@@ -13,13 +13,9 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -27,15 +23,12 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.ILaunchFilter;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.debug.ui.launchConfigurations.AppletParametersTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.console.StringMatcher;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -51,7 +44,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.editors.text.WorkspaceOperationRunner;
 
-public class JavaAppletLaunchShortcut implements ILaunchShortcut, ILaunchFilter {
+public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -268,46 +261,5 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut, ILaunchFilter 
 		}
 		return (IStructuredSelection)selection;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
-	 */
-	public boolean testAttribute(IResource target, String name, String value) {
-		if ("ContextualLaunchActionFilter".equals(name)) { //$NON-NLS-1$
-			return isApplet(target);
-		} else if ("NameMatches".equals(name)) { //$NON-NLS-1$
-			return nameMatches(target, value);
-		}
-		return false;
-	}
-	/**
-	 * Test if the name of the target resource matches a pattern.
-	 * 
-	 * @param target selected resource from workspace
-	 * @param value regular expression pattern to test
-	 * @return true if the pattern matches the resource name, false otherwise
-	 */
-	private boolean nameMatches(IResource resource, String pattern) {
-		String filename = resource.getName();
-		StringMatcher sm = new StringMatcher(pattern, true, false);
-		return sm.match(filename);
-	}
-	/**
-	 * Check if the specified resource is an Applet.
-	 * @return <code>true</code> if the target resource is an Applet,
-	 * <code>false</code> otherwise.
-	 */
-	private boolean isApplet(IResource resource) {
-		if (resource != null) {
-			try {
-				Set result= new HashSet();
-				AppletLaunchConfigurationUtils.collectTypes(resource, new NullProgressMonitor(), result);
-				if (result.size() > 0) {
-					return true;
-				}
-			} catch (JavaModelException e) {
-				return false;
-			}
-		}
-		return false;
-	}
+
 }

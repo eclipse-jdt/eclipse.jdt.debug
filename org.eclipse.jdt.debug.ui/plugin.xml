@@ -22,6 +22,7 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.variables"/>
+      <import plugin="org.eclipse.core.expressions"/>
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.debug.core"/>
@@ -38,6 +39,15 @@
    <extension-point id="vmInstallTypePage" name="%vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
 
 <!-- Extensions -->
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+      		namespace="org.eclipse.jdt.debug.ui"
+            properties="hasMainType, isApplet"
+            type="org.eclipse.core.resources.IResource"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.ResourceExtender"
+            id="org.eclipse.jdt.debug.IResourceExtender">
+      </propertyTester>
+   </extension>
    <extension
          point="org.eclipse.debug.core.watchExpressionDelegates">
          <watchExpressionDelegate
@@ -1904,19 +1914,28 @@
             icon="icons/full/ctool16/java_app.gif"
             helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
             modes="run, debug"
-            nameFilter="*.java"
-            filterClass="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
             id="org.eclipse.jdt.debug.ui.localJavaShortcut">
-         <contextLabel
-         	mode="run"
-         	label="%ContextualRunJavaApplication.label"/>
-  		 <contextLabel
-  		 	mode="debug"
-  		 	label="%ContextualDebugJavaApplication.label"/>
-         <filter
-         	name="ContextualLaunchActionFilter"
-         	value="supportsContextualLaunch"/>
+         <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                 <or>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
+                 </or>
+                 <test property="org.eclipse.jdt.debug.ui.hasMainType"/>
+               </iterate>
+             </with>
+           </enablement>
+           <contextLabel
+         	  mode="run"
+         	  label="%ContextualRunJavaApplication.label"/>
+  		   <contextLabel
+  		 	  mode="debug"
+  		 	  label="%ContextualDebugJavaApplication.label"/>
+  		 </contextualLaunch>
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspective>
@@ -1935,19 +1954,28 @@
             icon="icons/full/ctool16/java_applet.gif"
             helpContextId="org.eclipse.jdt.debug.ui.shortcut_java_applet"
             modes="run, debug"
-            nameFilter="*.java"
-            filterClass="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
             id="org.eclipse.jdt.debug.ui.javaAppletShortcut">
-         <filter
-         	name="ContextualLaunchActionFilter"
-         	value="supportsContextualLaunch"/>
-         <contextLabel
-         	mode="run"
-         	label="%ContextualRunJavaApplet.label"/>
-  		 <contextLabel
-  		 	mode="debug"
-  		 	label="%ContextualDebugJavaApplet.label"/>
+         <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                 <or>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
+                 </or>
+                 <test property="org.eclipse.jdt.debug.ui.isApplet"/>
+               </iterate>
+             </with>
+           </enablement>
+           <contextLabel
+         	  mode="run"
+         	  label="%ContextualRunJavaApplet.label"/>
+  		   <contextLabel
+  		 	  mode="debug"
+  		 	  label="%ContextualDebugJavaApplet.label"/>
+  		 </contextualLaunch>
          <perspective
                id="org.eclipse.jdt.ui.JavaPerspective">
          </perspective>

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
@@ -26,21 +25,13 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.ILaunchFilter;
 import org.eclipse.debug.ui.ILaunchShortcut;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
-import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.console.StringMatcher;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -58,7 +49,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 /**
  * Performs single click launching for local Java applications.
  */
-public class JavaApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilter {
+public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 	
 	/**
 	 * @param search the java elements to search for a main type
@@ -296,61 +287,4 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFi
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
-	 */
-	public boolean testAttribute(IResource target, String name, String value) {
-		if ("ContextualLaunchActionFilter".equals(name)) { //$NON-NLS-1$
-			return hasMain(target);
-		} else if ("NameMatches".equals(name)) { //$NON-NLS-1$
-			return nameMatches(target, value);
-		}
-		return false;
-	}
-	
-	/**
-	 * Test if the name of the target resource matches a pattern.
-	 * 
-	 * @param target selected resource from workspace
-	 * @param value regular expression pattern to test
-	 * @return true if the pattern matches the resource name, false otherwise
-	 */
-	private boolean nameMatches(IResource target, String regexp) {
-		String filename = target.getName();
-		StringMatcher sm = new StringMatcher(regexp, true, false);
-		return sm.match(filename);
-	}
-	
-	/**
-	 * Look for a Java main() method in the specified resource.
-	 * @return true if the target resource has a <code>main</code> method,
-	 * <code>false</code> otherwise.
-	 */
-	private boolean hasMain(IResource target) {
-		if (target != null) {
-			IJavaElement element = JavaCore.create(target);
-			if (element instanceof ICompilationUnit) {
-				ICompilationUnit cu = (ICompilationUnit) element;
-				IType mainType= cu.getType(Signature.getQualifier(cu.getElementName()));
-				try {
-					if (mainType.exists() && JavaModelUtil.hasMainMethod(mainType)) {
-						return true;
-					}
-				} catch (JavaModelException e) {
-					return false;
-				}
-			} else if (element instanceof IClassFile) {
-				IType mainType;
-				try {
-					mainType = ((IClassFile)element).getType();
-					if (JavaModelUtil.hasMainMethod(mainType)) {
-						return true;
-					}
-				} catch (JavaModelException e) {
-					return false;
-				}
-			}
-		}
-		return false;
-	}
 }
