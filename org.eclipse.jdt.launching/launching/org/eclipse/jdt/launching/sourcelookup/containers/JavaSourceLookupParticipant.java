@@ -32,6 +32,8 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
+import com.sun.jdi.VMDisconnectedException;
+
 /**
  * A source lookup participant that searches for Java source code.
  * <p>
@@ -90,7 +92,8 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 					return sourceName;	
 				}
 			} catch (DebugException e) {
-				if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+				if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED ||
+						e.getStatus().getException() instanceof VMDisconnectedException) {
 					return null;
 				}
 				throw e;
