@@ -23,14 +23,12 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
@@ -764,19 +762,4 @@ public class JDIDebugModel {
 		return fgSuspendOnUncaughtExceptions;
 	}
 	
-	/**
-	 * Returns the resource with which to associate a breakpoint
-	 * marker in the give type.
-	 * 
-	 * @param type Java model type
-	 * @return resource with which to associate a breakpoint
-	 *  marker
-	 */
-	private static IResource getResource(IType type) throws CoreException {
-		IResource res = type.getUnderlyingResource();
-		if (res == null) {
-			return type.getJavaProject().getProject();
-		}
-		return res;
-	}
 }
