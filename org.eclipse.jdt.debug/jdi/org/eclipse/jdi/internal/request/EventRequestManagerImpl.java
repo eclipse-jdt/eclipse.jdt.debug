@@ -252,7 +252,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		ClassPrepareRequestImpl requestPrepare =
 			new ClassPrepareRequestImpl(virtualMachineImpl());
 		requestPrepare.setGeneratedInside();
-		requestPrepare.setSuspendPolicy(ClassPrepareRequest.SUSPEND_NONE);
+		requestPrepare.setSuspendPolicy(EventRequest.SUSPEND_NONE);
 
 		requestPrepare.enable();
 	}
