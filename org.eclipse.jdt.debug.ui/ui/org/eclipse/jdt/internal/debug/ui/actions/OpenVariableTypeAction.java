@@ -32,14 +32,4 @@ public abstract class OpenVariableTypeAction extends OpenTypeAction {
 		}
 		return typeName;
 	}
-	
-
-	/**
-	 * @see org.eclipse.jdt.internal.debug.ui.actions.ObjectActionDelegate#isEnabledFor(Object)
-	 */
-	protected boolean isEnabledFor(Object element) {
-		return element instanceof IAdaptable && ((IAdaptable) element).getAdapter(IJavaVariable.class) != null;
-	}
-
-
 }
