@@ -28,6 +28,7 @@
 				
 		<copy file="plugin.xml" todir="${dest}"/>
 		<copy file="plugin.properties" todir="${dest}"/>
+		<copy file="java.policy.applet" todir="${dest}"/>
 		<zip zipfile="${dest}/launchingsrc.zip">
 		    <fileset dir="launching" />
   		</zip>
