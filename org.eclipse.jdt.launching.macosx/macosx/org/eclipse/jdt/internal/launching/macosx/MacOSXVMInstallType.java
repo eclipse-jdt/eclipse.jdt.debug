@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeff Myers myersj@gmail.com - fix for #75201
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.macosx;
 
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.LibraryInfo;
 import org.eclipse.jdt.internal.launching.StandardVMType;
 
@@ -97,30 +99,39 @@ public class MacOSXVMInstallType extends StandardVMType {
 			File[] versions= versionDir.listFiles();
 			for (int i= 0; i < versions.length; i++) {
 				String version= versions[i].getName();
-				File home=  new File(versions[i], JVM_ROOT);
-				if (home.exists() && findVMInstall(version) == null && !CURRENT_JVM.equals(version)) {
-					
+				File home= new File(versions[i], JVM_ROOT);
+				if (home.exists()) {
 					boolean isDefault= currentJDK.equals(versions[i]);
-					
-					VMStandin vm= new VMStandin(this, version);
-					vm.setInstallLocation(home);
-					String format= MacOSXLaunchingPlugin.getString(isDefault
-												? "MacOSXVMType.jvmDefaultName"		//$NON-NLS-1$
-												: "MacOSXVMType.jvmName");				//$NON-NLS-1$
-					vm.setName(MessageFormat.format(format, new Object[] { version } ));
-					vm.setLibraryLocations(getDefaultLibraryLocations(home));
-					URL doc= getDefaultJavadocLocation(home);
-					if (doc != null)
-						vm.setJavadocLocation(doc);
-					
-					IVMInstall rvm= vm.convertToRealVM();
-					
-					if (isDefault) {
-						defaultLocation= home;
-						try {
-							JavaRuntime.setDefaultVMInstall(rvm, null);
-						} catch (CoreException e) {
-							// NeedWork
+					IVMInstall install= findVMInstall(version);
+					if (install == null && !CURRENT_JVM.equals(version)) {
+						VMStandin vm= new VMStandin(this, version);
+						vm.setInstallLocation(home);
+						String format= MacOSXLaunchingPlugin.getString(isDefault
+													? "MacOSXVMType.jvmDefaultName"		//$NON-NLS-1$
+													: "MacOSXVMType.jvmName");				//$NON-NLS-1$
+						vm.setName(MessageFormat.format(format, new Object[] { version } ));
+						vm.setLibraryLocations(getDefaultLibraryLocations(home));
+						URL doc= getDefaultJavadocLocation(home);
+						if (doc != null)
+							vm.setJavadocLocation(doc);
+						
+						IVMInstall rvm= vm.convertToRealVM();					
+						if (isDefault) {
+							defaultLocation= home;
+							try {
+								JavaRuntime.setDefaultVMInstall(rvm, null);
+							} catch (CoreException e) {
+								LaunchingPlugin.log(e);
+							}
+						}
+					} else {
+						if (isDefault) {
+							defaultLocation= home;
+							try {
+								JavaRuntime.setDefaultVMInstall(install, null);
+							} catch (CoreException e) {
+								LaunchingPlugin.log(e);
+							}
 						}
 					}
 				}
