@@ -127,7 +127,6 @@ public class CompilationUnitDelta {
 		}
 	}
 
-	private ICompilationUnit fCompilationUnit;
 	private SimpleJavaElement fRoot;
 	private boolean fHasHistory= false;
 	
@@ -140,8 +139,6 @@ public class CompilationUnitDelta {
 		if (cu.isWorkingCopy()) {
 			cu= (ICompilationUnit) cu.getOriginalElement();
 		}
-
-		fCompilationUnit= cu;
 		
 		// find underlying file
 		IFile file= (IFile) cu.getUnderlyingResource();
