@@ -88,11 +88,11 @@ public class ExceptionFilterEditor {
 	private SelectionListener fSelectionListener= new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
-			if (source == fAddFilterButton) {
+			if (source == fAddTypeButton) {
 				addType();
 			} else if (source == fAddPackageButton) {
 				addPackage();
-			} else if (source == fEditorText) {
+			} else if (source == fAddFilterButton) {
 				editFilter();
 			} else if (source == fRemoveFilterButton) {
 				removeFilters();
