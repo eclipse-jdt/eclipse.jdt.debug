@@ -47,6 +47,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	private static final String CANT_TERMINATE= ERROR + "cant_terminate";
 	protected static final String IN_EVALUATION= ERROR + "in_evaluation";
 	protected static final String NO_BUILT_STATE= ERROR + "no_built_state";
+	protected static final String INVALID_EVALUATION_LOCATION= ERROR + "invalid_evaluation_location";
 	
 	protected static final String MAIN_THREAD_GROUP = "main";
 
@@ -80,6 +81,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	protected boolean fStepping;
 	protected int fStepCount= 0;
+	
+	/**
+	 * Whether suspended by an event in the VM such as a
+	 * breakpoint or step, or via an explicit user
+	 * request to suspend.
+	 */
+	protected boolean fEventSuspend = false;
 	
 	/**
 	 * The destination stack frame when stepping
@@ -716,6 +724,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					fStepping= false;
 					fireSuspendEvent(detail);
 				}
+				fEventSuspend = detail != DebugEvent.CLIENT_REQUEST;
 			}
 		}
 	}
@@ -983,21 +992,28 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * @see IJavaThread
 	 */
 	public void evaluate(String snippet, IJavaEvaluationListener listener, IEvaluationContext evaluationContext) throws DebugException {
+		verifyEvaluation(evaluationContext);
+		ThreadEvaluationContext context = new ThreadEvaluationContext(this, evaluationContext);
+		context.evaluate(snippet, listener);
+	}
+	
+	protected void verifyEvaluation(IEvaluationContext evaluationContext) throws DebugException {
 		if (fInEvaluation) {
 			requestFailed(IN_EVALUATION, null);
 		}
 		if (!evaluationContext.getProject().hasBuildState()) {
 			requestFailed(NO_BUILT_STATE, null);
 		}
-		ThreadEvaluationContext context = new ThreadEvaluationContext(this, evaluationContext);
-		context.evaluate(snippet, listener);
+		if (!fEventSuspend) {
+			requestFailed(INVALID_EVALUATION_LOCATION, null);
+		}
 	}
 	
 	/**
 	 * @see IJavaEvaluate
 	 */
 	public boolean canPerformEvaluation() {
-		return isSuspended() && !fInEvaluation;
+		return isSuspended() && !fInEvaluation && fEventSuspend;
 	}
 	
 	protected void dispose() {

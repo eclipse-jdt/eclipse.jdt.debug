@@ -541,12 +541,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame
 	 */
 	public void evaluate(String snippet, IJavaEvaluationListener listener, IEvaluationContext evaluationContext) throws DebugException {
-		if (((JDIThread)getThread()).fInEvaluation) {
-			requestFailed(JDIThread.IN_EVALUATION, null);
-		}
-		if (!evaluationContext.getProject().hasBuildState()) {
-			requestFailed(JDIThread.NO_BUILT_STATE, null);
-		}
+		((JDIThread)getThread()).verifyEvaluation(evaluationContext);
 		StackFrameEvaluationContext context = new StackFrameEvaluationContext(this, evaluationContext);
 		context.evaluate(snippet, listener);
 	}	

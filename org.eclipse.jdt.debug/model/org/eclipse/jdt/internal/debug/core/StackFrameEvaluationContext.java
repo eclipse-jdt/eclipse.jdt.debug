@@ -159,6 +159,8 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 				}
 			} catch (AbsentInformationException e) {
 				// No variables
+			} catch (NativeMethodException e) {
+				// No variables
 			}
 			
 			if (!fIsStatic) {
@@ -195,13 +197,15 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 					Value value = codeSnippet.getValue(field);
 					stackFrame.setValue(jdiVariable, value);
 				}	
-				Field resultField = codeSnippetClass.fieldByName(RESULT_VALUE_FIELD);
-				fResult = (ObjectReference)codeSnippet.getValue(resultField);
-				Field resultTypeField = codeSnippetClass.fieldByName(RESULT_TYPE_FIELD);
-				fResultType = (ClassObjectReference)codeSnippet.getValue(resultTypeField);
 			} catch (AbsentInformationException e) {
 				// No variables
+			} catch (NativeMethodException e) {
+				// No variables
 			}
+			Field resultField = codeSnippetClass.fieldByName(RESULT_VALUE_FIELD);
+			fResult = (ObjectReference)codeSnippet.getValue(resultField);
+			Field resultTypeField = codeSnippetClass.fieldByName(RESULT_TYPE_FIELD);
+			fResultType = (ClassObjectReference)codeSnippet.getValue(resultTypeField);
 		} catch (ClassNotLoadedException e) {
 			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
 		} catch (InvalidTypeException e) {
@@ -240,6 +244,11 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 				fLocalVariableModifiers[i] = 0;
 			}
 		} catch (AbsentInformationException e) {
+			// No variables
+			fLocalVariableTypeNames = new String[0];
+			fLocalVariableNames = new String[0];
+			fLocalVariableModifiers = new int[0];
+		} catch (NativeMethodException e) {
 			// No variables
 			fLocalVariableTypeNames = new String[0];
 			fLocalVariableNames = new String[0];
