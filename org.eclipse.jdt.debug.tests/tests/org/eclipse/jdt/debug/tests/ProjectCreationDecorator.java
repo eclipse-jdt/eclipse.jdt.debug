@@ -156,8 +156,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 	 * Set up preferences that need to be changed for the tests
 	 */
 	public void testSetPreferences() {
-		// Turn of suspend on  uncaught exceptions
-		setSuspendOnUncaughtExceptionsPreference(false);
 		IPreferenceStore debugUIPreferences = DebugUIPlugin.getDefault().getPreferenceStore();
 		// Don't prompt for perspective switching
 		debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, MessageDialogWithToggle.ALWAYS);
@@ -175,7 +173,10 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		}
 		
 		IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		// Don't warn about HCR failures
+		// Turn off suspend on  uncaught exceptions
+        jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
+        jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);
+        // Don't warn about HCR failures
 		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, false);
 		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, false);
 		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, false);

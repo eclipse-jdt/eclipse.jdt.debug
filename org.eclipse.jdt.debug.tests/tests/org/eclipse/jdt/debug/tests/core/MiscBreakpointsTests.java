@@ -49,6 +49,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 			assertTrue("line number should be '26', but was " + stackLine, stackLine == 26);
 		
 		} finally {
+            getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 			terminateAndRemove(javaThread);
 			removeAllBreakpoints();
 		}		
@@ -70,6 +71,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		IBuffer buffer = cu.getBuffer();
 		buffer.setContents(COMPILE_ERROR_CONTENTS);
 		cu.save(new NullProgressMonitor(), true);
+        waitForAutoBuild();
 		
 		IJavaThread javaThread = null;
 		try {
@@ -79,6 +81,8 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 			assertTrue("line number should be '3', but was " + stackLine, stackLine == 3);
 		
 		} finally {
+            getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
+            getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);
 			terminateAndRemove(javaThread);
 			removeAllBreakpoints();
 		}		
@@ -94,6 +98,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		IBuffer buffer = cu.getBuffer();
 		buffer.setContents(COMPILE_ERROR_CONTENTS);
 		cu.save(new NullProgressMonitor(), true);
+        waitForAutoBuild();
 		
 		IJavaDebugTarget debugTarget = null;
 		try {

@@ -27,6 +27,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -71,7 +72,7 @@ import com.sun.jdi.request.EventRequestManager;
  * Debug target for JDI debug model.
  */
 
-public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget, ILaunchListener, IBreakpointManagerListener {
+public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget, ILaunchListener, IBreakpointManagerListener, IDebugEventSetListener {
 		
 	/**
 	 * Threads contained in this debug target. When a thread
@@ -372,11 +373,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		initializeState();
 		initializeBreakpoints();
 		getLaunch().addDebugTarget(this);
+        DebugPlugin.getDefault().addDebugEventListener(this);
 		fireCreationEvent();
-		EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
-		if (dispatcher != null) {
-			new Thread(dispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
-		}
 	}
 	
 	/**
@@ -1320,6 +1318,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		plugin.getBreakpointManager().removeBreakpointListener(this);
 		plugin.getLaunchManager().removeLaunchListener(this);
 		plugin.getBreakpointManager().removeBreakpointManagerListener(this);
+        plugin.removeDebugEventListener(this);
 		removeAllBreakpoints();
 		fOutOfSynchTypes.clear();
 		if (fEngines != null) {
@@ -2151,5 +2150,24 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			}
 		}
 	}
+
+    /* (non-Javadoc)
+     * 
+     * begin handling/dispatching events after the creation event is handled by all listeners.
+     * 
+     * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+     */
+    public void handleDebugEvents(DebugEvent[] events) {
+        if (events.length == 1) {
+            DebugEvent event = events[0];
+            if (event.getSource() == this && event.getKind() == DebugEvent.CREATE) {
+                EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
+                if (dispatcher != null) {
+                    new Thread(dispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
+                }
+                DebugPlugin.getDefault().removeDebugEventListener(this);
+            }
+        }
+    }
 }
 

@@ -642,7 +642,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	    ILaunch launch = debugTarget.getLaunch();
 		if (debugTarget != null && !(debugTarget.isTerminated() || debugTarget.isDisconnected())) {
 			IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
-			boolean suspendOnException = jdiUIPreferences.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
 			jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 			
 			DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.TERMINATE, debugTarget);
@@ -661,8 +660,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				debugTarget.getDebugTarget().terminate();
 				waiter.waitForEvent();
 			} catch (CoreException e) {
-			} finally {
-			    jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, suspendOnException);
 			}
 		}
 		getLaunchManager().removeLaunch(launch);
@@ -854,14 +851,6 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
 		return (IJavaThread) suspendee;		
-	}	
-	/**
-	 * Sets the "suspend on uncaught exception" preference as specified.
-	 * 
-	 * @param on of off
-	 */	
-	protected void setSuspendOnUncaughtExceptionsPreference(boolean on) {
-		JDIDebugUIPlugin.getDefault().getPreferenceStore().setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, on);
 	}
 
 	/**
