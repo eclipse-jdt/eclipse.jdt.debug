@@ -1,5 +1,12 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
@@ -8,12 +15,6 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 
 
 /**
@@ -94,21 +95,42 @@ public class JDIThisVariable extends JDIVariable {
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPrivate()
 	 */
 	public boolean isPrivate() throws DebugException {
-		return ((ReferenceType)getUnderlyingType()).isPrivate();
+		try {
+			return ((ReferenceType)getUnderlyingType()).isPrivate(); 
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.getString("JDIThisVariable.Exception_occurred_while_retrieving_modifiers._1"), e); //$NON-NLS-1$
+		}
+		// this line will not be exceucted as an exception
+		// will be throw		
+		return false;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isProtected()
 	 */
 	public boolean isProtected() throws DebugException {
-		return ((ReferenceType)getUnderlyingType()).isProtected();
+		try {
+			return ((ReferenceType)getUnderlyingType()).isProtected();
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.getString("JDIThisVariable.Exception_occurred_while_retrieving_modifiers._1"), e); //$NON-NLS-1$
+		}			
+		// this line will not be exceucted as an exception
+		// will be throw
+		return false;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPublic()
 	 */
 	public boolean isPublic() throws DebugException {
-		return ((ReferenceType)getUnderlyingType()).isPublic();
+		try {
+			return ((ReferenceType)getUnderlyingType()).isPublic();
+		} catch (RuntimeException e) {
+			targetRequestFailed(JDIDebugModelMessages.getString("JDIThisVariable.Exception_occurred_while_retrieving_modifiers._1"), e); //$NON-NLS-1$
+		}			
+		// this line will not be exceucted as an exception
+		// will be throw		
+		return false;
 	}
 
 	/**
