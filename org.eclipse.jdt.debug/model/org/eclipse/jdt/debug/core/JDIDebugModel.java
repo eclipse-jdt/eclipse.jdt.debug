@@ -5,35 +5,17 @@ package org.eclipse.jdt.debug.core;
  * All Rights Reserved.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.internal.debug.core.DebugJavaUtils;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.JavaExceptionBreakpoint;
-import org.eclipse.jdt.internal.debug.core.JavaLineBreakpoint;
-import org.eclipse.jdt.internal.debug.core.JavaMethodEntryBreakpoint;
-import org.eclipse.jdt.internal.debug.core.JavaRunToLineBreakpoint;
-import org.eclipse.jdt.internal.debug.core.JavaWatchpoint;
-import org.eclipse.jdt.internal.debug.core.SnippetSupportLineBreakpoint;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.internal.debug.core.*;
 
 import com.sun.jdi.VirtualMachine;
 
@@ -252,6 +234,27 @@ public class JDIDebugModel {
 	public static IJavaMethodEntryBreakpoint createMethodEntryBreakpoint(final IMethod method, final int hitCount) throws DebugException {
 		return new JavaMethodEntryBreakpoint(method, hitCount);
 	}
+	
+	public static boolean isDuplicateLineBreakpoint(IType containingType, int lineNumber) throws CoreException {
+		String modelId= getPluginIdentifier();
+		String markerType= JavaLineBreakpoint.getMarkerType();
+		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints= manager.getBreakpoints(modelId);
+		for (int i = 0; i < breakpoints.length; i++) {
+			if (!(breakpoints[i] instanceof IJavaLineBreakpoint)) {
+				continue;
+			}
+			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) breakpoints[i];
+			if (breakpoint.getMarker().getType().equals(markerType)) {
+				if (breakpoint.getMarker().getType().equals(containingType)) {
+					if (breakpoint.getLineNumber() == lineNumber) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}	
 	
 	/**
 	 * Accessors for step filter state
