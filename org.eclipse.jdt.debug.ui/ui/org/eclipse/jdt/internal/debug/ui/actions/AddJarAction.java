@@ -29,6 +29,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * Adds an internal jar to the runtime class path.
@@ -76,6 +77,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 		dialog.setMessage(ActionMessages.getString("AddJarAction.Choose_jars_to_add__8")); //$NON-NLS-1$
 		dialog.addFilter(filter);
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
+		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
 
 		if (dialog.open() == ElementTreeSelectionDialog.OK) {
 			Object[] elements= dialog.getResult();
