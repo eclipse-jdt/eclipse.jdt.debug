@@ -190,7 +190,9 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 				}
 				return type.name();
 			} catch (ClassNotLoadedException e) {
-				throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, null, e));
+				System.out.println();
+				// we cannot create the generic name using the component type,
+				// just try to create one with the infos
 			}
 		}
 		StringBuffer res= new StringBuffer(Signature.toString(type.signature()).replace('/', '.'));

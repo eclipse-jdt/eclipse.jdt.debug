@@ -57,6 +57,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvocationException;
 
 public class JavaDetailFormattersManager implements IPropertyChangeListener, IDebugEventSetListener, ILaunchesListener {
@@ -497,7 +498,9 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				IJavaArrayType javaArrayType = (IJavaArrayType) arrayValue.getJavaType();
 				componentType = javaArrayType.getComponentType();
 			} catch (DebugException de) {
-				JDIDebugUIPlugin.log(de);
+				if (!(de.getStatus().getException() instanceof ClassNotLoadedException)) {
+					JDIDebugUIPlugin.log(de);
+				}
 				result.append(de.getStatus().getMessage());
 				return;	
 			}
