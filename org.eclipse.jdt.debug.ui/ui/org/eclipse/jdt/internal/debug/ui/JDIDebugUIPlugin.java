@@ -481,7 +481,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			throw exception[0];
 		}
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT;
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new JavaElementLabelProvider(flags));
+		PackageSelectionDialog dialog= new PackageSelectionDialog(shell, new JavaElementLabelProvider(flags));
 		dialog.setIgnoreCase(false);
 		dialog.setElements(packageList.toArray()); // XXX inefficient
 		return dialog;

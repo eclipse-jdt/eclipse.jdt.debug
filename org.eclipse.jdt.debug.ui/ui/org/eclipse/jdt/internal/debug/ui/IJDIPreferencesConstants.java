@@ -160,5 +160,13 @@ public interface IJDIPreferencesConstants {
 	 * 
 	 * @since 3.0
 	 */	
-	public static final String PREF_SHOW_SYSTEM_THREADS = IJavaDebugUIConstants.PLUGIN_ID + ".show_system_threads"; //$NON-NLS-1$	
+	public static final String PREF_SHOW_SYSTEM_THREADS = IJavaDebugUIConstants.PLUGIN_ID + ".show_system_threads"; //$NON-NLS-1$
+	
+	/**
+	 * Common dialog settings
+	 */
+	public static final String DIALOG_ORIGIN_X = "DIALOG_ORIGIN_X"; //$NON-NLS-1$
+	public static final String DIALOG_ORIGIN_Y = "DIALOG_ORIGIN_Y"; //$NON-NLS-1$
+	public static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
+	public static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$	
 }

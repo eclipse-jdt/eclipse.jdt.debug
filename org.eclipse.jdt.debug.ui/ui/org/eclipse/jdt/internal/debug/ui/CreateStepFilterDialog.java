@@ -1,10 +1,15 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -17,10 +22,13 @@ import org.eclipse.swt.widgets.Text;
 public class CreateStepFilterDialog extends StatusDialog {
 
 	private static final String DEFAULT_NEW_FILTER_TEXT = ""; //$NON-NLS-1$
+	private static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(425,125);
 	
 	private Text text;
 	private Filter filter;
 	private Button okButton;
+	private Button cancelButton;
+
 	private boolean filterValid;
 	private boolean okClicked;
 	private Filter[] existingFilters;
@@ -50,7 +58,8 @@ public class CreateStepFilterDialog extends StatusDialog {
 	
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton= createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		okButton.setEnabled(false);			
+		okButton.setEnabled(false);		
+		cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 	
 	protected Control createDialogArea(Composite parent) {
@@ -153,7 +162,69 @@ public class CreateStepFilterDialog extends StatusDialog {
 		return true;
 	}	
 
+	
+	protected IDialogSettings getDialogSettings() {
+		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
+		if (section == null) {
+			section = settings.addNewSection(getDialogSettingsSectionName());
+		} 
+		return section;
+	}
+	
+	/**
+	 * Returns the name of the section that this dialog stores its settings in
+	 * 
+	 * @return String
+	 */
+	protected String getDialogSettingsSectionName() {
+		return IDebugUIConstants.PLUGIN_ID + ".CREATE_STEP_FILTER_DIALOG_SECTION"; //$NON-NLS-1$
+	}
+	
+	protected void persistShellGeometry() {
+		Point shellLocation = getShell().getLocation();
+		Point shellSize = getShell().getSize();
+		IDialogSettings settings = getDialogSettings();
+		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_X, shellLocation.x);
+		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_Y, shellLocation.y);
+		settings.put(IDebugPreferenceConstants.DIALOG_WIDTH, shellSize.x);
+		settings.put(IDebugPreferenceConstants.DIALOG_HEIGHT, shellSize.y);
+	}	
 
+
+	/**
+	 * @see Window#getInitialLocation(Point)
+	 */
+	protected Point getInitialLocation(Point initialSize) {
+		IDialogSettings settings = getDialogSettings();
+		try {
+			int x, y;
+			x = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_X);
+			y = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_Y);
+			return new Point(x,y);
+		} catch (NumberFormatException e) {
+		}
+		return super.getInitialLocation(initialSize);
+	}
+
+	/**
+	 * @see Window#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		Point size = super.getInitialSize();
+		
+		IDialogSettings settings = getDialogSettings();
+		try {
+			int x, y;
+			x = settings.getInt(IDebugPreferenceConstants.DIALOG_WIDTH);
+			y = settings.getInt(IDebugPreferenceConstants.DIALOG_HEIGHT);
+			return new Point(Math.max(x,size.x),Math.max(y,size.y));
+		} catch (NumberFormatException e) {
+		}
+		return size;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
@@ -162,6 +233,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 			filterValid = false;
 			filter = null;
 		}
+		persistShellGeometry();
 		return super.close();
 	}
 
