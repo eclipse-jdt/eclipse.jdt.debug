@@ -235,8 +235,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	 * Creates an "invisible" line breakpoint. 
 	 */
 	IBreakpoint createMagicBreakpoint(String typeName) throws CoreException{
-	
-		fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, 51, -1, -1, 0, false, null);
+		//set a breakpoint on the Thread.sleep(100); line of the nop method of ScrapbookMain
+		fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, 59, -1, -1, 0, false, null);
 		fMagicBreakpoint.setPersisted(false);
 		return fMagicBreakpoint;
 	}
