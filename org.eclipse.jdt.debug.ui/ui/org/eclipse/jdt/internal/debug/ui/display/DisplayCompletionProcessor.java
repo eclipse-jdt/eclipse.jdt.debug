@@ -172,7 +172,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 
 	protected int computeInsertionPosition(IType receivingType, IJavaStackFrame stackFrame) throws JavaModelException, DebugException {
 		int insertion = -1;
-		if (!receivingType.isBinary() || receivingType.getDeclaringType() == null) {
+		if (!receivingType.isBinary() && receivingType.getDeclaringType() == null) {
 			ICompilationUnit stackCU= getCompilationUnit(stackFrame);
 			ICompilationUnit typeCU= receivingType.getCompilationUnit();
 			if (typeCU != null && typeCU.equals(stackCU)) {
