@@ -9,7 +9,9 @@ import com.sun.jdi.connect.*;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
 
-public interface Bootstrap
+public class Bootstrap
 {
-	public VirtualMachineManager virtualMachineManager();
+	public VirtualMachineManager virtualMachineManager() {
+		return null;
+	}
 }
