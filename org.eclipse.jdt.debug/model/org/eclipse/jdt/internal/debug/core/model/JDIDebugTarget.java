@@ -325,6 +325,26 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				logError(e);
 			}
 		}
+		// If any threads have resumed since thread collection was initialized,
+		// update their status (avoid concurrent modification - use #getThreads())
+		IThread[] threads = getThreads();
+		for (int i = 0; i < threads.length; i++) {
+			JDIThread thread = (JDIThread)threads[i];
+			if (thread.isSuspended()) {
+				try {
+					boolean suspended = thread.getUnderlyingThread().isSuspended();
+					if (!suspended) {
+						thread.setRunning(true);
+						thread.fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+					}
+				} catch (VMDisconnectedException e) {
+				} catch (ObjectCollectedException e){
+				} catch (RuntimeException e) {
+					logError(e);
+				}				
+			}
+		}
+		
 	}
 	 
 	/**
@@ -358,7 +378,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		if (threads != null) {
 			Iterator initialThreads= threads.iterator();
 			while (initialThreads.hasNext()) {
-				createRunningThread((ThreadReference) initialThreads.next());
+				createThread((ThreadReference) initialThreads.next());
 			}
 		}
 		
@@ -413,30 +433,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		if (isDisconnected()) {
 			return null;
 		}
-		getThreadList().add(jdiThread);
-		jdiThread.fireCreationEvent();
-		return jdiThread;
-	}
-	
-	/**
-	 * Creates a new JDI thread from the given ThreadReference and initializes
-	 * its state to "Running." This method should be called with extreme care.
-	 * 
-	 * @see JDIDebugTarget#createThread(ThreadReference)
-	 */
-	protected JDIThread createRunningThread(ThreadReference thread) {
-		JDIThread jdiThread= null;
-		try {
-			jdiThread= new JDIThread(this, thread);
-		} catch (ObjectCollectedException exception) {
-			// ObjectCollectionException can be thrown if the thread has already
-			// completed (exited) in the VM.
-			return null;
-		}
-		if (isDisconnected()) {
-			return null;
-		}
-		jdiThread.setRunning(true); // Initialize the thread to running.
 		getThreadList().add(jdiThread);
 		jdiThread.fireCreationEvent();
 		return jdiThread;
