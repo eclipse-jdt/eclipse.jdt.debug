@@ -307,22 +307,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		fMethodName= methodName;
 		fMethodSignature= methodSignature;
 	}
-	
-	/**
-	 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
-	 */
-	public boolean handleEvent(Event genericEvent, JDIDebugTarget target) {
-		if (genericEvent instanceof MethodEntryEvent) {
-			fLastEventTypes.put(target, ENTRY_EVENT);
-			return handleEntryEvent((MethodEntryEvent)genericEvent, target);
-		}
-		if (genericEvent instanceof MethodExitEvent) {
-			fLastEventTypes.put(target, EXIT_EVENT);
-			return handleExitEvent((MethodExitEvent)genericEvent, target);
-		}
-		return true;
-	}
-	
+
 	/**
 	 * @see IJavaMethodBreakpoint#isEntrySuspend(IDebugTarget)
 	 */
@@ -335,15 +320,21 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	}	
 	
 	/**
-	 * Method entry events are fired each time any method is invoked in a class
-	 * in which a method entry breakpoint has been installed.
-	 * When a method entry event is received by this breakpoint, ensure that
-	 * the event has been fired by a method invocation that this breakpoint
-	 * is interested in. If it is not, do nothing.
+	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget)
 	 */
-	protected boolean handleEntryEvent(MethodEntryEvent event, JDIDebugTarget target) {
-		return handleMethodEvent(event, event.method(), target);
-	}	
+	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target) {
+		if (event instanceof MethodEntryEvent) {
+			MethodEntryEvent entryEvent= (MethodEntryEvent) event;
+			fLastEventTypes.put(target, ENTRY_EVENT);
+			return handleMethodEvent(entryEvent, entryEvent.method(), target);
+		}
+		if (event instanceof MethodExitEvent) {
+			MethodExitEvent exitEvent= (MethodExitEvent) event;
+			fLastEventTypes.put(target, EXIT_EVENT);
+			return handleMethodEvent(exitEvent, exitEvent.method(), target);
+		}
+		return true;
+	}
 	
 	
 	/**
@@ -387,16 +378,6 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		}
 		return true;
 	}
-	/**
-	 * Method exit events are fired each time any method is exited in a class
-	 * in which a method exit breakpoint has been installed.
-	 * When a method exit event is received by this breakpoint, ensure that
-	 * the event has been fired by a method that this breakpoint
-	 * is interested in. If it is not, do nothing.
-	 */
-	protected boolean handleExitEvent(MethodExitEvent event, JDIDebugTarget target) {
-		return handleMethodEvent(event, event.method(), target);	
-	}	
 	
 	/**
 	 * Suspend the given thread in the given target, and returns
