@@ -1,14 +1,14 @@
+package org.eclipse.jdt.internal.debug.core.hcr;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.jdt.internal.debug.core.hcr;
-
+ 
 import java.util.Stack;
 
-import org.eclipse.jdt.internal.compiler.*;
+import org.eclipse.jdt.internal.compiler.SourceElementRequestorAdapter;
 import org.eclipse.jdt.internal.compiler.env.ICompilationUnit;
-
 
 class JavaParseTreeBuilder extends SourceElementRequestorAdapter implements ICompilationUnit {
 	
