@@ -90,7 +90,7 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 		projComp.setLayoutData(gd);
 		
 		fProjLabel = new Label(projComp, SWT.NONE);
-		fProjLabel.setText("Project");
+		fProjLabel.setText("Project:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
@@ -115,7 +115,7 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 		createVerticalSpacer(comp);		
 		
 		fHostLabel = new Label(comp, SWT.NONE);
-		fHostLabel.setText("Host name");
+		fHostLabel.setText("Host name:");
 
 		fHostText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -127,7 +127,7 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 		});
 		
 		fPortLabel = new Label(comp, SWT.NONE);
-		fPortLabel.setText("Port #");
+		fPortLabel.setText("Port #:");
 
 		fPortText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);

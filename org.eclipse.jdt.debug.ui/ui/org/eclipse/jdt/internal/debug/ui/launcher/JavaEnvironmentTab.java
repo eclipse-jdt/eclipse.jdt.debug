@@ -225,7 +225,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		createVerticalSpacer(comp, 2);
 		
 		fEnvLabel = new Label(comp, SWT.NONE);
-		fEnvLabel.setText("Environment variables");
+		fEnvLabel.setText("Environment variables:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fEnvLabel.setLayoutData(gd);

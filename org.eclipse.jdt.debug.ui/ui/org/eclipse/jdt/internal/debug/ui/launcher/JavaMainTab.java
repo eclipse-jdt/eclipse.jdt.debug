@@ -133,7 +133,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		projComp.setLayoutData(gd);
 		
 		fProjLabel = new Label(projComp, SWT.NONE);
-		fProjLabel.setText("Project");
+		fProjLabel.setText("Project:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
@@ -165,7 +165,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		mainComp.setLayoutData(gd);
 		
 		fMainLabel = new Label(mainComp, SWT.NONE);
-		fMainLabel.setText("Main class");
+		fMainLabel.setText("Main class:");
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fMainLabel.setLayoutData(gd);
@@ -203,7 +203,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		jreComp.setLayoutData(gd);
 		
 		fJRELabel = new Label(jreComp, SWT.NONE);
-		fJRELabel.setText("JRE");
+		fJRELabel.setText("JRE:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fJRELabel.setLayoutData(gd);

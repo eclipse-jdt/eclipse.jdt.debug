@@ -96,7 +96,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	 * @see ILaunchConfigurationDelegate#initializeDefaults(ILaunchConfigurationWorkingCopy, Object)
 	 */
 	public void initializeDefaults(ILaunchConfigurationWorkingCopy configuration, Object object) {
-		if ((object instanceof ICompilationUnit) || (object instanceof IClassFile)) {
+		if (object instanceof IJavaElement) {
 			initializeDefaults(configuration, (IJavaElement)object);
 		} else if (object instanceof IFile) {
 			IJavaElement javaElement = JavaCore.create((IFile)object);
@@ -163,6 +163,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 			if ((types == null) || (types.length < 1)) {
 				return;
 			}
+			// Simply grab the first main type found in the searched element
 			String fullyQualifiedName = types[0].getFullyQualifiedName();
 			workingCopy.setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, fullyQualifiedName);
 			String name = types[0].getElementName();
