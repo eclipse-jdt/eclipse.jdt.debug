@@ -93,7 +93,7 @@ public class TypeTest extends AbstractJDITest {
 		fFloatDoubleArrayType = getFloatDoubleArrayType();
 		fDoubleDoubleArrayType = getDoubleDoubleArrayType();
 		fCharDoubleArrayType = getCharDoubleArrayType();
-		fBooleanDoubleArrayType = getBooleanDoubleArrayType();;
+		fBooleanDoubleArrayType = getBooleanDoubleArrayType();
 
 	}
 	/**
