@@ -71,5 +71,6 @@ public interface IJavaDebugHelpContextIds {
 	public static final String TERMINATE_SCRAPBOOK_VM_ACTION = PREFIX + "terminate_scrapbook_vm_action_context"; //$NON-NLS-1$
 	public static final String SCRAPBOOK_IMPORTS_ACTION = PREFIX + "scrapbook_imports_action_context"; //$NON-NLS-1$
 	
-	
+	public static final String NEW_SNIPPET_WIZARD_PAGE= PREFIX + "new_snippet_wizard_page_context"; //$NON-NLS-1$
+	public static final String OPEN_SNIPPET_WIZARD_ACTION= PREFIX + "open_snippet_wizard_action"; //$NON-NLS-1$
 }
