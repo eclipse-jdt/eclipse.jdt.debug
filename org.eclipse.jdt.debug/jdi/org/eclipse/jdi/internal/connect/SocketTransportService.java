@@ -17,8 +17,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 
+import com.sun.jdi.connect.TransportTimeoutException;
 import com.sun.jdi.connect.spi.ClosedConnectionException;
 import com.sun.jdi.connect.spi.Connection;
 import com.sun.jdi.connect.spi.TransportService;
@@ -79,11 +81,20 @@ public class SocketTransportService extends TransportService {
      *      long, long)
      */
     public Connection accept(ListenKey listenKey, long attachTimeout, long handshakeTimeout) throws IOException {
-        fSocket = fServerSocket.accept();
+        if (attachTimeout > 0){
+            if (attachTimeout > Integer.MAX_VALUE) {
+                attachTimeout = Integer.MAX_VALUE;  //approx 25 days!
+            }
+            fServerSocket.setSoTimeout((int) attachTimeout);
+        }
+        try {
+            fSocket = fServerSocket.accept();
+        } catch (SocketTimeoutException e) {
+            throw new TransportTimeoutException();
+        }
         fInput = fSocket.getInputStream();
         fOutput = fSocket.getOutputStream();
-        writeHandshake(fOutput);
-        readHandshake(fInput);
+        performHandshake(fInput, fOutput, handshakeTimeout);
         return new SocketConnection(this);
     }
 
@@ -108,17 +119,67 @@ public class SocketTransportService extends TransportService {
     }
 
     public Connection attach(String host, int port, long attachTimeout, long handshakeTimeout) throws IOException {
-        fSocket = new Socket(host, port);
+        if (attachTimeout > 0){
+            if (attachTimeout > Integer.MAX_VALUE) {
+                attachTimeout = Integer.MAX_VALUE;  //approx 25 days!
+            }
+            fSocket.setSoTimeout((int) attachTimeout);
+        }
+        try {
+            fSocket = new Socket(host, port);
+        } catch (SocketTimeoutException e) {
+            throw new TransportTimeoutException();
+        }
         fInput = fSocket.getInputStream();
         fOutput = fSocket.getOutputStream();
-
-        writeHandshake(fOutput);
-        readHandshake(fInput);
-        
-        
+        performHandshake(fInput, fOutput, handshakeTimeout);
         return new SocketConnection(this);
     }
 
+    void performHandshake(final InputStream in, final OutputStream out, final long timeout) throws IOException {
+        final Object lock = new Object();
+        final IOException[] ex = new IOException[1];
+        final boolean[] handshakeCompleted = new boolean[1];
+        
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    writeHandshake(out);
+                    readHandshake(in);
+                    synchronized(lock) {
+                        handshakeCompleted[0] = true;
+                        lock.notify();
+                    }
+                } catch (IOException e) {
+                    ex[0] = e;
+                }
+            }
+        });
+        
+        t.start();
+        synchronized(lock) {
+            try {
+	            if (!handshakeCompleted[0]) 
+	                lock.wait(timeout);
+            } catch (InterruptedException e) {
+            }
+        }
+        
+        if (handshakeCompleted[0])
+            return;
+        
+        if (ex[0] != null)
+            throw ex[0];
+        
+        try {
+	        in.close();
+	        out.close();
+        } catch (IOException e) {
+        }
+        
+        throw new TransportTimeoutException();
+    }
+    
     private void readHandshake(InputStream input) throws IOException {
         try {
             DataInputStream in = new DataInputStream(input);
