@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
@@ -24,6 +25,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Adds a method breakpoint on a single selected element of type IMethod 
@@ -33,9 +36,6 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 	public ManageMethodBreakpointActionDelegate() {
 		super();
 		fAddText= ActionMessages.getString("ManageMethodBreakpointAction.&Add_Method_Breakpoint_1"); //$NON-NLS-1$
-		fAddDescription= ActionMessages.getString("ManageMethodBreakpointAction.Add_a_method_breakpoint_2"); //$NON-NLS-1$
-		fRemoveText= ActionMessages.getString("ManageMethodBreakpointAction.Remove_&Method_Breakpoint_4"); //$NON-NLS-1$
-		fRemoveDescription= ActionMessages.getString("ManageMethodBreakpointAction.Remove_a_method_breakpoint_5"); //$NON-NLS-1$
 	}
 	
 	protected IJavaBreakpoint getBreakpoint(IMember method) {
@@ -76,12 +76,15 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
+		updateForRun();
 		if (getBreakpoint() == null) {
 			// add breakpoint
 			try {
 				IMethod method = (IMethod)getMember();
 				if (method == null) {
-					update();
+					if (getTextEditor() != null) {
+						getTextEditor().getSite().getShell().getDisplay().beep();
+					}
 					return;
 				} 
 				int start = -1;
@@ -113,7 +116,6 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodBreakpointAction.Problems_removing_breakpoint_8"), x.getMessage()); //$NON-NLS-1$
 			}
 		}
-		update();
 	}
 	
 	/**
@@ -121,5 +123,25 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 	 */
 	protected boolean enableForMember(IMember member) {
 		return member instanceof IMethod && member.isBinary();
+	}
+	
+	/**
+	 * Only enabled for binary methods
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+		super.partActivated(part);
+		setEnabledState(getTextEditor());
+	}
+	
+	protected void setEnabledState(ITextEditor editor) {
+		if (getAction() != null && getPage() != null) {
+			if (getPage().getActiveEditor() != null) {
+				IClassFile classFile= (IClassFile)getPage().getActiveEditor().getEditorInput().getAdapter(IClassFile.class);
+				getAction().setEnabled(classFile != null);
+			} else {
+				getAction().setEnabled(false);
+			}
+		}	
 	}
 }

@@ -45,27 +45,28 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActionDelegate {
 	
 	public ManageWatchpointActionDelegate() {
 		super();
 		fAddText= ActionMessages.getString("ManageWatchpointAction.Add_&Watchpoint_1"); //$NON-NLS-1$
-		fAddDescription= ActionMessages.getString("ManageWatchpointAction.Add_a_watchpoint_2"); //$NON-NLS-1$
-		
-		fRemoveText= ActionMessages.getString("ManageWatchpointAction.Remove_&Watchpoint_4"); //$NON-NLS-1$
-		fRemoveDescription= ActionMessages.getString("ManageWatchpointAction.Remove_a_field_watchpoint_5"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
+		updateForRun();
 		if (getBreakpoint() == null) {
 			try {
 				IMember element= getMember();
-				if (element == null) {
-					update();
+				if (element == null || !enableForMember(element)) {
+					if (JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
+						JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
+					}
 					return;
 				}
 				IType type = element.getDeclaringType();
@@ -96,7 +97,6 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_removing_watchpoint_8"), x.getMessage()); //$NON-NLS-1$
 			}
 		}
-		update();
 	}
 	
 	protected IJavaBreakpoint getBreakpoint(IMember selectedField) {
@@ -278,6 +278,17 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	 */
 	protected boolean enableForMember(IMember member) {
 		return member instanceof IField;
+	}
+	
+	protected void setEnabledState(ITextEditor editor) {
+		if (getAction() != null) {
+			if (getWorkbenchWindow() != null) {
+				IWorkbenchPage page= getWorkbenchWindow().getActivePage();
+				if (page != null) {
+					getAction().setEnabled(page.getActiveEditor() != null && page.getActivePart() == page.getActiveEditor());
+				}
+			}
+		}
 	}
 }
 

@@ -24,9 +24,9 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWindowListener;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -52,6 +52,8 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 		if (fCurrentWindow != null) {
 			fCurrentWindow.getWorkbench().addWindowListener(this);
 			fCurrentWindow.getPartService().addPartListener(this);
+			IEditorPart part= fCurrentWindow.getActivePage().getActiveEditor();
+			checkToSetTextEditor(part);
 		}
 	}
 	

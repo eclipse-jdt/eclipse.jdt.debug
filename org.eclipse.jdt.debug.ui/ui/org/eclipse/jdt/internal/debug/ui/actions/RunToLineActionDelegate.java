@@ -157,6 +157,13 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	 * this action is the delegate for.
 	 */
 	protected void update() {
+		setEnabledState(getTextEditor());
+	}
+	
+	/**
+	 * @see ManageBreakpointActionDelegate#setEnabledState(ITextEditor)
+	 */
+	protected void setEnabledState(ITextEditor editor) {
 		IAction action= getAction();
 		if (action != null) {
 			try {
@@ -170,7 +177,7 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 			}
 		}
 	}
-		
+	
 	/**
 	 * Resolves a stack frame context from the model.
 	 */

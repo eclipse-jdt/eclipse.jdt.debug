@@ -8,11 +8,8 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointListener;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
@@ -30,7 +27,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
@@ -44,7 +40,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Action for adding/removing breakpoints at a line in a type represented
  * by the source shown in the active Java Editor.
  */
-public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDelegate, IBreakpointListener, IPartListener {
+public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDelegate, IPartListener {
 	
 	private boolean fInitialized= false;
 	private IAction fAction= null;
@@ -52,7 +48,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	private IType fType= null;
 	private ITextEditor fTextEditor= null;
 	private IWorkbenchWindow fWorkbenchWindow= null;
-	private final static String REMOVE_TEXT= ActionMessages.getString("ManageBreakpointActionDelegate.Remove_Break&point@Ctrl+B_1"); //$NON-NLS-1$
 	private final static String ADD_TEXT= ActionMessages.getString("ManageBreakpointActionDelegate.Add_Break&point@Ctrl+B_2"); //$NON-NLS-1$
 
 	public ManageBreakpointActionDelegate() {
@@ -63,7 +58,10 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	protected void manageBreakpoint(IEditorInput editorInput) {
 		ISelectionProvider sp= getTextEditor().getSelectionProvider();
-		if (sp == null) {
+		if (sp == null || getType() == null) {
+			if (getTextEditor() != null) {
+				getTextEditor().getSite().getShell().getDisplay().beep();
+			}
 			return;
 		}
 		ISelection selection= sp.getSelection();
@@ -95,7 +93,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 * Determines if a breakpoint exists on the line of the current selection.
 	 */
 	protected boolean breakpointExists(IEditorInput editorInput) {
-		
 		IType type= getType(editorInput);
 		if (type != null) {
 			try {
@@ -151,9 +148,9 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	public void run(IAction action) {
 		if (getTextEditor() != null) {
+			update();
 			manageBreakpoint(getTextEditor().getEditorInput());
 		}
-		update();
 	}
 	
 	/**
@@ -169,21 +166,20 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 					if (part instanceof ITextEditor) {
 						if (!(part instanceof JavaSnippetEditor)) {
 							setTextEditor((ITextEditor)part);
-							update();
+							update(page.getSelection());
 						}
 					}
 				}
 			}
 			fInitialized= true;
-		} else {
-			update(selection);
-		}
+		} 
 		
+		update(selection);
 	}
 		
 	protected void update(ISelection selection) {
 		if (selection instanceof ITextSelection) {
-			update();
+			setEnabledState(getTextEditor());
 		} else {
 			getAction().setEnabled(false);
 		}
@@ -193,13 +189,9 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 		IAction action= getAction();
 		if (action != null) {
 			if (getTextEditor() != null) {
-				boolean exists= breakpointExists(getTextEditor().getEditorInput());
-				action.setText(exists && getType() != null ? ADD_TEXT : REMOVE_TEXT);
+				breakpointExists(getTextEditor().getEditorInput());
 			}
 			action.setEnabled(getTextEditor()!= null && getType() != null);
-			if (!action.isEnabled()) {
-				action.setText(ADD_TEXT);
-			}
 		}
 	}
 	
@@ -228,43 +220,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	}
 	
 	/**
-	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
-	 */
-	public void breakpointAdded(IBreakpoint breakpoint) {
-		asyncUpdate();
-	}
-	
-	/**
-	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
-	 */
-	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-		asyncUpdate();
-	}
-	
-	/**
-	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
-	 */
-	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
-	}
-	
-	/**
-	 * Update in the UI thread
-	 */
-	protected void asyncUpdate() {
-		final Display d = JDIDebugUIPlugin.getStandardDisplay();
-		if (d != null && !d.isDisposed()) {
-			Runnable r = new Runnable() {
-				public void run() {
-					if (!d.isDisposed()) {
-						update();
-					}
-				}
-			};
-			d.asyncExec(r);
-		}
-	}
-	
-	/**
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
@@ -289,6 +244,12 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
+		if (part == getTextEditor()) {
+			setTextEditor(null);
+			if (getAction() != null) {
+				getAction().setEnabled(false);
+			}
+		}
 	}
 
 	/**
@@ -317,14 +278,20 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	protected void setTextEditor(ITextEditor editor) {
 		fTextEditor = editor;
 		setType(null);
+		setEnabledState(editor);
 	}
 
+	protected void setEnabledState(ITextEditor editor) {
+		if (getAction() != null) {
+			getAction().setEnabled(editor != null);
+		} 
+	}
+	
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
 		setWorkbenchWindow(window);
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 		window.getPartService().addPartListener(this);
 	}
 
@@ -333,7 +300,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	public void dispose() {
 		getWorkbenchWindow().getPartService().removePartListener(this);
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 	}
 
 	protected IWorkbenchWindow getWorkbenchWindow() {
