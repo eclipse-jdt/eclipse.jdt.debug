@@ -286,11 +286,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * If step filters are currently switched on, set all active filters on the step request.
 	 */
 	protected void attachFiltersToStepRequest(StepRequest stepRequest) {
-		JDIDebugPlugin plugin = JDIDebugPlugin.getDefault();
-		if (!plugin.useStepFilters()) {
+		if (!JDIDebugModel.useStepFilters()) {
 			return;
 		}
-		List activeFilters = plugin.getActiveStepFilters();
+		List activeFilters = JDIDebugModel.getActiveStepFilters();
 		Iterator iterator = activeFilters.iterator();
 		while (iterator.hasNext()) {
 			String filter = (String)iterator.next();

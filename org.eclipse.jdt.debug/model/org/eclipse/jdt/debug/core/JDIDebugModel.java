@@ -5,15 +5,35 @@ package org.eclipse.jdt.debug.core;
  * All Rights Reserved.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
+
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.debug.core.*;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.internal.debug.core.DebugJavaUtils;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.JavaExceptionBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JavaLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JavaMethodEntryBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JavaRunToLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JavaWatchpoint;
+import org.eclipse.jdt.internal.debug.core.SnippetSupportLineBreakpoint;
 
 import com.sun.jdi.VirtualMachine;
 
@@ -53,6 +73,24 @@ public class JDIDebugModel {
 	 */
 	private static IJavaDebugTarget fgTarget = null;
 
+	/**
+	 * State variables for step filters
+	 */
+	protected static boolean fStepFiltersModified = false;
+	protected static Properties fStepFilterProperties;
+	protected static boolean fUseStepFilters = true;
+	protected static List fActiveStepFilterList;
+	protected static List fInactiveStepFilterList;
+	
+	/**
+	 * Constants used for persisting step filter state
+	 */
+	protected static final String STEP_FILTERS_FILE_NAME = "stepFilters.ini"; //$NON-NLS-1$
+	protected static final String STEP_FILTER_PROPERTIES_HEADER = " Step filter properties"; //$NON-NLS-1$
+	protected static final String USE_FILTERS_KEY = "use_filters"; //$NON-NLS-1$
+	protected static final String ACTIVE_FILTERS_KEY = "active_filters"; //$NON-NLS-1$
+	protected static final String INACTIVE_FILTERS_KEY = "inactive_filters"; //$NON-NLS-1$
+	
 	/**
 	 * Not to be instantiated.
 	 */
@@ -215,9 +253,160 @@ public class JDIDebugModel {
 		return new JavaMethodEntryBreakpoint(method, hitCount);
 	}
 	
-	private static IBreakpointManager getBreakpointManager() {
-		return DebugPlugin.getDefault().getBreakpointManager();
+	/**
+	 * Accessors for step filter state
+	 */
+	public static boolean useStepFilters() {
+		return fUseStepFilters;
 	}
+	
+	public static void setUseStepFilters(boolean useFilters) {
+		fUseStepFilters = useFilters;
+		fStepFiltersModified = true;
+	}
+	
+	public static List getActiveStepFilters() {
+		return fActiveStepFilterList;
+	}
+	
+	public static void setActiveStepFilters(List list) {
+		fActiveStepFilterList = list;
+		fStepFiltersModified = true;
+	}
+
+	public static List getInactiveStepFilters() {
+		return fInactiveStepFilterList;
+	}
+	
+	public static void setInactiveStepFilters(List list) {
+		fInactiveStepFilterList = list;
+		fStepFiltersModified = true;
+	}
+	
+	public static List getAllStepFilters() {
+		ArrayList concat = new ArrayList(fActiveStepFilterList);
+		concat.addAll(fInactiveStepFilterList);
+		return concat;
+	}
+	
+	/**
+	 * Load the step filter state file if it exists, otherwise initialize the state to the specified default values.
+	 */
+	public static void setupStepFilterState() {
+		fStepFilterProperties = new Properties();		
+		File stepFilterFile = JDIDebugPlugin.getDefault().getStateLocation().append(STEP_FILTERS_FILE_NAME).toFile();
+		if (stepFilterFile.exists()) {		
+			readStepFilterState(stepFilterFile);
+		} else {
+			initializeFilters();
+		}
+	}
+	
+	private static void initializeFilters() {
+		fUseStepFilters = getDefaultUseStepFiltersFlag();		
+		fActiveStepFilterList = getDefaultActiveStepFilterList();		
+		fInactiveStepFilterList = getDefaultInactiveStepFilterList();
+		
+		fStepFiltersModified = true;
+	}
+	
+	/**
+	 * Accessors that return the specified default step filter state values.
+	 */
+	public static List getDefaultActiveStepFilterList() {
+		ArrayList list = new ArrayList(6);
+		list.add("com.sun.*");   //$NON-NLS-1$
+		list.add("java.*");      //$NON-NLS-1$
+		list.add("javax.*");      //$NON-NLS-1$
+		list.add("org.omg.*");   //$NON-NLS-1$
+		list.add("sun.*");       //$NON-NLS-1$
+		list.add("sunw.*");      //$NON-NLS-1$
+		return list;		
+	}
+	
+	public static List getDefaultInactiveStepFilterList() {
+		ArrayList list =  new ArrayList(1);
+		return list;
+	}
+	
+	public static boolean getDefaultUseStepFiltersFlag() {
+		return true;
+	}
+	
+	/**
+	 * Read the step filter state stored in the given File (which is assumed
+	 * to be a java.util.Properties style file), and parse the String values into 
+	 * the appropriate data structures.
+	 */
+	private static void readStepFilterState(File file) {
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			fStepFilterProperties.load(fis);			
+		} catch (IOException ioe) {			
+		}
+		
+		fUseStepFilters = parseBoolean(fStepFilterProperties.getProperty(USE_FILTERS_KEY, "true"));
+		fActiveStepFilterList = parseList(fStepFilterProperties.getProperty(ACTIVE_FILTERS_KEY, ""));
+		fInactiveStepFilterList = parseList(fStepFilterProperties.getProperty(INACTIVE_FILTERS_KEY, ""));
+	}
+	
+	private static boolean parseBoolean(String booleanString) {
+		if (booleanString.toLowerCase().startsWith("f")) {
+			return false;
+		}
+		return true;
+	}
+	
+	private static List parseList(String listString) {
+		List list = new ArrayList(listString.length() + 1);
+		StringTokenizer tokenizer = new StringTokenizer(listString, ",");
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			list.add(token);
+		}
+		return list;
+	}
+	
+	/**
+	 * Save the current step filter state values only if they've been changed.
+	 */
+	public static void saveStepFilterState() {
+		if (!fStepFiltersModified) {
+			return;
+		}
+		File file = JDIDebugPlugin.getDefault().getStateLocation().append(STEP_FILTERS_FILE_NAME).toFile();
+		try {
+			fStepFilterProperties.setProperty(USE_FILTERS_KEY, serializeBoolean(fUseStepFilters));
+			fStepFilterProperties.setProperty(ACTIVE_FILTERS_KEY, serializeList(fActiveStepFilterList));
+			fStepFilterProperties.setProperty(INACTIVE_FILTERS_KEY, serializeList(fInactiveStepFilterList));
+			FileOutputStream fos = new FileOutputStream(file);
+			fStepFilterProperties.store(fos, STEP_FILTER_PROPERTIES_HEADER);
+		} catch (IOException ioe) {
+		}
+	}
+
+	private static String serializeBoolean(boolean bool) {
+		if (bool) {
+			return Boolean.TRUE.toString();
+		}
+		return Boolean.FALSE.toString();
+	}
+	
+	private static String serializeList(List list) {
+		if (list == null) {
+			return "";
+		}
+		StringBuffer buffer = new StringBuffer();
+		Iterator iterator = list.iterator();
+		int count = 0;
+		while (iterator.hasNext()) {
+			if (count > 0) {
+				buffer.append(',');
+			}
+			buffer.append((String)iterator.next());
+			count++;
+		}
+		return buffer.toString();
+	}
+	
 }
-
-
