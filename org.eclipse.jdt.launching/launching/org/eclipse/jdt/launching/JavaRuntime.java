@@ -20,8 +20,10 @@ import java.io.Writer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -48,6 +50,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -57,6 +60,7 @@ import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
+import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -95,6 +99,14 @@ public final class JavaRuntime {
 	public static final String JRESRCROOT_VARIABLE= "JRE_SRCROOT"; //$NON-NLS-1$
 	
 	/**
+	 * Simple identifier constant (value <code>"runtimeClasspathEntryResolvers"</code>) for the
+	 * runtime classpath entry resolvers extension point.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRY_RESOLVERS= "runtimeClasspathEntryResolvers";	 //$NON-NLS-1$	
+		
+	/**
 	 * Classpath container used for a project's JRE. A container
 	 * is resolved in the context of a specific Java project, to
 	 * one or more system libraries contained in a JRE. The container
@@ -119,11 +131,15 @@ public final class JavaRuntime {
 	 * Preference key for launch/connect timeout. VM Runners should honor this timeout
 	 * value when attempting to launch and connect to a debuggable VM. The value is
 	 * an int, indicating a number of millieseconds.
+	 * 
+	 * @since 2.0
 	 */
 	public static final String PREF_CONNECT_TIMEOUT = LaunchingPlugin.getUniqueIdentifier() + ".PREF_CONNECT_TIMEOUT"; //$NON-NLS-1$
 	
 	/**
 	 * Default launch/connect timeout (ms).
+	 * 
+	 * @since 2.0
 	 */
 	public static final int DEF_CONNECT_TIMEOUT = 20000;
 	
@@ -141,6 +157,12 @@ public final class JavaRuntime {
 	private static IVMInstallType[] fgVMTypes= null;
 	private static String fgDefaultVMId= null;
 	private static String fgDefaultVMConnectorId = null;
+	
+	/**
+	 * Resolvers keyed by variable name and container id.
+	 */
+	private static Map fVariableResolvers = null;
+	private static Map fContainerResolvers = null;
 	
 	/**
 	 * Not intended to be instantiated.
@@ -426,13 +448,14 @@ public final class JavaRuntime {
 	 * conext of the project with the given name.
 	 * 
 	 * @param path container path
-	 * @param name Java project name
+	 * @param classpathProperty the type of entry - one of <code>USER_CLASSES</code>,
+	 * 	<code>BOOTSTRAP_CLASSES</code>, or <code>STANDARD_CLASSES</code>
 	 * @return runtime classpath entry
 	 * @exception CoreException if unable to construct a runtime classpath entry
 	 */
-	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, String name) throws CoreException {
+	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, int classpathProperty) throws CoreException {
 		IClasspathEntry cpe = JavaCore.newContainerEntry(path);
-		return new RuntimeClasspathEntry(cpe, name);
+		return new RuntimeClasspathEntry(cpe, classpathProperty);
 	}
 		
 	/**
@@ -465,7 +488,7 @@ public final class JavaRuntime {
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
 	 * 
-	 * Computes the default runtime claspath for a given project.
+	 * Computes the default (unresolved) runtime claspath for a given project.
 	 * 
 	 * @return runtime classpath entries
 	 * @exception CoreException if unable to compute the runtime classpath
@@ -483,7 +506,23 @@ public final class JavaRuntime {
 				runtimeEntries[i] = (IRuntimeClasspathEntry)e;				
 			}
 		}
-		return runtimeEntries;
+		// sort bootpath and standard entries first
+		IRuntimeClasspathEntry[] ordered = new IRuntimeClasspathEntry[runtimeEntries.length];
+		int index = 0;
+		for (int i = 0; i < runtimeEntries.length; i++) {
+			if (runtimeEntries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
+				ordered[index] = runtimeEntries[i];
+				index++;
+				runtimeEntries[i] = null;
+			} 
+		}
+		for (int i = 0; i < runtimeEntries.length; i++) {
+			if (runtimeEntries[i] != null) {
+				ordered[index] = runtimeEntries[i];
+				index++;
+			}
+		}
+		return ordered;
 	}
 	
 	/**
@@ -514,64 +553,94 @@ public final class JavaRuntime {
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
 	 * 
 	 * Returns a resolved entries for the given entry in the context of the given
-	 * launch configuration.
+	 * launch configuration for a runtime classpath.
 	 * 
 	 * @param entry runtime classpath entry
 	 * @param configuration launch configuration
 	 * @return resolved runtime classpath entry
 	 * @exception CoreException if unable to resolve
+	 * @see IRuntimeClasspathEntryResolver
+	 * @since 2.0
 	 */
-	public static IRuntimeClasspathEntry[] resolve(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
-		IRuntimeClasspathEntry[] resolved = null;
+	public static IRuntimeClasspathEntry[] resolveForClasspath(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
 		switch (entry.getType()) {
 			case IRuntimeClasspathEntry.VARIABLE:
-				if (entry.getVariableName().equals(JRELIB_VARIABLE)) {
-					int kind = IRuntimeClasspathEntry.STANDARD_CLASSES;
-					IVMInstall configJRE = computeVMInstall(configuration);
-					LibraryLocation[] libs = configJRE.getLibraryLocations();
-					if (libs == null) {
-						libs = configJRE.getVMInstallType().getDefaultLibraryLocations(configJRE.getInstallLocation());
-					} else {
-						kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-					}
-					resolved = new IRuntimeClasspathEntry[libs.length];
-					for (int i = 0; i < libs.length; i++) {
-						resolved[i] = newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
-						resolved[i].setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
-						resolved[i].setSourceAttachmentRootPath(libs[i].getPackageRootPath());
-						resolved[i].setClasspathProperty(kind);
-					}
-				}
-				break;
-			case IRuntimeClasspathEntry.CONTAINER:
-				if (entry.getVariableName().equals(JRE_CONTAINER)) {
-					int kind = IRuntimeClasspathEntry.STANDARD_CLASSES;
-					IVMInstall configJRE = computeVMInstall(configuration);
-					LibraryLocation[] libs = configJRE.getLibraryLocations();
-					if (libs == null) {
-						libs = configJRE.getVMInstallType().getDefaultLibraryLocations(configJRE.getInstallLocation());
-					} else {
-						kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-					}
-					resolved = new IRuntimeClasspathEntry[libs.length];
-					for (int i = 0; i < libs.length; i++) {
-						resolved[i] = newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
-						resolved[i].setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
-						resolved[i].setSourceAttachmentRootPath(libs[i].getPackageRootPath());
-						resolved[i].setClasspathProperty(kind);
-					}
+				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
+				if (resolver == null) {
+					// no resolution by default
+					break;
 				} else {
-					// XXX: other container resolve container entries
+					return resolver.resolveForClasspath(entry, configuration);
+				}				
+			case IRuntimeClasspathEntry.CONTAINER:
+				resolver = getContainerResolver(entry.getVariableName());
+				if (resolver == null) {
+					
+				} else {
+					return resolver.resolveForClasspath(entry, configuration);
 				}
 			default:
 				break;
 		}
-		if (resolved == null) {
-			return new IRuntimeClasspathEntry[] {entry};
-		}
-		return resolved;
+		return new IRuntimeClasspathEntry[] {entry};
 	}
 	
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
+	 * 
+	 * Returns a resolved entries for the given entry in the context of the given
+	 * launch configuration for a source lookup path.
+	 * 
+	 * @param entry runtime classpath entry
+	 * @param configuration launch configuration
+	 * @return resolved runtime classpath entry
+	 * @exception CoreException if unable to resolve
+	 * @see IRuntimeClasspathEntryResolver
+	 * @since 2.0
+	 */
+	public static IRuntimeClasspathEntry[] resolveForSourceLookupPath(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
+		switch (entry.getType()) {
+			case IRuntimeClasspathEntry.VARIABLE:
+				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
+				if (resolver == null) {
+					// no resolution by default
+					break;
+				} else {
+					return resolver.resolveForSourceLookupPath(entry, configuration);
+				}				
+			case IRuntimeClasspathEntry.CONTAINER:
+				resolver = getContainerResolver(entry.getVariableName());
+				if (resolver == null) {
+					
+				} else {
+					return resolver.resolveForSourceLookupPath(entry, configuration);
+				}
+			default:
+				break;
+		}
+		return new IRuntimeClasspathEntry[] {entry};
+	}
+	
+	/**
+	 * Performs default resolution for a container entry.
+	 * Delegates to the Java model.
+	 */
+	private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, ILaunchConfiguration config) throws CoreException {
+		IJavaProject project = getJavaProject(config);
+		if (project == null) {
+			// cannot resolve without project context
+			return new IRuntimeClasspathEntry[0];
+		} else {
+			IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
+			IClasspathEntry[] cpes = container.getClasspathEntries();
+			IRuntimeClasspathEntry[] resolved = new IRuntimeClasspathEntry[cpes.length];
+			for (int i = 0; i < resolved.length; i++) {
+				resolved[i] = newRuntimeClasspathEntry(cpes[i]);
+			}
+			return resolved;
+		}
+	}
+		
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
 	 * 
@@ -815,7 +884,20 @@ public final class JavaRuntime {
 						}
 					}
 				} else if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-					IRuntimeClasspathEntry r = newRuntimeContainerClasspathEntry(entry.getPath(), project.getElementName());
+					IClasspathContainer conatiner = JavaCore.getClasspathContainer(entry.getPath(), project);
+					int property = -1;
+					switch (conatiner.getKind()) {
+						case IClasspathContainer.K_APPLICATION:
+							property = IRuntimeClasspathEntry.USER_CLASSES;
+							break;
+						case IClasspathContainer.K_DEFAULT_SYSTEM:
+							property = IRuntimeClasspathEntry.STANDARD_CLASSES;
+							break;	
+						case IClasspathContainer.K_SYSTEM:
+							property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
+							break;
+					}
+					IRuntimeClasspathEntry r = newRuntimeContainerClasspathEntry(entry.getPath(), property);
 					if (!expandedPath.contains(r)) {
 						expandedPath.add(r);
 					}
@@ -1229,4 +1311,90 @@ public final class JavaRuntime {
 	public static Preferences getPreferences() {
 		return LaunchingPlugin.getDefault().getPluginPreferences();
 	}
+	
+	/**
+	 * <b>EXPERIMENTAL AND SUBJECT TO CHANGE</b>
+	 * 
+	 * Registers the given resolver for the specified variable.
+	 * 
+	 * @param resolver runtime classpathe entry resolver
+	 * @param variableName variable name to register for
+	 */
+	public static void addVariableResolver(IRuntimeClasspathEntryResolver resolver, String variableName) {
+		Map map = getVariableResolvers();
+		map.put(variableName, resolver);
+	}
+	
+	/**
+	 * <b>EXPERIMENTAL AND SUBJECT TO CHANGE</b>
+	 * 
+	 * Registers the given resolver for the specified container.
+	 * 
+	 * @param resolver runtime classpathe entry resolver
+	 * @param containerIdentifier identifier of the classpath container to register for
+	 */
+	public static void addContainerResolver(IRuntimeClasspathEntryResolver resolver, String containerIdentifier) {
+		Map map = getContainerResolvers();
+		map.put(containerIdentifier, resolver);
+	}	
+	
+	/**
+	 * Returns all registered variable resolvers.
+	 */
+	private static Map getVariableResolvers() {
+		if (fVariableResolvers == null) {
+			initializeResolvers();
+		}
+		return fVariableResolvers;
+	}
+	
+	/**
+	 * Returns all registered container resolvers.
+	 */
+	private static Map getContainerResolvers() {
+		if (fContainerResolvers == null) {
+			initializeResolvers();
+		}
+		return fContainerResolvers;
+	}
+	
+	private static void initializeResolvers() {
+		IExtensionPoint point = LaunchingPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRY_RESOLVERS);
+		IConfigurationElement[] extensions = point.getConfigurationElements();
+		fVariableResolvers = new HashMap(extensions.length);
+		fContainerResolvers = new HashMap(extensions.length);
+		for (int i = 0; i < extensions.length; i++) {
+			RuntimeClasspathEntryResolver res = new RuntimeClasspathEntryResolver(extensions[i]);
+			String variable = res.getVariableName();
+			String container = res.getContainerId();
+			if (variable != null) {
+				fVariableResolvers.put(variable, res);
+			}
+			if (container != null) {
+				fContainerResolvers.put(container, res);
+			}
+		}		
+	}
+	
+	/**
+	 * Returns the resovler registered for the give variable, or
+	 * <code>null</code> if none.
+	 * 
+	 * @return the resovler registered for the give variable, or
+	 * <code>null</code> if none
+	 */
+	private static IRuntimeClasspathEntryResolver getVariableResolver(String variableName) {
+		return (IRuntimeClasspathEntryResolver)getVariableResolvers().get(variableName);
+	}
+	
+	/**
+	 * Returns the resovler registered for the give container id, or
+	 * <code>null</code> if none.
+	 * 
+	 * @return the resovler registered for the give container id, or
+	 * <code>null</code> if none
+	 */	
+	private static IRuntimeClasspathEntryResolver getContainerResolver(String containerId) {
+		return (IRuntimeClasspathEntryResolver)getContainerResolvers().get(containerId);
+	}	
 }

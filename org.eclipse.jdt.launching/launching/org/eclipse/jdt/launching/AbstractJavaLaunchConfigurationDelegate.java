@@ -185,11 +185,20 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		boolean allStandard = true;
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
-				IRuntimeClasspathEntry[] resolved = JavaRuntime.resolve(entries[i], configuration);
-				for (int j = 0; j < resolved.length; j++) {
-					bootEntries.add(resolved[j].getResolvedPath());
-					allStandard = allStandard && resolved[j].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
-				}
+				switch (entries[i].getType()) {
+					case IRuntimeClasspathEntry.CONTAINER:
+					case IRuntimeClasspathEntry.VARIABLE:
+						IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveForClasspath(entries[i], configuration);
+						for (int j = 0; j < resolved.length; j++) {
+							bootEntries.add(resolved[j].getLocation());
+							allStandard = allStandard && resolved[j].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
+						}					
+						break;
+					default:
+						bootEntries.add(entries[i].getLocation());
+						allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
+						break;
+				}				
 			}
 		}
 		if (allStandard) {
@@ -215,13 +224,17 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		List userEntries = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				if (entries[i].getType() == IRuntimeClasspathEntry.CONTAINER) {
-					IRuntimeClasspathEntry[] containedEntries = entries[i].getContainedEntries();
-					for (int j = 0; j < containedEntries.length; j++) {
-						userEntries.add(containedEntries[j].getResolvedPath());
-					}
-				} else {
-					userEntries.add(entries[i].getResolvedPath());
+				switch (entries[i].getType()) {
+					case IRuntimeClasspathEntry.CONTAINER:
+					case IRuntimeClasspathEntry.VARIABLE:
+						IRuntimeClasspathEntry[] containedEntries = JavaRuntime.resolveForClasspath(entries[i], configuration);
+						for (int j = 0; j < containedEntries.length; j++) {
+							userEntries.add(containedEntries[j].getLocation());
+						}					
+						break;
+					default:
+						userEntries.add(entries[i].getLocation());
+						break;
 				}
 			}
 		}

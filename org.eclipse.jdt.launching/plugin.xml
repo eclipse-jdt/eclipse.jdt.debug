@@ -28,6 +28,7 @@
 
 <extension-point name="%vmInstallTypes" id="vmInstallTypes"/>
 <extension-point name="%vmConnectors" id="vmConnectors"/>
+<extension-point name="%runtimeClasspathEntryResolvers" id="runtimeClasspathEntryResolvers"/>
 
 <!-- Extensions -->
 
@@ -93,6 +94,14 @@
 	<classpathContainerInitializer
 		id="org.eclipse.jdt.launching.JRE_CONTAINER"
 		class="org.eclipse.jdt.internal.launching.JREContainerInitializer"/>
+</extension>
+
+<extension point = "org.eclipse.jdt.launching.runtimeClasspathEntryResolvers">
+	<runtimeClasspathEntryResolver
+		id = "org.eclipse.jdt.launching.JRE_RESOLVER"
+		class = "org.eclipse.jdt.internal.launching.JRERuntimeClasspathEntryResolver"
+		variable = "JRE_LIB"
+		container = "org.eclipse.jdt.launching.JRE_CONTAINER"/>
 </extension>
 
 </plugin>

@@ -70,11 +70,6 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	private IClasspathEntry fResolvedEntry = null;
 	
 	/**
-	 * Project context of container entry
-	 */
-	private String fProjectName = null;
-
-	/**
 	 * Constructs a new runtime classpath entry based on the
 	 * (build) classpath entry.
 	 * 
@@ -102,10 +97,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * Constructs a new container entry in the context of the given project
 	 * 
 	 * @param entry classpath entry
-	 * @param projectName Java project name
+	 * @param classpathProperty this entry's classpath property
 	 * @exception CoreException if unable to resolve the given entry
 	 */
-	public RuntimeClasspathEntry(IClasspathEntry entry, String projectName) throws CoreException {
+	public RuntimeClasspathEntry(IClasspathEntry entry, int classpathProperty) throws CoreException {
 		switch (entry.getEntryKind()) {
 			case IClasspathEntry.CPE_CONTAINER:
 				setType(CONTAINER);
@@ -113,20 +108,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			default:
 				throw new IllegalArgumentException(MessageFormat.format(LaunchingMessages.getString("RuntimeClasspathEntry.Illegal_classpath_entry_{0}_1"), new String[] {entry.toString()})); //$NON-NLS-1$
 		}
-		setProjectName(projectName);
 		setClasspathEntry(entry);
-		IClasspathContainer container = getClasspathContainer();
-		switch (container.getKind()) {
-			case IClasspathContainer.K_APPLICATION:
-				setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-				break;
-			case IClasspathContainer.K_DEFAULT_SYSTEM:
-				setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
-				break;
-			case IClasspathContainer.K_SYSTEM:
-				setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
-				break;
-		}
+		setClasspathProperty(classpathProperty);
 	}
 	
 	/**
@@ -204,13 +187,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					}
 					break;
 				case CONTAINER :
-					name = root.getAttribute("projectName"); //$NON-NLS-1$
-					if (name == null) {
-						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_classpath_entry_-_missing_project_name._1"), null); //$NON-NLS-1$
-					} else {
-						setProjectName(name);
-					}
-					var = root.getAttribute("variablePath"); //$NON-NLS-1$
+					var = root.getAttribute("containerPath"); //$NON-NLS-1$
 					if (var == null) {
 						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_7"), null); //$NON-NLS-1$
 					} else {
@@ -298,7 +275,6 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				break;
 			case VARIABLE :
 			case CONTAINER :
-				node.setAttribute("projectName", getProjectName()); //$NON-NLS-1$
 				node.setAttribute("containerPath", getPath().toString()); //$NON-NLS-1$
 				break;
 		}		
@@ -423,9 +399,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	}
 
 	/**
-	 * @see IRuntimeClasspathEntry#getResolvedPaths()
+	 * @see IRuntimeClasspathEntry#getLocation()
 	 */
-	public String getResolvedPath() {
+	public String getLocation() {
 
 		IPath path = null;
 		switch (getType()) {
@@ -524,9 +500,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	}
 
 	/**
-	 * @see IRuntimeClasspathEntry#getResolvedSourceAttachmentPath()
+	 * @see IRuntimeClasspathEntry#getSourceAttachmentLocation()
 	 */
-	public String getResolvedSourceAttachmentPath() {
+	public String getSourceAttachmentLocation() {
 		IPath path = null;
 		switch (getType()) {
 			case VARIABLE :
@@ -543,9 +519,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	}
 
 	/**
-	 * @see IRuntimeClasspathEntry#getResolvedSourceAttachmentRootPath()
+	 * @see IRuntimeClasspathEntry#getSourceAttachmentRootLocation()
 	 */
-	public String getResolvedSourceAttachmentRootPath() {
+	public String getSourceAttachmentRootLocation() {
 		IPath path = null;
 		switch (getType()) {
 			case VARIABLE :
@@ -593,56 +569,5 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}
 		return fResolvedEntry;
 	}
-	
-	/**
-	 * Sets the project context for a container entry
-	 * 
-	 * @param project Java project
-	 */
-	protected void setProjectName(String name) {
-		fProjectName = name;
-	}
-	
-	/**
-	 * Returns the project context for a container entry,
-	 * or <code>null</code> if none.
-	 * 
-	 * @return project context for a container entry,
-	 *  or <code>null</code> if none
-	 */
-	protected String getProjectName() {
-		return fProjectName;
-	}	
-	
-	/**
-	 * Returns the Java project associated with this
-	 * container entry
-	 */
-	protected IJavaProject getProject() {
-		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectName()));
-	}
-	
-	/**
-	 * Returns the classpath container for this container entry
-	 * 
-	 * @return the classpath container for this container entry
-	 * @exception CoreException if unable to resolve
-	 */
-	protected IClasspathContainer getClasspathContainer() throws CoreException {
-		return JavaCore.getClasspathContainer(getPath(), getProject());
-	}
-	
-	/**
-	 * @see IRuntimeClasspathEntry#getContainedEntries()
-	 */
-	public IRuntimeClasspathEntry[] getContainedEntries() throws CoreException {
-		IClasspathContainer container = getClasspathContainer();
-		IClasspathEntry[] cpes = container.getClasspathEntries();
-		IRuntimeClasspathEntry[] entries = new IRuntimeClasspathEntry[cpes.length];
-		for (int i = 0; i < cpes.length; i++) {
-			entries[i] = new RuntimeClasspathEntry(cpes[i]);
-		}
-		return entries;
-	}
-
+		
 }

@@ -215,41 +215,31 @@ public interface IRuntimeClasspathEntry {
 	public void setClasspathProperty(int location);	
 	
 	/**
-	 * Returns an absolute resolved path in the local file system for this entry,
+	 * Returns an absolute path in the local file system for this entry,
 	 * or <code>null</code> if none, or if this entry is of type <code>CONTAINER</code>.
 	 * 
-	 * @return an absolute resolved path in the local file system for this entry,
+	 * @return an absolute path in the local file system for this entry,
 	 *  or <code>null</code> if none
 	 */
-	public String getResolvedPath();
-	
+	public String getLocation();
+		
 	/**
-	 * If this entry is of type <code>CONTAINER</code> the entries that are 
-	 * contained within this container are returned, or <code>null</code>
-	 * if unable to resolve the contained entries.
-	 * 
-	 * @return runtime entries contained in this entry
-	 * @exception CoreException if unable to resolve contained entries
-	 */
-	public IRuntimeClasspathEntry[] getContainedEntries() throws CoreException;
-	
-	/**
-	 * Returns an absolute resolved path in the local file system for the source
+	 * Returns an absolute path in the local file system for the source
 	 * attachment associated with this entry entry, or <code>null</code> if none.
 	 * 
-	 * @return an absolute resolved path in the local file system for the source
+	 * @return an absolute path in the local file system for the source
 	 *  attachment associated with this entry entry, or <code>null</code> if none
 	 */
-	public String getResolvedSourceAttachmentPath();	
+	public String getSourceAttachmentLocation();	
 	
 	/**
-	 * Returns an resolved path relative to this entry's source attachment path for the
+	 * Returns a path relative to this entry's source attachment path for the
 	 * root location containing source, or <code>null</code> if none.
 	 * 
-	 * @return an resolved path relative to this entry's source attachment path for the
+	 * @return a path relative to this entry's source attachment path for the
 	 *  root location containing source, or <code>null</code> if none
 	 */
-	public String getResolvedSourceAttachmentRootPath();		
+	public String getSourceAttachmentRootLocation();		
 	
 	/**
 	 * Returns the name of the variable associated with this entry, or <code>null</code>

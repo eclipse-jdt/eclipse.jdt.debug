@@ -250,16 +250,9 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @see IPersistableSourceLocator#initializeDefaults(ILaunchConfiguration)
 	 */
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
-		IJavaProject jp = JavaRuntime.getJavaProject(configuration);
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeSourceLookupPath(configuration);
-		if (entries == null || entries.length == 0) {
-			if (jp != null) {
-				setSourceLocations(getDefaultSourceLocations(jp));
-			}
-		} else {
-			IRuntimeClasspathEntry[] resolved = resolveSourceLocations(entries, configuration);
-			setSourceLocations(getSourceLocations(resolved));
-		}
+		IRuntimeClasspathEntry[] resolved = resolveSourceLocations(entries, configuration);
+		setSourceLocations(getSourceLocations(resolved));
 	}
 
 	/**
@@ -279,8 +272,6 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	/**
 	 * Returns source locations that are associted with the given runtime classpath
 	 * entries.
-	 * 
-	 * XXX: fix for containers
 	 */
 	private static IJavaSourceLocation[] getSourceLocations(IRuntimeClasspathEntry[] entries) {
 		List locations = new ArrayList(entries.length);
@@ -295,10 +286,10 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					}
 					break;
 				case IRuntimeClasspathEntry.ARCHIVE:
-					String path = entry.getResolvedSourceAttachmentPath();
+					String path = entry.getSourceAttachmentLocation();
 					if (path == null) {
 						// if there is no source attachment, look in the archive itself
-						path = entry.getResolvedPath();
+						path = entry.getLocation();
 					}
 					if (path != null) {
 						File file = new File(path);
@@ -307,7 +298,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 								location = new DirectorySourceLocation(file);
 							} else {
 								try {
-									location = new ArchiveSourceLocation(path, entry.getResolvedSourceAttachmentRootPath());
+									location = new ArchiveSourceLocation(path, entry.getSourceAttachmentRootLocation());
 								} catch (IOException e) {
 									LaunchingPlugin.log(e);
 								}
@@ -317,22 +308,13 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					break;
 				case IRuntimeClasspathEntry.VARIABLE:
 					try {
-						location = new ArchiveSourceLocation(entry.getResolvedSourceAttachmentPath(), entry.getResolvedSourceAttachmentRootPath());
+						location = new ArchiveSourceLocation(entry.getSourceAttachmentLocation(), entry.getSourceAttachmentRootLocation());
 					} catch (IOException e) {
 						LaunchingPlugin.log(e);
 					}
 					break;
 				case IRuntimeClasspathEntry.CONTAINER:
-					try {
-						IRuntimeClasspathEntry[] containedEntries = entry.getContainedEntries();
-						IJavaSourceLocation[] containedLocations = getSourceLocations(containedEntries);
-						for (int j = 0; j < containedLocations.length; j++) {
-							locations.add(containedLocations[j]);
-						}
-					} catch (CoreException e) {
-						LaunchingPlugin.log(e);
-					}
-					break;
+					throw new IllegalArgumentException("Illegal to have a container resolved to a container");
 			}
 			if (location != null) {
 				locations.add(location);
@@ -346,42 +328,14 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * given launch configuration.
 	 */
 	private static IRuntimeClasspathEntry[] resolveSourceLocations(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
-		List resolved = new ArrayList(entries.length);
+		List all = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
-			IRuntimeClasspathEntry entry = entries[i];
-			switch (entries[i].getType()) {
-				case IRuntimeClasspathEntry.PROJECT:
-				case IRuntimeClasspathEntry.ARCHIVE:
-					resolved.add(entry);
-					break;
-				case IRuntimeClasspathEntry.VARIABLE:
-				case IRuntimeClasspathEntry.CONTAINER:
-					boolean include = false;
-					String name = entry.getVariableName();
-					if (name.equals(JavaRuntime.JRELIB_VARIABLE) || name.equals(JavaRuntime.JRE_CONTAINER)) {
-						IJavaProject pro = JavaRuntime.getJavaProject(configuration);
-						include = pro == null;
-						// omit from path unless JRE_LIB resolves to a library different
-						// than the config's project's JRE, or there is no project						
-						if (!include) {
-							IVMInstall buildVM = JavaRuntime.computeVMInstall(pro);
-							IVMInstall runVM = JavaRuntime.computeVMInstall(configuration);
-							include = !buildVM.equals(runVM);
-						}
-					} else {
-						include = true;
-					}		
-					if (include) {
-						IRuntimeClasspathEntry[] rs = JavaRuntime.resolve(entry, configuration);
-						// add to the beginning
-						for (int j = 0; j < rs.length; j++) {
-							resolved.add(j, rs[j]);
-						}
-					}						
-					break;
+			IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveForSourceLookupPath(entries[i], configuration);
+			for (int j =0; j < resolved.length; j++) {
+				all.add(resolved[j]);
 			}
 		}	
-		return (IRuntimeClasspathEntry[])resolved.toArray(new IRuntimeClasspathEntry[resolved.size()]);
+		return (IRuntimeClasspathEntry[])all.toArray(new IRuntimeClasspathEntry[all.size()]);
 	}
 
 }
