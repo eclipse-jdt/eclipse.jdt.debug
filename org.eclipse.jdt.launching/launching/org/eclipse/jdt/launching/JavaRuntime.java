@@ -492,8 +492,6 @@ public final class JavaRuntime {
 	}	
 			
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
-	 * 
 	 * Computes and returns the default unresolved runtime claspath for the
 	 * given project.
 	 * 
@@ -535,15 +533,13 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
-	 * 
-	 * Returns the (unresolved) source lookup path for the given (Java) launch configuration,
-	 * computing the path if required (i.e. is not explicitly set on the
-	 * launch configuration).
+	 * Computes and returns the unresolved source lookup path for the given launch
+	 * configuration.
 	 * 
 	 * @param configuration launch configuration
-	 * @return runtime classpath entries that should be on the source lookup path
+	 * @return runtime classpath entries
 	 * @exception CoreException if unable to compute the source lookup path
+	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] computeSourceLookupPath(ILaunchConfiguration configuration) throws CoreException {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
@@ -559,9 +555,7 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
-	 * 
-	 * Returns a resolved entries for the given entry in the context of the given
+	 * Returns resolved entries for the given entry in the context of the given
 	 * launch configuration for a runtime classpath.
 	 * 
 	 * @param entry runtime classpath entry
@@ -595,8 +589,6 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
-	 * 
 	 * Returns a resolved entries for the given entry in the context of the given
 	 * launch configuration for a source lookup path.
 	 * 
@@ -671,15 +663,12 @@ public final class JavaRuntime {
 	}
 			
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
-	 * 
-	 * Returns the (unresolved) class path for the given (Java) launch configuration,
-	 * computing the default path if required (i.e. is not explicitly set on the
-	 * launch configuration).
+	 * Computes and returns the unresolved class path for the given launch configuration.
 	 * 
 	 * @param configuration launch configuration
-	 * @return runtime classpath entries that should be on the class path
-	 * @exception CoreException if unable to compute the class path
+	 * @return unresolved runtime classpath entries
+	 * @exception CoreException if unable to compute the classpath
+	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] computeRuntimeClasspath(ILaunchConfiguration configuration) throws CoreException {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
@@ -760,23 +749,22 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
-	 * 
-	 * Returns the VMInstall for the given (Java) launch configuration.
-	 * The VM install is computed in the following way:
+	 * Returns the VM install for the given launch configuration.
+	 * The VM install is determined in the following way:
 	 * <ol>
 	 * <li>The VM install is explicitly specified on the launch configuration
 	 * 	via the <code>ATTR_VM_INSTALL_TYPE</code> and <code>ATTR_VM_INSTALL_ID</code>
 	 *  attributes.</li>
 	 * <li>If no explicit VM install is specified, the VM install associated with
-	 * 	the launch confiugration's project is used.<li>
+	 * 	the launch confiugration's project is returned.<li>
 	 * <li>If no project is specified, or the project does not specify a custom
-	 * 	VM install, the workspace default VM install is used.</li>
+	 * 	VM install, the workspace default VM install is returned.</li>
 	 * </ol>
 	 * 
 	 * @param configuration launch configuration
 	 * @return vm install
 	 * @exception CoreException if unable to compute a vm install
+	 * @since 2.0
 	 */
 	public static IVMInstall computeVMInstall(ILaunchConfiguration configuration) throws CoreException {
 		String type = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
@@ -817,14 +805,13 @@ public final class JavaRuntime {
 		return getDefaultVMInstall();
 	}
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
-	 * 
-	 * Returns the VMInstall used to build the given Java project - either an
+	 * Returns the VM install used to build the given Java project - either an
 	 * explicitly set VM install, or the workspace default.
 	 * 
 	 * @param project Java proect
 	 * @return vm install
 	 * @exception CoreException if unable to compute a vm install
+	 * @since 2.0
 	 */
 	public static IVMInstall computeVMInstall(IJavaProject project) throws CoreException {
 		IVMInstall vm = getVMInstall(project);
@@ -1306,6 +1293,7 @@ public final class JavaRuntime {
 	 * 
 	 * @param id VM connector identifier
 	 * @return VM connector or <code>null</code> if none
+	 * @since 2.0
 	 */
 	public static IVMConnector getVMConnector(String id) {
 		return LaunchingPlugin.getDefault().getVMConnector(id);
@@ -1315,6 +1303,7 @@ public final class JavaRuntime {
 	 * Returns all VM connector extensions.
 	 *
 	 * @return VM connectors
+	 * @since 2.0
 	 */
 	public static IVMConnector[] getVMConnectors() {
 		return LaunchingPlugin.getDefault().getVMConnectors();
@@ -1324,18 +1313,18 @@ public final class JavaRuntime {
 	 * Returns the preference store for the launching plug-in.
 	 * 
 	 * @return the preference store for the launching plug-in
+	 * @since 2.0
 	 */
 	public static Preferences getPreferences() {
 		return LaunchingPlugin.getDefault().getPluginPreferences();
 	}
 	
 	/**
-	 * <b>EXPERIMENTAL AND SUBJECT TO CHANGE</b>
-	 * 
 	 * Registers the given resolver for the specified variable.
 	 * 
 	 * @param resolver runtime classpathe entry resolver
 	 * @param variableName variable name to register for
+	 * @since 2.0
 	 */
 	public static void addVariableResolver(IRuntimeClasspathEntryResolver resolver, String variableName) {
 		Map map = getVariableResolvers();
@@ -1343,12 +1332,11 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * <b>EXPERIMENTAL AND SUBJECT TO CHANGE</b>
-	 * 
 	 * Registers the given resolver for the specified container.
 	 * 
 	 * @param resolver runtime classpathe entry resolver
 	 * @param containerIdentifier identifier of the classpath container to register for
+	 * @since 2.0
 	 */
 	public static void addContainerResolver(IRuntimeClasspathEntryResolver resolver, String containerIdentifier) {
 		Map map = getContainerResolvers();
@@ -1420,6 +1408,7 @@ public final class JavaRuntime {
 	 * listeners. Has no effect if an identical listener is already registered.
 	 * 
 	 * @param listener the listener to add
+	 * @since 2.0
 	 */
 	public static void addVMInstallChangedListener(IVMInstallChangedListener listener) {
 		fgVMListeners.add(listener);
@@ -1430,6 +1419,7 @@ public final class JavaRuntime {
 	 * listeners. Has no effect if an identical listener is not already registered.
 	 * 
 	 * @param listener the listener to remove
+	 * @since 2.0
 	 */
 	public static void removeVMInstallChangedListener(IVMInstallChangedListener listener) {
 		fgVMListeners.remove(listener);
