@@ -97,11 +97,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	private static ILabelProvider fLabelProvider= DebugUITools.newDebugModelPresentation();
 	
 	/**
-	 * Whether problem handling has been initialized.
-	 */
-	private boolean fProblemHandlingInitialized = false;
-	
-	/**
 	 * Constants indicating whether a breakpoint
 	 * is added, removed, or changed.
 	 */
@@ -112,7 +107,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	/**
 	 * Local cache of active step filters.
 	 */
-	private String[] fActiveStepFilters = new String[0];
+	private String[] fActiveStepFilters = null;
 	
 	/**
 	 * Helper class that describes a location in a stack
@@ -150,13 +145,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-		
-		if (!fProblemHandlingInitialized) {
-			// do nothing if problem handling has not yet been initialized.
-			// initialization is performed on first launch.
-			return;
-		}
-		
 		IMarkerDelta[] deltas = event.findMarkerDeltas("org.eclipse.jdt.core.problem", true); //$NON-NLS-1$
 		if (deltas != null) {
 			for (int i = 0; i < deltas.length; i++) {
@@ -195,12 +183,13 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * Called at startup by the java debug ui plug-in
 	 */
 	public void startup() throws CoreException {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		DebugPlugin.getDefault().addDebugEventListener(this);
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
-		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-		JDIDebugModel.addJavaBreakpointListener(this);
-		updateActiveFilters();
+		if (DebugPlugin.getDefault().getLaunchManager().getLaunches().length != 0) {
+			// If there are any pre-existing launches, start up fully.
+			activate();
+		} else {
+			// Else lazy initialization will occur on the first launch
+			DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		}
 	}
 	
 	/**
@@ -221,9 +210,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * on uncaught exceptions.
 	 */
 	protected void initializeProblemHandling() {
-		if (fProblemHandlingInitialized) {
-			return;
-		}
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// compilation error breakpoint
@@ -256,7 +242,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
-		fProblemHandlingInitialized = true;
 	}
 		
 	/**
@@ -393,45 +378,41 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS)) {
-			setSuspendOnCompilationErrors(((Boolean)event.getNewValue()).booleanValue());
+			IBreakpoint breakpoint = getSuspendOnCompilationErrorBreakpoint();
+			if (breakpoint != null) {
+				setEnabled(breakpoint, ((Boolean)event.getNewValue()).booleanValue());
+			}
 		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS)) {
-			setSuspendOnUncaughtExceptions(((Boolean)event.getNewValue()).booleanValue());
-		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS)) {
+			IBreakpoint breakpoint = getSuspendOnUncaughtExceptionBreakpoint();
+			if (breakpoint != null) {
+				setEnabled(breakpoint, ((Boolean)event.getNewValue()).booleanValue());
+			}
+		} else if (isUseFilterProperty(event.getProperty())) {
 			notifyTargetsOfFilters();
-		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS)) {
-			notifyTargetsOfFilters();
-		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS)) {
-			notifyTargetsOfFilters();
-		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_USE_FILTERS)) {
-			notifyTargetsOfFilters();
-		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST)) {
-			updateActiveFilters();
-		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST)) {
+		} else if (isFilterListProperty(event.getProperty())) {
 			updateActiveFilters();
 		}
 	}
 	
 	/**
-	 * Sets whether or not to suspend on compilation errors
-	 * 
-	 * @param enabled whether to suspend on compilation errors
+	 * Returns whether the given property is a property that affects whether
+	 * or not step filters are used.
 	 */
-	protected void setSuspendOnCompilationErrors(boolean enabled) {
-		initializeProblemHandling();
-		IBreakpoint breakpoint = getSuspendOnCompilationErrorBreakpoint();
-		setEnabled(breakpoint, enabled);
+	private boolean isUseFilterProperty(String property) {
+		return property.equals(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS) ||
+			property.equals(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS) ||
+			property.equals(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS) ||
+			property.equals(IJDIPreferencesConstants.PREF_USE_FILTERS);
 	}
 	
 	/**
-	 * Sets whether or not to suspend on uncaught exceptions
-	 * 
-	 * @param enabled whether or not to suspend on uncaught exceptions
+	 * Returns whether the given property is a property that affects
+	 * the list of active or inactive step filters.
 	 */
-	protected void setSuspendOnUncaughtExceptions(boolean enabled) {
-		initializeProblemHandling();
-		IBreakpoint breakpoint = getSuspendOnUncaughtExceptionBreakpoint();
-		setEnabled(breakpoint, enabled);
-	}	
+	private boolean isFilterListProperty(String property) {
+		return property.equals(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST) ||
+			property.equals(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST);
+	}
 	
 	/**
 	 * Enable/Disable the given breakpoint and notify
@@ -544,23 +525,19 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 			buffer.append(list[i]);
 		}
 		return buffer.toString();
-	}	
-	
-	/**
-	 * Sets the current list of active step filters
-	 * 
-	 * @param filters the current list of active step filters
-	 */
-	private void setActiveStepFilters(String[] filters) {
-		fActiveStepFilters = filters;
 	}
 	
 	/**
-	 * Returns the current list of active step filters
+	 * Returns the current list of active step filters.
 	 * 
 	 * @return current list of active step filters
 	 */
 	protected String[] getActiveStepFilters() {
+		if (fActiveStepFilters == null) {
+			fActiveStepFilters= parseList(JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST));
+			// After active filters are cached, register to hear about future changes
+			JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		}
 		return fActiveStepFilters;
 	}
 	
@@ -569,8 +546,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * notifies targets.
 	 */
 	protected void updateActiveFilters() {
-		String[] filters = parseList(JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST));
-		setActiveStepFilters(filters);
+		fActiveStepFilters= parseList(JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST));
 		notifyTargetsOfFilters();
 	}
 	
@@ -750,14 +726,30 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		});
 	}
 	
+	/**
+	 * Activates this debug options manager. When active, this
+	 * manager becomes a listener to many notifications and updates
+	 * running debug targets based on these notifications.
+	 * 
+	 * A debug options manager does not need to be activated until
+	 * there is a running debug target.
+	 */
+	private void activate() {
+		initializeProblemHandling();
+		notifyTargetsOfFilters();
+		DebugPlugin.getDefault().addDebugEventListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		JDIDebugModel.addJavaBreakpointListener(this);
+	}	
 
 	/**
-	 * Startup problem handling if required.
+	 * Startup problem handling on the first launch.
 	 * 
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
-	public void launchAdded(ILaunch launch) {		
-		initializeProblemHandling();
+	public void launchAdded(ILaunch launch) {
+		activate();
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
 	/**
 	 * @see ILaunchListener#launchChanged(ILaunch)

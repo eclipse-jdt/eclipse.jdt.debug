@@ -44,8 +44,6 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	
 	private static JDIDebugPlugin fgPlugin;
 	
-	private JavaHotCodeReplaceManager fJavaHCRMgr;
-	
 	/**
 	 * Breakpoint listener list.
 	 */
@@ -117,18 +115,26 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
-		fJavaHCRMgr= JavaHotCodeReplaceManager.getDefault();
+		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList(5);
 		getPluginPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
 		getPluginPreferences().addPropertyChangeListener(this);
 	}
 	
+	/**
+	 * Adds the given hot code replace listener to the collection of listeners
+	 * that will be notified by the hot code replace manager in this plugin.
+	 */
 	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
-		fJavaHCRMgr.addHotCodeReplaceListener(listener);
+		JavaHotCodeReplaceManager.getDefault().addHotCodeReplaceListener(listener);
 	}
-	
+
+	/**
+	 * Removes the given hot code replace listener from the collection of listeners
+	 * that will be notified by the hot code replace manager in this plugin.
+	 */	
 	public void removeHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
-		fJavaHCRMgr.removeHotCodeReplaceListener(listener);
+		JavaHotCodeReplaceManager.getDefault().removeHotCodeReplaceListener(listener);
 	}
 
 	/**
@@ -138,7 +144,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 */
 	public void shutdown() throws CoreException {
 		getPluginPreferences().removePropertyChangeListener(this);
-		fJavaHCRMgr.shutdown();
+		JavaHotCodeReplaceManager.getDefault().shutdown();
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		IDebugTarget[] targets= launchManager.getDebugTargets();
 		for (int i= 0 ; i < targets.length; i++) {

@@ -147,10 +147,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	/**
 	 * Returns the singleton HCR manager
 	 */
-	public static JavaHotCodeReplaceManager getDefault() {
+	public static synchronized JavaHotCodeReplaceManager getDefault() {
 		if (fgInstance == null) {
 			fgInstance= new JavaHotCodeReplaceManager();
-			fgInstance.startup();
 		}
 		return fgInstance;
 	}

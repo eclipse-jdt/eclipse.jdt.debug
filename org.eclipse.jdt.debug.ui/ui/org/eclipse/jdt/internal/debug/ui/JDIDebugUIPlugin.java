@@ -223,12 +223,20 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-		initializeHCRListener();
-		initializeOptionsManager();
-		initializeAdapterManager();
-		initializeEvaluationEngineManager();
-		initializeJavaModelListener();
-		initializeImageRegistry();	
+		JavaDebugOptionsManager.getDefault().startup();
+		IAdapterManager manager= Platform.getAdapterManager();
+		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);
+		fEvaluationEngineManager= new JavaEvaluationEngineManager();
+		fJavaModelListener= new JavaModelListener();
+		JavaCore.addElementChangedListener(fJavaModelListener);
+		fHCRListener= new JavaHotCodeReplaceListener();
+		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
+		getStandardDisplay().asyncExec(
+			new Runnable() {
+				public void run() {
+					createImageRegistry();
+				}
+			});	
 	}
 	
 	/**
@@ -243,38 +251,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		fEvaluationEngineManager.dispose();
 		super.shutdown();
-	}
-	
-	private void initializeHCRListener() {
-		fHCRListener= new JavaHotCodeReplaceListener();
-		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
-	}
-	
-	private void initializeOptionsManager() throws CoreException {
-		JavaDebugOptionsManager.getDefault().startup();
-	}
-	
-	private void initializeAdapterManager() {
-		IAdapterManager manager= Platform.getAdapterManager();
-		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);
-	}
-	
-	private void initializeEvaluationEngineManager() {
-		fEvaluationEngineManager= new JavaEvaluationEngineManager();
-	}
-	
-	private void initializeJavaModelListener() {
-		fJavaModelListener= new JavaModelListener();
-		JavaCore.addElementChangedListener(fJavaModelListener);
-	}
-	
-	private void initializeImageRegistry() {
-		getStandardDisplay().asyncExec(
-			new Runnable() {
-				public void run() {
-					createImageRegistry();
-				}
-			});	
 	}
 	
 	/**

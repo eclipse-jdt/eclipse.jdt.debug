@@ -1792,7 +1792,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 					return false;
 				}
 			}
-			return true;
+			return !jdiThread.isSuspended();
 		}
 		
 		/**
