@@ -45,10 +45,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
  * Support for launching scrapbook using launch configurations.
- * Not yet used. Will be used once launch configs are fixed
- * to perform verification in UI, rather than config. Currently
- * unable to launch as verification ensures project and main type
- * exist in the workspace, which is not true for the scrapbook.
  */
 
 public class ScrapbookLauncher implements IDebugEventSetListener {
@@ -106,7 +102,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"), e); //$NON-NLS-1$
 			return null;
 		} catch (IOException e) {
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_2"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"), e); //$NON-NLS-1$
 			return null;
 		}
 		
@@ -130,7 +126,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			try {
 				u = f.toURL();
 			} catch (MalformedURLException e) {
-				JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_4"),e);				 //$NON-NLS-1$
+				JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"),e); //$NON-NLS-1$
 				return null;
 			}
 			String[] defaultClasspath = JavaRuntime.computeDefaultRuntimeClassPath(p);
@@ -141,7 +137,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				try {
 					urls[i + 1] = f.toURL().toExternalForm();
 				} catch (MalformedURLException e) {
-					JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_5"), e);				 //$NON-NLS-1$
+					JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"), e);				 //$NON-NLS-1$
 				 	return null;
 				}
 			}
