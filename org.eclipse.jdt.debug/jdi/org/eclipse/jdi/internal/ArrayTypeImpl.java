@@ -5,17 +5,27 @@ package org.eclipse.jdi.internal;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.request.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.spy.*;
-import java.util.*;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.jdi.internal.jdwp.JdwpArrayID;
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpID;
+import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+
+import com.sun.jdi.ArrayReference;
+import com.sun.jdi.ArrayType;
+import com.sun.jdi.ClassLoaderReference;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.Type;
+import com.sun.jdi.Value;
 
 /**
  * this class implements the corresponding interfaces
@@ -107,7 +117,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 */
 	public List locationsOfLine(int line) {
 		// If this reference type is an ArrayType, the returned list is always empty. 
-		return new Vector();
+		return Collections.EMPTY_LIST;
 	}
 	
 	/**
@@ -149,14 +159,14 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * @return Returns a list containing each Field declared in this type. 
 	 */
 	public List fields() {
-		return new ArrayList();
+		return Collections.EMPTY_LIST;
 	}
 
 	/** 
 	 * @return Returns a list containing each Method declared in this type. 
 	 */
 	public List methods() {
-		return new ArrayList();
+		return Collections.EMPTY_LIST;
 	}
 
 	/** 
@@ -173,7 +183,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * @return Returns a List containing each ReferenceType declared within this type. 
 	 */
 	public List nestedTypes() {
-		return new ArrayList();
+		return Collections.EMPTY_LIST;
 	}
 		
 	/** 
@@ -187,7 +197,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * @return Returns the interfaces declared as implemented by this class. Interfaces indirectly implemented (extended by the implemented interface or implemented by a superclass) are not included.
 	 */
 	public List interfaces() {
-		return new ArrayList();
+		return Collections.EMPTY_LIST;
 	}
 		
 	/**
