@@ -4,11 +4,15 @@
  */
 package org.eclipse.jdt.internal.launching;
 
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 
 public class LaunchingPlugin extends Plugin {
@@ -60,6 +64,12 @@ public class LaunchingPlugin extends Plugin {
 	public void startup() throws CoreException {
 		super.startup();
 		JavaLaunchConfigurationHelper.getDefault().startup();
+		
+		//exclude launch configurations from being copied to the output directory
+		Hashtable optionsMap = JavaCore.getOptions();
+		String filters= (String)optionsMap.get("org.eclipse.jdt.core.builder.resourceCopyExclusionFilters"); //$NON-NLS-1$
+		filters= filters + ",*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
+		optionsMap.put("org.eclipse.jdt.core.builder.resourceCopyExclusionFilters", filters);  //$NON-NLS-1$
+		JavaCore.setOptions(optionsMap);
 	}
-
 }
