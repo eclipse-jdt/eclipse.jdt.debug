@@ -250,6 +250,10 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		return method;
 	}
 	
+	/**
+	 * Return the type containing the selected text, or <code>null</code> if the
+	 * selection is not in a type.
+	 */
 	protected IType getCallingType() {
 		IMember member= ActionDelegateHelper.getDefault().getCurrentMember(getTextSelection());
 		IType type= null;
