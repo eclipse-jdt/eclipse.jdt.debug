@@ -46,15 +46,20 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	}
 	
 	public static void startup() {
-		if (fgManager == null) {
-			fgManager = new EvaluationContextManager();
-			IWorkbench workbench = PlatformUI.getWorkbench();
-			IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++) {
-				fgManager.windowOpened(windows[i]);	
+		Runnable r = new Runnable() {
+			public void run() {
+				if (fgManager == null) {
+					fgManager = new EvaluationContextManager();
+					IWorkbench workbench = PlatformUI.getWorkbench();
+					IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+					for (int i = 0; i < windows.length; i++) {
+						fgManager.windowOpened(windows[i]);	
+					}
+					workbench.addWindowListener(fgManager);
+				}				
 			}
-			workbench.addWindowListener(fgManager);
-		}
+		};
+		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}
 
 	/* (non-Javadoc)
