@@ -82,7 +82,7 @@ public class UnsignedRightShiftOperator extends BinaryOperator {
 
 	protected int getInternResultType() {
 		// unary type promotion on both operands see 5.6.1 and 15.18
-		return fLeftTypeId;
+		return getUnaryPromotionType(fLeftTypeId);
 	}
 
 	public String toString() {
