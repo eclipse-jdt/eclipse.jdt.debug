@@ -182,8 +182,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Returns the requests that this breakpoint has installed
 	 * in the given target.
 	 */
-	protected List getRequests(JDIDebugTarget target) {
-		List list= (List)fRequestsByTarget.get(target);
+	protected ArrayList getRequests(JDIDebugTarget target) {
+		ArrayList list= (ArrayList)fRequestsByTarget.get(target);
 		if (list == null) {
 			list= new ArrayList(2);
 		}
@@ -590,7 +590,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		// removing was previously done is a workspace runnable, but that is
 		// not possible since it can be a resouce callback (marker deletion) that
 		// causes a breakpoint to be removed
-		List requests = getRequests(target);
+		ArrayList requests= (ArrayList)getRequests(target).clone();
+		// Iterate over a copy of the requests since this list of requests
+		// can be changed in other threads which would cause an ConcurrentModificationException
 		Iterator iter = requests.iterator();
 		EventRequest req;
 		while (iter.hasNext()) {
