@@ -77,9 +77,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	private List fStackFrames;
 
 	/**
-	 * Underlying thread group.
+	 * Underlying thread group, cached on first access.
 	 */
 	private ThreadGroupReference fThreadGroup;
+	
+	/**
+	 * Name of underlying thread group, cached on first access.
+	 */
+	private String fThreadGroupName;
 	
 	/**
 	 * Whether children need to be refreshed. Set to
@@ -366,7 +371,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 * </ul>
-	 */
+	 */	
 	protected synchronized List computeStackFrames() throws DebugException {
 		if (isSuspended()) {
 			if (isTerminated()) {
@@ -380,8 +385,37 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 						return fStackFrames;
 					}
 				} 
-				// compute new or removed stack frames
 				List frames= getUnderlyingFrames();
+				if (JDIDebugModel.useStepFilters() && !JDIDebugModel.getActiveStepFilters().isEmpty()) {
+					// If step filters are active, stepping can invalidate cached stack frame
+					// data. If any of the cached stack frame are out of synch with the underlying
+					// frames, discard the cached frames.
+					int numModelFrames= fStackFrames.size();
+					int numUnderlyingFrames= frames.size();
+					
+					int modelFramesIndex = 0;
+					int underlyingFramesIndex = 0;
+					int numFramesToCompare = 0;
+					if (numModelFrames > numUnderlyingFrames) {
+						modelFramesIndex = numModelFrames - numUnderlyingFrames;
+						numFramesToCompare = numUnderlyingFrames;
+					} else {
+						underlyingFramesIndex = numUnderlyingFrames - numModelFrames;
+						numFramesToCompare = numModelFrames;
+					}
+					
+					StackFrame underlyingFrame= null;
+					JDIStackFrame modelFrame= null;
+					for ( ; modelFramesIndex < numModelFrames; modelFramesIndex++, underlyingFramesIndex++) {
+						underlyingFrame= (StackFrame) frames.get(underlyingFramesIndex);
+						modelFrame= (JDIStackFrame) fStackFrames.get(modelFramesIndex);
+						if (!underlyingFrame.equals(modelFrame.getLastUnderlyingStackFrame())) {
+							// Replace the out of synch frame
+							fStackFrames.set(modelFramesIndex, new JDIStackFrame(this, underlyingFrame));
+						}
+					}
+				}
+				// compute new or removed stack frames
 				int offset= 0, length= frames.size();
 				if (length > fStackFrames.size()) {
 					// compute new frames
@@ -407,8 +441,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 							StackFrame newTOS= (StackFrame) frames.get(0);
 							Method newMethod= getUnderlyingMethod(newTOS);
 							if (!oldMethod.equals(newMethod)) {
-								// remove & replace all stack frames
-								fStackFrames= createAllStackFrames();
+								// replace top stack frame
+								fStackFrames.set(0, new JDIStackFrame(this, newTOS));
 								// no stack frames to update
 								offset= fStackFrames.size();
 							}
@@ -425,6 +459,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 		return fStackFrames;
 	}
+	
 
 	/**
 	 * Helper method for <code>#computeStackFrames()</code> to create all
@@ -925,15 +960,18 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * @see IJavaThread#getThreadGroupName()
 	 */
 	public String getThreadGroupName() throws DebugException {
-		ThreadGroupReference tgr= getUnderlyingThreadGroup();
-		try {
-			return tgr.name();
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_group_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// execution will not reach this line, as
-			// #targetRequestFailed will thrown an exception
-			return null;
+		if (fThreadGroupName == null) {
+			ThreadGroupReference tgr= getUnderlyingThreadGroup();
+			try {
+				fThreadGroupName = tgr.name();
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_group_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				// execution will not reach this line, as
+				// #targetRequestFailed will thrown an exception
+				return null;
+			}
 		}
+		return fThreadGroupName;
 	}
 
 	/**

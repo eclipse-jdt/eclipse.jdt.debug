@@ -55,6 +55,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	private StackFrame fStackFrame;
 	/**
+	 * The last (previous) underlying stack frame
+	 */
+	private StackFrame fLastStackFrame;
+	/**
 	 * Containing thread
 	 */
 	private JDIThread fThread;
@@ -67,6 +71,21 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * lazily on first access.
 	 */
 	private Method fMethod= null;
+	/**
+	 * The underlying Object associated with this stack frame.  Cached lazily on
+	 * first access.
+	 */
+	private ObjectReference fThisObject;
+	/**
+	 * The name of the type in which the method for this stack frame was
+	 * declared (implemented).  Cached on lazily first access.
+	 */
+	private String fDeclaringTypeName;
+	/**
+	 * The name of the type of the object that received the method call associated
+	 * with this stack frame.  Cached on lazily first access.
+	 */
+	private String fReceivingTypeName;
 	/**
 	 * Whether the variables need refreshing
 	 */
@@ -539,14 +558,17 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
 	protected ObjectReference getUnderlyingThisObject() throws DebugException {
-		try {
-			return getUnderlyingStackFrame().thisObject();
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_this"),new String[] {e.toString()}), e); //$NON-NLS-1$
-			// execution will not reach this line, as 
-			// #targetRequestFailed will throw an exception			
-			return null;
+		if (fThisObject == null) {
+			try {
+				fThisObject = getUnderlyingStackFrame().thisObject();
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_this"),new String[] {e.toString()}), e); //$NON-NLS-1$
+				// execution will not reach this line, as 
+				// #targetRequestFailed will throw an exception			
+				return null;
+			}
 		}
+		return fThisObject;
 	}
 	
 	/**
@@ -602,33 +624,39 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#getDeclaringTypeName()
 	 */
 	public String getDeclaringTypeName() throws DebugException {
-		try {
-			return getUnderlyingMethod().declaringType().name();
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_declaring_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// execution will not reach this line, as 
-			// #targetRequestFailed will throw an exception			
-			return null;
+		if (fDeclaringTypeName == null) {
+			try {
+				fDeclaringTypeName = getUnderlyingMethod().declaringType().name();
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_declaring_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				// execution will not reach this line, as 
+				// #targetRequestFailed will throw an exception			
+				return null;
+			}
 		}
+		return getUnderlyingMethod().declaringType().name();
 	}
 	
 	/**
 	 * @see IJavaStackFrame#getReceivingTypeName()
 	 */
 	public String getReceivingTypeName() throws DebugException {
-		try {
-			ObjectReference thisObject = getUnderlyingStackFrame().thisObject();
-			if (thisObject == null) {
-				return getDeclaringTypeName();
-			} else {
-				return thisObject.referenceType().name();
+		if (fReceivingTypeName == null) {
+			try {
+				ObjectReference thisObject = getUnderlyingThisObject();
+				if (thisObject == null) {
+					fReceivingTypeName = getDeclaringTypeName();
+				} else {
+					fReceivingTypeName = thisObject.referenceType().name();
+				}
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_receiving_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				// execution will not reach this line, as 
+				// #targetRequestFailed will throw an exception			
+				return null;
 			}
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_receiving_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// execution will not reach this line, as 
-			// #targetRequestFailed will throw an exception			
-			return null;
 		}
+		return fReceivingTypeName;
 	}
 	
 	/**
@@ -807,12 +835,23 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	protected StackFrame getUnderlyingStackFrame() throws DebugException {
 		if (fStackFrame == null) {
+			// In the case of preserved stack frames, the underlying stack frame
+			// could have been set via a call to JDIThread#updateStackFrames
 			((JDIThread)getThread()).computeStackFrames();
 			if (fStackFrame == null) {
-				requestFailed("Thread non suspended, stack frame unavilable.", null);
+				requestFailed("Thread non suspended, stack frame unavailable.", null);
 			}
 		}
 		return fStackFrame;
+	}
+	
+	/**
+	 * The underlying stack frame that existed before the current underlying
+	 * stack frame.  Used only so that equality can be checked on stack frame
+	 * after the new one has been set.
+	 */
+	protected StackFrame getLastUnderlyingStackFrame() {
+		return fLastStackFrame;
 	}
 	
 	/**
@@ -822,6 +861,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @param frame The underlying stack frame
 	 */
 	protected void setUnderlyingStackFrame(StackFrame frame) {
+		if (frame != null) {
+			fLastStackFrame = frame;
+		} else {
+			fLastStackFrame = fStackFrame;
+		}
 		fStackFrame = frame;
 		fRefreshVariables = true;
 	}
