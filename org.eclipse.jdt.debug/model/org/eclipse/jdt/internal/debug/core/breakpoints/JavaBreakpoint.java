@@ -122,10 +122,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Add this breakpoint to the breakpoint manager
+	 * Add this breakpoint to the breakpoint manager,
+	 * or sets it as unregistered.
 	 */
-	protected void addToBreakpointManager() throws CoreException {
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(this);
+	protected void register(boolean register) throws CoreException {
+		if (register) {
+			DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(this);
+		} else {
+			setRegistered(false);
+		}
 	}	
 	
 	/**

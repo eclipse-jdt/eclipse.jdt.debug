@@ -92,9 +92,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				
 				ensureMarker().setAttributes(attributes);
 				
-				if (add) {
-					addToBreakpointManager();
-				}
+				register(add);
 			}
 
 		};

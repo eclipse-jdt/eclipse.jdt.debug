@@ -59,10 +59,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				// set attributes
 				ensureMarker().setAttributes(attributes);
 				
-				// add to breakpoint manager
-				if (add) {
-					addToBreakpointManager();
-				}
+				// add to breakpoint manager if requested
+				register(add);
 			}
 		};
 		run(wr);

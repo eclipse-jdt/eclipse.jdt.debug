@@ -103,9 +103,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 				// set attributes
 				ensureMarker().setAttributes(attributes);
 				
-				if (add) {
-					addToBreakpointManager();
-				}
+				register(add);
 			}
 		};
 		run(wr);

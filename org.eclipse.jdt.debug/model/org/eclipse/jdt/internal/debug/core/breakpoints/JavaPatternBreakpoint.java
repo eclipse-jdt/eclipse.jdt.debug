@@ -58,9 +58,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 				// set attributes
 				ensureMarker().setAttributes(attributes);
 				
-				if (add) {
-					addToBreakpointManager();
-				}
+				register(add);
 			}
 		};
 		run(wr);

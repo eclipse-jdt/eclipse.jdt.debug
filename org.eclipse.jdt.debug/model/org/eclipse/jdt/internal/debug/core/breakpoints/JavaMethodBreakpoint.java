@@ -130,9 +130,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				//set attributes
 				ensureMarker().setAttributes(attributes);
 				
-				if (register) {
-					addToBreakpointManager();
-				}
+				register(register);
 			}
 
 		};
