@@ -198,4 +198,11 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * the failure.</li>
 	 */
 	boolean mayBeOutOfSynch() throws DebugException;
+	
+	/**
+	 * Returns whether this target supports hot code replace.
+	 * 
+	 * @return whether this target supports hot code replace
+	 */
+	public boolean supportsHotCodeReplace();
 }

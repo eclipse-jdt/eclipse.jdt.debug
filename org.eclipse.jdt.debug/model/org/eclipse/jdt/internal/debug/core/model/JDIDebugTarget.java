@@ -516,6 +516,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		fSupportsTerminate = supported;
 	}
 	
+	/**
+	 * @see IJavaDebugTarget#supportsHotCodeReplace()
+	 */
 	public boolean supportsHotCodeReplace() {
 		return supportsJ9HotCodeReplace() || supportsJDKHotCodeReplace();
 	}

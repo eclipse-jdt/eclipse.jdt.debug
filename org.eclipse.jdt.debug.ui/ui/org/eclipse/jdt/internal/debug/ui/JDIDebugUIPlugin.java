@@ -14,11 +14,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.core.model.ILauncherDelegate;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncherDelegate;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -181,6 +185,22 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	 * @see IJavaHotCodeReplaceListener#hotCodeReplaceFailed(DebugException)
 	 */
 	public void hotCodeReplaceFailed(final IJavaDebugTarget target, final DebugException exception) {
+		// do not report errors for snippet editor targets
+		// that do not support HCR. HCR is simulated by using
+		// a new class loader for each evaluation
+		ILaunch launch = target.getLaunch();
+		if (launch != null) {
+			ILauncher launcher = launch.getLauncher();
+			if (launcher != null) {
+				ILauncherDelegate delegate = launcher.getDelegate();
+				if (delegate instanceof ScrapbookLauncherDelegate) {
+					if (!target.supportsHotCodeReplace()) {
+						return;
+					}
+				}
+			}
+		}
+		
 		if (!getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED)) {
 			return;
 		}
