@@ -23,7 +23,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * Processes add/removed/changed VMs.
@@ -33,16 +32,10 @@ public class JREsUpdater {
 	// the VMs defined when this updated is instantiated
 	private VMDefinitionsContainer fOriginalVMs;	
 	
-	// shell for error dilaogs
-	private Shell fShell;
-
 	/**
 	 * Contstructs a new VM updater to update VM install settings.
-	 * 
-	 * @param shell a shell on which to display error dialogs (if required),
-	 *  or <code>null</code> if none
 	 */
-	public JREsUpdater(Shell shell) {
+	public JREsUpdater() {
 		fOriginalVMs = new VMDefinitionsContainer();
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
 		if (def != null) {
@@ -56,7 +49,6 @@ public class JREsUpdater {
 				fOriginalVMs.addVM(vms[j]);
 			}
 		}
-		fShell = shell;		
 	}
 	
 	/**
@@ -84,19 +76,8 @@ public class JREsUpdater {
 		// Generate XML for the VM defs and save it as the new value of the VM preference
 		saveVMDefinitions(vmContainer);
 		
-		
 		return true;
 	}
-	
-	private boolean isEqual(Object a, Object b) {
-		if (a == null) {
-			return b == null;
-		}
-		if (b == null) {
-			return false;
-		}
-		return (a.equals(b));
-	}	
 	
 	private void saveVMDefinitions(final VMDefinitionsContainer container) {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
@@ -128,14 +109,5 @@ public class JREsUpdater {
 		} catch (InterruptedException e) {
 			JDIDebugUIPlugin.log(e);
 		}
-	}	
-	
-	private Shell getShell() {
-		if (fShell == null) {
-			return JDIDebugUIPlugin.getActiveWorkbenchShell();
-		} else {
-			return fShell;
-		}
-	} 
-	
+	}
 }
