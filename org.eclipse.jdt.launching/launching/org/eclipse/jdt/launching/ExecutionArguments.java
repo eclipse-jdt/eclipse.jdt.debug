@@ -6,6 +6,7 @@
 package org.eclipse.jdt.launching;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -79,14 +80,9 @@ public class ExecutionArguments {
 			fArgs= args;
 		}
 		
-		private int getNext() {
-			if (fIndex < fArgs.length())
-				return fArgs.charAt(fIndex++);
-			return -1;
-		}
-		
 		public String[] parseArguments() {
-			ArrayList v= new ArrayList();
+			StringBuffer buf;
+			List v= new ArrayList();
 			
 			ch= getNext();
 			while (ch > 0) {
@@ -105,28 +101,46 @@ public class ExecutionArguments {
 			return result;
 		}
 		
-		public String parseString() {
+		private int getNext() {
+			if (fIndex < fArgs.length())
+				return fArgs.charAt(fIndex++);
+			return -1;
+		}
+		
+		private String parseString() {
 			StringBuffer buf= new StringBuffer();
-			buf.append((char)ch);
+			//buf.append((char)ch);
 			ch= getNext();
 			while (ch > 0 && ch != '"') {
-				buf.append((char)ch);
-				ch= getNext();
+				if (ch == '\\') {
+					ch= getNext();
+					if (ch != '"') buf.append('\\'); // Only escape double quotes
+				}
+				if (ch > 0) {
+					buf.append((char)ch);
+					ch= getNext();
+				}
 			}
-			if (ch > 0)
-				buf.append((char)ch);
+			//if (ch > 0) buf.append((char)ch);
 			ch= getNext();
 				
 			return buf.toString();
 		}
 		
-		public String parseToken() {
+		private String parseToken() {
 			StringBuffer buf= new StringBuffer();
 			
 			while (ch > 0 && !Character.isWhitespace((char)ch)) {
-				if (ch == '"')
+				if (ch == '\\') {
+					ch= getNext();
+					if (ch > 0) {
+						if (ch != '"') buf.append('\\'); // Only escape double quotes
+						buf.append((char)ch);
+						ch= getNext();
+					}
+				} else if (ch == '"') {
 					buf.append(parseString());
-				else {
+				} else {
 					buf.append((char)ch);
 					ch= getNext();
 				}
