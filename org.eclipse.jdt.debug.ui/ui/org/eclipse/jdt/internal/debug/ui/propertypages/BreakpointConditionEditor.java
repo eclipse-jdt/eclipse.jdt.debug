@@ -150,7 +150,9 @@ public class BreakpointConditionEditor {
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 		IHandler handler = new AbstractHandler() {
 			public Object execute(Map parameter) throws ExecutionException {
-				fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+			    if (fViewer.isEditable()) {
+			        fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+			    }
 				return null;
 			}
 		};
@@ -214,7 +216,7 @@ public class BreakpointConditionEditor {
 	 */
 	public void setEnabled(boolean enabled) {
 	    fViewer.setEditable(enabled);
-		fViewer.getTextWidget().setEnabled(enabled);
+	    fViewer.getTextWidget().setEnabled(enabled);
 		if (enabled) {
 			fViewer.updateViewerColors();
 			fViewer.getTextWidget().setFocus();
