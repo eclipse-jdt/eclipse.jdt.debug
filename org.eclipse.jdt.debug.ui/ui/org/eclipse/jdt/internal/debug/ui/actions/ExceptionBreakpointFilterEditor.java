@@ -466,7 +466,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		try {
 			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null);
 		} catch (JavaModelException jme) {
-			String title= ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_package_to_scope_12"); //$NON-NLS-1$
+			String title= ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_Package_to_Scope_14"); //$NON-NLS-1$
 			String message= ActionMessages.getString("ExceptionBreakpointFilterEditor.Could_not_open_package_selection_dialog_for_scope_definition_13");  //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
 			return;			
@@ -503,7 +503,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 			return;
 		}
 	
-		dialog.setTitle(ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_class_to_Scope_19")); //$NON-NLS-1$
+		dialog.setTitle(ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_Class_to_Scope_17")); //$NON-NLS-1$
 		dialog.setMessage(ActionMessages.getString("ExceptionBreakpointFilterEditor.&Select_a_class_to_add_to_the_scope_of_the_breakpoint_20")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
