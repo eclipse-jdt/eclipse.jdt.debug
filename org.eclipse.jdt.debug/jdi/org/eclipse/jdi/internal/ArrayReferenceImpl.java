@@ -23,6 +23,7 @@ import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InternalException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.PrimitiveValue;
 import com.sun.jdi.Value;
 
 /**
@@ -34,42 +35,42 @@ import com.sun.jdi.Value;
 public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayReference {
 	/** JDWP Tag. */
 	public static final byte tag = JdwpID.ARRAY_TAG;
-	
+
 	/**
 	 * Creates new ArrayReferenceImpl.
 	 */
 	public ArrayReferenceImpl(VirtualMachineImpl vmImpl, JdwpObjectID objectID) {
 		super("ArrayReference", vmImpl, objectID); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @returns tag.
 	 */
 	public byte getTag() {
 		return tag;
 	}
-	
+
 	/**
 	 * @returns Returns an array component value.
 	 */
 	public Value getValue(int index) throws IndexOutOfBoundsException {
-		return (Value)getValues(index, 1).get(0);
+		return (Value) getValues(index, 1).get(0);
 	}
-	
+
 	/**
 	 * @returns Returns all of the components in this array.
 	 */
 	public List getValues() {
 		return getValues(0, -1);
 	}
-	
+
 	/**
 	 * @return Returns a list containing each Method declared directly in this type.
 	 */
 	public List methods() {
 		return new Vector();
 	}
-	
+
 	/**
 	 * @returns Returns a range of array components.
 	 */
@@ -77,25 +78,25 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 		// Negative length indicates all elements.
 		if (length < 0)
 			length = length();
-			
+
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
-			write(this, outData);	// arrayObject
+			write(this, outData); // arrayObject
 			writeInt(firstIndex, "firstIndex", outData); //$NON-NLS-1$
 			writeInt(length, "length", outData); //$NON-NLS-1$
-	
+
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.AR_GET_VALUES, outBytes);
 			switch (replyPacket.errorCode()) {
-				case JdwpReplyPacket.INVALID_INDEX:
+				case JdwpReplyPacket.INVALID_INDEX :
 					throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Invalid_index_of_array_reference_given_1")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
-			
+
 			DataInputStream replyData = replyPacket.dataInStream();
-	
+
 			/* NOTE: The JDWP documentation is not clear on this: it turns out that the following is received from the VM:
 			 * - type tag;
 			 * - length of array;
@@ -105,32 +106,32 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			int type = readByte("type", JdwpID.tagMap(), replyData); //$NON-NLS-1$
 			int readLength = readInt("length", replyData); //$NON-NLS-1$
 			// See also ValueImpl.
-			switch(type) {
+			switch (type) {
 				// Multidimensional array.
-				case ArrayReferenceImpl.tag:
-				// Object references.
-				case ClassLoaderReferenceImpl.tag:
-				case ClassObjectReferenceImpl.tag:
-				case StringReferenceImpl.tag:
-				case ObjectReferenceImpl.tag:
-				case ThreadGroupReferenceImpl.tag:
-				case ThreadReferenceImpl.tag:
+				case ArrayReferenceImpl.tag :
+					// Object references.
+				case ClassLoaderReferenceImpl.tag :
+				case ClassObjectReferenceImpl.tag :
+				case StringReferenceImpl.tag :
+				case ObjectReferenceImpl.tag :
+				case ThreadGroupReferenceImpl.tag :
+				case ThreadReferenceImpl.tag :
 					return readObjectSequence(readLength, replyData);
 
-				// Primitive type.
-				case BooleanValueImpl.tag:
-				case ByteValueImpl.tag:
-				case CharValueImpl.tag:
-				case DoubleValueImpl.tag:
-				case FloatValueImpl.tag:
-				case IntegerValueImpl.tag:
-				case LongValueImpl.tag:
-				case ShortValueImpl.tag:
+					// Primitive type.
+				case BooleanValueImpl.tag :
+				case ByteValueImpl.tag :
+				case CharValueImpl.tag :
+				case DoubleValueImpl.tag :
+				case FloatValueImpl.tag :
+				case IntegerValueImpl.tag :
+				case LongValueImpl.tag :
+				case ShortValueImpl.tag :
 					return readPrimitiveSequence(readLength, type, replyData);
 
-				case VoidValueImpl.tag:
-				case 0:
-				default:
+				case VoidValueImpl.tag :
+				case 0 :
+				default :
 					throw new InternalException(JDIMessages.getString("ArrayReferenceImpl.Invalid_ArrayReference_Value_tag_encountered___2") + type); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
@@ -152,7 +153,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 		}
 		return elements;
 	}
-	
+
 	/**
 	 * @returns Returns sequence of values of primitive type.
 	 */
@@ -164,7 +165,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 		}
 		return elements;
 	}
-	
+
 	/**
 	 * @returns Returns the number of components in this array.
 	 */
@@ -182,7 +183,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			handledJdwpRequest();
 		}
 	}
-	
+
 	/**
 	 * Replaces an array component with another value.
 	 */
@@ -191,14 +192,14 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 		list.add(value);
 		setValues(index, list, 0, 1);
 	}
-	
+
 	/**
 	 * Replaces all array components with other values.
 	 */
 	public void setValues(List values) throws InvalidTypeException, ClassNotLoadedException {
 		setValues(0, values, 0, -1);
 	}
-	
+
 	/**
 	 * Replaces a range of array components with other values.
 	 */
@@ -221,21 +222,23 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			write(this, outData);
 			writeInt(index, "index", outData); //$NON-NLS-1$
 			writeInt(length, "length", outData); //$NON-NLS-1$
+			String componentSignature= ((ArrayTypeImpl) referenceType()).componentSignature();
 			for (int i = srcIndex; i < srcIndex + length; i++) {
-				ValueImpl value = (ValueImpl)values.get(i);
+				ValueImpl value = (ValueImpl) values.get(i);
 				if (value != null) {
+					value= convertPrimitiveValue(value, componentSignature);
 					checkVM(value);
-					((ValueImpl)value).write(this, outData);
+					((ValueImpl) value).write(this, outData);
 				} else {
 					ValueImpl.writeNull(this, outData);
 				}
 			}
-	
+
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.AR_SET_VALUES, outBytes);
 			switch (replyPacket.errorCode()) {
-				case JdwpReplyPacket.TYPE_MISMATCH:
+				case JdwpReplyPacket.TYPE_MISMATCH :
 					throw new InvalidTypeException();
-				case JdwpReplyPacket.INVALID_CLASS:
+				case JdwpReplyPacket.INVALID_CLASS :
 					throw new ClassNotLoadedException(type().name());
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
@@ -245,7 +248,34 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			handledJdwpRequest();
 		}
 	}
-	
+
+	/**
+	 * Converts the given primitive value to a value of the given primitive signature.
+	 */
+	private ValueImpl convertPrimitiveValue(ValueImpl value, String signature) {
+		if (!(value instanceof PrimitiveValue)) {
+			return value;
+		}
+		PrimitiveValueImpl primitiveValue = (PrimitiveValueImpl) value;
+		switch (signature.charAt(0)) {
+			case 'B' :
+				return new ByteValueImpl(virtualMachineImpl(), new Byte(primitiveValue.byteValue()));
+			case 'C' :
+				return new CharValueImpl(virtualMachineImpl(), new Character(primitiveValue.charValue()));
+			case 'S' :
+				return new ShortValueImpl(virtualMachineImpl(), new Short(primitiveValue.shortValue()));
+			case 'I' :
+				return new IntegerValueImpl(virtualMachineImpl(), new Integer(primitiveValue.intValue()));
+			case 'J' :
+				return new LongValueImpl(virtualMachineImpl(), new Long(primitiveValue.longValue()));
+			case 'F' :
+				return new FloatValueImpl(virtualMachineImpl(), new Float(primitiveValue.floatValue()));
+			case 'D' :
+				return new DoubleValueImpl(virtualMachineImpl(), new Double(primitiveValue.doubleValue()));
+		}
+		return value;
+	}
+
 	/**
 	 * @return Returns description of Mirror object.
 	 */
@@ -277,7 +307,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 
 		if (ID.isNull())
 			return null;
-			
+
 		ArrayReferenceImpl mirror = new ArrayReferenceImpl(vmImpl, ID);
 		return mirror;
 	}
