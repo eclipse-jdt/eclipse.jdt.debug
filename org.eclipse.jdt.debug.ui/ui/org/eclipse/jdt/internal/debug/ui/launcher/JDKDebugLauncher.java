@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
@@ -160,10 +161,10 @@ public class JDKDebugLauncher extends JDKLauncher {
 	}
 	
 	private void reportError(final String errorMessage) {
-		StandardVM.getStandardDisplay().syncExec(new Runnable() {
+		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 				IStatus s= new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, errorMessage, null);
-				ErrorDialog.openError(StandardVM.getStandardDisplay().getActiveShell(),LauncherMessages.getString("JDKDebugLauncher.Launching_a_Java_VM_1"), LauncherMessages.getString("JDKDebugLauncher.Problems_encountered_launching_the_Java_VM_in_debug_mode_2"), s); //$NON-NLS-1$ //$NON-NLS-2$
+				ErrorDialog.openError(JDIDebugUIPlugin.getStandardDisplay().getActiveShell(),LauncherMessages.getString("JDKDebugLauncher.Launching_a_Java_VM_1"), LauncherMessages.getString("JDKDebugLauncher.Problems_encountered_launching_the_Java_VM_in_debug_mode_2"), s); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			});
 	}
