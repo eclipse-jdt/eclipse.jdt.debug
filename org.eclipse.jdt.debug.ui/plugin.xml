@@ -963,6 +963,19 @@
 			enablesFor="+">
 		</action>		
 	</objectContribution>
+	<objectContribution
+		id="org.eclipse.jdt.debug.ui.JavaVariableActions"
+		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.WatchVariableAction"
+			label="%WatchVariable.label"
+			menubarPath="openOnGroup"
+			icon="icons/full/ctool16/expression_obj.gif"
+			helpContextId="variable_watch_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.WatchVariableAction"
+			enablesFor="+">
+		</action>		
+	</objectContribution>	
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.JavaSnippetPopupActions" 
     	targetID="#JavaSnippetEditorContext">
