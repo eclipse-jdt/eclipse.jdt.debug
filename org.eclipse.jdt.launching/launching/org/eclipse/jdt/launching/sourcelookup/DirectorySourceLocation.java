@@ -18,7 +18,10 @@ import java.text.MessageFormat;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.xerces.dom.DocumentImpl;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -85,6 +88,10 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 			String typeName = pathStr;
 			do {
 				IPath filePath = root.append(new Path(typeName + ".java")); //$NON-NLS-1$
+				IFile workspaceFile= ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
+				if (workspaceFile != null) {
+					return workspaceFile;
+				}
 				File file = filePath.toFile();
 				if (file.exists()) {
 					return new LocalFileStorage(file);

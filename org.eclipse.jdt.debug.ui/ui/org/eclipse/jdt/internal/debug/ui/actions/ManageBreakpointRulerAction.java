@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -213,64 +214,70 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 		
 		IEditorInput editorInput= getTextEditor().getEditorInput();
 		
-		IDocument document= getDocument();
-		int rulerLine= getVerticalRulerInfo().getLineOfLastMouseButtonActivity();
-		
 		try {
-			BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
-			int lineNumber = bv.getValidBreakpointLocation(document, rulerLine);
-			if (lineNumber > 0) {
-				
-				IRegion line= document.getLineInformation(lineNumber - 1);
-				
-				IType type = null;
-				IClassFile classFile= (IClassFile) editorInput.getAdapter(IClassFile.class);
-				if (classFile != null) {
-					type= classFile.getType();
-					// bug 34856 - if this is an inner type, ensure the breakpoint is not
-					// being added to the outer type
-					if (type.getDeclaringType() != null) {
-						ISourceRange sourceRange = type.getSourceRange();
-						int offset = line.getOffset();
-						int start = sourceRange.getOffset();
-						int end = start + sourceRange.getLength();
-						if (offset < start || offset > end) {
-							// not in the inner type
-							IStatusLineManager manager  = getTextEditor().getEditorSite().getActionBars().getStatusLineManager();
-							manager.setErrorMessage(MessageFormat.format(ActionMessages.getString("ManageBreakpointRulerAction.Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor__{0}._1"), new String[]{type.getTypeQualifiedName()})); //$NON-NLS-1$
-							Display.getCurrent().beep();
-							return;
-						}
-					}
-				} else if (editorInput instanceof IFileEditorInput) {
-					IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
-					ICompilationUnit unit= manager.getWorkingCopy(editorInput);
-					if (unit != null) {
-						synchronized (unit) {
-							unit.reconcile();
-						}
-						IJavaElement e = unit.getElementAt(line.getOffset());
-						if (e instanceof IType) {
-							type= (IType)e;
-						} else if (e instanceof IMember) {
-							type= ((IMember)e).getDeclaringType();
-						}
+			IDocument document= getDocument();
+			IRegion line= document.getLineInformation(getVerticalRulerInfo().getLineOfLastMouseButtonActivity());
+
+			IType type= null;
+			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
+			if (classFile != null) {
+				type= classFile.getType();
+				// bug 34856 - if this is an inner type, ensure the breakpoint is not
+				// being added to the outer type
+				if (type.getDeclaringType() != null) {
+					ISourceRange sourceRange = type.getSourceRange();
+					int offset = line.getOffset();
+					int start = sourceRange.getOffset();
+					int end = start + sourceRange.getLength();
+					if (offset < start || offset > end) {
+						// not in the inner type
+						IStatusLineManager manager  = getTextEditor().getEditorSite().getActionBars().getStatusLineManager();
+						manager.setErrorMessage(MessageFormat.format(ActionMessages.getString("ManageBreakpointRulerAction.Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor__{0}._1"), new String[]{type.getTypeQualifiedName()})); //$NON-NLS-1$
+						Display.getCurrent().beep();
+						return;
 					}
 				}
-				
-				if (type != null) {
-					IJavaProject project= type.getJavaProject();
-					if (type.exists() && project != null && project.isOnClasspath(type)) {
-						if (JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(),lineNumber) == null) {
-							Map attributes = new HashMap(10);
-							int start= line.getOffset();
-							int end= start + line.getLength() - 1;
-							BreakpointUtils.addJavaBreakpointAttributesWithMemberDetails(attributes, type, start, end);
-							JDIDebugModel.createLineBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, -1, -1, 0, true, attributes);
-						}
+			} else if (editorInput instanceof IFileEditorInput) {
+				IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
+				ICompilationUnit unit= manager.getWorkingCopy(editorInput);
+				if (unit != null) {
+					synchronized (unit) {
+						unit.reconcile();
+					}
+					IJavaElement e= unit.getElementAt(line.getOffset());
+					if (e instanceof IType) {
+						type= (IType)e;
+					} else if (e instanceof IMember) {
+						type= ((IMember)e).getDeclaringType();
 					}
 				}
 			}
+
+			Map attributes= new HashMap(10);
+			IResource resource;
+			String typeName= null;
+			int lineNumber= getVerticalRulerInfo().getLineOfLastMouseButtonActivity();
+			IJavaLineBreakpoint breakpoint= null;
+			if (type == null) {
+				if (editorInput instanceof IFileEditorInput) {
+					resource= ((IFileEditorInput)editorInput).getFile();
+				} else {
+					resource= ResourcesPlugin.getWorkspace().getRoot();
+				}
+			} else {
+				IJavaProject project= type.getJavaProject();
+				typeName= type.getFullyQualifiedName();
+				if (type.exists() && project != null && project.isOnClasspath(type)) {
+					if (JDIDebugModel.lineBreakpointExists(typeName, lineNumber) == null) {
+						int start= line.getOffset();
+						int end= start + line.getLength() - 1;
+						BreakpointUtils.addJavaBreakpointAttributesWithMemberDetails(attributes, type, start, end);
+					}
+				}
+				resource= BreakpointUtils.getBreakpointResource(type);
+				breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, -1, -1, 0, true, attributes);
+			}
+			new BreakpointLocationVerifierJob(document, line.getOffset(), breakpoint, lineNumber, typeName, type, resource).schedule();
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
 		} catch (CoreException e) {
@@ -293,27 +300,4 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 		}
 	}
 	
-	/**
-	 * Returns the resource on which a breakpoint marker should
-	 * be created for the given member. The resource returned is the 
-	 * associated file, or project in the case of a class file in 
-	 * a jar.
-	 * 
-	 * @param member member in which a breakpoint is being created
-	 * @return resource the resource on which a breakpoint marker
-	 *  should be created
-	 * @exception CoreException if an exception occurs accessing the
-	 *  underlying resource or Java model elements
-	 */
-	public IResource getBreakpointResource(IMember member) throws CoreException {
-		ICompilationUnit cu = member.getCompilationUnit();
-		if (cu != null && cu.isWorkingCopy()) {
-			member = (IMember)cu.getOriginal(member);
-		}
-		IResource res = member.getUnderlyingResource();
-		if (res == null) {
-			res = member.getJavaProject().getProject();
-		}
-		return res;
-	}
 }

@@ -11,11 +11,15 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
@@ -28,14 +32,17 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -65,7 +72,8 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	protected void manageBreakpoint(IEditorInput editorInput) {
 		ISelectionProvider sp= getTextEditor().getSelectionProvider();
-		if (sp == null || getType() == null) {
+		IType type = getType();
+		if (sp == null) {
 			report(ActionMessages.getString("ManageBreakpointActionDelegate.No_Breakpoint")); //$NON-NLS-1$
 			return;
 		}
@@ -73,28 +81,65 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 		ISelection selection= sp.getSelection();
 		if (selection instanceof ITextSelection) {
 			IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
-			BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
-			int lineNumber = bv.getValidBreakpointLocation(document, ((ITextSelection)selection).getStartLine());		
-			if (lineNumber > -1) {
-				try {
-					IJavaLineBreakpoint breakpoint= JDIDebugModel.lineBreakpointExists(getType().getFullyQualifiedName(), lineNumber);
-					if (breakpoint != null) {
-						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
-					} else {
-						try {
-							IRegion line= document.getLineInformation(lineNumber - 1);
-							Map attributes = new HashMap(10);
-							int start= line.getOffset();
-							int end= start + line.getLength() - 1;
-							BreakpointUtils.addJavaBreakpointAttributesWithMemberDetails(attributes, getType(), start, end);
-							JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(getType()), getType().getFullyQualifiedName(), lineNumber, -1, -1, 0, true, attributes);
-						} catch (BadLocationException ble) {
-							JDIDebugUIPlugin.log(ble);
+			
+			int lineNumber= ((ITextSelection)selection).getStartLine() + 1;
+
+			
+			int offset= ((ITextSelection)selection).getOffset();
+			try {
+				if (type == null) {
+					IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
+					if (classFile != null) {
+						type= classFile.getType();
+						// bug 34856 - if this is an inner type, ensure the breakpoint is not
+						// being added to the outer type
+						if (type.getDeclaringType() != null) {
+							ISourceRange sourceRange= type.getSourceRange();
+							int start= sourceRange.getOffset();
+							int end= start + sourceRange.getLength();
+							if (offset < start || offset > end) {
+								// not in the inner type
+								IStatusLineManager manager= getTextEditor().getEditorSite().getActionBars().getStatusLineManager();
+								manager.setErrorMessage(MessageFormat.format(ActionMessages.getString("ManageBreakpointRulerAction.Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor__{0}._1"), new String[] { type.getTypeQualifiedName()})); //$NON-NLS-1$
+								Display.getCurrent().beep();
+								return;
+							}
 						}
 					}
-				} catch (CoreException ce) {
-					ExceptionHandler.handle(ce, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
+			
+				String typeName= null;
+				IResource resource;
+				IJavaLineBreakpoint breakpoint= null;
+				if (type == null) {
+					if (editorInput instanceof IFileEditorInput) {
+						resource= ((IFileEditorInput)editorInput).getFile();
+					} else {
+						resource= ResourcesPlugin.getWorkspace().getRoot();
+					}
+				} else {
+					typeName= type.getFullyQualifiedName();
+					IJavaLineBreakpoint existingBreakpoint= JDIDebugModel.lineBreakpointExists(typeName, lineNumber);
+					if (existingBreakpoint != null) {
+						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(existingBreakpoint, true);
+						return;
+					}
+					resource= BreakpointUtils.getBreakpointResource(type);
+					Map attributes = new HashMap(10);
+					try {
+						IRegion line= document.getLineInformation(lineNumber - 1);
+						int start= line.getOffset();
+						int end= start + line.getLength() - 1;
+						BreakpointUtils.addJavaBreakpointAttributesWithMemberDetails(attributes, type, start, end);
+					} catch (BadLocationException ble) {
+						JDIDebugUIPlugin.log(ble);
+					}
+					breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, -1, -1, 0, true, attributes);
+				}
+				new BreakpointLocationVerifierJob(document, offset, breakpoint, lineNumber, typeName, type, resource).schedule();
+			} catch (CoreException ce) {
+				ExceptionHandler.handle(ce, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+				return;
 			}
 		}
 	}
