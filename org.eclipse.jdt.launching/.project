@@ -2,14 +2,6 @@
 <projectDescription>
 	<name>org.eclipse.jdt.launching</name>
 	<comment></comment>
-	<projects>
-		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime.compatibility</project>
-		<project>org.eclipse.core.variables</project>
-		<project>org.eclipse.debug.core</project>
-		<project>org.eclipse.jdt.core</project>
-		<project>org.eclipse.jdt.debug</project>
-	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>

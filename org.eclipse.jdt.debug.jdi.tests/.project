@@ -2,9 +2,6 @@
 <projectDescription>
 	<name>org.eclipse.jdt.debug.jdi.tests</name>
 	<comment></comment>
-	<projects>
-		<project>org.eclipse.jdt.debug</project>
-	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
