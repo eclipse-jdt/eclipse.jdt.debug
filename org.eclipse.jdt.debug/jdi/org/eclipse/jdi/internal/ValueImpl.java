@@ -219,7 +219,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	                superClass= superClass.superclass();
 	            }
 	        } else if (type instanceof InterfaceType) {
-	            List interfaces= ((ClassType)valueType).interfaces();
+	            List interfaces= ((ClassType)valueType).allInterfaces();
 	            for (Iterator iter= interfaces.iterator(); iter.hasNext();) {
 	                if (checkInterfaceType((InterfaceType) iter.next(), (InterfaceType) type)) {
 	                    return;
