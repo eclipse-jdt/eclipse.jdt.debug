@@ -391,7 +391,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	protected void initializeSuspendOnUncaughtExceptionBreakpoint() {
 		if (JDIDebugModel.suspendOnUncaughtExceptions()) {
 			try {
-				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null);
+				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
 				bp.setPersisted(false);
 				setSuspendOnUncaughtExceptionBreakpoint(bp);
 				breakpointAdded(bp);

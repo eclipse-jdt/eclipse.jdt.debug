@@ -153,7 +153,7 @@ public class ScrapbookLauncherDelegate extends JavaApplicationLauncherDelegate i
 			VMRunnerResult result= runner.run(config);
 			if (result != null) {
 				IDebugTarget dt = result.getDebugTarget();
-				IBreakpoint magicBreakpoint = createMagicBreakpoint("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain");
+				IBreakpoint magicBreakpoint = createMagicBreakpoint("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$
 				fScrapbookToVMs.put(page, dt);
 				fVMsToScrapbooks.put(dt, page);
 				fVMsToBreakpoints.put(dt, magicBreakpoint);
