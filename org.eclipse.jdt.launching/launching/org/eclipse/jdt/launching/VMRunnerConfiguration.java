@@ -101,6 +101,7 @@ public class VMRunnerConfiguration {
 	 * launched in the given environment.
 	 * 
 	 * @param environment the environment for the Java program
+	 * @since 3.0
 	 */
 	public void setEnvironment(String[] environment) {
 		fEnvironment= environment;
@@ -189,6 +190,7 @@ public class VMRunnerConfiguration {
 	 * Returns the environment for the Java program or <code>null</code>
 	 * 
 	 * @return The Java program environment. Default is <code>null</code>
+	 * @since 3.0
 	 */
 	public String[] getEnvironment() {
 		return fEnvironment;
