@@ -71,7 +71,7 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
 			b.setLayoutData(data);
 			b.setFont(parent.getFont());
-			b.setText("Enabled Hit Count");
+			b.setText(ActionMessages.getString("BreakpointHitCountAction.Enable_Hit_Count_1")); //$NON-NLS-1$
 			b.setSelection(true);
 			b.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {

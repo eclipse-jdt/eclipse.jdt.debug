@@ -126,17 +126,17 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	 */
 	protected class JavaBreakpointPreferenceStore implements IPreferenceStore {
 		
-		protected final static String ENABLED= "ENABLED";
-		protected final static String HIT_COUNT= "HIT_COUNT";
-		protected final static String HIT_COUNT_ENABLED= "HIT_COUNT_ENABLED";
-		protected final static String PERSISTED= "PERSISTED";
-		protected final static String SUSPEND_POLICY= "SUSPEND_POLICY";
-		protected final static String METHOD_EXIT= "METHOD_EXIT";
-		protected final static String METHOD_ENTRY= "METHOD_ENTRY";
-		protected final static String CAUGHT= "CAUGHT";
-		protected final static String UNCAUGHT= "UNCAUGHT";
-		protected final static String ACCESS= "ACCESS";
-		protected final static String MODIFICATION= "MODIFICATION";
+		protected final static String ENABLED= "ENABLED"; //$NON-NLS-1$
+		protected final static String HIT_COUNT= "HIT_COUNT"; //$NON-NLS-1$
+		protected final static String HIT_COUNT_ENABLED= "HIT_COUNT_ENABLED"; //$NON-NLS-1$
+		protected final static String PERSISTED= "PERSISTED"; //$NON-NLS-1$
+		protected final static String SUSPEND_POLICY= "SUSPEND_POLICY"; //$NON-NLS-1$
+		protected final static String METHOD_EXIT= "METHOD_EXIT"; //$NON-NLS-1$
+		protected final static String METHOD_ENTRY= "METHOD_ENTRY"; //$NON-NLS-1$
+		protected final static String CAUGHT= "CAUGHT"; //$NON-NLS-1$
+		protected final static String UNCAUGHT= "UNCAUGHT"; //$NON-NLS-1$
+		protected final static String ACCESS= "ACCESS"; //$NON-NLS-1$
+		protected final static String MODIFICATION= "MODIFICATION"; //$NON-NLS-1$
 		
 		protected HashMap fProperties;
 		private boolean fIsDirty= false; 

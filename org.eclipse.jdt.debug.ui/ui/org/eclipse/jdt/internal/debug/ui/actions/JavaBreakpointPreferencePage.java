@@ -33,6 +33,34 @@ import org.eclipse.swt.widgets.Text;
 
 public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 
+	class BreakpointIntegerFieldEditor extends IntegerFieldEditor {
+		public BreakpointIntegerFieldEditor(
+			String name,
+			String labelText,
+			Composite parent) {
+			super(name, labelText, parent);
+		}
+
+		/**
+		 * @see StringFieldEditor#checkState()
+		 */
+		protected boolean checkState() {
+			Text control= getTextControl();
+			if (!control.isEnabled()) {
+				clearErrorMessage();
+				return true;
+			}
+			return super.checkState();
+		}
+
+		/**
+		 * @see FieldEditor#refreshValidState()
+		 */
+		public void refreshValidState() {
+			super.refreshValidState();
+		}
+
+}
 	class LabelFieldEditor extends FieldEditor {
 
 		private Label fTitleLabel;
@@ -90,9 +118,10 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 
 	private Text fHitCountTextControl;
 	private BooleanFieldEditor fHitCountEnabler;
+	private BreakpointIntegerFieldEditor fHitCount;
 	private IJavaBreakpoint fBreakpoint;
-	protected static final String VM_SUSPEND_POLICY = "VM";
-	protected static final String THREAD_SUSPEND_POLICY = "THREAD";
+	protected static final String VM_SUSPEND_POLICY = "VM"; //$NON-NLS-1$
+	protected static final String THREAD_SUSPEND_POLICY = "THREAD"; //$NON-NLS-1$
 
 	protected JavaBreakpointPreferencePage(IJavaBreakpoint breakpoint) {
 		super(GRID);
@@ -109,8 +138,10 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
-				Boolean enabled = (Boolean) event.getNewValue();
-				fHitCountTextControl.setEnabled(enabled.booleanValue());
+				boolean enabled = ((Boolean) event.getNewValue()).booleanValue();
+				fHitCountTextControl.setEnabled(enabled);
+				fHitCount.refreshValidState();
+				checkState();
 			}
 		});
 	}
@@ -120,13 +151,13 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	 */
 	protected void createFieldEditors() {
 		IJavaBreakpoint breakpoint = getBreakpoint();
-		String type = "";
+		String type = ""; //$NON-NLS-1$
 		try {
 			type = BreakpointUtils.getType(breakpoint).getFullyQualifiedName();
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.logError(ce);
 		}
-		addField(createLabelEditor(getFieldEditorParent(), "Type: ", type));
+		addField(createLabelEditor(getFieldEditorParent(), ActionMessages.getString("JavaBreakpointPreferencePage.Type___4"), type)); //$NON-NLS-1$
 		if (breakpoint instanceof ILineBreakpoint) {
 			ILineBreakpoint lBreakpoint = (ILineBreakpoint) breakpoint;
 			StringBuffer lineNumber = new StringBuffer(4);
@@ -142,12 +173,12 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				addField(
 					createLabelEditor(
 						getFieldEditorParent(),
-						"Line Number: ",
+						ActionMessages.getString("JavaBreakpointPreferencePage.Line_Number___5"), //$NON-NLS-1$
 						lineNumber.toString()));
 			}
 		}
 		IPreferenceStore store =getPreferenceStore();
-		StringBuffer title = new StringBuffer("Properties For ");
+		StringBuffer title = new StringBuffer(ActionMessages.getString("JavaBreakpointPreferencePage.Properties_For__6")); //$NON-NLS-1$
 
 		try {
 			store.setValue(JavaBreakpointPreferenceStore.ENABLED, breakpoint.isEnabled());
@@ -162,7 +193,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			store.setValue(
 				JavaBreakpointPreferenceStore.PERSISTED,
 				breakpoint.isPersisted());
-			String policy = "";
+			String policy = ""; //$NON-NLS-1$
 			if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD) {
 				policy = THREAD_SUSPEND_POLICY;
 			} else {
@@ -176,18 +207,18 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 
 			if (breakpoint instanceof IJavaExceptionBreakpoint) {
 				IJavaExceptionBreakpoint jeBreakpoint = (IJavaExceptionBreakpoint) breakpoint;
-				this.setTitle("Java Exception Breakpoint Properties");
+				this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Exception_Breakpoint_Properties_8")); //$NON-NLS-1$
 				store.setValue(
 					JavaBreakpointPreferenceStore.UNCAUGHT,
 					jeBreakpoint.isUncaught());
 				store.setValue(JavaBreakpointPreferenceStore.CAUGHT, jeBreakpoint.isCaught());
 				addField(createUncaughtEditor(getFieldEditorParent()));
 				addField(createCaughtEditor(getFieldEditorParent()));
-				title.append("Java Exception Breakpoint");
+				title.append(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Exception_Breakpoint_9")); //$NON-NLS-1$
 			} else if (breakpoint instanceof IJavaLineBreakpoint) {
 				if (breakpoint instanceof IJavaMethodBreakpoint) {
 					IJavaMethodBreakpoint jmBreakpoint = (IJavaMethodBreakpoint) breakpoint;
-					this.setTitle("Java Method Breakpoint Properties");
+					this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Method_Breakpoint_Properties_10")); //$NON-NLS-1$
 					store.setValue(
 						JavaBreakpointPreferenceStore.METHOD_ENTRY,
 						jmBreakpoint.isEntry());
@@ -196,30 +227,28 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 						jmBreakpoint.isExit());
 					addField(createMethodEntryEditor(getFieldEditorParent()));
 					addField(createMethodExitEditor(getFieldEditorParent()));
-					title.append("Java Method Breakpoint");
+					title.append(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Method_Breakpoint_11")); //$NON-NLS-1$
 				} else if (breakpoint instanceof IJavaWatchpoint) {
 					IJavaWatchpoint jWatchpoint = (IJavaWatchpoint) breakpoint;
-					this.setTitle("Java Watchpoint Properties");
+					this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Watchpoint_Properties_12")); //$NON-NLS-1$
 					store.setValue(JavaBreakpointPreferenceStore.ACCESS, jWatchpoint.isAccess());
 					store.setValue(
 						JavaBreakpointPreferenceStore.MODIFICATION,
 						jWatchpoint.isModification());
 					addField(createAccessEditor(getFieldEditorParent()));
 					addField(createModificationEditor(getFieldEditorParent()));
-					title.append("Java Watchpoint");
+					title.append(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Watchpoint_13")); //$NON-NLS-1$
 				} else if (breakpoint instanceof IJavaPatternBreakpoint) {
-					this.setTitle("Java Pattern Breakpoint Properties");
-					title.append("Java Pattern Breakpoint");
+					this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Pattern_Breakpoint_Properties_14")); //$NON-NLS-1$
+					title.append(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Pattern_Breakpoint_15")); //$NON-NLS-1$
 				} else {
-					this.setTitle("Java Line Breakpoint Properties");
-					title.append("Java Line Breakpoint");
+					this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Line_Breakpoint_Properties_16")); //$NON-NLS-1$
+					title.append(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Line_Breakpoint_17")); //$NON-NLS-1$
 				}
 			}
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.logError(ce);
 		}
-		//JavaBreakpointPropertiesDialog.this.setTitle(title.toString());
-
 	}
 
 	public void createControl(Composite parent) {
@@ -228,7 +257,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	}
 
 	protected FieldEditor createAccessEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.ACCESS, "Access", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.ACCESS, ActionMessages.getString("JavaBreakpointPreferencePage.Access_18"), parent); //$NON-NLS-1$
 		return bfe;
 	}
 	
@@ -237,22 +266,22 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		fHitCountEnabler =
 			new BooleanFieldEditor(
 				JavaBreakpointPreferenceStore.HIT_COUNT_ENABLED,
-				"Enable &Hit Count",
+				ActionMessages.getString("JavaBreakpointPreferencePage.Enable_&Hit_Count_19"), //$NON-NLS-1$
 				parent);
 		addField(fHitCountEnabler);
 
-		IntegerFieldEditor ife =
-			new IntegerFieldEditor(
+		fHitCount =
+			new BreakpointIntegerFieldEditor(
 				JavaBreakpointPreferenceStore.HIT_COUNT,
-				"H&it Count:",
+				ActionMessages.getString("JavaBreakpointPreferencePage.H&it_Count__20"), //$NON-NLS-1$
 				parent);
-		ife.setValidRange(1, Integer.MAX_VALUE);
-		fHitCountTextControl = ife.getTextControl(parent);
+		fHitCount.setValidRange(1, Integer.MAX_VALUE);
+		fHitCountTextControl = fHitCount.getTextControl(parent);
 		try {
 			fHitCountTextControl.setEnabled(getBreakpoint().getHitCount() > 0);
 		} catch (CoreException ce) {
 		}
-		addField(ife);
+		addField(fHitCount);
 	}
 
 	protected FieldEditor createLabelEditor(
@@ -269,47 +298,47 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		fBreakpoint = breakpoint;
 	}
 		protected FieldEditor createCaughtEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CAUGHT, "&Caught", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CAUGHT, ActionMessages.getString("JavaBreakpointPreferencePage.&Caught_21"), parent); //$NON-NLS-1$
 		return bfe;
 	}
 
 	protected FieldEditor createEnabledEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.ENABLED, "&Enabled",parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.ENABLED, ActionMessages.getString("JavaBreakpointPreferencePage.&Enabled_22"),parent); //$NON-NLS-1$
 		return bfe;
 	}
 
 	protected FieldEditor createLineNumberEditor(Composite parent) {	
-		IntegerFieldEditor ife= new IntegerFieldEditor("LineNumber", "Line Number:",parent);
+		IntegerFieldEditor ife= new IntegerFieldEditor(ActionMessages.getString("JavaBreakpointPreferencePage.LineNumber_23"), ActionMessages.getString("JavaBreakpointPreferencePage.Line_Number__24"),parent); //$NON-NLS-1$ //$NON-NLS-2$
 		ife.setValidRange(0, Integer.MAX_VALUE);
 		return ife;
 	}
 
 	protected FieldEditor createMethodEntryEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.METHOD_ENTRY, "E&ntry", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.METHOD_ENTRY, ActionMessages.getString("JavaBreakpointPreferencePage.E&ntry_25"), parent); //$NON-NLS-1$
 		return bfe;
 	}
 
 	protected FieldEditor createMethodExitEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.METHOD_EXIT, "E&xit", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.METHOD_EXIT, ActionMessages.getString("JavaBreakpointPreferencePage.E&xit_26"), parent); //$NON-NLS-1$
 		return bfe;
 	}
 
 	protected FieldEditor createModificationEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.MODIFICATION, "&Modification", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.MODIFICATION, ActionMessages.getString("JavaBreakpointPreferencePage.&Modification_27"), parent); //$NON-NLS-1$
 		return bfe;
 	}
 
 	protected FieldEditor createPersistedEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.PERSISTED, "&Persisted",parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.PERSISTED, ActionMessages.getString("JavaBreakpointPreferencePage.&Persisted_28"),parent); //$NON-NLS-1$
 		return bfe;
 	}
 
 	protected FieldEditor createSuspendPolicyEditor(Composite parent) {	
 		RadioGroupFieldEditor editor= new RadioGroupFieldEditor(
- 			JavaBreakpointPreferenceStore.SUSPEND_POLICY, "Suspend Policy", 1,
+ 			JavaBreakpointPreferenceStore.SUSPEND_POLICY, ActionMessages.getString("JavaBreakpointPreferencePage.Suspend_Policy_29"), 1, //$NON-NLS-1$
  			new String[][] {
- 				{"Suspend &Thread", THREAD_SUSPEND_POLICY},
- 				{"Suspend &VM", VM_SUSPEND_POLICY}
+ 				{ActionMessages.getString("JavaBreakpointPreferencePage.Suspend_&Thread_30"), THREAD_SUSPEND_POLICY}, //$NON-NLS-1$
+ 				{ActionMessages.getString("JavaBreakpointPreferencePage.Suspend_&VM_31"), VM_SUSPEND_POLICY} //$NON-NLS-1$
  			},
            parent);	
 
@@ -317,7 +346,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	}
 
 	protected FieldEditor createUncaughtEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.UNCAUGHT, "&Uncaught", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.UNCAUGHT, ActionMessages.getString("JavaBreakpointPreferencePage.&Uncaught_32"), parent); //$NON-NLS-1$
 		return bfe;
 	}
 }
