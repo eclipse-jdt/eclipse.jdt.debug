@@ -327,8 +327,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		setEventDispatcher(new EventDispatcher(this));
 		initializeRequests();
 		initializeState();
-		fireCreationEvent();
 		initializeBreakpoints();
+		fireCreationEvent();
 		new Thread(getEventDispatcher(), JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
 	}
 	
