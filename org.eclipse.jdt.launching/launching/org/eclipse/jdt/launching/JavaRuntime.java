@@ -1,9 +1,9 @@
+package org.eclipse.jdt.launching;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-package org.eclipse.jdt.launching;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -59,7 +59,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
 
 /**
  * The central access point for launching support. This class manages
@@ -119,8 +118,9 @@ public final class JavaRuntime {
 	 * @return the list of registered VM types
 	 */
 	public static IVMInstallType[] getVMInstallTypes() {
-		if (fgVMTypes == null)
+		if (fgVMTypes == null) {
 			initializeVMTypes();
+		}
 		return fgVMTypes; 
 	}
 	
@@ -128,20 +128,28 @@ public final class JavaRuntime {
 		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(LaunchingPlugin.PLUGIN_ID + ".vmInstallTypes"); //$NON-NLS-1$
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
 		MultiStatus status= new MultiStatus(LaunchingPlugin.PLUGIN_ID, IStatus.OK, LaunchingMessages.getString("JavaRuntime.exceptionOccurred"), null); //$NON-NLS-1$
-		ArrayList vmTypes= new ArrayList(configs.length);
+		fgVMTypes= new IVMInstallType[configs.length];
 
 		for (int i= 0; i < configs.length; i++) {
 			try {
 				IVMInstallType vmType= (IVMInstallType)configs[i].createExecutableExtension("class"); //$NON-NLS-1$
-				vmTypes.add(vmType);
+				fgVMTypes[i]= vmType;
 			} catch (CoreException e) {
 				status.add(e.getStatus());
 			}
 		}
-		fgVMTypes= new IVMInstallType[vmTypes.size()];
-		fgVMTypes= (IVMInstallType[])vmTypes.toArray(fgVMTypes);
 		if (!status.isOK()) {
+			//only happens on a CoreException
 			LaunchingPlugin.log(status);
+			//cleanup null entries in fgVMTypes
+			List temp= new ArrayList(fgVMTypes.length);
+			for (int i = 0; i < fgVMTypes.length; i++) {
+				if(fgVMTypes[i] != null) {
+					temp.add(fgVMTypes[i]);
+				}
+				fgVMTypes= new IVMInstallType[temp.size()];
+				fgVMTypes= (IVMInstallType[])temp.toArray(fgVMTypes);
+			}
 		}
 		
 		try {
@@ -188,8 +196,9 @@ public final class JavaRuntime {
 	public static IVMInstallType getVMInstallType(String id) {
 		IVMInstallType[] vmTypes= getVMInstallTypes();
 		for (int i= 0; i < vmTypes.length; i++) {
-			if (vmTypes[i].getId().equals(id))
+			if (vmTypes[i].getId().equals(id)) {
 				return vmTypes[i];
+			}
 		}
 		return null;
 	}
@@ -247,6 +256,9 @@ public final class JavaRuntime {
 			return install;
 		} else {
 			// if the default JRE goes missing, re-detect
+			if (install != null) {
+				install.getVMInstallType().disposeVMInstall(install.getId());
+			}
 			fgDefaultVMId = null;
 			detectVMConfiguration();
 			return getVMFromId(getDefaultVMId());
@@ -254,14 +266,16 @@ public final class JavaRuntime {
 	}
 	
 	private static String getDefaultVMId() {
-		if (fgVMTypes == null)
+		if (fgVMTypes == null) {
 			initializeVMTypes();
+		}
 		return fgDefaultVMId;
 	}
 	
 	private static String getIdFromVM(IVMInstall vm) {
-		if (vm == null)
+		if (vm == null) {
 			return null;
+		}
 		IVMInstallType vmType= vm.getVMInstallType();
 		String typeID= vmType.getId();
 		CompositeId id= new CompositeId(new String[] { typeID, vm.getId() });
@@ -291,8 +305,9 @@ public final class JavaRuntime {
 	}	
 	
 	private static void collectClasspathEntries(IWorkspaceRoot root, IJavaProject jproject, List visited, List resultingPaths) throws CoreException {
-		if (visited.contains(jproject))
+		if (visited.contains(jproject)) {
 			return;
+		}
 		visited.add(jproject);
 	
 		boolean sourceFolderFound= false;
@@ -331,7 +346,6 @@ public final class JavaRuntime {
 		}		
 	}
 	
-	// saving
 	/**
 	 * Saves the VM configuration information to disk. This includes
 	 * the following information:
@@ -359,15 +373,15 @@ public final class JavaRuntime {
 	private static void writeVMs(Writer writer) throws IOException {
 		Document doc = new DocumentImpl();
 		Element config = doc.createElement("vmSettings"); //$NON-NLS-1$
-		if (fgDefaultVMId != null)
+		if (fgDefaultVMId != null) {
 			config.setAttribute("defaultVM", fgDefaultVMId); //$NON-NLS-1$
+		}
 		doc.appendChild(config);
 		
 		IVMInstallType[] vmTypes= getVMInstallTypes();
 
 		for (int i = 0; i < vmTypes.length; ++i) {
-			Element vmTypeElement =
-				vmTypeAsElement(doc, vmTypes[i]);
+			Element vmTypeElement = vmTypeAsElement(doc, vmTypes[i]);
 			config.appendChild(vmTypeElement);
 		}
 
@@ -400,8 +414,9 @@ public final class JavaRuntime {
 		element.setAttribute("timeout", String.valueOf(vm.getDebuggerTimeout())); //$NON-NLS-1$
 		String installPath= ""; //$NON-NLS-1$
 		File installLocation= vm.getInstallLocation();
-		if (installLocation != null)
+		if (installLocation != null) {
 			installPath= installLocation.getAbsolutePath();
+		}
 		element.setAttribute("path", installPath); //$NON-NLS-1$
 		LibraryLocation libraryLocation= vm.getLibraryLocation();
 		if (libraryLocation != null) {
@@ -418,8 +433,6 @@ public final class JavaRuntime {
 		element.setAttribute("pkgRoot", location.getPackageRootPath().toString()); //$NON-NLS-1$
 		return element;
 	}
-	
-	// loading
 	
 	private static void initializeVMConfiguration() throws IOException {
 		IPath stateLocation= LaunchingPlugin.getPlugin().getStateLocation();
@@ -503,25 +516,32 @@ public final class JavaRuntime {
 				}
 			}
 		} else {
-			//"log it".
+			LaunchingPlugin.log("VM type element with unknown id");
 		}
 	}
 
 	private static void createVM(IVMInstallType vmType, Element vmElement) {
 		String id= vmElement.getAttribute("id"); //$NON-NLS-1$
 		if (id != null) {
+			String installPath= vmElement.getAttribute("path"); //$NON-NLS-1$
+			if (installPath == null) {
+				return;
+			}
+			File installLocation= new File(installPath);
+			if (!installLocation.exists()) {
+				return;
+			}
 			IVMInstall vm= vmType.createVMInstall(id);
 			vm.setName(vmElement.getAttribute("name")); //$NON-NLS-1$
-			String installPath= vmElement.getAttribute("path"); //$NON-NLS-1$
+			vm.setInstallLocation(installLocation);
 			String timeoutString= vmElement.getAttribute("timeout"); //$NON-NLS-1$
 			try {
-				if (timeoutString != null)
+				if (timeoutString != null) {
 					vm.setDebuggerTimeout(Integer.parseInt(timeoutString));
+				}
 			} catch (NumberFormatException e) {
 			}
-			if (installPath == null)
-				installPath= ""; //$NON-NLS-1$
-			vm.setInstallLocation(new File(installPath));
+			
 			NodeList list = vmElement.getChildNodes();
 			int length = list.getLength();
 			for (int i = 0; i < length; ++i) {
@@ -537,7 +557,7 @@ public final class JavaRuntime {
 			}
 
 		} else {
-			//log it.
+			LaunchingPlugin.log("VM element specified with no id attribute");
 		}
 	}
 	
@@ -548,7 +568,7 @@ public final class JavaRuntime {
 		if (jreJar != null && jreSrc != null && pkgRoot != null) {
 			vm.setLibraryLocation(new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot)));
 		} else {
-			// log it
+			LaunchingPlugin.log("Library location element incorrectly specified");
 		}
 	}
 	
@@ -592,7 +612,6 @@ public final class JavaRuntime {
 		LibraryLocation location= defaultVM.getLibraryLocation();
 		if (location == null) {
 			LibraryLocation dflt= defaultVM.getVMInstallType().getDefaultLibraryLocation(defaultVM.getInstallLocation());
-			
 			libraryPath= dflt.getSystemLibraryPath();
 			if (!libraryPath.toFile().isFile()) {
 				libraryPath= Path.EMPTY;
@@ -645,5 +664,4 @@ public final class JavaRuntime {
 			new Path(JRESRCROOT_VARIABLE)
 		);
 	}
-
 }
