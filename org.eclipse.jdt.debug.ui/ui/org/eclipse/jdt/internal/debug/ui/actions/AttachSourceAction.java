@@ -87,6 +87,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 			fEntry.setSourceAttachmentPath(dialog.getSourceAttachmentPath());
 			fEntry.setSourceAttachmentRootPath(dialog.getSourceAttachmentRootPath());
 			getViewer().refresh(fEntry);
+			getViewer().notifyChanged();
 		}
 	}
 

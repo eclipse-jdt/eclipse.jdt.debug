@@ -170,7 +170,7 @@ public class RuntimeClasspathViewer extends TableViewer {
 		fListeners.remove(listener);
 	}
 	
-	protected void notifyChanged() {
+	public void notifyChanged() {
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			((IEntriesChangedListener)listeners[i]).entriesChanged(this);
