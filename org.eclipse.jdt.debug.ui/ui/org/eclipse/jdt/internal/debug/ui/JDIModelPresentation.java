@@ -751,7 +751,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		JDIImageDescriptor descriptor= null;
 		boolean enabled= (flags & JDIImageDescriptor.ENABLED) != 0;
 		if (!enabled) {
-			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
+			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_EXCEPTION_DISABLED, flags);
 		} else if (exception.isChecked()) {
 			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_EXCEPTION, flags);
 		} else {
