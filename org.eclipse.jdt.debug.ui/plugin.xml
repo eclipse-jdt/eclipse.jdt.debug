@@ -1621,44 +1621,6 @@
 <extension point="org.eclipse.ui.commands">
 	<command
 		category="org.eclipse.debug.ui.category.run"
-		id="org.eclipse.jdt.debug.ui.localJavaShortcut"
-		name= "%ActionDefinition.localJavaShortcut.name"
-		description="%ActionDefinition.localJavaShortcut.description"
-	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.localJavaShortcut"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.localJavaShortcut"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>
-	
-	<command
-		category="org.eclipse.debug.ui.category.run"
-		id="org.eclipse.jdt.debug.ui.javaAppletShortcut"
-		name= "%ActionDefinition.javaAppletShortcut.name"
-		description="%ActionDefinition.javaAppletShortcut.description"
-	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.javaAppletShortcut"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.javaAppletShortcut"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>	
-	
-	<command
-		category="org.eclipse.debug.ui.category.run"
 		 id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
   		 name="%ActionDefinition.manageWatchpoint.name"
   		 description= "%ActionDefinition.manageWatchpoint.description"
