@@ -196,9 +196,12 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 				Iterator variables = stackFrame.visibleVariables().iterator();
 				while (variables.hasNext()) {
 					LocalVariable jdiVariable = (LocalVariable)variables.next();
-					Field field = codeSnippetClass.fieldByName(LOCAL_VAR_PREFIX + jdiVariable.name());
-					Value value = codeSnippet.getValue(field);
-					stackFrame.setValue(jdiVariable, value);
+					String typeName = getTranslatedTypeName(jdiVariable);
+					if (typeName != null) {
+						Field field = codeSnippetClass.fieldByName(LOCAL_VAR_PREFIX + jdiVariable.name());
+						Value value = codeSnippet.getValue(field);
+						stackFrame.setValue(jdiVariable, value);
+					}
 				}	
 			} catch (AbsentInformationException e) {
 				// No variables
@@ -235,17 +238,24 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 		try {
 			List list = stackFrame.visibleVariables();
 			int size = list.size();
-			fLocalVariableTypeNames = new String[size];
-			fLocalVariableNames = new String[size];
-			fLocalVariableModifiers = new int[size];
-			
+			List typeNames = new ArrayList(size);
+			List varNames = new ArrayList(size);
+
 			for (int i = 0; i < size; i++) {
 				LocalVariable jdiVariable = (LocalVariable)list.get(i);
-				fLocalVariableTypeNames[i] = jdiVariable.typeName();
-				fLocalVariableNames[i] = jdiVariable.name();
-				// cannot determine if local is final, so specify as default
-				fLocalVariableModifiers[i] = 0;
+				String typeName = getTranslatedTypeName(jdiVariable);
+				if (typeName != null) {
+					typeNames.add(typeName);
+					varNames.add(jdiVariable.name());
+				}
 			}
+			
+			fLocalVariableTypeNames = (String[])typeNames.toArray(new String[typeNames.size()]);
+			fLocalVariableNames = (String[])varNames.toArray(new String[varNames.size()]);
+			fLocalVariableModifiers = new int[typeNames.size()];
+			// cannot determine if local is final, so specify as default
+			Arrays.fill(fLocalVariableModifiers, 0);
+			
 		} catch (AbsentInformationException e) {
 			// No variables
 			fLocalVariableTypeNames = new String[0];
@@ -266,6 +276,25 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			fIsStatic = method.isStatic();
 		} catch (RuntimeException e) {
 			fModelFrame.targetRequestFailed(ERROR_EVALUATION, e);
+		}
+	}
+	
+	protected String getTranslatedTypeName(LocalVariable local) {
+		String name = local.typeName();
+		int index = name.lastIndexOf('$');
+		if (index == -1) {
+			return name;
+		}
+		if (index + 1 > name.length()) {
+			// invalid name
+			return name;
+		}
+		String last = name.substring(index + 1);
+		try {
+			Integer.parseInt(last);
+			return null;
+		} catch (NumberFormatException e) {
+			return name.replace('$', '.');
 		}
 	}
 
