@@ -13,10 +13,10 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
-import org.eclipse.jdt.internal.ui.wizards.buildpaths.NewVariableEntryDialog;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
+import org.eclipse.jface.action.IAction;
 
 /**
  * Adds a variable to the runtime class path.
@@ -34,11 +34,8 @@ public class AddVariableAction extends RuntimeClasspathAction {
 	 */	
 	public void run() {
 		
-		NewVariableEntryDialog dialog = new NewVariableEntryDialog(getShell());
-		dialog.setTitle(ActionMessages.getString("AddVariableAction.Variable_Selection_1")); //$NON-NLS-1$
-		
-		if (dialog.open() == Window.OK) {			
-			IPath[] paths = dialog.getResult();
+		IPath[] paths = BuildPathDialogAccess.chooseVariableEntries(getShell(), new IPath[0]);
+		if (paths != null) {			
 			IRuntimeClasspathEntry[] entries = new IRuntimeClasspathEntry[paths.length];
 			for (int i = 0; i < paths.length; i++) {
 				entries[i] = JavaRuntime.newVariableRuntimeClasspathEntry(paths[i]);
