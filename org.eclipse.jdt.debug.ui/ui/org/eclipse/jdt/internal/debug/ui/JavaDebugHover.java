@@ -50,16 +50,17 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 				
 		DebugPlugin debugPlugin= DebugPlugin.getDefault();
-		if (debugPlugin == null)
+		if (debugPlugin == null) {
 			return null;
+		}
 			
 		ILaunchManager launchManager= debugPlugin.getLaunchManager();
-		if (launchManager == null)
+		if (launchManager == null) {
 			return null;
+		}
 			
 		IDebugTarget[] targets= launchManager.getDebugTargets();
 		if (targets != null && targets.length > 0) {
-			
 			try {
 				
 				String variableName= textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
@@ -72,8 +73,9 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 						try {
 							IVariable variable= javaTarget.findVariable(variableName);
 							if (variable != null) {
-								if (!first)
+								if (!first) {
 									buffer.append('\n');
+								}
 								first= false;
 								appendVariable(buffer, variable);
 							}
@@ -83,8 +85,9 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 					}
 				}
 				
-				if (buffer.length() > 0)
+				if (buffer.length() > 0) {
 					return buffer.toString();
+				}
 			
 			} catch (BadLocationException x) {
 				JDIDebugUIPlugin.log(x);
@@ -100,8 +103,9 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 		if (value instanceof IJavaValue) {
 			IJavaType type= ((IJavaValue) value).getJavaType();
 			
-			if (type == null)
+			if (type == null) {
 				return null;
+			}
 			
 			return type.getName();
 		}
@@ -119,16 +123,13 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 		
 		if (type == null) {
 			buffer.append(" null"); //$NON-NLS-1$
-
 		} else if (type.equals("java.lang.String")) { //$NON-NLS-1$
 			buffer.append(" \""); //$NON-NLS-1$
 			buffer.append(value);
 			buffer.append('"');
-
 		} else if (type.equals("boolean")) { //$NON-NLS-1$
 			buffer.append(' ');
 			buffer.append(value);
-
 		} else {
 			buffer.append(" ("); //$NON-NLS-1$
 			buffer.append(type);
