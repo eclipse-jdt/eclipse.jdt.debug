@@ -38,6 +38,7 @@ import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Method;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.Type;
 import com.sun.jdi.VirtualMachine;
@@ -251,8 +252,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			if (method.isStatic()) {
 				// add statics
 				List allFields= null;
+				ReferenceType declaringType = method.declaringType();
 				try {
-					allFields= method.declaringType().allFields();
+					allFields= declaringType.allFields();
 				} catch (RuntimeException e) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_fields"),new String[] {e.toString()}), e); //$NON-NLS-1$
 					// execution will not reach this line, as 
@@ -264,7 +266,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					while (fields.hasNext()) {
 						Field field= (Field) fields.next();
 						if (field.isStatic()) {
-							fVariables.add(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, null));
+							fVariables.add(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, declaringType));
 						}
 					}
 					Collections.sort(fVariables, new Comparator() {

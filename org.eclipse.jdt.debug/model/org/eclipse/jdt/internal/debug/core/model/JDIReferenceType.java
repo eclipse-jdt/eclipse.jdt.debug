@@ -74,9 +74,10 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 	 */
 	public IJavaFieldVariable getField(String name) throws DebugException {
 		try {
-			Field field = ((ReferenceType)getUnderlyingType()).fieldByName(name);
+			ReferenceType type = (ReferenceType)getUnderlyingType();
+			Field field = type.fieldByName(name);
 			if (field != null) {
-				return new JDIFieldVariable(getDebugTarget(), field, null);
+				return new JDIFieldVariable(getDebugTarget(), field, type);
 			}			
 		} catch (RuntimeException e) {
 			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_field"), new String[] {e.toString(), name}), e); //$NON-NLS-1$

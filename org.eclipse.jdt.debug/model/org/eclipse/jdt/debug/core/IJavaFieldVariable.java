@@ -53,14 +53,22 @@ public interface IJavaFieldVariable extends IJavaVariable {
 	public IJavaType getDeclaringType();	
 	
 	/**
-	 * Returns the object that contains this field variable. 
+	 * Returns the object that contains this field variable, or <code>null</code>
+	 * if no object contains this field variable (static field variable). 
 	 * 
 	 * @return the object that contains this field variable
 	 * @since 3.0
 	 */
 	public IJavaObject getReceiver();
 	
-
+	/**
+	 * Returns the type that contains this field variable.
+	 * 
+	 * @return the type that contains this field variable
+	 * @since 3.0
+	 */
+	public IJavaReferenceType getReceivingType();
+	
 }
 
 
