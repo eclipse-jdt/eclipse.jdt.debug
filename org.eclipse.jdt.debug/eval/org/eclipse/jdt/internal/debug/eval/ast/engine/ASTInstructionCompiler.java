@@ -2439,7 +2439,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			// (multiple arguments) and not an array
 			Iterator iterator= arguments.iterator();
 			// process the first arguments (no part of the var argument)
-			for (int i= 1; i < paramCount;) {
+			for (int i= 1; i < paramCount; i++) {
 				((Expression) iterator.next()).accept(this);
 			}
 			// create a array of the remainder arguments
