@@ -9,7 +9,13 @@ import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 
-import com.sun.jdi.*;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.Field;
+import com.sun.jdi.InterfaceType;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Value;
 
 /**
  * A field member.
@@ -46,12 +52,11 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	}
 
 	/**
-	 * @see IDebugElement
+	 * @see IVariable#getName()
 	 */
 	public String getName() throws DebugException {
 		try {
 			return fField.name();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_retrieving_field_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -69,7 +74,6 @@ public class JDIFieldVariable extends JDIModificationVariable {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_modifying_value_1"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_modifying_value_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_modifying_value_3"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -77,82 +81,81 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	}
 		
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaVariable#isVolatile()
 	 */
 	public boolean isVolatile() {
 		return fField.isVolatile();
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaVariable#isTransient()
 	 */
 	public boolean isTransient() {
 		return fField.isTransient();
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isSynthetic()
 	 */
 	public boolean isSynthetic() {
 		return fField.isSynthetic();
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isPublic()
 	 */
 	public boolean isPublic() {
 		return fField.isPublic();
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isPrivate()
 	 */
 	public boolean isPrivate() {
 		return fField.isPrivate();
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isProtected()
 	 */
 	public boolean isProtected() {
 		return fField.isProtected();
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isPackagePrivate()
 	 */
 	public boolean isPackagePrivate() {
 		return fField.isPackagePrivate();
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isStatic()
 	 */
 	public boolean isStatic() {
 		return fField.isStatic();
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaModifiers#isFinal()
 	 */
 	public boolean isFinal() {
 		return fField.isFinal();
 	}
 
 	/**
-	 * @see IVariable
+	 * @see IVariable#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() {
 		return fField.typeName();
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaVariable#getSignature()
 	 */
 	public String getSignature() throws DebugException {
 		try {
 			return fField.signature();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_retrieving_field_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} 
@@ -160,14 +163,10 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	}
 
 	/**
-	 * Returns this variables underlying jdi field
+	 * Returns this variables underlying JDI field
 	 */
 	protected Field getField() {
 		return fField;
-	}
-	
-	protected VirtualMachine getVirtualMachine() {
-		return fField.virtualMachine();
 	}
 	
 	public boolean supportsValueModification() {
