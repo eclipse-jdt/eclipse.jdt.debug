@@ -45,6 +45,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -161,8 +162,8 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 			names[i] = fConnectors[i].getName();
 		}
 		fConnectorCombo.setItems(names);
-		fConnectorCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
+		fConnectorCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
 				handleConnectorComboModified();
 			}
 		});
@@ -305,9 +306,9 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		String id = null;
 		try {
 			id = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, JavaRuntime.getDefaultVMConnector().getIdentifier());
-			fConnectorCombo.setText(JavaRuntime.getVMConnector(id).getName());	
-
-
+			fConnectorCombo.setText(JavaRuntime.getVMConnector(id).getName());
+			handleConnectorComboModified();
+			
 			Map attrMap = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map)null);
 			if (attrMap == null) {
 				return;
