@@ -694,7 +694,7 @@ public final class JavaRuntime {
 					if (project == null || !project.exists()) { 
 						abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_project__{0}_1"), new String[]{entry.getPath().lastSegment()}), null); //$NON-NLS-1$
 					}
-					if (!project.isOpen()) {
+					if (!project.getProject().isOpen()) {
 						abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_closed_project__{0}_2"), new String[]{entry.getPath().lastSegment()}), null); //$NON-NLS-1$
 					}
 					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project);
@@ -749,7 +749,7 @@ public final class JavaRuntime {
 	 */
 	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project) throws CoreException {
 		List nonDefault = new ArrayList();
-		if (project.exists() && project.isOpen()) {
+		if (project.exists() && project.getProject().isOpen()) {
 			IClasspathEntry entries[] = project.getRawClasspath();
 			for (int i = 0; i < entries.length; i++) {
 				IClasspathEntry classpathEntry = entries[i];
@@ -807,7 +807,7 @@ public final class JavaRuntime {
 				IResource resource = entry.getResource();
 				if (resource instanceof IProject) {
 					IJavaProject jp = JavaCore.create((IProject)resource);
-					if (jp.exists() && jp.isOpen()) {
+					if (jp.exists() && jp.getProject().isOpen()) {
 						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp);
 						if (entries != null) {
 							return entries;
@@ -1040,7 +1040,7 @@ public final class JavaRuntime {
 			return;
 		}
 		IJavaProject project = (IJavaProject)JavaCore.create(res);
-		if (project == null || !project.exists() || !project.isOpen()) {
+		if (project == null || !project.exists() || !project.getProject().isOpen()) {
 			// add project entry and return
 			expandedPath.add(projectEntry);
 			return;
