@@ -186,7 +186,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 					}
 				}
 			} catch (CoreException ex) {
-				JDIDebugUIPlugin.errorDialog("Unable to open type", ex.getStatus());
+				JDIDebugUIPlugin.errorDialog(ActionMessages.getString("OpenTypeAction.2"), ex.getStatus()); //$NON-NLS-1$
 			}
 					
 		}
