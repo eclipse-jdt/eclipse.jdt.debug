@@ -30,8 +30,6 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
-import org.eclipse.jdt.internal.core.JavaModel;
-import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
@@ -488,11 +486,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	
 	private IJavaProject getJavaProject(IProject project) {
 		try {
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				JavaModel model = JavaModelManager.getJavaModel(project.getWorkspace());
-				if (model != null) {
-					return model.getJavaProject(project);
-				}
+			if (project.exists() && project.hasNature(JavaCore.NATURE_ID)) {
+				return JavaCore.create(project);
 			}
 		} catch (CoreException e) {
 		}
