@@ -48,9 +48,7 @@
             name="%localJavaApplication"
             delegate="org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate"
             modes="run, debug"
-            id="org.eclipse.jdt.launching.localJavaApplication"
-            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer">
+            id="org.eclipse.jdt.launching.localJavaApplication">
       </launchConfigurationType>
       <launchConfigurationType
             name="%remoteJavaApplication"
