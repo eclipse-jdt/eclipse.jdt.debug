@@ -9,9 +9,9 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * A target pattern breakpoint is a Java line breakpoint which is installed in
- * classes with a specific source file name (debug attribute) and whose fully
+ * types with a specific source file name (debug attribute) and whose fully
  * qualified name matches a specified pattern per target.
- * The {target, class name pattern} pairs are not persisted with this breakpoint, as 
+ * The {target, type name pattern} pairs are not persisted with this breakpoint, as 
  * targets are transient. Clients that use this type of breakpoint are intended
  * to be breakpoint listeners that set a pattern per target as each breakpoint
  * is added to a target.
@@ -24,21 +24,21 @@ import org.eclipse.core.runtime.CoreException;
 public interface IJavaTargetPatternBreakpoint extends IJavaLineBreakpoint {
 
 	/**
-	 * Returns the class name pattern in which this breakpoint is to be
+	 * Returns the type name pattern in which this breakpoint is to be
 	 * installed for the given target
 	 * 
 	 * @param target debug target
-	 * @return the class name pattern in which this breakpoint is installed
+	 * @return the type name pattern in which this breakpoint is installed
 	 */
 	public String getPattern(IJavaDebugTarget target);
 	
 	/** 
-	 * Sets the class name pattern for the specified target. This breakpoint
+	 * Sets the type name pattern for the specified target. This breakpoint
 	 * will be installed in all types matching the given pattern in the
 	 * specified target.
 	 * 
 	 * @param target debug target
-	 * @param pattern class name pattern
+	 * @param pattern type name pattern
 	 * @exception CoreException if changing the pattern for this breakpoint fails
 	 */
 	public void setPattern(IJavaDebugTarget target, String pattern) throws CoreException;
@@ -46,7 +46,7 @@ public interface IJavaTargetPatternBreakpoint extends IJavaLineBreakpoint {
 	/**
 	 * Returns the simple source file name in which this breakpoint is set.
 	 * When this breakpoint specifies a source file name, this breakpoint is
-	 * only installed in classes whose source file name debug attribute
+	 * only installed in types whose source file name debug attribute
 	 * match this value.
 	 * 
 	 * @return the simple source file name in which this breakpoint is set
