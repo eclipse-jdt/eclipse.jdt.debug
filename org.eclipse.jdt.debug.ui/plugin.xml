@@ -1838,6 +1838,11 @@
 		types="java.util.Map$Entry"
 		class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapEntryVariablesContentProvider">
 	</javaVariablesContentProvider>
+	<javaVariablesContentProvider
+		id="org.eclipse.jdt.debug.ui.SWTCompositeContentProvider"
+		types="org.eclipse.swt.widgets.Composite"
+		class="org.eclipse.jdt.internal.debug.ui.SWTCompositeVariablesContentProvider">
+	</javaVariablesContentProvider>
 </extension>
 
 </plugin>
