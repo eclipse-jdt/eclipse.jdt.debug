@@ -1400,7 +1400,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fValue = value;
 			fListener = listener;
 			
-			if (value == null) {
+			if (((IJavaValue)value).getSignature() == null) {
 				// no need to spawn a thread for a null value
 				fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.null_78")); //$NON-NLS-1$
 				notifyListener();

@@ -94,7 +94,7 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	 * @see IJavaValue#getSignature()
 	 */
 	public String getSignature() {
-		return null;
+		return ""; //$NON-NLS-1$
 	}
 	
 	protected JDIArrayPartition getPartition() {
