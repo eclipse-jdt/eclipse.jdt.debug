@@ -70,7 +70,6 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
-		monitor.beginTask(LaunchingMessages.getString("JavaRuntime.Setting_JRE_classpath_variables"), 3); //$NON-NLS-1$
 		IVMInstall vmInstall= JavaRuntime.getDefaultVMInstall();
 		if (vmInstall != null) {
 			IWorkspace workspace= ResourcesPlugin.getWorkspace();

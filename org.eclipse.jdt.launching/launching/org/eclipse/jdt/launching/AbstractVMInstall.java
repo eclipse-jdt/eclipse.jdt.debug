@@ -46,8 +46,8 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	 * Subclasses should not override this method.
 	 * @see IVMInstall#setName(String)
 	 */
-	public void setName(String name) {		PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_NAME, fName, name);
-		fName= name;		JavaRuntime.fireVMChanged(event);
+	public void setName(String name) {		if (!name.equals(fName)) {			PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_NAME, fName, name);
+			fName= name;			JavaRuntime.fireVMChanged(event);		}
 	}
 
 	/* (non-Javadoc)
@@ -62,8 +62,8 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	 * Subclasses should not override this method.
 	 * @see IVMInstall#setInstallLocation(File)
 	 */
-	public void setInstallLocation(File installLocation) {		PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION, fInstallLocation, installLocation);
-		fInstallLocation= installLocation;		JavaRuntime.fireVMChanged(event);
+	public void setInstallLocation(File installLocation) {		if (!installLocation.equals(fInstallLocation)) {			PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION, fInstallLocation, installLocation);
+			fInstallLocation= installLocation;			JavaRuntime.fireVMChanged(event);		}
 	}
 
 	/* (non-Javadoc)
@@ -80,4 +80,4 @@ public abstract class AbstractVMInstall implements IVMInstall {
 		return null;
 	}
 
-	/**	 * @see IVMInstall#getLibraryLocations()	 */	public LibraryLocation[] getLibraryLocations() {		return fSystemLibraryDescriptions;	}	/**	 * @see IVMInstall#setLibraryLocations(LibraryLocation[])	 */	public void setLibraryLocations(LibraryLocation[] locations) {		PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_LIBRARY_LOCATIONS, fSystemLibraryDescriptions, locations);		fSystemLibraryDescriptions = locations;		JavaRuntime.fireVMChanged(event);	}	/**	 * @see IVMInstall#getJavadocLocation()	 */	public URL getJavadocLocation() {		return fJavadocLocation;	}	/**	 * @see IVMInstall#setJavadocLocation(URL)	 */	public void setJavadocLocation(URL url) {		PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_JAVADOC_LOCATION, fJavadocLocation, url);				fJavadocLocation = url;		JavaRuntime.fireVMChanged(event);	}}
+	/**	 * @see IVMInstall#getLibraryLocations()	 */	public LibraryLocation[] getLibraryLocations() {		return fSystemLibraryDescriptions;	}	/**	 * @see IVMInstall#setLibraryLocations(LibraryLocation[])	 */	public void setLibraryLocations(LibraryLocation[] locations) {		if (locations == fSystemLibraryDescriptions) {			return;		}		if (locations != null && fSystemLibraryDescriptions != null) {			if (locations.length == fSystemLibraryDescriptions.length) {				int i = 0;				boolean equal = true;				while (i < locations.length && equal) {					equal = locations[i].equals(fSystemLibraryDescriptions[i]);					i++;				}				if (equal) {					// no change					return;				}			}		}		PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_LIBRARY_LOCATIONS, fSystemLibraryDescriptions, locations);		fSystemLibraryDescriptions = locations;		JavaRuntime.fireVMChanged(event);			}	/**	 * @see IVMInstall#getJavadocLocation()	 */	public URL getJavadocLocation() {		return fJavadocLocation;	}	/**	 * @see IVMInstall#setJavadocLocation(URL)	 */	public void setJavadocLocation(URL url) {		if (url == fJavadocLocation) {			return;		}		if (url != null && fJavadocLocation != null) {			if (url.equals(fJavadocLocation)) {				// no change				return;			}		}				PropertyChangeEvent event = new PropertyChangeEvent(this, IVMInstallChangedListener.PROPERTY_JAVADOC_LOCATION, fJavadocLocation, url);				fJavadocLocation = url;		JavaRuntime.fireVMChanged(event);	}}

@@ -38,7 +38,7 @@ import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 
-public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener {
+public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener {
 	
 	/**
 	 * Identifier for 'vmConnectors' extension point
@@ -92,6 +92,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	public void shutdown() throws CoreException {
 		ArchiveSourceLocation.shutdown();
 		getPluginPreferences().removePropertyChangeListener(this);
+		JavaRuntime.removeVMInstallChangedListener(this);
 		super.shutdown();
 	}
 		
@@ -122,6 +123,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		// set default preference values
 		getPluginPreferences().setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
 		getPluginPreferences().addPropertyChangeListener(this);
+
+		JavaRuntime.addVMInstallChangedListener(this);
 	}
 	
 	/**
@@ -179,6 +182,39 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(JavaRuntime.PREF_CONNECT_TIMEOUT)) {
 			savePluginPreferences();
+		}
+	}
+
+	/**
+	 * @see IVMInstallChangedListener#defaultVMInstallChanged(IVMInstall, IVMInstall)
+	 */
+	public void defaultVMInstallChanged(
+		IVMInstall previous,
+		IVMInstall current) {
+	}
+
+	/**
+	 * @see IVMInstallChangedListener#vmAdded(IVMInstall)
+	 */
+	public void vmAdded(IVMInstall vm) {
+	}
+
+	/**
+	 * @see IVMInstallChangedListener#vmChanged(PropertyChangeEvent)
+	 */
+	public void vmChanged(
+		org.eclipse.jdt.launching.PropertyChangeEvent event) {
+	}
+
+	/**
+	 * @see IVMInstallChangedListener#vmRemoved(IVMInstall)
+	 */
+	public void vmRemoved(IVMInstall vm) {
+		JREContainerInitializer init = new JREContainerInitializer();
+		try {
+			init.updateRemovedVM(vm);
+		} catch (CoreException e) {
+			log(e);
 		}
 	}
 

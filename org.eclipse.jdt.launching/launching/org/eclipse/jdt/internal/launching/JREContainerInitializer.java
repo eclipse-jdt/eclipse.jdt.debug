@@ -131,7 +131,6 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}		
-		monitor.beginTask(LaunchingMessages.getString("JREContainerInitializer.Updating_JRE_system_library_containers..._1"), 3); //$NON-NLS-1$
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		IJavaModel model = JavaCore.create(ws.getRoot());
 		boolean wasAutobuild= setAutobuild(ws, false);
@@ -164,6 +163,47 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			setAutobuild(ws, wasAutobuild);
 		}	
 	}
+	
+	/**
+	 * Update conatiners that point to removed JRE explicitly. The containers
+	 * are now unbound.
+	 */
+	public void updateRemovedVM(IVMInstall vm) throws CoreException {
+		IProgressMonitor monitor= new NullProgressMonitor();
+		IWorkspace ws = ResourcesPlugin.getWorkspace();
+		IJavaModel model = JavaCore.create(ws.getRoot());
+		boolean wasAutobuild= setAutobuild(ws, false);
+		try {
+			IJavaProject[] projects = model.getJavaProjects();
+			List affectedProjects = new ArrayList(projects.length);
+			for (int i = 0; i < projects.length; i++) {
+				IClasspathEntry[] classpath = projects[i].getRawClasspath();
+				for (int j = 0; j < classpath.length; j++) {
+					IClasspathEntry entry = classpath[j];
+					if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+						IPath path = entry.getPath();
+						if (path.segmentCount() == 3 && path.segment(0).equals(JavaRuntime.JRE_CONTAINER)
+						&& path.segment(1).equals(vm.getVMInstallType().getId())
+						&& path.segment(2).equals(vm.getName())) {
+							// references removed JRE
+							affectedProjects.add(projects[i]);
+						}
+					}
+				}
+			}
+			if (!affectedProjects.isEmpty()) {
+				IJavaProject[] projArray = (IJavaProject[])affectedProjects.toArray(new IJavaProject[affectedProjects.size()]);
+				IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+				containerPath = containerPath.append(vm.getVMInstallType().getId());
+				containerPath = containerPath.append(vm.getName());
+				IClasspathContainer[] containers = new IClasspathContainer[projArray.length];
+				Arrays.fill(containers, null);
+				JavaCore.setClasspathContainer(containerPath, projArray, containers, monitor);
+			}
+		} finally {
+			setAutobuild(ws, wasAutobuild);
+		}	
+	}	
 	
 	private boolean setAutobuild(IWorkspace ws, boolean newState) throws CoreException {
 		IWorkspaceDescription wsDescription= ws.getDescription();

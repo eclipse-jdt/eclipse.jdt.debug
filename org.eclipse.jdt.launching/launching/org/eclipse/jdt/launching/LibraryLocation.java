@@ -10,4 +10,4 @@
 	/**	 * @return The path to the default package in the sources zip file.	 */	public IPath getPackageRootPath() {
 		return fPackageRootPath;
 	}
-}
+	/**	 * @see Object#equals(Object)	 */	public boolean equals(Object obj) {		if (obj instanceof LibraryLocation) {			LibraryLocation lib = (LibraryLocation)obj;			return getSystemLibraryPath().equals(lib.getSystemLibraryPath()) 				&& equals(getSystemLibrarySourcePath(), lib.getSystemLibrarySourcePath())				&& equals(getPackageRootPath(), lib.getPackageRootPath());		} 		return false;	}	/**	 * @see Object#hashCode()	 */	public int hashCode() {		return getSystemLibraryPath().hashCode();	}		/**	 * Returns whether the given paths are equal - either may be <code>null</code>.	 */	protected boolean equals(IPath path1, IPath path2) {		if (path1 == null) {			return path2 == null;		}		if (path2 == null) {			return false;		}		return path1.equals(path2);	}}
