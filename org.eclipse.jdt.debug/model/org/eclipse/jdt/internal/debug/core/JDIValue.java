@@ -27,12 +27,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	private static final String fgToString = "toString"; //$NON-NLS-1$
 	
 	/**
-	 * If a value is the result of an expression, we keep track
-	 * of which debug target it originated from.
-	 */
-	protected IJavaThread fJavaThread;
-	
-	/**
 	 * A flag indicating if this value is still allocated (valid)
 	 */
 	protected boolean fAllocated = true;
@@ -54,7 +48,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	}
 	
 	/**
-	 * @see IValue
+	 * @see IValue#getValueString()
 	 */
 	public String getValueString() throws DebugException {
 		if (!isAllocated()) {
@@ -74,20 +68,20 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		if (fValue instanceof ObjectReference) {
 			StringBuffer name= new StringBuffer();
 			if (fValue instanceof ClassObjectReference) {
-				name.append('(');
+				name.append('(');  //$NON-NLS-1$
 				name.append(((ClassObjectReference)fValue).reflectedType());
-				name.append(')');
+				name.append(')');  //$NON-NLS-1$
 			}
 			name.append(" ("); //$NON-NLS-1$
 			name.append(JDIDebugModelMessages.getString("JDIValue.id_8")); //$NON-NLS-1$
-			name.append('=');
+			name.append('=');  //$NON-NLS-1$
 			try {
 				name.append(((ObjectReference)fValue).uniqueID());
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_unique_id"), new String[] {e.toString()}), e); //$NON-NLS-1$
 				return "";
 			}
-			name.append(')');
+			name.append(')'); //$NON-NLS-1$
 			return name.toString();
 		} else {
 			return fValue.toString();
@@ -95,7 +89,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	}
 	
 	/**
-	 * @see IValue
+	 * @see IValue#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() throws DebugException {
 		try {
@@ -109,6 +103,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		return getUnknownMessage();
 	}
 
+	/**
+	 * @see Object#hashCode()
+	 */
 	public int hashCode() {
 		if (fValue == null) {
 			return getClass().hashCode();
@@ -117,6 +114,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		}
 	}
 
+	/**
+	 * @see Object#equals(Object)
+	 */
 	public boolean equals(Object o) {
 		if (fValue == o) {
 			return true;
@@ -136,16 +136,13 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	}	
 
 	/**
-	 * @see IValue
+	 * @see IValue#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
 		List list = getVariables0();
 		return (IVariable[])list.toArray(new IVariable[list.size()]);
 	}
 	
-	/**
-	 *
-	 */
 	protected List getVariables0() throws DebugException {
 		if (!isAllocated()) {
 			return Collections.EMPTY_LIST;
@@ -229,7 +226,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	}
 
 	/**
-	 * @see IValue
+	 * @see IValue#isAllocated()
 	 */
 	public boolean isAllocated() throws DebugException {
 		if (fAllocated) {
@@ -249,7 +246,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	}
 	
 	/**
-	 * @see IJavaValue
+	 * @see IJavaValue#getSignature()
 	 */
 	public String getSignature() throws DebugException {
 		try {
@@ -265,7 +262,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	}
 
 	/**
-	 * @see IJavaValue
+	 * @see IJavaValue#getArrayLength()
 	 */
 	public int getArrayLength() throws DebugException {
 		if (isArray()) {
@@ -286,7 +283,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	}
 	
 	/**
-	 * @see IJavaValue
+	 * @see IJavaValue#evaluateToString(IJavaThread)
 	 */
 	public synchronized String evaluateToString(final IJavaThread thread) throws DebugException {
 		String sig = getSignature();
@@ -333,7 +330,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			return toString[0];
 		}	
 		
-		((JDIThread)fJavaThread).abortEvaluation();
+		((JDIThread)thread).abortEvaluation();
 		requestFailed(JDIDebugModelMessages.getString("JDIValue.timeout_performing_toString()"), null); //$NON-NLS-1$
 		return null;
 	}
