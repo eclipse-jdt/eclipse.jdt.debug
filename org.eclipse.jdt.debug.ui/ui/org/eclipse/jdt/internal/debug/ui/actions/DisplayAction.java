@@ -31,6 +31,8 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class DisplayAction extends EvaluateAction implements IValueDetailListener {
 	
+	private Object fLock= new Object();
+	
 	/**
 	 * The debug model presentation used for computing toString
 	 */
@@ -72,7 +74,7 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 				if (sig != null) {
 					resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.type_name_pattern"), new Object[] { value.getReferenceTypeName() }); //$NON-NLS-1$
 				}
-				resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, evaluateToString(value, thread) }); //$NON-NLS-1$
+				resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, evaluateToString(value) }); //$NON-NLS-1$
 			}
 		} catch(DebugException x) {
 			reportError(x);
@@ -95,12 +97,17 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	 * @exception DebugException if an exception occurs during the
 	 *  evaluation.
 	 */
-	protected synchronized String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
+	protected String evaluateToString(IJavaValue value) throws DebugException {
+		fResult= null;
 		fPresentation.computeDetail(value, this);
-		try {
-			wait(20000);
-		} catch (InterruptedException e) {
-			return ActionMessages.getString("DisplayAction.toString_interrupted"); //$NON-NLS-1$
+		synchronized (fLock) {
+			if (fResult == null) {
+				try {
+					fLock.wait(20000);
+				} catch (InterruptedException e) {
+					return ActionMessages.getString("DisplayAction.toString_interrupted"); //$NON-NLS-1$
+				}
+			}
 		}
 		return fResult;
 	}
@@ -108,9 +115,11 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	/**
 	 * @see IValueDetailListener#detailComputed(IValue, String)
 	 */
-	public synchronized void detailComputed(IValue value, final String result) {
+	public void detailComputed(IValue value, final String result) {
 		fResult= result;
-		this.notifyAll();	
+		synchronized (fLock) {
+			fLock.notify();
+		}
 	}
 	
 	protected void run() {
