@@ -518,7 +518,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				
 			fSource.append("void "); //$NON-NLS-1$
 			fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
-			fSource.append(" {\n"); //$NON-NLS-1$
+			fSource.append("() {\n"); //$NON-NLS-1$
 			fSource.append("new "); //$NON-NLS-1$
 			fSource.append(getQualifiedIdentifier(node.getName()));
 			fSource.append("()"); //$NON-NLS-1$
