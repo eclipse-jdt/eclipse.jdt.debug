@@ -82,17 +82,19 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		List containers = new ArrayList();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IClasspathEntry[] entries = fProject.getRawClasspath();
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			switch (entry.getEntryKind()) {
-				case IClasspathEntry.CPE_SOURCE:
-					IPath path = entry.getPath();
-					IResource resource = root.findMember(path);
-					if (resource instanceof IContainer) {
-						containers.add(new FolderSourceContainer((IContainer)resource, false));
-					}
-					break;
+		if (fProject.getProject().isOpen()) {
+			IClasspathEntry[] entries = fProject.getRawClasspath();
+			for (int i = 0; i < entries.length; i++) {
+				IClasspathEntry entry = entries[i];
+				switch (entry.getEntryKind()) {
+					case IClasspathEntry.CPE_SOURCE:
+						IPath path = entry.getPath();
+						IResource resource = root.findMember(path);
+						if (resource instanceof IContainer) {
+							containers.add(new FolderSourceContainer((IContainer)resource, false));
+						}
+						break;
+				}
 			}
 		}
 		return (ISourceContainer[]) containers.toArray(new ISourceContainer[containers.size()]);
