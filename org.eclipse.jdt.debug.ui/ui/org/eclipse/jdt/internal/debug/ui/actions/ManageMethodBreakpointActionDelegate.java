@@ -1,14 +1,18 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -80,7 +84,8 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 			try {
 				IMethod method = (IMethod)getMember();
 				if (method == null || !enableForMember(method)) {
-					beep();
+					IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), Status.ERROR, ActionMessages.getString("ManageMethodBreakpointActionDelegate.Method_breakpoints_can_only_be_added_to_concrete,_binary_methods._1"), null); //$NON-NLS-1$
+					JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageMethodBreakpointActionDelegate.Add_Method_Breakpoint_Failed_2"), status); //$NON-NLS-1$
 					return;
 				} 
 				int start = -1;

@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +17,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -60,7 +64,8 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 			try {
 				IMember element= getMember();
 				if (element == null || !enableForMember(element)) {
-					beep();
+					IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), Status.ERROR, ActionMessages.getString("ManageWatchpointActionDelegate.Watchpoints_can_only_be_added_for_field_members._1"), null); //$NON-NLS-1$
+					JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageWatchpointActionDelegate.Add_Watchpoint_Failed_2"), status); //$NON-NLS-1$
 					return;
 				}
 				IType type = element.getDeclaringType();
