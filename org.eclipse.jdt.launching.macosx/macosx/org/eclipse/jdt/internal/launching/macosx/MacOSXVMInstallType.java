@@ -11,32 +11,34 @@ import java.net.URL;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.launching.AbstractVMInstallType;
+
+import org.eclipse.jdt.internal.launching.LibraryInfo;
+import org.eclipse.jdt.internal.launching.StandardVMType;
+
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
 
 /**
  * This plugins into the org.eclipse.jdt.launching.vmInstallTypes extension point
  */
-public class MacOSXVMInstallType extends AbstractVMInstallType {
-	
-	private static final String JAVA_VM_NAME= "Java HotSpot(TM) Client VM";	//$NON-NLS-1$
+public class MacOSXVMInstallType extends StandardVMType {
 	
 	/*
 	 * The directory structure for Java VMs is as follows:
 	 * 	/System/Library/Frameworks/JavaVM.framework/Versions/
 	 * 		1.3.1
+	 * 			Classes
 	 * 			Home
 	 * 		1.4.1
+	 * 			Classes
 	 * 			Home
 	 * 		CurrentJDK -> 1.3.1
 	 */
+	 
+	private static final String JAVA_VM_NAME= "Java HotSpot(TM) Client VM";	//$NON-NLS-1$
 	
 	/** The OS keeps all the JVM versions in this directory */
 	private static final String JVM_VERSION_LOC= "/System/Library/Frameworks/JavaVM.framework/Versions/";	//$NON-NLS-1$
@@ -46,125 +48,132 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 	private static final String JVM_ROOT= "Home";	//$NON-NLS-1$
 	/** The doc (for all JVMs) lives here (if the developer kit has been expanded)*/
 	private static final String JAVADOC_LOC= "/Developer/Documentation/Java/Reference/";	//$NON-NLS-1$
-	
-	private String fDefaultJDKID;
-	
-	public IVMInstall doCreateVMInstall(String id) {
-		return new MacOSXVMInstall(this, id);
-	}
-	
+		
+				
 	public String getName() {
 		return MacOSXLaunchingPlugin.getString("MacOSXVMType.name"); //$NON-NLS-1$
 	}
 	
-	public IStatus validateInstallLocation(File installLocation) {
-		String id= MacOSXLaunchingPlugin.getUniqueIdentifier();
-		File java= new File(installLocation, "bin"+File.separator+"java"); //$NON-NLS-2$ //$NON-NLS-1$
-		if (java.isFile())
-			return new Status(IStatus.OK, id, 0, "ok", null); //$NON-NLS-1$
-		return new Status(IStatus.ERROR, id, 0, MacOSXLaunchingPlugin.getString("MacOSXVMType.error.notRoot"), null); //$NON-NLS-1$
+	public IVMInstall doCreateVMInstall(String id) {
+		return new MacOSXVMInstall(this, id);
 	}
-
+			
 	/**
 	 * @see IVMInstallType#detectInstallLocation()
 	 */
 	public File detectInstallLocation() {
 		
-			String javaVMName= System.getProperty("java.vm.name");	//$NON-NLS-1$
-			if (javaVMName == null || !JAVA_VM_NAME.equals(javaVMName)) 
-				return null;
-	
-			// find all installed VMs
-			File versionDir= new File(JVM_VERSION_LOC);
-			if (versionDir.exists() && versionDir.isDirectory()) {
-				File currentJDK= new File(versionDir, CURRENT_JVM);
-				try {
-					currentJDK= currentJDK.getCanonicalFile();
-				} catch (IOException ex) {
-				}
-				File[] versions= versionDir.listFiles();
-				for (int i= 0; i < versions.length; i++) {
-					String version= versions[i].getName();
-					File home=  new File(versions[i], JVM_ROOT);
-					if (home.exists() && findVMInstall(version) == null && !CURRENT_JVM.equals(version)) {
-						VMStandin vm= new VMStandin(this, version);
-						vm.setInstallLocation(home);
-						String format= MacOSXLaunchingPlugin.getString(version.equals(fDefaultJDKID)
-													? "MacOSXVMType.jvmDefaultName"		//$NON-NLS-1$
-													: "MacOSXVMType.jvmName");				//$NON-NLS-1$
-						vm.setName(MessageFormat.format(format, new Object[] { version } ));
-						vm.setLibraryLocations(getDefaultLibraryLocations(home));
-						URL doc= getDefaultJavadocLocation(home);
-						if (doc != null)
-							vm.setJavadocLocation(doc);
-						
-						IVMInstall rvm= vm.convertToRealVM();
-						
-						if (currentJDK.equals(versions[i])) {
-							try {
-								JavaRuntime.setDefaultVMInstall(rvm, null);
-							} catch (CoreException e) {
-								// exception intentionally ignored
-							}
+		String javaVMName= System.getProperty("java.vm.name");	//$NON-NLS-1$
+		if (javaVMName == null || !JAVA_VM_NAME.equals(javaVMName)) 
+			return null;
+
+		// find all installed VMs
+		File defaultLocation= null;
+		File versionDir= new File(JVM_VERSION_LOC);
+		if (versionDir.exists() && versionDir.isDirectory()) {
+			File currentJDK= new File(versionDir, CURRENT_JVM);
+			try {
+				currentJDK= currentJDK.getCanonicalFile();
+			} catch (IOException ex) {
+			}
+			File[] versions= versionDir.listFiles();
+			for (int i= 0; i < versions.length; i++) {
+				String version= versions[i].getName();
+				File home=  new File(versions[i], JVM_ROOT);
+				if (home.exists() && findVMInstall(version) == null && !CURRENT_JVM.equals(version)) {
+					
+					boolean isDefault= currentJDK.equals(versions[i]);
+					
+					VMStandin vm= new VMStandin(this, version);
+					vm.setInstallLocation(home);
+					String format= MacOSXLaunchingPlugin.getString(isDefault
+												? "MacOSXVMType.jvmDefaultName"		//$NON-NLS-1$
+												: "MacOSXVMType.jvmName");				//$NON-NLS-1$
+					vm.setName(MessageFormat.format(format, new Object[] { version } ));
+					vm.setLibraryLocations(getDefaultLibraryLocations(home));
+					URL doc= getDefaultJavadocLocation(home);
+					if (doc != null)
+						vm.setJavadocLocation(doc);
+					
+					IVMInstall rvm= vm.convertToRealVM();
+					
+					if (isDefault) {
+						defaultLocation= home;
+						try {
+							JavaRuntime.setDefaultVMInstall(rvm, null);
+						} catch (CoreException e) {
+							// exception intentionally ignored
 						}
 					}
 				}
 			}
-		return null;
+		}
+		return defaultLocation;
 	}
 
 	/**
-	 * @see IVMInstallType#getDefaultSystemLibraryDescription(File)
+	 * Returns default library info for the given install location.
+	 * 
+	 * @param installLocation
+	 * @return LibraryInfo
 	 */
-	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {
-				
-		IPath libHome= new Path(installLocation.toString()); //$NON-NLS-1$
-		libHome= libHome.append(".."); //$NON-NLS-1$
-		libHome= libHome.append("Classes"); //$NON-NLS-1$
-		IPath lib= libHome.append("classes.jar"); //$NON-NLS-1$
-		IPath uilib= libHome.append("ui.jar"); //$NON-NLS-1$
+	protected LibraryInfo getDefaultLibraryInfo(File installLocation) {
+
+		File classes = new File(installLocation, "../Classes"); //$NON-NLS-1$
+		File lib1= new File(classes, "classes.jar"); //$NON-NLS-1$
+		File lib2= new File(classes, "ui.jar"); //$NON-NLS-1$
 		
-		IPath source= new Path(installLocation.toString());
-		source= source.append("src.jar"); //$NON-NLS-1$
+		String[] libs = new String[] { lib1.toString(),lib2.toString() };
 		
-		IPath srcPkgRoot= new Path("src"); //$NON-NLS-1$
+		File lib = new File(installLocation, "lib"); //$NON-NLS-1$
+		File extDir = new File(lib, "ext"); //$NON-NLS-1$
+		String[] dirs = null;
+		if (extDir == null)
+			dirs = new String[0];
+		else
+			dirs = new String[] {extDir.getAbsolutePath()};
+
+		File endDir = new File(lib, "endorsed"); //$NON-NLS-1$
+		String[] endDirs = null;
+		if (endDir == null)
+			endDirs = new String[0]; 
+		else
+			endDirs = new String[] {endDir.getAbsolutePath()};
 		
-		return new LibraryLocation[] {
-				new LibraryLocation(lib, source, srcPkgRoot),
-				new LibraryLocation(uilib, source, srcPkgRoot)
-		};
+		return new LibraryInfo("???", libs, dirs, endDirs);		 //$NON-NLS-1$
+	}
+	
+	/**
+	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
+	 */
+	public IStatus validateInstallLocation(File javaHome) {
+		/*
+		IStatus status = null;
+		File javaExecutable = findJavaExecutable(javaHome);
+		if (javaExecutable == null) {
+			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.getString("StandardVMType.Not_a_JDK_Root;_Java_executable_was_not_found_1"), null); //$NON-NLS-1$			
+		} else {
+			if (canDetectDefaultSystemLibraries(javaHome, javaExecutable)) {
+				status = new Status(IStatus.OK, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.getString("StandardVMType.ok_2"), null); //$NON-NLS-1$
+			} else {
+				status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.getString("StandardVMType.Not_a_JDK_root._System_library_was_not_found._1"), null); //$NON-NLS-1$
+			}
+		}
+		return status;
+		*/
+		String id= MacOSXLaunchingPlugin.getUniqueIdentifier();
+		File java= new File(javaHome, "bin"+File.separator+"java"); //$NON-NLS-2$ //$NON-NLS-1$
+		if (java.isFile())
+			return new Status(IStatus.OK, id, 0, "ok", null); //$NON-NLS-1$
+		return new Status(IStatus.ERROR, id, 0, MacOSXLaunchingPlugin.getString("MacOSXVMType.error.notRoot"), null); //$NON-NLS-1$
 	}
 	
 	/**
 	 * @see org.eclipse.jdt.launching.AbstractVMInstallType#getDefaultJavadocLocation(java.io.File)
 	 */
 	public URL getDefaultJavadocLocation(File installLocation) {
-
-	/*
-		File javaExecutable = findJavaExecutable(installLocation);
-		if (javaExecutable != null) {
-			LibraryInfo libInfo = getLibraryInfo(installLocation, javaExecutable);
-			if (libInfo != null) {
-				String version = libInfo.getVersion();
-				if (version != null) {
-					try {
-						if (version.startsWith("1.4.1")) { //$NON-NLS-1$
-							return new URL("http://java.sun.com/j2se/1.4.1/docs/api"); //$NON-NLS-1$
-						} else if (version.startsWith("1.4.0")) { //$NON-NLS-1$
-							return new URL("http://java.sun.com/j2se/1.4/docs/api"); //$NON-NLS-1$
-						} else if (version.startsWith("1.3")) { //$NON-NLS-1$
-							return new URL("http://java.sun.com/j2se/1.3/docs/api"); //$NON-NLS-1$
-						} else if (version.startsWith("1.2")) { //$NON-NLS-1$
-							return new URL("http://java.sun.com/products/jdk/1.2/docs/api"); //$NON-NLS-1$
-						}
-					} catch (MalformedURLException e) {
-					}
-				}
-			}
-		}
-		return null;
-	*/
-
+		
+		// try in local filesystem
 		String id= null;	
 		try {
 			String post= File.separator + JVM_ROOT;
@@ -173,32 +182,17 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 				id= path.substring(JVM_VERSION_LOC.length(), path.length()-post.length());
 		} catch (IOException ex) {
 		}
-		if (id == null)
-			return null;
-				
-		URL doc= null;
-		// first try in local filesystem
-		File docLocation= new File(JAVADOC_LOC + id);
-		if (docLocation.exists()) {
-			try {
-				doc= new URL("file", "", JAVADOC_LOC + id);	//$NON-NLS-1$ //$NON-NLS-2$
-			} catch (MalformedURLException ex) {
+		if (id != null) {
+			File docLocation= new File(JAVADOC_LOC + id);
+			if (docLocation.exists()) {
+				try {
+					return new URL("file", "", JAVADOC_LOC + id);	//$NON-NLS-1$ //$NON-NLS-2$
+				} catch (MalformedURLException ex) {
+				}
 			}
 		}
-		if (doc == null) {
-			// now try in a standard place on the web
-			try {
-				if (id.startsWith("1.4.1"))	//$NON-NLS-1$
-					return new URL("http://java.sun.com/j2se/1.4.1/docs/api"); //$NON-NLS-1$
-				if (id.startsWith("1.4.0"))	//$NON-NLS-1$
-					return new URL("http://java.sun.com/j2se/1.4/docs/api"); //$NON-NLS-1$
-				if (id.startsWith("1.3"))	//$NON-NLS-1$
-					return new URL("http://java.sun.com/j2se/1.3/docs/api"); //$NON-NLS-1$
-				if (id.startsWith("1.2"))	//$NON-NLS-1$
-					return new URL("http://java.sun.com/products/jdk/1.2/docs/api"); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-			}
-		}
-		return doc;
+		
+		// fall back
+		return super.getDefaultJavadocLocation(installLocation);
 	}
 }
