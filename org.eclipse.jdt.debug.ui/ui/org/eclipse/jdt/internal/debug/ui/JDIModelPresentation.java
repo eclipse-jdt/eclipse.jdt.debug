@@ -1374,26 +1374,31 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected String getBreakpointText(IBreakpoint breakpoint) throws CoreException {
-
-		if (breakpoint instanceof IJavaExceptionBreakpoint) {
-			return getExceptionBreakpointText((IJavaExceptionBreakpoint)breakpoint);
-		} else if (breakpoint instanceof IJavaWatchpoint) {
-			return getWatchpointText((IJavaWatchpoint)breakpoint);
-		} else if (breakpoint instanceof IJavaMethodBreakpoint) {
-			return getMethodBreakpointText((IJavaMethodBreakpoint)breakpoint);
-		} else if (breakpoint instanceof IJavaPatternBreakpoint) {
-			return getJavaPatternBreakpointText((IJavaPatternBreakpoint)breakpoint);
-		} else if (breakpoint instanceof IJavaTargetPatternBreakpoint) {
-			return getJavaTargetPatternBreakpointText((IJavaTargetPatternBreakpoint)breakpoint);
-		} else if (breakpoint instanceof IJavaStratumLineBreakpoint) {
-			return getJavaStratumLineBreakpointText((IJavaStratumLineBreakpoint)breakpoint);
-		} else if (breakpoint instanceof IJavaLineBreakpoint) {
-			return getLineBreakpointText((IJavaLineBreakpoint)breakpoint);
-		} else if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
-			return getClassPrepareBreakpointText((IJavaClassPrepareBreakpoint)breakpoint);
-		}
-
-		return ""; //$NON-NLS-1$
+	    try {
+			if (breakpoint instanceof IJavaExceptionBreakpoint) {
+				return getExceptionBreakpointText((IJavaExceptionBreakpoint)breakpoint);
+			} else if (breakpoint instanceof IJavaWatchpoint) {
+				return getWatchpointText((IJavaWatchpoint)breakpoint);
+			} else if (breakpoint instanceof IJavaMethodBreakpoint) {
+				return getMethodBreakpointText((IJavaMethodBreakpoint)breakpoint);
+			} else if (breakpoint instanceof IJavaPatternBreakpoint) {
+				return getJavaPatternBreakpointText((IJavaPatternBreakpoint)breakpoint);
+			} else if (breakpoint instanceof IJavaTargetPatternBreakpoint) {
+				return getJavaTargetPatternBreakpointText((IJavaTargetPatternBreakpoint)breakpoint);
+			} else if (breakpoint instanceof IJavaStratumLineBreakpoint) {
+				return getJavaStratumLineBreakpointText((IJavaStratumLineBreakpoint)breakpoint);
+			} else if (breakpoint instanceof IJavaLineBreakpoint) {
+				return getLineBreakpointText((IJavaLineBreakpoint)breakpoint);
+			} else if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
+				return getClassPrepareBreakpointText((IJavaClassPrepareBreakpoint)breakpoint);
+			}
+	
+			return ""; //$NON-NLS-1$
+	    } catch (CoreException e) {
+	        // Log any exceptions and re-throw
+	        JDIDebugUIPlugin.log(e);
+	        throw e;
+	    }
 	}
 
 	/**
