@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
@@ -78,6 +79,15 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	protected Button fStopInMainCheckButton;
 			
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	
+	/**
+	 * Boolean launch configuration attribute indicating that external jars (on
+	 * the runtime classpath) should be searched when looking for a main type.
+	 * Default value is <code>false</code>.
+	 * 
+	 * @since 2.1
+	 */
+	public static final String ATTR_INCLUDE_EXTERNAL_JARS = IJavaDebugUIConstants.PLUGIN_ID + ".INCLUDE_EXTERNAL_JARS"; //$NON-NLS-1$
 	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -177,6 +187,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		updateProjectFromConfig(config);
 		updateMainTypeFromConfig(config);
 		updateStopInMainFromConfig(config);
+		updateExternalJars(config);
 	}
 	
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
@@ -208,6 +219,16 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		}
 		fStopInMainCheckButton.setSelection(stop);
 	}
+	
+	protected void updateExternalJars(ILaunchConfiguration configuration) {
+		boolean search = false;
+		try {
+			search = configuration.getAttribute(ATTR_INCLUDE_EXTERNAL_JARS, false);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		fSearchExternalJarsCheckButton.setSelection(search);
+	}	
 		
 	/**
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
@@ -221,6 +242,13 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
 		} else {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, (String)null);
+		}
+		
+		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
+		if (fSearchExternalJarsCheckButton.getSelection()) {
+			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, true);
+		} else {
+			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, (String)null);
 		}
 	}
 			
