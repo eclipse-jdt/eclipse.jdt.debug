@@ -106,6 +106,13 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	private static Date fStartupDate= new Date();
 	/**
 	 * Utility object used for tracking build times of projects.
+	 * The HCR manager receives notification of builds AFTER
+	 * the build has occurred but BEFORE the classfile
+	 * resource changed deltas are fired. Thus, when the
+	 * current build time is set, we need to hang onto
+	 * the last build time so that we can use the last build
+	 * time for comparing changes to compilation units (for smart
+	 * drop to frame).
 	 */
 	class ProjectBuildTime {
 		private Date fCurrentDate= new Date();
