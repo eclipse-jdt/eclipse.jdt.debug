@@ -860,6 +860,15 @@
                menubarPath="javaActions"
                tooltip="%showSystemThreads.tooltip">
          </action>
+		<action
+               id="org.eclipse.jdt.debug.ui.launchViewActions.DropToFrame"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameButton"
+               icon="icons/full/elcl16/drop_to_frame.gif"
+               helpContextId="drop_to_frame_context"
+               label="%dropFrameAction.label"
+               toolbarPath="emptyStepGroup"
+               tooltip="%dropFrameAction.tooltip">
+         </action>         
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.jdt.debug.ui.DisplayView"
