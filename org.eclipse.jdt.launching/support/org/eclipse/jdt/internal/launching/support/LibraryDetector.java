@@ -20,7 +20,7 @@ public class LibraryDetector {
 	/**
 	 * Prints system properties to standard out.
 	 * <ul>
-	 * <li>java.vm.version</li>
+	 * <li>java.version</li>
 	 * <li>sun.boot.class.path</li>
 	 * <li>java.ext.dirs</li>
 	 * <li>java.endorsed.dirs</li>
