@@ -8,8 +8,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,8 +43,8 @@ import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.VMDefinitionsContainer;
+import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 
 public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener {
