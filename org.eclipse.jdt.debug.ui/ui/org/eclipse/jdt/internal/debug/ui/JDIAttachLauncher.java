@@ -93,8 +93,7 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 				ILaunch launch= new Launch(launcher, ILaunchManager.DEBUG_MODE, element, null, null, null);
 				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 								
-				IDebugTarget target= 
-					JDIDebugModel.newDebugTarget(launch,vm, vmLabel.toString(), null, allowTermination(), true);
+				JDIDebugModel.newDebugTarget(launch,vm, vmLabel.toString(), null, allowTermination(), true);
 				IJavaProject javaProject= JavaCore.create((IProject)element);
 				ISourceLocator sl= new JavaUISourceLocator(javaProject);
 				launch.setSourceLocator(sl);
