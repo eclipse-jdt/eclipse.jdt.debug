@@ -26,8 +26,10 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public final static int ENTRY=				 	0x008;
 	/** Flag to render the exit method breakpoint adornment */
 	public final static int EXIT=				 	0x010;
-	/** Flag telling to render the enabled breakpoint adornment */
-	public final static int ENABLED=				 	0x020;
+	/** Flag to render the enabled breakpoint adornment */
+	public final static int ENABLED=				0x020;
+	/** Flag to render the running adornment */
+	public final static int RUNNING=				0x040;
 
 	
 	private ImageDescriptor fBaseImage;
@@ -61,7 +63,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {
-		if (!JDIImageDescriptor.class.equals(object.getClass())){
+		if (!(object instanceof JDIImageDescriptor)){
 			return false;
 		}
 			
