@@ -45,7 +45,7 @@ public class IOConsoleOutputActionDelegate implements IActionDelegate2, IWorkben
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        IOConsole console = new IOConsole("Test IOConsole", DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
+        IOConsole console = new IOConsole("Test IOConsole", null, DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
 		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
 		manager.addConsoles(new IConsole[]{console});
 		OutputStream out = console.newOutputStream(); //$NON-NLS-1$

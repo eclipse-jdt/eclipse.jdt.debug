@@ -32,9 +32,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.views.console.HyperlinkPosition;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -65,6 +63,8 @@ import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
 
 
  
@@ -153,11 +153,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		return project.getPackageFragmentRoot(p.getFolder(name));
 	}
 	
-	protected IConsoleHyperlink getHyperlink(int offset, IDocument doc) {
+	protected IHyperlink getHyperlink(int offset, IDocument doc) {
 		if (offset >= 0 && doc != null) {
 			Position[] positions = null;
 			try {
-				positions = doc.getPositions(HyperlinkPosition.HYPER_LINK_CATEGORY);
+				positions = doc.getPositions(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
 			} catch (BadPositionCategoryException ex) {
 				// no links have been added
 				return null;
@@ -165,7 +165,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			for (int i = 0; i < positions.length; i++) {
 				Position position = positions[i];
 				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
-					return ((HyperlinkPosition)position).getHyperLink();
+					return ((IOConsoleHyperlinkPosition)position).getHyperLink();
 				}
 			}
 		}

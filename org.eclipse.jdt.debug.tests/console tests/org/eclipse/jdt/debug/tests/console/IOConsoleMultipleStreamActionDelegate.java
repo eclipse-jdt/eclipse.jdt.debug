@@ -58,7 +58,7 @@ public class IOConsoleMultipleStreamActionDelegate implements IActionDelegate2, 
     public void runTest() {
         ended = false;
         
-        final IOConsole console = new IOConsole("IO Test Console", DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
+        final IOConsole console = new IOConsole("IO Test Console", null, DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
 
 //        console.setWaterMarks(5, 10);
 
