@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,5 +125,18 @@ public interface IJavaClassType  extends IJavaReferenceType {
 	 * @since 3.0
 	 */
 	public IJavaInterfaceType[] getAllInterfaces() throws DebugException;
+	
+	/**
+	 * Indicates in this type was declared as a typesafe enum or not.
+	 * 
+	 * @return <code>true</code> if this type is a typesafe enum, <code>false</code> otherwise.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 * @since 3.1
+	 */
+	public boolean isEnum() throws DebugException;
 }
 
