@@ -17,6 +17,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -29,6 +30,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -41,6 +43,7 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -302,6 +305,17 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST)) {
 			populateDetailFormattersMap();
 			fCacheMap.clear();
+			// If a Java stack frame is selected in the Debug view, fire a change event on
+			// it so the variables view will update for any formatter changes.
+            IAdaptable selected = DebugUITools.getDebugContext();
+            if (selected != null) {
+                IJavaStackFrame frame= (IJavaStackFrame) selected.getAdapter(IJavaStackFrame.class);
+                if (frame != null) {
+                    DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { 
+                            new DebugEvent(frame, DebugEvent.CHANGE)
+                    });
+                }
+            }			
 		}
 	}
 	/**
