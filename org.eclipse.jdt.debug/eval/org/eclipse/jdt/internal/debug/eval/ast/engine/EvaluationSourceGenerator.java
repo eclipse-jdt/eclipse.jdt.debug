@@ -213,10 +213,14 @@ public class EvaluationSourceGenerator {
 					type = ((IClassFile)result).getType();
 				} else if (result instanceof ICompilationUnit) {
 					type = ((ICompilationUnit)result).getType(typeNames[0]);
+				} else if (result instanceof IType) {
+					type = ((IType)result);
 				}
 			}
-			for (int i = 1; i < typeNames.length; i++) {
-				type = type.getType(typeNames[i]);
+			if (type != null) {
+				for (int i = 1; i < typeNames.length; i++) {
+					type = type.getType(typeNames[i]);
+				}
 			}
 		} catch (JavaModelException e) {
 			throw new DebugException(e.getStatus());
