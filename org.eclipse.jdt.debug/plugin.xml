@@ -54,122 +54,53 @@
 	</breakpoint>
 </extension>
 
-<extension
-	id="javaBreakpointMarker"
-	point="org.eclipse.core.resources.markers">
-	<super
-		type="org.eclipse.debug.core.breakpointMarker">
-	</super>
+<extension id="javaBreakpointMarker" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.debug.core.breakpointMarker"/>
 </extension>
-<extension
-	id="commonJavaLineBreakpointMarker"
-	point="org.eclipse.core.resources.markers">
-	<super
-		type="org.eclipse.jdt.debug.javaBreakpointMarker">
-	</super>
-	<super
-		type="org.eclipse.debug.core.lineBreakpointMarker">
-	</super>
-	<persistent
-		value="true">
-	</persistent>
-   <attribute
-         name="installCount">
-   </attribute>
-   <attribute
-         name="hitCount">
-   </attribute>
-   <attribute
-         name="expired">
-   </attribute>
+
+<extension id="commonJavaLineBreakpointMarker" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.jdt.debug.javaBreakpointMarker"/>
+	<super type="org.eclipse.debug.core.lineBreakpointMarker"/>
+	<persistent value="true"/>
+	<attribute name="org.eclipse.jdt.debug.core.typeName"/>
+	<attribute name="org.eclipse.jdt.debug.core.installCount"/>
+	<attribute name="org.eclipse.jdt.debug.core.hitCount"/>
+	<attribute name="org.eclipse.jdt.debug.core.expired"/>
 </extension>
 	
-<extension
-      id="javaLineBreakpointMarker"
-      point="org.eclipse.core.resources.markers">
-	<super
-		type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
-	</super>
-   <persistent
-         value="true">
-   </persistent>
-   <attribute
-         name="typeHandle">
-   </attribute>
+<extension id="javaLineBreakpointMarker" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker"/>
+	<persistent value="true"/>
 </extension>
 
-<extension
-	id="javaPatternBreakpointMarker"
-	point="org.eclipse.core.resources.markers">
-	<super
-		type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
-	</super>
-	<persistent
-		value="true">
-	</persistent>
-	<attribute
-		name="pattern">
-	</attribute>
+<extension id="javaPatternBreakpointMarker" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker"/>
+	<persistent value="true"/>
+	<attribute name="org.eclipse.jdt.debug.core.pattern"/>
 </extension>	
 
-<extension
-      id="javaExceptionBreakpointMarker"
-      point="org.eclipse.core.resources.markers">
-	<super
-		type="org.eclipse.jdt.debug.javaBreakpointMarker">
-	</super>
-   <persistent
-         value="true">
-   </persistent>
-   <attribute
-         name="typeHandle">
-   </attribute>
-   <attribute
-         name="caught">
-   </attribute>
-   <attribute
-         name="uncaught">
-   </attribute>
-   <attribute
-         name="checked">
-   </attribute>
+<extension id="javaExceptionBreakpointMarker" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.jdt.debug.javaBreakpointMarker"/>
+	<persistent value="true"/>
+	<attribute name="org.eclipse.jdt.debug.core.caught"/>
+	<attribute name="org.eclipse.jdt.debug.core.uncaught"/>
+	<attribute name="org.eclipse.jdt.debug.core.checked"/>
 </extension>
 
-<extension
-	id="javaWatchpointMarker"
-	point="org.eclipse.core.resources.markers">
-	<super
-		type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
-	</super>
-	<persistent
-		value="true">
-	</persistent>
-	<attribute
-		name="fieldHandle">
-	</attribute>
-	<attribute
-		name="access">
-	</attribute>
-	<attribute
-		name="modification">
-	</attribute>
-	<attribute
-		name="auto_disabled">
-	</attribute>
+<extension id="javaWatchpointMarker" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.jdt.debug.javaLineBreakpointMarker"/>
+	<persistent value="true"/>
+	<attribute name="org.eclipse.jdt.debug.core.fieldName"/>
+	<attribute name="org.eclipse.jdt.debug.core.access"/>
+	<attribute name="org.eclipse.jdt.debug.core.modification"/>
+	<attribute name="org.eclipse.jdt.debug.core.auto_disabled"/>
 </extension>
 
-<extension
-      id="javaMethodEntryBreakpointMarker"
-      point="org.eclipse.core.resources.markers">
-   <super
-         type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
-   </super>
-   <persistent
-         value="true">
-   </persistent>
-   <attribute
-         name="methodHandle">
-   </attribute>
+<extension id="javaMethodEntryBreakpointMarker" point="org.eclipse.core.resources.markers">
+   <super type="org.eclipse.jdt.debug.javaLineBreakpointMarker"/>
+   <persistent value="true"/>
+   <attribute name="org.eclipse.jdt.debug.core.methodName"/>
+   <attribute name="org.eclipse.jdt.debug.core.methodSignature"/>
 </extension>
 
 </plugin>

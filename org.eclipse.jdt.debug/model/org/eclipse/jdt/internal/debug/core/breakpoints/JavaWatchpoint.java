@@ -37,37 +37,30 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	
 	private static final String JAVA_WATCHPOINT= "org.eclipse.jdt.debug.javaWatchpointMarker"; //$NON-NLS-1$
 	/**
-	 * Watchpoint attribute storing the access value (value <code>"access"</code>).
+	 * Watchpoint attribute storing the access value (value <code>"org.eclipse.jdt.debug.core.access"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether a
 	 * watchpoint is an access watchpoint.
 	 */
-	protected static final String ACCESS= "access"; //$NON-NLS-1$
+	protected static final String ACCESS= "org.eclipse.jdt.debug.core.access"; //$NON-NLS-1$
 	/**
-	 * Watchpoint attribute storing the modification value (value <code>"modification"</code>).
+	 * Watchpoint attribute storing the modification value (value <code>"org.eclipse.jdt.debug.core.modification"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether a
 	 * watchpoint is a modification watchpoint.
 	 */
-	protected static final String MODIFICATION= "modification"; //$NON-NLS-1$	
+	protected static final String MODIFICATION= "org.eclipse.jdt.debug.core.modification"; //$NON-NLS-1$	
 	/**
-	 * Watchpoint attribute storing the auto_disabled value (value <code>"auto_disabled"</code>).
+	 * Watchpoint attribute storing the auto_disabled value (value <code>"org.eclipse.jdt.debug.core.auto_disabled"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether a
 	 * watchpoint has been auto-disabled (as opposed to being disabled explicitly by the user)
 	 */
-	protected static final String AUTO_DISABLED="auto_disabled"; //$NON-NLS-1$
-	/**
-	 * Breakpoint attribute storing the handle identifier of the Java element
-	 * corresponding to the field on which a breakpoint is set
-	 * (value <code>"fieldHandle"</code>). This attribute is a <code>String</code>.
-	 * 
-	 * No longer used - replaced with FIELD_NAME
-	 */
-	protected static final String FIELD_HANDLE= "fieldHandle"; //$NON-NLS-1$	
+	protected static final String AUTO_DISABLED="org.eclipse.jdt.debug.core.auto_disabled"; //$NON-NLS-1$
+
 	/**
 	 * Breakpoint attribute storing the name of the field
 	 * on which a breakpoint is set.
-	 * (value <code>"fieldName"</code>). This attribute is a <code>String</code>.
+	 * (value <code>"org.eclipse.jdt.debug.core.fieldName"</code>). This attribute is a <code>String</code>.
 	 */
-	protected static final String FIELD_NAME= "fieldName"; //$NON-NLS-1$		
+	protected static final String FIELD_NAME= "org.eclipse.jdt.debug.core.fieldName"; //$NON-NLS-1$		
 	/**
 	 * Flag indicating that this breakpoint last suspended execution
 	 * due to a field access

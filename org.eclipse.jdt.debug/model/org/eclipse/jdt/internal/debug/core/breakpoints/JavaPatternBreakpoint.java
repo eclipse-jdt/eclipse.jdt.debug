@@ -31,11 +31,9 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	/**
 	 * Breakpoint attribute storing the pattern identifier of the source
 	 * file in which a breakpoint is created
-	 * (value <code>"patternHandle"</code>). This attribute is a <code>String</code>.
+	 * (value <code>"org.eclipse.jdt.debug.core.pattern"</code>). This attribute is a <code>String</code>.
 	 */
-	protected static final String PATTERN = "pattern"; //$NON-NLS-1$	
-	
-	protected static final String[] fgPatternAndHitCountAttributes= new String[]{PATTERN, HIT_COUNT, EXPIRED};		
+	protected static final String PATTERN = "org.eclipse.jdt.debug.core.pattern"; //$NON-NLS-1$	
 	
 	private String fResourceName= null;
 	

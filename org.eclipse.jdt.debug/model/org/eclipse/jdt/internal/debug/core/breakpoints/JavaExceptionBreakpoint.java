@@ -29,24 +29,24 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	
 	/**
 	 * Exception breakpoint attribute storing the suspend on caught value
-	 * (value <code>"caught"</code>). This attribute is stored as a <code>boolean</code>.
+	 * (value <code>"org.eclipse.jdt.debug.core.caught"</code>). This attribute is stored as a <code>boolean</code>.
 	 * When this attribute is <code>true</code>, a caught exception of the associated
 	 * type will cause excecution to suspend .
 	 */
-	protected static final String CAUGHT = "caught"; //$NON-NLS-1$
+	protected static final String CAUGHT = "org.eclipse.jdt.debug.core.caught"; //$NON-NLS-1$
 	/**
 	 * Exception breakpoint attribute storing the suspend on uncaught value
-	 * (value <code>"uncaught"</code>). This attribute is stored as a
+	 * (value <code>"org.eclipse.jdt.debug.core.uncaught"</code>). This attribute is stored as a
 	 * <code>boolean</code>. When this attribute is <code>true</code>, an uncaught
 	 * exception of the associated type will cause excecution to suspend. .
 	 */
-	protected static final String UNCAUGHT = "uncaught"; //$NON-NLS-1$	
+	protected static final String UNCAUGHT = "org.eclipse.jdt.debug.core.uncaught"; //$NON-NLS-1$	
 	/**
-	 * Exception breakpoint attribute storing the checked value (value <code>"checked"</code>).
+	 * Exception breakpoint attribute storing the checked value (value <code>"org.eclipse.jdt.debug.core.checked"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether an
 	 * exception is a checked exception.
 	 */
-	protected static final String CHECKED = "checked"; //$NON-NLS-1$	
+	protected static final String CHECKED = "org.eclipse.jdt.debug.core.checked"; //$NON-NLS-1$	
 	
 	/**
 	 * Name of the exception that was actually hit (could be a

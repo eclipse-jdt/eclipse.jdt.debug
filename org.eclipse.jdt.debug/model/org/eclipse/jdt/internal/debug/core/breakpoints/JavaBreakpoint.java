@@ -40,39 +40,30 @@ import com.sun.jdi.request.MethodEntryRequest;
 public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener {
 
 	/**
-	 * Breakpoint attribute storing the expired value (value <code>"expired"</code>).
+	 * Breakpoint attribute storing the expired value (value <code>"org.eclipse.jdt.debug.core.expired"</code>).
 	 * This attribute is stored as a <code>boolean</code>. Once a hit count has
 	 * been reached, a breakpoint is considered to be "expired".
 	 */
-	protected static final String EXPIRED = "expired"; //$NON-NLS-1$
+	protected static final String EXPIRED = "org.eclipse.jdt.debug.core.expired"; //$NON-NLS-1$
 	/**
 	 * Breakpoint attribute storing a breakpoint's hit count value
-	 * (value <code>"hitCount"</code>). This attribute is stored as an
+	 * (value <code>"org.eclipse.jdt.debug.core.hitCount"</code>). This attribute is stored as an
 	 * <code>int</code>.
 	 */
-	protected static final String HIT_COUNT = "hitCount"; //$NON-NLS-1$
+	protected static final String HIT_COUNT = "org.eclipse.jdt.debug.core.hitCount"; //$NON-NLS-1$
 	/**
 	 * Breakpoint attribute storing the number of debug targets a
-	 * breakpoint is installed in (value <code>"installCount"</code>).
+	 * breakpoint is installed in (value <code>"org.eclipse.jdt.debug.core.installCount"</code>).
 	 * This attribute is a <code>int</code>.
 	 */
-	protected static final String INSTALL_COUNT = "installCount"; //$NON-NLS-1$	
-	/**
-	 * Breakpoint attribute storing the handle identifier of the Java element
-	 * corresponding to the type in which a breakpoint is contained
-	 * (value <code>"typeHandle"</code>). This attribute is a <code>String</code>.
-	 * 
-	 * This attribute is no longer used - it has been replaced
-	 * by <code>TYPE_NAME</code>.
-	 */
-	protected static final String TYPE_HANDLE = "typeHandle"; //$NON-NLS-1$	
+	protected static final String INSTALL_COUNT = "org.eclipse.jdt.debug.core.installCount"; //$NON-NLS-1$	
 	
 	/**
 	 * Breakpoint attribute storing the fully qualified name of the type
 	 * this breakpoint is located in.
-	 * (value <code>"typeName"</code>). This attribute is a <code>String</code>.
+	 * (value <code>"org.eclipse.jdt.debug.core.typeName"</code>). This attribute is a <code>String</code>.
 	 */
-	protected static final String TYPE_NAME = "typeName"; //$NON-NLS-1$		
+	protected static final String TYPE_NAME = "org.eclipse.jdt.debug.core.typeName"; //$NON-NLS-1$		
 	
 	/**
 	 * Stores the collection of requests that this breakpoint has installed in

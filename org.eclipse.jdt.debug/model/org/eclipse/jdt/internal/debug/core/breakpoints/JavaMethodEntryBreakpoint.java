@@ -32,16 +32,16 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	/**
 	 * Breakpoint attribute storing the name of the method
 	 * in which a breakpoint is contained.
-	 * (value <code>"methodName"</code>). This attribute is a <code>String</code>.
+	 * (value <code>"org.eclipse.jdt.debug.core.methodName"</code>). This attribute is a <code>String</code>.
 	 */
-	private static final String METHOD_NAME = "methodName"; //$NON-NLS-1$	
+	private static final String METHOD_NAME = "org.eclipse.jdt.debug.core.methodName"; //$NON-NLS-1$	
 	
 	/**
 	 * Breakpoint attribute storing the signature of the method
 	 * in which a breakpoint is contained.
-	 * (value <code>"methodSignature"</code>). This attribute is a <code>String</code>.
+	 * (value <code>"org.eclipse.jdt.debug.core.methodSignature"</code>). This attribute is a <code>String</code>.
 	 */
-	private static final String METHOD_SIGNATURE = "methodSignature"; //$NON-NLS-1$	
+	private static final String METHOD_SIGNATURE = "org.eclipse.jdt.debug.core.methodSignature"; //$NON-NLS-1$	
 	
 	/**
 	 * Caches the name and signature of the method in which this breakpoint is installed
