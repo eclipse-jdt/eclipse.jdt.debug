@@ -1,18 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-*********************************************************************/
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
 public class NestedTypeFieldValue_406 extends Tests {
@@ -25,7 +25,7 @@ public class NestedTypeFieldValue_406 extends Tests {
 	}
 
 	public void init() throws Exception {
-		initializeFrame("EvalNestedTypeTests", 417, 3);
+		initializeFrame("EvalNestedTypeTests", 406, 4);
 	}
 
 	protected void end() throws Exception {
@@ -39,15 +39,13 @@ public class NestedTypeFieldValue_406 extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("a : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("a : wrong result : ", aIntValue_1, intValue);
+		assertEquals("a : wrong result : ", aIntValue_2, intValue);
 
 		value = eval(aString);
 		typeName = value.getReferenceTypeName();
 		assertEquals("a : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
-		assertEquals("a : wrong result : ", aStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
+		assertEquals("a : wrong result : ", aStringValue_2, stringValue);
 		} finally {;
 		end();
 		}
@@ -60,57 +58,13 @@ public class NestedTypeFieldValue_406 extends Tests {
 		String typeName = value.getReferenceTypeName();
 		assertEquals("b : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("b : wrong result : ", bIntValue_1, intValue);
+		assertEquals("b : wrong result : ", bIntValue_2, intValue);
 
 		value = eval(bString);
 		typeName = value.getReferenceTypeName();
 		assertEquals("b : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
-		assertEquals("b : wrong result : ", bStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
-		} finally {;
-		end();
-		}
-	}
-
-	public void testEvalNestedTypeTest_e() throws Throwable {
-		try {
-		init();
-		IValue value = eval(eInt);
-		String typeName = value.getReferenceTypeName();
-		assertEquals("e : wrong type : ", "int", typeName);
-		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("e : wrong result : ", eIntValue_1, intValue);
-
-		value = eval(eString);
-		typeName = value.getReferenceTypeName();
-		assertEquals("e : wrong type : ", "java.lang.String", typeName);
-		String stringValue = ((JDIObjectValue)value).getValueString();
-		assertEquals("e : wrong result : ", eStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
-		} finally {;
-		end();
-		}
-	}
-
-	public void testEvalNestedTypeTest_f() throws Throwable {
-		try {
-		init();
-		IValue value = eval(fInt);
-		String typeName = value.getReferenceTypeName();
-		assertEquals("f : wrong type : ", "int", typeName);
-		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
-		assertEquals("f : wrong result : ", fIntValue_1, intValue);
-
-		value = eval(fString);
-		typeName = value.getReferenceTypeName();
-		assertEquals("f : wrong type : ", "java.lang.String", typeName);
-		String stringValue = ((JDIObjectValue)value).getValueString();
-		assertEquals("f : wrong result : ", fStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
+		assertEquals("b : wrong result : ", bStringValue_2, stringValue);
 		} finally {;
 		end();
 		}
@@ -130,8 +84,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_b : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_b : wrong result : ", bStringValue_0, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -151,8 +103,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_d : wrong result : ", dStringValue_0, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -172,8 +122,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_f : wrong result : ", fStringValue_0, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -193,8 +141,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_A_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_d : wrong result : ", dStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -214,8 +160,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_A_h : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_h : wrong result : ", hStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -235,8 +179,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_A_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_d : wrong result : ", dStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -256,8 +198,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_A_h : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_h : wrong result : ", hStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -277,8 +217,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_A_AA_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_AA_d : wrong result : ", dStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -298,8 +236,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_A_AA_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_AA_f : wrong result : ", fStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -319,8 +255,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_A_AA_j : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_AA_j : wrong result : ", jStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -340,8 +274,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_A_AB_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_AB_d : wrong result : ", dStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -361,8 +293,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_A_AB_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_AB_f : wrong result : ", fStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -382,8 +312,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_A_AB_j : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_AB_j : wrong result : ", jStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -403,8 +331,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_A_AA_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_AA_d : wrong result : ", dStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -424,8 +350,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_A_AA_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_AA_f : wrong result : ", fStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -445,8 +369,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_A_AA_j : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_AA_j : wrong result : ", jStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -466,8 +388,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_A_AB_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_AB_d : wrong result : ", dStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -487,8 +407,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_A_AB_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_AB_f : wrong result : ", fStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -508,8 +426,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_A_AB_j : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_AB_j : wrong result : ", jStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -529,8 +445,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_B_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_B_d : wrong result : ", dStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -550,8 +464,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_B_h : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_B_h : wrong result : ", hStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -571,8 +483,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_B_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_B_d : wrong result : ", dStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -592,8 +502,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_B_h : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_B_h : wrong result : ", hStringValue_1, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -613,8 +521,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_B_BB_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_B_BB_d : wrong result : ", dStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -634,8 +540,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_B_BB_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_B_BB_f : wrong result : ", fStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -655,8 +559,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_B_BB_j : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_B_BB_j : wrong result : ", jStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -676,8 +578,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_B_BB_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_B_BB_d : wrong result : ", dStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -697,8 +597,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_B_BB_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_B_BB_f : wrong result : ", fStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -718,8 +616,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_B_BB_j : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_B_BB_j : wrong result : ", jStringValue_2, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -739,8 +635,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_this_a : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_this_a : wrong result : ", aStringValue_0, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -760,8 +654,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_this_b : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_this_b : wrong result : ", bStringValue_0, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -781,8 +673,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_this_c : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_this_c : wrong result : ", cStringValue_0, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -802,8 +692,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_this_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_this_d : wrong result : ", dStringValue_0, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -823,8 +711,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_this_e : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_this_e : wrong result : ", eStringValue_0, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -844,8 +730,6 @@ public class NestedTypeFieldValue_406 extends Tests {
 		assertEquals("T_T_this_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_this_f : wrong result : ", fStringValue_0, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}

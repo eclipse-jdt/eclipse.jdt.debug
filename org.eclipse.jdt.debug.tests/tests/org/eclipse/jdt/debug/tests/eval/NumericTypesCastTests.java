@@ -1,18 +1,23 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-*********************************************************************/
-
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
 public class NumericTypesCastTests extends Tests {
 
@@ -44,8 +49,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(byte) byte : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("(byte) byte : wrong result : ", ( byte) yByteValue, byteValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -65,8 +68,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(byte) char : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("(byte) char : wrong result : ", ( byte) yCharValue, byteValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -86,8 +87,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(byte) short : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("(byte) short : wrong result : ", ( byte) yShortValue, byteValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -107,8 +106,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(byte) int : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("(byte) int : wrong result : ", ( byte) yIntValue, byteValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -128,8 +125,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(byte) long : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("(byte) long : wrong result : ", ( byte) yLongValue, byteValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -149,8 +144,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(byte) float : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("(byte) float : wrong result : ", ( byte) yFloatValue, byteValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -170,8 +163,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(byte) double : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("(byte) double : wrong result : ", ( byte) yDoubleValue, byteValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -193,8 +184,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(char) byte : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("(char) byte : wrong result : ", ( char) yByteValue, charValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -214,8 +203,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(char) char : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("(char) char : wrong result : ", ( char) yCharValue, charValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -235,8 +222,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(char) short : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("(char) short : wrong result : ", ( char) yShortValue, charValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -256,8 +241,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(char) int : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("(char) int : wrong result : ", ( char) yIntValue, charValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -277,8 +260,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(char) long : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("(char) long : wrong result : ", ( char) yLongValue, charValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -298,8 +279,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(char) float : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("(char) float : wrong result : ", ( char) yFloatValue, charValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -319,8 +298,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(char) double : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("(char) double : wrong result : ", ( char) yDoubleValue, charValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -342,8 +319,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(short) byte : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("(short) byte : wrong result : ", ( short) yByteValue, shortValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -363,8 +338,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(short) char : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("(short) char : wrong result : ", ( short) yCharValue, shortValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -384,8 +357,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(short) short : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("(short) short : wrong result : ", ( short) yShortValue, shortValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -405,8 +376,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(short) int : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("(short) int : wrong result : ", ( short) yIntValue, shortValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -426,8 +395,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(short) long : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("(short) long : wrong result : ", ( short) yLongValue, shortValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -447,8 +414,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(short) float : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("(short) float : wrong result : ", ( short) yFloatValue, shortValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -468,8 +433,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(short) double : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("(short) double : wrong result : ", ( short) yDoubleValue, shortValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -491,8 +454,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(int) byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("(int) byte : wrong result : ", ( int) yByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -512,8 +473,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(int) char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("(int) char : wrong result : ", ( int) yCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -533,8 +492,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(int) short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("(int) short : wrong result : ", ( int) yShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -554,8 +511,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(int) int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("(int) int : wrong result : ", ( int) yIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -575,8 +530,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(int) long : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("(int) long : wrong result : ", ( int) yLongValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -596,8 +549,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(int) float : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("(int) float : wrong result : ", ( int) yFloatValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -617,8 +568,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(int) double : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("(int) double : wrong result : ", ( int) yDoubleValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -640,8 +589,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(long) byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("(long) byte : wrong result : ", ( long) yByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -661,8 +608,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(long) char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("(long) char : wrong result : ", ( long) yCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -682,8 +627,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(long) short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("(long) short : wrong result : ", ( long) yShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -703,8 +646,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(long) int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("(long) int : wrong result : ", ( long) yIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -724,8 +665,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(long) long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("(long) long : wrong result : ", ( long) yLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -745,8 +684,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(long) float : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("(long) float : wrong result : ", ( long) yFloatValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -766,8 +703,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(long) double : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("(long) double : wrong result : ", ( long) yDoubleValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -789,8 +724,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(float) byte : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("(float) byte : wrong result : ", ( float) yByteValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -810,8 +743,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(float) char : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("(float) char : wrong result : ", ( float) yCharValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -831,8 +762,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(float) short : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("(float) short : wrong result : ", ( float) yShortValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -852,8 +781,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(float) int : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("(float) int : wrong result : ", ( float) yIntValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -873,8 +800,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(float) long : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("(float) long : wrong result : ", ( float) yLongValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -894,8 +819,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(float) float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("(float) float : wrong result : ", ( float) yFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -915,8 +838,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(float) double : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("(float) double : wrong result : ", ( float) yDoubleValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -938,8 +859,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(double) byte : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("(double) byte : wrong result : ", ( double) yByteValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -959,8 +878,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(double) char : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("(double) char : wrong result : ", ( double) yCharValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -980,8 +897,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(double) short : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("(double) short : wrong result : ", ( double) yShortValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1001,8 +916,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(double) int : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("(double) int : wrong result : ", ( double) yIntValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1022,8 +935,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(double) long : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("(double) long : wrong result : ", ( double) yLongValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1043,8 +954,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(double) float : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("(double) float : wrong result : ", ( double) yFloatValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1064,8 +973,6 @@ public class NumericTypesCastTests extends Tests {
 		assertEquals("(double) double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("(double) double : wrong result : ", ( double) yDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}

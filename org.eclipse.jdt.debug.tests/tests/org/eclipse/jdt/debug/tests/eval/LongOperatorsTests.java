@@ -1,17 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-*********************************************************************/
-
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
@@ -45,8 +49,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long plus byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long plus byte : wrong result : ", yLongValue + xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -66,8 +68,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long plus char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long plus char : wrong result : ", yLongValue + xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -87,8 +87,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long plus short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long plus short : wrong result : ", yLongValue + xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -108,8 +106,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long plus int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long plus int : wrong result : ", yLongValue + xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -129,8 +125,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long plus long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long plus long : wrong result : ", yLongValue + xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -150,8 +144,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long plus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("long plus float : wrong result : ", yLongValue + xFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -171,8 +163,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long plus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("long plus double : wrong result : ", yLongValue + xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -192,8 +182,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long plus java.lang.String : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("long plus java.lang.String : wrong result : ", yLongValue + xStringValue, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -215,8 +203,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long minus byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long minus byte : wrong result : ", yLongValue - xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -236,8 +222,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long minus char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long minus char : wrong result : ", yLongValue - xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -257,8 +241,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long minus short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long minus short : wrong result : ", yLongValue - xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -278,8 +260,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long minus int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long minus int : wrong result : ", yLongValue - xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -299,8 +279,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long minus long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long minus long : wrong result : ", yLongValue - xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -320,8 +298,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long minus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("long minus float : wrong result : ", yLongValue - xFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -341,8 +317,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long minus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("long minus double : wrong result : ", yLongValue - xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -364,8 +338,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long multiply byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long multiply byte : wrong result : ", yLongValue * xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -385,8 +357,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long multiply char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long multiply char : wrong result : ", yLongValue * xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -406,8 +376,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long multiply short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long multiply short : wrong result : ", yLongValue * xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -427,8 +395,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long multiply int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long multiply int : wrong result : ", yLongValue * xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -448,8 +414,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long multiply long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long multiply long : wrong result : ", yLongValue * xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -469,8 +433,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long multiply float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("long multiply float : wrong result : ", yLongValue * xFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -490,8 +452,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long multiply double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("long multiply double : wrong result : ", yLongValue * xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -513,8 +473,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long divide byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long divide byte : wrong result : ", yLongValue / xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -534,8 +492,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long divide char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long divide char : wrong result : ", yLongValue / xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -555,8 +511,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long divide short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long divide short : wrong result : ", yLongValue / xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -576,8 +530,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long divide int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long divide int : wrong result : ", yLongValue / xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -597,8 +549,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long divide long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long divide long : wrong result : ", yLongValue / xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -618,8 +568,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long divide float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("long divide float : wrong result : ", yLongValue / xFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -639,8 +587,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long divide double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("long divide double : wrong result : ", yLongValue / xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -662,8 +608,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long remainder byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long remainder byte : wrong result : ", yLongValue % xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -683,8 +627,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long remainder char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long remainder char : wrong result : ", yLongValue % xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -704,8 +646,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long remainder short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long remainder short : wrong result : ", yLongValue % xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -725,8 +665,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long remainder int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long remainder int : wrong result : ", yLongValue % xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -746,8 +684,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long remainder long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long remainder long : wrong result : ", yLongValue % xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -767,8 +703,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long remainder float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("long remainder float : wrong result : ", yLongValue % xFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -788,8 +722,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long remainder double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("long remainder double : wrong result : ", yLongValue % xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -817,8 +749,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greater byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greater byte : wrong result : ", xLongValue > xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -844,8 +774,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greater char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greater char : wrong result : ", xLongValue > xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -871,8 +799,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greater short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greater short : wrong result : ", xLongValue > xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -898,8 +824,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greater int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greater int : wrong result : ", xLongValue > xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -925,8 +849,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greater long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greater long : wrong result : ", xLongValue > xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -952,8 +874,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greater float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greater float : wrong result : ", xLongValue > xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -979,8 +899,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greater double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greater double : wrong result : ", xLongValue > xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1008,8 +926,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greaterEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greaterEqual byte : wrong result : ", xLongValue >= xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1035,8 +951,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greaterEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greaterEqual char : wrong result : ", xLongValue >= xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1062,8 +976,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greaterEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greaterEqual short : wrong result : ", xLongValue >= xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1089,8 +1001,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greaterEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greaterEqual int : wrong result : ", xLongValue >= xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1116,8 +1026,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greaterEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greaterEqual long : wrong result : ", xLongValue >= xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1143,8 +1051,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greaterEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greaterEqual float : wrong result : ", xLongValue >= xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1170,8 +1076,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long greaterEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long greaterEqual double : wrong result : ", xLongValue >= xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1199,8 +1103,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long less byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long less byte : wrong result : ", xLongValue < xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1226,8 +1128,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long less char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long less char : wrong result : ", xLongValue < xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1253,8 +1153,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long less short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long less short : wrong result : ", xLongValue < xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1280,8 +1178,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long less int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long less int : wrong result : ", xLongValue < xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1307,8 +1203,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long less long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long less long : wrong result : ", xLongValue < xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1334,8 +1228,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long less float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long less float : wrong result : ", xLongValue < xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1361,8 +1253,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long less double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long less double : wrong result : ", xLongValue < xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1390,8 +1280,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long lessEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long lessEqual byte : wrong result : ", xLongValue <= xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1417,8 +1305,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long lessEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long lessEqual char : wrong result : ", xLongValue <= xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1444,8 +1330,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long lessEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long lessEqual short : wrong result : ", xLongValue <= xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1471,8 +1355,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long lessEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long lessEqual int : wrong result : ", xLongValue <= xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1498,8 +1380,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long lessEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long lessEqual long : wrong result : ", xLongValue <= xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1525,8 +1405,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long lessEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long lessEqual float : wrong result : ", xLongValue <= xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1552,8 +1430,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long lessEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long lessEqual double : wrong result : ", xLongValue <= xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1581,8 +1457,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long equalEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long equalEqual byte : wrong result : ", xLongValue == xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1608,8 +1482,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long equalEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long equalEqual char : wrong result : ", xLongValue == xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1635,8 +1507,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long equalEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long equalEqual short : wrong result : ", xLongValue == xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1662,8 +1532,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long equalEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long equalEqual int : wrong result : ", xLongValue == xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1689,8 +1557,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long equalEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long equalEqual long : wrong result : ", xLongValue == xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1716,8 +1582,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long equalEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long equalEqual float : wrong result : ", xLongValue == xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1743,8 +1607,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long equalEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long equalEqual double : wrong result : ", xLongValue == xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1772,8 +1634,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long notEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long notEqual byte : wrong result : ", xLongValue != xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1799,8 +1659,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long notEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long notEqual char : wrong result : ", xLongValue != xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1826,8 +1684,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long notEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long notEqual short : wrong result : ", xLongValue != xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1853,8 +1709,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long notEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long notEqual int : wrong result : ", xLongValue != xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1880,8 +1734,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long notEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long notEqual long : wrong result : ", xLongValue != xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1907,8 +1759,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long notEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long notEqual float : wrong result : ", xLongValue != xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1934,8 +1784,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long notEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("long notEqual double : wrong result : ", xLongValue != xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1957,8 +1805,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long leftShift byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long leftShift byte : wrong result : ", yLongValue << xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1978,8 +1824,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long leftShift char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long leftShift char : wrong result : ", yLongValue << xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1999,8 +1843,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long leftShift short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long leftShift short : wrong result : ", yLongValue << xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2020,8 +1862,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long leftShift int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long leftShift int : wrong result : ", yLongValue << xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2041,8 +1881,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long leftShift long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long leftShift long : wrong result : ", yLongValue << xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2064,8 +1902,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long rightShift byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long rightShift byte : wrong result : ", yLongValue >> xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2085,8 +1921,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long rightShift char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long rightShift char : wrong result : ", yLongValue >> xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2106,8 +1940,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long rightShift short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long rightShift short : wrong result : ", yLongValue >> xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2127,8 +1959,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long rightShift int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long rightShift int : wrong result : ", yLongValue >> xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2148,8 +1978,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long rightShift long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long rightShift long : wrong result : ", yLongValue >> xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2171,8 +1999,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long unsignedRightShift byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long unsignedRightShift byte : wrong result : ", yLongValue >>> xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2192,8 +2018,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long unsignedRightShift char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long unsignedRightShift char : wrong result : ", yLongValue >>> xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2213,8 +2037,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long unsignedRightShift short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long unsignedRightShift short : wrong result : ", yLongValue >>> xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2234,8 +2056,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long unsignedRightShift int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long unsignedRightShift int : wrong result : ", yLongValue >>> xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2255,8 +2075,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long unsignedRightShift long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long unsignedRightShift long : wrong result : ", yLongValue >>> xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2278,8 +2096,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long or byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long or byte : wrong result : ", yLongValue | xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2299,8 +2115,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long or char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long or char : wrong result : ", yLongValue | xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2320,8 +2134,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long or short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long or short : wrong result : ", yLongValue | xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2341,8 +2153,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long or int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long or int : wrong result : ", yLongValue | xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2362,8 +2172,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long or long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long or long : wrong result : ", yLongValue | xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2385,8 +2193,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long and byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long and byte : wrong result : ", yLongValue & xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2406,8 +2212,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long and char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long and char : wrong result : ", yLongValue & xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2427,8 +2231,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long and short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long and short : wrong result : ", yLongValue & xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2448,8 +2250,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long and int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long and int : wrong result : ", yLongValue & xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2469,8 +2269,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long and long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long and long : wrong result : ", yLongValue & xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2492,8 +2290,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long xor byte : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long xor byte : wrong result : ", yLongValue ^ xByteValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2513,8 +2309,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long xor char : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long xor char : wrong result : ", yLongValue ^ xCharValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2534,8 +2328,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long xor short : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long xor short : wrong result : ", yLongValue ^ xShortValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2555,8 +2347,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long xor int : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long xor int : wrong result : ", yLongValue ^ xIntValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2576,8 +2366,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("long xor long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long xor long : wrong result : ", yLongValue ^ xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2599,8 +2387,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("plus long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("plus long : wrong result : ", + yLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2622,8 +2408,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("minus long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("minus long : wrong result : ", - yLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2645,8 +2429,6 @@ public class LongOperatorsTests extends Tests {
 		assertEquals("twiddle long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("twiddle long : wrong result : ", ~ yLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}

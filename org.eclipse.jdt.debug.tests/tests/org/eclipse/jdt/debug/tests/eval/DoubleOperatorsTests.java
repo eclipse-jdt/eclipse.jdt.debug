@@ -1,17 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-*********************************************************************/
-
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
@@ -45,8 +49,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double plus byte : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double plus byte : wrong result : ", yDoubleValue + xByteValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -66,8 +68,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double plus char : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double plus char : wrong result : ", yDoubleValue + xCharValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -87,8 +87,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double plus short : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double plus short : wrong result : ", yDoubleValue + xShortValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -108,8 +106,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double plus int : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double plus int : wrong result : ", yDoubleValue + xIntValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -129,8 +125,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double plus long : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double plus long : wrong result : ", yDoubleValue + xLongValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -150,8 +144,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double plus float : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double plus float : wrong result : ", yDoubleValue + xFloatValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -171,8 +163,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double plus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double plus double : wrong result : ", yDoubleValue + xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -192,8 +182,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double plus java.lang.String : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("double plus java.lang.String : wrong result : ", yDoubleValue + xStringValue, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -215,8 +203,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double minus byte : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double minus byte : wrong result : ", yDoubleValue - xByteValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -236,8 +222,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double minus char : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double minus char : wrong result : ", yDoubleValue - xCharValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -257,8 +241,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double minus short : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double minus short : wrong result : ", yDoubleValue - xShortValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -278,8 +260,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double minus int : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double minus int : wrong result : ", yDoubleValue - xIntValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -299,8 +279,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double minus long : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double minus long : wrong result : ", yDoubleValue - xLongValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -320,8 +298,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double minus float : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double minus float : wrong result : ", yDoubleValue - xFloatValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -341,8 +317,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double minus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double minus double : wrong result : ", yDoubleValue - xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -364,8 +338,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double multiply byte : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double multiply byte : wrong result : ", yDoubleValue * xByteValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -385,8 +357,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double multiply char : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double multiply char : wrong result : ", yDoubleValue * xCharValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -406,8 +376,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double multiply short : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double multiply short : wrong result : ", yDoubleValue * xShortValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -427,8 +395,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double multiply int : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double multiply int : wrong result : ", yDoubleValue * xIntValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -448,8 +414,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double multiply long : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double multiply long : wrong result : ", yDoubleValue * xLongValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -469,8 +433,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double multiply float : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double multiply float : wrong result : ", yDoubleValue * xFloatValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -490,8 +452,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double multiply double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double multiply double : wrong result : ", yDoubleValue * xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -513,8 +473,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double divide byte : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double divide byte : wrong result : ", yDoubleValue / xByteValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -534,8 +492,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double divide char : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double divide char : wrong result : ", yDoubleValue / xCharValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -555,8 +511,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double divide short : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double divide short : wrong result : ", yDoubleValue / xShortValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -576,8 +530,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double divide int : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double divide int : wrong result : ", yDoubleValue / xIntValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -597,8 +549,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double divide long : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double divide long : wrong result : ", yDoubleValue / xLongValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -618,8 +568,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double divide float : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double divide float : wrong result : ", yDoubleValue / xFloatValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -639,8 +587,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double divide double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double divide double : wrong result : ", yDoubleValue / xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -662,8 +608,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double remainder byte : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double remainder byte : wrong result : ", yDoubleValue % xByteValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -683,8 +627,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double remainder char : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double remainder char : wrong result : ", yDoubleValue % xCharValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -704,8 +646,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double remainder short : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double remainder short : wrong result : ", yDoubleValue % xShortValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -725,8 +665,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double remainder int : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double remainder int : wrong result : ", yDoubleValue % xIntValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -746,8 +684,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double remainder long : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double remainder long : wrong result : ", yDoubleValue % xLongValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -767,8 +703,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double remainder float : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double remainder float : wrong result : ", yDoubleValue % xFloatValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -788,8 +722,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double remainder double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double remainder double : wrong result : ", yDoubleValue % xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -817,8 +749,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greater byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greater byte : wrong result : ", xDoubleValue > xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -844,8 +774,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greater char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greater char : wrong result : ", xDoubleValue > xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -871,8 +799,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greater short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greater short : wrong result : ", xDoubleValue > xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -898,8 +824,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greater int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greater int : wrong result : ", xDoubleValue > xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -925,8 +849,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greater long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greater long : wrong result : ", xDoubleValue > xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -952,8 +874,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greater float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greater float : wrong result : ", xDoubleValue > xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -979,8 +899,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greater double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greater double : wrong result : ", xDoubleValue > xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1008,8 +926,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greaterEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greaterEqual byte : wrong result : ", xDoubleValue >= xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1035,8 +951,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greaterEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greaterEqual char : wrong result : ", xDoubleValue >= xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1062,8 +976,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greaterEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greaterEqual short : wrong result : ", xDoubleValue >= xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1089,8 +1001,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greaterEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greaterEqual int : wrong result : ", xDoubleValue >= xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1116,8 +1026,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greaterEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greaterEqual long : wrong result : ", xDoubleValue >= xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1143,8 +1051,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greaterEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greaterEqual float : wrong result : ", xDoubleValue >= xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1170,8 +1076,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double greaterEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double greaterEqual double : wrong result : ", xDoubleValue >= xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1199,8 +1103,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double less byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double less byte : wrong result : ", xDoubleValue < xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1226,8 +1128,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double less char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double less char : wrong result : ", xDoubleValue < xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1253,8 +1153,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double less short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double less short : wrong result : ", xDoubleValue < xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1280,8 +1178,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double less int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double less int : wrong result : ", xDoubleValue < xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1307,8 +1203,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double less long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double less long : wrong result : ", xDoubleValue < xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1334,8 +1228,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double less float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double less float : wrong result : ", xDoubleValue < xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1361,8 +1253,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double less double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double less double : wrong result : ", xDoubleValue < xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1390,8 +1280,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double lessEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double lessEqual byte : wrong result : ", xDoubleValue <= xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1417,8 +1305,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double lessEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double lessEqual char : wrong result : ", xDoubleValue <= xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1444,8 +1330,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double lessEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double lessEqual short : wrong result : ", xDoubleValue <= xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1471,8 +1355,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double lessEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double lessEqual int : wrong result : ", xDoubleValue <= xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1498,8 +1380,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double lessEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double lessEqual long : wrong result : ", xDoubleValue <= xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1525,8 +1405,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double lessEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double lessEqual float : wrong result : ", xDoubleValue <= xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1552,8 +1430,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double lessEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double lessEqual double : wrong result : ", xDoubleValue <= xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1581,8 +1457,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double equalEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double equalEqual byte : wrong result : ", xDoubleValue == xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1608,8 +1482,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double equalEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double equalEqual char : wrong result : ", xDoubleValue == xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1635,8 +1507,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double equalEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double equalEqual short : wrong result : ", xDoubleValue == xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1662,8 +1532,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double equalEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double equalEqual int : wrong result : ", xDoubleValue == xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1689,8 +1557,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double equalEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double equalEqual long : wrong result : ", xDoubleValue == xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1716,8 +1582,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double equalEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double equalEqual float : wrong result : ", xDoubleValue == xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1743,8 +1607,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double equalEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double equalEqual double : wrong result : ", xDoubleValue == xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1772,8 +1634,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double notEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double notEqual byte : wrong result : ", xDoubleValue != xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1799,8 +1659,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double notEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double notEqual char : wrong result : ", xDoubleValue != xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1826,8 +1684,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double notEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double notEqual short : wrong result : ", xDoubleValue != xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1853,8 +1709,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double notEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double notEqual int : wrong result : ", xDoubleValue != xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1880,8 +1734,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double notEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double notEqual long : wrong result : ", xDoubleValue != xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1907,8 +1759,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double notEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double notEqual float : wrong result : ", xDoubleValue != xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1934,8 +1784,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("double notEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("double notEqual double : wrong result : ", xDoubleValue != xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1957,8 +1805,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("plus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("plus double : wrong result : ", + yDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1980,8 +1826,6 @@ public class DoubleOperatorsTests extends Tests {
 		assertEquals("minus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("minus double : wrong result : ", - yDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}

@@ -1,17 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-*********************************************************************/
-
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
@@ -45,8 +49,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short plus byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short plus byte : wrong result : ", yShortValue + xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -66,8 +68,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short plus char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short plus char : wrong result : ", yShortValue + xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -87,8 +87,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short plus short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short plus short : wrong result : ", yShortValue + xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -108,8 +106,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short plus int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short plus int : wrong result : ", yShortValue + xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -129,8 +125,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short plus long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("short plus long : wrong result : ", yShortValue + xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -150,8 +144,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short plus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("short plus float : wrong result : ", yShortValue + xFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -171,8 +163,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short plus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("short plus double : wrong result : ", yShortValue + xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -192,8 +182,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short plus java.lang.String : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("short plus java.lang.String : wrong result : ", yShortValue + xStringValue, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -215,8 +203,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short minus byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short minus byte : wrong result : ", yShortValue - xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -236,8 +222,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short minus char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short minus char : wrong result : ", yShortValue - xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -257,8 +241,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short minus short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short minus short : wrong result : ", yShortValue - xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -278,8 +260,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short minus int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short minus int : wrong result : ", yShortValue - xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -299,8 +279,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short minus long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("short minus long : wrong result : ", yShortValue - xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -320,8 +298,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short minus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("short minus float : wrong result : ", yShortValue - xFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -341,8 +317,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short minus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("short minus double : wrong result : ", yShortValue - xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -364,8 +338,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short multiply byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short multiply byte : wrong result : ", yShortValue * xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -385,8 +357,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short multiply char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short multiply char : wrong result : ", yShortValue * xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -406,8 +376,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short multiply short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short multiply short : wrong result : ", yShortValue * xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -427,8 +395,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short multiply int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short multiply int : wrong result : ", yShortValue * xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -448,8 +414,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short multiply long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("short multiply long : wrong result : ", yShortValue * xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -469,8 +433,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short multiply float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("short multiply float : wrong result : ", yShortValue * xFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -490,8 +452,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short multiply double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("short multiply double : wrong result : ", yShortValue * xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -513,8 +473,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short divide byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short divide byte : wrong result : ", yShortValue / xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -534,8 +492,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short divide char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short divide char : wrong result : ", yShortValue / xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -555,8 +511,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short divide short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short divide short : wrong result : ", yShortValue / xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -576,8 +530,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short divide int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short divide int : wrong result : ", yShortValue / xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -597,8 +549,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short divide long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("short divide long : wrong result : ", yShortValue / xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -618,8 +568,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short divide float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("short divide float : wrong result : ", yShortValue / xFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -639,8 +587,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short divide double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("short divide double : wrong result : ", yShortValue / xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -662,8 +608,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short remainder byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short remainder byte : wrong result : ", yShortValue % xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -683,8 +627,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short remainder char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short remainder char : wrong result : ", yShortValue % xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -704,8 +646,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short remainder short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short remainder short : wrong result : ", yShortValue % xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -725,8 +665,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short remainder int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short remainder int : wrong result : ", yShortValue % xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -746,8 +684,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short remainder long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("short remainder long : wrong result : ", yShortValue % xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -767,8 +703,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short remainder float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("short remainder float : wrong result : ", yShortValue % xFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -788,8 +722,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short remainder double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("short remainder double : wrong result : ", yShortValue % xDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -817,8 +749,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greater byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greater byte : wrong result : ", xShortValue > xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -844,8 +774,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greater char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greater char : wrong result : ", xShortValue > xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -871,8 +799,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greater short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greater short : wrong result : ", xShortValue > xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -898,8 +824,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greater int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greater int : wrong result : ", xShortValue > xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -925,8 +849,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greater long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greater long : wrong result : ", xShortValue > xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -952,8 +874,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greater float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greater float : wrong result : ", xShortValue > xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -979,8 +899,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greater double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greater double : wrong result : ", xShortValue > xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1008,8 +926,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greaterEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greaterEqual byte : wrong result : ", xShortValue >= xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1035,8 +951,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greaterEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greaterEqual char : wrong result : ", xShortValue >= xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1062,8 +976,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greaterEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greaterEqual short : wrong result : ", xShortValue >= xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1089,8 +1001,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greaterEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greaterEqual int : wrong result : ", xShortValue >= xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1116,8 +1026,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greaterEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greaterEqual long : wrong result : ", xShortValue >= xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1143,8 +1051,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greaterEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greaterEqual float : wrong result : ", xShortValue >= xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1170,8 +1076,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short greaterEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short greaterEqual double : wrong result : ", xShortValue >= xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1199,8 +1103,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short less byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short less byte : wrong result : ", xShortValue < xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1226,8 +1128,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short less char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short less char : wrong result : ", xShortValue < xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1253,8 +1153,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short less short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short less short : wrong result : ", xShortValue < xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1280,8 +1178,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short less int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short less int : wrong result : ", xShortValue < xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1307,8 +1203,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short less long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short less long : wrong result : ", xShortValue < xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1334,8 +1228,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short less float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short less float : wrong result : ", xShortValue < xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1361,8 +1253,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short less double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short less double : wrong result : ", xShortValue < xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1390,8 +1280,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short lessEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short lessEqual byte : wrong result : ", xShortValue <= xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1417,8 +1305,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short lessEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short lessEqual char : wrong result : ", xShortValue <= xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1444,8 +1330,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short lessEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short lessEqual short : wrong result : ", xShortValue <= xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1471,8 +1355,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short lessEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short lessEqual int : wrong result : ", xShortValue <= xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1498,8 +1380,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short lessEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short lessEqual long : wrong result : ", xShortValue <= xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1525,8 +1405,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short lessEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short lessEqual float : wrong result : ", xShortValue <= xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1552,8 +1430,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short lessEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short lessEqual double : wrong result : ", xShortValue <= xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1581,8 +1457,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short equalEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short equalEqual byte : wrong result : ", xShortValue == xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1608,8 +1482,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short equalEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short equalEqual char : wrong result : ", xShortValue == xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1635,8 +1507,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short equalEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short equalEqual short : wrong result : ", xShortValue == xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1662,8 +1532,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short equalEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short equalEqual int : wrong result : ", xShortValue == xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1689,8 +1557,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short equalEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short equalEqual long : wrong result : ", xShortValue == xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1716,8 +1582,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short equalEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short equalEqual float : wrong result : ", xShortValue == xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1743,8 +1607,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short equalEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short equalEqual double : wrong result : ", xShortValue == xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1772,8 +1634,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short notEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short notEqual byte : wrong result : ", xShortValue != xByteValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1799,8 +1659,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short notEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short notEqual char : wrong result : ", xShortValue != xCharValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1826,8 +1684,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short notEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short notEqual short : wrong result : ", xShortValue != xShortValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1853,8 +1709,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short notEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short notEqual int : wrong result : ", xShortValue != xIntValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1880,8 +1734,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short notEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short notEqual long : wrong result : ", xShortValue != xLongValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1907,8 +1759,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short notEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short notEqual float : wrong result : ", xShortValue != xFloatValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1934,8 +1784,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short notEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("short notEqual double : wrong result : ", xShortValue != xDoubleValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1957,8 +1805,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short leftShift byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short leftShift byte : wrong result : ", yShortValue << xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1978,8 +1824,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short leftShift char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short leftShift char : wrong result : ", yShortValue << xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -1999,8 +1843,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short leftShift short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short leftShift short : wrong result : ", yShortValue << xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2020,8 +1862,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short leftShift int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short leftShift int : wrong result : ", yShortValue << xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2041,8 +1881,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short leftShift long : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short leftShift long : wrong result : ", yShortValue << xLongValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2064,8 +1902,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short rightShift byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short rightShift byte : wrong result : ", yShortValue >> xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2085,8 +1921,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short rightShift char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short rightShift char : wrong result : ", yShortValue >> xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2106,8 +1940,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short rightShift short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short rightShift short : wrong result : ", yShortValue >> xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2127,8 +1959,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short rightShift int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short rightShift int : wrong result : ", yShortValue >> xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2148,8 +1978,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short rightShift long : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short rightShift long : wrong result : ", yShortValue >> xLongValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2171,8 +1999,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short unsignedRightShift byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short unsignedRightShift byte : wrong result : ", yShortValue >>> xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2192,8 +2018,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short unsignedRightShift char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short unsignedRightShift char : wrong result : ", yShortValue >>> xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2213,8 +2037,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short unsignedRightShift short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short unsignedRightShift short : wrong result : ", yShortValue >>> xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2234,8 +2056,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short unsignedRightShift int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short unsignedRightShift int : wrong result : ", yShortValue >>> xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2255,8 +2075,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short unsignedRightShift long : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short unsignedRightShift long : wrong result : ", yShortValue >>> xLongValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2278,8 +2096,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short or byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short or byte : wrong result : ", yShortValue | xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2299,8 +2115,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short or char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short or char : wrong result : ", yShortValue | xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2320,8 +2134,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short or short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short or short : wrong result : ", yShortValue | xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2341,8 +2153,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short or int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short or int : wrong result : ", yShortValue | xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2362,8 +2172,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short or long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("short or long : wrong result : ", yShortValue | xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2385,8 +2193,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short and byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short and byte : wrong result : ", yShortValue & xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2406,8 +2212,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short and char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short and char : wrong result : ", yShortValue & xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2427,8 +2231,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short and short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short and short : wrong result : ", yShortValue & xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2448,8 +2250,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short and int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short and int : wrong result : ", yShortValue & xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2469,8 +2269,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short and long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("short and long : wrong result : ", yShortValue & xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2492,8 +2290,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short xor byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short xor byte : wrong result : ", yShortValue ^ xByteValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2513,8 +2309,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short xor char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short xor char : wrong result : ", yShortValue ^ xCharValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2534,8 +2328,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short xor short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short xor short : wrong result : ", yShortValue ^ xShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2555,8 +2347,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short xor int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short xor int : wrong result : ", yShortValue ^ xIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2576,8 +2366,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("short xor long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("short xor long : wrong result : ", yShortValue ^ xLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2599,8 +2387,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("plus short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("plus short : wrong result : ", + yShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2622,8 +2408,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("minus short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("minus short : wrong result : ", - yShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -2645,8 +2429,6 @@ public class ShortOperatorsTests extends Tests {
 		assertEquals("twiddle short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("twiddle short : wrong result : ", ~ yShortValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}

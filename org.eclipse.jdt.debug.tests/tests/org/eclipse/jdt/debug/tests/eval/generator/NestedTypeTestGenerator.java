@@ -1,15 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval.generator;
-
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-*********************************************************************/
 
 import java.io.File;
 import java.io.FileWriter;
@@ -137,7 +136,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestThis('j', 2, code);
 		createTestsStaticFields_A(code);
 		
-		createJavaFile(code, 54, 4);
+		createJavaFile(code, 65, 4);
 	}
 	
 	public static void gen_AA_aaStatic() throws Exception {
@@ -150,7 +149,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('j', 2, code);
 		createTestsStaticFields_A(code);
 
-		createJavaFile(code, 58, 4);
+		createJavaFile(code, 69, 4);
 	}
 	
 	public static void gen_AB_ab() throws Exception {
@@ -177,7 +176,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_A_this, 'g', code);
 		createTestQualifier(T_A_this, 'h', code);
 		
-		createJavaFile(code, 83, 4);
+		createJavaFile(code, 94, 4);
 	}
 
 	public static void gen_AC_ac() throws Exception {
@@ -192,7 +191,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_A_this, 'g', code);
 		createTestQualifier(T_A_this, 'h', code);
 		
-		createJavaFile(code, 109, 4);
+		createJavaFile(code, 120, 4);
 	}
 	
 	public static void gen_AD_ad() throws Exception {
@@ -207,7 +206,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_A_this, 'g', code);
 		createTestQualifier(T_A_this, 'h', code);
 		
-		createJavaFile(code, 134, 4);
+		createJavaFile(code, 145, 4);
 	}
 	
 	public static void gen_A_a() throws Exception {
@@ -231,7 +230,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(I_AB, 'i', code);
 		createTestQualifier(I_AB, 'j', code);
 		
-		createJavaFile(code, 144, 3);
+		createJavaFile(code, 155, 3);
 	}
 	
 	public static void gen_AE_ae() throws Exception {
@@ -241,7 +240,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('h', 2, code);
 		createTestsStaticFields_A(code);
 		
-		createJavaFile(code, 168, 4);
+		createJavaFile(code, 179, 4);
 	}
 	
 	public static void gen_AF_af() throws Exception {
@@ -251,7 +250,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('h', 2, code);
 		createTestsStaticFields_A(code);
 		
-		createJavaFile(code, 192, 4);
+		createJavaFile(code, 203, 4);
 	}
 	
 	public static void gen_A_aStatic() throws Exception {
@@ -269,7 +268,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(I_AA, 'i', code);
 		createTestQualifier(I_AA, 'j', code);
 		
-		createJavaFile(code, 203, 3);
+		createJavaFile(code, 214, 3);
 	}
 	
 	public static void gen_BB_bb() throws Exception {
@@ -303,7 +302,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 241, 4);
+		createJavaFile(code, 252, 4);
 	}
 
 	public static void gen_BC_bc() throws Exception {
@@ -325,7 +324,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 268, 4);
+		createJavaFile(code, 279, 4);
 	}
 
 	public static void gen_BD_bd() throws Exception {
@@ -347,7 +346,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 293, 4);
+		createJavaFile(code, 304, 4);
 	}
 
 	public static void gen_B_b() throws Exception {
@@ -379,7 +378,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(I_BB, 'i', code);
 		createTestQualifier(I_BB, 'j', code);
 		
-		createJavaFile(code, 304, 3);
+		createJavaFile(code, 315, 3);
 	}
 
 	public static void gen_CB_cb() throws Exception {
@@ -395,7 +394,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 343, 4);
+		createJavaFile(code, 354, 4);
 	}
 
 	public static void gen_CC_cc() throws Exception {
@@ -411,7 +410,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 370, 4);
+		createJavaFile(code, 381, 4);
 	}
 
 	public static void gen_CD_cd() throws Exception {
@@ -427,7 +426,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 395, 4);
+		createJavaFile(code, 406, 4);
 	}
 
 	public static void gen_C_c() throws Exception {
@@ -445,7 +444,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 406, 3);
+		createJavaFile(code, 417, 3);
 	}
 
 	public static void gen_DB_db() throws Exception {
@@ -461,7 +460,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 444, 4);
+		createJavaFile(code, 455, 4);
 	}
 
 	public static void gen_DC_dc() throws Exception {
@@ -477,7 +476,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 470, 4);
+		createJavaFile(code, 481, 4);
 	}
 
 	public static void gen_DD_dd() throws Exception {
@@ -493,7 +492,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 495, 4);
+		createJavaFile(code, 506, 4);
 	}
 
 	public static void gen_D_d() throws Exception {
@@ -511,7 +510,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(T_T_this, 'e', code);
 		createTestQualifier(T_T_this, 'f', code);
 		
-		createJavaFile(code, 506, 3);
+		createJavaFile(code, 517, 3);
 	}
 	
 	public static void gen_evalNestedTypeTest() throws Exception {
@@ -542,7 +541,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(I_BB, 'i', code);
 		createTestQualifier(I_BB, 'j', code);
 		
-		createJavaFile(code, 518, 2);
+		createJavaFile(code, 529, 2);
 	}
 
 	public static void gen_EB_eb() throws Exception {
@@ -551,7 +550,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
 		
-		createJavaFile(code, 555, 4);
+		createJavaFile(code, 566, 4);
 	}
 
 	public static void gen_EC_ec() throws Exception {
@@ -560,7 +559,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
 		
-		createJavaFile(code, 581, 4);
+		createJavaFile(code, 592, 4);
 	}
 
 	public static void gen_ED_ed() throws Exception {
@@ -569,7 +568,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
 		
-		createJavaFile(code, 605, 4);
+		createJavaFile(code, 616, 4);
 	}
 
 	public static void gen_E_e() throws Exception {
@@ -579,7 +578,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('f', 1, code);
 		createTestsStaticFields(code);
 		
-		createJavaFile(code, 615, 3);
+		createJavaFile(code, 626, 3);
 	}
 	
 	public static void gen_FB_fb() throws Exception {
@@ -588,7 +587,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
 		
-		createJavaFile(code, 653, 4);
+		createJavaFile(code, 664, 4);
 	}
 
 	public static void gen_FC_fc() throws Exception {
@@ -597,7 +596,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
 		
-		createJavaFile(code, 679, 4);
+		createJavaFile(code, 690, 4);
 	}
 
 	public static void gen_FD_fd() throws Exception {
@@ -606,7 +605,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('b', 2, code);
 		createTestsStaticFields(code);
 		
-		createJavaFile(code, 703, 4);
+		createJavaFile(code, 714, 4);
 	}
 
 	public static void gen_F_f() throws Exception {
@@ -616,7 +615,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTest('f', 1, code);
 		createTestsStaticFields(code);
 		
-		createJavaFile(code, 713, 3);
+		createJavaFile(code, 724, 3);
 	}
 	
 	public static void gen_evalNestedTypeTestStatic() throws Exception {
@@ -643,7 +642,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		createTestQualifier(I_AB, 'i', code);
 		createTestQualifier(I_AB, 'j', code);
 		
-		createJavaFile(code, 728, 2);
+		createJavaFile(code, 739, 2);
 	}
 	
 	public static void gen_main() throws Exception {
@@ -651,7 +650,7 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		
 		createTestsStaticFields(code);
 
-		createJavaFile(code, 734, 1);
+		createJavaFile(code, 745, 1);
 	}
 
 	// ------------------------------
@@ -767,6 +766,16 @@ public class NestedTypeTestGenerator extends TestGenerator {
 		
 		StringBuffer code= new StringBuffer();
 		
+		code.append("/*******************************************************************************\n");
+		code.append(" * Copyright (c) 2002, 2003 IBM Corporation and others.\n");
+		code.append(" * All rights reserved. This program and the accompanying materials \n");
+		code.append(" * are made available under the terms of the Common Public License v1.0\n");
+		code.append(" * which accompanies this distribution, and is available at\n");
+		code.append(" * http://www.eclipse.org/legal/cpl-v10.html\n");
+		code.append(" * \n");
+		code.append(" * Contributors:\n");
+		code.append(" *     IBM Corporation - initial API and implementation\n");
+		code.append(" *******************************************************************************/\n");
 		code.append("package org.eclipse.jdt.debug.tests.eval;\n\n");
 		code.append("import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;\n\n");
 		code.append("import org.eclipse.debug.core.model.IValue;\n");

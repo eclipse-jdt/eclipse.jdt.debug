@@ -1,17 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-*********************************************************************/
-
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
@@ -45,8 +49,6 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("byte local variable value : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("byte local variable value : wrong result : ", yVarByteValue, byteValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -66,8 +68,6 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("char local variable value : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("char local variable value : wrong result : ", yVarCharValue, charValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -87,8 +87,6 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", yVarShortValue, shortValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -108,8 +106,6 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("int local variable value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int local variable value : wrong result : ", yVarIntValue, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -129,8 +125,6 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("long local variable value : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long local variable value : wrong result : ", yVarLongValue, longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -150,8 +144,6 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", yVarFloatValue, floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -171,8 +163,6 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("double local variable value : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double local variable value : wrong result : ", yVarDoubleValue, doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -192,8 +182,6 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("java.lang.String local variable value : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String local variable value : wrong result : ", yVarStringValue, stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -213,8 +201,6 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("boolean local variable value : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean local variable value : wrong result : ", yVarBooleanValue, booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}

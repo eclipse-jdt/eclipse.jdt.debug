@@ -1,15 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
-
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-*********************************************************************/
 
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
@@ -39,8 +38,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("iaa.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("iaa.m1 : wrong result : ", 1, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -54,8 +51,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("iab.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("iab.m1 : wrong result : ", 11, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -69,8 +64,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("iac.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("iac.m1 : wrong result : ", 111, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -84,8 +77,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("aa.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("aa.m1 : wrong result : ", 1, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -99,8 +90,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("aa.m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("aa.m2 : wrong result : ", 2, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -114,8 +103,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("aa.s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("aa.s2 : wrong result : ", 9, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -129,8 +116,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("ab.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ab.m1 : wrong result : ", 11, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -144,8 +129,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("ab.m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ab.m2 : wrong result : ", 22, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -159,8 +142,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("ab.s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ab.s2 : wrong result : ", 9, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -174,8 +155,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("ac.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ac.m1 : wrong result : ", 111, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -189,8 +168,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("ac.m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ac.m2 : wrong result : ", 222, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -204,8 +181,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("ac.s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ac.s2 : wrong result : ", 9, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -219,8 +194,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("ibb.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ibb.m1 : wrong result : ", 11, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -234,8 +207,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("ibb.m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ibb.m3 : wrong result : ", 33, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -249,8 +220,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("ibc.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ibc.m1 : wrong result : ", 111, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -264,8 +233,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("ibc.m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ibc.m3 : wrong result : ", 333, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -279,8 +246,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bb.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bb.m1 : wrong result : ", 11, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -294,8 +259,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bb.m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bb.m2 : wrong result : ", 22, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -309,8 +272,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bb.s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bb.s2 : wrong result : ", 99, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -324,8 +285,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bb.m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bb.m3 : wrong result : ", 33, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -339,8 +298,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bb.m4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bb.m4 : wrong result : ", 44, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -354,8 +311,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bb.s4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bb.s4 : wrong result : ", 88, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -369,8 +324,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bc.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bc.m1 : wrong result : ", 111, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -384,8 +337,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bc.m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bc.m2 : wrong result : ", 222, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -399,8 +350,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bc.s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bc.s2 : wrong result : ", 99, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -414,8 +363,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bc.m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bc.m3 : wrong result : ", 333, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -429,8 +376,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bc.m4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bc.m4 : wrong result : ", 444, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -444,8 +389,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("bc.s4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bc.s4 : wrong result : ", 88, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -459,8 +402,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("icc.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("icc.m1 : wrong result : ", 111, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -474,8 +415,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("icc.m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("icc.m3 : wrong result : ", 333, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -489,8 +428,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("icc.m5 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("icc.m5 : wrong result : ", 555, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -504,8 +441,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("cc.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.m1 : wrong result : ", 111, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -519,8 +454,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("cc.m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.m2 : wrong result : ", 222, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -534,8 +467,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("cc.s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.s2 : wrong result : ", 999, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -549,8 +480,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("cc.m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.m3 : wrong result : ", 333, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -564,8 +493,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("cc.m4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.m4 : wrong result : ", 444, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -579,8 +506,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("cc.s4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.s4 : wrong result : ", 888, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -594,8 +519,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("cc.m5 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.m5 : wrong result : ", 555, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -609,8 +532,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("cc.m6 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.m6 : wrong result : ", 666, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -624,8 +545,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("cc.s6 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.s6 : wrong result : ", 777, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -639,8 +558,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new A().m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new A().m1 : wrong result : ", 1, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -654,8 +571,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new A().m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new A().m2 : wrong result : ", 2, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -669,8 +584,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new A().s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new A().s2 : wrong result : ", 9, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -684,8 +597,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new B().m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new B().m1 : wrong result : ", 11, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -699,8 +610,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new B().m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new B().m2 : wrong result : ", 22, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -714,8 +623,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new B().s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new B().s2 : wrong result : ", 99, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -729,8 +636,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new B().m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new B().m3 : wrong result : ", 33, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -744,8 +649,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new B().m4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new B().m4 : wrong result : ", 44, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -759,8 +662,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new B().s4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new B().s4 : wrong result : ", 88, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -774,8 +675,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new C().m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().m1 : wrong result : ", 111, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -789,8 +688,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new C().m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().m2 : wrong result : ", 222, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -804,8 +701,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new C().s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().s2 : wrong result : ", 999, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -819,8 +714,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new C().m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().m3 : wrong result : ", 333, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -834,8 +727,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new C().m4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().m4 : wrong result : ", 444, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -849,8 +740,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new C().s4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().s4 : wrong result : ", 888, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -864,8 +753,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new C().m5 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().m5 : wrong result : ", 555, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -879,8 +766,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new C().m6 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().m6 : wrong result : ", 666, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -894,8 +779,6 @@ public class TypeHierarchy_146_1 extends Tests {
 		assertEquals("new C().s6 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().s6 : wrong result : ", 777, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}

@@ -1,17 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2002, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-*********************************************************************/
-
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
@@ -22,7 +26,7 @@ public class ArrayValueTests extends Tests {
 	}
 
 	protected void init() throws Exception {
-		initializeFrame("EvalArrayTests", 37, 1);
+		initializeFrame("EvalArrayTests",37,1);
 	}
 
 	protected void end() throws Exception {
@@ -43,8 +47,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("byte array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte array length : wrong result : ", yArrayByteValue.length, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -64,8 +66,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("char array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char array length : wrong result : ", yArrayCharValue.length, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -85,8 +85,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("short array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short array length : wrong result : ", yArrayShortValue.length, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -106,8 +104,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("int array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int array length : wrong result : ", yArrayIntValue.length, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -127,8 +123,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("long array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("long array length : wrong result : ", yArrayLongValue.length, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -148,8 +142,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("float array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("float array length : wrong result : ", yArrayFloatValue.length, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -169,8 +161,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("double array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("double array length : wrong result : ", yArrayDoubleValue.length, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -190,8 +180,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("java.lang.String array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("java.lang.String array length : wrong result : ", yArrayStringValue.length, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -211,8 +199,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("boolean array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("boolean array length : wrong result : ", yArrayBooleanValue.length, intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -256,8 +242,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("byte array value : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("byte array value : wrong result : ", yArrayByteValue[2], byteValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -301,8 +285,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("char array value : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("char array value : wrong result : ", yArrayCharValue[2], charValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -346,8 +328,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("short array value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short array value : wrong result : ", yArrayShortValue[2], shortValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -391,8 +371,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("int array value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int array value : wrong result : ", yArrayIntValue[2], intValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -436,8 +414,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("long array value : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long array value : wrong result : ", yArrayLongValue[2], longValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -481,8 +457,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("float array value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float array value : wrong result : ", yArrayFloatValue[2], floatValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -526,8 +500,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("double array value : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double array value : wrong result : ", yArrayDoubleValue[2], doubleValue, 0);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -571,8 +543,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("java.lang.String array value : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String array value : wrong result : ", yArrayStringValue[2], stringValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
@@ -616,8 +586,6 @@ public class ArrayValueTests extends Tests {
 		assertEquals("boolean array value : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean array value : wrong result : ", yArrayBooleanValue[2], booleanValue);
-		} catch (Throwable e) {
-		e.printStackTrace(); throw e;
 		} finally {;
 		end();
 		}
