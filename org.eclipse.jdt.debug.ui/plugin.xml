@@ -2090,6 +2090,31 @@
             command="org.eclipse.jdt.debug.ui.commands.Inspect"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+ <!-- views -->
+      <command
+            name="%ViewCommand.displayView.name"
+            description="%ViewCommand.displayView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.jdt.debug.ui.DisplayView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.DisplayView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ViewCommand.monitorsView.name"
+            description="%ViewCommand.monitorsView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.jdt.debug.ui.MonitorsView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.MonitorsView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          point="org.eclipse.jdt.ui.classpathContainerPage">
