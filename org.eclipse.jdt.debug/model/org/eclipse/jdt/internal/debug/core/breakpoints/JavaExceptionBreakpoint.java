@@ -298,14 +298,23 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	public boolean handleEvent(Event event, JDIDebugTarget target) {
 		if (event instanceof ExceptionEvent) {
 			setExceptionName(((ExceptionEvent)event).exception().type().name());
-			if (getClassFilters().length > 1) {
+			if (getClassFilters().length > 1 || classFiltersIncludeDefaultPackage()) {
 				if (isExceptionEventExcluded((ExceptionEvent)event)) {
 					return true;
 				}
 			}
 		}	
 		return super.handleEvent(event, target);
-	}	
+	}
+	
+	protected boolean classFiltersIncludeDefaultPackage() {
+		for (int i = 0; i < fClassFilters.length; i++) {
+			if (fClassFilters[i].length() == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * Returns whether this is an event that has 
@@ -326,7 +335,10 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 					}	
 				}
 			} else {
-				for (int i= 0; i < filters.length; i++) {			
+				for (int i= 0; i < filters.length; i++) {
+					if (filters[i].length() == 0) {
+						continue;
+					}
 					StringMatcher matcher= new StringMatcher(filters[i], false, false);
 					if (matcher.match(fullyQualifiedName)) {
 						return !inclusive;
