@@ -128,8 +128,8 @@ public abstract class ConnectorImpl implements Connector {
 	protected void startIOManagers() {
 		fPacketReceiveManager = new PacketReceiveManager(this);
 		fPacketSendManager = new PacketSendManager(this);
-		fThreadReceiveMgr = new Thread(fPacketReceiveManager, "Packet Receive Manager");
-		fThreadSendMgr = new Thread(fPacketSendManager, "Packet Send Manager");
+		fThreadReceiveMgr = new Thread(fPacketReceiveManager, ConnectMessages.getString("ConnectorImpl.Packet_Receive_Manager_1")); //$NON-NLS-1$
+		fThreadSendMgr = new Thread(fPacketSendManager, ConnectMessages.getString("ConnectorImpl.Packet_Send_Manager_2")); //$NON-NLS-1$
 		fPacketReceiveManager.setPartnerThread(fThreadSendMgr);
 		fPacketSendManager.setPartnerThread(fThreadReceiveMgr);
 		fThreadReceiveMgr.start();

@@ -57,30 +57,30 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 		HashMap arguments = new HashMap(6);
 		
 		// Home
-		StringArgumentImpl strArg = new StringArgumentImpl("home", "Home directory of the SDK or runtime environment used to launch the application.", "Home", false); //$NON-NLS-1$
+		StringArgumentImpl strArg = new StringArgumentImpl("home", ConnectMessages.getString("SocketLaunchingConnectorImpl.Home_directory_of_the_SDK_or_runtime_environment_used_to_launch_the_application_1"), ConnectMessages.getString("SocketLaunchingConnectorImpl.Home_2"), false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		strArg.setValue(System.getProperty("java.home")); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 		
 		// Options
-		strArg = new StringArgumentImpl("options", "Launched VM options.", "Options", false); //$NON-NLS-1$
+		strArg = new StringArgumentImpl("options", ConnectMessages.getString("SocketLaunchingConnectorImpl.Launched_VM_options_3"), ConnectMessages.getString("SocketLaunchingConnectorImpl.Options_4"), false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(strArg.name(), strArg);
 		
 		// Main
-		strArg = new StringArgumentImpl("main", "Main class and arguments, or if -jar is an option, the main jar file and arguments.", "Main", true); //$NON-NLS-1$
+		strArg = new StringArgumentImpl("main", ConnectMessages.getString("SocketLaunchingConnectorImpl.Main_class_and_arguments,_or_if_-jar_is_an_option,_the_main_jar_file_and_arguments_5"), ConnectMessages.getString("SocketLaunchingConnectorImpl.Main_6"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(strArg.name(), strArg);
 
 		// Suspend
-		BooleanArgumentImpl boolArg = new BooleanArgumentImpl("suspend", "All threads will be suspended before execution of main.", "Suspend", false); //$NON-NLS-1$
+		BooleanArgumentImpl boolArg = new BooleanArgumentImpl("suspend", ConnectMessages.getString("SocketLaunchingConnectorImpl.All_threads_will_be_suspended_before_execution_of_main_7"), ConnectMessages.getString("SocketLaunchingConnectorImpl.Suspend_8"), false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		boolArg.setValue(true);
 		arguments.put(boolArg.name(), boolArg);
 
 		// Quote
-		strArg = new StringArgumentImpl("quote", "Character used to combine space-delimited text into a single command line argument.", "Quote", true); //$NON-NLS-1$
+		strArg = new StringArgumentImpl("quote", ConnectMessages.getString("SocketLaunchingConnectorImpl.Character_used_to_combine_space-delimited_text_into_a_single_command_line_argument_9"), ConnectMessages.getString("SocketLaunchingConnectorImpl.Quote_10"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		strArg.setValue("\""); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
 		// Launcher
-		strArg = new StringArgumentImpl("vmexec", "Name of the Java VM launcher.", "Launcher", true); //$NON-NLS-1$
+		strArg = new StringArgumentImpl("vmexec", ConnectMessages.getString("SocketLaunchingConnectorImpl.Name_of_the_Java_VM_launcher_11"), ConnectMessages.getString("SocketLaunchingConnectorImpl.Launcher_12"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		strArg.setValue("java"); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
@@ -98,7 +98,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 	 * @return Returns a human-readable description of this connector and its purpose.
 	 */	
 	public String description() {
-		return "Launches target using Sun Java VM command line and attaches to it.";
+		return ConnectMessages.getString("SocketLaunchingConnectorImpl.Launches_target_using_Sun_Java_VM_command_line_and_attaches_to_it_13"); //$NON-NLS-1$
 	}
 	
  	/**
@@ -120,11 +120,11 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 		 	attribute = "vmexec"; //$NON-NLS-1$
 		 	fLauncher = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		} catch (ClassCastException e) {
-			throw new IllegalConnectorArgumentsException("Connection argument is not of the right type.", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketLaunchingConnectorImpl.Connection_argument_is_not_of_the_right_type_14"), attribute); //$NON-NLS-1$
 		} catch (NullPointerException e) {
-			throw new IllegalConnectorArgumentsException("Necessary connection argument is null.", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketLaunchingConnectorImpl.Necessary_connection_argument_is_null_15"), attribute); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
-			throw new IllegalConnectorArgumentsException("Connection argument is not a number", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketLaunchingConnectorImpl.Connection_argument_is_not_a_number_16"), attribute); //$NON-NLS-1$
 		}
 	}
 

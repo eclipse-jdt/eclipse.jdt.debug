@@ -60,7 +60,7 @@ public class PacketSendManager extends PacketManager {
 	 */
 	public synchronized void sendPacket(JdwpPacket packet) {
 		if (VMIsDisconnected())
-			throw (new VMDisconnectedException("Got IOException from Virtual Machine"));
+			throw (new VMDisconnectedException(ConnectMessages.getString("PacketSendManager.Got_IOException_from_Virtual_Machine_1"))); //$NON-NLS-1$
 
 		// Add packet to list of packets to send.
 		fOutgoingPackets.add(packet);

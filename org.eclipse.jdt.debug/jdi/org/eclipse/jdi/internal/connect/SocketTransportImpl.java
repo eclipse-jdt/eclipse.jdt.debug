@@ -133,9 +133,9 @@ public class SocketTransportImpl extends TransportImpl {
 			byte[] handshakeInput = new byte[handshakeBytes.length];
 			in.readFully(handshakeInput);
 			if (!Arrays.equals(handshakeInput,handshakeBytes))
-				throw new IOException("Incorrect handshake reply received: " + new String(handshakeInput));
+				throw new IOException(ConnectMessages.getString("SocketTransportImpl.Incorrect_handshake_reply_received___1") + new String(handshakeInput)); //$NON-NLS-1$
 		} catch (EOFException e) {
-			throw new IOException("EOF encoutered during handshake");
+			throw new IOException(ConnectMessages.getString("SocketTransportImpl.EOF_encoutered_during_handshake_2")); //$NON-NLS-1$
 		}
 	}
 }

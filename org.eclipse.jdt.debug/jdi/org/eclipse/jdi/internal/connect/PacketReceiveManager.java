@@ -90,7 +90,7 @@ public class PacketReceiveManager extends PacketManager {
 		
 		// Check for an IO Exception.
 		if (VMIsDisconnected())
-			throw new VMDisconnectedException("Got IOException from Virtual Machine");
+			throw new VMDisconnectedException(ConnectMessages.getString("PacketReceiveManager.Got_IOException_from_Virtual_Machine_1")); //$NON-NLS-1$
 			
 		// Check for a timeout.
 		if (packet == null)
@@ -120,7 +120,7 @@ public class PacketReceiveManager extends PacketManager {
 		
 		// Check for an IO Exception.
 		if (VMIsDisconnected())
-			throw new VMDisconnectedException("Got IOException from Virtual Machine");
+			throw new VMDisconnectedException(ConnectMessages.getString("PacketReceiveManager.Got_IOException_from_Virtual_Machine_2")); //$NON-NLS-1$
 			
 		// Check for a timeout.
 		if (packet == null)

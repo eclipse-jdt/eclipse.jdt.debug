@@ -43,11 +43,11 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 		HashMap arguments = new HashMap(1);
 		
 		// Port
-		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", "Port number at which to listen for VM connections", "Port", true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$
+		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", ConnectMessages.getString("SocketListeningConnectorImpl.Port_number_at_which_to_listen_for_VM_connections_1"), ConnectMessages.getString("SocketListeningConnectorImpl.Port_2"), true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(intArg.name(), intArg);
 		
 		// Timeout
-		intArg = new IntegerArgumentImpl("timeout", "Timeout before accept returns", "Timeout", false, 0, Integer.MAX_VALUE); //$NON-NLS-1$
+		intArg = new IntegerArgumentImpl("timeout", ConnectMessages.getString("SocketListeningConnectorImpl.Timeout_before_accept_returns_3"), ConnectMessages.getString("SocketListeningConnectorImpl.Timeout_4"), false, 0, Integer.MAX_VALUE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(intArg.name(), intArg);
 		
 		return arguments;
@@ -64,7 +64,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * @return Returns a human-readable description of this connector and its purpose.
 	 */	
 	public String description() {
-		return "Accepts socket connections initiated by other VMs.";
+		return ConnectMessages.getString("SocketListeningConnectorImpl.Accepts_socket_connections_initiated_by_other_VMs_5"); //$NON-NLS-1$
 	}
 	
  	/**
@@ -80,11 +80,11 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 		 	attribute = "timeout"; //$NON-NLS-1$
 		 	fTimeout = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
 		} catch (ClassCastException e) {
-			throw new IllegalConnectorArgumentsException("Connection argument is not of the right type.", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketListeningConnectorImpl.Connection_argument_is_not_of_the_right_type_6"), attribute); //$NON-NLS-1$
 		} catch (NullPointerException e) {
-			throw new IllegalConnectorArgumentsException("Necessary connection argument is null.", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketListeningConnectorImpl.Necessary_connection_argument_is_null_7"), attribute); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
-			throw new IllegalConnectorArgumentsException("Connection argument is not a number", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketListeningConnectorImpl.Connection_argument_is_not_a_number_8"), attribute); //$NON-NLS-1$
 		}
 	}
 	
@@ -94,7 +94,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 */
 	public String startListening(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
-		String result = "ListeningConnector Socket Port=" + fPort;
+		String result = ConnectMessages.getString("SocketListeningConnectorImpl.ListeningConnector_Socket_Port=_9") + fPort; //$NON-NLS-1$
 		try {
 			((SocketTransportImpl)fTransport).listen(fPort);
 		} catch (IllegalArgumentException e) {

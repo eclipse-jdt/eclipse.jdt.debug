@@ -50,15 +50,15 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 		HashMap arguments = new HashMap(6);
 		
 		// Command
-		StringArgumentImpl strArg = new StringArgumentImpl("command", "Raw command to start the debugged application VM.", "Command", true); //$NON-NLS-1$
+		StringArgumentImpl strArg = new StringArgumentImpl("command", ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Raw_command_to_start_the_debugged_application_VM_1"), ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Command_2"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(strArg.name(), strArg);
 		
 		// Address
-		strArg = new StringArgumentImpl("address", "Address from which to listen for a connection after the raw command is run.", "Address", true); //$NON-NLS-1$
+		strArg = new StringArgumentImpl("address", ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Address_from_which_to_listen_for_a_connection_after_the_raw_command_is_run_3"), ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Address_4"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(strArg.name(), strArg);
 		
 		// Quote
-		strArg = new StringArgumentImpl("quote", "Character used to combine space-delimited text into a single command line argument.", "Quote", true); //$NON-NLS-1$
+		strArg = new StringArgumentImpl("quote", ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Character_used_to_combine_space-delimited_text_into_a_single_command_line_argument_5"), ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Quote_6"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		strArg.setValue("\""); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
@@ -76,7 +76,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 	 * @return Returns a human-readable description of this connector and its purpose.
 	 */	
 	public String description() {
-		return "Launches target using user-specified command line and attaches to it.";
+		return ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Launches_target_using_user-specified_command_line_and_attaches_to_it_7"); //$NON-NLS-1$
 	}
 	
  	/**
@@ -92,11 +92,11 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 		 	attribute = "quote"; //$NON-NLS-1$
 		 	fQuote = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		} catch (ClassCastException e) {
-			throw new IllegalConnectorArgumentsException("Connection argument is not of the right type.", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Connection_argument_is_not_of_the_right_type_8"), attribute); //$NON-NLS-1$
 		} catch (NullPointerException e) {
-			throw new IllegalConnectorArgumentsException("Necessary connection argument is null.", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Necessary_connection_argument_is_null_9"), attribute); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
-			throw new IllegalConnectorArgumentsException("Connection argument is not a number", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Connection_argument_is_not_a_number_10"), attribute); //$NON-NLS-1$
 		}
 	}
 

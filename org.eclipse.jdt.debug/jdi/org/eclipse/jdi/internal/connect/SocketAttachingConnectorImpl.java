@@ -43,12 +43,12 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		HashMap arguments = new HashMap(2);
 		
 		// Hostname
-		StringArgumentImpl strArg = new StringArgumentImpl("hostname", "Machine name to which to attach for VM connections.", "Host", false); //$NON-NLS-1$
+		StringArgumentImpl strArg = new StringArgumentImpl("hostname", ConnectMessages.getString("SocketAttachingConnectorImpl.Machine_name_to_which_to_attach_for_VM_connections_1"), ConnectMessages.getString("SocketAttachingConnectorImpl.Host_2"), false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		strArg.setValue("localhost"); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 		
 		// Port
-		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", "Port number to which to attach for VM connections.", "Port", true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$
+		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", ConnectMessages.getString("SocketAttachingConnectorImpl.Port_number_to_which_to_attach_for_VM_connections_3"), ConnectMessages.getString("SocketAttachingConnectorImpl.Port_4"), true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(intArg.name(), intArg);
 		
 		return arguments;
@@ -65,7 +65,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 	 * @return Returns a human-readable description of this connector and its purpose.
 	 */	
 	public String description() {
-		return "Attaches by socket to other VMs.";
+		return ConnectMessages.getString("SocketAttachingConnectorImpl.Attaches_by_socket_to_other_VMs_5"); //$NON-NLS-1$
 	}
 	
  	/**
@@ -79,11 +79,11 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		 	attribute = "port"; //$NON-NLS-1$
 		 	fPort = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
 		} catch (ClassCastException e) {
-			throw new IllegalConnectorArgumentsException("Connection argument is not of the right type.", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketAttachingConnectorImpl.Connection_argument_is_not_of_the_right_type_6"), attribute); //$NON-NLS-1$
 		} catch (NullPointerException e) {
-			throw new IllegalConnectorArgumentsException("Necessary connection argument is null.", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketAttachingConnectorImpl.Necessary_connection_argument_is_null_7"), attribute); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
-			throw new IllegalConnectorArgumentsException("Connection argument is not a number", attribute);
+			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketAttachingConnectorImpl.Connection_argument_is_not_a_number_8"), attribute); //$NON-NLS-1$
 		}
 	}
 	
