@@ -994,12 +994,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 		try {
 			setSuspended(false);
-			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			getVM().resume();
 			Iterator threads = getThreadList().iterator();
 			while (threads.hasNext()) {
 				((JDIThread)threads.next()).resumedByVM();
 			}
+			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 		} catch (VMDisconnectedException e) {
 			disconnected();
 			return;
