@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /*
@@ -75,7 +74,7 @@ public class VMPropertyPage extends JavaProjectPropertyPage {
 		
 		initFromProject(getJavaProject());
 		
-		WorkbenchHelp.setHelp(ancestor, new DialogPageContextComputer(this, IHelpContextIds.LAUNCH_JRE_PROPERTY_PAGE));			
+		WorkbenchHelp.setHelp(ancestor, IHelpContextIds.LAUNCH_JRE_PROPERTY_PAGE);			
 		return parent;
 	}
 	

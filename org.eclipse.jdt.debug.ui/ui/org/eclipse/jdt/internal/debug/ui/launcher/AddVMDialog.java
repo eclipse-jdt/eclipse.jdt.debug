@@ -85,7 +85,7 @@ public class AddVMDialog extends StatusDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		WorkbenchHelp.setHelp(newShell, new Object[] { IHelpContextIds.EDIT_JRE_DIALOG });
+		WorkbenchHelp.setHelp(newShell, IHelpContextIds.EDIT_JRE_DIALOG);
 	}		
 	
 	
