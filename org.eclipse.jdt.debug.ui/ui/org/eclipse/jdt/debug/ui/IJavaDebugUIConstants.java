@@ -66,4 +66,11 @@ public interface IJavaDebugUIConstants {
 	 * Status code indicating an unexpected internal error (value <code>150</code>).
 	 */
 	public static final int INTERNAL_ERROR = 150;
+	
+	/**
+	 * Preference specifying that launches should continue when compile errors exist.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_CONTINUE_WITH_COMPILE_ERROR = PLUGIN_ID + ".cancel_launch_with_compile_errors"; //$NON-NLS-1$	
 }

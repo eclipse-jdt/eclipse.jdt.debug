@@ -1876,13 +1876,7 @@
             code="110"
             class="org.eclipse.jdt.internal.debug.ui.EvaluationContextStatusHandler"
             id="org.eclipse.jdt.debug.ui.statusHandler.evaluationContextStatusHandler">
-      </statusHandler>      
-      <statusHandler
-            plugin="org.eclipse.jdt.debug"
-            code="201"
-            class="org.eclipse.jdt.internal.debug.ui.launcher.DebugModePromptStatusHandler"
-            id="org.eclipse.jdt.debug.ui.statusHandler.debugModePromptStatusHandler">
-      </statusHandler>  
+      </statusHandler>        
       <statusHandler
             plugin="org.eclipse.jdt.debug"
             code="202"

@@ -37,16 +37,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
-import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
@@ -70,8 +67,6 @@ import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
  */
 public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConfigurationDelegate implements IDebugEventSetListener {
 	
-	protected static final IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null);  //$NON-NLS-1$//$NON-NLS-2$
-	protected static final IStatus switchToDebugPromptStatus = new Status(IStatus.INFO, "org.eclipse.jdt.debug", 201, "", null);  //$NON-NLS-1$//$NON-NLS-2$
 	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, "org.eclipse.jdt.debug", 202, "", null); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
@@ -698,60 +693,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 		}
 	}
 	
-
-
-	/**
-	 * Builds an ordered list of prerequisite projects (order by build order).  
-	 * 
-	 * If mode is RUN (not DEBUG), check workspace for breakpoints. If breakpoints 
-	 * exist gives the user a chance to cancel current launch and relaunch in DEBUG mode.
-	 * 
-	 * @param configuration configuration being lanuched
-	 * @param mode launch mode
-	 * @param monitor progress monitor
-	 * @return whether the launch should proceed
-	 * @throws CoreException if an exception occurs while building the list of prerequisite projects, or while checking for 
-	 * 		breakpoints in a RUN_MODE launch. 
-	 */
-	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		IJavaProject javaProject;
-		try {
-			if (mode.equals(LaunchManager.RUN_MODE)  && configuration.supportsMode(ILaunchManager.DEBUG_MODE)) {
-				monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.18"), 2); //$NON-NLS-1$
-			} else {
-				monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.19"), 1); //$NON-NLS-1$
-			}
-			
-			
-			monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.20")); //$NON-NLS-1$
-			javaProject = JavaRuntime.getJavaProject(configuration);
-			project = javaProject.getProject();
-			HashSet projectSet = new HashSet();
-			getReferencedProjectSet(project, projectSet);
-			orderedProjects = getBuildOrder(new ArrayList(projectSet));
-			
-			if (mode.equals(ILaunchManager.RUN_MODE) && configuration.supportsMode(ILaunchManager.DEBUG_MODE)) { // check if any breakpoints exist!
-				monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.21")); //$NON-NLS-1$
-				IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
-				IBreakpoint[] breakpoints = breakpointManager.getBreakpoints();
-				if (breakpoints.length > 0) {
-					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-					if (prompter != null) {
-						boolean lauchInDebugModeInstead = ((Boolean)prompter.handleStatus(switchToDebugPromptStatus, configuration)).booleanValue();
-						if (lauchInDebugModeInstead) { 
-							return false; //kill this launch
-						}
-					}
-										
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-		
-		return true;
-	}
-	
 	/**
 	 * Recursively creates a set of projects referenced by the current project
 	 * @param project The current project
@@ -819,6 +760,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	 * @throws CoreException if an exception occurrs while building
 	 */
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+
+		monitor.subTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.20")); //$NON-NLS-1$
+		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
+		project = javaProject.getProject();
+		HashSet projectSet = new HashSet();
+		getReferencedProjectSet(project, projectSet);
+		orderedProjects = getBuildOrder(new ArrayList(projectSet));
+		
 		if (orderedProjects != null) {
 			monitor.beginTask(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.22"), orderedProjects.size() + 1); //$NON-NLS-1$
 			

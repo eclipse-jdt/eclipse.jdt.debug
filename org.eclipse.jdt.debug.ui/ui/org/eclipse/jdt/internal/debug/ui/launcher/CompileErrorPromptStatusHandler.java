@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
@@ -22,7 +23,6 @@ import org.eclipse.swt.widgets.Shell;
 
 public class CompileErrorPromptStatusHandler implements IStatusHandler {
 	
-	private static final String PREFERENCE_KEY = "org.eclipse.jdt.internal.debug.ui.launcher.CompileErrorPromptStatusHandler.PROMPT_USER"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
@@ -33,7 +33,7 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 		String message = LauncherMessages.getString("CompileErrorPromptStatusHandler.2"); //$NON-NLS-1$
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
 		
-		String pref = store.getString(PREFERENCE_KEY);
+		String pref = store.getString(IJavaDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if (pref != null) {
 			if (pref.equals(AlwaysNeverDialog.ALWAYS)) {
 				return new Boolean(true);
@@ -42,7 +42,7 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 			}
 		}
 		
-		boolean answer = AlwaysNeverDialog.openQuestion(shell, title, message, PREFERENCE_KEY, store);
+		boolean answer = AlwaysNeverDialog.openQuestion(shell, title, message, IJavaDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, store);
 		return new Boolean(answer);
 	}
 
