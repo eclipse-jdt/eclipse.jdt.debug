@@ -164,12 +164,13 @@ public class JavaSourceLocator implements ISourceLocator {
 	 */
 	public static IJavaSourceLocation[] getDefaultSourceLocations(IJavaProject project) throws CoreException {
 		IVMInstall runtimeJRE = JavaRuntime.getVMInstall(project);
+		IVMInstall defaultJRE = JavaRuntime.getDefaultVMInstall();
 		ArrayList list = new ArrayList();
 		collectRequiredProjects(project,list);
 		int size = list.size();
 		int offset = 0;
 		ArchiveSourceLocation jreSource = null;
-		if (runtimeJRE != null) {
+		if (runtimeJRE != null && !runtimeJRE.equals(defaultJRE)) {
 			LibraryLocation library = runtimeJRE.getLibraryLocation();
 			if (library == null) {
 				library = runtimeJRE.getVMInstallType().getDefaultLibraryLocation(runtimeJRE.getInstallLocation());
