@@ -141,7 +141,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	
 	protected HashMap fAttributes= new HashMap(3);
 	
-	static final Point BIG_SIZE= new Point(22, 16);
+	static final Point BIG_SIZE= new Point(16, 16);
 	
 	private ImageDescriptorRegistry fJavaElementImageRegistry;
 	private org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry fDebugImageRegistry;
