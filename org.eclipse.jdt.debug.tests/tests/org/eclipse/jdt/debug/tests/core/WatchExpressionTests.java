@@ -127,11 +127,19 @@ public class WatchExpressionTests extends AbstractDebugTest {
 			source = waiter.waitForEvent();
 			assertNotNull("Watch expression did not change", source);
 			
+			// check for errors
+			dumpErrors(expression);
+			assertFalse("Should not have errors in expression", expression.hasErrors());
+			
 			// now step again - should be 1
 			waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
 			stepOver((IJavaStackFrame)thread.getTopStackFrame());
 			source = waiter.waitForEvent();
 			assertNotNull("Watch expression did not change", source);
+			
+			// check for errors
+			dumpErrors(expression);
+			assertFalse("Should not have errors in expression", expression.hasErrors());
 			
 			value = expression.getValue();			
 			// create comparison value
@@ -146,6 +154,21 @@ public class WatchExpressionTests extends AbstractDebugTest {
 	}
 		
 	/**
+	 * Dumps any error messages to the console.
+	 * 
+     * @param expression
+     */
+    private void dumpErrors(IWatchExpression expression) {
+        if (expression.hasErrors()) {
+            String[] errorMessages = expression.getErrorMessages();
+            for (int i = 0; i < errorMessages.length; i++) {
+                String string = errorMessages[i];
+                System.out.println(getName() + ": " + string);
+            }
+        }
+    }
+
+    /**
 	 * Returns the expression manager
 	 * 
 	 * @return expression manager
