@@ -28,7 +28,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.launcher.AppletLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.debug.ui.launcher.AppletSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
