@@ -20,6 +20,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -131,7 +132,13 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	 */
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (getAction() != null) {
-			selectionChanged(getAction(), getStructuredSelection());
+			IStructuredSelection selection= getStructuredSelection();
+			if (selection != null) {
+				IBreakpoint selectedBreakpoint= (IBreakpoint)selection.getFirstElement();
+				if (selectedBreakpoint.equals(breakpoint)) {
+					selectionChanged(getAction(), selection);
+				}
+			}			
 		}
 	}
 
