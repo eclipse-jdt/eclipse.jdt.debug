@@ -373,7 +373,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	 * Set the main type & name attributes on the working copy based on the IJavaElement
 	 */
 	protected void initializeMainTypeAndName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
-		String name = "";
+		String name = null;
 		if (javaElement instanceof IMember) {
 			IMember member = (IMember)javaElement;
 			if (member.isBinary()) {
@@ -393,14 +393,16 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			} catch (InvocationTargetException ite) {
 			}
 		}
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
-		if (name.length() > 0) {
-			int index = name.lastIndexOf('.');
-			if (index > 0) {
-				name = name.substring(index + 1);
-			}		
-			name = getLaunchConfigurationDialog().generateName(name);
-			config.rename(name);
+		if (name != null) {
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
+			if (name.length() > 0) {
+				int index = name.lastIndexOf('.');
+				if (index > 0) {
+					name = name.substring(index + 1);
+				}		
+				name = getLaunchConfigurationDialog().generateName(name);
+				config.rename(name);
+			}
 		}
 	}
 
