@@ -447,28 +447,12 @@ public class AddVMDialog extends StatusDialog {
 		fStati[1]= status;
 	}
 	
-	private IStatus getDebuggerTimeoutStatus() {
-		return fStati[2];
-	}
-	
-	private void setDebuggerTimeoutStatus(IStatus status) {
-		fStati[2]= status;
-	}
-	
 	protected IStatus getSystemLibraryStatus() {
 		return fStati[3];
 	}
 	
 	protected void setSystemLibraryStatus(IStatus status) {
 		fStati[3]= status;
-	}
-	
-	private IStatus getSystemLibrarySourceStatus() {
-		return fStati[4];
-	}
-	
-	private void setSystemLibrarySourceStatus(IStatus status) {
-		fStati[4]= status;
 	}
 	
 	/**
