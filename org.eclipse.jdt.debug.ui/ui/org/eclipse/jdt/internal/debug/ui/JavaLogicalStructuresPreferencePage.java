@@ -10,27 +10,41 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructure;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
+import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -41,28 +55,38 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class JavaLogicalStructuresPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, ISelectionChangedListener, Listener {
 
-    public class LogicalStructuresListViewerLabelProvider extends LabelProvider implements IColorProvider {
+    public class LogicalStructuresListViewerLabelProvider extends LabelProvider implements IColorProvider, ITableLabelProvider {
+
         /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
          */
-        public String getText(Object element) {
-        	JavaLogicalStructure logicalStructure= (JavaLogicalStructure) element;
-            String qualifiedName= logicalStructure.getQualifiedTypeName();
+        public String getColumnText(Object element, int columnIndex) {
+            JavaLogicalStructure logicalStructure= (JavaLogicalStructure) element;
             StringBuffer buffer= new StringBuffer();
-            int index= qualifiedName.lastIndexOf('.') + 1;
-            String simpleName= qualifiedName.substring(index);
-            buffer.append(simpleName);
-            buffer.append(" - ").append(logicalStructure.getDescription()); //$NON-NLS-1$
-            if (index > 0) {
-                buffer.append(" (").append(logicalStructure.getQualifiedTypeName()).append(')'); //$NON-NLS-1$
+            if (columnIndex == 0) {
+                String qualifiedName= logicalStructure.getQualifiedTypeName();
+                int index= qualifiedName.lastIndexOf('.') + 1;
+                String simpleName= qualifiedName.substring(index);
+                buffer.append(simpleName);
+                if (index > 0) {
+                    buffer.append(" (").append(logicalStructure.getQualifiedTypeName()).append(')'); //$NON-NLS-1$
+                }
             }
-        	return buffer.toString();
+            else if (columnIndex == 1) {
+                buffer.append(logicalStructure.getDescription());
+                String pluginId= logicalStructure.getContributingPluginId();
+                if (pluginId != null) {
+                    buffer.append(MessageFormat.format(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.8"), new String[] {pluginId})); //$NON-NLS-1$
+                }
+            }
+            return buffer.toString();
         }
 
 		/* (non-Javadoc)
@@ -83,6 +107,13 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 			}
 			return null;
 		}
+
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+         */
+        public Image getColumnImage(Object element, int columnIndex) {
+            return null;
+        }
     }
     
     public class LogicalStructuresListViewerContentProvider implements IStructuredContentProvider {
@@ -173,15 +204,30 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 
     }
     
-	private TableViewer fLogicalStructuresListViewer;
+	private TableViewer fLogicalStructuresViewer;
 	private Button fAddLogicalStructureButton;
 	private Button fEditLogicalStructureButton;
 	private Button fRemoveLogicalStructureButton;
-    private LogicalStructuresListViewerContentProvider fLogicalStructuresListViewerContentProvider;
+    private LogicalStructuresListViewerContentProvider fLogicalStructuresContentProvider;
+    
+    protected static String[] fTableColumnProperties= {
+        "type", //$NON-NLS-1$
+        "showAs", //$NON-NLS-1$
+    };
+    protected String[] fTableColumnHeaders= {
+        DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.9"), //$NON-NLS-1$
+        DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.10"), //$NON-NLS-1$
+    };
+    protected ColumnLayoutData[] fTableColumnLayouts= {
+        new ColumnWeightData(70),
+        new ColumnWeightData(30),
+    };
+    private SourceViewer fCodeViewer;
 
 	public JavaLogicalStructuresPreferencePage() {
 		super(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.0")); //$NON-NLS-1$
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
+        setDescription(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.11")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -189,8 +235,6 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	 */
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
-		
-		Font font = parent.getFont();
 		initializeDialogUnits(parent);
 		
 		// top level container
@@ -202,68 +246,119 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
-		container.setFont(font);
-		
-		Label label= new Label(container, SWT.NONE);
-		label.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.1")); //$NON-NLS-1$
-		gd= new GridData();
-		gd.horizontalSpan= 2;
-		label.setLayoutData(gd);
-		label.setFont(font);
-		
-		// logical structures list
-		fLogicalStructuresListViewer= new TableViewer(container, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		Table table = (Table)fLogicalStructuresListViewer.getControl();
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint= convertHeightInCharsToPixels(10);
-		gd.widthHint= convertWidthInCharsToPixels(10);
-		table.setLayoutData(gd);
-		table.setFont(font);
-		fLogicalStructuresListViewerContentProvider= new LogicalStructuresListViewerContentProvider();
-        fLogicalStructuresListViewer.setContentProvider(fLogicalStructuresListViewerContentProvider);
-		fLogicalStructuresListViewer.setLabelProvider(new LogicalStructuresListViewerLabelProvider());
-		fLogicalStructuresListViewer.addSelectionChangedListener(this);
-		fLogicalStructuresListViewer.setInput(this);
-		
-		// button container
-		Composite buttonContainer = new Composite(container, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		buttonContainer.setLayout(layout);
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		buttonContainer.setLayoutData(gd);
-		buttonContainer.setFont(font);
-		
-		// add button
-		fAddLogicalStructureButton = new Button(buttonContainer, SWT.PUSH);
-		fAddLogicalStructureButton.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.2")); //$NON-NLS-1$
-		fAddLogicalStructureButton.setToolTipText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.3")); //$NON-NLS-1$
-		fAddLogicalStructureButton.setFont(font);
-		setButtonLayoutData(fAddLogicalStructureButton);
-		fAddLogicalStructureButton.addListener(SWT.Selection, this);
-
-		// edit button
-		fEditLogicalStructureButton = new Button(buttonContainer, SWT.PUSH);
-		fEditLogicalStructureButton.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.4")); //$NON-NLS-1$
-		fEditLogicalStructureButton.setToolTipText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.5")); //$NON-NLS-1$
-		fEditLogicalStructureButton.setFont(font);
-		setButtonLayoutData(fEditLogicalStructureButton);
-		fEditLogicalStructureButton.addListener(SWT.Selection, this);
-
-		// remove button
-		fRemoveLogicalStructureButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveLogicalStructureButton.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.6")); //$NON-NLS-1$
-		fRemoveLogicalStructureButton.setToolTipText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.7")); //$NON-NLS-1$
-		fRemoveLogicalStructureButton.setFont(font);
-		setButtonLayoutData(fRemoveLogicalStructureButton);
-		fRemoveLogicalStructureButton.addListener(SWT.Selection, this);
-
-		// initialize the buttons state
-		selectionChanged((IStructuredSelection)fLogicalStructuresListViewer.getSelection());
+		container.setFont(parent.getFont());
+        
+        createTable(container);
+		createTableButtons(container);
+        createSourceViewer(container);
 		
 		return container;
 	}
+    
+    public void createSourceViewer(Composite parent) {
+        Label label= new Label(parent, SWT.NONE);
+        label.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.12")); //$NON-NLS-1$
+        
+        fCodeViewer= new SourceViewer(parent,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+
+        JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
+        IDocument document= new Document();
+        IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
+        document.setDocumentPartitioner(partitioner);
+        partitioner.connect(document);      
+        fCodeViewer.configure(new JavaSourceViewerConfiguration(tools, null));
+        fCodeViewer.setEditable(false);
+        fCodeViewer.setDocument(document);
+        fCodeViewer.getTextWidget().setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+    
+        fCodeViewer.getTextWidget().setFont(JFaceResources.getTextFont());
+        
+        Control control= fCodeViewer.getControl();
+        GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+        gd.horizontalSpan= 2;
+        gd.heightHint= convertHeightInCharsToPixels(10);
+        control.setLayoutData(gd);
+    }
+
+    /**
+     * @param font
+     * @param container
+     */
+    private void createTableButtons(Composite container) {
+        Font font= container.getFont();
+        // button container
+		Composite buttonContainer = new Composite(container, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        buttonContainer.setLayout(layout);
+        GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+        buttonContainer.setLayoutData(gd);
+        buttonContainer.setFont(font);
+        // add button
+		fAddLogicalStructureButton = new Button(buttonContainer, SWT.PUSH);
+        fAddLogicalStructureButton.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.2")); //$NON-NLS-1$
+        fAddLogicalStructureButton.setToolTipText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.3")); //$NON-NLS-1$
+        fAddLogicalStructureButton.setFont(font);
+        setButtonLayoutData(fAddLogicalStructureButton);
+        fAddLogicalStructureButton.addListener(SWT.Selection, this);
+        // edit button
+		fEditLogicalStructureButton = new Button(buttonContainer, SWT.PUSH);
+        fEditLogicalStructureButton.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.4")); //$NON-NLS-1$
+        fEditLogicalStructureButton.setToolTipText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.5")); //$NON-NLS-1$
+        fEditLogicalStructureButton.setFont(font);
+        setButtonLayoutData(fEditLogicalStructureButton);
+        fEditLogicalStructureButton.addListener(SWT.Selection, this);
+        // remove button
+		fRemoveLogicalStructureButton = new Button(buttonContainer, SWT.PUSH);
+        fRemoveLogicalStructureButton.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.6")); //$NON-NLS-1$
+        fRemoveLogicalStructureButton.setToolTipText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.7")); //$NON-NLS-1$
+        fRemoveLogicalStructureButton.setFont(font);
+        setButtonLayoutData(fRemoveLogicalStructureButton);
+        fRemoveLogicalStructureButton.addListener(SWT.Selection, this);
+        // initialize the buttons state
+		selectionChanged((IStructuredSelection)fLogicalStructuresViewer.getSelection());
+    }
+
+    /**
+     * @param container
+     */
+    private void createTable(Composite parent) {
+        Label label= new Label(parent, SWT.NONE);
+        label.setText(DebugUIMessages.getString("JavaLogicalStructuresPreferencePage.1")); //$NON-NLS-1$
+        GridData gd= new GridData();
+        gd.horizontalSpan= 2;
+        label.setLayoutData(gd);
+        label.setFont(parent.getFont());
+        
+        // logical structures list
+        fLogicalStructuresViewer= new TableViewer(parent, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+        Table table = (Table)fLogicalStructuresViewer.getControl();
+        gd= new GridData(GridData.FILL_HORIZONTAL);
+        gd.heightHint= convertHeightInCharsToPixels(10);
+        gd.widthHint= convertWidthInCharsToPixels(10);
+        table.setLayoutData(gd);
+        table.setFont(parent.getFont());
+        TableLayout tableLayout = new TableLayout();
+        table.setLayout(tableLayout);
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
+        
+        // create table columns
+        fLogicalStructuresViewer.setColumnProperties(fTableColumnProperties);
+        for (int i = 0; i < fTableColumnHeaders.length; i++) {
+            tableLayout.addColumnData(fTableColumnLayouts[i]);
+            TableColumn column = new TableColumn(table, SWT.NONE, i);
+            column.setResizable(fTableColumnLayouts[i].resizable);
+            column.setText(fTableColumnHeaders[i]);
+        }
+        
+        fLogicalStructuresContentProvider= new LogicalStructuresListViewerContentProvider();
+        fLogicalStructuresViewer.setContentProvider(fLogicalStructuresContentProvider);
+        fLogicalStructuresViewer.setLabelProvider(new LogicalStructuresListViewerLabelProvider());
+        fLogicalStructuresViewer.addSelectionChangedListener(this);
+        fLogicalStructuresViewer.setInput(this);
+    }
 
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
@@ -286,11 +381,13 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	 */
 	private void selectionChanged(IStructuredSelection structuredSelection) {
 		int size= structuredSelection.size();
+        StringBuffer buffer= new StringBuffer();
 		if (size == 0) {
 			fEditLogicalStructureButton.setEnabled(false);
 			fRemoveLogicalStructureButton.setEnabled(false);
 		} else {
-			fEditLogicalStructureButton.setEnabled(size == 1 && !((JavaLogicalStructure)structuredSelection.getFirstElement()).isContributed());
+			JavaLogicalStructure structure = (JavaLogicalStructure)structuredSelection.getFirstElement();
+            fEditLogicalStructureButton.setEnabled(size == 1 && !structure.isContributed());
 			boolean removeEnabled= true;
 			for (Iterator iter= structuredSelection.iterator(); iter.hasNext();) {
 				if (((JavaLogicalStructure) iter.next()).isContributed()) {
@@ -298,7 +395,24 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 				}
 			}
 			fRemoveLogicalStructureButton.setEnabled(removeEnabled);
-		} 
+            String snippet= structure.getValue();
+            if (snippet != null) {
+                buffer.append(snippet);
+            } else {
+                String[][] variables = structure.getVariables();
+                for (int i = 0; i < variables.length; i++) {
+                    buffer.append(variables[i][0]);
+                    buffer.append(" = "); //$NON-NLS-1$
+                    buffer.append(variables[i][1]);
+                    if (buffer.charAt(buffer.length() - 1) != '\n') {
+                        buffer.append('\n');
+                    }
+                }
+            }
+		}
+        if (fCodeViewer != null) {
+            fCodeViewer.getDocument().set(buffer.toString());
+        }
 	}
 
 	/* (non-Javadoc)
@@ -317,31 +431,31 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 
 	// code for the add button
 	protected void addLogicalStructure() {
-		JavaLogicalStructure logicalStructure= new JavaLogicalStructure("", true, "", "", new String[0][], false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (new EditLogicalStructureDialog(fLogicalStructuresListViewer.getControl().getShell(), logicalStructure).open() == Window.OK) {
-			fLogicalStructuresListViewerContentProvider.add(logicalStructure);
-			fLogicalStructuresListViewer.refresh();
-			fLogicalStructuresListViewer.setSelection(new StructuredSelection(logicalStructure));
+		JavaLogicalStructure logicalStructure= new JavaLogicalStructure("", true, "", "", new String[0][]); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (new EditLogicalStructureDialog(fLogicalStructuresViewer.getControl().getShell(), logicalStructure).open() == Window.OK) {
+			fLogicalStructuresContentProvider.add(logicalStructure);
+			fLogicalStructuresViewer.refresh();
+			fLogicalStructuresViewer.setSelection(new StructuredSelection(logicalStructure));
 		}
 	}
 
 	// code for the edit button
 	protected void editLogicalStructure() {
-		IStructuredSelection structuredSelection= (IStructuredSelection) fLogicalStructuresListViewer.getSelection();
+		IStructuredSelection structuredSelection= (IStructuredSelection) fLogicalStructuresViewer.getSelection();
 		if (structuredSelection.size() == 1) {
 			JavaLogicalStructure logicalStructure= (JavaLogicalStructure)structuredSelection.getFirstElement();
-			new EditLogicalStructureDialog(fLogicalStructuresListViewer.getControl().getShell(), logicalStructure).open();
-			fLogicalStructuresListViewerContentProvider.refresh(logicalStructure);
-			fLogicalStructuresListViewer.refresh();
+			new EditLogicalStructureDialog(fLogicalStructuresViewer.getControl().getShell(), logicalStructure).open();
+			fLogicalStructuresContentProvider.refresh(logicalStructure);
+			fLogicalStructuresViewer.refresh();
 		}
 	}
 
 	// code for the remove button
 	protected void removeLogicalStrutures() {
-		IStructuredSelection selection= (IStructuredSelection)fLogicalStructuresListViewer.getSelection();
+		IStructuredSelection selection= (IStructuredSelection)fLogicalStructuresViewer.getSelection();
 		if (selection.size() > 0) {
 			List selectedElements= selection.toList();
-			Object[] elements= fLogicalStructuresListViewerContentProvider.getElements(null);
+			Object[] elements= fLogicalStructuresContentProvider.getElements(null);
 			Object newSelectedElement= null;
 			for (int i= 0; i < elements.length; i++) {
 				if (!selectedElements.contains(elements[i])) {
@@ -350,15 +464,15 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 					break;
 				}
 			}
-			fLogicalStructuresListViewerContentProvider.remove(((IStructuredSelection) fLogicalStructuresListViewer.getSelection()).toList());
-			fLogicalStructuresListViewer.refresh();
+			fLogicalStructuresContentProvider.remove(((IStructuredSelection) fLogicalStructuresViewer.getSelection()).toList());
+			fLogicalStructuresViewer.refresh();
 			if (newSelectedElement == null) {
-				Object[] newElements= fLogicalStructuresListViewerContentProvider.getElements(null);
+				Object[] newElements= fLogicalStructuresContentProvider.getElements(null);
 				if (newElements.length > 0) {
-					fLogicalStructuresListViewer.setSelection(new StructuredSelection(newElements[0]));
+					fLogicalStructuresViewer.setSelection(new StructuredSelection(newElements[0]));
 				}
 			} else {
-				fLogicalStructuresListViewer.setSelection(new StructuredSelection(newSelectedElement));
+				fLogicalStructuresViewer.setSelection(new StructuredSelection(newSelectedElement));
 			}
 		}
 		
@@ -368,7 +482,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		fLogicalStructuresListViewerContentProvider.saveUserDefinedJavaLogicalStructures();
+		fLogicalStructuresContentProvider.saveUserDefinedJavaLogicalStructures();
 		return super.performOk();
 	}
 	

@@ -139,7 +139,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 				variables[i][1]= tokenizer.nextToken();
 				tokenizer.nextToken();
 			}
-			fUserDefinedJavaLogicalStructures.add(new JavaLogicalStructure(type, isSubtype, value, description, variables, false));
+			fUserDefinedJavaLogicalStructures.add(new JavaLogicalStructure(type, isSubtype, value, description, variables));
 		}
 	}
 	

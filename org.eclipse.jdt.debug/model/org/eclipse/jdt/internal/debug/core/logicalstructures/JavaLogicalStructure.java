@@ -78,9 +78,10 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	 */
 	private String[][] fVariables;
 	/**
-	 * Whethever this logical structure was contributed in a plugin.xml or not.
+	 * The plugin identifier of the plugin which contributed this logical structure
+     * or <code>null</code> if this structure was defined by the user.
 	 */
-    private boolean fIsContributed;
+    private String fContributingPluginId= null;
 	
 	/**
 	 * Performs the evaluations.
@@ -158,20 +159,18 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	/**
 	 * Constructor from parameters.
 	 */
-	public JavaLogicalStructure(String type, boolean subtypes, String value, String description, String[][] variables, boolean isContributed) {
+	public JavaLogicalStructure(String type, boolean subtypes, String value, String description, String[][] variables) {
 		fType= type;
 		fSubtypes= subtypes;
 		fValue= value;
 		fDescription= description;
 		fVariables= variables;
-		fIsContributed= isContributed;
 	}
 
 	/**
 	 * Constructor from configuration element.
 	 */
 	public JavaLogicalStructure(IConfigurationElement configurationElement) throws CoreException {
-		fIsContributed= true;
 		fType= configurationElement.getAttribute("type"); //$NON-NLS-1$
 		if (fType == null) {
 			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.0"), null)); //$NON-NLS-1$
@@ -199,6 +198,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			}
 			fVariables[j][1]= variableValue;
 		}
+        fContributingPluginId= configurationElement.getNamespace();
 	}
 	
 	/**
@@ -418,14 +418,24 @@ public class JavaLogicalStructure implements ILogicalStructureType {
     public String getDescription() {
 		return fDescription;
 	}
+    
+    /**
+     * Indicates if this logical structure was contributed by a plug-in
+     * or defined by a user.
+     */
+    public boolean isContributed() {
+        return fContributingPluginId != null;
+    }
 	
 	/**
-	 * Indicates if this logical structure was contributed by a plug-in
-	 * or defined by a user.
+     * Returns the plugin identifier of the plugin which contributed this logical
+     * structure or <code>null</code> if this structure was defined by the user.
+     * @return the plugin identifier of the plugin which contributed this
+     *  structure or <code>null</code>
 	 */
-	public boolean isContributed() {
-	    return fIsContributed;
-	}
+    public String getContributingPluginId() {
+        return fContributingPluginId;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILogicalStructureType#getId()

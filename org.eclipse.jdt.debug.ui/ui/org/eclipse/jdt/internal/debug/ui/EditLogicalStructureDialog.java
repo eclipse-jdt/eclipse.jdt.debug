@@ -227,8 +227,6 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		// name and description container
 		Composite typeNameDescriptionContainer= new Composite(container, SWT.NONE);
 		GridLayout gridLayout= new GridLayout(2, false);
-		gridLayout.marginHeight= 0;
-		gridLayout.marginWidth= 0;
 		typeNameDescriptionContainer.setLayout(gridLayout);
 		typeNameDescriptionContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 		
@@ -266,8 +264,6 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		// value/variable container
 		Composite radioContainer= new Composite(container, SWT.NONE);
 		gridLayout= new GridLayout(2, true);
-		gridLayout.marginHeight= 0;
-		gridLayout.marginWidth= 0;
 		radioContainer.setLayout(gridLayout);
 		radioContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 
@@ -285,8 +281,6 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		// attribute list container
 		fAttributesContainer= new Composite(container, SWT.NONE);
 		gridLayout= new GridLayout(2, false);
-		gridLayout.marginHeight= 0;
-		gridLayout.marginWidth= 0;
 		fAttributesContainer.setLayout(gridLayout);
 		fAttributesContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 		
@@ -323,8 +317,6 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 			// if it's a variable, create the attribute name text area
 			Composite attributeNameContainer= new Composite(fCodeGroup, SWT.NONE);
 			GridLayout gridLayout = new GridLayout(2, false);
-			gridLayout.marginHeight = 0;
-			gridLayout.marginWidth = 0;
 			attributeNameContainer.setLayout(gridLayout);
 			attributeNameContainer.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
 			
@@ -394,8 +386,6 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		// button container
 		Composite attributesListButtonsContainer= new Composite(fAttributesContainer, SWT.NONE);
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.marginHeight = 0;
-		gridLayout.marginWidth = 0;
 		attributesListButtonsContainer.setLayout(gridLayout);
 		attributesListButtonsContainer.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 		
