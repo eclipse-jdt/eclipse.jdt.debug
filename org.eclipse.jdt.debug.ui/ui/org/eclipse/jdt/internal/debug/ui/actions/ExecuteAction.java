@@ -35,7 +35,9 @@ public class ExecuteAction extends EvaluateAction {
 					evaluationCleanup();
 				}
 			});
-		} 			
+		} else {			
+			evaluationCleanup();
+		}
 	}
 
 	/**
