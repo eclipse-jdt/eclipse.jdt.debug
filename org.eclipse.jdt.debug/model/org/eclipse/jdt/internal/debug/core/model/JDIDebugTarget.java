@@ -32,6 +32,7 @@ import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -1284,7 +1285,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public IJavaVariable findVariable(String varName) throws DebugException {
 		IThread[] threads = getThreads();
 		for (int i = 0; i < threads.length; i++) {
-			JDIThread thread = (JDIThread)threads[i];
+			IJavaThread thread = (IJavaThread)threads[i];
 			IJavaVariable var = thread.findVariable(varName);
 			if (var != null) {
 				return var;

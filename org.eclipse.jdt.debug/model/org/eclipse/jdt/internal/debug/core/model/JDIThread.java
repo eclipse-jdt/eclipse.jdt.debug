@@ -1532,9 +1532,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	public IJavaVariable findVariable(String varName) throws DebugException {
 		if (isSuspended()) {
 			try {
-				Iterator stackFrames= computeStackFrames().iterator();
-				while (stackFrames.hasNext()) {
-					JDIStackFrame sf= (JDIStackFrame)stackFrames.next();
+				IStackFrame[] stackFrames= getStackFrames();
+				for (int i = 0; i < stackFrames.length; i++) {
+					IJavaStackFrame sf= (IJavaStackFrame)stackFrames[i];
 					IJavaVariable var= sf.findVariable(varName);
 					if (var != null) {
 						return var;
