@@ -96,27 +96,52 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return LaunchingPlugin.getUniqueIdentifier();
 	}
 	
+	/**
+	 * Construct and return a String containing the full path of a java executable
+	 * command such as 'java' or 'javaw.exe'.  This methods tries to use the user specified
+	 * command (from the launch config tab) for this if possible.  The command is searched
+	 * for in the JDK_HOME/jre/bin & JDK_HOME/bin directories in that order.	 */
 	protected String constructProgramString(VMRunnerConfiguration config) {
+		
+		// Build the path to the java executable.  First try 'jre/bin', and if that
+		// doesn't exist, try just 'bin'
+		String jdkLocation = null;
+		StringBuffer buff= new StringBuffer(getJDKLocation());
+		buff.append(File.separatorChar);
+		String jdkRootString = buff.toString();
+		File jdkBinFile = new File(jdkRootString + "jre" + File.separatorChar + "bin"); //$NON-NLS-2$ $NON-NLS-1$		
+		if (isExistingDirectory(jdkBinFile)) {
+			jdkLocation = jdkBinFile.getAbsolutePath();
+		} else {
+			jdkBinFile = new File(jdkRootString + "bin"); //$NON-NLS-1$
+			jdkLocation = jdkBinFile.getAbsolutePath();
+		}
+		jdkLocation += File.separatorChar;
+		buff = new StringBuffer(jdkLocation);
+		
+		// Look for the user-specified java executable command
 		String command= null;
 		Map map= config.getVMSpecificAttributesMap();
 		if (map != null) {
 			command = (String)map.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
 		}
-		StringBuffer buff= new StringBuffer(getJDKLocation());
-		buff.append(File.separator);
-		buff.append("bin"); //$NON-NLS-1$
-		buff.append(File.separator);
-		String jdkLocation= buff.toString();
+		
+		// If no java command was specified, try 'java', and tweak it as necessary
 		if (command == null) {
 			buff.append("java"); //$NON-NLS-1$
 			return adjustProgramString(buff.toString());
 		} 
 		
+		// Otherwise, use the user-specified command with the previously-determined 
+		// jdk bin location
 		buff.append(command);
 		String program= buff.toString();
-		File exe= new File(program + ".exe"); //$NON-NLS-1$
-		File javaCommand= new File(program); 
 		
+		// If neither the completed path, or the completed path plus '.exe' are valid,
+		// try just plain 'java'.  This guards against users entering non-existant
+		// java commands
+		File exe= new File(program + ".exe"); //$NON-NLS-1$
+		File javaCommand= new File(program); 		
 		if (!exe.isFile() && !javaCommand.isFile()) {
 			File java= new File(jdkLocation + "java.exe"); //$NON-NLS-1$
 			if (java.isFile()) {
@@ -130,6 +155,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 		return program;
 	}	
+	
+	protected boolean isExistingDirectory(File file) {
+		return file.exists() && file.isDirectory();
+	}
 
 	protected String convertClassPath(String[] cp) {
 		int pathCount= 0;
