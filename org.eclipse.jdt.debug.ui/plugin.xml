@@ -54,7 +54,7 @@
       </hover>
    </extension>
    <extension
-         id="org.eclipse.jdt.debug.ui.editors"
+         id="editors"
          point="org.eclipse.ui.editors">
       <editor
             name="%JavaSnippetEditor.label"
