@@ -1609,13 +1609,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 	}
 	
-	protected void appendInstanceFilter(IJavaLineBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
-		if (breakpoint instanceof IJavaWatchpoint) {
-			String instanceText= ((IJavaWatchpoint)breakpoint).getInstanceIdentifier();
+	protected void appendInstanceFilter(IJavaBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
+		IJavaObject[] instances = breakpoint.getInstanceFilters();
+		for (int i = 0; i < instances.length; i++) {
+			String instanceText= instances[i].getValueString();
 			if (instanceText != null) {
 				buffer.append(' ');
 				buffer.append(MessageFormat.format(DebugUIMessages.getString("JDIModelPresentation.instance_1"), new String[] {instanceText})); //$NON-NLS-1$
-			}
+			}				
 		}
 	}
 }

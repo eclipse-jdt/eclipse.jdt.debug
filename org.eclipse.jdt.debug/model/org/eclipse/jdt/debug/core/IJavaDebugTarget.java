@@ -201,6 +201,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * Returns whether this target supports instance breakpoints.
 	 * 
 	 * @return whether this target supports instance breakpoints
+	 * @since 2.1
 	 */
 	public boolean supportsInstanceBreakpoints();
 	

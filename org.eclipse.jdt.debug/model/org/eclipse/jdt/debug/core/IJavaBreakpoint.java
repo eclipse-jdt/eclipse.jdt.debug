@@ -141,5 +141,36 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 *  thread filters
 	 */
 	public IJavaThread[] getThreadFilters() throws CoreException; 
+	
+	/**
+	 * Adds the given object to the list of objects in which this
+	 * breakpoint is restricted to suspend execution. Has no effect
+	 * if the object has already been added.
+	 * 
+	 * @param object instance filter to add
+	 * @exception CoreException if unable to add the given instance filter
+	 * @since 2.1
+	 */
+	public void addInstanceFilter(IJavaObject object) throws CoreException;
+	
+	/**
+	 * Removes the given object from the list of objects in which this
+	 * breakpoint is restricted to suspend execution. Has no effect if the
+	 * object has not yet been added as an instance filter.
+	 * 
+	 * @param object instance filter to remove
+	 * @exception CoreException if unable to remove the given instance filter
+	 * @since 2.1
+	 */
+	public void removeInstanceFilter(IJavaObject object) throws CoreException;
+	
+	/**
+	 * Returns the current set of active instance filters.
+	 * 
+	 * @return the current set of active instance filters.
+	 * @exception CoreException if unable to retrive the list
+	 * @since 2.1
+	 */	
+	public IJavaObject[] getInstanceFilters() throws CoreException;
 }
 

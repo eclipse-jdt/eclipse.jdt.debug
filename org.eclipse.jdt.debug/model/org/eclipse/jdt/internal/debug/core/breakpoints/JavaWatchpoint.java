@@ -19,11 +19,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.internal.debug.core.model.JDIFieldVariable;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
@@ -86,7 +84,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * </ol>
 	 */
 	private HashMap fLastEventTypes= new HashMap(10); // $NON-NLS-1$
-	private JDIFieldVariable fFieldVariable;
 	
 	public JavaWatchpoint() {
 	}
@@ -94,7 +91,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	/**
 	 * @see JDIDebugModel#createWatchpoint(IResource, String, String, int, int, int, int, boolean, Map)
 	 */
-	public JavaWatchpoint(final IResource resource, final String typeName, final String fieldName, final IJavaFieldVariable fieldVariable, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean add, final Map attributes) throws DebugException {
+	public JavaWatchpoint(final IResource resource, final String typeName, final String fieldName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean add, final Map attributes) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {		
 				setMarker(resource.createMarker(JAVA_WATCHPOINT));
@@ -105,11 +102,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 				addMessageAttribute(attributes, lineNumber, hitCount);
 				// configure the field handle
 				addFieldName(attributes, fieldName);
-				if (fieldVariable != null) {
-					// Instance watchpoints are not persisted
-					attributes.put(PERSISTED, Boolean.FALSE);
-					fFieldVariable= (JDIFieldVariable)fieldVariable;
-				}
 				// configure the access and modification flags to defaults
 				addDefaultAccessAndModification(attributes);			
 				
@@ -238,19 +230,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 				return null;
 			}
 		return request;
-	}
-	
-	/**
-	 * @see JavaBreakpoint#configureRequest(EventRequest, JDIDebugTarget)
-	 */
-	protected void configureRequest(WatchpointRequest request, JDIDebugTarget target) throws CoreException {
-		if (fFieldVariable != null) {
-			ObjectReference reference= fFieldVariable.getObjectReference();
-			if (reference != null) {
-				request.addInstanceFilter(reference);
-			}
-		}
-		super.configureRequest(request, target);
 	}
 
 	/**
@@ -381,16 +360,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		return ensureMarker().getAttribute(FIELD_NAME, null);
 	}
 	
-	public String getInstanceIdentifier() {
-		if (fFieldVariable != null) {
-			ObjectReference reference= fFieldVariable.getObjectReference();
-			if (reference != null) {
-				return reference.toString();
-			}
-		}
-		return null;
-	}
-	
 	/**
 	 * Store the type of the event, then handle it as specified in
 	 * the superclass. This is useful for correctly generating the
@@ -479,9 +448,14 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
 		fLastEventTypes.remove(target);
 		super.removeFromTarget(target);
-		if (fFieldVariable != null) {
-			// Instance watchpoints do not outlive a debug target.
-			DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(this, true);
-		}
 	}
+	
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#addInstanceFilter(EventRequest, ObjectReference)
+	 */
+	protected void addInstanceFilter(EventRequest request, ObjectReference object) {
+		if (request instanceof WatchpointRequest) {
+			((WatchpointRequest)request).addInstanceFilter(object);
+		}
+	}	
 }

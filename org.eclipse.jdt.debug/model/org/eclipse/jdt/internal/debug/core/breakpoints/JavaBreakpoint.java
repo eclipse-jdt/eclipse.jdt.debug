@@ -25,17 +25,21 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIType;
 
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
@@ -108,6 +112,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * the breakpoint for HCR (i.e. in case an inner type is HCR'd).
 	 */
 	protected ReferenceType fInstalledType = null;
+	
+	/**
+	 * List of active instance filters for this breakpoint
+	 * (list of <code>IJavaObject</code>).	 */
+	protected List fInstanceFilters = null;
+	
+	/**
+	 * Empty instance filters array.	 */
+	protected static final IJavaObject[] fgEmptyInstanceFilters = new IJavaObject[0];
 	
 	/**
 	 * Propery identifier for a breakpoint object on an event request
@@ -367,7 +380,31 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		configureRequestHitCount(request);
 		// Important: only enable a request after it has been configured
 		updateEnabledState(request);
+		updateInstanceFilters(request, target);
 	}
+	
+	protected void updateInstanceFilters(EventRequest request, JDIDebugTarget target) {
+		if (fInstanceFilters != null && !fInstanceFilters.isEmpty()) {
+			Iterator iter = fInstanceFilters.iterator();
+			boolean inTarget = false;
+			while (iter.hasNext()) {
+				IJavaObject object = (IJavaObject)iter.next();
+				if (object.getDebugTarget().equals(target)) {
+					addInstanceFilter(request, ((JDIObjectValue)object).getUnderlyingObject());
+					inTarget = true;
+				}
+			}
+			if (!inTarget) {
+				request.disable();
+			}
+		}		
+	}
+	
+	/**
+	 * Adds an instance filter to the given request. Since the implementation is
+	 * request specific, subclasses must override.
+	 * 	 * @param request	 * @param object instance filter	 */
+	protected abstract void addInstanceFilter(EventRequest request, ObjectReference object);
 	
 	/**
 	 * Configure the thread filter property of the given request.
@@ -508,6 +545,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected EventRequest updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		updateEnabledState(request);
 		updateSuspendPolicy(request, target);
+		updateInstanceFilters(request, target);
 		EventRequest newRequest = updateHitCount(request, target);
 		if (newRequest != request) {
 			replaceRequest(target, request, newRequest);
@@ -629,6 +667,18 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		fFilteredThreadsByTarget.remove(target);
 		if (getInstallCount() == 0) {
 			fInstalledType = null;
+		}
+		
+		// instance filters
+		if (fInstanceFilters != null && !fInstanceFilters.isEmpty()) {
+			for (int i = 0; i < fInstanceFilters.size(); i++) {
+				IJavaObject object = (IJavaObject)fInstanceFilters.get(i);
+				if (object.getDebugTarget().equals(target)) {
+					fInstanceFilters.remove(i);
+				} else {
+					i++;
+				}
+			}
 		}
 		
 		// notification
@@ -1022,4 +1072,63 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		return JDIDebugPlugin.getDefault().fireInstalling(target, this, jt);
 	}
+	
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#addInstanceFilter(IJavaObject)
+	 */
+	public void addInstanceFilter(IJavaObject object) throws CoreException {
+		if (fInstanceFilters == null) {
+			fInstanceFilters= new ArrayList();
+		}
+		if (!fInstanceFilters.contains(object)) {
+			fInstanceFilters.add(object);
+			updateInstanceFilters((JDIDebugTarget)object.getDebugTarget());
+		}
+	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#getInstanceFilters()
+	 */
+	public IJavaObject[] getInstanceFilters() throws CoreException {
+		if (fInstanceFilters == null || fInstanceFilters.isEmpty()) {
+			return fgEmptyInstanceFilters;
+		}
+		return (IJavaObject[])fInstanceFilters.toArray(new IJavaObject[fInstanceFilters.size()]);
+	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#removeInstanceFilter(IJavaObject)
+	 */
+	public void removeInstanceFilter(IJavaObject object) throws CoreException {
+		if (fInstanceFilters == null) {
+			return;
+		}
+		if (fInstanceFilters.remove(object)) {
+			updateInstanceFilters((JDIDebugTarget)object.getDebugTarget());
+		}
+	}
+
+	/**
+	 * Update (re-create) event requests for the given target, as instance
+	 * filters have changed.
+	 * 	 * @param object	 * @throws CoreException	 */
+	protected void updateInstanceFilters(JDIDebugTarget target) throws CoreException {
+		List list = getRequests(target);
+		ListIterator iter = list.listIterator();
+		while (iter.hasNext()) {
+			EventRequest request = (EventRequest)iter.next();
+			if (!(request instanceof ClassPrepareRequest)) {
+				EventRequest newRequest = recreateRequest(request, target);
+				if (newRequest != request) {
+					iter.set(newRequest);
+					replaceRequest(target, request, newRequest);
+					DebugPlugin.getDefault().removeDebugEventListener(this);
+					// Since instance filters don't affect the underlying marker, fire
+					// a changed notification manually
+					DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);
+				}
+			}
+		}
+	}
+	
 }

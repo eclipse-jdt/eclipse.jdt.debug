@@ -48,6 +48,7 @@ import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.InvalidLineNumberException;
 import com.sun.jdi.Location;
 import com.sun.jdi.NativeMethodException;
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
@@ -645,4 +646,14 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		fCompiledExpressions.remove(thread);
 		super.cleanupForThreadTermination(thread);
 	}
+	
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#addInstanceFilter(EventRequest, ObjectReference)
+	 */
+	protected void addInstanceFilter(EventRequest request,ObjectReference object) {
+		if (request instanceof BreakpointRequest) {
+			((BreakpointRequest)request).addInstanceFilter(object);
+		}
+	}
+
 }

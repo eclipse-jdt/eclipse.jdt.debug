@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.core.IJavaObject;
 
 public class ManageInstanceWatchpointActionDelegate extends ManageWatchpointActionDelegate {
 	
@@ -15,7 +15,9 @@ public class ManageInstanceWatchpointActionDelegate extends ManageWatchpointActi
 	
 	protected IJavaBreakpoint createBreakpoint(IResource resource, String typeName, String fieldName, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
 		if (fField != null) {
-			return JDIDebugModel.createInstanceWatchpoint(resource, typeName, fieldName, fField, lineNumber, charStart, charEnd, hitCount, register, attributes);
+			IJavaBreakpoint bp = super.createBreakpoint(resource, typeName, fieldName, lineNumber, charStart, charEnd, hitCount, register, attributes);
+			bp.addInstanceFilter((IJavaObject)fField.getValue());
+			return bp;
 		}
 		return null;
 	}

@@ -29,6 +29,7 @@ import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.Location;
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
@@ -637,5 +638,13 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		updateRequestForFilters();
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#addInstanceFilter(EventRequest, ObjectReference)
+	 */
+	protected void addInstanceFilter(EventRequest request, ObjectReference object) {
+		if (request instanceof ExceptionRequest) {
+			((ExceptionRequest)request).addInstanceFilter(object);
+		}
+	}	
 }
 
