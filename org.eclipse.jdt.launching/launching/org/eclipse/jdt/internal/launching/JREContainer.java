@@ -66,11 +66,11 @@ public class JREContainer implements IClasspathContainer {
 					}
 				}
 
-				public void vmAdded(IVMInstall vm) {
+				public void vmAdded(IVMInstall newVm) {
 				}
 
-				public void vmRemoved(IVMInstall vm) {
-					fgClasspathEntries.remove(vm);
+				public void vmRemoved(IVMInstall removedVm) {
+					fgClasspathEntries.remove(removedVm);
 				}
 			};
 			JavaRuntime.addVMInstallChangedListener(listener);
