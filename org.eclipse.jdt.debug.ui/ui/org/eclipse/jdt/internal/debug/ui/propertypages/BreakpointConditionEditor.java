@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.propertypages;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClassFile;
@@ -23,6 +26,7 @@ import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaTextTools;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultUndoManager;
@@ -33,14 +37,21 @@ import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 
 /**
  * 
@@ -57,6 +68,9 @@ public class BreakpointConditionEditor {
 	
 	private JavaLineBreakpointPage fPage;
 	private IJavaLineBreakpoint fBreakpoint;
+	
+	private List submissions;
+	private Shell shell;
 		
 	public BreakpointConditionEditor(Composite parent, JavaLineBreakpointPage page) {
 		fPage= page;
@@ -97,21 +111,6 @@ public class BreakpointConditionEditor {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
 		
-		// listener for activate the code assist
-		fViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
-			public void verifyKey(VerifyEvent event) {
-				if (event.stateMask == SWT.CTRL) {
-					if (event.keyCode == ' ') { //do code assist for CTRL-SPACE
-						fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-						event.doit= false;
-					} else if (event.keyCode == 'z') { // undo for CTRL-z
-						undoManager.undo();
-						event.doit= false;
-					}
-				}
-			}
-		});
-
 		// listener for check the value
 		fViewer.getTextWidget().addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
@@ -151,6 +150,22 @@ public class BreakpointConditionEditor {
 		gd.widthHint= fPage.convertWidthInCharsToPixels(40);	
 		document.set(condition);
 		valueChanged();
+		
+		shell = parent.getShell();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);
+		
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		IHandler handler = new AbstractHandler() {
+			public void execute(Object parameter) throws ExecutionException {
+				fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+			}
+		};
+		submissions = Collections.singletonList(new HandlerSubmission(null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, 4, null)); //$NON-NLS-1$
+		commandSupport.addHandlerSubmissions(submissions);
+		
 	}
 
 	/**
@@ -235,6 +250,11 @@ public class BreakpointConditionEditor {
 	}
 	
 	public void dispose() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		commandSupport.removeHandlerSubmissions(submissions); 
+		contextSupport.unregisterShell(shell);		
 		fViewer.dispose();
 	}
 }
