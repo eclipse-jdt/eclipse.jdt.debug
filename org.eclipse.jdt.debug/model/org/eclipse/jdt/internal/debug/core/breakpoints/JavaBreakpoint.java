@@ -17,8 +17,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -40,7 +42,7 @@ import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.MethodEntryRequest;
 
-public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener {
+public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener, IDebugEventListener {
 
 	/**
 	 * Breakpoint attribute storing the expired value (value <code>"org.eclipse.jdt.debug.core.expired"</code>).
@@ -861,6 +863,35 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			EventRequest newRequest = recreateRequest(request, target);
 			if (newRequest != request) {
 				replaceRequest(target, request, newRequest);
+				DebugPlugin.getDefault().addDebugEventListener(this);
+			}
+		}
+	}
+	
+	/**
+	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * 
+	 * Remove thread filters for terminated threads
+	 */
+	public void handleDebugEvent(DebugEvent event) {
+		if (event.getKind() == DebugEvent.TERMINATE) {
+			Object source= event.getSource();
+			if (!(source instanceof JDIThread)) {
+				return;
+			}
+			JDIThread thread= (JDIThread)source;
+			JDIDebugTarget target= (JDIDebugTarget)thread.getDebugTarget();
+			try {
+				if (thread == getThreadFilter(target)) {
+					removeThreadFilter(target);
+				}
+			} catch (VMDisconnectedException exception) {
+				// Thread death often occurs at shutdown.
+				// A VMDisconnectedException trying to 
+				// update the breakpoint request is
+				// acceptable.
+			} catch (CoreException exception) {
+				JDIDebugPlugin.logError(exception);
 			}
 		}
 	}
@@ -904,6 +935,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			EventRequest newRequest = recreateRequest(request, target);
 			if (newRequest != request) {
 				replaceRequest(target, request, newRequest);
+				DebugPlugin.getDefault().removeDebugEventListener(this);
 			}
 		}
 	}
