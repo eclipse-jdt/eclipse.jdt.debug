@@ -118,7 +118,7 @@ public class EvalNestedTypeTests {
 				
 				void ac() {
 					System.out.println("Tests ...");
-					g = g;
+					
 				}
 			}
 			
@@ -143,7 +143,7 @@ public class EvalNestedTypeTests {
 				
 				public void run() {
 					System.out.println("Tests ...");
-					g = g;
+					
 				}
 			};
 			AB i_ab= new AB();
@@ -250,7 +250,7 @@ public class EvalNestedTypeTests {
 			
 			void bb() {
 				System.out.println("Tests ...");
-				g = g;
+				
 			}
 			
 		}
@@ -277,7 +277,7 @@ public class EvalNestedTypeTests {
 				
 				void bc() {
 					System.out.println("Tests ...");
-					g = g;
+					
 				}
 			}
 			
@@ -302,7 +302,7 @@ public class EvalNestedTypeTests {
 				
 				public void run() {
 					System.out.println("Tests ...");
-					g = g;
+
 				}
 			};
 			
@@ -313,7 +313,7 @@ public class EvalNestedTypeTests {
 			i_bd.run();
 
 			System.out.println("Tests ...");
-			a = a;
+			
 		}
 	}
 	
@@ -352,7 +352,7 @@ public class EvalNestedTypeTests {
 				
 				void cb() {
 					System.out.println("Tests ...");
-					a = a;
+					
 				}
 	
 			}
@@ -379,7 +379,7 @@ public class EvalNestedTypeTests {
 					
 					void cc() {
 						System.out.println("Tests ...");
-						a = a;
+						
 					}
 				}
 				
@@ -404,7 +404,7 @@ public class EvalNestedTypeTests {
 					
 					public void run() {
 						System.out.println("Tests ...");
-						a = a;
+						
 					}
 				};
 				
@@ -453,7 +453,7 @@ public class EvalNestedTypeTests {
 				
 				void db() {
 					System.out.println("Tests ...");
-					a = a;
+					
 				}
 			}
 			
@@ -479,7 +479,7 @@ public class EvalNestedTypeTests {
 					
 					void dc() {
 						System.out.println("Tests ...");
-						a = a;
+						
 					}
 				}
 				
@@ -504,7 +504,7 @@ public class EvalNestedTypeTests {
 					
 					public void run() {
 						System.out.println("Tests ...");
-						a = a;
+						
 					}
 				};
 				
