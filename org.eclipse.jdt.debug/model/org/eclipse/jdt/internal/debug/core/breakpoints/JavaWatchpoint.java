@@ -268,14 +268,22 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	}
 	
 	/**
-	 * @see IJavaWatchpoint#isAccess()
+	 * @see org.eclipse.debug.core.model.IWatchpoint#isAccess()
 	 */
 	public boolean isAccess() throws CoreException {
 		return ensureMarker().getAttribute(ACCESS, false);
 	}
 	
 	/**
-	 * @see IJavaWatchpoint#setAccess(boolean)
+	 * Sets whether this breakpoint will suspend execution when its associated
+	 * field is accessed. If true and this watchpoint is disabled, this watchpoint
+	 * is automatically enabled. If both access and modification are false,
+	 * this watchpoint is automatically disabled.
+	 * 
+	 * @param access whether to suspend on field access
+	 * @exception CoreException if unable to set the property
+	 * 	on this breakpoint's underlying marker
+	 * @see org.eclipse.debug.core.model.IWatchpoint#setAccess(boolean)
 	 */
 	public void setAccess(boolean access) throws CoreException {
 		if (access == isAccess()) {
@@ -291,14 +299,22 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	}
 	
 	/**
-	 * @see IJavaWatchpoint#isModification()
+	 * @see org.eclipse.debug.core.model.IWatchpoint#isModification()
 	 */	
 	public boolean isModification() throws CoreException {
 		return ensureMarker().getAttribute(MODIFICATION, false);
 	}
 	
 	/**
-	 * @see IJavaWatchpoint#setModification(boolean)
+	 * Sets whether this breakpoint will suspend execution when its associated
+	 * field is modified. If true and this watchpoint is disabled, this watchpoint
+	 * is automatically enabled. If both access and modification are false,
+	 * this watchpoint is automatically disabled.
+	 * 
+	 * @param modification whether to suspend on field modification
+	 * @exception CoreException if unable to set the property on
+	 * 	this breakpoint's underlying marker
+	 * @see org.eclipse.debug.core.model.IWatchpoint#setModification(boolean)
 	 */
 	public void setModification(boolean modification) throws CoreException {
 		if (modification == isModification()) {
