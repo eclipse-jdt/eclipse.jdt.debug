@@ -150,23 +150,21 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_DEFAULT_SOURCE_PATH = LaunchingPlugin.getUniqueIdentifier() + ".DEFAULT_SOURCE_PATH"; //$NON-NLS-1$
 			
 	/**
-	 * Host name launch configuration attribute name.
-	 * This attribute is used for attach launching.
-	 */
-	public static final String ATTR_HOSTNAME = LaunchingPlugin.getUniqueIdentifier() + ".HOSTNAME";	 //$NON-NLS-1$
-
-	/**
 	 * Allow termination launch configuration attribute name.
 	 * This attribute is used for attach launching.
 	 */
 	public static final String ATTR_ALLOW_TERMINATE = LaunchingPlugin.getUniqueIdentifier() + ".ALLOW_TERMINATE";	 //$NON-NLS-1$
 
 	/**
-	 * Port # launch configuration attribute name.
-	 * This attribute is used for attach launching.
+	 * Attribute key for the argument map used to
+	 * establish a remote connection. The value is 
+	 * a map with keys correpsonding to arguments names
+	 * returned by <code>IVMConnector#getDefaultArguments()</code>,
+	 * and values which are strings corresponding to the
+	 * values to use in establishing the connection.
 	 */
-	public static final String ATTR_PORT_NUMBER = LaunchingPlugin.getUniqueIdentifier() + ".PORT";	 //$NON-NLS-1$
-
+	public static final String ATTR_CONNECT_MAP = LaunchingPlugin.getUniqueIdentifier() + ".CONNECT_MAP";	 //$NON-NLS-1$
+	
 	/**
 	 * Status code indicating a launch configuration does not
 	 * specify a project that contains the main class to launch.

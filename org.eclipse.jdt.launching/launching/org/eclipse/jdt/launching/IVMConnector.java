@@ -5,6 +5,8 @@ package org.eclipse.jdt.launching;
  * All Rights Reserved.
  */
  
+import java.util.Map;
+
 import com.sun.jdi.VirtualMachine;
 
 import org.eclipse.core.runtime.CoreException;
@@ -45,16 +47,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IVMConnector {
 	
 	/**
-	 * Establishes a JDI connection with a debuggable VM at the specified
-	 * address, and returns the resulting virtual machine. 
+	 * Establishes a JDI connection with a debuggable VM using the arguments
+	 * specified in the given map, and returns the resulting virtual machine. 
+	 * The keys of the map are names of arguments used by this
+	 * connector (as returned by <code>#getDefaultArguments()</code>, and the
+	 * values are Strings representing the vales to use.
 	 * 
-	 * @param host the name of the host on which the target VM is running
-	 * @param port the port number at which to connect to the target VM
+	 * @param map argument map to use in establishing a connection
 	 * @param monitor progress monitor
 	 * @return virtual machine
 	 * @exception CoreException if unable to establish a connection with the target VM
 	 */
-	public VirtualMachine connect(String host, int port, IProgressMonitor monitor) throws CoreException;
+	public VirtualMachine connect(Map arguments, IProgressMonitor monitor) throws CoreException;
 		
 	/**
 	 * Returns the name of this connector.
@@ -69,4 +73,15 @@ public interface IVMConnector {
 	 * @return a unique indentifier for this kind of connector
 	 */
 	public String getIdentifier();
+	
+	/**
+	 * Returns a map of default arguments used by this connector. 
+	 * The keys of the map are names of arguments used by this
+	 * connector, and the values are of type
+	 * <code>com.sun.jdt.Connect.Connector.Argument</code>.
+	 * 
+	 * @return argument map with default values
+	 * @exception CoreException if unable to retrieve a default argument map
+	 */
+	public Map getDefaultArguments() throws CoreException;
 }

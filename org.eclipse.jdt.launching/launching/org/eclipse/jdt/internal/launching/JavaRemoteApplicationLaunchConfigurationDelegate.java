@@ -5,6 +5,8 @@ package org.eclipse.jdt.internal.launching;
  * All Rights Reserved.
  */
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -32,15 +34,6 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 						
-		// Host
-		String hostName = getHostName(configuration);
-
-		if (hostName.indexOf(' ') > -1) {
-			abort(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Invalid_host_name_specified_1"), null, IJavaLaunchConfigurationConstants.ERR_INVALID_HOSTNAME); //$NON-NLS-1$
-		}
-		
-		// Port
-		int portNumber = verifyPortNumber(configuration);
 						
 		// Allow termination of remote VM
 		boolean allowTerminate = isAllowTerminate(configuration);
@@ -56,9 +49,11 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		if (connector == null) {
 			abort(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Connector_not_specified_2"), null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE); //$NON-NLS-1$
 		}
+		
+		Map argMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map)null);
 
-		VirtualMachine vm= connector.connect(hostName, portNumber, monitor);
-		String vmLabel = constructVMLabel(vm, hostName, portNumber);
+		VirtualMachine vm= connector.connect(argMap, monitor);
+		String vmLabel = constructVMLabel(vm);
 		debugTarget= JDIDebugModel.newDebugTarget(launch, vm, vmLabel, null, allowTerminate, true);
 		
 		launch.addDebugTarget(debugTarget);
@@ -79,13 +74,8 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 	/**
 	 * Helper method that constructs a human-readable label for a launch.
 	 */
-	protected String constructVMLabel(VirtualMachine vm, String host, int port) {
+	protected String constructVMLabel(VirtualMachine vm) {
 		StringBuffer buffer = new StringBuffer(vm.name());
-		buffer.append('[');
-		buffer.append(host);
-		buffer.append(':');
-		buffer.append(port);
-		buffer.append(']');
 		return buffer.toString();
 	}
 	

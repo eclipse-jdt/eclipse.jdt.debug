@@ -471,51 +471,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		}
 		return null;		
 	}	
-		
-	/**
-	 * Returns the host name specified by the given 
-	 * launch configuration, or <code>localhost</code> if none.
-	 * 
-	 * @param configuration launch configuration
-	 * @return the host name specified by the given 
-	 *  launch configuration, or <code>localhost</code> if none
-	 * @exception CoreException if unable to retrieve the attribute
-	 */
-	protected String getHostName(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, "localhost").trim(); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Returns the port number specified by the given 
-	 * launch configuration, or <code>-1</code> if none.
-	 * 
-	 * @param configuration launch configuration
-	 * @return the port number specified by the given 
-	 *  launch configuration, or <code>-1</code> if none
-	 * @exception CoreException if unable to retrieve the attribute
-	 */
-	protected int getPortNumber(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, -1);
-	}
-	
-	/**
-	 * Verifies a port number is specified by the given 
-	 * launch configuration, throwing an exception if none.
-	 * 
-	 * @param configuration launch configuration
-	 * @return the port number specified by the given 
-	 *  launch configuration
-	 * @exception CoreException if unable to retrieve the attribute
-	 * 	or the attribute is unspecified
-	 */
-	protected int verifyPortNumber(ILaunchConfiguration configuration) throws CoreException {
-		int port = getPortNumber(configuration);
-		if (port == -1) {
-			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Port_number_not_specified_14"), null, IJavaLaunchConfigurationConstants.ERR_INVALID_PORT); //$NON-NLS-1$
-		}
-		return port;
-	}
-	
+				
 	/**
 	 * Returns whether the given launch configuration
 	 * specifies that termination is allowed.

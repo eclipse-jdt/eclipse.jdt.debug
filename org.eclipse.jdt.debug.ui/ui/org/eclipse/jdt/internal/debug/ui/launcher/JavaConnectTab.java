@@ -5,6 +5,11 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,6 +26,13 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -32,27 +44,30 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
-public class JavaConnectTab extends JavaLaunchConfigurationTab {
+import com.sun.jdi.connect.Connector;
+
+public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPropertyChangeListener {
 
 	// Project UI widgets
 	protected Label fProjLabel;
 	protected Text fProjText;
 	protected Button fProjButton;
 	
-	// Host name UI widgets
-	protected Label fHostLabel;
-	protected Text fHostText;
-
-	// Port # UI widgets
-	protected Label fPortLabel;
-	protected Text fPortText;
-
 	// Allow terminate UI widgets
 	protected Button fAllowTerminateButton;
+	
+	// Connector attributes for selected connector
+	protected Map fArgumentMap;
+	protected Map fFieldEditorMap = new HashMap();
+	protected Composite fArgumentComposite;
+	// the selected connector
+	protected IVMConnector fConnector;
 	
 	// Connector combo
 	protected Combo fConnectorCombo;
@@ -104,42 +119,6 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 				handleProjectButtonSelected();
 			}
 		});
-
-		createVerticalSpacer(comp, 1);		
-		
-		fHostLabel = new Label(comp, SWT.NONE);
-		fHostLabel.setText(LauncherMessages.getString("JavaConnectTab.&Host_name__4")); //$NON-NLS-1$
-
-		fHostText = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fHostText.setLayoutData(gd);
-		fHostText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-		
-		fPortLabel = new Label(comp, SWT.NONE);
-		fPortLabel.setText(LauncherMessages.getString("JavaConnectTab.P&ort_#__5")); //$NON-NLS-1$
-
-		fPortText = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fPortText.setLayoutData(gd);
-		fPortText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-
-		fAllowTerminateButton = new Button(comp, SWT.CHECK);
-		fAllowTerminateButton.setText(LauncherMessages.getString("JavaConnectTab.&Allow_termination_of_remote_VM_6")); //$NON-NLS-1$
-		fAllowTerminateButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-		
-		createVerticalSpacer(comp, 1);
 		
 		Composite connectorComp = new Composite(comp,SWT.NONE);
 		GridLayout y = new GridLayout();
@@ -152,7 +131,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		
 		Label l = new Label(connectorComp, SWT.NONE);
 		l.setText(LauncherMessages.getString("JavaConnectTab.Connect&ion_Type__7")); //$NON-NLS-1$
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
 		l.setLayoutData(gd);
 		
@@ -165,15 +144,113 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 			names[i] = fConnectors[i].getName();
 		}
 		fConnectorCombo.setItems(names);
+		fConnectorCombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent evt) {
+				handleConnectorComboModified();
+			}
+		});
+		
+		createVerticalSpacer(comp, 1);
+		
+		Group group = new Group(comp, SWT.NONE);
+		group.setText(LauncherMessages.getString("JavaConnectTab.Connection_Properties_1")); //$NON-NLS-1$
+		y = new GridLayout();
+		y.numColumns = 2;
+		group.setLayout(y);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		group.setLayoutData(gd);		
+		fArgumentComposite = group;
+		
+		createVerticalSpacer(comp, 1);		
+		
+		fAllowTerminateButton = new Button(comp, SWT.CHECK);
+		fAllowTerminateButton.setText(LauncherMessages.getString("JavaConnectTab.&Allow_termination_of_remote_VM_6")); //$NON-NLS-1$
+		fAllowTerminateButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
 	}
+
+	/**
+	 * Update the argument area to show the selected connector's arguments
+	 */
+	protected void handleConnectorComboModified() {
+		int index = fConnectorCombo.getSelectionIndex();
+		IVMConnector vm = fConnectors[index];
+		if (vm.equals(fConnector)) {
+			return; // selection did not change
+		}
+		fConnector = vm;
+		try {
+			fArgumentMap = vm.getDefaultArguments();
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaConnectTab.Unable_to_display_connection_arguments._2"), e.getStatus()); //$NON-NLS-1$
+			return;
+		}
+		
+		// Dispose of any current child widgets in the tab holder area
+		Control[] children = fArgumentComposite.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			children[i].dispose();
+		}
+		fFieldEditorMap.clear();
+		PreferenceStore store = new PreferenceStore();
+		// create editors
+		Iterator keys = fArgumentMap.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = (String)keys.next();
+			Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
+			FieldEditor field = null;
+			if (arg instanceof Connector.IntegerArgument) {
+				store.setDefault(arg.name(), ((Connector.IntegerArgument)arg).intValue());
+				field = new IntegerFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);
+			} else if (arg instanceof Connector.StringArgument) {
+				store.setDefault(arg.name(), arg.value());
+				field = new StringFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);
+			} else if (arg instanceof Connector.BooleanArgument) {
+				store.setDefault(arg.name(), ((Connector.BooleanArgument)arg).booleanValue());
+				field = new BooleanFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);				
+			} else if (arg instanceof Connector.SelectedArgument) {
+				List choices = ((Connector.SelectedArgument)arg).choices();
+				String[][] namesAndValues = new String[choices.size()][2];
+				Iterator iter = choices.iterator();
+				int count = 0;
+				while (iter.hasNext()) {
+					String choice = (String)iter.next();
+					namesAndValues[count][0] = choice;
+					namesAndValues[count][1] = choice;
+					count++;
+				}
+				store.setDefault(arg.name(), arg.value());
+				field = new ComboFieldEditor(arg.name(), getLabel(arg.label()), namesAndValues, fArgumentComposite);
+			}
+			field.setPreferenceStore(store);
+			field.loadDefault();
+			field.setPropertyChangeListener(this);
+			fFieldEditorMap.put(key, field);
+		}
+		
+		fArgumentComposite.layout();
+	}
+	
+	/**
+	 * Adds a colon to the label if required
+	 */
+	protected String getLabel(String label) {
+		if (!label.endsWith(":")) { //$NON-NLS-1$
+			label += ":"; //$NON-NLS-1$
+		}
+		return label;
+	}
+	
 
 	/**
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
-		updateHostNameFromConfig(config);
-		updatePortNumberFromConfig(config);
 		updateAllowTerminateFromConfig(config);
 		updateConnectionFromConfig(config);
 	}
@@ -188,26 +265,6 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		fProjText.setText(projectName);
 	}
 	
-	protected void updateHostNameFromConfig(ILaunchConfiguration config) {
-		String hostName = ""; //$NON-NLS-1$
-		try {
-			hostName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, EMPTY_STRING);
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);			
-		}		
-		fHostText.setText(hostName);
-	}
-
-	protected void updatePortNumberFromConfig(ILaunchConfiguration config) {
-		int portNumber = 8000;
-		try {
-			portNumber = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, 8000);
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
-		}	
-		fPortText.setText(String.valueOf(portNumber));	
-	}
-
 	protected void updateAllowTerminateFromConfig(ILaunchConfiguration config) {
 		boolean allowTerminate = false;
 		try {
@@ -222,10 +279,34 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		String id = null;
 		try {
 			id = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, JavaRuntime.getDefaultVMConnector().getIdentifier());
+			fConnectorCombo.setText(JavaRuntime.getVMConnector(id).getName());	
+
+
+			Map attrMap = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map)null);
+			if (attrMap == null) {
+				return;
+			}
+			Iterator keys = attrMap.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
+				FieldEditor editor = (FieldEditor)fFieldEditorMap.get(key);
+				String value = (String)attrMap.get(key);
+				if (arg instanceof Connector.StringArgument || arg instanceof Connector.SelectedArgument) {
+					editor.getPreferenceStore().setValue(key, value);
+				} else if (arg instanceof Connector.BooleanArgument) {
+					boolean b = new Boolean(value).booleanValue();
+					editor.getPreferenceStore().setValue(key, b);
+				} else if (arg instanceof Connector.IntegerArgument) {
+					int i = new Integer(value).intValue();
+					editor.getPreferenceStore().setValue(key, i);
+				}
+				editor.load();
+			}						
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}	
-		fConnectorCombo.setText(JavaRuntime.getVMConnector(id).getName());	
+			
 	}
 	
 	/**
@@ -239,18 +320,29 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, fHostText.getText().trim());
-		String portString = fPortText.getText();
-		int port = -1;
-		try {
-			port = Integer.parseInt(portString);
-		} catch (NumberFormatException nfe) {				
-		}
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, port);		
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, fAllowTerminateButton.getSelection());
+		IVMConnector vmc = getSelectedConnector();
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, vmc.getIdentifier());
 		
-		int index = fConnectorCombo.getSelectionIndex();
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, fConnectors[index].getIdentifier());
+		Map attrMap = new HashMap(fFieldEditorMap.size());
+		Iterator keys = fFieldEditorMap.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = (String)keys.next();
+			Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
+			FieldEditor editor = (FieldEditor)fFieldEditorMap.get(key);
+			editor.store();
+			if (arg instanceof Connector.StringArgument || arg instanceof Connector.SelectedArgument) {
+				String value = editor.getPreferenceStore().getString(key);
+				attrMap.put(key, value);
+			} else if (arg instanceof Connector.BooleanArgument) {
+				boolean value = editor.getPreferenceStore().getBoolean(key);
+				attrMap.put(key, new Boolean(value).toString());
+			} else if (arg instanceof Connector.IntegerArgument) {
+				int value = editor.getPreferenceStore().getInt(key);
+				attrMap.put(key, new Integer(value).toString());
+			}
+		}				
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, attrMap);
 	}
 		
 	/**
@@ -368,9 +460,8 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	 * Initialize those attributes whose default values are independent of any context.
 	 */
 	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, "localhost"); //$NON-NLS-1$
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, 8000);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, JavaRuntime.getDefaultVMConnector().getIdentifier());
 	}
 	
 	/**
@@ -389,36 +480,21 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 				return false;
 			}
 		}
-				
-		// Host
-		String hostName = fHostText.getText().trim();
-		if (hostName.length() < 1) {
-			setErrorMessage(LauncherMessages.getString("JavaConnectTab.Host_name_not_specified_15")); //$NON-NLS-1$
-			return false;
-		}
-		if (hostName.indexOf(' ') > -1) {
-			setErrorMessage(LauncherMessages.getString("JavaConnectTab.Invalid_host_name_16")); //$NON-NLS-1$
-			return false;
-		}
-		
-		// Port
-		String portString = fPortText.getText().trim();
-		int portNumber = -1;
-		try {
-			portNumber = Integer.parseInt(portString);
-		} catch (NumberFormatException e) {
-			setErrorMessage(LauncherMessages.getString("JavaConnectTab.Invalid_port_number_specified_17")); //$NON-NLS-1$
-			return false;
-		}
-		if (portNumber == Integer.MIN_VALUE) {
-			setErrorMessage(LauncherMessages.getString("JavaConnectTab.Port_number_not_specified_18")); //$NON-NLS-1$
-			return false;
-		}
-		if (portNumber < 1) {
-			setErrorMessage(LauncherMessages.getString("JavaConnectTab.Invalid_port_number_specified_19")); //$NON-NLS-1$
-			return false;
-		}
-				
+
+		Iterator keys = fFieldEditorMap.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = (String)keys.next();
+			Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
+			FieldEditor editor = (FieldEditor)fFieldEditorMap.get(key);
+			if (editor instanceof StringFieldEditor) {
+				String value = ((StringFieldEditor)editor).getStringValue();
+				if (!arg.isValid(value)) {
+					setErrorMessage(arg.label() + LauncherMessages.getString("JavaConnectTab._is_invalid._5")); //$NON-NLS-1$
+					return false;
+				}		
+			}
+		}				
+						
 		return true;
 	}
 	
@@ -428,4 +504,18 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	public String getName() {
 		return LauncherMessages.getString("JavaConnectTab.Conn&ect_20"); //$NON-NLS-1$
 	}			
+	
+	/**
+	 * Returns the selected connector
+	 */
+	protected IVMConnector getSelectedConnector() {
+		return fConnector;
+	}
+	/**
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		updateLaunchConfigurationDialog();
+	}
+
 }
