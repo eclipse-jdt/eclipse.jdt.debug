@@ -459,17 +459,21 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	public boolean supportsDropToFrame() {
 		//FIXME 1GH3XDA: ITPDUI:ALL - Drop to frame hangs if after invoke
 		JDIThread thread= (JDIThread) getThread();
-		boolean jdkSupport= getVM().canPopFrames();
-		boolean j9Support= false;
+		JDIDebugTarget target= (JDIDebugTarget)thread.getDebugTarget();
 		try {
-			j9Support= (thread.getUnderlyingThread() instanceof org.eclipse.jdi.hcr.ThreadReference) &&
-			 			((org.eclipse.jdi.hcr.VirtualMachine) ((JDIDebugTarget) getDebugTarget()).getVM()).canDoReturn();
-		} catch (UnsupportedOperationException uoe) {
-			j9Support= false;
-		}
-		try {
-			if (thread.isSuspended() && !thread.isTerminated()
-				&& (jdkSupport || j9Support)) {
+			if (!target.isAvailable() || !thread.isSuspended() || thread.isTerminated()) {
+				return false;
+			} 
+			boolean j9Support= false;
+			boolean jdkSupport= getVM().canPopFrames();
+			try {
+				j9Support= (thread.getUnderlyingThread() instanceof org.eclipse.jdi.hcr.ThreadReference) &&
+						((org.eclipse.jdi.hcr.VirtualMachine) ((JDIDebugTarget) getDebugTarget()).getVM()).canDoReturn();
+			} catch (UnsupportedOperationException uoe) {
+				j9Support= false;
+			}
+			
+			if (jdkSupport || j9Support) {
 				// Also ensure that this frame and no frames above this
 				// frame are native. Unable to pop native stack frames.
 				List frames= thread.computeStackFrames();
@@ -813,7 +817,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#isObsolete()
 	 */
 	public boolean isObsolete() throws DebugException {
-		return getUnderlyingMethod().isObsolete();
+		try {
+			return getUnderlyingMethod().isObsolete();
+		} catch (RuntimeException re) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.Exception_occurred_determining_if_stack_frame_is_obsolete_1"), new String[] {re.toString()}), re); //$NON-NLS-1$
+			// execution will not reach this line, as 
+			// #targetRequestFailed will throw an exception			
+			return true;
+		}
 	}
 	
 	protected boolean exists() throws DebugException {
@@ -1005,5 +1016,4 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			fireChangeEvent();
 		}
 	}	
-
 }
