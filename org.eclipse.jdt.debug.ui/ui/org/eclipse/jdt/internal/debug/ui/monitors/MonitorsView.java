@@ -7,7 +7,6 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Michael Fraenkel - bug 63472
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
