@@ -343,10 +343,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Configure a breakpoint request with common properties:
 	 * <ul>
-	 * <li><code>IDebugConstants.BREAKPOINT_MARKER</code></li>
-	 * <li><code>IJavaDebugConstants.HIT_COUNT</code></li>
-	 * <li><code>IJavaDebugConstants.EXPIRED</code></li>
-	 * <li><code>IDebugConstants.ENABLED</code></li>
+	 * <li><code>JAVA_BREAKPOINT_PROPERTY</code></li>
+	 * <li><code>HIT_COUNT</code></li>
+	 * <li><code>EXPIRED</code></li>
 	 * </ul>
 	 * and sets the suspend policy of the request to suspend 
 	 * the event thread.
@@ -532,6 +531,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		return EventRequest.SUSPEND_ALL;
 	}
+
 	
 	/**
 	 * Returns whether the hitCount of this breakpoint is equal to the hitCount of
