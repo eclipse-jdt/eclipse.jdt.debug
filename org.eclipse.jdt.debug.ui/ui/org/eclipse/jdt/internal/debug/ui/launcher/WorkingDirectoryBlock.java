@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -170,17 +171,14 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	 * the workspace
 	 */
 	protected void handleWorkspaceDirBrowseButtonSelected() {
+	    IContainer currentContainer= getContainer();
+		if (currentContainer == null) {
+		    currentContainer = ResourcesPlugin.getWorkspace().getRoot();
+		}	    
 		ContainerSelectionDialog dialog = 
 			new ContainerSelectionDialog(getShell(),
-					ResourcesPlugin.getWorkspace().getRoot(), false,
+					currentContainer, false,
 					LauncherMessages.getString("WorkingDirectoryBlock.4")); //$NON-NLS-1$
-		
-		IContainer currentContainer= getContainer();
-		if (currentContainer != null) {
-			IPath path = currentContainer.getFullPath();
-			dialog.setInitialSelections(new Object[] {path});
-		}
-		
 		dialog.showClosedProjects(false);
 		dialog.open();
 		Object[] results = dialog.getResult();		
@@ -197,8 +195,21 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	protected IContainer getContainer() {
 		String path = fWorkingDirText.getText().trim();
 		if (path.length() > 0) {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IResource res = root.findMember(path);
+		    IResource res = null;
+		    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		    if (path.startsWith("${workspace_loc:")) { //$NON-NLS-1$
+		        IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+			    try {
+                    path = manager.performStringSubstitution(path, false);
+                    IContainer[] containers = root.findContainersForLocation(new Path(path));
+                    if (containers.length > 0) {
+                        res = containers[0];
+                    }
+                } catch (CoreException e) {
+                }
+			} else {	    
+				res = root.findMember(path);
+			}
 			if (res instanceof IContainer) {
 				return (IContainer)res;
 			}
