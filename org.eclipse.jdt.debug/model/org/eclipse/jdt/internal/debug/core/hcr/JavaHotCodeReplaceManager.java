@@ -63,6 +63,7 @@ import org.eclipse.jdt.core.util.ISourceAttribute;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.core.util.Util;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -438,7 +439,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * we don't log these exceptions.
 	 */
 	private boolean shouldLogHCRException(DebugException exception) {
-	    return !(exception.getCause() instanceof IncompatibleThreadStateException);
+	    return !(exception.getStatus().getException() instanceof IncompatibleThreadStateException) ||
+	    	exception.getStatus().getCode() == IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE ||
+	    	exception.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED;
 	}
 
 	/**
