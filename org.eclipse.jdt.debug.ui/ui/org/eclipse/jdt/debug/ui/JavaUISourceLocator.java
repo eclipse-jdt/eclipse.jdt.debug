@@ -210,7 +210,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 				}
 				fSourceLookupBlock.applyChanges();
 				fLocator.setSourceLocations(fSourceLookupBlock.getSourceLocations());
-			} catch (JavaModelException e) {
+			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
 			}
 			super.okPressed();

@@ -298,10 +298,11 @@ public class SourceLookupBlock {
 	}
 	
 	
-	public void applyChanges() throws JavaModelException {
+	public void applyChanges() throws CoreException {
 		if (fUseDefaultRadioButton.isSelected()) {
 			ProjectSourceLocator.setSourceLookupPath(getJavaProject(), null);
 			ProjectSourceLocator.setPersistedSourceLocations(getJavaProject(), null);
+			setSourceLocations(JavaSourceLocator.getDefaultSourceLocations(getJavaProject()));
 		} else {
 			Iterator allLocations = fProjectList.getElements().iterator();
 			List orderedLocations = new ArrayList();

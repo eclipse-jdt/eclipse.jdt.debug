@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
@@ -41,7 +42,7 @@ public class SourceLookupPropertyPage extends JavaProjectPropertyPage {
 				fSourceLookupBlock.applyChanges();
 			}
 			return true;
-		} catch (JavaModelException e) {
+		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
 		return false;
