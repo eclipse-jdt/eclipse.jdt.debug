@@ -536,7 +536,10 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			sourceElement = locator.getSourceElement(stackFrame);
 		}
 		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
-			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
+			Object element= ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
+			if (element != null) {
+				sourceElement= element;
+			}
 		}
 		if (sourceElement instanceof IJavaElement) {
 			return ((IJavaElement) sourceElement).getJavaProject();
