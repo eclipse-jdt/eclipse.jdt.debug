@@ -20,7 +20,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
  * This action opens a Java editor on the element represented by text selection of
- * the connected java source editor. In addition, if the element is a type, it also 
+ * the connected Java source editor. In addition, if the element is a type, it also 
  * opens shows the element in the type hierarchy viewer.
  */
 public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyAction {
@@ -83,26 +83,29 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		int nResults= codeResolveResults.length;
 		List refs= new ArrayList(nResults);
 		for (int i= 0; i < nResults; i++) {
-			if (codeResolveResults[i] instanceof ISourceReference)
+			if (codeResolveResults[i] instanceof ISourceReference) {
 				refs.add(codeResolveResults[i]);
+			}
 		}
 		return refs;
 	}
 			
 
 	/**
-	 * Shows a dialog for resolving an ambigous java element.
+	 * Shows a dialog for resolving an ambigous Java element.
 	 * Utility method that can be called by subclassers.
 	 */
 	protected IJavaElement selectJavaElement(List elements, Shell shell, String title, String message) {
 		
 		int nResults= elements.size();
 		
-		if (nResults == 0)
+		if (nResults == 0) {
 			return null;
+		}
 		
-		if (nResults == 1)
+		if (nResults == 1) {
 			return (IJavaElement) elements.get(0);
+		}
 		
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT
 						| JavaElementLabelProvider.SHOW_QUALIFIED
@@ -119,12 +122,12 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 				nResults= selection.length;
 				for (int i= 0; i < nResults; i++) {
 					Object current= selection[i];
-					if (current instanceof IJavaElement)
+					if (current instanceof IJavaElement) {
 						return (IJavaElement) current;
+					}
 				}
 			}
 		}		
 		return null;
 	}
 }
-
