@@ -31,12 +31,10 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
@@ -57,7 +55,7 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 	}
 	
 	/**
-	 * @see MarkerRulerAction#getMarkers
+	 * @see MarkerRulerAction#getMarkers()
 	 */
 	protected List getMarkers() {
 		
@@ -97,7 +95,7 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 	}
 	
 	/**
-	 * @see MarkerRulerAction#addMarker
+	 * @see MarkerRulerAction#addMarker()
 	 */
 	protected void addMarker() {
 		
@@ -137,33 +135,27 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 				}
 			}
 		} catch (DebugException e) {
-			Shell shell= getTextEditor().getSite().getShell();
-			ErrorDialog.openError(shell, ActionMessages.getString("ManageBreakpoints.error.adding.title1"), ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e);
 		} catch (CoreException e) {
-			Shell shell= getTextEditor().getSite().getShell();
-			ErrorDialog.openError(shell, ActionMessages.getString("ManageBreakpoints.error.adding.title2"), ActionMessages.getString("ManageBreakpoints.error.adding.message2"), e.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e);
 		} catch (BadLocationException e) {
-			Shell shell= getTextEditor().getSite().getShell();
-			ErrorDialog.openError(shell, ActionMessages.getString("ManageBreakpoints.error.adding.title3"), ActionMessages.getString("ManageBreakpoints.error.adding.message3"), null); //$NON-NLS-2$ //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e);
 		}
 	}
 	
 	/**
-	 * @see MarkerRulerAction#removeMarkers
+	 * @see MarkerRulerAction#removeMarkers(List)
 	 */
 	protected void removeMarkers(List markers) {
 		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 		try {
-			
 			Iterator e= markers.iterator();
 			while (e.hasNext()) {
 				IBreakpoint breakpoint= breakpointManager.getBreakpoint((IMarker) e.next());
 				breakpointManager.removeBreakpoint(breakpoint, true);
 			}
-			
 		} catch (CoreException e) {
-			Shell shell= getTextEditor().getSite().getShell();
-			ErrorDialog.openError(shell, ActionMessages.getString("ManageBreakpoints.error.removing.title1"), ActionMessages.getString("ManageBreakpoints.error.removing.message1"), e.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.removing.message1"), e);
 		}
 	}
 	
@@ -176,7 +168,7 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 	 * @param member member in which a breakpoint is being created
 	 * @return resource the resource on which a breakpoint marker
 	 *  should be created
-	 * @exception CoreException if an exception occurrs accessing the
+	 * @exception CoreException if an exception occurs accessing the
 	 *  underlying resource or Java model elements
 	 */
 	public IResource getBreakpointResource(IMember member) throws CoreException {
