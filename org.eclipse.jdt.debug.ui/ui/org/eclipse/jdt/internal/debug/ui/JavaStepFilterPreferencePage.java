@@ -79,7 +79,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	private Button fDisableAllButton;
 	
 	private Text fEditorText;
-	private String fInvalidEditorText= null;
 	private TableEditor fTableEditor;
 	private TableItem fNewTableItem;
 	private Label fTableLabel;
