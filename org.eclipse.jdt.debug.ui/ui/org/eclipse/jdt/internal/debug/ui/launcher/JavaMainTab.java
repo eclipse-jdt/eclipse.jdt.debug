@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
  
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -322,6 +323,8 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		if (index > -1) {
 			fJRECombo.select(index);
 			//fJRECombo.setData(JavaDebugUI.VM_INSTALL_TYPE_ATTR, selectedVMStandin.getVMInstallType().getId());
+		} else {
+			clearJREComboBoxEntry();
 		}
 	}
 	
@@ -516,6 +519,24 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 				return false;
 			}
 		}
+		
+		int vmIndex = fJRECombo.getSelectionIndex();
+		if (vmIndex > -1) {
+			VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
+			IVMInstall vm = vmStandin.convertToRealVM();
+			File location = vm.getInstallLocation();
+			if (location == null) {
+				setErrorMessage("JRE home directory not specified.");
+				return false;
+			}
+			if (!location.exists()) {
+				setErrorMessage("JRE home directory does not exist.");
+				return false;
+			}			
+		} else {
+			setErrorMessage("JRE not specified.");
+			return false;
+		}	
 		
 		return true;
 	}
