@@ -28,6 +28,8 @@ public interface IHelpContextIds {
 	// view parts
 	public static final String DISPLAY_VIEW= PREFIX + "display_view_context"; //$NON-NLS-1$
 
+	//dialogs
+	public static final String EDIT_JRE_DIALOG= PREFIX + "edit_jre_dialog_context"; //$NON-NLS-1$
 
 	// Preference/Property pages
 	public static final String SOURCE_ATTACHMENT_PROPERTY_PAGE= PREFIX + "source_attachment_property_page_context"; //$NON-NLS-1$
