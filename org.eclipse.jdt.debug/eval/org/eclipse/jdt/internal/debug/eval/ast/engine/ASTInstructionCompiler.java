@@ -278,17 +278,26 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 	
 	private String getTypeName(ITypeBinding typeBinding) {
-		String name= typeBinding.getName();
+		StringBuffer name;
+		if (typeBinding.isArray()) {
+			name= new StringBuffer(getTypeName(typeBinding.getElementType()));
+			int dimensions= typeBinding.getDimensions();
+			for (int i= 0; i < dimensions; i++) {
+				name.append("[]");
+			}
+			return name.toString();
+		} 
+		name= new StringBuffer(typeBinding.getName());
 		IPackageBinding packageBinding= typeBinding.getPackage();
 		typeBinding= typeBinding.getDeclaringClass();
 		while(typeBinding != null) {
-			name= typeBinding.getName() + '$' + name;
+			name.insert(0, '$').insert(0, typeBinding.getName());
 			typeBinding= typeBinding.getDeclaringClass();
 		}
 		if (packageBinding != null && !packageBinding.isUnnamed()) {
-			name= packageBinding.getName() + '.' + name;
+			name.insert(0, '.').insert(0, packageBinding.getName());
 		}
-		return name;
+		return name.toString();
 	}
 	
 	private String getTypeSignature(ITypeBinding typeBinding) {
