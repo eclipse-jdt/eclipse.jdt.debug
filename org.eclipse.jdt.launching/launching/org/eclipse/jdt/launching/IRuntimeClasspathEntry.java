@@ -8,7 +8,6 @@ package org.eclipse.jdt.launching;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IJavaProject;
 
 /**
  * Represents an entry on the runtime classpath. A runtime classpath entry

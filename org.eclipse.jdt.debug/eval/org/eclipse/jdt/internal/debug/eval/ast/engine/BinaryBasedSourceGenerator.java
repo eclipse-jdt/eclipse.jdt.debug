@@ -9,10 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
-import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 
 import com.sun.jdi.ClassNotPreparedException;
 import com.sun.jdi.ClassType;

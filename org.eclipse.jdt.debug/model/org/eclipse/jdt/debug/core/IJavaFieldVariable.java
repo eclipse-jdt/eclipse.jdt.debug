@@ -6,7 +6,6 @@ package org.eclipse.jdt.debug.core;
  */
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IVariable;
 
 /**
  * A variable that contains the value of an instance or class variable.

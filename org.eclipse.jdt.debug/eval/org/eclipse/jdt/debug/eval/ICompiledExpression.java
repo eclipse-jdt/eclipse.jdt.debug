@@ -5,7 +5,6 @@ package org.eclipse.jdt.debug.eval;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.dom.Message;
 
 /**

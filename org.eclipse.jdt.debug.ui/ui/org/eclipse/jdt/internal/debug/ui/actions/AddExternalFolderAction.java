@@ -13,7 +13,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.FileDialog;
 
 /**
  * Adds an external folder to the runtime class path.

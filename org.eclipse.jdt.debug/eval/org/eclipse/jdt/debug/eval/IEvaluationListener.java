@@ -1,7 +1,5 @@
 package org.eclipse.jdt.debug.eval;
 
-import org.eclipse.jdt.debug.core.IJavaThread;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.

@@ -3,7 +3,9 @@
  * All Rights Reserved.
  */ 
 
-package org.eclipse.jdt.launching;import java.io.File;import org.eclipse.core.runtime.IPath;import org.eclipse.core.runtime.IStatus;
+package org.eclipse.jdt.launching;import java.io.File;
+
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * Represents a particular type of VM for which there may be

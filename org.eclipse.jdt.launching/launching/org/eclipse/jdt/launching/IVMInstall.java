@@ -3,8 +3,8 @@
  * All Rights Reserved.
  */
 
-package org.eclipse.jdt.launching;import java.io.File;import java.net.URL;
-import org.eclipse.core.runtime.IPath;
+package org.eclipse.jdt.launching;import java.io.File;
+import java.net.URL;
 
 /**
  * Represents a particular installation of a VM. A VM instance holds all parameters

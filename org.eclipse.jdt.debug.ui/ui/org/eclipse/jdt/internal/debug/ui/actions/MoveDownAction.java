@@ -5,7 +5,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;

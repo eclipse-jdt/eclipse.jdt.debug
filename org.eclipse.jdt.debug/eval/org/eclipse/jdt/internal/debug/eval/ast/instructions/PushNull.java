@@ -5,7 +5,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
+
  
 /**
  * Pushes the 'null' onto the stack.

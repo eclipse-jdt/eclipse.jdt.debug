@@ -8,14 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.dom.Message;
-import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
-import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
 
 public class InstructionSequence implements ICompiledExpression {
 

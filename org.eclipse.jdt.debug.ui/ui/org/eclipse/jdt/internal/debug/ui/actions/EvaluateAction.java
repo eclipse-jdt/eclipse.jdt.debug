@@ -67,7 +67,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 
-import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 

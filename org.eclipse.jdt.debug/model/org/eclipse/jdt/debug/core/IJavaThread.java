@@ -5,12 +5,9 @@ package org.eclipse.jdt.debug.core;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaProject;
 
 /**
  * A thread in a Java virtual machine.

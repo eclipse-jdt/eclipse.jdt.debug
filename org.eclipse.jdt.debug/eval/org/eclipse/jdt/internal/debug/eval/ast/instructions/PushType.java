@@ -5,10 +5,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.ReferenceType;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.Signature;
  
 /**
  * Pushes a reference type onto the stack.

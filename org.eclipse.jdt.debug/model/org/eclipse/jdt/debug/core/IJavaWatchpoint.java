@@ -7,7 +7,6 @@ package org.eclipse.jdt.debug.core;
  
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.jdt.core.IField;
 
 /**
  * A breakpoint on a field. If a watchpoint is an access watchpoint,

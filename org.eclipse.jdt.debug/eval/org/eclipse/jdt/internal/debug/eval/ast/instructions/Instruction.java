@@ -6,7 +6,6 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;

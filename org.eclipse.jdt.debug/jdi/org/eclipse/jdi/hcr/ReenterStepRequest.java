@@ -5,9 +5,8 @@ package org.eclipse.jdi.hcr;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.ClassType;
-import com.sun.jdi.ThreadReference;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.StepRequest;
 
 /**

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
-import org.eclipse.jdi.internal.connect.ConnectorImpl.IntegerArgumentImpl;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;

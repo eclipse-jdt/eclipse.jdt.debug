@@ -7,10 +7,8 @@ package org.eclipse.jdt.debug.core;
 
 import java.util.List;
 
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IVariable;
 
 /**
  * A stack frame in a thread on a Java virtual machine.

@@ -4,7 +4,7 @@
  */
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-import org.eclipse.core.runtime.CoreException;
+
 
 /**
  * A simple instruction cannot contain other instructions

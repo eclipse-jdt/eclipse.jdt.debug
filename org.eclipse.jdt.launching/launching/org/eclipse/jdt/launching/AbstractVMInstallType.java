@@ -1,5 +1,4 @@
-/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */package org.eclipse.jdt.launching;import java.io.File;import java.text.MessageFormat;import java.util.ArrayList;import java.util.List;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IConfigurationElement;import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.jdt.internal.launching.*;
+/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */package org.eclipse.jdt.launching;import java.text.MessageFormat;import java.util.ArrayList;import java.util.List;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IConfigurationElement;import org.eclipse.core.runtime.IExecutableExtension;import org.eclipse.jdt.internal.launching.LaunchingMessages;
 
 
 /**

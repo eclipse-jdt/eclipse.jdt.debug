@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
-import org.eclipse.jdi.internal.connect.ConnectorImpl.IntegerArgumentImpl;
-import org.eclipse.jdi.internal.connect.ConnectorImpl.StringArgumentImpl;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.AttachingConnector;

@@ -5,17 +5,11 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathAdvancedDialog;
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.FileDialog;
 
 /**
  * Opens a dialog to allow the user to choose among advanced actions.

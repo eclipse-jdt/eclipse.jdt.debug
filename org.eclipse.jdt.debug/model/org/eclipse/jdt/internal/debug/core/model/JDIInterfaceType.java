@@ -11,7 +11,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
-import org.eclipse.jdt.debug.core.IJavaVariable;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.InterfaceType;

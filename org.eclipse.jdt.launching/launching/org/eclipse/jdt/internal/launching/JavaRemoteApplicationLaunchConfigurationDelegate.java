@@ -13,14 +13,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 import com.sun.jdi.VirtualMachine;
 

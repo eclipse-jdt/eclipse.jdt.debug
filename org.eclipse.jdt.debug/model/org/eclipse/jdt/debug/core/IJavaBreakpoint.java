@@ -7,7 +7,6 @@ package org.eclipse.jdt.debug.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.jdt.core.IType;
 
 /**
  * A breakpoint specific to the Java debug model. A Java breakpoint

@@ -6,7 +6,6 @@ package org.eclipse.jdt.debug.core;
  */
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
 
 /**
  * A value referencing an array on a target VM.

@@ -1,4 +1,4 @@
-/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */package org.eclipse.jdt.launching;import java.io.File;import org.eclipse.core.runtime.IPath;import org.eclipse.core.runtime.Path;import org.eclipse.jdt.internal.launching.LaunchingMessages;
+/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */package org.eclipse.jdt.launching;import org.eclipse.core.runtime.IPath;import org.eclipse.jdt.internal.launching.LaunchingMessages;
 
 
 /** * Holder class for the configuration of the JRE library (for example rt.jar). * <p> * Clients may instantiate this class; it is not intended to be subclassed. * </p> */public final class LibraryLocation {

@@ -1,7 +1,5 @@
 package org.eclipse.jdt.debug.eval;
 
-import java.io.File;
-
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
