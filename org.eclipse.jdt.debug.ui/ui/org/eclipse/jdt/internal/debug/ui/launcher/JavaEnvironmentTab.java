@@ -134,7 +134,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		fClassPathTabItem.setData(fClassPathList);
 		
 		fClassPathDefaultButton = new Button(classPathComp, SWT.CHECK);
-		fClassPathDefaultButton.setText("&Use default classpath");
+		fClassPathDefaultButton.setText("Use defau&lt classpath");
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		fClassPathDefaultButton.setLayoutData(gd);
 		fClassPathDefaultButton.addSelectionListener(new SelectionAdapter() {
@@ -228,14 +228,14 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			}
 		});
 				
-		fPathMoveUpButton = createPushButton(pathButtonComp, "Move Up", null);
+		fPathMoveUpButton = createPushButton(pathButtonComp, "Move &Up", null);
 		fPathMoveUpButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathMoveButtonSelected(true);
 			}
 		});
 		
-		fPathMoveDownButton = createPushButton(pathButtonComp, "Move Down", null);
+		fPathMoveDownButton = createPushButton(pathButtonComp, "Move D&own", null);
 		fPathMoveDownButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathMoveButtonSelected(false);
