@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -135,7 +136,10 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 						JavaUISourceLocator.this.initializeDefaults(configuration);
 					}
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.log(e);
+					// only report an error if the thread has not resumed
+					if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+						JDIDebugUIPlugin.log(e);
+					}
 				}
 			}
 		};
