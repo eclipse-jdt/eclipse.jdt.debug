@@ -84,7 +84,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		for (int i= 0, length= detailFormattersList.length; i < length;) {
 			String typeName= detailFormattersList[i++];
 			String snippet= detailFormattersList[i++].replace('\u0000', ',');
-			boolean enabled= ! "0".equals(detailFormattersList[i++]);
+			boolean enabled= ! "0".equals(detailFormattersList[i++]); //$NON-NLS-1$
 			if (enabled) {
 				fDetailFormattersMap.put(typeName, snippet);
 			}
