@@ -233,7 +233,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 			fFieldEditorMap.put(key, field);
 		}
 		
-		fArgumentComposite.layout();
+		fArgumentComposite.getParent().layout();
 	}
 	
 	/**
