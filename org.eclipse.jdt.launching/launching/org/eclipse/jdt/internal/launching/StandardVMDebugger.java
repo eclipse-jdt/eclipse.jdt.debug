@@ -28,6 +28,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -308,12 +309,15 @@ public class StandardVMDebugger extends StandardVMRunner {
 	}
 	
 	protected void checkErrorMessage(IProcess process) throws CoreException {
-		String errorMessage= process.getStreamsProxy().getErrorStreamMonitor().getContents();
-		if (errorMessage.length() == 0) {
-			errorMessage= process.getStreamsProxy().getOutputStreamMonitor().getContents();
-		}
-		if (errorMessage.length() != 0) {
-			abort(errorMessage, null, IJavaLaunchConfigurationConstants.ERR_VM_LAUNCH_ERROR);
+		IStreamsProxy streamsProxy = process.getStreamsProxy();
+		if (streamsProxy != null) {
+			String errorMessage= streamsProxy.getErrorStreamMonitor().getContents();
+			if (errorMessage.length() == 0) {
+				errorMessage= streamsProxy.getOutputStreamMonitor().getContents();
+			}
+			if (errorMessage.length() != 0) {
+				abort(errorMessage, null, IJavaLaunchConfigurationConstants.ERR_VM_LAUNCH_ERROR);
+			}
 		}										
 	}
 		

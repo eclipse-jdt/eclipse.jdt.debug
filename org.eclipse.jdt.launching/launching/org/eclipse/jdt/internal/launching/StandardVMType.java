@@ -28,6 +28,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -443,7 +444,11 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * Parses the output from 'LibraryDetector'.
 	 */
 	protected LibraryInfo parseLibraryInfo(IProcess process) {
-		String text = process.getStreamsProxy().getOutputStreamMonitor().getContents();
+		IStreamsProxy streamsProxy = process.getStreamsProxy();
+		String text = null;
+		if (streamsProxy != null) {
+			text = streamsProxy.getOutputStreamMonitor().getContents();
+		}
 		if (text != null && text.length() > 0) {
 			int index = text.indexOf("|"); //$NON-NLS-1$
 			if (index > 0) { 
