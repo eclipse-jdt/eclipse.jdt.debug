@@ -256,7 +256,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 			Map attributes= new HashMap(10);
 			IResource resource;
 			String typeName= null;
-			int lineNumber= getVerticalRulerInfo().getLineOfLastMouseButtonActivity();
+			int lineNumber= getVerticalRulerInfo().getLineOfLastMouseButtonActivity() + 1; // Ruler is 0-based; editor is 1-based (nice :-/ )
 			IJavaLineBreakpoint breakpoint= null;
 			if (type == null) {
 				if (editorInput instanceof IFileEditorInput) {
