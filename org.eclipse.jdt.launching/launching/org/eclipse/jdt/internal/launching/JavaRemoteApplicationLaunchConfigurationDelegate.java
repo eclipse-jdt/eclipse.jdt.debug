@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMConnector;
@@ -76,7 +77,14 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		
 		// check for cancellation
 		if (monitor.isCanceled()) {
-			return;
+			IDebugTarget[] debugTargets = launch.getDebugTargets();
+            for (int i = 0; i < debugTargets.length; i++) {
+                IDebugTarget target = debugTargets[i];
+                if (target.canDisconnect()) {
+                    target.disconnect();
+                }
+            }
+            return;
 		}
 		
 		monitor.done();
