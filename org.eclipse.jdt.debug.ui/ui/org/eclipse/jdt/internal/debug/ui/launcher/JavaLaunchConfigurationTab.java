@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchPage;
 /**
  * Common function for Java launch configuration tabs.
  */
-public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
+public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigurationTab implements IEntriesChangedListener {
 		
 	/**
 	 * Returns the current Java element context from which to initialize
@@ -88,5 +88,13 @@ public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigura
 		gd.horizontalSpan = colSpan;
 		label.setLayoutData(gd);
 	}	
+	
+	/**
+	 * @see IEntriesChangedListener#entriesChanged(RuntimeClasspathViewer)
+	 */
+	public void entriesChanged(RuntimeClasspathViewer viewer) {
+		updateLaunchConfigurationDialog();
+	}
+
 }
 

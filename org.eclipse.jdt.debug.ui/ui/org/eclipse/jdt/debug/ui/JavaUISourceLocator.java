@@ -180,7 +180,8 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 			data.widthHint= convertWidthInCharsToPixels(message, 70);
 			message.setLayoutData(data);
 
-			Control inner= fSourceLookupBlock.createControl(composite);
+			fSourceLookupBlock.createControl(composite);
+			Control inner = fSourceLookupBlock.getControl();
 			fSourceLookupBlock.initializeFrom(fConfiguration);
 			inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 			fAskAgainCheckBox= new Button(composite, SWT.CHECK + SWT.WRAP);

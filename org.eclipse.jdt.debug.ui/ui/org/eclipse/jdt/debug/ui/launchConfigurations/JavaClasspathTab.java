@@ -99,12 +99,14 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		classPathComp.setLayout(classPathLayout);
 		
 		fClasspathViewer = new RuntimeClasspathViewer(fPathTabFolder);
+		fClasspathViewer.addEntriesChangedListener(this);
 		fClassPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 0);
 		fClassPathTabItem.setText(LauncherMessages.getString("JavaClasspathTab.Us&er_classes_1")); //$NON-NLS-1$
 		fClassPathTabItem.setControl(fClasspathViewer.getControl());
 		fClassPathTabItem.setData(fClasspathViewer);
 
 		fBootpathViewer = new RuntimeClasspathViewer(fPathTabFolder);
+		fBootpathViewer.addEntriesChangedListener(this);
 		fBootPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 1);
 		fBootPathTabItem.setText(LauncherMessages.getString("JavaClasspathTab.&Bootstrap_classes_2")); //$NON-NLS-1$
 		fBootPathTabItem.setControl(fBootpathViewer.getControl());
@@ -197,6 +199,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		}
 		fClasspathViewer.setEnabled(!useDefault);
 		fBootpathViewer.setEnabled(!useDefault);
+		updateLaunchConfigurationDialog();
 	}
 
 	/**
@@ -327,4 +330,13 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			action.setViewer(viewer);
 		}
 	}
+	/**
+	 * @see ILaunchConfigurationTab#dispose()
+	 */
+	public void dispose() {
+		fClasspathViewer.removeEntriesChangedListener(this);
+		fBootpathViewer.removeEntriesChangedListener(this);
+		super.dispose();
+	}
+
 }

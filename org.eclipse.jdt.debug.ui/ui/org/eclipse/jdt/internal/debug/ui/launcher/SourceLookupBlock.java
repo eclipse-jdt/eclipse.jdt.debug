@@ -12,9 +12,14 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddAdvancedAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
@@ -27,25 +32,20 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
  
 /**
  * Control used to edit the source lookup path for a Java launch configuration.
  */
-public class SourceLookupBlock {
+public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILaunchConfigurationTab {
 	
 	protected IJavaProject fProject;
 	protected ILaunchConfiguration fConfig;
@@ -59,7 +59,7 @@ public class SourceLookupBlock {
 	 * 
 	 * @param parent the parent widget of this control
 	 */
-	public Control createControl(Composite parent) {
+	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
@@ -68,6 +68,7 @@ public class SourceLookupBlock {
 		comp.setLayoutData(gd);
 		
 		fPathViewer = new RuntimeClasspathViewer(comp);
+		fPathViewer.addEntriesChangedListener(this);
 		gd = new GridData(GridData.FILL_BOTH);
 		fPathViewer.getControl().setLayoutData(gd);
 
@@ -144,7 +145,7 @@ public class SourceLookupBlock {
 																
 		retargetActions(fPathViewer);
 				
-		return comp;
+		setControl(comp);
 	}
 
 	/**
@@ -161,6 +162,7 @@ public class SourceLookupBlock {
 			}
 		}
 		fPathViewer.setEnabled(!def);
+		updateLaunchConfigurationDialog();
 	}
 
 	/**
@@ -233,7 +235,7 @@ public class SourceLookupBlock {
 		boolean def = fDefaultButton.getSelection();		
 		if (def) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (String)null);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List)null);
 		} else {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, def);
 			try {
@@ -294,5 +296,37 @@ public class SourceLookupBlock {
 	protected ILaunchConfiguration getLaunchConfiguration() {
 		return fConfig;
 	}	
+
+	/**
+	 * @see ILaunchConfigurationTab#getName()
+	 */
+	public String getName() {
+		return "Source";
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List)null);
+	}
+
+	/**
+	 * @see AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
+	 */
+	protected void updateLaunchConfigurationDialog() {
+		if (getLaunchConfigurationDialog() != null) {
+			super.updateLaunchConfigurationDialog();
+		}
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#dispose()
+	 */
+	public void dispose() {
+		fPathViewer.removeEntriesChangedListener(this);
+		super.dispose();
+	}
 
 }

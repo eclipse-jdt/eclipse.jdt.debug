@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -26,6 +27,11 @@ public class RuntimeClasspathViewer extends TableViewer {
 	 * Whether enabled/editable.
 	 */
 	private boolean fEnabled = true;
+	
+	/**
+	 * Entry changed listeners
+	 */
+	private ListenerList fListeners = new ListenerList(3);
 	
 	/**
 	 * The launch configuration context for this viewer, or <code>null</code>
@@ -86,6 +92,7 @@ public class RuntimeClasspathViewer extends TableViewer {
 			fEntries.add(entries[i]);
 		}
 		setInput(fEntries);
+		notifyChanged();
 	}
 	
 	/**
@@ -120,6 +127,7 @@ public class RuntimeClasspathViewer extends TableViewer {
 		}
 		setSelection(new StructuredSelection(entries));
 		refresh();
+		notifyChanged();
 	}	
 	
 	/**
@@ -147,6 +155,21 @@ public class RuntimeClasspathViewer extends TableViewer {
 		fLaunchConfiguration = configuration;
 		if (getLabelProvider() != null) {
 			((RuntimeClasspathEntryLabelProvider)getLabelProvider()).setLaunchConfiguration(configuration);
+		}
+	}
+	
+	public void addEntriesChangedListener(IEntriesChangedListener listener) {
+		fListeners.add(listener);
+	}
+	
+	public void removeEntriesChangedListener(IEntriesChangedListener listener) {
+		fListeners.remove(listener);
+	}
+	
+	protected void notifyChanged() {
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			((IEntriesChangedListener)listeners[i]).entriesChanged(this);
 		}
 	}
 }

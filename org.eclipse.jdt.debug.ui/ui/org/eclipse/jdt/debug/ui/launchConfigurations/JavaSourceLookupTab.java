@@ -5,6 +5,8 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
  * All Rights Reserved.
  */
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -46,6 +48,7 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 		createVerticalSpacer(comp, 1);
 		
 		fSourceLookupBlock = new SourceLookupBlock();
+		fSourceLookupBlock.setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 		fSourceLookupBlock.createControl(comp);
 		
 	}
@@ -56,6 +59,8 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// be default, use a prompting source locator
 		configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List)null);
 	}
 
 	/**
