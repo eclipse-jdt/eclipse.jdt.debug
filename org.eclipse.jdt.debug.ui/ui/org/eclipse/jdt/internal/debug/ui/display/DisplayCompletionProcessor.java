@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -94,21 +95,24 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * @see IContentAssistProcessor#computeProposals(ITextViewer, int)
 	 */
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int position) {
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
+		IAdaptable context = DebugUITools.getDebugContext();
+		if (context == null) {
+			return new ICompletionProposal[0];
+		}
+		
+		IJavaStackFrame stackFrame= (IJavaStackFrame)context.getAdapter(IJavaStackFrame.class);
+		if (stackFrame == null) {
+			return new ICompletionProposal[0];
+		}
+			
+		return computeCompletionProposals(stackFrame, viewer, documentOffset);
+	}
+
+	protected ICompletionProposal[] computeCompletionProposals(IJavaStackFrame stackFrame, ITextViewer viewer, int documentOffset) {
 		try {
-			IAdaptable context = DebugUITools.getDebugContext();
-			if (context == null) {
-				return new ICompletionProposal[0];
-			}
-			
-			IJavaStackFrame stackFrame= (IJavaStackFrame)context.getAdapter(IJavaStackFrame.class);
-			if (stackFrame == null) {
-				return new ICompletionProposal[0];
-			}
-			
 			IJavaProject project= getJavaProject(stackFrame);
 			if (project != null) {
-				ITextSelection selection= (ITextSelection)viewer.getSelectionProvider().getSelection();			
 				IType receivingType= getReceivingType(project, stackFrame);
 				
 				if (receivingType == null) {
@@ -118,36 +122,35 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				char[][] localVariableNames= new char[variables.length][];
 				char[][] localVariableTypeNames= new char[variables.length][];
 				resolveLocalVariables(variables, localVariableNames, localVariableTypeNames);
-				int snippetOffset= selection.getOffset();
 				
+				ITextSelection selection= (ITextSelection)viewer.getSelectionProvider().getSelection();
 				configureResultCollector(project, selection);	
+				
 				int[] localModifiers= new int[localVariableNames.length];
 				Arrays.fill(localModifiers, 0);
-				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), -1, snippetOffset,
+				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), -1, documentOffset,
 					 localVariableTypeNames, localVariableNames,
 					 localModifiers, stackFrame.isStatic(), fCollector);
 					 
 				 //Order here and not in result collector to make sure that the order
 				 //applies to all proposals and not just those of the compilation unit. 
-				return order(fCollector.getResults());	
+				return order(getCollector().getResults());	
 			}
 		} catch (JavaModelException x) {
-			Shell shell= viewer.getTextWidget().getShell();
-			ErrorDialog.openError(shell,
-				DisplayMessages.getString("DisplayCompletionProcessor.Problems_during_completion_1"), //$NON-NLS-1$
-				DisplayMessages.getString("DisplayCompletionProcessor.An_exception_occurred_during_code_completion_2"), //$NON-NLS-1$ 
-				x.getStatus());  
-			JDIDebugUIPlugin.log(x);
+			handle(viewer, x);
 		} catch (DebugException de) {
-			Shell shell= viewer.getTextWidget().getShell();
-			ErrorDialog.openError(shell,
-				DisplayMessages.getString("DisplayCompletionProcessor.Problems_during_completion_1"), //$NON-NLS-1$
-				DisplayMessages.getString("DisplayCompletionProcessor.An_exception_occurred_during_code_completion_2"), //$NON-NLS-1$
-				de.getStatus()); 
-			JDIDebugUIPlugin.log(de); 
+			handle(viewer, de);
 		}
 		
 		return null;
+	}
+	protected void handle(ITextViewer viewer, CoreException x) {
+		Shell shell= viewer.getTextWidget().getShell();
+		ErrorDialog.openError(shell,
+			DisplayMessages.getString("DisplayCompletionProcessor.Problems_during_completion_1"), //$NON-NLS-1$
+			DisplayMessages.getString("DisplayCompletionProcessor.An_exception_occurred_during_code_completion_2"), //$NON-NLS-1$ 
+			x.getStatus());  
+		JDIDebugUIPlugin.log(x);
 	}
 	
 	protected void resolveLocalVariables(IVariable[] variables, char[][] localVariableNames, char[][] localVariableTypeNames) throws DebugException {
@@ -183,7 +186,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * Order the given proposals.
 	 */
-	private ICompletionProposal[] order(ICompletionProposal[] proposals) {
+	protected ICompletionProposal[] order(ICompletionProposal[] proposals) {
 		if (fComparator != null)
 			Arrays.sort(proposals, fComparator);
 		return proposals;	
@@ -265,8 +268,8 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 * </ul>
 	 */
 	private IType getReceivingType(IJavaProject project, IJavaStackFrame frame) throws DebugException {
-		String typeName = frame.getReceivingTypeName();
-		String sourceName =frame.getSourceName();
+		String typeName= frame.getReceivingTypeName();
+		String sourceName= frame.getSourceName();
 		if (sourceName == null || !typeName.equals(frame.getDeclaringTypeName())) {
 			// if there is no debug attribute or the declaring type is not the
 			// same as the receiving type, we must guess at the receiver's source
@@ -287,33 +290,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 			}
 			typeName+=sourceName;
 		}
-		IPath sourcePath =  new Path(typeName);
-		
-		IType type = null;
-		try {
-			IJavaElement result = project.findElement(sourcePath);
-			String[] typeNames = getNestedTypeNames(frame.getReceivingTypeName());
-			if (result != null) {
-				if (result instanceof IClassFile) {
-					type = ((IClassFile)result).getType();
-				} else if (result instanceof ICompilationUnit) {
-					type = ((ICompilationUnit)result).getType(typeNames[0]);
-				}
-			}
-			for (int i = 1; i < typeNames.length; i++) {
-				String innerTypeName= typeNames[i];
-				try {
-					Integer.parseInt(innerTypeName);
-					continue; //loop over anonymous types
-				} catch (NumberFormatException e) {
-				}
-				type = type.getType(innerTypeName);
-			}
-		} catch (JavaModelException e) {
-			throw new DebugException(e.getStatus());
-		}
-		
-		return type;	
+		return getType(project, frame.getReceivingTypeName(), typeName);
 	}
 	
 	/**
@@ -340,5 +317,43 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
 		fProposalAutoActivationSet= activationSet;
+	}
+	
+	protected ResultCollector getCollector() {
+		return fCollector;
+	}
+
+	protected void setCollector(ResultCollector collector) {
+		fCollector = collector;
+	}
+
+	protected IType getType(IJavaProject project, String originalTypeName, String typeName) throws DebugException {
+		
+		IPath sourcePath =  new Path(typeName);
+		IType type = null;
+		try {
+			IJavaElement result = project.findElement(sourcePath);
+			String[] typeNames = getNestedTypeNames(originalTypeName);
+			if (result != null) {
+				if (result instanceof IClassFile) {
+					type = ((IClassFile)result).getType();
+				} else if (result instanceof ICompilationUnit) {
+					type = ((ICompilationUnit)result).getType(typeNames[0]);
+				}
+			}
+			for (int i = 1; i < typeNames.length; i++) {
+				String innerTypeName= typeNames[i];
+				try {
+					Integer.parseInt(innerTypeName);
+					continue; //loop over anonymous types
+				} catch (NumberFormatException e) {
+				}
+				type = type.getType(innerTypeName);
+			}
+		} catch (JavaModelException e) {
+			throw new DebugException(e.getStatus());
+		}
+		
+		return type;	
 	}
 }

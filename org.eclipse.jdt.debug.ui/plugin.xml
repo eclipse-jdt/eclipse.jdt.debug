@@ -407,7 +407,7 @@
          <debugModelPresentation
              class = "org.eclipse.jdt.internal.debug.ui.JDIModelPresentation"
              id = "org.eclipse.jdt.debug"
-             detailsViewerConfiguration = "org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration">
+             detailsViewerConfiguration = "org.eclipse.jdt.internal.debug.ui.display.DetailsViewerConfiguration">
           </debugModelPresentation> 
 </extension>
 
