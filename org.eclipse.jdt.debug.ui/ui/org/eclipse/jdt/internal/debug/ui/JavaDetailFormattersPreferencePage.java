@@ -194,19 +194,6 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			}
 		});
 		
-		// Remove button
-		fRemoveFormatterButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveFormatterButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.&Remove_7")); //$NON-NLS-1$
-		fRemoveFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Remove_all_selected_detail_formatters_8")); //$NON-NLS-1$
-		fRemoveFormatterButton.setFont(font);
-		setButtonLayoutData(fRemoveFormatterButton);
-		fRemoveFormatterButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				removeTypes();
-			}
-		});
-		fRemoveFormatterButton.setEnabled(false);
-		
 		// Edit button
 		fEditFormatterButton = new Button(buttonContainer, SWT.PUSH);
 		fEditFormatterButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.&Edit..._9")); //$NON-NLS-1$
@@ -220,6 +207,18 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		});
 		fEditFormatterButton.setEnabled(false);
 		
+		// Remove button
+		fRemoveFormatterButton = new Button(buttonContainer, SWT.PUSH);
+		fRemoveFormatterButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.&Remove_7")); //$NON-NLS-1$
+		fRemoveFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Remove_all_selected_detail_formatters_8")); //$NON-NLS-1$
+		fRemoveFormatterButton.setFont(font);
+		setButtonLayoutData(fRemoveFormatterButton);
+		fRemoveFormatterButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				removeTypes();
+			}
+		});
+		fRemoveFormatterButton.setEnabled(false);
 	}
 	
 	public void createSourceViewer(Composite container) {

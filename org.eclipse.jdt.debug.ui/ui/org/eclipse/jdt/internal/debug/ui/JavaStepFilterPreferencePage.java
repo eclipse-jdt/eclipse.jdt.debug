@@ -295,6 +295,15 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		});
 		fRemoveFilterButton.setEnabled(false);
 		
+		// copied from ListDialogField.CreateSeparator()
+		Label separator= new Label(buttonContainer, SWT.NONE);
+		separator.setVisible(false);
+		gd= new GridData();
+		gd.horizontalAlignment= GridData.FILL;
+		gd.verticalAlignment= GridData.BEGINNING;
+		gd.heightHint= 4;
+		separator.setLayoutData(gd);
+				
 		fEnableAllButton= new Button(buttonContainer, SWT.PUSH);
 		fEnableAllButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.&Enable_All_1")); //$NON-NLS-1$
 		fEnableAllButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Enables_all_step_filters_2")); //$NON-NLS-1$

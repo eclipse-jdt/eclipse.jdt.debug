@@ -354,6 +354,15 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			}
 		});
 		
+		// copied from ListDialogField.CreateSeparator()
+		Label separator= new Label(buttons, SWT.NONE);
+		separator.setVisible(false);
+		GridData gd= new GridData();
+		gd.horizontalAlignment= GridData.FILL;
+		gd.verticalAlignment= GridData.BEGINNING;
+		gd.heightHint= 4;
+		separator.setLayoutData(gd);
+		
 		fSearchButton = createPushButton(buttons, JREMessages.getString("InstalledJREsBlock.6")); //$NON-NLS-1$
 		fSearchButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event evt) {
