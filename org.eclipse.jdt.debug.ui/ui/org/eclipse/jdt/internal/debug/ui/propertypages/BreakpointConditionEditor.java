@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.propertypages;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClassFile;
@@ -50,6 +49,7 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 public class BreakpointConditionEditor {
 	
@@ -64,7 +64,7 @@ public class BreakpointConditionEditor {
 	private JavaLineBreakpointPage fPage;
 	private IJavaLineBreakpoint fBreakpoint;
 	
-	private List submissions;
+	private HandlerSubmission submission;
 		
 	public BreakpointConditionEditor(Composite parent, JavaLineBreakpointPage page) {
 		fPage= page;
@@ -155,9 +155,8 @@ public class BreakpointConditionEditor {
 			}
 		};
 		
-		submissions = Collections.singletonList(new HandlerSubmission(null, null, null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, Priority.MEDIUM)); //$NON-NLS-1$
-		commandSupport.addHandlerSubmissions(submissions);
-		
+		submission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$
+		commandSupport.addHandlerSubmission(submission);	
 	}
 
 	/**
@@ -244,8 +243,7 @@ public class BreakpointConditionEditor {
 	public void dispose() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		commandSupport.removeHandlerSubmissions(submissions); 
-		
+		commandSupport.removeHandlerSubmission(submission); 
 		fViewer.dispose();
 	}
 }

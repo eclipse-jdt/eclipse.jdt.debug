@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.display;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -147,7 +146,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 	 * workbench shutdown.
 	 */
 	private static IMemento tempMemento;
-	private List submissions;
+	private HandlerSubmission submission;
 	
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
@@ -288,8 +287,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();	
-		submissions = Collections.singletonList(new HandlerSubmission(null, null, null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, Priority.MEDIUM)); //$NON-NLS-1$
-		commandSupport.addHandlerSubmissions(submissions);	
+		submission = new HandlerSubmission(null, null, getSite(), ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$
+		commandSupport.addHandlerSubmission(submission);	
 
 	}
 
@@ -453,7 +452,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 		
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		commandSupport.removeHandlerSubmissions(submissions);
+		commandSupport.removeHandlerSubmission(submission);
 		
 		super.dispose();
 	}

@@ -12,9 +12,9 @@ package org.eclipse.jdt.internal.debug.ui;
 
 
 import java.text.MessageFormat;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -68,6 +68,7 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  * Dialog for edit detail formatter.
@@ -105,7 +106,7 @@ public class DetailFormatterDialog extends StatusDialog {
 	
 	private List fDefinedTypes;
 
-	private List submissions;
+	private HandlerSubmission submission;
 	
 	/**
 	 * DetailFormatterDialog constructor.
@@ -155,8 +156,8 @@ public class DetailFormatterDialog extends StatusDialog {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();		
-		submissions = Collections.singletonList(new HandlerSubmission(null, null, null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, Priority.MEDIUM)); //$NON-NLS-1$
-		commandSupport.addHandlerSubmissions(submissions);	
+		submission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$
+		commandSupport.addHandlerSubmission(submission);	
 		
 		Composite container = (Composite)super.createDialogArea(parent);
 		
@@ -388,7 +389,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		commandSupport.removeHandlerSubmissions(submissions);
+		commandSupport.removeHandlerSubmission(submission);
 		
 		fSnippetViewer.dispose();
 		return super.close();
