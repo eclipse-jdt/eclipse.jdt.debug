@@ -36,7 +36,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
@@ -1361,7 +1360,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 					// cannot perform nested evaluations
 					return true;
 				}
-				//non NLS
+			
 				List classes= jdiClassesByName("java.lang.ThreadDeath"); //$NON-NLS-1$
 				if (!classes.isEmpty()) {
 					ClassType threadDeathClass= (ClassType) classes.get(0);
@@ -1559,7 +1558,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			}
 			return true;
 		}
-		
 	}
 }
 
