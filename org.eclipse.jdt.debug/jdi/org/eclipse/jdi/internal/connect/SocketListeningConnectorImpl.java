@@ -70,9 +70,8 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
  	 * Retrieves connection arguments.
  	 */
 	private void getConnectionArguments(Map connectionArgs) throws IllegalConnectorArgumentsException {
-		String attribute = ""; //$NON-NLS-1$
+		String attribute = "port"; //$NON-NLS-1$
 		try {
-		 	attribute = "port"; //$NON-NLS-1$
 		 	fPort = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
 		 	// Note that timeout is not used in SUN's ListeningConnector, but is used by our
 		 	// LaunchingConnector.
