@@ -116,15 +116,8 @@ public class LocatableTest extends AbstractJDITest {
 			assertTrue(
 				"4." + locatable,
 				(location.lineNumber() > 0) || (location.lineNumber() == -1));
-			assertTrue(
-				"5." + locatable,
-				(location.method() instanceof Method)
-					|| (location.method() == null));
 			try {
-				assertTrue(
-					"6." + locatable,
-					(location.sourceName() instanceof String)
-						|| (location.sourceName() == null));
+				location.sourceName();
 			} catch (AbsentInformationException e) {
 				assertTrue("7", false);
 			}
