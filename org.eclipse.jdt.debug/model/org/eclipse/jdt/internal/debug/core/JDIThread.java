@@ -52,7 +52,7 @@ import com.sun.jdi.request.StepRequest;
  * Model thread implementation for an underlying
  * thread on a VM.
  */
-public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutListener {
+public class JDIThread extends JDIDebugElement implements IJavaThread {
 	
 	/**
 	 * Constant for the name of the main thread group.
@@ -111,12 +111,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * a call is made to <code>#suspend()</code>).
 	 */
 	private boolean fEventSuspend = false;
-
-	/**
-	 * Action timer. During a long running action,
-	 * stack frames are collapsed.
-	 */
-	private Timer fTimer;
 
 	/**
 	 * Whether terminated.
@@ -622,7 +616,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			setPerformingEvaluation(true);
 			preserveStackFrames();
 			resetInterrupted();
-			startCollapseTimer();
 			if (receiverClass == null) {
 				result= receiverObject.invokeMethod(getUnderlyingThread(), method, args, ClassType.INVOKE_SINGLE_THREADED);
 			} else {
@@ -649,7 +642,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	
 	/**
 	 * Called when this thread suspends. If this thread is performing
-	 * a method invocation, a not is made that the invocation was
+	 * a method invocation, a note is made that the invocation was
 	 * interrupted. When an invocation is interrupted, a suspend
 	 * event must be fired when/if the invocation eventually completes.
 	 * 
@@ -658,7 +651,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	protected void interrupted() {
 		if (isPerformingEvaluation()) {
 			fInterrupted = true;
-			stopCollapseTimer();
 		}
 	}
 	
@@ -764,7 +756,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			setPerformingEvaluation(true);
 			preserveStackFrames();
 			resetInterrupted();
-			startCollapseTimer();
 			result= receiverClass.newInstance(getUnderlyingThread(), constructor, args, ClassType.INVOKE_SINGLE_THREADED);
 		} catch (InvalidTypeException e) {
 			invokeFailed(e, timeout);
@@ -805,7 +796,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	/**
 	 * Called when a method invocation has returned, successfully
 	 * or not. This method performs cleanup:<ul>
-	 * <li>Stops the frame collapse timer</li>
 	 * <li>Resets the state of this thread to suspended</li>
 	 * <li>Restores the communication timeout value</li>
 	 * <li>Computes the new set of stack frames for this thread</code>
@@ -818,7 +808,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
  	 * @see #newInstance(ClassType, Method, List)
 	 */
 	protected void invokeComplete(int restoreTimeout) {
-		stopCollapseTimer();
 		boolean interrupted= wasInterrupted();
 		setRunning(false);
 		setPerformingEvaluation(false);
@@ -1292,7 +1281,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		if (!canStepReturn()) {
 			return;
 		}
-		StepHandler handler = new StepToFrameHanlder(frame);
+		StepHandler handler = new StepToFrameHandler(frame);
 		handler.step();
 	}
 		
@@ -1374,15 +1363,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * When a thread is disposed, its timer thread is disposed.
-	 */
-	protected void dispose() {
-		if (fTimer != null) {
-			fTimer.dispose();
-		}
-	}
-	
-	/**
 	 * When a suspend event is fired, a thread keeps track of the
 	 * cause of the suspend. If the suspend is due to a an event
 	 * request in the underlying VM, evaluations may be performed,
@@ -1401,8 +1381,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	protected void terminated() {
 		setTerminated(true);
-		setRunning(false);
-		dispose();		
+		setRunning(false);	
 		fireTerminateEvent();
 	}
 	
@@ -1456,44 +1435,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			}
 		}
 		return fThreadGroup;
-	}
-	
-	/**
-	 * Returns this thread's timer.
-	 * 
-	 * @return timer
-	 */
-	private Timer getTimer() {
-		if (fTimer == null) {
-			fTimer = new Timer();
-		}
-		return fTimer;
-	}
-	
-	/**
-	 * An action has timed out. Stack frames are
-	 * disposed and a change event is fired.
-	 */
-	public void timeout() {
-		disposeStackFrames();
-		interrupted();
-		fireChangeEvent();
-	}
-	
-	/**
-	 * Starts a timer. In the event of a timeout,
-	 * stack frames are collapsed.
-	 */
-	protected void startCollapseTimer() {
-		getTimer().start(this, COLLAPSE_TIMEOUT);
-	}
-	
-	/**
-	 * Stops the current timer to cancel a pending
-	 * stack frame collapse.
-	 */
-	protected void stopCollapseTimer() {
-		getTimer().stop();
 	}
 		 	
 	/**
@@ -1560,9 +1501,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		 * This thread's state is set to running and stepping, and
 		 * stack frames are invalidated (but preserved to be re-used
 		 * when the step completes). A resume event with a step detail
-		 * is fired for this thread. A step timer is started. If the timer
-		 * expires, stack frames are cleared and not re-used on the
-		 * eventual suspend.
+		 * is fired for this thread.
 		 * </p>
 		 * 
 		 * @exception DebugException if this method fails.  Reasons include:
@@ -1697,14 +1636,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		/**
 		 * Returns whether this step handler should use step
 		 * filters when creating its step request. By default,
-		 * step filters are used. Subclasses must override 
+		 * step filters are not used. Subclasses must override 
 		 * if/when required.
 		 * 
 		 * @return whether this step handler should use step
 		 * filters when creating its step request
 		 */
 		protected boolean applyStepFilters() {
-			return true;
+			return false;
 		}
 		
 		/**
@@ -1741,22 +1680,24 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 		
 		/**
-		 * Return true if the StepEvent's Location is a Method that the 
+		 * Returns true if the StepEvent's Location is a Method that the 
 		 * user has indicated (via the step filter preferences) should be 
 		 * filtered.  Return false otherwise.
 		 */
 		protected boolean locationIsFiltered(Method method) {
-			boolean filterStatics = JDIDebugModel.filterStatics();
-			boolean filterSynthetics = JDIDebugModel.filterSynthetics();
-			boolean filterConstructors = JDIDebugModel.filterConstructors();
-			if (!(filterStatics || filterSynthetics  || filterConstructors)) {
-				return false;
-			}			
+			if (applyStepFilters()) {
+				boolean filterStatics = JDIDebugModel.filterStatics();
+				boolean filterSynthetics = JDIDebugModel.filterSynthetics();
+				boolean filterConstructors = JDIDebugModel.filterConstructors();
+				if (!(filterStatics || filterSynthetics  || filterConstructors)) {
+					return false;
+				}			
 			
-			if ((filterStatics && method.isStaticInitializer())	||
-				(filterSynthetics && method.isSynthetic()) ||
-				(filterConstructors && method.isConstructor()) ) {
-				return true;	
+				if ((filterStatics && method.isStaticInitializer()) ||
+					(filterSynthetics && method.isSynthetic()) ||
+					(filterConstructors && method.isConstructor()) ) {
+					return true;	
+				}
 			}
 			
 			return false;
@@ -1764,7 +1705,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 
 		/**
 		 * Cleans up when a step completes.<ul>
-		 * <li>Stops the step timer</code>
 		 * <li>Thread state is set to suspended.</li>
 		 * <li>Stepping state is set to false</li>
 		 * <li>Stack frames and variables are incrementally updated</li>
@@ -1781,7 +1721,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 		
 		/**
-		 * Creates another step request in the underlying of the
+		 * Creates another step request in the underlying thread of the
 		 * appropriate kind (over, into, return). This thread will
 		 * be resumed by the event dispatcher as this event handler
 		 * will vote to resume suspended threads. When a step is
@@ -1803,9 +1743,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}	
 		
 		/**
-		 * Aborts this step request if active. The step timer is
-		 * stopped, and the step event request is deleted
-		 * from the underlying VM.
+		 * Aborts this step request if active. The step event
+		 * request is deleted from the underlying VM.
 		 */
 		protected void abort() {
 			if (getStepRequest() != null) {
@@ -1813,7 +1752,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				setPendingStepHandler(null);
 			}
 		}
-		
 	}
 	
 	/**
@@ -1838,6 +1776,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		protected int getStepKind() {
 			return StepRequest.STEP_INTO;
 		}	
+		
+		/**
+		 * Returns <code>true</code>. Step filters are applied for
+		 * stepping into new frames.
+		 * 
+		 * @see StepHandler#applyStepFilters()
+		 */
+		protected boolean applyStepFilters() {
+			return true;
+		}
 	}
 	
 	/**
@@ -1859,7 +1807,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * or the thread is suspended (explicitly, or by a
 	 * breakpoint).
 	 */
-	class StepToFrameHanlder extends StepReturnHandler {
+	class StepToFrameHandler extends StepReturnHandler {
 		
 		/**
 		 * The number of frames that should be left on the stack
@@ -1878,7 +1826,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		 * the failure.</li>
 		 * </ul>
 		 */
-		protected StepToFrameHanlder(IStackFrame frame) throws DebugException {
+		protected StepToFrameHandler(IStackFrame frame) throws DebugException {
 			List frames = computeStackFrames();
 			setRemainingFrames(frames.size() - frames.indexOf(frame));
 		}
@@ -1931,18 +1879,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				stepEnd();
 				return false;
 			}
-		}
-
-		/**
-		 * Returns <code>false</code>. To step to a particular frame,
-		 * step filters are not used.
-		 * 
-		 * @see StepHandler#applyStepFilters()
-		 */
-		protected boolean applyStepFilters() {
-			return false;
-		}
-				
+		}				
 	}
 	
 	/**
