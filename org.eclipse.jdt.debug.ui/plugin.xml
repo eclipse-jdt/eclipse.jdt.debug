@@ -30,7 +30,7 @@
 </runtime>
 
 <!-- Extensions Points -->
-<extension-point name="%vmInstallTypePage" id="vmInstallTypePage"/>
+<extension-point name="%vmInstallTypePage" id="vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
 
 <!-- Extensions -->
 

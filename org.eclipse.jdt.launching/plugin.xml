@@ -25,12 +25,12 @@
 </runtime>
 
 
-<!-- Search extension point definitions -->
+<!-- Extension point definitions -->
 
-<extension-point name="%vmInstallTypes" id="vmInstallTypes"/>
-<extension-point name="%vmConnectors" id="vmConnectors"/>
-<extension-point name="%runtimeClasspathEntryResolvers" id="runtimeClasspathEntryResolvers"/>
 <extension-point name="%classpathProviders" id="classpathProviders"/>
+<extension-point name="%runtimeClasspathEntryResolvers" id="runtimeClasspathEntryResolvers" schema="schema/'runtimeClasspathEntryResolvers.exsd"/>
+<extension-point name="%vmConnectors" id="vmConnectors" schema="schema/'vmConnectors.exsd"/>
+<extension-point name="%vmInstallTypes" id="vmInstallTypes" schema="schema/'vmInstallTypes.exsd"/>
 
 <!-- Extensions -->
 
