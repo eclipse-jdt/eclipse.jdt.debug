@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
@@ -294,7 +295,7 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 			return;
 		} 
 		menu.add(new Separator(IJavaDebugUIConstants.EVALUATION_GROUP));
-		if (DebugUITools.getDebugContext() != null) {
+		if (EvaluationContextManager.getEvaluationContext(this) != null) {
 			menu.add(fContentAssistAction);
 		}
 		menu.add(new Separator());		
