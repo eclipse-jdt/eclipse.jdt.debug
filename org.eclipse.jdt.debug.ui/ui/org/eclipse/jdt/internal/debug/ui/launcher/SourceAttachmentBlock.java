@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.PixelConverter;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.jdt.internal.ui.wizards.IStatusChangeListener;
@@ -32,6 +31,7 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -39,6 +39,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -186,7 +188,10 @@ public class SourceAttachmentBlock {
 	public Control createControl(Composite parent) {
 		Font font = parent.getFont();
 		
-		PixelConverter converter= new PixelConverter(parent);
+		GC gc = new GC(parent);
+		gc.setFont(font);
+		FontMetrics fontMetrics= gc.getFontMetrics();
+		gc.dispose();
 		
 		fSWTWidget= parent;
 		
@@ -199,7 +204,7 @@ public class SourceAttachmentBlock {
 		composite.setLayout(layout);
 		composite.setFont(font);
 		
-		int widthHint= converter.convertWidthInCharsToPixels(fIsVariableEntry ? 50 : 60);
+		int widthHint= Dialog.convertWidthInCharsToPixels(fontMetrics, fIsVariableEntry ? 50 : 60);
 		
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 4;

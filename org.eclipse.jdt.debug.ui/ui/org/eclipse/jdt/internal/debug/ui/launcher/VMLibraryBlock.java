@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AttachSourceAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
@@ -33,7 +32,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -49,8 +47,6 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 	protected IVMInstall fVmInstall;
 	protected IVMInstallType fVmInstallType;
 	protected File fHome;
-	// used to make buttons all the same width
-	protected Button fAddJarButton;
 	
 	protected RuntimeClasspathViewer fPathViewer;
 	protected Button fDefaultButton;
@@ -113,31 +109,29 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 		});
 		
 		RuntimeClasspathAction action = new MoveUpAction(null);								
-		Button button  = createPushButton(pathButtonComp, action.getText(), null);
+		Button button  = createPushButton(pathButtonComp, action.getText());
 		action.setButton(button);
 		addAction(action);
 		
 		action = new MoveDownAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
+		button  = createPushButton(pathButtonComp, action.getText());
 		action.setButton(button);
 		addAction(action);		
 
 		action = new RemoveAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
+		button  = createPushButton(pathButtonComp, action.getText());
 		action.setButton(button);
 		addAction(action);		
 		
 		action = new AddExternalJarAction(null, DIALOG_SETTINGS_PREFIX);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
+		button  = createPushButton(pathButtonComp, action.getText());
 		action.setButton(button);
 		addAction(action);		
-		fAddJarButton = button;
 		
 		action = new AttachSourceAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
+		button  = createPushButton(pathButtonComp, action.getText());
 		action.setButton(button);
-		addAction(action);		
-		fAddJarButton = button;		
+		addAction(action);				
 														
 		retargetActions(fPathViewer);
 				
@@ -156,14 +150,14 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 	 * 
 	 * @param parent parent widget
 	 * @param label label
-	 * @param image image
 	 * @return Button
 	 */
-	protected Button createPushButton(
-		Composite parent,
-		String label,
-		Image image) {
-		return SWTUtil.createPushButton(parent, label, image);
+	protected Button createPushButton(Composite parent, String label) {
+		Button button = new Button(parent, SWT.PUSH);
+		button.setFont(parent.getFont());
+		button.setText(label);
+		fDialog.setButtonLayoutData(button);
+		return button;	
 	}
 	
 	/**

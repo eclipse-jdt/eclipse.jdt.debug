@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.PixelConverter;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.ClasspathContainerDescriptor;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.ClasspathContainerWizard;
@@ -121,7 +120,6 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		
 		getShell().setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Advanced_Options_1")); //$NON-NLS-1$
 		
-		applyDialogFont(composite);
 		return composite;
 
 	}
@@ -164,9 +162,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		ClasspathContainerWizard wizard= new ClasspathContainerWizard(desc, null, entries);
 		
 		WizardDialog dialog= new WizardDialog(getShell(), wizard);
-		PixelConverter converter= new PixelConverter(getShell());
-		
-		dialog.setMinimumPageSize(converter.convertWidthInCharsToPixels(40), converter.convertHeightInCharsToPixels(20));
+		dialog.setMinimumPageSize(convertWidthInCharsToPixels(40), convertHeightInCharsToPixels(20));
 		dialog.create();
 		dialog.getShell().setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Select_Container_2")); //$NON-NLS-1$
 		if (dialog.open() == WizardDialog.OK) {

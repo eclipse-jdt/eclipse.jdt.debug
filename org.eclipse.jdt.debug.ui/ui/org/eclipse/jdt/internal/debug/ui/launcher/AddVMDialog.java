@@ -146,7 +146,7 @@ public class AddVMDialog extends StatusDialog {
 		
 	protected Control createDialogArea(Composite ancestor) {
 		Font font = ancestor.getFont();
-		
+		initializeDialogUnits(ancestor);
 		createDialogFields();
 		Composite parent= new Composite(ancestor, SWT.NULL);
 		GridLayout layout= new GridLayout();
@@ -188,7 +188,6 @@ public class AddVMDialog extends StatusDialog {
 		
 		initializeFields();
 		
-		applyDialogFont(parent);
 		return parent;
 	}
 	
@@ -471,4 +470,10 @@ public class AddVMDialog extends StatusDialog {
 			ok.setEnabled(status.getSeverity() == IStatus.OK);
 	}	
 	
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#setButtonLayoutData(org.eclipse.swt.widgets.Button)
+	 */
+	protected void setButtonLayoutData(Button button) {
+		super.setButtonLayoutData(button);
+	}
 }

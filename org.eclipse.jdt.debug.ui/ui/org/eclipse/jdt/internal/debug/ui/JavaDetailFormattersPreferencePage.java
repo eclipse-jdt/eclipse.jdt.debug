@@ -19,8 +19,6 @@ import java.util.TreeSet;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jdt.ui.text.JavaTextTools;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
@@ -40,8 +38,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -91,6 +87,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	 */
 	private Control createDetailFormatsPreferences(Composite parent) {
 		Font font = parent.getFont();
+		initializeDialogUnits(parent);
 		
 		// top level container
 		Composite container = new Composite(parent, SWT.NONE);
@@ -166,10 +163,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fAddFormatterButton = new Button(buttonContainer, SWT.PUSH);
 		fAddFormatterButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Add_&Formatter..._5")); //$NON-NLS-1$
 		fAddFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Allow_you_to_create_a_new_detail_formatter_6")); //$NON-NLS-1$
-		gd = getButtonGridData(fAddFormatterButton);
 		fAddFormatterButton.setLayoutData(gd);
 		fAddFormatterButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fAddFormatterButton);
+		setButtonLayoutData(fAddFormatterButton);
 		fAddFormatterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addType();
@@ -180,10 +176,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fRemoveFormatterButton = new Button(buttonContainer, SWT.PUSH);
 		fRemoveFormatterButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.&Remove_7")); //$NON-NLS-1$
 		fRemoveFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Remove_all_selected_detail_formatters_8")); //$NON-NLS-1$
-		gd = getButtonGridData(fRemoveFormatterButton);
-		fRemoveFormatterButton.setLayoutData(gd);
 		fRemoveFormatterButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fRemoveFormatterButton);
+		setButtonLayoutData(fRemoveFormatterButton);
 		fRemoveFormatterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				removeTypes();
@@ -195,10 +189,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fEditFormatterButton = new Button(buttonContainer, SWT.PUSH);
 		fEditFormatterButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.&Edit..._9")); //$NON-NLS-1$
 		fEditFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Edit_the_selected_detail_formatter_10")); //$NON-NLS-1$
-		gd = getButtonGridData(fEditFormatterButton);
-		fEditFormatterButton.setLayoutData(gd);
 		fEditFormatterButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fEditFormatterButton);
+		setButtonLayoutData(fEditFormatterButton);
 		fEditFormatterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				editType();
@@ -206,19 +198,6 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		});
 		fEditFormatterButton.setEnabled(false);
 		
-	}
-
-	private GridData getButtonGridData(Button button) {
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		GC gc = new GC(button);
-		gc.setFont(button.getFont());
-		FontMetrics fontMetrics= gc.getFontMetrics();
-		gc.dispose();
-		int widthHint= Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
-		gd.widthHint= Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		
-		gd.heightHint= Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_HEIGHT);
-		return gd;
 	}
 	
 	public void createSourceViewer(Composite container) {
@@ -420,7 +399,5 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-
 	}
-
 }

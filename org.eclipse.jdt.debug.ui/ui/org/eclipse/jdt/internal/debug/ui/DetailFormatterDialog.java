@@ -162,7 +162,9 @@ public class DetailFormatterDialog extends StatusDialog {
 		});
 		
 		// type search button
-		Button typeSearchButton = SWTUtil.createPushButton(innerContainer, DebugUIMessages.getString("DetailFormatterDialog.Select_&type_4"), null);  //$NON-NLS-1$
+		Button typeSearchButton = new Button(innerContainer, SWT.PUSH); 
+		typeSearchButton.setText(DebugUIMessages.getString("DetailFormatterDialog.Select_&type_4"));  //$NON-NLS-1$
+		setButtonLayoutData(typeSearchButton);
 		gd= (GridData)typeSearchButton.getLayoutData();
 		gd.horizontalAlignment = GridData.END;
 		typeSearchButton.setLayoutData(gd);
@@ -234,7 +236,6 @@ public class DetailFormatterDialog extends StatusDialog {
 		fCheckBox.setFont(font);
 		
 		checkValues();
-		applyDialogFont(container);
 		return container;
 	}
 	

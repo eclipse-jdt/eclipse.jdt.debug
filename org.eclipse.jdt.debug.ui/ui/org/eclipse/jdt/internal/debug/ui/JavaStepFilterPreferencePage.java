@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -40,8 +39,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -276,7 +273,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	}
 	private void createStepFilterButtons(Composite container) {
 		Font font = container.getFont();
-		
+		initializeDialogUnits(container);
 		// button container
 		Composite buttonContainer = new Composite(container, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
@@ -291,10 +288,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fAddFilterButton = new Button(buttonContainer, SWT.PUSH);
 		fAddFilterButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_&Filter_9")); //$NON-NLS-1$
 		fAddFilterButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Key_in_the_name_of_a_new_step_filter_10")); //$NON-NLS-1$
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		fAddFilterButton.setLayoutData(gd);
+		setButtonLayoutData(fAddFilterButton);
 		fAddFilterButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fAddFilterButton);
 		fAddFilterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				editFilter();
@@ -305,10 +300,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
 		fAddTypeButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_&Type..._11")); //$NON-NLS-1$
 		fAddTypeButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Choose_a_Java_type_and_add_it_to_step_filters_12")); //$NON-NLS-1$
-		gd = getButtonGridData(fAddTypeButton);
-		fAddTypeButton.setLayoutData(gd);
 		fAddTypeButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fAddTypeButton);
+		setButtonLayoutData(fAddTypeButton);
 		fAddTypeButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addType();
@@ -319,10 +312,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
 		fAddPackageButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_&Package..._13")); //$NON-NLS-1$
 		fAddPackageButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Choose_a_package_and_add_it_to_step_filters_14")); //$NON-NLS-1$
-		gd = getButtonGridData(fAddPackageButton);
-		fAddPackageButton.setLayoutData(gd);
 		fAddPackageButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fAddPackageButton);
+		setButtonLayoutData(fAddPackageButton);
 		fAddPackageButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addPackage();
@@ -333,10 +324,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fRemoveFilterButton = new Button(buttonContainer, SWT.PUSH);
 		fRemoveFilterButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.&Remove_15")); //$NON-NLS-1$
 		fRemoveFilterButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Remove_all_selected_step_filters_16")); //$NON-NLS-1$
-		gd = getButtonGridData(fRemoveFilterButton);
-		fRemoveFilterButton.setLayoutData(gd);
 		fRemoveFilterButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fRemoveFilterButton);
+		setButtonLayoutData(fRemoveFilterButton);
 		fRemoveFilterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				removeFilters();
@@ -347,10 +336,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fEnableAllButton= new Button(buttonContainer, SWT.PUSH);
 		fEnableAllButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.&Enable_All_1")); //$NON-NLS-1$
 		fEnableAllButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Enables_all_step_filters_2")); //$NON-NLS-1$
-		gd = getButtonGridData(fEnableAllButton);
-		fEnableAllButton.setLayoutData(gd);
 		fEnableAllButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fEnableAllButton);
+		setButtonLayoutData(fEnableAllButton);
 		fEnableAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				checkAllFilters(true);
@@ -360,10 +347,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fDisableAllButton= new Button(buttonContainer, SWT.PUSH);
 		fDisableAllButton.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Disa&ble_All_3")); //$NON-NLS-1$
 		fDisableAllButton.setToolTipText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Disables_all_step_filters_4")); //$NON-NLS-1$
-		gd = getButtonGridData(fDisableAllButton);
-		fDisableAllButton.setLayoutData(gd);
 		fDisableAllButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fDisableAllButton);
+		setButtonLayoutData(fDisableAllButton);
 		fDisableAllButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				checkAllFilters(false);
@@ -384,19 +369,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		} else if (!fFilterViewer.getSelection().isEmpty()) {
 			fRemoveFilterButton.setEnabled(true);
 		}
-	}
-	
-	private GridData getButtonGridData(Button button) {
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		GC gc = new GC(button);
-		gc.setFont(button.getFont());
-		FontMetrics fontMetrics= gc.getFontMetrics();
-		gc.dispose();
-		int widthHint= Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
-		gd.widthHint= Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		
-		gd.heightHint= Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_HEIGHT);
-		return gd;
 	}
 	
 	private void checkAllFilters(boolean check) {
