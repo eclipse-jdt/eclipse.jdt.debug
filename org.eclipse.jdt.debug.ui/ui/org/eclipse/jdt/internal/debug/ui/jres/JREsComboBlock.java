@@ -86,8 +86,13 @@ public class JREsComboBlock implements ISelectionProvider {
 	/**
 	 * Default JRE descriptor or <code>null</code> if none.
 	 */
-	private DefaultJREDescriptor fDefaultDescriptor = null;
+	private JREDescriptor fDefaultDescriptor = null;
 	
+	/**
+	 * Specific JRE descriptor or <code>null</code> if none.
+	 */
+	private JREDescriptor fSpecificDescriptor = null;
+
 	/**
 	 * Default JRE radio button or <code>null</code> if none
 	 */
@@ -200,7 +205,11 @@ public class JREsComboBlock implements ISelectionProvider {
 		}
 		
 		fSpecificButton = new Button(parent, SWT.RADIO);
-		fSpecificButton.setText(JREMessages.getString("JREsComboBlock.1")); //$NON-NLS-1$
+		if (fSpecificDescriptor != null) {
+			fSpecificButton.setText(fSpecificDescriptor.getDescription());
+		} else {
+			fSpecificButton.setText(JREMessages.getString("JREsComboBlock.1")); //$NON-NLS-1$
+		}
 		fSpecificButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fSpecificButton.getSelection()) {
@@ -245,7 +254,7 @@ public class JREsComboBlock implements ISelectionProvider {
 					// clear the old selection so that a selection changed is fired
 					fPrevSelection = null;
 				}
-				// udate text
+				// update text
 				setDefaultJREDescriptor(fDefaultDescriptor);
 				if (isDefaultJRE()) {
 					// reset in case default has changed
@@ -390,17 +399,31 @@ public class JREsComboBlock implements ISelectionProvider {
 	 * 
 	 * @param descriptor default JRE descriptor
 	 */
-	public void setDefaultJREDescriptor(DefaultJREDescriptor descriptor) {
+	public void setDefaultJREDescriptor(JREDescriptor descriptor) {
 		fDefaultDescriptor = descriptor;
-		if (fDefaultButton != null) {
+		setButtonTextFromDescriptor(fDefaultButton, descriptor);
+	}
+	
+	private void setButtonTextFromDescriptor(Button button, JREDescriptor descriptor) {
+		if (button != null) {
 			//update the description & JRE in case it has changed
-			String currentText = fDefaultButton.getText();
+			String currentText = button.getText();
 			String newText = descriptor.getDescription();
 			if (!newText.equals(currentText)) {
-				fDefaultButton.setText(newText);
+				button.setText(newText);
 				fControl.layout();
 			}
 		}
+	}
+
+	/**
+	 * Sets the specific JRE Descriptor for this block.
+	 * 
+	 * @param descriptor specific JRE descriptor
+	 */
+	public void setSpecificJREDescriptor(JREDescriptor descriptor) {
+		fSpecificDescriptor = descriptor;
+		setButtonTextFromDescriptor(fSpecificButton, descriptor);
 	}
 	
 	/**
