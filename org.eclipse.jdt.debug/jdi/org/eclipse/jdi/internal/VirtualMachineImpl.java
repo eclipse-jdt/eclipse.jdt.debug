@@ -122,7 +122,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean fCanUseInstanceFilters;
 	private boolean fCanGetSourceDebugExtension;
 	private boolean fCanRequestVMDeathEvent;
-	private boolean fCanSetDefaultStratum;
 	private boolean[] fHcrCapabilities = null;
 	
 	/*
@@ -1188,15 +1187,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 */
 	public String getDefaultStratum() {
 		return fDefaultStratum;
-	}
-	
-	/*
-	 * Returns whether the target VM supports setting
-	 * the default stratum.
-	 */
-	private boolean canSetDefaultStratum() {
-		getCapabilities();
-		return fCanSetDefaultStratum;
 	}
 	
 	/**
