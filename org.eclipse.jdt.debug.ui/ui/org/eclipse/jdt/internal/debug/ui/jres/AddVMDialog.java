@@ -386,7 +386,11 @@ public class AddVMDialog extends StatusDialog {
 	}
 	
 	private void browseForJavadocURL() {
-		URL[] urls= BuildPathDialogAccess.configureJavadocLocation(getShell(), JREMessages.getString("AddVMDialog.0"), getURL()); //$NON-NLS-1$
+		String name = getVMName();
+		if (name.trim().length() == 0) {
+			name = JREMessages.getString("AddVMDialog.0");  //$NON-NLS-1$
+		}
+		URL[] urls= BuildPathDialogAccess.configureJavadocLocation(getShell(), name, getURL());
 
 		if (urls != null) {
 			if (urls[0] == null) {
