@@ -5,9 +5,6 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
  
-import java.util.HashMap;
-import java.util.Iterator;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -16,13 +13,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -222,7 +218,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	public void shutdown() throws CoreException {
 		JDIDebugModel.removeHotCodeReplaceListener(fHCRListener);
-		JavaModelManager.getJavaModelManager().removeElementChangedListener(fJavaModelListener);
+		JavaCore.removeElementChangedListener(fJavaModelListener);
 		JavaDebugOptionsManager.getDefault().shutdown();
 		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();
@@ -251,7 +247,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	
 	private void initializeJavaModelListener() {
 		fJavaModelListener= new JavaModelListener();
-		JavaModelManager.getJavaModelManager().addElementChangedListener(fJavaModelListener);
+		JavaCore.addElementChangedListener(fJavaModelListener);
 	}
 	
 	private void initializeImageRegistry() {
