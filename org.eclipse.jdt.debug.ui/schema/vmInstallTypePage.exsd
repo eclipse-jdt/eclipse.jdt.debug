@@ -2,14 +2,14 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.jdt.debug.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.jdt.debug.ui" id="vmInstallTypePage" name="VM Install Type UI Page"/>
-   </appInfo>
-   <documentation>
-      This extension point provides a mechanism for contributing UI that will appear in the JRE tab of the launch configuration dialog.
+      <appInfo>
+         <meta.schema plugin="org.eclipse.jdt.debug.ui" id="vmInstallTypePage" name="VM Install Type UI Page"/>
+      </appInfo>
+      <documentation>
+         This extension point provides a mechanism for contributing UI that will appear in the JRE tab of the launch configuration dialog.
 The UI is shown only when a VM of the specified install type is selected in the JRE tab.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -33,7 +33,7 @@ The UI is shown only when a VM of the specified install type is selected in the 
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -78,11 +78,11 @@ The UI is shown only when a VM of the specified install type is selected in the 
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.jdt.debug.ui.vmInstallTypePage"&gt;
+ &lt;extension point=&quot;org.eclipse.jdt.debug.ui.vmInstallTypePage&quot;&gt;
   &lt;vmInstallTypePage
-   id="com.example.ExampleVMInstallTypePage"
-   vmInstallTypeID="com.example.ExampleVMInstallTypeIdentifier"
-   class="com.example.ExampleVMInstallTypePage"&gt;
+   id=&quot;com.example.ExampleVMInstallTypePage&quot;
+   vmInstallTypeID=&quot;com.example.ExampleVMInstallTypeIdentifier&quot;
+   class=&quot;com.example.ExampleVMInstallTypePage&quot;&gt;
   &lt;/vmInstallTypePage&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
@@ -108,7 +108,7 @@ whenever the currently selected JRE has a VM Install type identifier of &lt;samp
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         
       </documentation>
    </annotation>
 
