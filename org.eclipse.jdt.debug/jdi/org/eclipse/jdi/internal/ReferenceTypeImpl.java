@@ -1453,7 +1453,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				exception= e;
 			}
 		}
-		if (!hasLineInformation) {
+		if (!hasLineInformation && exception != null) {
 			throw exception;
 		}
 		return locations;
