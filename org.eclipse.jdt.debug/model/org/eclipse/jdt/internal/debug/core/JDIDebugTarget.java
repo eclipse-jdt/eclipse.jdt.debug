@@ -1095,12 +1095,22 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			}
 		}
 	}
-	
+
 	/**
 	 * A watchpoint has been added.
 	 * Create or update the request.
 	 */
 	protected void watchpointAdded(IMarker breakpoint) {
+		selectiveWatchpointAdded(breakpoint, true, true);
+
+	}
+
+	/**
+	 * A single watchpoint can create multiple requests. This method provides control over this
+	 * property for explicitly choosing which requests (access, modification, or both) to 
+	 * potentially add.
+	 */	
+	protected void selectiveWatchpointAdded(IMarker breakpoint, boolean accessCheck, boolean modificationCheck) {
 		String topLevelName= getTopLevelTypeName(breakpoint);
 		if (topLevelName == null) {
 			internalError(ERROR_BREAKPOINT_NO_TYPE);
@@ -1124,8 +1134,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				return;
 			}
 			AccessWatchpointRequest accessRequest= null;
-			ModificationWatchpointRequest modificationRequest= null;
-			if (DebugJavaUtils.isAccess(breakpoint)) {
+			ModificationWatchpointRequest modificationRequest= null;			
+			// If we're not supposed to check access or modification, just retrieve the
+			// existing request
+			if (!accessCheck) {
+				accessRequest= getAccessWatchpointRequest(field);
+			}
+			if (!modificationCheck) {
+				modificationRequest= getModificationWatchpointRequest(field);
+			}
+			if (DebugJavaUtils.isAccess(breakpoint) && accessCheck) {
 				if (getVM().canWatchFieldAccess()) {
 					accessRequest= accessWatchpointAdded(breakpoint, field);
 				} else {
@@ -1136,7 +1154,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 					}
 				}
 			}
-			if (DebugJavaUtils.isModification(breakpoint)) {
+			if (DebugJavaUtils.isModification(breakpoint) && modificationCheck) {
 				if (getVM().canWatchFieldModification()) {
 					modificationRequest= modificationWatchpointAdded(breakpoint, field);
 				} else {
@@ -1354,6 +1372,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		for (int i=0; i < requests.length; i++) {
 			WatchpointRequest request= (WatchpointRequest)requests[i];
 			if (request == null) {
+				if ((i == 0) && DebugJavaUtils.isAccess(breakpoint)) {
+					selectiveWatchpointAdded(breakpoint, true, false);
+				}
+				if ((i == 1) && DebugJavaUtils.isModification(breakpoint)) {
+					selectiveWatchpointAdded(breakpoint, false, true);
+				}
 				continue;
 			}
 			if ((!DebugJavaUtils.isAccess(breakpoint) && (request instanceof AccessWatchpointRequest)) ||
