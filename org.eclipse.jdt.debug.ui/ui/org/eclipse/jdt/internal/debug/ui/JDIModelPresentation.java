@@ -544,41 +544,41 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return null;
 		}
 		String valueString= value.getValueString();
-		int intValue= 0;	
+		long longValue;
+		try {
+			longValue= Long.parseLong(valueString);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 		switch (sig.charAt(0)) {
 			case 'B' : // byte
-				intValue= Integer.parseInt(valueString);
-				intValue= intValue & 0xFF; // Only lower 8 bits
+				longValue= longValue & 0xFF; // Only lower 8 bits
 				break;
 			case 'I' : // int
-				intValue= Integer.parseInt(valueString);
-				if (intValue > 255 || intValue < 0) {
+				longValue= longValue & 0xFFFFFFFF; // Only lower 32 bits
+				if (longValue > 0xFFFF || longValue < 0) {
 					return null;
 				}
 				break;
 			case 'S' : // short
-				intValue= Integer.parseInt(valueString);
-				if (intValue > 255 || intValue < 0) {
-					return null;
-				}
+				longValue= longValue & 0xFFFF; // Only lower 16 bits
 				break;
 			case 'J' :
-				long longValue= Long.parseLong(valueString);
-				if (longValue > 255 || longValue < 0) {
+				if (longValue > 0xFFFF || longValue < 0) {
 					// Out of character range
 					return null;
 				}
-				intValue= (int) longValue;
 				break;
 			default :
 				return null;
 		}
+		char charValue= (char)longValue;
 		StringBuffer charText = new StringBuffer();
-		if (Character.getType((char) intValue) == Character.CONTROL) {
-			Character ctrl = new Character((char) (intValue + 64));
+		if (Character.getType(charValue) == Character.CONTROL) {
+			Character ctrl = new Character((char) (charValue + 64));
 			charText.append('^'); //$NON-NLS-1$
 			charText.append(ctrl);
-			switch (intValue) { // common use
+			switch (charValue) { // common use
 				case 0: charText.append(" (NUL)"); break; //$NON-NLS-1$
 				case 8: charText.append(" (BS)"); break; //$NON-NLS-1$
 				case 9: charText.append(" (TAB)"); break; //$NON-NLS-1$
@@ -589,7 +589,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				case 127: charText.append(" (DEL)"); break; //$NON-NLS-1$
 			}
 		} else {
-			charText.append(new Character((char)intValue));
+			charText.append(new Character(charValue));
 		}
 		return charText.toString();
 	}
@@ -1119,7 +1119,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 		switch (sig.charAt(0)) {
 			case 'B' : // byte
-				int byteVal= Integer.parseInt(value.getValueString());
+				int byteVal;
+				try {
+					byteVal= Integer.parseInt(value.getValueString());
+				} catch (NumberFormatException e) {
+					return null;
+				}
 				if (byteVal < 0) {
 					byteVal = byteVal & 0xFF;
 					return Integer.toString(byteVal);					
@@ -1136,27 +1141,34 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 
 		StringBuffer buff= new StringBuffer();
-		int intValue= Integer.parseInt(value.getValueString());
+		long longValue;
+		try {
+			longValue= Long.parseLong(value.getValueString());
+		} catch (NumberFormatException e) {
+			return null;
+		}
 		switch (sig.charAt(0)) {
 			case 'B' :
 				buff.append("0x"); //$NON-NLS-1$
-				int byteVal = intValue;
-				byteVal = byteVal & 0xFF;
-				buff.append(Integer.toHexString(byteVal));
+				// keep only the relevant bits for byte
+				longValue &= 0xFF;
+				buff.append(Long.toHexString(longValue));
 				break;
 			case 'I' :
 				buff.append("0x"); //$NON-NLS-1$
-				buff.append(Integer.toHexString(intValue));
+				// keep only the relevant bits for int
+				longValue &= 0xFFFFFFFFl;
+				buff.append(Long.toHexString(longValue));
 				break;			
 			case 'S' :
 				buff.append("0x"); //$NON-NLS-1$
-				int shortVal = intValue;
-				shortVal = shortVal & 0xFFFF;
-				buff.append(Integer.toHexString(shortVal));
+				// keep only the relevant bits for short
+				longValue = longValue & 0xFFFF;
+				buff.append(Long.toHexString(longValue));
 				break;
 			case 'J' :
 				buff.append("0x"); //$NON-NLS-1$
-				buff.append(Long.toHexString(Long.parseLong(value.getValueString())));
+				buff.append(Long.toHexString(longValue));
 				break;
 			case 'C' :
 				buff.append("\\u"); //$NON-NLS-1$
