@@ -141,7 +141,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 	
 	/**
-	 * Finds the currently selected stack frame in the UI
+	 * Finds the currently selected stack frame in the UI.
+	 * Stack frames from a scrapbook launch are ignored.
 	 */
 	protected IStackFrame getStackFrameContext() {
 		IAdaptable context = DebugUITools.getDebugContext();
