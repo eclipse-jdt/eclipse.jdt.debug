@@ -375,7 +375,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 				// update preserved frames
 				if (offset < fStackFrames.size()) {
-					updateStackFrames(frames, offset, fStackFrames, length);
+					updateStackFrames(frames, offset, length);
 				}
 			}
 			fRefreshChildren = false;
@@ -1295,13 +1295,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 *  the <code>oldFrames</code> list.
 	 * @param offset the offset in the lists at which to start replacing
 	 *  the old underlying frames
-	 * @param oldFrames list of preserved frames, of type <code>JDIStackFrame</code>
 	 * @param length the number of frames to replace
 	 */
-	protected void updateStackFrames(List newFrames, int offset, List oldFrames, int length) throws DebugException {
+	protected void updateStackFrames(List newFrames, int offset, int length) throws DebugException {
+		JDIStackFrame oldFrame;
+		StackFrame newFrame;
 		for (int i= 0; i < length; i++) {
-			JDIStackFrame frame= (JDIStackFrame) oldFrames.get(offset);
-			frame.setUnderlyingStackFrame((StackFrame) newFrames.get(offset));
+			oldFrame= (JDIStackFrame) fStackFrames.get(offset);
+			newFrame= (StackFrame) newFrames.get(offset);
+			if (oldFrame.getLastMethod() != null && oldFrame.getLastMethod().equals(newFrame.location().method())) {
+				oldFrame.setUnderlyingStackFrame(newFrame);
+			} else {
+				fStackFrames.set(offset, new JDIStackFrame(this, newFrame));
+			}
 			offset++;
 		}
 	}

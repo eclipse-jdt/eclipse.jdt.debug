@@ -46,9 +46,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	private StackFrame fStackFrame;
 	/**
-	 * The last (previous) underlying stack frame.
+	 * The last (previous) underlying method.
 	 */
-	private StackFrame fLastStackFrame;
+	private Method fLastMethod;
 	/**
 	 * Containing thread.
 	 */
@@ -926,15 +926,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 	
 	/**
-	 * The underlying stack frame that existed before the current underlying
-	 * stack frame.  Used only so that equality can be checked on stack frame
-	 * after the new one has been set.
-	 */
-	protected StackFrame getLastUnderlyingStackFrame() {
-		return fLastStackFrame;
-	}
-	
-	/**
 	 * Sets the underlying JDI StackFrame. Called by a thread
 	 * when incrementally updating after a step has completed.
 	 * 
@@ -942,15 +933,16 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	protected void setUnderlyingStackFrame(StackFrame frame) {
 		if (frame != null) {
-			if (fLastStackFrame != null && !equalFrame(fLastStackFrame, frame)) {
+			fMethod= frame.location().method();
+			if (fLastMethod != null && !fLastMethod.equals(fMethod)) {
 				clearCachedData();
 			}
-			fLastStackFrame = frame;
+			fLastMethod= fMethod;
 		} else {
-			if (fStackFrame != null) {
-				// only set the last stack frame if the current frame is not null:
-				//     * last stack frame should never be null
-				fLastStackFrame = fStackFrame;
+			if (fMethod != null) {
+				// only set the last method if the current method is not null:
+				//     * last method should never be null
+				fLastMethod = fMethod;
 			}
 		}
 		fStackFrame = frame;
@@ -958,15 +950,12 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 	
 	/**
-	 * Helper method for computeStackFrames(). For the purposes of detecting if
-	 * an underlying stack frame needs to be disposed, stack frames are equal if
-	 * the frames are equal and the locations are equal.
+	 * The underlying method that existed before the current underlying
+	 * method.  Used only so that equality can be checked on stack frame
+	 * after the new one has been set.
 	 */
-	protected static boolean equalFrame(StackFrame frameOne, StackFrame frameTwo) {
-		if (frameOne.thread().equals(frameTwo.thread()) &&  frameOne.location().method().equals(frameTwo.location().method())) {
-			return true;
-		}
-		return false;
+	protected Method getLastMethod() {
+		return fLastMethod;
 	}
 
 	protected void setThread(JDIThread thread) {
