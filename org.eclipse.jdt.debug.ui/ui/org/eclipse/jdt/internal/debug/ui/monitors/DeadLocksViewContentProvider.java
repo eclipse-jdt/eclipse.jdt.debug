@@ -151,7 +151,7 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 			
 			for (int i = 0; i < numDeadLocks; i++) {
 				//all the root elements are ContentThreadWrapper
-				ContentThreadWrapper rootWrapper = new ContentThreadWrapper(null, manager.getStartThread(i));
+				ContentThreadWrapper rootWrapper = new ContentThreadWrapper(manager.getStartThread(i), null);
 				List deadlockList = manager.getDeadlockList(i);
 				Map tree= new HashMap(deadlockList.size());
 				tree.put(rootWrapper, rootWrapper);
@@ -165,6 +165,7 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 	protected void buildDeadlockTree(ContentThreadWrapper ctw, Map tree, Object parent, List deadlockList) {
 		Object next;
 		Object object;
+		Object inTree;
 		List childFinder= new ArrayList(deadlockList.size());
 		for (int j= 1; j < deadlockList.size(); j++) {
 			next= deadlockList.get(j);
@@ -177,22 +178,11 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 			if (j == 1) {
 				ctw.fChild= object;
 			}
-			Object inTree= tree.get(object);
-			if (inTree != null) {
-				if (inTree instanceof ContentThreadWrapper) {
-					((ContentThreadWrapper)inTree).caughtInADeadLock= true;
-					((ContentThreadWrapper)object).caughtInADeadLock= true;
-					List threadsInDeadlock= new ArrayList(2);
-					threadsInDeadlock.add(inTree);
-					threadsInDeadlock.add(object);
-					tree.put(object, threadsInDeadlock);
-				} else if (inTree instanceof ContentMonitorWrapper) {
-				} else {
-					List threadsInDeadlock= (List)inTree;
-					((ContentThreadWrapper)object).caughtInADeadLock= true;
-					threadsInDeadlock.add(object);
-				}
-			} else {
+			inTree= tree.get(object);
+			if (inTree instanceof ContentThreadWrapper) {
+				((ContentThreadWrapper)inTree).caughtInADeadLock= true;
+				((ContentThreadWrapper)object).caughtInADeadLock= true;
+			} else if (inTree == null){
 				tree.put(object, object);
 			}
 			parent= object;
