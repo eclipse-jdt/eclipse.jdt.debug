@@ -161,11 +161,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 			return;
 		}
 		IJavaProject project = (IJavaProject)JavaCore.create(res);
-		IProject pj = null;
-		if (project != null) {
-			pj = project.getProject();
-		}
-		if (project == null || !pj.exists() || !pj.isOpen() || !project.exists()) {
+		if (project == null || !project.getProject().isOpen() || !project.exists()) {
 			// add project entry and return
 			expandedPath.add(projectEntry);
 			return;

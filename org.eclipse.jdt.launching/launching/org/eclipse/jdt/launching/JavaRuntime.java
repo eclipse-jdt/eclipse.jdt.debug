@@ -796,7 +796,7 @@ public final class JavaRuntime {
 				if (resource instanceof IProject) {
 					IProject p = (IProject)resource;
 					IJavaProject project = JavaCore.create(p);
-					if (project == null || !p.exists() || !p.isOpen() || !project.exists()) { 
+					if (project == null || !p.isOpen() || !project.exists()) { 
 						return new IRuntimeClasspathEntry[0];
 					}
 					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty());
@@ -966,7 +966,7 @@ public final class JavaRuntime {
 				if (resource instanceof IProject) {
 					IProject p = (IProject)resource;
 					IJavaProject jp = JavaCore.create(p);
-					if (jp != null && p.exists() && p.isOpen() && jp.exists()) {
+					if (jp != null && p.isOpen() && jp.exists()) {
 						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp, entry.getClasspathProperty());
 						if (entries != null) {
 							return entries;
