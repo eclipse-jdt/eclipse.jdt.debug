@@ -12,11 +12,6 @@ import org.eclipse.debug.core.DebugException;
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see IJavaValue
  * @since 2.0
  */
@@ -25,9 +20,10 @@ public interface IJavaClassType  extends IJavaType {
 	/**
 	 * Returns a new instance of this class by invoking the
 	 * constructor with the given signature and arguments in
-	 * the specified thread. The thread is resumed to perform the
-	 * method invocation, and this method does not return until the
-	 * method invocation is complete. Resuming the specified thread
+	 * the specified thread. The given thread is resumed to perform this
+	 * method invocation and suspends in its original location when
+	 * this method invocation is complete. This method does not return
+	 * until the method invocation is complete. Resuming the specified thread
 	 * can result in breakpoints being hit, infinite loops, and deadlock.
 	 * 
 	 * @param signature the JNI style signature of the method to be invoked
@@ -40,7 +36,7 @@ public interface IJavaClassType  extends IJavaType {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 * <li>This type does not implement the specified constructor</li>
-	 * <li>An exception occurs while invoking the specified method</li>
+	 * <li>An exception occurs while invoking the specified constructor</li>
 	 * </ul>
 	 */
 	public IJavaObject newInstance(String signature, IJavaValue[] args, IJavaThread thread) throws DebugException;	
@@ -48,8 +44,9 @@ public interface IJavaClassType  extends IJavaType {
 	/**
 	 * Returns the result of sending the specified message to this class
 	 * with the given arguments in the specified thread (invokes a static
-	 * method on this type). The given thread is resumed to perform the
-	 * method invocation, and this method does not return until the
+	 * method on this type). The given thread is resumed to perform this
+	 * method invocation and suspends in its original location when this
+	 * method invocation is complete. This method does not return until the
 	 * method invocation is complete. Resuming the specified thread can
 	 * result in breakpoints being hit, infinite loops, and deadlock.
 	 * 
@@ -75,7 +72,7 @@ public interface IJavaClassType  extends IJavaType {
 	 * field with the given name, or the name is ambiguous.
 	 * 
 	 * @param name field name
-	 * @return the variable representing the static field, or <code>null</code>
+	 * @return the variable representing a static field, or <code>null</code>
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for

@@ -43,6 +43,7 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -948,11 +949,18 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	protected IJavaObject newInstance(String className) throws DebugException {
 		IJavaObject object = null;
 		IJavaClassType clazz = null;
-		clazz = (IJavaClassType)getDebugTarget().getJavaType(className);
+		IJavaType[] types = getDebugTarget().getJavaTypes(className);
+		if (types != null && types.length > 0) {
+			clazz = (IJavaClassType)types[0];
+		}
 		if (clazz == null) {
 			// The class is not loaded on the target VM.
 			// Force the load of the class.
-			IJavaClassType classClass = (IJavaClassType)getDebugTarget().getJavaType("java.lang.Class"); //$NON-NLS-1$
+			types = getDebugTarget().getJavaTypes("java.lang.Class"); //$NON-NLS-1$
+			IJavaClassType classClass = null;
+			if (types != null && types.length > 0) {
+				classClass = (IJavaClassType)types[0]; 
+			}
 			if (classClass == null) {
 				// unable to load the class
 				throw new DebugException(

@@ -113,9 +113,13 @@ public class EvaluationVM extends EvaluationElement implements IVirtualMachine {
 	 * @see IVirtualMachine#classesByName(String)
 	 */
 	public IType[] classesByName(String qualifiedName) throws CoreException {
-		IJavaType type = getJavaDebugTarget().getJavaType(qualifiedName);
-		if (type != null) {
-			return new IType[] {EvaluationType.createType(type)};
+		IJavaType[] types = getJavaDebugTarget().getJavaTypes(qualifiedName);
+		if (types != null) {
+			IType[] theTypes = new IType[types.length];
+			for (int i = 0; i < types.length; i++) {
+				theTypes[i] = EvaluationType.createType(types[i]);
+			}
+			return theTypes;
 		}
 		return new IType[0];
 	}

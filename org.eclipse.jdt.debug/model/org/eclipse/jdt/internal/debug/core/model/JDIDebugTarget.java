@@ -38,6 +38,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
@@ -1343,11 +1344,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	/**
 	 * @see IJavaDebugTarget#findVariable(String)
 	 */
-	public IVariable findVariable(String varName) throws DebugException {
+	public IJavaVariable findVariable(String varName) throws DebugException {
 		IThread[] threads = getThreads();
 		for (int i = 0; i < threads.length; i++) {
 			JDIThread thread = (JDIThread)threads[i];
-			IVariable var = thread.findVariable(varName);
+			IJavaVariable var = thread.findVariable(varName);
 			if (var != null) {
 				return var;
 			}
@@ -1423,17 +1424,20 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 
 	/**
-	 * @see IJavaDebugTarget.getJavaType(Sting)
+	 * @see IJavaDebugTarget#getJavaTypes(String)
 	 */
-	public IJavaType getJavaType(String name) throws DebugException {
+	public IJavaType[] getJavaTypes(String name) throws DebugException {
 		try {
 			// get java.lang.Class
 			List classes = getVM().classesByName(name);
 			if (classes.size() == 0) {
 				return null;
 			} else {
-				Type type = (Type)classes.get(0);
-				return JDIType.createType(this, type);
+				IJavaType[] types = new IJavaType[classes.size()];
+				for (int i = 0; i < types.length; i++) {
+					types[i] = JDIType.createType(this, (Type)classes.get(i));
+				}
+				return types;
 			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving class for name {1}", new String[]{e.toString(), name}), e); //$NON-NLS-1$

@@ -240,7 +240,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
-	IVariable findVariable(String variableName) throws DebugException;
+	IJavaVariable findVariable(String variableName) throws DebugException;
 	
 	/**
 	 * Returns the unqualified name of the source file this stack frame is associated 

@@ -540,7 +540,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#findVariable(String)
 	 */
-	public IVariable findVariable(String varName) throws DebugException {
+	public IJavaVariable findVariable(String varName) throws DebugException {
 		if (isNative()) {
 			return null;
 		}
@@ -548,7 +548,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		JDIThisVariable thisVariable= null;
 		Iterator iterator= variables.iterator();
 		while (iterator.hasNext()) {
-			IVariable var = (IVariable) iterator.next();
+			IJavaVariable var = (IJavaVariable) iterator.next();
 			if (var.getName().equals(varName)) {
 				return var;
 			}
@@ -561,7 +561,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (thisVariable != null) {
 			Iterator thisChildren = ((JDIValue)thisVariable.getValue()).getVariables0().iterator();
 			while (thisChildren.hasNext()) {
-				IVariable var= (IVariable) thisChildren.next();
+				IJavaVariable var= (IJavaVariable) thisChildren.next();
 				if (var.getName().equals(varName)) {
 					return var;
 				}

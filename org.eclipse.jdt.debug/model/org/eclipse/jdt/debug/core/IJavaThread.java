@@ -107,7 +107,7 @@ public interface IJavaThread extends IThread {
 	 * the failure.</li>
 	 * </ul>
 	 */
-	IVariable findVariable(String variableName) throws DebugException;
+	IJavaVariable findVariable(String variableName) throws DebugException;
 	
 	/**
 	 * Invokes the given evaluation with the specfied progress

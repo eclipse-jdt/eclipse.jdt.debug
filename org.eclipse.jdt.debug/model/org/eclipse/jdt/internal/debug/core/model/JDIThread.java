@@ -22,6 +22,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.StringMatcher;
@@ -1329,12 +1330,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see IJavaThread#findVariable(String)
 	 */
-	public IVariable findVariable(String varName) throws DebugException {
+	public IJavaVariable findVariable(String varName) throws DebugException {
 		if (isSuspended()) {
 			Iterator stackFrames= computeStackFrames().iterator();
 			while (stackFrames.hasNext()) {
 				JDIStackFrame sf= (JDIStackFrame)stackFrames.next();
-				IVariable var= sf.findVariable(varName);
+				IJavaVariable var= sf.findVariable(varName);
 				if (var != null) {
 					return var;
 				}
