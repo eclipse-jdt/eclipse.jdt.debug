@@ -107,13 +107,13 @@
             </separator>
          </menu>
          <action
-               definitionId="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleWatchpoint"
                label="%manageWatchpointAction.label"
                icon="icons/full/obj16/readwrite_obj.gif"
                helpContextId="manage_watchpoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.jdt.debug.ui.ManageWatchpointAction">
+               id="org.eclipse.jdt.debug.ui.actions.ToggleWatchpoint">
             <enablement>
                <or>
                   <objectClass
@@ -129,13 +129,13 @@
             </enablement>
          </action>
          <action
-               definitionId="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleMethodBreakpoint"
                label="%manageMethodBreakpointAction.label"
                icon="icons/full/obj16/brkpi_obj.gif"
                helpContextId="manage_method_breakpoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction">
+               id="org.eclipse.jdt.debug.ui.actions.ToggleMethodBreakpoint">
             <enablement>
                <or>
                   <objectClass
@@ -148,31 +148,31 @@
             </enablement>
          </action>
          <action
-               definitionId="org.eclipse.jdt.debug.ui.actionSet.AddException"
+               definitionId="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint"
                label="%exceptionAction.accel.label"
                icon="icons/full/clcl16/exc_catch.gif"
                helpContextId="add_exception_action_context"
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.jdt.debug.ui.actionSet.AddException">
+               id="org.eclipse.jdt.debug.ui.actions.AddExceptionBreakpoint">
          </action>
          <action
-               definitionId="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleBreakpoint"
                label="%ManageBreakpointAction.label"
                icon="icons/full/obj16/brkpi_obj.gif"
                helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.jdt.debug.ui.ManageBreakpointAction">
+               id="org.eclipse.jdt.debug.ui.actions.ToggleBreakpoint">
          </action>
          <action
-               definitionId="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
                label="%stepIntoSelectionAction.label"
                helpContextId="step_into_selection_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
                menubarPath="org.eclipse.ui.run/jdtGroup"
                enablesFor="*"
-               id="org.eclipse.jdt.debug.ui.StepIntoSelectionAction">
+               id="org.eclipse.jdt.debug.ui.actions.StepIntoSelection">
             <enablement>
                <and>
                   <systemProperty
@@ -186,10 +186,10 @@
             </enablement>
          </action>
          <action
-               id="org.eclipse.jdt.debug.ui.RunToLineAction"
+               id="org.eclipse.jdt.debug.ui.actions.RunToLine"
                hoverIcon="icons/full/clcl16/runtoline_co.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
-               definitionId="org.eclipse.jdt.debug.ui.RunToLineAction"
+               definitionId="org.eclipse.jdt.debug.ui.commands.RunToLine"
                disabledIcon="icons/full/dlcl16/runtoline_co.gif"
                icon="icons/full/elcl16/runtoline_co.gif"
                helpContextId="run_to_line_action_context"
@@ -208,10 +208,10 @@
             </enablement>
          </action>
          <action
-               id="org.eclipse.jdt.debug.ui.Execute"
+               id="org.eclipse.jdt.debug.ui.actions.Execute"
                hoverIcon="icons/full/ctool16/run_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-               definitionId="org.eclipse.jdt.debug.ui.Execute"
+               definitionId="org.eclipse.jdt.debug.ui.commands.Execute"
                disabledIcon="icons/full/dtool16/run_sbook.gif"
                enablesFor="+"
                icon="icons/full/etool16/run_sbook.gif"
@@ -237,10 +237,10 @@
             </enablement>
          </action>
          <action
-               id="org.eclipse.jdt.debug.ui.Display"
+               id="org.eclipse.jdt.debug.ui.actions.Display"
                hoverIcon="icons/full/ctool16/disp_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
-               definitionId="org.eclipse.jdt.debug.ui.Display"
+               definitionId="org.eclipse.jdt.debug.ui.commands.Display"
                disabledIcon="icons/full/dtool16/disp_sbook.gif"
                enablesFor="+"
                icon="icons/full/etool16/disp_sbook.gif"
@@ -266,10 +266,10 @@
             </enablement>
          </action>
          <action
-               id="org.eclipse.jdt.debug.ui.Inspect"
+               id="org.eclipse.jdt.debug.ui.actions.Inspect"
                hoverIcon="icons/full/ctool16/insp_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
-               definitionId="org.eclipse.jdt.debug.ui.Inspect"
+               definitionId="org.eclipse.jdt.debug.ui.commands.Inspect"
                disabledIcon="icons/full/dtool16/insp_sbook.gif"
                enablesFor="+"
                icon="icons/full/etool16/insp_sbook.gif"
@@ -1308,7 +1308,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
                menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.Execute">
+               id="org.eclipse.jdt.debug.ui.actions.Execute">
             <selection
                   class="org.eclipse.jface.text.ITextSelection">
             </selection>
@@ -1320,7 +1320,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.Display">
+               id="org.eclipse.jdt.debug.ui.actions.Display">
             <selection
                   class="org.eclipse.jface.text.ITextSelection">
             </selection>
@@ -1332,7 +1332,7 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="additions"
                enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.Inspect">
+               id="org.eclipse.jdt.debug.ui.actions.Inspect">
             <selection
                   class="org.eclipse.jface.text.ITextSelection">
             </selection>
@@ -2059,108 +2059,108 @@
             name="%ActionDefinition.manageWatchpoint.name"
             description="%ActionDefinition.manageWatchpoint.description"
             category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.ManageWatchpointAction">
+            id="org.eclipse.jdt.debug.ui.commands.ToggleWatchpoint">
       </command>
       <keyBinding
             string=""
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
+            command="org.eclipse.jdt.debug.ui.commands.ToggleWatchpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.manageMethodBreakpoint.name"
             description="%ActionDefinition.manageMethodBreakpoint.description"
             category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction">
+            id="org.eclipse.jdt.debug.ui.commands.ToggleMethodBreakpoint">
       </command>
       <keyBinding
             string=""
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
+            command="org.eclipse.jdt.debug.ui.commands.ToggleMethodBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.addException.name"
             description="%ActionDefinition.addException.description"
             category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.actionSet.AddException">
+            id="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint">
       </command>
       <keyBinding
             string=""
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.actionSet.AddException"
+            command="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.manageBreakpoint.name"
             description="%ActionDefinition.manageBreakpoint.description"
             category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.ManageBreakpointAction">
+            id="org.eclipse.jdt.debug.ui.commands.ToggleBreakpoint">
       </command>
       <keyBinding
             string="Ctrl+Shift+B"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
+            command="org.eclipse.jdt.debug.ui.commands.ToggleBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.stepIntoSelection.name"
             description="%ActionDefinition.stepIntoSelection.description"
             category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.StepIntoSelectionAction">
+            id="org.eclipse.jdt.debug.ui.commands.StepIntoSelection">
       </command>
       <keyBinding
             string="Ctrl+F5"
-            scope="org.eclipse.jdt.ui.javaEditorScope"
-            command="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
+            scope="org.eclipse.debug.ui.debugging"
+            command="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.runToLine.name"
             description="%ActionDefinition.runToLine.description"
             category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.RunToLineAction">
+            id="org.eclipse.jdt.debug.ui.commands.RunToLine">
       </command>
       <keyBinding
             string="Ctrl+R"
-            scope="org.eclipse.jdt.ui.javaEditorScope"
-            command="org.eclipse.jdt.debug.ui.RunToLineAction"
+            scope="org.eclipse.debug.ui.debugging"
+            command="org.eclipse.jdt.debug.ui.commands.RunToLine"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.execute.name"
             description="%ActionDefinition.execute.description"
             category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.Execute">
+            id="org.eclipse.jdt.debug.ui.commands.Execute">
       </command>
       <keyBinding
             string="Ctrl+U"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.Execute"
+            command="org.eclipse.jdt.debug.ui.commands.Execute"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.display.name"
             description="%ActionDefinition.display.description"
             category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.Display">
+            id="org.eclipse.jdt.debug.ui.commands.Display">
       </command>
       <keyBinding
             string="Ctrl+Shift+D"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.Display"
+            command="org.eclipse.jdt.debug.ui.commands.Display"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%ActionDefinition.inspect.name"
             description="%ActionDefinition.inspect.description"
             category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.Inspect">
+            id="org.eclipse.jdt.debug.ui.commands.Inspect">
       </command>
       <keyBinding
             string="Ctrl+Shift+I"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.Inspect"
+            command="org.eclipse.jdt.debug.ui.commands.Inspect"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
