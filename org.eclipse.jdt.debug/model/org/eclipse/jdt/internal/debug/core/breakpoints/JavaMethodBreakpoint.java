@@ -307,28 +307,15 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @see JavaBreakpoint#updateEnabledState(EventRequest)
 	 */
 	protected void updateEnabledState(EventRequest request) throws CoreException  {
-		boolean enabled = isEnabled();
+		boolean enabled= isEnabled();
 		if (request instanceof MethodEntryRequest) {
-			if (isEntry()) {
-				if (enabled != request.isEnabled()) {
-					internalUpdateEnabledState(request, enabled);
-				}
-			} else {
-				if (request.isEnabled()) {
-					internalUpdateEnabledState(request, false);
-				}
-			}
+			enabled= enabled && isEntry();
+		} else if (request instanceof MethodExitRequest) {
+			enabled= enabled && isExit();
 		}
-		if (request instanceof MethodExitRequest) {
-			if (isExit()) {
-				if (enabled != request.isEnabled()) {
-					internalUpdateEnabledState(request, enabled);
-				}
-			} else {
-				if (request.isEnabled()) {
-					internalUpdateEnabledState(request, false);
-				}
-			}
+		
+		if (enabled != request.isEnabled()) {
+			internalUpdateEnabledState(request, enabled);
 		}
 	}	
 	
