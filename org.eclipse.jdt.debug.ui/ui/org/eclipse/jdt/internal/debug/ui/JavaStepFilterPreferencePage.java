@@ -105,6 +105,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
+		layout.marginHeight=0;
+		layout.marginWidth=0;
 		composite.setLayout(layout);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
