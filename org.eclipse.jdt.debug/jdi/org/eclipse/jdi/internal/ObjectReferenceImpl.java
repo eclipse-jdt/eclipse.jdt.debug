@@ -48,6 +48,11 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	
 	/** ObjectID of object that corresponds to this reference. */
 	private JdwpObjectID fObjectID;
+	/**
+	 * Cached reference type. This value is safe for caching because
+	 * the type of an object never changes.
+	 */
+	private ReferenceType fReferenceType;
 	
 	/**
 	 * Creates new ObjectReferenceImpl.
@@ -415,12 +420,16 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns the ReferenceType that mirrors the type of this object.
 	 */
 	public ReferenceType referenceType() {
+		if (fReferenceType != null) {
+			return fReferenceType;
+		}
 		initJdwpRequest();
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.OR_REFERENCE_TYPE, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			return ReferenceTypeImpl.readWithTypeTag(this, replyData);
+			fReferenceType= ReferenceTypeImpl.readWithTypeTag(this, replyData);
+			return fReferenceType;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return null;
