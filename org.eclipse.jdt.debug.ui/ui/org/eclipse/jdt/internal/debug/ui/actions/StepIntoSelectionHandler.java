@@ -131,6 +131,11 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 						}
 					}
 				} else if (event.getKind() == DebugEvent.SUSPEND) {
+					// if not a step-end then abort
+					if (event.getDetail() != DebugEvent.STEP_END) {
+						cleanup();
+						return events;
+					}
 					// compare location to desired location
 					try {
 						final IJavaStackFrame frame = (IJavaStackFrame)getThread().getTopStackFrame();
