@@ -489,6 +489,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				return !suspendForEvent(event, thread);
 			}
 			fSuspendEvents.put(thread, event);
+            thread.setEvaluatingConditionalBreakpoint(true);
 			engine.evaluateExpression(expression, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
 	
 			// Do not resume. When the evaluation returns, the evaluation listener
@@ -557,6 +558,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	class EvaluationListener implements IEvaluationListener {
 		public void evaluationComplete(IEvaluationResult result) {
 			JDIThread thread= (JDIThread)result.getThread();
+            thread.setEvaluatingConditionalBreakpoint(false);
 			Event event= (Event)fSuspendEvents.get(thread);
 			if (result.hasErrors()) {
 				DebugException exception= result.getException();

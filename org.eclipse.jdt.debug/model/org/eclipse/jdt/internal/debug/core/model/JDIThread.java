@@ -180,6 +180,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Whether or not this thread is currently suspending (user-requested).
 	 */
 	private boolean fIsSuspending= false;
+    /**
+     * Whether or not this thread is currently evaluating an expression for a conditional breakpoint
+     */
+    private boolean fIsEvaluatingConditionalBreakpoint= false;
 
 	private ThreadJob fAsyncJob;
 	
@@ -951,7 +955,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
  	 * @see #newInstance(ClassType, Method, List)
 	 */
 	protected void invokeComplete(int restoreTimeout) {
-		abortStep();
+        if (!fIsEvaluatingConditionalBreakpoint) {
+            abortStep();
+        }
 		setInvokingMethod(false);
 		setRunning(false);
 		setRequestTimeout(restoreTimeout);
@@ -962,6 +968,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			logError(e);
 		}
 	}
+    
+    /**
+     * Sets whether or not this thread is currently evaluating a conditional
+     * breakpoint expression. This state is maintained as a workaround to problems
+     * that can occur related to the interaction of stepping and expression
+     * evaluation. See bug 81658 for more details.
+     * @param evaluating
+     */
+    public void setEvaluatingConditionalBreakpoint(boolean evaluating) {
+        fIsEvaluatingConditionalBreakpoint= evaluating;
+    }
 	
 	/**
 	 * @see IThread#getName()
