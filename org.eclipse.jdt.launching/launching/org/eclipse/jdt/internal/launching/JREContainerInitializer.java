@@ -65,6 +65,22 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	protected void handleResolutionError(IPath containerPath, IJavaProject project) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), JavaRuntime.ERR_UNABLE_TO_RESOLVE_JRE, 
 			MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.Unable_to_locate_JRE_named_{0}_to_build_project_{1}._1"), new String[] {containerPath.segment(2), project.getElementName()}), null); //$NON-NLS-1$
+			
+		// if there are no JREs to choose from there is no point in consulting the status handler
+		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
+		if (types.length == 0) {
+			throw new CoreException(status);
+		}
+		int count = 0;
+		for (int i = 0; i < types.length; i++) {
+			IVMInstallType type = types[i];
+			IVMInstall[] installs = type.getVMInstalls();
+			count += installs.length;
+		}
+		if (count == 0) {
+			throw new CoreException(status);
+		}
+		
 		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 		IVMInstall vm = null;
 		if (handler != null) {

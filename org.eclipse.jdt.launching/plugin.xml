@@ -114,4 +114,9 @@
 		attribute = "org.eclipse.jdt.launching.SOURCE_PATH"/>		
 </extension>
 
+<extension point = "org.eclipse.core.resources.markers" id = "noDefaultJRE">
+	<super type = "org.eclipse.core.resources.problemmarker"/>
+	<persistent value = "true"/>
+</extension>
+
 </plugin>
