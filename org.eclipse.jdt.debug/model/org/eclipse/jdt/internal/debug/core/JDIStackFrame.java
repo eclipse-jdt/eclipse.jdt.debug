@@ -446,7 +446,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		} catch (DebugException e) {
 			logError(e);
 		} catch (UnsupportedOperationException e) {
-			logError(e);
+			// drop to frame not supported - this is an expected
+			// exception for VMs that do not support drop to frame
+			return false;
 		} catch (RuntimeException e) {
 			internalError(e);
 		}
