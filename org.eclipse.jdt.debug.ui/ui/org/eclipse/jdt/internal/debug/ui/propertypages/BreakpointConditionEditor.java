@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.propertypages;
 
 import java.util.Collections;
 import java.util.List;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClassFile;
@@ -26,7 +25,6 @@ import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaTextTools;
-import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultUndoManager;
@@ -53,9 +51,6 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 
-/**
- * 
- */
 public class BreakpointConditionEditor {
 	
 	private JDISourceViewer fViewer;
@@ -177,7 +172,7 @@ public class BreakpointConditionEditor {
 	}
 
 	/**
-	 * @see FieldEditor#refreshValidState()
+	 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
 	 */
 	protected void refreshValidState() {
 		// the value is valid if the field is not editable, or if the value is not empty
