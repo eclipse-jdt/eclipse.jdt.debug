@@ -109,6 +109,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("VariableChanges");		
 		createLaunchConfiguration("DefPkgReturnType");
 		createLaunchConfiguration("InstanceFilterObject");
+		createLaunchConfiguration("org.eclipse.debug.tests.targets.CallStack");
 	}
 	
 	/**
