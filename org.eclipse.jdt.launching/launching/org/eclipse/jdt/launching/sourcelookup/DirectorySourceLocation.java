@@ -4,20 +4,15 @@ package org.eclipse.jdt.launching.sourcelookup;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.text.MessageFormat;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.StringWriter;
+import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -26,6 +21,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -137,23 +133,16 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	public String getMemento() throws CoreException {
 		Document doc = new DocumentImpl();
 		Element node = doc.createElement("directorySourceLocation"); //$NON-NLS-1$
+		doc.appendChild(node);
 		node.setAttribute("path", getDirectory().getAbsolutePath()); //$NON-NLS-1$
 		
-		// produce a String output
-		StringWriter writer = new StringWriter();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				writer,
-				format);
-		
 		try {
-			serializer.asDOMSerializer().serialize(node);
+			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
 			abort(MessageFormat.format(LaunchingMessages.getString("DirectorySourceLocation.Unable_to_create_memento_for_directory_source_location_{0}_1"), new String[] {getDirectory().getAbsolutePath()}), e); //$NON-NLS-1$
 		}
-		return writer.toString();
+		// execution will not reach here
+		return null;
 	}
 
 	/**

@@ -5,6 +5,14 @@ package org.eclipse.jdt.internal.launching;
  * All Rights Reserved.
  */
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,6 +34,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.w3c.dom.Document;
 
 /**
  * This class contains a number of static helper methods useful for the 'local java' delegate.
@@ -163,5 +172,25 @@ public class JavaLaunchConfigurationUtils {
 	private static IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
-	
+
+	/**
+	 * Serializes a XML document into a string - encoded in UTF8 format,
+	 * with platform line separators.
+	 * 
+	 * @param doc document to serialize
+	 * @return the document as a string
+	 */
+	public static String serializeDocument(Document doc) throws IOException {
+		ByteArrayOutputStream s= new ByteArrayOutputStream();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		format.setLineSeparator(System.getProperty("line.separator"));  //$NON-NLS-1$
+		
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				new OutputStreamWriter(s, "UTF8"), //$NON-NLS-1$
+				format);
+		serializer.asDOMSerializer().serialize(doc);
+		return s.toString("UTF8"); //$NON-NLS-1$		
+	}	
 }

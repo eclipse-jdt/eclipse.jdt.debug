@@ -5,6 +5,14 @@ package org.eclipse.jdt.launching;
  * All Rights Reserved.
  */
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,27 +20,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -55,6 +47,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.ListenerList;
@@ -1072,16 +1065,17 @@ public final class JavaRuntime {
 		IPath stateFile= stateLocation.append("vmConfiguration.xml"); //$NON-NLS-1$
 		File f= new File(stateFile.toOSString());
 		try {
-			OutputStream stream= new BufferedOutputStream(new FileOutputStream(f));
-			Writer writer= new OutputStreamWriter(stream);
-			writeVMs(writer);
+			String xml = getVMsAsXML();
+			FileOutputStream stream = new FileOutputStream(f);
+			stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+			stream.close();			
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.ioExceptionOccurred"), e)); //$NON-NLS-1$
 		}
 		
 	}
 	
-	private static void writeVMs(Writer writer) throws IOException {
+	private static String getVMsAsXML() throws IOException {
 		Document doc = new DocumentImpl();
 		Element config = doc.createElement("vmSettings"); //$NON-NLS-1$
 		if (fgDefaultVMId != null) {
@@ -1099,15 +1093,7 @@ public final class JavaRuntime {
 			config.appendChild(vmTypeElement);
 		}
 
-
-
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				writer,
-				format);
-		serializer.asDOMSerializer().serialize(doc);
+		return JavaLaunchConfigurationUtils.serializeDocument(doc);
 	}
 	
 	private static Element vmTypeAsElement(Document doc, IVMInstallType vmType) {

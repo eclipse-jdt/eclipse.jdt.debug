@@ -7,17 +7,12 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -27,7 +22,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -259,6 +253,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		
 		Document doc = new DocumentImpl();
 		Element node = doc.createElement("runtimeClasspathEntry"); //$NON-NLS-1$
+		doc.appendChild(node);
 		node.setAttribute("type", (new Integer(getType())).toString()); //$NON-NLS-1$
 		node.setAttribute("path", (new Integer(getClasspathProperty())).toString()); //$NON-NLS-1$
 		switch (getType()) {
@@ -285,23 +280,12 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			node.setAttribute("sourceRootPath", getSourceAttachmentRootPath().toString()); //$NON-NLS-1$
 		}
 		
-		// produce a String output
-		StringWriter writer = new StringWriter();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				writer,
-				format);
-		
 		try {
-			serializer.asDOMSerializer().serialize(node);
+			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.getString("RuntimeClasspathEntry.An_exception_occurred_generating_runtime_classpath_memento_8"), e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
-		return writer.toString();
-				
 	}
 
 	/**
