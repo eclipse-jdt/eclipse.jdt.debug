@@ -77,6 +77,11 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 		boolArg.setValue(true);
 		arguments.put(boolArg.name(), boolArg);
 
+		// Quote
+		strArg = new StringArgumentImpl("quote", ConnectMessages.getString("SocketLaunchingConnectorImpl.Character_used_to_combine_space-delimited_text_into_a_single_command_line_argument_9"), ConnectMessages.getString("SocketLaunchingConnectorImpl.Quote_10"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		strArg.setValue("\""); //$NON-NLS-1$
+		arguments.put(strArg.name(), strArg);
+
 		// Launcher
 		strArg = new StringArgumentImpl("vmexec", ConnectMessages.getString("SocketLaunchingConnectorImpl.Name_of_the_Java_VM_launcher_11"), ConnectMessages.getString("SocketLaunchingConnectorImpl.Launcher_12"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		strArg.setValue("java"); //$NON-NLS-1$
@@ -113,6 +118,8 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 		 	fMain = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		 	attribute = "suspend"; //$NON-NLS-1$
 		 	fSuspend = ((Connector.BooleanArgument)connectionArgs.get(attribute)).booleanValue();
+		 	attribute = "quote"; //$NON-NLS-1$
+		 	((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		 	attribute = "vmexec"; //$NON-NLS-1$
 		 	fLauncher = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		} catch (ClassCastException e) {
