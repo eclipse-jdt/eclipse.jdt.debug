@@ -86,7 +86,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	/**
 	 * Performs the evaluations.
 	 */
-	static class EvaluationBlock implements IEvaluationListener {
+	private class EvaluationBlock implements IEvaluationListener {
 		
 		private IJavaObject fEvaluationValue;
 		private IJavaReferenceType fEvaluationType;
@@ -115,12 +115,8 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			ICompiledExpression compiledExpression= fEvaluationEngine.getCompiledExpression(snippet, fEvaluationType);
 			if (compiledExpression.hasErrors()) {
 				String[] errorMessages = compiledExpression.getErrorMessages();
-				StringBuffer log= new StringBuffer();
-				for (int i = 0; i < errorMessages.length; i++) {
-					log.append(errorMessages[i]).append('\n');
-				}
-				JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, log.toString(),null));
-				return new JavaStructureErrorValue(LogicalStructuresMessages.getString("JavaLogicalStructure.0")); //$NON-NLS-1$
+                log(errorMessages);
+				return new JavaStructureErrorValue(errorMessages, (IJavaDebugTarget) fThread.getDebugTarget());
 			}
 			fResult= null;
 			fEvaluationEngine.evaluateExpression(compiledExpression, fEvaluationValue, fThread, this, DebugEvent.EVALUATION_IMPLICIT, false);
@@ -133,27 +129,38 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 				}
 			}
 			if (fResult == null) {
-				return new JavaStructureErrorValue(LogicalStructuresMessages.getString("JavaLogicalStructure.1")); //$NON-NLS-1$
+				return new JavaStructureErrorValue(LogicalStructuresMessages.getString("JavaLogicalStructure.1"), (IJavaDebugTarget) fThread.getDebugTarget()); //$NON-NLS-1$
 			}
 			if (fResult.hasErrors()) {
 				DebugException exception = fResult.getException();
 				String message;
 				if (exception != null) {
-					JDIDebugPlugin.log(exception);
+                    if (isContributed()) {
+                        JDIDebugPlugin.log(exception);
+                    }
 					message= MessageFormat.format(LogicalStructuresMessages.getString("JavaLogicalStructure.2"), new String[] { exception.getMessage() }); //$NON-NLS-1$
 				} else {
-					StringBuffer log= new StringBuffer();
-					String[] errorMessages = fResult.getErrorMessages();
-					for (int i = 0; i < errorMessages.length; i++) {
-						log.append(errorMessages[i]).append('\n');
-					}
-					JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, log.toString(),null));
+                    log(fResult.getErrorMessages());
 					message= LogicalStructuresMessages.getString("JavaLogicalStructure.3"); //$NON-NLS-1$
 				}
-				return new JavaStructureErrorValue(message);
+				return new JavaStructureErrorValue(message, (IJavaDebugTarget) fThread.getDebugTarget());
 			}
 			return fResult.getValue();
 		}
+        
+        /**
+         * Logs the given error messages if this logical structure was contributed
+         * via extension.
+         */
+        private void log(String[] messages) {
+            if (isContributed()) {
+                StringBuffer log= new StringBuffer();
+                for (int i = 0; i < messages.length; i++) {
+                    log.append(messages[i]).append('\n');
+                }
+                JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, log.toString(),null));
+            }
+        }
 	}
 
 	/**

@@ -14,6 +14,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -23,11 +24,18 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
  */
 public class JavaStructureErrorValue implements IJavaValue {
 	
-	private String fMessage;
+	private String[] fMessages;
+    private IJavaDebugTarget fDebugTarget;
 
-	public JavaStructureErrorValue(String errorMessage) {
-		fMessage= errorMessage;
+	public JavaStructureErrorValue(String errorMessage, IJavaDebugTarget target) {
+		fMessages= new String[] { errorMessage };
+        fDebugTarget= target;
 	}
+    
+    public JavaStructureErrorValue(String[] errorMessages, IJavaDebugTarget target) {
+        fMessages= errorMessages;
+        fDebugTarget= target;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getSignature()
@@ -61,7 +69,7 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
 	public String getValueString() throws DebugException {
-		return fMessage;
+		return fMessages[0];
 	}
 
 	/* (non-Javadoc)
@@ -75,7 +83,17 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
-		return new IVariable[0];
+        IVariable[] variables= new IVariable[fMessages.length];
+        for (int i = 0; i < variables.length; i++) {
+            StringBuffer varName= new StringBuffer();
+            if (variables.length > 1) {
+                varName.append(LogicalStructuresMessages.getString("JavaStructureErrorValue.0")).append('[').append(i).append(']'); //$NON-NLS-1$
+            } else {
+                varName.append(LogicalStructuresMessages.getString("JavaStructureErrorValue.1")); //$NON-NLS-1$
+            }
+            variables[i]= new JDIPlaceholderVariable(varName.toString(), new JavaStructureErrorValue(fMessages[i], (IJavaDebugTarget) getDebugTarget()));
+        }
+		return variables;
 	}
 
 	/* (non-Javadoc)
@@ -96,14 +114,14 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	public IDebugTarget getDebugTarget() {
-		return null;
+		return fDebugTarget;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
 	public ILaunch getLaunch() {
-		return null;
+		return fDebugTarget.getLaunch();
 	}
 
 	/* (non-Javadoc)
