@@ -27,6 +27,7 @@ public class VMRunnerConfiguration {
 	private String fClassToLaunch;
 	private String[] fVMArgs;
 	private String[] fProgramArgs;
+	private String[] fEnvironment;
 	private String[] fClassPath;
 	private String[] fBootClassPath;
 	private String fWorkingDirectory;
@@ -93,6 +94,16 @@ public class VMRunnerConfiguration {
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.programArgsNotNull")); //$NON-NLS-1$
 		}
 		fProgramArgs= args;
+	}
+	
+	/**
+	 * Sets the environment for the Java program. The Java VM will be
+	 * launched in the given environment.
+	 * 
+	 * @param environment the environment for the Java program
+	 */
+	public void setEnvironment(String[] environment) {
+		fEnvironment= environment;
 	}
 	
 	/**
@@ -172,6 +183,15 @@ public class VMRunnerConfiguration {
 			return fgEmpty;
 		}
 		return fProgramArgs;
+	}
+	
+	/**
+	 * Returns the environment for the Java program or <code>null</code>
+	 * 
+	 * @return The Java program environment. Default is <code>null</code>
+	 */
+	public String[] getEnvironment() {
+		return fEnvironment;
 	}
 	
 	/**

@@ -234,6 +234,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
 		
+		String[] envp= config.getEnvironment();
+		
 		subMonitor.worked(1);
 
 		// check for cancellation
@@ -244,7 +246,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		subMonitor.subTask(LaunchingMessages.getString("StandardVMRunner.Starting_virtual_machine..._3")); //$NON-NLS-1$
 		Process p= null;
 		File workingDir = getWorkingDir(config);
-		p= exec(cmdLine, workingDir);
+		p= exec(cmdLine, workingDir, envp);
 		if (p == null) {
 			return;
 		}

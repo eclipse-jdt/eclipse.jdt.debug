@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
@@ -69,6 +70,9 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 			workingDirName = workingDir.getAbsolutePath();
 		}
 		
+		// Environment variables
+		String[] envp= DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
+		
 		// Program & VM args
 		String pgmArgs = getProgramArguments(configuration);
 		String vmArgs = getVMArguments(configuration);
@@ -83,6 +87,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		// Create VM config
 		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, classpath);
 		runConfig.setProgramArguments(execArgs.getProgramArgumentsArray());
+		runConfig.setEnvironment(envp);
 		runConfig.setVMArguments(execArgs.getVMArgumentsArray());
 		runConfig.setWorkingDirectory(workingDirName);
 		runConfig.setVMSpecificAttributesMap(vmAttributesMap);

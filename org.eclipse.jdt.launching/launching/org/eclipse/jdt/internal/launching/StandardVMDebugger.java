@@ -170,6 +170,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
 		
+		String[] envp= config.getEnvironment();
+		
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
@@ -196,7 +198,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 				connector.startListening(map);
 				
 				File workingDir = getWorkingDir(config);
-				p = exec(cmdLine, workingDir);				
+				p = exec(cmdLine, workingDir, envp);				
 				if (p == null) {
 					return;
 				}

@@ -59,6 +59,14 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 */
 	protected Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
 		return DebugPlugin.exec(cmdLine, workingDirectory);
+	}
+	
+	/**
+	 * @since 3.0
+	 * @see DebugPlugin#exec(String[], File, String[])
+	 */
+	protected Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
+		return DebugPlugin.exec(cmdLine, workingDirectory, envp);
 	}	
 	
 	/**
