@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests.core;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -246,5 +247,24 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 			terminateAndRemove(target);
 			removeAllBreakpoints();
 		}		
-	}		
+	}
+	
+	public void testSkipExceptionBreakpoint() throws Exception {
+		String typeName = "ThrowsNPE";
+		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);	
+		IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(15, typeName);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, lineBreakpoint);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			getBreakpointManager().setEnabled(false);
+			resumeAndExit(thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			getBreakpointManager().setEnabled(true);
+		}		
+	}	
 }

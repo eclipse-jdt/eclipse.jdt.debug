@@ -215,4 +215,33 @@ public class WatchpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}	
+	
+	public void testSkipWatchpoint() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
+		
+		IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, true);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+
+			IBreakpoint hit = getBreakpoint(thread);
+			IStackFrame frame = thread.getTopStackFrame();
+			assertNotNull("No breakpoint", hit);
+			
+			// should be modification
+			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
+			// line 27
+			assertEquals("Should be on line 27", 27, frame.getLineNumber());
+			
+			getBreakpointManager().setEnabled(false);
+			resumeAndExit(thread);
+
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			getBreakpointManager().setEnabled(true);
+		}		
+	}	
 }

@@ -157,4 +157,61 @@ public class PatternBreakpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}				
 	}	
+	
+	public void testSkipPatternBreakpoint() throws Exception {
+		String sourceName = "Breakpoints.java";
+		String pattern = "Break";
+		List bps = new ArrayList();
+		// anonymous class
+		bps.add(createPatternBreakpoint(43, sourceName, pattern));
+		// blocks
+		bps.add(createPatternBreakpoint(102, sourceName, pattern));
+		// constructor
+		bps.add(createPatternBreakpoint(77, sourceName, pattern));
+		// else
+		bps.add(createPatternBreakpoint(88, sourceName, pattern));
+		//finally after catch
+		bps.add(createPatternBreakpoint(120, sourceName, pattern));
+		//finally after try
+		bps.add(createPatternBreakpoint(128, sourceName, pattern));
+		// for loop
+		bps.add(createPatternBreakpoint(93, sourceName, pattern));
+		// if
+		bps.add(createPatternBreakpoint(81, sourceName, pattern));
+		// initializer
+		bps.add(createPatternBreakpoint(17, sourceName, pattern));
+		// inner class
+		bps.add(createPatternBreakpoint(22, sourceName, pattern));
+		// return true
+		bps.add(createPatternBreakpoint(72, sourceName, pattern));
+		// instance method
+		bps.add(createPatternBreakpoint(107, sourceName, pattern));
+		// static method 
+		bps.add(createPatternBreakpoint(53, sourceName, pattern));
+		// case statement
+		bps.add(createPatternBreakpoint(133, sourceName, pattern));
+		// default statement
+		bps.add(createPatternBreakpoint(140, sourceName, pattern));
+		// synchronized blocks
+		bps.add(createPatternBreakpoint(146, sourceName, pattern));
+		// try
+		bps.add(createPatternBreakpoint(125, sourceName, pattern));
+		//catch
+		bps.add(createPatternBreakpoint(118, sourceName, pattern));
+		// while
+		bps.add(createPatternBreakpoint(97, sourceName, pattern));
+		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint("Breakpoints");
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			getBreakpointManager().setEnabled(false);
+			resumeAndExit(thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			getBreakpointManager().setEnabled(true);
+		}		
+	}	
 }

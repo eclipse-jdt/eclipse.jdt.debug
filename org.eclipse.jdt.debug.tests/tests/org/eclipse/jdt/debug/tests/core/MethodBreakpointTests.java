@@ -352,4 +352,31 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			modelPresentation.dispose();
 		}
 	}		
+	
+	public void testSkipMethodBreakpoint() throws Exception {
+		String typeName = "DropTests";
+		List bps = new ArrayList();
+		// method 4 - entry
+		bps.add(createMethodBreakpoint(typeName, "method4", "()V", true, false));
+		// method 1 - exit
+		bps.add(createMethodBreakpoint(typeName, "method1", "()V", false, true));
+		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IBreakpoint hit = getBreakpoint(thread);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertEquals("should hit entry breakpoint first", bps.get(0),hit);
+
+			getBreakpointManager().setEnabled(false);			
+			resumeAndExit(thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			getBreakpointManager().setEnabled(true);
+		}		
+	}	
 }

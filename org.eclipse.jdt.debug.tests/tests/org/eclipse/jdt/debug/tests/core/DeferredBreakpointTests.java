@@ -125,4 +125,21 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}				
 	}
+	
+	public void testSkipLineBreakpoint() throws Exception {
+		String typeName = "Breakpoints";
+		ILineBreakpoint bp = createLineBreakpoint(52, typeName);
+		createLineBreakpoint(54, typeName);
+		
+		IJavaThread thread = null;
+		try {
+		    thread= launchToLineBreakpoint(typeName, bp);
+		    getBreakpointManager().setEnabled(false);
+		    resumeAndExit(thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			getBreakpointManager().setEnabled(true);
+		}			    
+	}
 }
