@@ -121,7 +121,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				int snippetOffset= selection.getOffset();
 				
 				configureResultCollector(project, selection);	
-				int[] localModifiers= new int[]{localVariableNames.length};
+				int[] localModifiers= new int[localVariableNames.length];
 				Arrays.fill(localModifiers, 0);
 				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), -1, snippetOffset,
 					 localVariableTypeNames, localVariableNames,
