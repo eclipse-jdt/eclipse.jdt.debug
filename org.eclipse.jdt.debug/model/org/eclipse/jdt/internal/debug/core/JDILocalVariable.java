@@ -41,7 +41,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 * Returns this variable's current Value.
 	 */
 	protected Value retrieveValue() {
-		return fStackFrame.getUnderlyingStackFrame().getValue(fLocal);
+		return getStackFrame().getUnderlyingStackFrame().getValue(fLocal);
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 */
 	public String getName() throws DebugException {
 		try {
-			return fLocal.name();
+			return getLocal().name();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -61,7 +61,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 */
 	public void setValue(Value value) throws DebugException {
 		try {
-			fStackFrame.getUnderlyingStackFrame().setValue(fLocal, value);
+			getStackFrame().getUnderlyingStackFrame().setValue(getLocal(), value);
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_modifying_local_variable_value_1"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
@@ -76,7 +76,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 */
 	public String getReferenceTypeName() throws DebugException {
 		try {
-			return fLocal.typeName();
+			return getLocal().typeName();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -88,7 +88,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 */
 	public String getSignature() throws DebugException {
 		try {
-			return fLocal.signature();
+			return getLocal().signature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -105,6 +105,10 @@ public class JDILocalVariable extends JDIModificationVariable {
 	
 	protected LocalVariable getLocal() {
 		return fLocal;
+	}
+	
+	protected JDIStackFrame getStackFrame() {
+		return fStackFrame;
 	}
 	
 }
