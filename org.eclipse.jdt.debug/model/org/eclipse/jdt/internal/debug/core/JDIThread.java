@@ -15,6 +15,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
@@ -898,7 +899,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	/**
-	 * @see ISuspendResum#isSuspended()
+	 * @see ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
 		return !fRunning && !fTerminated;
@@ -1235,9 +1236,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
 		if (isSuspended()) {
-			IStackFrame[] stackframes= getStackFrames();
-			for (int i = 0; i < stackframes.length; i++) {
-				JDIStackFrame sf= (JDIStackFrame)stackframes[i];
+			Iterator stackFrames= computeStackFrames().iterator();
+			while (stackFrames.hasNext()) {
+				JDIStackFrame sf= (JDIStackFrame)stackFrames.next();
 				IVariable var= sf.findVariable(varName);
 				if (var != null) {
 					return var;
