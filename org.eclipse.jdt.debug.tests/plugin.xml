@@ -63,4 +63,13 @@
 	</launchDelegate>
 </extension>
 
+<extension point = "org.eclipse.debug.ui.launchConfigurationTabGroups">
+	<launchConfigurationTabGroup
+		id="org.eclipse.jdt.debug.tests.launchConfigurationTabGroup.testJavaApplication"
+		type ="org.eclipse.jdt.launching.localJavaApplication"
+		class="org.eclipse.jdt.debug.testplugin.TestJavaApplicationTabGroup"
+		modes="TEST_MODE">
+	</launchConfigurationTabGroup>
+</extension>
+
 </plugin>
