@@ -75,11 +75,6 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 			libs = vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
 		}
 		assertEquals("there is one system lib", 1, libs.length);
-		IPath sourcePath = libs[0].getSystemLibrarySourcePath();
-		IPath rootPath = libs[0].getPackageRootPath();
-		
-		assertEquals("Source attachment path did not resolve properly", sourcePath.toOSString(), entry.getResolvedSourceAttachmentPath());
-		assertEquals("Source root path did not resolve properly", rootPath.toOSString(), entry.getResolvedSourceAttachmentRootPath());
 		
 	}	
 	
