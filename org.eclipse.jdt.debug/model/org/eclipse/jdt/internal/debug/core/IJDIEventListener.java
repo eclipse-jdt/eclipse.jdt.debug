@@ -30,6 +30,7 @@ public interface IJDIEventListener {
 	 * 
 	 * @param event the event to handle
 	 * @param target the debug target in which the event occurred
+	 * @return whether the thread in which the event occurred should be resumed
 	 */
 	public boolean handleEvent(Event event, JDIDebugTarget target);
 }
