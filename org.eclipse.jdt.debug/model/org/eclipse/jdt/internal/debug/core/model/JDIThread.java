@@ -404,8 +404,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				
 				boolean topDown = false;
 				// what was the last method on the top of the stack
-				JDIStackFrame topStackFrame = (JDIStackFrame)fStackFrames.get(0);
-				Method lastMethod = topStackFrame.getLastMethod();
+				Method lastMethod = ((JDIStackFrame)fStackFrames.get(0)).getLastMethod();
 				// what is the method on top of the stack now
 				if (stackSize > 0) {
 					Method currMethod = getUnderlyingFrame(0).location().method();
