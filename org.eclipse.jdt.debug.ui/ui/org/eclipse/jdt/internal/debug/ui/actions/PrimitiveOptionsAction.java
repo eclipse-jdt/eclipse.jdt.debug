@@ -35,7 +35,6 @@ import org.eclipse.ui.IViewPart;
 public class PrimitiveOptionsAction implements IViewActionDelegate, IActionDelegate2 {
 	
 	private IViewPart fView;
-	private IAction fAction;
 
 	public PrimitiveOptionsAction() {
 		super();
@@ -53,7 +52,6 @@ public class PrimitiveOptionsAction implements IViewActionDelegate, IActionDeleg
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	public void init(IAction action) {
-		fAction = action;
 	}
 
 	/* (non-Javadoc)

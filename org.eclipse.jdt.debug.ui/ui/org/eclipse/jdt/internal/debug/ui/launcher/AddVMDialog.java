@@ -36,7 +36,6 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
@@ -69,8 +68,6 @@ public class AddVMDialog extends StatusDialog {
 	private StringButtonDialogField fJavadocURL;
 	private boolean fAutoDetectJavadocLocation = false;
 	
-	private IDialogSettings fDialogSettings;
-	
 	private IStatus[] fStati;
 		
 	public AddVMDialog(IAddVMDialogRequestor requestor, Shell shell, IVMInstallType[] vmInstallTypes, IVMInstall editedVM) {
@@ -85,8 +82,6 @@ public class AddVMDialog extends StatusDialog {
 		fSelectedVMType= editedVM != null ? editedVM.getVMInstallType() : vmInstallTypes[0];
 		
 		fEditedVM= editedVM;
-		
-		fDialogSettings= JDIDebugUIPlugin.getDefault().getDialogSettings();
 		
 		//only detect the javadoc location if not already set
 		fAutoDetectJavadocLocation = fEditedVM == null || fEditedVM.getJavadocLocation() == null;
