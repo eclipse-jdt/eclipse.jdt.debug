@@ -6,6 +6,8 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
 
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
@@ -46,19 +48,21 @@ public class ShowQualifiedAction extends VariableFilterAction {
 		setValue(action.isChecked());
 		
 		final StructuredViewer viewer = getStructuredViewer();
-		ILabelProvider labelProvider= (ILabelProvider)viewer.getLabelProvider();
-		if (labelProvider instanceof IDebugModelPresentation) {
-			IDebugModelPresentation debugLabelProvider= (IDebugModelPresentation)labelProvider;
-			debugLabelProvider.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, (getValue() ? Boolean.TRUE : Boolean.FALSE));
-			BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
-				public void run() {
-					viewer.refresh();
-					IPreferenceStore store = getPreferenceStore();
-					String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
-					store.setValue(key, getValue());
-					JDIDebugUIPlugin.getDefault().savePluginPreferences();						
-				}
-			});
+		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);
+		if (view != null) {
+			IDebugModelPresentation pres = view.getPresentation(JDIDebugModel.getPluginIdentifier());
+			if (pres != null) {
+				pres.setAttribute(JDIModelPresentation.DISPLAY_QUALIFIED_NAMES, (getValue() ? Boolean.TRUE : Boolean.FALSE));
+				BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+					public void run() {
+						viewer.refresh();
+						IPreferenceStore store = getPreferenceStore();
+						String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
+						store.setValue(key, getValue());
+						JDIDebugUIPlugin.getDefault().savePluginPreferences();						
+					}
+				});
+			}
 		}		
 	}	
 }
