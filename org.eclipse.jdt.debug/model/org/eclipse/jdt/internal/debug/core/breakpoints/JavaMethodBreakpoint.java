@@ -21,6 +21,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
 import com.sun.jdi.Method;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.Event;
@@ -137,12 +138,14 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 
 		};
 		run(wr);
-		fMatcher= new StringMatcher(typePattern, false, false);
+		if (isTypePattern()) {
+			fMatcher= new StringMatcher(typePattern, false, false);
+		}
 	}
 	
 	/**
-	 * Creates and installs an entry and exit watchpoint request
-	 * in the given reference type, configuring the requests as appropriate
+	 * Creates and installs an entry and exit requests
+	 * in the given type name, configuring the requests as appropriate
 	 * for this breakpoint. The requests are then enabled based on whether
 	 * this breakpoint is an entry breakpoint, exit breakpoint, or
 	 * both. Finally, the requests are registered with the given target.
@@ -153,7 +156,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		
 		registerRequest(entryRequest, target);
 		registerRequest(exitRequest, target);
-	}	
+	}
 	
 	/**
 	 * @see JavaBreakpoint#recreateRequest(EventRequest, JDIDebugTarget)
@@ -208,21 +211,62 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	}
 	
 	/**
+	 * Returns a new method entry request for this breakpoint's
+	 * criteria
+	 * 
+	 * @param the target in which to create the request
+	 * @param type the type on which to create the request
+	 * @return method entry request
+	 * @exception CoreException if an exception occurs accessing
+	 *  this breakpoint's underlying marker
+	 */
+	protected MethodEntryRequest createMethodEntryRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {	
+		return (MethodEntryRequest)createMethodRequest(target, type, true);
+	}
+	
+	/**
+	 * Returns a new method exit request for the given reference type
+	 * 
+	 * @param target the target in which to create the request
+	 * @param type the type on which to create the request
+	 * @return method exit request
+	 * @exception CoreException if an exception occurs accessing
+	 *  this breakpoint's underlying marker
+	 */
+	protected MethodExitRequest createMethodExitRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {	
+		return (MethodExitRequest)createMethodRequest(target, type, false);
+	}	
+	
+	/**
 	 * @see JavaMethodBreakpoint#createMethodEntryRequest(JDIDebugTarget, ReferenceType)
 	 *  or JavaMethodBreakpoint#createMethodExitRequest(JDIDebugTarget, ReferenceType)
 	 *
 	 * Returns a MethodEntryRequest if entry is <code>true</code>,
 	 *  a MethodExitRequest if entry is <code>false</code>
+	 * 
+	 * @param target the debug target in which to create the request
+	 * @param classFilter a filter which specifies the scope of the method request. This parameter must
+	 *  be either a <code>String</code> or a <code>ReferenceType</code>
+	 * @param entry whether or not the request will be a method entry request. If <code>false</code>,
+	 *  the request will be a method exit request.
 	 */
-	private EventRequest createMethodRequest(JDIDebugTarget target, String typePattern, boolean entry) throws CoreException {
+	private EventRequest createMethodRequest(JDIDebugTarget target, Object classFilter, boolean entry) throws CoreException {
 		EventRequest request = null;
 		try {
 			if (entry) {
 				request= target.getEventRequestManager().createMethodEntryRequest();
-				((MethodEntryRequest)request).addClassFilter(typePattern);
+				if (classFilter instanceof String) {
+					((MethodEntryRequest)request).addClassFilter((String)classFilter);
+				} else if (classFilter instanceof ReferenceType) {
+					((MethodEntryRequest)request).addClassFilter((ReferenceType)classFilter);
+				}
 			} else {
 				request= target.getEventRequestManager().createMethodExitRequest();
-				((MethodExitRequest)request).addClassFilter(typePattern);
+				if (classFilter instanceof String) {
+					((MethodExitRequest)request).addClassFilter((String)classFilter);
+				} else if (classFilter instanceof ReferenceType) {
+					((MethodExitRequest)request).addClassFilter((ReferenceType)classFilter);
+				}
 			}
 			configureRequest(request, target);
 		} catch (VMDisconnectedException e) {
@@ -535,7 +579,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		fMethodName = marker.getAttribute(METHOD_NAME, null);
 		fMethodSignature = marker.getAttribute(METHOD_SIGNATURE, null);
 		String typePattern= marker.getAttribute(TYPE_NAME, ""); //$NON-NLS-1$
-		if (typePattern != null) {
+		if (typePattern != null && isTypePattern()) {
 			fMatcher= new StringMatcher(typePattern, false, false);
 		}
 		
@@ -581,15 +625,19 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
-		// pre-notification
-		fireAdding(target);
-		
-		String referenceTypeNamePattern= getTypeName();
-		if (referenceTypeNamePattern == null) {
-			return;
+		if (isTypePattern()) {
+			// pre-notification
+			fireAdding(target);
+			
+			String referenceTypeNamePattern= getTypeName();
+			if (referenceTypeNamePattern == null) {
+				return;
+			}
+			
+			createRequest(target, referenceTypeNamePattern);
+		} else {
+			super.addToTarget(target);
 		}
-		
-		createRequest(target, referenceTypeNamePattern);
 	}
 	/**
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#removeFromTarget(JDIDebugTarget)
@@ -598,4 +646,30 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		fLastEventTypes.remove(target);
 		super.removeFromTarget(target);
 	}
+	
+	/**
+	 * Returns whether this breakpoint uses type name pattern matching.
+	 * 
+	 * @return whether this breakpoint uses type name pattern matching
+	 */
+	protected boolean isTypePattern() throws CoreException {
+		String name = getTypeName();
+		return name != null && (name.startsWith("*") || name.endsWith("*"));
+	}
+	
+	/**
+	 * Used when this breakpoint is for a specific type (i.e. not using type name
+	 * pattern matching).
+	 * 
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
+	 */
+	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+		MethodEntryRequest entryRequest= createMethodEntryRequest(target, type);
+		MethodExitRequest exitRequest= createMethodExitRequest(target, type);
+		
+		registerRequest(entryRequest, target);
+		registerRequest(exitRequest, target);
+		return true;
+	}
+
 }
