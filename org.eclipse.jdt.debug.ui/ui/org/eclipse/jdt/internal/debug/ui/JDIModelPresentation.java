@@ -553,14 +553,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		IJavaType type= value.getJavaType();
 		if (type != null) {
 			String sig= type.getSignature();
-			if (sig != null || sig.length() == 1) {
+			if (sig != null && sig.length() == 1) {
 				return sig;
 			}
 		}
 		return null;
 	}
 	/**
-	 * Returns the character string of a byte or <code>null</code if
+	 * Returns the character string of a byte or <code>null</code> if
 	 * the value can not be interpreted as a valid character.
 	 */
 	protected String getValueCharText(IJavaValue value) throws DebugException {
