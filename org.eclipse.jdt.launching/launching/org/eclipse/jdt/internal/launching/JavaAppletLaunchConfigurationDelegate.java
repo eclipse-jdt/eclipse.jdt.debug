@@ -30,7 +30,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -40,9 +39,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -61,8 +57,8 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	 */
 	private static Map fgLaunchToFileMap = new HashMap();
 	
-	/**
-	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, ILaunch, IProgressMonitor)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 			
@@ -73,9 +69,7 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Starting_Applet_{0}..._1"), new String[]{configuration.getName()}), 3); //$NON-NLS-1$
 		monitor.subTask(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Verifying_launch_attributes..._1")); //$NON-NLS-1$
 		
-		String mainTypeName = verifyMainTypeName(configuration);
-
-		IJavaProject javaProject = getJavaProject(configuration);
+		verifyMainTypeName(configuration);
 
 		IVMInstall vm = verifyVMInstall(configuration);
 
@@ -236,8 +230,8 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		return tempFile;
 	}
 	
-	/**
-	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
@@ -352,7 +346,7 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		return contents;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#verifyWorkingDirectory(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
