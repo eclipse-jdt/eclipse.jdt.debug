@@ -75,7 +75,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setFont(font);
 		setControl(comp);
-		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMENTS_TAB);
+		setHelpContextId();
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);		
 		GridData gd;
@@ -102,8 +102,15 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 				
 		createVerticalSpacer(comp, 1);
 						
-		fWorkingDirectoryBlock.createControl(comp);
-		
+		fWorkingDirectoryBlock.createControl(comp);		
+	}
+	
+	/**
+	 * Set the help context id for this launch config tab.  Subclasses may
+	 * override this method.
+	 */
+	protected void setHelpContextId() {
+		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMENTS_TAB);		
 	}
 			
 	/**

@@ -1,7 +1,9 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.launcher.AppletWorkingDirectoryBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
@@ -18,4 +20,12 @@ public class AppletArgumentsTab extends JavaArgumentsTab {
 	protected WorkingDirectoryBlock createWorkingDirBlock() {
 		return new AppletWorkingDirectoryBlock();
 	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab#setHelpContextId()
+	 */
+	protected void setHelpContextId() {
+		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_APPLET_ARGUMENTS_TAB);		
+	}
+			
 }

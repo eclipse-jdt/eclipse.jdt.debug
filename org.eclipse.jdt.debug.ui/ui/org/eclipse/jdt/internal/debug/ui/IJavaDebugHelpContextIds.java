@@ -42,7 +42,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String SOURCE_ATTACHMENT_BLOCK= PREFIX + "source_attachment_context"; //$NON-NLS-1$
 	public static final String WORKING_DIRECTORY_BLOCK= PREFIX + "working_directory_context"; //$NON-NLS-1$
 
-	// launch configuration dialog tabs
+	// application launch configuration dialog tabs
 	public static final String LAUNCH_CONFIGURATION_DIALOG_ARGUMENTS_TAB= PREFIX + "launch_configuration_dialog_arguments_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_CLASSPATH_TAB= PREFIX + "launch_configuration_dialog_classpath_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_CONNECT_TAB= PREFIX + "launch_configuration_dialog_connect_tab"; //$NON-NLS-1$
@@ -50,6 +50,10 @@ public interface IJavaDebugHelpContextIds {
 	public static final String LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB= PREFIX + "launch_configuration_dialog_main_tab"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_DIALOG_SOURCE_TAB= PREFIX + "launch_configuration_dialog_source_tab"; //$NON-NLS-1$
 	
+	// applet launch configuration dialog tabs
+	public static final String LAUNCH_CONFIGURATION_DIALOG_APPLET_MAIN_TAB= PREFIX + "launch_configuration_dialog_applet_main_tab"; //$NON-NLS-1$
+	public static final String LAUNCH_CONFIGURATION_DIALOG_APPLET_ARGUMENTS_TAB= PREFIX + "launch_configuration_dialog_applet_arguments_tab"; //$NON-NLS-1$
+
 	//actions
 	public static final String STEP_INTO_SELECTION_ACTION = PREFIX + "step_into_selection_action"; //$NON-NLS-1$
 	
