@@ -58,6 +58,18 @@ public class JavaSourceLocator implements ISourceLocator {
 	}
 	
 	/**
+	 * Constructs a new JavaSourceLocator that searches the
+	 * default set of source locations for the given Java project.
+	 * 
+	 * @param project Java project
+	 * @exception CoreException if an exception occurrs reading
+	 *  the classpath of the given or any required project
+	 */
+	public JavaSourceLocator(IJavaProject project) throws CoreException {
+		setSourceLocations(getDefaultSourceLocations(project));
+	}	
+	
+	/**
 	 * Sets the locations that will be searched, in the order
 	 * to be searched.
 	 * 
