@@ -387,16 +387,16 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	 * @see Dialog#okPressed()
 	 */
 	protected void okPressed() {
+		String[] imports= null;
 		Object[] results= fImportContentProvider.getElements(null);
 		if (results != null && results.length > 0) {
-			String[] imports= new String[results.length];
+			imports= new String[results.length];
 			for (int i = 0; i < results.length; i++) {
 				Filter imprt = (Filter)results[i];
 				imports[i]= imprt.getName();
 			}
-			fEditor.setImports(imports);
 		}
-
+		fEditor.setImports(imports);
 		super.okPressed();
 	}
 	
