@@ -98,14 +98,13 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fProjButton = new Button(projComp, SWT.PUSH);
-		fProjButton.setText(LauncherMessages.getString("JavaConnectTab.&Browse_3")); //$NON-NLS-1$
+		fProjButton = createPushButton(projComp, LauncherMessages.getString("JavaConnectTab.&Browse_3"), null); //$NON-NLS-1$
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
 			}
 		});
-		
+
 		createVerticalSpacer(comp, 1);		
 		
 		fHostLabel = new Label(comp, SWT.NONE);
