@@ -15,6 +15,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -34,11 +38,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.Page;
 
 /**
@@ -363,22 +369,38 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 				}
 			}
 			if (targets.size() == 1) {
-				IJavaDebugTarget debugTarget= (IJavaDebugTarget)targets.toArray()[0];
+				final IJavaDebugTarget debugTarget= (IJavaDebugTarget)targets.toArray()[0];
 				if (debugTarget != fLastSelectedTarget || !fValidSelection) {
-					boolean monitorInformationAvailable= debugTarget.supportsMonitorInformation();
-					if (monitorInformationAvailable) {
-						MonitorManager.getDefault().updatePartial(debugTarget);
-					}
-					fValidSelection= true;
-					refreshCurrentViewer(monitorInformationAvailable, true);
-					fLastSelectedTarget= debugTarget;
+					Job job = new Job(MonitorMessages.getString("MonitorsView.4")) { //$NON-NLS-1$
+						protected IStatus run(IProgressMonitor monitor) {
+							final boolean monitorInformationAvailable= debugTarget.supportsMonitorInformation();
+							if (monitorInformationAvailable) {
+								MonitorManager.getDefault().updatePartial(debugTarget);
+							}
+							fValidSelection= true;	
+							Display.getDefault().asyncExec(new Runnable() {
+								public void run() {
+									refreshCurrentViewer(monitorInformationAvailable, true);
+									fLastSelectedTarget= debugTarget;						
+								}
+							});
+							
+							return Status.OK_STATUS;
+						}
+					};
+					
+					job.schedule();
 				}
 				return;
 			}
 		}
 		if (fValidSelection) {
-			fValidSelection= false;
-			refreshCurrentViewer(false, true);
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					fValidSelection= false;
+					refreshCurrentViewer(false, true);
+				}
+			});
 		}
 	}
 }
