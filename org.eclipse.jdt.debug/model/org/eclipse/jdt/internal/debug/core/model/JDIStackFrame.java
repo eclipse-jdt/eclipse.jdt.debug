@@ -392,7 +392,16 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		int index= 0;
 		if (!method.isStatic()) {
 			// update "this"
-			ObjectReference thisObject= getUnderlyingThisObject();
+			ObjectReference thisObject;
+			try {
+				thisObject= getUnderlyingThisObject();
+			} catch (DebugException exception) {
+				if (!getThread().isSuspended()) {
+					thisObject= null;
+				} else {
+					throw exception;
+				}
+			}
 			JDIThisVariable oldThisObject= null;
 			if (!fVariables.isEmpty() && fVariables.get(0) instanceof JDIThisVariable) {
 				oldThisObject= (JDIThisVariable) fVariables.get(0);
