@@ -19,7 +19,7 @@ import org.eclipse.swt.custom.BusyIndicator;
  */
 public class ShowQualifiedAction extends ToggleDelegateAction {
 
-	protected void valueChanged(final boolean on) {
+	protected void valueChanged(boolean on) {
 		if (getViewer().getControl().isDisposed()) {
 			return;
 		}		
