@@ -59,19 +59,12 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 			}
 		}
 		if (frame == null) {
-//			// if the debug target has terminated, update
-//			if (target != null && target.isTerminated()) {
-//				fResultValue= null;
-//				setHasError(false);
-//				setObsolete(false);
-//				refresh();			
-//			}
 			fListener.watchEvaluationFinished(null);	
 		} else {
 			// consult the adapter in case of a wrappered debug model
 			final IJavaStackFrame javaStackFrame =(IJavaStackFrame) ((IAdaptable)frame).getAdapter(IJavaStackFrame.class);
 			if (javaStackFrame != null) {
-				doEvaluation(javaStackFrame, true);
+				doEvaluation(javaStackFrame);
 			} else {
 				fListener.watchEvaluationFinished(null);
 			}	
@@ -86,39 +79,23 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 	 * 
 	 * @param javaStackFrame the stack frame in the context of which performed
 	 * the evaluation.
-	 * @param implicit indicate if the evaluation is implicite or not. If the
-	 * expression is disabled, implicite evaluation wont be performed.
 	 */
-	protected void doEvaluation(IJavaStackFrame javaStackFrame, boolean implicit) {
+	protected void doEvaluation(IJavaStackFrame javaStackFrame) {
 		IJavaThread thread = (IJavaThread)javaStackFrame.getThread();
-		if (preEvaluationCheck(thread, implicit)) {
+		if (preEvaluationCheck(thread)) {
 			thread.queueRunnable(new EvaluationRunnable(javaStackFrame));
 		} else {
 			fListener.watchEvaluationFinished(null);
 		}
 	}
 	
-	private boolean preEvaluationCheck(IJavaThread javaThread, boolean implicit) {
+	private boolean preEvaluationCheck(IJavaThread javaThread) {
 		if (javaThread == null) {
-			//refresh();
 			return false;
 		}
 		if (javaThread.isSuspended() && ((JDIThread)javaThread).isInvokingMethod()) {
-			//refreshForError();
 			return false;
 		}
-//		if (implicit && !isEnabled()) {
-//			if (fResultValue != null || hasError()) {
-//				setObsolete(true);
-//				refresh();
-//			}
-//			return false;
-//		}
-//		fResultValue= null;
-//		setHasError(false);
-//		setObsolete(false);
-//		setPending(true);
-//		refresh();
 		return true;
 	}
 	
@@ -137,15 +114,12 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 			IJavaProject project = getProject(fStackFrame);
 			if (project == null) {
 				fListener.watchEvaluationFinished(null);
-				//refreshForError();
 				return;
 			}
 			IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget) fStackFrame.getDebugTarget());
 			// the evaluation listener
 			IEvaluationListener listener= new IEvaluationListener() {
 				public void evaluationComplete(final IEvaluationResult result) {
-					//setPending(false);
-					//refresh();
 					IWatchExpressionResult watchResult= new IWatchExpressionResult() {
 						public IValue getValue() {
 							return result.getValue();
@@ -170,7 +144,6 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 				evaluationEngine.evaluate(fExpressionText, fStackFrame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
 			} catch (DebugException e) {
 				JDIDebugPlugin.log(e);
-				//refreshForError();
 				fListener.watchEvaluationFinished(null);
 			}
 		}
@@ -195,5 +168,4 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 		}
 		return null;
 	}
-
 }
