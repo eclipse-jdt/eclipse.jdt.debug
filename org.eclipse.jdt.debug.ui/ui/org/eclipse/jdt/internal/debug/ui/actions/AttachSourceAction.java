@@ -11,10 +11,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
-import org.eclipse.jdt.internal.debug.ui.launcher.SourceAttachmentBlock;
 import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
 import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.jdt.internal.ui.wizards.IStatusChangeListener;
+import org.eclipse.jdt.internal.ui.wizards.buildpaths.SourceAttachmentBlock;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,12 +34,12 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	// a dialog to set the source attachment properties
 	private class SourceAttachmentDialog extends StatusDialog implements IStatusChangeListener {
 		
-		private SourceAttachmentBlock fSourceAttachmentBlock;
+		private org.eclipse.jdt.internal.ui.wizards.buildpaths.SourceAttachmentBlock fSourceAttachmentBlock;
 				
 		public SourceAttachmentDialog(Shell parent, IRuntimeClasspathEntry entry) {
 			super(parent);
 			setTitle(MessageFormat.format(ActionMessages.getString("AttachSourceAction.Attachments_For_____{0}_____1"),new String[] {entry.getPath().toString()})); //$NON-NLS-1$
-			fSourceAttachmentBlock= new SourceAttachmentBlock(ResourcesPlugin.getWorkspace().getRoot(), this, entry);
+			fSourceAttachmentBlock= new SourceAttachmentBlock(ResourcesPlugin.getWorkspace().getRoot(), this, entry.getClasspathEntry());
 		}
 		
 		/*
