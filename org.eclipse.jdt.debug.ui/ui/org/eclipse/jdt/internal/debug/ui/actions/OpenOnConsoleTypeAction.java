@@ -287,7 +287,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 		}	
 		
 		// isolate right edge
-		if (firstParen != -1) {
+		if (firstParen != -1 && leftEdge < firstParen) {
 			String substring = selection.substring(leftEdge, firstParen);
 			rightEdge = substring.lastIndexOf('.');
 			if (rightEdge == -1) {
