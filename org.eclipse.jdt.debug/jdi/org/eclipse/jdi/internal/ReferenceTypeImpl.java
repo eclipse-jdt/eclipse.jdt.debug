@@ -291,11 +291,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		 * @return
 		 */
 		public List getInputLineInfos(int outputLineNumber) {
-			List result= null;
-			do {
-				result= (List)fOutputLineToInputLine.get(new Integer(outputLineNumber));
-			} while (result == null && --outputLineNumber > 0);
-			return result;
+			return (List)fOutputLineToInputLine.get(new Integer(outputLineNumber));
 		}
 
 	}
