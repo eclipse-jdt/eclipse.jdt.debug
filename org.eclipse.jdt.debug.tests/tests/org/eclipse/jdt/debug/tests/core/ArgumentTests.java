@@ -84,17 +84,22 @@ public class ArgumentTests extends AbstractDebugTest {
 		    synchronized (fLock) {
 		    	if (!closed) {
 			        try {
-	                    fLock.wait(60000);
+	                    fLock.wait(30000);
 	                } catch (InterruptedException e) {
 	                }
 		    	}
 		    }
-			// even if not closed yet - see what's in the buffer. Sometimes
-			// we miss the close notification (due to a different bug).
-			if (buffer != null) {
-				return buffer.toString(); 
-			}
-			return null;
+		    if (!closed) {
+				// output contents to console in case of error 
+				if (buffer != null) {
+				    System.out.println();
+				    System.out.println(ArgumentTests.this.getName());
+				    System.out.println("\treceived " + buffer.length() + " chars: " + buffer.toString()); 
+				}
+		    }
+		    assertNotNull("Line tracker did not receive init notification", buffer);
+		    assertTrue("Line tracker did not receive close notification", closed);
+			return buffer.toString();
 		}
 
 }
@@ -311,8 +316,13 @@ public class ArgumentTests extends AbstractDebugTest {
 		}
 		try {
 			String output = retriever.getOutput();
-			System.out.println("Expected: " + outputValue);
-			System.out.println("Actual:   " + output);
+			// output if in error
+			if (!outputValue.equals(output)) {
+			    System.out.println();
+			    System.out.println(getName());
+				System.out.println("\tExpected: " + outputValue);
+				System.out.println("\tActual:   " + output);
+			}
 			assertEquals(outputValue, output);
 		} finally {
 			ConsoleLineTracker.setDelegate(null);
