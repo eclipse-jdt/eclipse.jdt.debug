@@ -141,7 +141,7 @@ private static AbstractJDITest run(junit.framework.TestResult result, Class test
 	} catch (InvocationTargetException e) {
 		throw e.getTargetException();
 	}
-	if (!test.parseArgs(arguments))
+	if (!AbstractJDITest.parseArgs(arguments))
 		return null;
 	test.setVMInfo(info);
 	test.setInControl(false);
