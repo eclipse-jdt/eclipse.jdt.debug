@@ -3,7 +3,8 @@
  * All Rights Reserved.
  */
 
-package org.eclipse.jdt.launching;import java.io.File;import org.eclipse.core.runtime.IPath;
+package org.eclipse.jdt.launching;import java.io.File;import java.net.URL;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Represents a particular installation of a VM. A VM instance holds all parameters
@@ -89,4 +90,22 @@ public interface IVMInstall {
 	 * @since 2.0
 	 */
 	void setLibraryLocations(LibraryLocation[] locations);	
+	
+	/**
+	 * Sets the Javadoc location associated with this VM install.
+	 * 
+	 * @param url a url pointing to the Javadoc location associated with
+	 * 	this VM install
+	 * @since 2.0
+	 */
+	public void setJavadocLocation(URL url);
+	
+	/**
+	 * Returns the Javadoc location associated with this VM install.
+	 * 
+	 * @return a url pointing to the Javadoc location associated with
+	 * 	this VM install, or <code>null</code> if none
+	 * @since 2.0
+	 */
+	public URL getJavadocLocation();	
 }

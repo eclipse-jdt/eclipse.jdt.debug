@@ -108,13 +108,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 			String vmName = containerPath.segment(2);
 			IVMInstallType vmType = JavaRuntime.getVMInstallType(vmTypeId);
 			if (vmType != null) {
-				IVMInstall[] vms = vmType.getVMInstalls();
-				for (int i = 0; i < vms.length; i++) {
-					if (vmName.equals(vms[i].getName())) {
-						vm = vms[i];
-						break;
-					}
-				}
+				vm = vmType.findVMInstallByName(vmName);
 			}
 		} else {
 			// workspace default JRE

@@ -39,7 +39,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 		for (int i= 0; i < fVMs.size(); i++) {
 			IVMInstall vm= (IVMInstall)fVMs.get(i);
 			if (vm.getId().equals(id)) {
-				fVMs.remove(i);
+				fVMs.remove(i);				JavaRuntime.fireVMRemoved(vm);
 				return;
 			}
 		}
@@ -68,7 +68,7 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 			throw new IllegalArgumentException(MessageFormat.format(format, new String[] { id }));
 		}
 		IVMInstall vm= doCreateVMInstall(id);
-		fVMs.add(vm);
+		fVMs.add(vm);		JavaRuntime.fireVMAdded(vm);
 		return vm;
 	}
 	
@@ -100,4 +100,4 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	public String getId() {
 		return fId;
 	}
-}
+	/**	 * @see IVMInstallType#findVMInstallByName(String)	 */	public IVMInstall findVMInstallByName(String name) {		for (int i= 0; i < fVMs.size(); i++) {			IVMInstall vm= (IVMInstall)fVMs.get(i);			if (vm.getName().equals(name)) {				return vm;			}		}		return null;	}}

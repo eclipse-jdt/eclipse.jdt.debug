@@ -5,6 +5,13 @@ package org.eclipse.jdt.launching;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -17,13 +24,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -260,39 +260,30 @@ public final class JavaRuntime {
 	 * @return the VM instance that is selected for the given Java project
 	 * 		   Returns null if no VM was previously set.
 	 * @throws CoreException if unable to determine the project's VM install
-	 * 
-	 * XXX: does not work for non-standard variables or containers
 	 */
 	public static IVMInstall getVMInstall(IJavaProject project) throws CoreException {
 		// check the classpath
+		IVMInstall vm = null;
 		IClasspathEntry[] classpath = project.getRawClasspath();
+		IRuntimeClasspathEntryResolver resolver = null;
 		for (int i = 0; i < classpath.length; i++) {
-			switch (classpath[i].getEntryKind()) {
+			IClasspathEntry entry = classpath[i];
+			switch (entry.getEntryKind()) {
 				case IClasspathEntry.CPE_VARIABLE:
-					if (classpath[i].getPath().segment(0).equals(JRELIB_VARIABLE)) {
-						return getDefaultVMInstall();
+					resolver = getVariableResolver(entry.getPath().segment(0));
+					if (resolver != null) {
+						vm = resolver.resolveVMInstall(entry);
 					}
 					break;
 				case IClasspathEntry.CPE_CONTAINER:
-					if (classpath[i].getPath().segment(0).equals(JRE_CONTAINER)) {
-						IPath path = classpath[i].getPath();
-						if (path.segmentCount() > 1) {
-							String typeId = path.segment(1);
-							String name = path.segment(2);
-							IVMInstallType type = getVMInstallType(typeId);
-							if (type != null) {
-								IVMInstall[] vms = type.getVMInstalls();
-								for (int j = 0; j < vms.length; j++) {
-									if (vms[j].getName().equals(name)) {
-										return vms[i];
-									}
-								}
-							}
-						} else {
-							return getDefaultVMInstall();
-						}
+					resolver = getContainerResolver(entry.getPath().segment(0));
+					if (resolver != null) {
+						vm = resolver.resolveVMInstall(entry);
 					}
 					break;
+			}
+			if (vm != null) {
+				return vm;
 			}
 		}
 		return null;
@@ -845,8 +836,8 @@ public final class JavaRuntime {
 				// error type does not exist
 				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_type_does_not_exist__{0}_2"), new String[] {type}), null); //$NON-NLS-1$
 			}
-			IVMInstall[] vms = vt.getVMInstalls();
-				// look for a name
+			IVMInstall vm = null;
+			// look for a name
 			String name = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 			if (name == null) {
 				// error - type specified without a specific install (could be an old config that specified a VM ID)
@@ -855,13 +846,13 @@ public final class JavaRuntime {
 				LaunchingPlugin.log(status);
 				return getDefaultVMInstall();
 			} else {
-				for (int i = 0; i < vms.length; i++) {
-					if (name.equals(vms[i].getName())) {
-						return vms[i];
-					}
+				vm = vt.findVMInstallByName(name);
+				if (vm == null) {
+					// error - install not found
+					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_not_found__type_{0},_name_{1}_2"), new String[] {type, name}), null);					 //$NON-NLS-1$
+				} else {
+					return vm;
 				}
-			// error - install not found
-			abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_not_found__type_{0},_name_{1}_2"), new String[] {type, name}), null);					 //$NON-NLS-1$
 			}
 		}
 		
@@ -1528,4 +1519,46 @@ public final class JavaRuntime {
 		}
 	}
 	
+	/**
+	 * Notifies all VM install changed listeners of the given property change.
+	 * 
+	 * @param vm the VM that has changed
+	 * @param event event desribing the change.
+	 * @since 2.0
+	 */
+	public static void fireVMChanged(PropertyChangeEvent event) {
+		Object[] listeners = fgVMListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
+			listener.vmChanged(event);
+		}		
+	}
+	
+	/**
+	 * Notifies all VM install changed listeners of the VM addition
+	 * 
+	 * @param vm the VM that has been added
+	 * @since 2.0
+	 */
+	public static void fireVMAdded(IVMInstall vm) {
+		Object[] listeners = fgVMListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
+			listener.vmAdded(vm);
+		}		
+	}	
+	
+	/**
+	 * Notifies all VM install changed listeners of the VM removal
+	 * 
+	 * @param vm the VM that has been removed
+	 * @since 2.0
+	 */
+	public static void fireVMRemoved(IVMInstall vm) {
+		Object[] listeners = fgVMListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
+			listener.vmRemoved(vm);
+		}		
+	}		
 }

@@ -7,6 +7,7 @@ package org.eclipse.jdt.launching;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IClasspathEntry;
 
 /**
  * Resolves variable and/or container runtime classpath entries in
@@ -64,4 +65,13 @@ public interface IRuntimeClasspathEntryResolver {
 	 */
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException;
 	
+	/**
+	 * Returns a VM install associated with the given classpath entry,
+	 * or <code>null</code> if none.
+	 * 
+	 * @param entry classpath entry
+	 * @return vm install associated with entry or <code>null</code> if none
+	 * @exception CoreException if unable to resolve a VM
+	 */
+	public IVMInstall resolveVMInstall(IClasspathEntry entry) throws CoreException;
 }

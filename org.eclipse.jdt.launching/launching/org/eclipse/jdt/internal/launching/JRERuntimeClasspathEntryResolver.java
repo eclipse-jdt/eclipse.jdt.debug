@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver;
@@ -47,4 +48,25 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		return resolved;
 	}
 	
+	/**
+	 * @see IRuntimeClasspathEntryResolver#resolveVMInstall(IClasspathEntry)
+	 */
+	public IVMInstall resolveVMInstall(IClasspathEntry entry) throws CoreException {
+		switch (entry.getEntryKind()) {
+			case IClasspathEntry.CPE_VARIABLE:
+				if (entry.getPath().equals(JavaRuntime.JRELIB_VARIABLE)) {
+					return JavaRuntime.getDefaultVMInstall();
+				}
+				break;
+			case IClasspathEntry.CPE_CONTAINER:
+				if (entry.getPath().segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+					return JREContainerInitializer.resolveVM(entry.getPath());
+				}
+				break;
+			default:
+				break;
+		}
+		return null;
+	}
+
 }

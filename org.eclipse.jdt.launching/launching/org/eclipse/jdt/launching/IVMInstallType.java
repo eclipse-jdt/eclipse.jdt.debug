@@ -37,6 +37,14 @@ public interface IVMInstallType {
 	 * @return a VM instance, or <code>null</code> if not found
 	 */
 	IVMInstall findVMInstall(String id);
+	/**
+	 * Finds the VM with the given name.
+	 * 
+	 * @param name the VM name
+	 * @return a VM instance, or <code>null</code> if not found
+	 * @since 2.0
+	 */
+	IVMInstall findVMInstallByName(String name);	
 	
 	/**
 	 * Remove the given VM from the set of VMs managed by this VM type.
