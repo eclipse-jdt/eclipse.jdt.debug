@@ -39,26 +39,26 @@ import org.eclipse.swt.widgets.Text;
 public class JavaConnectTab extends JavaLaunchConfigurationTab {
 
 	// Project UI widgets
-	private Label fProjLabel;
-	private Text fProjText;
-	private Button fProjButton;
+	protected Label fProjLabel;
+	protected Text fProjText;
+	protected Button fProjButton;
 	
 	// Host name UI widgets
-	private Label fHostLabel;
-	private Text fHostText;
+	protected Label fHostLabel;
+	protected Text fHostText;
 
 	// Port # UI widgets
-	private Label fPortLabel;
-	private Text fPortText;
+	protected Label fPortLabel;
+	protected Text fPortText;
 
 	// Allow terminate UI widgets
-	private Button fAllowTerminateButton;
+	protected Button fAllowTerminateButton;
 	
 	// Connector combo
-	private Combo fConnectorCombo;
-	private IVMConnector[] fConnectors = JavaRuntime.getVMConnectors();
+	protected Combo fConnectorCombo;
+	protected IVMConnector[] fConnectors = JavaRuntime.getVMConnectors();
 	
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)

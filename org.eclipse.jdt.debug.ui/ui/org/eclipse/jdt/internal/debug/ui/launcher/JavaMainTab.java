@@ -55,17 +55,17 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 public class JavaMainTab extends JavaLaunchConfigurationTab {
 		
 	// Project UI widgets
-	private Label fProjLabel;
-	private Text fProjText;
-	private Button fProjButton;
+	protected Label fProjLabel;
+	protected Text fProjText;
+	protected Button fProjButton;
 
 	// Main class UI widgets
-	private Label fMainLabel;
-	private Text fMainText;
-	private Button fSearchButton;
-	private Button fSearchExternalJarsCheckButton;
+	protected Label fMainLabel;
+	protected Text fMainText;
+	protected Button fSearchButton;
+	protected Button fSearchExternalJarsCheckButton;
 			
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)

@@ -32,20 +32,20 @@ import org.eclipse.swt.widgets.Text;
 public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		
 	// Program arguments UI widgets
-	private Label fPrgmArgumentsLabel;
-	private Text fPrgmArgumentsText;
+	protected Label fPrgmArgumentsLabel;
+	protected Text fPrgmArgumentsText;
 
 	// VM arguments UI widgets
-	private Label fVMArgumentsLabel;
-	private Text fVMArgumentsText;
+	protected Label fVMArgumentsLabel;
+	protected Text fVMArgumentsText;
 	
 	// Working directory UI widgets
-	private Label fWorkingDirLabel;
-	private Text fWorkingDirText;
-	private Button fWorkingDirBrowseButton;
-	private Button fUseDefaultWorkingDirButton;
+	protected Label fWorkingDirLabel;
+	protected Text fWorkingDirText;
+	protected Button fWorkingDirBrowseButton;
+	protected Button fUseDefaultWorkingDirButton;
 	
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 		
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)

@@ -56,55 +56,55 @@ import org.eclipse.swt.widgets.TableItem;
 public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IAddVMDialogRequestor {
 	
 	// Paths UI widgets
-	private TabFolder fPathTabFolder;
-	private TabItem fBootPathTabItem;
-	private TabItem fClassPathTabItem;
-	private TabItem fExtensionPathTabItem;
-	private TabItem fJRETabItem;
-	private List fBootPathList;
-	private List fClassPathList;
-	private List fExtensionPathList;
-	private Button fClassPathDefaultButton;
-	private Button fPathAddArchiveButton;
-	private Button fPathAddDirectoryButton;
-	private Button fPathRemoveButton;
-	private Button fPathMoveUpButton;
-	private Button fPathMoveDownButton;
-	private Combo fJRECombo;
-	private Button fJREAddButton;
+	protected TabFolder fPathTabFolder;
+	protected TabItem fBootPathTabItem;
+	protected TabItem fClassPathTabItem;
+	protected TabItem fExtensionPathTabItem;
+	protected TabItem fJRETabItem;
+	protected List fBootPathList;
+	protected List fClassPathList;
+	protected List fExtensionPathList;
+	protected Button fClassPathDefaultButton;
+	protected Button fPathAddArchiveButton;
+	protected Button fPathAddDirectoryButton;
+	protected Button fPathRemoveButton;
+	protected Button fPathMoveUpButton;
+	protected Button fPathMoveDownButton;
+	protected Combo fJRECombo;
+	protected Button fJREAddButton;
 	
 	// Collections used to populating the JRE Combo box
-	private IVMInstallType[] fVMTypes;
-	private java.util.List fVMStandins;	
+	protected IVMInstallType[] fVMTypes;
+	protected java.util.List fVMStandins;	
 	
 	// Environment variables UI widgets
-	private Label fEnvLabel;
-	private Table fEnvTable;
-	private Button fEnvAddButton;
-	private Button fEnvEditButton;
-	private Button fEnvRemoveButton;
+	protected Label fEnvLabel;
+	protected Table fEnvTable;
+	protected Button fEnvAddButton;
+	protected Button fEnvEditButton;
+	protected Button fEnvRemoveButton;
 	
 	// Remember last directory when browsing for archives or directories
-	private String fLastBrowsedDirectory;
+	protected String fLastBrowsedDirectory;
 	
 	// Listener for list selection events
-	private SelectionAdapter fListSelectionAdapter;
+	protected SelectionAdapter fListSelectionAdapter;
 	
 	// Java project context
-	private IJavaProject fJavaProject;
+	protected IJavaProject fJavaProject;
 	
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	// Constants used in reading & persisting XML documents containing path entries
-	private static final String PATH_XML_ENTRIES = "pathEntries"; //$NON-NLS-1$
-	private static final String PATH_XML_ENTRY = "pathEntry"; //$NON-NLS-1$
-	private static final String PATH_XML_PATH = "path"; //$NON-NLS-1$
+	protected static final String PATH_XML_ENTRIES = "pathEntries"; //$NON-NLS-1$
+	protected static final String PATH_XML_ENTRY = "pathEntry"; //$NON-NLS-1$
+	protected static final String PATH_XML_PATH = "path"; //$NON-NLS-1$
 	
 	// Constants used in reading & persisting XML documents containing env. vars.
-	private static final String ENV_XML_ENTRIES = "envVarEntries"; //$NON-NLS-1$
-	private static final String ENV_XML_ENTRY = "envVarEntry"; //$NON-NLS-1$
-	private static final String ENV_XML_NAME = "envVarName"; //$NON-NLS-1$
-	private static final String ENV_XML_VALUE = "envVarValue"; //$NON-NLS-1$
+	protected static final String ENV_XML_ENTRIES = "envVarEntries"; //$NON-NLS-1$
+	protected static final String ENV_XML_ENTRY = "envVarEntry"; //$NON-NLS-1$
+	protected static final String ENV_XML_NAME = "envVarName"; //$NON-NLS-1$
+	protected static final String ENV_XML_VALUE = "envVarValue"; //$NON-NLS-1$
 		
 	/**
 	 * @see ILaunchConfigurationTab#createTabControl(ILaunchConfigurationDialog, TabItem)
