@@ -80,6 +80,25 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
+	public void testDontSuspendOnCompilationErrors() throws Exception {
+		String typeName = "CompileError";
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);		
+		
+		IType type = fJavaProject.findType(typeName);
+		ICompilationUnit cu = type.getCompilationUnit();
+		IBuffer buffer = cu.getBuffer();
+		buffer.setContents(COMPILE_ERROR_CONTENTS);
+		cu.save(new NullProgressMonitor(), true);
+		
+		IJavaDebugTarget debugTarget = null;
+		try {
+			debugTarget= launchAndTerminate(typeName, 3000);
+		} finally {
+			terminateAndRemove(debugTarget);
+			removeAllBreakpoints();
+		}		
+	}
+
 	protected IPreferenceStore getPrefStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();		
 	}
