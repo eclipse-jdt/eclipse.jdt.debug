@@ -234,10 +234,9 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 	 */
 	protected void initializeLocals(IJavaObject object) throws DebugException {
 		IJavaVariable[] locals = null;
-		IJavaObject thisObject = null;
+		IJavaObject thisObject = getThis();
 		if (getStackFrame() != null) {
 			locals = getStackFrame().getLocalVariables();
-			thisObject = getStackFrame().getThis();
 		}
 		if (locals != null) {
 			for (int i = 0; i < locals.length; i++) {
@@ -448,6 +447,57 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 			final boolean isStatic = frame.isStatic();
 			final boolean isConstructor = frame.isConstructor();
 			final IType receivingType = getReceivingType(frame);
+			
+			// do the evaluation in a different thread
+			Runnable r = new Runnable() {
+				public void run() {
+					try {
+						LocalEvaluationEngine.this.getEvaluationContext().
+							evaluateCodeSnippet(
+							LocalEvaluationEngine.this.getSnippet(),
+							LocalEvaluationEngine.this.getLocalVariableTypeNames(),
+							LocalEvaluationEngine.this.getLocalVariableNames(),
+							LocalEvaluationEngine.this.getLocalVariableModifiers(),
+							receivingType,
+							isStatic,
+							isConstructor,
+							LocalEvaluationEngine.this,
+							null);
+					} catch (JavaModelException e) {
+						LocalEvaluationEngine.this.getResult().setException(e);
+					}
+					LocalEvaluationEngine.this.evaluationComplete();
+				}
+			};
+			
+			Thread t = new Thread(r);
+			t.start();
+	}
+	
+	/*
+	 * @see IEvaluationEngine#evaluate(String, String, IJavaThread, IEvaluationListener)
+	 */
+	public void evaluate(
+		String snippet,
+		IJavaObject thisContext,
+		IJavaThread thread,
+		IEvaluationListener listener)
+		throws DebugException {
+			checkDisposed();
+			setListener(listener);
+			setResult(new EvaluationResult(this, snippet, thread));
+			checkThread();
+						
+			// no locals			
+			setLocalVariableTypeNames(new String[0]);
+			setLocalVariableNames(new String[0]);
+			setLocalVariableModifiers(new int[0]);
+			
+			setThis(thisContext);
+			
+			final boolean isStatic = false;
+			final boolean isConstructor = false;
+			final IType receivingType = getReceivingType(thisContext);
 			
 			// do the evaluation in a different thread
 			Runnable r = new Runnable() {
@@ -962,6 +1012,8 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 	 * @exception DebugException if:<ul>
 	 * <li>A failure occurrs while accessing attributes of 
 	 *  the stack frame</li>
+	 * <li>the resolved type is an inner type</li>
+	 * <li>unable to resolve a type</li>
 	 * </ul>
 	 */
 	private IType getReceivingType(IJavaStackFrame frame) throws DebugException {
@@ -974,7 +1026,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 			int dollarIndex= typeName.indexOf('$');
 			if (dollarIndex >= 0)
 				typeName= typeName.substring(0, dollarIndex);
-			typeName.replace('.', IPath.SEPARATOR);
+			typeName = typeName.replace('.', IPath.SEPARATOR);
 			typeName+= ".java";			 //$NON-NLS-1$
 		} else {
 			int index = typeName.lastIndexOf('.');
@@ -1023,6 +1075,77 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		
 		return type;	
 	}
+	
+	/**
+	 * Returns the type of the the given object.
+	 * 
+	 * @return type
+	 * @exception DebugException if:<ul>
+	 * <li>A failure occurrs while accessing attributes of 
+	 *  the object</li>
+	 * </ul>
+	 */
+	private IType getReceivingType(IJavaObject object) throws DebugException {
+		String typeName = object.getJavaType().getName();
+		// we must guess at the receiver's source file name
+		int dollarIndex= typeName.indexOf('$');
+		if (dollarIndex >= 0)
+			typeName= typeName.substring(0, dollarIndex);
+		return getType(typeName);
+	}
+
+	/**
+	 * Returns the type associated with the specified
+	 * name in this evaluation engine's associated Java project.
+	 * 
+	 * @param typeName fully qualified name of type, for
+	 *  example, <code>java.lang.String</code>
+	 * @return main type associated with source file
+	 * @exception DebugException if:<ul>
+	 * <li>the resolved type is an inner type</li>
+	 * <li>unable to resolve a type</li>
+	 * <li>a lower level java exception occurrs</li>
+	 * </ul>
+	 */
+	private IType getType(String typeName) throws DebugException {
+		String path = typeName.replace('.', IPath.SEPARATOR);
+		path+= ".java";			 //$NON-NLS-1$
+		IPath sourcePath =  new Path(path);
+		
+		IType type = null;
+		try {
+			IJavaElement result = getJavaProject().findElement(sourcePath);
+			String[] typeNames = getNestedTypeNames(typeName);
+			if (result != null) {
+				if (result instanceof IClassFile) {
+					type = ((IClassFile)result).getType();
+				} else if (result instanceof ICompilationUnit) {
+					type = ((ICompilationUnit)result).getType(typeNames[0]);
+				}
+			}
+			for (int i = 1; i < typeNames.length; i++) {
+				type = type.getType(typeNames[i]);
+			}
+		} catch (JavaModelException e) {
+			throw new DebugException(e.getStatus());
+		}
+		
+		if (type == null) {
+			throw new DebugException(
+				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
+				DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_unable_to_determine_receiving_type_context._18"), null) //$NON-NLS-1$
+			);
+		}
+		
+		if (type.getParent() instanceof IType) {
+			throw new DebugException(
+				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
+				DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_in_context_of_inner_type_not_supported._19"), null) //$NON-NLS-1$
+			);
+		}	
+		
+		return type;	
+	}	
 
 	/**
 	 * Returns an array of simple type names that are
