@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -303,7 +304,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
+		String arguments= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
+		return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(arguments);
 	}	
 
 	/**
@@ -317,7 +319,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	public String getVMArguments(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
+		String arguments= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
+		return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(arguments);
 	}	
 
 	/**
@@ -357,6 +360,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	public IPath getWorkingDirectoryPath(ILaunchConfiguration configuration) throws CoreException {
 		String path = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
 		if (path != null) {
+			path= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(path);
 			return new Path(path);
 		}
 		return null;
