@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others. All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.File;
 import java.io.IOException;
@@ -271,7 +273,6 @@ public class AddVMDialog extends StatusDialog {
 		if (name == null || name.trim().length() == 0) {
 			status.setInfo(LauncherMessages.getString("addVMDialog.enterName")); //$NON-NLS-1$
 		} else {
-			IVMInstallType type= getVMType();
 			if (fRequestor.isDuplicateName(name) && (fEditedVM == null || !name.equals(fEditedVM.getName()))) {
 				status.setError(LauncherMessages.getString("addVMDialog.duplicateName")); //$NON-NLS-1$
 			} else {
