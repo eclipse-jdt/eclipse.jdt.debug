@@ -61,8 +61,11 @@ public class JavaInspectExpressionActionFilter implements IActionFilter {
 	
 	private boolean isNotPrimitiveType(JavaInspectExpression exp) {
 		try {
-			String refType = OpenVariableTypeAction.removeArray(exp.getValue().getReferenceTypeName());
-			return !fgPrimitiveTypes.contains(refType);
+			IValue value = exp.getValue();
+			if (value != null) {
+				String refType = OpenVariableTypeAction.removeArray(value.getReferenceTypeName());
+				return !fgPrimitiveTypes.contains(refType);
+			}
 		} catch (DebugException e) {
 		}
 		return false;
