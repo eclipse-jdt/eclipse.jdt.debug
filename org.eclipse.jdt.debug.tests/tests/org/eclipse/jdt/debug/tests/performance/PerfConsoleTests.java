@@ -42,7 +42,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     }
 
     public void testProcessConsolePlainOutput100Lines() throws Exception {
-        tagAsGlobalSummary("Process Console 100 lines: plain output", Dimension.CPU_TIME);
+        tagAsSummary("Process Console 100 lines: plain output", Dimension.CPU_TIME);
         runConsole80CharsTest(100, 100);
     }
 
