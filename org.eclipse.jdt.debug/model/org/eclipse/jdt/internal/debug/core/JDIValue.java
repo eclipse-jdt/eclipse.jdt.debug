@@ -20,8 +20,8 @@ import com.sun.jdi.*;
 
 public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	
-	public Value fValue;
-	protected List fVariables;
+	private Value fValue;
+	private List fVariables;
 	
 	private static final String fgToStringSignature = "()Ljava/lang/String;"; //$NON-NLS-1$
 	private static final String fgToString = "toString"; //$NON-NLS-1$

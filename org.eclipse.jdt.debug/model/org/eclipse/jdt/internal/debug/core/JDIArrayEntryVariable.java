@@ -20,12 +20,12 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	/**
 	 * The index of the variable entry
 	 */
-	protected int fIndex;
+	private int fIndex;
 	
 	/**
 	 * The array object
 	 */
-	protected ArrayReference fArray;
+	private ArrayReference fArray;
 	
 	/**
 	 * Constructs an array entry at the given index in an array.

@@ -21,7 +21,7 @@ import com.sun.jdi.ArrayReference;
  */
 public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValue {
 	
-	protected JDIArrayPartition fPartition;
+	private JDIArrayPartition fPartition;
 	
 	public JDIArrayPartitionValue(JDIArrayPartition partition) {
 		super(null);

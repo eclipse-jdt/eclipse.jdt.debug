@@ -24,12 +24,12 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	/**
 	 * The wrappered field
 	 */
-	protected Field fField;
+	private Field fField;
 	/**
 	 * The object containing the field,
 	 * or <code>null</code> for a static field.
 	 */
-	protected ObjectReference fObject;
+	private ObjectReference fObject;
 	
 	/**
 	 * Constructs a field wrappering the given field.

@@ -21,14 +21,15 @@ import com.sun.jdi.Value;
  */
 
 public class JDIArrayPartition extends JDIVariable {
+	
 	private int fStart;
 	private int fEnd;
-	protected ArrayReference fArray;
+	private ArrayReference fArray;
 	
 	/**
 	 * Cache of value
 	 */
-	protected JDIArrayPartitionValue fArrayPartitionValue;
+	private JDIArrayPartitionValue fArrayPartitionValue;
 
 	public JDIArrayPartition(JDIDebugTarget target, ArrayReference array, int start, int end) {
 		super(target);

@@ -19,7 +19,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	/**
 	 * Cache of current value - see #getValue().
 	 */
-	protected JDIValue fValue;
+	private JDIValue fValue;
 	
 	protected final static String jdiStringSignature= "Ljava/lang/String;"; //$NON-NLS-1$
 	

@@ -20,12 +20,12 @@ public class JDILocalVariable extends JDIModificationVariable {
 	/**
 	 * The wrappered local variable
 	 */
-	protected LocalVariable fLocal;
+	private LocalVariable fLocal;
 	
 	/**
 	 * The stack frame the local is contained in
 	 */
-	protected JDIStackFrame fStackFrame;
+	private JDIStackFrame fStackFrame;
 	
 	/**
 	 * Constructs a local variable wrappering the given local from
