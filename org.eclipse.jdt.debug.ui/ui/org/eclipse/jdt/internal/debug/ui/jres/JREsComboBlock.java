@@ -437,5 +437,12 @@ public class JREsComboBlock implements ISelectionProvider {
 	public void setTitle(String title) {
 		fTitle = title;
 	}
+
+	/**
+	 * Refresh the default JRE description.
+	 */
+	public void refresh() {
+		setDefaultJREDescriptor(fDefaultDescriptor);
+	}
 	
 }

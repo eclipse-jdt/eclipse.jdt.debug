@@ -502,7 +502,9 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-		// do nothing when activated
+		// update the default JRE descriptoin, in case it has changed
+		// based on the selected project
+		fJREBlock.refresh();
 	}
 
 	/* (non-Javadoc)
