@@ -103,7 +103,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Creates a shared lanuch configuration for the type with the given
+	 * Creates a shared launch configuration for the type with the given
 	 * name.
 	 */
 	protected void createLaunchConfiguration(String mainTypeName) throws Exception {

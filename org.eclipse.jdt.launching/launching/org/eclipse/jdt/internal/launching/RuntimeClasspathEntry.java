@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
 
 /**
  * An entry on the runtime classpath that the user can manipulate
- * and share in a lanuch configuration.
+ * and share in a launch configuration.
  * 
  * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry
  * @since 2.0

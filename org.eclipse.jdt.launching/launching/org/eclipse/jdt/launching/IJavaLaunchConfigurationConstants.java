@@ -147,7 +147,7 @@ public interface IJavaLaunchConfigurationConstants {
 	 * <code>false</code> a source path must be specified via the
 	 * <code>ATTR_SOURCE_PATH</code> attribute. When <code>true</code> or
 	 * unspecified, a source lookup path is computed by the source path
-	 * provider associated with a lanuch configuration.
+	 * provider associated with a launch configuration.
 	 */
 	public static final String ATTR_DEFAULT_SOURCE_PATH = LaunchingPlugin.getUniqueIdentifier() + ".DEFAULT_SOURCE_PATH"; //$NON-NLS-1$
 
