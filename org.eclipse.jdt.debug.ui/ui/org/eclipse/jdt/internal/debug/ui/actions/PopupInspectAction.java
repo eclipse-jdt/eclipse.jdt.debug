@@ -53,6 +53,8 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 		} else {
 			showPopup(result);
 		}		
+		
+		evaluationCleanup();
 	}
 	
 	protected void showPopup(final IEvaluationResult result) {
