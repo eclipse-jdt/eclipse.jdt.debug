@@ -1358,16 +1358,19 @@
 	<launchConfigurationTabGroup
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
 		type ="org.eclipse.jdt.launching.localJavaApplication"
+		helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.local_java_application"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.LocalJavaApplicationTabGroup">
 	</launchConfigurationTabGroup>
 	<launchConfigurationTabGroup
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.remoteJavaApplication"
 		type ="org.eclipse.jdt.launching.remoteJavaApplication"
+		helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.remote_java_application"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.RemoteJavaApplicationTabGroup">
 	</launchConfigurationTabGroup>
     <launchConfigurationTabGroup
         id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.javaApplet"
         type="org.eclipse.jdt.launching.javaApplet"
+		helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.java_applet"
         class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletTabGroup">
     </launchConfigurationTabGroup>
 </extension>
@@ -1427,6 +1430,7 @@
 	<shortcut
 		id="org.eclipse.jdt.debug.ui.localJavaShortcut"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
+		helpContextId="org.eclipse.jdt.debug.ui.launchShortcutHelpContext.local_java_application"
 		label="%JavaApplicationShortcut.label"
 		icon="icons/full/ctool16/java_app.gif"
 		modes="run, debug">
@@ -1438,6 +1442,7 @@
     <shortcut
         id="org.eclipse.jdt.debug.ui.javaAppletShortcut"
         class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
+		helpContextId="org.eclipse.jdt.debug.ui.launchShortcutHelpContext.java_applet"
         label="%AppletShortcut.label"
         icon="icons/full/ctool16/java_applet.gif"
         modes="run, debug">
