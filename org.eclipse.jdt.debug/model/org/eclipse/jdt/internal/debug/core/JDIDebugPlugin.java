@@ -193,10 +193,7 @@ public class JDIDebugPlugin extends Plugin {
 	}	
 	
 	/**
-	 * Notifies listeners that the given breakpoint has compilation errors
-	 * 
-	 * @param breakpoint the breakpoint
-	 * @param errors the compilation errors in the breakpoint's condition
+	 * @see IJavaConditionalBreakpointListener#breakpointHasRuntimeException(IJavaLineBreakpoint, Throwable)
 	 */
 	public void fireBreakpointHasCompilationErrors(IJavaLineBreakpoint breakpoint, Message[] errors) {
 		Object listeners[]= fConditionalBreakpointListeners.getListeners();
@@ -206,16 +203,22 @@ public class JDIDebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Notifies listeners that the given breakpoint has runtime errors
-	 * 
-	 * @param breakpoint the breakpoint
-	 * @param errors the runtime errors that occurred evaluating the breakpoint's
-	 *  condition
+	 * @see IJavaConditionalBreakpointListener#breakpointHasCompilationErrors(IJavaLineBreakpoint, Message[])
 	 */
 	public void fireBreakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, Throwable exception) {
 		Object listeners[]= fConditionalBreakpointListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			((IJavaConditionalBreakpointListener)listeners[i]).breakpointHasRuntimeException(breakpoint, exception);
+		}
+	}
+	
+	/**
+	 * @see IJavaConditionalBreakpointListener#breakpointHasTimedOut(IJavaLineBreakpoint, IJavaThread)
+	 */
+	public void fireBreakpointHasTimedOut(IJavaLineBreakpoint breakpoint, IJavaThread thread) {
+		Object listeners[]= fConditionalBreakpointListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			((IJavaConditionalBreakpointListener)listeners[i]).breakpointHasTimedOut(breakpoint, thread);
 		}
 	}
 	
