@@ -186,7 +186,15 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 					IPath path = entry.getPath();
 					File lib = path.toFile();
 					if (lib.exists() && lib.isFile()) {
-						libs[i] = new LibraryLocation(path, entry.getSourceAttachmentPath(), entry.getSourceAttachmentRootPath());
+						IPath srcPath = entry.getSourceAttachmentPath();
+						if (srcPath == null) {
+							srcPath = Path.EMPTY;
+						}
+						IPath rootPath = entry.getSourceAttachmentRootPath();
+						if (rootPath == null) {
+							rootPath = Path.EMPTY;
+						}
+						libs[i] = new LibraryLocation(path, srcPath, rootPath);
 					} else {
 						IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, MessageFormat.format("Classpath entry {0} does not refer to an existing library.", new String[]{entry.getPath().toString()}), null);
 						throw new CoreException(status);
