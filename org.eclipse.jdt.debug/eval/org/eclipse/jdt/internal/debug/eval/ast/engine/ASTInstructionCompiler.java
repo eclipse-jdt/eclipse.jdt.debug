@@ -483,13 +483,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * Returns true if a storeInstruction() is needed after visiting the expression
 	 */
 	private boolean checkAutoBoxing(ITypeBinding valueBinding, ITypeBinding requestedBinding) {
-		if ((valueBinding.isPrimitive() || valueBinding.isNullType() || "java.lang.String".equals(valueBinding.getQualifiedName())) == (requestedBinding.isPrimitive() || valueBinding.isNullType() || "java.lang.String".equals(requestedBinding.getQualifiedName()))) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (valueBinding.isPrimitive() == requestedBinding.isPrimitive()) {
 			return false;
 		}
 		if (requestedBinding.isPrimitive()) {
 			unBoxing(valueBinding);
 		} else {
-			boxing(requestedBinding);
+			boxing(requestedBinding, valueBinding);
 		}
 		return true;
 	}
@@ -510,9 +510,36 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	/**
 	 * Add to the stack the instruction to box a primitive value.
 	 */
-	private void boxing(ITypeBinding requestedBinding) {
+	private void boxing(ITypeBinding requestedBinding, ITypeBinding valueBinding) {
 		String requestedTypeName= requestedBinding.getQualifiedName();
-		if ("java.lang.Integer".equals(requestedTypeName)) { //$NON-NLS-1$
+		if ("java.lang.Object".equals(requestedTypeName)) { //$NON-NLS-1$
+			switch (valueBinding.getBinaryName().charAt(0)) {
+				case 'I':
+					push(new SendStaticMessage("java.lang.Integer", "valueOf", "(I)Ljava/lang/Integer;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					break;
+				case 'C':
+					push(new SendStaticMessage("java.lang.Character", "valueOf", "(C)Ljava/lang/Character;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					break;
+				case 'B':
+					push(new SendStaticMessage("java.lang.Byte", "valueOf", "(B)Ljava/lang/Byte;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					break;
+				case 'S':
+					push(new SendStaticMessage("java.lang.Short", "valueOf", "(S)Ljava/lang/Short;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					break;
+				case 'J':
+					push(new SendStaticMessage("java.lang.Long", "valueOf", "(J)Ljava/lang/Long;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					break;
+				case 'F':
+					push(new SendStaticMessage("java.lang.Float", "valueOf", "(F)Ljava/lang/Float;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					break;
+				case 'D':
+					push(new SendStaticMessage("java.lang.Double", "valueOf", "(D)Ljava/lang/Double;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					break;
+				case 'Z':
+					push(new SendStaticMessage("java.lang.Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					break;
+			}
+		} else if ("java.lang.Integer".equals(requestedTypeName)) { //$NON-NLS-1$
 			push(new SendStaticMessage(requestedTypeName, "valueOf", "(I)Ljava/lang/Integer;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if ("java.lang.Character".equals(requestedTypeName)) { //$NON-NLS-1$
 			push(new SendStaticMessage(requestedTypeName, "valueOf", "(C)Ljava/lang/Character;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1599,7 +1626,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				
 				boolean storeRequired= false;
 				if (rightHandSide.resolveTypeBinding().isPrimitive()) {
-					boxing(leftHandSide.resolveTypeBinding());
+					boxing(leftHandSide.resolveTypeBinding(), rightHandSide.resolveTypeBinding());
 					storeRequired= true;
 				}
 				rightHandSide.accept(this);
@@ -1611,7 +1638,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				boolean unrecognized = false;
 				
 				
-				boxing(leftHandSide.resolveTypeBinding());
+				boxing(leftHandSide.resolveTypeBinding(), rightHandSide.resolveTypeBinding());
 				
 				switch (char0) {
 					case '=': // equal
@@ -2920,7 +2947,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(new PushInt(1));
 			storeInstruction(); // push 1
 			storeInstruction(); // operator
-			boxing(operand.resolveTypeBinding());
+			boxing(operand.resolveTypeBinding(), null);
 			storeInstruction(); // boxing
 			storeInstruction(); // assigment
 			push(new Pop(assignmentInstruction.getSize() + 1));
@@ -3001,7 +3028,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				
 				operand.accept(this);
 				
-				boxing(operand.resolveTypeBinding());
+				boxing(operand.resolveTypeBinding(), null);
 				
 				switch (char1) {
 					case '+':
