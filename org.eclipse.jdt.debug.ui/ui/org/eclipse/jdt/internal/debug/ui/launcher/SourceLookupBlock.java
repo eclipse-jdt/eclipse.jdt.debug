@@ -118,6 +118,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		fDuplicatesButton.setFont(font);
 		fDuplicatesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
+				setDirty(true);
 				updateLaunchConfigurationDialog();
 			}
 		});		
@@ -204,8 +205,8 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 			}
 		}
 		fPathViewer.setEnabled(!def);
-		updateLaunchConfigurationDialog();
 		setDirty(true);
+		updateLaunchConfigurationDialog();
 	}
 	
 	/**
