@@ -26,7 +26,7 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 		IProject project = getJavaProject().getProject();
 		IRuntimeClasspathEntry entry = JavaRuntime.newProjectRuntimeClasspathEntry(getJavaProject());
 	
-		assertEquals("Paths should be equal", project.getLocation(), entry.getPath());
+		assertEquals("Paths should be equal", project.getFullPath(), entry.getPath());
 		assertEquals("Resources should be equal", project, entry.getResource());
 		assertEquals("Should be of type project", IRuntimeClasspathEntry.PROJECT, entry.getType());
 		assertEquals("Should be a user entry", IRuntimeClasspathEntry.USER_CLASSES, entry.getClasspathProperty());

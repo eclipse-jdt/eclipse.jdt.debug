@@ -138,7 +138,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_project_name_4"), null); //$NON-NLS-1$
 					} else {
 						IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-						setClasspathEntry(JavaCore.newProjectEntry(proj.getLocation()));
+						setClasspathEntry(JavaCore.newProjectEntry(proj.getFullPath()));
 					}
 					break;
 				case ARCHIVE :
