@@ -23,6 +23,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -196,13 +197,13 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 			writer.write("\" >\n"); //$NON-NLS-1$
 			Map parameters = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, new HashMap());
 			if (parameters.size() != 0) {
-				Iterator iterator = parameters.keySet().iterator();
+				Iterator iterator= parameters.entrySet().iterator();
 				while(iterator.hasNext()) {
-		 			String next = (String) iterator.next();
+		 			Map.Entry next = (Map.Entry) iterator.next();
 					writer.write("<param name="); //$NON-NLS-1$
-					writer.write(next);
+					writer.write(getQuotedString((String)next.getKey()));
 					writer.write(" value="); //$NON-NLS-1$
-					writer.write((String) parameters.get(next));
+					writer.write(getQuotedString((String)next.getValue()));
 					writer.write(">\n"); //$NON-NLS-1$
 				}
 			}
@@ -223,6 +224,14 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 			return null;
 		}
 		return tempFile;
+	}
+	
+	private String getQuotedString(String string) {
+		if (string.indexOf('"') == -1) {
+			return '"' + string + '"';
+		} else {
+			return '\'' + string + '\'';
+		}
 	}
 	
 	/* (non-Javadoc)
