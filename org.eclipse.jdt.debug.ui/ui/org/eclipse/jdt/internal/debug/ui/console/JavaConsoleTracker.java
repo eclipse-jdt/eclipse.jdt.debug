@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.ui.console.IHyperlink;
 
 /**
  * Provides links for stack traces
@@ -76,7 +76,7 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 							int start = m.start();
 							int end = m.end();
 							int size = end - start;
-							IConsoleHyperlink link = new JavaExceptionHyperLink(fConsole, fPrevText.substring(start, end));
+							IHyperlink link = new JavaExceptionHyperLink(fConsole, fPrevText.substring(start, end));
 							start += fPrevLine.getOffset();
 							fConsole.addLink(link, start, size);
 						}
@@ -84,7 +84,7 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 				}
 				int linkOffset = offset + index + 1;
 				int linkLength = length - index - 1;
-				IConsoleHyperlink link = null;
+				IHyperlink link = null;
 				if (standardMatch) {
 					link = new JavaStackTraceHyperlink(fConsole);
 				} else {

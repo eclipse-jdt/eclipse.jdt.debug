@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,10 @@ package org.eclipse.jdt.internal.debug.ui.console;
 
 
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.ui.console.IHyperlink;
 
 /**
  * Provides links for stack traces in J9 output
@@ -52,8 +52,7 @@ public class J9ConsoleTracker implements IConsoleLineTracker {
 				if (index >= 0) {
 					int linkOffset = offset + index + 1;
 					int linkLength = length - index - 1;
-					IConsoleHyperlink link = null;
-					link = new J9StackTraceHyperlink(fConsole);
+					IHyperlink link = new J9StackTraceHyperlink(fConsole);
 					fConsole.addLink(link, linkOffset, linkLength);
 				}				
 			}
