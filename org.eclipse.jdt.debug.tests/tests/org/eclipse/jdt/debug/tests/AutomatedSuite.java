@@ -59,7 +59,6 @@ import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TypeTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
-import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -123,7 +122,8 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(DirectorySourceLookupTests.class));
 		addTest(new TestSuite(ArchiveSourceLookupTests.class));
 		addTest(new TestSuite(MiscBreakpointsTests.class));
-		addTest(new TestSuite(WorkingDirectoryTests.class));
+		// removed for M5 - see bug 46991
+		//addTest(new TestSuite(WorkingDirectoryTests.class));
 		addTest(new TestSuite(StepIntoSelectionTests.class));
 		addTest(new TestSuite(StringSubstitutionTests.class));
 		addTest(new TestSuite(RefreshTabTests.class));
