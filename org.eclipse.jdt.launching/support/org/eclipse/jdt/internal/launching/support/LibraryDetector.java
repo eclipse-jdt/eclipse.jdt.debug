@@ -29,7 +29,7 @@ public class LibraryDetector {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.print(System.getProperty("java.vm.version")); //$NON-NLS-1$
+		System.out.print(System.getProperty("java.version")); //$NON-NLS-1$
 		System.out.print("|"); //$NON-NLS-1$
 		System.out.print(System.getProperty("sun.boot.class.path")); //$NON-NLS-1$
 		System.out.print("|"); //$NON-NLS-1$
