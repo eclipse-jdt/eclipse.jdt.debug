@@ -93,7 +93,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		setTextSelection(null);
 		IJavaStackFrame frame = getStackFrame();
 		boolean enabled = false;
-		if (getActiveEditor() != null && frame != null && selection instanceof ITextSelection && !selection.isEmpty()) {
+		if (getActiveEditor() != null && frame != null && frame.isSuspended() && selection instanceof ITextSelection && !selection.isEmpty()) {
 			ITextSelection textSelection = (ITextSelection)selection;
 			try {
 				int lineNumber = frame.getLineNumber();
