@@ -182,7 +182,7 @@ public class JavaApplicationShortcut implements ILaunchShortcut {
 		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfigurationType configType = getJavaLaunchConfigType();
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, type.getElementName()); 
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(type.getElementName())); 
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
 			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
@@ -199,8 +199,11 @@ public class JavaApplicationShortcut implements ILaunchShortcut {
 	 * Returns the local java launch config type
 	 */
 	protected ILaunchConfigurationType getJavaLaunchConfigType() {
-		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
-		return lm.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);		
+		return getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);		
+	}
+	
+	protected ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
 	}
 	
 	/**
