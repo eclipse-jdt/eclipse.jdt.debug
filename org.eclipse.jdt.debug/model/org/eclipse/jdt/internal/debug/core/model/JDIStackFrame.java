@@ -158,7 +158,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public boolean canStepReturn() {
 		try {
-			if (isObsolete()) {
+			if (!exists() || isObsolete()) {
 				return false;
 			}
 			List frames = ((JDIThread)getThread()).computeStackFrames();
@@ -171,7 +171,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						aboveObsoleteFrame= true;
 					}
 				}
-				return exists() && !bottomFrame && !aboveObsoleteFrame && getThread().canStepReturn();
+				return !bottomFrame && !aboveObsoleteFrame && getThread().canStepReturn();
 			}
 		} catch (DebugException e) {
 			logError(e);
@@ -832,6 +832,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (!((JDIDebugTarget)getDebugTarget()).hasHCROccurred()) {
 			// If no hot code replace has occurred, this frame
 			// cannot be obsolete.
+			return false;
+		}
+		if (isTerminated()) {
 			return false;
 		}
 		try {
