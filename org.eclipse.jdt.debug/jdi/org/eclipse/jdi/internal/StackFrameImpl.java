@@ -181,8 +181,6 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.SF_SET_VALUES, outBytes);
 			switch (replyPacket.errorCode()) {
-				case JdwpReplyPacket.TYPE_MISMATCH:
-					throw new InvalidTypeException();
 				case JdwpReplyPacket.INVALID_CLASS:
 					throw new ClassNotLoadedException(var.typeName());
 			}

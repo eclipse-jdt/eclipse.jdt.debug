@@ -20,10 +20,16 @@ import java.util.List;
 
 import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
+import com.sun.jdi.ArrayType;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.InterfaceType;
 import com.sun.jdi.InternalException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.PrimitiveType;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
@@ -159,30 +165,86 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	 * Check the type and the vm of the given value.
 	 * In case of primitive value, the value is converted if needed.
 	 * @return the (converted) value.
-	 * @throws InvalidTypeException if the value and the type are not both
-	 * primitive or not primitive or, in case of primitive, if the given
-	 * value is no assignment compatible with the given type.
+	 * @throws InvalidTypeException if the given value is no assignment
+	 * compatible with the given type.
 	 * @see checkPrimitiveValue(PrimitiveValueImpl, PrimitiveTypeImpl, PrimitiveTypeImpl)
 	 */
 	protected static ValueImpl checkValue(Value value, Type type, VirtualMachineImpl vm) throws InvalidTypeException {
 		if (value == null) {
-			if (type instanceof PrimitiveType) {
-				throw new InvalidTypeException(JDIMessages.getString("ValueImpl.Type_of_the_value_not_compatible_with_the_expected_type._1")); //$NON-NLS-1$
+			if (!(type instanceof PrimitiveType)) {
+			    return null;
 			}
-			return null;
-		} 
-		vm.checkVM(value);
-		TypeImpl valueType= (TypeImpl)value.type();
-		if ((type instanceof PrimitiveType) ^ (valueType instanceof PrimitiveType)) {
-			throw new InvalidTypeException(JDIMessages.getString("ValueImpl.Type_of_the_value_not_compatible_with_the_expected_type._1")); //$NON-NLS-1$
+		} else {
+			vm.checkVM(value);
+			TypeImpl valueType= (TypeImpl)value.type();
+			if (valueType instanceof PrimitiveType && type instanceof PrimitiveType) {
+				return checkPrimitiveValue((PrimitiveValueImpl) value, (PrimitiveTypeImpl) valueType, (PrimitiveTypeImpl) type);
+			} 
+			if (valueType instanceof ReferenceType && type instanceof ReferenceType) {
+			    checkReferenceType((ReferenceType) valueType, (ReferenceType) type);
+				return (ValueImpl)value;
+			}
 		}
-		if (type instanceof PrimitiveType) {
-			return checkPrimitiveValue((PrimitiveValueImpl) value, (PrimitiveTypeImpl) valueType, (PrimitiveTypeImpl) type);
-		} 
-		return (ValueImpl)value;
+		throw new InvalidTypeException(JDIMessages.getString("ValueImpl.Type_of_the_value_not_compatible_with_the_expected_type._1")); //$NON-NLS-1$
 	}
 
 	/**
+     */
+    private static void checkReferenceType(ReferenceType valueType, ReferenceType type) throws InvalidTypeException {
+        if (valueType instanceof ArrayType) {
+            if (type instanceof ArrayType) {
+                try {
+                    Type valueComponentType= ((ArrayType) valueType).componentType();
+                    Type componentType= ((ArrayType) type).componentType();
+                    if (valueComponentType instanceof PrimitiveType) {
+                        if (valueComponentType.equals(componentType)) {
+                            return;
+                        }
+                    } else if (valueComponentType instanceof ReferenceType && componentType instanceof ReferenceType) {
+                        checkReferenceType((ReferenceType) valueComponentType, (ReferenceType) componentType);
+                        return;
+                    }
+                } catch (ClassNotLoadedException e) {
+                    // should not append, log anyway
+                    JDIDebugPlugin.log(e);
+                }
+            }
+        } else {
+	        if (type instanceof ClassType) {
+	            ClassType superClass= (ClassType) valueType;
+	            while (superClass != null) {
+	                if (superClass.equals(type)) {
+	                    return;
+	                }
+	                superClass= superClass.superclass();
+	            }
+	        } else if (type instanceof InterfaceType) {
+	            List interfaces= ((ClassType)valueType).interfaces();
+	            for (Iterator iter= interfaces.iterator(); iter.hasNext();) {
+	                if (checkInterfaceType((InterfaceType) iter.next(), (InterfaceType) type)) {
+	                    return;
+	                }
+	            }
+	        }
+        }
+            
+		throw new InvalidTypeException(JDIMessages.getString("ValueImpl.Type_of_the_value_not_compatible_with_the_expected_type._1")); //$NON-NLS-1$
+    }
+    
+    private static boolean checkInterfaceType(InterfaceType valueType, InterfaceType type) {
+        if (valueType.equals(type)) {
+            return true;
+        }
+        List superInterfaces= valueType.superinterfaces();
+        for (Iterator iter= superInterfaces.iterator(); iter.hasNext();) {
+            if (checkInterfaceType((InterfaceType) iter.next(), type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
 	 * Check the type of the given value, and convert the value to the given
 	 * type if needed (see Java Language Spec, section 5.2).
 	 * @return the (converted) value.

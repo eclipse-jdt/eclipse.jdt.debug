@@ -58,4 +58,13 @@ public abstract class PrimitiveTypeImpl extends TypeImpl implements PrimitiveTyp
 	public int modifiers() {
 		throw new InternalError(JDIMessages.getString("PrimitiveTypeImpl.A_PrimitiveType_does_not_have_modifiers_3")); //$NON-NLS-1$
 	}
+	
+	/* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        return obj instanceof PrimitiveTypeImpl
+          && tag() == ((PrimitiveTypeImpl)obj).tag()
+          && virtualMachine().equals(((PrimitiveTypeImpl)obj).virtualMachine());
+    }
 }
