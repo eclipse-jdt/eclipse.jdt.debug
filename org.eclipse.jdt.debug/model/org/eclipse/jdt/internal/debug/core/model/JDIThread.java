@@ -1005,13 +1005,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Updates the state of this thread to suspend for
 	 * the given breakpoint  but does not fire notification
-	 * of the suspend.
+	 * of the suspend. Do no abort the current step neither (bug 28406).
 	 */
 	public boolean handleSuspendForBreakpointQuiet(JavaBreakpoint breakpoint) {
 		addCurrentBreakpoint(breakpoint);
 		setSuspendedQuiet(true);
 		setRunning(false);
-		abortStep();
 		return true;
 	}
 
@@ -2429,5 +2428,4 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		
 	}
-	
 }
