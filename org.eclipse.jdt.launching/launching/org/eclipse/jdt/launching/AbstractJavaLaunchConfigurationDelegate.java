@@ -12,10 +12,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -376,14 +380,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	protected File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
-		String path = getWorkingDirectoryPath(configuration);
-		if (path != null) {
-			File dir = new File(path);
-			if (dir.isDirectory()) {
-				return dir;
-			}
-		}
-		return null;
+		return verifyWorkingDirectory(configuration);
 	}
 
 	/**
@@ -395,8 +392,12 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected String getWorkingDirectoryPath(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+	protected IPath getWorkingDirectoryPath(ILaunchConfiguration configuration) throws CoreException {
+		String path = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+		if (path != null) {
+			return new Path(path);
+		}
+		return null;
 	}
 
 	/**
@@ -450,15 +451,25 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
 	protected File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
-		String path = getWorkingDirectoryPath(configuration);
+		IPath path = getWorkingDirectoryPath(configuration);
 		if (path != null) {
-			File dir = new File(path);
-			if (!dir.isDirectory()) {
-				abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+			if (path.isAbsolute()) {
+				File dir = new File(path.toOSString());
+				if (dir.isDirectory()) {
+					return dir;
+				} else {
+					abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+				}
+			} else {
+				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+				if (res instanceof IContainer && res.exists()) {
+					return res.getLocation().toFile();
+				} else {
+					abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+				}
 			}
-			return dir;
 		}
-		return null;
+		return null;		
 	}	
 		
 	/**

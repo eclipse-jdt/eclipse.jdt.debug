@@ -65,7 +65,7 @@ public class JREContainer implements IClasspathContainer {
 	 * @see IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		return "JRE System Library";
+		return LaunchingMessages.getString("JREContainer.JRE_System_Library_1"); //$NON-NLS-1$
 	}
 
 	/**

@@ -8,6 +8,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
@@ -83,30 +84,6 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		
 	}
 			
-	protected void updatePgmArgsFromConfig(ILaunchConfiguration config) {
-		try {
-			String pgmArgs = EMPTY_STRING;
-			if (config != null) {
-				pgmArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, EMPTY_STRING);
-			}
-			fPrgmArgumentsText.setText(pgmArgs);
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);			
-		}
-	}
-	
-	protected void updateVMArgsFromConfig(ILaunchConfiguration config) {
-		try {
-			String vmArgs = EMPTY_STRING;
-			if (config != null) {
-				vmArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, EMPTY_STRING);
-			}
-			fVMArgumentsText.setText(vmArgs);
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);		
-		}
-	}
-	
 	/**
 	 * @see ILaunchConfigurationTab#dispose()
 	 */
@@ -117,7 +94,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
-		return fWorkingDirectoryBlock.isValid();
+		return fWorkingDirectoryBlock.isValid(config);
 	}
 
 	/**
@@ -173,5 +150,35 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	public String getName() {
 		return LauncherMessages.getString("JavaArgumentsTab.&Arguments_16"); //$NON-NLS-1$
 	}	
+	
+	/**
+	 * @see ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
+	 */
+	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
+		super.setLaunchConfigurationDialog(dialog);
+		fWorkingDirectoryBlock.setLaunchConfigurationDialog(dialog);
+	}	
+	/**
+	 * @see ILaunchConfigurationTab#getErrorMessage()
+	 */
+	public String getErrorMessage() {
+		String m = super.getErrorMessage();
+		if (m == null) {
+			return fWorkingDirectoryBlock.getErrorMessage();
+		}
+		return m;
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#getMessage()
+	 */
+	public String getMessage() {
+		String m = super.getMessage();
+		if (m == null) {
+			return fWorkingDirectoryBlock.getMessage();
+		}
+		return m;
+	}
+
 }
 

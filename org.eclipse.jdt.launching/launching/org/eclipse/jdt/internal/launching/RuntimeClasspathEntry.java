@@ -206,7 +206,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				case CONTAINER :
 					name = root.getAttribute("projectName"); //$NON-NLS-1$
 					if (name == null) {
-						abort("Unable to recover runtime classpath entry - missing project name.", null);
+						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_classpath_entry_-_missing_project_name._1"), null); //$NON-NLS-1$
 					} else {
 						setProjectName(name);
 					}

@@ -62,9 +62,11 @@ public interface IJavaLaunchConfigurationConstants {
 	/**
 	 * Working directory attribute name. The working directory
 	 * to be used by the VM is stored with this key. The value
-	 * is a string specifying an absolute path to the working
-	 * directory to use. When unspecified, the working directory
-	 * is inherited from the current process.
+	 * is a string specifying an path to the working directory to use.
+	 * When unspecified, the working directory is inherited from the current process.
+	 * When specified as an absolute path, the path represents a path in the local
+	 * file system. When specified as a full path, the path represents a workspace
+	 * relative path.
 	 */
 	public static final String ATTR_WORKING_DIRECTORY = LaunchingPlugin.getUniqueIdentifier() + ".WORKING_DIRECTORY";	 //$NON-NLS-1$
 	
