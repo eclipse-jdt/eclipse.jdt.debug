@@ -707,15 +707,14 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		if (display.isDisposed()) {
 			return;
 		}
+		final String message= MessageFormat.format(errorMessage, new String[] {fLabelProvider.getText(breakpoint)});
 		display.asyncExec(new Runnable() {
 			public void run() {
 				if (display.isDisposed()) {
 					return;
 				}
 				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-				String breakpointText= fLabelProvider.getText(breakpoint);
-				ConditionalBreakpointErrorDialog dialog= new ConditionalBreakpointErrorDialog(shell, title,
-					MessageFormat.format(errorMessage, new String[] {breakpointText}), status, breakpoint);
+				ConditionalBreakpointErrorDialog dialog= new ConditionalBreakpointErrorDialog(shell, title, message, status, breakpoint);
 				dialog.open();
 			}
 		});

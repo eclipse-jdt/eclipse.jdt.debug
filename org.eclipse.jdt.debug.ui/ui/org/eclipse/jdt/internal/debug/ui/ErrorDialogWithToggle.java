@@ -43,11 +43,12 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 	 */
 	IPreferenceStore fStore= null;
 
-	public ErrorDialogWithToggle(Shell parentShell, String dialogTitle, String message, IStatus status, int displayMask, String preferenceKey, String toggleMessage, IPreferenceStore store) {
-		super(parentShell, dialogTitle, message, status, displayMask);
+	public ErrorDialogWithToggle(Shell parentShell, String dialogTitle, String message, IStatus status, String preferenceKey, String toggleMessage, IPreferenceStore store) {
+		super(parentShell, dialogTitle, message, status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO);
 		fStore= store;
 		fPreferenceKey= preferenceKey;
 		fToggleMessage= toggleMessage;
+		setBlockOnOpen(false);
 	}
 
 	protected Control createDialogArea(Composite parent) {
