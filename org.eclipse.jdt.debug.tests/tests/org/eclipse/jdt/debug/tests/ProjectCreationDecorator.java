@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.testplugin.JavaProjectHelper;
@@ -41,23 +42,23 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 			pro.delete(true, true, null);
 		}
 		// create project and import source
-		IJavaProject project = JavaProjectHelper.createJavaProject("DebugTests", "bin");
-		IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(project, "src");
+		fJavaProject = JavaProjectHelper.createJavaProject("DebugTests", "bin");
+		IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(fJavaProject, "src");
 		File root = JavaTestPlugin.getDefault().getFileInPlugin(JavaProjectHelper.TEST_SRC_DIR);
 		JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
 		
 		// add rt.jar
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		assertNotNull("No default JRE", vm);
-		JavaProjectHelper.addVariableEntry(project, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
+		JavaProjectHelper.addVariableEntry(fJavaProject, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
 		
-		pro = project.getProject();
+		pro = fJavaProject.getProject();
 		
 		//add A.jar
 		root = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testjars"));
 		JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
 		IPath path = src.getPath().append("A.jar");
-		JavaProjectHelper.addLibrary(project, path);
+		JavaProjectHelper.addLibrary(fJavaProject, path);
 		
 		// create launch configuration folder
 		
@@ -83,6 +84,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("org.eclipse.debug.tests.targets.Watchpoint");
 		createLaunchConfiguration("A");
 		createLaunchConfiguration("HitCountLooper");
+		createLaunchConfiguration("CompileError");
 				
 	}
 	
@@ -95,6 +97,8 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		ILaunchConfigurationWorkingCopy config = type.newInstance(getJavaProject().getProject().getFolder("launchConfigurations"), mainTypeName);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, mainTypeName);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
+		config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);		
+		config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);		
 		config.doSave();
 	}
 }

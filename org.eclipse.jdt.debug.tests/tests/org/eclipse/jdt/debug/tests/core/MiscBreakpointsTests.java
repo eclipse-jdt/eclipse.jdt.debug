@@ -1,0 +1,87 @@
+package org.eclipse.jdt.debug.tests.core;
+
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IBuffer;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
+
+/**
+ * Home for breakpoint tests that don't fit elsewhere
+ */
+public class MiscBreakpointsTests extends AbstractDebugTest {
+
+	private static final String COMPILE_ERROR_CONTENTS = 
+	 "public class CompileError {\npublic static void main(String[] args) {\nString foo = \"foo\" + bar;\n}	\n}";
+
+	public MiscBreakpointsTests(String name) {
+		super(name);
+	}
+
+	public void testSuspendOnUncaughtExceptions() throws Exception {
+		String typeName = "ThrowsNPE";
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
+				
+		IJavaThread thread = null;
+		try {
+			thread= launch(typeName);
+			
+			assertTrue("suspendee was not an IJavaThread", thread instanceof IJavaThread);
+			IJavaThread javaThread = (IJavaThread) thread;
+			int stackLine = javaThread.getTopStackFrame().getLineNumber();
+			assertTrue("line number should be '15', but was " + stackLine, stackLine == 15);
+		
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+
+	public void testDontSuspendOnUncaughtExceptions() throws Exception {
+		String typeName = "ThrowsNPE";
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);		
+		
+		IJavaDebugTarget debugTarget= null;
+		try {
+			debugTarget = launchAndTerminate(typeName, 3000);
+		} finally {
+			terminateAndRemove(debugTarget);
+			removeAllBreakpoints();
+		}		
+	}
+
+	public void testSuspendOnCompilationErrors() throws Exception {
+		String typeName = "CompileError";
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);		
+		
+		IType type = fJavaProject.findType(typeName);
+		ICompilationUnit cu = type.getCompilationUnit();
+		IBuffer buffer = cu.getBuffer();
+		buffer.setContents(COMPILE_ERROR_CONTENTS);
+		cu.save(new NullProgressMonitor(), true);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launch(typeName);
+			
+			assertTrue("suspendee was not an IJavaThread", thread instanceof IJavaThread);
+			IJavaThread javaThread = (IJavaThread) thread;
+			int stackLine = javaThread.getTopStackFrame().getLineNumber();
+			assertTrue("line number should be '3', but was " + stackLine, stackLine == 3);
+		
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+
+	protected IPreferenceStore getPrefStore() {
+		return JDIDebugUIPlugin.getDefault().getPreferenceStore();		
+	}
+
+}

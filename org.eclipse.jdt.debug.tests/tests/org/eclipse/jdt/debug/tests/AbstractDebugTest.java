@@ -52,6 +52,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	
 	public IEvaluationResult fEvaluationResult;
 	
+	public static IJavaProject fJavaProject;
+	
 	/**
 	 * The last relevent event set - for example, that caused
 	 * a thread to suspend

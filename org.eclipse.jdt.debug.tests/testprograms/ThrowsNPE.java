@@ -6,7 +6,8 @@ public class ThrowsNPE {
 			anObject.throwBaby();
 		} catch(NullPointerException ne) {
 			// do nothing
-		}
+		}		
+		anObject.throwBaby();
 	}
 
 
