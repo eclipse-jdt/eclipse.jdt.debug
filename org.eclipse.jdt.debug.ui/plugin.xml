@@ -1496,6 +1496,10 @@
 		<action id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression"/>
 		<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"/>
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStatic"/>
+		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStatic"/>
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowConstants"/>
+		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowConstants"/>
 		<action id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions"/>
 		<action id="org.eclipse.jdt.ui.variableViewActions.PrimitiveOptions"/>
 	</debugActionGroup>
