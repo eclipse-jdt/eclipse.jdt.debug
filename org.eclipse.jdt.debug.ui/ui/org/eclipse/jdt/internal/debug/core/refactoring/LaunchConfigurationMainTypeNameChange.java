@@ -51,7 +51,7 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 		} else if (nbChanges == 1) {
 			return (Change) changes.get(0);
 		} else {
-			return new CompositeChange(RefractoringMessages.getString("LaunchConfigurationMainTypeNameChange.1"), (Change[])changes.toArray(new Change[changes.size()])); //$NON-NLS-1$
+			return new CompositeChange(RefactoringMessages.getString("LaunchConfigurationMainTypeNameChange.1"), (Change[])changes.toArray(new Change[changes.size()])); //$NON-NLS-1$
 		}
 	}
 	
@@ -132,9 +132,9 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 	 */
 	public String getName() {
 		if (fNewLaunchConfigurationName != null) {
-			return MessageFormat.format(RefractoringMessages.getString("LaunchConfigurationMainTypeNameChange.2"), new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName}); //$NON-NLS-1$
+			return MessageFormat.format(RefactoringMessages.getString("LaunchConfigurationMainTypeNameChange.2"), new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName}); //$NON-NLS-1$
 		} else {
-			return MessageFormat.format(RefractoringMessages.getString("LaunchConfigurationMainTypeNameChange.3"), new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
+			return MessageFormat.format(RefactoringMessages.getString("LaunchConfigurationMainTypeNameChange.3"), new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
 		}
 	}
 	/* (non-Javadoc)

@@ -62,7 +62,7 @@ public class LaunchConfigurationProjectNameChange extends Change {
 		} else if (nbChanges == 1) {
 			return (Change) changes.get(0);
 		} else {
-			return new CompositeChange(RefractoringMessages.getString("LaunchConfigurationProjectNameChange.0"), (Change[])changes.toArray(new Change[changes.size()])); //$NON-NLS-1$
+			return new CompositeChange(RefactoringMessages.getString("LaunchConfigurationProjectNameChange.0"), (Change[])changes.toArray(new Change[changes.size()])); //$NON-NLS-1$
 		}
 	}
 	
@@ -93,7 +93,7 @@ public class LaunchConfigurationProjectNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.IChange#getName()
 	 */
 	public String getName() {
-		return MessageFormat.format(RefractoringMessages.getString("LaunchConfigurationProjectNameChange.1"), new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
+		return MessageFormat.format(RefactoringMessages.getString("LaunchConfigurationProjectNameChange.1"), new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
 	}
 
 	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
