@@ -5,18 +5,18 @@ package org.eclipse.jdt.debug.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
+import java.util.Map;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.debug.core.*;
+
 import com.sun.jdi.VirtualMachine;
-import java.util.Map;
 
 /**
  * The JDI debug model plug-in provides an implementation of a debug
@@ -276,6 +276,91 @@ public class JDIDebugModel {
 	}
 
 	/**
+	 * Creates and returns a watchpoint on the
+	 * given field.
+	 * If hitCount > 0, the breakpoint will suspend execution when it is
+	 * "hit" the specified number of times. Note: the breakpoint is not
+	 * added to the breakpoint manager - it is merely created.
+	 * 
+	 * @param field the field on which to suspend (on access or modification)
+	 * @param hitCount the number of times the breakpoint will be hit before
+	 * 	suspending execution - 0 if it should always suspend
+	 * @return a watchpoint
+	 * @exception DebugException if unable to create the breakpoint marker due
+	 * 	to a lower level exception
+	 */
+	public static IMarker createWatchpoint(final IField field, final int hitCount) throws DebugException {
+		
+		fgBreakpoint= null;
+		
+		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
+			
+			public void run(IProgressMonitor monitor) throws CoreException {
+
+				IResource resource = null;
+				ICompilationUnit compilationUnit = getCompilationUnit(field);
+				if (compilationUnit != null) {
+					resource = compilationUnit.getUnderlyingResource();
+				}
+				if (resource == null) {
+					resource = field.getJavaProject().getProject();
+				}
+				
+				fgBreakpoint= resource.createMarker(IJavaDebugConstants.JAVA_WATCHPOINT);
+				
+				// find the source range if available
+				int start = -1;
+				int stop = -1;
+				ISourceRange range = field.getSourceRange();
+				if (range != null) {
+					start = range.getOffset();
+					stop = start + range.getLength() - 1;
+				}
+				// configure the standard attributes
+				DebugPlugin.getDefault().getBreakpointManager().configureLineBreakpoint(fgBreakpoint, getPluginIdentifier(), true, -1, start, stop);
+				// configure the type handle and hit count
+				DebugJavaUtils.setTypeAndHitCount(fgBreakpoint, field.getDeclaringType(), hitCount);
+				// configure the field handle
+				DebugJavaUtils.setField(fgBreakpoint, field);
+				// configure the access and modification flags to defaults
+				DebugJavaUtils.setDefaultAccessAndModification(fgBreakpoint);
+				DebugJavaUtils.setAutoDisabled(fgBreakpoint, false);				
+				
+				
+				// configure the marker as a Java marker
+				Map attributes= fgBreakpoint.getAttributes();
+				JavaCore.addJavaElementMarkerAttributes(attributes, field);
+				fgBreakpoint.setAttributes(attributes);			
+			}
+		};
+		
+		try {
+			ResourcesPlugin.getWorkspace().run(wr, null);
+		} catch (CoreException e) {
+			throw new DebugException(e.getStatus());
+		}
+		
+		return fgBreakpoint;
+	}
+
+	/**
+	 * Returns the underlying compilation unit of an element.
+	 */
+	public static ICompilationUnit getCompilationUnit(IJavaElement element) {
+		if (element instanceof IWorkingCopy) {
+			return (ICompilationUnit) ((IWorkingCopy) element).getOriginalElement();
+		}
+		if (element instanceof ICompilationUnit) {
+			return (ICompilationUnit) element;
+		}		
+		IJavaElement parent = element.getParent();
+		if (parent != null) {
+			return getCompilationUnit(parent);
+		}
+		return null;
+	}
+
+	/**
 	 * Creates and returns a method entry breakpoint in the
 	 * given method.
 	 * If hitCount is > 0, the breakpoint will suspend execution when it is
@@ -383,6 +468,25 @@ public class JDIDebugModel {
 	public static IMethod getMethod(IMarker breakpoint) {
 		return DebugJavaUtils.getMethod(breakpoint);
 	}
+
+	/**
+	 * Returns the field handle identifier of the given breakpoint
+	 */
+	public static String getFieldHandleIdentifier(IMarker breakpoint) {
+		return DebugJavaUtils.getFieldHandleIdentifier(breakpoint);
+	}
+	
+	/**
+	 * Returns the field the given breakpoint is installed on
+	 * or <code>null</code> if breakpoint is not installed in a method.
+	 * 
+	 * @param breakpoint the breakpoint
+	 * @return a field or <code>null</code>
+	 */
+	public static IField getField(IMarker breakpoint) {
+		return DebugJavaUtils.getField(breakpoint);
+	}
+	
 	/**
 	 * Returns the type the given breakpoint is installed in
 	 * or <code>null</code> if breakpoint is not installed in a type. If
@@ -437,6 +541,44 @@ public class JDIDebugModel {
 	 */
 	public static boolean isInstalled(IMarker breakpoint) {
 		return DebugJavaUtils.isInstalled(breakpoint);
+	}
+	
+	/**
+	 * Returns whether the given breakpoint is a watchpoint.
+	 *
+	 * @param breakpoint the breakpoint
+	 * @return whether the given breakpoint is a watchpoint
+	 */
+	public static boolean isWatchpoint(IMarker breakpoint) {
+		return DebugJavaUtils.isWatchpoint(breakpoint);
+	}
+	
+	/**
+	 * Returns whether the given breakpoint
+	 * is an access watchpoint.
+	 * 
+	 * @param breakpoint the breakpoint
+	 * @return whether the given breakpoint 
+	 * is an access watchpoint
+	 */
+	public static boolean isAccess(IMarker breakpoint) {
+		return DebugJavaUtils.isAccess(breakpoint);
+	}
+	
+	/**
+	 * Returns whether the given breakpoint
+	 * is an modificaion watchpoint.
+	 * 
+	 * @param breakpoint the breakpoint
+	 * @return whether the given breakpoint 
+	 * is an modification watchpoint
+	 */
+	public static boolean isModification(IMarker breakpoint) {
+		return DebugJavaUtils.isModification(breakpoint);
+	}	
+	
+	public static boolean isAutoDisabled(IMarker breakpoint) {
+		return DebugJavaUtils.isAutoDisabled(breakpoint);
 	}
 	/**
 	 * Returns whether the given breakpoint is a method entry breakpoint.

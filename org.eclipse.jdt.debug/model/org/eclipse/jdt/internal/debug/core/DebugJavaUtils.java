@@ -176,6 +176,17 @@ public class DebugJavaUtils {
 	}
 	
 	/**
+	 * Returns whether the given breakpoint is a watchpoint.
+	 */
+	public static boolean isWatchpoint(IMarker breakpoint) {
+		try {
+			return breakpoint.isSubtypeOf(IJavaDebugConstants.JAVA_WATCHPOINT);
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+	
+	/**
 	 * Returns whether the given breakpoint is a method entry breakpoint.
 	 */
 	public static boolean isMethodEntryBreakpoint(IMarker breakpoint) {
@@ -202,6 +213,30 @@ public class DebugJavaUtils {
 	 */
 	public static void setCaught(IMarker breakpoint, boolean caught) throws CoreException {
 		setBooleanAttribute(breakpoint, IJavaDebugConstants.CAUGHT, caught);	
+	}
+
+	/**
+	 * Returns the <code>ACCESS</code> attribute of the given breakpoint
+	 * or <code>false</code> if the attribute is not set
+	 */
+	public static boolean isAccess(IMarker breakpoint) {
+		return getBooleanAttribute(breakpoint, IJavaDebugConstants.ACCESS);
+	}
+	
+	/**
+	 * Returns the <code>MODIFICATION</code> attribute of the given breakpoint
+	 * or <code>false</code> if the attribute is not set
+	 */
+	public static boolean isModification(IMarker breakpoint) {
+		return getBooleanAttribute(breakpoint, IJavaDebugConstants.MODIFICATION);
+	}
+
+	/**
+	 * Returns the <code>AUTO_DISABLED</code> attribute of the given breakpoint
+	 * or <code>false</code> if the attribute is not set
+	 */
+	public static boolean isAutoDisabled(IMarker breakpoint) {
+		return getBooleanAttribute(breakpoint, IJavaDebugConstants.AUTO_DISABLED);
 	}
 
 	/**
@@ -249,6 +284,20 @@ public class DebugJavaUtils {
 	}
 
 	/**
+	 * Returns the <code>FIELD_HANDLE</code> attribute of the given breakpoint.
+	 */
+	public static String getFieldHandleIdentifier(IMarker breakpoint) {
+		String handle;
+		try {
+			handle= (String)breakpoint.getAttribute(IJavaDebugConstants.FIELD_HANDLE);
+		} catch (CoreException ce) {
+			handle= "";
+			logError(ce);
+		}
+		return handle;
+	}
+
+	/**
 	 * Returns the <code>METHOD_HANDLE</code> attribute of the given breakpoint.
 	 */
 	public static String getMethodHandleIdentifier(IMarker breakpoint) throws CoreException {
@@ -267,6 +316,14 @@ public class DebugJavaUtils {
 			}
 		} catch (CoreException e) {
 			logError(e);
+		}
+		return null;
+	}
+	
+	public static IField getField(IMarker breakpoint) {
+		String handle= getFieldHandleIdentifier(breakpoint);
+		if (handle != null && handle != "") {
+			return (IField)JavaCore.create(handle);
 		}
 		return null;
 	}
@@ -320,6 +377,52 @@ public class DebugJavaUtils {
 	 */
 	public static void setTypeHandleIdentifier(IMarker breakpoint, String identifier) throws CoreException {
 		breakpoint.setAttribute(IJavaDebugConstants.TYPE_HANDLE, identifier);
+	}
+	
+	/**
+	 * Sets the default access and modification states of the given
+	 * breakpoint.
+	 */
+	public static void setDefaultAccessAndModification(IMarker breakpoint) throws CoreException {
+		Object[] values= new Object[]{Boolean.FALSE, Boolean.TRUE};
+		String[] attributes= new String[]{IJavaDebugConstants.ACCESS, IJavaDebugConstants.MODIFICATION};
+		breakpoint.setAttributes(attributes, values);		
+	}
+	
+	/**
+	 * Sets the <code>ACCESS</code> attribute of the given breakpoint.
+	 */
+	public static void setAccess(IMarker breakpoint, boolean access) throws CoreException {
+		breakpoint.setAttribute(IJavaDebugConstants.ACCESS, access);
+	}
+	
+	/**
+	 * Sets the <code>MODIFICATION</code> attribute of the given breakpoint.
+	 */
+	public static void setModification(IMarker breakpoint, boolean modification) throws CoreException {
+		breakpoint.setAttribute(IJavaDebugConstants.MODIFICATION, modification);
+	}
+	
+	/**
+	 * Sets the <code>AUTO_DISABLED</code> attribute of the given breakpoint.
+	 */
+	public static void setAutoDisabled(IMarker breakpoint, boolean autoDisabled) throws CoreException {
+		breakpoint.setAttribute(IJavaDebugConstants.AUTO_DISABLED, autoDisabled);
+	}
+	
+	/**
+	 * Sets the <code>FIELD_HANDLE</code> attribute of the given breakpoint, associated
+	 * with the given IField.
+	 */
+	public static void setField(IMarker breakpoint, IField field) throws CoreException {
+		String handle = field.getHandleIdentifier();
+		setFieldHandleIdentifier(breakpoint, handle);
+	}
+	/**
+	 * Sets the <code>FIELD_HANDLE</code> attribute of the given breakpoint.
+	 */
+	public static void setFieldHandleIdentifier(IMarker breakpoint, String handle) throws CoreException {
+		breakpoint.setAttribute(IJavaDebugConstants.FIELD_HANDLE, handle);
 	}
 	
 	/**

@@ -5,24 +5,19 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
+import java.util.*;
+
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaEvaluationListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import com.sun.jdi.event.BreakpointEvent;
-import com.sun.jdi.event.ExceptionEvent;
-import com.sun.jdi.event.StepEvent;
-import com.sun.jdi.request.EventRequest;
-import com.sun.jdi.request.EventRequestManager;
-import com.sun.jdi.request.StepRequest;
-import java.util.*;
+
+import com.sun.jdi.*;
+import com.sun.jdi.event.*;
+import com.sun.jdi.request.*;
 
 /** 
  * Proxy to a thread reference on the target.
@@ -590,14 +585,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 	}
 
-	protected void handleBreakpoint(BreakpointEvent event) {
+	/**
+	 * Suspend the thread based on a breakpoint or watchpoint event
+	 */
+	protected void handleLocatableEvent(LocatableEvent event) {
 		abortDropAndStep();
-		IBreakpointManager bpManager= getBreakpointManager();
 		fCurrentBreakpoint= (IMarker) event.request().getProperty(IDebugConstants.BREAKPOINT_MARKER);
 		setRunning(false, DebugEvent.BREAKPOINT);
 		((JDIDebugTarget) getDebugTarget()).expireHitCount(event);
 	}
-
+	
+	/**
+	 * Suspend the thread based on an exception event
+	 */
 	protected void handleException(ExceptionEvent event) {
 		abortDropAndStep();
 		fCurrentBreakpoint= (IMarker) event.request().getProperty(IDebugConstants.BREAKPOINT_MARKER);

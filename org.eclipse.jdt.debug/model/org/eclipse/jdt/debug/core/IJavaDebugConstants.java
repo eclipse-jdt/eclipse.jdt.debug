@@ -39,6 +39,12 @@ public interface IJavaDebugConstants {
 	public static final String JAVA_EXCEPTION_BREAKPOINT = "org.eclipse.jdt.debug.javaExceptionBreakpoint";
 	
 	/**
+	 * Java watchpoint marker type
+	 * (value <code>"org.eclipse.jdt.debug.javaWatchpoint"</code>).
+	 */
+	public static final String JAVA_WATCHPOINT= "org.eclipse.jdt.debug.javaWatchpoint";
+	
+	/**
 	 * Java method entry breakpoint marker type
 	 * (value <code>"org.eclipse.jdt.debug.javaMethodEntryBreakpoint"</code>).
 	 */
@@ -50,6 +56,13 @@ public interface IJavaDebugConstants {
 	 * (value <code>"typeHandle"</code>). This attribute is a <code>String</code>.
 	 */
 	public static final String TYPE_HANDLE = "typeHandle";
+	
+	/**
+	 * Breakpoint attribute storing the handle identifier of the Java element
+	 * corresponding to the field on which a breakpoint is set
+	 * (value <code>"fieldHandle"</code>). This attribute is a <code>String</code>.
+	 */
+	public static final String FIELD_HANDLE= "fieldHandle";
 	
 	/**
 	 * Breakpoint attribute storing the handle identifier of the Java element
@@ -101,7 +114,26 @@ public interface IJavaDebugConstants {
 	 * exception is a checked exception.
 	 */
 	public static final String CHECKED = "checked";
+	
+	/**
+	 * Watchpoint attribute storing the access value (value <code>"access"</code>).
+	 * This attribute is stored as a <code>boolean</code>, indicating whether a
+	 * watchpoint is an access watchpoint.
+	 */
+	public static final String ACCESS= "access";
+	
+	/**
+	 * Watchpoint attribute storing the modification value (value <code>"modification"</code>).
+	 * This attribute is stored as a <code>boolean</code>, indicating whether a
+	 * watchpoint is a modification watchpoint.
+	 */
+	public static final String MODIFICATION= "modification";
+	
+	/**
+	 * Watchpoint attribute storing the auto_disabled value (value <code>"auto_disabled"</code>).
+	 * This attribute is stored as a <code>boolean</code>, indicating whether a
+	 * watchpoint has been auto-disabled (as opposed to being disabled explicitly by the user)
+	 */
+	public static final String AUTO_DISABLED="auto_disabled";
 
 }
-
-

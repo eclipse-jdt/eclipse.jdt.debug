@@ -62,7 +62,7 @@ class EventDispatcher implements Runnable {
 				dispatchStepEvent((StepEvent)event);
 			} else
 				if (event instanceof BreakpointEvent) {
-					dispatchBreakpointEvent((BreakpointEvent) event);
+					dispatchLocatableEvent((LocatableEvent) event);
 				} else
 					if (event instanceof ExceptionEvent) {
 						dispatchExceptionEvent((ExceptionEvent) event);
@@ -76,25 +76,28 @@ class EventDispatcher implements Runnable {
 								if (event instanceof ClassPrepareEvent) {
 									fTarget.handleClassLoad((ClassPrepareEvent) event);
 								} else
-									if (event instanceof MethodEntryEvent) {
-										fTarget.handleMethodEntry((MethodEntryEvent) event);
+									if (event instanceof WatchpointEvent) {
+										dispatchLocatableEvent((LocatableEvent) event);
 									} else
-										if (event instanceof VMDeathEvent) {
-											fTarget.handleVMDeath((VMDeathEvent) event);
-											fKeepReading= false; // stop listening for events
+										if (event instanceof MethodEntryEvent) {
+											fTarget.handleMethodEntry((MethodEntryEvent) event);
 										} else
-											if (event instanceof VMDisconnectEvent) {
-												fTarget.handleVMDisconnect((VMDisconnectEvent) event);
+											if (event instanceof VMDeathEvent) {
+												fTarget.handleVMDeath((VMDeathEvent) event);
 												fKeepReading= false; // stop listening for events
-											} else if (event instanceof VMStartEvent) {
-												fTarget.handleVMStart((VMStartEvent)event);
-											} else {
-												// Unknown Event Type
-											}
+											} else
+												if (event instanceof VMDisconnectEvent) {
+													fTarget.handleVMDisconnect((VMDisconnectEvent) event);
+													fKeepReading= false; // stop listening for events
+												} else if (event instanceof VMStartEvent) {
+													fTarget.handleVMStart((VMStartEvent)event);
+												} else {
+													// Unknown Event Type
+												}
 		}
 	}
 
-	protected void dispatchBreakpointEvent(BreakpointEvent event) {
+	protected void dispatchLocatableEvent(LocatableEvent event) {
 		if (!fKeepReading) {
 			return;
 		}
@@ -104,7 +107,7 @@ class EventDispatcher implements Runnable {
 			fTarget.resume(threadRef);
 			return;
 		} else {
-			thread.handleBreakpoint(event);
+			thread.handleLocatableEvent(event);
 		}
 	}
 

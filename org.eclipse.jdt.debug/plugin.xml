@@ -81,6 +81,28 @@
    </attribute>
 </extension>
 <extension
+	id="javaWatchpoint"
+	point="org.eclipse.core.resources.markers">
+	<super
+		type="org.eclipse.jdt.debug.javaLineBreakpoint">
+	</super>
+	<persistent
+		value="true">
+	</persistent>
+	<attribute
+		name="fieldHandle">
+	</attribute>
+	<attribute
+		name="access">
+	</attribute>
+	<attribute
+		name="modification">
+	</attribute>
+	<attribute
+		name="auto_disabled">
+	</attribute>
+</extension>
+<extension
       id="javaMethodEntryBreakpoint"
       point="org.eclipse.core.resources.markers">
    <super
