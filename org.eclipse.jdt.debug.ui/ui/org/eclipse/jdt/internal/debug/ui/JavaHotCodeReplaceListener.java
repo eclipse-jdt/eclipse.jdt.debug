@@ -78,7 +78,7 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 					return;
 				}
 				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-				ErrorDialogWithToggle dialog= new ErrorDialogWithToggle(shell, title, message, status, preference, alertMessage, JDIDebugUIPlugin.getDefault().getPreferenceStore());
+				TerminateErrorDialog dialog= new TerminateErrorDialog(shell, title, message, status, preference, alertMessage, JDIDebugUIPlugin.getDefault().getPreferenceStore(), target);
 				dialog.setBlockOnOpen(false);
 				dialog.open();
 			}
@@ -107,8 +107,8 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 					return;
 				}
 				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-				ErrorDialogWithToggle dialog= new ErrorDialogWithToggle(shell, dialogTitle, message, status, IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS,
-					toggleMessage, JDIDebugUIPlugin.getDefault().getPreferenceStore());
+				TerminateErrorDialog dialog= new TerminateErrorDialog(shell, dialogTitle, message, status, IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS,
+					toggleMessage, JDIDebugUIPlugin.getDefault().getPreferenceStore(), target);
 				dialog.setBlockOnOpen(false);
 				dialog.open();
 			}
