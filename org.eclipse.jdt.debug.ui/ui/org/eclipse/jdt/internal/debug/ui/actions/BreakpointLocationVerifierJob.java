@@ -138,11 +138,13 @@ public class BreakpointLocationVerifierJob extends Job {
 						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(fBreakpoint, true);
 					}
 					new ToggleBreakpointAdapter().toggleMethodBreakpoints(fEditorPart, new TextSelection(locator.getMemberOffset(), 0));
+					break;
 				case ValidBreakpointLocationLocator.LOCATION_FIELD:
 					if (fBreakpoint != null) {
 						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(fBreakpoint, true);
 					}
 					new ToggleBreakpointAdapter().toggleWatchpoints(fEditorPart, new TextSelection(locator.getMemberOffset(), 0));
+					break;
 				default:
 					// cannot found a valid location
 					report(ActionMessages.getString("BreakpointLocationVerifierJob.not_valid_location")); //$NON-NLS-1$
