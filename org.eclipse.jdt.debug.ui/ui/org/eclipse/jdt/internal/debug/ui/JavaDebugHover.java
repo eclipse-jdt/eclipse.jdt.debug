@@ -107,13 +107,30 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	/**
 	 * Append HTML for the given variable to the given buffer
 	 */
-	private static void appendVariable(StringBuffer buffer, IVariable variable) throws DebugException {
-		String preferenceValue = AbstractDisplayOptionsAction.getStringPreferenceValue(IDebugUIConstants.ID_VARIABLE_VIEW, IJDIPreferencesConstants.PREF_SHOW_DETAILS);
-		JDIModelPresentation modelPresentation = new JDIModelPresentation();
-		modelPresentation.setAttribute(JDIModelPresentation.SHOW_DETAILS, preferenceValue);
+	private static void appendVariable(StringBuffer buffer, IVariable variable) throws DebugException {		
+		JDIModelPresentation modelPresentation = getModelPresentation();
 		buffer.append("<p><pre>"); //$NON-NLS-1$
 		buffer.append(modelPresentation.getVariableText((IJavaVariable) variable));
 		buffer.append("</pre></p>"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns a configured model presentation for use displaying variables.
+	 */
+	private static JDIModelPresentation getModelPresentation() {
+		JDIModelPresentation presentation = new JDIModelPresentation();
+		String viewId= IDebugUIConstants.ID_VARIABLE_VIEW;
+		String showDetails = AbstractDisplayOptionsAction.getStringPreferenceValue(viewId, IJDIPreferencesConstants.PREF_SHOW_DETAILS);
+		presentation.setAttribute(JDIModelPresentation.SHOW_DETAILS, showDetails);
+		
+		String[][] booleanPrefs= {{IJDIPreferencesConstants.PREF_SHOW_HEX, JDIModelPresentation.SHOW_HEX_VALUES},
+        {IJDIPreferencesConstants.PREF_SHOW_CHAR, JDIModelPresentation.SHOW_CHAR_VALUES},
+        {IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, JDIModelPresentation.SHOW_UNSIGNED_VALUES}};
+        for (int i = 0; i < booleanPrefs.length; i++) {
+        	boolean preferenceValue = AbstractDisplayOptionsAction.getBooleanPreferenceValue(viewId, booleanPrefs[i][0]);
+    		presentation.setAttribute(booleanPrefs[i][1], (preferenceValue ? Boolean.TRUE : Boolean.FALSE));
+		}
+		return presentation;
 	}
 
 	/* (non-Javadoc)
