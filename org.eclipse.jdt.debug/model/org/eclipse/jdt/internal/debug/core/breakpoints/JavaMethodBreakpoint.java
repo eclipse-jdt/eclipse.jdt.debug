@@ -707,4 +707,11 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		registerRequest(exitRequest, target);
 		return true;
 	}
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#setTypeName(String)
+	 */
+	protected void setTypeName(String typeName) throws CoreException {
+		fUsesTypePattern= null;
+		super.setTypeName(typeName);
+	}
 }
