@@ -91,8 +91,13 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	public void selectionChanged(IAction action, ISelection selection) {
 		setCodeAssist(null);
 		setTextSelection(null);
+		if (!action.isEnabled()) {
+			//the xml specified enabler has already determined that this action
+			//should not be enabled...debugger must be active and + text selection
+			return;
+		}
 		boolean enabled = false;
-		if (getActiveEditor() != null && selection instanceof ITextSelection && !selection.isEmpty()) {
+		if (getActiveEditor() != null) {
 			IJavaStackFrame frame = getStackFrame();
 			if (frame != null && frame.isSuspended()) {
 				ITextSelection textSelection = (ITextSelection)selection;
