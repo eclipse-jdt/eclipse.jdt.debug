@@ -21,9 +21,9 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 public class JDIDebugPlugin extends Plugin {
 	
-	protected static JDIDebugPlugin fgPlugin;
+	private static JDIDebugPlugin fgPlugin;
 	
-	protected JavaHotCodeReplaceManager fJavaHCRMgr;
+	private JavaHotCodeReplaceManager fJavaHCRMgr;
 	
 	/**
 	 * Return the singleton instance of the JDI Debug Model plug-in.  
@@ -90,4 +90,5 @@ public class JDIDebugPlugin extends Plugin {
 			System.out.println();
 		}
 	}
+
 }
