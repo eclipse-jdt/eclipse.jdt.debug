@@ -357,6 +357,8 @@ public class JavaLaunchConfigurationHelper implements IResourceChangeListener,
 					}
 				}
 			}
+		} else if (javaElement instanceof IType) {
+			return (IType)javaElement;
 		} else if (javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
 			String simpleName= Signature.getSimpleName(mainTypeName);
 			return ((ICompilationUnit) javaElement).getType(simpleName);
