@@ -49,6 +49,7 @@ import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.commands.Priority;
 
 public class BreakpointConditionEditor {
 	
@@ -154,7 +155,7 @@ public class BreakpointConditionEditor {
 			}
 		};
 		
-		submissions = Collections.singletonList(new HandlerSubmission(null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, 4, null)); //$NON-NLS-1$
+		submissions = Collections.singletonList(new HandlerSubmission(null, null, null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, Priority.MEDIUM)); //$NON-NLS-1$
 		commandSupport.addHandlerSubmissions(submissions);
 		
 	}

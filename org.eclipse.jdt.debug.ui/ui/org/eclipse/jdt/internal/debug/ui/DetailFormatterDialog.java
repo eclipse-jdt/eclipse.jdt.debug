@@ -65,6 +65,7 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -161,7 +162,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		contextSupport.registerShell(fShell, IWorkbenchContextSupport.TYPE_WINDOW);		
 		
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();		
-		submissions = Collections.singletonList(new HandlerSubmission(null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, 4, null)); //$NON-NLS-1$
+		submissions = Collections.singletonList(new HandlerSubmission(null, null, null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, Priority.MEDIUM)); //$NON-NLS-1$
 		commandSupport.addHandlerSubmissions(submissions);	
 		
 		Composite container = (Composite)super.createDialogArea(parent);
