@@ -14,13 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
@@ -30,7 +33,6 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 
@@ -41,9 +43,12 @@ public abstract class JavaBreakpointTypeChange extends Change {
 	
 	public static final int TYPE_RENAME= 1;
 	public static final int TYPE_MOVE= 2;
+	public static final int PROJECT_RENAME= 3;
+	public static final int PACKAGE_RENAME= 4;
+	public static final int PACKAGE_MOVE= 5;
 	
 	private IJavaBreakpoint fBreakpoint;
-	private IType fChangedType;
+	private Object fChangedElement;
 	private Object fArgument;
 	private int fChangeType;
 	private IType fDeclaringType;
@@ -52,17 +57,49 @@ public abstract class JavaBreakpointTypeChange extends Change {
 	private int fHitCount;
 	
 	/**
-	 * Create changes for each breakpoint which need to be updated for this IType rename.
+	 * Create changes for each breakpoint which needs to be updated for this IType rename.
 	 */
 	public static Change createChangesForTypeRename(IType type, String newName) throws CoreException {
 		return createChangesForTypeChange(type, newName, TYPE_RENAME);
 	}
 	
 	/**
-	 * Create changes for each breakpoint which need to be updated for this IType move.
+	 * Create changes for each breakpoint which needs to be updated for this IType move.
 	 */
 	public static Change createChangesForTypeMove(IType type, Object destination) throws CoreException {
 		return createChangesForTypeChange(type, destination, TYPE_MOVE);
+	}
+
+	/**
+	 * Create a change for each breakpoint which needs to be updated for this IJavaProject rename.
+	 */
+	public static Change createChangesForProjectRename(IJavaProject project, String newName) throws CoreException {
+		List changes= new ArrayList();
+		IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
+		for (int i= 0; i < breakpoints.length; i++) {
+			IBreakpoint breakpoint= breakpoints[i];
+			if (breakpoint instanceof IJavaBreakpoint) {
+				IJavaBreakpoint javaBreakpoint= (IJavaBreakpoint) breakpoint;
+				if (project.equals(BreakpointUtils.getType(javaBreakpoint).getJavaProject())) {
+					changes.add(createChange(javaBreakpoint, null, newName, PROJECT_RENAME));
+				}
+			}
+		}
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.getString("JavaBreakpointTypeChange.0")); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Create a change for each breakpoint which needs to be updated for this IPackageFragment rename.
+	 */
+	public static Change createChangesForPackageRename(IPackageFragment packageFragment, String newName) throws CoreException {
+		return createChangesForPackageChange(packageFragment, newName, PACKAGE_RENAME);
+	}
+
+	/**
+	 * Create a change for each breakponit which needs to be updated for this IPackageFragment move.
+	 */
+	public static Change createChangesForPackageMove(IPackageFragment packageFragment, IPackageFragmentRoot destination) throws CoreException {
+		return createChangesForPackageChange(packageFragment, destination, PACKAGE_MOVE);
 	}
 	
 	/**
@@ -81,8 +118,8 @@ public abstract class JavaBreakpointTypeChange extends Change {
 				// check the name of the type where the breakpoint is installed
 				if (javaBreakpoint.getTypeName().startsWith(typeName)) {
 					// if it matcheds, check the type
-					if (changedType.equals(BreakpointUtils.getType((IJavaBreakpoint)breakpoint))) {
-						changes.add(createChange((IJavaBreakpoint)breakpoint, changedType, argument, changeType));
+					if (changedType.equals(BreakpointUtils.getType(javaBreakpoint))) {
+						changes.add(createChange(javaBreakpoint, changedType, argument, changeType));
 					} else {
 						// if it's not the type, check the inner types
 						Change change= createChangesForOuterTypeChange(javaBreakpoint, changedType, changedType, argument, changeType);
@@ -94,7 +131,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 			}
 		}
 				
-		return createChangeFromList(changes);
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.getString("JavaBreakpointTypeChange.0")); //$NON-NLS-1$
 	}
 	
 	private static Change createChangesForOuterTypeChange(IJavaBreakpoint javaBreakpoint, IType type, IType changedType, Object argument, int changeType) throws CoreException {
@@ -108,44 +145,47 @@ public abstract class JavaBreakpointTypeChange extends Change {
 				// if it matcheds, check the type
 				if (innerType.equals(breakpointType)) {
 					return createChange(javaBreakpoint, changedType, argument, changeType);
-				} else {
-					// if it's not the type, check the inner types
-					return createChangesForOuterTypeChange(javaBreakpoint, innerType, changedType, argument, changeType);
-				}
+				} 
+				// if it's not the type, check the inner types
+				return createChangesForOuterTypeChange(javaBreakpoint, innerType, changedType, argument, changeType);
 			}
 			
 		}
 		return null;
 	}
-	
-	/**
-	 * Take a list of Changes, and return a unique Change, a CompositeChange, or null.
-	 */
-	private static Change createChangeFromList(List changes) {
-		int nbChanges= changes.size();
-		if (nbChanges == 0) {
-			return null;
-		} else if (nbChanges == 1) {
-			return (Change) changes.get(0);
-		} else {
-			return new CompositeChange("Breakpoint updates", (Change[])changes.toArray(new Change[changes.size()])); //$NON-NLS-1$
-		}
-	}
 
+	/**
+	 * Create a change for each breakpoint which needs to be updated for this IPackageFragment change.
+	 */
+	private static Change createChangesForPackageChange(IPackageFragment packageFragment, Object argument, int changeType) throws CoreException {
+		List changes= new ArrayList();
+		IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
+		for (int i= 0; i < breakpoints.length; i++) {
+			IBreakpoint breakpoint= breakpoints[i];
+			if (breakpoint instanceof IJavaBreakpoint) {
+				IJavaBreakpoint javaBreakpoint= (IJavaBreakpoint) breakpoint;
+				if (packageFragment.equals(BreakpointUtils.getType(javaBreakpoint).getPackageFragment())) {
+					changes.add(createChange(javaBreakpoint, packageFragment, argument, changeType));
+				}
+			}
+		}
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.getString("JavaBreakpointTypeChange.0")); //$NON-NLS-1$
+	}
+	
 	/**
 	 * Create a change according to type of the breakpoint.
 	 */
-	private static Change createChange(IJavaBreakpoint javaBreakpoint, IType changedType, Object argument, int changeType) throws CoreException {
+	private static Change createChange(IJavaBreakpoint javaBreakpoint, Object changedElement, Object argument, int changeType) throws CoreException {
 		if (javaBreakpoint instanceof IJavaClassPrepareBreakpoint) {
-			return new JavaClassPrepareBreakpointTypeChange((IJavaClassPrepareBreakpoint) javaBreakpoint, changedType, argument, changeType);
+			return new JavaClassPrepareBreakpointTypeChange((IJavaClassPrepareBreakpoint) javaBreakpoint, changedElement, argument, changeType);
 		} else if (javaBreakpoint instanceof IJavaExceptionBreakpoint) {
-			return new JavaExceptionBreakpointTypeChange((IJavaExceptionBreakpoint) javaBreakpoint, changedType, argument, changeType);
+			return new JavaExceptionBreakpointTypeChange((IJavaExceptionBreakpoint) javaBreakpoint, changedElement, argument, changeType);
 		} else if (javaBreakpoint instanceof IJavaMethodBreakpoint) {
-			return new JavaMethodBreakpointTypeChange((IJavaMethodBreakpoint) javaBreakpoint, changedType, argument, changeType);
+			return new JavaMethodBreakpointTypeChange((IJavaMethodBreakpoint) javaBreakpoint, changedElement, argument, changeType);
 		} else if (javaBreakpoint instanceof IJavaWatchpoint) {
-			return new JavaWatchpointTypeChange((IJavaWatchpoint) javaBreakpoint, changedType, argument, changeType);
+			return new JavaWatchpointTypeChange((IJavaWatchpoint) javaBreakpoint, changedElement, argument, changeType);
 		} else if (javaBreakpoint instanceof IJavaLineBreakpoint) {
-			return new JavaLineBreakpointTypeChange((IJavaLineBreakpoint) javaBreakpoint, changedType, argument, changeType);
+			return new JavaLineBreakpointTypeChange((IJavaLineBreakpoint) javaBreakpoint, changedElement, argument, changeType);
 		} else {
 			return null;
 		}
@@ -154,9 +194,9 @@ public abstract class JavaBreakpointTypeChange extends Change {
 	/**
 	 * JavaBreakpointTypeChange constructor.
 	 */
-	protected JavaBreakpointTypeChange(IJavaBreakpoint breakpoint, IType modifiedType, Object argument, int changeType) throws CoreException {
+	protected JavaBreakpointTypeChange(IJavaBreakpoint breakpoint, Object changedElement, Object argument, int changeType) throws CoreException {
 		fBreakpoint= breakpoint;
-		fChangedType= modifiedType;
+		fChangedElement= changedElement;
 		fArgument= argument;
 		fChangeType= changeType;
 		fDeclaringType= BreakpointUtils.getType(breakpoint);
@@ -191,6 +231,12 @@ public abstract class JavaBreakpointTypeChange extends Change {
 				return performTypeRename();
 			case TYPE_MOVE:
 				return performTypeMove();
+			case PROJECT_RENAME:
+				return performProjectRename();
+			case PACKAGE_RENAME:
+				return performPackageRename();
+			case PACKAGE_MOVE:
+				return performPackageMove();
 		}
 		return null;
 	}
@@ -198,11 +244,12 @@ public abstract class JavaBreakpointTypeChange extends Change {
 	private Change performTypeRename() throws CoreException {
 		// Get the new type and the new 'changed' type then call the code specific to this type
 		// of breakpoint.
-		String oldChangedTypeName= fChangedType.getFullyQualifiedName();
+		IType changedType= getChangedType();
+		String oldChangedTypeName= changedType.getFullyQualifiedName();
 		String newChangedTypeName;
-		IType parent= fChangedType.getDeclaringType();
+		IType parent= changedType.getDeclaringType();
 		if (parent == null) {
-			newChangedTypeName= fChangedType.getPackageFragment().getElementName() + '.' + getNewName();
+			newChangedTypeName= changedType.getPackageFragment().getElementName() + '.' + getNewName();
 		} else {
 			newChangedTypeName= parent.getFullyQualifiedName() + '$' + getNewName();
 		}
@@ -210,7 +257,7 @@ public abstract class JavaBreakpointTypeChange extends Change {
 		IType newChangedType;
 		IType newType;
 		IJavaProject project= fDeclaringType.getJavaProject();
-		if (fChangedType == fDeclaringType) {
+		if (changedType == fDeclaringType) {
 			newType= project.findType(newChangedTypeName);
 			newChangedType= newType;
 		} else {
@@ -220,40 +267,66 @@ public abstract class JavaBreakpointTypeChange extends Change {
 			newChangedType= project.findType(newChangedTypeName);
 		}
 		
-		return performChange(newType, newChangedType, fChangedType.getElementName(), TYPE_RENAME);
+		return performChange(newType, newChangedType, changedType.getElementName(), TYPE_RENAME);
 	}
 	
 	private Change performTypeMove() throws CoreException {
 		// Get the new type and the new 'changed' type then call the code specific to this type
 		// of breakpoint.
+		IType changedType= getChangedType();
 		Object destination= getDestination();
 		String newChangedTypeName;
 		if (destination instanceof IPackageFragment) {
-			newChangedTypeName= ((IPackageFragment)destination).getElementName() + '.' + fChangedType.getElementName();
+			newChangedTypeName= ((IPackageFragment)destination).getElementName() + '.' + changedType.getElementName();
 		} else {
-			newChangedTypeName= ((IType)destination).getFullyQualifiedName() + '$' + fChangedType.getElementName();
+			newChangedTypeName= ((IType)destination).getFullyQualifiedName() + '$' + changedType.getElementName();
 		}
 		
 		IType newChangedType;
 		IType newType;
 		IJavaProject project= fDeclaringType.getJavaProject();
-		if (fChangedType == fDeclaringType) {
+		if (changedType == fDeclaringType) {
 			newType= project.findType(newChangedTypeName);
 			newChangedType= newType;
 		} else {
-			String oldChangedTypeName= fChangedType.getFullyQualifiedName();
+			String oldChangedTypeName= changedType.getFullyQualifiedName();
 			String typeNameSuffix= fDeclaringType.getFullyQualifiedName().substring(oldChangedTypeName.length());
 			String newTypeName= newChangedTypeName + typeNameSuffix;
 			newType= project.findType(newTypeName);
 			newChangedType= project.findType(newChangedTypeName);
 		}
 		
-		Object oldDestination= fChangedType.getDeclaringType();
+		Object oldDestination= changedType.getDeclaringType();
 		if (oldDestination == null) {
-			oldDestination= fChangedType.getPackageFragment();
+			oldDestination= changedType.getPackageFragment();
 		}
 		
 		return performChange(newType, newChangedType, oldDestination, TYPE_MOVE);
+	}
+	
+	private Change performProjectRename() throws CoreException {
+		// Get the new type, then call the code specific to this type of breakpoint.
+		IJavaProject project= JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(getNewName()));
+		IType newType= project.findType(fDeclaringType.getFullyQualifiedName());
+		return performChange(newType, null, fDeclaringType.getJavaProject().getElementName(), PROJECT_RENAME);
+	}
+	
+	private Change performPackageRename() throws CoreException {
+		// Get the new type and the new package fragment, then call the code specific
+		// to this type of breakpoint.
+		IPackageFragment changedPackage= getChangePackage();
+		IJavaProject project= fDeclaringType.getJavaProject();
+		String newTypeName= getNewName() + fDeclaringType.getFullyQualifiedName().substring(changedPackage.getElementName().length());
+		IType newType= project.findType(newTypeName);
+		return performChange(newType, newType.getPackageFragment(), changedPackage.getElementName(), PACKAGE_RENAME);
+	}
+	
+	private Change performPackageMove() throws CoreException {
+		IPackageFragmentRoot destination= getPackageRootDestination();
+		IPackageFragment changedPackage= getChangePackage();
+		IJavaProject project= destination.getJavaProject();
+		IType newType= project.findType(fDeclaringType.getFullyQualifiedName());
+		return performChange(newType, newType.getPackageFragment(), changedPackage.getParent(), PROJECT_RENAME);
 	}
 
 	/* (non-Javadoc)
@@ -271,21 +344,32 @@ public abstract class JavaBreakpointTypeChange extends Change {
 	}
 	
 	/**
-	 * Return the new name of the changed type for a IType rename change.
+	 * Return the new name of the changed type for a IType, IJavaProject
+	 * or IPackageFragment rename change.
 	 */
 	public String getNewName() {
-		if (fChangeType == TYPE_RENAME) {
+		if (fChangeType == TYPE_RENAME || fChangeType == PROJECT_RENAME || fChangeType == PACKAGE_RENAME) {
 			return (String)fArgument;
 		}
 		return null;
 	}
 	
 	/**
-	 * Return the parent the changed type for a IType move change.
+	 * Return the destination for a IType move change.
 	 */
 	private Object getDestination() {
 		if (fChangeType == TYPE_MOVE) {
 			return fArgument;
+		}
+		return null;
+	}
+	
+	/**
+	 * Return the destination for a IPackageFragment move change.
+	 */
+	private IPackageFragmentRoot getPackageRootDestination() {
+		if (fChangeType == PACKAGE_MOVE) {
+			return (IPackageFragmentRoot)fArgument;
 		}
 		return null;
 	}
@@ -295,6 +379,26 @@ public abstract class JavaBreakpointTypeChange extends Change {
 	 */
 	public IType getDeclaringType() {
 		return fDeclaringType;
+	}
+
+	/**
+	 * Return the type modified.
+	 */
+	public IType getChangedType() {
+		if (fChangeType == TYPE_RENAME || fChangeType == TYPE_MOVE) {
+			return (IType) fChangedElement;
+		}
+		return null;
+	}
+
+	/**
+	 * Return the package modified.
+	 */
+	public IPackageFragment getChangePackage() {
+		if (fChangeType == PACKAGE_RENAME || fChangeType == PACKAGE_MOVE) {
+			return (IPackageFragment) fChangedElement;
+		}
+		return null;
 	}
 	
 	/**
@@ -327,6 +431,6 @@ public abstract class JavaBreakpointTypeChange extends Change {
 	 * Perform the real modifications.
 	 * @return the undo change.
 	 */
-	public abstract Change performChange(IType newType, IType undoChangedType, Object undoArgument, int changeType) throws CoreException;
+	public abstract Change performChange(IType newType, Object undoChangedElement, Object undoArgument, int changeType) throws CoreException;
 
 }
