@@ -113,6 +113,8 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * Returns the detected version of JDI support. This
 	 * is intended to distinguish between clients that support
 	 * JDI 1.4 methods like hot code replace.
+	 * 
+	 * @since 2.1
 	 */
 	public static float getJDIVersion() {
 		return fJDIVersion;
