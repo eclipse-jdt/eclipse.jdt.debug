@@ -160,17 +160,20 @@ public class VMRunnerConfiguration {
 	 * Returns the boot classpath. An empty array indicates an empty
 	 * bootpath and <code>null</code> indicates a default bootpah.
 	 * <p>
-	 * In 3.0, support has been added for prepending and appending to the boot classpath.
-	 * The methods <code>#getPrependBootClassPath()</code>, <code>#getMainBootClassPath()</code>,
-	 * and <code>#getAppendBootClassPath()</code> should be used instead of this method
-	 * if an <code>IVMRunner</code> supports the options, as they may return more accurate
-	 * information. In the case that the other options are not specified, and a single
-	 * boot classpath is provided, an <code>IVMRunner</code> should honor the
-	 * boot classpath specified by this method.
+	 * In 3.0, support has been added for prepending and appending to the
+	 * boot classpath. The new attributes are stored in the VM specific
+	 * attributes map using the following keys defined in 
+	 * <code>IJavaLaunchConfigurationConstants</code>:
+	 * <ul>
+	 * <li>ATTR_BOOTPATH_PREPEND</li>
+	 * <li>ATTR_BOOTPATH_APPEND</li>
+	 * <li>ATTR_BOOTPATH</li>
+	 * </ul>
 	 * </p>
 	 * @return The boot classpath. An emptry array indicates an empty
 	 *  bootpath and <code>null</code> indicates a default bootpah.
 	 * @see #setBootClassPath(String[])
+	 * @see IJavaLaunchConfigurationConstants
 	 */
 	public String[] getBootClassPath() {
 		return fBootClassPath;
