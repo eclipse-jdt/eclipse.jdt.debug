@@ -199,7 +199,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		gd.horizontalSpan = 2;
 		spacingComposite.setLayoutData(gd);	
 		fArgumentComposite= spacingComposite;
-		
+		fArgumentComposite.setFont(font);
 		createVerticalSpacer(comp, 2);		
 		
 		fAllowTerminateButton = new Button(comp, SWT.CHECK);
