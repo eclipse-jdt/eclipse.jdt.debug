@@ -35,8 +35,6 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 	private String fCommand;
 	/** Address from which to listen for a connection after the raw command is run. */
 	private String fAddress;
-	/** Character used to combine space-delimited text into a single command line argument. */
-	private String fQuote;
 	
 	/**
 	 * Creates new SocketAttachingConnectorImpl.
@@ -63,11 +61,6 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 		strArg = new StringArgumentImpl("address", ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Address_from_which_to_listen_for_a_connection_after_the_raw_command_is_run_3"), ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Address_4"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(strArg.name(), strArg);
 		
-		// Quote
-		strArg = new StringArgumentImpl("quote", ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Character_used_to_combine_space-delimited_text_into_a_single_command_line_argument_5"), ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Quote_6"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		strArg.setValue("\""); //$NON-NLS-1$
-		arguments.put(strArg.name(), strArg);
-
 		return arguments;
 	}
 	
@@ -95,8 +88,6 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 		 	fCommand = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		 	attribute = "address"; //$NON-NLS-1$
 		 	fAddress = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
-		 	attribute = "quote"; //$NON-NLS-1$
-		 	fQuote = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		} catch (ClassCastException e) {
 			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Connection_argument_is_not_of_the_right_type_8"), attribute); //$NON-NLS-1$
 		} catch (NullPointerException e) {
