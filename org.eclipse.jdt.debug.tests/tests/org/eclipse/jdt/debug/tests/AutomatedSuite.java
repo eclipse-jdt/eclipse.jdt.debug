@@ -46,6 +46,7 @@ import org.eclipse.jdt.debug.tests.core.PatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.RefreshTabTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
+import org.eclipse.jdt.debug.tests.core.SourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.core.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
@@ -119,6 +120,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(JavaBreakpointListenerTests.class));
 		
 		addTest(new TestSuite(SourceLookupTests.class));
+		addTest(new TestSuite(SourceContainerTests.class));
 		addTest(new TestSuite(DirectorySourceLookupTests.class));
 		addTest(new TestSuite(ArchiveSourceLookupTests.class));
 		addTest(new TestSuite(MiscBreakpointsTests.class));
