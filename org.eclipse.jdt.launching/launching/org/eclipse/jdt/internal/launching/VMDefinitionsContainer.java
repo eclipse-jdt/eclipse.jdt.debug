@@ -29,8 +29,8 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -230,10 +230,10 @@ public class VMDefinitionsContainer {
 	 * <li>serialization of the XML document failed</li>
 	 * </ul>
 	 */
-	public String getAsXML() throws IOException{
+	public String getAsXML() throws ParserConfigurationException, IOException, TransformerException {
 		
 		// Create the Document and the top-level node
-		Document doc = new DocumentImpl();
+		Document doc = LaunchingPlugin.getDocument();
 		Element config = doc.createElement("vmSettings");    //$NON-NLS-1$
 		doc.appendChild(config);
 		

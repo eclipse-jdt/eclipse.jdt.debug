@@ -23,6 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -236,6 +239,10 @@ public final class JavaRuntime {
 		try {
 			initializeVMConfiguration();
 		} catch (IOException e) {
+			LaunchingPlugin.log(e);
+		} catch (ParserConfigurationException e) {
+			LaunchingPlugin.log(e);
+		} catch (TransformerException e) {
 			LaunchingPlugin.log(e);
 		}
 	}
@@ -519,7 +526,7 @@ public final class JavaRuntime {
 	 * @exception CoreException if unable to construct a runtime classpath entry
 	 * @since 2.0
 	 */
-	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, int classpathProperty) throws CoreException {
+	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, int classpathProperty) {
 		IClasspathEntry cpe = JavaCore.newContainerEntry(path);
 		return new RuntimeClasspathEntry(cpe, classpathProperty);
 	}
@@ -1239,7 +1246,11 @@ public final class JavaRuntime {
 			getPreferences().setValue(PREF_VM_XML, xml);
 			savePreferences();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.ioExceptionOccurred"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.exceptionsOccurred"), e)); //$NON-NLS-1$
+		} catch (ParserConfigurationException e) {
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.exceptionsOccurred"), e)); //$NON-NLS-1$
+		} catch (TransformerException e) {
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.exceptionsOccurred"), e)); //$NON-NLS-1$
 		}
 	}
 	
@@ -1252,7 +1263,7 @@ public final class JavaRuntime {
 		LaunchingPlugin.getDefault().savePluginPreferences();		
 	}
 
-	private static String getVMsAsXML() throws IOException {
+	private static String getVMsAsXML() throws IOException, ParserConfigurationException, TransformerException {
 		VMDefinitionsContainer container = new VMDefinitionsContainer();	
 		container.setDefaultVMInstallCompositeID(getDefaultVMId());
 		container.setDefaultVMInstallConnectorTypeID(getDefaultVMConnectorId());	
@@ -1274,7 +1285,7 @@ public final class JavaRuntime {
 	 * If neither the preference nor the meta-data file is found, the file system is
 	 * searched for VMs.
 	 */
-	private static void initializeVMConfiguration() throws IOException {
+	private static void initializeVMConfiguration() throws ParserConfigurationException, IOException, TransformerException {
 		// Try retrieving the VM preferences from the preference store
 		String vmXMLString = getPreferences().getString(PREF_VM_XML);
 		
@@ -1473,6 +1484,10 @@ public final class JavaRuntime {
 			saveVMDefinitions(vmDefXML);
 		} catch (IOException ioe) {
 			LaunchingPlugin.log(ioe);
+		} catch (ParserConfigurationException e) {
+			LaunchingPlugin.log(e);
+		} catch (TransformerException e) {
+			LaunchingPlugin.log(e);
 		}
 	}
 	

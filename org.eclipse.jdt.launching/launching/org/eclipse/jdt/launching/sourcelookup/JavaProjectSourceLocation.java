@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -148,14 +148,17 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 	 * @see IJavaSourceLocation#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		Document doc = new DocumentImpl();
-		Element node = doc.createElement("javaProjectSourceLocation"); //$NON-NLS-1$
-		doc.appendChild(node);
-		node.setAttribute("name", getJavaProject().getElementName()); //$NON-NLS-1$
-		
 		try {
+			Document doc = LaunchingPlugin.getDocument();
+			Element node = doc.createElement("javaProjectSourceLocation"); //$NON-NLS-1$
+			doc.appendChild(node);
+			node.setAttribute("name", getJavaProject().getElementName()); //$NON-NLS-1$
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
+			abort(MessageFormat.format(LaunchingMessages.getString("JavaProjectSourceLocation.Unable_to_create_memento_for_Java_project_source_location_{0}_1"), new String[] {getJavaProject().getElementName()}), e); //$NON-NLS-1$
+		} catch (ParserConfigurationException e) {
+			abort(MessageFormat.format(LaunchingMessages.getString("JavaProjectSourceLocation.Unable_to_create_memento_for_Java_project_source_location_{0}_1"), new String[] {getJavaProject().getElementName()}), e); //$NON-NLS-1$
+		} catch (TransformerException e) {
 			abort(MessageFormat.format(LaunchingMessages.getString("JavaProjectSourceLocation.Unable_to_create_memento_for_Java_project_source_location_{0}_1"), new String[] {getJavaProject().getElementName()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach here

@@ -28,8 +28,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -642,10 +642,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * <li>serialization of the XML document failed</li>
 	 * </ul>
 	 */
-	private static String getLibraryInfoAsXML() throws IOException{
+	private static String getLibraryInfoAsXML() throws ParserConfigurationException, IOException, TransformerException{
 		
-		// Create the Document and the top-level node
-		Document doc = new DocumentImpl();
+		Document doc = getDocument();
 		Element config = doc.createElement("libraryInfos");    //$NON-NLS-1$
 		doc.appendChild(config);
 						
@@ -663,6 +662,17 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		return JavaLaunchConfigurationUtils.serializeDocument(doc);
 	}	
 	
+	public static Document getDocument() throws ParserConfigurationException {
+		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+
+		dfactory.setNamespaceAware(true);
+		dfactory.setValidating(true);
+
+		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+		Document doc =docBuilder.newDocument();
+		return doc;
+	}
+
 	/**
 	 * Creates an XML element for the given info.
 	 * 
@@ -717,6 +727,10 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
 			stream.close();
 		} catch (IOException e) {
+			log(e);
+		} catch (ParserConfigurationException e) {
+			log(e);
+		} catch (TransformerException e) {
 			log(e);
 		}	
 	}

@@ -13,12 +13,13 @@ package org.eclipse.jdt.internal.launching;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -35,7 +36,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.w3c.dom.Document;
 
 /**
- * This class contains a number of static helper methods useful for the 'local java' delegate.
+ * This class contains a number of static helper methods useful for the 'local Java' delegate.
  */
 public class JavaLaunchConfigurationUtils {
 																		 		
@@ -109,17 +110,15 @@ public class JavaLaunchConfigurationUtils {
 	 * @param doc document to serialize
 	 * @return the document as a string
 	 */
-	public static String serializeDocument(Document doc) throws IOException {
+	public static String serializeDocument(Document doc) throws IOException, TransformerException {
 		ByteArrayOutputStream s= new ByteArrayOutputStream();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		format.setLineSeparator(System.getProperty("line.separator"));  //$NON-NLS-1$
 		
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				new OutputStreamWriter(s, "UTF8"), //$NON-NLS-1$
-				format);
-		serializer.asDOMSerializer().serialize(doc);
-		return s.toString("UTF8"); //$NON-NLS-1$		
+		TransformerFactory factory= TransformerFactory.newInstance();
+		Transformer transformer= factory.newTransformer();
+		DOMSource source= new DOMSource(doc);
+		StreamResult outputTarget= new StreamResult(s);
+		transformer.transform(source, outputTarget);
+		
+		return s.toString("UTF8"); //$NON-NLS-1$			
 	}	
 }

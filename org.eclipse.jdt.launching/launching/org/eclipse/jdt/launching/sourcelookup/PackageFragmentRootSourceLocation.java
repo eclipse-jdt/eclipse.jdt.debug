@@ -18,8 +18,8 @@ import java.text.MessageFormat;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -114,18 +114,21 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		Document doc = new DocumentImpl();
-		Element node = doc.createElement("javaPackageFragmentRootSourceLocation"); //$NON-NLS-1$
-		doc.appendChild(node);
-		String handle = ""; //$NON-NLS-1$
-		if (getPackageFragmentRoot() != null) {
-			handle = getPackageFragmentRoot().getHandleIdentifier();
-		}
-		node.setAttribute("handleId", handle); //$NON-NLS-1$
-		
 		try {
+			Document doc = LaunchingPlugin.getDocument();
+			Element node = doc.createElement("javaPackageFragmentRootSourceLocation"); //$NON-NLS-1$
+			doc.appendChild(node);
+			String handle = ""; //$NON-NLS-1$
+			if (getPackageFragmentRoot() != null) {
+				handle = getPackageFragmentRoot().getHandleIdentifier();
+			}
+			node.setAttribute("handleId", handle); //$NON-NLS-1$
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
+			abort(MessageFormat.format(LaunchingMessages.getString("PackageFragmentRootSourceLocation.Unable_to_create_memento_for_package_fragment_root_source_location_{0}_5"), new String[] {getPackageFragmentRoot().getElementName()}), e); //$NON-NLS-1$
+		} catch (ParserConfigurationException e) {
+			abort(MessageFormat.format(LaunchingMessages.getString("PackageFragmentRootSourceLocation.Unable_to_create_memento_for_package_fragment_root_source_location_{0}_5"), new String[] {getPackageFragmentRoot().getElementName()}), e); //$NON-NLS-1$
+		} catch (TransformerException e) {
 			abort(MessageFormat.format(LaunchingMessages.getString("PackageFragmentRootSourceLocation.Unable_to_create_memento_for_package_fragment_root_source_location_{0}_5"), new String[] {getPackageFragmentRoot().getElementName()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach here

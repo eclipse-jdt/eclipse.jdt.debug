@@ -23,8 +23,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -356,23 +356,27 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @see IPersistableSourceLocator#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		Document doc = new DocumentImpl();
-		Element node = doc.createElement("javaSourceLocator"); //$NON-NLS-1$
-		doc.appendChild(node);
-		
-		IJavaSourceLocation[] locations = getSourceLocations();
-		for (int i = 0; i < locations.length; i++) {
-			Element child = doc.createElement("javaSourceLocation"); //$NON-NLS-1$
-			child.setAttribute("class", locations[i].getClass().getName()); //$NON-NLS-1$
-			child.setAttribute("memento", locations[i].getMemento()); //$NON-NLS-1$
-			node.appendChild(child);
-		}
-		
 		try {
+			Document doc = LaunchingPlugin.getDocument();
+			Element node = doc.createElement("javaSourceLocator"); //$NON-NLS-1$
+			doc.appendChild(node);
+			
+			IJavaSourceLocation[] locations = getSourceLocations();
+			for (int i = 0; i < locations.length; i++) {
+				Element child = doc.createElement("javaSourceLocation"); //$NON-NLS-1$
+				child.setAttribute("class", locations[i].getClass().getName()); //$NON-NLS-1$
+				child.setAttribute("memento", locations[i].getMemento()); //$NON-NLS-1$
+				node.appendChild(child);
+			}
+		
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
 			abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_create_memento_for_Java_source_locator._4"), e); //$NON-NLS-1$
-		}
+		} catch (ParserConfigurationException e) {
+			abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_create_memento_for_Java_source_locator._4"), e); //$NON-NLS-1$
+		} catch (TransformerException e) {
+			abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_create_memento_for_Java_source_locator._4"), e); //$NON-NLS-1$
+		} 
 		// execution will not reach here
 		return null;
 	}

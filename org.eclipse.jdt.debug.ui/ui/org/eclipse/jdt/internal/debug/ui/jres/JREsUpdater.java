@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -225,6 +228,10 @@ public class JREsUpdater {
 					JavaRuntime.savePreferences();
 				} catch (IOException ioe) {
 					JDIDebugUIPlugin.log(ioe);
+				} catch (ParserConfigurationException e) {
+					JDIDebugUIPlugin.log(e);
+				} catch (TransformerException e) {
+					JDIDebugUIPlugin.log(e);
 				}
 			}
 		});

@@ -18,7 +18,8 @@ import java.text.MessageFormat;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.xerces.dom.DocumentImpl;
+import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -142,14 +143,17 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 	 * @see IJavaSourceLocation#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		Document doc = new DocumentImpl();
-		Element node = doc.createElement("directorySourceLocation"); //$NON-NLS-1$
-		doc.appendChild(node);
-		node.setAttribute("path", getDirectory().getAbsolutePath()); //$NON-NLS-1$
-		
 		try {
+			Document doc = LaunchingPlugin.getDocument();
+			Element node = doc.createElement("directorySourceLocation"); //$NON-NLS-1$
+			doc.appendChild(node);
+			node.setAttribute("path", getDirectory().getAbsolutePath()); //$NON-NLS-1$
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
+			abort(MessageFormat.format(LaunchingMessages.getString("DirectorySourceLocation.Unable_to_create_memento_for_directory_source_location_{0}_1"), new String[] {getDirectory().getAbsolutePath()}), e); //$NON-NLS-1$
+		} catch (ParserConfigurationException e) {
+			abort(MessageFormat.format(LaunchingMessages.getString("DirectorySourceLocation.Unable_to_create_memento_for_directory_source_location_{0}_1"), new String[] {getDirectory().getAbsolutePath()}), e); //$NON-NLS-1$
+		} catch (TransformerException e) {
 			abort(MessageFormat.format(LaunchingMessages.getString("DirectorySourceLocation.Unable_to_create_memento_for_directory_source_location_{0}_1"), new String[] {getDirectory().getAbsolutePath()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach here

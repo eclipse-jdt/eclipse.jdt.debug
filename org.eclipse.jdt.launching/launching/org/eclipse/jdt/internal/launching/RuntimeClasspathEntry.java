@@ -19,8 +19,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -266,8 +266,14 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		
-		Document doc = new DocumentImpl();
+	
+		Document doc;
+		try {
+			doc = LaunchingPlugin.getDocument();
+		} catch (ParserConfigurationException e) {
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.getString("RuntimeClasspathEntry.An_exception_occurred_generating_runtime_classpath_memento_8"), e); //$NON-NLS-1$
+			throw new CoreException(status);
+		}
 		Element node = doc.createElement("runtimeClasspathEntry"); //$NON-NLS-1$
 		doc.appendChild(node);
 		node.setAttribute("type", (new Integer(getType())).toString()); //$NON-NLS-1$
@@ -299,6 +305,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		try {
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.getString("RuntimeClasspathEntry.An_exception_occurred_generating_runtime_classpath_memento_8"), e); //$NON-NLS-1$
+			throw new CoreException(status);
+		} catch (TransformerException e) {
 			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.getString("RuntimeClasspathEntry.An_exception_occurred_generating_runtime_classpath_memento_8"), e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
