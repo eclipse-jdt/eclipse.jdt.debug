@@ -27,7 +27,6 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventFilter;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -38,6 +37,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jdt.core.ICompletionRequestor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -54,6 +54,7 @@ import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
@@ -61,8 +62,6 @@ import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.JavaStatusConstants;
-import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jdt.ui.text.JavaTextTools;
@@ -397,7 +396,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			return;
 		}
 		if (getThread() == null) {
-			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), JavaStatusConstants.INTERNAL_ERROR, 
+			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, 
 				SnippetMessages.getString("SnippetEditor.error.nocontext"), null); //$NON-NLS-1$
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.evaluating"), null, status); //$NON-NLS-1$
 			evaluationEnds();
@@ -503,14 +502,14 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}
 		
-	public void codeComplete(ResultCollector collector) throws JavaModelException {
+	public void codeComplete(ICompletionRequestor requestor) throws JavaModelException {
 		IDocument d= getSourceViewer().getDocument();
 		ITextSelection selection= (ITextSelection)getSelectionProvider().getSelection();
 		int start= selection.getOffset();
 		String snippet= d.get();	
 		IEvaluationContext e= getEvaluationContext();
 		if (e != null) 
-			e.codeComplete(snippet, start, collector);
+			e.codeComplete(snippet, start, requestor);
 	}
 		 
 	public IJavaElement[] codeResolve() throws JavaModelException {
