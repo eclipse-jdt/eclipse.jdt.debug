@@ -95,7 +95,7 @@ public interface IRuntimeClasspathEntry {
 	 * Returns a memento for this classpath entry.
 	 * 
 	 * @return a memento for this classpath entry
-	 * @exception CoreException if an exception occurrs generating a memento
+	 * @exception CoreException if an exception occurs generating a memento
 	 */
 	public String getMemento() throws CoreException;
 	

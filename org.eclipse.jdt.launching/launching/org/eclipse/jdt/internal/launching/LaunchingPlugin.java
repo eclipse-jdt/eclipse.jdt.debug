@@ -545,7 +545,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	
 	/**
 	 * Parse the given xml into a VM definitions container, returning an empty
-	 * container if an exception occurrs.
+	 * container if an exception occurs.
 	 * 
 	 * @param xml
 	 * @return VMDefinitionsContainer
