@@ -214,8 +214,12 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 			if (!selection.equals(fPrevSelection)) {
 				fPrevSelection = selection;
 				Object jre = ((IStructuredSelection)selection).getFirstElement();
-				fVMList.setCheckedElements(new Object[]{jre});
-				fVMList.reveal(jre);
+				if (jre == null) {
+					fVMList.setCheckedElements(new Object[0]);
+				} else {
+					fVMList.setCheckedElements(new Object[]{jre});
+					fVMList.reveal(jre);
+				}
 				fireSelectionChanged();
 			}
 		}
