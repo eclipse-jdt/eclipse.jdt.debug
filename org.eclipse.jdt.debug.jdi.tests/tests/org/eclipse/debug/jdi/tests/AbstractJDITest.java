@@ -1397,11 +1397,12 @@ public abstract class AbstractJDITest extends TestCase {
 		EventRequest request =
 			fVM.eventRequestManager().createExceptionRequest(null, true, false);
 		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		request.enable();
 
 		// Prepare to receive the event
 		EventWaiter waiter = new EventWaiter(request, false);
 		fEventReader.addEventListener(waiter);
+
+		request.enable();
 
 		while (true) {
 			// Wait for the event to come in
