@@ -196,8 +196,9 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_ALLOW_TERMINATE = LaunchingPlugin.getUniqueIdentifier() + ".ALLOW_TERMINATE";	 //$NON-NLS-1$
 	
 	/**
-	 * Launch configuration attribute key. The value is a String, indicating
-	 * the String to use to invoke the JRE.
+	 * Attribute key for VM specific attributes found in the
+	 * <code>ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP</code>. The value is a String,
+	 * indicating the String to use to invoke the JRE.
 	 */
 	public static final String ATTR_JAVA_COMMAND = LaunchingPlugin.getUniqueIdentifier() + ".JAVA_COMMAND";	 //$NON-NLS-1$
 
