@@ -13,12 +13,12 @@ package org.eclipse.jdt.debug.tests.performance;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
 
 /**
  * Tests performance of stepping.
  */
-public class PerfSteppingTests extends AbstractDebugTest {
+public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 	
 	public PerfSteppingTests(String name) {
 		super(name);
@@ -34,9 +34,12 @@ public class PerfSteppingTests extends AbstractDebugTest {
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			for (int i = 0; i < 100; i++) {
+			    startMeasuring();
 				stepOver(frame);
+				stopMeasuring();
 			}
-
+			commitMeasurements();
+			assertPerformance();
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

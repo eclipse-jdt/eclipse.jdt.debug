@@ -32,6 +32,7 @@
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.test.performance"/>
    </requires>
 
 
@@ -180,6 +181,15 @@
             modes="run, debug"
             id="org.eclipse.jdt.debug.tests.testConfigType">
       </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            code="1000"
+            plugin="org.eclipse.jdt.debug.tests"
+            class="org.eclipse.jdt.debug.tests.ui.performance.JavaApplicationStatusHandler"
+            id="org.eclipse.jdt.debug.tests.performance.statusHandler.JavaApplication">
+      </statusHandler>
    </extension>
 
 </plugin>
