@@ -1543,7 +1543,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			setRunning(true);
 			preserveStackFrames();
 			fireResumeEvent(DebugEvent.STEP_START);
-			startCollapseTimer();
 			invokeThread();
 		}
 		
@@ -1736,7 +1735,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		 * </ul>
 		 */
 		protected void stepEnd() {
-			stopCollapseTimer();
 			setRunning(false);
 			deleteStepRequest();
 			setPendingStepHandler(null);
@@ -1772,7 +1770,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		 */
 		protected void abort() {
 			if (getStepRequest() != null) {
-				stopCollapseTimer();
 				deleteStepRequest();
 				setPendingStepHandler(null);
 			}
