@@ -547,6 +547,6 @@ public class SourceDebugExtensionParser {
 			default:
 				return false;
 		}
-	};
+	}
 
 }

@@ -39,7 +39,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 		fgValidSignatures.add("S");  // short //$NON-NLS-1$
 		fgValidSignatures.add("Z");  // boolean //$NON-NLS-1$
 		fgValidSignatures.add(jdiStringSignature); // String
-	};
+	}
 
 	public JDIModificationVariable(JDIDebugTarget target) {
 		super(target);

@@ -401,7 +401,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 				default:
 					defaultReplyErrorHandler(replyPacket.errorCode());
 					break;
-			};
+			}
 			DataInputStream replyData = replyPacket.dataInStream();
 			boolean result = readBoolean("is collected", replyData); //$NON-NLS-1$
 			return result;

@@ -545,7 +545,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			// Suspend when an error occurs
 			suspendForEvent(event, thread);
 		}
-	};
+	}
 	
 	private void fireConditionHasRuntimeErrors(DebugException exception) {
 		JDIDebugPlugin.getDefault().fireBreakpointHasRuntimeException(this, exception);

@@ -782,7 +782,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	protected void attemptStepIn(List threads) throws DebugException {
 		Iterator iter= threads.iterator();
 		while (iter.hasNext()) {
-			((JDIThread) iter.next()).stepInto();;
+			((JDIThread) iter.next()).stepInto();
 		}
 	}
 	
