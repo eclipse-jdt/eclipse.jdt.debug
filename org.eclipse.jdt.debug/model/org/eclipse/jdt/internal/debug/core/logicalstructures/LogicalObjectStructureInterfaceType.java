@@ -134,6 +134,9 @@ public abstract class LogicalObjectStructureInterfaceType implements ILogicalStr
 			}
 		} catch (InterruptedException e) {
 		}
+		if (ex[0] != null) {
+			throw ex[0];
+		}
 		return fResult;
 	}
 
