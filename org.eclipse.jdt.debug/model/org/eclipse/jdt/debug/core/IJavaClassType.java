@@ -96,5 +96,17 @@ public interface IJavaClassType  extends IJavaType {
 	 * </ul>
 	 */
 	public IJavaClassType getSuperclass() throws DebugException;
+	
+	/**
+	 * Returns the class object associated with this class type.
+	 * 
+	 * @return the class object associated with this class type
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 */
+	public IJavaClassObject getClassObject() throws DebugException;
 }
 

@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -21,6 +22,7 @@ import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Value;
 
 /**
@@ -145,6 +147,21 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 		// it is possible to return null
 		return null;
 	}
+	
+	/**
+	 * @see IJavaClassType#getClassObject()
+	 */
+	public IJavaClassObject getClassObject() throws DebugException {
+		try {
+			ReferenceType type= (ReferenceType)getUnderlyingType();
+			return (IJavaClassObject)JDIValue.createValue(getDebugTarget(), type.classObject());
+		} catch (RuntimeException e) {
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_class_object"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+		// execution will not fall through to here,
+		// as #requestFailed will throw an exception
+		return null;
+	}	
 
 }
 
