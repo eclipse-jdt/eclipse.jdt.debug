@@ -127,17 +127,18 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * Compute the name of the type which contains this node.
 	 * Result will be the name of the type or the inner type which contains this node, but not of the local or anonymous type.
 	 */
-	private void computeTypeName(ASTNode node) {
+	static protected String computeTypeName(ASTNode node) {
+		String typeName = null;
 		while (!(node instanceof CompilationUnit)) {
 			if (node instanceof TypeDeclaration) {
 				String identifier= ((TypeDeclaration)node).getName().getIdentifier();
-				if (fTypeName == null) {
-					fTypeName= identifier;
+				if (typeName == null) {
+					typeName= identifier;
 				} else {
-					fTypeName= identifier + "$" + fTypeName; //$NON-NLS-1$
+					typeName= identifier + "$" + typeName; //$NON-NLS-1$
 				}
 			} else {
-				fTypeName= null;
+				typeName= null;
 			}
 			node= node.getParent();
 		}
@@ -152,7 +153,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			}
 			packageIdentifier= ((SimpleName)packageName).getIdentifier() + "." + packageIdentifier; //$NON-NLS-1$
 		}
-		fTypeName= packageIdentifier + fTypeName;
+		return packageIdentifier + typeName;
 	}
 
 	/**
@@ -173,7 +174,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		if (isCode && (fPositionLine == startLine || startLine == fCompilationUnit.lineNumber(endPosition))) {
 			fLocation= startLine;
 			fLocationFound= true;
-			computeTypeName(node);
+			fTypeName= computeTypeName(node);
 			return false;
 		}
 		return true;
@@ -411,7 +412,10 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public boolean visit(MethodDeclaration node) {
 		if (visit(node, false)) {
 			// visit only the body
-			node.getBody().accept(this);
+			Block body = node.getBody();
+			if (body != null) { // body is null for abstract methods
+				body.accept(this);
+			}
 		}
 		return false;
 	}
