@@ -69,7 +69,9 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.IContextMenuConstants;
+import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jdt.ui.text.JavaTextTools;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -244,7 +246,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	protected void createActions() {
 		super.createActions();
 		setAction("Run", new RunSnippetAction(this)); //$NON-NLS-1$
-		setAction("ContentAssistProposal", new TextOperationAction(SnippetMessages.getBundle(), "SnippetEditor.ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS));			 //$NON-NLS-2$ //$NON-NLS-1$
+		Action action = new TextOperationAction(SnippetMessages.getBundle(), "SnippetEditor.ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
+		action.setActionDefinitionId(IJavaEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		setAction("ContentAssistProposal", action);//$NON-NLS-1$
 		setAction("Stop", new StopAction(this));  //$NON-NLS-1$
 		setAction("SelectImports", new SelectImportsAction(this));  //$NON-NLS-1$
 	} 
