@@ -891,6 +891,17 @@
                menubarPath="javaActions"
                tooltip="%showQualifiedAction.tooltip">
          </action>
+         <action
+               state="true"
+               style="toggle"
+               id="org.eclipse.jdt.debug.ui.launchViewActions.ShowSystemThreads"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowSystemThreadsAction"
+               icon="../org.eclipse.debug.ui/icons/full/obj16/thread_obj.gif"
+               helpContextId="show_system_threads_context"
+               label="%showSystemThreads.label"
+               menubarPath="javaActions"
+               tooltip="%showSystemThreads.tooltip">
+         </action>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.jdt.debug.ui.DisplayView"

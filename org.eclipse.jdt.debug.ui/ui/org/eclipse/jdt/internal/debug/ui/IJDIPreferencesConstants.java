@@ -152,4 +152,13 @@ public interface IJDIPreferencesConstants {
 	 * @since 2.1
 	 */	
 	public static final String PREF_SHOW_UNSIGNED = IJavaDebugUIConstants.PLUGIN_ID + ".show_unsigned"; //$NON-NLS-1$	
+	
+	/**
+	 * Boolean preference indicating whether system threads should appear visible in the debug launch view.
+	 * A view may over-ride this preference, and if so, stores
+	 * its preference, prefixed by view id.
+	 * 
+	 * @since 3.0
+	 */	
+	public static final String PREF_SHOW_SYSTEM_THREADS = IJavaDebugUIConstants.PLUGIN_ID + ".show_system_threads"; //$NON-NLS-1$	
 }
