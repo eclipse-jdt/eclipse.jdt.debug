@@ -22,7 +22,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
-import org.eclipse.jdt.internal.compiler.ast.FalseLiteral;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.Filter;
 import org.eclipse.jdt.internal.debug.ui.FilterLabelProvider;
