@@ -109,7 +109,7 @@ public abstract class AbstractAddRemoveBreakpointActionDelegate extends PartEven
 		if (node != null) {
 			IJavaElement javaElement = (IJavaElement)editor.getEditorInput().getAdapter(IJavaElement.class);
 			try {
-				IJavaBreakpoint breakpoint = createBreakpoint(node, javaElement);
+				createBreakpoint(node, javaElement);
 			} catch (CoreException e) {
 				errorDialog(e);
 			}
