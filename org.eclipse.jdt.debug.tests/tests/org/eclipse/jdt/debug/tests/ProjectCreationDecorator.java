@@ -108,6 +108,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("ConditionalStepReturn");	
 		createLaunchConfiguration("VariableChanges");		
 		createLaunchConfiguration("DefPkgReturnType");
+		createLaunchConfiguration("InstanceFilterObject");
 	}
 	
 	/**

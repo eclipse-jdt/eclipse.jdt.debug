@@ -11,22 +11,24 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
  * Tests instance filters on breakpoints.
  * 
- * These tests do not work on JDK1.3.1. They do work on 1.4.1,
- * as well as IBM 1.3 and 1.3.1.
+ * These tests only "run" on VMs that support instance breakpoints,
+ * such as JDK 1.4.1.
  */
 public class InstanceFilterTests extends AbstractDebugTest {
 	
@@ -38,169 +40,345 @@ public class InstanceFilterTests extends AbstractDebugTest {
 	 * Instance filter on a line breakpoint
 	 * 	 * @throws Exception	 */
 	public void testLineBreakpoint() throws Exception {
-		String typeName = "Breakpoints";
-		// instance method - if
-		IJavaLineBreakpoint breakpoint = createLineBreakpoint(81, typeName);		
-		// instance method - else
-		IJavaLineBreakpoint breakpoint2 = createLineBreakpoint(88, typeName);				
+		String typeName = "InstanceFilterObject";
+		// main
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		// simpleMethod
+		IJavaLineBreakpoint simpleMethod = createLineBreakpoint(19, typeName);		
 		
 		IJavaThread thread= null;
-		IJavaThread thread2 = null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
-			assertEquals("hit un-registered breakpoint", breakpoint, hit);
+			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
 			
 			// can only do test if the VM supports instance filters
 			if (supportsInstanceBreakpoints(thread)) {
-				// add instance filter
+				// restrict breakpoint in simpleMethod to object 1
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-				IJavaObject thisObject = frame.getThis();
-				assertNotNull("Unable to access 'this'", thisObject);
-				((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
+				assertNotNull(frame);
+				IJavaVariable var1 = frame.findVariable("object1");
+				IJavaVariable var2 = frame.findVariable("object2");
+				assertNotNull(var1);
+				assertNotNull(var2);
+				IJavaObject object1 = (IJavaObject)var1.getValue();
+				IJavaObject object2 = (IJavaObject)var2.getValue();
+				assertNotNull(object1);
+				assertNotNull(object2);
 				
-				// launch a second target
-				thread2= launchToBreakpoint(typeName);
-				assertNotNull("Breakpoint not hit in second target", thread2);
+				simpleMethod.addInstanceFilter(object1);
 				
-				// should miss first breakpoint
-				IBreakpoint hit2 = getBreakpoint(thread2);
-				assertNotNull("suspended, but not by breakpoint", hit2);
-				assertEquals("did not hit 2nd breakpoint", breakpoint2, hit2);
+				// resume the thread
+				thread= resume(thread);
+				IBreakpoint[] breakpoints = thread.getBreakpoints();
+				assertEquals("should be a breakpoint", 1, breakpoints.length);
+				assertEquals("should be in simpleMethod", simpleMethod, breakpoints[0]);
+				
+				// receiver should be object1
+				frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertNotNull(frame);
+				IJavaObject receiver = frame.getThis();
+				assertEquals("should be in object1 context", object1, receiver);
 			}
 		} finally {
 			terminateAndRemove(thread);
-			terminateAndRemove(thread2);
 			removeAllBreakpoints();
 		}		
 	}
 	
-	public void testMethodEntry() throws Exception {
-		String typeName = "Breakpoints";
-		// instance method
-		IJavaMethodBreakpoint breakpoint = createMethodBreakpoint(typeName, "instanceMethod", "()V", true, false);		
-		// instance method 2
-		IJavaLineBreakpoint breakpoint2 = createMethodBreakpoint(typeName, "instanceMethod2", "()V", true, false);				
+	/**
+	 * Instance filter on a method entry breakpoint
+	 * 
+	 * @throws Exception
+	 */
+	public void testMethodEntryBreakpoint() throws Exception {
+		String typeName = "InstanceFilterObject";
+		// main
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		// simpleMethod
+		IJavaMethodBreakpoint simpleMethod = createMethodBreakpoint(typeName, "simpleMethod", "()V", true, false);		
 		
 		IJavaThread thread= null;
-		IJavaThread thread2 = null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);
-			assertEquals("hit un-registered breakpoint", breakpoint, hit);
+			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
 			
 			// can only do test if the VM supports instance filters
-			if (supportsInstanceBreakpoints(thread)) { 
-				// add instance filter
+			if (supportsInstanceBreakpoints(thread)) {
+				// restrict breakpoint in simpleMethod to object 1
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-				IJavaObject thisObject = frame.getThis();
-				assertNotNull("Unable to access 'this'", thisObject);
-				((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
+				assertNotNull(frame);
+				IJavaVariable var1 = frame.findVariable("object1");
+				IJavaVariable var2 = frame.findVariable("object2");
+				assertNotNull(var1);
+				assertNotNull(var2);
+				IJavaObject object1 = (IJavaObject)var1.getValue();
+				IJavaObject object2 = (IJavaObject)var2.getValue();
+				assertNotNull(object1);
+				assertNotNull(object2);
 				
-				// launch a second target
-				thread2= launchToBreakpoint(typeName);
-				assertNotNull("Breakpoint not hit in second target", thread2);
+				simpleMethod.addInstanceFilter(object1);
 				
-				// should miss first breakpoint
-				IBreakpoint hit2 = getBreakpoint(thread2);
-				assertNotNull("suspended, but not by breakpoint", hit2);
-				assertEquals("did not hit 2nd breakpoint", breakpoint2, hit2);
+				// resume the thread
+				thread= resume(thread);
+				IBreakpoint[] breakpoints = thread.getBreakpoints();
+				assertEquals("should be a breakpoint", 1, breakpoints.length);
+				assertEquals("should be in simpleMethod", simpleMethod, breakpoints[0]);
+				
+				// receiver should be object1
+				frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertNotNull(frame);
+				IJavaObject receiver = frame.getThis();
+				assertEquals("should be in object1 context", object1, receiver);
+				// method should not have executed yet
+				IJavaFieldVariable boolVar = receiver.getField("executedSimpleMethod",false);
+				assertNotNull(boolVar);
+				IValue value = boolVar.getValue();
+				assertEquals("method should not have executed", ((IJavaDebugTarget)frame.getDebugTarget()).newValue(false), value);
 			}
 		} finally {
 			terminateAndRemove(thread);
-			terminateAndRemove(thread2);
 			removeAllBreakpoints();
 		}		
 	}	
 	
-	public void testWatchpoint() throws Exception {
-		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
-		
-		IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, true);
-		IJavaLineBreakpoint bp = createLineBreakpoint(28, typeName);
+	/**
+	 * Instance filter on a method exit breakpoint
+	 * 
+	 * @throws Exception
+	 */
+	public void testMethodExitBreakpoint() throws Exception {
+		String typeName = "InstanceFilterObject";
+		// main
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		// simpleMethod
+		IJavaMethodBreakpoint simpleMethod = createMethodBreakpoint(typeName, "simpleMethod", "()V", false, true);		
 		
 		IJavaThread thread= null;
-		IJavaThread thread2 = null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-
 			IBreakpoint hit = getBreakpoint(thread);
-			assertNotNull("No breakpoint", hit);
-			assertEquals("did not hit watch point", wp, hit);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
 			
 			// can only do test if the VM supports instance filters
-			if (supportsInstanceBreakpoints(thread)) {			
-
-				// add instance filter
+			if (supportsInstanceBreakpoints(thread)) {
+				// restrict breakpoint in simpleMethod to object 1
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-				IJavaObject thisObject = frame.getThis();
-				assertNotNull("Unable to access 'this'", thisObject);
-				((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
+				assertNotNull(frame);
+				IJavaVariable var1 = frame.findVariable("object1");
+				IJavaVariable var2 = frame.findVariable("object2");
+				assertNotNull(var1);
+				assertNotNull(var2);
+				IJavaObject object1 = (IJavaObject)var1.getValue();
+				IJavaObject object2 = (IJavaObject)var2.getValue();
+				assertNotNull(object1);
+				assertNotNull(object2);
 				
-				// launch a second target
-				thread2= launchToBreakpoint(typeName);
-				assertNotNull("Breakpoint not hit in second target", thread2);
+				simpleMethod.addInstanceFilter(object1);
 				
-				// should miss watchpoint
-				IBreakpoint hit2 = getBreakpoint(thread2);
-				assertNotNull("suspended, but not by breakpoint", hit2);
-				assertEquals("did not hit line breakpoint", bp, hit2);			
+				// resume the thread
+				thread= resume(thread);
+				IBreakpoint[] breakpoints = thread.getBreakpoints();
+				assertEquals("should be a breakpoint", 1, breakpoints.length);
+				assertEquals("should be in simpleMethod", simpleMethod, breakpoints[0]);
+				
+				// receiver should be object1
+				frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertNotNull(frame);
+				IJavaObject receiver = frame.getThis();
+				assertEquals("should be in object1 context", object1, receiver);
+				// method should have executed
+				IJavaFieldVariable boolVar = receiver.getField("executedSimpleMethod",false);
+				assertNotNull(boolVar);
+				IValue value = boolVar.getValue();
+				assertEquals("method should have executed", ((IJavaDebugTarget)frame.getDebugTarget()).newValue(true), value);
 			}
 		} finally {
 			terminateAndRemove(thread);
-			terminateAndRemove(thread2);
+			removeAllBreakpoints();
+		}		
+	}		
+
+	/**
+	 * Instance filter on an exception breakpoint
+	 * 
+	 * @throws Exception
+	 */
+	public void testExceptionBreakpoint() throws Exception {
+		String typeName = "InstanceFilterObject";
+		// main
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		// exception breakpoint
+		IJavaExceptionBreakpoint npe = createExceptionBreakpoint("java.lang.NullPointerException", true, true);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IBreakpoint hit = getBreakpoint(thread);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
+			
+			// can only do test if the VM supports instance filters
+			if (supportsInstanceBreakpoints(thread)) {
+				// restrict breakpoint in simpleMethod to object 1
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertNotNull(frame);
+				IJavaVariable var1 = frame.findVariable("object1");
+				IJavaVariable var2 = frame.findVariable("object2");
+				assertNotNull(var1);
+				assertNotNull(var2);
+				IJavaObject object1 = (IJavaObject)var1.getValue();
+				IJavaObject object2 = (IJavaObject)var2.getValue();
+				assertNotNull(object1);
+				assertNotNull(object2);
+				
+				npe.addInstanceFilter(object1);
+				
+				// resume the thread
+				thread= resume(thread);
+				IBreakpoint[] breakpoints = thread.getBreakpoints();
+				assertEquals("should be a breakpoint", 1, breakpoints.length);
+				assertEquals("should be in throwNPE", npe, breakpoints[0]);
+				
+				// receiver should be object1
+				frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertNotNull(frame);
+				IJavaObject receiver = frame.getThis();
+				assertEquals("should be in object1 context", object1, receiver);
+			}
+		} finally {
+			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}		
 	}
 	
-	public void testException() throws Exception {
-		String typeName = "ThrowsNPE";
-		
-		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, true);
-		IJavaLineBreakpoint bp = createLineBreakpoint(21, typeName);
+	/**
+	 * Instance filter on an access watchpoint
+	 * 
+	 * @throws Exception
+	 */
+	public void testAccessWatchpoint() throws Exception {
+		String typeName = "InstanceFilterObject";
+		// main
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		// exception breakpoint
+		IJavaWatchpoint watchpoint = createWatchpoint(typeName, "field", true, false);		
 		
 		IJavaThread thread= null;
-		IJavaThread thread2 = null;
 		try {
 			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
-
 			IBreakpoint hit = getBreakpoint(thread);
-			assertNotNull("No breakpoint", hit);
-			assertEquals("did not hit exception breakpoint", ex, hit);
-
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
+			
 			// can only do test if the VM supports instance filters
 			if (supportsInstanceBreakpoints(thread)) {
-			
-				// add instance filter
+				// restrict breakpoint in simpleMethod to object 1
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-				IJavaObject thisObject = frame.getThis();
-				assertNotNull("Unable to access 'this'", thisObject);
-				((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
+				assertNotNull(frame);
+				IJavaVariable var1 = frame.findVariable("object1");
+				IJavaVariable var2 = frame.findVariable("object2");
+				assertNotNull(var1);
+				assertNotNull(var2);
+				IJavaObject object1 = (IJavaObject)var1.getValue();
+				IJavaObject object2 = (IJavaObject)var2.getValue();
+				assertNotNull(object1);
+				assertNotNull(object2);
 				
-				// launch a second target
-				thread2= launchToBreakpoint(typeName);
-				assertNotNull("Breakpoint not hit in second target", thread2);
+				watchpoint.addInstanceFilter(object1);
 				
-				// should miss exception breakpoint
-				IBreakpoint hit2 = getBreakpoint(thread2);
-				assertNotNull("suspended, but not by breakpoint", hit2);
-				assertEquals("did not hit line breakpoint", bp, hit2);
-			}			
-						
-			
+				// resume the thread
+				thread= resume(thread);
+				IBreakpoint[] breakpoints = thread.getBreakpoints();
+				assertEquals("should be a breakpoint", 1, breakpoints.length);
+				assertEquals("should be in access method", watchpoint, breakpoints[0]);
+				
+				// in "accessField" 
+				frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertNotNull(frame);
+				assertEquals("should be in access method", "accessField", frame.getMethodName());
+				
+				// receiver should be object1
+				IJavaObject receiver = frame.getThis();
+				assertEquals("should be in object1 context", object1, receiver);
+			}
 		} finally {
 			terminateAndRemove(thread);
-			terminateAndRemove(thread2);
 			removeAllBreakpoints();
 		}		
 	}
-
+	
+	/**
+	 * Instance filter on an modification watchpoint
+	 * 
+	 * @throws Exception
+	 */
+	public void testModificationWatchpoint() throws Exception {
+		String typeName = "InstanceFilterObject";
+		// main
+		IJavaLineBreakpoint mainBreakpoint = createLineBreakpoint(39, typeName);
+		// exception breakpoint
+		IJavaWatchpoint watchpoint = createWatchpoint(typeName, "field", false, true);
+		// disable to avoid variable initializer
+		watchpoint.setEnabled(false);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IBreakpoint hit = getBreakpoint(thread);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			assertEquals("hit wrong breakpoint", mainBreakpoint, hit);
+			
+			// can only do test if the VM supports instance filters
+			if (supportsInstanceBreakpoints(thread)) {
+				// restrict breakpoint in simpleMethod to object 1
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertNotNull(frame);
+				IJavaVariable var1 = frame.findVariable("object1");
+				IJavaVariable var2 = frame.findVariable("object2");
+				assertNotNull(var1);
+				assertNotNull(var2);
+				IJavaObject object1 = (IJavaObject)var1.getValue();
+				IJavaObject object2 = (IJavaObject)var2.getValue();
+				assertNotNull(object1);
+				assertNotNull(object2);
+				
+				watchpoint.addInstanceFilter(object1);
+				
+				// enable watchpoint
+				watchpoint.setEnabled(true);
+				
+				// resume the thread
+				thread= resume(thread);
+				IBreakpoint[] breakpoints = thread.getBreakpoints();
+				assertEquals("should be a breakpoint", 1, breakpoints.length);
+				assertEquals("should be in modification method", watchpoint, breakpoints[0]);
+				
+				// in "modifyField" 
+				frame = (IJavaStackFrame)thread.getTopStackFrame();
+				assertNotNull(frame);
+				assertEquals("should be in modify method", "modifyField", frame.getMethodName());
+				
+				// receiver should be object1
+				IJavaObject receiver = frame.getThis();
+				assertEquals("should be in object1 context", object1, receiver);
+			}
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}		
+	
 	/**
 	 * Returns whether the associated target supports instance breakpoints
 	 * 
