@@ -5,23 +5,24 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -34,8 +35,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -50,7 +49,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferencePageContainer {
 
@@ -99,10 +97,10 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	
 	private Button fOkButton;
 	
-	public static final String PREF_DLG_TITLE_IMG = "preference_dialog_title_image";//$NON-NLS-1$
-	public static final String PREF_DLG_IMG_TITLE_ERROR = "preference_dialog_title_error_image";//$NON-NLS-1$
+	public static final String PREF_DLG_TITLE_IMG = "breakpoint_preference_dialog_title_image";//$NON-NLS-1$
+	public static final String PREF_DLG_IMG_TITLE_ERROR = "breakpoint_preference_dialog_title_error_image";//$NON-NLS-1$
 	static {
-		ImageRegistry reg = JFaceResources.getImageRegistry();
+		ImageRegistry reg = JDIDebugUIPlugin.getDefault().getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
 		reg.put(PREF_DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/title_error.gif"));//$NON-NLS-1$
 	}
@@ -114,124 +112,17 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	private Composite fPageContainer;
 
 	/**
-	 * The minimum page size; 400 by 400 by default.
+	 * The minimum page size; 200 by 200 by default.
 	 *
-	 * @see #setMinimumPageSize
+	 * @see #setMinimumPageSize(Point)
 	 */
-	private Point fMinimumPageSize = new Point(400,400);
+	private Point fMinimumPageSize = new Point(200,200);
 	
 	private IJavaBreakpoint fBreakpoint;
 	
-	private class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
-		
-		private Text fHitCountTextControl;
-		private BooleanFieldEditor fHitCountEnabler;
-		
-		protected JavaBreakpointPreferencePage() {
-			super(GRID);
-		}
-		
-		/**
-		 * Initializes all field editors.
-		 */
-		protected void initialize() {
-			super.initialize();
-			fHitCountEnabler.setPropertyChangeListener(new IPropertyChangeListener () {
-				/**
-				 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-				 */
-				public void propertyChange(PropertyChangeEvent event) {
-					Boolean enabled= (Boolean)event.getNewValue();
-					fHitCountTextControl.setEnabled(enabled.booleanValue());
-					}
-				}
-			);
-		}
-
-		/**
-		 * @see FieldEditorPreferencePage#createFieldEditors()
-		 */
-		protected void createFieldEditors() {
-			
-			IJavaBreakpoint breakpoint= getBreakpoint();
-			IPreferenceStore store= JavaBreakpointPropertiesDialog.this.getPreferenceStore();
-			StringBuffer title= new StringBuffer("Properties For ");
-			try {
-			store.setValue(JavaBreakpointPreferenceStore.ENABLED, breakpoint.isEnabled());
-			int hitCount= breakpoint.getHitCount();
-			if (hitCount > 0) {
-				store.setValue(JavaBreakpointPreferenceStore.HIT_COUNT, hitCount);
-				store.setValue(JavaBreakpointPreferenceStore.HIT_COUNT_ENABLED, true);
-			} else {
-				store.setValue(JavaBreakpointPreferenceStore.HIT_COUNT_ENABLED, false);
-			}
-			
-			store.setValue(JavaBreakpointPreferenceStore.PERSISTED, breakpoint.isPersisted());
-			store.setValue(JavaBreakpointPreferenceStore.SUSPEND_POLICY, breakpoint.getSuspendPolicy());		
-			addField(createEnabledEditor(getFieldEditorParent()));
-			addField(createPersistedEditor(getFieldEditorParent()));
-			createHitCountEditor(getFieldEditorParent());
-			addField(createSuspendPolicyEditor(getFieldEditorParent()));
-			if (breakpoint instanceof IJavaExceptionBreakpoint) {
-				IJavaExceptionBreakpoint jeBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
-				this.setTitle("Java Exception Breakpoint Properties");
-				store.setValue(JavaBreakpointPreferenceStore.UNCAUGHT, jeBreakpoint.isUncaught());
-				store.setValue(JavaBreakpointPreferenceStore.CAUGHT, jeBreakpoint.isCaught());
-				addField(createUncaughtEditor(getFieldEditorParent()));
-				addField(createCaughtEditor(getFieldEditorParent()));
-				title.append("Java Exception Breakpoint");
-			} else if (breakpoint instanceof IJavaLineBreakpoint) {
-				if (breakpoint instanceof IJavaMethodBreakpoint) {
-					IJavaMethodBreakpoint jmBreakpoint= (IJavaMethodBreakpoint)breakpoint;
-					this.setTitle("Java Method Breakpoint Properties");
-					store.setValue(JavaBreakpointPreferenceStore.METHOD_ENTRY, jmBreakpoint.isEntry());
-					store.setValue(JavaBreakpointPreferenceStore.METHOD_EXIT, jmBreakpoint.isExit());
-					addField(createMethodEntryEditor(getFieldEditorParent()));
-					addField(createMethodExitEditor(getFieldEditorParent()));
-					title.append("Java Method Breakpoint");
-				} else if (breakpoint instanceof IJavaWatchpoint) {
-					IJavaWatchpoint jWatchpoint= (IJavaWatchpoint)breakpoint;
-					this.setTitle("Java Watchpoint Properties");
-					store.setValue(JavaBreakpointPreferenceStore.ACCESS, jWatchpoint.isAccess());
-					store.setValue(JavaBreakpointPreferenceStore.MODIFICATION, jWatchpoint.isModification());
-					addField(createAccessEditor(getFieldEditorParent()));
-					addField(createModificationEditor(getFieldEditorParent()));
-					title.append("Java Watchpoint");
-				} else if (breakpoint instanceof IJavaPatternBreakpoint) {
-					this.setTitle("Java Pattern Breakpoint Properties");
-					title.append("Java Pattern Breakpoint");
-				} else {
-					this.setTitle("Java Line Breakpoint Properties");
-					title.append("Java Line Breakpoint");
-				}
-			}
-			} catch (CoreException ce) {
-			}
-			JavaBreakpointPropertiesDialog.this.setTitle(title.toString());
-		}
-		
-		public void createControl(Composite parent) {
-			super.createContents(parent);
-			setControl(getFieldEditorParent());
-		}
-		
-		protected void createHitCountEditor(Composite parent) {
-		
-			fHitCountEnabler= new BooleanFieldEditor(JavaBreakpointPreferenceStore.HIT_COUNT_ENABLED, "Enable Hit Count", parent);
-			addField(fHitCountEnabler);
-			
-			IntegerFieldEditor ife= new IntegerFieldEditor(JavaBreakpointPreferenceStore.HIT_COUNT, "Hit Count:",parent);
-			ife.setValidRange(1, Integer.MAX_VALUE);
-			fHitCountTextControl= ife.getTextControl(parent);
-			try {
-				fHitCountTextControl.setEnabled(getBreakpoint().getHitCount() > 0);
-			} catch (CoreException ce) {
-			}
-			addField(ife);
-		}
-	}
 	/**
-	 * 
+	 * A preference store that presents the state of the properties
+	 * of a Java breakpoint.
 	 */
 	protected class JavaBreakpointPreferenceStore implements IPreferenceStore {
 		
@@ -547,9 +438,96 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	 * @see Dialog#okPressed()
 	 */
 	protected void okPressed() {
+		final List changedProperties= new ArrayList(5);
+		getPreferenceStore().addPropertyChangeListener( new IPropertyChangeListener() {
+			/**
+			 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				changedProperties.add(event.getProperty());
+			}
+		});
+		fPage.performOk();
+		setBreakpointProperties(changedProperties);
 		super.okPressed();
 	}
 	
+	protected void setBreakpointProperties(final List changedProperties) {
+		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+
+		IJavaBreakpoint breakpoint= getBreakpoint();
+		Iterator changed= changedProperties.iterator();
+		while (changed.hasNext()) {
+			String property = (String) changed.next();
+			switch (property.charAt(0)) {
+				case 'A': //access
+					IJavaWatchpoint jWatchpoint= (IJavaWatchpoint)breakpoint;
+					jWatchpoint.setAccess(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.ACCESS));
+					break;
+				case 'C': //caught
+					IJavaExceptionBreakpoint jeBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
+					jeBreakpoint.setCaught(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.CAUGHT));
+					break;
+				case 'E'://enabled
+					breakpoint.setEnabled(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.ENABLED));
+					break;
+				case 'H':
+					if (property.charAt(property.length() - 1) == 'T') {
+						//hitcount
+						breakpoint.setHitCount(getPreferenceStore().getInt(JavaBreakpointPreferenceStore.HIT_COUNT));
+					} else {
+						if (getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.HIT_COUNT_ENABLED)) {
+							 if (!changedProperties.contains(JavaBreakpointPreferenceStore.HIT_COUNT)) {
+								//enabled the hit count but did not change the hit count value
+								breakpoint.setHitCount(getPreferenceStore().getInt(JavaBreakpointPreferenceStore.HIT_COUNT));
+							}
+						} else {
+							//disable the hitCount
+							breakpoint.setHitCount(0);	
+						}
+					}
+					break;
+				case 'M':
+					char lastChar= property.charAt(property.length() - 1);
+					if (lastChar == 'T') {
+						//exit
+						IJavaMethodBreakpoint jmBreakpoint= (IJavaMethodBreakpoint)breakpoint;
+						jmBreakpoint.setExit(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.METHOD_EXIT));
+					} else if (lastChar == 'Y') {
+						//entry
+						IJavaMethodBreakpoint jmBreakpoint= (IJavaMethodBreakpoint)breakpoint;
+						jmBreakpoint.setEntry(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.METHOD_ENTRY));
+					} else {
+						jWatchpoint= (IJavaWatchpoint)breakpoint;
+						jWatchpoint.setModification(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.MODIFICATION));
+					}
+					break;
+				case 'P':
+					breakpoint.setPersisted(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.PERSISTED));
+					break;
+				case 'S':
+					String value= getPreferenceStore().getString(JavaBreakpointPreferenceStore.SUSPEND_POLICY);
+					if (value.equals(JavaBreakpointPreferencePage.VM_SUSPEND_POLICY)) {
+						breakpoint.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
+					} else {
+						breakpoint.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
+					}
+					break;
+				case 'U':
+					jeBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
+					jeBreakpoint.setUncaught(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.UNCAUGHT));
+					break;
+			}
+			
+		}}};
+		
+		try {
+			ResourcesPlugin.getWorkspace().run(wr, null);
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.logError(ce);
+		}	
+		}
 	/**
 	 * Sets the title for this dialog.
 	 * @param title the title.
@@ -590,7 +568,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		fPageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fPageContainer.setFont(parent.getFont());
 
-		fPage= new JavaBreakpointPreferencePage();
+		fPage= new JavaBreakpointPreferencePage(getBreakpoint());
 		fPage.setContainer(this);
 		fPage.createControl(fPageContainer);
 			
@@ -601,107 +579,6 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		separator.setLayoutData(gd);
 	
 		return composite;
-	}
-	
-	
-	protected FieldEditor createEnabledEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.ENABLED, "Enabled",parent);
-		return bfe;
-	}
-	
-	protected FieldEditor createPersistedEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.PERSISTED, "Persisted",parent);
-		return bfe;
-	}
-	
-	protected FieldEditor createSuspendPolicyEditor(Composite parent) {	
-		IntegerFieldEditor ife= new IntegerFieldEditor(JavaBreakpointPreferenceStore.SUSPEND_POLICY, "Suspend Policy", parent);
-		ife.setValidRange(1, 2);
-		return ife;
-	}
-	
-	protected FieldEditor createMethodExitEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.METHOD_EXIT, "Exit", parent);
-		return bfe;
-	}
-	
-	protected FieldEditor createMethodEntryEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.METHOD_ENTRY, "Entry", parent);
-		return bfe;
-	}
-	
-	protected FieldEditor createUncaughtEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.UNCAUGHT, "Uncaught", parent);
-		return bfe;
-	}
-	
-	protected FieldEditor createCaughtEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CAUGHT, "Caught", parent);
-		return bfe;
-	}
-	
-	protected FieldEditor createAccessEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.ACCESS, "Access", parent);
-		return bfe;
-	}
-	
-	protected FieldEditor createModificationEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.MODIFICATION, "Modification", parent);
-		return bfe;
-	}
-	
-	
-	
-	protected FieldEditor createLineNumberEditor(Composite parent) {	
-		IntegerFieldEditor ife= new IntegerFieldEditor("LineNumber", "Line Number:",parent);
-		ife.setValidRange(0, Integer.MAX_VALUE);
-		return ife;
-	}
-	
-	protected void createBreakpointPropertyEditors(Composite parent) {
-		IJavaBreakpoint breakpoint= getBreakpoint();
-		IPreferenceStore store= getPreferenceStore();
-		StringBuffer title= new StringBuffer("Properties For ");
-		try {
-		store.setValue(JavaBreakpointPreferenceStore.ENABLED, breakpoint.isEnabled());
-		store.setValue(JavaBreakpointPreferenceStore.HIT_COUNT, breakpoint.getHitCount());
-		store.setValue(JavaBreakpointPreferenceStore.PERSISTED, breakpoint.isPersisted());
-		store.setValue(JavaBreakpointPreferenceStore.SUSPEND_POLICY, breakpoint.getSuspendPolicy());		
-		createEnabledEditor(parent);
-		//createHitCountEditor(parent);
-		createPersistedEditor(parent);
-		createSuspendPolicyEditor(parent);
-		if (breakpoint instanceof IJavaExceptionBreakpoint) {
-			IJavaExceptionBreakpoint jeBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
-			fMessageLabel.setText("Java Exception Breakpoint Properties");
-			store.setValue(JavaBreakpointPreferenceStore.UNCAUGHT, jeBreakpoint.isUncaught());
-			store.setValue(JavaBreakpointPreferenceStore.CAUGHT, jeBreakpoint.isCaught());
-			createUncaughtEditor(parent);
-			createCaughtEditor(parent);
-			title.append("Java Exception Breakpoint");
-		} else if (breakpoint instanceof IJavaLineBreakpoint) {
-			if (breakpoint instanceof IJavaMethodBreakpoint) {
-				IJavaMethodBreakpoint jmBreakpoint= (IJavaMethodBreakpoint)breakpoint;
-				fMessageLabel.setText("Java Method Breakpoint Properties");
-				store.setValue(JavaBreakpointPreferenceStore.METHOD_ENTRY, jmBreakpoint.isEntry());
-				store.setValue(JavaBreakpointPreferenceStore.METHOD_EXIT, jmBreakpoint.isExit());
-				createMethodEntryEditor(parent);
-				createMethodExitEditor(parent);
-				title.append("Java Method Breakpoint");
-			} else if (breakpoint instanceof IJavaWatchpoint) {
-				fMessageLabel.setText("Java Watchpoint Properties");
-				title.append("Java Watchpoint");
-			} else if (breakpoint instanceof IJavaPatternBreakpoint) {
-				fMessageLabel.setText("Java Pattern Breakpoint Properties");
-				title.append("Java Pattern Breakpoint");
-			} else {
-				fMessageLabel.setText("Java Line Breakpoint Properties");
-				title.append("Java Line Breakpoint");
-			}
-		}
-		} catch (CoreException ce) {
-		}
-		setTitle(title.toString());
 	}
 	
 	/**
@@ -771,7 +648,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		// Title image
 		fTitleImage = new Label(fTitleArea, SWT.LEFT);
 		fTitleImage.setBackground(bg);
-		fTitleImage.setImage(getImage(PREF_DLG_TITLE_IMG));
+		fTitleImage.setImage(JDIDebugUIPlugin.getDefault().getImageRegistry().get(PREF_DLG_TITLE_IMG));
 		gd = new GridData(); 
 		gd.horizontalAlignment = gd.END;
 		fTitleImage.setLayoutData(gd);
@@ -813,7 +690,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 				// we were previously showing an error
 				fMessageLabel.setBackground(fNormalMsgAreaBackground);
 				fMessageLabel.setImage(null);
-				fTitleImage.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
+				fTitleImage.setImage(JDIDebugUIPlugin.getDefault().getImageRegistry().get(PREF_DLG_TITLE_IMG));
 				fTitleArea.layout(true);
 			}
 	
@@ -828,7 +705,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 				// lazy initialize the error background color and image
 				if (fErrorMsgAreaBackground == null) {
 					fErrorMsgAreaBackground = new Color(fMessageLabel.getDisplay(), ERROR_BACKGROUND_RGB);
-					fErrorMsgImage = JFaceResources.getImage(PREF_DLG_IMG_TITLE_ERROR);
+					fErrorMsgImage = JDIDebugUIPlugin.getDefault().getImageRegistry().get(PREF_DLG_IMG_TITLE_ERROR);
 				}
 	
 				// show the error	
@@ -903,6 +780,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	 * @see IPreferencePageContainer#updateTitle()
 	 */
 	public void updateTitle() {
+		setTitle(fPage.getTitle());
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
