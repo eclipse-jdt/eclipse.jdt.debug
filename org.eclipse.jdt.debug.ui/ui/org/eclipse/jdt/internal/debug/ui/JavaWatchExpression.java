@@ -22,6 +22,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -190,7 +191,17 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 								stackFrame= (IJavaStackFrame) ((IJavaThread) source).getTopStackFrame();
 							} catch (DebugException e) {
 							}
-							evaluateExpression(stackFrame, true);
+							final IJavaStackFrame finalStackFrame= stackFrame;
+							Runnable runnable= new Runnable() {
+								public void run() {
+									DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+										public void run() {
+											evaluateExpression(finalStackFrame, true);
+										}
+									});
+								}
+							};
+							DebugPlugin.getDefault().asyncExec(runnable);
 						}
 					}
 					break;
@@ -269,11 +280,7 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 		setPending(true);
 		refresh();
 		fDebugTarget= (IJavaDebugTarget)javaStackFrame.getDebugTarget();
-		try {
-			DebugPlugin.getDefault().asyncExec(new EvaluationRunnable(javaStackFrame), JDIDebugUIPlugin.getStandardDisplay().getThread());
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
+		DebugPlugin.getDefault().asyncExec(new EvaluationRunnable(javaStackFrame));
 	}
 
 	/**

@@ -215,7 +215,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 									}
 								};																
 							}
-							DebugPlugin.getDefault().asyncExec(r, JDIDebugUIPlugin.getStandardDisplay().getThread());
+							DebugPlugin.getDefault().asyncExec(r);
 							// filter the events
 							return fgEmptyEvents;
 						}
