@@ -75,7 +75,7 @@ while [ $# -gt 0 ]; do
 done
 
 while [ $# -gt 0 ]; do
-	PARAMETERS="$PARAMETERS $1"
+	PARAMETERS="$PARAMETERS<string>$1</string>"
 	shift
 done
 
@@ -139,7 +139,7 @@ cat > Info.plist <<End_Of_Input
 		<key>WorkingDirectory</key>
 			<string>$CURRENT_DIR</string>
 		<key>Arguments</key>
-			<string>$PARAMETERS</string>
+			<array>$PARAMETERS</array>
 	</dict>
 </dict>
 </plist>
