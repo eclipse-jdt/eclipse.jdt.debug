@@ -200,18 +200,24 @@ public interface IJavaLaunchConfigurationConstants {
 	
 	/**
 	 * Launch configuration attribute key. The value is an integer
-	 * indicating the width of the applet viewing area.	 */
+	 * indicating the width of the applet viewing area.
+	 * 
+	 * @since 2.1	 */
 	public static final String ATTR_APPLET_WIDTH = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_WIDTH";	 //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is an integer
 	 * indicating the height of the applet viewing area.
+	 * 
+	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_HEIGHT = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_HEIGHT";	 //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is an String
 	 * indicating the HTML name of the applet.
+	 * 
+	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_NAME = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_NAME";	 //$NON-NLS-1$
 
@@ -219,6 +225,8 @@ public interface IJavaLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is an Map.
 	 * Keys in the map represent applet parameter names and the
 	 * values in the map are the corresponding parameter values
+	 * 
+	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_PARAMETERS = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_PARAMETERS";	 //$NON-NLS-1$
 
