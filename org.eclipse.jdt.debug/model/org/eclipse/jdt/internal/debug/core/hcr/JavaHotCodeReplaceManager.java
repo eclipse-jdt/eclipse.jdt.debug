@@ -922,6 +922,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public void launchRemoved(ILaunch launch) {
+		IDebugTarget[] debugTargets= launch.getDebugTargets();
+		for (int i = 0; i < debugTargets.length; i++) {
+			if (debugTargets[i] instanceof JDIDebugTarget) {
+				deregisterTarget((JDIDebugTarget)debugTargets[i]);		
+			}
+		}
 	}
 	/**
 	 * Begin listening for resource changes when a launch is
@@ -972,8 +978,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		// listening to resource changes.
 		for (int i= 0; i < launches.length; i++) {
 			if (launches[i].getDebugTarget() instanceof JDIDebugTarget) {
-				JDIDebugTarget launchTarget= (JDIDebugTarget) launches[i].getDebugTarget();
-				if (launchTarget.isAvailable()) {
+				if (((JDIDebugTarget) launches[i].getDebugTarget()).isAvailable()) {
 					return;
 				}
 			}
