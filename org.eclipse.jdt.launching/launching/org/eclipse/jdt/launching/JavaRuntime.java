@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1354,7 +1355,12 @@ public final class JavaRuntime {
 				detectedVMStandin = new VMStandin(vmType, vmID);
 				if (detectedVMStandin != null) {
 					detectedVMStandin.setInstallLocation(detectedLocation);
-					detectedVMStandin.setName(generateDetectedVMName(detectedVMStandin));						
+					detectedVMStandin.setName(generateDetectedVMName(detectedVMStandin));
+					if (vmType instanceof AbstractVMInstallType) {
+						AbstractVMInstallType abs = (AbstractVMInstallType)vmType;
+						URL url = abs.getDefaultJavadocLocation(detectedLocation);
+						detectedVMStandin.setJavadocLocation(url);						
+					}
 				}				
 			}
 		}
