@@ -9,12 +9,15 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIImageDescriptor;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -142,7 +145,7 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 		
 		if(thread.state == MonitorsViewContentProvider.ThreadWrapper.OWNING_THREAD) {
 			res.append(MonitorMessages.getString("MonitorModelPresentation._(owning)_7")); //$NON-NLS-1$
-		} else if(thread.state==MonitorsViewContentProvider.ThreadWrapper.CONTENDING_THREAD) {
+		} else if(thread.state == MonitorsViewContentProvider.ThreadWrapper.IN_CONTENTION_FOR_MONITOR) {
 			res.append(MonitorMessages.getString("MonitorModelPresentation._(contending)_8")); //$NON-NLS-1$
 		}
 		return res.toString();
@@ -161,7 +164,7 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 	}
 
 	/**
-	 * Maps a Java element to an appropriate image.
+	 * Maps an element to an appropriate image.
 	 * 
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
@@ -170,47 +173,39 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 		if (item instanceof ThreadsViewContentProvider.ThreadWrapper) {
 			return getThreadWrapperThreadImage((ThreadsViewContentProvider.ThreadWrapper)item);
 		} else if (item instanceof ThreadsViewContentProvider.MonitorWrapper) {
-			return getMonitorWrapperThreadImage((ThreadsViewContentProvider.MonitorWrapper)item);
+			ThreadsViewContentProvider.MonitorWrapper monitorWrapper= (ThreadsViewContentProvider.MonitorWrapper)item;
+			JDIImageDescriptor descriptor= null;
+			int flags= computeMonitorAdornmentFlags(monitorWrapper);
+			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJ_MONITOR, flags);
+			return fDebugImageRegistry.get(descriptor);
 		} else if (item instanceof MonitorsViewContentProvider.ThreadWrapper) {
-			return getThreadWrapperMonitorImage((MonitorsViewContentProvider.ThreadWrapper)item);
+			MonitorsViewContentProvider.ThreadWrapper threadWrapper= (MonitorsViewContentProvider.ThreadWrapper)item;
+			JDIImageDescriptor descriptor= null;
+			int flags= computeThreadAdornmentFlags(threadWrapper);
+			if (threadWrapper.thread.isSuspended()) {
+				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED), flags);
+			} else {
+				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING), flags);
+			}
+			return fDebugImageRegistry.get(descriptor);
 		} else if (item instanceof IJavaObject) {
 			return getMonitorImage((IJavaObject)item);
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Image for a MonitorWrapper in ThreadsViewContentProvider
-	 */
-	private Image getMonitorWrapperThreadImage(ThreadsViewContentProvider.MonitorWrapper monitor){
-		ImageDescriptor res=null;
-		if(monitor.state==ThreadsViewContentProvider.MonitorWrapper.OWNED_MONITOR) {
-			res = JavaDebugImages.DESC_OBJ_MONITOR_OWNED;
-		} else {
-			res = JavaDebugImages.DESC_OBJ_MONITOR_WAITED;
-		}
-		return fDebugImageRegistry.get(res);
+		} 
+		
+		return null;
 	}
 
 	/**
 	 * Image for a ThreadWrapper in ThreadsViewContentProvider
 	 */
 	private Image getThreadWrapperThreadImage(ThreadsViewContentProvider.ThreadWrapper thread){
-		return fDebugImageRegistry.get(JavaDebugImages.DESC_OBJ_THREAD);
-	}
-
-	/**
-	 * Image for ThreadWrapper in MonitorsViewContentProvider
-	 */
-	private Image getThreadWrapperMonitorImage(MonitorsViewContentProvider.ThreadWrapper thread){
-		ImageDescriptor res=null;
-		if(thread.state==MonitorsViewContentProvider.ThreadWrapper.OWNING_THREAD) {
-			res = JavaDebugImages.DESC_OBJ_THREAD_OWNING;
+		ImageDescriptor descriptor= null;
+		if (thread.thread.isSuspended()) {
+			descriptor= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED);
 		} else {
-			res = JavaDebugImages.DESC_OBJ_THREAD_WAITING;
+			descriptor= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING);
 		}
-		return fDebugImageRegistry.get(res);
+		return fDebugImageRegistry.get(descriptor);
 	}
 
 	/**
@@ -238,5 +233,39 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 	 * @see IDebugModelPresentation#setAttribute(String, Object)
 	 */
 	public void setAttribute(String id, Object value) {
+	}
+	
+	/**
+	 * Returns the adornment flags for the monitor.
+	 * These flags are used to render appropriate overlay
+	 * icons for the monitor.
+	 */
+	private int computeMonitorAdornmentFlags(ThreadsViewContentProvider.MonitorWrapper wrapper)  {
+		int flags= 0;
+		
+		if (wrapper.state == ThreadsViewContentProvider.MonitorWrapper.CONTENDED_MONITOR) {
+			flags |= JDIImageDescriptor.CONTENTED_MONITOR;
+		}
+		if (wrapper.state == ThreadsViewContentProvider.MonitorWrapper.OWNED_MONITOR) {
+			flags |= JDIImageDescriptor.OWNED_MONITOR;
+		}
+		return flags;
+	}
+	
+	/**
+	 * Returns the adornment flags for the thread.
+	 * These flags are used to render appropriate overlay
+	 * icons for the thread.
+	 */
+	private int computeThreadAdornmentFlags(MonitorsViewContentProvider.ThreadWrapper wrapper)  {
+		int flags= 0;
+		
+		if (wrapper.state == MonitorsViewContentProvider.ThreadWrapper.IN_CONTENTION_FOR_MONITOR) {
+			flags |= JDIImageDescriptor.IN_CONTENTION_FOR_MONITOR;
+		}
+		if (wrapper.state == MonitorsViewContentProvider.ThreadWrapper.OWNING_THREAD) {
+			flags |= JDIImageDescriptor.OWNS_MONITOR;
+		}
+		return flags;
 	}
 }

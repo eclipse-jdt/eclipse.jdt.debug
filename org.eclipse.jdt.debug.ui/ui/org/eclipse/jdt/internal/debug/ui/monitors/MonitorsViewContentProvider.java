@@ -29,7 +29,7 @@ public class MonitorsViewContentProvider implements ITreeContentProvider {
 	 */
 	public class ThreadWrapper{
 		public static final int OWNING_THREAD = 1;
-		public static final int CONTENDING_THREAD = 2;
+		public static final int IN_CONTENTION_FOR_MONITOR = 2;
 		public IJavaThread thread;
 		public int state;
 	}
@@ -66,7 +66,7 @@ public class MonitorsViewContentProvider implements ITreeContentProvider {
 				for (int i = 0; i < contendingThreads.size(); i++) {
 					ThreadWrapper tw = new ThreadWrapper();
 					tw.thread = (IJavaThread) contendingThreads.get(i);
-					tw.state = ThreadWrapper.CONTENDING_THREAD;
+					tw.state = ThreadWrapper.IN_CONTENTION_FOR_MONITOR;
 					wrappedThreads.add(tw);
 				}
 				wrappedThreads.toArray(children);

@@ -20,7 +20,7 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 
 	/**
 	 * MonitorWrapper for the thread view
-	 * We use it to know the state of the monitor we display: owned or contending
+	 * We use it to know the state of the monitor we display: owned or in contention
 	 */	
 	public class MonitorWrapper{
 		public static final int OWNED_MONITOR = 1;
@@ -31,7 +31,7 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 
 	/**
 	 * ThreadWrapper for the monitor view
-	 * We use it to know the state of the thread we display: caught in a deadlock or no
+	 * We use it to know the state of the thread we display: caught in a deadlock or not
 	 */	
 	public class ThreadWrapper{
 		public IJavaThread thread;

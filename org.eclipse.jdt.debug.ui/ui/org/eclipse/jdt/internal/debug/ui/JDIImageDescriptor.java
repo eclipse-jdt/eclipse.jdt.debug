@@ -17,25 +17,34 @@ import org.eclipse.swt.graphics.Point;
 public class JDIImageDescriptor extends CompositeImageDescriptor {
 	
 	/** Flag to render the is out of synch adornment */
-	public final static int IS_OUT_OF_SYNCH= 		0x001;
+	public final static int IS_OUT_OF_SYNCH= 			0x0001;
 	/** Flag to render the may be out of synch adornment */
-	public final static int MAY_BE_OUT_OF_SYNCH= 	0x002;
+	public final static int MAY_BE_OUT_OF_SYNCH= 		0x0002;
 	/** Flag to render the installed breakpoint adornment */
-	public final static int INSTALLED= 				0x004;
+	public final static int INSTALLED= 					0x0004;
 	/** Flag to render the entry method breakpoint adornment */
-	public final static int ENTRY=				 	0x008;
+	public final static int ENTRY=				 		0x0008;
 	/** Flag to render the exit method breakpoint adornment */
-	public final static int EXIT=				 	0x010;
+	public final static int EXIT=				 		0x0010;
 	/** Flag to render the enabled breakpoint adornment */
-	public final static int ENABLED=				0x020;
+	public final static int ENABLED=						0x0020;
 	/** Flag to render the conditional breakpoint adornment */
-	public final static int CONDITIONAL=				0x040;
+	public final static int CONDITIONAL=					0x0040;
 	/** Flag to render the caught breakpoint adornment */
-	public final static int CAUGHT=				0x080;
+	public final static int CAUGHT=						0x0080;
 	/** Flag to render the uncaught breakpoint adornment */
-	public final static int UNCAUGHT=				0x100;
+	public final static int UNCAUGHT=					0x0100;
 	/** Flag to render the scoped breakpoint adornment */
-	public final static int SCOPED=				0x200;
+	public final static int SCOPED=						0x0200;
+	
+	/** Flag to render the owning a monitor thread adornment */
+	public final static int OWNS_MONITOR=				0x0400;
+	/** Flag to render the owned monitor adornment */
+	public final static int OWNED_MONITOR=				0x0800;
+	/** Flag to render the in contention monitor adornment */
+	public final static int CONTENTED_MONITOR=			0x1000;
+	/** Flag to render the in contention for monitor thread adornment */
+	public final static int IN_CONTENTION_FOR_MONITOR=	0x2000;
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
@@ -95,7 +104,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		drawOverlays();
 	}
 
-/**
+	/**
 	 * Add any overlays to the image as specified in the flags.
 	 */
 	protected void drawOverlays() {
@@ -116,87 +125,122 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 			x -= data.width;
 			drawImage(data, x, y);
 		} else {
-			if ((flags & INSTALLED) != 0) {
-				x= 0;
+			if ((flags & OWNED_MONITOR) != 0) {
+				x= getSize().x;
 				y= getSize().y;
-				if ((flags & ENABLED) !=0) {
-					data= JavaDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED.getImageData();
-				} else {
-					data= JavaDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED.getImageData();
-				}
-				
+				data= JavaDebugImages.DESC_OVR_OWNED.getImageData();
+				x -= data.width;
 				y -= data.height;
 				drawImage(data, x, y);
-			}
-			if ((flags & CAUGHT) != 0) {
-				if ((flags & ENABLED) !=0) {
-					data= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT.getImageData();
-				} else {
-					data= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT_DISABLED.getImageData();
-				}
-				x= 0;
-				y= 0;
-				drawImage(data, x, y);
-			}
-			if ((flags & UNCAUGHT) != 0) {
-				if ((flags & ENABLED) !=0) {
-					data= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT.getImageData();
-				} else {
-					data= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT_DISABLED.getImageData();
-				}
-				x= data.width;
-				y= data.height;
-				drawImage(data, x, y);
-			}
-			if ((flags & SCOPED) != 0) {
-				if ((flags & ENABLED) !=0) {
-					data= JavaDebugImages.DESC_OBJS_SCOPED_BREAKPOINT.getImageData();
-				} else {
-					data= JavaDebugImages.DESC_OBJS_SCOPED_BREAKPOINT_DISABLED.getImageData();
-				}
-				x= 0;
+			} else if ((flags & CONTENTED_MONITOR) != 0) {
+				x= getSize().x;
 				y= getSize().y;
-				y-= data.height;
+				data= JavaDebugImages.DESC_OVR_IN_CONTENTION.getImageData();
+				x -= data.width;
+				y -= data.height;
 				drawImage(data, x, y);
-			}
-			if ((flags & CONDITIONAL) != 0) {
+			} else if ((flags & OWNS_MONITOR) != 0) {
 				x= getSize().x;
 				y= 0;
-				if ((flags & ENABLED) !=0) {
-					data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT.getImageData();
-				} else {
-					data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT_DISABLED.getImageData();
-				}
+				data= JavaDebugImages.DESC_OVR_OWNS_MONITOR.getImageData();
+				x -= data.width;
+				drawImage(data, x, y);
+			} else if ((flags & IN_CONTENTION_FOR_MONITOR) != 0) {
+				x= getSize().x;
+				y= 0;
+				data= JavaDebugImages.DESC_OVR_IN_CONTENTION_FOR_MONITOR.getImageData();
 				x -= data.width;
 				drawImage(data, x, y);
 			} else {
-				if ((flags & ENTRY) != 0) {
-					x= getSize().x;
-					y= 0;
-					if ((flags & ENABLED) !=0) {
-						data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY.getImageData();
-					} else {
-						data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED.getImageData();
-					}
-					x -= data.width;
-					drawImage(data, x, y);
-				}
-				if ((flags & EXIT)  != 0){
-					x= getSize().x;
-					y= getSize().y;
-					if ((flags & ENABLED) != 0) {
-						data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT.getImageData();
-					} else {
-						data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED.getImageData();
-					}
-					x -= data.width;
-					y -= data.height;
-					drawImage(data, x, y);
-				}
+				drawBreakpointOverlays();
 			}
 		}
 	}
 	
+	protected void drawBreakpointOverlays() {
+		int flags= getFlags();
+		int x= 0;
+		int y= 0;
+		ImageData data= null;
+		if ((flags & INSTALLED) != 0) {
+			x= 0;
+			y= getSize().y;
+			if ((flags & ENABLED) !=0) {
+				data= JavaDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED.getImageData();
+			} else {
+				data= JavaDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED.getImageData();
+			}
+				
+			y -= data.height;
+			drawImage(data, x, y);
+		}
+		if ((flags & CAUGHT) != 0) {
+			if ((flags & ENABLED) !=0) {
+			data= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT.getImageData();
+			} else {
+				data= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT_DISABLED.getImageData();
+			}
+			x= 0;
+			y= 0;
+			drawImage(data, x, y);
+		}
+		if ((flags & UNCAUGHT) != 0) {
+			if ((flags & ENABLED) !=0) {
+				data= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT.getImageData();
+			} else {
+				data= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT_DISABLED.getImageData();
+			}
+			x= data.width;
+			y= data.height;
+			drawImage(data, x, y);
+		}
+		if ((flags & SCOPED) != 0) {
+			if ((flags & ENABLED) !=0) {
+				data= JavaDebugImages.DESC_OBJS_SCOPED_BREAKPOINT.getImageData();
+			} else {
+				data= JavaDebugImages.DESC_OBJS_SCOPED_BREAKPOINT_DISABLED.getImageData();
+			}
+			x= 0;
+			y= getSize().y;
+			y-= data.height;
+			drawImage(data, x, y);
+		}
+		if ((flags & CONDITIONAL) != 0) {
+			x= getSize().x;
+			y= 0;
+			if ((flags & ENABLED) !=0) {
+				data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT.getImageData();
+			} else {
+				data= JavaDebugImages.DESC_OBJS_CONDITIONAL_BREAKPOINT_DISABLED.getImageData();
+			}
+			x -= data.width;
+			drawImage(data, x, y);
+		} else {
+			if ((flags & ENTRY) != 0) {
+				x= getSize().x;
+				y= 0;
+				if ((flags & ENABLED) !=0) {
+					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY.getImageData();
+				} else {
+					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED.getImageData();
+				}
+				x -= data.width;
+				drawImage(data, x, y);
+			}
+			if ((flags & EXIT)  != 0){
+				x= getSize().x;
+				y= getSize().y;
+				if ((flags & ENABLED) != 0) {
+					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT.getImageData();
+				} else {
+					data= JavaDebugImages.DESC_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED.getImageData();
+				}
+				x -= data.width;
+				y -= data.height;
+				drawImage(data, x, y);
+			}
+		}
+	}
 	protected ImageDescriptor getBaseImage() {
 		return fBaseImage;
 	}

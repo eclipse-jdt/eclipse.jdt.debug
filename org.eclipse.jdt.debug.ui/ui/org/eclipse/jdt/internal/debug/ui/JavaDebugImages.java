@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Image;
 public class JavaDebugImages {
 
 	private static final String NAME_PREFIX= "org.eclipse.jdt.debug.ui."; //$NON-NLS-1$
-	private static final int    NAME_PREFIX_LENGTH= NAME_PREFIX.length();
+	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
 
 	private static URL fgIconBaseURL= null;
 	
@@ -75,12 +75,7 @@ public class JavaDebugImages {
 	
 	public static final String IMG_VIEW_ARGUMENTS_TAB= NAME_PREFIX + "variable_tab.gif";  //$NON-NLS-1$
 	
-	public static final String IMG_OBJS_THREAD = NAME_PREFIX + "thread_obj.gif";  //$NON-NLS-1$
 	public static final String IMG_OBJS_MONITOR = NAME_PREFIX + "monitor_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_MONITOR_OWNED = NAME_PREFIX + "monitor_owned_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_MONITOR_WAITED = NAME_PREFIX + "monitor_waited_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_THREAD_OWNING = NAME_PREFIX + "thread_owning_obj.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_THREAD_WAITING = NAME_PREFIX + "thread_waiting_obj.gif";  //$NON-NLS-1$
 	
 	/*
 	 * Set of predefined Image Descriptors.
@@ -129,16 +124,15 @@ public class JavaDebugImages {
 	
 	public static final ImageDescriptor DESC_VIEW_ARGUMENTS_TAB = createManaged(T_CVIEW, IMG_VIEW_ARGUMENTS_TAB);
 
-	public static final ImageDescriptor DESC_OBJ_THREAD = createManaged(T_OBJ, IMG_OBJS_THREAD);
 	public static final ImageDescriptor DESC_OBJ_MONITOR = createManaged(T_OBJ, IMG_OBJS_MONITOR);
-	public static final ImageDescriptor DESC_OBJ_MONITOR_OWNED = createManaged(T_OBJ, IMG_OBJS_MONITOR_OWNED);
-	public static final ImageDescriptor DESC_OBJ_MONITOR_WAITED = createManaged(T_OBJ, IMG_OBJS_MONITOR_WAITED);
-	public static final ImageDescriptor DESC_OBJ_THREAD_OWNING = createManaged(T_OBJ, IMG_OBJS_THREAD_OWNING);
-	public static final ImageDescriptor DESC_OBJ_THREAD_WAITING = createManaged(T_OBJ, IMG_OBJS_THREAD_WAITING);
-
-		
+	
 	public static final ImageDescriptor DESC_OVR_IS_OUT_OF_SYNCH= create(T_OVR, "error_co.gif");			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_MAY_BE_OUT_OF_SYNCH= create(T_OVR, "warning_co.gif");		//$NON-NLS-1$
+	
+	public static final ImageDescriptor DESC_OVR_OWNED= create(T_OVR, "owned_ovr.gif");			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_OWNS_MONITOR= create(T_OVR, "ownsmonitor_ovr.gif");		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_IN_CONTENTION= create(T_OVR, "contention_ovr.gif");			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_IN_CONTENTION_FOR_MONITOR= create(T_OVR, "contentionformonitor_ovr.gif");		//$NON-NLS-1$
 			
 	public static final ImageDescriptor DESC_WIZBAN_NEWSCRAPPAGE= create(T_WIZBAN, "newsbook_wiz.gif");		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_JAVA_LAUNCH= create(T_WIZBAN, "java_app_wiz.gif"); 		//$NON-NLS-1$
@@ -152,7 +146,6 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET= create(T_ETOOL, "term_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_HOVER= create(T_CTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_DISABLED= create(T_DTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
-
 
 	/**
 	 * Returns the image managed under the given key in this registry.
