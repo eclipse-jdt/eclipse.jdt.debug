@@ -8,10 +8,17 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
@@ -248,69 +255,115 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 		return null;
 	}
 	
+	private boolean isValidJavaCharacter(char c) {
+		return Character.isJavaIdentifierPart(c) || c == '.' || c == '<' || c == '>';
+	}
+	
 	/**
 	 * Parse out the package name (if there is one), type name and line number
 	 * (if there is one).  
 	 */
-	protected void parseSelection(String sel) {
-		// initialize
-		String selection = sel.trim();
+	protected void parseSelection(String selection) {
+		
+		selection = selection.trim();
 		if (selection.length() < 1) {
 			return;
 		}
-		int leftEdge = 0;
-		int firstDot = selection.indexOf('.');
-		int firstParen = selection.indexOf('(');
-		int rightEdge = selection.length();
 		
-		// isolate left edge
+		int firstDot= selection.indexOf('.');
+		
+		// isolate the first character of the name
+		int nameFirstChar= 0;
 		if (firstDot != -1) {
-			String substring = selection.substring(0, firstDot);
-			leftEdge = substring.lastIndexOf(' ') + 1;
-		}	
+			String substring= selection.substring(0, firstDot);
+			nameFirstChar= substring.lastIndexOf(' ') + 1;
+		} 
 		
-		// isolate right edge
-		if (firstParen != -1 && leftEdge < firstParen) {
-			String substring = selection.substring(leftEdge, firstParen);
-			rightEdge = substring.lastIndexOf('.');
-			if (rightEdge == -1) {
-				rightEdge = selection.length();
-			} else {
-				rightEdge += leftEdge;
+		// isolate the last character of the name
+		int nameLastChar= selection.length();
+		if (firstDot != -1) {
+			for (int i= firstDot; i < nameLastChar; i++) {
+				char c= selection.charAt(i);
+				if (!isValidJavaCharacter(c)) {
+					nameLastChar= i;
+				}
 			}
 		}
 		
-		// extract the fully qualified type name
-		String qualifiedName = selection.substring(leftEdge, rightEdge);
-		String[] names= parseTypeNames(qualifiedName);
+		String name= selection.substring(nameFirstChar, nameLastChar);
 		
-		for (int i = 0; i < names.length; i++) {
-			String typeName = names[i];	
-			try {
-				Integer.parseInt(typeName);
-			} catch(NumberFormatException e) {
-				setTypeName(typeName);
-				continue;
-			}	
-			break;
-		}
-		
-		// look for line #
-		int lastColon = selection.lastIndexOf(':');
-		if (lastColon != -1) {
-			StringBuffer buffer = new StringBuffer();
-			for (int i = lastColon + 1; i < selection.length(); i++) {
-				char character = selection.charAt(i);
-				if (Character.isDigit(character)) {
-					buffer.append(character);
-				} else {
-					try {
-						setLineNumber(Integer.parseInt(buffer.toString()));
-					} catch (NumberFormatException nfe) {
+		String fileSeparator= System.getProperty("file.separator");
+		String typeName= null;
+		boolean isFind= false;
+		if (name.indexOf(fileSeparator) != -1) { // may be the absolute path of a file
+			IContainer resource= ResourcesPlugin.getWorkspace().getRoot();
+			typeName= null;
+			boolean intermediateFolderFind= true;
+			while (!isFind && intermediateFolderFind) { // find the right file
+				IResource[] children;
+				try {
+					children= resource.members();
+				} catch (CoreException e) {
+					return;
+				}
+				intermediateFolderFind= false;
+				IPath namePath= new Path(name);
+				for (int i= 0, length= children.length; i < length; i++) {
+					IResource child= children[i];
+					if (child.getLocation().isPrefixOf(namePath)) {
+						if (child instanceof IFile) { // a file with a matching name has been found
+							IType[] types;
+							try { // get the fully qualified name of the type contained in this file
+								types= JavaCore.createCompilationUnitFrom((IFile)child).getTypes();
+							} catch (JavaModelException e) {
+								return;
+							}
+							if (types.length > 0) { // there is some types in this file
+								typeName= types[0].getFullyQualifiedName();
+								typeName= parseTypeNames(typeName)[0];
+								isFind= true;
+								intermediateFolderFind= true;
+							}
+						} else if (child instanceof IContainer) { // a folder with a matching name has been found
+							resource = (IContainer) child;
+							intermediateFolderFind= true;
+						}
+						break;
 					}
 				}
 			}
 		}
+		
+		if (!isFind) { // is not the absolute path of a file, should be a qualified type name
+			if (nameLastChar < selection.length() && selection.charAt(nameLastChar) == '(') { // remove the method name if there is one
+				name= name.substring(0, name.lastIndexOf('.'));
+			}
+			
+			typeName= parseTypeNames(name.replace('/', '.'))[0];
+		}
+		
+		setTypeName(typeName);
+		
+		// isolate the first character of the line number
+		int lineNumber= -1;
+		int lineNumberFirstChar= nameLastChar;
+		do {
+			lineNumberFirstChar= selection.indexOf(':', lineNumberFirstChar) + 1;
+		} while (lineNumberFirstChar != 0 && !Character.isDigit(selection.charAt(lineNumberFirstChar)));
+		
+		// get the line number
+		StringBuffer number= new StringBuffer();
+		for (char c; Character.isDigit(c = selection.charAt(lineNumberFirstChar)); lineNumberFirstChar++) {
+			number.append(c);
+		}
+		
+		try {
+			lineNumber= Integer.parseInt(number.toString());
+		} catch (NumberFormatException e) {
+		}
+		
+		setLineNumber(lineNumber);
+		
 	}
 
 	protected Shell getShell() {
@@ -463,4 +516,3 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 		return (String[])list.toArray(new String[list.size()]);	
 	}
 }
-
