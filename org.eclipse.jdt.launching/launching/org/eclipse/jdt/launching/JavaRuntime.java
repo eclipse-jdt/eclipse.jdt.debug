@@ -138,7 +138,7 @@ public final class JavaRuntime {
 	 */
 	public final static String ATTR_CMDLINE= LaunchingPlugin.getUniqueIdentifier() + ".launcher.cmdLine"; //$NON-NLS-1$
 
-	private static final String PROPERTY_VM= LaunchingPlugin.getUniqueIdentifier() + ".vm"; //$NON-NLS-1$
+	private static final String PROPERTY_BUILD_VM= LaunchingPlugin.getUniqueIdentifier() + ".build_vm"; //$NON-NLS-1$
 
 	private static IVMInstallType[] fgVMTypes= null;
 	private static String fgDefaultVMId= null;
@@ -210,7 +210,7 @@ public final class JavaRuntime {
 	 * 							corrupt.
 	 */
 	public static IVMInstall getVMInstall(IJavaProject project) throws CoreException {
-		String idString= project.getProject().getPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), PROPERTY_VM));
+		String idString= project.getProject().getPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), PROPERTY_BUILD_VM));
 		return getVMFromId(idString);
 	}
 	
@@ -255,7 +255,7 @@ public final class JavaRuntime {
 	 */
 	public static void setVM(IJavaProject project, IVMInstall javaRuntime) throws CoreException {
 		String idString= getIdFromVM(javaRuntime);
-		project.getProject().setPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), PROPERTY_VM), idString);
+		project.getProject().setPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), PROPERTY_BUILD_VM), idString);
 	}
 	
 	/**
@@ -653,12 +653,18 @@ public final class JavaRuntime {
 	 * @param configuration launch configuration
 	 * @return vm install
 	 * @exception CoreException if unable to compute a vm install
-	 * 
-	 * [XXX: need to account for JRE per project when support exists]
 	 */
 	public static IVMInstall computeVMInstall(ILaunchConfiguration configuration) throws CoreException {
 		String type = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-		if (type != null) {
+		if (type == null) {
+			IJavaProject proj = JavaLaunchConfigurationUtils.getJavaProject(configuration);
+			if (proj != null) {
+				IVMInstall vm = getVMInstall(proj);
+				if (vm != null) {
+					return vm;
+				}
+			}
+		} else {
 			String id = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, (String)null);
 			if (id == null) {
 				// error - type specified without a specific install
@@ -680,8 +686,6 @@ public final class JavaRuntime {
 				}
 			}
 		}
-		
-		// XXX: check project's JRE
 		
 		return getDefaultVMInstall();
 	}

@@ -73,14 +73,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	protected IVMInstall getVMInstall(ILaunchConfiguration configuration) throws CoreException {
-		String id = getVMInstallId(configuration);
-		if (id != null) {
-			IVMInstallType type = getVMInstallType(configuration);
-			if (type != null) {
-				return type.findVMInstall(id);
-			}
-		}
-		return null;
+		return JavaRuntime.computeVMInstall(configuration);
 	}
 
 	/**
@@ -130,30 +123,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	}
 
 	/**
-	 * Verifies a VM install type is specified by the given 
-	 * launch configuration, and returns the VM install type.
-	 * 
-	 * @param configuration launch configuration
-	 * @return the VM install type specified by the given 
-	 *  launch configuration
-	 * @exception CoreException if unable to retrieve the attribute
-	 * 	or the attribute is unspecified
-	 */	
-	protected IVMInstallType verifyVMInstallType(ILaunchConfiguration configuration) throws CoreException {
-		String vmInstallTypeId = getVMInstallTypeId(configuration);
-		if (vmInstallTypeId == null) {
-			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.JRE_type_not_specified_1"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL_TYPE); //$NON-NLS-1$
-		}		
-		IVMInstallType type = getVMInstallType(configuration);
-		if (type == null) {
-			abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.JRE_type_{0}_does_not_exist_2"), new String[] {vmInstallTypeId}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_TYPE_DOES_NOT_EXIST); //$NON-NLS-1$
-		}	
-		return type;	
-	}
-
-	/**
-	 * Verifies a VM install is specified by the given 
-	 * launch configuration, that its home location
+	 * Verifies the VM install specified by the given 
+	 * launch configuration - i.e. that its home location
 	 * is specified and exists, and returns the VM install.
 	 * 
 	 * @param configuration launch configuration
@@ -164,11 +135,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 *  unspecified or does not exist
 	 */	
 	protected IVMInstall verifyVMInstall(ILaunchConfiguration configuration) throws CoreException {
-		verifyVMInstallType(configuration);
-		String id = getVMInstallId(configuration);
-		if (id == null) {
-			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.JRE_not_specified_3"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL);  //$NON-NLS-1$
-		}
 		IVMInstall vm = getVMInstall(configuration);
 		if (vm == null) {
 			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.The_specified_JRE_installation_does_not_exist_4"), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$

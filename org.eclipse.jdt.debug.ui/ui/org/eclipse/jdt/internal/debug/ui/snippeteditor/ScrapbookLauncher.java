@@ -157,14 +157,6 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpathList);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, p.getElementName());
-			IVMInstall vm = JavaRuntime.getVMInstall(p);
-			if (vm == null) {
-				vm = JavaRuntime.getDefaultVMInstall();
-			}
-			if (vm != null) {
-				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vm.getId());
-				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vm.getVMInstallType().getId());
-			}
 			
 			StringBuffer urlsString = new StringBuffer();
 			for (int i = 0; i < urls.length; i++) {
