@@ -16,7 +16,6 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
