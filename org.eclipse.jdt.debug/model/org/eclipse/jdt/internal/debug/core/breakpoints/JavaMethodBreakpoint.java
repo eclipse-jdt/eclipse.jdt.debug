@@ -19,11 +19,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -480,15 +477,15 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		}
 	}
 	
-	/**
-	 * @see IJavaMethodEntryBreakpoint#getMethodName()		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint#getMethodName()		
 	 */
 	public String getMethodName() {
 		return fMethodName;
 	}
 	
-	/**
-	 * @see IJavaMethodEntryBreakpoint#getMethodSignature()		
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint#getMethodSignature()		
 	 */
 	public String getMethodSignature() {
 		return fMethodSignature;
@@ -558,7 +555,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	/**
 	 * Initialize cache of attributes
 	 * 
-	 * @see IBreakpoint#setMarker(IMarker)
+	 * @see org.eclipse.debug.core.model.IBreakpoint#setMarker(IMarker)
 	 */
 	public void setMarker(IMarker marker) throws CoreException {
 		super.setMarker(marker);
@@ -572,10 +569,10 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	}	
 	
 	/**
-	 * @see IBreakpoint#setEnabled(boolean)
-	 * 
 	 * If this breakpoint is not entry or exit enabled,
 	 * set the default (entry)
+	 * 
+	 * @see org.eclipse.debug.core.model.IBreakpoint#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled) throws CoreException {		
 		if (enabled) {
@@ -600,8 +597,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		setAttributes(attributes, values);
 	}
 	
-	/**
-	 * @see IJavaLineBreakpoint#supportsCondition()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#supportsCondition()
 	 */
 	public boolean supportsCondition() {
 		return true;

@@ -53,15 +53,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -191,8 +188,8 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 		return doc;
 	}
 	
-	/**
-	 * @see IWorkbenchPart#setFocus()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
 		if (fSourceViewer != null) {
@@ -311,8 +308,8 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
-	/**
-	 * @see WorkbenchPart#getAdapter(Class)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(Class)
 	 */
 	public Object getAdapter(Class required) {
 			
@@ -347,7 +344,7 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 	/**
 	 * Saves the contents of the display view and the formatting.
 	 * 
-	 * @see IViewPart#saveState(IMemento)
+	 * @see org.eclipse.ui.IViewPart#saveState(IMemento)
 	 */
 	public void saveState(IMemento memento) {
 		if (fSourceViewer != null) {
@@ -362,7 +359,7 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 	/**
 	 * Restores the contents of the display view and the formatting.
 	 * 
-	 * @see IViewPart#init(IViewSite, IMemento)
+	 * @see org.eclipse.ui.IViewPart#init(IViewSite, IMemento)
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
