@@ -408,13 +408,13 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fNewTableItem = fFilterTable.getItem(0);
 		
 		// create & configure Text widget for editor
-		// Fix for bug 1766.  Border behavior on Windows & Linux for text
-		// fields is different.  On Linux, you always get a border, on Windows,
-		// you don't.  Specifying a border on Linux results in the characters
+		// Fix for bug 1766.  Border behavior on for text fields varies per platform.
+		// On Motif, you always get a border, on other platforms,
+		// you don't.  Specifying a border on Motif results in the characters
 		// getting pushed down so that only there very tops are visible.  Thus,
 		// we have to specify different style constants for the different platforms.
 		int textStyles = SWT.SINGLE | SWT.LEFT;
-		if (SWT.getPlatform().equals("win32")) {  //$NON-NLS-1$
+		if (!SWT.getPlatform().equals("motif")) {  //$NON-NLS-1$
 			textStyles |= SWT.BORDER;
 		}
 		fEditorText = new Text(fFilterTable, textStyles);
