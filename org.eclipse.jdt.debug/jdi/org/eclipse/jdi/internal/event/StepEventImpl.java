@@ -22,7 +22,7 @@ import com.sun.jdi.event.StepEvent;
  */
 public class StepEventImpl extends LocatableEventImpl implements StepEvent {
 	/** Jdwp Event Kind. */
-	public static final int EVENT_KIND = EVENT_SINGLE_STEP;
+	public static final byte EVENT_KIND = EVENT_SINGLE_STEP;
 
 	/**
 	 * Creates new StepEventImpl.
