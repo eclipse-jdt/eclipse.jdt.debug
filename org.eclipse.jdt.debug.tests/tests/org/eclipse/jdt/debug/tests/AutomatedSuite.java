@@ -32,7 +32,7 @@ import org.eclipse.jdt.debug.tests.core.InstanceFilterTests;
 import org.eclipse.jdt.debug.tests.core.InstanceVariableTests;
 import org.eclipse.jdt.debug.tests.core.JavaBreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.core.LaunchConfigurationTests;
-import org.eclipse.jdt.debug.tests.core.LaunchConfigurationVariableTests;
+import org.eclipse.jdt.debug.tests.core.LaunchVariableTests;
 import org.eclipse.jdt.debug.tests.core.LaunchModeTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.MethodBreakpointTests;
@@ -132,7 +132,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(WorkingDirectoryTests.class));
 		addTest(new TestSuite(RemoteAttachTests.class));
 		addTest(new TestSuite(StepIntoSelectionTests.class));
-		addTest(new TestSuite(LaunchConfigurationVariableTests.class));
+		addTest(new TestSuite(LaunchVariableTests.class));
 		// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
 	}

@@ -27,9 +27,9 @@ import org.eclipse.debug.core.variables.SimpleLaunchVariable;
 /**
  * Tests launch configuration variables
  */
-public class LaunchConfigurationVariableTests extends LaunchConfigurationTests {
+public class LaunchVariableTests extends LaunchConfigurationTests {
 
-	public LaunchConfigurationVariableTests(String name) {
+	public LaunchVariableTests(String name) {
 		super(name);
 	}
 
