@@ -5,11 +5,8 @@ package org.eclipse.jdt.internal.launching;
  * All Rights Reserved.
  */
 
-import java.io.File;
 import java.text.MessageFormat;
-import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -19,14 +16,11 @@ import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jdt.launching.VMRunnerResult;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
@@ -184,7 +178,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	 * 	or the attribute is unspecified
 	 */	
 	protected IVMInstall verifyVMInstall(ILaunchConfiguration configuration) throws CoreException {
-		IVMInstallType type = verifyVMInstallType(configuration);
+		verifyVMInstallType(configuration);
 		String id = getVMInstallId(configuration);
 		if (id == null) {
 			abort("JRE not specified.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL); 
@@ -195,6 +189,5 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		}
 		return vm;
 	}	
-	
 }
 
