@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -107,11 +107,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			jarURL = Platform.asLocalURL(jarURL);
 		} catch (MalformedURLException e) {
 			JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.", e);
-			
 			return null;
 		} catch (IOException e) {
 			JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.", e);
-			
 			return null;
 		}
 		
@@ -151,10 +149,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				}
 			}
 			
-			List classpathList = new ArrayList();
-			for (int i = 0; i < classPath.length; i++) {
-				classpathList.add(classPath[i]);
-			}
+			List classpathList= Arrays.asList(classPath);
+			
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpathList);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain");
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, p.getElementName());
