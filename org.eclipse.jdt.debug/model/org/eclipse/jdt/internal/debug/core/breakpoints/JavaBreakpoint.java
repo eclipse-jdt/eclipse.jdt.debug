@@ -18,8 +18,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -34,7 +32,6 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
-import com.sun.jdi.InterfaceType;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
@@ -43,7 +40,6 @@ import com.sun.jdi.event.Event;
 import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
-import com.sun.jdi.request.MethodEntryRequest;
 
 public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener, IDebugEventListener {
 
@@ -288,9 +284,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * breakpoint to be installed in.
 	 */
 	protected boolean installableReferenceType(ReferenceType type) throws CoreException {
-		if (type instanceof InterfaceType) {
-			return false;
-		}
 		String installableType= getTypeName();
 		String queriedType= type.name();
 		if (installableType == null || queriedType == null) {
@@ -332,9 +325,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @return Whether a request was created
 	 */
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
-		if (type instanceof InterfaceType) {
-			return false;
-		} 
 		EventRequest request= newRequest(target, type);
 		if (request == null) {
 			return false;

@@ -20,7 +20,6 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.InterfaceType;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.EventRequest;
 
@@ -111,9 +110,6 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	 * @see JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
 	 */
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
-		if (type instanceof InterfaceType) {
-			return false;
-		} 
 		String typeName= type.name();
 		String installableTypeName= getReferenceTypeName();
 		if (typeName == null || installableTypeName == null) {
@@ -142,10 +138,6 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	 * @see JavaBreakpoint#installableReferenceType(ReferenceType)
 	 */
 	protected boolean installableReferenceType(ReferenceType type) {
-		if (type instanceof InterfaceType) {
-			return false;
-		}
-
 		String pattern= getReferenceTypeName();
 		String queriedType= type.name();
 		if (pattern == null || queriedType == null) {
