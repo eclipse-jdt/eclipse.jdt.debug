@@ -11,10 +11,16 @@
 package org.eclipse.jdt.launching;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
 import org.eclipse.jdt.internal.launching.VariableClasspathEntry;
@@ -73,6 +79,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 					if (res != null) {
 						for (int j = 0; j < res.length; j++) {
 							all.add(res[j]);
+                            addManifestReferences(res[j], all);
 						}
 					}
 					break;
@@ -80,11 +87,59 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 					IRuntimeClasspathEntry[] resolved =JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
 					for (int j = 0; j < resolved.length; j++) {
 						all.add(resolved[j]);
+                        addManifestReferences(resolved[j], all);
 					}
 					break;
 			}
 		}
 		return (IRuntimeClasspathEntry[])all.toArray(new IRuntimeClasspathEntry[all.size()]);
 	}
+
+    /**
+     * If the given entry is an archive, adds any archives referenced by the associated manifest.
+     * 
+     * @param entry runtime classpath entry
+     * @param all list to add references to
+     */
+    protected void addManifestReferences(IRuntimeClasspathEntry entry, List all) {
+        if (entry.getType() == IRuntimeClasspathEntry.ARCHIVE) {
+            String location = entry.getLocation();
+            if (location != null) {
+                JarFile jar = null;
+                try {
+                    jar = new JarFile(location);
+                    Manifest manifest = jar.getManifest();
+                    if (manifest != null) {
+                        Attributes mainAttributes = manifest.getMainAttributes();
+                        if (mainAttributes != null) {
+                            String value = mainAttributes.getValue(Attributes.Name.CLASS_PATH);
+                            if (value != null) {
+                                String[] entries = value.split("\\s+"); //$NON-NLS-1$
+                                IPath base = new Path(location);
+                                base = base.removeLastSegments(1);
+                                for (int i = 0; i < entries.length; i++) {
+                                    IPath path = base.append(entries[i]);
+                                    if (path.toFile().exists()) {
+                                        IRuntimeClasspathEntry ref = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
+                                        if (!all.contains(ref)) {
+                                            all.add(ref);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                } finally {
+                    if (jar != null) {
+                        try {
+                            jar.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }
