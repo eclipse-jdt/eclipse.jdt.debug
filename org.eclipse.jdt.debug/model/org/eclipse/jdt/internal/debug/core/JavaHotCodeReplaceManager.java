@@ -389,16 +389,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	}
 	/**
 	 * @see ILaunchListener#launchDeregistered(ILaunch)
-	 * 
-	 * When a launch is deregistered, check if there are any
-	 * other launches registered. If not, stop listening
-	 * to resource changes.
 	 */
 	public void launchDeregistered(ILaunch launch) {
-		if (!(launch.getDebugTarget() instanceof JDIDebugTarget)) {
-			return;
-		}
-		deregisterTarget((JDIDebugTarget) launch.getDebugTarget());
 	}
 	/**
 	 * @see ILaunchListener#launchRegistered(ILaunch)
@@ -429,13 +421,10 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	protected void deregisterTarget(JDIDebugTarget target) {
 		// Remove the target from its hot swap target cache.
 		if (!fHotSwapTargets.remove(target)) {
-			if (!fNoHotSwapTargets.remove(target)) {
-				// This target has already been removed.
-				return;
-			}
+			fNoHotSwapTargets.remove(target);
 		}
 		ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();		
-		// If there are no more JDIDebugTargets, stop
+		// If there are no more active JDIDebugTargets, stop
 		// listening to resource changes.
 		for (int i= 0; i < launches.length; i++) {
 			if (launches[i].getDebugTarget() instanceof JDIDebugTarget) {

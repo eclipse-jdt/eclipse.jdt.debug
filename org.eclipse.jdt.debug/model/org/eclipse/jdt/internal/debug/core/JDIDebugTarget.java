@@ -35,6 +35,8 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
@@ -84,7 +86,7 @@ import com.sun.jdi.request.EventRequestManager;
  * Debug target for JDI debug model.
  */
 
-public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget {
+public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget, ILaunchListener {
 		
 	/**
 	 * Threads contained in this debug target. When a thread
@@ -226,6 +228,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		setThreadList(new ArrayList(5));
 		setOutOfSynchTypes(new ArrayList(2));
 		initialize();
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
 	/**
@@ -1877,5 +1880,23 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	protected void setSuspendOnUncaughtExceptionBreakpoint(IJavaExceptionBreakpoint suspendOnUncaughtExceptionBreakpoint) {
 		fSuspendOnUncaughtExceptionBreakpoint = suspendOnUncaughtExceptionBreakpoint;
 	}
+	/**
+	 * @see ILaunchListener#launchDeregistered(ILaunch)
+	 */
+	public void launchDeregistered(ILaunch launch) {
+		if (isTerminated() || isDisconnected() || (launch.getDebugTarget() != this)) {
+			return;
+		}
+		// This target has been deregistered, but it hasn't successfully terminated.
+		// Update internal state to reflect that it is disconnected
+		disconnected();
+	}
+
+	/**
+	 * @see ILaunchListener#launchRegistered(ILaunch)
+	 */
+	public void launchRegistered(ILaunch launch) {
+	}
+
 }
 
