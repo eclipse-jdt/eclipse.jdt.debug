@@ -189,7 +189,7 @@ public class AddVMDialog extends StatusDialog {
 		
 		fLibraryBlock = new VMLibraryBlock(this);
 		Control block = fLibraryBlock.createControl(parent);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
 		block.setLayoutData(gd);
 		
