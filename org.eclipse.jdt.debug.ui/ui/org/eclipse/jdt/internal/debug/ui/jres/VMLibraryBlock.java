@@ -83,6 +83,8 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
+		topLayout.marginHeight = 0;
+		topLayout.marginWidth = 0;
 		comp.setLayout(topLayout);		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);

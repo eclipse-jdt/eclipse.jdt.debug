@@ -155,9 +155,14 @@ public class AddVMDialog extends StatusDialog {
 		Font font = ancestor.getFont();
 		initializeDialogUnits(ancestor);
 		createDialogFields();
-		Composite parent= new Composite(ancestor, SWT.NULL);
+		Composite parent= new Composite(ancestor, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
+		layout.marginWidth =
+			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginHeight =
+			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);		
+			
 		parent.setLayout(layout);
 		parent.setFont(font);
 		
