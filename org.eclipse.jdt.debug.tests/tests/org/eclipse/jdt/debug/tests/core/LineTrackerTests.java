@@ -22,8 +22,12 @@ import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.debug.ui.console.JavaExceptionHyperLink;
+import org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceHyperlink;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.console.IOConsole;
 
 /**
  * Tests console line tracker.
@@ -181,6 +185,41 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			fStopped = true;
 			fLock.notifyAll();
         }
+	}
+	
+	/**
+	 * Tests that stack traces appear with hyperlinks
+	 */
+	public void testStackTraces() throws Exception {
+		ConsoleLineTracker.setDelegate(this);
+		fTarget = null;
+		try {
+			fTarget = launchAndTerminate("StackTraces");
+			synchronized (fLock) {
+			    if (!fStopped) {
+			        fLock.wait(30000);
+			    }
+			}
+			assertTrue("Never received 'start' notification", fStarted);
+			assertTrue("Never received 'stopped' notification", fStopped);
+			assertTrue("Console should be an IOCosnole", fConsole instanceof IOConsole);
+			IOConsole console = (IOConsole)fConsole;
+			IHyperlink[] hyperlinks = console.getHyperlinks();
+			// should be 100 exception hyperlinks
+			int total = 0;
+			for (int i = 0; i < hyperlinks.length; i++) {
+                IHyperlink hyperlink = hyperlinks[i];
+                if (hyperlink instanceof JavaExceptionHyperLink) {
+                    total++;
+                    // should be followed by a stack trace hyperlink
+                    assertTrue("Stack trace hyperlink missing", hyperlinks[i + 1] instanceof JavaStackTraceHyperlink);
+                }
+            }
+			assertEquals("Wrong number of exception hyperlinks", 100, total);
+		} finally {
+			ConsoleLineTracker.setDelegate(null);
+			terminateAndRemove(fTarget);
+		}	    
 	}
 
 }

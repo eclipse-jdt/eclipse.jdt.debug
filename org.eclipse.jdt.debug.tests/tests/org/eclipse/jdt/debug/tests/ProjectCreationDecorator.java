@@ -124,6 +124,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("WatchItemTests");
 		createLaunchConfiguration("ArrayTests");
 		createLaunchConfiguration("PerfLoop");
+		createLaunchConfiguration("StackTraces");
 	}
 	
 	/**
