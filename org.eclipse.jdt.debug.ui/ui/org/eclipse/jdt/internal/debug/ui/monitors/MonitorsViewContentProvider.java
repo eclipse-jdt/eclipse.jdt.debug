@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -120,8 +119,7 @@ public class MonitorsViewContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		Set allMonitors = MonitorManager.getDefault().getMonitors();
-		return (Object[]) allMonitors.toArray(new Object[allMonitors.size()]);
+		return MonitorManager.getDefault().getMonitors();
 	}
 
 	/**

@@ -7,10 +7,6 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -54,7 +50,7 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 			IJavaThread thread= (IJavaThread)((ThreadWrapper)parentElement).thread;
 			
 			//owned monitors
-			List ownedMonitors= MonitorManager.getDefault().getOwnedMonitors(thread);
+			IJavaObject[] ownedMonitors= MonitorManager.getDefault().getOwnedMonitors(thread);
 			
 			//contended monitor
 			IJavaObject contendedMonitor= MonitorManager.getDefault().getContendedMonitor(thread);
@@ -65,7 +61,7 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 			//adding the monitors to the result
 			int size= 0;
 			if (ownedMonitors != null) {
-				size= ownedMonitors.size();
+				size= ownedMonitors.length;
 			}
 			if (contendedMonitor != null) {
 				size= size + 1;
@@ -73,14 +69,12 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 			//transforming the result to MonitorWrapper, setting the type
 			Object[] children= new Object[size];
 			if (ownedMonitors != null) {
-				List wrappedMonitors = new ArrayList();
-				for (int i = 0; i < ownedMonitors.size(); i++) {
+				for (int i = 0; i < ownedMonitors.length; i++) {
 					MonitorWrapper mw = new MonitorWrapper();
-					mw.monitor = (IJavaObject) ownedMonitors.get(i);
+					mw.monitor = ownedMonitors[i];
 					mw.state = MonitorWrapper.OWNED_MONITOR;
-					wrappedMonitors.add(mw);
+					children[i]= mw;
 				}
-				wrappedMonitors.toArray(children);
 			}
 			if (contendedMonitor != null) {
 				MonitorWrapper mw = new MonitorWrapper();
@@ -114,7 +108,7 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 			
 		if (element instanceof IJavaThread) {
 			IJavaThread thread= (IJavaThread)element;
-			List ownedMonitors= MonitorManager.getDefault().getOwnedMonitors(thread);
+			IJavaObject[] ownedMonitors= MonitorManager.getDefault().getOwnedMonitors(thread);
 			IJavaObject contendedMonitor= MonitorManager.getDefault().getContendedMonitor(thread);
 			if (ownedMonitors == null && contendedMonitor == null) {
 				return false;
@@ -131,12 +125,12 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		
 		//the root elements are ThreadWrapper
-		Set allThreads= MonitorManager.getDefault().getThreads();
-		Object[] res = allThreads.toArray(new Object[allThreads.size()]);
-		for (int i = 0; i < res.length; i++) {
+		IJavaThread[] allThreads= MonitorManager.getDefault().getThreads();
+		Object[] res = new Object[allThreads.length];
+		for (int i = 0; i < allThreads.length; i++) {
 			ThreadWrapper tw = new ThreadWrapper();
-			tw.thread = (IJavaThread) res[i];
-			if(MonitorManager.getDefault().isCaughtInDeadlock((IJavaThread)res[i])) {
+			tw.thread= allThreads[i];
+			if(MonitorManager.getDefault().isCaughtInDeadlock(allThreads[i])) {
 				tw.isCaughtInDeadlock = true;
 			} else {
 				tw.isCaughtInDeadlock = false;

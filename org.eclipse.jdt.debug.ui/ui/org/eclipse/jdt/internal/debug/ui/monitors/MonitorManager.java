@@ -135,14 +135,14 @@ public class MonitorManager {
 	}
 		
 	/**
-	 * Returns the list of monitors owned by the given thread, or <code>null</code>
+	 * Returns the monitors owned by the given thread, or <code>null</code>
 	 * if the thread does not own any monitors.
 	 * 
 	 * @param thread The thread owning the monitors
-	 * @return The list of monitors owned by the given thread
+	 * @return The monitors owned by the given thread
 	 */
-	public List getOwnedMonitors(IJavaThread thread) {
-		return (List)fThreadToOwnedMonitors.get(thread);
+	public IJavaObject[] getOwnedMonitors(IJavaThread thread) {
+		return (IJavaObject[])fThreadToOwnedMonitors.get(thread);
 	}
 
 	/**
@@ -178,28 +178,27 @@ public class MonitorManager {
 	}
 	
 	/**
-	 * Returns all the threads owning or waiting, or <code>null</code>
+	 * Returns all the threads owning or waiting on a monitor
 	 * 
-	 * @return The set of all the threads (owning or waiting)
+	 * @return All the threads (owning or waiting on a monitor)
 	 */
-	public Set getThreads() {
+	public IJavaThread[] getThreads() {
 		Set all= new HashSet();
 		all.addAll(fThreadToContendedMonitor.keySet());
 		all.addAll(fThreadToOwnedMonitors.keySet());
-		return all;
+		return (IJavaThread[])all.toArray(new IJavaThread[all.size()]);
 	}
 	
 	/**
-	 * Returns all the monitors owned or contended, or <code>null</code> if
-	 * no monitors are owned or in contention.
+	 * Returns all the monitors owned or in contention.
 	 * 
-	 * @return The set of all the monitors (owned or in contention)
+	 * @return All the monitors (owned or in contention)
 	 */
-	public Set getMonitors() {
+	public IJavaObject[] getMonitors() {
 		Set all= new HashSet();
 		all.addAll(fMonitorToContendingThreads.keySet());
 		all.addAll(fMonitorToOwningThread.keySet());
-		return all;
+		return (IJavaObject[])all.toArray(new IJavaObject[all.size()]);
 	}	
 	
 	/**
