@@ -101,7 +101,6 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	public void setSelection(IClasspathEntry containerEntry) {
 		fSelection = containerEntry;
 		initializeFromSelection();
-		fSelection = null;
 	}
 
 	/**
