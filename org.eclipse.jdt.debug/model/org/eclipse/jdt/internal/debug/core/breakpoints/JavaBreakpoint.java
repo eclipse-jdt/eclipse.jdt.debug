@@ -636,10 +636,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (request.isEnabled() != enabled) {
 			// change the enabled state
 			try {
-				// if the request has expired, and is not a method entry request, do not disable.
-				// BreakpointRequests that have expired cannot be deleted. However method entry 
-				// requests that are expired can be deleted (since we simulate the hit count)
-				if (request instanceof MethodEntryRequest || !isExpired(request)) {
+				// if the request has expired, do not disable.
+				// BreakpointRequests that have expired cannot be deleted.
+				if (!isExpired(request)) {
 					request.setEnabled(enabled);
 				}
 			} catch (VMDisconnectedException e) {
