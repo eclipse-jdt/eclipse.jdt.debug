@@ -1,4 +1,3 @@
-#!/bin/sh
 
 #********************************************************************** 
 # Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
@@ -24,13 +23,6 @@
 # How is it used?
 # Basically by replacing the standard Java VM ('/usr/bin/java') with this script.
 # Since this script is a replacement for the VM it takes roughly the same arguments.
-
-#
-# In order to build an application bundle under MacOS X we need
-# a small stub that reads the various artefacts of a bundle and
-# starts the Java VM. We copy the stub from the JavaVM framework.
-#
-JAVASTUB="/System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/MacOS/JavaApplicationStub"
 
 #
 # Where to build the temporary application bundle
@@ -83,7 +75,7 @@ while [ $# -gt 0 ]; do
 done
 
 while [ $# -gt 0 ]; do
-	PARAMETERS="$PARAMETERS<string>$1</string>"
+	PARAMETERS="$PARAMETERS $1"
 	shift
 done
 
@@ -147,7 +139,7 @@ cat > Info.plist <<End_Of_Input
 		<key>WorkingDirectory</key>
 			<string>$CURRENT_DIR</string>
 		<key>Arguments</key>
-			<array>$PARAMETERS</array>
+			<string>$PARAMETERS</string>
 	</dict>
 </dict>
 </plist>
