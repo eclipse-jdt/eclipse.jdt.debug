@@ -293,7 +293,7 @@
 
 <extension point="org.eclipse.ui.popupMenus">
 	<objectContribution
-		id="org.eclipse.jdt.debug.ui.OpenOnDeclaringTypeActions"
+		id="org.eclipse.jdt.debug.ui.OpenOnReceivingTypeActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
 		<menu
 			id="org.eclipse.jdt.debug.ui.actions.OpenOnMenu"
@@ -302,16 +302,16 @@
 			<separator name="group.openOn"/>
 		</menu>
 		<action
-			id="org.eclipse.jdt.debug.ui.actions.OpenOnDeclaringType"
-			label="%openDeclType.label"
-			tooltip="%openDeclType.tooltip"
-			menubarPath="org.eclipse.jdt.ui.actions.OpenOnMenu/group.openOn"
-			class="org.eclipse.jdt.internal.debuge.ui.launcher.OpenOnDeclaringTypeAction">
+			id="org.eclipse.jdt.debug.ui.actions.OpenOnReceivingType"
+			label="%openRecType.label"
+			tooltip="%openRecType.tooltip"
+			menubarPath="org.eclipse.jdt.debug.ui.actions.OpenOnMenu/group.openOn"
+			class="org.eclipse.jdt.internal.debug.ui.launcher.OpenOnReceivingTypeAction">
 		</action>
 	</objectContribution>
 	<objectContribution
 		id="org.eclipse.jdt.debug.ui.OpenOnVariableActions"
-		objectClass="org.eclipse.jdt.debug.IJavaVariable">
+		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.OpenOnVariableType"
 			label="%openDeclVarType.label"
@@ -321,14 +321,14 @@
 		</action>
 	</objectContribution>
 	<objectContribution
-		id="org.eclipse.jdt.debug.ui.OpenOnReceivingTypeActions"
+		id="org.eclipse.jdt.debug.ui.OpenOnDeclaringTypeActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
 		<action
-			id="org.eclipse.jdt.debug.ui.actions.OpenOnReceivingType"
-			label="%openRecType.label"
-			tooltip="%openRecType.tooltip"
-			menubarPath="org.eclipse.jdt.ui.actions.OpenOnMenu/group.openOn"
-			class="org.eclipse.jdt.internal.debug.ui.launcher.OpenOnReceivingTypeAction">
+			id="org.eclipse.jdt.debug.ui.actions.OpenOnDeclaringType"
+			label="%openDeclType.label"
+			tooltip="%openDeclType.tooltip"
+			menubarPath="org.eclipse.jdt.debug.ui.actions.OpenOnMenu/group.openOn"
+			class="org.eclipse.jdt.internal.debug.ui.launcher.OpenOnDeclaringTypeAction">
 		</action>
 	</objectContribution>
 </extension>
