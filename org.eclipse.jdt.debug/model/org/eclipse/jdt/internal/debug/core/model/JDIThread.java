@@ -404,10 +404,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				
 				boolean topDown = false;
 				// what was the last method on the top of the stack
-				Method lastMethod = ((JDIStackFrame)fStackFrames.get(0)).getLastMethod();
+				JDIStackFrame topStackFrame = (JDIStackFrame)fStackFrames.get(0);
+				Method lastMethod = topStackFrame.getLastMethod();
 				// what is the method on top of the stack now
 				if (stackSize > 0) {
-					Method currMethod = getUnderlyingFrame(0).location().method();
+					Method currMethod = topStackFrame.getUnderlyingMethod();
 					if (currMethod.equals(lastMethod)) {
 						// preserve frames top down
 						topDown = true;					
@@ -2441,7 +2442,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						return;
 					}
 					fThread.start();
-				} 
+				} else {
+					notify();
+				}
 			}
 		}
 		
@@ -2464,6 +2467,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			while (true) {
 				Runnable nextRunnable= null;
 				synchronized (this) {
+					if (fRunnables.isEmpty()) {
+						try {
+							wait(5000);
+						} catch (InterruptedException e1) {
+						}
+					}
 					if (fRunnables.isEmpty()) {
 						fThread= null;
 						return;
