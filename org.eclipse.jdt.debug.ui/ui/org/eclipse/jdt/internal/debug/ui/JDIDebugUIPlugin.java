@@ -7,9 +7,11 @@ package org.eclipse.jdt.internal.debug.ui;
  
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -31,7 +33,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private FileDocumentProvider fSnippetDocumentProvider;
 	
 	/**
-	 * @see org.eclipse.core.runtime.Plugin(IPluginDescriptor)
+	 * @see Plugin(IPluginDescriptor)
 	 */
 	public JDIDebugUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -136,6 +138,18 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			e.printStackTrace();
 			System.out.println();
 		}
+	}
+	
+	/**
+	 * @see AbstractUIPlugin#initializeDefaultPreferences
+	 */
+	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		super.initializeDefaultPreferences(store);
+		
+		store.setDefault(IJDIPreferencesConstants.ATTACH_LAUNCH_PORT, "8000"); //$NON-NLS-1$
+		store.setDefault(IJDIPreferencesConstants.ATTACH_LAUNCH_HOST, "localhost"); //$NON-NLS-1$
+		
+		JavaDebugPreferencePage.initDefaults(store);
 	}
 }
 

@@ -27,7 +27,7 @@ import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /*
- * The page for setting java runtime
+ * The page for setting Java runtime
  */
 public class VMPropertyPage extends JavaProjectPropertyPage {
 	private VMSelector fVMSelector;
@@ -75,7 +75,7 @@ public class VMPropertyPage extends JavaProjectPropertyPage {
 		
 		initFromProject(getJavaProject());
 		
-		WorkbenchHelp.setHelp(ancestor, new DialogPageContextComputer(this, IHelpContextIds.LAUNCH_JRE_PROPERYY_PAGE));			
+		WorkbenchHelp.setHelp(ancestor, new DialogPageContextComputer(this, IHelpContextIds.LAUNCH_JRE_PROPERTY_PAGE));			
 		return parent;
 	}
 	

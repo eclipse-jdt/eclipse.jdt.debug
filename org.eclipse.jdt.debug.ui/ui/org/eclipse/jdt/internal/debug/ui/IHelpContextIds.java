@@ -1,11 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui;
 
-import org.eclipse.jdt.debug.ui.JavaDebugUI;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
+import org.eclipse.jdt.debug.ui.JavaDebugUI;
 
 /**
  * Help context ids for the Java Debug UI.
@@ -33,14 +33,10 @@ public interface IHelpContextIds {
 	public static final String SOURCE_ATTACHMENT_PROPERTY_PAGE= PREFIX + "source_attachment_property_page_context"; //$NON-NLS-1$
 	public static final String JRE_PREFERENCE_PAGE= PREFIX + "jre_preference_page_context"; //$NON-NLS-1$
 	public static final String SOURCE_LOOKUP_PROPERTY_PAGE= PREFIX + "source_lookup_property_page_context"; //$NON-NLS-1$
-	public static final String LAUNCH_JRE_PROPERYY_PAGE= PREFIX + "launch_jre_property_page_context"; //$NON-NLS-1$
+	public static final String LAUNCH_JRE_PROPERTY_PAGE= PREFIX + "launch_jre_property_page_context"; //$NON-NLS-1$
+	public static final String JAVA_DEBUG_PREFERENCE_PAGE= PREFIX + "java_debug_preference_page_context"; //$NON-NLS-1$
 
 	// Wizard pages
 	public static final String JAVA_APPLICATION_WIZARD_PAGE= PREFIX + "java_application_page_context"; //$NON-NLS-1$
-	public static final String JDI_ATTACH_LAUNCHER_WIZARD_PAGE= PREFIX + "jdi_attach_launcher_page_context"; //$NON-NLS-1$
-
-	// reused ui-blocks
-	public static final String SOURCE_ATTACHMENT_BLOCK= PREFIX + "source_attachment_context"; //$NON-NLS-1$
-	
-	
+	public static final String JDI_ATTACH_LAUNCHER_WIZARD_PAGE= PREFIX + "jdi_attach_launcher_page_context"; //$NON-NLS-1$	
 }

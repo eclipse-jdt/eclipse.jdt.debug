@@ -473,9 +473,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	protected String getValueText(IJavaValue value) throws DebugException {
 		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		boolean showHexValues= store.getBoolean(IPreferencesConstants.SHOW_HEX_VALUES);		
-		boolean showCharValues= store.getBoolean(IPreferencesConstants.SHOW_CHAR_VALUES);
-		boolean showUnsignedValues= store.getBoolean(IPreferencesConstants.SHOW_UNSIGNED_VALUES);
+		boolean showHexValues= store.getBoolean(IJDIPreferencesConstants.SHOW_HEX_VALUES);		
+		boolean showCharValues= store.getBoolean(IJDIPreferencesConstants.SHOW_CHAR_VALUES);
+		boolean showUnsignedValues= store.getBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES);
 		
 		String refTypeName= value.getReferenceTypeName();
 		String valueString= value.getValueString();
@@ -563,7 +563,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty() != IPreferencesConstants.VARIABLE_RENDERING) {
+		if (event.getProperty() != IJDIPreferencesConstants.VARIABLE_RENDERING) {
 			return;
 		}
 		IDebugTarget[] targets= DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
