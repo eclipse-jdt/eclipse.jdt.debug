@@ -186,7 +186,7 @@ public class BreakpointLocationVerifierJob extends Job {
 	public IStatus manageLineBreakpoint(String typeName, int lineNumber) {
 		try {
 			boolean differentLineNumber= lineNumber != fLineNumber;
-			IJavaLineBreakpoint breakpoint= JDIDebugModel.lineBreakpointExists(typeName, lineNumber);
+			IJavaLineBreakpoint breakpoint= JDIDebugModel.lineBreakpointExists(fResource, typeName, lineNumber);
 			boolean breakpointExist= breakpoint != null;
 			if (fBreakpoint == null) {
 				if (breakpointExist) {

@@ -586,6 +586,43 @@ public class JDIDebugModel {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns a Java line breakpoint that is already registered with the breakpoint
+	 * manager for a type with the given name at the given line number in the given resource.
+	 * 
+	 * @param resource the resource
+	 * @param typeName fully qualified type name
+	 * @param lineNumber line number
+	 * @return a Java line breakpoint that is already registered with the breakpoint
+	 *  manager for a type with the given name at the given line number or <code>null</code>
+	 * if no such breakpoint is registered
+	 * @exception CoreException if unable to retrieve the associated marker
+	 * 	attributes (line number).
+	 * @since 3.1
+	 */
+	public static IJavaLineBreakpoint lineBreakpointExists(IResource resource, String typeName, int lineNumber) throws CoreException {
+		String modelId= getPluginIdentifier();
+		String markerType= JavaLineBreakpoint.getMarkerType();
+		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints= manager.getBreakpoints(modelId);
+		for (int i = 0; i < breakpoints.length; i++) {
+			if (!(breakpoints[i] instanceof IJavaLineBreakpoint)) {
+				continue;
+			}
+			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) breakpoints[i];
+			IMarker marker = breakpoint.getMarker();
+			if (marker != null && marker.exists() && marker.getType().equals(markerType)) {
+				String breakpointTypeName = breakpoint.getTypeName();
+				if ((breakpointTypeName.equals(typeName) || breakpointTypeName.startsWith(typeName + '$')) &&
+					breakpoint.getLineNumber() == lineNumber &&
+					resource.equals(marker.getResource())) {
+						return breakpoint;
+				}
+			}
+		}
+		return null;
 	}	
 		
 	/**
