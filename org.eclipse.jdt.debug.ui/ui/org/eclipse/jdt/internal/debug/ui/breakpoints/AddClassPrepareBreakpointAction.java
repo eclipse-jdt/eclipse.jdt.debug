@@ -20,6 +20,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -75,7 +76,14 @@ public class AddClassPrepareBreakpointAction implements IWorkbenchWindowActionDe
 						}
 					}
 					if (!exists) {
-						JDIDebugModel.createClassPrepareBreakpoint(resource, type.getFullyQualifiedName(), kind, true, map);
+						ISourceRange range= type.getNameRange();
+						int start= -1;
+						int end= -1;
+						if (range != null) {
+							start= range.getOffset();
+							end= start + range.getLength();
+						}
+						JDIDebugModel.createClassPrepareBreakpoint(resource, type.getFullyQualifiedName(), kind, start, end, true, map);
 					}
 				}
 				Runnable r = new Runnable() {

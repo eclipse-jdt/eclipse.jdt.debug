@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
 
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -52,21 +53,23 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaC
 	protected static final String MEMBER_TYPE = "org.eclipse.jdt.debug.core.memberType"; //$NON-NLS-1$
 	
 	/**
-	 * Creates and returns an exception breakpoint for the
-	 * given (throwable) type. Caught and uncaught specify where the exception
-	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
-	 * Checked indicates if the given exception is a checked exception.
+	 * Creates and returns a Java class prepare breakpoint for the
+	 * given type.
 	 * @param resource the resource on which to create the associated
 	 *  breakpoint marker 
 	 * @param typeName the fully qualified name of the type for
 	 *  which to create the breakpoint
 	 * @param memberType one of <code>TYPE_CLASS</code> or <code>TYPE_INTERFACE</code>
+	 * @param charStart the first character index associated with the breakpoint,
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
+ 	 * @param charEnd the last character index associated with the breakpoint,
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
  	 * @param add whether to add this breakpoint to the breakpoint manager
 	 * @return a Java class prepare breakpoint
 	 * @exception DebugException if unable to create the associated marker due
 	 *  to a lower level exception.
 	 */	
-	public JavaClassPrepareBreakpoint(final IResource resource, final String typeName, final int memberType, final boolean add, final Map attributes) throws DebugException {
+	public JavaClassPrepareBreakpoint(final IResource resource, final String typeName, final int memberType, final int charStart, final int charEnd, final boolean add, final Map attributes) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 
 			public void run(IProgressMonitor monitor) throws CoreException {				
@@ -75,6 +78,8 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaC
 				
 				// add attributes
 				attributes.put(IBreakpoint.ID, getModelIdentifier());
+				attributes.put(IMarker.CHAR_START, new Integer(charStart));
+				attributes.put(IMarker.CHAR_END, new Integer(charEnd)); 
 				attributes.put(TYPE_NAME, typeName);
 				attributes.put(MEMBER_TYPE, new Integer(memberType));
 				attributes.put(ENABLED, Boolean.TRUE);

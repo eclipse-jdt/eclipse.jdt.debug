@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
@@ -87,7 +88,15 @@ public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate
 					}
 					HashMap map = new HashMap(10);
 					BreakpointUtils.addJavaBreakpointAttributes(map, type);
-					JDIDebugModel.createClassPrepareBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), kind, true, map);
+					
+					ISourceRange range= type.getNameRange();
+					int start= -1;
+					int end= -1;
+					if (range != null) {
+						start= range.getOffset();
+						end= start + range.getLength();
+					}
+					JDIDebugModel.createClassPrepareBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), kind, start, end, true, map);
 				}
 			} catch (CoreException e) {
 				

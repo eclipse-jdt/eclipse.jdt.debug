@@ -613,19 +613,23 @@ public class JDIDebugModel {
 	 * @param typeName the fully qualified name of the type for
 	 *  which to create the breakpoint
 	 * @param memberType one of <code>TYPE_CLASS</code> or <code>TYPE_INTERFACE</code>
+	 * @param charStart the first character index associated with the breakpoint,
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
+ 	 * @param charEnd the last character index associated with the breakpoint,
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
  	 * @param register whether to add this breakpoint to the breakpoint manager
  	 * @param attributes a map of client defined attributes that should be assigned
  	 *  to the underlying breakpoint marker on creation or <code>null</code> if none.
-	 * @return an exception breakpoint
+	 * @return a class prepare breakpoint
 	 * @exception CoreException If this method fails. Reasons include:<ul> 
 	 *<li>Failure creating underlying marker.  The exception's status contains
 	 * the underlying exception responsible for the failure.</li></ul>
 	 * @since 3.0
 	 */
-	public static IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(IResource resource, String typeName, int memberType, boolean register, Map attributes) throws CoreException {
+	public static IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(IResource resource, String typeName, int memberType, int charStart, int charEnd, boolean register, Map attributes) throws CoreException {
 		if (attributes == null) {
 			attributes = new HashMap(10);
 		}
-		return new JavaClassPrepareBreakpoint(resource, typeName, memberType, register, attributes);
+		return new JavaClassPrepareBreakpoint(resource, typeName, memberType, charStart, charEnd, register, attributes);
 	}	
 }
