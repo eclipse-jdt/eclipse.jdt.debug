@@ -2708,14 +2708,25 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			// (multiple arguments) and not an array
 			Iterator iterator= arguments.iterator();
 			// process the first arguments (no part of the var argument)
-			for (int i= 1; i < paramCount; i++) {
-				((Expression) iterator.next()).accept(this);
+			for (int i= 0; i < paramCount - 1; i++) {
+				Expression argument= (Expression)iterator.next();
+				boolean storeRequired= checkAutoBoxing(argument.resolveTypeBinding(), parameterTypes[i]);
+				argument.accept(this);
+				if (storeRequired) {
+					storeInstruction();
+				}
 			}
 			// create a array of the remainder arguments
 			ITypeBinding varargsParameterType= parameterTypes[paramCount - 1];
-			push(new ArrayInitializerInstruction(getTypeSignature(varargsParameterType.getElementType()), argCount - paramCount + 1, varargsParameterType.getDimensions(), fCounter));
+			ITypeBinding varargsElementType= varargsParameterType.getElementType();
+			push(new ArrayInitializerInstruction(getTypeSignature(varargsElementType), argCount - paramCount + 1, varargsParameterType.getDimensions(), fCounter));
 			while (iterator.hasNext()) {
-				((Expression) iterator.next()).accept(this);
+				Expression argument= (Expression) iterator.next();
+				boolean storeRequired= checkAutoBoxing(argument.resolveTypeBinding(), varargsElementType);
+				argument.accept(this);
+				if (storeRequired) {
+					storeInstruction();
+				}
 			}
 			storeInstruction();
 		} else {
@@ -3380,14 +3391,25 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			// (multiple arguments) and not an array
 			Iterator iterator= arguments.iterator();
 			// process the first arguments (no part of the var argument)
-			for (int i= 1; i < paramCount;) {
-				((Expression) iterator.next()).accept(this);
+			for (int i= 0; i < paramCount - 1; i++) {
+				Expression argument= (Expression) iterator.next();
+				boolean storeRequired= checkAutoBoxing(argument.resolveTypeBinding(), parameterTypes[i]);
+				argument.accept(this);
+				if (storeRequired) {
+					storeInstruction();
+				}
 			}
 			// create a array of the remainder arguments
 			ITypeBinding varargsParameterType= parameterTypes[paramCount - 1];
-			push(new ArrayInitializerInstruction(getTypeSignature(varargsParameterType.getElementType()), argCount - paramCount + 1, varargsParameterType.getDimensions(), fCounter));
+			ITypeBinding varargsElementType= varargsParameterType.getElementType();
+			push(new ArrayInitializerInstruction(getTypeSignature(varargsElementType), argCount - paramCount + 1, varargsParameterType.getDimensions(), fCounter));
 			while (iterator.hasNext()) {
-				((Expression) iterator.next()).accept(this);
+				Expression argument= (Expression) iterator.next();
+				boolean storeRequired= checkAutoBoxing(argument.resolveTypeBinding(), varargsElementType);
+				argument.accept(this);
+				if (storeRequired) {
+					storeInstruction();
+				}
 			}
 			storeInstruction();
 		} else {
