@@ -77,7 +77,12 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 					if (index >= 0) {
 						sourceName = sourceName.substring(0, index);
 					}
-					sourceName = sourceName + ".java"; //$NON-NLS-1$
+					if (sourceName.length() == 0) {
+						// likely a proxy class (see bug 40815)
+						sourceName = null;
+					} else {
+						sourceName = sourceName + ".java"; //$NON-NLS-1$
+					}
 				}
 				return sourceName;	
 			}
