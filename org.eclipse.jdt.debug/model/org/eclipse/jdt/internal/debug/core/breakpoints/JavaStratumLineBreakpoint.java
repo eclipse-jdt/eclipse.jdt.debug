@@ -37,9 +37,11 @@ import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
 
 /**
+ * A line breakpoint identified by its source file
+ * name and/or path, and stratum that it is relative to.
+ * 
  * @since 3.0
  */
-// TODO: review the javadoc
 public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJavaStratumLineBreakpoint {
 	private static final String PATTERN= "org.eclipse.jdt.debug.pattern"; //$NON-NLS-1$
 	private static final String STRATUM= "org.eclipse.jdt.debug.stratum"; //$NON-NLS-1$
@@ -50,16 +52,47 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	}
 
 	/**
-	 * @param resource
-	 * @param stratum
-	 * @param sourceName
-	 * @param classNamePattern
-	 * @param lineNumber
-	 * @param charStart
-	 * @param charEnd
-	 * @param hitCount
-	 * @param register
-	 * @param attributes
+	 * Creates and returns a line breakpoint identified by its source file
+	 * name and/or path, and stratum that it is relative to. 
+	 * 
+	 * @param resource the resource on which to create the associated breakpoint
+	 *  marker
+	 * @param stratum the stratum in which the source name, source path and line number
+	 *  are relative, or <code>null</code> if the source names and line numbers are
+	 *  relative to a type's default stratum
+	 * @param sourceName the simple name of the source file in which the breakpoint is
+	 *  set, or <code>null</code>. The breakpoint will install itself in classes that have a source
+	 *  file name debug attribute that matches this value in the specified stratum,
+	 *  and satisfies the class name pattern and source path attribute. When <code>null</code>,
+	 *  the source file name debug attribute is not considered. 
+	 * @param sourcePath the qualified source file name in which the breakpoint is
+	 *  set, or <code>null</code>. When specified, the pattern breakpoint will
+	 *  install itself in classes that have a source file path in the specified stratum
+	 *  that matches this value, and satisfies the class name pattern and source name
+	 *  attribute. When <code>null</code>, the source path attribute is not considered.
+	 * @param classNamePattern the class name pattern to which the breakpoint should
+	 *   be restricted, or <code>null</code>. The breakpoint will install itself in each type that
+	 *   matches this class name pattern, with a satisfying source name and source path.
+	 *   Patterns may begin or end with '*', which matches 0 or more characters. A pattern that
+	 *   does not contain a '*' is equivalent to a pattern ending in '*'. Specifying <code>null</code>,
+	 *   or an empty string is the equivalent to "*". 
+	 * @param lineNumber the lineNumber on which the breakpoint is set - line
+	 *   numbers are 1 based, associated with the source file (stratum) in which
+	 *   the breakpoint is set
+	 * @param charStart the first character index associated with the breakpoint,
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
+	 * @param charEnd the last character index associated with the breakpoint,
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
+	 * @param hitCount the number of times the breakpoint will be hit before
+	 *   suspending execution - 0 if it should always suspend
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @param attributes a map of client defined attributes that should be assigned
+	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
+	 * @return a stratum breakpoint
+	 * @exception CoreException If this method fails. Reasons include:<ul> 
+	 *<li>Failure creating underlying marker.  The exception's status contains
+	 * the underlying exception responsible for the failure.</li></ul>
+	 * @since 3.0
 	 */
 	public JavaStratumLineBreakpoint(IResource resource, String stratum, String sourceName, String sourcePath, String classNamePattern, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws DebugException {
 		this(resource, stratum, sourceName, sourcePath, classNamePattern, lineNumber, charStart, charEnd, hitCount, register, attributes, STRATUM_BREAKPOINT);
@@ -72,9 +105,15 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 				// create the marker
 				setMarker(resource.createMarker(markerType));
 				
+				// modify pattern
+				String pattern = classNamePattern;
+				if (pattern != null && pattern.length() == 0) {
+					pattern = null;
+				}
+				
 				// add attributes
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
-				addStratumPatternAndHitCount(attributes, stratum, sourceName, sourcePath, classNamePattern, hitCount);
+				addStratumPatternAndHitCount(attributes, stratum, sourceName, sourcePath, pattern, hitCount);
 				// set attributes
 				ensureMarker().setAttributes(attributes);
 				
@@ -154,51 +193,44 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		if (!validType(typeName)) {
 			return false;
 		}
+		// calculate statum to install in
+		String stratum = computeStratum(type);
 		// check the source name.
 		String bpSourceName= getSourceName();
-		if (bpSourceName == null) {
-			return false;
-		}
-		List sourceNames;
-		try {
-			sourceNames= type.sourceNames(getStratum());
-		} catch (AbsentInformationException e1) {
-			return false;
-		}
-		boolean sourceNameFound= false;
-		for (Iterator iter = sourceNames.iterator(); iter.hasNext();) {
-			if (((String) iter.next()).equals(bpSourceName)) {
-				sourceNameFound= true;
-				break;
-			}
-		}
-		if (!sourceNameFound) {
-			return false;
-		}
-		
-		String bpSourcePath= getSourcePath();
-		if (bpSourcePath == null) {
-			// source path not specified
-			return queryInstallListeners(target, type);
-		} else {
-			// check that source paths match
-			List sourcePaths;
+		if (bpSourceName != null) {
+			List sourceNames;
 			try {
-				sourcePaths= type.sourcePaths(getStratum());
+				sourceNames= type.sourceNames(stratum);
 			} catch (AbsentInformationException e1) {
 				return false;
 			}
-			for (Iterator iter = sourcePaths.iterator(); iter.hasNext();) {
-				if (((String) iter.next()).equals(bpSourcePath)) {
-					// query registered listeners to see if this pattern breakpoint should
-					// be installed in the given target
-					return queryInstallListeners(target, type);
-				}
+			if (!containsMatch(sourceNames, bpSourceName)) {
+				return false;
 			}
 		}
 		
-
-		// not found.
+		String bpSourcePath= getSourcePath();
+		if (bpSourcePath != null) {
+			// check that source paths match
+			List sourcePaths;
+			try {
+				sourcePaths= type.sourcePaths(stratum);
+			} catch (AbsentInformationException e1) {
+				return false;
+			}
+			if (!containsMatch(sourcePaths, bpSourcePath)) {
+				return false;
+			}
+		}
+		return queryInstallListeners(target, type);
+	}
+	
+	private boolean containsMatch(List strings, String key) {
+		for (Iterator iter = strings.iterator(); iter.hasNext();) {
+			if (((String) iter.next()).equals(key)) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -208,9 +240,9 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	 */
 	private boolean validType(String typeName) throws CoreException {
 		String pattern= getPattern();
-		if (pattern.length() < 1) {
-			return false;
-		} 
+		if (pattern.equals("*")) { //$NON-NLS-1$
+			return true;
+		}
 		if (pattern.charAt(0) == '*') {
 			return typeName.endsWith(pattern.substring(1));
 		} else {
@@ -231,7 +263,8 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		List locations;
 		String sourcePath;
 		try {
-			locations= type.locationsOfLine(getStratum(), getSourceName(), lineNumber);
+			String stratum = computeStratum(type);	
+			locations= type.locationsOfLine(stratum, getSourceName(), lineNumber);
 			sourcePath= getSourcePath();
 		} catch (AbsentInformationException aie) {
 			IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), NO_LINE_NUMBERS, JDIDebugBreakpointMessages.getString("JavaLineBreakpoint.Absent_Line_Number_Information_1"), null);  //$NON-NLS-1$
@@ -283,11 +316,28 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		return null;
 	}
 	
+	/**
+	 * Returns the stratum to use when installing in the given type - 
+	 * the stratum specified on this breakpoint, or the type's default
+	 * stratum when this breakpoint's stratum is <code>null</code>.
+	 * 
+	 * @param type possible installation type
+	 * @return installation stratum
+	 * @throws CoreException if unable to retrieve stratum
+	 */
+	private String computeStratum(ReferenceType type) throws CoreException {
+		String stratum = getStratum();
+		if (stratum == null) {
+			stratum = type.defaultStratum();
+		}
+		return stratum;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint#getPattern()
 	 */
 	public String getPattern() throws CoreException {
-		return (String) ensureMarker().getAttribute(PATTERN);		
+		return ensureMarker().getAttribute(PATTERN, "*"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

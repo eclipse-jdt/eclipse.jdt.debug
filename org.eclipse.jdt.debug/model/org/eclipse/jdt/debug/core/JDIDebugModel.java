@@ -298,6 +298,7 @@ public class JDIDebugModel {
 	 * @exception CoreException If this method fails. Reasons include:<ul> 
 	 *<li>Failure creating underlying marker.  The exception's status contains
 	 * the underlying exception responsible for the failure.</li></ul>
+	 * @deprecated use <code>createStratumBreakpoint</code> instead
 	 */
 	public static IJavaPatternBreakpoint createPatternBreakpoint(IResource resource, String sourceName, String pattern, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
 		if (attributes == null) {
@@ -307,26 +308,30 @@ public class JDIDebugModel {
 	}	
 	
 	/**
-	 * Creates and returns a line breakpoint associated with the given resource,
-	 * at the given line number in the specified stratum (see JSR045). The breakpoint
-	 * is installed in classes that have a matching stratum, source name, source path,
-	 * and class name pattern. 
+	 * Creates and returns a line breakpoint identified by its source file
+	 * name and/or path, and stratum that it is relative to. 
 	 * 
 	 * @param resource the resource on which to create the associated breakpoint
 	 *  marker
 	 * @param stratum the stratum in which the source name, source path and line number
-	 *  are relative.
+	 *  are relative, or <code>null</code> if the source names and line numbers are
+	 *  relative to a type's default stratum
 	 * @param sourceName the simple name of the source file in which the breakpoint is
-	 *  set. The breakpoint will install itself in classes that have a source
+	 *  set, or <code>null</code>. The breakpoint will install itself in classes that have a source
 	 *  file name debug attribute that matches this value in the specified stratum,
-	 *  and satisfies the class name pattern.
-	 * @param sourcePath the path in the project of the source file in which the breakpoint is
+	 *  and satisfies the class name pattern and source path attribute. When <code>null</code>,
+	 *  the source file name debug attribute is not considered. 
+	 * @param sourcePath the qualified source file name in which the breakpoint is
 	 *  set, or <code>null</code>. When specified, the pattern breakpoint will
 	 *  install itself in classes that have a source file path in the specified stratum
-	 *  that matches this value, and satisfies the class name pattern.
-	 * @param classNamePattern the class name pattern in which the pattern breakpoint should
-	 *   be installed. The pattern breakpoint will install itself in each class that
+	 *  that matches this value, and satisfies the class name pattern and source name
+	 *  attribute. When <code>null</code>, the source path attribute is not considered.
+	 * @param classNamePattern the class name pattern to which the breakpoint should
+	 *   be restricted, or <code>null</code>. The breakpoint will install itself in each type that
 	 *   matches this class name pattern, with a satisfying source name and source path.
+	 *   Patterns may begin or end with '*', which matches 0 or more characters. A pattern that
+	 *   does not contain a '*' is equivalent to a pattern ending in '*'. Specifying <code>null</code>,
+	 *   or an empty string is the equivalent to "*". 
 	 * @param lineNumber the lineNumber on which the breakpoint is set - line
 	 *   numbers are 1 based, associated with the source file (stratum) in which
 	 *   the breakpoint is set
