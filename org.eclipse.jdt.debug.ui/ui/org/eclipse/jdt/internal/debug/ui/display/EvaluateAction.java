@@ -22,18 +22,18 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
-import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -65,6 +65,11 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	private String fExpression;
 	private IWorkbenchWindow fWorkbenchWindow;
 	private IAction fAction;
+	
+	/**
+	 * Used to resolve editor input for selected stack frame
+	 */
+	private IDebugModelPresentation fPresentation;
 	
 	/**
 	 * Indicates whether this action is used from within an editor.  If so,
@@ -237,14 +242,15 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		if (launch == null) {
 			return false;
 		}
-		ISourceLocator sourceLocator = launch.getSourceLocator();
-		Object sourceElement = sourceLocator.getSourceElement(stackFrame);
-		IEditorInput sfEditorInput= null;
-		try {
-			sfEditorInput= EditorUtility.getEditorInput(sourceElement);
-		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.logError(jme);
+		ISourceLocator locator= launch.getSourceLocator();
+		if (locator == null) {
+			return false;
 		}
+		Object sourceElement = locator.getSourceElement(stackFrame);
+		if (sourceElement == null) {
+			return false;
+		}
+		IEditorInput sfEditorInput= getDebugModelPresentation().getEditorInput(sourceElement);
 		if (getWorkbenchPart() instanceof IEditorPart) {
 			return ((IEditorPart)getWorkbenchPart()).getEditorInput().equals(sfEditorInput);
 		}
@@ -398,6 +404,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
+		disposeDebugModelPresentation();
 	}
 
 	/**
@@ -470,5 +477,28 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 
 	protected void setWorkbenchPart(IWorkbenchPart workbenchPart) {
 		fWorkbenchPart = workbenchPart;
+	}
+	
+	/**
+	 * Returns a debug model presentation (creating one
+	 * if neccesary).
+	 * 
+	 * @return debug model presentation
+	 */
+	protected IDebugModelPresentation getDebugModelPresentation() {
+		if (fPresentation == null) {
+			fPresentation = DebugUITools.newDebugModelPresentation(JDIDebugModel.getPluginIdentifier());
+		}
+		return fPresentation;
+	}
+	
+	/** 
+	 * Disposes this action's debug model presentation, if
+	 * one was created.
+	 */
+	protected void disposeDebugModelPresentation() {
+		if (fPresentation != null) {
+			fPresentation.dispose();
+		}
 	}
 }
