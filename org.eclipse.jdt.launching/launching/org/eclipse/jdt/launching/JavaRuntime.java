@@ -1182,6 +1182,10 @@ public final class JavaRuntime {
 	 * configuration information.
 	 */
 	public static void saveVMConfiguration() throws CoreException {
+		if (fgVMTypes == null) {
+			// if the VM types have not been instaniated, there can be no changes.
+			return;
+		}
 		try {
 			String xml = getVMsAsXML();
 			getPreferences().setValue(PREF_VM_XML, xml);
