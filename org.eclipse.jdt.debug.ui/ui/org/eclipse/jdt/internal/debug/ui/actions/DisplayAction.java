@@ -24,21 +24,13 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * Displays the result of an evaluation in the display view
  */
-public class DisplayAction extends EvaluateAction implements IValueDetailListener {
-
-	/**
-	 * The result of a toString evaluation returned asynchronously by the
-	 * debug model.
-	 */
-	private String fResult;
+public class DisplayAction extends EvaluateAction {
 
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
 	protected void displayResult(IEvaluationResult result) {
-		final IDataDisplay directDisplay= getDirectDataDisplay();
 		final String snippet= result.getSnippet();
-		String resultString= ""; //$NON-NLS-1$
 		IJavaValue value= result.getValue();
 		try {
 			String sig= null;
@@ -47,18 +39,27 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 				sig= type.getSignature();
 			}
 			if ("V".equals(sig)) { //$NON-NLS-1$
-				resultString= ActionMessages.getString("DisplayAction.no_result_value"); //$NON-NLS-1$
+				displayStringResult(snippet, ActionMessages.getString("DisplayAction.no_result_value")); //$NON-NLS-1$
 			} else {
+				final String resultString;
 				if (sig != null) {
 					resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.type_name_pattern"), new Object[] { value.getReferenceTypeName() }); //$NON-NLS-1$
+				} else {
+					resultString= "";
 				}
-				resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, evaluateToString(value) }); //$NON-NLS-1$
+				getDebugModelPresentation().computeDetail(value, new IValueDetailListener() {
+					public void detailComputed(IValue value, String result) {
+						displayStringResult(snippet, MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, result})); //$NON-NLS-1$
+					}
+				});
 			}
 		} catch (DebugException x) {
-			resultString= getExceptionMessage(x);
+			displayStringResult(snippet, getExceptionMessage(x));
 		}
+	}
 
-		final String finalString= resultString;
+	protected void displayStringResult(final String snippet,final String resultString) {
+		final IDataDisplay directDisplay= getDirectDataDisplay();
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
@@ -68,47 +69,12 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 						if (directDisplay == null) {
 							dataDisplay.displayExpression(snippet);
 						}
-						dataDisplay.displayExpressionValue(finalString);
+						dataDisplay.displayExpressionValue(resultString);
 					}
 				}
 				evaluationCleanup();
 			}
 		});
-	}
-
-	/**
-	 * Returns the result of evaluating 'toString' on the given
-	 * value.
-	 * 
-	 * @param value object or primitive data type the 'toString'
-	 *  is required for
-	 * @return the result of evaluating toString
-	 * @exception DebugException if an exception occurs during the
-	 *  evaluation.
-	 */
-	protected String evaluateToString(IJavaValue value) throws DebugException {
-		setResult(null);
-		getDebugModelPresentation().computeDetail(value, this);
-		synchronized (this) {
-			if (getResult() == null) {
-				try {
-					wait(20000);
-				} catch (InterruptedException e) {
-					return ActionMessages.getString("DisplayAction.toString_interrupted"); //$NON-NLS-1$
-				}
-			}
-		}
-		return getResult();
-	}
-
-	/**
-	 * @see IValueDetailListener#detailComputed(IValue, String)
-	 */
-	public void detailComputed(IValue value, String result) {
-		setResult(result);
-		synchronized (this) {
-			notifyAll();
-		}
 	}
 
 	protected void run() {
@@ -120,11 +86,4 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 		super.run();
 	}
 
-	protected String getResult() {
-		return fResult;
-	}
-
-	protected void setResult(String result) {
-		fResult= result;
-	}
 }

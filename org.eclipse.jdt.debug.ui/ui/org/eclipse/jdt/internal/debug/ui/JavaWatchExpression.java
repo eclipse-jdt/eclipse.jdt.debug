@@ -179,6 +179,8 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 							try {
 								stackFrame= (IJavaStackFrame) ((IJavaThread) source).getTopStackFrame();
 							} catch (DebugException e) {
+								DebugUIPlugin.log(e);
+								continue;
 							}
 							if (preEvaluationCheck(stackFrame, true)) {
 								final IJavaStackFrame finalStackFrame= stackFrame;
