@@ -1065,20 +1065,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	public String name() {
 		// Make sure that we know the signature, from which the name is derived.
 		if (fName == null) {
-			String genericSignature= genericSignature();
-			StringBuffer name= new StringBuffer(GenericSignature.signatureToName(signature()));
-			if (genericSignature != null) {
-				List parameters= GenericSignature.getTypeParameters(genericSignature);
-				Iterator iterator= parameters.iterator();
-				if (iterator.hasNext()) {
-					name.append('<').append(iterator.next());
-					while (iterator.hasNext()) {
-						name.append(',').append(iterator.next());
-					}
-					name.append('>');
-				}
-			}
-			setName(name.toString());
+			setName(GenericSignature.signatureToName(signature()));
 		}
 		return fName;
 	}
