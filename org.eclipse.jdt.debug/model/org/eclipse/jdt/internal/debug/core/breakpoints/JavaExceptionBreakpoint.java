@@ -307,7 +307,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}
 	
 	public String[] getFilters() throws CoreException {
-		return parseList(ensureMarker().getAttribute(FILTERS, ""));
+		return parseList(ensureMarker().getAttribute(FILTERS, "")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -316,7 +316,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	public void setFilters(String[] filters, boolean inclusive) throws CoreException {
 		String serializedFilters= serializeList(filters);
 		if (inclusive == ensureMarker().getAttribute(INCLUSIVE_FILTERS, false)) {
-			if (serializedFilters.equals(ensureMarker().getAttribute(FILTERS, ""))) {
+			if (serializedFilters.equals(ensureMarker().getAttribute(FILTERS, ""))) { //$NON-NLS-1$
 				//no change
 				return;
 			}
