@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.internal.ui.util.BusyIndicatorRunnableContext;
@@ -335,7 +335,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		if (jp != null) {
 			// only verify type exists if Java project is specified
 			try {
-				JavaLaunchConfigurationHelper.getMainType(name, jp);
+				JavaLaunchConfigurationUtils.getMainType(name, jp);
 			} catch (CoreException e) {
 				setErrorMessage(e.getMessage());
 				return false;

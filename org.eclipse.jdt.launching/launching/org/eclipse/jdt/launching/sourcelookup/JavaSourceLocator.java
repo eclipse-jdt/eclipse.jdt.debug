@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -270,7 +270,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 */
 	public String getMemento() throws CoreException {
 		try {
-			return JavaLaunchConfigurationHelper.encodeSourceLocations(getSourceLocations());
+			return JavaLaunchConfigurationUtils.encodeSourceLocations(getSourceLocations());
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
 			"An exception occurred while creating a source locator memento for 'JavaSourceLocator'.", e));
@@ -282,7 +282,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @see IPersistableSourceLocator#initializeDefaults(ILaunchConfiguration)
 	 */
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
-		IJavaProject jp = JavaLaunchConfigurationHelper.getJavaProject(configuration);
+		IJavaProject jp = JavaLaunchConfigurationUtils.getJavaProject(configuration);
 		if (jp != null) {
 			setSourceLocations(getDefaultSourceLocations(jp));
 		}
@@ -294,7 +294,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	public void initiatlizeFromMemento(String memento) throws CoreException {
 		IJavaSourceLocation[] locations = null;
 		try {
-			locations = JavaLaunchConfigurationHelper.decodeSourceLocations(memento);
+			locations = JavaLaunchConfigurationUtils.decodeSourceLocations(memento);
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
 			"An exception occurred while restoring 'JavaSourceLocator' from a memento.", e));

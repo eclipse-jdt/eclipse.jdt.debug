@@ -18,7 +18,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.launching.ProjectSourceLocator;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
@@ -234,7 +234,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	public void initializeDefaults(ILaunchConfiguration configuration)
 		throws CoreException {
 			fSourceLocator.initializeDefaults(configuration);
-			fJavaProject = JavaLaunchConfigurationHelper.getJavaProject(configuration);
+			fJavaProject = JavaLaunchConfigurationUtils.getJavaProject(configuration);
 	}
 
 	/**

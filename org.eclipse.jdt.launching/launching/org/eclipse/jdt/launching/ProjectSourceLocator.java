@@ -32,7 +32,7 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.DirectorySourceLocation;
@@ -188,7 +188,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 			String property= p.getPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, ADDITIONAL_LOCATIONS_PROPERTY));
 			if (property == null)
 				return null;
-			return JavaLaunchConfigurationHelper.decodeSourceLocations(property);
+			return JavaLaunchConfigurationUtils.decodeSourceLocations(property);
 		} catch (CoreException e) {
 			throw new JavaModelException(e);
 		} catch (IOException e) {
@@ -234,7 +234,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 		String property= null;
 		try {
 			if (locations != null)
-				property= JavaLaunchConfigurationHelper.encodeSourceLocations(locations);
+				property= JavaLaunchConfigurationUtils.encodeSourceLocations(locations);
 			p.setPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, ADDITIONAL_LOCATIONS_PROPERTY), property);
 		} catch (CoreException e) {
 			throw new JavaModelException(e);

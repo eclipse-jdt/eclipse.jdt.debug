@@ -17,11 +17,6 @@ import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 
 public class LaunchingPlugin extends Plugin {
 	
-	/**
-	 * Monitors resource deltas related to launch configs
-	 */
-	private JavaLaunchConfigurationHelper fHelper;
-	
 	public static final String PLUGIN_ID= "org.eclipse.jdt.launching"; //$NON-NLS-1$
 	
 	private static LaunchingPlugin fgLaunchingPlugin;
@@ -55,7 +50,6 @@ public class LaunchingPlugin extends Plugin {
 	 */
 	public void shutdown() {
 		ArchiveSourceLocation.shutdown();
-		JavaLaunchConfigurationHelper.getDefault().shutdown();
 	}
 		
 	/**
@@ -63,7 +57,6 @@ public class LaunchingPlugin extends Plugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-		JavaLaunchConfigurationHelper.getDefault().startup();
 		
 		//exclude launch configurations from being copied to the output directory
 		Hashtable optionsMap = JavaCore.getOptions();

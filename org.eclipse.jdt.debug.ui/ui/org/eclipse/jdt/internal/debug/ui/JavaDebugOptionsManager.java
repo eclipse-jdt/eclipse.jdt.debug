@@ -44,7 +44,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -691,7 +691,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 				|| (config.getType().getIdentifier().equals(IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION)))) {
 					ISourceLocator sl = launch.getSourceLocator();
 					if (sl != null && sl instanceof JavaSourceLocator) {
-						IJavaProject jp = JavaLaunchConfigurationHelper.getJavaProject(config);
+						IJavaProject jp = JavaLaunchConfigurationUtils.getJavaProject(config);
 						if (jp != null) {
 							
 								JavaUISourceLocator jsl = new JavaUISourceLocator(jp);
