@@ -1040,7 +1040,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(SuperMethodInvocation)
 	 */
 	public void endVisit(SuperMethodInvocation node) {
-
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();
 	}
 
 	/**
