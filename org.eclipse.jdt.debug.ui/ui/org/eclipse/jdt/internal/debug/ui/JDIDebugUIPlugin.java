@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -71,6 +74,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
 	
 	private JavaEvaluationEngineManager fEvaluationEngineManager;
+	
+	private JDIDebugUIAdapterFactory fAdapterFactory;
 	
 	/**
 	 * Java Debug UI listeners
@@ -241,10 +246,12 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		JavaDebugOptionsManager.getDefault().startup();
 		
 		IAdapterManager manager= Platform.getAdapterManager();
-		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);
-		manager.registerAdapters(new MethodAdapterFactory(), IMethod.class);
-		manager.registerAdapters(new JavaStackFrameAdapterFactory(), IJavaStackFrame.class);
-		manager.registerAdapters(new JavaThreadAdapterFactory(), IJavaThread.class);
+		fAdapterFactory= new JDIDebugUIAdapterFactory();
+		manager.registerAdapters(fAdapterFactory, IJavaSourceLocation.class);
+		manager.registerAdapters(fAdapterFactory, IMethod.class);
+		manager.registerAdapters(fAdapterFactory, IJavaVariable.class);
+		manager.registerAdapters(fAdapterFactory, IJavaStackFrame.class);
+		manager.registerAdapters(fAdapterFactory, IJavaThread.class);
 		
 		fEvaluationEngineManager= new JavaEvaluationEngineManager();
 		fJavaModelListener= new JavaModelListener();
@@ -270,6 +277,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			fImageDescriptorRegistry.dispose();
 		}
 		fEvaluationEngineManager.dispose();
+		IAdapterManager manager= Platform.getAdapterManager();
+		manager.unregisterAdapters(fAdapterFactory);
 		super.shutdown();
 	}
 	

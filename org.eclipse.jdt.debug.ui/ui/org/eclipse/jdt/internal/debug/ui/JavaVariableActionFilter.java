@@ -1,0 +1,80 @@
+package org.eclipse.jdt.internal.debug.ui;
+
+/**********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.ui.actions.OpenVariableTypeAction;
+import org.eclipse.ui.IActionFilter;
+
+public class JavaVariableActionFilter implements IActionFilter {
+
+	private static final Set fgPrimitiveTypes = initPrimitiveTypes();
+
+	private static Set initPrimitiveTypes() {
+		HashSet set = new HashSet(8);
+		set.add("short"); //$NON-NLS-1$
+		set.add("int"); //$NON-NLS-1$
+		set.add("long"); //$NON-NLS-1$
+		set.add("float"); //$NON-NLS-1$
+		set.add("double"); //$NON-NLS-1$
+		set.add("boolean"); //$NON-NLS-1$
+		set.add("byte"); //$NON-NLS-1$
+		set.add("char"); //$NON-NLS-1$
+		return set;
+	}
+
+	/**
+	 * @see org.eclipse.ui.IActionFilter#testAttribute(Object, String, String)
+	 */
+	public boolean testAttribute(Object target, String name, String value) {
+		if (target instanceof IJavaVariable) {
+			IJavaVariable var = (IJavaVariable) target;
+			if (name.equals("PrimitiveVariableActionFilter") //$NON-NLS-1$
+			&& value.equals("isPrimitive")) { //$NON-NLS-1$
+				return isPrimitiveType(var);
+			} else if (name.equals("ConcreteVariableActionFilter") 
+						&& value.equals("isConcrete")) {
+					try {
+						return isDeclaredSameAsConcrete(var);
+					} catch (DebugException de) {
+						JDIDebugUIPlugin.log(de);
+					}
+				}
+		}
+
+		return false;
+	}
+
+	protected boolean isDeclaredSameAsConcrete(IJavaVariable var) throws DebugException {
+		IValue value= var.getValue();
+		return !var.getReferenceTypeName().equals(value.getReferenceTypeName());
+	}
+	protected String getTypeNameToOpen(IJavaVariable var) throws DebugException {
+		String refType = var.getReferenceTypeName();
+		refType = OpenVariableTypeAction.removeArray(refType);
+		if (fgPrimitiveTypes.contains(refType)) {
+			return null;
+		}
+		return refType;
+	}
+
+	protected boolean isPrimitiveType(IJavaVariable var) {
+		try {
+			return getTypeNameToOpen(var) != null;
+		} catch (DebugException e) {
+			JDIDebugUIPlugin.log(e);
+			// fall through
+		}
+		return false;
+	}
+}
