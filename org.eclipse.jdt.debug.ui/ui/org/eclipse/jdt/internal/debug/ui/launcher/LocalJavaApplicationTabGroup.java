@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
  
+import org.eclipse.debug.internal.ui.sourcelookup.SourceContainerLookupTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.EnvironmentTab;
@@ -29,7 +30,7 @@ public class LocalJavaApplicationTabGroup extends AbstractLaunchConfigurationTab
 			new JavaArgumentsTab(),
 			new JavaJRETab(),
 			new JavaClasspathTab(),
-			new JavaSourceLookupTab(),
+			new SourceContainerLookupTab(),
 			new EnvironmentTab(),
 			new CommonTab()
 		};

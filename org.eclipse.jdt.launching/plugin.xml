@@ -48,23 +48,25 @@
             name="%localJavaApplication"
             delegate="org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate"
             modes="run, debug"
-            id="org.eclipse.jdt.launching.localJavaApplication">
-<!--  Platform source lookup disabled (in progress)
+            id="org.eclipse.jdt.launching.localJavaApplication"
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer">
--->
       </launchConfigurationType>
       <launchConfigurationType
             name="%remoteJavaApplication"
             delegate="org.eclipse.jdt.internal.launching.JavaRemoteApplicationLaunchConfigurationDelegate"
             modes="debug"
-            id="org.eclipse.jdt.launching.remoteJavaApplication">
+            id="org.eclipse.jdt.launching.remoteJavaApplication"
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer">            
       </launchConfigurationType>
       <launchConfigurationType
             name="%appletLabel"
             delegate="org.eclipse.jdt.internal.launching.JavaAppletLaunchConfigurationDelegate"
             modes="run, debug"
-            id="org.eclipse.jdt.launching.javaApplet">
+            id="org.eclipse.jdt.launching.javaApplet"
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer">            
       </launchConfigurationType>
    </extension>
    <extension

@@ -11,16 +11,17 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
+import org.eclipse.debug.internal.ui.sourcelookup.SourceContainerLookupTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jdt.debug.ui.launchConfigurations.AppletArgumentsTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.AppletMainTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.AppletParametersTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaSourceLookupTab;
 
 public class JavaAppletTabGroup extends AbstractLaunchConfigurationTabGroup {
 	
@@ -40,7 +41,7 @@ public class JavaAppletTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new AppletArgumentsTab(),
 			new JavaJRETab(),
 			new JavaClasspathTab(),
-			new JavaSourceLookupTab(),	
+			new SourceContainerLookupTab(),	
 			new CommonTab()
 		};
 		setTabs(tabs);

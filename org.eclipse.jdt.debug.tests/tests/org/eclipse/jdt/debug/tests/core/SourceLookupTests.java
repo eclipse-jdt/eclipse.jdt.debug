@@ -144,7 +144,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 			IStackFrame frame = thread.getTopStackFrame();
 			ISourceLocator sourceLocator = thread.getLaunch().getSourceLocator();
 			Object source = sourceLocator.getSourceElement(frame);
-			assertEquals("Source lookup failed", expectedSource, source);
+			assertEquals("Source lookup failed", expectedSource.getResource(), source);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();			
@@ -170,7 +170,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 			IStackFrame frame = thread.getTopStackFrame();
 			ISourceLocator sourceLocator = thread.getLaunch().getSourceLocator();
 			Object source = sourceLocator.getSourceElement(frame);
-			assertEquals("Source lookup failed", expectedSource, source);
+			assertEquals("Source lookup failed", expectedSource.getResource(), source);
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();			

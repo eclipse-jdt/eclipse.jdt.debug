@@ -11,11 +11,13 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
  
+import org.eclipse.debug.internal.ui.sourcelookup.SourceContainerLookupTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jdt.debug.ui.launchConfigurations.*;
+import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.jdt.debug.ui.launchConfigurations.JavaConnectTab;
 
 public class RemoteJavaApplicationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
@@ -25,7 +27,7 @@ public class RemoteJavaApplicationTabGroup extends AbstractLaunchConfigurationTa
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new JavaConnectTab(),
-			new JavaSourceLookupTab(),
+			new SourceContainerLookupTab(),
 			new CommonTab(),
 		};
 		setTabs(tabs);
