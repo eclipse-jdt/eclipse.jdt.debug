@@ -26,11 +26,10 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.debug.ui.*;
+import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
+import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaApplicationWizard;
-import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.jdt.internal.ui.util.SWTUtil;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
@@ -197,7 +196,7 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 	}
 	
 	private void registerLaunch(final ILaunch launch) {
-		SWTUtil.getStandardDisplay().syncExec(new Runnable() {
+		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 			}
