@@ -137,7 +137,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(IStackFrame)
 	 */
 	public Object getSourceElement(IStackFrame stackFrame) {
-		Object res = findSourceElemnet(stackFrame);
+		Object res = findSourceElement(stackFrame);
 		if (res == null && fAllowedToAsk) {
 			IJavaStackFrame frame =
 				(IJavaStackFrame) stackFrame.getAdapter(IJavaStackFrame.class);
@@ -154,7 +154,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 		return res;
 	}
 
-	private Object findSourceElemnet(IStackFrame stackFrame) {
+	private Object findSourceElement(IStackFrame stackFrame) {
 		if (isFindAllSourceElements()) {
 			Object[] sourceElements = fSourceLocator.getSourceElements(stackFrame);
 			if (sourceElements == null) {
