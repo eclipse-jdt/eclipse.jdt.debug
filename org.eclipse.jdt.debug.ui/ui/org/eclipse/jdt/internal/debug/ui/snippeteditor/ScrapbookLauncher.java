@@ -53,7 +53,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 public class ScrapbookLauncher implements IDebugEventSetListener {
 	
-	public static final String SCRAPBOOK_LAUNCH = IJavaDebugUIConstants.PLUGIN_ID + ".scrapbook_launch";
+	public static final String SCRAPBOOK_LAUNCH = IJavaDebugUIConstants.PLUGIN_ID + ".scrapbook_launch"; //$NON-NLS-1$
 	
 	private IJavaLineBreakpoint fMagicBreakpoint;
 	
@@ -149,7 +149,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			List classpathList= Arrays.asList(classPath);
 			
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpathList);
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain");
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, p.getElementName());
 			IVMInstall vm = JavaRuntime.getVMInstall(p);
 			if (vm == null) {
@@ -160,9 +160,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vm.getVMInstallType().getId());
 			}
 			
-			String urlsString = "";
+			String urlsString = ""; //$NON-NLS-1$
 			for (int i = 0; i < urls.length; i++) {
-				urlsString += " " + urls[i];
+				urlsString += " " + urls[i]; //$NON-NLS-1$
 			}
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, urlsString);
 			ILaunchConfiguration config = wc.doSave();
