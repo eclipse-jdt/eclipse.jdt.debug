@@ -17,7 +17,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
+
 import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.InterfaceType;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.EventRequest;
 
@@ -33,6 +35,8 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	protected static final String PATTERN = "pattern"; //$NON-NLS-1$	
 	
 	protected static final String[] fgPatternAndHitCountAttributes= new String[]{PATTERN, HIT_COUNT, EXPIRED};		
+	
+	private String fResourceName= null;
 	
 	public JavaPatternBreakpoint(IResource resource, String pattern, int lineNumber, int hitCount) throws DebugException {
 		this(resource, pattern, lineNumber, hitCount, PATTERN_BREAKPOINT);
@@ -59,7 +63,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	/**
 	 * Creates the event requests to:<ul>
 	 * <li>Listen to class loads related to the breakpoint</li>
-	 * <li>Respond to the breakpoint being hti</li>
+	 * <li>Respond to the breakpoint being hit</li>
 	 * </ul>
 	 */
 	protected void addToTarget(JDIDebugTarget target) throws CoreException {
@@ -97,6 +101,9 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	 * @see JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
 	 */
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+		if (type instanceof InterfaceType) {
+			return false;
+		} 
 		String typeName= type.name();
 		String installableTypeName= getReferenceTypeName();
 		if (typeName == null || installableTypeName == null) {
@@ -125,6 +132,10 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	 * @see JavaBreakpoint#installableReferenceType(ReferenceType)
 	 */
 	protected boolean installableReferenceType(ReferenceType type) {
+		if (type instanceof InterfaceType) {
+			return false;
+		}
+
 		String pattern= getReferenceTypeName();
 		String queriedType= type.name();
 		if (pattern == null || queriedType == null) {
@@ -155,12 +166,19 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 		}
 		
 		// if the debug attribute matches the resource name, install a breakpoint
-		if (ensureMarker().getResource().getName().equalsIgnoreCase(sourceName)) {
+		if (getResourceName().equalsIgnoreCase(sourceName)) {
 			return super.newRequest(target, type);
 		}
 		return null;
 	}
 	
+	
+	protected String getResourceName() throws CoreException {
+		if (fResourceName == null) {
+			fResourceName= ensureMarker().getResource().getName();
+		}
+		return fResourceName;
+	}
 	/**
 	 * Sets the class name pattern in which this breakpoint will install itself.
 	 * If <code>hitCount > 0</code>, sets the hit count of the given breakpoint.
