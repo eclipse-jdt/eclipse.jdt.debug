@@ -16,7 +16,6 @@ import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
-import org.eclipse.jface.action.IAction;
 
 /**
  * Adds a variable to the runtime class path.
@@ -30,7 +29,7 @@ public class AddVariableAction extends RuntimeClasspathAction {
 	/**
 	 * Prompts for variables to add.
 	 * 
-	 * @see IAction#run()
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
 	public void run() {
 		

@@ -19,7 +19,6 @@ import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
-import org.eclipse.jface.action.IAction;
 
 /**
  * Adds a library to the runtime class path.
@@ -33,7 +32,7 @@ public class AddLibraryAction extends RuntimeClasspathAction {
 	/**
 	 * Prompts for folder(s) to add.
 	 * 
-	 * @see IAction#run()
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
 	public void run() {
 
