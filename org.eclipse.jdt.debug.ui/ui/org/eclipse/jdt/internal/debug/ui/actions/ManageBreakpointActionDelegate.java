@@ -119,8 +119,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 			if (!s.isEmpty() && s instanceof ITextSelection) {
 				ITextSelection selection= (ITextSelection) s;
 				type= getType();
-				if (type != null) {
-					
+				if (type != null && type.exists()) {
 					try {
 						ISourceRange sourceRange= type.getSourceRange();
 						if (selection.getOffset() >= sourceRange.getOffset()) {
@@ -156,10 +155,8 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 				} else if (e != null && e instanceof IMember) {
 					type = ((IMember) e).getDeclaringType();
 				}
-				if (unit.getAllTypes().length == 1) {
-					//cache the type as there is only one 
-					setType(type);
-				}
+				
+				setType(type);
 			}
 		} catch (JavaModelException jme) {
 			JDIDebugUIPlugin.log(jme);
