@@ -19,7 +19,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 /**
  * Handles all the data for the Threads and Monitors view.
@@ -208,7 +208,12 @@ public class MonitorManager {
 	 * @param target The debug target
 	 */
 	public void update(IJavaDebugTarget target){
+		
+		removeMonitorInformation(target);
 
+		if (!target.supportsMonitorInformation()) {
+			return;
+		}
 		update(target, true);
 	}
 		
@@ -221,7 +226,12 @@ public class MonitorManager {
 	 * @see update(IJavaDebugTarget target)
 	 */
 	public void updatePartial(IJavaDebugTarget target){
+			
+		removeMonitorInformation(target);
 
+		if (!target.supportsMonitorInformation()) {
+			return;
+		}
 		update(target, false);
 	}
 	
@@ -235,10 +245,7 @@ public class MonitorManager {
 	 */
 	private void update(IJavaDebugTarget target, boolean suspendThreads){
 
-		try {
-			// clear all the tables
-			removeMonitorInformation(target);
-			
+		try {			
 			// construct the list of all the non system threads
 			IThread[] threadResult= target.getThreads();
 			List threadsList = new ArrayList(threadResult.length);
@@ -269,7 +276,7 @@ public class MonitorManager {
 				updateDeadlock(thread);
 			}
 		} catch(DebugException e){
-			JDIDebugPlugin.log(e);
+			JDIDebugUIPlugin.log(e);
 		}
 	}
 
@@ -324,10 +331,10 @@ public class MonitorManager {
 			}
 		}
 		catch (DebugException e) {
-			JDIDebugPlugin.log(e);
+			JDIDebugUIPlugin.log(e);
 		}
 		catch (InterruptedException e){
-			JDIDebugPlugin.log(e);
+			JDIDebugUIPlugin.log(e);
 		}
 	}
 	

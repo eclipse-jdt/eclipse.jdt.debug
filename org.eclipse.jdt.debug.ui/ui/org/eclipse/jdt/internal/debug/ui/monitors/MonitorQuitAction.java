@@ -25,6 +25,9 @@ public class MonitorQuitAction extends MonitorAction {
 	 */
 	public void run(IAction action) {	
 		IJavaDebugTarget target= getDebugTarget();
+		if (target == null) {
+			return;
+		}
 		try {
 			IThread[] threads= target.getThreads();
 			

@@ -319,5 +319,13 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * 
 	 * @return timeout value, in milliseconds, or -1 if not supported
 	 */
-	public int getRequestTimeout();	
+	public int getRequestTimeout();
+	
+	/**
+	 * Returns whether this target supports providing monitor information.
+	 * 
+	 * @return whether this target supports providing monitor information.
+	 * @since 2.1
+	 */
+	public boolean supportsMonitorInformation();
 }

@@ -27,6 +27,7 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 	protected void doHandleDebugEvents(DebugEvent[] events) {
 		DebugEvent event;
 		Object source;
+		boolean monitorInformationAvailable= true;	
 		for (int i = 0; i < events.length; i++) {
 			event= events[i];
 			source= event.getSource();
@@ -34,28 +35,38 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 			//if a thread is suspended in the debug view
 			if(event.getKind() == DebugEvent.SUSPEND) {
 				if (source instanceof IJavaDebugTarget) {
-					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)source);
-					refreshView();
+					IJavaDebugTarget target= (IJavaDebugTarget)source;
+					monitorInformationAvailable= target.supportsMonitorInformation();
+					if (monitorInformationAvailable) {
+						MonitorManager.getDefault().updatePartial(target);
+					} 
 				} else if (source instanceof IJavaThread) {
-					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
-					refreshView();
+					IJavaDebugTarget target= (IJavaDebugTarget)((IJavaThread)source).getDebugTarget();
+					monitorInformationAvailable= target.supportsMonitorInformation();
+					if (monitorInformationAvailable) {
+						MonitorManager.getDefault().updatePartial(target);
+					}
+					
 				}
 			} else if(event.getKind() == DebugEvent.RESUME) { 			
 				if (source instanceof IJavaDebugTarget) {
-					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)source);
-					refreshView();
+					IJavaDebugTarget target= (IJavaDebugTarget)source;
+					monitorInformationAvailable= target.supportsMonitorInformation();
+					if (monitorInformationAvailable) {
+						MonitorManager.getDefault().updatePartial((IJavaDebugTarget)source);
+					}
 				} else if (source instanceof IJavaThread) {
-					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
-					refreshView();
+					IJavaDebugTarget target= (IJavaDebugTarget)((IJavaThread)source).getDebugTarget();
+					monitorInformationAvailable= target.supportsMonitorInformation();
+					if (monitorInformationAvailable) {
+						MonitorManager.getDefault().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
+					}
 				}
 			} else if(event.getKind() == DebugEvent.TERMINATE && source instanceof IJavaDebugTarget) {
 				MonitorManager.getDefault().removeMonitorInformation((IJavaDebugTarget)source);
-				refreshView();
+				
 			}
 		}
-	}
-	
-	private void refreshView() {
-		((MonitorsView)getView()).refreshViewers();
+		((MonitorsView)getView()).refreshViewers(monitorInformationAvailable);
 	}
 }

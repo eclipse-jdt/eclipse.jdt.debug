@@ -217,7 +217,8 @@
     		relationship="stack"/>
 		<!-- <view id="org.eclipse.jdt.debug.ui.MonitorsView"
 			relative="org.eclipse.jdt.debug.ui.DisplayView"
-			relationship="stack"/> -->
+			relationship="stack"
+			visible="false"/> -->
         <view id="org.eclipse.jdt.ui.PackageExplorer" 
                 relative="org.eclipse.debug.ui.DebugView" 
                 relationship="stack"

@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -38,6 +39,8 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 	
 	private Viewer fDeadLocksViewer;
 	private Viewer fMonitorsViewer;
+	
+	private boolean fMonitorInformationAvailable= true;
 	
 	/**
 	 * A page in this view's page book that contains this
@@ -111,7 +114,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 	}
 	
 	public MonitorsView(){		
-		fViewId = VIEW_ID_THREAD;
+		fViewId = VIEW_ID_MONITOR;
 		setEventHandler(new MonitorsDebugEventHandler(this));
 	}
 
@@ -227,7 +230,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
 	 */
 	protected String getHelpContextId() {
-		return null;
+		return IJavaDebugHelpContextIds.MONITORS_VIEW;
 	}
 
 	/**
@@ -243,6 +246,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator("vmGroup")); //$NON-NLS-1$
+		updateObjects();
 	}
 
 	/**
@@ -281,9 +285,14 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		if (getPageBook().isDisposed()) {
 			return;
 		}
+		if (!fMonitorInformationAvailable) {
+			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
+			return;
+		}
 		if(MonitorManager.getDefault().getNumberOfDeadlocks() == 0){
 			showMessage(MonitorMessages.getString("MonitorsView.No_deadlock_detected_3")); //$NON-NLS-1$
 		} else{
+			((TreeViewer)getDeadLocksViewer()).expandAll();
 			getPageBook().showPage(getDeadLocksViewer().getControl());
 		}
 	}
@@ -292,17 +301,46 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		if (getPageBook().isDisposed()) {
 			return;
 		}
+		if (!fMonitorInformationAvailable) {
+			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
+			return;
+		}
+		((TreeViewer)getMonitorsViewer()).expandAll();
 		getPageBook().showPage(getMonitorsViewer().getControl());
 	}
 
 	
-	public void refreshViewers() {
-		getViewer().refresh();
+	public void refreshViewers(boolean monitorInformationAvailable) {
+		fMonitorInformationAvailable= monitorInformationAvailable;
+		if (!monitorInformationAvailable) {
+			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
+			return;
+		}
+		switch (fViewId) {
+			case VIEW_ID_THREAD:
+				getViewer().refresh();
+				((TreeViewer)getViewer()).expandAll();
+				break;
+			case VIEW_ID_DEADLOCK:
+				getDeadLocksViewer().refresh();
+				((TreeViewer)getDeadLocksViewer()).expandAll();
+				break;
+			case VIEW_ID_MONITOR:
+				getMonitorsViewer().refresh();
+				((TreeViewer)getMonitorsViewer()).expandAll();
+				break;
+		}
+		updateObjects();
+	}
+	/**
+	 * @see org.eclipse.debug.ui.AbstractDebugView#showViewer()
+	 */
+	public void showViewer() {
+		if (!fMonitorInformationAvailable) {
+			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
+			return;
+		}
 		((TreeViewer)getViewer()).expandAll();
-		getMonitorsViewer().refresh();
-		((TreeViewer)getMonitorsViewer()).expandAll();
-		getDeadLocksViewer().refresh();
-		((TreeViewer)getDeadLocksViewer()).expandAll();
-		setViewId(fViewId);
+		super.showViewer();
 	}
 }
