@@ -121,7 +121,11 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	public VirtualMachine accept(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		((SocketTransportImpl)fTransport).setAcceptTimeout(fTimeout);
 		((SocketTransportImpl)fTransport).accept();
-		return establishedConnection();
+		if (fTransport.isOpen()) {
+			return establishedConnection();
+		} else {
+			return null;
+		}
 	}
 	
 	/**

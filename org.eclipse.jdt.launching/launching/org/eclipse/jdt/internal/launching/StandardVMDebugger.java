@@ -254,9 +254,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 						}
 						
 						VirtualMachine vm= runnable.getVirtualMachine();
-						JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
-						subMonitor.worked(1);
-						subMonitor.done();
+						if (vm != null) {
+							JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
+							subMonitor.worked(1);
+							subMonitor.done();
+						}
 						return;
 					} catch (InterruptedIOException e) {
 						checkErrorMessage(process);

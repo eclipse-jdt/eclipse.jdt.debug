@@ -30,7 +30,7 @@ public class SocketTransportImpl extends TransportImpl {
 	private static final byte[] handshakeBytes = "JDWP-Handshake".getBytes(); //$NON-NLS-1$
 	/** Socket on which VM is connected. */
 	private Socket fSocket = null;
-	/** ServerSocker used to listen to connecting VMs. */
+	/** ServerSocket used to listen to connecting VMs. */
 	private ServerSocket fServerSocket = null;
 	
 	/**
@@ -81,6 +81,9 @@ public class SocketTransportImpl extends TransportImpl {
 	 * Accepts connections initiated by target VMs. 
 	 */
 	public void accept() throws IOException {
+		if (fServerSocket == null) {
+			return;
+		}
 		fSocket =fServerSocket.accept();
 		PerformHandshake();
 	}
@@ -89,6 +92,9 @@ public class SocketTransportImpl extends TransportImpl {
 	 * Sets timeout on accept. 
 	 */
 	public void setAcceptTimeout(int timeout) throws SocketException {
+		if (fServerSocket == null) {
+			return;
+		}
 		fServerSocket.setSoTimeout(timeout);
 	}
 	
