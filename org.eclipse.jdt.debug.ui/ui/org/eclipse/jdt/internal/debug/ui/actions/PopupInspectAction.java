@@ -11,11 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import java.util.Map;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
-import org.eclipse.debug.ui.actions.PopupInformationControl;
+import org.eclipse.debug.internal.ui.views.expression.ExpressionInformationControl;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
@@ -33,9 +29,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.IHandler;
 
 
 public class PopupInspectAction extends InspectAction implements IInformationProvider {
@@ -70,18 +63,9 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 	protected void showPopup(final IEvaluationResult result) {
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				IHandler handler = new AbstractHandler() {
-					public Object execute(Map parameter) throws ExecutionException {
-						DebugPlugin.getDefault().getExpressionManager().addExpression(expression);	
-						showExpressionView();
-						return null;
-					}				
-				};
-				
 				IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
 				expression = new JavaInspectExpression(result);
-				IPopupInformationControlAdapter adapter = DebugUITools.newExpressionInformationControlAdapter(page, expression, ActionMessages.getString("PopupInspectAction.3"), ACTION_DEFININIITION_ID); //$NON-NLS-1$
-				return new PopupInformationControl(parent, adapter, handler);
+				return new ExpressionInformationControl(page, expression, ACTION_DEFININIITION_ID);
 			}
 		});
 		
@@ -93,7 +77,6 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 				try {
 					String contentType = doc.getContentType(p.x);
 					infoPresenter.setInformationProvider(PopupInspectAction.this, contentType);				
-					
 					infoPresenter.install(viewer);
 					infoPresenter.showInformation();
 				} catch (BadLocationException e) {
