@@ -52,8 +52,8 @@ public abstract class JDIModificationVariable extends JDIVariable {
 		} catch (DebugException e) {
 			logError(e);
 		} catch (VMDisconnectedException e) {
-			IDebugTarget target = getDebugTarget();
-			if (target.isTerminated() || target.isDisconnected()) {
+			JDIDebugTarget target = (JDIDebugTarget)getDebugTarget();
+			if (!target.isAvailable()) {
 				return false;
 			}
 			logError(e);

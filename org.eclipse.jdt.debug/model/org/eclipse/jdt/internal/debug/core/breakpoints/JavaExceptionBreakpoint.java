@@ -116,7 +116,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				request= target.getEventRequestManager().createExceptionRequest(type, isCaught(), isUncaught());
 				configureRequest(request);
 			} catch (VMDisconnectedException e) {
-				if (target.isTerminated() || target.isDisconnected()) {
+				if (!target.isAvailable()) {
 					return null;
 				}
 				JDIDebugPlugin.logError(e);
@@ -259,7 +259,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			ReferenceType exClass = ((ExceptionRequest)request).exception();				
 			request = (ExceptionRequest) newRequest(target, exClass);
 		} catch (VMDisconnectedException e) {
-			if (target.isTerminated() || target.isDisconnected()) {
+			if (!target.isAvailable()) {
 				return request;
 			}
 			JDIDebugPlugin.logError(e);

@@ -121,7 +121,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			request= target.getEventRequestManager().createBreakpointRequest(location);
 			configureRequest(request);
 		} catch (VMDisconnectedException e) {
-			if (target.isDisconnected() || target.isTerminated()) {			
+			if (!target.isAvailable()) {			
 				return null;
 			} 
 			JDIDebugPlugin.logError(e);
@@ -178,7 +178,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				Location location = ((BreakpointRequest) request).location();			
 				request = createLineBreakpointRequest(location, target);
 			} catch (VMDisconnectedException e) {
-				if (target.isDisconnected() || target.isTerminated()) {
+				if (!target.isAvailable()) {
 					return request;
 				}
 				JDIDebugPlugin.logError(e);

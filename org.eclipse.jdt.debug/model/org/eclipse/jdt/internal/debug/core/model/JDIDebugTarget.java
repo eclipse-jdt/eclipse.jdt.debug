@@ -367,7 +367,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	
 	public void setEnabledSuspendOnUncaughtException(boolean enable) {
 		
-		if (isTerminated() || isDisconnected()) {
+		if (!isAvailable()) {
 			return;
 		}
 		try {
@@ -416,14 +416,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return isSuspended() && !isTerminated() && !isDisconnected();
+		return isSuspended() && isAvailable();
 	}
 
 	/**
 	 * @see ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
-		if (!isSuspended() && !isTerminated() && !isDisconnected()) {
+		if (!isSuspended() && isAvailable()) {
 			// only allow suspend if no threads are currently suspended
 			Iterator threads = getThreadList().iterator();
 			while (threads.hasNext()) {
@@ -440,7 +440,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		return supportsTerminate() && !isTerminated() && !isDisconnected();
+		return supportsTerminate() && isAvailable();
 	}
 
 	/**
@@ -503,7 +503,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return whether this debug target supports J9 hot code replace
 	 */
 	private boolean supportsJ9HotCodeReplace() {
-		if (!isTerminated() && getVM() instanceof org.eclipse.jdi.hcr.VirtualMachine) {
+		if (isAvailable() && getVM() instanceof org.eclipse.jdi.hcr.VirtualMachine) {
 			try {
 				return ((org.eclipse.jdi.hcr.VirtualMachine) getVM()).canReloadClasses();
 			} catch (UnsupportedOperationException e) {
@@ -520,7 +520,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return whether this debug target supports JDK hot code replace
 	 */
 	private boolean supportsJDKHotCodeReplace() {
-		if (!isTerminated()) {
+		if (isAvailable()) {
 			return getVM().canRedefineClasses();
 		}
 		return false;
@@ -911,6 +911,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private void setSuspended(boolean suspended) {
 		fSuspended = suspended;
 	}
+	
+	/**
+	 * Returns whether this target is available to
+	 * handle VM requests
+	 */
+	public boolean isAvailable() {
+		return !(isTerminated() || isTerminating() || isDisconnected());
+	}
 
 	/**
 	 * @see ITerminate#isTerminated()
@@ -1021,7 +1029,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * 	the breakpoint manager
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
-		if (isTerminated() || isDisconnected()) {
+		if (!isAvailable()) {
 			return;
 		}
 		if (breakpoint instanceof JavaBreakpoint) {
@@ -1046,7 +1054,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @param breakpoint the breakpoint that has changed
 	 */
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
-		if (isTerminated() || isDisconnected()) {
+		if (!isAvailable()) {
 			return;
 		}		
 		if (breakpoint instanceof JavaBreakpoint) {	
@@ -1067,7 +1075,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 *  the breakpoint manager.
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-		if (isTerminated() || isDisconnected()) {
+		if (!isAvailable()) {
 			return;
 		}		
 		if (breakpoint instanceof JavaBreakpoint) {
@@ -1250,7 +1258,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		try {
 			return getVM().classesByName(className);
 		} catch (VMDisconnectedException e) {
-			if (isDisconnected() || isTerminated()) {
+			if (!isAvailable()) {
 				return Collections.EMPTY_LIST;
 			}
 			logError(e);
@@ -1807,7 +1815,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public void launchRemoved(ILaunch launch) {
-		if (isTerminated() || isDisconnected()) {
+		if (!isAvailable()) {
 			return;
 		}
 		if (launch.equals(getLaunch())) {

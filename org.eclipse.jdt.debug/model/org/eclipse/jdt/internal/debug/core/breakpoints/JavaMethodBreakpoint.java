@@ -172,7 +172,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			}		
 			request.setEnabled(isEnabled() && isEntry());
 		} catch (VMDisconnectedException e) {
-			if (target.isTerminated() || target.isDisconnected()) {
+			if (!target.isAvailable()) {
 				return null;
 			}
 			JDIDebugPlugin.logError(e);
@@ -203,7 +203,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			}		
 			request.setEnabled(isEnabled() && isExit());
 		} catch (VMDisconnectedException e) {
-			if (target.isTerminated() || target.isDisconnected()) {
+			if (!target.isAvailable()) {
 				return null;
 			}
 			JDIDebugPlugin.logError(e);
@@ -227,7 +227,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				}
 				request.putProperty(HIT_COUNT, hc);
 			} catch (VMDisconnectedException e) {
-				if (target.isTerminated() || target.isDisconnected()) {
+				if (!target.isAvailable()) {
 					return request;
 				}
 				JDIDebugPlugin.logError(e);

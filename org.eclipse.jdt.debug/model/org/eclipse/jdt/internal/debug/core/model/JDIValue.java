@@ -286,8 +286,8 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 					// #targetRequestFailed will thrown an exception			
 				}
 			} else {
-				IDebugTarget dt = getDebugTarget();
-				fAllocated = !dt.isTerminated();
+				JDIDebugTarget dt = (JDIDebugTarget)getDebugTarget();
+				fAllocated = dt.isAvailable();
 			}
 		}
 		return fAllocated;

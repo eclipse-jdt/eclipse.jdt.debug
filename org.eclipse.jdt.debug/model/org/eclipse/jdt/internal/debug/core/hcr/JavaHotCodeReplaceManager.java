@@ -367,7 +367,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	}
 	
 	protected void notifyFailedHCR(JDIDebugTarget target, List resources, List qualifiedNames) {
-		if (!target.isTerminated() && !target.isDisconnected()) {
+		if (target.isAvailable()) {
 			target.typesFailedReload(resources, qualifiedNames);
 		}
 	}	
@@ -414,7 +414,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			JDIDebugTarget target= (JDIDebugTarget) iter.next();
 			List poppedThreads= new ArrayList();
 			try {
-				if (target.isTerminated() || target.isDisconnected()) {
+				if (!target.isAvailable()) {
 					continue;
 				}
 				boolean framesPopped= false;
@@ -973,7 +973,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		for (int i= 0; i < launches.length; i++) {
 			if (launches[i].getDebugTarget() instanceof JDIDebugTarget) {
 				JDIDebugTarget launchTarget= (JDIDebugTarget) launches[i].getDebugTarget();
-				if (!launchTarget.isDisconnected() && !launchTarget.isTerminated()) {
+				if (launchTarget.isAvailable()) {
 					return;
 				}
 			}

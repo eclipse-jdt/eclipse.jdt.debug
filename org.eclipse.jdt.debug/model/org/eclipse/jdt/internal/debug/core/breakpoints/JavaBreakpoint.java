@@ -513,11 +513,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		while (iter.hasNext()) {
 			EventRequest req = (EventRequest)iter.next();
 			try {				
-				if (!target.isTerminated() && !target.isDisconnected() && !isExpired(req)) { // cannot delete an expired request
+				if (target.isAvailable() && !isExpired(req)) { // cannot delete an expired request
 					target.getEventRequestManager().deleteEventRequest(req); // disable & remove
 				}
 			} catch (VMDisconnectedException e) {
-				if (!(target.isDisconnected() || target.isTerminated())) {
+				if (target.isAvailable()) {
 					JDIDebugPlugin.logError(e);
 				}
 			} catch (RuntimeException e) {

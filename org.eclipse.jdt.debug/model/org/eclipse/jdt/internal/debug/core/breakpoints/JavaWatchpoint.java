@@ -210,7 +210,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 				}
 				configureRequest(request);
 			} catch (VMDisconnectedException e) {
-				if (target.isTerminated() || target.isDisconnected()) {
+				if (!target.isAvailable()) {
 					return null;
 				}
 				target.internalError(e);
@@ -238,7 +238,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 					request= createModificationWatchpoint(target, field);
 				}
 			} catch (VMDisconnectedException e) {
-				if (target.isTerminated() || target.isDisconnected()) {
+				if (!target.isAvailable()) {
 					return request;
 				}
 				target.internalError(e);
