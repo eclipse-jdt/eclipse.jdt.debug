@@ -221,12 +221,6 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * @see IVMInstallChangedListener#vmChanged(PropertyChangeEvent)
 	 */
 	public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
-		String property = event.getProperty();
-		if (property.equals(IVMInstallChangedListener.PROPERTY_LIBRARY_LOCATIONS) ||
-			property.equals(IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION) ||
-			property.equals(IVMInstallChangedListener.PROPERTY_NAME)) {
-				
-		}
 	}
 
 	/**
