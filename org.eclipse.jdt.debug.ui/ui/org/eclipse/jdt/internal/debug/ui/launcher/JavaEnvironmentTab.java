@@ -614,6 +614,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 												new String[] {"Name", "Value"}, 
 												new String[] {"", ""});
 		doEnvVarDialog(dialog);
+		setEnvButtonsEnableState();
 	}
 	
 	protected void handleEnvEditButtonSelected() {
@@ -649,6 +650,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 	protected void handleEnvRemoveButtonSelected() {
 		int[] selectedIndices = fEnvTable.getSelectionIndices();
 		fEnvTable.remove(selectedIndices);
+		setEnvButtonsEnableState();
 	}
 	
 	/**
