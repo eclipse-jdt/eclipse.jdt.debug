@@ -2649,8 +2649,14 @@ M4 = Platform-specific fourth key
    <extension
          point="org.eclipse.debug.ui.debugViewContentProviders">
       <debugViewContentProvider
-            class="org.eclipse.jdt.internal.debug.ui.JavaDebugContentProvider"
-            debugModelId="org.eclipse.jdt.debug">
+      		id="org.eclipse.jdt.debug.ui.IJavaThreadContentProvider"
+            class="org.eclipse.jdt.internal.debug.ui.JavaDebugContentProvider">
+            <enablement>
+            	<or>
+            		<adapt type="org.eclipse.jdt.debug.core.IJavaThread"/>
+            		<instanceof value="org.eclipse.jdt.internal.debug.ui.IJavaMonitorElement"/>
+            	</or>
+            </enablement>
       </debugViewContentProvider>
    </extension>   
 	<extension point="org.eclipse.core.runtime.preferences">

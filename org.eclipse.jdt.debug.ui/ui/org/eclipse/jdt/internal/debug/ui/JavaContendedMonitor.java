@@ -19,7 +19,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
  * In this case, the monitor is owned by the owning thread, and waited
  * by the parent thread.
  */
-public class JavaContendedMonitor implements IDebugElement {
+public class JavaContendedMonitor implements IDebugElement, IJavaMonitorElement {
 
 	/**
 	 * The monitor object in the threads and monitors model.

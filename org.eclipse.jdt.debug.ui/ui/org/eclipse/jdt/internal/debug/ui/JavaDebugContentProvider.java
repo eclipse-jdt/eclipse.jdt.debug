@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DefaultDebugViewContentProvider;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -39,24 +40,27 @@ public class JavaDebugContentProvider extends DefaultDebugViewContentProvider im
 	 */
 	public Object[] getChildren(Object parent) {
 		try {
-			if (fDisplayMonitors && parent instanceof IJavaThread) {
-				IJavaThread thread= (IJavaThread)parent;
-				ThreadMonitorManager threadMonitorManager= ThreadMonitorManager.getDefault();
-				JavaOwnedMonitor[] ownedMonitors= threadMonitorManager.getOwnedMonitors(thread);
-				JavaContendedMonitor contendedMonitor= threadMonitorManager.getContendedMonitor(thread);
-				IStackFrame[] stackFrames= thread.getStackFrames();
-				Object[] children= new Object[ownedMonitors.length + (contendedMonitor == null ? 0 : 1) + stackFrames.length];
-				int k= 0;
-				for (int i= 0; i < ownedMonitors.length; i++) {
-					children[k++]= ownedMonitors[i];
-				}
-				if (contendedMonitor != null) {
-					children[k++]= contendedMonitor;
-				}
-				for (int i= 0; i < stackFrames.length; i++) {
-					children[k++]= stackFrames[i];
-				}
-				return children;
+			if (fDisplayMonitors && parent instanceof IThread) {
+			    IThread thread = (IThread)parent;
+			    IJavaThread adapter = (IJavaThread) thread.getAdapter(IJavaThread.class);
+			    if (adapter != null) {
+					ThreadMonitorManager threadMonitorManager= ThreadMonitorManager.getDefault();
+					JavaOwnedMonitor[] ownedMonitors= threadMonitorManager.getOwnedMonitors(adapter);
+					JavaContendedMonitor contendedMonitor= threadMonitorManager.getContendedMonitor(adapter);
+					IStackFrame[] stackFrames= thread.getStackFrames();
+					Object[] children= new Object[ownedMonitors.length + (contendedMonitor == null ? 0 : 1) + stackFrames.length];
+					int k= 0;
+					for (int i= 0; i < ownedMonitors.length; i++) {
+						children[k++]= ownedMonitors[i];
+					}
+					if (contendedMonitor != null) {
+						children[k++]= contendedMonitor;
+					}
+					for (int i= 0; i < stackFrames.length; i++) {
+						children[k++]= stackFrames[i];
+					}
+					return children;
+			    }
 			}
 			if (parent instanceof  JavaOwnedMonitor) {
 				return ((JavaOwnedMonitor)parent).getWaitingThreads();
