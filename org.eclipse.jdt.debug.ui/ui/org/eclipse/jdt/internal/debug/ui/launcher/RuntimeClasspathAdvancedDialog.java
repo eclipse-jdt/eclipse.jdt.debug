@@ -104,17 +104,23 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		fAddContainerButton.setFont(font);
 		
 		fContainerCombo = new Combo(inner, SWT.READ_ONLY);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.grabExcessHorizontalSpace = true;
-		fContainerCombo.setLayoutData(gd);
 		fContainerCombo.setFont(font);
 		fDescriptors= ClasspathContainerDescriptor.getDescriptors();
 		String[] names= new String[fDescriptors.length];
+		int maxLength = 0;
 		for (int i = 0; i < names.length; i++) {
 			names[i]= fDescriptors[i].getName();
+			int length = names[i].length();
+			if (length > maxLength) {
+				maxLength = length;
+			}
 		}	
 		fContainerCombo.setItems(names);
 		fContainerCombo.select(0);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.grabExcessHorizontalSpace = true;
+		gd.widthHint = convertWidthInCharsToPixels(maxLength + 5);
+		fContainerCombo.setLayoutData(gd);
 		
 		new Label(inner, SWT.NONE);
 		
