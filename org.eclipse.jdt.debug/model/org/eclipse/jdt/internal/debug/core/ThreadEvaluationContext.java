@@ -151,8 +151,9 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 		} else {
 			if (fResultType != null) {
 				try {
-					String sig = fResultType.reflectedType().signature();
-					if (sig.equals("V")) {
+					ReferenceType ref= fResultType.reflectedType();
+					String sig = ref.signature();
+					if (sig.equals("V") || sig.equals("Lvoid;")) {
 						// void
 						fValue = new JDIVoidValue(getModelThread());
 						return;
