@@ -274,7 +274,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 			case '[':
 				return arraySignatureToName(signature);
 			case '(':
-				throw new InternalError("Can't covert method signature to name.");
+				throw new InternalError("Can't convert method signature to name.");
 		}
 		throw new InternalError("Invalid signature: \"" + signature + "\"");
 	}
