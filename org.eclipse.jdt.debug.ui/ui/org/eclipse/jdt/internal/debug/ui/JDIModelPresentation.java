@@ -1391,8 +1391,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.null_78")); //$NON-NLS-1$
 				notifyListener();
 				return;
-			} else if (value instanceof IJavaPrimitiveValue || thread == null) {
+			} else if (value instanceof IJavaPrimitiveValue) {
 				// no need to spawn a thread for a primitive value
+				appendJDIValueString(value);
+				notifyListener();
+				return;
+			} else if (thread == null || !thread.isSuspended()) {
+				// no thread available
+				fResultBuffer = new StringBuffer(DebugUIMessages.getString("JDIModelPresentation.no_suspended_threads_1")); //$NON-NLS-1$
 				appendJDIValueString(value);
 				notifyListener();
 				return;
@@ -1404,14 +1410,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				public void run() {	
 					IEvaluationRunnable er = new IEvaluationRunnable() {
 						public void run(IJavaThread jt, IProgressMonitor pm) {
-							if (jt.isSuspended()) {
-								if (value instanceof IJavaArray) {
-									appendArrayDetail((IJavaArray)value, jt);
-								} else if (fValue instanceof IJavaObject) {
+							if (value instanceof IJavaArray) {
+								appendArrayDetail((IJavaArray)value, jt);
+							} else if (fValue instanceof IJavaObject) {
+								try {
 									appendObjectDetail((IJavaObject)value, jt);
+								} catch (DebugException e) {
+									handleDebugException(e, (IJavaValue)value);
 								}
-							} else {
-								appendJDIValueString(value);							
 							}
 						}
 					};
@@ -1428,14 +1434,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			};
 			
-			if (thread.isSuspended()) {
-				fDetailThread = new Thread(detailRunnable);
-				fDetailThread.start();
-			} else {
-				appendJDIValueString(value);
-				fRequestedValues.remove(fListener);
-				notifyListener();
-			}
+			fDetailThread = new Thread(detailRunnable);
+			fDetailThread.start();
 
 		}
 				
@@ -1449,18 +1449,30 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 		}
 		
-		protected void appendObjectDetail(IJavaObject objectValue, IJavaThread thread) {			
-			try {
-				IJavaValue toStringValue = objectValue.sendMessage(JDIModelPresentation.fgToString, JDIModelPresentation.fgToStringSignature, null, thread, false);
-				if (toStringValue == null) {
-					fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.<unknown>_80")); //$NON-NLS-1$
-				} else {
-					appendJDIValueString(toStringValue);
-				}
-			} catch (DebugException de) {
-				JDIDebugUIPlugin.log(de);
-				fResultBuffer.append(de.getStatus().getMessage());
+		protected void appendObjectDetail(IJavaObject objectValue, IJavaThread thread) throws DebugException {			
+			IJavaValue toStringValue = objectValue.sendMessage(JDIModelPresentation.fgToString, JDIModelPresentation.fgToStringSignature, null, thread, false);
+			if (toStringValue == null) {
+				fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.<unknown>_80")); //$NON-NLS-1$
+			} else {
+				appendJDIValueString(toStringValue);
 			}
+		}
+		
+		protected void handleDebugException(DebugException de, IJavaValue value) {
+			String reason = null;
+			switch (de.getStatus().getCode()) {
+				case IJavaThread.ERR_THREAD_NOT_SUSPENDED:
+					reason = DebugUIMessages.getString("JDIModelPresentation.thread_not_suspended_2"); //$NON-NLS-1$
+					break;
+				case IJavaThread.ERR_NESTED_METHOD_INVOCATION:
+					reason = DebugUIMessages.getString("JDIModelPresentation.evaluation_in_progress_3"); //$NON-NLS-1$
+					break;
+				default:
+					reason = de.getStatus().getMessage();
+					break;
+			}
+			fResultBuffer = new StringBuffer(reason);
+			appendJDIValueString(value);
 		}
 
 		protected void appendArrayDetail(IJavaArray arrayValue, IJavaThread thread) {
@@ -1473,21 +1485,25 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				fResultBuffer.append(de.getStatus().getMessage());
 				return;
 			}
-			for (int i = 0; i < arrayValues.length; i++) {
-				IJavaValue value = arrayValues[i];
-				if (value instanceof IJavaArray) {
-					appendArrayDetail((IJavaArray)value, thread);	
-				} else if (value instanceof IJavaObject) {
-					appendObjectDetail((IJavaObject)value, thread);
-				} else {
-					appendJDIValueString(value);
+			try {
+				for (int i = 0; i < arrayValues.length; i++) {
+					IJavaValue value = arrayValues[i];
+					if (value instanceof IJavaArray) {
+						appendArrayDetail((IJavaArray)value, thread);	
+					} else if (value instanceof IJavaObject) {
+						appendObjectDetail((IJavaObject)value, thread);
+					} else {
+						appendJDIValueString(value);
+					}
+					if (i < arrayValues.length - 1) {
+						fResultBuffer.append(',');
+						fResultBuffer.append(' ');
+					}
 				}
-				if (i < arrayValues.length - 1) {
-					fResultBuffer.append(',');
-					fResultBuffer.append(' ');
-				}
+				fResultBuffer.append(']');
+			} catch (DebugException e) {
+				handleDebugException(e, arrayValue);
 			}
-			fResultBuffer.append(']');
 		}
 	}	
 	
