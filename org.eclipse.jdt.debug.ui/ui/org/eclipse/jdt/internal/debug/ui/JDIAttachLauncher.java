@@ -195,9 +195,7 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 	public boolean launch(Object[] objects, String mode, ILauncher launcher) {
 		Object element= null;
 		if (objects.length > 0) {
-			if (!(element instanceof IDebugElement)) {
-				element= objects[0];
-			}
+			element= objects[0];
 		}
 		return doLaunchUsingWizard(element, launcher);
 	}

@@ -191,7 +191,7 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 	/**
 	 * Creates "allow terminate" visual components.
 	 *	 
-	 * @see org.eclipse.swt.widgets.Composite
+	 * @see Composite
 	 */
 	protected void createTerminateGroup(Composite parent) {
 		// add empty label
@@ -204,7 +204,7 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 	}
 	
 	/**
-	 * @see Listener
+	 * @see Listener#handleEvent(Event)
 	 */
 	public void handleEvent(Event ev) {
 		boolean valid= validatePage();
