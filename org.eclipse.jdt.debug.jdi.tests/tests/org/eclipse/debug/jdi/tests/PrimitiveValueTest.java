@@ -71,14 +71,14 @@ public class PrimitiveValueTest extends AbstractJDITest {
 	 * Test JDI byteValue().
 	 */
 	public void testJDIByteValue() {
-		assertEquals("1", 1, fBoolean.byteValue());
-		assertEquals("2", 1, fByte.byteValue());
-		assertEquals("3", 97, fChar.byteValue());
-		assertEquals("4", 57, fDouble.byteValue());
-		assertEquals("5", 57, fFloat.byteValue());
-		assertEquals("6", 57, fInt.byteValue());
-		assertEquals("7", 21, fLong.byteValue());
-		assertEquals("8", 57, fShort.byteValue());
+		assertEquals("1", (byte) 1, fBoolean.byteValue());
+		assertEquals("2", (byte) 1, fByte.byteValue());
+		assertEquals("3", (byte) 97, fChar.byteValue());
+		assertEquals("4", (byte) 57, fDouble.byteValue());
+		assertEquals("5", (byte) 57, fFloat.byteValue());
+		assertEquals("6", (byte) 57, fInt.byteValue());
+		assertEquals("7", (byte) 21, fLong.byteValue());
+		assertEquals("8", (byte) 57, fShort.byteValue());
 	}
 	/**
 	 * Test JDI charValue().
