@@ -49,6 +49,7 @@ import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -372,6 +373,13 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		public void setEnabled(boolean enabled) {
 			super.setEnabled(enabled, fParent);
 			fViewer.setEditable(enabled);
+			Color color= null;
+			if (enabled) {
+				color= fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+			} else {
+				color= fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+			}
+			fViewer.getTextWidget().setBackground(color);
 			valueChanged();
 		}
 
