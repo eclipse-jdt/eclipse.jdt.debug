@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.sun.jdi.ObjectCollectedException;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -954,7 +956,18 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			boolean showTypes= isShowVariableTypeNames();
 			StringBuffer buff= new StringBuffer();
 			IJavaValue javaValue= (IJavaValue) expression.getValue();
-			String typeName= javaValue.getReferenceTypeName();
+			String typeName=null;
+			try {
+				typeName= javaValue.getReferenceTypeName();
+			} catch (DebugException exception) {
+				// ObjectCollectedException is an expected exception which will
+				// occur if the inspected object has been garbage collected.
+				if (exception.getStatus().getException() instanceof ObjectCollectedException) {
+					return DebugUIMessages.getString("JDIModelPresentation.<garbage_collected_object>_6"); //$NON-NLS-1$
+				} else {
+					throw exception;
+				}
+			}
 			if (showTypes ) {
 				typeName= getQualifiedName(typeName);
 				if (typeName.length() > 0) {
@@ -971,7 +984,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			return buff.toString();
 		}
-		return ""; //$NON-NLS-1$
+		return ""; //$NON-NLS-1$ 
 	}	
 
 	/**
