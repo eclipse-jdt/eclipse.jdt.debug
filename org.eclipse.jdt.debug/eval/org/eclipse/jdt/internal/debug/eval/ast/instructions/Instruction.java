@@ -20,8 +20,8 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -89,14 +89,8 @@ public abstract class Instruction {
 	 * Answers the instance of Class that the given type represents.
 	 */
 	protected IJavaObject getClassObject(IJavaType type) throws CoreException {
-		if (type instanceof IJavaClassType) {
-			return ((IJavaClassType)type).getClassObject();
-		}
-		if (type instanceof IJavaInterfaceType) {
-			return ((IJavaInterfaceType)type).getClassObject();
-		}
-		if (type instanceof IJavaArrayType) {
-			return ((IJavaArrayType)type).getClassObject();
+		if (type instanceof IJavaReferenceType) {
+			return ((IJavaReferenceType)type).getClassObject();
 		}
 		return null;
 	}

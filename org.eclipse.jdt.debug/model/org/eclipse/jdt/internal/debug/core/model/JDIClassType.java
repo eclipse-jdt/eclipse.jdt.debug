@@ -37,7 +37,7 @@ import com.sun.jdi.Value;
 /**
  * The class of an object in a debug target.
  */
-public class JDIClassType extends JDIType implements IJavaClassType {
+public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 	
 	/**
 	 * Cosntructs a new class type on the given target referencing

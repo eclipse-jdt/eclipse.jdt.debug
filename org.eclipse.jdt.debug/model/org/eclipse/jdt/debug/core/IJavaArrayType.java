@@ -22,7 +22,7 @@ import org.eclipse.debug.core.DebugException;
  * @since 2.0
  */
 
-public interface IJavaArrayType extends IJavaType {
+public interface IJavaArrayType extends IJavaReferenceType {
 
 	/**
 	 * Returns a new instance of an array of this type,
@@ -50,17 +50,5 @@ public interface IJavaArrayType extends IJavaType {
 	 */
 	public IJavaType getComponentType() throws DebugException;
 
-	/**
-	 * Returns the class object associated with this array type.
-	 *
-	 * @return the class object associated with this array type
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
-	 * </ul>
-	 * @since 2.1
-	 */
-	public IJavaClassObject getClassObject() throws DebugException;
 }
 

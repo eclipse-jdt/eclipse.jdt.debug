@@ -30,7 +30,7 @@ import com.sun.jdi.ReferenceType;
 /**
  * The interface of an object in a debug target.
  */
-public class JDIInterfaceType extends JDIType implements IJavaInterfaceType {
+public class JDIInterfaceType extends JDIReferenceType implements IJavaInterfaceType {
 	
 	/**
 	 * Cosntructs a new interface type on the given target referencing

@@ -27,7 +27,7 @@ import com.sun.jdi.Type;
 /**
  * The type of an array
  */
-public class JDIArrayType extends JDIType implements IJavaArrayType {
+public class JDIArrayType extends JDIReferenceType implements IJavaArrayType {
 
 	/**
 	 * Cosntructs a new array type on the given target referencing

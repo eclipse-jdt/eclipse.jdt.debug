@@ -21,7 +21,7 @@ import org.eclipse.debug.core.DebugException;
  * @see IJavaValue
  * @since 2.0
  */
-public interface IJavaClassType  extends IJavaType {
+public interface IJavaClassType  extends IJavaReferenceType {
 	
 	/**
 	 * Returns a new instance of this class by invoking the
@@ -111,18 +111,6 @@ public interface IJavaClassType  extends IJavaType {
 	 * </ul>
 	 */
 	public IJavaClassType getSuperclass() throws DebugException;
-	
-	/**
-	 * Returns the class object associated with this class type.
-	 * 
-	 * @return the class object associated with this class type
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
-	 * </ul>
-	 */
-	public IJavaClassObject getClassObject() throws DebugException;
 	
 	/**
 	 * Returns the interface objects associated with the interfaces this class directly implements.
