@@ -385,7 +385,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			}
 		};
 		
-		int timeout = ((JDIThread)getThread()).getRequestTimeout();
+		int timeout = ((JDIThread)getThread()).getReqeustTimeout();
 		Thread evalThread = new Thread(eval);
 		evalThread.start();
 		try {
@@ -401,7 +401,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			return toString[0];
 		}	
 		
-		((JDIThread)getThread()).invokeToStringFailed();
 		requestFailed(ERROR_TO_STRING_TIMEOUT, null);
 		return null;
 	}

@@ -142,8 +142,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * invocations cannot be performed.
 	 */
 	protected boolean fInEvaluation = false;
-	
-	protected boolean fInvokeToStringFailed= false;
 
 	/**
 	 * Creates a new thread on the underlying thread reference.
@@ -426,7 +424,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			requestFailed(IN_EVALUATION, null);
 		}
 		Value result= null;
-		int timeout= getRequestTimeout();
+		int timeout= getReqeustTimeout();
 		try {
 			// set the request timeout to be infinite
 			setRequestTimeout(Integer.MAX_VALUE);
@@ -462,7 +460,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			requestFailed(IN_EVALUATION, null);
 		}
 		ObjectReference result= null;
-		int timeout= getRequestTimeout();
+		int timeout= getReqeustTimeout();
 		try {
 			// set the request timeout to be infinite
 			setRequestTimeout(Integer.MAX_VALUE);
@@ -505,7 +503,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * Sets the timeout interval for jdi requests in milliseconds
+	 * Sets the timeout interval for jdi requests in millieseconds
 	 */
 	protected void setRequestTimeout(int timeout) {
 		VirtualMachine vm = getVM();
@@ -515,18 +513,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * Invoking #toString in the underlying thread has failed.
-	 */
-	protected void invokeToStringFailed() {
-		fInEvaluation = false;
-		fInvokeToStringFailed= true;
-	}
-	
-	/**
 	 * Returns the timeout interval for jdi requests in millieseconds,
 	 * or -1 if not supported
 	 */
-	protected int getRequestTimeout() {
+	protected int getReqeustTimeout() {
 		VirtualMachine vm = getVM();
 		if (vm instanceof org.eclipse.jdi.VirtualMachine) {
 			return ((org.eclipse.jdi.VirtualMachine) vm).getRequestTimeout();
@@ -717,7 +707,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		if (!isSuspended()) {
 			return;
 		}
-		resumeIfToStringFailed();
 		try {
 			setRunning(true);
 			fThread.resume();
@@ -787,9 +776,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	
 	protected void step(int type) throws DebugException {
 		try {
-			resumeIfToStringFailed();
 			setRunning(true, DebugEvent.STEP_START);
-			enableStepRequest(type);			
+			enableStepRequest(type);
 			fThread.resume();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
@@ -798,15 +786,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 	}
 	
-	private void resumeIfToStringFailed() throws DebugException {
-		if (fInvokeToStringFailed) {
-			fInvokeToStringFailed= false;
-			if (fCurrentBreakpoint != null) {
-			//at a breakpoint hit during a toString()
-				resume();
-			} 
-		}
-	}
 	/**
 	 * A step has timed out. Children are disposed.
 	 */
