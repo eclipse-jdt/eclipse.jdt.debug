@@ -495,19 +495,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/**
-	 * Check the value requires unboxing to be used like a primitive.
-	 * If needed, the correct instruction is added to the stack
-	 * Returns true if a storeInstruction() is needed after visiting the expression
-	 */
-	private boolean checkUnBoxing(ITypeBinding valueBinding) {
-		if (valueBinding.isPrimitive() || valueBinding.isNullType() || "java.lang.String".equals(valueBinding.getQualifiedName())) { //$NON-NLS-1$
-			return false;
-		}
-		unBoxing(valueBinding);
-		return true;
-	}
-
-	/**
 	 * Add to the stack the instruction to box a primitive value.
 	 */
 	private void boxing(ITypeBinding requestedBinding, ITypeBinding valueBinding) {
@@ -559,9 +546,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/**
-	 * Add the instruction to unbox a non-primitive value.
+	 * Add the instruction to unbox a non-primitive value if needed.
+	 * Returns true if a storeInstruction() is needed after visiting the expression
 	 */
-	private void unBoxing(ITypeBinding valueBinding) {
+	private boolean unBoxing(ITypeBinding valueBinding) {
 		String valueTypeName= valueBinding.getQualifiedName();
 		if ("java.lang.Integer".equals(valueTypeName)) { //$NON-NLS-1$
 			push(new SendMessage("intValue", "()I", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -579,7 +567,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(new SendMessage("doubleValue", "()D", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if ("java.lang.Boolean".equals(valueTypeName)) { //$NON-NLS-1$
 			push(new SendMessage("booleanValue", "()Z", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			return false;
 		}
+		return true;
 	}
 
 	/**
@@ -1699,7 +1690,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				storeInstruction(); // dup
 				storeInstruction(); // unboxing
 			
-				boolean storeRequired= checkUnBoxing(rightHandSide.resolveTypeBinding());
+				boolean storeRequired= unBoxing(rightHandSide.resolveTypeBinding());
 				rightHandSide.accept(this);
 				if (storeRequired) {
 					storeInstruction(); // unboxing
@@ -1769,7 +1760,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 			
 			leftHandSide.accept(this);
-			boolean storeRequired= checkUnBoxing(rightHandSide.resolveTypeBinding());
+			boolean storeRequired= unBoxing(rightHandSide.resolveTypeBinding());
 			rightHandSide.accept(this);
 			if (storeRequired) {
 				storeInstruction();
@@ -2495,7 +2486,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			ConditionalJump[] conditionalJumps= new ConditionalJump[operatorNumber];
 			int[] conditionalJumpAddresses = new int[operatorNumber];
 
-			boolean storeRequired= checkUnBoxing(leftOperand.resolveTypeBinding());
+			boolean storeRequired= unBoxing(leftOperand.resolveTypeBinding());
 			leftOperand.accept(this);
 			if (storeRequired) {
 				storeInstruction();
@@ -2507,7 +2498,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(conditionalJump);
 			storeInstruction();
 
-			storeRequired= checkUnBoxing(rightOperand.resolveTypeBinding());
+			storeRequired= unBoxing(rightOperand.resolveTypeBinding());
 			rightOperand.accept(this);
 			if (storeRequired) {
 				storeInstruction();
@@ -2520,7 +2511,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				push(conditionalJump);
 				storeInstruction();
 				Expression operand= (Expression) iterator.next();
-				storeRequired= checkUnBoxing(operand.resolveTypeBinding());
+				storeRequired= unBoxing(operand.resolveTypeBinding());
 				operand.accept(this);
 				if (storeRequired) {
 					storeInstruction();
@@ -2546,14 +2537,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 			boolean storeRequired= false;
 			if (unbox) {
-				storeRequired= checkUnBoxing(leftOperand.resolveTypeBinding());
+				storeRequired= unBoxing(leftOperand.resolveTypeBinding());
 			}
 			leftOperand.accept(this);
 			if (storeRequired) {
 				storeInstruction();
 			}
 			if (unbox) {
-				storeRequired= checkUnBoxing(rightOperand.resolveTypeBinding());
+				storeRequired= unBoxing(rightOperand.resolveTypeBinding());
 			}
 			rightOperand.accept(this);
 			if (storeRequired) {
@@ -2564,7 +2555,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			for (int i= 1; i < operatorNumber; i ++) {
 				Expression operand= (Expression) iterator.next();
 				if (unbox) {
-					storeRequired= checkUnBoxing(operand.resolveTypeBinding());
+					storeRequired= unBoxing(operand.resolveTypeBinding());
 				}
 				operand.accept(this);
 				if (storeRequired) {
