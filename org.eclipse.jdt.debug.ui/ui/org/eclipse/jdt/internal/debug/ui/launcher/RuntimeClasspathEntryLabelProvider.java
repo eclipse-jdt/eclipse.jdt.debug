@@ -53,19 +53,18 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 	 */
 	public Image getImage(Object element) {
 		IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry)element;
+		IResource resource = entry.getResource();
 		switch (entry.getType()) {
 			case IRuntimeClasspathEntry.PROJECT:
 				//TODO what if project not loaded?
-				IResource res = entry.getResource();
-				IJavaElement proj = JavaCore.create(res);
+				IJavaElement proj = JavaCore.create(resource);
 				return lp.getImage(proj);
 			case IRuntimeClasspathEntry.ARCHIVE:
 				//TODO illegal access to images
-				res = entry.getResource();
-				if (res instanceof IContainer) {
-					return lp.getImage(res);
+				if (resource instanceof IContainer) {
+					return lp.getImage(resource);
 				}
-				boolean external = res == null;
+				boolean external = resource == null;
 				boolean source = (entry.getSourceAttachmentPath() != null && !Path.EMPTY.equals(entry.getSourceAttachmentPath()));
 				String key = null;
 				if (external) {
@@ -89,7 +88,11 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				// TODO: illegal internal access
 				return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
 			case IRuntimeClasspathEntry.OTHER:
-				return lp.getImage(entry.getResource());
+				if (resource == null) {
+					return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
+				} else {
+					return lp.getImage(resource);
+				}
 		}	
 		return null;
 	}
