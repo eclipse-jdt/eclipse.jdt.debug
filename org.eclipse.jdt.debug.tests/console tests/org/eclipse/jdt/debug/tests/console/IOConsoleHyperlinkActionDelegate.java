@@ -53,18 +53,14 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
             }
 
             public int getCompilerFlags() {
-                // TODO Auto-generated method stub
                 return 0;
             }
 
             public void connect(IConsole console) {
-                // TODO Auto-generated method stub
                 
             }
 
             public void disconnect() {
-                // TODO Auto-generated method stub
-                
             }
         };
         

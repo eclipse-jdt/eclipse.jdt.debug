@@ -73,16 +73,12 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
      * @see org.eclipse.ui.console.IPatternMatchListener#connect(org.eclipse.ui.console.IConsole)
      */
     public void connect(IConsole console) {
-        // TODO Auto-generated method stub
-        
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#disconnect()
      */
     public void disconnect() {
-        // TODO Auto-generated method stub
-        
     }
 
 }

@@ -22,16 +22,13 @@ public class IOConsoleOutputActionDelegate implements IActionDelegate2, IWorkben
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
     public void init(IAction action) {
-        // TODO Auto-generated method stub
-        
+       
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
     public void dispose() {
-        // TODO Auto-generated method stub
-        
     }
 
     /* (non-Javadoc)
@@ -69,16 +66,12 @@ public class IOConsoleOutputActionDelegate implements IActionDelegate2, IWorkben
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
     public void selectionChanged(IAction action, ISelection selection) {
-        // TODO Auto-generated method stub
-        
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
     public void init(IWorkbenchWindow window) {
-        // TODO Auto-generated method stub
-        
     }
 
 }

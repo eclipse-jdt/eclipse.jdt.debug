@@ -43,7 +43,6 @@ import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
-import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
@@ -1709,14 +1708,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		push(new NoOp(fCounter));
 		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnhancedForStatement)
-	 */
-	public boolean visit(EnhancedForStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
 	}
 
 	/* (non-Javadoc)
