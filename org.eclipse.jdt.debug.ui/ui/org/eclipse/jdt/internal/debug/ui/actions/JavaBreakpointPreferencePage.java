@@ -393,6 +393,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			Color color= null;
 			if (enabled) {
 				color= fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+				fViewer.getTextWidget().setFocus();
 			} else {
 				color= fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			}
@@ -760,8 +761,10 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				{ActionMessages.getString("JavaBreakpointPreferencePage.value_of_condition_change._3"), JavaBreakpointPreferenceStore.CONDITION_SUSPEND_ON_CHANGES}}, parent);  //$NON-NLS-1$
 		try {
 			boolean enabled= ((IJavaLineBreakpoint)getBreakpoint()).isConditionEnabled();
-			fCondition.setEnabled(enabled);
-			fConditionSuspendRadio.setEnabled(enabled, getFieldEditorParent());
+			if (!enabled) {
+				fCondition.setEnabled(enabled);
+				fConditionSuspendRadio.setEnabled(enabled, getFieldEditorParent());
+			}
 		} catch (CoreException ce) {
 		}
 		addField(fCondition);
