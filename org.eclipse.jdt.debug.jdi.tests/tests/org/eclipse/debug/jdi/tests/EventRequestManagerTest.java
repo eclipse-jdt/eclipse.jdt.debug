@@ -103,7 +103,7 @@ public void testJDIBreakpointRequest() {
 	List breakpoints = fManager.breakpointRequests();
 	ListIterator iterator = breakpoints.listIterator();
 	while (iterator.hasNext()) {
-		BreakpointRequest breakpoint = (BreakpointRequest)iterator.next();
+		Object breakpoint = iterator.next();
 		assertTrue("3", breakpoint instanceof BreakpointRequest);
 	}
 	
