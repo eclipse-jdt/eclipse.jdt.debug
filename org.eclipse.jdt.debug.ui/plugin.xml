@@ -1588,13 +1588,6 @@
   <fileTypes extension="jpage" type="text"/>
 </extension>
 
-<extension point="org.eclipse.ui.perspectiveExtensions">   
-	<perspectiveExtension
-		targetID="org.eclipse.debug.ui.DebugPerspective">
-		<showInPart id="org.eclipse.jdt.ui.PackageExplorer"/>
-	</perspectiveExtension>
-</extension>
-
 <extension point="org.eclipse.ui.markerResolution">
 	<markerResolutionGenerator
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JreResolutionGenerator"
