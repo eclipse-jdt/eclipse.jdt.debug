@@ -31,6 +31,9 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -75,7 +78,17 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				Runnable r = new Runnable() {
 					public void run() {
 						lineNumber[0] = textSelection.getStartLine() + 1;
-						ASTParser parser = ASTParser.newParser(AST.JLS2);
+						IMember member =ActionDelegateHelper.getDefault().getCurrentMember(textSelection);
+						int astLevel= AST.JLS2;
+						if (member != null) {
+							IJavaProject project= member.getJavaProject();
+							if (project != null && "1.5".equals(project.getOptions(true).get(JavaCore.COMPILER_COMPLIANCE))) { //$NON-NLS-1$
+								astLevel= AST.JLS3;
+							} else {
+								astLevel= AST.JLS2;
+							}
+						}
+						ASTParser parser = ASTParser.newParser(astLevel);
 						parser.setSource(document.get().toCharArray());
 						CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
 						ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineNumber[0], false, false);
