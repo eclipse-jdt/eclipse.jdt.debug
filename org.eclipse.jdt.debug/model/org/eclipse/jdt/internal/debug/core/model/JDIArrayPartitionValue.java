@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
@@ -39,18 +38,10 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 		return ""; //$NON-NLS-1$
 	}
 	
-	public String getValueString(boolean qualified) {
-		return ""; //$NON-NLS-1$
-	}
-	
 	public String getValueString() {
 		return ""; //$NON-NLS-1$
 	}
 	
-	public String evaluateToString(IJavaThread thread) {
-		return getValueString();
-	}
-		
 	/**
 	 * @see IValue#getVariables()
 	 */
@@ -90,13 +81,6 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	}
 	
 	/**
-	 * @see IJavaValue#getArrayLength()
-	 */
-	public int getArrayLength() {
-		return -1;
-	}
-
-	/**
 	 * @see IJavaValue#getSignature()
 	 */
 	public String getSignature() {
@@ -110,22 +94,6 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	 * @see IJavaValue#getJavaType()
 	 */
 	public IJavaType getJavaType() throws DebugException {
-			return null;
-	}
-
-	/**
-	 * @see IJavaValue#sendMessage(String, String, IJavaValue[], IJavaThread)
-	 */
-	public IJavaValue sendMessage(
-		String selector,
-		String signature,
-		IJavaValue[] args,
-		IJavaThread thread,
-		boolean superSend)
-		throws DebugException {
-			requestFailed(JDIDebugModelMessages.getString("JDIArrayPartitionValue.Cannot_send_a_message_to_an_array"), null); //$NON-NLS-1$
-			// execution will not fall through, as
-			// #requestFailed will throw an exception
 			return null;
 	}
 
