@@ -971,11 +971,11 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * Returns the class file visitor after visiting the resource change.
 	 * The visitor contains the changed class files and qualified type names.
 	 * Returns <code>null</code> if the visitor encounters an exception,
-	 * or the detlta is not a POST_CHANGE.
+	 * or the delta is not a POST_BUILD.
 	 */
 	protected ChangedClassFilesVisitor getChangedClassFiles(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
-		if (event.getType() != IResourceChangeEvent.POST_CHANGE || delta == null) {
+		if (event.getType() != IResourceChangeEvent.POST_BUILD || delta == null) {
 			return null;
 		}
 		fClassfileVisitor.reset();
@@ -1224,7 +1224,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			}
 		}
 		if (!fHotSwapTargets.isEmpty() || !fNoHotSwapTargets.isEmpty()) {
-			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.POST_BUILD);
+			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 		}
 	}
 	
