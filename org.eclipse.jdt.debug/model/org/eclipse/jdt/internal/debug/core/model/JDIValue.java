@@ -126,7 +126,8 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			name.append(')'); //$NON-NLS-1$
 			return name.toString();
 		} else {
-			return fValue.toString();
+			// see bug 43285
+			return String.valueOf(fValue);
 		}
 	}
 	
