@@ -27,13 +27,7 @@ import org.eclipse.ui.IViewPart;
 
 public class BreakpointHitCountAction extends Action implements IViewActionDelegate {
 
-	private final static String PREFIX= "breakpoint_hit_count_action.";
-	private final static String ERROR= PREFIX + "error.";
-	private static final String DIALOG_TITLE= PREFIX + "dialog.title";
-	private static final String DIALOG_MESSAGE= PREFIX + "dialog.message";
-	private static final String DIALOG_INVALID= PREFIX + "dialog.invalid";
-
-	private static final String INITIAL_VALUE= "0";
+	private static final String INITIAL_VALUE= "0"; //$NON-NLS-1$
 
 	protected IStructuredSelection fCurrentSelection;
 
@@ -73,7 +67,7 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 	}
 
 	/**
-	 * @see IActionDelegate
+	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
 		IStructuredSelection selection= getStructuredSelection();
@@ -97,15 +91,15 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 	}
 
 	/**
-	 * @see IAction
+	 * @see IAction#run()
 	 */
 	public void run() {
 		run(null);
 	}
 
 	protected int hitCountDialog(IJavaBreakpoint breakpoint) {
-		String title= DebugUIUtils.getResourceString(DIALOG_TITLE);
-		String message= DebugUIUtils.getResourceString(DIALOG_MESSAGE);
+		String title= ActionMessages.getString("BreakpointHitCountAction.Set_Breakpoint_Hit_Count_2"); //$NON-NLS-1$
+		String message= ActionMessages.getString("BreakpointHitCountAction.&Enter_the_new_hit_count_for_the_breakpoint__3"); //$NON-NLS-1$
 		IInputValidator validator= new IInputValidator() {
 			int hitCount= -1;
 			public String isValid(String value) {
@@ -115,8 +109,7 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 					hitCount= -1;
 				}
 				if (hitCount < 0) {
-					String msg= DebugUIUtils.getResourceString(DIALOG_INVALID);
-					return msg;
+					return ActionMessages.getString("BreakpointHitCountAction.Value_is_not_a_valid_hit_count_4"); //$NON-NLS-1$
 				}
 				//no error
 				return null;

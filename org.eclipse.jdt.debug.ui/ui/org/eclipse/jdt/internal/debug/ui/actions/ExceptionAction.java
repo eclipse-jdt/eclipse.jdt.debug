@@ -16,10 +16,10 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.BreakpointsView;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
-import org.eclipse.jdt.internal.debug.ui.DebugUIUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -39,7 +39,7 @@ public abstract class ExceptionAction extends Action implements IViewActionDeleg
 	}
 
 	/**
-	 * @see IActionDelegate
+	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
 		fAction= action;
@@ -50,20 +50,22 @@ public abstract class ExceptionAction extends Action implements IViewActionDeleg
 				IJavaExceptionBreakpoint breakpoint= (IJavaExceptionBreakpoint)enum.next();
 				doAction(breakpoint);
 			} catch (CoreException e) {
-				DebugUIUtils.errorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(),"exception_action.error.", e.getStatus());
+				String title= ActionMessages.getString("ExceptionAction.Exception_Caught/Uncaught_1"); //$NON-NLS-1$
+				String message= ActionMessages.getString("ExceptionAction.Failed_to_change_the_exception__s_caught/uncaught_state._2"); //$NON-NLS-1$
+				ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell(), title, message, e.getStatus());
 			}
 		}
 	}
 
 	/**
-	 * @see IAction
+	 * @see IAction#run()
 	 */
 	public void run() {
 		run(null);
 	}
 
 	/**
-	 * @see IActionDelegate
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection sel) {
 		fAction= action;
@@ -94,7 +96,7 @@ public abstract class ExceptionAction extends Action implements IViewActionDeleg
 	protected abstract boolean getToggleState(IJavaExceptionBreakpoint exception) throws CoreException;
 
 	/**
-	 * @see IViewActionDelegate
+	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart viewPart) {
 		if (viewPart instanceof BreakpointsView) {
@@ -111,19 +113,19 @@ public abstract class ExceptionAction extends Action implements IViewActionDeleg
 	}
 	
 	/** 
-	 * @see IBreakpointListener
+	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
 	}
 
 	/** 
-	 * @see IBreakpointListener
+	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 
 	/** 
-	 * @see IBreakpointListener
+	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
 	 */
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		final Display display= Display.getDefault();
@@ -152,5 +154,4 @@ public abstract class ExceptionAction extends Action implements IViewActionDeleg
 	private IBreakpoint getBreakpoint(IMarker marker) {
 		return getBreakpointManager().getBreakpoint(marker);
 	}	
-
 }

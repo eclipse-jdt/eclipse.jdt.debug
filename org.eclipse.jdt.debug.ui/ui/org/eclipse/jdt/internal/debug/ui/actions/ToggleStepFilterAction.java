@@ -53,6 +53,5 @@ public class ToggleStepFilterAction extends Action implements IViewActionDelegat
 			fSetInitialState = true;
 		}
 	}
-
 }
 

@@ -6,7 +6,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
 
 import org.eclipse.debug.ui.IDebugViewAdapter;
-import org.eclipse.jdt.internal.debug.ui.DebugUIUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -25,13 +24,10 @@ public abstract class ToggleFilterAction extends Action implements IViewActionDe
 	/**
 	 * The viewer that this action works for
 	 */
-	StructuredViewer fViewer;
-
-	protected static final String fgShow= ".label.show";
-	protected static final String fgHide= ".label.hide";
+	private StructuredViewer fViewer;
 
 	/**
-	 * @see IViewActionDelegate
+	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {
 		IDebugViewAdapter adapter= (IDebugViewAdapter) view.getAdapter(IDebugViewAdapter.class);
@@ -45,7 +41,7 @@ public abstract class ToggleFilterAction extends Action implements IViewActionDe
 	 * the state of the action.
 	 */
 	protected String getToolTipText(boolean on) {
-		return on ? DebugUIUtils.getResourceString(getPrefix() + fgShow) : DebugUIUtils.getResourceString(getPrefix() + fgHide);
+		return on ? getShowText() : getHideText();
 	}
 
 	/**
@@ -90,13 +86,7 @@ public abstract class ToggleFilterAction extends Action implements IViewActionDe
 	protected abstract ViewerFilter getViewerFilter();
 
 	/**
-	 * @see IViewActionDelegate
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-	}
-
-	/**
-	 * @see IViewActionDelegate
+	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
 		valueChanged(action.isChecked());
@@ -105,16 +95,28 @@ public abstract class ToggleFilterAction extends Action implements IViewActionDe
 		action.setText(label);
 	}
 
-	/**
-	 * Returns resource bundle prefix for "button_id". The ".label.hide" and ".label.show"
-	 * suffixes will be applied to get tool tip text and labels.
-	 */
-	protected abstract String getPrefix();
+	protected abstract String getShowText();
 
+	protected abstract String getHideText();
+	
 	/**
-	 * @see IAction
+	 * @see IAction#run()
 	 */
 	public void run() {
+	}
+	
+	protected StructuredViewer getViewer() {
+		return fViewer;
+	}
+
+	protected void setViewer(StructuredViewer viewer) {
+		fViewer = viewer;
+	}
+	
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
 }

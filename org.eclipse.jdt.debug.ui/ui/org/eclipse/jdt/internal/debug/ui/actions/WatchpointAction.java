@@ -16,10 +16,10 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.BreakpointsView;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.internal.debug.ui.DebugUIUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
@@ -63,7 +63,9 @@ public abstract class WatchpointAction extends Action implements IViewActionDele
 				IJavaWatchpoint breakpoint= (IJavaWatchpoint) enum.next();
 				doAction(breakpoint);
 			} catch (CoreException e) {
-				DebugUIUtils.errorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(),"watchpoint_action.error", e.getStatus());
+				String title= ActionMessages.getString("WatchPointAction.Watchpoint_configuration_1"); //$NON-NLS-1$
+				String message= ActionMessages.getString("WatchPointAction.Exceptions_occurred_attempting_to_modify_watchpoint._2"); //$NON-NLS-1$
+				ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell(), title, message, e.getStatus());
 			}			
 		}
 	}

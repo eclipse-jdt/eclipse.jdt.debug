@@ -5,22 +5,22 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugException;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.internal.debug.ui.DebugUIUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import java.util.Iterator;
+import org.eclipse.ui.IViewActionDelegate;
+import org.eclipse.ui.IViewPart;
 
 public class DropToFrameAction extends Action implements IViewActionDelegate {
 
-	private static final String PREFIX= "drop_to_frame_action.";
 	protected IStructuredSelection fCurrentSelection;
 
 	public DropToFrameAction() {
@@ -47,7 +47,7 @@ public class DropToFrameAction extends Action implements IViewActionDelegate {
 	}
 
 	/**
-	 * @see IActionDelegate
+	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
 		Iterator enum= getStructuredSelection().iterator();
@@ -58,13 +58,15 @@ public class DropToFrameAction extends Action implements IViewActionDelegate {
 			try {
 				doAction(element);
 			} catch (DebugException de) {
-				DebugUIUtils.errorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), PREFIX + "error.", de.getStatus());
+				String title= ActionMessages.getString("DropToFrameAction.Drop_to_Frame_1"); //$NON-NLS-1$
+				String message= ActionMessages.getString("DropToFrameAction.Exceptions_occurred_attempting_to_drop_to_frame._2"); //$NON-NLS-1$
+				ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell(), title, message, de.getStatus());
 			}
 		}
 	}
 
 	/**
-	 * @see IAction
+	 * @see IAction#run()
 	 */
 	public void run() {
 		run(null);
@@ -75,7 +77,7 @@ public class DropToFrameAction extends Action implements IViewActionDelegate {
 	}
 
 	/**
-	 * @see IActionDelegate
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection sel) {
 		if (sel instanceof IStructuredSelection) {
@@ -86,9 +88,8 @@ public class DropToFrameAction extends Action implements IViewActionDelegate {
 	}
 
 	/**
-	 * @see IViewActionDelegate
+	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {
 	}
-
 }

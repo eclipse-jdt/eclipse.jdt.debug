@@ -25,9 +25,9 @@ import org.eclipse.swt.graphics.RGB;
 
 public class JDIContentAssistPreference {
 	
-	private final static String VISIBILITY= "org.eclipse.jdt.core.codeComplete.visibilityCheck";
-	private final static String ENABLED= "enabled";
-	private final static String DISABLED= "disabled";
+	private final static String VISIBILITY= "org.eclipse.jdt.core.codeComplete.visibilityCheck"; //$NON-NLS-1$
+	private final static String ENABLED= "enabled"; //$NON-NLS-1$
+	private final static String DISABLED= "disabled"; //$NON-NLS-1$
 	
 	private static Color getColor(IPreferenceStore store, String key, IColorManager manager) {
 		RGB rgb= PreferenceConverter.getColor(store, key);

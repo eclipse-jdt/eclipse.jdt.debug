@@ -133,7 +133,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 			              
 		} catch (JavaModelException jme) {			
 			JDIDebugUIPlugin.log(jme);
-			ErrorDialog.openError(getShell(), "Error searching for type", null, jme.getStatus());
+			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_searching_for_type_1"), null, jme.getStatus()); //$NON-NLS-1$
 		}				
 		
 		// choose the appropriate result             
@@ -148,7 +148,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 			openAndPositionEditor(type);		
 		} catch (JavaModelException jme) {
 			JDIDebugUIPlugin.log(jme);
-			ErrorDialog.openError(getShell(), "Error searching for type", null, jme.getStatus());			
+			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_searching_for_type_2"), null, jme.getStatus());			 //$NON-NLS-1$
 		}
 	}
 	
@@ -165,8 +165,8 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), 
 													new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_FULLYQUALIFIED | TypeInfoLabelProvider.SHOW_ROOT_POSTFIX));
-		dialog.setTitle("Open Type");
-		dialog.setMessage("Choose a type to open"); 
+		dialog.setTitle(ActionMessages.getString("OpenOnConsoleTypeAction.Open_Type_3")); //$NON-NLS-1$
+		dialog.setMessage(ActionMessages.getString("OpenOnConsoleTypeAction.Choose_a_type_to_open_4"));  //$NON-NLS-1$
 		dialog.setElements(typeInfoList.toArray(new TypeInfo[typeInfoList.size()]));
 		if (dialog.open() == dialog.OK) {
 			return (TypeInfo) dialog.getFirstResult();
@@ -193,13 +193,13 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 			}	
 		} catch (JavaModelException jme) {
 			JDIDebugUIPlugin.log(jme);
-			ErrorDialog.openError(getShell(), "Error opening editor", null, jme.getStatus()); 			
+			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_opening_editor_5"), null, jme.getStatus()); 			 //$NON-NLS-1$
 		} catch (PartInitException pie) {
 			JDIDebugUIPlugin.log(pie);
-			ErrorDialog.openError(getShell(), "Error opening editor", null, pie.getStatus()); 						
+			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_opening_editor_6"), null, pie.getStatus()); 						 //$NON-NLS-1$
 		} catch (BadLocationException ble) {
 			JDIDebugUIPlugin.log(ble);
-			MessageDialog.openError(getShell(), "Error parsing console document", ble.getMessage());
+			MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_console_document_7"), ble.getMessage()); //$NON-NLS-1$
 		} 
 	}
 	
@@ -233,7 +233,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 					parseSelection(lineText);
 				} catch (BadLocationException ble) {
 					JDIDebugUIPlugin.log(ble);
-					MessageDialog.openError(getShell(), "Error parsing console document", ble.getMessage());
+					MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_console_document_8"), ble.getMessage()); //$NON-NLS-1$
 				}
 			}
 		}		
