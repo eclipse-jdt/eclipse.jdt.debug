@@ -71,6 +71,7 @@ public interface IVMInstall {
 	 * set up the vm's they start with this timeout if possible.
 	 * @param	miliseconds. The timeout value in milliseconds.
 	 * 						 Must be >= 0.
+	 * @deprecated this method to be deleted
 	 */
 	void setDebuggerTimeout(int milliseconds);
 	
@@ -79,6 +80,7 @@ public interface IVMInstall {
 	 * a VM started from this VM install. 
 	 * @return 	The timeout value in milliseconds. Implementers must
 	 * 			return a default value >= 0 when no value was set.
+	 * @deprecated this method to be removed
 	 */
 	int getDebuggerTimeout();
 	

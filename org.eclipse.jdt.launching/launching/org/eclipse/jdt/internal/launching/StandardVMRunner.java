@@ -13,10 +13,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.AbstractVMRunner;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -125,62 +123,11 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return buf.toString();
 	}
 
-/**
-	 * @see IVMRunner#run(ILaunchConfiguration)
-	 */
-	public VMRunnerResult run(ILaunchConfiguration config) throws CoreException {
-		
-		String program= constructProgramString();
-		File javawexe= new File(program + "w.exe"); //$NON-NLS-1$
-		File javaw= new File(program + "w"); //$NON-NLS-1$
-		
-		if (javawexe.isFile()) {
-			program= javawexe.getAbsolutePath();
-		} else if (javaw.isFile()) {
-			program= javaw.getAbsolutePath();
-		}
-		
-		List arguments= new ArrayList();
 
-		arguments.add(program);
-				
-		String[] bootCP= getBootpath(config);
-		if (bootCP.length > 0) {
-			arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
-		} 
-		
-		String[] cp= getClasspath(config);
-		if (cp.length > 0) {
-			arguments.add("-classpath"); //$NON-NLS-1$
-			arguments.add(convertClassPath(cp));
-		}
-		String[] vmArgs= getVMArgumentsArray(config);
-		addArguments(vmArgs, arguments);
-		
-		arguments.add(verifyMainTypeName(config));
-		
-		String[] programArgs= getProgramArgumentsArray(config);
-		addArguments(programArgs, arguments);
-				
-		String[] cmdLine= new String[arguments.size()];
-		arguments.toArray(cmdLine);
-
-		Process p= null;
-		File workingDir = verifyWorkingDirectory(config);
-		p= exec(cmdLine, workingDir);
-		if (p == null) {
-			return null;
-		}
-		
-		IProcess process= DebugPlugin.getDefault().newProcess(p, renderProcessLabel(cmdLine));
-		process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
-		return new VMRunnerResult(null, new IProcess[] { process });
-	}	
-
-/**
+	/**
 	 * @see IVMRunner#run(VMRunnerConfiguration)
 	 */
-	public VMRunnerResult run(VMRunnerConfiguration config) throws CoreException {
+	public VMRunnerResult run(VMRunnerConfiguration config, IProgressMonitor monitor) throws CoreException {
 		
 		String program= constructProgramString();
 		File javawexe= new File(program + "w.exe"); //$NON-NLS-1$
