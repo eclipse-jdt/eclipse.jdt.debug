@@ -654,7 +654,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 */
 	protected boolean isTypePattern() throws CoreException {
 		String name = getTypeName();
-		return name != null && (name.startsWith("*") || name.endsWith("*"));
+		return name != null && (name.startsWith("*") || name.endsWith("*")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
