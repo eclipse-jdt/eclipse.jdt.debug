@@ -40,10 +40,10 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		setText(ActionMessages.getString("RunToLine.label")); //$NON-NLS-1$
 		setToolTipText(ActionMessages.getString("RunToLine.tooltip")); //$NON-NLS-1$
 		setDescription(ActionMessages.getString("RunToLine.description")); //$NON-NLS-1$
-		
 		update();
 		setHelpContextId(IHelpContextIds.RUN_TO_LINE_ACTION );					
 	}
+	
 	public void run() {
 		try {
 			IDebugTarget target= getContext();
@@ -223,6 +223,9 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		if (targetEditor instanceof ITextEditor) {
+			setEditor((ITextEditor)targetEditor);
+		}
 		setPluginAction(action);
 		update();
 	}
