@@ -29,6 +29,7 @@ import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.DirectorySourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.EventSetTests;
 import org.eclipse.jdt.debug.tests.core.ExceptionBreakpointTests;
+import org.eclipse.jdt.debug.tests.core.HcrTests;
 import org.eclipse.jdt.debug.tests.core.HitCountBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.InstanceFilterTests;
 import org.eclipse.jdt.debug.tests.core.InstanceVariableTests;
@@ -149,7 +150,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(StratumTests.class));
 		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
 		// HCR tests are last - they modify resources
-		//addTest(new TestSuite(HcrTests.class));
+		addTest(new TestSuite(HcrTests.class));
 	}
 	
 	/**
