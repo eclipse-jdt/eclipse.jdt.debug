@@ -19,6 +19,39 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * configuration, and resolves classpath entries for a launch configuration.
  * A classpath provider is defined as an extension of type 
  * <code>org.eclipse.jdt.launching.classpathProvider</code>.
+ * <p>
+ * A provider is registered with an identifier that can be specified as
+ * referenced by a launc configuration. A classpath provider is consulted
+ * to compute a classpath or source lookup path when a launch configuration
+ * references specifies a provider in one or both of the following attributes:
+ * <ul>
+ * <li><code>ATTR_CLASSPATH_PROVIDER</code></li>
+ * <li><code>ATTR_SOURCE_PATH_PROVIDER</code></li>
+ * </ul>
+ * </p>
+ * A provider extension is defined in <code>plugin.xml</code>.
+ * Following is an example definition of a runtime classpath provider
+ * extension.
+ * <pre>
+ * &lt;extension point="org.eclipse.jdt.launching.classpathProviders"&gt;
+ *   &lt;classpathProvider 
+ *      id="com.example.ExampleClasspathProvider"
+ *      class="com.example.ExampleClasspathProviderImpl"
+ *   &lt;/classpathProvider&gt;
+ * &lt;/extension&gt;
+ * </pre>
+ * The attributes are specified as follows:
+ * <ul>
+ * <li><code>id</code> specifies a unique identifier for this extension. This 
+ * 	identifier may be used to reference a provider on one of the launch
+ *  configuration attributes mentioned above.</li>
+ * <li><code>class</code> specifies the fully qualified name of the Java class
+ *   that implements <code>IRuntimeClasspathProvider</code>.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * 
  * @since 2.0
  */

@@ -60,6 +60,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.ListenerList;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
+import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.eclipse.jdt.internal.launching.StandardClasspathProvider;
 import org.eclipse.jdt.internal.launching.StandardSourcePathProvider;
@@ -106,6 +107,14 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRY_RESOLVERS= "runtimeClasspathEntryResolvers";	 //$NON-NLS-1$	
+	
+	/**
+	 * Simple identifier constant (value <code>"classpathProviders"</code>) for the
+	 * runtime classpath providers extension point.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String EXTENSION_POINT_RUNTIME_CLASSPATH_PROVIDERS= "classpathProviders";	 //$NON-NLS-1$		
 		
 	/**
 	 * Classpath container used for a project's JRE. A container
@@ -164,6 +173,11 @@ public final class JavaRuntime {
 	 */
 	private static Map fgVariableResolvers = null;
 	private static Map fgContainerResolvers = null;
+	
+	/**
+	 * Path providers keyed by id
+	 */
+	private static Map fgPathProviders = null;
 	
 	/**
 	 * Default classpath and source path providers.
@@ -581,7 +595,7 @@ public final class JavaRuntime {
 		if (providerId == null) {
 			provider = fgDefaultClasspathProvider;
 		} else {
-			// XXX: use custom classpath provider	
+			provider = (IRuntimeClasspathProvider)getClasspathProviders().get(providerId);	
 		}
 		return provider;
 	}	
@@ -600,7 +614,7 @@ public final class JavaRuntime {
 		if (providerId == null) {
 			provider = fgDefaultSourcePathProvider;
 		} else {
-			// XXX: use custom classpath provider	
+			provider = (IRuntimeClasspathProvider)getClasspathProviders().get(providerId);
 		}
 		return provider;
 	}	
@@ -1395,7 +1409,27 @@ public final class JavaRuntime {
 			}
 		}		
 	}
-	
+
+	/**
+	 * Returns all registered classpath providers.
+	 */
+	private static Map getClasspathProviders() {
+		if (fgPathProviders == null) {
+			initializeProviders();
+		}
+		return fgPathProviders;
+	}
+		
+	private static void initializeProviders() {
+		IExtensionPoint point = LaunchingPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_RUNTIME_CLASSPATH_PROVIDERS);
+		IConfigurationElement[] extensions = point.getConfigurationElements();
+		fgPathProviders = new HashMap(extensions.length);
+		for (int i = 0; i < extensions.length; i++) {
+			RuntimeClasspathProvider res = new RuntimeClasspathProvider(extensions[i]);
+			fgPathProviders.put(res.getIdentifier(), res);
+		}		
+	}
+		
 	/**
 	 * Returns the resovler registered for the give variable, or
 	 * <code>null</code> if none.
@@ -1417,6 +1451,17 @@ public final class JavaRuntime {
 	private static IRuntimeClasspathEntryResolver getContainerResolver(String containerId) {
 		return (IRuntimeClasspathEntryResolver)getContainerResolvers().get(containerId);
 	}	
+	
+	/**
+	 * Returns the provider registered for the given identifier, or
+	 * <code>null</code> if none.
+	 * 
+	 * @return the provider registered for the given identifier, or
+	 * <code>null</code> if none
+	 */
+	private static IRuntimeClasspathProvider getClasspathProvider(String identifier) {
+		return (IRuntimeClasspathProvider)getClasspathProviders().get(identifier);
+	}
 	
 	/**
 	 * Adds the given listener to the list of registered VM install changed

@@ -29,6 +29,7 @@
 <extension-point name="%vmInstallTypes" id="vmInstallTypes"/>
 <extension-point name="%vmConnectors" id="vmConnectors"/>
 <extension-point name="%runtimeClasspathEntryResolvers" id="runtimeClasspathEntryResolvers"/>
+<extension-point name="%classpathProviders" id="classpathProviders"/>
 
 <!-- Extensions -->
 
