@@ -23,13 +23,16 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public class JavaStackTracePageParticipant implements IConsolePageParticipant {
     
     private CloseConsoleAction fCloseAction;
+    private FormatJavaStackTraceAction fFormatAction;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsolePageParticipant#init(org.eclipse.ui.part.IPageBookViewPage, org.eclipse.ui.console.IConsole)
      */
     public void init(IPageBookViewPage page, IConsole console) {
         fCloseAction = new CloseConsoleAction(console);
+        fFormatAction = new FormatJavaStackTraceAction((JavaStackTraceConsole)console);
         IToolBarManager manager = page.getSite().getActionBars().getToolBarManager();
+        manager.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fFormatAction);
         manager.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fCloseAction);
     }
 

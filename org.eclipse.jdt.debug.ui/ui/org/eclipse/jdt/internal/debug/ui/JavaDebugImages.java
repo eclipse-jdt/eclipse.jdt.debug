@@ -78,6 +78,7 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_PLUS_SIGN = NAME_PREFIX + "plus_sign.gif";  //$NON-NLS-1$
 	public static final String IMG_OBJS_MINUS_SIGN = NAME_PREFIX + "minus_sign.gif";  //$NON-NLS-1$
 	public static final String IMG_OBJS_CLASSPATH = NAME_PREFIX + "classpath_obj.gif"; //$NON-NLS-1$
+
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
@@ -87,6 +88,7 @@ public class JavaDebugImages {
 	private static final String T_EVIEW= "eview16"; 	//$NON-NLS-1$
 	private static final String T_DTOOL= "dtool16"; 	//$NON-NLS-1$
 	private static final String T_ETOOL= "etool16"; 	//$NON-NLS-1$
+	private static final String T_ELCL= "elcl16"; //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION= createManaged(T_OBJ, IMG_OBJS_EXCEPTION);
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION_DISABLED= createManaged(T_OBJ, IMG_OBJS_EXCEPTION_DISABLED);
@@ -148,6 +150,8 @@ public class JavaDebugImages {
 
 	public static final ImageDescriptor DESC_OBJ_JAVA_INSPECT_EXPRESSION= create(T_OBJ, "insp_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLASSPATH= createManaged(T_OBJ, IMG_OBJS_CLASSPATH);
+	
+	public static final ImageDescriptor DESC_ELCL_FORMAT_STACKTRACE= create(T_ELCL, "format_trace.gif"); //$NON-NLS-1$
 	/**
 	 * Returns the image managed under the given key in this registry.
 	 * 
