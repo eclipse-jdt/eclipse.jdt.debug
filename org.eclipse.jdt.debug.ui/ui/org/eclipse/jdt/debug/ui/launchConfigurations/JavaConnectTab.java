@@ -259,6 +259,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		}
 		
 		fArgumentComposite.getParent().getParent().layout();
+		fArgumentComposite.layout();
 	}
 	
 	/**
