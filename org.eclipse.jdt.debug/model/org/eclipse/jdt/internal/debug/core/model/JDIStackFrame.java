@@ -330,7 +330,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			if (genericSignature == null) {
 				// no generic signature
 				List argumentTypeNames= underlyingMethod.argumentTypeNames();
-				if (underlyingMethod.isVarargs()) {
+				if (underlyingMethod.isVarArgs()) {
 					String argumentTypeName= (String)argumentTypeNames.remove(argumentTypeNames.size() - 1);
 					argumentTypeNames.add(argumentTypeName.substring(0, argumentTypeName.length() - 2) + "..."); //$NON-NLS-1$
 				}
@@ -342,7 +342,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			for (int i= 0; i < parameterTypes.length - 1; i++) {
 				argumentTypeNames.add(Signature.toString(parameterTypes[i]).replace('/', '.'));
 			}
-			if (underlyingMethod.isVarargs()) {
+			if (underlyingMethod.isVarArgs()) {
 				String parameterTypeName= Signature.toString(parameterTypes[parameterTypes.length - 1]).replace('/', '.');
 				argumentTypeNames.add(parameterTypeName.substring(0, parameterTypeName.length() - 2) + "..."); //$NON-NLS-1$
 			} else if (parameterTypes.length > 0) {
@@ -1221,7 +1221,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#isVarargs()
 	 */
 	public boolean isVarargs() throws DebugException {
-		return getUnderlyingMethod().isVarargs();
+		return getUnderlyingMethod().isVarArgs();
 	}
 
 }

@@ -398,7 +398,7 @@ public class BinaryBasedSourceGenerator {
 			int i= 0;
 			if (parameterTypes.length != 0) {
 				source.append(Signature.toString(parameterTypes[0]).replace('/', '.')).append(" arg").append(i++); //$NON-NLS-1$
-				if (method.isVarargs()) {
+				if (method.isVarArgs()) {
 					for (int j= 1; j < parameterTypes.length - 1; j++) {
 						source.append(',').append(Signature.toString(parameterTypes[j]).replace('/', '.')).append(" arg").append(i++); //$NON-NLS-1$
 					}
@@ -419,7 +419,7 @@ public class BinaryBasedSourceGenerator {
 			if (arguments.size() != 0) {
 				Iterator iterator= arguments.iterator();
 				source.append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
-				if (method.isVarargs()) {
+				if (method.isVarArgs()) {
 					while (iterator.hasNext()) {
 						source.append(',');
 						String argName = getDotName((String) iterator.next());

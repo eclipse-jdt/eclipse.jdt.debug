@@ -29,7 +29,7 @@ public interface Method extends TypeComponent , Locatable , Comparable {
 	public boolean isObsolete();
 	public boolean isStaticInitializer();
 	public boolean isSynchronized();
-	public boolean isVarargs();
+	public boolean isVarArgs();
 	public Location locationOfCodeIndex(long arg1);
 	public List locationsOfLine(int arg1) throws AbsentInformationException;
 	public List locationsOfLine(String arg1, String arg2, int arg3) throws AbsentInformationException;
