@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -82,6 +83,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
 				
 				// add attributes
+				attributes.put(IBreakpoint.ID, getModelIdentifier());
 				attributes.put(TYPE_NAME, exceptionName);
 				attributes.put(ENABLED, new Boolean(true));
 				attributes.put(CAUGHT, new Boolean(caught));
