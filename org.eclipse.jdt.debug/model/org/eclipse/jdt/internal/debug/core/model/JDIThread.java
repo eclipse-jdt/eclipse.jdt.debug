@@ -395,7 +395,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					underlyingFrame= (StackFrame) frames.get(underlyingFramesIndex);
 					modelFrame= (JDIStackFrame) fStackFrames.get(modelFramesIndex);
 					if (!equalFrame(underlyingFrame, modelFrame.getLastUnderlyingStackFrame())) {
-						modelFrame.clearCachedData();
 						modelFrame.setUnderlyingStackFrame(underlyingFrame);
 					}
 				}

@@ -904,6 +904,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @param frame The underlying stack frame
 	 */
 	protected void setUnderlyingStackFrame(StackFrame frame) {
+		clearCachedData();
 		if (frame != null) {
 			fLastStackFrame = frame;
 		} else {
@@ -993,7 +994,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * The underlying stack frame has changed in such a way
 	 * that the cached data may not be valid.
 	 */
-	protected void clearCachedData() {
+	private void clearCachedData() {
 		fMethod= null;
 		fThisObject= null;
 		fDeclaringTypeName= null;
