@@ -1057,31 +1057,35 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			boolean showTypes= isShowVariableTypeNames();
 			StringBuffer buff= new StringBuffer();
 			IJavaValue javaValue= (IJavaValue) expression.getValue();
-			String typeName=null;
-			try {
-				typeName= javaValue.getReferenceTypeName();
-			} catch (DebugException exception) {
-				// ObjectCollectedException is an expected exception which will
-				// occur if the inspected object has been garbage collected.
-				if (exception.getStatus().getException() instanceof ObjectCollectedException) {
-					return DebugUIMessages.getString("JDIModelPresentation.<garbage_collected_object>_6"); //$NON-NLS-1$
-				} else {
-					throw exception;
+			if (javaValue != null) {
+				String typeName=null;
+				try {
+					typeName= javaValue.getReferenceTypeName();
+				} catch (DebugException exception) {
+					// ObjectCollectedException is an expected exception which will
+					// occur if the inspected object has been garbage collected.
+					if (exception.getStatus().getException() instanceof ObjectCollectedException) {
+						return DebugUIMessages.getString("JDIModelPresentation.<garbage_collected_object>_6"); //$NON-NLS-1$
+					} else {
+						throw exception;
+					}
 				}
-			}
-			if (showTypes ) {
-				typeName= getQualifiedName(typeName);
-				if (typeName.length() > 0) {
-					buff.append(typeName);
-					buff.append(' ');
+				if (showTypes ) {
+					typeName= getQualifiedName(typeName);
+					if (typeName.length() > 0) {
+						buff.append(typeName);
+						buff.append(' ');
+					}
 				}
 			}
 			buff.append(label);
 
-			String valueString= getValueText(javaValue);
-			if (valueString.length() > 0) {
-				buff.append("= "); //$NON-NLS-1$
-				buff.append(valueString);
+			if (javaValue != null) {
+				String valueString= getValueText(javaValue);
+				if (valueString.length() > 0) {
+					buff.append("= "); //$NON-NLS-1$
+					buff.append(valueString);
+				}
 			}
 			return buff.toString();
 		}
