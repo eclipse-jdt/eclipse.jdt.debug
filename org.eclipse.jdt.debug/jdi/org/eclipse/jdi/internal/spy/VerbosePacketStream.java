@@ -135,7 +135,7 @@ public class VerbosePacketStream extends PrintStream {
 		
 	private static final byte[] zeros;
 	static {
-		zeros= new byte[32];
+		zeros= new byte[16];
 		Arrays.fill(zeros, (byte)'0');
 	}
 	
@@ -2491,7 +2491,6 @@ public class VerbosePacketStream extends PrintStream {
 	protected void printHexString(String hex, int width) {
 		width-= hex.length();
 		print("0x"); //$NON-NLS-1$
-		
 		write(zeros, 0, width);
 		print(hex);
 	}
