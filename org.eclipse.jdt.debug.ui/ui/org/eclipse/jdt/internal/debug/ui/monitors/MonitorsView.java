@@ -235,7 +235,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
-		menu.add(new Separator("vmGroup"));
+		menu.add(new Separator("vmGroup")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
@@ -243,7 +243,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(IToolBarManager)
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
-		tbm.add(new Separator("vmGroup"));
+		tbm.add(new Separator("vmGroup")); //$NON-NLS-1$
 	}
 
 	/**
@@ -283,7 +283,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 			return;
 		}
 		if(JDIDebugModel.getMonitorManager().getNumberOfDeadlocks() == 0){
-			showMessage("No deadlock detected");
+			showMessage(MonitorMessages.getString("MonitorsView.No_deadlock_detected_3")); //$NON-NLS-1$
 		} else{
 			getPageBook().showPage(getDeadLocksViewer().getControl());
 		}

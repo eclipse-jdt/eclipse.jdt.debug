@@ -45,33 +45,20 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 			
 		if (item instanceof DeadLocksViewContentProvider.ContentThreadWrapper) {
 			return getThreadDeadLockText((DeadLocksViewContentProvider.ContentThreadWrapper)item);
-		}
-	
-		else if (item instanceof DeadLocksViewContentProvider.ContentMonitorWrapper) {
+		} else if (item instanceof DeadLocksViewContentProvider.ContentMonitorWrapper) {
 			return getMonitorText((IJavaObject)((DeadLocksViewContentProvider.ContentMonitorWrapper)item).fMonitor);
-		}
-		
-		else if (item instanceof IJavaObject) {
+		} else if (item instanceof IJavaObject) {
 			return getMonitorText((IJavaObject)item);
-		}
-
-		else if (item instanceof IJavaThread) {
+		} else if (item instanceof IJavaThread) {
 			return getThreadText((IJavaThread)item);
-		}			
-		
-		else if (item instanceof ThreadsViewContentProvider.MonitorWrapper) {
+		} else if (item instanceof ThreadsViewContentProvider.MonitorWrapper) {
 			return getMonitorWrapperText((ThreadsViewContentProvider.MonitorWrapper)item);
-		}
-
-		else if (item instanceof MonitorsViewContentProvider.ThreadWrapper) {
+		} else if (item instanceof MonitorsViewContentProvider.ThreadWrapper) {
 			return getThreadWrapperMonitorText((MonitorsViewContentProvider.ThreadWrapper)item);
-		}
-
-		else if (item instanceof ThreadsViewContentProvider.ThreadWrapper) {
+		} else if (item instanceof ThreadsViewContentProvider.ThreadWrapper) {
 			return getThreadWrapperThreadText((ThreadsViewContentProvider.ThreadWrapper)item);
-		}						
-		else {
-			return "unsuported type";	
+		} else {
+			return MonitorMessages.getString("MonitorModelPresentation.unsuported_type_1");	 //$NON-NLS-1$
 		}
 	}
 
@@ -79,32 +66,32 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 	 * Text for a ThreadWrapper in DeadLocksViewContentProvider
 	 */
 	protected String getThreadDeadLockText(DeadLocksViewContentProvider.ContentThreadWrapper thread){
-		String res="";
+		StringBuffer res= new StringBuffer();
 		try{
-			res += thread.fThread.getName();
+			res.append(thread.fThread.getName());
 		} catch(DebugException e){
 		}
 		
 		if(thread.caughtInADeadLock){
-			res += " (caught in the deadlock)";
+			res.append(MonitorMessages.getString("MonitorModelPresentation._(caught_in_the_deadlock)_2")); //$NON-NLS-1$
 		}
-		return res;
+		return res.toString();
 	}
 
 	/**
 	 * Text for ThreadWrapper in DeadLocksViewContentProvider
 	 */
 	protected String getContentThreadWrapperText(DeadLocksViewContentProvider.ContentThreadWrapper ctw){
-		String res="";
+		StringBuffer res= new StringBuffer();
 		try{
-			res += ctw.fThread.getName();
+			res.append(ctw.fThread.getName());
 		}
 		catch (DebugException e) {
 		}
 		if(ctw.caughtInADeadLock){
-			res += " (caught in a deadlock)";
+			res.append(MonitorMessages.getString("MonitorModelPresentation._(caught_in_a_deadlock)_3")); //$NON-NLS-1$
 		}
-		return res;	
+		return res.toString();	
 	}
 
 	/**
@@ -118,54 +105,59 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 	 * Text for MonitorWrapper in ThreadsViewContentProvider
 	 */
 	protected String getMonitorWrapperText(ThreadsViewContentProvider.MonitorWrapper monitor) {
-		String res="";
-		res += monitor.monitor.toString();
-		if(monitor.state==ThreadsViewContentProvider.MonitorWrapper.OWNED_MONITOR)
-			res += " (owned)";
-		else if(monitor.state==ThreadsViewContentProvider.MonitorWrapper.CONTENDED_MONITOR)
-			res += " (contended)";
-		return res;
+		StringBuffer res= new StringBuffer(monitor.monitor.toString());
+		if(monitor.state==ThreadsViewContentProvider.MonitorWrapper.OWNED_MONITOR) {
+			res.append(MonitorMessages.getString("MonitorModelPresentation._(owned)_4")); //$NON-NLS-1$
+		} else if(monitor.state==ThreadsViewContentProvider.MonitorWrapper.CONTENDED_MONITOR) {
+			res.append(MonitorMessages.getString("MonitorModelPresentation._(contended)_5")); //$NON-NLS-1$
+		}
+		return res.toString();
 	}
 
 	/**
 	 * Text for ThreadWrapper in ThreadsViewContentProvider
 	 */
 	protected String getThreadWrapperThreadText(ThreadsViewContentProvider.ThreadWrapper thread) {
-		String res="";
+		StringBuffer res= new StringBuffer();
 		try{
-			res += thread.thread.getName();
-		} catch(Exception e){}
+			res.append(thread.thread.getName());
+		} catch(DebugException e){
+		}
 		
-		if(thread.isCaughtInDeadlock)
-			res += " (caught in a deadlock)";
-		return res;
+		if(thread.isCaughtInDeadlock) {
+			res.append(MonitorMessages.getString("MonitorModelPresentation._(caught_in_a_deadlock)_6")); //$NON-NLS-1$
+		}
+		return res.toString();
 	}
 
 	/**
 	 * Text for ThreadWrapper in MonitorsViewContentProvider
 	 */
 	protected String getThreadWrapperMonitorText(MonitorsViewContentProvider.ThreadWrapper thread) {
-		String res="";
+		StringBuffer res= new StringBuffer();
 		try{
-			res += thread.thread.getName();
-		} catch(Exception e){}
+			res.append(thread.thread.getName());
+		} catch(DebugException e){
+		}
 		
-		if(thread.state==MonitorsViewContentProvider.ThreadWrapper.OWNING_THREAD)
-			res += " (owning)";
-		else if(thread.state==MonitorsViewContentProvider.ThreadWrapper.CONTENDING_THREAD)
-			res += " (contending)";
-		return res;
+		if(thread.state == MonitorsViewContentProvider.ThreadWrapper.OWNING_THREAD) {
+			res.append(MonitorMessages.getString("MonitorModelPresentation._(owning)_7")); //$NON-NLS-1$
+		} else if(thread.state==MonitorsViewContentProvider.ThreadWrapper.CONTENDING_THREAD) {
+			res.append(MonitorMessages.getString("MonitorModelPresentation._(contending)_8")); //$NON-NLS-1$
+		}
+		return res.toString();
 	}
 
 	/**
 	 * Text for threads
 	 */	
 	protected String getThreadText(IJavaThread thread){
-		String res = "";
+		StringBuffer res = new StringBuffer();
 		try{
-			res += thread.getName();
-		} catch(Exception e){}
-		return res;
+			res.append(thread.getName());
+		} catch(DebugException e){
+		}
+		return res.toString();
 	}
 
 	/**
@@ -177,21 +169,13 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 				
 		if (item instanceof ThreadsViewContentProvider.ThreadWrapper) {
 			return getThreadWrapperThreadImage((ThreadsViewContentProvider.ThreadWrapper)item);
-		}						
-		
-		else if (item instanceof ThreadsViewContentProvider.MonitorWrapper) {
+		} else if (item instanceof ThreadsViewContentProvider.MonitorWrapper) {
 			return getMonitorWrapperThreadImage((ThreadsViewContentProvider.MonitorWrapper)item);
-		}
-
-		else if (item instanceof MonitorsViewContentProvider.ThreadWrapper) {
+		} else if (item instanceof MonitorsViewContentProvider.ThreadWrapper) {
 			return getThreadWrapperMonitorImage((MonitorsViewContentProvider.ThreadWrapper)item);
-		}
-
-		else if (item instanceof IJavaObject) {
+		} else if (item instanceof IJavaObject) {
 			return getMonitorImage((IJavaObject)item);
-		}
-		
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -201,11 +185,11 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 	 */
 	private Image getMonitorWrapperThreadImage(ThreadsViewContentProvider.MonitorWrapper monitor){
 		ImageDescriptor res=null;
-		if(monitor.state==ThreadsViewContentProvider.MonitorWrapper.OWNED_MONITOR)
+		if(monitor.state==ThreadsViewContentProvider.MonitorWrapper.OWNED_MONITOR) {
 			res = JavaDebugImages.DESC_OBJ_MONITOR_OWNED;
-		//else if(monitor.state==ThreadsViewContentProvider.MonitorWrapper.CONTENDED_MONITOR)
-		else
+		} else {
 			res = JavaDebugImages.DESC_OBJ_MONITOR_WAITED;
+		}
 		return fDebugImageRegistry.get(res);
 	}
 
@@ -221,11 +205,11 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 	 */
 	private Image getThreadWrapperMonitorImage(MonitorsViewContentProvider.ThreadWrapper thread){
 		ImageDescriptor res=null;
-		if(thread.state==MonitorsViewContentProvider.ThreadWrapper.OWNING_THREAD)
+		if(thread.state==MonitorsViewContentProvider.ThreadWrapper.OWNING_THREAD) {
 			res = JavaDebugImages.DESC_OBJ_THREAD_OWNING;
-		//else if(monitor.state==ThreadsViewContentProvider.MonitorWrapper.CONTENDED_MONITOR)
-		else
+		} else {
 			res = JavaDebugImages.DESC_OBJ_THREAD_WAITING;
+		}
 		return fDebugImageRegistry.get(res);
 	}
 
