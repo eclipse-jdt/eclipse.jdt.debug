@@ -83,7 +83,7 @@ public class PacketReceiveManager extends PacketManager {
 					&& (packet = removeCommandPacket(command)) == null
 					&& (timeToWait < 0 || remainingTime > 0)) {
 			timeBeforeWait = System.currentTimeMillis();
-			waitForPacketAvailable(timeToWait);
+			waitForPacketAvailable(remainingTime);
 			waitedTime = System.currentTimeMillis() - timeBeforeWait;
 			remainingTime -= waitedTime;
 		}
