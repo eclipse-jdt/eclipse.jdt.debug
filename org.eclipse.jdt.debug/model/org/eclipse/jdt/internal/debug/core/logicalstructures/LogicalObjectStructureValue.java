@@ -106,14 +106,14 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
-	public IVariable[] getVariables() throws DebugException {
+	public IVariable[] getVariables() {
 		return fVariables;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
-	public boolean hasVariables() throws DebugException {
+	public boolean hasVariables() {
 		return fVariables.length > 0;
 	}
 
