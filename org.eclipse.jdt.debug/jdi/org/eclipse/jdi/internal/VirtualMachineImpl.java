@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -120,7 +124,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean[] fHcrCapabilities = null;
 	
 	/*
-	 * singletons for primitive types	 */
+	 * singletons for primitive types
+	 */
 	private BooleanTypeImpl fBooleanType;
 	private ByteTypeImpl fByteType;
 	private CharTypeImpl fCharType;
@@ -1184,7 +1189,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	}
 	
 	/**
-	 * Return the boolean type for this VM.	 */
+	 * Return the boolean type for this VM.
+	 */
 	protected BooleanTypeImpl getBooleanType() {
 		if (fBooleanType == null) {
 			fBooleanType= new BooleanTypeImpl(this);

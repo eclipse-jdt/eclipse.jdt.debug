@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -139,7 +143,10 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	/**
 	 * Reutrns if the JDI version being used is greater than or equal to the
 	 * given version (major, minor).
-	 * 	 * @param version	 * @return boolean	 */
+	 * 
+	 * @param version
+	 * @return boolean
+	 */
 	public static boolean isJdiVersionGreaterThanOrEqual(int[] version) {
 		int[] runningVersion = getJDIVersion();
 		return runningVersion[0] > version[0] || (runningVersion[0] == version[0] && runningVersion[1] >= version[1]);

@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.breakpoints;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
  
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -297,8 +301,11 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	/**
 	 * Returns whether the given type is in the given filter set.
 	 * 
-	 * @param filters the filter set	 * @param typeName fully qualified type name
-	 * @param defaultPackage whether the type name is in the default package	 * @return boolean	 */
+	 * @param filters the filter set
+	 * @param typeName fully qualified type name
+	 * @param defaultPackage whether the type name is in the default package
+	 * @return boolean
+	 */
 	protected boolean matchesFilters(String[] filters, String typeName, boolean defaultPackage) {
 		for (int i = 0; i < filters.length; i++) {
 			String filter = filters[i];

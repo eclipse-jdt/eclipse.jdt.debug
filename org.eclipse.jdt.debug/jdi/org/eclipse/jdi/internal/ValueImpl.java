@@ -1,15 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdi.internal;
 
-/**********************************************************************
-Copyright (c) 2000, 2001, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-**********************************************************************/
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -162,7 +162,8 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	 * @throws InvalidTypeException if the value and the type are not both
 	 * primitive or not primitive or, in case of primitive, if the given
 	 * value is no assignment compatible with the given type.
-	 * @see checkPrimitiveValue(PrimitiveValueImpl, PrimitiveTypeImpl, PrimitiveTypeImpl)	 */
+	 * @see checkPrimitiveValue(PrimitiveValueImpl, PrimitiveTypeImpl, PrimitiveTypeImpl)
+	 */
 	protected static ValueImpl checkValue(Value value, Type type, VirtualMachineImpl vm) throws InvalidTypeException {
 		if (value == null) {
 			if (type instanceof PrimitiveType) {
