@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
  
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -311,7 +312,10 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		while (tokenizer.hasMoreElements()) {
 			encoded.append(urlDelimiter);
 			String token= tokenizer.nextToken();
-			encoded.append(URLEncoder.encode(token));
+			try {
+				encoded.append(URLEncoder.encode(token, "UTF-8")); // $NON-NLS-1$
+			} catch (UnsupportedEncodingException e) {
+			}
 		}
 		if (file.isDirectory()) {
 			encoded.append(urlDelimiter);
