@@ -1264,11 +1264,7 @@ public final class JavaRuntime {
 	/**
 	 * Make the name of a detected VM stand out.
 	 */	private static String generateDetectedVMName(IVMInstall vm) {
-		StringBuffer nameBuffer = new StringBuffer(LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
-		nameBuffer.append(" ("); //$NON-NLS-1$
-		nameBuffer.append(vm.getInstallLocation().getName());
-		nameBuffer.append(')');
-		return nameBuffer.toString();
+		return vm.getInstallLocation().getName();
 	}
 	
 	/**
