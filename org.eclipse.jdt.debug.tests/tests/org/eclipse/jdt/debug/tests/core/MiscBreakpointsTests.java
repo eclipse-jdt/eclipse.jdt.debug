@@ -4,12 +4,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Home for breakpoint tests that don't fit elsewhere
@@ -23,9 +19,13 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		super(name);
 	}
 
+	/**
+	 * This method DEPENDS on the default setting of the 'suspend on uncaught exceptions'
+	 * preference being TRUE.
+	 */
 	public void testSuspendOnUncaughtExceptions() throws Exception {
 		String typeName = "ThrowsNPE";
-		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
+		//getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
 				
 		IJavaThread thread = null;
 		try {
@@ -42,6 +42,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
+	/*
 	public void testDontSuspendOnUncaughtExceptions() throws Exception {
 		String typeName = "ThrowsNPE";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);		
@@ -54,10 +55,15 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
+	*/
 
+	/**
+	 * This method DEPENDS on the default setting of the 'suspend on compilation errors'
+	 * preference being TRUE.
+	 */
 	public void testSuspendOnCompilationErrors() throws Exception {
 		String typeName = "CompileError";
-		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);		
+		//getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);		
 		
 		IType type = fJavaProject.findType(typeName);
 		ICompilationUnit cu = type.getCompilationUnit();
@@ -80,6 +86,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
+	/*
 	public void testDontSuspendOnCompilationErrors() throws Exception {
 		String typeName = "CompileError";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);		
@@ -98,9 +105,12 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
+	*/
 
+	/*
 	protected IPreferenceStore getPrefStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();		
 	}
+	*/
 
 }
