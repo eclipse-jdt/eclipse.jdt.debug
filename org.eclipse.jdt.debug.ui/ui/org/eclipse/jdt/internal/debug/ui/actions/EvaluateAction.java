@@ -67,6 +67,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 
+import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -443,16 +444,15 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 	
 	protected String getExceptionMessage(Throwable exception) {
-		if (exception instanceof DebugException) {
-			DebugException de = (DebugException)exception;
-			Throwable t= de.getStatus().getException();
-			if (t != null) {
-				return getWrappedExceptionMessage(t);
-			}
-		}
-		
 		if (exception instanceof CoreException) {
-			CoreException ce= (CoreException) exception;
+			CoreException ce = (CoreException)exception;
+			Throwable throwable= ce.getStatus().getException();
+			if (throwable instanceof com.sun.jdi.InvocationException) {
+				return getInvocationExceptionMessage((com.sun.jdi.InvocationException)t);
+			} else if (throwable instanceof CoreException) {
+				// Traverse nested CoreExceptions
+				return getExceptionMessage(t);
+			}
 			return ce.getStatus().getMessage();
 		}
 		String message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.direct_exception"), new Object[] { exception.getClass() }); //$NON-NLS-1$
@@ -460,6 +460,15 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.exception.pattern"), new Object[] { message, exception.getMessage() }); //$NON-NLS-1$
 		}
 		return message;
+	}
+
+	/**
+	 * Returns a message for the exception wrapped in an invocation exception
+	 */
+	protected String getInvocationExceptionMessage(com.sun.jdi.InvocationException exception) {
+			InvocationException ie= (InvocationException) exception;
+			ObjectReference ref= ie.exception();
+			return MessageFormat.format(ActionMessages.getString("Evaluate.error.message.wrapped_exception"), new Object[] { ref.referenceType().name() }); //$NON-NLS-1$
 	}
 	
 	protected void reportErrors(IEvaluationResult result) {
@@ -491,15 +500,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			}
 		}
 		return message;
-	}
-	
-	protected String getWrappedExceptionMessage(Throwable exception) {
-		if (exception instanceof com.sun.jdi.InvocationException) {
-			InvocationException ie= (InvocationException) exception;
-			ObjectReference ref= ie.exception();
-			return MessageFormat.format(ActionMessages.getString("Evaluate.error.message.wrapped_exception"), new Object[] { ref.referenceType().name() }); //$NON-NLS-1$
-		} else
-			return getExceptionMessage(exception);
 	}
 	
 	/**
