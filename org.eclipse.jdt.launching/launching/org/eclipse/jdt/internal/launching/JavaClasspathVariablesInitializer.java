@@ -5,6 +5,9 @@ package org.eclipse.jdt.internal.launching;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -12,7 +15,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.ClasspathVariableInitializer;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -74,25 +76,39 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 			IWorkspace workspace= ResourcesPlugin.getWorkspace();
 			boolean wasAutobuild= setAutobuild(workspace, false);
 			try {
+				List changedVars= new ArrayList(3);
+				List changedPaths= new ArrayList(3);
 				LibraryLocation desc= JavaRuntime.getLibraryLocation(vmInstall);
 				IPath library= desc.getSystemLibraryPath();
-				setMonitor(new SubProgressMonitor(monitor, 1));
-				setJREVariable(library, JavaRuntime.JRELIB_VARIABLE);
+				if (changedJREVariable(library, JavaRuntime.JRELIB_VARIABLE)) {
+					changedVars.add(JavaRuntime.JRELIB_VARIABLE);
+					changedPaths.add(library);
+				}
 				IPath source= desc.getSystemLibrarySourcePath();
-				setMonitor(new SubProgressMonitor(monitor, 1));
-				setJREVariable(source, JavaRuntime.JRESRC_VARIABLE);
+				if (changedJREVariable(source, JavaRuntime.JRESRC_VARIABLE)) {
+					changedVars.add(JavaRuntime.JRESRC_VARIABLE);
+					changedPaths.add(source);
+				}
 				IPath pkgRoot= desc.getPackageRootPath();
-				setMonitor(new SubProgressMonitor(monitor, 1));		
-				setJREVariable(pkgRoot, JavaRuntime.JRESRCROOT_VARIABLE);
+				if (changedJREVariable(pkgRoot, JavaRuntime.JRESRCROOT_VARIABLE)) {
+					changedVars.add(JavaRuntime.JRESRCROOT_VARIABLE);
+					changedPaths.add(pkgRoot);
+				}
+				JavaCore.setClasspathVariables((String[])changedVars.toArray(new String[changedVars.size()]), (IPath[])changedPaths.toArray(new IPath[changedPaths.size()]), monitor);
 			} finally {
 				setAutobuild(workspace, wasAutobuild);
 			}
 		}
 	}
 	
-	private void setJREVariable(IPath newPath, String var) throws CoreException {
+	
+	private boolean changedJREVariable(IPath newPath, String var) throws CoreException {
 		IPath oldPath= JavaCore.getClasspathVariable(var);
-		if (!newPath.equals(oldPath)) {
+		return !newPath.equals(oldPath);
+	}
+	
+	private void setJREVariable(IPath newPath, String var) throws CoreException {
+		if (changedJREVariable(newPath, var)) {
 			JavaCore.setClasspathVariable(var, newPath, getMonitor());
 		}
 	}
