@@ -97,11 +97,20 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * Resumes threads that were suspended by this event set.
 	 */
 	private void resumeThreads() {
+		if (fEvents.size() == 1) {
+			// Most event sets have only one event.
+			// Avoid expensive object creation.
+			((EventImpl)fEvents.get(0)).thread().resume();
+			return;
+		}
 		Iterator iter = fEvents.iterator();
+		List resumedThreads= new ArrayList(fEvents.size());
 		while (iter.hasNext()) {
 			EventImpl event = (EventImpl)iter.next();
-			if (event.thread() != null) {
-				event.thread().resume();
+			ThreadReference thread= event.thread();			
+			if (thread != null && !resumedThreads.contains(thread)) {
+				thread.resume();
+				resumedThreads.add(thread);
 			}
 		}
 	}
