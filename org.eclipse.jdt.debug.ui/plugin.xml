@@ -501,7 +501,7 @@
 	<launchConfigurationTab
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.Main"
 		type ="org.eclipse.jdt.debug.ui.localJavaApplication"
-		class="org.eclipse.debug.internal.ui.launcher.MainTab"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.MainTab"
 		name="Main">
 	</launchConfigurationTab>
 </extension>
