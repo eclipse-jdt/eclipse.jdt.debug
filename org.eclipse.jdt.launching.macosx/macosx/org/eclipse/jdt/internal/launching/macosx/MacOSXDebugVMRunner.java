@@ -25,4 +25,8 @@ public class MacOSXDebugVMRunner extends StandardVMDebugger {
 	protected Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
 		return super.exec(MacOSXLaunchingPlugin.wrap(getClass(), cmdLine), workingDirectory);
 	}
+	
+	protected Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
+		return super.exec(MacOSXLaunchingPlugin.wrap(getClass(), cmdLine), workingDirectory, envp);
+	}	
 }
