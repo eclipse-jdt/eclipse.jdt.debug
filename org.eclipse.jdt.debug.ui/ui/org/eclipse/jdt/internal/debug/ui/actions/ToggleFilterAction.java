@@ -59,5 +59,4 @@ public abstract class ToggleFilterAction extends ToggleDelegateAction {
 	protected String getToolTipText(boolean on) {
 		return on ? getShowText() : getHideText();
 	}
-
 }
