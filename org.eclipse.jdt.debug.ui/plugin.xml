@@ -2431,6 +2431,11 @@
             icon="icons/full/obj16/prj_obj.gif"
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.javaProject">
       </sourceContainerPresentation>      
+      <sourceContainerPresentation
+            containerTypeID="org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot"
+            icon="icons/full/obj16/jar_obj.gif"
+            id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.packageFragmentRoot">
+      </sourceContainerPresentation>      
    </extension>
 	<extension point="org.eclipse.core.runtime.adapters">
          <factory 
