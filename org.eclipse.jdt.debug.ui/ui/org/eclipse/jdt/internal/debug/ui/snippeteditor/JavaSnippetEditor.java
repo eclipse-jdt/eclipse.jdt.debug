@@ -131,6 +131,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				if (assistant instanceof ContentAssistant) {
 					JDIContentAssistPreference.changeConfiguration((ContentAssistant) assistant, event);
 				}				
+				
+				handlePreferenceStoreChanged(event);
 			}
 		}
 	};
@@ -713,6 +715,14 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				}
 			}
 		}
+	}
+	
+	/**
+	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
+	 */
+	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
+		JavaTextTools textTools= JavaPlugin.getDefault().getJavaTextTools();
+		return textTools.affectsBehavior(event);
 	}
 	
 	protected IJavaThread getThread() {
