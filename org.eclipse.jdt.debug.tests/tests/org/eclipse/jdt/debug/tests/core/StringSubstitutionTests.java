@@ -574,7 +574,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		assertEquals(resource.getName(), delegate.getVMArguments(wc));
 		File workingDir = delegate.getWorkingDirectory(wc);
 		assertNotNull(workingDir);
-		assertEquals(resource.getProject().getLocation().toString(), workingDir.toString());
+		assertEquals(resource.getProject().getLocation().toOSString(), workingDir.toString());
 	}
 	
 	/**
