@@ -164,7 +164,13 @@ public abstract class JDIModificationVariable extends JDIVariable {
 					vmValue= vm.mirrorOf(doubleValue);
 					break;
 				case 'L' :
-					vmValue= vm.mirrorOf(expression);
+					if (expression.equals("null")) { //$NON-NLS-1$
+						vmValue = null;
+					} else if (expression.equals("\"null\"")) { //$NON-NLS-1$
+						vmValue = vm.mirrorOf("null"); //$NON-NLS-1$
+					} else {
+						vmValue= vm.mirrorOf(expression);
+					}
 					break;
 
 			}
@@ -179,10 +185,9 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	 */
 	public boolean verifyValue(String expression) {
 		try {
-			Value vmValue= generateVMValue(expression);
-			return vmValue != null;
+			IValue value = JDIValue.createValue(getJavaDebugTarget(), generateVMValue(expression));
+			return verifyValue(value);
 		} catch (DebugException e) {
-			logError(e);
 			return false;
 		}
 	}
@@ -200,11 +205,6 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	 */
 	public final void setValue(String expression) throws DebugException {
 	 	Value value= generateVMValue(expression);
-
-		if (value == null) {
-			requestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIModificationVariable.value_modification_failed"), new String[] {expression}), null); //$NON-NLS-1$
-		} 
-
 		setValue(value);
 		fireChangeEvent(DebugEvent.CONTENT);
 	}
