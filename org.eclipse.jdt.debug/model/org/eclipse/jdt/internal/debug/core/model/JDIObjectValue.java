@@ -16,8 +16,6 @@ import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
-import sun.security.krb5.internal.i;
-import sun.security.krb5.internal.crypto.e;
 
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
