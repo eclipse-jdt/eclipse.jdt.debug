@@ -41,9 +41,9 @@ public class JDIArrayPartition extends JDIVariable {
 	public String getName() throws DebugException {
 		StringBuffer name = new StringBuffer();
 		name.append('[');  //$NON-NLS-1$
-		name.append(fStart);
+		name.append(getStart());
 		name.append(".."); //$NON-NLS-1$
-		name.append(fEnd);
+		name.append(getEnd());
 		name.append(']');  //$NON-NLS-1$
 		return name.toString();
 	}
@@ -90,16 +90,15 @@ public class JDIArrayPartition extends JDIVariable {
 		return children;
 	}
 	
-	public int getStart() {
+	protected int getStart() {
 		return fStart;
 	}
 	
-	public int getEnd() {
+	protected int getEnd() {
 		return fEnd;
-	}
-	
+	}	
 
-	public ArrayReference getArrayReference() {
+	protected ArrayReference getArrayReference() {
 		return fArray;
 	}
 	
