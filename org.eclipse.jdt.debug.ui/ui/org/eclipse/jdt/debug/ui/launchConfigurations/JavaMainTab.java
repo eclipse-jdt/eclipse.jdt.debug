@@ -40,6 +40,8 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodFinder;
+import org.eclipse.jdt.internal.debug.ui.launcher.MainMethodSearchEngine;
+import org.eclipse.jdt.internal.debug.ui.launcher.MainTypeSelectionDialog;
 import org.eclipse.jdt.internal.ui.util.BusyIndicatorRunnableContext;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
@@ -87,6 +89,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	protected Text fMainText;
 	protected Button fSearchButton;
 	protected Button fSearchExternalJarsCheckButton;
+	protected Button fConsiderInheritedMainButton;
 	protected Button fStopInMainCheckButton;
 			
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -99,6 +102,15 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	 * @since 2.1
 	 */
 	public static final String ATTR_INCLUDE_EXTERNAL_JARS = IJavaDebugUIConstants.PLUGIN_ID + ".INCLUDE_EXTERNAL_JARS"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean launch configuration attribute indicating whether types inheriting
+	 * a main method should be considerd when searching for a main type.
+	 * Default value is <code>false</code>.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String ATTR_CONSIDER_INHERITED_MAIN = IJavaDebugUIConstants.PLUGIN_ID + ".CONSIDER_INHERITED_MAIN"; //$NON-NLS-1$	
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
@@ -192,7 +204,16 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
-		});			
+		});	
+		
+		fConsiderInheritedMainButton = new Button(comp, SWT.CHECK);
+		fConsiderInheritedMainButton.setText(LauncherMessages.getString("JavaMainTab.22")); //$NON-NLS-1$
+		fConsiderInheritedMainButton.setFont(font);
+		fConsiderInheritedMainButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});		
 
 		fStopInMainCheckButton = new Button(comp, SWT.CHECK);
 		fStopInMainCheckButton.setText(LauncherMessages.getString("JavaMainTab.St&op_in_main_1")); //$NON-NLS-1$
@@ -212,6 +233,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		updateProjectFromConfig(config);
 		updateMainTypeFromConfig(config);
 		updateStopInMainFromConfig(config);
+		updateInheritedMainsFromConfig(config);
 		updateExternalJars(config);
 	}
 	
@@ -245,6 +267,16 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		fStopInMainCheckButton.setSelection(stop);
 	}
 	
+	protected void updateInheritedMainsFromConfig(ILaunchConfiguration configuration) {
+		boolean inherit = false;
+		try {
+			inherit = configuration.getAttribute(ATTR_CONSIDER_INHERITED_MAIN, false);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		fConsiderInheritedMainButton.setSelection(inherit);
+	}	
+	
 	protected void updateExternalJars(ILaunchConfiguration configuration) {
 		boolean search = false;
 		try {
@@ -275,6 +307,13 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		} else {
 			config.setAttribute(ATTR_INCLUDE_EXTERNAL_JARS, (String)null);
 		}
+		
+		// attribute added in 3.0, so null must be used instead of false for backwards compatibility
+		if (fConsiderInheritedMainButton.getSelection()) {
+			config.setAttribute(ATTR_CONSIDER_INHERITED_MAIN, true);
+		} else {
+			config.setAttribute(ATTR_CONSIDER_INHERITED_MAIN, (String)null);
+		}		
 	}
 			
 	/**
@@ -301,13 +340,20 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			constraints |= IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS;
 		}
 		
+		MainMethodSearchEngine engine = new MainMethodSearchEngine();
+		IType[] types = null;
+		try {
+			types = engine.searchMainMethods(getLaunchConfigurationDialog(), searchScope, constraints, fConsiderInheritedMainButton.getSelection());
+		} catch (InvocationTargetException e) {
+			setErrorMessage(e.getMessage());
+			return;
+		} catch (InterruptedException e) {
+			setErrorMessage(e.getMessage());
+			return;
+		}
+		
 		Shell shell = getShell();
-		SelectionDialog dialog = JavaUI.createMainTypeDialog(shell, 
-															 getLaunchConfigurationDialog(), 
-															 searchScope, 
-															 constraints, 
-															 false, 
-															 fMainText.getText()); 
+		SelectionDialog dialog = new MainTypeSelectionDialog(shell, types); 
 		dialog.setTitle(LauncherMessages.getString("JavaMainTab.Choose_Main_Type_11")); //$NON-NLS-1$
 		dialog.setMessage(LauncherMessages.getString("JavaMainTab.Choose_a_main_&type_to_launch__12")); //$NON-NLS-1$
 		if (dialog.open() == Window.CANCEL) {
