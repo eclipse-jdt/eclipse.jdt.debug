@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -37,6 +38,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -476,7 +478,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		Object sourceElement = locator.getSourceElement(stackFrame);
 		if (sourceElement instanceof IJavaElement) {
 			return ((IJavaElement) sourceElement).getJavaProject();
-		}			
+		} else if (sourceElement instanceof IResource) {
+			IJavaProject project = JavaCore.create(((IResource)sourceElement).getProject());
+			if (project.exists()) {
+				return project;
+			}
+		}
 		return null;
 	}
 	

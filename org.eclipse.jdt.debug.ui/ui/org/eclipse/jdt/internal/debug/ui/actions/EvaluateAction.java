@@ -15,6 +15,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.text.MessageFormat;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -30,6 +31,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -58,6 +60,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -264,6 +267,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		Object sourceElement = locator.getSourceElement(stackFrame);
 		if (sourceElement instanceof IJavaElement) {
 			return (IJavaElement) sourceElement;
+		} else if (sourceElement instanceof IResource) {
+			IJavaProject project = JavaCore.create(((IResource)sourceElement).getProject());
+			if (project.exists()) {
+				return project;
+			}
 		}			
 		return null;
 	}
