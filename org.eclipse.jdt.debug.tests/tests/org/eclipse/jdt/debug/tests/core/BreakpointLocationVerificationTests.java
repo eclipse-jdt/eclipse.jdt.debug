@@ -33,7 +33,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	private void testLocation(int lineToTry, int expectedLineNumber, String expectedTypeName) throws JavaModelException {
 		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
-		CompilationUnit compilationUnit= AST.parseCompilationUnit(type.getCompilationUnit(), false);
+		CompilationUnit compilationUnit= AST.parseCompilationUnit(type.getCompilationUnit(), false, null, null);
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineToTry);
 		compilationUnit.accept(locator);
 		int lineNumber= locator.getValidLocation();		
@@ -105,7 +105,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
 		ICompilationUnit unit= type.getCompilationUnit();
-		CompilationUnit compilationUnit= AST.parseCompilationUnit(unit, false);
+		CompilationUnit compilationUnit= AST.parseCompilationUnit(unit, false, null, null);
 		int offset= new Document(unit.getSource()).getLineOffset(line - 1) + offsetInLine;
 		BreakpointFieldLocator locator= new BreakpointFieldLocator(offset);
 		compilationUnit.accept(locator);
@@ -127,7 +127,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
 		ICompilationUnit unit= type.getCompilationUnit();
-		CompilationUnit compilationUnit= AST.parseCompilationUnit(unit, false);
+		CompilationUnit compilationUnit= AST.parseCompilationUnit(unit, false, null, null);
 		int offset= new Document(unit.getSource()).getLineOffset(line - 1) + offsetInLine;
 		BreakpointMethodLocator locator= new BreakpointMethodLocator(offset);
 		compilationUnit.accept(locator);
