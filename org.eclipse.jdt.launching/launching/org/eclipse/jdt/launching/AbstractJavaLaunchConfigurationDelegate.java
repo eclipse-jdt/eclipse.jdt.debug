@@ -37,17 +37,17 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
-import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 /**
  * Abstract implementation of a Java launch configuration delegate.
@@ -616,14 +616,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	protected void setDefaultSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
 		//  set default source locator if none specified
 		if (launch.getSourceLocator() == null) {
-			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
-			if (id == null) {
-				IJavaProject javaProject = getJavaProject(configuration);
-				if (javaProject != null) {
-					ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
-					launch.setSourceLocator(sourceLocator);					
-				}
-			}
+			ISourceLookupDirector sourceLocator = new JavaSourceLookupDirector();
+			sourceLocator.setSourcePathComputer(getLaunchManager().getSourcePathComputer("org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer")); //$NON-NLS-1$
+			sourceLocator.initializeDefaults(configuration);
+			launch.setSourceLocator(sourceLocator);					
 		}
 	}
 	
