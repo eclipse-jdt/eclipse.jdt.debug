@@ -239,7 +239,24 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		addEventRequest(STEP_INDEX, req);
 		return req;
 	}
+	
+	/**
+	 * Enables class prepare requests for all loaded classes.  This is
+	 * necessary for current versions of the KVM to function correctly.
+	 * This method is only called when the remote VM is determined to be
+	 * the KVM.
+	 */
+	public void enableInternalClassPrepareEvent() {
+		// Note that these requests are not stored in the set of outstanding requests because
+		// they must be invisible from outside.
+		ClassPrepareRequestImpl requestPrepare =
+			new ClassPrepareRequestImpl(virtualMachineImpl());
+		requestPrepare.setGeneratedInside();
+		requestPrepare.setSuspendPolicy(ClassPrepareRequest.SUSPEND_NONE);
 
+		requestPrepare.enable();
+	}
+	
 	/**
 	 * Creates ClassUnloadRequest for maintaining class information for within JDI.
 	 * Needed to known when to flush the cache.

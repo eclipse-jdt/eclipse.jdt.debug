@@ -844,6 +844,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			fJdwpMinorVersion = readInt("minor version", replyData); //$NON-NLS-1$
 			fVMVersion = readString("version", replyData); //$NON-NLS-1$
 			fVMName = readString("name", replyData); //$NON-NLS-1$
+			
+			if ((fVMName != null) && fVMName.equals("KVM")) { //$NON-NLS-1$
+				// KVM requires class preparation events in order
+				// to resolve things correctly
+				eventRequestManagerImpl().enableInternalClassPrepareEvent();
+			}
+
 		} catch (IOException e) {
 			fVersionDescription = null;
 			defaultIOExceptionHandler(e);
