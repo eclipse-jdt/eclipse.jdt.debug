@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -36,6 +37,10 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	 */
 	protected ILaunchConfiguration fFrom;
 	protected ILaunchConfiguration fTo;
+	
+	protected Object fLock = new Object();
+	protected ILaunchConfiguration fAdded;
+	protected ILaunchConfiguration fRemoved;
 	
 	public LaunchConfigurationTests(String name) {
 		super(name);
@@ -575,6 +580,10 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
 		fFrom = getLaunchManager().getMovedFrom(configuration);
+		synchronized (fLock) {
+		    fAdded = configuration;
+		    fLock.notifyAll();
+        }
 	}
 
 	/**
@@ -588,6 +597,10 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	 */
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
 		fTo = getLaunchManager().getMovedTo(configuration);
+		synchronized (fLock) {
+		    fRemoved = configuration;
+		    fLock.notifyAll();
+        }
 	}
 
 	protected void addConfigListener() {
@@ -596,6 +609,42 @@ public class LaunchConfigurationTests extends AbstractDebugTest implements ILaun
 	
 	protected void removeConfigListener() {
 		getLaunchManager().removeLaunchConfigurationListener(this);
+	}
+	
+	/**
+	 * Ensures that a removal notification is sent for a shared config in a project
+	 * that is deleted.
+	 *  
+	 * @throws Exception
+	 */
+	public void testDeleteProjectWithSharedConfig() throws Exception {
+	   IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("DeleteSharedConfig");
+	   try {
+		   assertFalse("project should not exist yet", project.exists());
+		   project.create(null);
+		   assertTrue("project should now exist", project.exists());
+		   project.open(null);
+		   assertTrue("project should be open", project.isOpen());
+		   ILaunchConfigurationWorkingCopy wc = newConfiguration(project, "ToBeDeleted");
+		   
+		   addConfigListener();
+		   ILaunchConfiguration configuration = wc.doSave();
+		   assertEquals(configuration, fAdded);
+		   
+		   synchronized (fLock) {
+		       fRemoved = null;
+		       project.delete(true, false, null);
+		       if (fRemoved == null) {
+		           fLock.wait(10000);
+		       }
+		   }
+		   assertEquals(configuration, fRemoved);
+	   } finally {
+	       if (project.exists()) {
+	           project.delete(true, false, null);
+	       }
+	       removeConfigListener();
+	   }
 	}
 }
 
