@@ -64,8 +64,6 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	/** Is thread currently at a breakpoint? */
 	private boolean fIsAtBreakpoint = false;
 	
-	/** The following are the stored results of JDWP calls. */
-	private String fName = null;
 	/**
 	 * The cached thread group. A thread's thread group cannot be changed.
 	 */

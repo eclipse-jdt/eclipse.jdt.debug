@@ -61,8 +61,6 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	/** The following are the stored results of JDWP calls. */
 	private ClassTypeImpl fSuperclass = null;
 	
-	private List fAllInterfaces = null;
-	
 	/**
 	 * Creates new ClassTypeImpl.
 	 */
@@ -136,15 +134,17 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	 	while (methods.hasNext()) {
 	 		method = (MethodImpl)methods.next();
 	 		if (method.name().equals(name) && method.signature().equals(signature)) {
-	 			if (method.isAbstract())
+	 			if (method.isAbstract()) {
 	 				return null;
-	 			else
+	 			} else {
 	 				return method;
+	 			}
 	 		}
 	 	}
 	 	
-		if (superclass() != null)
+		if (superclass() != null) {
 			return superclass().concreteMethodByName(name, signature);
+		}
 		
 		return null;
 	}
