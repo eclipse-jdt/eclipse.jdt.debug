@@ -485,7 +485,9 @@ public abstract class Tests extends AbstractDebugTest {
 			terminateAndRemove(fSuspendeeThread);
 		} finally {
 			removeAllBreakpoints();
-			fEngine.dispose();
+			if (fEngine != null) {
+				fEngine.dispose();
+			}
 		}
 		fFrame = null;
 	}
