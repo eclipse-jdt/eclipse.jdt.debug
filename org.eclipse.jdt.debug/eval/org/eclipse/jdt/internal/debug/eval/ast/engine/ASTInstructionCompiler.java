@@ -1841,12 +1841,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		switch (binding.getKind()) {
 			case IBinding.TYPE:
 				node.getName().accept(this);
+				break;
 			case IBinding.VARIABLE:
 				String signature = getTypeSignature(node.getQualifier().resolveTypeBinding());
 		
 				push(new PushFieldVariable(node.getName().getIdentifier(), signature, fCounter));
 				node.getQualifier().accept(this);
 				storeInstruction();
+				break;
 		}
 		
 		return false;
