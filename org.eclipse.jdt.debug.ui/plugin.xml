@@ -375,7 +375,7 @@
       <perspectiveExtension
             targetID="org.eclipse.debug.ui.DebugPerspective">
          <view
-               relative="org.eclipse.debug.ui.ExpressionView"
+               relative="org.eclipse.debug.ui.BreakpointView"
                relationship="stack"
                id="org.eclipse.jdt.debug.ui.DisplayView">
          </view>
