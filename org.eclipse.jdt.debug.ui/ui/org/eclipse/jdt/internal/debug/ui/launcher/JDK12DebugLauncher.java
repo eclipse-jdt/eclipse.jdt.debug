@@ -160,7 +160,7 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 		port.setValue(portNumber);
 		
 		Connector.IntegerArgument timeoutArg= (Connector.IntegerArgument) map.get("timeout"); //$NON-NLS-1$
-		timeoutArg.setValue(timeout);
+		timeoutArg.setValue(20000);
 		
 		
 	}
