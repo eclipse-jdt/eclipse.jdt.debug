@@ -31,6 +31,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 /**
  * A watch expression is an expression which is re-evaluated after every thread
@@ -43,6 +44,49 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
  * @see org.eclipse.debug.core.model.IExpression
  */
 public class JavaWatchExpression extends PlatformObject implements IExpression, IDebugEventSetListener {
+	
+	/**
+	 * Runnable used to evaluate the snippet.
+	 */
+	private final class EvaluationRunnable implements Runnable {
+		
+		private final IJavaStackFrame javaStackFrame;
+		
+		private EvaluationRunnable(IJavaStackFrame javaStackFrame) {
+			super();
+			this.javaStackFrame= javaStackFrame;
+		}
+		
+		public void run() {
+			IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(getProject(javaStackFrame), fDebugTarget);
+			// the evaluation listener
+			IEvaluationListener listener= new IEvaluationListener() {
+				public void evaluationComplete(IEvaluationResult result) {
+					if (result.hasErrors()) {
+						setHasError(true);
+					} else {
+						fResultValue= result.getValue();
+					}
+					setPending(false);
+					refresh();
+					synchronized (this) {
+						notifyAll();
+					}
+				}
+			};
+			synchronized (listener) {
+				try {
+					evaluationEngine.evaluate(fExpressionText, javaStackFrame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
+				} catch (DebugException e) {
+					JDIDebugPlugin.log(e);
+				}
+				try {
+					listener.wait();
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+	}
 
 	/**
 	 * The expression is enable for implicit (re-)evaluation.
@@ -216,35 +260,15 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 		fResultValue= null;
 		setHasError(false);
 		setObsolete(false);
-		final IJavaProject project= getProject(javaStackFrame);
-		if (project == null) {
+		if (getProject(javaStackFrame) == null) {
 			setHasError(true);
 			refresh();
 			return;
 		}
 		setPending(true);
+		refresh();
 		fDebugTarget= (IJavaDebugTarget)javaStackFrame.getDebugTarget();
-		DebugPlugin.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				refresh();
-				IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, fDebugTarget);
-				IEvaluationListener listener= new IEvaluationListener() {
-					public void evaluationComplete(IEvaluationResult result) {
-						if (result.hasErrors()) {
-							setHasError(true);
-						} else {
-							fResultValue= result.getValue();
-						}
-						setPending(false);
-						refresh();
-					}
-				};
-				try {
-					evaluationEngine.evaluate(fExpressionText, javaStackFrame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-				} catch (DebugException e) {
-				}
-			}
-		});
+		DebugPlugin.getDefault().asyncExec(new EvaluationRunnable(javaStackFrame));
 	}
 
 	/**
