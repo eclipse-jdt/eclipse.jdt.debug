@@ -81,10 +81,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	private boolean fRefreshVariables= true;
 	/**
-	 * Whether this stack frame has been declared out of synch
+	 * Whether this stack frame has been marked as out of synch. If set
+	 * to <code>true</code> this stack frame will stop dynamically
+	 * calculating its out of synch state.
 	 */
 	private boolean fIsOutOfSynch= false;
-	
 	/**
 	 * The source name debug attribute. Cached lazily on first access.
 	 */
@@ -802,9 +803,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		return tos != null && tos.equals(this);
 	}
 	
+	/**
+	 * Sets this stack frame to be out of synch.
+	 * Note that passing <code>true</code> to this method
+	 * marks this stack frame as out of synch permanently (statically).
+	 */
 	public void setOutOfSynch(boolean outOfSynch) {
 		fIsOutOfSynch= outOfSynch;
-		fireChangeEvent(DebugEvent.STATE);
 	}
 	
 	/**
@@ -815,7 +820,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return true;
 		}
 		if (((JDIDebugTarget)getDebugTarget()).isOutOfSynch(getUnderlyingMethod().declaringType().name())) {
-			fIsOutOfSynch= true;
 			return true;
 		}
 		return false;

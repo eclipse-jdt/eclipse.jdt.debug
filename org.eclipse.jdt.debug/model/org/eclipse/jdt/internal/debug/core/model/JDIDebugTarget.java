@@ -9,10 +9,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -119,7 +121,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * Collection of types that have attempted HCR, but failed.
 	 * The types are stored by their fully qualified names.
 	 */
-	private List fOutOfSynchTypes;
+	private Set fOutOfSynchTypes;
 	/**
 	 * Whether or not this target has performed a hot code replace.
 	 */
@@ -227,7 +229,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		setName(name);
 		setBreakpoints(new ArrayList(5));
 		setThreadList(new ArrayList(5));
-		setOutOfSynchTypes(new ArrayList(2));
+		setOutOfSynchTypes(new ArrayList(0));
 		setHCROccurred(false);
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
@@ -582,6 +584,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 
 	public void typesHaveChanged(List resources, List qualifiedNames) throws DebugException {
+		fOutOfSynchTypes.removeAll(qualifiedNames);
 		if (supportsJDKHotCodeReplace()) {
 			typesHaveChangedJDK(resources, qualifiedNames);
 		} else if (supportsJ9HotCodeReplace()) {
@@ -679,7 +682,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * to the given list.
 	 */
 	private void setOutOfSynchTypes(List qualifiedNames) {
-		fOutOfSynchTypes= qualifiedNames;
+		fOutOfSynchTypes= new HashSet();
+		fOutOfSynchTypes.addAll(qualifiedNames);
 	}
 	
 	/**
@@ -687,7 +691,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public void typesFailedHCR(List qualifiedNames) {
 		fOutOfSynchTypes.addAll(qualifiedNames);
-		fireChangeEvent(DebugEvent.CONTENT);
 	}
 	
 	/**

@@ -369,6 +369,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	protected void notifyFailedHCR(JDIDebugTarget target, List resources, List qualifiedNames) {
 		if (target.isAvailable()) {
 			target.typesFailedHCR(qualifiedNames);
+			target.fireChangeEvent(DebugEvent.STATE);
 		}
 	}	
 	
@@ -434,7 +435,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				target.typesHaveChanged(resources, qualifiedNames);
 				if (containsObsoleteMethods(target)) {
 					fireObsoleteMethods(target);
-					target.fireChangeEvent(DebugEvent.CONTENT);
 				}
 				if (target.getVM().canPopFrames() && framesPopped) {
 					// Second half of JDK 1.4 drop to frame support:
@@ -456,6 +456,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				// target update failed
 				fireHCRFailed(target, de);
 			}
+			target.fireChangeEvent(DebugEvent.CONTENT);
 		}
 		if (!ms.isOK()) {
 			JDIDebugPlugin.logError(new DebugException(ms));
