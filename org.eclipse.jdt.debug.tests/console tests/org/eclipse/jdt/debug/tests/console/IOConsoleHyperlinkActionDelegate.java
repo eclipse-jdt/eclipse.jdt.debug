@@ -55,9 +55,12 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
             public int getCompilerFlags() {
                 return 0;
             }
+            
+            public String getMatchContext() {
+                return "line";
+            }
 
             public void connect(IConsole console) {
-                
             }
 
             public void disconnect() {
