@@ -231,7 +231,25 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 	/**
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
-	public void partActivated(IWorkbenchPart part) {
+	public void partActivated(final IWorkbenchPart part) {
+		if (part.getSite().getShell().getDisplay().isDisposed()) {
+			return;
+		}
+		if (part.equals(getTextEditor())) {
+			part.getSite().getShell().getDisplay().asyncExec(new Runnable() {
+				/**
+				 * @see Runnable#run()
+				 */
+				public void run() {
+					if (!part.getSite().getShell().getDisplay().isDisposed()) {
+						//must call after the editor is fully realized else we
+						//create the working copy...revisist XXX
+						update();
+					}
+				}
+			});
+
+		}
 	}
 
 	/**
