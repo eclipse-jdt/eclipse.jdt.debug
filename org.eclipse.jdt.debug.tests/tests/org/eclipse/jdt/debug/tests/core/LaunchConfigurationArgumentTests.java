@@ -280,5 +280,6 @@ public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
 		assertEquals(outputValue, retriever.getOutput());
 		terminateAndRemove(target);
 		config.delete();
+		ConsoleLineTracker.setDelegate(null);
 	}
 }
