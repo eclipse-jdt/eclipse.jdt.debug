@@ -39,7 +39,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * Exception breakpoint attribute storing the suspend on uncaught value
 	 * (value <code>"org.eclipse.jdt.debug.core.uncaught"</code>). This attribute is stored as a
 	 * <code>boolean</code>. When this attribute is <code>true</code>, an uncaught
-	 * exception of the associated type will cause excecution to suspend. .
+	 * exception of the associated type will cause excecution to suspend.
 	 */
 	protected static final String UNCAUGHT = "org.eclipse.jdt.debug.core.uncaught"; //$NON-NLS-1$	
 	/**
@@ -51,7 +51,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	
 	/**
 	 * Name of the exception that was actually hit (could be a
-	 * subtype of the type that is being caught)
+	 * subtype of the type that is being caught).
 	 */
 	protected String fExceptionName = null;
 	
