@@ -108,9 +108,11 @@ public class JavaLogicalStructure {
 			ICompiledExpression compiledExpression= fEvaluationEngine.getCompiledExpression(snippet, fEvaluationType);
 			if (compiledExpression.hasErrors()) {
 				String[] errorMessages = compiledExpression.getErrorMessages();
+				StringBuffer log= new StringBuffer();
 				for (int i = 0; i < errorMessages.length; i++) {
-					JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, errorMessages[i], null));
+					log.append(errorMessages[i]).append('\n');
 				}
+				JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, log.toString(),null));
 				return new JavaStructureErrorValue(LogicalStructuresMessages.getString("JavaLogicalStructure.0")); //$NON-NLS-1$
 			}
 			fResult= null;
@@ -128,10 +130,20 @@ public class JavaLogicalStructure {
 			}
 			if (fResult.hasErrors()) {
 				DebugException exception = fResult.getException();
+				String message;
 				if (exception != null) {
 					JDIDebugPlugin.log(exception);
+					message= MessageFormat.format(LogicalStructuresMessages.getString("JavaLogicalStructure.2"), new String[] { exception.getMessage() }); //$NON-NLS-1$
+				} else {
+					StringBuffer log= new StringBuffer();
+					String[] errorMessages = fResult.getErrorMessages();
+					for (int i = 0; i < errorMessages.length; i++) {
+						log.append(errorMessages[i]).append('\n');
+					}
+					JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, log.toString(),null));
+					message= LogicalStructuresMessages.getString("JavaLogicalStructure.3"); //$NON-NLS-1$
 				}
-				return new JavaStructureErrorValue(MessageFormat.format(LogicalStructuresMessages.getString("JavaLogicalStructure.2"), new String[] { exception.getMessage() })); //$NON-NLS-1$
+				return new JavaStructureErrorValue(message);
 			}
 			return fResult.getValue();
 		}
