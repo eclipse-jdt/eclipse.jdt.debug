@@ -8,9 +8,11 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
  
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IResource;
@@ -62,18 +64,20 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	protected static final String CHECKED = "org.eclipse.jdt.debug.core.checked"; //$NON-NLS-1$	
 	
 	/**
-	 * Exception breakpoint attribute storing the inclusive value (value <code>"org.eclipse.jdt.debug.core.inclusive_filters"</code>).
-	 * This attribute is stored as a <code>boolean</code>, indicating whether class
-	 * filters are inclusive or exclusive.
+	 * Exception breakpoint attribute storing the String value (value <code>"org.eclipse.jdt.debug.core.filters"</code>).
+	 * This attribute is stored as a <code>String</code>, a comma delimited list
+	 * of class filters.  The filters are applied as inclusion or exclusion depending on 
+	 * INCLUSIVE_FILTERS.
 	 */
-	protected static final String INCLUSIVE_FILTERS = "org.eclipse.jdt.debug.core.inclusive_filters"; //$NON-NLS-1$	
+	protected static final String INCLUSION_FILTERS = "org.eclipse.jdt.debug.core.inclusion_filters"; //$NON-NLS-1$	
+	
 	/**
 	 * Exception breakpoint attribute storing the String value (value <code>"org.eclipse.jdt.debug.core.filters"</code>).
 	 * This attribute is stored as a <code>String</code>, a comma delimited list
 	 * of class filters.  The filters are applied as inclusion or exclusion depending on 
 	 * INCLUSIVE_FILTERS.
 	 */
-	protected static final String FILTERS = "org.eclipse.jdt.debug.core.filters"; //$NON-NLS-1$	
+	protected static final String EXCLUSION_FILTERS = "org.eclipse.jdt.debug.core.exclusion_filters"; //$NON-NLS-1$	
 	/**
 	 * Name of the exception that was actually hit (could be a
 	 * subtype of the type that is being caught).
@@ -81,15 +85,14 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	protected String fExceptionName = null;
 	
 	/**
-	 * The current set of class filters.
+	 * The current set of inclusion class filters.
 	 */
-	protected String[] fClassFilters= null;
+	protected String[] fInclusionClassFilters= null;
 	
 	/**
-	 * The current common pattern generated from the set of filters
-	 * May be null.
+	 * The current set of inclusion class filters.
 	 */
-	protected String fCommonPattern;
+	protected String[] fExclusionClassFilters= null;
 	
 	public JavaExceptionBreakpoint() {
 	}
@@ -125,7 +128,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				attributes.put(CAUGHT, new Boolean(caught));
 				attributes.put(UNCAUGHT, new Boolean(uncaught));
 				attributes.put(CHECKED, new Boolean(checked));
-				attributes.put(INCLUSIVE_FILTERS, Boolean.TRUE);
 				
 				ensureMarker().setAttributes(attributes);
 				
@@ -301,7 +303,11 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	public boolean handleEvent(Event event, JDIDebugTarget target) {
 		if (event instanceof ExceptionEvent) {
 			setExceptionName(((ExceptionEvent)event).exception().type().name());
-			if (getClassFilters().length > 1 || classFiltersIncludeDefaultPackage()) {
+			if (getExclusionClassFilters().length > 1 
+				|| getInclusionClassFilters().length > 1
+				|| (getExclusionClassFilters().length + getInclusionClassFilters().length) >= 2
+				|| filtersIncludeDefaultPackage(fInclusionClassFilters) 
+				|| filtersIncludeDefaultPackage(fExclusionClassFilters)) {
 				if (isExceptionEventExcluded((ExceptionEvent)event)) {
 					return true;
 				}
@@ -310,9 +316,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		return super.handleEvent(event, target);
 	}
 	
-	protected boolean classFiltersIncludeDefaultPackage() {
-		for (int i = 0; i < fClassFilters.length; i++) {
-			if (fClassFilters[i].length() == 0 || (fClassFilters[i].indexOf('.') == -1)) {
+	protected boolean filtersIncludeDefaultPackage(String[] filters) {
+		for (int i = 0; i < filters.length; i++) {
+			if (filters[i].length() == 0 || (filters[i].indexOf('.') == -1)) {
 				return true;
 			}
 		}
@@ -327,31 +333,59 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		Location location= event.location();
 		String fullyQualifiedName= location.declaringType().name();
 		boolean defaultPackage= fullyQualifiedName.indexOf('.') == -1;
-		String[] filters= getClassFilters();
-		
-		try {
-			boolean inclusive= isInclusiveFiltered();
-			if (defaultPackage) {
-				for (int i= 0; i < filters.length; i++) {
-					if (filters[i].length() == 0 || filters[i].equals(fullyQualifiedName)){
-						return !inclusive;
-					}	
-				}
-			} else {
-				for (int i= 0; i < filters.length; i++) {
-					if (filters[i].length() == 0) {
-						continue;
-					}
-					StringMatcher matcher= new StringMatcher(filters[i], false, false);
-					if (matcher.match(fullyQualifiedName)) {
-						return !inclusive;
+		String[] iFilters= getInclusionClassFilters();
+		String[] eFilters= getExclusionClassFilters();
+		boolean excluded= false;
+		String iFilter= null;
+		String eFilter= null;
+		if (iFilters.length > 0) {
+			iFilter= isExceptionEventExcluded(defaultPackage, true, fullyQualifiedName, iFilters);
+			if (iFilter == null) { //no inclusion filter pertained
+				if (eFilters.length > 0) {
+					if (isExceptionEventExcluded(defaultPackage, false, fullyQualifiedName, eFilters) != null) {
+						excluded = true;
 					}
 				}
-			} 
-		} catch (CoreException ce) {
-			JDIDebugPlugin.log(ce);
+			} else { //an inclusion filter pertained
+				if (eFilters.length > 0) {
+					eFilter= isExceptionEventExcluded(defaultPackage, false, fullyQualifiedName, eFilters);
+					if (eFilter != null) {
+						//excluded if more specific exclusion
+						StringMatcher m= new StringMatcher(iFilter, false, false);
+						StringMatcher.Position pos1= m.find(fullyQualifiedName, 0, fullyQualifiedName.length());
+						StringMatcher m2= new StringMatcher(eFilter, false, false);
+						StringMatcher.Position pos2= m2.find(fullyQualifiedName, 0, fullyQualifiedName.length());
+						return (pos2.getEnd() - pos2.getStart()) > (pos1.getEnd() - pos1.getStart());
+						//excluded= eFilter.length() > iFilter.length();
+					}
+				} 
+			}
 		}
-		return false;
+		
+		return excluded;
+	}
+	
+	protected String isExceptionEventExcluded(boolean defaultPackage, boolean inclusion, String fullyQualifiedName, String[] filters) {
+		
+		if (defaultPackage) {
+			for (int i= 0; i < filters.length; i++) {
+				if (filters[i].length() == 0 || filters[i].equals(fullyQualifiedName)){
+					return filters[i];
+				}	
+			}
+		} else {
+			for (int i= 0; i < filters.length; i++) {
+				if (filters[i].length() == 0) {
+					continue;
+				}
+				StringMatcher matcher= new StringMatcher(filters[i], false, false);
+				if (matcher.match(fullyQualifiedName)) {
+					return filters[i];
+				}
+			}
+		} 
+
+		return null;
 	}
 	
 	/**
@@ -374,25 +408,193 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @see IJavaExceptionBreakpoint#getFilters()
 	 */
 	public String[] getFilters() throws CoreException {
-		return getClassFilters();
+		String[] iFilters= getInclusionFilters();
+		String[] eFilters= getExclusionFilters();
+		String[] filters= new String[iFilters.length + eFilters.length];
+		System.arraycopy(iFilters, 0, filters, 0, iFilters.length);
+		System.arraycopy(eFilters, 0, filters, iFilters.length, eFilters.length);
+		return filters;
 	}
 	
 	/**
 	 * @see IJavaExceptionBreakpoint#setFilters(String[], boolean)
 	 */
 	public void setFilters(String[] filters, boolean inclusive) throws CoreException {
-		String serializedFilters= serializeList(filters);
-		if (inclusive == ensureMarker().getAttribute(INCLUSIVE_FILTERS, true)) {
-			if (serializedFilters.equals(ensureMarker().getAttribute(FILTERS, ""))) { //$NON-NLS-1$
-				//no change
-				return;
+		if (inclusive) {
+			setInclusionFilters(filters);
+		} else {
+			setExclusionFilters(filters);
+		}
+	}
+	
+	/**
+	 * Adds the filtering to the exception request
+	 */
+	protected void configureRequest(EventRequest eRequest, JDIDebugTarget target) throws CoreException {
+		String[] iFilters= getInclusionClassFilters();
+		String[] eFilters= getExclusionClassFilters();
+		
+		/*if (iFilters.length > 0) {
+			getInclusionGreatestCommonPatternFilter(iFilters);
+		} 
+		if (eFilters.length > 0) {
+			getExclusionGreatestCommonPatternFilter(eFilters);
+		}*/
+		ExceptionRequest request= (ExceptionRequest)eRequest;
+		
+		/*if (fInclusionCommonPattern != null) {
+			if (fExclusionCommonPattern != null) {
+				//no filters added do the work ourselves
+			} else {
+				request.addClassFilter(fInclusionCommonPattern);
+			}
+		} else {
+			request.addClassExclusionFilter(fExclusionCommonPattern);
+		}*/
+		if (iFilters.length == 1) {
+			if (eFilters.length ==0) {
+				request.addClassFilter(iFilters[0]);
+			}
+		} else if (eFilters.length == 1) {
+			if (iFilters.length == 0) {
+				request.addClassExclusionFilter(iFilters[0]);
 			}
 		}
-		setClassFilters(filters);
-		fCommonPattern= null;
 		
-		setAttributes(new String[]{INCLUSIVE_FILTERS, FILTERS}, new Object[]{new Boolean(inclusive), serializedFilters});
+		super.configureRequest(eRequest, target);
+	}
+	
+	/**
+	 * Serializes the array of Strings into one comma
+	 * separated String.
+	 * Removes duplicates.
+	 */
+	protected String serializeList(String[] list) {
+		if (list == null) {
+			return ""; //$NON-NLS-1$
+		}
+		Set set= new HashSet(list.length);
+
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < list.length; i++) {
+			if (i > 0) {
+				buffer.append(',');
+			}
+			String pattern= list[i];
+			if (!set.contains(pattern)) {
+				if (pattern.length() == 0) {
+					//serialize the default package
+					pattern= "."; //$NON-NLS-1$
+				}
+				buffer.append(pattern);
+			}
+		}
+		return buffer.toString();
+	}	
+	
+	/**
+	 * Parses the comma separated String into an array of Strings
+	 */
+	protected String[] parseList(String listString) {
+		List list = new ArrayList(10);
+		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			if (token.equals(".")) { //$NON-NLS-1$
+				//serialized form for the default package
+				//@see serializeList(String[])
+				token= ""; //$NON-NLS-1$
+			}
+			list.add(token);
+		}
+		return (String[])list.toArray(new String[list.size()]);
+	}
+	
+	/**
+	 * @see IJavaExceptionBreakpoint#isInclusiveFiltered()
+	 */
+	public boolean isInclusiveFiltered() throws CoreException {
+		return ensureMarker().getAttribute(INCLUSION_FILTERS, "").length() > 0;
+	}
+	
+	protected String[] getInclusionClassFilters() {
+		if (fInclusionClassFilters == null) {
+			try {
+				fInclusionClassFilters= parseList(ensureMarker().getAttribute(INCLUSION_FILTERS, "")); //$NON-NLS-1$
+			} catch (CoreException ce) {
+				fInclusionClassFilters= new String[]{};
+			}
+		}
+		return fInclusionClassFilters;
+	}
+
+	protected void setInclusionClassFilters(String[] filters) {
+		fInclusionClassFilters = filters;
+	}
+	
+	protected String[] getExclusionClassFilters() {
+		if (fExclusionClassFilters == null) {
+			try {
+				fExclusionClassFilters= parseList(ensureMarker().getAttribute(EXCLUSION_FILTERS, "")); //$NON-NLS-1$
+			} catch (CoreException ce) {
+				fExclusionClassFilters= new String[]{};
+			}
+		}
+		return fExclusionClassFilters;
+	}
+
+	protected void setExclusionClassFilters(String[] filters) {
+		fExclusionClassFilters = filters;
+	}
+	
+	/**
+	 * @see JavaBreakpoint#installableReferenceType(ReferenceType, JDIDebugTarget)
+	 */
+	protected boolean installableReferenceType(ReferenceType type, JDIDebugTarget target) throws CoreException {
+		String installableType= getTypeName();
+		String queriedType= type.name();
+		if (installableType == null || queriedType == null) {
+			return false;
+		}
+		if (installableType.equals(queriedType)) {
+			return queryInstallListeners(target, type);
+		}
 		
+		return false;
+	}
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#getExclusionFilters()
+	 */
+	public String[] getExclusionFilters() throws CoreException {
+		return getExclusionClassFilters();
+	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#getInclusionFilters()
+	 */
+	public String[] getInclusionFilters() throws CoreException {
+		return getInclusionClassFilters();
+	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#setExclusionFilters(String[])
+	 */
+	public void setExclusionFilters(String[] filters) throws CoreException {
+		String serializedFilters= serializeList(filters);
+		
+		if (serializedFilters.equals(ensureMarker().getAttribute(EXCLUSION_FILTERS, ""))) { //$NON-NLS-1$
+			//no change
+			return;
+		}
+
+		setExclusionClassFilters(filters);
+		
+		setAttribute(EXCLUSION_FILTERS, serializedFilters);
+		
+		updateRequestForFilters();
+	}
+
+	protected void updateRequestForFilters() throws CoreException {
 		IDebugTarget[] targets= DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
 		for (int i = 0; i < targets.length; i++) {
 			IDebugTarget t = targets[i];
@@ -416,183 +618,24 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			}
 		}
 	}
-	
-	/**
-	 * Adds the filtering to the exception request
-	 */
-	protected void configureRequest(EventRequest eRequest, JDIDebugTarget target) throws CoreException {
-		String[] filters= getClassFilters();
-		if (filters.length > 0 ) {
-			boolean inclusive= ensureMarker().getAttribute(INCLUSIVE_FILTERS, true);
-			String pattern= ""; //$NON-NLS-1$
-			//emulated for more than one class filter
-			//as class filters must all be satisfied for the event to occur
-			if (filters.length == 1) {	
-				pattern= filters[0];
-			} else {
-				pattern= getGreatestCommonPatternFilter();
-			}
-			if (pattern.length() > 0) {
-				ExceptionRequest request= (ExceptionRequest)eRequest;
-				if (inclusive) {
-					request.addClassFilter(pattern);
-				} else {
-					request.addClassExclusionFilter(pattern);
-				}
-			}
-		}
-		super.configureRequest(eRequest, target);
-	}
-	
-	/**
-	 * Returns the longest common pattern from the class filters specified
-	 * for this breakpoint.
-	 */
-	protected String getGreatestCommonPatternFilter() {
-		if (fCommonPattern != null) {
-			return fCommonPattern;
-		}
-		String[] filters= null;
-		StringBuffer buff= new StringBuffer();
-		try {
-			filters= parseList(ensureMarker().getAttribute(FILTERS, "")); //$NON-NLS-1$
-		} catch(DebugException e) {
-			return buff.toString();
-		}
-		int max=0;
-		int longest= 0;
-		for (int i= 0;i < filters.length; i++) {
-			String filter = filters[i];
-			int length= filter.length();
-			if (length > max) {
-				max= length;
-				longest= i;
-			}
-		}
-		int index= 0;
-		String longestFilter= filters[longest];
-		filters[longest]= null;
-		char current= longestFilter.charAt(index);
-		boolean common= true;
-		if (current != '*') {
-			while (common) {
-				for (int i = 0; i < filters.length; i++) {
-					String filter = filters[i];
-					if (filter == null) {
-						//filter ended with a '*'
-						continue;
-					}
-					if (filter.length() <= index) {
-						common= false;
-						break;
-					}
-					char other= filter.charAt(index);
-					if (other == '*') {
-						if (index == 0) {
-							common= false;
-							break;
-						} else if (index == filter.length() - 1) {
-							filters[i] = null;
-						}
-					} else if (other != current) {
-						common= false;
-						break;
-					}
-				}
-				if (common) {
-					buff.append(current);
-					index++;
-					if (index == max) {
-						break;
-					}
-					current= longestFilter.charAt(index);
-				}
-			}
-		}
-		if (buff.length() > 0) {
-			if (buff.charAt(buff.length() - 1) != '*') {
-				buff.append('*');
-			}
-		}
-		fCommonPattern= buff.toString();
-		return fCommonPattern;
-	}
-	/**
-	 * Serializes the array of Strings into one comma
-	 * separated String.
-	 */
-	protected String serializeList(String[] list) {
-		if (list == null) {
-			return ""; //$NON-NLS-1$
-		}
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < list.length; i++) {
-			if (i > 0) {
-				buffer.append(',');
-			}
-			String pattern= list[i];
-			if (pattern.length() == 0) {
-				//serialize the default package
-				pattern= "."; //$NON-NLS-1$
-			}
-			buffer.append(pattern);
-		}
-		return buffer.toString();
-	}	
-	
-	/**
-	 * Parses the comma separated String into an array of Strings
-	 */
-	protected String[] parseList(String listString) {
-		List list = new ArrayList(10);
-		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
-		while (tokenizer.hasMoreTokens()) {
-			String token = tokenizer.nextToken();
-			if (token.equals(".")) { //$NON-NLS-1$
-				//serialized form for the default package
-				//@see serializeList(String[])
-				token= ""; //$NON-NLS-1$
-			}
-			list.add(token);
-		}
-		return (String[])list.toArray(new String[list.size()]);
-	}
-	/**
-	 * @see IJavaExceptionBreakpoint#isInclusiveFiltered()
-	 */
-	public boolean isInclusiveFiltered() throws CoreException {
-		return ensureMarker().getAttribute(INCLUSIVE_FILTERS, true);
-	}
-	
-	protected String[] getClassFilters() {
-		if (fClassFilters == null) {
-			try {
-				fClassFilters= parseList(ensureMarker().getAttribute(FILTERS, "")); //$NON-NLS-1$
-			} catch (CoreException ce) {
-				fClassFilters= new String[]{};
-			}
-		}
-		return fClassFilters;
-	}
 
-	protected void setClassFilters(String[] filters) {
-		fClassFilters = filters;
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint#setInclusionFilters(String[])
+	 */
+	public void setInclusionFilters(String[] filters) throws CoreException {
+		String serializedFilters= serializeList(filters);
+		
+		if (serializedFilters.equals(ensureMarker().getAttribute(INCLUSION_FILTERS, ""))) { //$NON-NLS-1$
+			//no change
+			return;
+		}
+
+		setInclusionClassFilters(filters);
+		
+		setAttribute(INCLUSION_FILTERS, serializedFilters);
+		
+		updateRequestForFilters();
 	}
 	
-	/**
-	 * @see JavaBreakpoint#installableReferenceType(ReferenceType, JDIDebugTarget)
-	 */
-	protected boolean installableReferenceType(ReferenceType type, JDIDebugTarget target) throws CoreException {
-		String installableType= getTypeName();
-		String queriedType= type.name();
-		if (installableType == null || queriedType == null) {
-			return false;
-		}
-		if (installableType.equals(queriedType)) {
-			return queryInstallListeners(target, type);
-		}
-		
-		return false;
-	}
 }
 

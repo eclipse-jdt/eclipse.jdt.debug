@@ -25,15 +25,17 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -73,7 +75,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	private TableItem fNewTableItem;
 	private Filter fNewFilter;
 	private Label fTableLabel;
-	private TableViewer fFilterViewer;
+	private CheckboxTableViewer fFilterViewer;
 	private Table fFilterTable;
 	private Composite fOuter;
 	private Label fIncludeExcludeLabel;
@@ -89,29 +91,39 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	 */	
 	protected class FilterContentProvider implements IStructuredContentProvider {
 		
-		private TableViewer fViewer;
+		private CheckboxTableViewer fViewer;
 		private List fFilters;
 		
-		public FilterContentProvider(TableViewer viewer) {
+		public FilterContentProvider(CheckboxTableViewer viewer) {
 			fViewer = viewer;
 			populateFilters();
 		}
 		
 		protected void populateFilters() {
-			String[] filters= null;
+			String[] iFilters= null;
+			String[] eFilters= null;
 			try {
-				filters = fBreakpoint.getFilters();
+				iFilters = fBreakpoint.getInclusionFilters();
+				eFilters = fBreakpoint.getExclusionFilters();
 			} catch (CoreException ce) {
 				JDIDebugUIPlugin.log(ce);
-				filters= new String[]{};
+				iFilters= new String[]{};
+				eFilters= new String[]{};
 			}
-			fFilters= new ArrayList(1);
+			fFilters= new ArrayList();
+			populateFilters(iFilters, true);
+			populateFilters(eFilters, false);
+
+		}
+
+		protected void populateFilters(String[] filters, boolean checked) {
 			for (int i = 0; i < filters.length; i++) {
 				String name = filters[i];
 				if (name.length() == 0) {
 					name= DEFAULT_PACKAGE;
 				}
-				addFilter(name);
+				Filter filter= addFilter(name);
+				checkFilter(filter, checked);
 			}
 		}
 		
@@ -131,6 +143,17 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 				fFilters.remove(filter);
 			}
 			fViewer.remove(filters);
+		}
+		
+		public void toggleFilter(Filter filter) {
+			boolean newState = !filter.isChecked();
+			filter.setChecked(newState);
+			fViewer.setChecked(filter, newState);
+		}
+		
+		public void checkFilter(Filter filter, boolean checked) {
+			filter.setChecked(checked);
+			fViewer.setChecked(filter, checked);
 		}
 		
 		/**
@@ -155,7 +178,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	
 	public ExceptionBreakpointFilterEditor(Composite parent, IJavaExceptionBreakpoint breakpoint) {
 		fBreakpoint= breakpoint;
-		init(JavaBreakpointPreferenceStore.EXCEPTION_FILTER, ActionMessages.getString("ExceptionBreakpointFilterEditor.Re&strict_to_Selected_Location(s)__1")); //$NON-NLS-1$
+		init(JavaBreakpointPreferenceStore.EXCEPTION_FILTER, "Re&strict to Selected Location(s):\nChecked locations are inclusive (stop in the specified location)\nUnchecked locations are exclusive (do not stop in the specified location)"); //$NON-NLS-1$
 		createControl(parent);
 	}
 	
@@ -188,7 +211,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		getLabelControl(fOuter).setLayoutData(gd);
 		
 		// filter table
-		fFilterTable= new Table(fOuter, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		fFilterTable= new Table(fOuter, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		
 		TableLayout tableLayout= new TableLayout();
 		ColumnLayoutData[] columnLayoutData= new ColumnLayoutData[1];
@@ -197,7 +220,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		fFilterTable.setLayout(tableLayout);
 		new TableColumn(fFilterTable, SWT.NONE);
 
-		fFilterViewer = new TableViewer(fFilterTable);
+		fFilterViewer = new CheckboxTableViewer(fFilterTable);
 		fTableEditor = new TableEditor(fFilterTable);
 		fFilterViewer.setLabelProvider(new FilterLabelProvider());
 		fFilterViewer.setSorter(new FilterViewerSorter());
@@ -208,6 +231,12 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 		gd.widthHint = 100;
 		fFilterViewer.getTable().setLayoutData(gd);
+		fFilterViewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				Filter filter = (Filter)event.getElement();
+				fFilterContentProvider.toggleFilter(filter);
+			}
+		});
 		fFilterViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
@@ -220,7 +249,6 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		});		
 		
 		createFilterButtons(fOuter);
-		createIncludeExcludeRadioButtons(fOuter);
 	}
 
 	private void createFilterButtons(Composite container) {
@@ -291,41 +319,6 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		});
 		fRemoveFilterButton.setEnabled(false);
 		
-	}
-	
-	private void createIncludeExcludeRadioButtons(Composite container) {
-		Composite comp = new Composite(container, SWT.NONE);
-		GridLayout compLayout = new GridLayout();
-		compLayout.marginHeight = 0;
-		compLayout.marginWidth = 0;
-		comp.setLayout(compLayout);
-		
-		fIncludeExcludeLabel = new Label(comp, SWT.NONE);
-		fIncludeExcludeLabel.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.Selected_location_semantics_1"));  //$NON-NLS-1$
-		
-		Composite radioComp = new Composite(comp, SWT.NONE);
-		GridLayout radioLayout = new GridLayout();
-		radioLayout.marginHeight = 0;
-		radioLayout.marginWidth = 0;
-		radioComp.setLayout(radioLayout);
-		GridData gd = new GridData();
-		gd.horizontalIndent = HORIZONTAL_GAP;
-		radioComp.setLayoutData(gd);
-
-		fInclusiveRadioButton = new Button(radioComp, SWT.RADIO);
-		fInclusiveRadioButton.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.I&nclusive_(only_stop_in_specified_locations)_2")); //$NON-NLS-1$
-		fExclusiveRadioButton = new Button(radioComp, SWT.RADIO);
-		fExclusiveRadioButton.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.E&xclusive_(only_stop_outside_of_specified_locations)_3"));  //$NON-NLS-1$
-			
-		try {
-			if (!fBreakpoint.isInclusiveFiltered()) {
-				fExclusiveRadioButton.setSelection(true);
-			} else {
-				fInclusiveRadioButton.setSelection(true);			
-			}			
-		} catch (CoreException ce) {
-			fInclusiveRadioButton.setSelection(true);
-		}
 	}
 	
 	private GridData getButtonGridData(Button button) {
@@ -533,7 +526,8 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 				} else {
 					filter += ".*"; //$NON-NLS-1$
 				}
-				fFilterContentProvider.addFilter(filter);
+				Filter f= fFilterContentProvider.addFilter(filter);
+				fFilterContentProvider.checkFilter(f, true);
 			}
 		}		
 	}
@@ -558,10 +552,12 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		}
 		
 		Object[] types= dialog.getResult();
+		IType type;
 		if (types != null) {
 			for (int i = 0; i < types.length; i++) {
-				IType type = (IType)types[i];
-				fFilterContentProvider.addFilter(type.getFullyQualifiedName());
+				 type= (IType)types[i];
+				 Filter f= fFilterContentProvider.addFilter(type.getFullyQualifiedName());
+				 fFilterContentProvider.checkFilter(f, true);
 			}
 		}		
 	}
@@ -615,17 +611,23 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	 */
 	protected void doStore() {
 		Object[] filters= fFilterContentProvider.getElements(null);
-		String[] stringFilters= new String[filters.length];
+		List inclusionFilters= new ArrayList(filters.length);
+		List exclusionFilters= new ArrayList(filters.length);
 		for (int i = 0; i < filters.length; i++) {
 			Filter filter = (Filter)filters[i];
 			String name= filter.getName();
 			if (name.equals(DEFAULT_PACKAGE)) {
 				name= ""; //$NON-NLS-1$
 			}
-			stringFilters[i]= name;
+			if (filter.isChecked()) {
+				inclusionFilters.add(name);
+			} else {
+				exclusionFilters.add(name);
+			}
 		}
 		try {
-			fBreakpoint.setFilters(stringFilters, fInclusiveRadioButton.getSelection());
+			fBreakpoint.setInclusionFilters((String[])inclusionFilters.toArray(new String[inclusionFilters.size()]));
+			fBreakpoint.setExclusionFilters((String[])exclusionFilters.toArray(new String[exclusionFilters.size()]));
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}

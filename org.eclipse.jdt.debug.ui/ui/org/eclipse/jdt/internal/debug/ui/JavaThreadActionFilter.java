@@ -1,0 +1,41 @@
+package org.eclipse.jdt.internal.debug.ui;
+
+/**********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.ui.IActionFilter;
+
+/**
+ * Filter which determines if actions relevant to an IJavaThread should
+ * be displayed. This filter is provided to the platform by JDIDebugUIAdapterFactory.
+ */
+public class JavaThreadActionFilter implements IActionFilter {
+
+	public boolean testAttribute(Object target, String name, String value) {
+		if (target instanceof IJavaThread) {
+			if (name.equals("TerminateEvaluationActionFilter") //$NON-NLS-1$
+				&& value.equals("supportsTerminateEvaluation")) { //$NON-NLS-1$
+				IJavaThread thread = (IJavaThread) target;
+				return thread.isPerformingEvaluation();
+			} else if (name.equals("ExcludeExceptionLocationFilter") //$NON-NLS-1$
+				&& value.equals("suspendedAtException")) { //$NON-NLS-1$
+				IJavaThread thread = (IJavaThread) target;
+				IBreakpoint[] breakpoints= thread.getBreakpoints();
+				for (int i = 0; i < breakpoints.length; i++) {
+					if(breakpoints[i] instanceof IJavaExceptionBreakpoint) {
+						return true;
+					}	
+				}
+			}
+				
+		}
+		return false;
+	}
+}

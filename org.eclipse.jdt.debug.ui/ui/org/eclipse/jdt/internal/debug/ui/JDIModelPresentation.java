@@ -835,7 +835,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				if (eBreakpoint.isUncaught()) {
 					flags |= JDIImageDescriptor.UNCAUGHT;
 				}
-				if (eBreakpoint.getFilters().length > 0) {
+				if (eBreakpoint.getExclusionFilters().length > 0 || eBreakpoint.getInclusionFilters().length > 0) {
 					flags |= JDIImageDescriptor.SCOPED;
 				}
 			}
@@ -1115,7 +1115,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		appendHitCount(breakpoint, buffer);
 		appendSuspendPolicy(breakpoint, buffer);
 		appendThreadFilter(breakpoint, buffer);
-		if (breakpoint.getFilters().length > 0) {
+		if (breakpoint.getExclusionFilters().length > 0 || breakpoint.getInclusionFilters().length > 0) {
 			buffer.append(DebugUIMessages.getString("JDIModelPresentation._[scoped]_1")); //$NON-NLS-1$
 		}
 		String state= null;

@@ -338,6 +338,20 @@
 		</action>
 	</objectContribution>
 	<objectContribution
+		id="org.eclipse.jdt.debug.ExcludeExceptionAction"
+		objectClass="org.eclipse.jdt.debug.core.IJavaThread">
+		<filter name="ExcludeExceptionLocationFilter" value="suspendedAtException"/>
+		<action
+			id="org.eclipse.jdt.ui.actions.ExcludeExceptionLocation"
+			label="%excludeExceptionLocationAction.label"
+			tooltip="%excludeExceptionLocationAction.tooltip"
+			menubarPath="emptyThreadGroup"
+			helpContextId="exclude_exception_location_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExcludeExceptionLocationAction"
+			enablesFor="1">
+		</action>
+	</objectContribution>
+	<objectContribution
 		id="org.eclipse.jdt.debug.DropToFrameActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
 		<filter name="DropToFrameActionFilter" value="supportsDropToFrame"/>
@@ -656,7 +670,8 @@
 			tooltip="%openRecTypeHierarchy.tooltip"
 			menubarPath="emptyEditGroup"
 			helpContextId="open_receiving_type_hierarchy_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenReceivingTypeHierarchyAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenReceivingTypeHierarchyAction"
+			enablesFor="1">
 		</action>
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.OpenReceivingType"
@@ -664,7 +679,8 @@
 			tooltip="%openRecType.tooltip"
 			menubarPath="emptyEditGroup"
 			helpContextId="open_on_receiving_type_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenReceivingTypeAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenReceivingTypeAction"
+			enablesFor="1">
 		</action>
 	</objectContribution>
 	<objectContribution
@@ -676,7 +692,8 @@
 			tooltip="%openDeclTypeHierarchy.tooltip"
 			menubarPath="emptyEditGroup"
 			helpContextId="open_declaring_type_hierarchy_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenDeclaringTypeHierarchyAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenDeclaringTypeHierarchyAction"
+			enablesFor="1">
 		</action>
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.OpenDeclaringType"
@@ -684,7 +701,8 @@
 			tooltip="%openDeclType.tooltip"
 			menubarPath="emptyEditGroup"
 			helpContextId="open_on_declaring_type_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenDeclaringTypeAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenDeclaringTypeAction"
+			enablesFor="1">
 		</action>
 	</objectContribution>
 	<objectContribution
@@ -698,7 +716,8 @@
 			tooltip="%openConcreteVarTypeHierarchy.tooltip"
 			menubarPath="emptyNavigationGroup"
 			helpContextId="open_variable_concrete_type_hierarchy_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableConcreteTypeHierarchyAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableConcreteTypeHierarchyAction"
+			enablesFor="1">
 		</action>
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.OpenVariableConcreteType"
@@ -706,7 +725,8 @@
 			tooltip="%openConcreteVarType.tooltip"
 			menubarPath="emptyNavigationGroup"
 			helpContextId="open_variable_concrete_type_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableConcreteTypeAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableConcreteTypeAction"
+			enablesFor="1">
 		</action>
 	</objectContribution>
 	<objectContribution
@@ -719,7 +739,8 @@
 			tooltip="%openDeclVarTypeHierarchy.tooltip"
 			menubarPath="emptyNavigationGroup"
 			helpContextId="open_variable_declared_type_hierarchy_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableDeclaredTypeHierarchyAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableDeclaredTypeHierarchyAction"
+			enablesFor="1">
 		</action>
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.OpenVariableDeclaredType"
@@ -727,10 +748,10 @@
 			tooltip="%openDeclVarType.tooltip"
 			menubarPath="emptyNavigationGroup"
 			helpContextId="open_on_variable_type_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableDeclaredTypeAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableDeclaredTypeAction"
+			enablesFor="1">
 		</action>
 	</objectContribution>
-	
 	<objectContribution
 		id="org.eclipse.jdt.debug.ui.JavaVariableActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">

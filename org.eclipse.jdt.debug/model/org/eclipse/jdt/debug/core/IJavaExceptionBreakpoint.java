@@ -1,9 +1,11 @@
 package org.eclipse.jdt.debug.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import org.eclipse.core.runtime.CoreException;
 
@@ -19,6 +21,27 @@ import org.eclipse.core.runtime.CoreException;
  * @since 2.0
  */
 public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
+	/**
+	 * Sets the inclusion filters that will define the scope for the associated exception.
+	 * Filters are a collection of strings of type name prefixes.
+	 * Default packages should be specified as the empty string.
+	 * 
+	 * @param filters the array of filters to apply
+	 * @exception CoreException if unable to set the property on 
+	 *  this breakpoint's underlying marker
+	 */
+	public void setInclusionFilters(String[] filters) throws CoreException;
+
+	/**
+	 * Returns the inclusive filters that define the scope for the associated exception.
+	 * Filters are a collection of strings of type name prefixes.
+	 * 
+	 * @return the array of defined inclusive filters
+	 * @exception CoreException if unable to access the property on
+	 *  this breakpoint's underlying marker
+	 */
+	public String[] getInclusionFilters() throws CoreException;
+
 	/**
 	 * Returns whether this breakpoint suspends execution when the
 	 * associated exception is thrown in a caught location (i.e. in
@@ -93,8 +116,20 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * @param inclusive whether or not to apply the filters as inclusive or exclusive
 	 * @exception CoreException if unable to set the property on 
 	 *  this breakpoint's underlying marker
+	 * @deprecated Exception breakpoints can have a mixed set of filters. Use setInclusiveFilters(String[] filters) or setExclusiveFilters(String[] filters)
 	 */
 	public void setFilters(String[] filters, boolean inclusive) throws CoreException;
+	
+	/**
+	 * Sets the exclusion filters that will define the scope for the associated exception.
+	 * Filters are a collection of strings of type name prefixes.
+	 * Default packages should be specified as the empty string.
+	 * 
+	 * @param filters the array of filters to apply
+	 * @exception CoreException if unable to set the property on 
+	 *  this breakpoint's underlying marker
+	 */
+	public void setExclusionFilters(String[] filters) throws CoreException;
 	
 	/**
 	 * Returns the filters that define the scope for the associated exception.
@@ -103,15 +138,27 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * @return the array of defined filters
 	 * @exception CoreException if unable to access the property on
 	 *  this breakpoint's underlying marker
+	 * @deprecated Use getExclusionFilters() or getInclusionFilters()
 	 */
 	public String[] getFilters() throws CoreException;
 	
 	/**
-	 * Returns whether to apply any filters as inclusive or exclusive.
-	 * @return <code>true<code> if the filters are applied as inclusive,
-	 *  <code>false</code> if the filters are applied as exclusive
+	 * Returns the exclusive filters that define the scope for the associated exception.
+	 * Filters are a collection of strings of type name prefixes.
+	 * 
+	 * @return the array of defined inclusive filters
+	 * @exception CoreException if unable to access the property on
+	 *  this breakpoint's underlying marker
+	 */
+	public String[] getExclusionFilters() throws CoreException;
+	
+	/**
+	 * Returns whether any inclusive filters have been applied
+	 * @return <code>true<code> if the inclusive filters have been applied
 	 * @exception CoreException if unable to access the property on 
 	 *  this breakpoint's underlying marker
+	 * @deprecated Exception breakpoints can have a mixed set of filters
+	 * and this method is maintained strictly for API backwards compatibility
 	 */
 	public boolean isInclusiveFiltered() throws CoreException;
 }
