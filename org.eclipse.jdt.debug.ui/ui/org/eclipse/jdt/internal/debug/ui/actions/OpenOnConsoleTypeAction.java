@@ -159,7 +159,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 			openAndPositionEditor(type);		
 		} catch (JavaModelException jme) {
 			JDIDebugUIPlugin.log(jme);
-			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_searching_for_type_2"), null, jme.getStatus());			 //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_searching_for_type_1"), null, jme.getStatus());			 //$NON-NLS-1$
 		}
 	}
 	
@@ -198,6 +198,10 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 				IEditorInput input = textEditor.getEditorInput();
 				IDocumentProvider provider = textEditor.getDocumentProvider();
 				IDocument document = provider.getDocument(input);
+				if (document.getLength() == 0) {
+					//class file editor with no source
+					return;
+				}
 				int lineOffset = document.getLineOffset(zeroBasedLineNumber);
 				int lineLength = document.getLineLength(zeroBasedLineNumber);
 				textEditor.selectAndReveal(lineOffset, lineLength);
@@ -207,10 +211,10 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_opening_editor_5"), null, jme.getStatus()); 			 //$NON-NLS-1$
 		} catch (PartInitException pie) {
 			JDIDebugUIPlugin.log(pie);
-			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_opening_editor_6"), null, pie.getStatus()); 						 //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_opening_editor_5"), null, pie.getStatus()); 						 //$NON-NLS-1$
 		} catch (BadLocationException ble) {
 			JDIDebugUIPlugin.log(ble);
-			MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_console_document_7"), ble.getMessage()); //$NON-NLS-1$
+			MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Open_Type_3"), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_editor_document")); //$NON-NLS-1$  //$NON-NLS-2$
 		} 
 	}
 	
@@ -244,7 +248,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 					parseSelection(lineText);
 				} catch (BadLocationException ble) {
 					JDIDebugUIPlugin.log(ble);
-					MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_console_document_8"), ble.getMessage()); //$NON-NLS-1$
+					MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Open_Type_3"), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_console_document_7")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}		
@@ -300,10 +304,19 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 		int lastPkgDot = qualifiedName.lastIndexOf('.');
 		if (lastPkgDot == -1) {
 			setPkgName(null);
+			int lastInnerClass= qualifiedName.lastIndexOf('$');
+			if (lastInnerClass == -1) {
+				qualifiedName= qualifiedName.substring(lastInnerClass + 1);
+			}
 			setTypeName(qualifiedName);
 		} else {
 			setPkgName(qualifiedName.substring(0, lastPkgDot));
-			setTypeName(qualifiedName.substring(lastPkgDot + 1, qualifiedName.length()));
+			String typeName= qualifiedName.substring(lastPkgDot + 1);
+			int lastInnerClass= typeName.lastIndexOf('$');
+			if (lastInnerClass != -1) {
+				typeName= typeName.substring(lastInnerClass + 1);
+			}
+			setTypeName(typeName);
 		}
 		
 		// look for line #
@@ -370,7 +383,12 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 	}
 
 	protected void setTypeName(String typeName) {
-		fTypeName = typeName;
+		if (typeName != null) {
+			fTypeName = typeName.replace('$', '.');
+		} else {
+			fTypeName= null;
+		}
+
 	}
 	
 	protected IViewPart getViewPart() {
