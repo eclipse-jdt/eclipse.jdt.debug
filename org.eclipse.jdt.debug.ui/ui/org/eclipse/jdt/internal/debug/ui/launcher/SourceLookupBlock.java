@@ -62,7 +62,7 @@ public class SourceLookupBlock {
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
 		comp.setLayout(topLayout);		
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
 		
 		fPathViewer = new RuntimeClasspathViewer(comp);

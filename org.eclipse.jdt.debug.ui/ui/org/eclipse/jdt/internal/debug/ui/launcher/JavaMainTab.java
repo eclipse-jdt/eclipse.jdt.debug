@@ -111,6 +111,8 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
+		createVerticalSpacer(comp, 1);
+
 		Composite mainComp = new Composite(comp, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
 		mainLayout.numColumns = 3;
