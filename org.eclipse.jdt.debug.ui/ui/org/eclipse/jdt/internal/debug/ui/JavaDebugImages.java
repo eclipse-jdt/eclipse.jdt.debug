@@ -34,7 +34,7 @@ public class JavaDebugImages {
 	}
 	
 	// The plugin registry
-	private final static ImageRegistry IMAGE_REGISTRY= new ImageRegistry();
+	private final static ImageRegistry IMAGE_REGISTRY= new ImageRegistry(JDIDebugUIPlugin.getStandardDisplay());
 
 	/*
 	 * Available cached Images in the Java debug plug-in image registry.
