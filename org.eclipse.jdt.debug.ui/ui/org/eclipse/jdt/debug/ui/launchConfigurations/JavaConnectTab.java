@@ -342,8 +342,11 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		Iterator keys = fFieldEditorMap.keySet().iterator();
 		while (keys.hasNext()) {
 			String key = (String)keys.next();
-			Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
 			FieldEditor editor = (FieldEditor)fFieldEditorMap.get(key);
+			if (!editor.isValid()) {
+				return;
+			}
+			Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);
 			editor.store();
 			if (arg instanceof Connector.StringArgument || arg instanceof Connector.SelectedArgument) {
 				String value = editor.getPreferenceStore().getString(key);
@@ -531,5 +534,4 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 	public void propertyChange(PropertyChangeEvent event) {
 		updateLaunchConfigurationDialog();
 	}
-
 }
