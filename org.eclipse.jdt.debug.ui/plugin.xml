@@ -486,64 +486,8 @@
 	 </action>
 	</objectContribution>
 	<viewerContribution
-		id="org.eclipse.jdt.debug.DebugViewPopupActions"
-		targetID="org.eclipse.debug.ui.DebugView">
-		<action id="org.eclipse.jdt.ui.debugViewPopupActions.ShowQualified"
-			label="%showQualifiedAction.label"
-			tooltip="%showQualifiedAction.tooltip"
-			menubarPath="renderGroup"
-			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-			state="false">
-		</action>
-	</viewerContribution>
-	<viewerContribution
-		id="org.eclipse.jdt.debug.BreakpointViewPopupActions"
-		targetID="org.eclipse.debug.ui.BreakpointView">
-		<action id="org.eclipse.jdt.ui.breakpointViewPopupActions.ShowQualified"
-			label="%showQualifiedAction.label"
-			tooltip="%showQualifiedAction.tooltip"
-			menubarPath="renderGroup"
-			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-			state="false">
-		</action>
-		<action id="org.eclipse.jdt.debug.ui.breakpointViewPopupActions.AddException"
-			label="%exceptionAction.accel.label"
-			menubarPath="emptyBreakpointGroup"
-			icon="icons/full/clcl16/exc_catch.gif"
-			tooltip="%exceptionAction.tooltip"
-			helpContextId="add_exception_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction">
-		</action>
-	</viewerContribution>
-	<viewerContribution
-		id="org.eclipse.jdt.debug.VariableViewPopupActions"
-		targetID="org.eclipse.debug.ui.VariableView">
-		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowQualified"
-			label="%showQualifiedAction.label"
-			tooltip="%showQualifiedAction.tooltip"
-			menubarPath="renderGroup"
-			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-			state="false">
-		</action>
-	</viewerContribution>
-	<viewerContribution
 		id="org.eclipse.jdt.debug.ExpressionViewPopupActions"
 		targetID="org.eclipse.debug.ui.ExpressionView">
-		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowQualified"
-			label="%showQualifiedAction.label"
-			tooltip="%showQualifiedAction.tooltip"
-			menubarPath="renderGroup"
-			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-			state="false">
-		</action>	
          <action
                label="%addWatchExpressionAction.label"
                icon="icons/full/ctool16/expression_obj.gif"
@@ -1470,15 +1414,10 @@
 	   	name="%JavaDebugActionGroup.name">
 	   	<action id="org.eclipse.jdt.debug.ui.actions.AddException"/>
 	   	<action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"/>
-	   	<action id="org.eclipse.jdt.ui.breakpointViewPopupActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.debug.ui.breakpointViewPopupActions.AddException"/>
 	   	<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression"/>
 		<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.ui.debugViewPopupActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Execute"/>
 		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display"/>
         <action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Inspect"/>
