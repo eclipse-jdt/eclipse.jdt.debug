@@ -381,7 +381,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		initializeBreakpoints();
 		getLaunch().addDebugTarget(this);
 		fireCreationEvent();
-		new Thread(getEventDispatcher(), JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
+		EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
+		if (dispatcher != null) {
+			new Thread(dispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
+		}
 	}
 	
 	/**
@@ -1285,6 +1288,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			fEngines.clear();
 		}
 		fVirtualMachine= null;
+		setThreadStartHandler(null);
+		setEventDispatcher(null);
+		setStepFilters(new String[0]);
 	}
 
 	/**
@@ -1293,11 +1299,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	protected void removeAllThreads() {
 		Iterator itr= getThreadIterator();
-		setThreadList(new ArrayList(0));
 		while (itr.hasNext()) {
 			JDIThread child= (JDIThread) itr.next();
 			child.terminated();
 		}
+		getThreadList().clear();
 	}
 
 	/**
@@ -1372,7 +1378,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * cleaup.
 	 */
 	public void shutdown() {
-		getEventDispatcher().shutdown();
+		EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
+		if (dispatcher != null) {
+			dispatcher.shutdown();
+		}
 		try {
 			if (supportsTerminate()) {
 				terminate();

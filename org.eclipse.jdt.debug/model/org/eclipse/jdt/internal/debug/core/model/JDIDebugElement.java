@@ -28,6 +28,7 @@ import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.hcr.OperationRefusedException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.core.EventDispatcher;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
@@ -147,7 +148,10 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @param event the event to queue
 	 */
 	public void queueEvent(DebugEvent event) {
-		((JDIDebugTarget)getDebugTarget()).getEventDispatcher().queue(event);
+		EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
+		if (dispatcher != null) {
+			dispatcher.queue(event);
+		}
 	}
 	
 	/**
@@ -370,7 +374,10 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @param request the event request
 	 */
 	public void addJDIEventListener(IJDIEventListener listener, EventRequest request) {
-		((JDIDebugTarget)getDebugTarget()).getEventDispatcher().addJDIEventListener(listener, request);
+		EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
+		if (dispatcher != null) {
+			dispatcher.addJDIEventListener(listener, request);
+		}
 	}
 	
 	/**
@@ -383,7 +390,10 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @param request the event request
 	 */
 	public void removeJDIEventListener(IJDIEventListener listener, EventRequest request) {
-		((JDIDebugTarget)getDebugTarget()).getEventDispatcher().removeJDIEventListener(listener, request);
+		EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
+		if (dispatcher != null) {
+			dispatcher.removeJDIEventListener(listener, request);
+		}
 	}
 	
 	/**
