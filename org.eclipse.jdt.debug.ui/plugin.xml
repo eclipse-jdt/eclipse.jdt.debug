@@ -480,7 +480,7 @@
 	id="org.eclipse.jdt.debug.ui.JavaInspectExpressionActions">
 	 <action
 	   label="%convertToWatchExpressionAction.label"
-	   helpContextId="convert_to_watch_expression"
+	   helpContextId="convert_to_watch_expression_context"
 	   tooltip="%convertToWatchExpressionAction.tooltip"
 	   class="org.eclipse.jdt.internal.debug.ui.actions.ConvertToWatchExpressionAction"
 	   menubarPath="additions"
