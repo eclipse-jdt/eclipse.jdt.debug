@@ -17,7 +17,9 @@ import java.net.URL;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jdt.internal.launching.LibraryInfo;
@@ -34,13 +36,20 @@ public class MacOSXVMInstallType extends StandardVMType {
 	
 	/*
 	 * The directory structure for Java VMs is as follows:
+	 * 
 	 * 	/System/Library/Frameworks/JavaVM.framework/Versions/
 	 * 		1.3.1
 	 * 			Classes
+	 * 				classes.jar
+	 * 				ui.jar
 	 * 			Home
+	 * 				src.jar
 	 * 		1.4.1
 	 * 			Classes
+	 * 				classes.jar
+	 * 				ui.jar
 	 * 			Home
+	 * 				src.jar
 	 * 		CurrentJDK -> 1.3.1
 	 */
 	 
@@ -150,24 +159,30 @@ public class MacOSXVMInstallType extends StandardVMType {
 		return new LibraryInfo("???", libs, dirs, endDirs);		 //$NON-NLS-1$
 	}
 	
+	protected IPath getDefaultSystemLibrarySource(File libLocation) {
+		File parent= libLocation.getParentFile();
+		while (parent != null) {
+			File home= new File(parent, JVM_ROOT);
+			File parentsrc= new File(home, "src.jar"); //$NON-NLS-1$
+			if (parentsrc.isFile()) {
+				setDefaultRootPath("src");//$NON-NLS-1$
+				return new Path(parentsrc.getPath());
+			}
+			parentsrc= new File(home, "src.zip"); //$NON-NLS-1$
+			if (parentsrc.isFile()) {
+				setDefaultRootPath(""); //$NON-NLS-1$
+				return new Path(parentsrc.getPath());
+			}
+			parent = parent.getParentFile();
+		}
+		setDefaultRootPath(""); //$NON-NLS-1$
+		return Path.EMPTY; //$NON-NLS-1$
+	}
+
 	/**
 	 * @see org.eclipse.jdt.launching.IVMInstallType#validateInstallLocation(java.io.File)
 	 */
 	public IStatus validateInstallLocation(File javaHome) {
-		/*
-		IStatus status = null;
-		File javaExecutable = findJavaExecutable(javaHome);
-		if (javaExecutable == null) {
-			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.getString("StandardVMType.Not_a_JDK_Root;_Java_executable_was_not_found_1"), null); //$NON-NLS-1$			
-		} else {
-			if (canDetectDefaultSystemLibraries(javaHome, javaExecutable)) {
-				status = new Status(IStatus.OK, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.getString("StandardVMType.ok_2"), null); //$NON-NLS-1$
-			} else {
-				status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.getString("StandardVMType.Not_a_JDK_root._System_library_was_not_found._1"), null); //$NON-NLS-1$
-			}
-		}
-		return status;
-		*/
 		String id= MacOSXLaunchingPlugin.getUniqueIdentifier();
 		File java= new File(javaHome, "bin"+File.separator+"java"); //$NON-NLS-2$ //$NON-NLS-1$
 		if (java.isFile())
