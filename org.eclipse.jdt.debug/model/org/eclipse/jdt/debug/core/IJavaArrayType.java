@@ -12,12 +12,8 @@ import org.eclipse.debug.core.DebugException;
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see IJavaValue
+ * @since 2.0
  */
 
 public interface IJavaArrayType extends IJavaType {

@@ -10,12 +10,13 @@ import org.eclipse.debug.core.DebugException;
  
 /**
  * A runnable that represents one logical evaluation
- * to be run by a thread. 
+ * to be run in a target thread. 
  * <p>
  * Clients are intended to imlpement this interface.
  * </p>
  * 
  * @see org.eclipse.jdt.debug.core.IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)
+ * @since 2.0
  */ 
 public interface IEvaluationRunnable {
 	

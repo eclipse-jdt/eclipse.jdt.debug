@@ -10,17 +10,21 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IType;
 
 /**
- * IJavaBreakpoints extend IBreakpoint by adding
- * the following notions:
+ * A breakpoint specific to the Java debug model. A Java breakpoint
+ * supports:
  * <ul>
- * <li>hit count - a number of times that this breakpoint
- * will be "hit" before it suspends execution
- * <li>type - the type the given breakpoint is installed in
- * <li>installed - whether the given breakpoint is installed
- * in a debug target. when a breakpoint is installed in a debug
- * target, it may cause the suspension of that target
- * 
+ * <li>a hit count</li>
+ * <li>a suspend policy that determines if the entire VM or
+ *   a single thread is suspended when hit</li>
+ * <li>a thread filter to restrict a breakpoin to a specific
+ *  thread within a VM</li>
+ * <li>an installed property that indicates a breakpoint was successfully
+ *  installed in a VM</li>
+ * </ul>
+ * <p>
  * Clients are not intended to implement this interface
+ * </p>
+ * @since 2.0
  */
 public interface IJavaBreakpoint extends IBreakpoint {
 	
@@ -41,19 +45,19 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * one debug target.
 	 * 
 	 * @return whether this breakpoint is installed
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property 
+	 * 	on this breakpoint's underlying marker
 	 */
 	public boolean isInstalled() throws CoreException;
 	/**
-	 * Returns the fully qualified name of type this breakpoint
-	 * is located in, or <code>null</code> is this breakpoint
-	 * is not located in a type - for example, a pattern breakpoint
+	 * Returns the fully qualified name of the type this breakpoint
+	 * is located in, or <code>null</code> if this breakpoint
+	 * is not located in a specific type - for example, a pattern breakpoint.
 	 * 
 	 * @return the fully qualified name of the type this breakpoint
 	 *  is located in, or <code>null</code>
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property
+	 * 	from this breakpoint's underlying marker
 	 */
 	public String getTypeName() throws CoreException;
 	/**
@@ -61,18 +65,18 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * breakpoint does not have a hit count.
 	 * 
 	 * @return this breakpoint's hit count, or -1
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property
+	 *  from this breakpoint's underlying marker
 	 */
 	public int getHitCount() throws CoreException;
 	/**
 	 * Sets the hit count attribute of this breakpoint.
 	 * If this breakpoint is currently disabled and the hit count
-	 * is set greater than -1, the breakpoint is enabled.
+	 * is set greater than -1, this breakpoint is automatically enabled.
 	 * 
 	 * @param count the new hit count
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to set the property
+	 * 	on this breakpoint's underlying marker
 	 */
 	public void setHitCount(int count) throws CoreException;	
 	
@@ -80,12 +84,12 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * Sets whether all threads in the target VM will be suspended
 	 * when this breakpoint is hit. When <code>SUSPEND_VM</code> the target
 	 * VM is suspended, and when <code>SUSPEND_THREAD</code> only the thread
-	 * in which the breakpoint occurred is suspended.
+	 * in which this breakpoint occurred is suspended.
 	 * 
 	 * @param suspendPolicy one of <code>SUSPEND_VM</code> or
 	 *  <code>SUSPEND_THREAD</code>
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to set the property
+	 * 	on this breakpoint's underlying marker
 	 */
 	public void setSuspendPolicy(int suspendPolicy) throws CoreException;
 	
@@ -94,24 +98,20 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * <code>SUSPEND_VM</code> or <code>SUSPEND_THREAD</code>.
 	 * 
 	 * @return one of <code>SUSPEND_VM</code> or <code>SUSPEND_THREAD</code>
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property 
+	 * 	from this breakpoint's underlying marker
 	 */
 	public int getSuspendPolicy() throws CoreException;
 	
 	/**
-	 * Set the given threads as the thread in which this
-	 * breakpoint is enabled. The previous thread filter, if
-	 * any, is lost.
+	 * Restricts this breakpoint to suspend only in the given thread
+	 * when encounterd in the given thread's target. A breakpoint can
+	 * only be resticted to one thread per target. Any previous
+	 * thread filter for the same target is lost.
+	 * A thread filter is not persisted
+	 * across workbench invocations.
 	 * 
-	 * A thread filter applies to a single debug target and is not persisted
-	 * across invokations.
-	 * 
-	 * While this breakpoint has a thread filter, 
-	 * it will only suspend in the filtered thread.
-	 * 
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to set the thread filter
 	 */
 	public void setThreadFilter(IJavaThread thread) throws CoreException;
 	
@@ -119,12 +119,8 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * Removes this breakpoint's thread filter in the given target, if any. 
 	 * Has no effect if this breakpoint does not have a filter in the given target.
 	 * 
-	 * While this breakpoint has a thread filter in the given target,
-	 * it will only suspend threads which are filtered.
-	 * 
 	 * @param target the target whose thread filter will be removed
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to remove the thread filter
 	 */
 	public void removeThreadFilter(IJavaDebugTarget target) throws CoreException;
 	
@@ -134,17 +130,16 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * all threads in the given target.
 	 * 
 	 * @return the thread in the given target that this breakpoint is enabled for
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to determine this breakpoint's thread
+	 *  filter
 	 */
 	public IJavaThread getThreadFilter(IJavaDebugTarget target) throws CoreException;
 	/**
-	 * Returns the threads in which this breakpoint is enabled or an empty array 
-	 * if this breakpoint is enabled in all threads.
+	 * Returns all thread filters set on this breakpoint.
 	 * 
-	 * @return the threads that this breakpoint is enabled for
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @return the threads that this breakpoint is resticted to
+	 * @exception CoreException if unable to determine this breakpoint's
+	 *  thread filters
 	 */
 	public IJavaThread[] getThreadFilters() throws CoreException; 
 }
