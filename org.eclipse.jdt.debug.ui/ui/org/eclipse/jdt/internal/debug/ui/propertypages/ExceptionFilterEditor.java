@@ -428,7 +428,7 @@ public class ExceptionFilterEditor {
 		Shell shell = fAddPackageButton.getDisplay().getActiveShell();
 		ElementListSelectionDialog dialog = null;
 		try {
-			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null, true);
+			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null, false);
 		} catch (JavaModelException jme) {
 			String title = PropertyPageMessages.getString("ExceptionFilterEditor.15"); //$NON-NLS-1$
 			String message = PropertyPageMessages.getString("ExceptionFilterEditor.16"); //$NON-NLS-1$
