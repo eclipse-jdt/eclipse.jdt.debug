@@ -548,61 +548,41 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	/**
 	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
 	 */
-	public void evaluationComplete(final IEvaluationResult result) {
-		Runnable r = new Runnable() {
-			public void run() {
-				boolean severeErrors= false;
-				if (result.hasErrors()) {
-					Message[] errors = result.getErrors();
-					int count= errors.length;
-					if (count == 0) {
-						showException(result.getException());
-					} else {
-						severeErrors= showAllErrors(errors);
-						if (!severeErrors) {
-							//warnings only..check for exception
-							if (result.getException() != null) {
-								showException(result.getException());
-							}
-						}
-					}
-				} 
-				final IJavaValue value= result.getValue();
-				if (value != null && !severeErrors) {
-					switch (fResultMode) {
-					case RESULT_DISPLAY:
-						Runnable r = new Runnable() {
-							public void run() {
-								displayResult(value, result.getThread());
-							}
-						};
-						getSite().getShell().getDisplay().asyncExec(r);
-						break;
-					case RESULT_INSPECT:
-						String snippet= result.getSnippet().trim();
-						int snippetLength= snippet.length();
-						if (snippetLength > 30) {
-							snippet = snippet.substring(0, 15) + SnippetMessages.getString("SnippetEditor.ellipsis") + snippet.substring(snippetLength - 15, snippetLength);  //$NON-NLS-1$
-						}
-						snippet= snippet.replace('\n', ' ');
-						snippet= snippet.replace('\r', ' ');
-						snippet= snippet.replace('\t', ' ');
-						showExpressionView();
-						JavaInspectExpression exp = new JavaInspectExpression(snippet, value);
-						DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
-						break;
-					case RESULT_RUN:
-						// no action
-						break;
-					}
-				}
-				evaluationEnds();
+	public void evaluationComplete(IEvaluationResult result) {
+		boolean severeErrors = false;
+		if (result.hasErrors()) {
+			Message[] errors = result.getErrors();
+			severeErrors = errors.length > 0;
+			if (result.getException() != null) {
+				showException(result.getException());
 			}
-		};
-		Control control= getVerticalRuler().getControl();
-		if (!control.isDisposed()) {
-			control.getDisplay().asyncExec(r);
-		}		
+			showAllErrors(errors);
+		} 
+		IJavaValue value= result.getValue();
+		if (value != null && !severeErrors) {
+			switch (fResultMode) {
+			case RESULT_DISPLAY:
+				displayResult(value, result.getThread());
+				break;
+			case RESULT_INSPECT:
+				String snippet= result.getSnippet().trim();
+				int snippetLength= snippet.length();
+				if (snippetLength > 30) {
+					snippet = snippet.substring(0, 15) + SnippetMessages.getString("SnippetEditor.ellipsis") + snippet.substring(snippetLength - 15, snippetLength);  //$NON-NLS-1$
+				}
+				snippet= snippet.replace('\n', ' ');
+				snippet= snippet.replace('\r', ' ');
+				snippet= snippet.replace('\t', ' ');
+				showExpressionView();
+				JavaInspectExpression exp = new JavaInspectExpression(snippet, value);
+				DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
+				break;
+			case RESULT_RUN:
+				// no action
+				break;
+			}
+		}
+		evaluationEnds();
 	}
 	
 	/**
@@ -610,20 +590,26 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * if required.
 	 */
 	protected void showExpressionView() {
-		IWorkbenchPage page = JDIDebugUIPlugin.getDefault().getActivePage();
-		if (page != null) {
-			IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-			if (part == null) {
-				try {
-					page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-				} catch (PartInitException e) {
-					JDIDebugUIPlugin.log(e);
-					showError(e.getStatus());
+		Runnable r = new Runnable() {
+			public void run() {
+				IWorkbenchPage page = JDIDebugUIPlugin.getDefault().getActivePage();
+				if (page != null) {
+					IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+					if (part == null) {
+						try {
+							page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+						} catch (PartInitException e) {
+							JDIDebugUIPlugin.log(e);
+							showError(e.getStatus());
+						}
+					} else {
+						page.bringToTop(part);
+					}
 				}
-			} else {
-				page.bringToTop(part);
 			}
-		}
+		};
+		
+		async(r);
 	}
 		
 	protected void codeComplete(ICompletionRequestor requestor) throws JavaModelException {
@@ -689,13 +675,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.toString"), null, e.getStatus()); //$NON-NLS-1$
 		}
 			
-		try {
-			getSourceViewer().getDocument().replace(fSnippetEnd, 0, resultString.toString());
-		} catch (BadLocationException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		
-		selectAndReveal(fSnippetEnd, resultString.length());
+		showAndSelect(resultString.toString(), fSnippetEnd);
 	}
 	
 	/**
@@ -730,40 +710,38 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		this.notifyAll();
 	}
 	
-	protected boolean showAllErrors(Message[] errors) {
-		IDocument document = getSourceViewer().getDocument();
-		String delimiter = document.getLegalLineDelimiters()[0];
-		int insertionPoint = fSnippetStart;
-		try {
-			insertionPoint = document.getLineOffset(document.getLineOfOffset(fSnippetStart));
-		} catch (BadLocationException ble) {
-			JDIDebugUIPlugin.log(ble);
+	protected void showAllErrors(final Message[] errors) {
+		if (errors.length > 0) {
+			Runnable r = new Runnable() {
+				public void run() {
+					IDocument document = getSourceViewer().getDocument();
+					String delimiter = document.getLegalLineDelimiters()[0];
+					int insertionPoint = fSnippetStart;
+					try {
+						insertionPoint = document.getLineOffset(document.getLineOfOffset(fSnippetStart));
+					} catch (BadLocationException ble) {
+						JDIDebugUIPlugin.log(ble);
+					}
+					int firstInsertionPoint = insertionPoint;
+					for (int i = 0; i < errors.length; i++) {
+						Message error= errors[i];
+			
+						String message= SnippetMessages.getString("SnippetEditor.error.unqualified"); //$NON-NLS-1$
+						message= error.getMessage() + delimiter;
+						try {
+							document.replace(insertionPoint, 0, message);
+						} catch (BadLocationException e) {
+							JDIDebugUIPlugin.log(e);
+						}
+						insertionPoint += message.length();
+					}
+					selectAndReveal(firstInsertionPoint, insertionPoint - firstInsertionPoint);
+					fSnippetStart = insertionPoint;
+				}
+			};
+			async(r);
 		}
-		int firstInsertionPoint = insertionPoint;
-		boolean severeError=false;
-		for (int i = 0; i < errors.length; i++) {
-			Message error= errors[i];
-			//only show problems that are greater severity than a warning
-			insertionPoint = showOneError(document, error, insertionPoint, delimiter);
-			severeError= true;
-		}
-		if (severeError) {
-			selectAndReveal(firstInsertionPoint, insertionPoint - firstInsertionPoint);
-			fSnippetStart = insertionPoint;
-		}
-		return severeError;
 	}
-
-	protected int showOneError(IDocument document, Message problem, int insertionPoint, String delimiter) {
-		String message= SnippetMessages.getString("SnippetEditor.error.unqualified"); //$NON-NLS-1$
-		message= problem.getMessage() + delimiter;
-		try {
-			document.replace(insertionPoint, 0, message);
-		} catch (BadLocationException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		return insertionPoint += message.length();
-	}	
 
 	protected void showException(Throwable exception) {
 		if (exception instanceof DebugException) {
@@ -775,15 +753,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				return;
 			}
 		}
-		ByteArrayOutputStream bos= new ByteArrayOutputStream();
+		final ByteArrayOutputStream bos= new ByteArrayOutputStream();
 		PrintStream ps= new PrintStream(bos, true);
 		exception.printStackTrace(ps);
-		try {
-			getSourceViewer().getDocument().replace(fSnippetEnd, 0, bos.toString());
-		} catch (BadLocationException e) {
-			JDIDebugUIPlugin.log(e);
-		}
-		selectAndReveal(fSnippetEnd, bos.size());
+		
+		showAndSelect(bos.toString(), fSnippetEnd);
 	}
 	
 	protected void showUnderlyingException(Throwable t) {
@@ -792,12 +766,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			ObjectReference ref= ie.exception();
 			String eName= ref.referenceType().name();
 			String message= SnippetMessages.getFormattedString("SnippetEditor.exception", eName); //$NON-NLS-1$
-			try {
-				getSourceViewer().getDocument().replace(fSnippetEnd, 0, message);
-			} catch (BadLocationException e) {
-				JDIDebugUIPlugin.log(e);
-			}
-			selectAndReveal(fSnippetEnd, message.length());
+			showAndSelect(message, fSnippetEnd);
 		} else {
 			showException(t);
 		}
@@ -914,11 +883,16 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 		
 	protected void evaluationEnds() {
-		fEvaluating= false;
-		setTitleImage();
-		fireEvalStateChanged();
-		showStatus(""); //$NON-NLS-1$
-		getSourceViewer().setEditable(true);
+		Runnable r = new Runnable() {
+			public void run() {
+				fEvaluating= false;
+				setTitleImage();
+				fireEvalStateChanged();
+				showStatus(""); //$NON-NLS-1$
+				getSourceViewer().setEditable(true);
+			}
+		};
+		async(r);
 	}
 	
 	protected void showStatus(String message) {
@@ -1218,4 +1192,28 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 		return null;
 	}	
+	
+	/**
+	 * Executes the given runnable in the Display thread
+	 */
+	protected void async(Runnable r) {
+		Control control= getVerticalRuler().getControl();
+		if (!control.isDisposed()) {
+			control.getDisplay().asyncExec(r);
+		}		
+	}
+	
+	protected void showAndSelect(final String text, final int offset) {
+		Runnable r = new Runnable() {
+			public void run() {
+				try {
+					getSourceViewer().getDocument().replace(offset, 0, text);
+				} catch (BadLocationException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+				selectAndReveal(offset, text.length());
+			}
+		};
+		async(r);		
+	}
 }
