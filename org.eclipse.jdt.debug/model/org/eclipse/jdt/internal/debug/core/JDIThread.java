@@ -1182,7 +1182,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			} finally {
 				disposeStackFrames();
 				computeStackFrames();
-				fireChangeEvent();				
+				fireSuspendEvent(DebugEvent.CLIENT_REQUEST);							
 			}
 		} else {
 			// J9 support
