@@ -575,7 +575,15 @@
 			helpContextId="execute_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
 			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
+			<enablement>
+				<and>
+					<or>
+						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
+					</or>
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+	             </and>
+            </enablement>			
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.displayView.Display" 
 			label="%Display.label" 
@@ -584,7 +592,15 @@
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
 			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
+			<enablement>
+				<and>
+					<or>
+						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
+					</or>
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+	             </and>
+            </enablement>
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.displayView.Inspect" 
 			label="%Inspect.label" 
@@ -593,7 +609,15 @@
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
 			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
+			<enablement>
+				<and>
+					<or>
+						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
+					</or>
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+	             </and>
+            </enablement>
 		</action> 
 	</viewerContribution>
 	<viewerContribution
@@ -758,7 +782,15 @@
 			helpContextId="execute_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
 			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
+			<enablement>
+				<and>
+					<or>
+						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
+					</or>
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+	             </and>
+            </enablement>
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Display" 
 			label="%Display.label" 
@@ -770,7 +802,15 @@
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
 			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
+			<enablement>
+				<and>
+					<or>
+						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
+					</or>
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+	             </and>
+            </enablement>
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Inspect" 
 			label="%Inspect.label" 
@@ -782,7 +822,15 @@
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
 			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
+			<enablement>
+				<and>
+					<or>
+						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
+					</or>
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+	             </and>
+            </enablement>
 		</action> 
 	</viewContribution>
 
