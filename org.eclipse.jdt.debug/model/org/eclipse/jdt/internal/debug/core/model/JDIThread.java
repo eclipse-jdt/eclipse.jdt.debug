@@ -2496,36 +2496,38 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 
 		/*
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
-		public IStatus run(IProgressMonitor monitor) {
-			fJDIThread.fRunningAsyncJob= this;
-			Vector runnables;
-			synchronized (fRunnables) {
-				runnables= fRunnables;
-				fRunnables= new Vector(5);
-			}
-			
-			MultiStatus failed = null;
-			monitor.beginTask(this.getName(), runnables.size()); //$NON-NLS-1$
-			for (Iterator iter= runnables.iterator(); iter.hasNext() && !fJDIThread.isTerminated() && !monitor.isCanceled();) {
-				try {
-					((Runnable) iter.next()).run();
-				} catch (Exception e) {
-					if (failed == null) {
-						failed = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugModelMessages.getString("JDIThread.0"), null); //$NON-NLS-1$
-					}
-					failed.add(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugModelMessages.getString("JDIThread.0"), e)); //$NON-NLS-1$
-				}
-				monitor.worked(1);
-			}
-			fJDIThread.fRunningAsyncJob= null;
-			monitor.done();
-			if (failed == null) {
-				return Status.OK_STATUS;
-			}
-			return failed;
-		}
+         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+         */
+        public IStatus run(IProgressMonitor monitor) {
+        	fJDIThread.fRunningAsyncJob= this;
+        	Object[] runnables;
+        	synchronized (fRunnables) {
+        		runnables= fRunnables.toArray();
+        		fRunnables.clear();
+        	}
+        	
+        	MultiStatus failed = null;
+        	monitor.beginTask(this.getName(), runnables.length); //$NON-NLS-1$
+        	int i = 0;
+        	while (i < runnables.length && !fJDIThread.isTerminated() && !monitor.isCanceled()) {
+        		try {
+        			((Runnable) runnables[i]).run();
+        		} catch (Exception e) {
+        			if (failed == null) {
+        				failed = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugModelMessages.getString("JDIThread.0"), null); //$NON-NLS-1$
+        			}
+        			failed.add(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugModelMessages.getString("JDIThread.0"), e)); //$NON-NLS-1$
+        		}
+        		i++;
+        		monitor.worked(1);
+        	}
+        	fJDIThread.fRunningAsyncJob= null;
+        	monitor.done();
+        	if (failed == null) {
+        		return Status.OK_STATUS;
+        	}
+        	return failed;
+        }
 
 		/*
 		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
