@@ -26,6 +26,7 @@ public class VMRunnerConfiguration {
 	private String[] fProgramArgs;
 	private String[] fClassPath;
 	private String[] fBootClassPath;
+	private String[] fEnvVars;
 	private String fWorkingDirectory;
 	
 	private static final String[] fgEmpty= new String[0];
@@ -158,6 +159,7 @@ public class VMRunnerConfiguration {
 	 *  to be used by a launched VM, or <code>null</code> if
 	 *  the working directory is to be inherited from the
 	 *  current process
+	 * @since 2.0
 	 */
 	public void setWorkingDirectory(String path) {
 		fWorkingDirectory = path;
@@ -169,8 +171,34 @@ public class VMRunnerConfiguration {
 	 * @return the absolute path to the working directory
 	 *  of a launched VM, or <code>null</code> if the working
 	 *  directory is inherited from the current process
+	 * @since 2.0
 	 */
 	public String getWorkingDirectory() {
 		return fWorkingDirectory;
 	}	
+	
+	/**
+	 * Sets the environment variables to be used when launching the VM.
+	 * 
+	 * @param envVars the environment variables to use when launching 
+	 *  the VM, or <code>null</code> to use the default environment. Each
+	 *  entry is in the form of "name=value".
+	 * @since 2.0
+	 */
+	public void setEnvironmentVariables(String[] envVars) {
+		fEnvVars = envVars;
+	}
+
+	/**
+	 * Returns the environment variables to be used when launching the VM,
+	 * or <code>null</code> when using the default environment.
+	 * 
+	 * @return the environment variables to use when launching 
+	 *  the VM, or <code>null</code> when using the default environment. Each
+	 *  entry is in the form of "name=value".
+	 * @since 2.0
+	 */
+	public String[] getEnvironmentVariables() {
+		return fEnvVars;
+	}
 }

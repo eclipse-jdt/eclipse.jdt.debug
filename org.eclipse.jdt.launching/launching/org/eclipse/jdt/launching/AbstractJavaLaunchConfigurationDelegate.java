@@ -8,7 +8,9 @@ package org.eclipse.jdt.launching;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -259,6 +261,32 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		return removeRtJarFromClasspath(defaultClasspath);
 	}
 
+	/**
+	 * Returns the environment variables specified by the given launch
+	 * configuration, as an array of Strings. Each entry is of the form 'var=value'.
+	 * The returned array is <code>null</cdo> if no environment variables are specified.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the environment variables specified by the given 
+	 *  launch configuration, or <code>null</code>
+	 * @exception CoreException if unable to retrieve the attribute
+	 */	
+	protected String[] getEnvironmentVariables(ILaunchConfiguration configuration) throws CoreException {
+		Map map = (Map)configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ENVIRONMENT_VARIABLES, (Map)null);
+		String[] vars = null;
+		if (map != null) {
+			vars = new String[map.size()];
+			Iterator keys = map.keySet().iterator();
+			int i = 0;
+			while (keys.hasNext()) {
+				String key= (String)keys.next();
+				vars[i] = key + "=" + (String)map.get(key);
+				i++;
+			}
+		}
+		return vars;
+	}
+	
 	/**
 	 * Remove any entry in the String array argument that corresponds to an 'rt.jar' file.
 	 */

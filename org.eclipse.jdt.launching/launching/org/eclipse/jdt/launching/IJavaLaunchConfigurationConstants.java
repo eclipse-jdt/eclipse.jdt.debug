@@ -120,8 +120,9 @@ public interface IJavaLaunchConfigurationConstants {
 	
 	/**
 	 * Environment variables launch configuration attribute name.
-	 * This attribute contains name value pairs specifiying environment variables
-	 * that will be set in the launched environment.
+	 * This attribute is a map containing name value pairs specifiying environment variables
+	 * that will be set in the launched environment, or <code>null</code> if the default
+	 * environment should be used.
 	 */
 	public static final String ATTR_ENVIRONMENT_VARIABLES = LaunchingPlugin.PLUGIN_ID + ".ENVIRONMENT_VARIABLES";	 //$NON-NLS-1$
 	
