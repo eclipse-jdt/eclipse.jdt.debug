@@ -27,6 +27,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.launching.JREContainer;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -142,7 +143,14 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 								IVMInstall vm = JavaRuntime.computeVMInstall(fLaunchConfuration);
 								return MessageFormat.format(LauncherMessages.getString("RuntimeClasspathEntryLabelProvider.JRE_System_Library_[{0}]_2"), new String[]{vm.getName()}); //$NON-NLS-1$
 							}
-							IJavaProject project = JavaRuntime.getJavaProject(fLaunchConfuration);
+							IJavaProject project = null;
+							try {
+								project = JavaRuntime.getJavaProject(fLaunchConfuration);
+							} catch (CoreException e) {
+								if (e.getStatus().getCode() != IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT) {
+									throw e;
+								}
+							}
 							if (project == null) {
 								if (path.segmentCount() > 0 && path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
 									IVMInstall vm = JREContainerInitializer.resolveVM(path);
