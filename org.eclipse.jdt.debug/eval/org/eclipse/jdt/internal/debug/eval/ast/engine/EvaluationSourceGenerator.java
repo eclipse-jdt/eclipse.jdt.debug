@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -148,7 +146,7 @@ public class EvaluationSourceGenerator {
 		return fCodeSnippet;
 	}
 
-	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber, boolean createInAStaticMethod, int apiLevel) throws DebugException {
+	private void createEvaluationSourceFromSource(String source, String typeName, int position, boolean createInAStaticMethod, int apiLevel) throws DebugException {
 		ASTParser parser = ASTParser.newParser(apiLevel);
 		parser.setSource(source.toCharArray());
 		if (apiLevel == 3) {
@@ -158,7 +156,7 @@ public class EvaluationSourceGenerator {
 			parser.setCompilerOptions(options);
 		}
 		CompilationUnit unit= (CompilationUnit)parser.createAST(null);
-		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
+		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, typeName, position, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
 		unit.accept(visitor);
 		
 		if (visitor.hasError()) {
@@ -209,7 +207,7 @@ public class EvaluationSourceGenerator {
 				String baseSource= getSourceFromFrame(frame);
 				int lineNumber= frame.getLineNumber();
 				if (baseSource != null && lineNumber != -1) {
-					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true, frame.isStatic(), apiLevel);
+					createEvaluationSourceFromSource(baseSource, frame.getDeclaringType().getName(), frame.getLineNumber(), frame.isStatic(), apiLevel);
 				} 
 				if (fSource == null) {
 					JDIObjectValue object= (JDIObjectValue)frame.getThis();
@@ -241,7 +239,7 @@ public class EvaluationSourceGenerator {
 			String baseSource= getTypeSourceFromProject(type.getName(), javaProject);
 			int lineNumber= getLineNumber((JDIReferenceType)type);
 			if (baseSource != null && lineNumber != -1) {
-				createEvaluationSourceFromSource(baseSource, lineNumber, true, false, apiLevel);
+				createEvaluationSourceFromSource(baseSource, type.getName(), lineNumber, false, apiLevel);
 			}
 			if (fSource == null) {
 				BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIReferenceType) type, false, apiLevel);
@@ -253,24 +251,9 @@ public class EvaluationSourceGenerator {
 
 	private int getLineNumber(JDIReferenceType type) {
 		ReferenceType referenceType= (ReferenceType) type.getUnderlyingType();
-		String referenceTypeName= referenceType.name();
-		Location location;
-		Hashtable lineNumbers= new Hashtable();
 		try {
-			for (Iterator iterator = referenceType.allLineLocations().iterator(); iterator.hasNext();) {
-				lineNumbers.put(new Integer(((Location)iterator.next()).lineNumber()), this);
-			}
-			for (Iterator iterator = referenceType.allLineLocations().iterator(); iterator.hasNext();) {
-				location= (Location)iterator.next();
-				if (!location.declaringType().name().equals(referenceTypeName)) {
-					lineNumbers.remove(new Integer(((Location)iterator.next()).lineNumber()));
-				}
-			}
-			if (lineNumbers.size() > 0) {
-				return ((Integer)lineNumbers.keys().nextElement()).intValue();
-			}
-			return -1;
-		} catch(AbsentInformationException e) {
+			return ((Location)referenceType.allLineLocations().get(0)).lineNumber();
+		} catch (AbsentInformationException e) {
 			return -1;
 		}
 	}

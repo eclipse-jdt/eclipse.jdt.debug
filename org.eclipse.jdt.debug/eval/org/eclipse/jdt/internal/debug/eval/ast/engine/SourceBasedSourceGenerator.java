@@ -128,9 +128,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private CompilationUnit fUnit;
 	
-	private int fPosition;
+	private String fTypeName;
 	
-	private boolean fIsLineNumber;
+	private int fPosition;
 	
 	private StringBuffer fSource;
 	
@@ -147,14 +147,14 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * which contains the code snippet is an no-static method, even if <code>position</code>
 	 * is in a static method.
 	 */
-	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, boolean createInAStaticMethod, String[] localTypesNames, String[] localVariables, String codeSnippet) {
+	public SourceBasedSourceGenerator(CompilationUnit unit, String typeName, int position, boolean createInAStaticMethod, String[] localTypesNames, String[] localVariables, String codeSnippet) {
 		fRightTypeFound= false;
 		fUnit= unit;
+		fTypeName= typeName;
 		fPosition= position;
 		fLocalVariableTypeNames= localTypesNames;
 		fLocalVariableNames= localVariables;
 		fCodeSnippet= codeSnippet;
-		fIsLineNumber= isLineNumber;
 		fCreateInAStaticMethod= createInAStaticMethod;
 		fIsJLS3= unit.getAST().apiLevel() == AST.JLS3;
 	}
@@ -249,16 +249,72 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	private String getDotName(String typeName) {
 		return typeName.replace('$', '.');
 	}
-	
-	private boolean containsLine(ASTNode node) {
+
+	private boolean isRightType(ASTNode node) {
 		int position= getPosition();
-		if (fIsLineNumber) {
-			int startLineNumber= getCorrespondingLineNumber(node.getStartPosition());
-			int endLineNumber= getCorrespondingLineNumber(node.getStartPosition() + node.getLength() - 1);
-			return startLineNumber <= position && position <= endLineNumber;
-		} 
-		int startPosition= node.getStartPosition();
-		return startPosition <= position && position <= startPosition + node.getLength();
+		int startLineNumber= getCorrespondingLineNumber(node.getStartPosition());
+		int endLineNumber= getCorrespondingLineNumber(node.getStartPosition() + node.getLength() - 1);
+		if (startLineNumber <= position && position <= endLineNumber) {
+			// check the typeName
+			String typeName= fTypeName;
+			while (node != null) {
+				if (node instanceof TypeDeclaration || node instanceof EnumDeclaration) {
+					AbstractTypeDeclaration abstractTypeDeclaration= (AbstractTypeDeclaration) node;
+					String name= abstractTypeDeclaration.getName().getIdentifier();
+					if (abstractTypeDeclaration.isLocalTypeDeclaration()) {
+						if (! typeName.endsWith('$' + name)) {
+							return false;
+						}
+						typeName= typeName.substring(0, typeName.length() - name.length() - 1);
+						int index= typeName.lastIndexOf('$');
+						if (index < 0) {
+							return false;
+						}
+						for (int i= typeName.length() - 1; i > index; i--) {
+							if (!Character.isDigit(typeName.charAt(i))) {
+								return false;
+							}
+						}
+						typeName= typeName.substring(0, index);
+						ASTNode parent= node.getParent();
+						while (!(parent instanceof CompilationUnit)) {
+							node= parent;
+							parent= node.getParent();
+						}
+					} else {
+						if (abstractTypeDeclaration.isPackageMemberTypeDeclaration()) {
+							PackageDeclaration packageDeclaration= ((CompilationUnit) node.getParent()).getPackage();
+							if (packageDeclaration == null) {
+								return typeName.equals(name);
+							}
+							return typeName.equals(getQualifiedIdentifier(packageDeclaration.getName()) + '.' + name);
+						}
+						if (!typeName.endsWith('$' + name)) {
+							return false;
+						}
+						typeName= typeName.substring(0, typeName.length() - name.length() - 1);
+						node= node.getParent();
+					}
+				} else if (node instanceof ClassInstanceCreation) {
+					int index= typeName.lastIndexOf('$');
+					if (index < 0) {
+						return false;
+					}
+					for (int i= typeName.length() - 1; i > index; i--) {
+						if (!Character.isDigit(typeName.charAt(i))) {
+							return false;
+						}
+					}
+					typeName= typeName.substring(0, index);
+					ASTNode parent= node.getParent();
+					while (!(parent instanceof CompilationUnit)) {
+						node= parent;
+						parent= node.getParent();
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 	private StringBuffer buildTypeBody(StringBuffer buffer, List list) {
@@ -735,7 +791,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 		AnonymousClassDeclaration anonymousClassDeclaration = node.getAnonymousClassDeclaration();
 		if (anonymousClassDeclaration != null) {
-			if (!rightTypeFound() && containsLine(node)) {
+			if (!rightTypeFound() && isRightType(node)) {
 				setRightTypeFound(true);
 				
 				fSource= buildRunMethod(anonymousClassDeclaration.bodyDeclarations());
@@ -825,7 +881,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			return;
 		}
 		
-		if (!rightTypeFound() && containsLine(node)) {
+		if (!rightTypeFound() && isRightType(node)) {
 			setRightTypeFound(true);
 			
 			fSource= buildRunMethod(node.bodyDeclarations());
@@ -878,7 +934,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			return;
 		}
 		
-		if (!rightTypeFound() && containsLine(node)) {
+		if (!rightTypeFound() && isRightType(node)) {
 			setRightTypeFound(true);
 			
 			fSource= buildRunMethod(node.bodyDeclarations());
