@@ -639,6 +639,10 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * available (if UI is loaded), or just use a workspace runnable to do the build otherwise.	 */
 	private void buildProjects(final Set projects) throws CoreException {
 		
+		if (projects.isEmpty()) {
+			return;
+		}
+		
 		// Workspace runnable that builds the specified projects
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
