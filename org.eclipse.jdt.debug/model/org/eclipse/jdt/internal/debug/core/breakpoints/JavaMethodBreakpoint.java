@@ -263,11 +263,14 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				if (classFilter instanceof ClassType && getMethodName() != null && getMethodSignature() != null) {
 					// use a line breakpoint if possible for better performance
 					ClassType clazz = (ClassType)classFilter;
-					Method method = clazz.concreteMethodByName(getMethodName(), getMethodSignature());
-					if (method != null && !method.isNative()) {
-						Location location = method.location();
-						if (location != null && location.codeIndex() != -1) {
-							request = target.getEventRequestManager().createBreakpointRequest(location);
+					if (clazz.name().equals(getTypeName())) {
+						// only use line breakpoint when there is an exact match
+						Method method = clazz.concreteMethodByName(getMethodName(), getMethodSignature());
+						if (method != null && !method.isNative()) {
+							Location location = method.location();
+							if (location != null && location.codeIndex() != -1) {
+								request = target.getEventRequestManager().createBreakpointRequest(location);
+							}
 						}
 					}
 				}
