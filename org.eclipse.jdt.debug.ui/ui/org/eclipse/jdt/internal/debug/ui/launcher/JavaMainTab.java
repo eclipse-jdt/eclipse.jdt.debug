@@ -104,8 +104,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fProjButton = new Button(projComp, SWT.PUSH);
-		fProjButton.setText("&Browse...");
+		fProjButton = createPushButton(projComp, "&Browse...", null);
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
@@ -136,8 +135,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fSearchButton = new Button(mainComp, SWT.PUSH);
-		fSearchButton.setText("Searc&h...");
+		fSearchButton = createPushButton(mainComp,"Searc&h...", null);
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSearchButtonSelected();

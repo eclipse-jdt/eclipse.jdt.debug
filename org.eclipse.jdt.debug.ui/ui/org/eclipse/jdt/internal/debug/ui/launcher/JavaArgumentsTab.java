@@ -69,7 +69,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		workingDirComp.setLayoutData(gd);
 		
 		fWorkingDirLabel = new Label(workingDirComp, SWT.NONE);
-		fWorkingDirLabel.setText("Wor&king directory:");
+		fWorkingDirLabel.setText("Wor&king Directory:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fWorkingDirLabel.setLayoutData(gd);
@@ -83,8 +83,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fWorkingDirBrowseButton = new Button(workingDirComp, SWT.PUSH);
-		fWorkingDirBrowseButton.setText("&Browse...");
+		fWorkingDirBrowseButton = createPushButton(workingDirComp, "&Browse...", null);
 		fWorkingDirBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkingDirBrowseButtonSelected();
@@ -105,7 +104,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		createVerticalSpacer(comp);
 				
 		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
-		fPrgmArgumentsLabel.setText("&Program arguments:");
+		fPrgmArgumentsLabel.setText("&Program Arguments:");
 						
 		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -118,7 +117,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		});
 		
 		fVMArgumentsLabel = new Label(comp, SWT.NONE);
-		fVMArgumentsLabel.setText("VM ar&guments:");
+		fVMArgumentsLabel.setText("VM Ar&guments:");
 		
 		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);

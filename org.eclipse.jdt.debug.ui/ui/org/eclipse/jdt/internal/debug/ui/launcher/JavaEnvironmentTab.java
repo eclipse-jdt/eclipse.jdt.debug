@@ -18,7 +18,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -33,7 +32,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -161,7 +159,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		fExtensionPathList.setData(IJavaLaunchConfigurationConstants.ATTR_EXTPATH);
 		fExtensionPathList.addSelectionListener(getListSelectionAdapter());
 		fExtensionPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 2);
-		fExtensionPathTabItem.setText("E&xtension path");
+		fExtensionPathTabItem.setText("E&xtension Path");
 		fExtensionPathTabItem.setControl(fExtensionPathList);
 		fExtensionPathTabItem.setData(fExtensionPathList);
 		
@@ -187,8 +185,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			}
 		});
 		
-		fJREAddButton = new Button(jreComp, SWT.PUSH);
-		fJREAddButton.setText("N&ew...");
+		fJREAddButton =createPushButton(jreComp,"N&ew...", null);
 		fJREAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleJREAddButtonSelected();
@@ -209,59 +206,36 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		
 		createVerticalSpacer(pathButtonComp, 1);
 		
-		fPathAddArchiveButton = new Button(pathButtonComp, SWT.PUSH);
-		fPathAddArchiveButton.setText("Add arc&hive...");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fPathAddArchiveButton.setLayoutData(gd);
+		fPathAddArchiveButton = createPushButton(pathButtonComp,"Add Arc&hive...", null);
 		fPathAddArchiveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathAddArchiveButtonSelected();
 			}
 		});
+		gd = (GridData)fPathAddArchiveButton.getLayoutData();
 		
-		fPathAddDirectoryButton = new Button(pathButtonComp, SWT.PUSH);
-		fPathAddDirectoryButton.setText("Add &folder...");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fPathAddDirectoryButton.setLayoutData(gd);
+		fPathAddDirectoryButton = createPushButton(pathButtonComp, "Add &Folder...", null);
 		fPathAddDirectoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathAddDirectoryButtonSelected();
 			}
 		});
 		
-		fPathRemoveButton = new Button(pathButtonComp, SWT.PUSH);
-		fPathRemoveButton.setText("&Remove");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fPathRemoveButton.setLayoutData(gd);
+		fPathRemoveButton = createPushButton(pathButtonComp,"&Remove", null);
 		fPathRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathRemoveButtonSelected();
 			}
 		});
-		
-		Composite moveButtonComp = new Composite(pathButtonComp, SWT.NONE);
-		GridLayout moveButtonLayout = new GridLayout();
-		moveButtonLayout.marginHeight = 0;
-		moveButtonLayout.marginWidth = 0;
-		moveButtonLayout.numColumns = 2;
-		moveButtonComp.setLayout(moveButtonLayout);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		moveButtonComp.setLayoutData(gd);
-		
-		fPathMoveUpButton = new Button(moveButtonComp, SWT.PUSH);
-		fPathMoveUpButton.setImage(JavaDebugImages.get(JavaDebugImages.IMG_OBJS_UP_NAV));
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fPathMoveUpButton.setLayoutData(gd);
+				
+		fPathMoveUpButton = createPushButton(pathButtonComp, "Move Up", null);
 		fPathMoveUpButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathMoveButtonSelected(true);
 			}
 		});
 		
-		fPathMoveDownButton = new Button(moveButtonComp, SWT.PUSH);
-		fPathMoveDownButton.setImage(JavaDebugImages.get(JavaDebugImages.IMG_OBJS_DOWN_NAV));
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fPathMoveDownButton.setLayoutData(gd);
+		fPathMoveDownButton = createPushButton(pathButtonComp, "Move Down", null);
 		fPathMoveDownButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handlePathMoveButtonSelected(false);
@@ -273,7 +247,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		createVerticalSpacer(comp, 2);
 		
 		fEnvLabel = new Label(comp, SWT.NONE);
-		fEnvLabel.setText("Environment variables:");
+		fEnvLabel.setText("Environment Variables:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fEnvLabel.setLayoutData(gd);
@@ -314,30 +288,21 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		envButtonComp.setLayoutData(gd);
 		
-		fEnvAddButton = new Button(envButtonComp, SWT.PUSH);
-		fEnvAddButton.setText("A&dd...");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fEnvAddButton.setLayoutData(gd);
+		fEnvAddButton = createPushButton(envButtonComp ,"A&dd...", null);
 		fEnvAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleEnvAddButtonSelected();
 			}
 		});
 		
-		fEnvEditButton = new Button(envButtonComp, SWT.PUSH);
-		fEnvEditButton.setText("Ed&it...");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fEnvEditButton.setLayoutData(gd);
+		fEnvEditButton = createPushButton(envButtonComp, "Ed&it...", null);
 		fEnvEditButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleEnvEditButtonSelected();
 			}
 		});
 		
-		fEnvRemoveButton = new Button(envButtonComp, SWT.PUSH);
-		fEnvRemoveButton.setText("Rem&ove");
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fEnvRemoveButton.setLayoutData(gd);
+		fEnvRemoveButton = createPushButton(envButtonComp, "Rem&ove", null);
 		fEnvRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleEnvRemoveButtonSelected();
@@ -349,7 +314,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 				setPathButtonsEnableState();
 			}			
 		});
-				
+	
 		setEnvButtonsEnableState();
 		
 	}
