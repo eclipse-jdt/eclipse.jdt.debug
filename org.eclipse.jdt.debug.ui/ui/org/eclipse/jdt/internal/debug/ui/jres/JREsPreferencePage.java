@@ -125,14 +125,21 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		final boolean[] canceled = new boolean[] {false};
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
 				IVMInstall defaultVM = getCurrentDefaultVM();
 				IVMInstall[] vms = fJREBlock.getJREs();
 				JREsUpdater updater = new JREsUpdater(getShell());
-				updater.updateJRESettings(vms, defaultVM);
+				if (!updater.updateJRESettings(vms, defaultVM)) {
+					canceled[0] = true;
+				}
 			}
 		});
+		
+		if(canceled[0]) {
+			return false;
+		}
 		
 		// save column widths
 		IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
