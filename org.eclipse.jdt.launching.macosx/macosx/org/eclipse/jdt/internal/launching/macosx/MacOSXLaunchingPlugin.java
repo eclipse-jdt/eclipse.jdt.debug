@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching.macosx;
 
-import java.io.*;
 import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -59,15 +58,8 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		
 		for (int i= 0; i < cmdLine.length; i++) {
 			// test whether we depend on SWT
-			if (useSWT(cmdLine[i])) {
-				try {
-					cmdLine= createSWTlauncher(clazz, cmdLine, cmdLine[0]);
-				} catch (IOException e) {
-					// give up by not wrapping this command
-					// NeedWork
-				}
-				return cmdLine;
-			}
+			if (useSWT(cmdLine[i]))
+				return createSWTlauncher(clazz, cmdLine, cmdLine[0]);
 		}
 		return cmdLine;
 	}
@@ -84,9 +76,9 @@ public class MacOSXLaunchingPlugin extends Plugin {
 	/**
 	 * Returns path to executable.
 	 */
-	static String[] createSWTlauncher(Class clazz, String[] cmdLine, String vmVersion) throws IOException {
+	static String[] createSWTlauncher(Class clazz, String[] cmdLine, String vmVersion) {
 				
-		// the following property is defined if Eclipse is started with java_swt
+		// the following property is defined if Eclipse is started via java_swt
 		String java_swt= System.getProperty("org.eclipse.swtlauncher");	//$NON-NLS-1$
 		if (java_swt == null) {
 			// if not defined try to guess...
