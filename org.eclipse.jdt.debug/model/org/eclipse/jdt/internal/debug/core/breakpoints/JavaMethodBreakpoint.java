@@ -328,7 +328,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	/**
 	 * @see JavaBreakpoint#updateEnabledState(EventRequest)
 	 */
-	protected void updateEnabledState(EventRequest request, JDIDebugTarget target) throws CoreException  {
+	protected void updateEnabledState(EventRequest request) throws CoreException  {
 		boolean enabled= isEnabled();
 		if (request instanceof MethodEntryRequest || request instanceof BreakpointRequest) {
 			enabled= enabled && isEntry();
@@ -337,7 +337,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		}
 		
 		if (enabled != request.isEnabled()) {
-			internalUpdateEnabledState(request, enabled, target);
+			internalUpdateEnabledState(request, enabled);
 		}
 	}	
 	
@@ -375,11 +375,11 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		if (event instanceof MethodEntryEvent) {
 			MethodEntryEvent entryEvent= (MethodEntryEvent) event;
 			fLastEventTypes.put(target, ENTRY_EVENT);
-			return handleMethodEvent(entryEvent, entryEvent.method(), target, thread);
+			return handleMethodEvent(entryEvent, entryEvent.method(), thread);
 		} else if (event instanceof MethodExitEvent) {
 			MethodExitEvent exitEvent= (MethodExitEvent) event;
 			fLastEventTypes.put(target, EXIT_EVENT);
-			return handleMethodEvent(exitEvent, exitEvent.method(), target, thread);
+			return handleMethodEvent(exitEvent, exitEvent.method(), thread);
 		} else if (event instanceof BreakpointEvent) {
 			fLastEventTypes.put(target, ENTRY_EVENT);
 			return super.handleBreakpointEvent(event, target, thread);
@@ -394,7 +394,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * the event has been fired by a method invocation that this breakpoint
 	 * is interested in. If it is not, do nothing.
 	 */
-	protected boolean handleMethodEvent(LocatableEvent event, Method method, JDIDebugTarget target, JDIThread thread) {
+	protected boolean handleMethodEvent(LocatableEvent event, Method method, JDIThread thread) {
 		try {
 			if (isNativeOnly()) {
 				if (!method.isNative()) {

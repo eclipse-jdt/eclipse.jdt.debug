@@ -381,7 +381,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		configureRequestHitCount(request);
 		configureInstanceFilters(request, target);
 		// Important: only enable a request after it has been configured
-		updateEnabledState(request, target);
+		updateEnabledState(request);
 	}
 	
 	/**
@@ -637,15 +637,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * with this breakpoint. Set the enabled state of the request
 	 * to the enabled state of this breakpoint.
 	 */
-	protected void updateEnabledState(EventRequest request, JDIDebugTarget target) throws CoreException  {
-		internalUpdateEnabledState(request, isEnabled(), target);
+	protected void updateEnabledState(EventRequest request) throws CoreException  {
+		internalUpdateEnabledState(request, isEnabled());
 	}
 	
 	/**
 	 * Set the enabled state of the given request to the given
 	 * value, also taking into account instance filters.
 	 */
-	protected void internalUpdateEnabledState(EventRequest request, boolean enabled, JDIDebugTarget target) {
+	protected void internalUpdateEnabledState(EventRequest request, boolean enabled) {
 		if (request.isEnabled() != enabled) {
 			// change the enabled state
 			try {

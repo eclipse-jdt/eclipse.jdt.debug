@@ -376,27 +376,27 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	/**
 	 * @see JavaBreakpoint#updateEnabledState(EventRequest)
 	 */
-	protected void updateEnabledState(EventRequest request, JDIDebugTarget target) throws CoreException  {
+	protected void updateEnabledState(EventRequest request) throws CoreException  {
 		boolean enabled = isEnabled();
 		if (request instanceof AccessWatchpointRequest) {
 			if (isAccess()) {
 				if (enabled != request.isEnabled()) {
-					internalUpdateEnabledState(request, enabled, target);
+					internalUpdateEnabledState(request, enabled);
 				}
 			} else {
 				if (request.isEnabled()) {
-					internalUpdateEnabledState(request, false, target);
+					internalUpdateEnabledState(request, false);
 				}
 			}
 		}
 		if (request instanceof ModificationWatchpointRequest) {
 			if (isModification()) {
 				if (enabled != request.isEnabled()) {
-					internalUpdateEnabledState(request, enabled, target);
+					internalUpdateEnabledState(request, enabled);
 				}
 			} else {
 				if (request.isEnabled()) {
-					internalUpdateEnabledState(request, false, target);
+					internalUpdateEnabledState(request, false);
 				}
 			}
 		}
