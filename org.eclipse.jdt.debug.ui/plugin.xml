@@ -1024,4 +1024,17 @@
 		name= "%jreSystemLibrary.name"
 		class= "org.eclipse.jdt.internal.debug.ui.launcher.JREContainerWizardPage"/>
 </extension>
+
+<extension point = "org.eclipse.jdt.debug.ui.vmInstallTypePage">
+	<vmInstallTypePage
+		id="org.eclipse.jdt.debug.ui.StandardVMCommandTab"
+		vmInstallTypeID="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMCommandTab">
+	</vmInstallTypePage>
+	<vmInstallTypePage
+		id="org.eclipse.jdt.debug.ui.J9VMCommandTab"
+		vmInstallTypeID="org.eclipse.jdt.internal.launching.j9.J9Type"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.J9VMCommandTab">
+	</vmInstallTypePage>
+</extension>
 </plugin>

@@ -61,6 +61,9 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected ILaunchConfigurationTab fDynamicTab;
 	protected Composite fDynamicTabHolder;
 	
+	protected ILaunchConfigurationWorkingCopy fWorkingCopy;
+	protected ILaunchConfiguration fLaunchConfiguration;
+	
 	// Constants
 	protected static final String DEFAULT_JRE_NAME = LauncherMessages.getString("JavaJRETab.Default_1"); //$NON-NLS-1$
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -106,6 +109,8 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		
 		setDynamicTabHolder(new Composite(topComp, SWT.NONE));
 		GridLayout tabHolderLayout = new GridLayout();
+		tabHolderLayout.marginHeight= 0;
+		tabHolderLayout.marginWidth= 0;
 		tabHolderLayout.numColumns = 1;
 		getDynamicTabHolder().setLayout(tabHolderLayout);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -139,6 +144,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		setLaunchConfigurationWorkingCopy(config);
 		IJavaElement javaElement = getContext();
 		if (javaElement != null) {
 			initializeDefaults(javaElement, config);
@@ -161,6 +167,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		setLaunchConfiguration(configuration);
 		updateJREFromConfig(configuration);
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
@@ -398,7 +405,16 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		// Ask the dynamic UI to create its Control
 		getDynamicTab().setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 		getDynamicTab().createControl(getDynamicTabHolder());
+		if (getLaunchConfigurationWorkingCopy() != null) {
+			//creating a dynamic area that was not created initially
+			getDynamicTab().setDefaults(getLaunchConfigurationWorkingCopy());
+		}
+		getDynamicTab().initializeFrom(getLaunchConfiguration());
 		getDynamicTabHolder().layout();		
+	}
+
+	protected ILaunchConfigurationWorkingCopy getLaunchConfigurationWorkingCopy() {
+		return fWorkingCopy;
 	}
 	
 	/**
@@ -415,4 +431,15 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		}
 	}
 
+	protected void setLaunchConfigurationWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
+		fWorkingCopy = workingCopy;
+	}
+
+	protected ILaunchConfiguration getLaunchConfiguration() {
+		return fLaunchConfiguration;
+	}
+
+	protected void setLaunchConfiguration(ILaunchConfiguration launchConfiguration) {
+		fLaunchConfiguration = launchConfiguration;
+	}
 }
