@@ -257,6 +257,8 @@ public class AddVMDialog extends StatusDialog {
 				fJavadocURL.setText(url.toExternalForm());
 			}
 		}
+		setVMNameStatus(validateVMName());
+		updateStatusLine();
 	}
 	
 	private IVMInstallType getVMType() {
