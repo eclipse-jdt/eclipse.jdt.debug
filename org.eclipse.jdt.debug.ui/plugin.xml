@@ -660,6 +660,12 @@
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CUPopupActions" 
     	targetID="#CompilationUnitEditorContext">
+    	<action id="org.eclipse.jdt.debug.ui.RunToLine"
+    		label="%runToLineAction.label"
+    		icon="icons/full/clcl16/runtoline_co.gif"
+    		menubarPath="additions"
+    		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"> 
+		</action>
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
@@ -676,6 +682,12 @@
      <viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CFPopupActions" 
     	targetID="#ClassFileEditorContext">
+    	<action id="org.eclipse.jdt.debug.ui.RunToLine"
+ 		   	icon="icons/full/clcl16/runtoline_co.gif"
+    		label="%runToLineAction.label"
+    		menubarPath="additions"
+    		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"> 
+		</action> 
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions"

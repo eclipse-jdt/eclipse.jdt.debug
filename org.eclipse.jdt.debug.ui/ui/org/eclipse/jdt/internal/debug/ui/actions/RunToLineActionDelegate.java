@@ -27,13 +27,15 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IEditorActionDelegate;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Action to support run to line (i.e. where the cursor is in the active editor)
  */
-public class RunToLineActionDelegate extends ManageBreakpointActionDelegate {
+public class RunToLineActionDelegate extends ManageBreakpointActionDelegate implements IEditorActionDelegate {
 	
 	public RunToLineActionDelegate() {
 	}
@@ -182,5 +184,15 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
+	 */
+	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		setPluginAction(action);
+		if (targetEditor instanceof ITextEditor) {
+			setTextEditor((ITextEditor)targetEditor);
+		}
 	}
 }
