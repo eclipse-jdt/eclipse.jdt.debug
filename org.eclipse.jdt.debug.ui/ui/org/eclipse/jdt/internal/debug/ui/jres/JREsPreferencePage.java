@@ -32,7 +32,6 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -75,10 +74,10 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		super();
 		
 		// only used when page is shown programatically
-		setTitle(LauncherMessages.getString("VMPreferencePage.Installed_JREs_1"));	 //$NON-NLS-1$
+		setTitle(JREMessages.getString("JREsPreferencePage.1"));	 //$NON-NLS-1$
 				
 		
-		setDescription(LauncherMessages.getString("vmPreferencePage.message")); //$NON-NLS-1$
+		setDescription(JREMessages.getString("JREsPreferencePage.2")); //$NON-NLS-1$
 		fVMTypes = JavaRuntime.getVMInstallTypes();
 		fOriginalVMs = new VMDefinitionsContainer();
 		IVMInstall def = JavaRuntime.getDefaultVMInstall();
@@ -160,7 +159,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		GridData data;
 				
 		Label tableLabel = new Label(parent, SWT.NONE);
-		tableLabel.setText(LauncherMessages.getString("VMPreferencePage.Installed_&JREs__1")); //$NON-NLS-1$
+		tableLabel.setText(JREMessages.getString("JREsPreferencePage.3")); //$NON-NLS-1$
 		data = new GridData();
 		tableLabel.setLayoutData(data);
 		tableLabel.setFont(font);
@@ -207,9 +206,9 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		boolean build = false;
 		if (buildRequired) {
 			// prompt the user to do a full build
-			MessageDialog messageDialog = new MessageDialog(getShell(), LauncherMessages.getString("VMPreferencePage.JRE_Settings_Changed_1"), null,  //$NON-NLS-1$
-			LauncherMessages.getString("VMPreferencePage.The_JRE_settings_have_changed._A_full_build_is_required_to_make_the_changes_effective._Do_the_full_build_now__2"), //$NON-NLS-1$
-			MessageDialog.QUESTION, new String[] {LauncherMessages.getString("VMPreferencePage.&Yes_3"), LauncherMessages.getString("VMPreferencePage.&No_4"), LauncherMessages.getString("VMPreferencePage.&Cancel_1")}, 0); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			MessageDialog messageDialog = new MessageDialog(getShell(), JREMessages.getString("JREsPreferencePage.4"), null,  //$NON-NLS-1$
+			JREMessages.getString("JREsPreferencePage.5"), //$NON-NLS-1$
+			MessageDialog.QUESTION, new String[] {JREMessages.getString("JREsPreferencePage.6"), JREMessages.getString("JREsPreferencePage.7"), JREMessages.getString("JREsPreferencePage.8")}, 0); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			int button = messageDialog.open();
 			if (button == 2) {
 				return false;
@@ -262,7 +261,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		} catch (InterruptedException e) {
 			// opearation canceled by user
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), LauncherMessages.getString("VMPreferencePage.Installed_JREs_1"), LauncherMessages.getString("VMPreferencePage.Build_failed._1")); //$NON-NLS-1$ //$NON-NLS-2$
+			ExceptionHandler.handle(e, getShell(), JREMessages.getString("JREsPreferencePage.1"), JREMessages.getString("JREsPreferencePage.9")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}			
 	
@@ -297,7 +296,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 				} else {
 					fJREBlock.setCheckedJRE(def);
 				}
-				ErrorDialog.openError(getControl().getShell(), LauncherMessages.getString("VMPreferencePage.Installed_JREs_1"), LauncherMessages.getString("VMPreferencePage.Installed_JRE_location_no_longer_exists.__JRE_will_be_removed_2"), new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, LauncherMessages.getString("VMPreferencePage.JRE_removed_3"), null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				ErrorDialog.openError(getControl().getShell(), JREMessages.getString("JREsPreferencePage.1"), JREMessages.getString("JREsPreferencePage.10"), new Status(IStatus.ERROR, IJavaDebugUIConstants.PLUGIN_ID, IJavaDebugUIConstants.INTERNAL_ERROR, JREMessages.getString("JREsPreferencePage.11"), null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				return;
 			}
 		} else {
@@ -311,7 +310,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			setTitle(LauncherMessages.getString("vmPreferencePage.title")); //$NON-NLS-1$
+			setTitle(JREMessages.getString("JREsPreferencePage.12")); //$NON-NLS-1$
 		}
 	}
 

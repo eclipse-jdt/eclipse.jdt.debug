@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.jres.JREsPreferencePage;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -34,7 +35,7 @@ public class DefineSystemLibraryQuickFix implements IMarkerResolution {
 	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
 	public void run(IMarker marker) {
-		IPreferencePage page = new VMPreferencePage();
+		IPreferencePage page = new JREsPreferencePage();
 		showPreferencePage("org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", page);	 //$NON-NLS-1$
 	}
 	
