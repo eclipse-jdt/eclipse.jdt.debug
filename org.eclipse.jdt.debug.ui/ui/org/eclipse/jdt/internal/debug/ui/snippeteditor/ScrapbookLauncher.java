@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.io.File;
 import java.io.IOException;
@@ -364,10 +366,10 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	}	
 	
 	/**
-	 * Returns the handle memento for the given scrapbook's launch configuration
-	 * template, or <code>null</code> if none.
+	 * Sets the handle memento for the given scrapbook's launch configuration
+	 * template.
 	 */
-	private static void setLaunchConfigMemento(IFile file, String memento) {
+	protected static void setLaunchConfigMemento(IFile file, String memento) {
 		try {
 			file.setPersistentProperty(SNIPPET_EDITOR_LAUNCH_CONFIG_HANDLE_MEMENTO, memento);
 		} catch (CoreException e) {
