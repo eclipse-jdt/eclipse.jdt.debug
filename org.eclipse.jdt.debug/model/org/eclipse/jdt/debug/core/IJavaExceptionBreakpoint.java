@@ -50,7 +50,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 
 	/**
 	 * Returns whether this breakpoint suspends execution when the
-	 * associated exception is thrown in a caught location (i.e. in
+	 * associated exception is thrown in a caught location (in
 	 * a try/catch statement).
 	 * 
 	 * @return <code>true</code> if this is a caught exception
@@ -61,7 +61,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	public boolean isCaught() throws CoreException;
 	/**
 	 * Returns whether this breakpoint suspends execution when the
-	 * associated exception is thrown in an uncaught location (i.e. not
+	 * associated exception is thrown in an uncaught location (not
 	 * caught by a try/catch statement).
 	 * 
 	 * @return <code>true</code> if this is an uncaught exception
@@ -72,7 +72,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	public boolean isUncaught() throws CoreException;		
 	/**
 	 * Sets whether this breakpoint suspends execution when the associated
-	 * exception is thrown in a caught location (i.e. in a try/catch
+	 * exception is thrown in a caught location (in a try/catch
 	 * statement).
 	 *
 	 * @param caught whether or not this breakpoint suspends execution when the
@@ -93,7 +93,7 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	public void setUncaught(boolean uncaught) throws CoreException;
 	/**
 	 * Returns whether the exception associated with this breakpoint is a
-	 * checked exception (i.e. compiler detected, not a runtime exception)
+	 * checked exception (compiler detected).
 	 * 
 	 * @return <code>true</code> if the exception associated with this breakpoint
 	 *  is a checked exception

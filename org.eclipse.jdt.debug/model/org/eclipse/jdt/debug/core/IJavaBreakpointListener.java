@@ -26,7 +26,9 @@ public interface IJavaBreakpointListener {
 	
 	/**
 	 * Notification that the given breakpoint is about to be added to
-	 * the specified target (i.e. pre notification).
+	 * the specified target. This message is sent before the breakpoint
+	 * is actually added to the debut target (i.e. this is a
+	 * pre-notification).
 	 * 
 	 * @param target Java debug target
 	 * @param breakpoint Java breakpoint
