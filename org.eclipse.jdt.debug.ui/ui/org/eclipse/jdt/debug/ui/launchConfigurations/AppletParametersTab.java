@@ -238,13 +238,13 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		try {
-			Integer.parseInt(fWidthText.getText().trim());
+			Integer.parseInt(getWidthText());
 		} catch(NumberFormatException nfe) {
 			setErrorMessage(LauncherMessages.getString("appletlauncher.argumenttab.width.error.notaninteger")); //$NON-NLS-1$
 			return false;
 		}
 		try {
-			Integer.parseInt(fHeightText.getText().trim());
+			Integer.parseInt(getHeightText());
 		} catch(NumberFormatException nfe) {
 			setErrorMessage(LauncherMessages.getString("appletlauncher.argumenttab.height.error.notaninteger")); //$NON-NLS-1$
 			return false;
@@ -343,10 +343,32 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, Integer.parseInt(fWidthText.getText()));
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, Integer.parseInt(fHeightText.getText()));
+		try {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_WIDTH, Integer.parseInt(getWidthText()));
+		} catch (NumberFormatException e) {
+		}
+		try {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, Integer.parseInt(getHeightText()));
+		} catch (NumberFormatException e) {
+		}
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, fNameText.getText());
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, getMapFromParametersTable());
+	}
+	
+	/**
+	 * Returns the current width specified by the user
+	 * @return the width specified by the user
+	 */
+	private String getWidthText() {
+		return fWidthText.getText().trim();
+	}
+	
+	/**
+	 * Returns the current height specified by the user
+	 * @return the height specified by the user
+	 */
+	private String getHeightText() {
+		return fHeightText.getText().trim();
 	}
 	
 	private Map getMapFromParametersTable() {
