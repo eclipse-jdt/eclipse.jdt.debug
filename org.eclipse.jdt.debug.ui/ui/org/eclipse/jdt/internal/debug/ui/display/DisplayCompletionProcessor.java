@@ -66,7 +66,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		
 	public DisplayCompletionProcessor() {
 		fCollector= new ResultCollector();
-		ContextType contextType= JavaPlugin.getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
+		ContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
 			fTemplateEngine= new TemplateEngine(contextType);
 		}
