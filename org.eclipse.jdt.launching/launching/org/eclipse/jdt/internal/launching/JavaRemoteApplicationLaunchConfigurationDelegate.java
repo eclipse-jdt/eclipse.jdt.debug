@@ -9,23 +9,17 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdi.Bootstrap;
-import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
@@ -37,44 +31,26 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 /**
  * Launch configuration delegate for a remote Java application.
  */
-public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
+public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
 	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, IProgressMonitor)
 	 */
 	public ILaunch launch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		
-		// Java project
-		String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
-		if ((projectName == null) || (projectName.trim().length() < 1)) {
-			abort("No project specified", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
-		}			
-		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);
-		if ((javaProject == null) || !javaProject.exists()) {
-			abort("Invalid project specified", null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT);
-		}
-				
+						
 		// Host
-		String hostName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, "").trim();
-		if (hostName.length() < 1) {
-			abort("No host name specified", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_HOSTNAME);
-		}
+		String hostName = getHostName(configuration);
+
 		if (hostName.indexOf(' ') > -1) {
 			abort("Invalid host name specified", null, IJavaLaunchConfigurationConstants.ERR_INVALID_HOSTNAME);
 		}
 		
 		// Port
-		int portNumber = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, Integer.MIN_VALUE);
-		if (portNumber == Integer.MIN_VALUE) {
-			abort("No port number specified", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PORT);
-		}
-		if (portNumber < 1) {
-			abort("Invalid port number specified", null, IJavaLaunchConfigurationConstants.ERR_INVALID_PORT);
-		}
+		int portNumber = verifyPortNumber(configuration);
 						
 		// Allow termination of remote VM
-		boolean allowTerminate = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
-		String portNumberString = String.valueOf(portNumber);
+		boolean allowTerminate = isAllowTermiante(configuration);
+		String portNumberString = Integer.toString(portNumber);
 		
 		IDebugTarget debugTarget = null;
 		AttachingConnector connector= getAttachingConnector();
@@ -97,24 +73,17 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 		} else {
 			abort("Shared memory attaching connector not available", null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE);
 		}
-			
-		ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
+		
+		// Create & return Launch:
+		//  - set default source locator if none specified
+		ISourceLocator sourceLocator = null;
+		String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
+		if (id == null) {
+			IJavaProject javaProject = JavaLaunchConfigurationHelper.getJavaProject(configuration);
+			sourceLocator = new JavaSourceLocator(javaProject);
+		}
 		Launch launch = new Launch(configuration, mode, sourceLocator, null, debugTarget);
 		return launch;		
-	}
-
-	/**
-	 * Convenience method to get the workspace root.
-	 */
-	private IWorkspaceRoot getWorkspaceRoot() {
-		return ResourcesPlugin.getWorkspace().getRoot();
-	}
-	
-	/**
-	 * Convenience method to get the java model.
-	 */
-	private IJavaModel getJavaModel() {
-		return JavaCore.create(getWorkspaceRoot());
 	}
 	
 	/**
@@ -146,19 +115,4 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 		return connector;
 	}
 
-	/**
-	 * @see JavaLocalApplicationLaunchConfigurationHelper#abort(String, Throwable, int)
-	 */
-	protected void abort(String message, Throwable exception, int code) throws CoreException {
-		JavaLaunchConfigurationHelper.abort(message, exception, code);
-	}
-	
-	/**
-	 * Convenience method to return the launch manager.
-	 * 
-	 * @return the launch manager
-	 */
-	private ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
-	}
 }

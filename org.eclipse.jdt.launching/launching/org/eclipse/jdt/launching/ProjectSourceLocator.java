@@ -154,6 +154,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 	 		or null if no lookup path has been set for the <code>project</code>.
 	 * @throws JavaModelException	When access to the underlying <code>IProject</code> 
 	 					fails or when the persisten property has a wrong format.
+	 * @deprecated to be removed - source lookup path to be stored with launch config
 	 */
 	public static IJavaProject[] getSourceLookupPath(IJavaProject project) throws JavaModelException {
 		IProject p= project.getProject();
@@ -178,6 +179,8 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 	 * 	or <code>null</code> if none have been set
 	 * @throws JavaModelException	When access to the underlying <code>IProject</code> 
 	 *  fails or when the persistent property has an invalid format.
+	 * @deprecated to be removed - launch configuations will store
+	 *  source lookup paths
 	 */
 	public static IJavaSourceLocation[] getPersistedSourceLocations(IJavaProject project) throws JavaModelException {
 		IProject p= project.getProject();
@@ -200,6 +203,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 	 * @param projects	The projects that will be searched for source files.
 	 * @throws JavaModelException	When access to the underlying <code>IProject</code> 
 	 					fails.
+	 * @deprecated to be removed - source lookup path to be stored with launch config					
 	 */
 	public static void setSourceLookupPath(IJavaProject project, IJavaProject[] projects) throws JavaModelException {
 		fgCustomSearchPathChanged= true;
@@ -221,6 +225,8 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 	 * @param locations The locations that will be searched for source files.
 	 * @throws JavaModelException	When access to the underlying <code>IProject</code>
 	 *  fails, or an exception occurs persisting the property
+	 * 
+	 * @deprecated to be removed - source lookup path to be stored with launch config
 	 */
 	public static void setPersistedSourceLocations(IJavaProject project, IJavaSourceLocation[] locations) throws JavaModelException {
 		fgCustomSearchPathChanged= true;

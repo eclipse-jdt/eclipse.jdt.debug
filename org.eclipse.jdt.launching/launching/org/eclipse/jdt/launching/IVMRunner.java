@@ -41,9 +41,9 @@ public interface IVMRunner {
 	 * @param configuration the configuration settings for this run
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return a result object containing the create processes and 
-	 *   debug target if the launch was successful, and <code>null</code> otherwise
-	 * 
-	 * XXX: what should be returned if cancelled?
+	 *   debug target if the launch was successful, and <code>null</code>
+	 *   otherwise if cancelled
+	 * @exception CoreException if an exception occurrs while launching
 	 */
 	public VMRunnerResult run(VMRunnerConfiguration configuration, IProgressMonitor monitor) throws CoreException;	
 	
