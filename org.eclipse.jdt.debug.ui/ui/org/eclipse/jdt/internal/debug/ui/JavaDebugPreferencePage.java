@@ -36,6 +36,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -46,6 +49,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -66,6 +70,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -104,6 +109,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fFilterStaticButton;
 	private Button fFilterConstructorButton;
 	private Text fEditorText;
+	private String fInvalidEditorText= null;
 	private TableEditor fTableEditor;
 	private TableItem fNewTableItem;
 	private StepFilter fNewStepFilter;
@@ -178,6 +184,20 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		public void setChecked(boolean checked) {
 			fChecked = checked;
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof StepFilter) {
+				StepFilter other= (StepFilter)o;
+				if (getName().equals(other.getName())) {
+					return true;
+				}	
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return getName().hashCode();
 		}
 	}
 		
@@ -464,8 +484,16 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fTableLabel.setLayoutData(gd);
 		
 		// filter table
-		fFilterViewer = new CheckboxTableViewer(container, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		fFilterTable = fFilterViewer.getTable();
+		fFilterTable= new Table(container, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		
+		TableLayout tableLayout= new TableLayout();
+		ColumnLayoutData[] columnLayoutData= new ColumnLayoutData[1];
+		columnLayoutData[0]= new ColumnWeightData(100);		
+		tableLayout.addColumnData(columnLayoutData[0]);
+		fFilterTable.setLayout(tableLayout);
+		new TableColumn(fFilterTable, SWT.NONE);
+
+		fFilterViewer = new CheckboxTableViewer(fFilterTable);
 		fTableEditor = new TableEditor(fFilterTable);
 		fFilterViewer.setLabelProvider(new StepFilterLabelProvider());
 		fFilterViewer.setSorter(new WorkbenchViewerSorter());
@@ -642,7 +670,12 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		text.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent event) {				
 				if (event.character == SWT.CR) {
-					validateChangeAndCleanup();
+					if (fInvalidEditorText != null) {
+						fEditorText.setText(fInvalidEditorText);
+						fInvalidEditorText= null;
+					} else {
+						validateChangeAndCleanup();
+					}
 				} else if (event.character == SWT.ESC) {
 					removeNewFilter();
 					cleanupEditor();
@@ -652,7 +685,12 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		// Consider loss of focus on the editor to mean the same as CR
 		text.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent event) {
-				validateChangeAndCleanup();
+				if (fInvalidEditorText != null) {
+					fEditorText.setText(fInvalidEditorText);
+					fInvalidEditorText= null;
+				} else {
+					validateChangeAndCleanup();
+				}
 			}
 		});
 		// Consume traversal events from the text widget so that CR doesn't 
@@ -671,14 +709,27 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		if (trimmedValue.length() < 1) {
 			removeNewFilter();
 		}
-		// if it's invalid, beep and leave the sitting in the editor
+		// if it's invalid, beep and leave sitting in the editor
 		else if (!validateEditorInput(trimmedValue)) {
+			fInvalidEditorText= trimmedValue;
+			fEditorText.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Invalid_step_filter._Return_to_continue;_escape_to_exit._1")); //$NON-NLS-1$
 			getShell().getDisplay().beep();			
 			return;
-		// otherwise, commit the new value
+		// otherwise, commit the new value if not a duplicate
 		} else {		
+			
+			Object[] filters= fStepFilterContentProvider.getElements(null);
+			for (int i = 0; i < filters.length; i++) {
+				StepFilter filter = (StepFilter)filters[i];
+				if (filter.getName().equals(trimmedValue)) {
+					removeNewFilter();
+					cleanupEditor();
+					return;
+				}	
+			}
 			fNewTableItem.setText(trimmedValue);
 			fNewStepFilter.setName(trimmedValue);
+			fFilterViewer.update(fNewStepFilter, new String[]{IBasicPropertyConstants.P_IMAGE});
 		}
 		cleanupEditor();
 	}
@@ -701,15 +752,34 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	}
 	
 	/**
-	 * A valid step filter is simply one that is not empty (all spaces),
-	 * and has no embedded spaces.  Beyond this, a string cannot be
-	 * validated as corresponding to an existing type or package (and
-	 * this is probably not even desirable).  
+	 * A valid step filter is simply one that is a valid Java identifier.
+	 * and, as defined in the JDI spec, the regular expressions used for
+	 * step filtering must be limited to exact matches or patterns that
+	 * begin with '*' or end with '*'. Beyond this, a string cannot be validated
+	 * as corresponding to an existing type or package (and this is probably not
+	 * even desirable).  
 	 */
+	
 	private boolean validateEditorInput(String trimmedValue) {
-		int embeddedSpace = trimmedValue.indexOf(' ');
-		if (embeddedSpace != -1) {
-			return false;
+		char firstChar= trimmedValue.charAt(0);
+		if (!Character.isJavaIdentifierStart(firstChar)) {
+			if (!(firstChar == '*')) {
+				return false;
+			}
+
+		}
+		int length= trimmedValue.length();
+		for (int i= 1; i < length; i++) {
+			char c= trimmedValue.charAt(i);
+			if (!Character.isJavaIdentifierPart(c)) {
+				if (c == '.' && i != (length - 1)) {
+					continue;
+				}
+				if (c == '*' && i == (length - 1)) {
+					continue;
+				}
+				return false;
+			}
 		}
 		return true;
 	}
