@@ -5,20 +5,7 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
-import com.sun.jdi.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IDebugStatusConstants;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
-import org.eclipse.jdt.core.eval.IEvaluationContext;
-import org.eclipse.jdt.debug.core.IJavaEvaluationListener;
-import org.eclipse.jdt.debug.core.IJavaEvaluationResult;
-import org.eclipse.jdt.debug.core.IJavaValue;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import com.sun.jdi.*;import java.util.*;import org.eclipse.core.resources.IMarker;import org.eclipse.debug.core.DebugException;import org.eclipse.jdt.core.JavaModelException;import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;import org.eclipse.jdt.core.eval.IEvaluationContext;import org.eclipse.jdt.debug.core.*;
 
 /**
  * An evaluation context for a stack frame.
@@ -167,8 +154,12 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 					getModelThread().targetRequestFailed(ERROR_EVALUATION, e);
 				}
 			}
-			// null
-			fValue = new JDIValue(null, getModelThread());
+			if (hasProblems()) {
+				fValue= null;
+			} else {
+				// null
+				fValue = new JDIValue(null, getModelThread());
+			}
 		}
 	}
 	
