@@ -13,9 +13,11 @@ package org.eclipse.jdt.internal.debug.core.logicalstructures;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
@@ -53,6 +55,11 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	 * The list of java logical structures defined by the user.
 	 */
 	private static List fUserDefinedJavaLogicalStructures;
+    
+    /**
+     * The list of java logical structures listeners.
+     */
+    private static Set fListeners= new HashSet();
 	
 	/**
 	 * Get the logical structure from the extension point and the preference store,
@@ -111,7 +118,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	/**
 	 * Get the user defined logical structures (from the preference store).
 	 */
-	static private void initUserDefinedJavaLogicalStructures() {
+	 private static void initUserDefinedJavaLogicalStructures() {
 		fUserDefinedJavaLogicalStructures= new ArrayList();
 		String logicalStructuresString= JDIDebugModel.getPreferences().getString(JDIDebugModel.PREF_JAVA_LOGICAL_STRUCTURES);
 		StringTokenizer tokenizer= new StringTokenizer(logicalStructuresString, "\0", true); //$NON-NLS-1$
@@ -146,7 +153,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	/**
 	 * Save the user defined logical structures in the preference store.
 	 */
-	static private void saveUserDefinedJavaLogicalStructures() {
+	public static void saveUserDefinedJavaLogicalStructures() {
 		StringBuffer logicalStructuresString= new StringBuffer();
 		for (Iterator iter= fUserDefinedJavaLogicalStructures.iterator(); iter.hasNext();) {
 			JavaLogicalStructure logicalStructure= (JavaLogicalStructure) iter.next();
@@ -167,12 +174,18 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 			}
 		}
 		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_JAVA_LOGICAL_STRUCTURES, logicalStructuresString.toString());
+
+        initJavaLogicalStructureMap();
+        Iterator iter = fListeners.iterator();
+        while (iter.hasNext()) {
+            ((IJavaStructuresListener) iter.next()).logicalStructuresChanged();
+        }
 	}
 
 	/**
 	 * Return all the defined logical structures.
 	 */
-	static public JavaLogicalStructure[] getJavaLogicalStructures() {
+	public static JavaLogicalStructure[] getJavaLogicalStructures() {
 		JavaLogicalStructure[] logicalStructures= new JavaLogicalStructure[fPluginContributedJavaLogicalStructures.size() + fUserDefinedJavaLogicalStructures.size()];
 		int i= 0;
 		for (Iterator iter= fPluginContributedJavaLogicalStructures.iterator(); iter.hasNext();) {
@@ -187,11 +200,18 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	/**
 	 * Set the user defined logical structures.
 	 */
-	static public void setUserDefinedJavaLogicalStructures(JavaLogicalStructure[] logicalStructures) {
+	public static void setUserDefinedJavaLogicalStructures(JavaLogicalStructure[] logicalStructures) {
 		fUserDefinedJavaLogicalStructures= Arrays.asList(logicalStructures);
 		saveUserDefinedJavaLogicalStructures();
-		initJavaLogicalStructureMap();
 	}
+    
+    public static void addStructuresListener(IJavaStructuresListener listener) {
+        fListeners.add(listener);
+    }
+    
+    public static void removeStructuresListener(IJavaStructuresListener listener) {
+        fListeners.remove(listener);
+    }
 
 	public ILogicalStructureType[] getLogicalStructureTypes(IValue value) {
 		if (!(value instanceof IJavaObject)) {

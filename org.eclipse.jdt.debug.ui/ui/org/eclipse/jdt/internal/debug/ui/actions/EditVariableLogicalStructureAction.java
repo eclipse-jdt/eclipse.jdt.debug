@@ -17,9 +17,11 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructure;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
 import org.eclipse.jdt.internal.debug.ui.EditLogicalStructureDialog;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -62,7 +64,9 @@ public class EditVariableLogicalStructureAction extends ActionDelegate implement
                 Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
                 if (shell != null) {
                     EditLogicalStructureDialog dialog= new EditLogicalStructureDialog(shell, (JavaLogicalStructure) structure);
-                    dialog.open();
+                    if (dialog.open() == Dialog.OK) {
+                        JavaLogicalStructures.saveUserDefinedJavaLogicalStructures();
+                    }
                 }
             }
         } catch (DebugException e) {

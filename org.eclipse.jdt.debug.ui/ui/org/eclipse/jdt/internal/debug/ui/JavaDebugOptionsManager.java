@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -59,6 +60,8 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.IJavaStructuresListener;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -83,7 +86,7 @@ import com.sun.jdi.ObjectReference;
  * debug action visibility.
  * </ul>
  */
-public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventSetListener, IPropertyChangeListener, IJavaBreakpointListener, ILaunchListener, IBreakpointsListener {
+public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventSetListener, IPropertyChangeListener, IJavaBreakpointListener, ILaunchListener, IBreakpointsListener, IJavaStructuresListener {
 	
 	/**
 	 * Singleton options manager
@@ -275,6 +278,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 			JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		}
 		JDIDebugModel.removeJavaBreakpointListener(this);
+        JavaLogicalStructures.removeStructuresListener(this);
 		fProblemMap.clear();
 		fLocationMap.clear();
 		System.getProperties().remove(JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"); //$NON-NLS-1$
@@ -826,6 +830,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 		JDIDebugModel.addJavaBreakpointListener(this);
+        JavaLogicalStructures.addStructuresListener(this);
 	}	
 
 	/**
@@ -924,5 +929,22 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		IBreakpoint[] breakpoints,
 		IMarkerDelta[] deltas) {
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jdt.internal.debug.core.logicalstructures.IJavaStructuresListener#logicalStructuresChanged()
+     */
+    public void logicalStructuresChanged() {
+        // If a Java stack frame is selected in the Debug view, fire a change event on
+        // it so the variables view will update for any structure changes.
+        IAdaptable selected = DebugUITools.getDebugContext();
+        if (selected != null) {
+            IJavaStackFrame frame= (IJavaStackFrame) selected.getAdapter(IJavaStackFrame.class);
+            if (frame != null) {
+                DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { 
+                        new DebugEvent(frame, DebugEvent.CHANGE)
+                });
+            }
+        }
+    }
 
 }
