@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
@@ -1146,6 +1147,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		if (breakpoint instanceof IJavaWatchpoint) {
 			return getWatchpointText((IJavaWatchpoint)breakpoint);
+		} else if (breakpoint instanceof IJavaPatternBreakpoint) {
+			return getJavaPatternBreakpointText((IJavaPatternBreakpoint)breakpoint);
 		} else if (breakpoint instanceof IJavaLineBreakpoint) {
 			return getLineBreakpointText((IJavaLineBreakpoint)breakpoint);
 		}
@@ -1157,14 +1160,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		StringBuffer buffer = new StringBuffer();
 		String typeName = breakpoint.getTypeName();
 		buffer.append(getQualifiedName(typeName));
-		int hitCount= breakpoint.getHitCount();
-		if (hitCount > 0) {
-			buffer.append(" ["); //$NON-NLS-1$
-			buffer.append(DebugUIMessages.getString("JDIModelPresentation.hit_count__59")); //$NON-NLS-1$
-			buffer.append(' ');
-			buffer.append(hitCount);
-			buffer.append(']');
-		}		
+		appendHitCount(breakpoint, buffer);
 		appendSuspendPolicy(breakpoint, buffer);
 		appendThreadFilter(breakpoint, buffer);
 		if (breakpoint.getFilters().length > 0) {
@@ -1196,24 +1192,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		IMember member= BreakpointUtils.getMember(breakpoint);
 		StringBuffer label= new StringBuffer();
 		label.append(getQualifiedName(typeName));
-		int lineNumber= breakpoint.getLineNumber();
-		if (lineNumber > 0) {
-			label.append(" ["); //$NON-NLS-1$
-			label.append(DebugUIMessages.getString("JDIModelPresentation.line__65")); //$NON-NLS-1$
-			label.append(' ');
-			label.append(lineNumber);
-			label.append(']');
-
-		}
-		int hitCount= breakpoint.getHitCount();
-		if (hitCount > 0) {
-			label.append(" ["); //$NON-NLS-1$
-			label.append(DebugUIMessages.getString("JDIModelPresentation.hit_count__67")); //$NON-NLS-1$
-			label.append(' ');
-			label.append(hitCount);
-			label.append(']');
-		}
-		
+		appendLineNumber(breakpoint, label);
+		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint,label);
 		appendThreadFilter(breakpoint, label);
 		
@@ -1237,6 +1217,49 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		
 		return label.toString();
 
+	}
+	
+	protected StringBuffer appendLineNumber(IJavaLineBreakpoint breakpoint, StringBuffer label) throws CoreException {
+		int lineNumber= breakpoint.getLineNumber();
+		if (lineNumber > 0) {
+			label.append(" ["); //$NON-NLS-1$
+			label.append(DebugUIMessages.getString("JDIModelPresentation.line__65")); //$NON-NLS-1$
+			label.append(' ');
+			label.append(lineNumber);
+			label.append(']');
+
+		}
+		return label;
+	}
+	
+	protected StringBuffer appendHitCount(IJavaBreakpoint breakpoint, StringBuffer label) throws CoreException {
+		int hitCount= breakpoint.getHitCount();
+		if (hitCount > 0) {
+			label.append(" ["); //$NON-NLS-1$
+			label.append(DebugUIMessages.getString("JDIModelPresentation.hit_count__67")); //$NON-NLS-1$
+			label.append(' ');
+			label.append(hitCount);
+			label.append(']');
+		}
+		return label;
+	}
+	
+	protected String getJavaPatternBreakpointText(IJavaPatternBreakpoint breakpoint) throws CoreException {
+	
+		IResource resource= breakpoint.getMarker().getResource();
+		IMember member= BreakpointUtils.getMember(breakpoint);
+		StringBuffer label= new StringBuffer(resource.getName());
+		appendLineNumber(breakpoint, label);
+		appendHitCount(breakpoint, label);
+		appendSuspendPolicy(breakpoint,label);
+		appendThreadFilter(breakpoint, label);
+					
+		if (member != null) {
+			label.append(" - "); //$NON-NLS-1$
+			label.append(fJavaLabelProvider.getText(member));
+		}
+		
+		return label.toString();
 	}
 	
 	protected String getWatchpointText(IJavaWatchpoint watchpoint) throws CoreException {
