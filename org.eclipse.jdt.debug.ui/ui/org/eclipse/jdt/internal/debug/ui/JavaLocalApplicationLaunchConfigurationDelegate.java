@@ -117,44 +117,29 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	 */
 	protected void initializeDefaults(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
 		
-		// The java project & main type are ALWAYS initialized from context (it wouldn't make
-		// sense to persist these)
+		// First look for a default config for this config type and the specified resource
+		try {
+			IResource resource = javaElement.getUnderlyingResource();
+			if (resource != null) {
+				String configTypeID = workingCopy.getType().getIdentifier();
+				boolean foundDefault = getLaunchManager().initializeFromDefaultLaunchConfiguration(resource, workingCopy, configTypeID);
+				if (foundDefault) {
+					initializeFromContextMainTypeAndName(workingCopy, javaElement);
+					return;
+				}
+			}
+		} catch (JavaModelException jme) {			
+		} catch (CoreException ce) {			
+		}
+				
+		// If no default config was found, initialize all attributes we can from the specified 
+		// context object and from 'hard-coded' defaults known to this delegate
 		initializeFromContextJavaProject(workingCopy, javaElement);
 		initializeFromContextMainTypeAndName(workingCopy, javaElement);
-		
-		// Retrieve the IResource for the java element
-		boolean initializeFromPersisted = true;
-		IResource resource = null;
-		try {
-			resource = javaElement.getUnderlyingResource();
-		} catch (CoreException ce) {
-		}
-		if (resource == null) {
-			initializeFromPersisted = false;
-		}
-		
-		// The VM attributes are 'required' in the sense that if any launch config attributes 
-		// were persisted for this resource, these must be also.  
-		if (initializeFromPersisted) {
-			initializeFromPersisted = initializeFromPersistedVM(workingCopy, resource);
-		}
-		
-		// If we have so far successfully initialized the working copy from persisted information,
-		// initialize the rest of the working copy attributes from persisted info, otherwise
-		// initialize the working copy from contextual and 'hard-coded' defaults
-		if (initializeFromPersisted) {
-			initializeFromPersistedContainer(workingCopy, resource);
-			initializeFromPersistedPerspectives(workingCopy, resource);
-			initializeFromPersistedPgmArgs(workingCopy, resource);
-			initializeFromPersistedVMArgs(workingCopy, resource);
-			initializeFromPersistedWorkingDir(workingCopy, resource);
-			initializeFromPersistedBuild(workingCopy, resource);
-		} else {
-			initializeFromDefaultVM(workingCopy);
-			initializeFromDefaultContainer(workingCopy);
-			initializeFromDefaultPerspectives(workingCopy);	
-			initializeFromDefaultBuild(workingCopy);		
-		}
+		initializeFromDefaultVM(workingCopy);
+		initializeFromDefaultContainer(workingCopy);
+		initializeFromDefaultPerspectives(workingCopy);	
+		initializeFromDefaultBuild(workingCopy);				
 	}
 	
 	/**
@@ -419,10 +404,6 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 			runConfig.setBootClassPath(bootpath);
 		}
 		
-		// Get the configuration's container as a String
-		IPath location = configuration.getLocation();
-		IPath containerPath = location.removeLastSegments(1);
-		
 		// Get the configuration's perspective id's
 		String runPerspID = configuration.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
 		String debugPerspID = configuration.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
@@ -437,17 +418,10 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		} catch (CoreException ce) {			
 		}		
 		if (resource != null) {
-			persistAttribute(fgQualNameContainer, resource, containerPath.toString());
-			persistAttribute(fgQualNameRunPerspId, resource, runPerspID);
-			persistAttribute(fgQualNameDebugPerspId, resource, debugPerspID);			
-			persistAttribute(fgQualNameWorkingDir, resource, workingDir);
-			persistAttribute(fgQualNamePgmArgs, resource, pgmArgs);
-			persistAttribute(fgQualNameVMArgs, resource, vmArgs);
-			persistAttribute(fgQualNameVMTypeId, resource, vmInstallTypeId);
-			persistAttribute(fgQualNameVMId, resource, vmInstallId);
-			persistAttribute(fgQualNameBuild, resource, String.valueOf(build));
+			getLaunchManager().setDefaultLaunchConfiguration(resource, configuration);
 		}
 
+		// Create & return Launch
 		ISourceLocator sourceLocator = new JavaUISourceLocator(javaProject);
 		Launch launch = new Launch(configuration, mode, sourceLocator, result.getProcesses(), result.getDebugTarget());
 		return launch;
