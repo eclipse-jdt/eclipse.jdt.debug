@@ -82,6 +82,8 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected static final String DEFAULT_JRE_NAME_PREFIX = LauncherMessages.getString("JavaJRETab.Default_1"); //$NON-NLS-1$
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
+	/**
+	 * Name of the default VM or <code>null</code> if a default VM does not exist.	 */ 
 	protected String fDefaultVMName;
 		
 	/**
@@ -188,8 +190,15 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			if (selectedIndex > -1) {
 				String vmName = null;
 				String vmTypeID = null;
-				if (selectedIndex > 0) {
-					VMStandin vmStandin = (VMStandin)fVMStandins.get(selectedIndex - 1);
+				
+				// there may not be a default VM
+				int offset = 0;
+				if (fDefaultVMName != null) {
+					offset++;
+				}
+				
+				if (fDefaultVMName == null || selectedIndex > 0) {
+					VMStandin vmStandin = (VMStandin)fVMStandins.get(selectedIndex - offset);
 					vmName = vmStandin.getName();
 					vmTypeID = vmStandin.getVMInstallType().getId();
 				} 
@@ -370,15 +379,24 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * Set the available items on the JRE combo box
 	 */
 	protected void populateJREComboBox() {
-		String[] vmNames = new String[fVMStandins.size() + 1];
 
-		// Show the name of the 'default' VM
-		String defaultVMName = JavaRuntime.getDefaultVMInstall().getName();
-		vmNames[0] = DEFAULT_JRE_NAME_PREFIX + " (" + defaultVMName + ')'; //$NON-NLS-1$
-		fDefaultVMName = vmNames[0];
+		// Show the name of the 'default' VM, if it exists
+		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
+		int numVMs = fVMStandins.size();
+		int offset = 0;
+		if (defaultVM != null) {
+			numVMs++;
+			offset++;
+		}
+		String[] vmNames = new String[numVMs];
+		if (defaultVM != null) {
+			String defaultVMName = defaultVM.getName();
+			vmNames[0] = DEFAULT_JRE_NAME_PREFIX + " (" + defaultVMName + ')'; //$NON-NLS-1$
+			fDefaultVMName = vmNames[0];
+		}
 
 		// Add all installed VMs
-		int index = 1;
+		int index = offset;
 		Iterator iterator = fVMStandins.iterator();
 		while (iterator.hasNext()) {
 			VMStandin standin = (VMStandin)iterator.next();
@@ -519,4 +537,5 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected boolean isUseDynamicJREArea() {
 		return fUseDynamicArea;
 	}
+
 }

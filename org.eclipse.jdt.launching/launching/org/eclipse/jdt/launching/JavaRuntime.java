@@ -975,44 +975,46 @@ public final class JavaRuntime {
 					case IClasspathEntry.CPE_CONTAINER:
 						IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
 						int property = -1;
-						switch (container.getKind()) {
-							case IClasspathContainer.K_APPLICATION:
-								property = IRuntimeClasspathEntry.USER_CLASSES;
-								break;
-							case IClasspathContainer.K_DEFAULT_SYSTEM:
-								property = IRuntimeClasspathEntry.STANDARD_CLASSES;
-								break;	
-							case IClasspathContainer.K_SYSTEM:
-								property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-								break;
-						}
-						IRuntimeClasspathEntry r = newRuntimeContainerClasspathEntry(entry.getPath(), property);
-						// check for duplicate/redundant entries 
-						boolean duplicate = false;
-						for (int i = 0; i < expandedPath.size(); i++) {
-							Object o = expandedPath.get(i);
-							if (o instanceof IRuntimeClasspathEntry) {
-								IRuntimeClasspathEntry re = (IRuntimeClasspathEntry)o;
-								if (re.getType() == IRuntimeClasspathEntry.CONTAINER) {
-									if (container instanceof IRuntimeContainerComparator) {
-										duplicate = ((IRuntimeContainerComparator)container).isDuplicate(re.getPath());
-										if (duplicate) {
+						if (container != null) {
+							switch (container.getKind()) {
+								case IClasspathContainer.K_APPLICATION:
+									property = IRuntimeClasspathEntry.USER_CLASSES;
+									break;
+								case IClasspathContainer.K_DEFAULT_SYSTEM:
+									property = IRuntimeClasspathEntry.STANDARD_CLASSES;
+									break;	
+								case IClasspathContainer.K_SYSTEM:
+									property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
+									break;
+							}
+							IRuntimeClasspathEntry r = newRuntimeContainerClasspathEntry(entry.getPath(), property);
+							// check for duplicate/redundant entries 
+							boolean duplicate = false;
+							for (int i = 0; i < expandedPath.size(); i++) {
+								Object o = expandedPath.get(i);
+								if (o instanceof IRuntimeClasspathEntry) {
+									IRuntimeClasspathEntry re = (IRuntimeClasspathEntry)o;
+									if (re.getType() == IRuntimeClasspathEntry.CONTAINER) {
+										if (container instanceof IRuntimeContainerComparator) {
+											duplicate = ((IRuntimeContainerComparator)container).isDuplicate(re.getPath());
+											if (duplicate) {
+												break;
+											}
+										} else if (re.getVariableName().equals(r.getVariableName())) {
+											duplicate = true;
 											break;
 										}
-									} else if (re.getVariableName().equals(r.getVariableName())) {
-										duplicate = true;
-										break;
 									}
 								}
 							}
+							if (!duplicate) {
+								expandedPath.add(r);
+							}	
 						}
-						if (!duplicate) {
-							expandedPath.add(r);
-						}	
 						break;
 					case IClasspathEntry.CPE_VARIABLE:
 						if (entry.getPath().segment(0).equals(JRELIB_VARIABLE)) {
-							r = newVariableRuntimeClasspathEntry(entry.getPath());
+							IRuntimeClasspathEntry r = newVariableRuntimeClasspathEntry(entry.getPath());
 							r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
 							r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
 							r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
