@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DefaultVariablesContentProvider;
 import org.eclipse.debug.ui.IDebugView;
@@ -54,15 +55,15 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IVariablesContentProvider#getVariableChildren(org.eclipse.debug.core.model.IVariable)
 	 */
-	public IVariable[] getVariableChildren(IDebugView view, IVariable parent) throws DebugException {
-		IJavaVariablesContentProvider contentProvider = getContentProvider(parent);		
+	public IVariable[] getVariableChildren(IDebugView view, IValue value) throws DebugException {
+		IJavaVariablesContentProvider contentProvider = getContentProvider(value);		
 		if (contentProvider == null) {
-			return super.getVariableChildren(view, parent);
+			return super.getVariableChildren(view, value);
 		}
-		IJavaVariable[] result = contentProvider.getVariableChildren(view, (IJavaVariable)parent);
+		IJavaVariable[] result = contentProvider.getVariableChildren(view, (IJavaValue)value);
 		// If specified content provider can't get children, defer to the default content provider
 		if (result == null) {
-			return super.getVariableChildren(view, parent);
+			return super.getVariableChildren(view, value);
 		}
 		return result;
 	}
@@ -70,17 +71,16 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IVariablesContentProvider#hasVariableChildren(org.eclipse.debug.core.model.IVariable)
 	 */
-	public boolean hasVariableChildren(IDebugView view, IVariable parent) throws DebugException {
-		IJavaVariablesContentProvider contentProvider = getContentProvider(parent);		
+	public boolean hasVariableChildren(IDebugView view, IValue value) throws DebugException {
+		IJavaVariablesContentProvider contentProvider = getContentProvider(value);		
 		if (contentProvider == null) {
-			return super.hasVariableChildren(view, parent);
+			return super.hasVariableChildren(view, value);
 		}
-		return contentProvider.hasVariableChildren(view, (IJavaVariable)parent);
+		return contentProvider.hasVariableChildren(view, (IJavaValue)value);
 	}
 
-	protected IJavaVariablesContentProvider getContentProvider(IVariable parent) throws DebugException {
-		IJavaVariable javaVariable = (IJavaVariable) parent;
-		IJavaValue javaValue = (IJavaValue) javaVariable.getValue();
+	protected IJavaVariablesContentProvider getContentProvider(IValue value) throws DebugException {
+		IJavaValue javaValue = (IJavaValue) value;
 		IJavaVariablesContentProvider contentProvider = getContentProviderForValue(javaValue);
 		return contentProvider;
 	}

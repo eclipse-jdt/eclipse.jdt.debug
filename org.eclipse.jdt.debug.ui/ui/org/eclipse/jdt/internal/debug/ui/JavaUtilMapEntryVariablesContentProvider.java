@@ -37,13 +37,13 @@ public class JavaUtilMapEntryVariablesContentProvider extends AbstractJavaVariab
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.IJavaVariablesContentProvider#getVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaVariable)
 	 */
-	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaVariable parent) throws DebugException {
+	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
 		
-		IJavaObject objectValue = getObjectValue(parent);
+		IJavaObject objectValue = getObjectValue(value);
 		if (objectValue == null) {
 			return null;
 		}
-		IJavaThread javaThread = getJavaThreadFor(view);
+		IJavaThread javaThread = getJavaThread(view, objectValue);
 		if (javaThread == null) {
 			return null;	
 		}
@@ -69,7 +69,7 @@ public class JavaUtilMapEntryVariablesContentProvider extends AbstractJavaVariab
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.IJavaVariablesContentProvider#hasVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaVariable)
 	 */
-	public boolean hasVariableChildren(IDebugView view, IJavaVariable parent) throws DebugException {
+	public boolean hasVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
 		return true;
 	}
 

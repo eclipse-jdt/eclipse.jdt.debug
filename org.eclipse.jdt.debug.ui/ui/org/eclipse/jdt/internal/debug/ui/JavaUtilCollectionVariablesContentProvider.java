@@ -30,12 +30,12 @@ public class JavaUtilCollectionVariablesContentProvider extends AbstractJavaVari
 	private static final String TO_ARRAY_METHOD_SIGNATURE = "()[Ljava/lang/Object;"; //$NON-NLS-1$
 	private static final IJavaValue[] EMPTY_VALUE_ARRAY = new IJavaValue[0];
 
-	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaVariable parent) throws DebugException {
-		IJavaObject objectValue = getObjectValue(parent);
+	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
+		IJavaObject objectValue = getObjectValue(value);
 		if (objectValue == null) {
 			return null;
 		}
-		IJavaThread javaThread = getJavaThreadFor(view);		
+		IJavaThread javaThread = getJavaThread(view, objectValue);		
 		if (javaThread == null) {
 			return null;	
 		}
@@ -52,7 +52,7 @@ public class JavaUtilCollectionVariablesContentProvider extends AbstractJavaVari
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.IJavaVariablesContentProvider#hasVariableChildren(org.eclipse.jdt.debug.core.IJavaVariable)
 	 */
-	public boolean hasVariableChildren(IDebugView view, IJavaVariable parent) throws DebugException {
+	public boolean hasVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
 		return true;
 	}
 	

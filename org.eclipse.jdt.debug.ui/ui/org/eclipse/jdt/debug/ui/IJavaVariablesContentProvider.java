@@ -12,12 +12,13 @@ package org.eclipse.jdt.debug.ui;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
 public interface IJavaVariablesContentProvider {
 
-	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaVariable parent) throws DebugException;
+	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaValue value) throws DebugException;
 	
-	public boolean hasVariableChildren(IDebugView view, IJavaVariable parent) throws DebugException;
+	public boolean hasVariableChildren(IDebugView view, IJavaValue value) throws DebugException;
 	
 }

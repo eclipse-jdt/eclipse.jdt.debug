@@ -160,7 +160,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * 	required
 	 * @return thread or <code>null</code>
 	 */
-	protected IJavaThread getEvaluationThread(IJavaDebugTarget target) {
+	public static IJavaThread getEvaluationThread(IJavaDebugTarget target) {
 		IAdaptable context = DebugUITools.getDebugContext();
 		IJavaThread thread = null;
 		if (context != null) {
