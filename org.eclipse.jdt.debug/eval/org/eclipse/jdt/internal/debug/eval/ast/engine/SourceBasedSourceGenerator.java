@@ -384,6 +384,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				source.append(buildTypeDeclaration(null,typeDeclaration));
 			}
 		}
+		if (fCompilationUnitName == null) {		
+			// If no public class was found, the compilation unit
+			// name doesn't matter.
+			fCompilationUnitName= "Eval"; //$NON-NLS-1$
+		}
 		return source;
 	}
 	
