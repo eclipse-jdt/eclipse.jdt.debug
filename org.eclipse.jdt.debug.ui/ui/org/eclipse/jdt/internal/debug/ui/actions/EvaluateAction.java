@@ -12,7 +12,6 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -20,7 +19,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -40,13 +38,13 @@ import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.DataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ISnippetStateChangedListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
-import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextSelection;
@@ -158,24 +156,15 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 * Finds the currently selected stack frame in the UI.
 	 * Stack frames from a scrapbook launch are ignored.
 	 */
-	protected IStackFrame getStackFrameContext() {
-		IAdaptable context = DebugUITools.getDebugContext();
-		if (context instanceof IThread) {
-			try {
-				context = ((IThread)context).getTopStackFrame();
-			} catch (DebugException e) {
-				JDIDebugUIPlugin.log(e);
-			}
-		}
-		if (context != null) {			
-			IJavaStackFrame frame = (IJavaStackFrame) context.getAdapter(IJavaStackFrame.class);
-			if (frame != null) {			
-				if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
-					return frame;
-				}
-			}
-		}
-		return null;
+	protected IJavaStackFrame getStackFrameContext() {
+		IWorkbenchPart part = getTargetPart();
+		IJavaStackFrame frame = null;
+		if (part == null) {
+			frame = EvaluationContextManager.getEvaluationContext(getWindow());
+		} else {
+			frame = EvaluationContextManager.getEvaluationContext(part);
+		}		
+		return frame;
 	}
 	
 	/**

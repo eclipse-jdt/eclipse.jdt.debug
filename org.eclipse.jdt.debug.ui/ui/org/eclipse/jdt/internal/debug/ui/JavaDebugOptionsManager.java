@@ -115,11 +115,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	private String[] fActiveStepFilters = null;
 	
 	/**
-	 * Count of running Java debug targets
-	 */
-	private int fJavaDebugTargetsCount= 0;
-	
-	/**
 	 * Helper class that describes a location in a stack
 	 * frame. A location consists of a package name, source
 	 * file name, and a line number.
@@ -195,6 +190,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	public void startup() throws CoreException {
 		// lazy initialization will occur on the first launch
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		EvaluationContextManager.startup();
 	}
 	
 	/**
@@ -581,19 +577,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 					
 					// step filters
 					notifyTargetOfFilters(javaTarget);
-					
-					if (fJavaDebugTargetsCount == 0) {
-						System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					fJavaDebugTargetsCount++;
-				}
-			} else if (event.getKind() == DebugEvent.TERMINATE) {
-				Object source = event.getSource();
-				if (source instanceof IJavaDebugTarget) {
-					fJavaDebugTargetsCount--;
-					if (fJavaDebugTargetsCount == 0) {
-						System.getProperties().remove(JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"); //$NON-NLS-1$
-					}
 				}
 			}
 		}
