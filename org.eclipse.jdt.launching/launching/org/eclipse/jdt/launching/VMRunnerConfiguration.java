@@ -28,7 +28,7 @@ public class VMRunnerConfiguration {
 	private String[] fBootClassPath;
 	private String fWorkingDirectory;
 	
-	private static final String[] fgEmtpy= new String[0];
+	private static final String[] fgEmpty= new String[0];
 	
 	/**
 	 * Creates a new configuration for launching a VM to run the given main class
@@ -38,10 +38,12 @@ public class VMRunnerConfiguration {
 	 * @param classPath 	The classpath. May not be null.
 	 */
 	public VMRunnerConfiguration(String classToLaunch, String[] classPath) {
-		if (classToLaunch == null)
+		if (classToLaunch == null) {
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.classNotNull")); //$NON-NLS-1$
-		if (classPath == null)
+		}
+		if (classPath == null) {
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.classPathNotNull")); //$NON-NLS-1$
+		}
 		fClassToLaunch= classToLaunch;
 		fClassPath= classPath;
 	}
@@ -56,8 +58,9 @@ public class VMRunnerConfiguration {
 	 * @param args the list of VM arguments
 	 */
 	public void setVMArguments(String[] args) {
-		if (args == null)
+		if (args == null) {
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.vmArgsNotNull")); //$NON-NLS-1$
+		}
 		fVMArgs= args;
 	}
 	
@@ -71,8 +74,9 @@ public class VMRunnerConfiguration {
 	 * @param args the list of arguments	
 	 */
 	public void setProgramArguments(String[] args) {
-		if (args == null)
+		if (args == null) {
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.programArgsNotNull")); //$NON-NLS-1$
+		}
 		fProgramArgs= args;
 	}
 	
@@ -84,8 +88,9 @@ public class VMRunnerConfiguration {
 	 * @param bootClassPath The boot classpath. May not be null.
 	 */
 	public void setBootClassPath(String[] bootClassPath) {
-		if (bootClassPath == null)
+		if (bootClassPath == null) {
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.bootClassPathNotNull")); //$NON-NLS-1$
+		}
 		fBootClassPath= bootClassPath;
 	}
 	
@@ -114,8 +119,9 @@ public class VMRunnerConfiguration {
 	 * @see #setBootClassPath
 	 */
 	public String[] getBootClassPath() {
-		if (fBootClassPath == null)
-			return fgEmtpy;
+		if (fBootClassPath == null) {
+			return fgEmpty;
+		}
 		return fBootClassPath;
 	}
 
@@ -126,8 +132,9 @@ public class VMRunnerConfiguration {
 	 * @see #setVMArguments
 	 */
 	public String[] getVMArguments() {
-		if (fVMArgs == null)
-			return fgEmtpy;
+		if (fVMArgs == null) {
+			return fgEmpty;
+		}
 		return fVMArgs;
 	}
 	
@@ -138,8 +145,9 @@ public class VMRunnerConfiguration {
 	 * @see #setProgramArguments
 	 */
 	public String[] getProgramArguments() {
-		if (fProgramArgs == null)
-			return fgEmtpy;
+		if (fProgramArgs == null) {
+			return fgEmpty;
+		}
 		return fProgramArgs;
 	}
 	
@@ -165,6 +173,4 @@ public class VMRunnerConfiguration {
 	public String getWorkingDirectory() {
 		return fWorkingDirectory;
 	}	
-	
-	
 }
