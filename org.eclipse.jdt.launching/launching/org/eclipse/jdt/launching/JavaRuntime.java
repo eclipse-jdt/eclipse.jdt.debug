@@ -1370,12 +1370,14 @@ public final class JavaRuntime {
 		IPath[] libraryPaths;
 		IPath[] sourcePaths;
 		IPath[] sourceRootPaths;
+		URL[] javadocLocations;
 		LibraryLocation[] locations= vm.getLibraryLocations();
 		if (locations == null) {
 			LibraryLocation[] dflts= vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
 			libraryPaths = new IPath[dflts.length];
 			sourcePaths = new IPath[dflts.length];
 			sourceRootPaths = new IPath[dflts.length];
+			javadocLocations= new URL[dflts.length];
 			for (int i = 0; i < dflts.length; i++) {
 				libraryPaths[i]= dflts[i].getSystemLibraryPath();
 				if (!libraryPaths[i].toFile().isFile()) {
@@ -1394,15 +1396,17 @@ public final class JavaRuntime {
 			libraryPaths = new IPath[locations.length];
 			sourcePaths = new IPath[locations.length];
 			sourceRootPaths = new IPath[locations.length];
+			javadocLocations= new URL[locations.length];
 			for (int i = 0; i < locations.length; i++) {			
 				libraryPaths[i]= locations[i].getSystemLibraryPath();
 				sourcePaths[i]= locations[i].getSystemLibrarySourcePath();
 				sourceRootPaths[i]= locations[i].getPackageRootPath();
+				javadocLocations[i]= locations[i].getJavadocLocation();
 			}
 		}
 		locations = new LibraryLocation[sourcePaths.length];
 		for (int i = 0; i < sourcePaths.length; i++) {
-			locations[i] = new LibraryLocation(libraryPaths[i], sourcePaths[i], sourceRootPaths[i]);
+			locations[i] = new LibraryLocation(libraryPaths[i], sourcePaths[i], sourceRootPaths[i], javadocLocations[i]);
 		}
 		return locations;
 	}

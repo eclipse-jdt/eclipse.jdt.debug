@@ -334,6 +334,10 @@ public class VMDefinitionsContainer {
 			element.setAttribute("jreJar", locations[i].getSystemLibraryPath().toString()); //$NON-NLS-1$
 			element.setAttribute("jreSrc", locations[i].getSystemLibrarySourcePath().toString()); //$NON-NLS-1$
 			element.setAttribute("pkgRoot", locations[i].getPackageRootPath().toString()); //$NON-NLS-1$
+			URL url= locations[i].getJavadocLocation();
+			if (url != null) {
+				element.setAttribute("jreJavadoc", url.toExternalForm()); //$NON-NLS-1$
+			}
 			root.appendChild(element);
 		}
 		return root;
@@ -509,8 +513,19 @@ public class VMDefinitionsContainer {
 		String jreJar= libLocationElement.getAttribute("jreJar"); //$NON-NLS-1$
 		String jreSrc= libLocationElement.getAttribute("jreSrc"); //$NON-NLS-1$
 		String pkgRoot= libLocationElement.getAttribute("pkgRoot"); //$NON-NLS-1$
+		String jreJavadoc= libLocationElement.getAttribute("jreJavadoc"); //$NON-NLS-1$
+		URL javadocURL= null;
+		if (jreJavadoc.length() == 0) {
+			jreJavadoc= null;
+		} else {
+			try {
+				javadocURL= new URL(jreJavadoc);
+			} catch (MalformedURLException e) {
+				LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.Library_location_element_incorrectly_specified_3")); //$NON-NLS-1$
+			}
+		}
 		if (jreJar != null && jreSrc != null && pkgRoot != null) {
-			return new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot));
+			return new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot), javadocURL);
 		}
 		LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.Library_location_element_incorrectly_specified_3")); //$NON-NLS-1$
 		return null;

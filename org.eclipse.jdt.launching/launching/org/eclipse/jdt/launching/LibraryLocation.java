@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.launching;
 
+import java.net.URL;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 
@@ -24,6 +26,7 @@ public final class LibraryLocation {
 	private IPath fSystemLibrary;
 	private IPath fSystemLibrarySource;
 	private IPath fPackageRootPath;
+	private URL fJavadocLocation;
 	
 	/**
 	 * Creates a new library location.
@@ -40,12 +43,32 @@ public final class LibraryLocation {
 	 * @throws	IllegalArgumentException	If the library path is <code>null</code>.
 	 */	
 	public LibraryLocation(IPath libraryPath, IPath sourcePath, IPath packageRoot) {
+		this(libraryPath, sourcePath, packageRoot, null);
+	}
+
+	/**
+	 * Creates a new library location.
+	 * 
+	 * @param libraryPath	The location of the JAR containing java.lang.Object
+	 * 					Must not be <code>null</code>.
+	 * @param sourcePath	The location of the zip file containing the sources for <code>library</code>
+	 * 					Must not be <code>null</code> (Use Path.EMPTY instead)
+	 * @param packageRoot The path inside the <code>source</code> zip file where packages names
+	 * 					  begin. If the source for java.lang.Object source is found at 
+	 * 					  "src/java/lang/Object.java" in the zip file, the 
+	 * 					  packageRoot should be "src"
+	 * 					  Must not be <code>null</code>. (Use Path.EMPTY or IPath.ROOT)
+	 * @param javadocLocation The location of the javadoc for <code>library</code>
+	 * @throws	IllegalArgumentException	If the library path is <code>null</code>.
+	 */	
+	public LibraryLocation(IPath libraryPath, IPath sourcePath, IPath packageRoot, URL javadocLocation) {
 		if (libraryPath == null)
 			throw new IllegalArgumentException(LaunchingMessages.getString("libraryLocation.assert.libraryNotNull")); //$NON-NLS-1$
 
 		fSystemLibrary= libraryPath;
 		fSystemLibrarySource= sourcePath;
 		fPackageRootPath= packageRoot;
+		fJavadocLocation= javadocLocation;
 	}		
 		
 	/**
@@ -82,7 +105,8 @@ public final class LibraryLocation {
 			LibraryLocation lib = (LibraryLocation)obj;
 			return getSystemLibraryPath().equals(lib.getSystemLibraryPath()) 
 				&& equals(getSystemLibrarySourcePath(), lib.getSystemLibrarySourcePath())
-				&& equals(getPackageRootPath(), lib.getPackageRootPath());
+				&& equals(getPackageRootPath(), lib.getPackageRootPath())
+				&& (getJavadocLocation() != null && getJavadocLocation().equals(lib.getJavadocLocation()) || getJavadocLocation() == null && lib.getJavadocLocation() == null);
 		} 
 		return false;
 	}
@@ -109,4 +133,16 @@ public final class LibraryLocation {
 		}
 		return path1.equals(path2);
 	}
+
+	/**
+	 * Returns the Javadoc location associated with this Library location.
+	 * 
+	 * @return a url pointing to the Javadoc location associated with
+	 * 	this Library location, or <code>null</code> if none
+	 * @since 3.1
+	 */
+	public URL getJavadocLocation() {
+		return fJavadocLocation;
+	}
+	
 }

@@ -35,6 +35,7 @@ import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -263,7 +264,7 @@ public class AddVMDialog extends StatusDialog {
 			} else {
 				fJavadocURL.setText(url.toExternalForm());
 			}
-			
+			fLibraryBlock.initializeFrom(fEditedVM, fSelectedVMType);
 			String vmArgs = fEditedVM.getVMArgs();
 			if (vmArgs != null) {
 				fVMArgs.setText(vmArgs);
@@ -385,24 +386,13 @@ public class AddVMDialog extends StatusDialog {
 	}
 	
 	private void browseForJavadocURL() {
-		DirectoryDialog dialog= new DirectoryDialog(getShell());
-		
-		String initPath= ""; //$NON-NLS-1$
-		URL url = getURL();
-		if (url != null && "file".equals(url.getProtocol())) { //$NON-NLS-1$
-			initPath= (new File(url.getFile())).getPath();
-		}
+		URL[] urls= BuildPathDialogAccess.configureJavadocLocation(getShell(), "AddVMDialog.Select_Javadoc_location__3", getURL());
 
-		dialog.setFilterPath(initPath);
-		dialog.setMessage(JREMessages.getString("AddVMDialog.Select_Javadoc_location__3")); //$NON-NLS-1$
-		String res = dialog.open();
-		if (res != null) {
-			try {
-				url = (new File(res)).toURL();
-				fJavadocURL.setText(url.toExternalForm());
-			} catch (MalformedURLException e) {
-				// should not happen
-				JDIDebugUIPlugin.log(e);
+		if (urls != null) {
+			if (urls[0] == null) {
+				fJavadocURL.setText(""); //$NON-NLS-1$
+			} else {
+				fJavadocURL.setText(urls[0].toExternalForm());
 			}
 		}
 	}	
