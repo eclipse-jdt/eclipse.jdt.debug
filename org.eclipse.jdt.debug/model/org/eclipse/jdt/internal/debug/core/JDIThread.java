@@ -1459,7 +1459,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			addJDIEventListener(this, getStepRequest());
 			setRunning(true);
 			preserveStackFrames();
-			fireResumeEvent(DebugEvent.STEP_START);
+			fireResumeEvent(getStepDetail());
 			invokeThread();
 		}
 		
@@ -1522,6 +1522,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * 	<code>StepRequest.STEP_OVER</code>, <code>StepRequest.STEP_OUT</code>
 		 */
 		protected abstract int getStepKind();
+		
+		/**
+		 * Returns the detail for this step event.
+		 * 
+		 * @return one of <code>DebugEvent.STEP_INTO</code>,
+		 * 	<code>DebugEvent.STEP_OVER</code>, <code>DebugEvent.STEP_RETURN</code>
+		 */
+		protected abstract int getStepDetail();		
 		
 		/**
 		 * Sets the step request created by this handler in
@@ -1703,6 +1711,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		protected int getStepKind() {
 			return StepRequest.STEP_OVER;
 		}	
+		
+		/**
+		 * @see StepHandler#getStepDetail()
+		 */
+		protected int getStepDetail() {
+			return DebugEvent.STEP_OVER;
+		}		
 	}
 	
 	/**
@@ -1715,6 +1730,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		protected int getStepKind() {
 			return StepRequest.STEP_INTO;
 		}	
+		
+		/**
+		 * @see StepHandler#getStepDetail()
+		 */
+		protected int getStepDetail() {
+			return DebugEvent.STEP_INTO;
+		}
 		
 		/**
 		 * Returns <code>true</code>. Step filters are applied for
@@ -1737,6 +1759,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		protected int getStepKind() {
 			return StepRequest.STEP_OUT;
 		}	
+		
+		/**
+		 * @see StepHandler#getStepDetail()
+		 */
+		protected int getStepDetail() {
+			return DebugEvent.STEP_RETURN;
+		}		
 	}
 	
 	/**
