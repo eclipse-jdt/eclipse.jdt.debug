@@ -5,29 +5,37 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
  
-import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Toggles the global preference flag that controls whether the active step filters
  * defined in the Java Debug Options preference page are used.
  */
-public class ToggleStepFilterAction extends Action implements IViewActionDelegate {
+public class ToggleStepFilterAction implements IViewActionDelegate, IPartListener ,IPropertyChangeListener {
 
-	// See comment in selectionChanged()
 	private boolean fSetInitialState = false;
 
+	private IViewPart fView;
+	private IAction fAction;
+	
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
-	public void init(IViewPart view) {		
+	public void init(IViewPart view) {
+		setView(view);
+		view.getSite().getPage().addPartListener(this);
+		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		store.addPropertyChangeListener(this);
 	}
 
 	/**
@@ -36,26 +44,82 @@ public class ToggleStepFilterAction extends Action implements IViewActionDelegat
 	public void run(IAction action) {
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		boolean newStepFilterState = !store.getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS);		
-		action.setChecked(newStepFilterState);
 		store.setValue(IJDIPreferencesConstants.PREF_USE_FILTERS, newStepFilterState);
 	}
-
-	/**
-	 * @see Action#run()
-	 */
-	public void run() {
-	}
-
+	
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		// This is the only way to set the initial checked state of the action
-		// See [1GJUUTP: ITPDUI:ALL - Cheesy code in ToggleStepFilterAction]
 		if (!fSetInitialState) {
 			action.setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS));
 			fSetInitialState = true;
+			setAction(action);
 		}
+	}
+	
+	protected IAction getAction() {
+		return fAction;
+	}
+
+	protected void setAction(IAction action) {
+		fAction = action;
+	}
+
+	protected IViewPart getView() {
+		return fView;
+	}
+
+	protected void setView(IViewPart view) {
+		fView = view;
+	}
+	/**
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		IAction action= getAction();
+		if (action == null) {
+			return;
+		}
+		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_USE_FILTERS)) {
+			Boolean checked= (Boolean)event.getNewValue();
+			action.setChecked(checked.booleanValue());
+		}
+		
+	}
+	/**
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partClosed(IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+		if (part == getView()) {
+			getView().getSite().getPage().removePartListener(this);
+			IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+			store.removePropertyChangeListener(this);
+		}
+	}
+
+	/**
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partOpened(IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
 	}
 }
 
