@@ -389,6 +389,41 @@
 			enablesFor="1">
 		</action>
 	</objectContribution>
+	  <objectContribution
+	objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression"
+	id="org.eclipse.jdt.debug.ui.JavaInspectExpressionActions">
+	 <action
+	   label="%convertToWatchExpressionAction.label"
+	   helpContextId="convert_to_watch_expression"
+	   tooltip="%convertToWatchExpressionAction.tooltip"
+	   class="org.eclipse.jdt.internal.debug.ui.actions.ConvertToWatchExpressionAction"
+	   menubarPath="additions"
+	   enablesFor="*"
+	   id="org.eclipse.jdt.debug.ui.actions.ConvertToWatchExpression">
+	 </action>
+	  </objectContribution>
+	  <objectContribution
+	objectClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpression"
+	id="org.eclipse.jdt.debug.WatchExpressionActions">
+	 <action
+	   label="%editWatchExpressionAction.label"
+	   helpContextId="edit_watch_expression_context"
+	   tooltip="%editWatchExpressionAction.tooltip"
+	   class="org.eclipse.jdt.internal.debug.ui.actions.EditWatchExpressionAction"
+	   menubarPath="additions"
+	   enablesFor="1"
+	   id="org.eclipse.jdt.ui.watchExpressionActions.EditWatchExpression">
+	 </action>
+	 <action
+	   label="%reevaluateWatchExpressionAction.label"
+	   helpContextId="reevaluate_watch_expression_context"
+	   tooltip="%reevaluateWatchExpressionAction.tooltip"
+	   class="org.eclipse.jdt.internal.debug.ui.actions.ReevaluateWatchExpressionAction"
+	   menubarPath="additions"
+	   enablesFor="1"
+	   id="org.eclipse.jdt.ui.watchExpressionActions.ReevaluateWatchExpression">
+	 </action>
+	  </objectContribution>
 	<viewerContribution
 		id="org.eclipse.jdt.debug.ToggleStepFilterActions"
 		targetID="org.eclipse.debug.ui.DebugView">
@@ -508,6 +543,15 @@
 			helpContextId="show_final_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
 		</action>		
+         <action
+               label="%addWatchExpressionAction.label"
+               icon="icons/full/elcl16/final_co.gif"
+               helpContextId="add_watch_expression_context"
+               tooltip="%addWatchExpressionAction.tooltip"
+               menubarPath="additions"
+               class="org.eclipse.jdt.internal.debug.ui.actions.AddWatchExpressionAction"
+               id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression">
+         </action>
 	</viewerContribution>
 	<viewerContribution
 		id="org.eclipse.jdt.debug.DetailsEvaluationActions"

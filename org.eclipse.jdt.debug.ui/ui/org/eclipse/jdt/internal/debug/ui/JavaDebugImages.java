@@ -147,6 +147,8 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_HOVER= create(T_CTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_DISABLED= create(T_DTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
 
+	public static final ImageDescriptor DESC_OBJ_JAVA_INSPECT_EXPRESSION= create(T_OBJ, "insp_sbook.gif"); 			//$NON-NLS-1$
+
 	/**
 	 * Returns the image managed under the given key in this registry.
 	 * 
