@@ -83,22 +83,18 @@ class EventDispatcher implements Runnable {
 					if (event instanceof ThreadDeathEvent) {
 						fTarget.handleThreadDeath((ThreadDeathEvent) event);
 					} else
-						if (event instanceof ClassPrepareEvent) {
-							vote = true;
-							fTarget.handleClassLoad((ClassPrepareEvent) event);
+						if (event instanceof VMDeathEvent) {
+							fTarget.handleVMDeath((VMDeathEvent) event);
+							fKeepReading= false; // stop listening for events
 						} else
-							if (event instanceof VMDeathEvent) {
-								fTarget.handleVMDeath((VMDeathEvent) event);
+							if (event instanceof VMDisconnectEvent) {
+								fTarget.handleVMDisconnect((VMDisconnectEvent) event);
 								fKeepReading= false; // stop listening for events
-							} else
-								if (event instanceof VMDisconnectEvent) {
-									fTarget.handleVMDisconnect((VMDisconnectEvent) event);
-									fKeepReading= false; // stop listening for events
-								} else if (event instanceof VMStartEvent) {
-									fTarget.handleVMStart((VMStartEvent)event);
-								} else {
-									// Unknown Event Type
-								}
+							} else if (event instanceof VMStartEvent) {
+								fTarget.handleVMStart((VMStartEvent)event);
+							} else {
+								// Unknown Event Type
+							}
 		}
 		if (vote && resume) {
 			eventSet.resume();

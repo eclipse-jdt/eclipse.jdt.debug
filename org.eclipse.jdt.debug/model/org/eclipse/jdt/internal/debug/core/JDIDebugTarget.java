@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -56,6 +55,7 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.ClassPrepareEvent;
+import com.sun.jdi.event.Event;
 import com.sun.jdi.event.ThreadDeathEvent;
 import com.sun.jdi.event.ThreadStartEvent;
 import com.sun.jdi.event.VMDeathEvent;
@@ -70,11 +70,11 @@ import com.sun.jdi.request.EventRequestManager;
  */
 
 public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget {
-	
-	private static final int MAX_THREAD_DEATH_ATTEMPTS = 1;
-	
+		
 	/**
-	 * Threads contained in this debug target.
+	 * Threads contained in this debug target. When a thread
+	 * starts it is added to the list. When a thread ends it
+	 * is removed from the list.
 	 */
 	protected List fThreads;
 	/**
@@ -86,7 +86,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	protected VirtualMachine fVirtualMachine;
 	/**
-	 * Whether terminate is supported.
+	 * Whether terminate is supported. Not all targets
+	 * support terminate. For example, a VM that was attached
+	 * to remotely may not allow the user to terminate it.
 	 */
 	protected boolean fSupportsTerminate;
 	/**
@@ -98,39 +100,21 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	protected boolean fSupportsDisconnect;
 	/**
-	 * Table of class prepare requests for deferred breakpoints
-	 * <p>
-	 * Key: the fully qualified name of the class<br>
-	 * Value: a <code>ClassPrepareRequest</code>s
-	 */
-	protected Map fClassPrepareRequestsByClass;	
-	/**
 	 * Collection of breakpoints added to this target. Values are of type <code>IJavaBreakpoint</code>.
 	 */
 	protected List fBreakpoints;
 	 
 	/**
-	 * The thread death object used to interrupt threads on the target.
+	 * The instance of <code>java.lang.ThreadDeath</code> used to
+	 * interrupt threads on this target.
 	 */
 	protected ObjectReference fThreadDeath;
-	
-	/**
-	 * Number of attempts to create instance of thread death.
-	 */
-	protected int fThreadDeathAttempts = 0;
 
 	/**
 	 * The name of this target - set by the client on creation, or retrieved from the
 	 * underlying VM.
 	 */
 	protected String fName;
-	
-	/**
-	 * The class prepare request used to listen for ALL class loads so that when the very
-	 * first class is loaded, we can create a ThreadDeath instance.  After this, the 
-	 * request is deleted.
-	 */
-	protected ClassPrepareRequest fUniversalClassPrepareReq;
 	
 	/**
 	 * A cache of evaluation contexts keyed by java projects. When 
@@ -150,7 +134,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * The event dispatcher for this debug target, which runs in its
 	 * own thread.
 	 */
-	 EventDispatcher fEventDispatcher= null;
+	protected EventDispatcher fEventDispatcher= null;
 	 
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
@@ -167,7 +151,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		fTerminated= false;
 		fName= name;
 
-		fClassPrepareRequestsByClass= new HashMap(5);
 		fBreakpoints = new ArrayList(5);
 		fThreads = new ArrayList(5);
 		initialize();
@@ -197,12 +180,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * initialized.
 	 */
 	public synchronized void initialize() {
-		initializeRequests();
 		fEventDispatcher= new EventDispatcher(this);
-		new Thread(fEventDispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
+		initializeRequests();
 		initializeState();
 		fireCreationEvent();
 		initializeBreakpoints();
+		new Thread(fEventDispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
 	}
 	
 	/**
@@ -247,11 +230,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			internalError(e);
 		}
 		
-		// Listen for all class loads so we can create an instance of ThreadDeath to terminate threads.
-		// Once the first ClassPrepareEvent is seen and the ThreadDeath instance created, this request 
-		// is deleted.  Note this has no effect on more selective ClassPrepareRequests for deferred 
-		// breakpoints or exceptions.  
-		fUniversalClassPrepareReq= listenForClassLoad("*"); //$NON-NLS-1$
+		// Listen for all class loads so we can create an instance of ThreadDeath to terminate threads. 
+		new ThreadTerminator();
 	}
 
 	/**
@@ -337,76 +317,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Attempts to create an instance of <code>java.lang.ThreadDeath</code> in the target VM.
-	 * This instance will be used to terminate threads in the target VM.
-	 * Note that if a thread death instance is not created threads will return <code>false</code>
-	 * to <code>ITerminate#canTerminate()</code>.
-	 */
-	protected void createThreadDeathInstance(ThreadReference threadRef) {
-		if (fThreadDeathAttempts == MAX_THREAD_DEATH_ATTEMPTS) {
-			if (fUniversalClassPrepareReq != null) {
-				try {
-					getEventRequestManager().deleteEventRequest(fUniversalClassPrepareReq);
-					fClassPrepareRequestsByClass.remove("*"); //$NON-NLS-1$
-				} catch (RuntimeException e) {
-					internalError(e);
-				}
-				fUniversalClassPrepareReq = null;
-			}
-			return;
-		}
-		fThreadDeathAttempts++;
-		// Try to create an instance of java.lang.ThreadDeath
-		// NB: This has to be done when the VM is interrupted by an event
-		if (fThreadDeath == null) {
-			JDIThread jt = findThread(threadRef);
-			if (jt != null && jt.fInEvaluation) {
-				// invalid state to perform an evaluation
-				return;
-			}
-			//non NLS
-			List classes= jdiClassesByName("java.lang.ThreadDeath"); //$NON-NLS-1$
-			if (classes != null && classes.size() != 0) {
-				ClassType threadDeathClass= (ClassType) classes.get(0);
-				Method constructor= null;
-				try {
-					constructor= threadDeathClass.concreteMethodByName("<init>", "()V"); //$NON-NLS-2$ //$NON-NLS-1$
-				} catch (RuntimeException e) {
-					internalError(e);
-					return;
-				}
-				try {
-					fThreadDeath= threadDeathClass.newInstance(threadRef, constructor, new LinkedList(), ClassType.INVOKE_SINGLE_THREADED);
-				} catch (ClassNotLoadedException e) {
-					logError(e);
-				} catch (InvalidTypeException e) {
-					logError(e);
-				} catch (InvocationException e) {
-					logError(e);
-				} catch (IncompatibleThreadStateException e) {
-					logError(e);
-				} catch (RuntimeException e) {
-					logError(e);
-				}
-				if (fThreadDeath != null) {
-					try {
-						fThreadDeath.disableCollection(); // This object is going to be used for the lifetime of the VM. 
-						// If we successfully created our ThreadDeath instance, then
-						// remove the "*" ClassPrepareRequest since it's no longer needed
-						if (fUniversalClassPrepareReq != null) {
-							getEventRequestManager().deleteEventRequest(fUniversalClassPrepareReq);
-							fClassPrepareRequestsByClass.remove("*"); //$NON-NLS-1$
-						}
-					} catch (RuntimeException e) {
-						fThreadDeath= null;
-						logError(e);
-					}
-				}
-			}
-		}
 	}
 
 	/**
@@ -516,16 +426,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 
 	/**
-	 * A class has been loaded.  
-	 * Attempt to install any applicable deferred breakpoints.
-	 * Attempt to create a ThreadDeath instance if required.
-	 */
-	protected void handleClassLoad(ClassPrepareEvent event) {
-		ThreadReference threadRef= event.thread();
-		createThreadDeathInstance(threadRef);
-	}
-
-	/**
 	 * Resumes the given thread
 	 */
 	protected void resume(ThreadReference thread) {
@@ -597,33 +497,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	
 	/**
 	 * Creates, enables and returns a class prepare request for the
-	 * specified class name, or <code>null</code> if unable to
-	 * create the request. Caches the request in the class prepare
-	 * request table.
-	 */
-	private ClassPrepareRequest listenForClassLoad(String className) {
-		EventRequestManager manager= getEventRequestManager();
-		ClassPrepareRequest req= null;
-		try {
-			req= manager.createClassPrepareRequest();
-			req.addClassFilter(className);
-			req.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-			req.enable();
-		} catch (VMDisconnectedException e) {
-			return null;
-		} catch (RuntimeException e) {
-			internalError(e);
-			return null;
-		}
-		fClassPrepareRequestsByClass.put(className, req);
-		return req;
-	}
-	
-	/**
-	 * Creates, enables and returns a class prepare request for the
-	 * specified class name, or <code>null</code> if unable to
-	 * create the request. Caches the request in the class prepare
-	 * request table.
+	 * specified class name in this target, or <code>null</code> if
+	 * unable to create the request.
+	 * 
+	 * @param className regular expression specifying the pattern of
+	 * 	class names that will cause the event request to fire. Regular
+	 * 	expressions may begin with a '*', end with a '*', or be an exact
+	 * 	match.
 	 */
 	protected ClassPrepareRequest createClassPrepareRequest(String className) {
 		EventRequestManager manager= getEventRequestManager();
@@ -633,8 +513,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			req.addClassFilter(className);
 			req.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			req.enable();
-		} catch (VMDisconnectedException e) {
-			return null;
 		} catch (RuntimeException e) {
 			internalError(e);
 			return null;
@@ -1011,5 +889,199 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		fEventDispatcher.removeJDIEventListener(listener, request);
 	}
 	
+	/**
+	 * Sets the instance of <code>java.lang.ThreadDeath</code> used
+	 * by this target to terminate threads. The instance is created
+	 * by this target's thread terminator.
+	 * 
+	 * @see ThreadTerminator
+	 */
+	protected void setThreadDeath(ObjectReference threadDeath) {
+		fThreadDeath = threadDeath;
+	}
+	
+	/**
+	 * Returns the instance of <code>java.lang.ThreadDeath</code> in the
+	 * target VM used by this target to terminate threads, or <code>null</code>
+	 * if there is no instance to use.
+	 * 
+	 * @see ThreadTerminator
+	 */
+	protected ObjectReference getThreadDeath() {
+		return fThreadDeath;
+	}
+	
+	/**
+	 * A jdi debug target creates a thread terminator on initialization.
+	 * A thread terminator listens to all class loads, and when a class
+	 * is loaded, it attempts to create an instance of <code>java.lang.ThreadDeath</code>,
+	 * in the thread in which the class load occurred. The instance of
+	 * <code>ThreadDeath</code> is used on user requests to terminate
+	 * threads.
+	 * <p>
+	 * The number of times a thread terminator attempts to create an
+	 * instance of <code>ThreadDeath</code> is limited, as instantiation
+	 * of <code>ThreadDeath</code> does not work on some VMs during startup. 
+	 * <code>
+	 * 
+	 * @see JDIThread#terminate()
+	 */
+	class ThreadTerminator implements IJDIEventListener {
+		
+		/**
+		 * The maximum number of times a thread terminator attempts to
+		 * create an instance of <code>java.lang.ThreadDeath</code>.
+		 */
+		protected static final int MAX_ATTEMPTS = 1;
+
+		/**
+		 * Number of attempts this terminator has made to create
+		 * instance of <code>java.lang.ThreadDeath</code>.
+		 */
+		protected int fAttempts = 0;
+		
+		/**
+		 * The class prepare request used to listen for ALL class loads
+		 * so that when the very first class is loaded, an attempt is made
+		 * to create an instance of <code>java.lang.ThreadDeath</code>. 
+		 */
+		protected ClassPrepareRequest fClassPrepareReq;
+		
+		/**
+		 * Constructs a new thread terminator which attemps to create
+		 * an instance of <code>java.lang.ThreadDeath</code> for its
+		 * debug target.
+		 */
+		protected ThreadTerminator() {
+			createRequest();
+		}
+		
+		/**
+		 * Attempts to create an instance of <code>java.lang.ThreadDeath</code>
+		 * in the target VM. This instance will be used to terminate threads in
+		 * the target VM. Note that if a thread death instance is not created
+		 * threads will return <code>false</code> to <code>ITerminate#canTerminate()</code>.
+		 */
+		public boolean handleEvent(Event event, JDIDebugTarget target) {
+			if (getAttempts() == MAX_ATTEMPTS) {
+				deleteRequest();
+				return true;
+			}
+			incrementAttempts();
+			ThreadReference threadRef = ((ClassPrepareEvent)event).thread();
+			// Try to create an instance of java.lang.ThreadDeath
+			// NB: This has to be done when the VM is interrupted by an event
+			if (fThreadDeath == null) {
+				JDIThread jt = findThread(threadRef);
+				if (jt != null && jt.fInEvaluation) {
+					// invalid state to perform an evaluation
+					return true;
+				}
+				//non NLS
+				List classes= jdiClassesByName("java.lang.ThreadDeath"); //$NON-NLS-1$
+				if (classes != null && classes.size() != 0) {
+					ClassType threadDeathClass= (ClassType) classes.get(0);
+					Method constructor= null;
+					try {
+						constructor= threadDeathClass.concreteMethodByName("<init>", "()V"); //$NON-NLS-2$ //$NON-NLS-1$
+					} catch (RuntimeException e) {
+						internalError(e);
+						return true;
+					}
+					ObjectReference threadDeath = null;
+					try {
+						threadDeath= threadDeathClass.newInstance(threadRef, constructor, new LinkedList(), ClassType.INVOKE_SINGLE_THREADED);
+					} catch (ClassNotLoadedException e) {
+						logError(e);
+					} catch (InvalidTypeException e) {
+						logError(e);
+					} catch (InvocationException e) {
+						logError(e);
+					} catch (IncompatibleThreadStateException e) {
+						logError(e);
+					} catch (RuntimeException e) {
+						logError(e);
+					}
+					if (threadDeath != null) {
+						try {
+							threadDeath.disableCollection(); // This object is going to be used for the lifetime of the VM. 							
+						} catch (RuntimeException e) {
+							logError(e);
+							return true;
+						}
+						setThreadDeath(threadDeath);
+						deleteRequest();
+					}
+				}
+			}
+			return true;
+		}
+		
+		/**
+		 * Returns the number of attempts this thread terminator
+		 * has made to create an instance of <code>java.lang.ThreadDeath</code>.
+		 * 
+		 * @return number of attempts
+		 */
+		protected int getAttempts() {
+			return fAttempts;
+		}
+		
+		/**
+		 * Increments the attempt counter
+		 */
+		protected void incrementAttempts() {
+			fAttempts++;
+		}
+		
+		/** 
+		 * Returns the event request used to listen to all class loads
+		 * or <code>null<code> if there is not currently a request.
+		 * 
+		 * @return universal class prepare request, or <code>null</code>
+		 */
+		protected ClassPrepareRequest getRequest() {
+			return fClassPrepareReq;
+		}
+		
+		/** 
+		 * Sets the event request used to listen to all class loads.
+		 * Can be <code>null</code> if the attempt to create the
+		 * request fails.
+		 * 
+		 * @param event request
+		 */
+		protected void setRequest(ClassPrepareRequest request) {
+			fClassPrepareReq = request;
+		}
+		
+		/**
+		 * Creates and registers a request to listen to all class
+		 * loads.
+		 */
+		protected void createRequest() {
+			ClassPrepareRequest request = createClassPrepareRequest("*"); //$NON-NLS-1$
+			if (request != null) {
+				setRequest(request);
+				addJDIEventListener(this, getRequest());
+			}
+		}
+		
+		/**
+		 * Deregisters this event listener and deletes any outstanding
+		 * class prepare request.
+		 */
+		protected void deleteRequest() {
+			if (getRequest() != null) {
+				removeJDIEventListener(this, getRequest());
+				try {
+					getEventRequestManager().deleteEventRequest(getRequest());
+				} catch (RuntimeException e) {
+					logError(e);
+				}
+				setRequest(null);
+			}
+		}
+	}
 }
 
