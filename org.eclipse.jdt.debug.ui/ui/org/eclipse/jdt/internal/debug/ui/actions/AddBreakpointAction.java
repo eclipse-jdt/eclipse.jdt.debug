@@ -52,59 +52,67 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 	public AddBreakpointAction() {
 	}
 	
-	protected void run() {
-		if (getTextEditor() != null) {
-			createBreakpoint(getTextEditor().getEditorInput());
-		}
-		update();
-	}
 	/**
 	 * Creates a breakpoint.
 	 */
-	protected IBreakpoint createBreakpoint(IEditorInput editorInput) {
-		if (breakpointCanBeCreated(editorInput)) {
+	protected void createBreakpoint(IEditorInput editorInput) {
+		IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
+		BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
+		ISelectionProvider sp= getTextEditor().getSelectionProvider();
+		if (sp == null) {
+			return;
+		}
+		ISelection selection= sp.getSelection();
+		if (selection instanceof ITextSelection) {
+			int lineNumber = bv.getValidBreakpointLocation(document, ((ITextSelection)selection).getStartLine());		
 			try {
+				if (JDIDebugModel.lineBreakpointExists(getType().getFullyQualifiedName(), lineNumber)) {
+					return;
+				}
 				Map attributes = new HashMap(10);
 				BreakpointUtils.addJavaBreakpointAttributes(attributes, getType());
-				IJavaLineBreakpoint bp = JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(getType()), getType().getFullyQualifiedName(), getLineNumber(), -1, -1, 0, true, attributes);
-				return bp;
+				JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(getType()), getType().getFullyQualifiedName(), lineNumber, -1, -1, 0, true, attributes);
 			} catch (CoreException ce) {
 				ExceptionHandler.handle(ce, ActionMessages.getString("AddBreakpoint.error.title1"), ActionMessages.getString("AddBreakpoint.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		return null;
 	}
 	
 	/**
 	 * Creates a breakpoint marker.
 	 */
 	protected boolean breakpointCanBeCreated(IEditorInput editorInput) {
-		IType type= getType(editorInput);
-		setType(type);
-		if (type != null) {
-			try {
-				return !JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(), getLineNumber());
-			} catch (CoreException ce) {
-				JDIDebugUIPlugin.log(ce);
-			}
+		ISelectionProvider sp= getTextEditor().getSelectionProvider();
+		if (sp == null) {
+			return false;
 		}
+		ISelection s= sp.getSelection();
+		if (!s.isEmpty() && s instanceof ITextSelection) {
+			ITextSelection selection= (ITextSelection) s;
+			setLineNumber(selection.getStartLine() + 1);
+			IType type= getType(editorInput);
+			if (type != null) {
+				try {
+					return !JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(), getLineNumber());
+				} catch (CoreException ce) {
+					JDIDebugUIPlugin.log(ce);
+				}
+			}
+		}	
 		return false;
 	}
 	
 	protected IType getType(IEditorInput editorInput) {
+		if (getType() != null) {
+			return getType();
+		}
 		IType type = null;
 		ISelectionProvider sp= getTextEditor().getSelectionProvider();
 		if (sp != null) {
 			ISelection s= sp.getSelection();
 			if (!s.isEmpty() && s instanceof ITextSelection) {
 				ITextSelection selection= (ITextSelection) s;
-				IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
-				BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
-				int lineNumber = bv.getValidBreakpointLocation(document, selection.getStartLine());
-				if (lineNumber > 0) {
-					setLineNumber(lineNumber);
-					type= getType0(selection, editorInput);
-				}
+				type= getType0(selection, editorInput);
 			}
 		}
 		return type;
@@ -116,7 +124,7 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
 			if (classFile != null) {
 				type = classFile.getType();
-			
+				setType(type);
 			} else {
 				IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
 				ICompilationUnit unit= manager.getWorkingCopy(editorInput);
@@ -129,6 +137,10 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 				}
 				else if (e != null && e instanceof IMember) {
 					type = ((IMember) e).getDeclaringType();
+				}
+				if (unit.getAllTypes().length == 1) {
+					//cache the type as there is only one 
+					setType(type);
 				}
 			}
 		} catch (JavaModelException jme) {
@@ -149,20 +161,23 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 		} else {
 			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		}
+		setType(null);
 		update();
 	}
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		run();
+		if (getTextEditor() != null) {
+			createBreakpoint(getTextEditor().getEditorInput());
+		}
+		action.setEnabled(false);
 	}
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof ITextSelection) {
-			setPluginAction(action);
 			update();
 		}
 	}
