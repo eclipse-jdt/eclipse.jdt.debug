@@ -59,6 +59,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -78,12 +79,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class JavaMainTab extends JavaLaunchConfigurationTab {
 		
 	// Project UI widgets
-	protected Label fProjLabel;
 	protected Text fProjText;
 	protected Button fProjButton;
 
 	// Main class UI widgets
-	protected Label fMainLabel;
 	protected Text fMainText;
 	protected Button fSearchButton;
 	protected Button fSearchExternalJarsCheckButton;
@@ -121,29 +120,20 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
 		GridLayout topLayout = new GridLayout();
 		topLayout.verticalSpacing = 0;
+		topLayout.numColumns = 2;
 		comp.setLayout(topLayout);
 		comp.setFont(font);
 		
-		createVerticalSpacer(comp, 1);
+		createVerticalSpacer(comp, 2);
 		
-		Composite projComp = new Composite(comp, SWT.NONE);
-		GridLayout projLayout = new GridLayout();
-		projLayout.numColumns = 2;
-		projLayout.marginHeight = 0;
-		projLayout.marginWidth = 0;
-		projComp.setLayout(projLayout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		projComp.setLayoutData(gd);
-		projComp.setFont(font);
-		
-		fProjLabel = new Label(projComp, SWT.NONE);
-		fProjLabel.setText(LauncherMessages.getString("JavaMainTab.&Project__2")); //$NON-NLS-1$
-		gd = new GridData();
+		Label projLabel = new Label(comp, SWT.NONE);
+		projLabel.setText(LauncherMessages.getString("JavaMainTab.&Project__2")); //$NON-NLS-1$
+		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
-		fProjLabel.setLayoutData(gd);
-		fProjLabel.setFont(font);
+		projLabel.setLayoutData(gd);
+		projLabel.setFont(font);
 		
-		fProjText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
+		fProjText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProjText.setLayoutData(gd);
 		fProjText.setFont(font);
@@ -153,23 +143,49 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fProjButton = createPushButton(projComp, LauncherMessages.getString("JavaMainTab.&Browse_3"), null); //$NON-NLS-1$
+		fProjButton = createPushButton(comp, LauncherMessages.getString("JavaMainTab.&Browse_3"), null); //$NON-NLS-1$
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
 			}
 		});
 		
-		createVerticalSpacer(projComp, 2);
+		createVerticalSpacer(comp, 2);
 		
-		fMainLabel = new Label(projComp, SWT.NONE);
-		fMainLabel.setText(LauncherMessages.getString("JavaMainTab.Main_cla&ss__4")); //$NON-NLS-1$
+		createMainTypeEditor(comp);
+		
+		createVerticalSpacer(comp, 2);
+		
+		fStopInMainCheckButton = createCheckButton(comp, LauncherMessages.getString("JavaMainTab.St&op_in_main_1")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
-		fMainLabel.setLayoutData(gd);
-		fMainLabel.setFont(font);
+		fStopInMainCheckButton.setLayoutData(gd);
+		fStopInMainCheckButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});		
+		
+	}
+		
+	/**
+	 * Creates the widgets for specifying a main type.
+	 * 
+	 * @param parent the parent composite
+	 */
+	private void createMainTypeEditor(Composite parent) {
+		Font font= parent.getFont();
+		Group mainGroup= new Group(parent, SWT.NONE);
+		mainGroup.setText(LauncherMessages.getString("JavaMainTab.Main_cla&ss__4")); //$NON-NLS-1$
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		mainGroup.setLayoutData(gd);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		mainGroup.setLayout(layout);
+		mainGroup.setFont(font);
 
-		fMainText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
+		fMainText = new Text(mainGroup, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fMainText.setLayoutData(gd);
 		fMainText.setFont(font);
@@ -179,36 +195,34 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fSearchButton = createPushButton(projComp,LauncherMessages.getString("JavaMainTab.Searc&h_5"), null); //$NON-NLS-1$
+		fSearchButton = createPushButton(mainGroup,LauncherMessages.getString("JavaMainTab.Searc&h_5"), null); //$NON-NLS-1$
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSearchButtonSelected();
 			}
 		});
 		
-		fSearchExternalJarsCheckButton = createCheckButton(comp, LauncherMessages.getString("JavaMainTab.E&xt._jars_6")); //$NON-NLS-1$
+		fSearchExternalJarsCheckButton = createCheckButton(mainGroup, LauncherMessages.getString("JavaMainTab.E&xt._jars_6")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fSearchExternalJarsCheckButton.setLayoutData(gd);
 		fSearchExternalJarsCheckButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
 		});
 
-		fConsiderInheritedMainButton = createCheckButton(comp, LauncherMessages.getString("JavaMainTab.22")); //$NON-NLS-1$
+		fConsiderInheritedMainButton = createCheckButton(mainGroup, LauncherMessages.getString("JavaMainTab.22")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fConsiderInheritedMainButton.setLayoutData(gd);
 		fConsiderInheritedMainButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
-		});	
-		
-		fStopInMainCheckButton = createCheckButton(comp, LauncherMessages.getString("JavaMainTab.St&op_in_main_1")); //$NON-NLS-1$
-		fStopInMainCheckButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});		
-		
+		});
 	}
-		
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
