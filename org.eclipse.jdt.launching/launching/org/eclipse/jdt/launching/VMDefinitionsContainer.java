@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -260,6 +262,12 @@ public class VMDefinitionsContainer {
 			element.appendChild(libLocationElement);
 		}
 		
+		// Java doc location
+		URL url = vm.getJavadocLocation();
+		if (url != null) {
+			element.setAttribute("javadocURL", url.toExternalForm()); //$NON-NLS-1$
+		}
+		
 		return element;
 	}
 	
@@ -419,6 +427,16 @@ public class VMDefinitionsContainer {
 						setLibraryLocations(vmStandin, libraryLocationElement);
 						break;
 					}
+				}
+			}
+			
+			// javadoc URL
+			String externalForm = vmElement.getAttribute("javadocURL"); //$NON-NLS-1$
+			if (externalForm != null) {
+				try {
+					vmStandin.setJavadocLocation(new URL(externalForm));
+				} catch (MalformedURLException e) {
+					LaunchingPlugin.log(e);
 				}
 			}
 		} else {

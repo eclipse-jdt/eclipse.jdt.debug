@@ -7,14 +7,10 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,11 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -49,7 +40,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.ListenerList;
@@ -57,12 +47,6 @@ import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * The central access point for launching support. This class manages
@@ -316,6 +300,7 @@ public final class JavaRuntime {
 	 * @param monitor progress monitor or <code>null</code>
 	 * @param savePreference If <code>true</code>, update workbench preferences to reflect
 	 * 		   				  the new default VM.
+	 * @since 2.1
 	 */
 	public static void setDefaultVMInstall(IVMInstall vm, IProgressMonitor monitor, boolean savePreference) throws CoreException {
 		IVMInstall previous = null;
@@ -1098,86 +1083,22 @@ public final class JavaRuntime {
 	 * Write out the specified String as the new value of the VM definitions preference
 	 * and save all preferences.
 	 */
-	public static void saveVMDefinitions(String vmDefXML) {
+	private static void saveVMDefinitions(String vmDefXML) {
 		LaunchingPlugin.getDefault().getPluginPreferences().setValue(PREF_VM_XML, vmDefXML);
 		LaunchingPlugin.getDefault().savePluginPreferences();		
 	}
 
 	private static String getVMsAsXML() throws IOException {
-		Document doc = new DocumentImpl();
-		Element config = doc.createElement("vmSettings"); //$NON-NLS-1$
-		if (fgDefaultVMId != null) {
-			config.setAttribute("defaultVM", fgDefaultVMId); //$NON-NLS-1$
-		}
-		if (fgDefaultVMConnectorId != null) {
-			config.setAttribute("defaultVMConnector", fgDefaultVMConnectorId); //$NON-NLS-1$
-		}
-		doc.appendChild(config);
-		
+		VMDefinitionsContainer container = new VMDefinitionsContainer();		
 		IVMInstallType[] vmTypes= getVMInstallTypes();
-
 		for (int i = 0; i < vmTypes.length; ++i) {
-			Element vmTypeElement = vmTypeAsElement(doc, vmTypes[i]);
-			config.appendChild(vmTypeElement);
+			IVMInstall[] vms = vmTypes[i].getVMInstalls();
+			for (int j = 0; j < vms.length; j++) {
+				IVMInstall install = vms[j];
+				container.addVM(install);
+			}
 		}
-
-		return JavaLaunchConfigurationUtils.serializeDocument(doc);
-	}
-	
-	private static Element vmTypeAsElement(Document doc, IVMInstallType vmType) {
-		Element element= doc.createElement("vmType"); //$NON-NLS-1$
-		element.setAttribute("id", vmType.getId()); //$NON-NLS-1$
-		IVMInstall[] vms= vmType.getVMInstalls();
-		for (int i= 0; i < vms.length; i++) {
-			Element vmElement= vmAsElement(doc, vms[i]);
-			element.appendChild(vmElement);
-		}
-		return element;
-	}
-	
-	private static Element vmAsElement(Document doc, IVMInstall vm) {
-		Element element= doc.createElement("vm"); //$NON-NLS-1$
-		element.setAttribute("id", vm.getId());	 //$NON-NLS-1$
-		element.setAttribute("name", vm.getName()); //$NON-NLS-1$
-		String installPath= ""; //$NON-NLS-1$
-		File installLocation= vm.getInstallLocation();
-		if (installLocation != null) {
-			installPath= installLocation.getAbsolutePath();
-		}
-		element.setAttribute("path", installPath); //$NON-NLS-1$
-		LibraryLocation[] libraryLocations= vm.getLibraryLocations();
-		if (libraryLocations != null) {
-			Element libLocationElement=  libraryLocationsAsElement(doc, libraryLocations);
-			element.appendChild(libLocationElement);
-		}
-		return element;
-	}
-	
-	private static Element libraryLocationsAsElement(Document doc, LibraryLocation[] locations) {
-		Element root = doc.createElement("libraryLocations"); //$NON-NLS-1$
-		for (int i = 0; i < locations.length; i++) {
-			Element element= doc.createElement("libraryLocation"); //$NON-NLS-1$
-			element.setAttribute("jreJar", locations[i].getSystemLibraryPath().toString()); //$NON-NLS-1$
-			element.setAttribute("jreSrc", locations[i].getSystemLibrarySourcePath().toString()); //$NON-NLS-1$
-			element.setAttribute("pkgRoot", locations[i].getPackageRootPath().toString()); //$NON-NLS-1$
-			root.appendChild(element);
-		}
-		return root;
-	}
-	
-	/**
-	 * Parse the XML contained in the specified InputStream, and return a result collector
-	 * containing the results.  Return <code>null</code> if there were any problems.
-	 */
-	public static VMDefinitionsContainer parseVMDefinitionXML(InputStream inputStream) {
-		VMDefinitionsContainer vmDefs = null;
-		try {
-			vmDefs = loadVMConfiguration(inputStream);
-		} catch (IOException ioe) {
-			LaunchingPlugin.log(ioe);
-			return null;
-		}
-		return vmDefs;
+		return container.getAsXML();
 	}
 	
 	/**
@@ -1238,158 +1159,7 @@ public final class JavaRuntime {
 			vmStandin.convertToRealVM();
 		}
 	}
-	
-	/**
-	 * Parse the set of installed JREs out of the XML contained in the specified InputStream,
-	 * put the results in a VMDefinitionsContainer and return it.
-	 * 
-	 * Calling this method does NOT affect the internal memory model used to manage VMs.
-	 * Thus, it does not create 'real' VMInstall objects.  It only creates VStandin
-	 * objects, and puts all the results in the result collector.	 */
-	private static VMDefinitionsContainer loadVMConfiguration(InputStream inputStream) throws IOException {
-		// Wrapper the stream for efficient parsing
-		InputStream stream= new BufferedInputStream(inputStream);
-		Reader reader= new InputStreamReader(stream);
-
-		// Do the parsing and obtain the top-level node
-		Element config= null;		
-		try {
-			DocumentBuilder parser= DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			config = parser.parse(new InputSource(reader)).getDocumentElement();
-		} catch (SAXException e) {
-			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
-		} catch (ParserConfigurationException e) {
-			reader.close();
-			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
-		} finally {
-			reader.close();
-		}
-		
-		// If the top-level node wasn't what we expected, bail out
-		if (!config.getNodeName().equalsIgnoreCase("vmSettings")) { //$NON-NLS-1$
-			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
-		}
-		
-		// Construct the result collector that will hold the results of traversing the 
-		// parsed structure and populate the default VM related values
-		VMDefinitionsContainer resultCollector = new VMDefinitionsContainer();
-		resultCollector.setDefaultVMInstallCompositeID(config.getAttribute("defaultVM")); //$NON-NLS-1$
-		resultCollector.setDefaultVMInstallConnectorTypeID(config.getAttribute("defaultVMConnector")); //$NON-NLS-1$
-		
-		// Traverse the parsed structure.  This consists of processing each VMType node, and
-		// then processing each VM node underneath these
-		NodeList list = config.getChildNodes();
-		int length = list.getLength();
-		for (int i = 0; i < length; ++i) {
-			Node node = list.item(i);
-			short type = node.getNodeType();
-			if (type == Node.ELEMENT_NODE) {
-				Element vmTypeElement = (Element) node;
-				if (vmTypeElement.getNodeName().equalsIgnoreCase("vmType")) { //$NON-NLS-1$
-					createFromVMType(vmTypeElement, resultCollector);
-				}
-			}
-		}
-		
-		return resultCollector;
-	}
-	
-	/**
-	 * For the specified vm type node, parse all subordinate VM definitions and add them
-	 * to the specified result collector.	 */
-	private static void createFromVMType(Element vmTypeElement, VMDefinitionsContainer resultCollector) {
-		String id = vmTypeElement.getAttribute("id"); //$NON-NLS-1$
-		IVMInstallType vmType= getVMInstallType(id);
-		if (vmType != null) {
-			NodeList list = vmTypeElement.getChildNodes();
-			int length = list.getLength();
-			for (int i = 0; i < length; ++i) {
-				Node node = list.item(i);
-				short type = node.getNodeType();
-				if (type == Node.ELEMENT_NODE) {
-					Element vmElement = (Element) node;
-					if (vmElement.getNodeName().equalsIgnoreCase("vm")) { //$NON-NLS-1$
-						createVM(vmType, vmElement, resultCollector);
-					}
-				}
-			}
-		} else {
-			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.VM_type_element_with_unknown_id_1")); //$NON-NLS-1$
-		}
-	}
-
-	/**
-	 * Parse the specified VM node, create a VMStandin for it, and add this to the 
-	 * specified result collector.	 */
-	private static void createVM(IVMInstallType vmType, Element vmElement, VMDefinitionsContainer resultCollector) {
-		String id= vmElement.getAttribute("id"); //$NON-NLS-1$
-		if (id != null) {
-			String installPath= vmElement.getAttribute("path"); //$NON-NLS-1$
-			if (installPath == null) {
-				return;
-			}
-			File installLocation= new File(installPath);
-			if (!installLocation.exists()) {
-				return;
-			}
 			
-			VMStandin vmStandin = new VMStandin(vmType, id);
-			resultCollector.addVM(vmStandin);
-			vmStandin.setName(vmElement.getAttribute("name")); //$NON-NLS-1$
-			vmStandin.setInstallLocation(installLocation);
-			
-			NodeList list = vmElement.getChildNodes();
-			int length = list.getLength();
-			for (int i = 0; i < length; ++i) {
-				Node node = list.item(i);
-				short type = node.getNodeType();
-				if (type == Node.ELEMENT_NODE) {
-					Element libraryLocationElement= (Element)node;
-					if (libraryLocationElement.getNodeName().equals("libraryLocation")) { //$NON-NLS-1$
-						LibraryLocation loc = getLibraryLocation(vmStandin, libraryLocationElement);
-						vmStandin.setLibraryLocations(new LibraryLocation[]{loc});
-						break;
-					} else if (libraryLocationElement.getNodeName().equals("libraryLocations")) { //$NON-NLS-1$
-						setLibraryLocations(vmStandin, libraryLocationElement);
-						break;
-					}
-				}
-			}
-
-		} else {
-			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.VM_element_specified_with_no_id_attribute_2")); //$NON-NLS-1$
-		}
-	}
-	
-	private static LibraryLocation getLibraryLocation(IVMInstall vm, Element libLocationElement) {
-		String jreJar= libLocationElement.getAttribute("jreJar"); //$NON-NLS-1$
-		String jreSrc= libLocationElement.getAttribute("jreSrc"); //$NON-NLS-1$
-		String pkgRoot= libLocationElement.getAttribute("pkgRoot"); //$NON-NLS-1$
-		if (jreJar != null && jreSrc != null && pkgRoot != null) {
-			return new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot));
-		} else {
-			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.Library_location_element_incorrectly_specified_3")); //$NON-NLS-1$
-		}
-		return null;
-	}
-	
-	private static void setLibraryLocations(IVMInstall vm, Element libLocationsElement) {
-		NodeList list = libLocationsElement.getChildNodes();
-		int length = list.getLength();
-		List locations = new ArrayList(length);
-		for (int i = 0; i < length; ++i) {
-			Node node = list.item(i);
-			short type = node.getNodeType();
-			if (type == Node.ELEMENT_NODE) {
-				Element libraryLocationElement= (Element)node;
-				if (libraryLocationElement.getNodeName().equals("libraryLocation")) { //$NON-NLS-1$
-					locations.add(getLibraryLocation(vm, libraryLocationElement));
-				}
-			}
-		}	
-		vm.setLibraryLocations((LibraryLocation[])locations.toArray(new LibraryLocation[locations.size()]));
-	}
-		
 	/**
 	 * Evaluates library locations for a IVMInstall. If no library locations are set on the install, a default
 	 * location is evaluated and checked if it exists.

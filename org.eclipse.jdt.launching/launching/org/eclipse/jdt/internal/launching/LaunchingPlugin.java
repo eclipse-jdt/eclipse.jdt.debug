@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -256,7 +257,11 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		byte[] oldByteArray = oldPrefString.getBytes();
 		if (oldByteArray.length > 0) {
 			ByteArrayInputStream oldStream = new ByteArrayInputStream(oldByteArray);
-			oldResults = JavaRuntime.parseVMDefinitionXML(oldStream);
+			try {
+				oldResults = VMDefinitionsContainer.parseXMLIntoContainer(oldStream);
+			} catch (IOException e) {
+				LaunchingPlugin.log(e);
+			}
 			if (oldResults != null) {
 				oldList = oldResults.getVMList();
 			} else {
@@ -273,7 +278,11 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		byte[] newByteArray = newPrefString.getBytes();
 		if (newByteArray.length > 0) {
 			ByteArrayInputStream newStream = new ByteArrayInputStream(newPrefString.getBytes());
-			newResults = JavaRuntime.parseVMDefinitionXML(newStream);
+			try {
+				newResults = VMDefinitionsContainer.parseXMLIntoContainer(newStream);
+			} catch (IOException e) {
+				LaunchingPlugin.log(e);
+			}
 			if (newResults != null) {
 				newList = newResults.getVMList();
 			} else {
