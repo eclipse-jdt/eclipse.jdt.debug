@@ -209,7 +209,6 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 		} catch (PartInitException pie) {
 			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("OpenOnConsoleTypeAction.Error_opening_editor_5"), pie); //$NON-NLS-1$
 		} catch (BadLocationException ble) {
-			JDIDebugUIPlugin.log(ble);
 			MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Open_Type_3"), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_editor_document")); //$NON-NLS-1$  //$NON-NLS-2$
 		} 
 	}
@@ -234,7 +233,6 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 			String lineText = consoleDocument.get(lineOffset, lineLength);				
 			parseSelection(lineText);
 		} catch (BadLocationException ble) {
-			JDIDebugUIPlugin.log(ble);
 			MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Open_Type_3"), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_console_document_7")); //$NON-NLS-1$ //$NON-NLS-2$
 		}		
 	}
