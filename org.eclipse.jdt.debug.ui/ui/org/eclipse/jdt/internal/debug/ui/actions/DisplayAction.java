@@ -33,12 +33,12 @@ public class DisplayAction extends EvaluateAction {
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
-	protected void displayResult(IEvaluationResult result) {
-		final String snippet= result.getSnippet();
-		IJavaValue value= result.getValue();
+	protected void displayResult(IEvaluationResult evaluationResult) {
+		final String snippet= evaluationResult.getSnippet();
+		IJavaValue resultValue= evaluationResult.getValue();
 		try {
 			String sig= null;
-			IJavaType type= value.getJavaType();
+			IJavaType type= resultValue.getJavaType();
 			if (type != null) {
 				sig= type.getSignature();
 			}
@@ -47,11 +47,11 @@ public class DisplayAction extends EvaluateAction {
 			} else {
 				final String resultString;
 				if (sig != null) {
-					resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.type_name_pattern"), new Object[] { value.getReferenceTypeName() }); //$NON-NLS-1$
+					resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.type_name_pattern"), new Object[] { resultValue.getReferenceTypeName() }); //$NON-NLS-1$
 				} else {
 					resultString= ""; //$NON-NLS-1$
 				}
-				getDebugModelPresentation().computeDetail(value, new IValueDetailListener() {
+				getDebugModelPresentation().computeDetail(resultValue, new IValueDetailListener() {
 					public void detailComputed(IValue value, String result) {
 						displayStringResult(snippet, MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, result})); //$NON-NLS-1$
 					}

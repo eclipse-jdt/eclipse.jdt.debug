@@ -68,7 +68,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 			return;
 		}
 
-		ProgressMonitorDialog monitor = new ProgressMonitorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell());
+		ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell());
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
@@ -107,7 +107,7 @@ public class SelectSystemLibraryQuickFix extends JREResolution {
 		};
 		
 		try {
-			monitor.run(true, true, runnable);
+			progressMonitor.run(true, true, runnable);
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof CoreException) {
 				throw (CoreException)e.getTargetException();

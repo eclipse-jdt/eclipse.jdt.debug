@@ -120,11 +120,11 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 										}
 									}
 									if (sameTarget) {
-										MessageDialog dialog= new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("InstanceFiltersAction.Instance_Filter_Breakpoint_Selection_2"), //$NON-NLS-1$
+										MessageDialog messageDialog= new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("InstanceFiltersAction.Instance_Filter_Breakpoint_Selection_2"), //$NON-NLS-1$
 											null, MessageFormat.format(ActionMessages.getString("InstanceFiltersAction.breakpoint_{0}_already_restricted._Reset_the_restriction_to_object_{1}_"), new String[] { modelPresentation.getText(breakpoint), var.getName()}), //$NON-NLS-1$
 											MessageDialog.QUESTION, new String[] { ActionMessages.getString("InstanceFiltersAction.Yes_2"), ActionMessages.getString("InstanceFiltersAction.Cancel_3")}, //$NON-NLS-1$ //$NON-NLS-2$
 											0);
-										if (dialog.open() == Dialog.OK) {
+										if (messageDialog.open() == Dialog.OK) {
 											for (int i= 0; i < instanceFilters.length; i++) {
 												breakpoint.removeInstanceFilter(instanceFilters[i]);
 											}

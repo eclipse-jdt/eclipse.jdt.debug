@@ -397,7 +397,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		final IJavaProject[] projects= originals;
 		final JavaModelException[] exception= new JavaModelException[1];
-		ProgressMonitorDialog monitor= new ProgressMonitorDialog(shell);
+		ProgressMonitorDialog progressMonitor= new ProgressMonitorDialog(shell);
 		IRunnableWithProgress r= new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
@@ -427,7 +427,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			}
 		};
 		try {
-			monitor.run(false, false, r);	
+			progressMonitor.run(false, false, r);	
 		} catch (InvocationTargetException e) {
 			JDIDebugUIPlugin.log(e);
 		} catch (InterruptedException e) {

@@ -87,8 +87,8 @@ class JavaModelListener implements IElementChangedListener {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					Iterator itr= breakpointsToRemove.iterator();
 					while (itr.hasNext()) {
-						IBreakpoint breakpoint = (IBreakpoint) itr.next();
-						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);	
+						IBreakpoint breakpointToRemove = (IBreakpoint) itr.next();
+						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpointToRemove, true);	
 					}	
 				}
 			};
