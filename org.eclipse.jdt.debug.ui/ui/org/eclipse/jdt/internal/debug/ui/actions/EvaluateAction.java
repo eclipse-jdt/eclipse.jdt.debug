@@ -55,7 +55,6 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -74,7 +73,7 @@ import com.sun.jdi.ObjectReference;
  * is done in the UI thread and the expression and result are
  * displayed using the IDataDisplay.
  */
-public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchWindowActionDelegate, IObjectActionDelegate, IEditorActionDelegate, IPartListener, IViewActionDelegate, IPageListener {
+public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchWindowActionDelegate, IObjectActionDelegate, IEditorActionDelegate, IPartListener, IViewActionDelegate {
 
 	private IAction fAction;
 	private IWorkbenchPart fTargetPart;
@@ -510,7 +509,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IWorkbenchWindow win = getWindow();
 		if (win != null) {
 			win.getPartService().removePartListener(this);
-			win.removePageListener(this);
 		}
 	}
 
@@ -519,9 +517,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 */
 	public void init(IWorkbenchWindow window) {
 		setWindow(window);
-		setTargetPart(window.getActivePage().getActivePart());
+		IWorkbenchPage page= window.getActivePage();
+		if (page != null) {
+			setTargetPart(page.getActivePart());
+		}
 		window.getPartService().addPartListener(this);
-		window.addPageListener(this);
 		update();
 	}
 
@@ -629,23 +629,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		setTargetPart(targetPart);
 		update();
 	}
-	/**
-	 * @see IPageListener#pageActivated(IWorkbenchPage)
-	 */
-	public void pageActivated(IWorkbenchPage page) {
-	}
-
-	/**
-	 * @see IPageListener#pageClosed(IWorkbenchPage)
-	 */
-	public void pageClosed(IWorkbenchPage page) {
-	}
-
-	/**
-	 * @see IPageListener#pageOpened(IWorkbenchPage)
-	 */
-	public void pageOpened(IWorkbenchPage page) {
-	}	
 	
 	protected Object getSelectedObject() {
 		return fSelection;
