@@ -280,24 +280,17 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 		
 		// extract the fully qualified type name
 		String qualifiedName = selection.substring(leftEdge, rightEdge);
+		String[] names= parseTypeNames(qualifiedName);
 		
-		// extract package name and the simple type name
-		int lastPkgDot = qualifiedName.lastIndexOf('.');
-		if (lastPkgDot == -1) {
-			setPkgName(null);
-			int lastInnerClass= qualifiedName.lastIndexOf('$');
-			if (lastInnerClass == -1) {
-				qualifiedName= qualifiedName.substring(lastInnerClass + 1);
-			}
-			setTypeName(qualifiedName);
-		} else {
-			setPkgName(qualifiedName.substring(0, lastPkgDot));
-			String typeName= qualifiedName.substring(lastPkgDot + 1);
-			int lastInnerClass= typeName.lastIndexOf('$');
-			if (lastInnerClass != -1) {
-				typeName= typeName.substring(lastInnerClass + 1);
-			}
-			setTypeName(typeName);
+		for (int i = 0; i < names.length; i++) {
+			String typeName = names[i];	
+			try {
+				Integer.parseInt(typeName);
+			} catch(NumberFormatException e) {
+				setTypeName(typeName);
+				continue;
+			}	
+			break;
 		}
 		
 		// look for line #
@@ -433,6 +426,36 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 	
 	protected void beep() {
 		getShell().getDisplay().beep();
+	}
+	
+	/**
+	 * Returns an array of simple type names that are
+	 * part of the given type's qualified name. For
+	 * example, if the given name is <code>x.y.A$B</code>,
+	 * an array with <code>["A", "B"]</code> is returned.
+	 * Sets the package name if there is one.
+	 * 
+	 * @param typeName fully qualified type name
+	 * @return array of nested type names
+	 */
+	protected String[] parseTypeNames(String typeName) {
+		int index = typeName.lastIndexOf('.');
+		if (index >= 0) {
+			setPkgName(typeName.substring(0, index));
+			typeName= typeName.substring(index + 1);
+		} else {
+			setPkgName(null);
+		}
+		
+		index = typeName.indexOf('$');
+		List list = new ArrayList(1);
+		while (index >= 0) {
+			list.add(typeName.substring(0, index));
+			typeName = typeName.substring(index + 1);
+			index = typeName.indexOf('$');
+		}
+		list.add(typeName);
+		return (String[])list.toArray(new String[list.size()]);	
 	}
 }
 
