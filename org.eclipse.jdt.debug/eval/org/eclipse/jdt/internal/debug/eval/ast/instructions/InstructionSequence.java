@@ -5,6 +5,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -15,7 +16,7 @@ public class InstructionSequence implements ICompiledExpression {
 
 	private List fInstructions;
 	/**
-	 * A collection of errors (Message) that occurred while
+	 * A collection of error messages (<code>String</code>) that occurred while
 	 * creating this expression
 	 */
 	private List fErrors;
@@ -47,7 +48,7 @@ public class InstructionSequence implements ICompiledExpression {
 	 * Adds the given error to the list of errors that occurred
 	 * while compiling this instruction sequence
 	 */
-	public void addError(Message error) {
+	public void addError(String error) {
 		fErrors.add(error);
 	}
 	
@@ -60,9 +61,22 @@ public class InstructionSequence implements ICompiledExpression {
 	
 	/**
 	 * @see ICompiledExpression#getErrors()
+	 * @deprecated
 	 */
 	public Message[] getErrors() {
-		return (Message[])fErrors.toArray(new Message[fErrors.size()]);
+		Message[] messages= new Message[fErrors.size()];
+		int i= 0;
+		for (Iterator iter= fErrors.iterator(); iter.hasNext();) {
+			messages[i++]= new Message((String) iter.next(), -1);
+		}
+		return messages;
+	}
+	
+	/**
+	 * @see org.eclipse.jdt.debug.eval.ICompiledExpression#getErrorMessages()
+	 */
+	public String[] getErrorMessages() {
+		return (String[])fErrors.toArray(new String[fErrors.size()]);
 	}
 
 	/**

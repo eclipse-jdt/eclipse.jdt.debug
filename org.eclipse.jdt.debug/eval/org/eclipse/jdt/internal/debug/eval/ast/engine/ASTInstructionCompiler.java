@@ -51,7 +51,6 @@ import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.LabeledStatement;
-import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -240,7 +239,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		fHasErrors= value;
 	}
 
-	private void addErrorMessage(Message message) {
+	private void addErrorMessage(String message) {
 		fInstructions.addError(message);
 	}
 
@@ -1229,7 +1228,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_2"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_2")); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1257,7 +1256,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		ArrayType arrayType= node.getType();
 
 		if (isALocalType(arrayType.resolveBinding().getElementType())) {
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Local_type_array_instance_creation_cannot_be_used_in_an_evaluation_expression_29"), node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Local_type_array_instance_creation_cannot_be_used_in_an_evaluation_expression_29")); //$NON-NLS-1$
 			setHasError(true);
 			return true;
 		}
@@ -1308,7 +1307,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Assert_statement_cannot_be_used_in_an_evaluation_expression_3"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Assert_statement_cannot_be_used_in_an_evaluation_expression_3")); //$NON-NLS-1$
 		return true;
 	}
 
@@ -1383,7 +1382,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (unrecognized) {
 			setHasError(true);
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_assignment_operator____4") + opToken, node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_assignment_operator____4") + opToken); //$NON-NLS-1$
 		}
 
 		return true;
@@ -1477,7 +1476,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Catch_clause_cannot_be_used_in_an_evaluation_expression_6"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Catch_clause_cannot_be_used_in_an_evaluation_expression_6")); //$NON-NLS-1$
 		return true;
 	}
 
@@ -1505,7 +1504,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (node.getAnonymousClassDeclaration() != null) {
 			setHasError(true);
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_7"), node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_7")); //$NON-NLS-1$
 		}
 
 		IMethodBinding methodBinding= node.resolveConstructorBinding();
@@ -1516,12 +1515,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (isALocalType(typeBinding)) {
 			setHasError(true);
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Constructor_of_a_local_type_cannot_be_used_in_an_evaluation_expression_8"), node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Constructor_of_a_local_type_cannot_be_used_in_an_evaluation_expression_8")); //$NON-NLS-1$
 		}
 
 		if (containsALocalType(methodBinding)) {
 			setHasError(true);
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Constructor_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_30"), node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Constructor_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_30")); //$NON-NLS-1$
 		}
 
 
@@ -1556,7 +1555,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				} while (! (parent instanceof MethodDeclaration));
 				if (Modifier.isStatic(((MethodDeclaration)parent).getModifiers())) {
 					setHasError(true);
-					addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Must_explicitly_qualify_the_allocation_with_an_instance_of_the_enclosing_type_33"), node.getStartPosition())); //$NON-NLS-1$
+					addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Must_explicitly_qualify_the_allocation_with_an_instance_of_the_enclosing_type_33")); //$NON-NLS-1$
 					return true;
 				}
 
@@ -1601,7 +1600,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.this_constructor_invocation_cannot_be_used_in_an_evaluation_expression_9"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.this_constructor_invocation_cannot_be_used_in_an_evaluation_expression_9")); //$NON-NLS-1$
 		return false;
 	}
 
@@ -1688,7 +1687,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			} else {
 				if (isALocalType(declaringTypeBinding)) {
 					setHasError(true);
-					addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Qualified_local_type_field_access_cannot_be_used_in_an_evaluation_expression_31"), node.getStartPosition())); //$NON-NLS-1$
+					addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Qualified_local_type_field_access_cannot_be_used_in_an_evaluation_expression_31")); //$NON-NLS-1$
 					return false;
 				}
 				push(new PushFieldVariable(fieldId, getTypeSignature(declaringTypeBinding), fCounter));
@@ -1950,7 +1949,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (unrecognized) {
 			setHasError(true);
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_infix_operator____13") + opToken, node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_infix_operator____13") + opToken); //$NON-NLS-1$
 		}
 
 		if (hasErrors()) {
@@ -2077,7 +2076,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (containsALocalType(methodBinding)) {
 			setHasError(true);
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32"), node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32")); //$NON-NLS-1$
 		}
 
 		if (hasErrors()) {
@@ -2273,7 +2272,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				break;
 			default:
 				setHasError(true);
-				addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.unrecognized_postfix_operator____15") + opToken, node.getStartPosition())); //$NON-NLS-1$
+				addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.unrecognized_postfix_operator____15") + opToken); //$NON-NLS-1$
 				break;
 		}
 
@@ -2341,7 +2340,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (unrecognized) {
 			setHasError(true);
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.unrecognized_prefix_operator____16") + opToken, node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.unrecognized_prefix_operator____16") + opToken); //$NON-NLS-1$
 		}
 
 		return true;
@@ -2426,7 +2425,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		String variableId = node.getIdentifier();
 		if (binding == null) {
 			setHasError(true);
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.binding_null_for__17") + variableId, node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.binding_null_for__17") + variableId); //$NON-NLS-1$
 			return true;
 		}
 
@@ -2517,7 +2516,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.super_constructor_invocation_cannot_be_used_in_an_evaluation_expression_19"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.super_constructor_invocation_cannot_be_used_in_an_evaluation_expression_19")); //$NON-NLS-1$
 		return false;
 	}
 
@@ -2566,7 +2565,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (containsALocalType(methodBinding)) {
 			setHasError(true);
-			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32"), node.getStartPosition())); //$NON-NLS-1$
+			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32")); //$NON-NLS-1$
 		}
 
 		if (hasErrors()) {
@@ -2607,7 +2606,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Switch_case_cannot_be_used_in_an_evaluation_expression_20"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Switch_case_cannot_be_used_in_an_evaluation_expression_20")); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2619,7 +2618,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Switch_statement_cannot_be_used_in_an_evaluation_expression_21"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Switch_statement_cannot_be_used_in_an_evaluation_expression_21")); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2659,7 +2658,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Throw_statement_cannot_be_used_in_an_evaluation_expression_22"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Throw_statement_cannot_be_used_in_an_evaluation_expression_22")); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2671,7 +2670,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Try_statement_cannot_be_used_in_an_evaluation_expression_23"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Try_statement_cannot_be_used_in_an_evaluation_expression_23")); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2683,7 +2682,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Type_declaration_cannot_be_used_in_an_evaluation_expression_24"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Type_declaration_cannot_be_used_in_an_evaluation_expression_24")); //$NON-NLS-1$
 		return true;
 	}
 
@@ -2695,7 +2694,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Type_declaration_statement_cannot_be_used_in_an_evaluation_expression_25"), node.getStartPosition())); //$NON-NLS-1$
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Type_declaration_statement_cannot_be_used_in_an_evaluation_expression_25")); //$NON-NLS-1$
 		return false;
 	}
 
@@ -2746,7 +2745,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				break;
 			default:
 				setHasError(true);
-				addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Error_in_type_declaration_statement"), node.getStartPosition())); //$NON-NLS-1$
+				addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Error_in_type_declaration_statement")); //$NON-NLS-1$
 				return false;
 		}
 		int typeDimension= typeBinding.getDimensions();

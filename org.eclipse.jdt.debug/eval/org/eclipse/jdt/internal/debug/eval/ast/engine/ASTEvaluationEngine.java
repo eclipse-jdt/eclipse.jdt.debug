@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -173,7 +172,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			unit = AST.parseCompilationUnit(mapper.getSource(frame).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
-			expression.addError(new Message(e.getStatus().getMessage(), 1));
+			expression.addError(e.getStatus().getMessage());
 			return expression;
 		}
 		
@@ -202,7 +201,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext) {
 		if (thisContext instanceof IJavaArray) {
 			InstructionSequence errorExpression= new InstructionSequence(snippet);
-			errorExpression.addError(new Message(EvaluationEngineMessages.getString("ASTEvaluationEngine.Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1"), 0)); //$NON-NLS-1$
+			errorExpression.addError(EvaluationEngineMessages.getString("ASTEvaluationEngine.Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1")); //$NON-NLS-1$
 		}
 		IJavaProject javaProject = getJavaProject();
 
@@ -215,7 +214,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			unit = AST.parseCompilationUnit(mapper.getSource(thisContext, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
-			expression.addError(new Message(e.getStatus().getMessage(), 1));
+			expression.addError(e.getStatus().getMessage());
 			return expression;
 		}
 		return createExpressionFromAST(snippet, mapper, unit);
@@ -243,7 +242,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				int errorOffset= problem.getSourceStart();
 				if (problem.isError() && problem.getID() != IProblem.VoidMethodReturnsValue) {
 					if (codeSnippetStart <= errorOffset && errorOffset <= codeSnippetEnd) {
-						errorSequence.addError(new Message(problem.getMessage(), problem.getSourceStart()));
+						errorSequence.addError(problem.getMessage());
 						snippetError = true;
 					} else if (runMethodStart <= errorOffset && errorOffset <= runMethodEnd) {
 						runMethodError = true;
@@ -252,7 +251,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			}
 			if (snippetError || runMethodError) {
 				if (runMethodError) {
-					errorSequence.addError(new Message(EvaluationEngineMessages.getString("ASTEvaluationEngine.Evaluations_must_contain_either_an_expression_or_a_block_of_well-formed_statements_1"), 0)); //$NON-NLS-1$
+					errorSequence.addError(EvaluationEngineMessages.getString("ASTEvaluationEngine.Evaluations_must_contain_either_an_expression_or_a_block_of_well-formed_statements_1")); //$NON-NLS-1$
 				}
 				return errorSequence;
 			}

@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.eval;
  */
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
@@ -50,8 +51,7 @@ public class EvaluationResult implements IEvaluationResult {
 	private DebugException fException;
 	
 	/**
-	 * List of <code>Message</code>s describing compilation
-	 * problems.
+	 * List of <code>String</code>s describing compilation problems.
 	 */
 	private List fErrors;
 
@@ -93,10 +93,24 @@ public class EvaluationResult implements IEvaluationResult {
 
 	/**
 	 * @see IEvaluationResult#getProblems()
+	 * @deprecated
 	 */
 	public Message[] getErrors() {
-		return (Message[])fErrors.toArray(new Message[fErrors.size()]);
+		Message[] messages= new Message[fErrors.size()];
+		int i= 0;
+		for (Iterator iter= fErrors.iterator(); iter.hasNext();) {
+			messages[i++]= new Message((String) iter.next(), -1);
+		}
+		return messages;
 	}
+	
+	/**
+	 * @see org.eclipse.jdt.debug.eval.IEvaluationResult#getErrorMessages()
+	 */
+	public String[] getErrorMessages() {
+		return (String[])fErrors.toArray(new String[fErrors.size()]);
+	}
+	
 	/**
 	 * @see IEvaluationResult#getSnippet()
 	 */
@@ -165,23 +179,9 @@ public class EvaluationResult implements IEvaluationResult {
 	}
 	
 	/**
-	 * Adds the given problem with associated kind and
-	 * source fragment to this result.
-	 * 
-	 * @param marker marker describing compilation error/warning
-	 * @param kind 	 the kind of problem, indicating if a problem is
-	 *   about a global variable, a code snippet, an import, or a
-	 *   package declaration. The value is one of <code>ICodeSnippetRequestor.VARIABLE</code>, 
-	 *   <code>ICodeSnippetRequestor.CODE_SNIPPET</code>, <code>ICodeSnippetRequestor.IMPORT</code>
-	 *   or <code>ICodeSnippetRequestor.PACKAGE</code>.
-	 * @param fragment 	 the source fragment for the problem. If a problem
-	 *   is about a global variable, the corresponding source fragment
-	 *   is the name of the variable. If a problem is about a code snippet,
-	 *   the source fragment is the code snippet. If a problem is about an
-	 *   import, the source fragment is the import. If a problem is about a
-	 *   package declaration, the source fragment is the package declaration.
+	 * Adds the given message to the list of error messages.
 	 */
-	public void addError(Message message) {
+	public void addError(String message) {
 		fErrors.add(message);
 	}
 }

@@ -35,7 +35,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
@@ -354,8 +353,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		if (problemMarker.getAttribute(IMarker.SEVERITY, -1) != IMarker.SEVERITY_ERROR) {
 			return;
 		}
-		Message message= new Message(problemMarker.getAttribute(IMarker.MESSAGE, ""), problemMarker.getAttribute(IMarker.CHAR_START, 0)); //$NON-NLS-1$
-		getResult().addError(message);
+		getResult().addError(problemMarker.getAttribute(IMarker.MESSAGE, "")); //$NON-NLS-1$
 	}
 	
 	/**

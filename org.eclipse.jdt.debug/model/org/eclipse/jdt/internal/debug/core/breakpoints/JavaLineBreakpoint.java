@@ -32,6 +32,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
@@ -467,10 +468,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * If the evaluation returns <code>false</code>, the thread is resumed.
 	 */
 	class EvaluationListener implements IEvaluationListener {
-		IEvaluationResult fResult;
-		
 		public void evaluationComplete(IEvaluationResult result) {
-			fResult= result;
 			JDIThread thread= (JDIThread)result.getThread();
 			Event event= (Event)fSuspendEvents.get(thread);
 			if (result.hasErrors()) {
@@ -528,10 +526,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			// Suspend when an error occurs
 			suspendForEvent(event, thread);
 		}
-		
-		public IEvaluationResult getResult() {
-			return fResult;
-		}
 	};
 	
 	private void fireConditionHasRuntimeErrors(DebugException exception) {
@@ -543,9 +537,22 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * compiled that contains errors
 	 */
 	private void fireConditionHasErrors(ICompiledExpression expression) {
-		JDIDebugPlugin.getDefault().fireBreakpointHasCompilationErrors(this, expression.getErrors());
+		JDIDebugPlugin.getDefault().fireBreakpointHasCompilationErrors(this, getMessages(expression));
 	}
 	
+	/**
+	 * Convert an array of <code>String</code> to an array of
+	 * <code>Message</code>.
+	 */
+	private Message[] getMessages(ICompiledExpression expression) {
+		String[] errorMessages= expression.getErrorMessages();
+		Message[] messages= new Message[errorMessages.length];
+		for (int i= 0; i < messages.length; i++) {
+			messages[i]= new Message(errorMessages[i], -1);
+		}
+		return messages;
+	}
+
 	/**
 	 * Returns whether the cached conditional expression has errors or
 	 * <code>false</code> if there is no cached expression

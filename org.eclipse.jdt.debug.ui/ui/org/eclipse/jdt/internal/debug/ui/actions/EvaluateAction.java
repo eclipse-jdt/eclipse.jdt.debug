@@ -28,7 +28,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -528,7 +527,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 	
 	protected String getErrorMessage(IEvaluationResult result) {
-		Message[] errors= result.getErrors();
+		String[] errors= result.getErrorMessages();
 		if (errors.length == 0) {
 			return getExceptionMessage(result.getException());
 		} else {
@@ -536,12 +535,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 	}
 	
-	protected String getErrorMessage(Message[] errors) {
+	protected String getErrorMessage(String[] errors) {
 		String message= ""; //$NON-NLS-1$
 		for (int i= 0; i < errors.length; i++) {
-			Message error= errors[i];
-			//more than a warning
-			String msg= error.getMessage();
+			String msg= errors[i];
 			if (i == 0) {
 				message= msg;
 			} else {

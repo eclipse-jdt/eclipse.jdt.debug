@@ -252,14 +252,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return isSuspended() && !getDebugTarget().isSuspended();
+		return isSuspended() && ( isInvokingMethod() || ! isPerformingEvaluation() ) && !getDebugTarget().isSuspended();
 	}
 
 	/**
 	 * @see ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
-		return !isSuspended();
+		return !isSuspended() || ( isPerformingEvaluation() && ! isInvokingMethod() );
 	}
 
 	/**
@@ -299,7 +299,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected boolean canStep() {
 		try {
-			return isSuspended() && !isStepping() && getTopStackFrame() != null && !((IJavaDebugTarget)getDebugTarget()).isPerformingHotCodeReplace();
+			return isSuspended() && ( isInvokingMethod() || ! isPerformingEvaluation() ) && !isStepping() && getTopStackFrame() != null && !((IJavaDebugTarget)getDebugTarget()).isPerformingHotCodeReplace();
 		} catch (DebugException e) {
 			return false;
 		}
@@ -842,8 +842,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected void invokeComplete(int restoreTimeout) {
 		abortStep();
-		setRunning(false);
 		setInvokingMethod(false);
+		setRunning(false);
 		setRequestTimeout(restoreTimeout);
 		// update preserved stack frames
 		try {

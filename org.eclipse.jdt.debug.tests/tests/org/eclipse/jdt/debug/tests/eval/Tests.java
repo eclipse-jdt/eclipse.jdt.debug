@@ -17,7 +17,6 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -456,9 +455,9 @@ public abstract class Tests extends AbstractDebugTest {
 			DebugException exception= result.getException();
 			if (exception == null) {
 				message= "";
-				Message[] messages= result.getErrors();
+				String[] messages= result.getErrorMessages();
 				for (int i= 0, limit= messages.length; i < limit; i++) {
-					message += messages[i].getMessage() + ", ";
+					message += messages[i] + ", ";
 				}
 			} else {
 				message= exception.getStatus().getMessage();

@@ -50,8 +50,17 @@ public interface IEvaluationResult {
 	 * occurred while compiling the snippet.
 	 *
 	 * @return compilation error messages, or an empty array if no errors occurred
+	 * @deprecated
 	 */
 	public Message[] getErrors();
+		
+	/**
+	 * Returns an array of problem messages. Each message describes a problem that
+	 * occurred while compiling the snippet.
+	 *
+	 * @return compilation error messages, or an empty array if no errors occurred
+	 */
+	public String[] getErrorMessages();
 		
 	/**
 	 * Returns the snippet that was evaluated.

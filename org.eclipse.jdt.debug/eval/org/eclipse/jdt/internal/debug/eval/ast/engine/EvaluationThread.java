@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ITerminate;
-import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -144,7 +143,7 @@ class EvaluationThread {
 		fEvaluating = true;
 		EvaluationResult result = new EvaluationResult(fEngine, fExpression.getSnippet(), fThread);
 		if (fExpression.hasErrors()) {
-			Message[] errors = fExpression.getErrors();
+			String[] errors = fExpression.getErrorMessages();
 			for (int i = 0, numErrors = errors.length; i < numErrors; i++) {
 				result.addError(errors[i]);
 			}
@@ -191,7 +190,7 @@ class EvaluationThread {
 		if (value != null) {
 			result.setValue(value);
 		} else {
-			result.addError(new Message(EvaluationEngineMessages.getString("EvaluationThread.An_unknown_error_occurred_during_evaluation_1"), 0)); //$NON-NLS-1$
+			result.addError(EvaluationEngineMessages.getString("EvaluationThread.An_unknown_error_occurred_during_evaluation_1")); //$NON-NLS-1$
 		}
 		if (exception != null) {
 			if (exception instanceof DebugException) {

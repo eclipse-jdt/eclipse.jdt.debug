@@ -23,7 +23,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -127,9 +126,9 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 							error.append(exception.getStatus().getMessage());
 						}
 					} else {
-						Message[] errors= result.getErrors();
+						String[] errors= result.getErrorMessages();
 						for (int i= 0, length= errors.length; i < length; i++) {
-							error.append("\n\t\t").append(errors[i].getMessage()); //$NON-NLS-1$
+							error.append("\n\t\t").append(errors[i]); //$NON-NLS-1$
 						}
 					}
 					fToStringValue= ((IJavaDebugTarget)thread.getDebugTarget()).newValue(error.toString());

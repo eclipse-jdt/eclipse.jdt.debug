@@ -45,7 +45,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -554,7 +553,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	public void evaluationComplete(IEvaluationResult result) {
 		boolean severeErrors = false;
 		if (result.hasErrors()) {
-			Message[] errors = result.getErrors();
+			String[] errors = result.getErrorMessages();
 			severeErrors = errors.length > 0;
 			if (result.getException() != null) {
 				showException(result.getException());
@@ -713,7 +712,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		this.notifyAll();
 	}
 	
-	protected void showAllErrors(final Message[] errors) {
+	protected void showAllErrors(final String[] errors) {
 		if (errors.length > 0) {
 			Runnable r = new Runnable() {
 				public void run() {
@@ -727,10 +726,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 					}
 					int firstInsertionPoint = insertionPoint;
 					for (int i = 0; i < errors.length; i++) {
-						Message error= errors[i];
+						String error= errors[i];
 			
-						String message= SnippetMessages.getString("SnippetEditor.error.unqualified"); //$NON-NLS-1$
-						message= error.getMessage() + delimiter;
+						String message= error + delimiter;
 						try {
 							document.replace(insertionPoint, 0, message);
 						} catch (BadLocationException e) {
