@@ -305,7 +305,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected boolean canStep() {
 		try {
 			return isSuspended()
-				&& (!isSuspendedQuiet())  && (!isPerformingEvaluation() || isInvokingMethod())
+				&& !isSuspendedQuiet()
+				&& !(isPerformingEvaluation() || isInvokingMethod())
 				&& !isStepping()
 				&& getTopStackFrame() != null
 				&& !getJavaDebugTarget().isPerformingHotCodeReplace();
@@ -593,12 +594,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)
 	 */ 
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
-		if (!canStep()) {
-			requestFailed(JDIDebugModelMessages.getString("JDIThread.Evaluation_failed_-_thread_not_suspended"), null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
-		}
-		
 		if (isPerformingEvaluation()) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); //$NON-NLS-1$			
+		}
+		
+		if (!canRunEvaluation()) {
+			requestFailed(JDIDebugModelMessages.getString("JDIThread.Evaluation_failed_-_thread_not_suspended"), null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
 		}
 		
 		fIsPerformingEvaluation = true;
@@ -616,6 +617,26 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			fireSuspendEvent(evaluationDetail);
 		}
 	}
+	
+	/**
+	 * Returns whether this thread is in a valid state to
+	 * run an evaluation.
+	 * 
+	 * @return whether this thread is in a valid state to
+	 * run an evaluation
+	 */
+	protected boolean canRunEvaluation() {
+		// NOTE similar to #canStep, except a quiet suspend state is OK
+		try {
+			return isSuspended()
+				&& !(isPerformingEvaluation() || isInvokingMethod())
+				&& !isStepping()
+				&& getTopStackFrame() != null
+				&& !getJavaDebugTarget().isPerformingHotCodeReplace();
+		} catch (DebugException e) {
+			return false;
+		}
+	}	
 	
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#queueRunnable(Runnable)
