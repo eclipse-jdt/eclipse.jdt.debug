@@ -147,7 +147,7 @@ public class StandardVMType extends AbstractVMInstallType {
 		// return null.
 		File javaHome; //$NON-NLS-1$
 		try {
-			javaHome= new File (System.getProperty("java.home")).getCanonicalFile();
+			javaHome= new File (System.getProperty("java.home")).getCanonicalFile(); //$NON-NLS-1$
 		} catch (IOException e) {
 			LaunchingPlugin.log(e);
 			return null;
