@@ -255,25 +255,25 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		// VM install type
 		String vmInstallTypeId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, (String)null);
 		if (vmInstallTypeId == null) {
-			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_Type_not_specified._2"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL_TYPE); //$NON-NLS-1$
+			JavaLocalApplicationLaunchConfigurationHelper.abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_Type_not_specified._2"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL_TYPE); //$NON-NLS-1$
 		}		
 		IVMInstallType type = JavaRuntime.getVMInstallType(vmInstallTypeId);
 		if (type == null) {
-			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.VM_Install_type_does_not_exist"), new String[] {vmInstallTypeId}), null, JavaDebugUI.VM_INSTALL_TYPE_DOES_NOT_EXIST); //$NON-NLS-1$
+			JavaLocalApplicationLaunchConfigurationHelper.abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.VM_Install_type_does_not_exist"), new String[] {vmInstallTypeId}), null, JavaDebugUI.VM_INSTALL_TYPE_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		
 		// VM
 		String vmInstallId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, (String)null);
 		if (vmInstallId == null) {
-			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_not_specified._3"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL); //$NON-NLS-1$
+			JavaLocalApplicationLaunchConfigurationHelper.abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_not_specified._3"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL); //$NON-NLS-1$
 		}
 		IVMInstall install = type.findVMInstall(vmInstallId);
 		if (install == null) {
-			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_{0}_does_not_exist._4"), new String[]{vmInstallId}), null, JavaDebugUI.VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
+			JavaLocalApplicationLaunchConfigurationHelper.abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_{0}_does_not_exist._4"), new String[]{vmInstallId}), null, JavaDebugUI.VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
 		}		
 		IVMRunner runner = install.getVMRunner(mode);
 		if (runner == null) {
-			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Internal_error__JRE_{0}_does_not_specify_a_VM_Runner._5"), new String[]{vmInstallId}), null, JavaDebugUI.VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
+			JavaLocalApplicationLaunchConfigurationHelper.abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Internal_error__JRE_{0}_does_not_specify_a_VM_Runner._5"), new String[]{vmInstallId}), null, JavaDebugUI.VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		
 		// Working directory
@@ -281,7 +281,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		if ((workingDir != null) && (workingDir.trim().length() > 0)) {
 			File dir = new File(workingDir);
 			if (!dir.isDirectory()) {
-				abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfiguration.Working_directory_does_not_exist"), new String[] {workingDir}), null, JavaDebugUI.WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+				JavaLocalApplicationLaunchConfigurationHelper.abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfiguration.Working_directory_does_not_exist"), new String[] {workingDir}), null, JavaDebugUI.WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 			}
 		}
 		
@@ -354,20 +354,6 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 			resource.setPersistentProperty(qualName, value);
 		} catch (CoreException ce) {	
 		}
-	}
-	
-	/**
-	 * Throws a core exception with the given message and optional
-	 * exception. The exception's status code will indicate an error.
-	 * 
-	 * @param message error message
-	 * @param exception cause of the error, or <code>null</code>
-	 * @exception CoreException with the given message and underlying
-	 *  exception
-	 */
-	protected void abort(String message, Throwable exception, int code) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-		  code, message, exception));
 	}
 	
 	/**

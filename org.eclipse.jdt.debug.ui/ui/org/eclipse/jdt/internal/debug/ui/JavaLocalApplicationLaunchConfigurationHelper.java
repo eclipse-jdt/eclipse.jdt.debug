@@ -10,8 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -36,19 +40,47 @@ import org.eclipse.jdt.debug.ui.JavaDebugUI;
 
 /**
  * This class listens for resource changes and deletes 'local java' launch configurations when
- * their main type has been deleted.
+ * their main type has been deleted.  This class also contains a number of static helper methods
+ * useful for the 'local java' delegate.
  */
 public class JavaLocalApplicationLaunchConfigurationHelper implements IResourceChangeListener,
 																		 ILaunchConfigurationListener {
 
+	private class LocalJavaConfigurationVisitor implements IResourceDeltaVisitor {
+		
+		public boolean visit(IResourceDelta delta) {
+			
+			// If no delta, do nothing and return false since no children 
+			if (delta == null) {
+				return false;
+			}
+			
+			// If resource is NOT an IFile, do nothing, but do examine children
+			IResource resource = delta.getResource();
+			if (!(resource instanceof IFile)) {
+				return true;
+			}			
+			
+			// So resource IS an IFile.  
+			
+			
+			return true;
+		}
+	}
+	
 	/**
 	 * Maps <code>IType</code>s to <code>List</code>s of <code>ILaunchCofiguration</code>s
 	 */
 	private Map fTypeToConfigMap;
+	
+	private LocalJavaConfigurationVisitor fResourceVisitor ;
 
 	/**
 	 * Fill the internal type-to-config map with all currently known local java configs, then
-	 * register for resource change & launch configuration events.
+	 * register for resource change & launch configuration events.  Launch configuration events
+	 * allow this class to keep its internal map up to date as far as what configurations of 
+	 * type 'local java' exist, and resource change events are when this class deletes all
+	 * 'local java' type configs that specified the deleted type as their main type.
 	 */
 	public JavaLocalApplicationLaunchConfigurationHelper() {
 		initializeConfigMap();
@@ -59,8 +91,18 @@ public class JavaLocalApplicationLaunchConfigurationHelper implements IResourceC
 	/**
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
-	public void resourceChanged(IResourceChangeEvent evt) {
-		
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta= event.getDelta();
+		if (delta != null) {
+			try {
+				if (fResourceVisitor == null) {
+					fResourceVisitor= new LocalJavaConfigurationVisitor();
+				}
+				delta.accept(fResourceVisitor);
+			} catch (CoreException e) {
+				DebugPlugin.logError(e);
+			}
+		}		
 	}
 	
 	/**
