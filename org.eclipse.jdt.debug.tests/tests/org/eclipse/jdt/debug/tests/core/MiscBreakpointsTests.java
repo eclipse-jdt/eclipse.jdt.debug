@@ -41,17 +41,15 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		String typeName = "ThrowsNPE";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, true);
 				
-		IJavaThread thread = null;
+		IJavaThread javaThread = null;
 		try {
-			thread= launchAndSuspend(typeName);
+			javaThread= launchAndSuspend(typeName);
 			
-			assertTrue("suspendee was not an IJavaThread", thread instanceof IJavaThread);
-			IJavaThread javaThread = (IJavaThread) thread;
 			int stackLine = javaThread.getTopStackFrame().getLineNumber();
 			assertTrue("line number should be '26', but was " + stackLine, stackLine == 26);
 		
 		} finally {
-			terminateAndRemove(thread);
+			terminateAndRemove(javaThread);
 			removeAllBreakpoints();
 		}		
 	}
@@ -73,17 +71,15 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 		buffer.setContents(COMPILE_ERROR_CONTENTS);
 		cu.save(new NullProgressMonitor(), true);
 		
-		IJavaThread thread = null;
+		IJavaThread javaThread = null;
 		try {
-			thread= launchAndSuspend(typeName);
+			javaThread= launchAndSuspend(typeName);
 			
-			assertTrue("suspendee was not an IJavaThread", thread instanceof IJavaThread);
-			IJavaThread javaThread = (IJavaThread) thread;
 			int stackLine = javaThread.getTopStackFrame().getLineNumber();
 			assertTrue("line number should be '3', but was " + stackLine, stackLine == 3);
 		
 		} finally {
-			terminateAndRemove(thread);
+			terminateAndRemove(javaThread);
 			removeAllBreakpoints();
 		}		
 	}
