@@ -12,10 +12,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -116,7 +118,12 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 	 * @see AbstractManageBreakpointActionDelegate#enableForMember(IMember)
 	 */
 	protected boolean enableForMember(IMember member) {
-		return member instanceof IMethod && member.isBinary();
+		try {
+			return member instanceof IMethod && member.isBinary() && !Flags.isAbstract(member.getFlags());
+		} catch (JavaModelException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		return false;
 	}
 	
 	/**
