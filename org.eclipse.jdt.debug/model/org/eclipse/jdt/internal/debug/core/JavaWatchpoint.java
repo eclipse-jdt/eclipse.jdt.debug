@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -92,8 +92,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * Creates and returns a watchpoint on the
 	 * given field.
 	 * If hitCount > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times. Note: the breakpoint is not
-	 * added to the breakpoint manager - it is merely created.
+	 * "hit" the specified number of times.
 	 * 
 	 * @param field the field on which to suspend (on access or modification)
 	 * @param hitCount the number of times the breakpoint will be hit before
@@ -298,14 +297,14 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	}
 	
 	/**
-	 * @see IJavaWatchpoint#isAccess
+	 * @see IJavaWatchpoint#isAccess()
 	 */
 	public boolean isAccess() throws CoreException {
 		return ensureMarker().getAttribute(ACCESS, false);
 	}
 	
 	/**
-	 * @see IJavaWatchpoint#setAccess
+	 * @see IJavaWatchpoint#setAccess(boolean)
 	 */
 	public void setAccess(boolean access) throws CoreException {
 		if (access == isAccess()) {
@@ -320,7 +319,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	}
 	
 	/**
-	 * @see IJavaWatchpoint#isModification
+	 * @see IJavaWatchpoint#isModification()
 	 */	
 	public boolean isModification() throws CoreException {
 		return ensureMarker().getAttribute(MODIFICATION, false);
@@ -365,13 +364,14 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	
 	/**
 	 * Set standard attributes of a watchpoint based on the
-	 * given field
+	 * given field.
 	 */
 	protected void setStandardAttributes(IField field) throws CoreException {
-		// find the source range if available
+		// find the name range if available
 		int start = -1;
 		int stop = -1;
-		ISourceRange range = field.getSourceRange();
+		
+		ISourceRange range = field.getNameRange();
 		if (range != null) {
 			start = range.getOffset();
 			stop = start + range.getLength() - 1;
@@ -392,7 +392,10 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 */
 	public static ICompilationUnit getCompilationUnit(IJavaElement element) {
 		if (element instanceof IWorkingCopy) {
-			return (ICompilationUnit) ((IWorkingCopy) element).getOriginalElement();
+			IWorkingCopy copy= (IWorkingCopy) element;
+			if (copy.isWorkingCopy()) {
+				return (ICompilationUnit)copy.getOriginalElement();
+			}
 		}
 		if (element instanceof ICompilationUnit) {
 			return (ICompilationUnit) element;
@@ -491,4 +494,3 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		return lastEventType.equals(ACCESS_EVENT);
 	}
 }
-
