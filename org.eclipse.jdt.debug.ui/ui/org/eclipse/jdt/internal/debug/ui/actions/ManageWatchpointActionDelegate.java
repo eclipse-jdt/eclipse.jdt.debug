@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -35,7 +34,6 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
@@ -52,20 +50,14 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActionDelegate {
 
-	/**
-	 * @see IActionDelegate#run(IAction)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
 		updateForRun();
@@ -73,20 +65,11 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 		try {
 			IMember[] elements= getMembers();
 			if (elements == null || elements.length == 0) {
-				IWorkbenchPage page= getPage();
-				if (page != null) {
-					ISelection selection= page.getSelection();
-					if (selection instanceof ITextSelection) {
-						IEditorInput editorInput = getTextEditor().getEditorInput();
-						IResource resource;
-						if (editorInput instanceof IFileEditorInput) {
-							resource= ((IFileEditorInput)editorInput).getFile();
-						} else {
-							resource= ResourcesPlugin.getWorkspace().getRoot();
-						}
-						IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
-						CompilationUnit compilationUnit= AST.parseCompilationUnit(document.get().toCharArray());
-						BreakpointFieldLocator locator= new BreakpointFieldLocator(((ITextSelection)selection).getOffset());
+				ITextSelection textSelection= getTextSelection();
+				if (textSelection != null) {
+					CompilationUnit compilationUnit= parseCompilationUnit();
+					if (compilationUnit != null) {
+						BreakpointFieldLocator locator= new BreakpointFieldLocator(textSelection.getOffset());
 						compilationUnit.accept(locator);
 						String fieldName= locator.getFieldName();
 						if (fieldName == null) {
@@ -108,7 +91,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 							}
 						}
 						// add the watchpoint
-						JDIDebugModel.createWatchpoint(resource, typeName, fieldName, -1, -1, -1, 0, true, new HashMap(10));
+						JDIDebugModel.createWatchpoint(getResource(), typeName, fieldName, -1, -1, -1, 0, true, new HashMap(10));
 					}
 				}
 			} else {
@@ -334,28 +317,12 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 		}
 		return typeName.toCharArray();
 	}
+	
 	/**
 	 * @see AbstractManageBreakpointActionDelegate#enableForMember(IMember)
 	 */
 	protected boolean enableForMember(IMember member) {
 		return member instanceof IField;
-	}
-	
-	protected void setEnabledState(ITextEditor editor) {
-		if (getAction() != null && getPage() != null) {
-			IWorkbenchPart part = getPage().getActivePart();
-			if (part == null) {
-				getAction().setEnabled(false);
-			} else {
-				if (part == getPage().getActiveEditor()) {
-					if (getPage().getActiveEditor() instanceof ITextEditor) {
-						super.setEnabledState((ITextEditor)getPage().getActiveEditor());
-					} else {
-						getAction().setEnabled(false);
-					}
-				}
-			}
-		}	
 	}
 }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.debug.ui.actions.BreakpointFieldLocator;
@@ -30,10 +31,18 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		super(name);
 	}
 
+	private CompilationUnit parseCompilationUnit(ICompilationUnit unit) {
+		ASTParser c = ASTParser.newParser(AST.LEVEL_2_0);
+		c.setSource(unit);
+		c.setResolveBindings(false);
+		c.setWorkingCopyOwner(null);
+		return (CompilationUnit) c.createAST(null);
+	}
+	
 	private void testLocation(int lineToTry, int expectedLineNumber, String expectedTypeName) throws JavaModelException {
 		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
-		CompilationUnit compilationUnit= AST.parseCompilationUnit(type.getCompilationUnit(), false, null, null);
+		CompilationUnit compilationUnit= parseCompilationUnit(type.getCompilationUnit());
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineToTry);
 		compilationUnit.accept(locator);
 		int lineNumber= locator.getValidLocation();		
@@ -105,7 +114,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
 		ICompilationUnit unit= type.getCompilationUnit();
-		CompilationUnit compilationUnit= AST.parseCompilationUnit(unit, false, null, null);
+		CompilationUnit compilationUnit= parseCompilationUnit(unit);
 		int offset= new Document(unit.getSource()).getLineOffset(line - 1) + offsetInLine;
 		BreakpointFieldLocator locator= new BreakpointFieldLocator(offset);
 		compilationUnit.accept(locator);
@@ -127,7 +136,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
 		ICompilationUnit unit= type.getCompilationUnit();
-		CompilationUnit compilationUnit= AST.parseCompilationUnit(unit, false, null, null);
+		CompilationUnit compilationUnit= parseCompilationUnit(unit);
 		int offset= new Document(unit.getSource()).getLineOffset(line - 1) + offsetInLine;
 		BreakpointMethodLocator locator= new BreakpointMethodLocator(offset);
 		compilationUnit.accept(locator);

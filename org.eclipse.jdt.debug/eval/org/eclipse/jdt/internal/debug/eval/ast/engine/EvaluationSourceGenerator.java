@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -145,7 +146,9 @@ public class EvaluationSourceGenerator {
 	}
 
 	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber, boolean createInAnInstanceMethod) throws DebugException {
-		CompilationUnit unit= AST.parseCompilationUnit(source.toCharArray());
+		ASTParser c = ASTParser.newParser(AST.LEVEL_2_0);
+		c.setSource(source.toCharArray());
+		CompilationUnit unit= (CompilationUnit)c.createAST(null);
 		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, createInAnInstanceMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
 		unit.accept(visitor);
 		

@@ -240,7 +240,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 				ICompilationUnit unit= manager.getWorkingCopy(editorInput);
 				if (unit != null) {
 					synchronized (unit) {
-						unit.reconcile(false, null);
+						unit.reconcile(false/*don't create ast*/, false/*don't force problem detection*/, null/*use primary owner*/, null/*no progress monitor*/);
 					}
 					IJavaElement e= unit.getElementAt(line.getOffset());
 					if (e instanceof IType) {

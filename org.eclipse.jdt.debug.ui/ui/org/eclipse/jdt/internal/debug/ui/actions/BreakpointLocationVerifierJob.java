@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -87,7 +88,9 @@ public class BreakpointLocationVerifierJob extends Job {
 	}
 	
 	public IStatus run(IProgressMonitor monitor) {
-		CompilationUnit compilationUnit= AST.parseCompilationUnit(fDocument.get().toCharArray());
+		ASTParser c = ASTParser.newParser(AST.LEVEL_2_0);
+		c.setSource(fDocument.get().toCharArray());
+		CompilationUnit compilationUnit= (CompilationUnit)c.createAST(null);
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber);
 		compilationUnit.accept(locator);
 		int lineNumber= locator.getValidLocation();		

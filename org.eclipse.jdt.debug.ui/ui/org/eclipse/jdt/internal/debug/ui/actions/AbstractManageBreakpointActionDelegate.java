@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,18 +11,27 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 
 public abstract class AbstractManageBreakpointActionDelegate extends ManageBreakpointActionDelegate implements IObjectActionDelegate {
@@ -110,5 +119,52 @@ public abstract class AbstractManageBreakpointActionDelegate extends ManageBreak
 		} else {
 			super.report(message);
 		}
+	}
+	
+	protected CompilationUnit parseCompilationUnit() {
+		IEditorInput editorInput = getTextEditor().getEditorInput();
+		IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
+		ASTParser c = ASTParser.newParser(AST.LEVEL_2_0);
+		c.setSource(document.get().toCharArray());
+		return (CompilationUnit) c.createAST(null);
+	}
+	
+	protected IResource getResource() {
+		IResource resource;
+		IEditorInput editorInput = getTextEditor().getEditorInput();
+		if (editorInput instanceof IFileEditorInput) {
+			resource= ((IFileEditorInput)editorInput).getFile();
+		} else {
+			resource= ResourcesPlugin.getWorkspace().getRoot();
+		}
+		return resource;
+	}
+	
+	protected ITextSelection getTextSelection() {
+		IWorkbenchPage page= getPage();
+		if (page != null) {
+			ISelection selection= page.getSelection();
+			if (selection instanceof ITextSelection) {
+				return (ITextSelection) selection;
+			}
+		}
+		return null;
+	}
+
+	protected void setEnabledState(ITextEditor editor) {
+		if (getAction() != null && getPage() != null) {
+			IWorkbenchPart part = getPage().getActivePart();
+			if (part == null) {
+				getAction().setEnabled(false);
+			} else {
+				if (part == getPage().getActiveEditor()) {
+					if (getPage().getActiveEditor() instanceof ITextEditor) {
+						super.setEnabledState((ITextEditor)getPage().getActiveEditor());
+					} else {
+						getAction().setEnabled(false);
+					}
+				}
+			}
+		}	
 	}
 }

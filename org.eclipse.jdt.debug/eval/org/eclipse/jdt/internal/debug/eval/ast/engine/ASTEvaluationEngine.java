@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
@@ -145,7 +146,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				localTypesNames[i] = locals[i].getReferenceTypeName();
 			}
 			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, snippet);
-			unit = AST.parseCompilationUnit(mapper.getSource(frame).toCharArray(), mapper.getCompilationUnitName(), javaProject, null, null);
+			unit = parseCompilationUnit(mapper.getSource(frame).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());
@@ -153,6 +154,15 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		}
 		
 		return createExpressionFromAST(snippet, mapper, unit);
+	}
+	
+	private CompilationUnit parseCompilationUnit(char[] source, String unitName, IJavaProject project) {
+		ASTParser c = ASTParser.newParser(AST.LEVEL_2_0);
+		c.setSource(source);
+		c.setUnitName(unitName);
+		c.setProject(project);
+		c.setWorkingCopyOwner(null);
+		return (CompilationUnit) c.createAST(null);
 	}
 
 	// ******
@@ -187,7 +197,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		mapper = new EvaluationSourceGenerator(new String[0], new String[0], snippet);
 
 		try {
-			unit = AST.parseCompilationUnit(mapper.getSource(thisContext, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject, null, null);
+			unit = parseCompilationUnit(mapper.getSource(thisContext, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());

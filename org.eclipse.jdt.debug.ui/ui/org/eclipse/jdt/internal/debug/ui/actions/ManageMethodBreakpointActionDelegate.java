@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,7 +29,6 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
@@ -40,15 +37,9 @@ import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Adds a method breakpoint on a single selected element of type IMethod 
@@ -110,8 +101,8 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 		return null;
 	}
 
-	/**
-	 * @see IActionDelegate#run(IAction)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
 		updateForRun();
@@ -119,20 +110,11 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 		try {
 			IMember[] members = getMembers();
 			if (members == null || members.length == 0) {
-				IWorkbenchPage page= getPage();
-				if (page != null) {
-					ISelection selection= page.getSelection();
-					if (selection instanceof ITextSelection) {
-						IEditorInput editorInput = getTextEditor().getEditorInput();
-						IResource resource;
-						if (editorInput instanceof IFileEditorInput) {
-							resource= ((IFileEditorInput)editorInput).getFile();
-						} else {
-							resource= ResourcesPlugin.getWorkspace().getRoot();
-						}
-						IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
-						CompilationUnit compilationUnit= AST.parseCompilationUnit(document.get().toCharArray());
-						BreakpointMethodLocator locator= new BreakpointMethodLocator(((ITextSelection)selection).getOffset());
+				ITextSelection selection= getTextSelection();
+				if (selection != null) {
+					CompilationUnit compilationUnit= parseCompilationUnit();
+					if (compilationUnit != null) {
+						BreakpointMethodLocator locator= new BreakpointMethodLocator(selection.getOffset());
 						compilationUnit.accept(locator);
 						String methodName= locator.getMethodName();
 						if (methodName == null) {
@@ -161,7 +143,7 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 							}
 						}
 						// add the breakpoint
-						JDIDebugModel.createMethodBreakpoint(resource, typeName, methodName, methodSignature, true, false, false, -1, -1, -1, 0, true, new HashMap(10));
+						JDIDebugModel.createMethodBreakpoint(getResource(), typeName, methodName, methodSignature, true, false, false, -1, -1, -1, 0, true, new HashMap(10));
 					}
 				}
 			} else {
@@ -269,22 +251,5 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 			JDIDebugUIPlugin.log(e);
 		}
 		return false;
-	}
-	
-	protected void setEnabledState(ITextEditor editor) {
-		if (getAction() != null && getPage() != null) {
-			IWorkbenchPart part = getPage().getActivePart();
-			if (part == null) {
-				getAction().setEnabled(false);
-			} else {
-				if (part == getPage().getActiveEditor()) {
-					if (getPage().getActiveEditor() instanceof ITextEditor) {
-						super.setEnabledState((ITextEditor)getPage().getActiveEditor());
-					} else {
-						getAction().setEnabled(false);
-					}
-				}
-			}
-		}	
 	}
 }
