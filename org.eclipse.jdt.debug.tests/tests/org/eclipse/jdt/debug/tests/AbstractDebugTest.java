@@ -634,7 +634,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param frame stack frame to step in
 	 */
 	protected IJavaThread stepOver(IJavaStackFrame frame) throws Exception {
-		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
+		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
 		frame.stepOver();
@@ -651,7 +651,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param frame stack frame to step in
 	 */
 	protected IJavaThread stepInto(IJavaStackFrame frame) throws Exception {
-		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
+		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
 		frame.stepInto();
@@ -668,7 +668,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param frame stack frame to step return from
 	 */
 	protected IJavaThread stepReturn(IJavaStackFrame frame) throws Exception {
-		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
+		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.STEP_END);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
 		frame.stepReturn();
