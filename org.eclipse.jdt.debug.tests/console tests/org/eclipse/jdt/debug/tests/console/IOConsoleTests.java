@@ -14,8 +14,6 @@ import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
-import org.eclipse.ui.console.IOConsole;
-import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
