@@ -932,7 +932,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (!isTerminated()) {
 			setTerminated(true);
 			setDisconnected(true);
-			cleanup0();
+			cleanup();
 			fireTerminateEvent();
 		}
 	}
@@ -944,7 +944,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	protected void disconnected() {
 		if (!isDisconnected()) {
 			setDisconnected(true);
-			cleanup0();
+			cleanup();
 			fireChangeEvent();
 		}
 	}
@@ -962,7 +962,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * are deleted, and evaluation contexts are cleared.
 	 * </p>
 	 */
-	protected void cleanup0() {
+	protected void cleanup() {
 		removeAllThreads();
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 		removeAllBreakpoints();
