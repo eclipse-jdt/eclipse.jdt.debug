@@ -524,7 +524,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * Fire a debug event
 	 */
 	public void fireEvent(DebugEvent event) {
-		DebugPlugin.getDefault().fireDebugEvent(event);
+		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{event});
 	}	
 
 	/**
@@ -1219,8 +1219,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected String getJavaTargetPatternBreakpointText(IJavaTargetPatternBreakpoint breakpoint) throws CoreException {
-	
-		IResource resource= breakpoint.getMarker().getResource();
 		IMember member= BreakpointUtils.getMember(breakpoint);
 		StringBuffer label= new StringBuffer(breakpoint.getSourceName());
 		appendLineNumber(breakpoint, label);
