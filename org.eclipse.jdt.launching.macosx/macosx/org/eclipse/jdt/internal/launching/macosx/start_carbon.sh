@@ -37,19 +37,6 @@ CURRENT_DIR="$PWD"
 
 #echo $* > /dev/console
 
-VM_OPTIONS=""
-#
-# Ensure that we get our own JDI implementation
-# 
-#JDI="$JAVA_LIBRARY_PATH"/plugins/org.eclipse.jdt.debug/jdi.jar
-#if test -f "$JDI"
-#then
-#	VM_OPTIONS="$VM_OPTIONS<string>-Xbootclasspath/p:$JDI</string>"
-#	echo $VM_OPTIONS > /dev/console
-#else
-#	echo "$JDI not found" > /dev/console
-#fi
-
 # extract JVM version from 1st argument
 JVM_VERSION="1.3.1"
 if test "$1" = "/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Home/bin/java"
@@ -63,6 +50,7 @@ shift
 #
 # Process command line arguments until we see the main class...
 #
+VM_OPTIONS=""
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-classpath | -cp )
@@ -109,7 +97,7 @@ cd "$APP_NAME.app/Contents"
 #
 # Copy the JavaAppLauncher into the bundle 
 #
-cp "$JAVASTUB"/* "MacOS/$APP_NAME"
+cp "$JAVASTUB"/Eclipse MacOS/JavaApplicationStub
 
 #
 # Create the Info.plist file.
@@ -121,6 +109,8 @@ cat > Info.plist <<End_Of_Input
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 		<string>English</string>
+	<key>CFBundleExecutable</key>
+		<string>JavaApplicationStub</string>
 	<key>CFBundleGetInfoString</key>
 		<string>$APP_NAME</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -158,7 +148,7 @@ End_Of_Input
 # Start the JavaAppLauncher by replacing this shell script
 # to ensure that the process id is preserved.
 #
-exec "$TMP_APP_DIR/$APP_NAME.app/Contents/MacOS/$APP_NAME"
+exec "$TMP_APP_DIR/$APP_NAME.app/Contents/MacOS/JavaApplicationStub"
 
 #
 # not reached (as long as the exec from above succeeds).
