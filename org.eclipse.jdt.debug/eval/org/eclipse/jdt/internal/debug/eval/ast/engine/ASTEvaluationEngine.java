@@ -37,9 +37,14 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
+
+import com.sun.jdi.InvocationException;
+import com.sun.jdi.ObjectReference;
 
 public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	
@@ -298,6 +303,17 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 						interpreter.execute();
 					} catch (CoreException exception) {
 						fException = exception;
+						if (fEvaluationDetail == DebugEvent.EVALUATION && exception.getStatus().getException() instanceof InvocationException) {
+							// print the stack trace for the exception if an *explicit* evaluation 
+							InvocationException invocationException = (InvocationException)exception.getStatus().getException();
+							ObjectReference exObject = invocationException.exception();
+							IJavaObject modelObject = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), exObject);
+							try {
+								modelObject.sendMessage("printStackTrace", "()V", null, jt, false); //$NON-NLS-1$ //$NON-NLS-2$
+							} catch (DebugException e) {
+								// unable to print stack trace
+							}
+						}
 					} catch (Throwable exception) {
 						JDIDebugPlugin.log(exception);
 						fException = new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, EvaluationEngineMessages.getString("ASTEvaluationEngine.Runtime_exception_occurred_during_evaluation._See_log_for_details"), exception)); //$NON-NLS-1$
