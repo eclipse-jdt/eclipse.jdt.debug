@@ -213,5 +213,16 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	 * <li>The type associated with this variable is not yet loaded</li></ul>
 	 */
 	protected abstract Type getUnderlyingType() throws DebugException;
+	
+	/**
+	 * Returns the last known value for this variable
+	 */
+	protected Value getLastKnownValue() {
+		if (fValue == null) {
+			return null;
+		} else {
+			return fValue.getUnderlyingValue();
+		}
+	}
 }
 

@@ -46,7 +46,12 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 * Returns this variable's current Value.
 	 */
 	protected Value retrieveValue() throws DebugException {
-		return getStackFrame().getUnderlyingStackFrame().getValue(fLocal);
+		if (getStackFrame().isSuspended()) {
+			return getStackFrame().getUnderlyingStackFrame().getValue(fLocal);
+		} else {
+			// bug 6518
+			return getLastKnownValue();
+		}
 	}
 
 	/**
