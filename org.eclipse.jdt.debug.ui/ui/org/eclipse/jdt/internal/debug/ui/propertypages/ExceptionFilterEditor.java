@@ -45,6 +45,7 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -83,6 +84,21 @@ public class ExceptionFilterEditor {
 	private CheckboxTableViewer fFilterViewer;
 	private Table fFilterTable;
 	private FilterContentProvider fFilterContentProvider;
+	
+	private SelectionListener fSelectionListener= new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			Object source = e.getSource();
+			if (source == fAddFilterButton) {
+				addType();
+			} else if (source == fAddPackageButton) {
+				addPackage();
+			} else if (source == fEditorText) {
+				editFilter();
+			} else if (source == fRemoveFilterButton) {
+				removeFilters();
+			}
+		}
+	};
 
 	public ExceptionFilterEditor(Composite parent, JavaExceptionBreakpointAdvancedPage page) {
 		fBreakpoint = (IJavaExceptionBreakpoint) page.getBreakpoint();
@@ -191,69 +207,36 @@ public class ExceptionFilterEditor {
 		buttonLayout.marginWidth = 0;
 		buttonContainer.setLayout(buttonLayout);
 
-		// Add filter button
-		fAddFilterButton = new Button(buttonContainer, SWT.PUSH);
-		fAddFilterButton.setFont(font);
-		fAddFilterButton.setText(PropertyPageMessages.getString("ExceptionFilterEditor.6")); //$NON-NLS-1$
-		fAddFilterButton.setToolTipText(PropertyPageMessages.getString("ExceptionFilterEditor.7")); //$NON-NLS-1$
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		fAddFilterButton.setLayoutData(gd);
-		fAddFilterButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent se) {
-				editFilter();
-			}
-			public void widgetDefaultSelected(SelectionEvent se) {
-			}
-		});
-
-		// Add type button
-		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
-		fAddTypeButton.setFont(font);
-		fAddTypeButton.setText(PropertyPageMessages.getString("ExceptionFilterEditor.8")); //$NON-NLS-1$
-		fAddTypeButton.setToolTipText(PropertyPageMessages.getString("ExceptionFilterEditor.9")); //$NON-NLS-1$
-		gd = getButtonGridData(fAddTypeButton);
-		fAddTypeButton.setLayoutData(gd);
-		fAddTypeButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent se) {
-				addType();
-			}
-			public void widgetDefaultSelected(SelectionEvent se) {
-			}
-		});
-
-		// Add package button
-		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
-		fAddPackageButton.setFont(font);
-		fAddPackageButton.setText(PropertyPageMessages.getString("ExceptionFilterEditor.10")); //$NON-NLS-1$
-		fAddPackageButton.setToolTipText(PropertyPageMessages.getString("ExceptionFilterEditor.11")); //$NON-NLS-1$
-		gd = getButtonGridData(fAddPackageButton);
-		fAddPackageButton.setLayoutData(gd);
-		fAddPackageButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent se) {
-				addPackage();
-			}
-			public void widgetDefaultSelected(SelectionEvent se) {
-			}
-		});
-
-		// Remove button
-		fRemoveFilterButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveFilterButton.setFont(font);
-		fRemoveFilterButton.setText(PropertyPageMessages.getString("ExceptionFilterEditor.12")); //$NON-NLS-1$
-		fRemoveFilterButton.setToolTipText(PropertyPageMessages.getString("ExceptionFilterEditor.13")); //$NON-NLS-1$
-		gd = getButtonGridData(fRemoveFilterButton);
-		fRemoveFilterButton.setLayoutData(gd);
-		fRemoveFilterButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent se) {
-				removeFilters();
-			}
-			public void widgetDefaultSelected(SelectionEvent se) {
-			}
-		});
+		fAddFilterButton = createPushButton(buttonContainer,
+				PropertyPageMessages.getString("ExceptionFilterEditor.6"), //$NON-NLS-1$
+				PropertyPageMessages.getString("ExceptionFilterEditor.7")); //$NON-NLS-1$
+		fAddTypeButton = createPushButton(buttonContainer,
+				PropertyPageMessages.getString("ExceptionFilterEditor.8"), //$NON-NLS-1$
+				PropertyPageMessages.getString("ExceptionFilterEditor.9")); //$NON-NLS-1$
+		fAddPackageButton = createPushButton(buttonContainer,
+				PropertyPageMessages.getString("ExceptionFilterEditor.10"), //$NON-NLS-1$
+				PropertyPageMessages.getString("ExceptionFilterEditor.11")); //$NON-NLS-1$
+		fRemoveFilterButton = createPushButton(buttonContainer,
+				PropertyPageMessages.getString("ExceptionFilterEditor.12"), //$NON-NLS-1$
+				PropertyPageMessages.getString("ExceptionFilterEditor.13")); //$NON-NLS-1$
 		fRemoveFilterButton.setEnabled(false);
 	}
+	
+	/**
+	 * Creates a fully configured push button with the given label and tooltip.
+	 */
+	public Button createPushButton(Composite parent, String text, String tooltipText) {
+		Button button = new Button(parent, SWT.PUSH);
+		button.setFont(parent.getFont());
+		button.setText(text);
+		button.setToolTipText(text);
+		GridData gd = getButtonGridData(button);
+		button.setLayoutData(gd);
+		button.addSelectionListener(fSelectionListener);
+		return button;
+	}
 
-	private GridData getButtonGridData(Button button) {
+	private static GridData getButtonGridData(Button button) {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		GC gc = new GC(button);
 		gc.setFont(button.getFont());
