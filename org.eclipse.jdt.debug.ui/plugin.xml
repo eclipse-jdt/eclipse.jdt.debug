@@ -1922,24 +1922,12 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.addClassPrepareBreakpoint.name"
             description="%ActionDefinition.addClassPrepareBreakpoint.description"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
       <command
             name="%ActionDefinition.stepIntoSelection.name"
             description="%ActionDefinition.stepIntoSelection.description"
@@ -2002,12 +1990,6 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.jdt.debug.ui.DisplayView">
       </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.jdt.debug.ui.DisplayView"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
 <!-- launch shortcuts -->
       <command
             name="%JavaApplicationShortcut.description.debug"
