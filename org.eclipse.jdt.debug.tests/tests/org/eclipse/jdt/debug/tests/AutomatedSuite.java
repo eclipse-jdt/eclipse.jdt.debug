@@ -43,6 +43,7 @@ import org.eclipse.jdt.debug.tests.core.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TypeTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
+import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
 import org.eclipse.jdt.debug.tests.eval.TestsArrays;
 import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes1;
 import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes2;
@@ -120,6 +121,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(TestsTypeHierarchy2.class));
 		
 		addTest(new TestSuite(MiscBreakpointsTests.class));
+		addTest(new TestSuite(WorkingDirectoryTests.class));
 	}
 	
 	public static void main(String[] args) {

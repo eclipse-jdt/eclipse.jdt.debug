@@ -103,6 +103,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("EvalTypeTests");
 		createLaunchConfiguration("EvalNestedTypeTests");
 		createLaunchConfiguration("EvalTypeHierarchyTests");
+		createLaunchConfiguration("WorkingDirectoryTest");		
 	}
 	
 	/**
