@@ -844,7 +844,7 @@
 		code="115">
 	</statusHandler>
 	<statusHandler
-		id="org.eclipse.jdt.debug.ui.statusHandler.workingDirectory"
+		id="org.eclipse.jdt.debug.ui.statusHandler.vmConnectTimeout"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.VMConnectTimeoutStatusHandler"
 		plugin ="org.eclipse.jdt.launching"
 		code="117">
