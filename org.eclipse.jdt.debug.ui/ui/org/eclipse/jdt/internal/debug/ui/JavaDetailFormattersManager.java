@@ -113,10 +113,6 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * @param listener the listener
 	 */	
 	public void computeValueDetail(final IJavaValue objectValue, final IJavaThread thread, final IValueDetailListener listener) {
-		if (thread.isPerformingEvaluation()) {
-			listener.detailComputed(objectValue, DebugUIMessages.getString("JavaDetailFormattersManager.Cannot_performed_nested_evaluation")); //$NON-NLS-1$
-			return;
-		}
 		Runnable postEventDispatch = new Runnable() {
 			public void run() {
 				Runnable postEventProcess = new Runnable() {
