@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -222,6 +223,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 							IRuntimeClasspathEntry r = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), property);
 							// check for duplicate/redundant entries 
 							boolean duplicate = false;
+							ClasspathContainerInitializer initializer = JavaCore.getClasspathContainerInitializer(r.getPath().segment(0));
 							for (int i = 0; i < expandedPath.size(); i++) {
 								Object o = expandedPath.get(i);
 								if (o instanceof IRuntimeClasspathEntry) {
@@ -229,11 +231,17 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 									if (re.getType() == IRuntimeClasspathEntry.CONTAINER) {
 										if (container instanceof IRuntimeContainerComparator) {
 											duplicate = ((IRuntimeContainerComparator)container).isDuplicate(re.getPath());
-											if (duplicate) {
-												break;
+										} else {
+											ClasspathContainerInitializer initializer2 = JavaCore.getClasspathContainerInitializer(re.getPath().segment(0));
+											Object id1 = initializer.getComparisonID(r.getPath(), project);
+											Object id2 = initializer2.getComparisonID(re.getPath(), project);
+											if (id1 == null) {
+												duplicate = id2 == null;
+											} else {
+												duplicate = id1.equals(id2);
 											}
-										} else if (re.getVariableName().equals(r.getVariableName())) {
-											duplicate = true;
+										}
+										if (duplicate) {
 											break;
 										}
 									}

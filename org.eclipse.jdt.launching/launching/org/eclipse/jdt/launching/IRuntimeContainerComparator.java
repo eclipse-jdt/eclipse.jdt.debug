@@ -21,6 +21,12 @@ import org.eclipse.core.runtime.IPath;
  * considered duplicates. 
  * 
  * @since 2.0.1
+ * @deprecated support has been added to <code>ClasspathContainerInitializer</code>
+ *  to handle comparison of classpath containers. Use
+ *  <code>ClasspathContainerInitializer.getComparisonID(IPath,IJavaProject)</code>.
+ *  When a classpath container implements this interface, this interface is
+ *  used to determine equality before using the support defined in
+ *  <code>ClasspathContainerInitializer</code>. 
  */
 public interface IRuntimeContainerComparator {
 	
