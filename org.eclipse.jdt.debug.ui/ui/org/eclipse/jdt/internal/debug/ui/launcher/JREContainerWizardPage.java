@@ -21,10 +21,12 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -46,7 +48,12 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 * Fake launch config used with the control.
 	 */
 	private ILaunchConfigurationWorkingCopy fConfig;
-
+	
+	/**
+	 * Image
+	 */
+	private Image fImage;
+	
 	/**
 	 * Constructs a new page.
 	 */
@@ -138,5 +145,27 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		
 		initializeFromSelection();
 	}
+
+	/**
+	 * @see IDialogPage#getImage()
+	 */
+	public Image getImage() {
+		if (fImage == null) {
+			fImage = JavaDebugImages.DESC_WIZBAN_LIBRARY.createImage();
+		}
+		return fImage;
+	}
+
+
+	/**
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (fImage != null) {
+			fImage.dispose();
+		}
+	}
+
 
 }

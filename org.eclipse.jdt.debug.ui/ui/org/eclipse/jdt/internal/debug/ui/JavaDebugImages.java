@@ -126,6 +126,7 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_WIZBAN_NEWSCRAPPAGE= create(T_WIZBAN, "newsbook_wiz.gif");		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_JAVA_LAUNCH= create(T_WIZBAN, "java_app_wiz.gif"); 		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_JAVA_ATTACH= create(T_WIZBAN, "java_attach_wiz.gif"); 	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_LIBRARY= create(T_WIZBAN, "library_wiz.gif"); 	//$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET= create(T_ETOOL, "run_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET_HOVER= create(T_CTOOL, "run_sbook.gif"); 	//$NON-NLS-1$
