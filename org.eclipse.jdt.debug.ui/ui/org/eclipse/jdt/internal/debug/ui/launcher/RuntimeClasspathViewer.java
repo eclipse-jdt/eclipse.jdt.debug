@@ -22,6 +22,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -84,6 +87,17 @@ public class RuntimeClasspathViewer extends TableViewer {
 		lp.setLaunchConfiguration(fLaunchConfiguration);
 		setLabelProvider(lp);
 		setInput(fEntries);
+		
+		getTable().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (isEnabled() && event.character == SWT.DEL && event.stateMask == 0) {
+					List selection= getSelectionFromWidget();
+					fEntries.removeAll(selection);
+					setInput(fEntries);
+					notifyChanged();
+				}
+			}
+		});	
 	}	
 
 	/**
