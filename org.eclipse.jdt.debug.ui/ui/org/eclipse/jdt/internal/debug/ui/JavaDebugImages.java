@@ -165,7 +165,7 @@ public class JavaDebugImages {
 	 * @return the image managed under the given key
 	 */ 
 	public static Image get(String key) {
-		return fgImageRegistry.get(key);
+		return getImageRegistry().get(key);
 	}
 	
 	/**
