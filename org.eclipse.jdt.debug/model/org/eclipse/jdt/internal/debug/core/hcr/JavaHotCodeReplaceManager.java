@@ -246,7 +246,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			project= (IProject) iter.next();
 			buildTime= (ProjectBuildTime)fProjectBuildTimes.get(project);
 			if (buildTime == null) {
-				fProjectBuildTimes.put(project, new ProjectBuildTime());
+				buildTime= new ProjectBuildTime();
+				fProjectBuildTimes.put(project, buildTime);
 			}
 			buildTime.setCurrentBuildDate(currentDate);
 		}
