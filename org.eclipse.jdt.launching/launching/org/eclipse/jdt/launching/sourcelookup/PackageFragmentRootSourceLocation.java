@@ -184,10 +184,6 @@ public class PackageFragmentRootSourceLocation extends PlatformObject implements
 	private void setPackageFragmentRoot(IPackageFragmentRoot root) {
 		fRoot = root;
 	}
-
-	private boolean isEmpty(String string) {
-		return string == null || string.length() == 0;
-	}
 	
 	/**
 	 * Throws an internal error exception

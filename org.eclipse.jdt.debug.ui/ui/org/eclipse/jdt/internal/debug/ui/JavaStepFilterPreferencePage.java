@@ -117,40 +117,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	}
 	
 	/**
-	 * Creates composite control and sets the default layout data.
-	 *
-	 * @param parent  the parent of the new composite
-	 * @param numColumns  the number of columns for the new composite
-	 * @param labelText  the text label of the new composite
-	 * @return the newly-created composite
-	 */
-	private Composite createLabelledComposite(Composite parent, int numColumns, String labelText) {
-		Font font = parent.getFont();
-		
-		Composite comp = new Composite(parent, SWT.NONE);
-		
-		//GridLayout
-		GridLayout layout = new GridLayout();
-		layout.numColumns = numColumns;
-		comp.setLayout(layout);
-		//GridData
-		GridData gd= new GridData();
-		gd.verticalAlignment = GridData.FILL;
-		gd.horizontalAlignment = GridData.FILL;
-		comp.setLayoutData(gd);
-		comp.setFont(font);
-		
-		//Label
-		Label label = new Label(comp, SWT.NONE);
-		label.setText(labelText);
-		gd = new GridData();
-		gd.horizontalSpan = numColumns;
-		label.setLayoutData(gd);
-		label.setFont(font);
-		return comp;
-	}
-	
-	/**
 	 * Create a group to contain the step filter related widgetry
 	 */
 	private void createStepFilterPreferences(Composite parent) {
