@@ -27,6 +27,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.ui.text.java.IJavaCompletionProposal;
+import org.eclipse.jdt.internal.ui.text.java.JavaCompletionProposalComparator;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -50,18 +52,11 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	private IContextInformationValidator fValidator;
 	
 	private char[] fProposalAutoActivationSet;
-	private Comparator fComparator;
-	
-	private static class CompletionProposalComparator implements Comparator {
-		public int compare(Object o1, Object o2) {
-			ICompletionProposal c1= (ICompletionProposal) o1;
-			ICompletionProposal c2= (ICompletionProposal) o2;
-			return c1.getDisplayString().compareTo(c2.getDisplayString());
-		}
-	};
-	
+	private JavaCompletionProposalComparator fComparator;
+		
 	public DisplayCompletionProcessor() {
 		fCollector= new ResultCollector();
+		fComparator= new JavaCompletionProposalComparator();
 	}
 	
 	/**
@@ -237,9 +232,8 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * Order the given proposals.
 	 */
-	protected ICompletionProposal[] order(ICompletionProposal[] proposals) {
-		if (fComparator != null)
-			Arrays.sort(proposals, fComparator);
+	protected IJavaCompletionProposal[] order(IJavaCompletionProposal[] proposals) {
+		Arrays.sort(proposals, fComparator);
 		return proposals;	
 	}	
 	
@@ -350,7 +344,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 * @param order <code>true</code> if proposals should be ordered.
 	 */
 	public void orderProposalsAlphabetically(boolean order) {
-		fComparator= order ? new CompletionProposalComparator() : null;
+		fComparator.setOrderAlphabetically(order);
 	}
 	
 	/**

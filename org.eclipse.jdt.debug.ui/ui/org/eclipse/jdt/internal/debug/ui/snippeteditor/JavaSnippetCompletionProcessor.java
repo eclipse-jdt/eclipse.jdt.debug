@@ -6,22 +6,26 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  */
  
 import java.util.Arrays;
-import java.util.Comparator;
 
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.corext.template.ContextType;
-import org.eclipse.jdt.internal.corext.template.ContextTypeRegistry;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
-import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
-import org.eclipse.jdt.internal.ui.text.template.TemplateEngine;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jdt.core.JavaModelException;
+
+import org.eclipse.jdt.internal.corext.template.ContextType;
+import org.eclipse.jdt.internal.corext.template.ContextTypeRegistry;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.ui.text.java.IJavaCompletionProposal;
+import org.eclipse.jdt.internal.ui.text.java.JavaCompletionProposalComparator;
+import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
+import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
+import org.eclipse.jdt.internal.ui.text.template.TemplateEngine;
 
 /**
  * Java snippet completion processor.
@@ -32,18 +36,10 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	private JavaSnippetEditor fEditor;
 	private IContextInformationValidator fValidator;
 	private TemplateEngine fTemplateEngine;
-	private Comparator fComparator;
+	private JavaCompletionProposalComparator fComparator;
 	
 	private char[] fProposalAutoActivationSet;
-	
-	private static class CompletionProposalComparator implements Comparator {
-		public int compare(Object o1, Object o2) {
-			ICompletionProposal c1= (ICompletionProposal) o1;
-			ICompletionProposal c2= (ICompletionProposal) o2;
-			return c1.getDisplayString().compareTo(c2.getDisplayString());
-		}
-	};
-		
+			
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
 		fCollector= new ResultCollector();
 		fEditor= editor;
@@ -51,6 +47,8 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 		if (contextType != null) {
 			fTemplateEngine= new TemplateEngine(contextType);
 		}
+		
+		fComparator= new JavaCompletionProposalComparator();
 	}
 	
 	/**
@@ -97,7 +95,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 			JDIDebugUIPlugin.log(x);
 		}
 		
-		ICompletionProposal[] results= fCollector.getResults();
+		IJavaCompletionProposal[] results= fCollector.getResults();
 		
 		if (fTemplateEngine != null) {
 			try {
@@ -109,10 +107,10 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 				ErrorDialog.openError(shell, SnippetMessages.getString("CompletionProcessor.errorTitle"), SnippetMessages.getString("CompletionProcessor.errorMessage"), x.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
 			}			
 		
-			ICompletionProposal[] templateResults= fTemplateEngine.getResults();
+			IJavaCompletionProposal[] templateResults= fTemplateEngine.getResults();
 
 			// concatenate arrays
-			ICompletionProposal[] total= new ICompletionProposal[results.length + templateResults.length];
+			IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
 			System.arraycopy(templateResults, 0, total, 0, templateResults.length);
 			System.arraycopy(results, 0, total, templateResults.length, results.length);
 			results= total;
@@ -123,9 +121,8 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * Order the given proposals.
 	 */
-	private ICompletionProposal[] order(ICompletionProposal[] proposals) {
-		if (fComparator != null)
-			Arrays.sort(proposals, fComparator);
+	private ICompletionProposal[] order(IJavaCompletionProposal[] proposals) {
+		Arrays.sort(proposals, fComparator);
 		return proposals;	
 	}	
 	
@@ -152,6 +149,6 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	 * @param order <code>true</code> if proposals should be ordered.
 	 */
 	public void orderProposalsAlphabetically(boolean order) {
-		fComparator= order ? new CompletionProposalComparator() : null;
+		fComparator.setOrderAlphabetically(order);
 	}
 }
