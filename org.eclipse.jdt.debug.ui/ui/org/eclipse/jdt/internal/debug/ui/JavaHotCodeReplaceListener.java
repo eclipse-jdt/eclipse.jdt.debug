@@ -69,11 +69,11 @@ public class JavaHotCodeReplaceListener implements IJavaHotCodeReplaceListener {
 				if (exception == null) {
 					status= new Status(IStatus.WARNING, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.WARNING, DebugUIMessages.getString("JDIDebugUIPlugin.The_target_VM_does_not_support_hot_code_replace_1"), null); //$NON-NLS-1$
 					preference= IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED;
-					alertMessage= DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_when_hot_code_replace_is_not_supported_1");
+					alertMessage= DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_when_hot_code_replace_is_not_supported_1"); //$NON-NLS-1$
 				} else {
 					status= exception.getStatus();
 					preference= IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED;
-					alertMessage= DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_of_hot_code_replace_failure_1");
+					alertMessage= DebugUIMessages.getString("JDIDebugUIPlugin.Always_alert_me_of_hot_code_replace_failure_1"); //$NON-NLS-1$
 				}
 				ErrorDialogWithToggle dialog= new ErrorDialogWithToggle(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Hot_code_replace_failed_1"), //$NON-NLS-1$
 					MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), //$NON-NLS-1$

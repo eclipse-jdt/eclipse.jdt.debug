@@ -305,7 +305,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 							wc = getLaunchConfiguration().getWorkingCopy();
 					}
 				} catch (CoreException e) {
-					JDIDebugUIPlugin.errorDialog("Unable to initialize defaults for selected JRE", e);
+					JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaJRETab.Unable_to_initialize_defaults_for_selected_JRE_1"), e); //$NON-NLS-1$
 					return;
 				}
 			}

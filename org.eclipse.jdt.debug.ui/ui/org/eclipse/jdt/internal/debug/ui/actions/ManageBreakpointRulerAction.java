@@ -59,8 +59,8 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 		fRuler= ruler;
 		fTextEditor= editor;
 		fMarkerType= IBreakpoint.BREAKPOINT_MARKER;
-		fAddLabel= ActionMessages.getString("ManageBreakpointRulerAction.add.label");
-		fRemoveLabel= ActionMessages.getString("ManageBreakpointRulerAction.remove.label");
+		fAddLabel= ActionMessages.getString("ManageBreakpointRulerAction.add.label"); //$NON-NLS-1$
+		fRemoveLabel= ActionMessages.getString("ManageBreakpointRulerAction.remove.label"); //$NON-NLS-1$
 	}
 	
 	/** 
@@ -237,11 +237,11 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 				}
 			}
 		} catch (DebugException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
 		} catch (BadLocationException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -254,7 +254,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 				breakpointManager.removeBreakpoint(breakpoint, true);
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.removing.message1"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.removing.message1"), e); //$NON-NLS-1$
 		}
 	}
 	
