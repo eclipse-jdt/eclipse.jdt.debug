@@ -62,5 +62,12 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
         fMatchCount++;
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IPatternMatchListener#getModifiers()
+	 */
+	public int getCompilerFlags() {
+		return 0;
+	}
+
 }
     

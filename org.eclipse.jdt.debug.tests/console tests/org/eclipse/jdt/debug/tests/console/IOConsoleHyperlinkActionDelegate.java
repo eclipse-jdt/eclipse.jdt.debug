@@ -11,6 +11,7 @@
 package org.eclipse.jdt.debug.tests.console;
 
 import java.io.PrintStream;
+import java.util.regex.Pattern;
 
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -24,8 +25,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.IPatternMatchListener;
@@ -63,6 +64,11 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
             public void matchFound(PatternMatchEvent event) {
                matches ++;
             }
+
+
+			public int getCompilerFlags() {
+				return 0;
+			}
             
             
         };
