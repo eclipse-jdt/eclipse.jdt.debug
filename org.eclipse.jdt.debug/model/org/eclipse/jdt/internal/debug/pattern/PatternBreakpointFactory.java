@@ -82,7 +82,7 @@ class BreakpointCreator implements IWorkspaceRunnable {
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
 		// create the marker
-		fBreakpoint = fFile.createMarker(JDIDebugModel.getPluginIdentifier() + ".patternBreakpoint");
+		fBreakpoint = fFile.createMarker(PatternDebugModel.PATTERN_BREAKPOINT);
 		// configure the standard attributes
 		DebugPlugin.getDefault().getBreakpointManager().configureLineBreakpoint(
 			fBreakpoint, JDIDebugModel.getPluginIdentifier(), true, fLine, -1, -1);
