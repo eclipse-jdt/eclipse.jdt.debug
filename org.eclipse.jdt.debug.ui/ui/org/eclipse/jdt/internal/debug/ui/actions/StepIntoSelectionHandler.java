@@ -68,9 +68,14 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	private boolean fStepFilterEnabledState;
 	
 	/**
-	 * Empty event set.
+	 * Expected event kind
 	 */
-	private static final DebugEvent[] fgEmptyEvents = new DebugEvent[0];
+	private int fExpectedKind = -1;
+	
+	/**
+	 * Expected event detail
+	 */
+	private int fExpectedDetail = -1;
 
 	/**
 	 * Constructs a step handler to step into the given method in the given thread
@@ -128,117 +133,128 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	 * @see org.eclipse.debug.core.IDebugEventFilter#filterDebugEvents(org.eclipse.debug.core.DebugEvent)
 	 */
 	public DebugEvent[] filterDebugEvents(DebugEvent[] events) {
+		// we only expect one event from our thread - find the event
+		DebugEvent event = null;
+		int index = -1;
+		int threadEvents = 0;
 		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
-			if (event.getSource() == getThread()) {
-				if (event.getKind() == DebugEvent.RESUME) {
-					if (event.isStepStart()) {
-						if (fFirstStep) {
-							fFirstStep = false;
-							return events;
-						} else {
-							// secondary step - filter the event
-							return fgEmptyEvents;
-						}
-					}
-				} else if (event.getKind() == DebugEvent.SUSPEND) {
-					// if not a step-end then abort (i.e. hit a breakpoint, etc)
-					if (event.getDetail() != DebugEvent.STEP_END) {
-						cleanup();
-						return events;
-					}
-					// if there is more than one suspend event, then abort:
-					//  -> this means that we have hit a suspend event at the same location
-					// that our step ended.
-					if (events.length > 1) {
-						for (int j = i + 1; j < events.length; j++) {
-							DebugEvent debugEvent = events[j];
-							if (debugEvent.getKind() == DebugEvent.SUSPEND) {
-								cleanup();
-								int filteredLength= events.length - j;
-								DebugEvent[] filtered = new DebugEvent[filteredLength];
-								System.arraycopy(events, j, filtered, 0, filteredLength);
-								return filtered;
-							}
-						}
-					}
-					// compare location to desired location
-					try {
-						final IJavaStackFrame frame = (IJavaStackFrame)getThread().getTopStackFrame();
-						int stackDepth = frame.getThread().getStackFrames().length;
-						String name = null;
-						if (frame.isConstructor()) {
-							name = frame.getDeclaringTypeName();
-							int index = name.lastIndexOf('.');
-							if (index >= 0) {
-								name = name.substring(index + 1);
-							}
-						} else {
-							name = frame.getName();
-						}
-						if (name.equals(getMethod().getElementName()) && frame.getSignature().equals(getSignature())) {
-							// hit
-							cleanup();
-							return events;
-						} else {
-							// step again
-							Runnable r = null;
-							if (stackDepth > fOriginalStackDepth) {
-								r = new Runnable() {
-									public void run() {
-										try {
-											frame.stepReturn();
-										} catch (DebugException e) {
-											JDIDebugUIPlugin.log(e);
-											cleanup();
-											DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});
-										}
-									}
-								};								
-							} else if (stackDepth == fOriginalStackDepth){
-								// we should be back in the original stack frame - if not, abort
-								if (!(frame.getSignature().equals(fOriginalSignature) && frame.getName().equals(fOriginalName) && frame.getDeclaringTypeName().equals(fOriginalTypeName))) {
-									missed();
-									return events;
-								}
-								r = new Runnable() {
-									public void run() {
-										try {
-											frame.stepInto();	
-										} catch (DebugException e) {
-											JDIDebugUIPlugin.log(e);
-											cleanup();
-											DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});
-										}
-									}
-								};																
-							} else {
-								// we returned from the original frame - never hit the desired method
-								missed();
-								return events;								
-							}
-							DebugPlugin.getDefault().asyncExec(r);
-							// filter the events
-							return fgEmptyEvents;
-						}
-					} catch (CoreException e) {
-						// abort
-						JDIDebugUIPlugin.log(e);
-						cleanup();
-						return events;
-					}
-				} else {
-					// abort
-					cleanup();
-					return events;
+			DebugEvent e = events[i];
+			if (isExpectedEvent(e)) {
+				event = e;
+				index = i;
+				threadEvents++;
+			} else if (e.getSource() == getThread()) {
+				threadEvents++;
+			} 
+		}
+		
+		if (event == null) {
+			// nothing to process in this event set
+			return events;
+		}
+				
+		// create filtered event set
+		DebugEvent[] filtered = new DebugEvent[events.length - 1];
+		if (filtered.length > 0) {
+			int j = 0;
+			for (int i = 0; i < events.length; i++) {
+				if (i != index) {
+					filtered[j] = events[i];
+					j++;
 				}
-			} else if (event.getSource() == getThread().getDebugTarget()) {
-				// abort
-				cleanup();
-				return events;
 			}
 		}
+		
+		// if more than one event in our thread, abort (filtering our event)
+		if (threadEvents > 1) {
+			cleanup();
+			return filtered;
+		}
+		
+		// we have the one expected event - process it
+		switch (event.getKind()) {
+			case DebugEvent.RESUME:
+				// next, we expect a step end
+				setExpectedEvent(DebugEvent.SUSPEND, DebugEvent.STEP_END);
+				if (fFirstStep) {
+					fFirstStep = false;
+					return events; // include the first resume event
+				} else {
+					// secondary step - filter the event
+					return filtered;
+				}			
+			case DebugEvent.SUSPEND:
+				// compare location to desired location
+				try {
+					final IJavaStackFrame frame = (IJavaStackFrame)getThread().getTopStackFrame();
+					int stackDepth = frame.getThread().getStackFrames().length;
+					String name = null;
+					if (frame.isConstructor()) {
+						name = frame.getDeclaringTypeName();
+						index = name.lastIndexOf('.');
+						if (index >= 0) {
+							name = name.substring(index + 1);
+						}
+					} else {
+						name = frame.getName();
+					}
+					if (name.equals(getMethod().getElementName()) && frame.getSignature().equals(getSignature())) {
+						// hit
+						cleanup();
+						return events;
+					} else {
+						// step again
+						Runnable r = null;
+						if (stackDepth > fOriginalStackDepth) {
+							r = new Runnable() {
+								public void run() {
+									try {
+										setExpectedEvent(DebugEvent.RESUME, DebugEvent.STEP_RETURN);
+										frame.stepReturn();
+									} catch (DebugException e) {
+										JDIDebugUIPlugin.log(e);
+										cleanup();
+										DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});
+									}
+								}
+							};								
+						} else if (stackDepth == fOriginalStackDepth){
+							// we should be back in the original stack frame - if not, abort
+							if (!(frame.getSignature().equals(fOriginalSignature) && frame.getName().equals(fOriginalName) && frame.getDeclaringTypeName().equals(fOriginalTypeName))) {
+								missed();
+								return events;
+							}
+							r = new Runnable() {
+								public void run() {
+									try {
+										setExpectedEvent(DebugEvent.RESUME, DebugEvent.STEP_INTO);
+										frame.stepInto();	
+									} catch (DebugException e) {
+										JDIDebugUIPlugin.log(e);
+										cleanup();
+										DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});
+									}
+								}
+							};																
+						} else {
+							// we returned from the original frame - never hit the desired method
+							missed();
+							return events;								
+						}
+						DebugPlugin.getDefault().asyncExec(r);
+						// filter the events
+						return filtered;
+					}
+				} catch (CoreException e) {
+					// abort
+					JDIDebugUIPlugin.log(e);
+					cleanup();
+					return events;
+				}			
+		}
+		// execution should not reach here
 		return events;
+		 
 	}
 	
 	/** 
@@ -271,6 +287,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 		getDebugTarget().setStepFiltersEnabled(false);
 		try {
 			fOriginalStackDepth = getThread().getStackFrames().length;
+			setExpectedEvent(DebugEvent.RESUME, DebugEvent.STEP_INTO);
 			getThread().stepInto();
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.log(e);
@@ -286,5 +303,28 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 		DebugPlugin.getDefault().removeDebugEventFilter(this);
 		// restore step filter state
 		getDebugTarget().setStepFiltersEnabled(fStepFilterEnabledState);
+	}
+	
+	/**
+	 * Sets the expected debug event kind and detail we are waiting for next.
+	 * 
+	 * @param kind event kind
+	 * @param detail event detail
+	 */
+	private void setExpectedEvent(int kind, int detail) {
+		fExpectedKind = kind;
+		fExpectedDetail = detail;
+	}
+	
+	/**
+	 * Returns whether the given event is what we expected.
+	 * 
+	 * @param event fire event
+	 * @return whether the event is what we expected
+	 */
+	protected boolean isExpectedEvent(DebugEvent event) {
+		return event.getSource().equals(getThread()) &&
+			event.getKind() == fExpectedKind &&
+			event.getDetail() == fExpectedDetail;
 	}
 }

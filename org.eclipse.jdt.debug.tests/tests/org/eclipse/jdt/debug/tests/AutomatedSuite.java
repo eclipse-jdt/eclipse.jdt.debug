@@ -44,6 +44,7 @@ import org.eclipse.jdt.debug.tests.core.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.core.SourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
 import org.eclipse.jdt.debug.tests.core.StepFilterTests;
+import org.eclipse.jdt.debug.tests.core.StepIntoSelectionTests;
 import org.eclipse.jdt.debug.tests.core.SuspendVMBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
@@ -129,6 +130,8 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(MiscBreakpointsTests.class));
 		addTest(new TestSuite(WorkingDirectoryTests.class));
 		addTest(new TestSuite(RemoteAttachTests.class));
+		addTest(new TestSuite(StepIntoSelectionTests.class));
+		// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
 	}
 	
