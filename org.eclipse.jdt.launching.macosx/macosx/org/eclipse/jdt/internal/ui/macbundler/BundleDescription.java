@@ -179,14 +179,15 @@ class BundleDescription implements BundleAttributes {
 		fProperties.put(USES_SWT, new Boolean(isSWT));
 		
 		String launcher= null;
-		if (isSWT) {
+		if (isSWT)
 			launcher= System.getProperty("org.eclipse.swtlauncher");	//$NON-NLS-1$
-		} else {
+		
+		if (launcher == null) {
 			setValue(JVMVERSION, "1.4*"); //$NON-NLS-1$
-			launcher= "/System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/MacOS/JavaApplicationStub";	//$NON-NLS-1$
+			launcher= "/System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/MacOS/JavaApplicationStub";	//$NON-NLS-1$			
 		}
 		setValue(LAUNCHER, launcher);
-		
+
 		
 		IJavaProject p= null;
 		try {
