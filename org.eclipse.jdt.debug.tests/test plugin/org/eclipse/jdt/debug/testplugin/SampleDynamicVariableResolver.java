@@ -11,18 +11,18 @@
 package org.eclipse.jdt.debug.testplugin;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.core.stringsubstitution.IContextVariable;
-import org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver;
+import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
+import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariableResolver;
 
 /**
  * SampleContextVariableResolver
  */
-public class SampleContextVariableResolver implements IContextVariableResolver {
+public class SampleDynamicVariableResolver implements IDynamicVariableResolver {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IContextVariableResolver#resolveValue(org.eclipse.debug.internal.core.stringsubstitution.IContextVariable, java.lang.String)
 	 */
-	public String resolveValue(IContextVariable variable, String argument) throws CoreException {
+	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		if (argument == null) {
 			return "no arg";
 		} else {

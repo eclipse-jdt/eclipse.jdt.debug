@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.core.stringsubstitution.IContextVariable;
+import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
 import org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager;
 import org.eclipse.debug.internal.core.stringsubstitution.IValueVariable;
 import org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener;
@@ -62,8 +62,8 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * @return context variable with the given name or <code>null</code>
 	 * if none
 	 */
-	protected IContextVariable getContextVariable(String name) {
-		return StringVariableManager.getDefault().getContextVariable(name);
+	protected IDynamicVariable getContextVariable(String name) {
+		return StringVariableManager.getDefault().getDynamicVariable(name);
 	}	
 	
 	/**
@@ -92,8 +92,8 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * Tests a context variable with an argument
 	 */
 	public void testContextWithArg() throws CoreException {
-		IContextVariable variable = getContextVariable("SAMPLE_CONTEXT_VAR");
-		assertNotNull("Missing SAMPLE_CONTEXT_VAR", variable);
+		IDynamicVariable variable = getContextVariable("SAMPLE_DYNAMIC_VAR");
+		assertNotNull("Missing SAMPLE_DYNAMIC_VAR", variable);
 		String value = variable.getValue("ONE");
 		assertEquals("the arg is ONE", value);
 	}
@@ -102,8 +102,8 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * Tests a context variable with no argument
 	 */	
 	public void testContextWithoutArg() throws CoreException {
-		IContextVariable variable = getContextVariable("SAMPLE_CONTEXT_VAR");
-		assertNotNull("Missing SAMPLE_CONTEXT_VAR", variable);
+		IDynamicVariable variable = getContextVariable("SAMPLE_DYNAMIC_VAR");
+		assertNotNull("Missing SAMPLE_DYNAMIC_VAR", variable);
 		String value = variable.getValue(null);
 		assertEquals("no arg", value);		
 	}
@@ -130,7 +130,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * Test an expression with a context variable reference
 	 */
 	public void testContextVarReferenceNoArgs() throws CoreException {
-		String expression = "something ${SAMPLE_CONTEXT_VAR} else";
+		String expression = "something ${SAMPLE_DYNAMIC_VAR} else";
 		String result = doSubs(expression);
 		assertEquals("something no arg else", result);
 	}
@@ -139,7 +139,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * Test an expression with a context variable reference and arg
 	 */
 	public void testContextVarReferenceWithArg() throws CoreException {
-		String expression = "something ${SAMPLE_CONTEXT_VAR:TWO} else";
+		String expression = "something ${SAMPLE_DYNAMIC_VAR:TWO} else";
 		String result = doSubs(expression);
 		assertEquals("something the arg is TWO else", result);
 	}	
@@ -148,7 +148,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * Test an expression with multiple references
 	 */
 	public void testMultipleReferences() throws CoreException {
-		String expression = "${SAMPLE_CONTEXT_VAR:TWO} ${VALUE_VAR_WITH_INITIALIZER} ${VALUE_VAR_WITH_VALUE}";
+		String expression = "${SAMPLE_DYNAMIC_VAR:TWO} ${VALUE_VAR_WITH_INITIALIZER} ${VALUE_VAR_WITH_VALUE}";
 		String result = doSubs(expression);
 		assertEquals("the arg is TWO initialized-value initial-value", result);
 	}	
@@ -168,7 +168,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * Test nested variables
 	 */
 	public void testNestedReferences() throws CoreException {
-		String expression = "${SAMPLE_CONTEXT_VAR:${VALUE_VAR_WITH_VALUE}}";
+		String expression = "${SAMPLE_DYNAMIC_VAR:${VALUE_VAR_WITH_VALUE}}";
 		String result = doSubs(expression);
 		assertEquals("the arg is initial-value", result);
 	}
@@ -181,7 +181,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		IValueVariable variable = manager.newValueVariable("my_var", null);
 		try {
 			manager.addVariables(new IValueVariable[]{variable});
-			variable.setValue("${SAMPLE_CONTEXT_VAR:recurse}");
+			variable.setValue("${SAMPLE_DYNAMIC_VAR:recurse}");
 			String expression = "something ${my_var} else";
 			String result = doSubs(expression);
 			assertEquals("something the arg is recurse else", result);
@@ -195,9 +195,9 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * will not be translated.
 	 */
 	public void testOpenEndedBrace() throws CoreException {
-		String expression = "${SAMPLE_CONTEXT_VAR:${VALUE_VAR_WITH_VALUE}";
+		String expression = "${SAMPLE_DYNAMIC_VAR:${VALUE_VAR_WITH_VALUE}";
 		String result = doSubs(expression);
-		assertEquals("${SAMPLE_CONTEXT_VAR:initial-value", result);
+		assertEquals("${SAMPLE_DYNAMIC_VAR:initial-value", result);
 	}
 	
 	/**

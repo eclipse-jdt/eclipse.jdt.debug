@@ -91,11 +91,11 @@
       </variable>      
    </extension>   
    <extension
-         point="org.eclipse.debug.core.contextVariables">
+         point="org.eclipse.debug.core.dynamicVariables">
       <variable
-            name="SAMPLE_CONTEXT_VAR"
-            resolver="org.eclipse.jdt.debug.testplugin.SampleContextVariableResolver"
-            description="sample context variable">
+            name="SAMPLE_DYNAMIC_VAR"
+            resolver="org.eclipse.jdt.debug.testplugin.SampleDynamicVariableResolver"
+            description="sample dynamic variable">
       </variable>
    </extension>   
 
