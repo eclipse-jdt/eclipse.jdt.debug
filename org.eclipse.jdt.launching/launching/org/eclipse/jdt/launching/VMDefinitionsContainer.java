@@ -62,6 +62,10 @@ public class VMDefinitionsContainer {
 	private Map fVMTypeToVMMap;
 	
 	/**
+	 * VMs managed by this container whose install locations don't actually exist.	 */
+	private List fInvalidVMList;
+	
+	/**
 	 * The number of VMs managed by this container.	 */
 	private int fVMCount = 0;
 	
@@ -79,10 +83,16 @@ public class VMDefinitionsContainer {
 	 */
 	public VMDefinitionsContainer() {
 		fVMTypeToVMMap = new HashMap(10);
+		fInvalidVMList = new ArrayList(5);
 	}
 	
 	/**
 	 * Add the specified VM to the VM definitions managed by this container.
+	 * <p>
+	 * If distinguishing valid from invalid VMs is important, the specified VM must
+	 * have already had its install location set.  An invalid VM is one whose install
+	 * location doesn't exist.
+	 * </p>
 	 * 
 	 * @param vm the VM to be added to this container	 */
 	public void addVM(IVMInstall vm) {	
@@ -93,11 +103,19 @@ public class VMDefinitionsContainer {
 			fVMTypeToVMMap.put(vmInstallType, vmList);			
 		}		
 		vmList.add(vm);
+		if (!verifyInstallLocation(vm)) {
+			fInvalidVMList.add(vm);
+		}
 		fVMCount++;
 	}
 	
 	/**
 	 * Add all VM's in the specified list to the VM definitions managed by this container.
+	 * <p>
+	 * If distinguishing valid from invalid VMs is important, the specified VMs must
+	 * have already had their install locations set.  An invalid VM is one whose install
+	 * location doesn't exist.
+	 * </p>
 	 * 
 	 * @param vmList a list of VMs to be added to this container	 */
 	public void addVMList(List vmList) {
@@ -109,6 +127,19 @@ public class VMDefinitionsContainer {
 	}
 	
 	/**
+	 * Return <code>true</code> if the specified VM's install location exists on the
+	 * file system, <code>false</code> otherwise.
+	 * 	 * @param vm the instance of <code>IVMInstall</code> whose install location will be verified	 * @return boolean <code>true</code> if the specified VMs install location exists on the
+	 * 			file system, <code>false</code> otherwise.	 */
+	private boolean verifyInstallLocation(IVMInstall vm) {
+		File installLocation = vm.getInstallLocation();
+		if (installLocation.exists()) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Return a mapping of VM install types to lists of VMs.  The keys of this map are instances of
 	 * <code>IVMInstallType</code>.  The values are instances of <code>java.util.List</code>
 	 * which contain instances of <code>IVMInstall</code>.  
@@ -119,7 +150,9 @@ public class VMDefinitionsContainer {
 	}
 	
 	/**
-	 * Return a list of all VMs in this container.  The order of the list is not specified.
+	 * Return a list of all VMs in this container, including any invalid VMs.  An invalid
+	 * VM is one whose install location does not exist on the file system.
+	 * The order of the list is not specified.
 	 * 
 	 * @return List the data structure containing all VMs managed by this container	 */
 	public List getVMList() {
@@ -133,6 +166,17 @@ public class VMDefinitionsContainer {
 			resultList.addAll(vmList);
 		}
 		
+		return resultList;
+	}
+	
+	/**
+	 * Return a list of all valid VMs in this container.  A valid VM is one whose install
+	 * location exists on the file system.  The order of the list is not specified.
+	 * 
+	 * @return List 	 */
+	public List getValidVMList() {
+		List resultList = getVMList();
+		resultList.removeAll(fInvalidVMList);
 		return resultList;
 	}
 	
@@ -397,18 +441,13 @@ public class VMDefinitionsContainer {
 			if (installPath == null) {
 				return;
 			}
-			
-			// Verify something exists at the specified install path.  If not, skip this node.
-			File installLocation= new File(installPath);
-			if (!installLocation.exists()) {
-				return;
-			}
-			
+						
 			// Create a VMStandin for the node and set its 'name' & 'installLocation' attributes
 			VMStandin vmStandin = new VMStandin(vmType, id);
-			container.addVM(vmStandin);
 			vmStandin.setName(vmElement.getAttribute("name")); //$NON-NLS-1$
+			File installLocation= new File(installPath);
 			vmStandin.setInstallLocation(installLocation);
+			container.addVM(vmStandin);
 			
 			// Look for subordinate nodes.  These may be either 'libraryLocation' or
 			// 'libraryLocations'.  

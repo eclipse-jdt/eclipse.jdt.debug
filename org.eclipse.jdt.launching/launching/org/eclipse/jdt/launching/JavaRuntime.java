@@ -1152,7 +1152,7 @@ public final class JavaRuntime {
 		fgDefaultVMId = vmContainer.getDefaultVMInstallCompositeID();
 		fgDefaultVMConnectorId = vmContainer.getDefaultVMInstallConnectorTypeID();
 		
-		List vmList = vmContainer.getVMList();
+		List vmList = vmContainer.getValidVMList();
 		Iterator vmListIterator = vmList.iterator();
 		while (vmListIterator.hasNext()) {
 			VMStandin vmStandin = (VMStandin) vmListIterator.next();
@@ -1231,9 +1231,9 @@ public final class JavaRuntime {
 				String vmID = String.valueOf(unique);
 				VMStandin detectedVMStandin = new VMStandin(vmType, vmID);
 				if (detectedVMStandin != null) {
-					resultCollector.addVM(detectedVMStandin);				
 					detectedVMStandin.setInstallLocation(detectedLocation);
 					detectedVMStandin.setName(generateDetectedVMName(detectedVMStandin));
+					resultCollector.addVM(detectedVMStandin);				
 					
 					// Only set one default VM
 					if (resultCollector.getDefaultVMInstallCompositeID() == null) {
