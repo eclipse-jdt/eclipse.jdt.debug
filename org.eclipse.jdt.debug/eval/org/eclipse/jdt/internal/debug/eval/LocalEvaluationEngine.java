@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.eval;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -106,7 +108,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	private EvaluationResult fResult;
 	
 	/**
-	 * Collection of depolyed snippet class files
+	 * Collection of deployed snippet class files
 	 */
 	private List fSnippetFiles;
 	
@@ -167,7 +169,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	private String fCodeSnippetClassName = null;
 	
 	/** 
-	 * Wether to hit breakpoints in the evaluation thread
+	 * Whether to hit breakpoints in the evaluation thread
 	 */
 	private boolean fHitBreakpoints = false;
 		

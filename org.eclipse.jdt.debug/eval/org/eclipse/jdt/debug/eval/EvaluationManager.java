@@ -1,9 +1,11 @@
 package org.eclipse.jdt.debug.eval;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.io.File;
 
@@ -56,7 +58,7 @@ public class EvaluationManager {
 	 * Creates and returns a new evaluation engine that performs evaluations by
 	 * compiling expressions into abstract syntax trees (ASTs), and interpreting
 	 * the AST over a JDI connection. This type of evaluation engine is capable of
-	 * performing remote evalautions.
+	 * performing remote evaluations.
 	 * 
 	 * @param project the Java project in which expressions are to be compiled
 	 * @param target the Java debug target in which expressions are to be evaluated
@@ -65,6 +67,5 @@ public class EvaluationManager {
 	public static ASTEvaluationEngine newAstEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
 		return new ASTEvaluationEngine(project, target);
 	}
-
 }
 
