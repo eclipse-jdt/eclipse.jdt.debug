@@ -10,6 +10,9 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.ISnippetSupportLineBreakpoint;
 
+/**
+ * @see ISnippetSupportLineBreakpoint
+ */
 public class SnippetSupportLineBreakpoint extends JavaLineBreakpoint implements ISnippetSupportLineBreakpoint {
 	
 	private static final String SNIPPET_SUPPORT_LINE_BREAKPOINT= "org.eclipse.jdt.debug.snippetSupportLineBreakpointMarker"; //$NON-NLS-1$
@@ -29,13 +32,6 @@ public class SnippetSupportLineBreakpoint extends JavaLineBreakpoint implements 
 	}
 
 	/**
-	 * Constructor for SnippetSupportLineBreakpoint
-	 */
-	public SnippetSupportLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd, int hitCount, String markerType) throws DebugException {
-		super(type, lineNumber, charStart, charEnd, hitCount, markerType);
-	}
-
-	/**
 	 * Return the resource for this breakpoint.
 	 * The resource for a SnippetSupportLineBreakpoint is the java project
 	 * it belongs to.
@@ -45,7 +41,7 @@ public class SnippetSupportLineBreakpoint extends JavaLineBreakpoint implements 
 	}
 	
 	/**
-	 * Run to line breakpoints should not be added to the breakpoint
+	 * Snippet support line breakpoints should not be added to the breakpoint
 	 * manager
 	 */
 	protected void addToBreakpointManager() throws DebugException {

@@ -114,7 +114,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		IMarker m = getMarker();
 		if (m == null || !m.exists()) {
 			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), IDebugStatusConstants.REQUEST_FAILED,
-				JDIDebugModelMessages.getString("JavaBreakpoint.no_assocoiated_marker"),null)); //$NON-NLS-1$
+				JDIDebugModelMessages.getString("JavaBreakpoint.no_associated_marker"),null)); //$NON-NLS-1$
 		}
 		return m;
 	}

@@ -132,14 +132,14 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			return;
 		}
 		String exceptionName = exceptionType.getFullyQualifiedName();
-		String topLevelName = getTopLevelTypeName();
-		if (topLevelName == null) {
+		String referenceName = getReferenceTypeName();
+		if (referenceName == null) {
 //			internalError(ERROR_BREAKPOINT_NO_TYPE);
 			return;
 		}
 
 		// listen to class loads
-		registerRequest(target, target.createClassPrepareRequest(topLevelName));
+		registerRequest(target.createClassPrepareRequest(referenceName), target);
 		
 		if (isCaught() || isUncaught()) {			
 			List classes= target.jdiClassesByName(exceptionName);
@@ -151,7 +151,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				}
 			}
 		}	
-	}	
+	}
 	
 	protected ExceptionRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		if (!isCaught() && !isUncaught()) {
@@ -184,16 +184,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	
 	protected void createRequest(JDIDebugTarget target, ReferenceType type)  throws CoreException {
 			ExceptionRequest request= newRequest(target, type);
-			registerRequest(target, request);
+			registerRequest(request, target);
 	}
-			
-	/**
-	 * @see JavaBreakpoint#isSupportedBy(VirtualMachine)
-	 */
-	public boolean isSupportedBy(VirtualMachine vm) {
-		return true;
-	}
-	
+
 	/**
 	 * Enable this exception breakpoint.
 	 * 

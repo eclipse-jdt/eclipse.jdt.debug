@@ -1,25 +1,33 @@
 package org.eclipse.jdt.internal.debug.core;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IDebugConstants;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassNotPreparedException;
+import com.sun.jdi.InvalidLineNumberException;
+import com.sun.jdi.Location;
+import com.sun.jdi.NativeMethodException;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VMDisconnectedException;
 
-public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint implements IJavaLineBreakpoint {
-		
-	/**
-	 * Java line breakpoint marker type
-	 * (value <code>"org.eclipse.jdt.debug.javaLineBreakpointMarker"</code>).
-	 */
+public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint {
+
 	private static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpointMarker"; //$NON-NLS-1$
 	
 	/**
@@ -78,22 +86,19 @@ public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint implements IJ
 	}
 	
 	/**
-	 * Creates the event requests to:<ul>
-	 * <li>Listen to class loads related to the breakpoint</li>
-	 * <li>Respond to the breakpoint being hti</li>
-	 * </ul>
+	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
 	 */
 	protected void addToTarget(JDIDebugTarget target) throws CoreException {
-		String topLevelName= getTopLevelTypeName();
-		if (topLevelName == null) {
+		String referenceTypeName= getReferenceTypeName();
+		if (referenceTypeName == null) {
 			return;
 		}
 		
 		// create request to listen to class loads
-		registerRequest(target, target.createClassPrepareRequest(topLevelName));
+		registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
 		
 		// create breakpoint requests for each class currently loaded
-		List classes= target.jdiClassesByName(topLevelName);
+		List classes= target.jdiClassesByName(referenceTypeName);
 		if (!classes.isEmpty()) {
 			Iterator iter = classes.iterator();
 			while (iter.hasNext()) {
@@ -168,58 +173,7 @@ public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint implements IJ
 		Object[] values= new Object[]{handle, new Integer(hitCount), Boolean.FALSE};
 		ensureMarker().setAttributes(fgTypeAndHitCountAttributes, values);
 	}
-	
-	/**
-	 * Searches the given source range of the container for a member that is
-	 * not the same as the given type.
-	 */
-	protected IMember binSearch(IClassFile container, IType type, int start, int end) throws JavaModelException {
-		IJavaElement je = container.getElementAt(start);
-		if (je != null && !je.equals(type)) {
-			return (IMember)je;
-		}
-		if (end > start) {
-			je = container.getElementAt(end);
-			if (je != null && !je.equals(type)) {
-				return (IMember)je;
-			}
-			int mid = ((end - start) / 2) + start;
-			if (mid > start) {
-				je = binSearch(container, type, start + 1, mid);
-				if (je == null) {
-					je = binSearch(container, type, mid + 1, end - 1);
-				}
-				return (IMember)je;
-			}
-		}
-		return null;
-	}	
-	
-	/**
-	 * Searches the given source range of the container for a member that is
-	 * not the same as the given type.
-	 */
-	protected IMember binSearch(ICompilationUnit container, IType type, int start, int end) throws JavaModelException {
-		IJavaElement je = container.getElementAt(start);
-		if (je != null && !je.equals(type)) {
-			return (IMember)je;
-		}
-		if (end > start) {
-			je = container.getElementAt(end);
-			if (je != null && !je.equals(type)) {
-				return (IMember)je;
-			}
-			int mid = ((end - start) / 2) + start;
-			if (mid > start) {
-				je = binSearch(container, type, start + 1, mid);
-				if (je == null) {
-					je = binSearch(container, type, mid + 1, end - 1);
-				}
-				return (IMember)je;
-			}
-		}
-		return null;
-	}
+
 }
 
 

@@ -140,26 +140,17 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		ModificationWatchpointRequest modificationRequest= null;			
 		if (accessSupportedBy(target.getVM())) {
 			accessRequest= createAccessWatchpoint(target, field);
-			registerRequest(target, accessRequest);
+			registerRequest(accessRequest, target);
 		} else {
 			notSupported(JDIDebugModelMessages.getString("JavaWatchpoint.no_access_watchpoints"));				 //$NON-NLS-1$
 		}
 		if (modificationSupportedBy(target.getVM())) {
 			modificationRequest= createModificationWatchpoint(target, field);
-			registerRequest(target, modificationRequest);
+			registerRequest(modificationRequest, target);
 		} else {
 			notSupported(JDIDebugModelMessages.getString("JavaWatchpoint.no_modification_watchpoints")); //$NON-NLS-1$
 		}
 
-	}
-	
-	/**
-	 * Returns whether this kind of breakpoint is supported by the given
-	 * virtual machine. A watchpoint is supported if both access and
-	 * modification watchpoints are supported.
-	 */
-	public boolean isSupportedBy(VirtualMachine vm) {
-		return (modificationSupportedBy(vm) && accessSupportedBy(vm));
 	}
 	
 	/**

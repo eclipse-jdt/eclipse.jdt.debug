@@ -113,7 +113,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 			JDIDebugPlugin.logError(e);
 			return;
 		}
-		registerRequest(target, request);
+		registerRequest(request, target);
 
 	}
 

@@ -56,8 +56,10 @@ public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements
 	 */
 	protected void addToTarget(JDIDebugTarget target) throws CoreException {
 		
+		String referenceTypeName= getReferenceTypeName();
+		
 		// create request to listen to class loads
-		registerRequest(target, target.createClassPrepareRequest(getPattern()));
+		registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
 		
 		// create breakpoint requests for each class currently loaded
 		List classes= target.getVM().allClasses();
@@ -69,11 +71,21 @@ public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements
 			while (iter.hasNext()) {
 				type= (ReferenceType) iter.next();
 				typeName= type.name();
-				if (typeName != null && typeName.startsWith(getPattern())) {
+				if (typeName != null && typeName.startsWith(referenceTypeName)) {
 					createRequest(target, type);
 				}
 			}
 		}
+	}
+	
+	protected String getReferenceTypeName() {
+		String name= "";
+		try {
+			name= getPattern();
+		} catch (CoreException ce) {
+			JDIDebugPlugin.logError(ce);
+		}
+		return name;
 	}
 	
 	/**
