@@ -32,6 +32,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -112,6 +114,41 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private StepFilterContentProvider fStepFilterContentProvider;
 	private ICellEditorValidator fCellValidator;
+	private PropertyChangeListener fPropertyChangeListener;
+	
+	protected class ButtonListener implements SelectionListener {
+		private boolean fHasStateChanged= false;
+		
+		public void widgetSelected(SelectionEvent e) {
+			fHasStateChanged= true;
+		}
+
+	 	public void widgetDefaultSelected(SelectionEvent e) {
+	 		fHasStateChanged= true;
+ 		}
+ 		
+ 		public boolean hasStateChanged() {
+ 			return fHasStateChanged;
+ 		}
+
+	}
+	
+	protected class PropertyChangeListener implements IPropertyChangeListener {
+		private boolean fHasStateChanged= false;
+		
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(IJDIPreferencesConstants.SHOW_HEX_VALUES)) {
+				fHasStateChanged= true;
+			} else if (event.getProperty().equals(IJDIPreferencesConstants.SHOW_CHAR_VALUES)) {
+				fHasStateChanged= true;
+			} else if (event.getProperty().equals(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES)) {
+				fHasStateChanged= true;
+			}
+		}
+		public boolean hasStateChanged() {
+ 			return fHasStateChanged;
+ 		}
+	}
 	
 	/**
 	 * Model object that represents a single entry in the table
@@ -335,6 +372,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	public JavaDebugPreferencePage() {
 		super();
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
+		getPreferenceStore().addPropertyChangeListener(getPropertyChangeListener());
 	}
 	
 	/**
@@ -777,7 +815,10 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	public boolean performOk() {
 		storeValues();
-		getPreferenceStore().firePropertyChangeEvent(IJDIPreferencesConstants.VARIABLE_RENDERING, new Boolean(true), new Boolean(false));
+		if (getPropertyChangeListener().hasStateChanged()) {
+			//only fire the notification if the user has toggled a button.
+			getPreferenceStore().firePropertyChangeEvent(IJDIPreferencesConstants.VARIABLE_RENDERING, new Boolean(true), new Boolean(false));
+		}
 		fStepFilterContentProvider.saveFilters();
 		JDIDebugModel.setSuspendOnUncaughtExceptions(fSuspendButton.getSelection());
 		return true;
@@ -891,6 +932,18 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.SHOW_HEX_VALUES, fHexButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.SHOW_CHAR_VALUES, fCharButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, fUnsignedButton.getSelection());
+	}
+
+	protected PropertyChangeListener getPropertyChangeListener() {
+		if (fPropertyChangeListener == null) {
+			fPropertyChangeListener= new PropertyChangeListener();
+		}
+		return fPropertyChangeListener;
+	}
+	
+	public void dispose() {
+		super.dispose();
+		getPreferenceStore().removePropertyChangeListener(getPropertyChangeListener());
 	}
 }
 

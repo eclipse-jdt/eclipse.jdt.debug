@@ -24,6 +24,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
@@ -31,7 +32,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
+import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -221,9 +222,12 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		}
 		ISourceLocator sourceLocator = launch.getSourceLocator();
 		Object sourceElement = sourceLocator.getSourceElement(stackFrame);
-		JDIModelPresentation presentation = new JDIModelPresentation();
-		IEditorInput sfEditorInput = presentation.getEditorInput(sourceElement);
-		presentation.dispose();
+		IEditorInput sfEditorInput= null;
+		try {
+			sfEditorInput= EditorUtility.getEditorInput(sourceElement);
+		} catch (JavaModelException jme) {
+			JDIDebugUIPlugin.logError(jme);
+		}
 		if (fWorkbenchPart instanceof IEditorPart) {
 			return ((IEditorPart)fWorkbenchPart).getEditorInput().equals(sfEditorInput);
 		}
