@@ -1249,7 +1249,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			try {
 				// Pop the drop frame and all frames above it
 				popFrame(frame);
-				computeStackFrames();
 				stepInto();
 			} catch (RuntimeException exception) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
