@@ -734,7 +734,7 @@ public final class JavaRuntime {
 				}
 				File file = new File(location);
 				if (!file.exists()) {
-					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_archive__{0}_5"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
+					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_archive__{0}_4"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
 				}
 				break;
 			default:
