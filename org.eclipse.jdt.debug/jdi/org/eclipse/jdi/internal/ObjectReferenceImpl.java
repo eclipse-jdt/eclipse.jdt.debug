@@ -10,6 +10,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -186,6 +187,10 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns the value of multiple instance and/or static fields in this object. 
 	 */
 	public Map getValues(List allFields) {
+		// if the field list is empty, nothing to do.
+		if (allFields.isEmpty()) {
+			return new HashMap();
+		}
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {
@@ -211,8 +216,17 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			}
 			
 			// First get values for the static fields.
-			Map resultMap  = referenceType().getValues(staticFields);
+			Map resultMap;
+			if (staticFields.isEmpty()) {
+				resultMap= new HashMap();
+			} else {
+				resultMap= referenceType().getValues(staticFields);
+			}
 			
+			// if no non-static fields are requested, return directly the result.
+			if (nonStaticFields.isEmpty()) {
+				return resultMap;
+			}
 			// Then get the values for the non-static fields.
 			int nonStaticFieldsSize = nonStaticFields.size();
 			write(this, outData);

@@ -608,6 +608,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return a Map of the requested static Field objects with their Value.
 	 */
 	public Map getValues(List fields) {
+		// if the field list is empty, nothing to do
+		if (fields.isEmpty()) {
+			return new HashMap();
+		}
 		// Note that this information should not be cached.
 		initJdwpRequest();
 		try {

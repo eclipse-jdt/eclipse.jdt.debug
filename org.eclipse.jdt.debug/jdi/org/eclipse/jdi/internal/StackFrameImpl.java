@@ -72,7 +72,10 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	public Map getValues(List variables) throws IllegalArgumentException, InvalidStackFrameException, VMMismatchException {
 		// Note that this information should not be cached.
 		HashMap map = new HashMap();
-
+		// if the variable list is empty, nothing to do
+		if (variables.isEmpty()) {
+			return map;
+		}
 		/*
 		 * If 'this' is requested, we have to use a special JDWP request.
 		 * Therefore, we remember the positions in the list of requests for 'this'.
