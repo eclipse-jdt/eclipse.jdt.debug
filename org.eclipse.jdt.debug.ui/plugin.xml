@@ -1698,7 +1698,7 @@
             adaptable="true"
             name="%filteringPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointAdvancedPage"
-            id="org.eclipse.jdt.debug.ui.propertypages.common">
+            id="org.eclipse.jdt.debug.ui.propertypages.filtering">
       </page>
       <page
             objectClass="org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint"
@@ -1713,7 +1713,7 @@
             adaptable="true"
             name="%filteringPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointAdvancedPage"
-            id="org.eclipse.jdt.debug.ui.propertypages.common">
+            id="org.eclipse.jdt.debug.ui.propertypages.filtering">
       </page>
       <page
             objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint"
