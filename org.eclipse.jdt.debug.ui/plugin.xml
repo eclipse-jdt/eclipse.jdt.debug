@@ -1005,7 +1005,7 @@
 		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
 		<visibility>
 			<and>
-				<objectState name="PrimitiveVariableActionFilter" value="isPrimitive"/>
+				<objectState name="PrimitiveVariableActionFilter" value="isValuePrimitive"/>
 				<not>
 					<objectState name="DetailFormatterFilter" value="isDefined"/>
 				</not>
@@ -1024,7 +1024,7 @@
 	<objectContribution
 		id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
-		<filter name="PrimitiveVariableActionFilter" value="isPrimitive"/>
+		<filter name="PrimitiveVariableActionFilter" value="isValuePrimitive"/>
 		<filter name="DetailFormatterFilter" value="isDefined"/>
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter"
@@ -1039,11 +1039,13 @@
 	<objectContribution
 		id="org.eclipse.jdt.debug.ui.FilteredJavaInspectExpressionActions"
 		objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression">
-		<filter name="PrimitiveVariableActionFilter" value="isNotPrimitive"/>
 		<visibility>
-			<not>
-				<objectState name="DetailFormatterFilter" value="isDefined"/>
-			</not>
+			<and>
+				<objectState name="PrimitiveVariableActionFilter" value="isNotPrimitive"/>
+				<not>
+					<objectState name="DetailFormatterFilter" value="isDefined"/>
+				</not>
+			</and>
 		</visibility>
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.NewDetailFormatter"

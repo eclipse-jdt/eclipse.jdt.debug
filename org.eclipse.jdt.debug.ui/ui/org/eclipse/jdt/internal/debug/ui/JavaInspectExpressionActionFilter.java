@@ -35,6 +35,7 @@ public class JavaInspectExpressionActionFilter implements IActionFilter {
 		set.add("boolean"); //$NON-NLS-1$
 		set.add("byte"); //$NON-NLS-1$
 		set.add("char"); //$NON-NLS-1$
+		set.add("null"); //$NON-NLS-1$
 		return set;
 	}
 

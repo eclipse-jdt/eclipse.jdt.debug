@@ -19,6 +19,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenVariableTypeAction;
 import org.eclipse.ui.IActionFilter;
 
@@ -36,6 +37,7 @@ public class JavaVariableActionFilter implements IActionFilter {
 		set.add("boolean"); //$NON-NLS-1$
 		set.add("byte"); //$NON-NLS-1$
 		set.add("char"); //$NON-NLS-1$
+		set.add("null");
 		return set;
 	}
 
@@ -45,8 +47,12 @@ public class JavaVariableActionFilter implements IActionFilter {
 	public boolean testAttribute(Object target, String name, String value) {
 		if (target instanceof IJavaVariable) {
 			IJavaVariable var = (IJavaVariable) target;
-			if (name.equals("PrimitiveVariableActionFilter") && value.equals("isPrimitive")) { //$NON-NLS-1$ //$NON-NLS-2$
-				return isPrimitiveType(var);
+			if (name.equals("PrimitiveVariableActionFilter")) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (value.equals("isPrimitive")) {
+					return isPrimitiveType(var);
+				} else if (value.equals("isValuePrimitive")) {
+					return isValuePrimitiveType(var);
+				}
 			} else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
 				try {
 					return isDeclaredSameAsConcrete(var);
@@ -75,10 +81,12 @@ public class JavaVariableActionFilter implements IActionFilter {
 
 	protected boolean isDeclaredSameAsConcrete(IJavaVariable var) throws DebugException {
 		IValue value= var.getValue();
+		if (value instanceof JDINullValue) {
+			return false;
+		}
 		return !var.getReferenceTypeName().equals(value.getReferenceTypeName());
 	}
-	protected String getTypeNameToOpen(IJavaVariable var) throws DebugException {
-		String refType = var.getReferenceTypeName();
+	protected String getTypeNameToOpen(String refType) throws DebugException {
 		refType = OpenVariableTypeAction.removeArray(refType);
 		if (fgPrimitiveTypes.contains(refType)) {
 			return null;
@@ -86,9 +94,20 @@ public class JavaVariableActionFilter implements IActionFilter {
 		return refType;
 	}
 
+
 	protected boolean isPrimitiveType(IJavaVariable var) {
 		try {
-			return getTypeNameToOpen(var) != null;
+			return getTypeNameToOpen(var.getReferenceTypeName()) != null;
+		} catch (DebugException e) {
+			JDIDebugUIPlugin.log(e);
+			// fall through
+		}
+		return false;
+	}
+	
+	protected boolean isValuePrimitiveType(IJavaVariable var) {
+		try {
+			return getTypeNameToOpen(var.getValue().getReferenceTypeName()) != null;
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.log(e);
 			// fall through
