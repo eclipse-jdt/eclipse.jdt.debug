@@ -59,11 +59,9 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	/**
 	 * Create the helper class that handles deleting configs whose underlying main type gets deleted
 	 */
-	/*
 	static {
 		new JavaLocalApplicationLaunchConfigurationHelper();
 	}
-	*/
 
 	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
