@@ -11,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -234,7 +233,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	public void dispose() {
 		shutDownVM();
 		fPresentation.dispose();
-		fSnippetStateListeners= Collections.EMPTY_LIST;
+		fSnippetStateListeners= null;
 		super.dispose();
 	}
 	
@@ -495,7 +494,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	public void addSnippetStateChangedListener(ISnippetStateChangedListener listener) {
-		if (!fSnippetStateListeners.contains(listener)) {
+		if (fSnippetStateListeners != null && !fSnippetStateListeners.contains(listener)) {
 			fSnippetStateListeners.add(listener);
 		}
 	}
