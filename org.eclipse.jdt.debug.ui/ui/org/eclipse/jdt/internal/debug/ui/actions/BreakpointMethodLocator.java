@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -98,7 +99,12 @@ public class BreakpointMethodLocator extends ASTVisitor {
 			}
 		}
 		signature.append(')');
-		Type returnType= node.getReturnType();
+		Type returnType;
+		if (node.getAST().apiLevel() >= AST.JLS3) {
+			returnType= node.getReturnType2();
+		} else {
+			returnType= node.getReturnType();
+		}
 		if (returnType instanceof PrimitiveType) {
 			appendTypeLetter(signature, (PrimitiveType)returnType);
 		} else {

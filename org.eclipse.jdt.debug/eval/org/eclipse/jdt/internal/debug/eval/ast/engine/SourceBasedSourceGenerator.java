@@ -822,7 +822,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 					fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
 					fSource.append("() {\n"); //$NON-NLS-1$
 					fSource.append("new "); //$NON-NLS-1$
-					fSource.append(getQualifiedIdentifier(node.getName()));
+					if (fIsJLS3) {
+						fSource.append(getTypeName(node.getType()));
+					} else {
+						fSource.append(getQualifiedIdentifier(node.getName()));
+					}
 					fSource.append("()"); //$NON-NLS-1$
 					
 					fSnippetStartPosition+= fSource.length();
@@ -845,7 +849,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 					fSource.append(' ');
 					fSource.append(getUniqueFieldName(EVAL_FIELD_NAME, bodyDeclarations));
 					fSource.append(" = new "); //$NON-NLS-1$
-					fSource.append(getQualifiedIdentifier(node.getName()));
+					if (fIsJLS3) {
+						fSource.append(getTypeName(node.getType()));
+					} else {
+						fSource.append(getQualifiedIdentifier(node.getName()));
+					}
 					fSource.append("()"); //$NON-NLS-1$
 					
 					fSnippetStartPosition+= fSource.length();
