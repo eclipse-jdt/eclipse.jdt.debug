@@ -797,6 +797,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Saves the library info in a local workspace state location 
 	 */
 	private static void saveLibraryInfo() {
+		FileOutputStream stream= null;
 		try {
 			String xml = getLibraryInfoAsXML();
 			IPath libPath = getDefault().getStateLocation();
@@ -805,16 +806,22 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			FileOutputStream stream = new FileOutputStream(file);
+			stream = new FileOutputStream(file);
 			stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
-			stream.close();
 		} catch (IOException e) {
 			log(e);
 		} catch (ParserConfigurationException e) {
 			log(e);
 		} catch (TransformerException e) {
 			log(e);
-		}	
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
 	}
 	
 	/**

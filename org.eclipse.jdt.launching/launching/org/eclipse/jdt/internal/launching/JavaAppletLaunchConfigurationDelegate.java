@@ -155,13 +155,20 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 			if (!file.exists()) {
 				// copy it to the working directory
 				File test = LaunchingPlugin.getFileInPlugin(new Path("java.policy.applet")); //$NON-NLS-1$
+				BufferedOutputStream outputStream= null;
 				try {
 					byte[] bytes = getFileByteContent(test);
-					BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+					outputStream = new BufferedOutputStream(new FileOutputStream(file));
 					outputStream.write(bytes);
-					outputStream.close();
 				} catch (IOException e) {
 					return "";//$NON-NLS-1$
+				} finally {
+					if (outputStream != null) {
+						try {
+							outputStream.close();
+						} catch (IOException e1) {
+						}
+					}
 				}
 			}
 		return "-Djava.security.policy=java.policy.applet";//$NON-NLS-1$
