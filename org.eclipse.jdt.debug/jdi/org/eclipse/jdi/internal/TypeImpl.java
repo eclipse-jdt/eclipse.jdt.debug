@@ -198,6 +198,82 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 		return signature.toString();
 	}
 	
+
+	/**
+	 * Converts a JNI class signature to a name.
+	 */
+	public static String classSignatureToName(String signature) {
+		// L<classname>;  : fully-qualified-class  
+		return signature.substring(1, signature.length() - 1).replace('/','.');
+	}
+
+	/**
+	 * Converts a JNI array signature to a name.
+	 */
+	public static String arraySignatureToName(String signature) {
+		// [<type> : array of type <type>
+		if (signature.indexOf('[') < 0) {
+			return signature;
+		}
+		StringBuffer name= new StringBuffer();
+		String type= signature.substring(signature.lastIndexOf('[') + 1);
+		if (type.length() == 1 && isPrimitiveSignature(type)) {
+			name.append(getPrimitiveSignatureToName(type.charAt(0)));
+		} else {
+			name.append(classSignatureToName(type));
+		}
+		int index= 0;
+		while ((index= (signature.indexOf('[', index) + 1)) > 0) {
+			name.append('[').append(']');
+		}
+		return signatureToName(signature.substring(1)) + "[]"; //$NON-NLS-1$
+	}
+
+	/**
+	 * @returns Returns Type Name, converted from a JNI signature.
+	 */
+	public static String signatureToName(String signature) {
+		// See JNI 1.1 Specification, Table 3-2 Java VM Type Signatures.
+		String primitive= getPrimitiveSignatureToName(signature.charAt(0));
+		if (primitive != null) {
+			return primitive;
+		}
+		switch (signature.charAt(0)) {
+			case 'V':
+				return "void"; //$NON-NLS-1$
+			case 'L':
+				return classSignatureToName(signature);
+			case '[':
+				return arraySignatureToName(signature);
+			case '(':
+				throw new InternalError(JDIMessages.getString("TypeImpl.Can__t_convert_method_signature_to_name_2")); //$NON-NLS-1$
+		}
+		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____3") + signature + JDIMessages.getString("TypeImpl.__4")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private static String getPrimitiveSignatureToName(char signature) {
+		switch (signature) {
+			case 'Z':
+				return "boolean"; //$NON-NLS-1$
+			case 'B':
+				return "byte"; //$NON-NLS-1$
+			case 'C':
+				return "char"; //$NON-NLS-1$
+			case 'S':
+				return "short"; //$NON-NLS-1$
+			case 'I':
+				return "int"; //$NON-NLS-1$
+			case 'J':
+				return "long"; //$NON-NLS-1$
+			case 'F':
+				return "float"; //$NON-NLS-1$
+			case 'D':
+				return "double"; //$NON-NLS-1$
+			default:
+				return null;
+		}
+	}
+	
 	/**
 	 * @returns Returns Jdwp Tag, converted from a JNI signature.
 	 */

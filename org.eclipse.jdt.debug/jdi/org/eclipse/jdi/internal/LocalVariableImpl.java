@@ -11,8 +11,6 @@
 package org.eclipse.jdi.internal;
 
 
-import org.eclipse.jdt.core.Signature;
-
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.StackFrame;
@@ -166,8 +164,8 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	/** 
 	 * @return Returns a text representation of the declared type of this variable.
 	 */
-	public String typeName() {
-		return Signature.toString(signature()).replace('/','.');
+	public String typeName() { 
+		return TypeImpl.signatureToName(fSignature);
 	}
 	
 	/** 

@@ -25,8 +25,6 @@ import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
-import org.eclipse.jdt.core.Signature;
-
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
@@ -91,7 +89,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * @return Returns a text representation of the component type.
 	 */
 	public String componentTypeName() {
-		return Signature.toString(componentSignature()).replace('/','.');
+		return signatureToName(componentSignature());
 	}
 
 	/**

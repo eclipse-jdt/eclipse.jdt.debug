@@ -279,7 +279,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		List argumentTypeSignatures= argumentTypeSignatures();
 		List result= new ArrayList();
 		for (Iterator iter= argumentTypeSignatures.iterator(); iter.hasNext();) {
-			String argumentTypeName= Signature.toString((String) iter.next()).replace('/','.');
+			String argumentTypeName= TypeImpl.signatureToName((String) iter.next());
 			if (isVarargs() && !iter.hasNext()) { // add '...' to the last argument, if the method has variable arguments
 				argumentTypeName= argumentTypeName.substring(0, argumentTypeName.length() - 2) + "..."; //$NON-NLS-1$
 			}
@@ -472,7 +472,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fReturnTypeName != null) {
 			return fReturnTypeName;
 		}
-		fReturnTypeName= Signature.toString(Signature.getReturnType(signature())).replace('/','.');
+		fReturnTypeName= TypeImpl.signatureToName(Signature.getReturnType(signature())).replace('/','.');
 		return fReturnTypeName;
 	}	
 	

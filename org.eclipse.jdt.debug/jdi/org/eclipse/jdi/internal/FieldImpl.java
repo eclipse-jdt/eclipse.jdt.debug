@@ -16,8 +16,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import org.eclipse.jdi.internal.jdwp.JdwpFieldID;
-import org.eclipse.jdt.core.Signature;
-
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.Field;
 import com.sun.jdi.Type;
@@ -98,7 +96,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	 * @return Returns a text representation of the declared type.
 	 */
 	public String typeName() {
-		return Signature.toString(signature()).replace('/','.');
+		return TypeImpl.signatureToName(signature());
 	}
 	
 	/** 
