@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -444,5 +448,53 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 			assertEquals("Resolved entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, entry.getClasspathProperty());
 		}
 				
-	}			
+	}	
+	
+	/**
+	 * Tests that default classpath computation works for a project with mulitple
+	 * output locations.
+	 * 
+	 * @throws Exception
+	 */
+	public void testMultiOutputDefaultClasspath() throws Exception {
+		IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject("MultiOutput");
+		IJavaProject project = JavaCore.create(p);
+		String[] entries = JavaRuntime.computeDefaultRuntimeClassPath(project);
+		
+		IFolder bin1 = p.getFolder("bin1");
+		IFolder bin2 = p.getFolder("bin2");
+		String location1 = bin1.getLocation().toOSString();
+		String location2 = bin2.getLocation().toOSString();
+		
+		List list = new ArrayList();
+		for (int i = 0; i < entries.length; i++) {
+			list.add(entries[i]);
+		}
+		
+		assertTrue("Classpath is missing " + location1, list.contains(location1));
+		assertTrue("Classpath is missing " + location2, list.contains(location2));
+				
+	}
+	
+	/**
+	 * Tests that default classpath computation works for a project with a default
+	 * output location.
+	 * 
+	 * @throws Exception
+	 */
+	public void testSingleOutputDefaultClasspath() throws Exception {
+		IJavaProject project = getJavaProject();
+		String[] entries = JavaRuntime.computeDefaultRuntimeClassPath(project);
+		
+		IFolder bin = ResourcesPlugin.getWorkspace().getRoot().getFolder(project.getOutputLocation());
+		String location = bin.getLocation().toOSString();
+		
+		List list = new ArrayList();
+		for (int i = 0; i < entries.length; i++) {
+			list.add(entries[i]);
+		}
+		
+		assertTrue("Classpath is missing " + location, list.contains(location));
+				
+	}	
 }

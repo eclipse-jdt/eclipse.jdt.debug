@@ -1206,24 +1206,13 @@ public final class JavaRuntime {
 		List resolved = new ArrayList(unresolved.length);
 		for (int i = 0; i < unresolved.length; i++) {
 			IRuntimeClasspathEntry entry = unresolved[i];
-			if (unresolved[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				String location = null;
-				switch (entry.getType()) {
-					case IRuntimeClasspathEntry.CONTAINER:
-						IRuntimeClasspathEntry[] contained = computeDefaultContainerEntries(entry, jproject);
-						for (int j = 0; j < contained.length; j++) {
-							location = contained[j].getLocation();
-							if (location != null) {
-								resolved.add(location);
-							}
-						}
-						break;
-					default:
-						location = entry.getLocation();
-						if (location != null) {
-							resolved.add(location);
-						}
-						break;
+			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(entry, jproject);
+				for (int j = 0; j < entries.length; j++) {
+					String location = entries[j].getLocation();
+					if (location != null) {
+						resolved.add(location); 
+					}
 				}
 			}
 		}
