@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -707,15 +706,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	public void queueRunnable(Runnable evaluation) {
 		if (fAsyncJob == null) {
 			fAsyncJob= new ThreadJob(this);
-			fAsyncJob.addRunnable(evaluation);
-		} else {
-			synchronized (fAsyncJob) {
-				if (fAsyncJob == null) {
-					fAsyncJob= new ThreadJob(this);
-				}
-				fAsyncJob.addRunnable(evaluation);
-			}
 		}
+		fAsyncJob.addRunnable(evaluation);
 	}
 	
 	/**
@@ -2467,7 +2459,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Class which managed the queue of runnable associated with this thread.
 	 */
-	static class ThreadJob extends Job implements ISchedulingRule {
+	static class ThreadJob extends Job {
 		
 		private Vector fRunnables;
 		
@@ -2477,7 +2469,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			super(JDIDebugModelMessages.getString("JDIThread.39")); //$NON-NLS-1$
 			fJDIThread= thread;
 			fRunnables= new Vector(5);
-			setRule(this);
 		}
 		
 		public void addRunnable(Runnable runnable) {
@@ -2494,12 +2485,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 */
 		public IStatus run(IProgressMonitor monitor) {
 			fJDIThread.fRunningAsyncJob= this;
-			synchronized (this) {
-				fJDIThread.fAsyncJob= null;
+			Vector runnables;
+			synchronized (fRunnables) {
+				runnables= fRunnables;
+				fRunnables= new Vector(5);
 			}
 
-			monitor.beginTask(this.getName(), fRunnables.size()); //$NON-NLS-1$
-			for (Iterator iter= fRunnables.iterator(); iter.hasNext() && !fJDIThread.isTerminated() || monitor.isCanceled();) {
+			monitor.beginTask(this.getName(), runnables.size()); //$NON-NLS-1$
+			for (Iterator iter= runnables.iterator(); iter.hasNext() && !fJDIThread.isTerminated() || monitor.isCanceled();) {
 				try {
 					((Runnable)iter.next()).run();
 				} catch (Throwable t) {
@@ -2516,21 +2509,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 		 */
 		public boolean shouldRun() {
-			return !fJDIThread.isTerminated();
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
-		public boolean contains(ISchedulingRule rule) {
-			return (rule instanceof ThreadJob) && fJDIThread == ((ThreadJob)rule).fJDIThread;
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
-		public boolean isConflicting(ISchedulingRule rule) {
-			return (rule instanceof ThreadJob) && fJDIThread == ((ThreadJob)rule).fJDIThread;
+			return !fJDIThread.isTerminated() && !fRunnables.isEmpty();
 		}
 
 	}
