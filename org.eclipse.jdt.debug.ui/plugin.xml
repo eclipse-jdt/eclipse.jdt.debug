@@ -1874,18 +1874,38 @@
             helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.local_java_application"
             class="org.eclipse.jdt.internal.debug.ui.launcher.LocalJavaApplicationTabGroup"
             id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication">
+            <launchMode 
+                  mode="debug"
+                  perspective="org.eclipse.debug.ui.DebugPerspective"
+                  description="%localJavaApplicationTabGroupDescription.debug">
+            </launchMode>
+            <launchMode
+                  mode="run"
+                  description="%localJavaApplicationTabGroupDescription.run">
+            </launchMode>
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.jdt.launching.remoteJavaApplication"
+            description="%remoteJavaApplicationTabGroupDescription"
             helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.remote_java_application"
             class="org.eclipse.jdt.internal.debug.ui.launcher.RemoteJavaApplicationTabGroup"
             id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.remoteJavaApplication">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.jdt.launching.javaApplet"
+            description="%appletTabGroupDescription"
             helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.java_applet"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletTabGroup"
             id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.javaApplet">
+            <launchMode 
+                  mode="debug"
+                  perspective="org.eclipse.debug.ui.DebugPerspective"
+                  description="%appletTabGroupDescription.debug">
+            </launchMode>
+            <launchMode
+                  mode="run"
+                  description="%appletTabGroupDescription.run">
+            </launchMode>
       </launchConfigurationTabGroup>
    </extension>
    <extension
