@@ -243,43 +243,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		}
 		return (String[])userEntries.toArray(new String[userEntries.size()]);
 	}
-	
-	/**
-	 * Return the default classpath computed for the specified configuration.  Remove any
-	 * 'rt.jar' entry from this classpath before returning it.
-	 * 
-	 * @param configuration the launch configuration to compute the default classpath for
-	 * @exception CoreException if unable to compute the default classpath
-	 */
-	private String[] getDefaultClasspath(ILaunchConfiguration configuration) throws CoreException {
-		IJavaProject javaProject = getJavaProject(configuration);
-		if (javaProject == null) {
-			return new String[0];
-		}
-		String[] defaultClasspath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);		
-		return removeRtJarFromClasspath(defaultClasspath);
-	}
-	
-	/**
-	 * Remove any entry in the String array argument that corresponds to an 'rt.jar' file.
-	 */
-	private String[] removeRtJarFromClasspath(String[] classpath) {
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < classpath.length; i++) {
-			if (classpath[i].endsWith("rt.jar")) { //$NON-NLS-1$
-				File file = new File(classpath[i]);
-				if ("rt.jar".equals(file.getName())) { //$NON-NLS-1$
-					continue;
-				}
-			}
-			list.add(classpath[i]);
-		}
-		list.trimToSize();
-		String[] stringArray = new String[list.size()];
-		list.toArray(stringArray);
-		return stringArray;
-	}
-	
+		
 	/**
 	 * Returns the Java project specified by the given 
 	 * launch configuration, or <code>null</code> if none.
