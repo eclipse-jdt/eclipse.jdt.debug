@@ -9,10 +9,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.eval.model.IValue;
 
-/**
- * @version 	1.0
- * @author
- */
 public class DivideOperator extends BinaryOperator {
 	public DivideOperator(int resultId, int leftTypeId, int rightTypeId, int start) {
 		this(resultId, leftTypeId, rightTypeId, false, start);

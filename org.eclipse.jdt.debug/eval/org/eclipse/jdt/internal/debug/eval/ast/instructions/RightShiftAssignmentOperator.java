@@ -4,10 +4,6 @@
  */
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-/**
- * @version 	1.0
- * @author
- */
 public class RightShiftAssignmentOperator extends RightShiftOperator {
 
 	public RightShiftAssignmentOperator(int variableTypeId, int valueTypeId, int start) {

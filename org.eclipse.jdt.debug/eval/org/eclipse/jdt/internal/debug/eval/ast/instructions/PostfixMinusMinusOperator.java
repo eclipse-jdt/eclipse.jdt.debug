@@ -8,10 +8,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.eval.model.IVariable;
 
-/**
- * @version 	1.0
- * @author
- */
 public class PostfixMinusMinusOperator extends XfixOperator {
 	
 	public PostfixMinusMinusOperator(int variableTypeId, int start) {

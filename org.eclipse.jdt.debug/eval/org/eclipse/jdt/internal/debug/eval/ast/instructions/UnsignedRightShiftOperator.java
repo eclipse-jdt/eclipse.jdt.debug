@@ -7,10 +7,6 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.eval.model.IValue;
 
-/**
- * @version 	1.0
- * @author
- */
 public class UnsignedRightShiftOperator extends BinaryOperator {
 	public UnsignedRightShiftOperator(int resultId, int leftTypeId, int rightTypeId, int start) {
 		this(resultId, leftTypeId, rightTypeId, false, start);

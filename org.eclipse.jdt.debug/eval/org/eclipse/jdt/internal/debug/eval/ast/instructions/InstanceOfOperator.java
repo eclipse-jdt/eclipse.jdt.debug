@@ -10,10 +10,6 @@ import org.eclipse.jdt.debug.eval.model.IInterfaceType;
 import org.eclipse.jdt.debug.eval.model.IObject;
 import org.eclipse.jdt.debug.eval.model.IType;
 
-/**
- * @version 	1.0
- * @author
- */
 public class InstanceOfOperator extends CompoundInstruction {
 	public static final String IS_INSTANCE= "isInstance";
 	public static final String IS_INSTANCE_SIGNATURE= "(Ljava/lang/Object;)Z";

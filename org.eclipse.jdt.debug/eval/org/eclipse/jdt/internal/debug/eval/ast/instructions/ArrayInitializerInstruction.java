@@ -8,10 +8,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.eval.model.IArray;
 import org.eclipse.jdt.debug.eval.model.IArrayType;
 
-/**
- * @version 	1.0
- * @author
- */
 public class ArrayInitializerInstruction extends ArrayInstruction {
 
 	private String fTypeSignature;

@@ -7,10 +7,6 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 
-/**
- * @version 	1.0
- * @author
- */
 public class NoOp extends CompoundInstruction {
 
 	public NoOp(int start) {

@@ -9,10 +9,6 @@ import org.eclipse.jdt.debug.eval.model.IValue;
 import org.eclipse.jdt.internal.debug.eval.model.*;
 import org.eclipse.jdt.internal.debug.eval.model.EvaluationValue;
 
-/**
- * @version 	1.0
- * @author
- */
 public class EqualEqualOperator extends BinaryOperator {
 	
 	private boolean fIsEquals;

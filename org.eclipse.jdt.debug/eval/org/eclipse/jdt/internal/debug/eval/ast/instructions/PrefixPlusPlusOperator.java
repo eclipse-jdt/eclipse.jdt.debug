@@ -8,10 +8,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.eval.model.IVariable;
 
-/**
- * @version 	1.0
- * @author
- */
 public class PrefixPlusPlusOperator extends XfixOperator {
 	
 	public PrefixPlusPlusOperator(int variableTypeId, int start) {

@@ -7,9 +7,6 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 /**
  * A <code>CompoundInstruction</code> is a container instruction
  * and may have a size greater than one.
- * 
- * @version 	1.0
- * @author
  */
 public abstract class CompoundInstruction extends Instruction {
 

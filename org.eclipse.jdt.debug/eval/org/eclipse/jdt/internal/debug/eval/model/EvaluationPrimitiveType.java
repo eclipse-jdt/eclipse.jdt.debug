@@ -7,13 +7,7 @@ package org.eclipse.jdt.internal.debug.eval.model;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.eval.model.IPrimitiveType;
 
-/**
- * @version 	1.0
- * @author
- */
-public class EvaluationPrimitiveType
-//	extends EvaluationType
-	implements IPrimitiveType {
+public class EvaluationPrimitiveType implements IPrimitiveType {
 		
 	private String fName;
 	private String fSignature;

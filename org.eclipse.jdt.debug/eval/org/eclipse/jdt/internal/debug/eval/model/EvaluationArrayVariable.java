@@ -11,10 +11,6 @@ import org.eclipse.jdt.debug.eval.model.IType;
 import org.eclipse.jdt.debug.eval.model.IValue;
 import org.eclipse.jdt.debug.eval.model.IVariable;
 
-/**
- * @version 	1.0
- * @author
- */
 public class EvaluationArrayVariable implements IVariable {
 
 	private IArray fArray;

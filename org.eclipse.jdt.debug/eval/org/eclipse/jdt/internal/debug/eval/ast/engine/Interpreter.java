@@ -13,10 +13,6 @@ import org.eclipse.jdt.debug.eval.model.IVariable;
 import org.eclipse.jdt.debug.eval.model.IVirtualMachine;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction;
 
-/**
- * @version 	1.0
- * @author
- */
 public class Interpreter {
 	private Instruction[] fInstructions;
 	private int fInstructionCounter;

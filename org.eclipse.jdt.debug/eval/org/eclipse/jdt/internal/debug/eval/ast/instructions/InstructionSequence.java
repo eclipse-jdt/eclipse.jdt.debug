@@ -14,10 +14,6 @@ import org.eclipse.jdt.debug.eval.model.IRuntimeContext;
 import org.eclipse.jdt.debug.eval.model.IValue;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.*;
 
-/**
- * @version 	1.0
- * @author
- */
 public class InstructionSequence implements ICompiledExpression {
 
 	private List fInstructions;

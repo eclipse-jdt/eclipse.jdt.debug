@@ -14,10 +14,6 @@ import org.eclipse.jdt.internal.debug.eval.model.*;
 import org.eclipse.jdt.internal.debug.eval.model.EvaluationObject;
 import org.eclipse.jdt.internal.debug.eval.model.EvaluationValue;
 
-/**
- * @version 	1.0
- * @author
- */
 public class PlusOperator extends BinaryOperator {
 
 	public static final String NULL= "null";

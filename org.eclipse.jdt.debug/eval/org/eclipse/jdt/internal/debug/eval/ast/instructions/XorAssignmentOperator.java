@@ -4,10 +4,6 @@
  */
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-/**
- * @version 	1.0
- * @author
- */
 public class XorAssignmentOperator extends XorOperator {
 
 	public XorAssignmentOperator(int variableTypeId, int valueTypeId, int start) {

@@ -10,10 +10,6 @@ import org.eclipse.jdt.debug.eval.model.IArrayType;
 import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.eval.model.IType;
 
-/**
- * @version 	1.0
- * @author
- */
 public class ArrayAllocation extends ArrayInstruction {
 
 	private int fDimension;

@@ -9,9 +9,6 @@ import org.eclipse.jdt.debug.eval.model.IType;
 
 /**
  * Handles code like "new Object().class"
- * 
- * @version 	1.0
- * @author
  */
 public class PushClassLiteralValue extends CompoundInstruction {
 	public PushClassLiteralValue(int start) {

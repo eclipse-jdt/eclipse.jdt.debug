@@ -9,10 +9,6 @@ import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.eval.model.IValue;
 import org.eclipse.jdt.debug.eval.model.IVariable;
 
-/**
- * @version 	1.0
- * @author
- */
 public abstract class BinaryOperator extends CompoundInstruction {
 	protected int fResultTypeId;
 	protected int fLeftTypeId;

@@ -8,10 +8,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.eval.model.IObject;
 import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 
-/**
- * @version 	1.0
- * @author
- */
 public class UnaryPlusOperator extends UnaryOperator {
 
 	public UnaryPlusOperator(int expressionTypeId, int start) {

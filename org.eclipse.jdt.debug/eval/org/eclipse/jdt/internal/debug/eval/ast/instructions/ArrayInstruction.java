@@ -10,10 +10,6 @@ import org.eclipse.jdt.debug.eval.model.IArrayType;
 import org.eclipse.jdt.debug.eval.model.IObject;
 import org.eclipse.jdt.debug.eval.model.IType;
 
-/**
- * @version 	1.0
- * @author
- */
 public abstract class ArrayInstruction extends CompoundInstruction {
 
 	

@@ -11,10 +11,6 @@ import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.eval.model.IType;
 import org.eclipse.jdt.debug.eval.model.IValue;
 
-/**
- * @version 	1.0
- * @author
- */
 public class Cast extends CompoundInstruction {
 
 	public static final String IS_INSTANCE= "isInstance";

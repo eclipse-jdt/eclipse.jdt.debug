@@ -77,10 +77,6 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 
-/**
- * @version 	1.0
- * @author
- */
 public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private static final String RUN_METHOD_NAME= "___run"; //$NON-NLS-1$
