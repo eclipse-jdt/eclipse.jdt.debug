@@ -43,7 +43,14 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchesListener;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -60,7 +67,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener {
+public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
 	
 	/**
 	 * Identifier for 'vmConnectors' extension point
@@ -306,6 +313,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		ArchiveSourceLocation.closeArchives();
 		getPluginPreferences().removePropertyChangeListener(this);
@@ -345,6 +354,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 
 		JavaRuntime.addVMInstallChangedListener(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, ResourceChangeEvent.PRE_DELETE | ResourceChangeEvent.PRE_CLOSE);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 	
 	/**
@@ -767,6 +778,45 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		return (String[])paths.toArray(new String[paths.size()]);		
 	}
 	
+	/**
+	 * When a launch is removed, close all source archives. Prevents file
+	 * sharing violations.
+	 * 
+	 * @see ILaunchesListener#launchesRemoved(ILaunch[])
+	 */
+	public void launchesRemoved(ILaunch[] launches) {
+		ArchiveSourceLocation.closeArchives();
+	}
+	
+	/**
+	 * @see ILaunchesListener#launchesAdded(ILaunch[])
+	 */
+	public void launchesAdded(ILaunch[] launches) {
+	}
+	
+	/**
+	 * @see ILaunchesListener#launchesChanged(ILaunch[])
+	 */
+	public void launchesChanged(ILaunch[] launches) {
+	}
+	
+	/**
+	 * When a debug target or process terminates, close source arhives.
+	 * Prevents file sharing violations.
+	 * 
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
+	 */
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getKind() == DebugEvent.TERMINATE) {
+				Object source = event.getSource();
+				if (source instanceof IDebugTarget || source instanceof IProcess) {
+					ArchiveSourceLocation.closeArchives();
+				}
+			}
+		}
+	}
 }
 
  
