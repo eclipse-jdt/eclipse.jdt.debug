@@ -118,14 +118,9 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 	/*
 	 * @see IJavaClassType#getField(String)
 	 */
-	public IJavaVariable getField(String name, boolean superField) throws DebugException {
-		Type type = getUnderlyingType();
+	public IJavaVariable getField(String name) throws DebugException {
 		try {
-			if (superField) {
-				// begin lookup in superclass
-				type = ((ClassType)type).superclass();
-			}
-			Field field = ((ClassType)type).fieldByName(name);
+			Field field = ((ClassType)getUnderlyingType()).fieldByName(name);
 			if (field != null) {
 				return new JDIFieldVariable(getDebugTarget(), field, null);
 			}			

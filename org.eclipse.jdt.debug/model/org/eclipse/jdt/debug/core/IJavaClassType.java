@@ -75,8 +75,6 @@ public interface IJavaClassType  extends IJavaType {
 	 * field with the given name, or the name is ambiguous.
 	 * 
 	 * @param name field name
-	 * @param superField whether or not to get the field from the superclass
-	 *  of this class
 	 * @return the variable representing the static field, or <code>null</code>
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
@@ -84,7 +82,7 @@ public interface IJavaClassType  extends IJavaType {
 	 * the failure.</li>
 	 * </ul>
 	 */
-	public IJavaVariable getField(String name, boolean superField) throws DebugException;	
+	public IJavaVariable getField(String name) throws DebugException;	
 	
 	/**
 	 * Returns the superclass of this class type, or <code>null</code>
