@@ -830,7 +830,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#getSourceName()
 	 */
 	public String getSourceName() throws DebugException {
-		if (fSourceName == null) {
+		if (fStackFrame == null || fSourceName == null) {
 			try {
 				Location l = getUnderlyingMethod().location();
 				if (l != null) {
