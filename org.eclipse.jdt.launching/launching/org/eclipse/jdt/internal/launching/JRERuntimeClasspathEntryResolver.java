@@ -5,9 +5,6 @@ package org.eclipse.jdt.internal.launching;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -19,7 +16,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 
 /**
- * Resolves for JRELIB_VARIALBE and JRE_CONTAINER
+ * Resolves for JRELIB_VARIABLE and JRE_CONTAINER
  */
 public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryResolver {
 
