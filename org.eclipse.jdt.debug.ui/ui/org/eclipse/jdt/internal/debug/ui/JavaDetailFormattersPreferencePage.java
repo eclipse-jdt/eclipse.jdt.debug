@@ -262,7 +262,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 
 	public void addType() {
 		DetailFormatter detailFormat= new DetailFormatter("", "", true); //$NON-NLS-1$ //$NON-NLS-2$
-		if (new DetailFormatterDialog(getShell(), detailFormat).open() == Window.OK) {
+		if (new DetailFormatterDialog(getShell(), detailFormat, false).open() == Window.OK) {
 			fFormatViewerContentProvider.addDetailFormat(detailFormat);
 		}
 	}
@@ -273,7 +273,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	
 	public void editType() {
 		IStructuredSelection selection= (IStructuredSelection)fFormatterListViewer.getSelection();
-		if (new DetailFormatterDialog(getShell(), (DetailFormatter)(selection).getFirstElement()).open() == Window.OK) {
+		if (new DetailFormatterDialog(getShell(), (DetailFormatter)(selection).getFirstElement(), true).open() == Window.OK) {
 			fFormatterListViewer.refresh();
 			fFormatViewerContentProvider.refreshViewer();
 			updatePage(selection);
@@ -302,7 +302,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fDetailFormattersList= new ArrayList(detailFormattersList.length / 3);
 			for (int i= 0, length= detailFormattersList.length; i < length;) {
 				String typeName= detailFormattersList[i++];
-				String snippet= detailFormattersList[i++];
+				String snippet= detailFormattersList[i++].replace('\u0000', ',');
 				boolean enabled= ! DETAIL_FORMATTER_IS_DISABLED.equals(detailFormattersList[i++]);
 				DetailFormatter detailFormatter= new DetailFormatter(typeName, snippet, enabled);
 				fDetailFormattersList.add(detailFormatter);
@@ -317,7 +317,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			for (Iterator iter= fDetailFormattersList.iterator(); iter.hasNext();) {
 				DetailFormatter detailFormatter= (DetailFormatter) iter.next();
 				values[i++]= detailFormatter.getTypeName();
-				values[i++]= detailFormatter.getSnippet();
+				values[i++]= detailFormatter.getSnippet().replace(',','\u0000');
 				values[i++]= detailFormatter.isEnabled() ? DETAIL_FORMATTER_IS_ENABLED : DETAIL_FORMATTER_IS_DISABLED;
 			}
 			String pref = JavaDebugOptionsManager.serializeList(values);

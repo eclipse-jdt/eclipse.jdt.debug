@@ -24,12 +24,16 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -49,13 +53,17 @@ class DetailFormatterDialog extends StatusDialog {
 	
 	private Text fTypeNameText;
 
-	private SourceViewer fSnippetViewer;
+	private JDISourceViewer fSnippetViewer;
 	
-	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormat) {
+	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormat, boolean editDialog) {
 		super(parent);
 		fDetailFormat= detailFormat;
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
-		setTitle(DebugUIMessages.getString("DetailFormatterDialog.Edit_1")); //$NON-NLS-1$
+		if (editDialog) {
+			setTitle(DebugUIMessages.getString(DebugUIMessages.getString("DetailFormatterDialog.Edit_Detail_Formatter_1"))); //$NON-NLS-1$
+		} else {
+			setTitle(DebugUIMessages.getString(DebugUIMessages.getString("DetailFormatterDialog.Add_Detail_Formatter_2"))); //$NON-NLS-1$
+		}
 	}
 	
 	/**
@@ -72,23 +80,19 @@ class DetailFormatterDialog extends StatusDialog {
 
 		// type name label
 		Label label= new Label(container, SWT.NONE);
-		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_name__2")); //$NON-NLS-1$
+		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_&name__2")); //$NON-NLS-1$
 		gd= new GridData(GridData.BEGINNING);
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
 
 		// type name text
-		fTypeNameText= new Text(container, SWT.SINGLE);
+		fTypeNameText= new Text(container, SWT.SINGLE | SWT.BORDER);
 		fTypeNameText.setText(fDetailFormat.getTypeName());
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fTypeNameText.setLayoutData(gd);
 		fTypeNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				StatusInfo status= new StatusInfo();
-				if (fTypeNameText.getText().trim().length() == 0) {
-					status.setError(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_name_must_not_be_empty._3")); //$NON-NLS-1$
- 				}
-				updateStatus(status);
+				checkValues();
 			}
 		});
 		
@@ -106,13 +110,13 @@ class DetailFormatterDialog extends StatusDialog {
 		
 		// snippet label
 		label= new Label(container, SWT.NONE);
-		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Associated_code__5")); //$NON-NLS-1$
+		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Associated_&code__5")); //$NON-NLS-1$
 		gd= new GridData(GridData.BEGINNING);
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
 
 		// snippet viewer
-		fSnippetViewer= new SourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		fSnippetViewer= new JDISourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
 	
 		JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
 		IDocument document= new Document();
@@ -134,10 +138,29 @@ class DetailFormatterDialog extends StatusDialog {
 		control.setLayoutData(gd);
 		document.set(fDetailFormat.getSnippet());
 		
+		fSnippetViewer.getDocument().addDocumentListener(new IDocumentListener() {
+			public void documentAboutToBeChanged(DocumentEvent event) {
+			}
+			public void documentChanged(DocumentEvent event) {
+				checkValues();
+			}
+		});
+		
+		checkValues();
+
 		return container;
 	}
 	
 	
+	private void checkValues() {
+		StatusInfo status= new StatusInfo();
+		if (fTypeNameText.getText().trim().length() == 0) {
+			status.setError(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_name_must_not_be_empty._3")); //$NON-NLS-1$
+		} else if (fSnippetViewer.getDocument().get().trim().length() == 0) {
+			status.setError(DebugUIMessages.getString("DetailFormatterDialog.Associated_code_must_not_be_empty_3")); //$NON-NLS-1$
+		}
+		updateStatus(status);
+	}
 
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
