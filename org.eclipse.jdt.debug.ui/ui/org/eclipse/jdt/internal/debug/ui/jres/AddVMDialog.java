@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
@@ -97,7 +97,7 @@ public class AddVMDialog extends StatusDialog {
 	
 	protected void createDialogFields() {
 		fVMTypeCombo= new ComboDialogField(SWT.READ_ONLY);
-		fVMTypeCombo.setLabelText(LauncherMessages.getString("addVMDialog.jreType")); //$NON-NLS-1$
+		fVMTypeCombo.setLabelText(JREMessages.getString("addVMDialog.jreType")); //$NON-NLS-1$
 		fVMTypeCombo.setItems(getVMTypeNames());
 		fVMTypeCombo.setDialogFieldListener(new IDialogFieldListener() {
 			public void dialogFieldChanged(DialogField field) {
@@ -106,7 +106,7 @@ public class AddVMDialog extends StatusDialog {
 		});
 		
 		fVMName= new StringDialogField();
-		fVMName.setLabelText(LauncherMessages.getString("addVMDialog.jreName")); //$NON-NLS-1$
+		fVMName.setLabelText(JREMessages.getString("addVMDialog.jreName")); //$NON-NLS-1$
 		fVMName.setDialogFieldListener(new IDialogFieldListener() {
 			public void dialogFieldChanged(DialogField field) {
 				setVMNameStatus(validateVMName());
@@ -119,8 +119,8 @@ public class AddVMDialog extends StatusDialog {
 				browseForInstallDir();
 			}
 		});
-		fJRERoot.setLabelText(LauncherMessages.getString("addVMDialog.jreHome")); //$NON-NLS-1$
-		fJRERoot.setButtonLabel(LauncherMessages.getString("addVMDialog.browse1")); //$NON-NLS-1$
+		fJRERoot.setLabelText(JREMessages.getString("addVMDialog.jreHome")); //$NON-NLS-1$
+		fJRERoot.setButtonLabel(JREMessages.getString("addVMDialog.browse1")); //$NON-NLS-1$
 		fJRERoot.setDialogFieldListener(new IDialogFieldListener() {
 			public void dialogFieldChanged(DialogField field) {
 				setJRELocationStatus(validateJRELocation());
@@ -133,8 +133,8 @@ public class AddVMDialog extends StatusDialog {
 				browseForJavadocURL();
 			}
 		});
-		fJavadocURL.setLabelText(LauncherMessages.getString("AddVMDialog.Java&doc_URL__1")); //$NON-NLS-1$
-		fJavadocURL.setButtonLabel(LauncherMessages.getString("AddVMDialog.Bro&wse..._2")); //$NON-NLS-1$
+		fJavadocURL.setLabelText(JREMessages.getString("AddVMDialog.Java&doc_URL__1")); //$NON-NLS-1$
+		fJavadocURL.setButtonLabel(JREMessages.getString("AddVMDialog.Bro&wse..._2")); //$NON-NLS-1$
 		fJavadocURL.setDialogFieldListener(new IDialogFieldListener() {
 			public void dialogFieldChanged(DialogField field) {
 				setJavadocURLStatus(validateJavadocURL());
@@ -171,7 +171,7 @@ public class AddVMDialog extends StatusDialog {
 		fJavadocURL.doFillIntoGrid(parent, 3);
 		
 		Label l = new Label(parent, SWT.NONE);
-		l.setText(LauncherMessages.getString("AddVMDialog.JRE_system_libraries__1")); //$NON-NLS-1$
+		l.setText(JREMessages.getString("AddVMDialog.JRE_system_libraries__1")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		l.setLayoutData(gd);
@@ -261,11 +261,11 @@ public class AddVMDialog extends StatusDialog {
 		IStatus s = null;
 		File file = null;
 		if (locationName.length() == 0) {//$NON-NLS-1$
-			s = new StatusInfo(IStatus.INFO, LauncherMessages.getString("addVMDialog.enterLocation")); //$NON-NLS-1$
+			s = new StatusInfo(IStatus.INFO, JREMessages.getString("addVMDialog.enterLocation")); //$NON-NLS-1$
 		} else {
 			file= new File(locationName);
 			if (!file.exists()) {
-				s = new StatusInfo(IStatus.ERROR, LauncherMessages.getString("addVMDialog.locationNotExists")); //$NON-NLS-1$
+				s = new StatusInfo(IStatus.ERROR, JREMessages.getString("addVMDialog.locationNotExists")); //$NON-NLS-1$
 			} else {
 				final IStatus[] temp = new IStatus[1];
 				final File tempFile = file; 
@@ -297,7 +297,7 @@ public class AddVMDialog extends StatusDialog {
 			try {
 				new URL(text);
 			} catch (MalformedURLException e) {
-				return new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, LauncherMessages.getString("AddVMDialog.Invalid_URL_syntax_specified_for_Javadoc_location._1"), e); //$NON-NLS-1$
+				return new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, JREMessages.getString("AddVMDialog.Invalid_URL_syntax_specified_for_Javadoc_location._1"), e); //$NON-NLS-1$
 			}
 		}
 		return new StatusInfo();
@@ -324,14 +324,14 @@ public class AddVMDialog extends StatusDialog {
 		StatusInfo status= new StatusInfo();
 		String name= fVMName.getText();
 		if (name == null || name.trim().length() == 0) {
-			status.setInfo(LauncherMessages.getString("addVMDialog.enterName")); //$NON-NLS-1$
+			status.setInfo(JREMessages.getString("addVMDialog.enterName")); //$NON-NLS-1$
 		} else {
 			if (fRequestor.isDuplicateName(name) && (fEditedVM == null || !name.equals(fEditedVM.getName()))) {
-				status.setError(LauncherMessages.getString("addVMDialog.duplicateName")); //$NON-NLS-1$
+				status.setError(JREMessages.getString("addVMDialog.duplicateName")); //$NON-NLS-1$
 			} else {
 				IStatus s = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
 				if (!s.isOK()) {
-					status.setError(MessageFormat.format(LauncherMessages.getString("AddVMDialog.JRE_name_must_be_a_valid_file_name__{0}_1"), new String[]{s.getMessage()})); //$NON-NLS-1$
+					status.setError(MessageFormat.format(JREMessages.getString("AddVMDialog.JRE_name_must_be_a_valid_file_name__{0}_1"), new String[]{s.getMessage()})); //$NON-NLS-1$
 				}
 			}
 		}
@@ -356,7 +356,7 @@ public class AddVMDialog extends StatusDialog {
 	private void browseForInstallDir() {
 		DirectoryDialog dialog= new DirectoryDialog(getShell());
 		dialog.setFilterPath(fJRERoot.getText());
-		dialog.setMessage(LauncherMessages.getString("addVMDialog.pickJRERootDialog.message")); //$NON-NLS-1$
+		dialog.setMessage(JREMessages.getString("addVMDialog.pickJRERootDialog.message")); //$NON-NLS-1$
 		String newPath= dialog.open();
 		if (newPath != null) {
 			fJRERoot.setText(newPath);
@@ -373,7 +373,7 @@ public class AddVMDialog extends StatusDialog {
 		}
 
 		dialog.setFilterPath(initPath);
-		dialog.setMessage(LauncherMessages.getString("AddVMDialog.Select_Javadoc_location__3")); //$NON-NLS-1$
+		dialog.setMessage(JREMessages.getString("AddVMDialog.Select_Javadoc_location__3")); //$NON-NLS-1$
 		String res = dialog.open();
 		if (res != null) {
 			try {

@@ -24,8 +24,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.launcher.AddVMDialog;
-import org.eclipse.jdt.internal.debug.ui.launcher.IAddVMDialogRequestor;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -654,7 +652,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	}
 	
 	private void saveColumn(IDialogSettings settings, String qualifier, int col) {
-		settings.put(qualifier + ".column" + col, getColumnWeight(col));	
+		settings.put(qualifier + ".column" + col, getColumnWeight(col));	 //$NON-NLS-1$
 	}
 	
 	private float getColumnWeight(int col) {
@@ -682,7 +680,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		Table table = fVMList.getTable();
 		
 		try {
-			return settings.getFloat(qualifier + ".column" + col);
+			return settings.getFloat(qualifier + ".column" + col); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
 			return 1/3F;
 		}

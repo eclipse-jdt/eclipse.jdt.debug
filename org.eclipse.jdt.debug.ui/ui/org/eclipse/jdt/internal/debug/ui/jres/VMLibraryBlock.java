@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
@@ -28,6 +28,8 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
+import org.eclipse.jdt.internal.debug.ui.launcher.IEntriesChangedListener;
+import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -103,7 +105,7 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 		createVerticalSpacer(comp, 2);
 						
 		fDefaultButton = new Button(comp, SWT.CHECK);
-		fDefaultButton.setText(LauncherMessages.getString("VMLibraryBlock.Use_default_system_libraries_1")); //$NON-NLS-1$
+		fDefaultButton.setText(JREMessages.getString("VMLibraryBlock.Use_default_system_libraries_1")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fDefaultButton.setLayoutData(gd);
@@ -258,7 +260,7 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 				entries[i].setSourceAttachmentRootPath(libs[i].getPackageRootPath());
 				if (!libPath.toFile().exists() && status == null) {
 					status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
-						LauncherMessages.getString("VMLibraryBlock.Default_libraries_do_not_exist._1"), null); //$NON-NLS-1$
+						JREMessages.getString("VMLibraryBlock.Default_libraries_do_not_exist._1"), null); //$NON-NLS-1$
 				}				
 			}
 			fPathViewer.setEntries(entries);
@@ -266,7 +268,7 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 		fPathViewer.setEnabled(!useDefault);		
 		if (getEntries().length == 0 && !isDefaultSystemLibrary()) {
 			status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
-				LauncherMessages.getString("VMLibraryBlock.Libraries_cannot_be_empty._1"), null); //$NON-NLS-1$
+				JREMessages.getString("VMLibraryBlock.Libraries_cannot_be_empty._1"), null); //$NON-NLS-1$
 		} else if (status == null) {
 			status = new StatusInfo();
 		}		

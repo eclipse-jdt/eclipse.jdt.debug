@@ -27,6 +27,7 @@ import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.jres.AddVMDialog;
 import org.eclipse.jdt.internal.debug.ui.jres.IAddVMDialogRequestor;
+import org.eclipse.jdt.internal.debug.ui.jres.JREMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
@@ -414,7 +415,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 */
 	protected void handleJREAddButtonSelected() {
 		AddVMDialog dialog= new AddVMDialog(this, getShell(), fVMTypes, null);
-		dialog.setTitle(LauncherMessages.getString("vmPreferencePage.addJRE.title")); //$NON-NLS-1$
+		dialog.setTitle(JREMessages.getString("InstalledJREsBlock.7")); //$NON-NLS-1$
 		if (dialog.open() != AddVMDialog.OK) {
 			return;
 		}
