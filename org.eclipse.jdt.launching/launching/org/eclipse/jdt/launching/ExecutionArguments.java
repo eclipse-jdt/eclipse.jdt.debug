@@ -129,6 +129,9 @@ public class ExecutionArguments {
 	
 			ch= getNext();
 				
+			// add the preceding and trailing quotes that were present
+			buf.insert(0, '"');
+			buf.append('"');
 			return buf.toString();
 		}
 		
