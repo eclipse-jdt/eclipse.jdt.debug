@@ -53,14 +53,12 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 	 * @see IVMRunner#run
 	 */
 	public VMRunnerResult run(VMRunnerConfiguration config) throws CoreException {
+		verifyVMInstall();
 		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
 		if (port == -1) {
 			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.noPort"), null)); //$NON-NLS-1$
 		}
-		String location= getJDKLocation(""); //$NON-NLS-1$
-		if ("".equals(location)) { //$NON-NLS-1$
-			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.noJDKHome"), null)); //$NON-NLS-1$
-		}
+		String location= getJDKLocation();
 		String program= location+File.separator+"bin"+File.separator+"java"; //$NON-NLS-2$ //$NON-NLS-1$
 		File javawexe= new File(program+"w.exe"); //$NON-NLS-1$
 		File javaw= new File(program+"w"); //$NON-NLS-1$

@@ -11,6 +11,7 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
@@ -53,12 +54,28 @@ public abstract class JavaLauncher implements IVMRunner {
 			v.add(args[i]);
 	}
 		
-
+	/**
+	 * Verifies this launcher's VM install is valid.
+	 * 
+	 * @exception CoreException if this launcher's VM install
+	 *  is invalid. Reasons include:<ul>
+	 * <li>The install location does not exist</li>
+	 * </ul>
+	 */
+	protected void verifyVMInstall() throws CoreException {
+		File location = fVMInstance.getInstallLocation();
+		if (location == null) {
+			throw new CoreException(createStatus(
+				MessageFormat.format(LauncherMessages.getString("JavaLauncher.JRE_home_not_specified"), new String[]{fVMInstance.getName()}), null)); //$NON-NLS-1$
+		}
+		if (!location.exists()) {
+			throw new CoreException(createStatus(
+				MessageFormat.format(LauncherMessages.getString("JavaLauncher.JRE_home_does_not_exist"), new String[]{fVMInstance.getName(), location.getAbsolutePath()}), null)); //$NON-NLS-1$
+		}
+	}
 	
-	protected String getJDKLocation(String dflt) {
+	protected String getJDKLocation() {
 		File location= fVMInstance.getInstallLocation();
-		if (location == null)
-			return dflt;
 		return location.getAbsolutePath();
 	}
 	

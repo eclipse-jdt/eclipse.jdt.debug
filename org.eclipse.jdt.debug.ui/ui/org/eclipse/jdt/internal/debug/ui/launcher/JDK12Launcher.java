@@ -26,10 +26,8 @@ public class JDK12Launcher extends JavaLauncher {
 	}
 	
 	public VMRunnerResult run(VMRunnerConfiguration config) throws CoreException {
-		String location= getJDKLocation(""); //$NON-NLS-1$
-		if ("".equals(location)) { //$NON-NLS-1$
-			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.noJDKHome"), null)); //$NON-NLS-1$
-		}
+		verifyVMInstall();
+		String location= getJDKLocation();
 		
 		String program= location+File.separator+"bin"+File.separator+"java"; //$NON-NLS-2$ //$NON-NLS-1$
 		File javawexe= new File(program+"w.exe"); //$NON-NLS-1$
