@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -69,6 +68,7 @@ import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
+import org.osgi.framework.BundleContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -77,6 +77,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener, ILaunchesListener, IDebugEventSetListener {
+	
+	/**
+	 * The id of the JDT launching plug-in (value <code>"org.eclipse.jdt.launching"</code>).
+	 */	
+	public static final String ID_PLUGIN= "org.eclipse.jdt.launching"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for 'vmConnectors' extension point
@@ -264,10 +269,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 
 	}
 	
-	
-	
-	public LaunchingPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public LaunchingPlugin() {
+		super();
 		fgLaunchingPlugin= this;
 	}
 	
@@ -311,7 +314,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	public static File getFileInPlugin(IPath path) {
 		try {
 			URL installURL =
-				new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
+				new URL(getDefault().getBundle().getEntry("/"), path.toString()); //$NON-NLS-1$
 			URL localURL = Platform.asLocalURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException ioe) {
@@ -323,13 +326,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
-		if (getDefault() == null) {
-			// If the default instance is not yet initialized,
-			// return a static identifier. This identifier must
-			// match the plugin id defined in plugin.xml
-			return "org.eclipse.jdt.launching"; //$NON-NLS-1$
-		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return ID_PLUGIN;
 	}
 
 	public static LaunchingPlugin getDefault() {
@@ -352,26 +349,29 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Clears zip file cache.
 	 * Shutdown the launch config helper.
 	 * 
-	 * @see Plugin#shutdown()
+	 * @see Plugin#stop(BundleContext)
 	 */
-	public void shutdown() throws CoreException {
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-		DebugPlugin.getDefault().removeDebugEventListener(this);
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		ArchiveSourceLocation.closeArchives();
-		getPluginPreferences().removePropertyChangeListener(this);
-		JavaRuntime.removeVMInstallChangedListener(this);
-		JavaRuntime.saveVMConfiguration();
-		savePluginPreferences();
-		fgXMLParser = null;
-		super.shutdown();
+	public void stop(BundleContext context) throws Exception {
+		try {
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+			DebugPlugin.getDefault().removeDebugEventListener(this);
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+			ArchiveSourceLocation.closeArchives();
+			getPluginPreferences().removePropertyChangeListener(this);
+			JavaRuntime.removeVMInstallChangedListener(this);
+			JavaRuntime.saveVMConfiguration();
+			savePluginPreferences();
+			fgXMLParser = null;
+		} finally {
+			super.stop(context);
+		}
 	}
 		
 	/**
-	 * @see Plugin#startup()
+	 * @see Plugin#start(BundleContext)
 	 */
-	public void startup() throws CoreException {
-		super.startup();
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		
 		// Exclude launch configurations from being copied to the output directory
 		String launchFilter = "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
@@ -431,7 +431,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Loads VM connector extensions
 	 */
 	private void initializeVMConnectors() {
-		IExtensionPoint extensionPoint= getDescriptor().getExtensionPoint(ID_EXTENSION_POINT_VM_CONNECTORS);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ID_PLUGIN, ID_EXTENSION_POINT_VM_CONNECTORS);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
 		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, LaunchingMessages.getString("LaunchingPlugin.Exception_occurred_reading_vmConnectors_extensions_1"), null); //$NON-NLS-1$
 		fVMConnectors = new HashMap(configs.length);
@@ -470,7 +470,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Loads runtime classpath extensions
 	 */
 	private void initializeRuntimeClasspathExtensions() {
-		IExtensionPoint extensionPoint= getDescriptor().getExtensionPoint(ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
 		fClasspathEntryExtensions = new HashMap(configs.length);
 		for (int i= 0; i < configs.length; i++) {

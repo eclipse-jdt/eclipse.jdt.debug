@@ -14,7 +14,7 @@ package org.eclipse.jdt.launching;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
 
 /**
@@ -124,7 +124,7 @@ public class ExecutionArguments {
 					if (ch != '"') {           // Only escape double quotes
 						buf.append('\\');
 					} else {
-						if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+						if (Platform.getOS().equals(Constants.OS_WIN32)) {
 							// @see Bug 26870. Windows requires an extra escape for embedded strings
 							buf.append('\\');
 						}
@@ -156,7 +156,7 @@ public class ExecutionArguments {
 						if (ch != '"') {           // Only escape double quotes
 							buf.append('\\');
 						} else {
-							if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+							if (Platform.getOS().equals(Constants.OS_WIN32)) {
 								// @see Bug 26870. Windows requires an extra escape for embedded strings
 								buf.append('\\');
 							}
