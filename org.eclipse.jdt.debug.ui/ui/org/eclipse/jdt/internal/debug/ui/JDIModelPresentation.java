@@ -1189,11 +1189,17 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 
 			int lineNumber= frame.getLineNumber();
+			label.append(' ');
+			label.append(DebugUIMessages.getString("JDIModelPresentation.line__76")); //$NON-NLS-1$
+			label.append(' ');
 			if (lineNumber >= 0) {
-				label.append(' ');
-				label.append(DebugUIMessages.getString("JDIModelPresentation.line__76")); //$NON-NLS-1$
-				label.append(' ');
 				label.append(lineNumber);
+			} else {
+				label.append(DebugUIMessages.getString("JDIModelPresentation.not_available")); //$NON-NLS-1$
+				if (frame.isNative()) {
+					label.append(' ');
+					label.append(DebugUIMessages.getString("JDIModelPresentation.native_method")); //$NON-NLS-1$
+				}
 			}
 			return label.toString();
 
