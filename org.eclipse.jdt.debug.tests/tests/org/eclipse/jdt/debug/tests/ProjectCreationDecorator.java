@@ -77,6 +77,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		// create launch configurations
 		createLaunchConfiguration("Breakpoints");
 		createLaunchConfiguration("InstanceVariablesTests");
+		createLaunchConfiguration("LocalVariablesTests");
 		createLaunchConfiguration("StaticVariablesTests");
 		createLaunchConfiguration("DropTests");
 		createLaunchConfiguration("ThrowsNPE");

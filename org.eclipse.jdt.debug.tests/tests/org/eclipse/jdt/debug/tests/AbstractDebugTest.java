@@ -322,6 +322,23 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	public void evaluationComplete(IEvaluationResult result) {
 		fEvaluationResult = result;
 	}
+	
+	/**
+	 * Performs a step in the given stack frame and returns when complete.
+	 * 
+	 * @param frame stack frame to step in
+	 */
+	protected void stepOver(IJavaStackFrame frame) throws Exception {
+		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
+		waiter.setTimeout(DEFAULT_TIMEOUT);
+		
+		frame.stepOver();
+		
+		Object suspendee= waiter.waitForEvent();
+		setEventSet(waiter.getEventSet());
+		assertNotNull("Program did not suspend.", suspendee);
+		
+	}
 
 }
 
