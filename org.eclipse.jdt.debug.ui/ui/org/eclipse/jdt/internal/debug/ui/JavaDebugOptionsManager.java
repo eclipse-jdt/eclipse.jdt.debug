@@ -28,7 +28,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -56,6 +58,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -131,6 +134,54 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * Whether the manager has been activated
 	 */
 	private boolean fActivated = false;
+	
+	class InitJob extends Job {
+		
+		public InitJob() {
+			super(DebugUIMessages.getString("JavaDebugOptionsManager.0")); //$NON-NLS-1$
+			// we create markers on the workspace root
+			setRule(ResourcesPlugin.getWorkspace().getRuleFactory().markerRule(
+					ResourcesPlugin.getWorkspace().getRoot()));
+		}
+		
+		protected IStatus run(IProgressMonitor monitor) {
+			MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.getString("JavaDebugOptionsManager.1"), null); //$NON-NLS-1$
+			// compilation error breakpoint 
+			try {
+				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Error", true, true, false, false, null); //$NON-NLS-1$
+				bp.setPersisted(false);
+				setSuspendOnCompilationErrorsBreakpoint(bp);
+			} catch (CoreException e) {
+				status.add(e.getStatus());
+			}
+			
+			// uncaught exception breakpoint
+			try {
+				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
+				bp.setPersisted(false);
+				setSuspendOnUncaughtExceptionBreakpoint(bp);
+			} catch (CoreException e) {
+				status.add(e.getStatus());
+			}
+			
+			// note existing compilation errors
+			try {
+				IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
+				if (problems != null) {
+					for (int i = 0; i < problems.length; i++) {
+						problemAdded(problems[i]);
+					}
+				}
+			} catch (CoreException e) {
+				status.add(e.getStatus());
+			}
+			
+			if (status.getChildren().length == 0) {
+				return Status.OK_STATUS;
+			}
+			return status;
+		}
+}
 	
 	/**
 	 * Helper class that describes a location in a stack
@@ -237,33 +288,9 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * on uncaught exceptions.
 	 */
 	protected void initializeProblemHandling() {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// compilation error breakpoint
-				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Error", true, true, false, false, null); //$NON-NLS-1$
-				bp.setPersisted(false);
-				setSuspendOnCompilationErrorsBreakpoint(bp);
-				
-				// uncaught exception breakpoint
-				bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
-				bp.setPersisted(false);
-				setSuspendOnUncaughtExceptionBreakpoint(bp);
-				
-				// note existing compilation errors
-				IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
-				if (problems != null) {
-					for (int i = 0; i < problems.length; i++) {
-						problemAdded(problems[i]);
-					}
-				}				
-			}
-		};
-		
-		try {
-			ResourcesPlugin.getWorkspace().run(wr, null, 0, null);
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
+		InitJob job = new InitJob();
+		job.setSystem(true);
+		job.schedule();
 	}
 		
 	/**
