@@ -68,6 +68,9 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				refType = ((ClassType)refType).superclass();
 			}
 			method = concreteMethodByName(refType, selector, signature);
+			if (method == null) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.11"), new String[] {selector, signature}), null); //$NON-NLS-1$
+			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 		}
@@ -101,6 +104,9 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				}
 			}
 			method= concreteMethodByName(refType, selector, signature);
+			if (method == null) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.11"), new String[] {selector, signature}), null); //$NON-NLS-1$
+			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 		}
