@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
@@ -79,11 +80,11 @@ public abstract class AbstractVMRunner implements IVMRunner {
 				if (p != null) {
 					p.destroy();
 				}
-				abort("Exception starting process.", e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+				abort(LaunchingMessages.getString("AbstractVMRunner.Exception_starting_process_1"), e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory
 			
-			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED, "Eclipse runtime does not support working directory.", e);
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED, LaunchingMessages.getString("AbstractVMRunner.Eclipse_runtime_does_not_support_working_directory_2"), e); //$NON-NLS-1$
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 			
 			if (handler != null) {

@@ -68,11 +68,11 @@ public class JavaLaunchConfigurationUtils {
 	public static IJavaProject getJavaProject(ILaunchConfiguration configuration) throws CoreException {
 		String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 		if ((projectName == null) || (projectName.trim().length() < 1)) {
-			abort("No project specified", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
+			abort(LaunchingMessages.getString("JavaLaunchConfigurationUtils.No_project_specified_1"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT); //$NON-NLS-1$
 		}			
 		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);		
 		if ((javaProject == null) || !javaProject.exists()) {
-			abort("Invalid project specified", null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT);
+			abort(LaunchingMessages.getString("JavaLaunchConfigurationUtils.Invalid_project_specified_2"), null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); //$NON-NLS-1$
 		}
 		return javaProject;
 	}
@@ -94,7 +94,7 @@ public class JavaLaunchConfigurationUtils {
 	 */
 	public static IType getMainType(String mainTypeName, IJavaProject javaProject) throws CoreException {
 		if ((mainTypeName == null) || (mainTypeName.trim().length() < 1)) {
-			abort("Main type not specified.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
+			abort(LaunchingMessages.getString("JavaLaunchConfigurationUtils.Main_type_not_specified_3"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
 		IType mainType = null;
 		try {
@@ -102,7 +102,7 @@ public class JavaLaunchConfigurationUtils {
 		} catch (JavaModelException jme) {
 		}
 		if (mainType == null) {
-			abort("Main type does not exist.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
+			abort(LaunchingMessages.getString("JavaLaunchConfigurationUtils.Main_type_does_not_exist_4"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
 		return mainType;
 	}	
@@ -218,7 +218,7 @@ public class JavaLaunchConfigurationUtils {
 				buf.append('\n');
 				IPath root = location.getRootPath();
 				if (root == null) {
-					buf.append(" ");
+					buf.append(" "); //$NON-NLS-1$
 				} else {
 					buf.append(root.toString());
 				}

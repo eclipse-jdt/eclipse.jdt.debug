@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
@@ -24,6 +23,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
+import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -53,7 +53,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * Identifier for the 'Java Source Locator' extension
 	 * (value <code>"org.eclipse.jdt.launching.javaSourceLocator"</code>).
 	 */
-	public static final String ID_JAVA_SOURCE_LOCATOR = LaunchingPlugin.PLUGIN_ID + ".javaSourceLocator";
+	public static final String ID_JAVA_SOURCE_LOCATOR = LaunchingPlugin.PLUGIN_ID + ".javaSourceLocator"; //$NON-NLS-1$
 
 	/**
 	 * A collection of the source locations to search
@@ -273,7 +273,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			return JavaLaunchConfigurationUtils.encodeSourceLocations(getSourceLocations());
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-			"An exception occurred while creating a source locator memento for 'JavaSourceLocator'.", e));
+			LaunchingMessages.getString("JavaSourceLocator.An_exception_occurred_while_creating_a_source_locator_memento_for___JavaSourceLocator__2"), e)); //$NON-NLS-1$
 		}
 
 	}
@@ -297,7 +297,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			locations = JavaLaunchConfigurationUtils.decodeSourceLocations(memento);
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-			"An exception occurred while restoring 'JavaSourceLocator' from a memento.", e));
+			LaunchingMessages.getString("JavaSourceLocator.An_exception_occurred_while_restoring___JavaSourceLocator___from_a_memento_3"), e)); //$NON-NLS-1$
 		}
 		setSourceLocations(locations);
 	}

@@ -54,7 +54,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
 		if (port == -1) {
-			abort("Could not find a free socket for the debugger.", null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE);
+			abort(LaunchingMessages.getString("StandardVMDebugger.Could_not_find_a_free_socket_for_the_debugger_1"), null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE); //$NON-NLS-1$
 		}
 		
 		String program= constructProgramString();
@@ -97,7 +97,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		ListeningConnector connector= getConnector();
 		if (connector == null) {
-			abort("Couldn't find an appropriate debug connector", null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE);
+			abort(LaunchingMessages.getString("StandardVMDebugger.Couldn__t_find_an_appropriate_debug_connector_2"), null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE); //$NON-NLS-1$
 		}
 		Map map= connector.defaultArguments();
 		int timeout= fVMInstance.getDebuggerTimeout();
@@ -133,7 +133,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 							abort(errorMessage, e, IJavaLaunchConfigurationConstants.ERR_VM_LAUNCH_ERROR);
 						} else {
 							// timeout, consult status handler if there is one
-							IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_VM_CONNECT_TIMEOUT, "", e);
+							IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_VM_CONNECT_TIMEOUT, "", e); //$NON-NLS-1$
 							IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 							
 							retry= false;
@@ -153,9 +153,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 				connector.stopListening(map);
 			}
 		} catch (IOException e) {
-			abort("Couldn't connect to VM", e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED); 
+			abort(LaunchingMessages.getString("StandardVMDebugger.Couldn__t_connect_to_VM_4"), e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED);  //$NON-NLS-1$
 		} catch (IllegalConnectorArgumentsException e) {
-			abort("Couldn't connect to VM", e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED); 
+			abort(LaunchingMessages.getString("StandardVMDebugger.Couldn__t_connect_to_VM_5"), e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED);  //$NON-NLS-1$
 		}
 		if (p != null) {
 			p.destroy();

@@ -111,7 +111,7 @@ public class LaunchingPlugin extends Plugin {
 	private void initializeVMConnectors() {
 		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(ID_EXTENSION_POINT_VM_CONNECTORS);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
-		MultiStatus status= new MultiStatus(PLUGIN_ID, IStatus.OK, "Exception occurred reading vmConnectors extensions", null);
+		MultiStatus status= new MultiStatus(PLUGIN_ID, IStatus.OK, LaunchingMessages.getString("LaunchingPlugin.Exception_occurred_reading_vmConnectors_extensions_1"), null); //$NON-NLS-1$
 		fVMConnectors = new HashMap(configs.length);
 		for (int i= 0; i < configs.length; i++) {
 			try {

@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
@@ -139,11 +140,11 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	protected IVMInstallType verifyVMInstallType(ILaunchConfiguration configuration) throws CoreException {
 		String vmInstallTypeId = getVMInstallTypeId(configuration);
 		if (vmInstallTypeId == null) {
-			abort("JRE type not specified", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL_TYPE);
+			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.JRE_type_not_specified_1"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL_TYPE); //$NON-NLS-1$
 		}		
 		IVMInstallType type = getVMInstallType(configuration);
 		if (type == null) {
-			abort(MessageFormat.format("JRE type {0} does not exist.", new String[] {vmInstallTypeId}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_TYPE_DOES_NOT_EXIST);
+			abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.JRE_type_{0}_does_not_exist_2"), new String[] {vmInstallTypeId}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_TYPE_DOES_NOT_EXIST); //$NON-NLS-1$
 		}	
 		return type;	
 	}
@@ -164,18 +165,18 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		verifyVMInstallType(configuration);
 		String id = getVMInstallId(configuration);
 		if (id == null) {
-			abort("JRE not specified.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL); 
+			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.JRE_not_specified_3"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL);  //$NON-NLS-1$
 		}
 		IVMInstall vm = getVMInstall(configuration);
 		if (vm == null) {
-			abort("The specified JRE installation does not exist.", null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
+			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.The_specified_JRE_installation_does_not_exist_4"), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		File location = vm.getInstallLocation();
 		if (location == null) {
-			abort(MessageFormat.format("JRE home directory not specified for {0}.", new String[]{vm.getName()}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
+			abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.JRE_home_directory_not_specified_for_{0}_5"), new String[]{vm.getName()}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		if (!location.exists()) {
-			abort(MessageFormat.format("JRE home directory for {0} does not exist: {1}", new String[]{vm.getName(), location.getAbsolutePath()}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
+			abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.JRE_home_directory_for_{0}_does_not_exist__{1}_6"), new String[]{vm.getName(), location.getAbsolutePath()}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 				
 		return vm;
@@ -339,7 +340,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	protected String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "");
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 	}	
 
 	/**
@@ -353,7 +354,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	protected String getVMArguments(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "");
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
 	}	
 
 	/**
@@ -402,11 +403,11 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	protected IJavaProject verifyJavaProject(ILaunchConfiguration configuration) throws CoreException {
 		String name = getJavaProjectName(configuration);
 		if (name == null) {
-			abort("Java project not specified.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
+			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Java_project_not_specified_9"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT); //$NON-NLS-1$
 		}
 		IJavaProject project = getJavaProject(configuration);
 		if (project == null) {
-			abort("Project does not exist, or is not a Java project.", null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT);
+			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Project_does_not_exist_or_is_not_a_Java_project_10"), null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); //$NON-NLS-1$
 		}
 		return project;
 	}
@@ -424,7 +425,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	protected String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
 		String name = getMainTypeName(configuration);
 		if (name == null) {
-			abort("Main type not specified.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE);
+			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Main_type_not_specified_11"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
 		return name;
 	}
@@ -444,7 +445,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		if (path != null) {
 			File dir = new File(path);
 			if (!dir.isDirectory()) {
-				abort(MessageFormat.format("Working directory does not exist: {0}", new String[] {path}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+				abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 			}
 			return dir;
 		}
@@ -461,7 +462,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	protected String getHostName(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, "localhost").trim();
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, "localhost").trim(); //$NON-NLS-1$
 	}
 	
 	/**
@@ -490,7 +491,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	protected int verifyPortNumber(ILaunchConfiguration configuration) throws CoreException {
 		int port = getPortNumber(configuration);
 		if (port == -1) {
-			abort("Port number not specified", null, IJavaLaunchConfigurationConstants.ERR_INVALID_PORT);
+			abort(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Port_number_not_specified_14"), null, IJavaLaunchConfigurationConstants.ERR_INVALID_PORT); //$NON-NLS-1$
 		}
 		return port;
 	}

@@ -31,12 +31,12 @@ public class StandardVMRunner extends AbstractVMRunner {
 	}
 	
 	protected String renderDebugTarget(String classToRun, int host) {
-		String format= "{0} at localhost:{1}";
+		String format= LaunchingMessages.getString("StandardVMRunner.{0}_at_localhost_{1}_1"); //$NON-NLS-1$
 		return MessageFormat.format(format, new String[] { classToRun, String.valueOf(host) });
 	}
 
 	public static String renderProcessLabel(String[] commandLine) {
-		String format= "{0} ({1})";
+		String format= LaunchingMessages.getString("StandardVMRunner.{0}_({1})_2"); //$NON-NLS-1$
 		String timestamp= DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
 		return MessageFormat.format(format, new String[] { commandLine[0], timestamp });
 	}
@@ -82,7 +82,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 		File dir = new File(path);
 		if (!dir.isDirectory()) {
-			abort(MessageFormat.format("Specified working directory does not exist or is not a directory: {0}", new String[] {path}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+			abort(MessageFormat.format(LaunchingMessages.getString("StandardVMRunner.Specified_working_directory_does_not_exist_or_is_not_a_directory__{0}_3"), new String[] {path}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		return dir;
 	}

@@ -43,12 +43,12 @@ public class SocketAttachConnector implements IVMConnector {
 			try {
 				return connector.attach(map);
 			} catch (IOException e) {
-				abort("Failed to connect to remote VM", e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
+				abort(LaunchingMessages.getString("SocketAttachConnector.Failed_to_connect_to_remote_VM_1"), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
 			} catch (IllegalConnectorArgumentsException e) {
-				abort("Failed to connect to remote VM", e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
+				abort(LaunchingMessages.getString("SocketAttachConnector.Failed_to_connect_to_remote_VM_2"), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
 			}
 		} else {
-			abort("Socket attaching connector not available", null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE);
+			abort(LaunchingMessages.getString("SocketAttachConnector.Socket_attaching_connector_not_available_3"), null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE); //$NON-NLS-1$
 		}
 		// execution path will not reach here
 		return null;
@@ -81,7 +81,7 @@ public class SocketAttachConnector implements IVMConnector {
 	 * @see IVMConnector#getName()
 	 */
 	public String getName() {
-		return "Standard (Socket Attach)";
+		return LaunchingMessages.getString("SocketAttachConnector.Standard_(Socket_Attach)_4"); //$NON-NLS-1$
 	}
 	
 	/**

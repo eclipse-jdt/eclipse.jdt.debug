@@ -36,7 +36,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		String hostName = getHostName(configuration);
 
 		if (hostName.indexOf(' ') > -1) {
-			abort("Invalid host name specified", null, IJavaLaunchConfigurationConstants.ERR_INVALID_HOSTNAME);
+			abort(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Invalid_host_name_specified_1"), null, IJavaLaunchConfigurationConstants.ERR_INVALID_HOSTNAME); //$NON-NLS-1$
 		}
 		
 		// Port
@@ -54,7 +54,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			connector = JavaRuntime.getVMConnector(connectorId);
 		}
 		if (connector == null) {
-			abort("Connector not specified.", null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE);
+			abort(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Connector_not_specified_2"), null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE); //$NON-NLS-1$
 		}
 
 		VirtualMachine vm= connector.connect(hostName, portNumber, monitor);
