@@ -2110,6 +2110,55 @@ M4 = Platform-specific fourth key
             commandId="org.eclipse.jdt.debug.ui.MonitorsView"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+<!-- launch shortcuts -->
+      <command
+            name="%JavaApplicationShortcut.description.debug"
+            description="%JavaApplicationShortcut.description.debug"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.localJavaShortcut.debug">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+D J"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.debug"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
+      <command
+            name="%JavaApplicationShortcut.description.run"
+            description="%JavaApplicationShortcut.description.run"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.localJavaShortcut.run">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+X J"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.run"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%AppletShortcut.description.debug"
+            description="%AppletShortcut.description.debug"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.javaAppletShortcut.debug">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+D A"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.debug"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
+      <command
+            name="%AppletShortcut.description.run"
+            description="%AppletShortcut.description.run"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.javaAppletShortcut.run">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+X A"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.run"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
    </extension>
    <extension
          point="org.eclipse.jdt.ui.classpathContainerPage">
