@@ -653,30 +653,47 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 */
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 		if (breakpoint == getSuspendOnCompilationErrorBreakpoint()) {
-			return getProblem(thread) != null ? SUSPEND : DONT_SUSPEND;
+		    try {
+		        return getProblem(thread) != null ? SUSPEND : DONT_SUSPEND;
+		    } catch (DebugException e) {
+		        JDIDebugUIPlugin.log(e);
+		        // don't suspend if we can't determine if there is a problem
+		        return DONT_SUSPEND;
+		    }
 		}
 		if (breakpoint == getSuspendOnUncaughtExceptionBreakpoint()) {
 			// the "uncaught" exceptions breakpoint subsumes the "compilation error" breakpoint
 			// since "Throwable" is a supertype of "Error". Thus, if there is actually a compilation
 			// error here, but the option to suspend on compilation errors is off, we should
 			// resume (i.e. do not suspend)
-			if (!isSuspendOnCompilationErrors() && getProblem(thread) != null) {
-				return DONT_SUSPEND;
+			if (!isSuspendOnCompilationErrors()) {
+			    try {
+			        if (getProblem(thread) != null) {
+			            return DONT_SUSPEND;
+			        }
+			    } catch (DebugException e) {
+			        JDIDebugUIPlugin.log(e);
+			        // unable to determine if there was a compilation problem, so fall thru and suspend
+			    }
 			}
 			return SUSPEND;
 		}
 		return DONT_CARE;
 	}
 	
-	private IMarker getProblem(IJavaThread thread) {
-		try {
-			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			if (frame != null) {
-				return  getProblem(frame);
-			}
-		} catch (DebugException e) {
-			JDIDebugUIPlugin.log(e);
-		}	
+	/**
+	 * Returns any problem for the top stack frame in the given thread, or
+	 * <code>null</code> if none.
+	 * 
+	 * @param thread thread to look for a compilation problem in
+	 * @return problem or <code>null</code>
+	 * @throws DebugException if an exception occurrs retrieveing the problem
+	 */
+	private IMarker getProblem(IJavaThread thread) throws DebugException {
+		IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+		if (frame != null) {
+			return  getProblem(frame);
+		}
 		return null;	
 	}
 
@@ -698,41 +715,37 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * 
 	 * @param frame stack frame
 	 * @return marker representing compilation problem, or <code>null</code>
+	 * @throws DebugException if an exception occurrs retrieveing the problem
 	 */
-	protected IMarker getProblem(IJavaStackFrame frame) {
-		try {
-			String name = frame.getSourceName();
-			String packageName = frame.getDeclaringTypeName();
-			int index = packageName.lastIndexOf('.');
-			if (index == -1) {
-				if (name == null) {
-					// guess at source name if no debug attribute
-					name = packageName;
-					int dollar = name.indexOf('$');
-					if (dollar >= 0) {
-						name = name.substring(0, dollar);
-					}
-					name+= ".java"; //$NON-NLS-1$
+	protected IMarker getProblem(IJavaStackFrame frame) throws DebugException {
+		String name = frame.getSourceName();
+		String packageName = frame.getDeclaringTypeName();
+		int index = packageName.lastIndexOf('.');
+		if (index == -1) {
+			if (name == null) {
+				// guess at source name if no debug attribute
+				name = packageName;
+				int dollar = name.indexOf('$');
+				if (dollar >= 0) {
+					name = name.substring(0, dollar);
 				}
-				packageName = ""; //$NON-NLS-1$
-			} else {
-				if (name == null) {
-					name = packageName.substring(index + 1);
-					int dollar = name.indexOf('$');
-					if (dollar >= 0) {
-						name = name.substring(0, dollar);
-					}
-					name += ".java"; //$NON-NLS-1$
-				}
-				packageName = packageName.substring(0,index);
+				name+= ".java"; //$NON-NLS-1$
 			}
-			int line = frame.getLineNumber();
-			Location l = new Location(packageName, name, line);
-			return  (IMarker)fLocationMap.get(l);		
-		} catch (DebugException e) {
-			JDIDebugUIPlugin.log(e);
+			packageName = ""; //$NON-NLS-1$
+		} else {
+			if (name == null) {
+				name = packageName.substring(index + 1);
+				int dollar = name.indexOf('$');
+				if (dollar >= 0) {
+					name = name.substring(0, dollar);
+				}
+				name += ".java"; //$NON-NLS-1$
+			}
+			packageName = packageName.substring(0,index);
 		}
-		return null;
+		int line = frame.getLineNumber();
+		Location l = new Location(packageName, name, line);
+		return  (IMarker)fLocationMap.get(l);		
 	}	
 	
 	/* (non-Javadoc)
