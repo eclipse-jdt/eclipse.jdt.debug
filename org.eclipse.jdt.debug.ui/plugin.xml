@@ -993,4 +993,11 @@
 	</shortcut>
 </extension>
 
+<extension point = "org.eclipse.jdt.ui.classpathContainerPage">
+	<classpathContainerPage
+		id = "org.eclipse.jdt.debug.ui.jreContainerPage"
+		name = "JRE System Library"
+		class = "org.eclipse.jdt.internal.debug.ui.launcher.JREContainerWizardPage"/>
+</extension>
+
 </plugin>
