@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -25,6 +24,7 @@ import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -181,7 +181,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 				Item[] children = getChildren(getControl());
 				if (children != null) {
 					//to be changed
-					Color c= DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB);
+					Color c= JFaceResources.getColorRegistry().get(IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR);
 					for (int i = 0; i < children.length; i++) {
 						updateColor((TreeItem)children[i], c, 0);
 					}
@@ -301,13 +301,14 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 			return;
 		}
 		if (!fValidSelection) {
-			showMessage(MonitorMessages.getString("MonitorsView.select_one_java_debug_target")); //$NON-NLS-1$
+			showMessage(MonitorMessages.getString("MonitorsView.2")); //$NON-NLS-1$
+			updateObjects();
 			return;
 		}
 		boolean changeFromShowMessagePage= monitorInformationAvailable && !fMonitorInformationAvailable;
 		fMonitorInformationAvailable= monitorInformationAvailable;
 		if (!monitorInformationAvailable) {
-			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
+			showMessage(MonitorMessages.getString("MonitorsView.1")); //$NON-NLS-1$
 			updateObjects();
 			return;
 		}
@@ -322,7 +323,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 				break;
 			case VIEW_ID_DEADLOCK:
 				if(MonitorManager.getDefault().getNumberOfDeadlocks() == 0 && MonitorManager.getDefault().getThreads().length > 0) {
-					showMessage(MonitorMessages.getString("MonitorsView.No_deadlock_detected_3")); //$NON-NLS-1$
+					showMessage(MonitorMessages.getString("MonitorsView.3")); //$NON-NLS-1$
 					showPage= false;
 					break;
 				} else {

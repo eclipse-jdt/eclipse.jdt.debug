@@ -1,12 +1,15 @@
-/*
- * Created on Dec 11, 2003
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jdt.debug.tests.console;
 
-import org.eclipse.debug.internal.ui.ColorManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -14,6 +17,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -26,12 +30,6 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
-/**
- * @author DWright
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class TestMessageConsoleActionDelegate implements IActionDelegate2, IWorkbenchWindowActionDelegate {
 
 	/* (non-Javadoc)
@@ -73,7 +71,7 @@ public class TestMessageConsoleActionDelegate implements IActionDelegate2, IWork
 		stream.println("two.... three....");
 		ColorDialog dialog = new ColorDialog(DebugUIPlugin.getShell());
 		dialog.open();
-		Color color = ColorManager.getDefault().getColor(dialog.getRGB());
+		Color color = new Color(Display.getCurrent(), dialog.getRGB());
 		stream.setColor(color);
 	}
 
