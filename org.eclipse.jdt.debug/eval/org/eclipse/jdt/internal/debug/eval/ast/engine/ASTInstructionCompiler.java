@@ -3153,7 +3153,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * @see ASTVisitor#visit(VariableDeclarationExpression)
-	 * return <code>false</code>, don't use the standart accept order.
 	 */
 	public boolean visit(VariableDeclarationExpression node) {
 		/* if it is in the code to execute, return <code>false</code>,
@@ -3216,7 +3215,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * @see ASTVisitor#visit(VariableDeclarationStatement)
-	 * return <code>false</code>, don't use the standart accept order.
 	 */
 	public boolean visit(VariableDeclarationStatement node) {
 		/* if it is in the code to execute, return <code>false</code>,
