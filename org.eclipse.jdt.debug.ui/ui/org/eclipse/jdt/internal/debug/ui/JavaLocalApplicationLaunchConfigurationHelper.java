@@ -272,7 +272,7 @@ public class JavaLocalApplicationLaunchConfigurationHelper implements IResourceC
 	 * specified configuration or throw a <code>CoreException</code> whose message explains
 	 * why this couldn't be done.
 	 */
-	protected static IResource getMainTypeResource(ILaunchConfiguration configuration) throws CoreException{
+	public static IResource getMainTypeResource(ILaunchConfiguration configuration) throws CoreException{
 		IType mainType = getMainType(configuration);
 		return mainType.getUnderlyingResource();
 	}
@@ -281,7 +281,7 @@ public class JavaLocalApplicationLaunchConfigurationHelper implements IResourceC
 	 * Return the <code>IType</code> referenced in the specified configuration or throw a 
 	 * <code>CoreException</code> whose message explains why this couldn't be done.
 	 */
-	protected static IType getMainType(ILaunchConfiguration configuration) throws CoreException {
+	public static IType getMainType(ILaunchConfiguration configuration) throws CoreException {
 		return getMainType(configuration, getJavaProject(configuration));
 	}
 	
@@ -289,7 +289,7 @@ public class JavaLocalApplicationLaunchConfigurationHelper implements IResourceC
 	 * Return the <code>IJavaProject</code> referenced in the specified configuration or throw a
 	 * <code>CoreException</code> whose message explains why this couldn't be done.
 	 */
-	protected static IJavaProject getJavaProject(ILaunchConfiguration configuration) throws CoreException {
+	public static IJavaProject getJavaProject(ILaunchConfiguration configuration) throws CoreException {
 		String projectName = configuration.getAttribute(JavaDebugUI.PROJECT_ATTR, (String)null);
 		if ((projectName == null) || (projectName.trim().length() < 1)) {
 			abort("No project specified", null, JavaDebugUI.UNSPECIFIED_PROJECT);
@@ -306,7 +306,7 @@ public class JavaLocalApplicationLaunchConfigurationHelper implements IResourceC
 	 * the specified project or throw a <code>CoreException</code> whose message explains why 
 	 * this couldn't be done.
 	 */
-	protected static IType getMainType(ILaunchConfiguration configuration, IJavaProject javaProject) throws CoreException {
+	public static IType getMainType(ILaunchConfiguration configuration, IJavaProject javaProject) throws CoreException {
 		String mainTypeName = configuration.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)null);
 		if ((mainTypeName == null) || (mainTypeName.trim().length() < 1)) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_not_specified._1"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
@@ -326,7 +326,7 @@ public class JavaLocalApplicationLaunchConfigurationHelper implements IResourceC
 	/**
 	 * Find the specified (fully-qualified) type name in the specified java project.
 	 */
-	protected static IType findType(IJavaProject javaProject, String mainTypeName) throws JavaModelException {
+	public static IType findType(IJavaProject javaProject, String mainTypeName) throws JavaModelException {
 		String pathStr= mainTypeName.replace('.', '/') + ".java"; //$NON-NLS-1$
 		IJavaElement javaElement= javaProject.findElement(new Path(pathStr));
 		if (javaElement == null) {

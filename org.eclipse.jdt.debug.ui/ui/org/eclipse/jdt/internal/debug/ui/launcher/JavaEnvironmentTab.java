@@ -18,8 +18,11 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.internal.debug.ui.JavaLocalApplicationLaunchConfigurationHelper;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.window.Window;
@@ -63,6 +66,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 	private List fBootPathList;
 	private List fClassPathList;
 	private List fExtensionPathList;
+	private Button fClassPathDefaultButton;
 	private Button fPathAddArchiveButton;
 	private Button fPathAddDirectoryButton;
 	private Button fPathRemoveButton;
@@ -132,25 +136,39 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_BOTH);
 		fPathTabFolder.setLayoutData(gd);
 		
+		Composite classPathComp = new Composite(fPathTabFolder, SWT.NONE);
+		GridLayout classPathLayout = new GridLayout();
+		classPathComp.setLayout(classPathLayout);
+		
+		fClassPathList = new List(classPathComp, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		gd = new GridData(GridData.FILL_BOTH);
+		fClassPathList.setLayoutData(gd);
+		fClassPathList.setData(JavaDebugUI.CLASSPATH_ATTR);
+		fClassPathList.addSelectionListener(getListSelectionAdapter());
+		fClassPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 0);
+		fClassPathTabItem.setText("Class&path");
+		fClassPathTabItem.setControl(classPathComp);
+		fClassPathTabItem.setData(fClassPathList);
+		
+		fClassPathDefaultButton = new Button(classPathComp, SWT.CHECK);
+		fClassPathDefaultButton.setText("&Use default classpath");
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		fClassPathDefaultButton.setLayoutData(gd);
+		fClassPathDefaultButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleClassPathDefaultButtonSelected();
+			}
+		});
+		
 		fBootPathList = new List(fPathTabFolder, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		fBootPathList.setLayoutData(gd);
 		fBootPathList.setData(JavaDebugUI.BOOTPATH_ATTR);
 		fBootPathList.addSelectionListener(getListSelectionAdapter());
-		fBootPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 0);
+		fBootPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 1);
 		fBootPathTabItem.setText("&Bootpath");
 		fBootPathTabItem.setControl(fBootPathList);
 		fBootPathTabItem.setData(fBootPathList);
-		
-		fClassPathList = new List(fPathTabFolder, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH);
-		fClassPathList.setLayoutData(gd);
-		fClassPathList.setData(JavaDebugUI.CLASSPATH_ATTR);
-		fClassPathList.addSelectionListener(getListSelectionAdapter());
-		fClassPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 1);
-		fClassPathTabItem.setText("Class&path");
-		fClassPathTabItem.setControl(fClassPathList);
-		fClassPathTabItem.setData(fClassPathList);
 		
 		fExtensionPathList = new List(fPathTabFolder, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -208,10 +226,12 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		moveButtonLayout.marginWidth = 0;
 		moveButtonLayout.numColumns = 2;
 		moveButtonComp.setLayout(moveButtonLayout);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		moveButtonComp.setLayoutData(gd);
 		
 		fPathMoveUpButton = new Button(moveButtonComp, SWT.PUSH);
 		fPathMoveUpButton.setImage(JavaDebugImages.get(JavaDebugImages.IMG_OBJS_UP_NAV));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fPathMoveUpButton.setLayoutData(gd);
 		fPathMoveUpButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -221,7 +241,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		
 		fPathMoveDownButton = new Button(moveButtonComp, SWT.PUSH);
 		fPathMoveDownButton.setImage(JavaDebugImages.get(JavaDebugImages.IMG_OBJS_DOWN_NAV));
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fPathMoveDownButton.setLayoutData(gd);
 		fPathMoveDownButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -574,6 +594,26 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		updateConfigFromPathList(listWidget);
 		listWidget.setSelection(targetIndex);
 		setPathButtonsEnableState();
+	}
+	
+	/**
+	 * Toggle the state of the class path default checkbox.
+	 */
+	protected void handleClassPathDefaultButtonSelected() {
+		boolean selected = fClassPathDefaultButton.getSelection();
+		if (selected) {
+			fClassPathList.setEnabled(true);
+		} else {
+			fClassPathList.setEnabled(false);			
+		}
+		try {
+			getWorkingCopy().setAttribute(JavaDebugUI.DEFAULT_CLASSPATH_ATTR, selected);
+			IJavaProject javaProject = JavaLocalApplicationLaunchConfigurationHelper.getJavaProject(getWorkingCopy());
+			String[] defaultClassPath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
+			fClassPathList.setItems(defaultClassPath);
+			updateConfigFromPathList(fClassPathList);
+		} catch (CoreException ce) {			
+		}
 	}
 	
 	/**

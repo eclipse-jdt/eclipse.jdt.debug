@@ -87,6 +87,14 @@ public class JavaDebugUI {
 	public static final String CLASSPATH_ATTR = PLUGIN_ID + ".CLASSPATH";	 //$NON-NLS-1$
 	
 	/**
+	 * Default classpath launch configuration boolean attribute name.
+	 * If this attribute is present on a launch configuration, then the default
+	 * class path is computed at runtime.  If this attribute is set, the contents
+	 * of <code>CLASSPATH_ATTR</code> are ignored.
+	 */
+	public static final String DEFAULT_CLASSPATH_ATTR = PLUGIN_ID + ".DEFAULT_CLASSPATH"; //$NON-NLS-1$
+	
+	/**
 	 * Extension path launch configuration attribute name.
 	 */
 	public static final String EXTPATH_ATTR = PLUGIN_ID + ".EXTPATH";	 //$NON-NLS-1$
