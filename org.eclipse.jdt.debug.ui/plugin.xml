@@ -331,7 +331,12 @@
 	</objectContribution>
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CUPopupActions" 
-    	targetID="#CompilationUnitEditorContext"> 
+    	targetID="#CompilationUnitEditorContext">
+    	<action id="org.eclipse.jdt.debug.ui.RunToLine"
+    		label="%runToLineAction.label"
+    		menubarPath="additions"
+    		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineAction"> 
+		</action>
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
@@ -352,7 +357,12 @@
      </viewerContribution>
      <viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CFPopupActions" 
-    	targetID="#ClassFileEditorContext"> 
+    	targetID="#ClassFileEditorContext">
+    	<action id="org.eclipse.jdt.debug.ui.RunToLine"
+    		label="%runToLineAction.label"
+    		menubarPath="additions"
+    		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineAction"> 
+		</action> 
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
