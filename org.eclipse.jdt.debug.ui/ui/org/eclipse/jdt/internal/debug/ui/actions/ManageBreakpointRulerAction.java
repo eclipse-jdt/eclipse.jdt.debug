@@ -237,7 +237,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 						Map attributes = new HashMap(10);
 						JavaCore.addJavaElementMarkerAttributes(attributes, type);
 						attributes.put("org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID", type.getHandleIdentifier()); //$NON-NLS-1$
-						JDIDebugModel.createLineBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, line.getOffset(), line.getOffset() + line.getLength(), 0, true, attributes);
+						JDIDebugModel.createLineBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, -1, -1, 0, true, attributes);
 					}
 				}
 			}
