@@ -16,7 +16,7 @@
   <TR>
     <TD valign=top align=left width="30%">
       <P align=right><B>Evaluation Popups throughout the debug support and the addition of a details area for the Inspect popup</B> </P></TD>
-    <TD width="70%"> description needed<p></P>
+    <TD width="70%"> Evaluation popups are used for all Display and Inspect results. As well, a details area has been implemented for the Inspect popup.<p></P>
       <P><IMG height=201 src="inspect_popup.gif" width=443></P></TD></TR>
   <TR>
   <TR>
@@ -28,7 +28,7 @@
         <TD valign=top align=left width="30%">
           <P align=right><B>Enhanced debugging in non-debug perspective</B> </P></TD>
 
-    <TD width="70%">Options to switch perspectives and activate debug view when a breakpoint is hit. Prompts to change perspectives.
+    <TD width="70%">New options to switch perspectives and activate the debug view when a breakpoint is hit. The user is prompted before the perspective is changed.
     </TD></TR>
     <TR>
       <TD colSpan=2>
@@ -49,8 +49,8 @@
     </TR>
     <TR>
 	      <TD valign=top align=left width="30%">
-	        <P align=right><B>Skip breakpoints</B> </P></TD>
-	      <TD width="70%">Skip breakpoints button, and preferences to skip breakpoints during run-to-line and evaluations.
+	        <P align=right><B>Skipping breakpoints</B> </P></TD>
+	      <TD width="70%">A new Skip breakpoints button has been added that turns off all breakpoints in the workspace. New preferences have been added to skip breakpoints during run-to-line and evaluations.
       <P><IMG height=81 src="skip_all_breakpoint.gif" width=298></P></TD></TR>
     </TD></TR>
     <TR>
@@ -97,9 +97,9 @@
 	      <TD valign=top align=left width="30%">
 	        <P align=right><B>Class prepare breakpoints</B> </P></TD>
 
-    <TD width="70%">Breakpoints can set on class prepare event. The program will be suspended
+    <TD width="70%">Breakpoints can be set on a class prepare event. The program will be suspended
     				when the specified class or interface is loaded in the VM.
-						<P><img src="class_prepare_breakpoint.gif" width="347" height="80"></P>
+					<P><img src="class_prepare_breakpoint.gif" width="347" height="80"></P>
     </TD></TR>
 	  <TR>
 	    <TD colSpan=2>
@@ -123,7 +123,7 @@
 		      <TD valign=top align=left width="30%">
 		        <P align=right><B>Refactoring support for Java launch configurations</B> </P></TD>
 
-	    <TD width="70%">The launch configuration are updated when a project, a package of a type is renamed.
+	    <TD width="70%">Java launch configurations are updated when a project, a package, or a type is renamed.
     </TD></TR>
     	  <TR>
 			    <TD colSpan=2>
@@ -141,8 +141,8 @@
 			<P align=right><B>Workspace is checked for breakpoints before launching in run mode</B> </P>
 		</TD>
 	    <TD width="70%">
-	    	When an application is launched in run mode (ie run, not debugged) and breakpoints are set in the
-	    	workspace, the user will be prompted to find out if he would rather debug the application. A launching 
+	    	When an application is launched in run mode and breakpoints are set in the
+	    	workspace, the user will be prompted to determine if the launch should be in debug mode. A launching 
 	    	preference has been provided to turn this feature on and off.
 						<P><img src="breakpoint_run_mode.gif" width="441" height="146"></P>
 		</TD>
@@ -154,11 +154,11 @@
 	</TR>
 	<TR>
 		<TD valign=top align=left width="30%">
-			<P align=right><B>Prelaunch builds are restricted to the project being launched and its prerequite projects</B></P>
+			<P align=right><B>Pre-launch builds are restricted to the project being launched and its prerequisite projects</B></P>
 		</TD>
 	    <TD width="70%">
 	    	When a user is running eclipse without auto-build on, and a build is required before launching, the build will be restricted to 
-	    	the project containing the class file being launched and any prerequite project. Eclipse will no longer build the entire workspace
+	    	the project containing the class file being launched and any prerequisite project. Eclipse will no longer build the entire workspace
 	    	in this scenario.
 		</TD>
 	</TR>
@@ -172,7 +172,7 @@
 			<P align=right><B>User is prompted when trying to launch an application from a project that contains compile errors</B></P>
 		</TD>
 	    <TD width="70%">
-	    	When a launch is initiated from a project that contains compile errors, or a project that it depends on contains compile errors
+	    	When a launch is initiated from a project that contains compile errors, or a project that it depends on contains compile errors,
 	    	the user is prompted and given the chance to cancel the launch. A launching preference has been provided to turn this feature 
 	    	on and off.
 						<P><img src="compile_errors.gif" width="441" height="146"></P>
@@ -190,7 +190,7 @@
 	    <TD width="70%">
 			Parsing and syntax errors resulting from an Ant build file are displayed in the Problems view. Potential problems such as missing libraries or class files
 			as specified in a taskdef as flagged as warnings.
-						<P><img src="ant_problem_view.gif" width="391" height="113"></P>
+					<P><img src="ant_problem_view.gif" width="391" height="113"></P>
 		</TD>
 	</TR>		
 	 <TR>
@@ -203,7 +203,8 @@
 			<P align=right><B>Ant code assist proposals for custom tasks and types</B></P>
 		</TD>
 	    <TD width="70%">
-DESCRIPTION NEEDED
+			Tasks or types defined within the buildfile or via extension point are presented as code assist proposals if they are relevant.
+			Attributes for these tasks and types are also available via code assist.
 		</TD>
 	</TR>
 	<TR>
@@ -227,7 +228,7 @@ DESCRIPTION NEEDED
 		 <TD valign=top align=left width="30%">
 		       <P align=right><B>Environment tabs added</B> </P></TD>
 
-	    <TD width="70%">The launch configuration tab for specifying the enviroment has been added for Ant launches, and external tool builders.
+	    <TD width="70%">The launch configuration tab for specifying the environment has been added for Ant launches, and external tool builders.
     </TD></TR>
 	<TR>
 		<TD colSpan=2>
@@ -236,9 +237,9 @@ DESCRIPTION NEEDED
 	</TR>	
 	<TR>
 		 <TD valign=top align=left width="30%">
-		       <P align=right><B>Ant external tool builders can build in an external VM</B> </P></TD>
+		       <P align=right><B>Ant external tool builders can be set to build in an external VM</B> </P></TD>
 
-	    <TD width="70%">The JRE tab has been added to configure the launch configuration for Ant external tool builders.
+	    <TD width="70%">The JRE tab has been added to configure the JRE of the launch for Ant external tool builders.
     </TD></TR>
     <TR>
 		<TD colSpan=2>
@@ -285,7 +286,7 @@ DESCRIPTION NEEDED
 		 <TD valign=top align=left width="30%">
 		       <P align=right><B>Extension point support for separate VM builds</B> </P></TD>
 
-	    <TD width="70%">Support has been added for making use of Ant extension point definitions in separate VM builds. Ant extraClasspathEntries, tasks, types 
+	    <TD width="70%">Support has been added for making use of Ant extension point definitions in separate VM builds. Ant extra classpath entries, tasks, types 
 	    and properties can be defined to be available in separate VM builds. See bug <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47901">47901</a>.
     </TD></TR>
     </TBODY></TABLE></BODY></HTML>
