@@ -43,13 +43,23 @@ public class DropToFrameButton implements IViewActionDelegate, IActionDelegate2 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		try {
-			fFrame.dropToFrame();
-		} catch (DebugException e) {
-			String title= ActionMessages.getString("DropToFrameAction.Drop_to_Frame_1"); //$NON-NLS-1$
-			String message= ActionMessages.getString("DropToFrameAction.Exceptions_occurred_attempting_to_drop_to_frame._2"); //$NON-NLS-1$
-			ExceptionHandler.handle(e, title, message);
-		}
+        Job job = new Job("Drop To Frame") { //$NON-NLS-1$
+            protected IStatus run(IProgressMonitor monitor) {
+                if (monitor.isCanceled()) {
+                    return Status.CANCEL_STATUS;
+                }
+                try {
+                    fFrame.dropToFrame();
+                } catch (DebugException e) {
+                    String title= ActionMessages.getString("DropToFrameAction.Drop_to_Frame_1"); //$NON-NLS-1$
+                    String message= ActionMessages.getString("DropToFrameAction.Exceptions_occurred_attempting_to_drop_to_frame._2"); //$NON-NLS-1$
+                    ExceptionHandler.handle(e, title, message);
+                }
+                return Status.OK_STATUS;
+            }
+        };
+        job.setSystem(true);
+        job.schedule();
 	}
 
 	/* (non-Javadoc)
