@@ -184,12 +184,11 @@ public class JDIDebugModel {
 	
 	/**
 	 * Creates and returns a line breakpoint in the type with the
-	 * given name, at the given line number. The marker associated with the]
+	 * given name, at the given line number. The marker associated with the
 	 * breakpoint will be created on the specified resource. If a character
 	 * range within the line is known, it may be specified by charStart/charEnd.
 	 * If hitCount is > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times. Adding the breakpoint to the
-	 * breakpoint manager is a client responsibility.
+	 * "hit" the specified number of times.
 	 * 
 	 * @param resource the resource on which to create the associated breakpoint
 	 *  marker
@@ -211,7 +210,7 @@ public class JDIDebugModel {
 	 *   suspending execution - 0 if it should always suspend
 	 * @param register whether to add this breakpoint to the breakpoint manager
 	 * @param attributes a map of client defined attributes that should be assigned
- 	 *  to the underlying breakpoint marker on creation
+ 	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
 	 * @return a line breakpoint
 	 * @exception CoreException If this method fails. Reasons include:<ul> 
 	 *<li>Failure creating underlying marker.  The exception's status contains
@@ -247,7 +246,7 @@ public class JDIDebugModel {
 	 *   suspending execution - 0 if it should always suspend
 	 * @param register whether to add this breakpoint to the breakpoint manager
 	 * @param attributes a map of client defined attributes that should be assigned
- 	 *  to the underlying breakpoint marker on creation
+ 	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
 	 * @return a pattern breakpoint
 	 * @exception CoreException If this method fails. Reasons include:<ul> 
 	 *<li>Failure creating underlying marker.  The exception's status contains
@@ -316,7 +315,7 @@ public class JDIDebugModel {
 	 * 	suspending execution - 0 if it should always suspend
 	 * @param register whether to add this breakpoint to the breakpoint manager
 	 * @param attributes a map of client defined attributes that should be assigned
- 	 *  to the underlying breakpoint marker on creation
+ 	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
 	 * @return a watchpoint
 	 * @exception CoreException If this method fails. Reasons include:<ul> 
 	 *<li>Failure creating underlying marker.  The CoreException's status contains
@@ -354,7 +353,7 @@ public class JDIDebugModel {
 	 *   suspending execution - 0 if it should always suspend
 	 * @param register whether to add this breakpoint to the breakpoint manager
 	 * @param attributes a map of client defined attributes that should be assigned
- 	 *  to the underlying breakpoint marker on creation
+ 	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
 	 * @return a method entry breakpoint
 	 * @exception CoreException If this method fails. Reasons include:<ul> 
 	 *<li>Failure creating underlying marker.  The exception's status contains
