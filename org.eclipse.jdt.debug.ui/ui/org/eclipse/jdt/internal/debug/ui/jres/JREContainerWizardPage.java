@@ -21,7 +21,10 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -121,11 +124,16 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		composite.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		composite.setLayoutData(gd);
 		fJREBlock = new JREsComboBlock();
 		fJREBlock.setDefaultJREDescriptor(new BuildJREDescriptor());
 		fJREBlock.setTitle(JREMessages.getString("JREContainerWizardPage.3")); //$NON-NLS-1$
-		fJREBlock.createControl(parent);
-		setControl(fJREBlock.getControl());	
+		fJREBlock.createControl(composite);
+		setControl(composite);	
 		
 		setTitle(JREMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
 		setMessage(JREMessages.getString("JREContainerWizardPage.Select_the_JRE_used_to_build_this_project._4")); //$NON-NLS-1$
