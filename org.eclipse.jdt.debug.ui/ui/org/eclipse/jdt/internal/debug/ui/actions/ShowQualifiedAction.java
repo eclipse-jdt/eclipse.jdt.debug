@@ -54,7 +54,7 @@ public class ShowQualifiedAction extends VariableFilterAction {
 				public void run() {
 					viewer.refresh();
 					IPreferenceStore store = getPreferenceStore();
-					String key = getView().getSite().getId() + "." + getPreferenceKey();
+					String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
 					store.setValue(key, getValue());
 					JDIDebugUIPlugin.getDefault().savePluginPreferences();						
 				}

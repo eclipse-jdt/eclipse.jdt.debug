@@ -102,7 +102,7 @@ public class PrimitiveOptionsAction implements IViewActionDelegate, IActionDeleg
 	 * @return boolean
 	 */
 	public static boolean getPreferenceValue(String id, String preference) {
-		String compositeKey = id + "." + preference;
+		String compositeKey = id + "." + preference; //$NON-NLS-1$
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		boolean value = false;
 		if (store.contains(compositeKey)) {

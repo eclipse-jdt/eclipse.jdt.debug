@@ -47,7 +47,7 @@ public class PrimitiveOptionsDialog extends Dialog {
 			parent,
 			IJavaDebugHelpContextIds.PRIMITIVE_DISPLAY_OPTIONS_DIALOG);		
 		
-		getShell().setText("Primitive Type Display Options");
+		getShell().setText(ActionMessages.getString("PrimitiveOptionsDialog.Primitive_Type_Display_Options_1")); //$NON-NLS-1$
 		Composite composite = (Composite)super.createDialogArea(parent);
 		
 		// Create the 3 primitive display checkboxes
@@ -68,9 +68,9 @@ public class PrimitiveOptionsDialog extends Dialog {
 	 */
 	protected void okPressed() {
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		store.setValue(fPrefix + "." + IJDIPreferencesConstants.PREF_SHOW_HEX, fHexButton.getSelection());
-		store.setValue(fPrefix + "." + IJDIPreferencesConstants.PREF_SHOW_CHAR, fCharButton.getSelection());
-		store.setValue(fPrefix + "." + IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, fUnsignedButton.getSelection());
+		store.setValue(fPrefix + "." + IJDIPreferencesConstants.PREF_SHOW_HEX, fHexButton.getSelection()); //$NON-NLS-1$
+		store.setValue(fPrefix + "." + IJDIPreferencesConstants.PREF_SHOW_CHAR, fCharButton.getSelection()); //$NON-NLS-1$
+		store.setValue(fPrefix + "." + IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, fUnsignedButton.getSelection()); //$NON-NLS-1$
 		super.okPressed();
 	}	
 }

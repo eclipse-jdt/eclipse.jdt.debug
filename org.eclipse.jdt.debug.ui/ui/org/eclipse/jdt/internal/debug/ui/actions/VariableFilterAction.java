@@ -91,7 +91,7 @@ public abstract class VariableFilterAction extends ViewerFilter implements IView
 		}
 		viewer.refresh();
 		IPreferenceStore store = getPreferenceStore();
-		String key = getView().getSite().getId() + "." + getPreferenceKey();
+		String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
 		store.setValue(key, getValue());
 		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 	}
@@ -116,7 +116,7 @@ public abstract class VariableFilterAction extends ViewerFilter implements IView
 	protected boolean getPreferenceValue(IViewPart part) {
 		String baseKey = getPreferenceKey();
 		String viewKey = part.getSite().getId();
-		String compositeKey = viewKey + "." + baseKey;
+		String compositeKey = viewKey + "." + baseKey; //$NON-NLS-1$
 		IPreferenceStore store = getPreferenceStore();
 		boolean value = false;
 		if (store.contains(compositeKey)) {
