@@ -14,18 +14,21 @@ package org.eclipse.jdt.internal.debug.core.model;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
+import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
+import com.sun.jdi.InterfaceType;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
@@ -168,6 +171,52 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 		// as #requestFailed will throw an exception
 		return null;
 	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getAllInterfaces()
+	 */
+	public IJavaInterfaceType[] getAllInterfaces() throws DebugException {
+		try {
+			List interfaceList = ((ClassType)getUnderlyingType()).allInterfaces();
+			List javaInterfaceTypeList = new ArrayList(interfaceList.size());
+			Iterator iterator = interfaceList.iterator();
+			while (iterator.hasNext()) {
+				InterfaceType interfaceType = (InterfaceType) iterator.next();
+				if (interfaceType != null) {
+					javaInterfaceTypeList.add((IJavaInterfaceType)JDIType.createType(getDebugTarget(), interfaceType));
+				}				
+			}
+			IJavaInterfaceType[] javaInterfaceTypeArray = new IJavaInterfaceType[javaInterfaceTypeList.size()];
+			javaInterfaceTypeArray = (IJavaInterfaceType[]) javaInterfaceTypeList.toArray(javaInterfaceTypeArray);
+			return javaInterfaceTypeArray;
+		} catch (RuntimeException re) {
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_superclass"), new String[] {re.toString()}), re); //$NON-NLS-1$
+		}
+		return new IJavaInterfaceType[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getInterfaces()
+	 */
+	public IJavaInterfaceType[] getInterfaces() throws DebugException {
+		try {
+			List interfaceList = ((ClassType)getUnderlyingType()).interfaces();
+			List javaInterfaceTypeList = new ArrayList(interfaceList.size());
+			Iterator iterator = interfaceList.iterator();
+			while (iterator.hasNext()) {
+				InterfaceType interfaceType = (InterfaceType) iterator.next();
+				if (interfaceType != null) {
+					javaInterfaceTypeList.add((IJavaInterfaceType)JDIType.createType(getDebugTarget(), interfaceType));
+				}				
+			}
+			IJavaInterfaceType[] javaInterfaceTypeArray = new IJavaInterfaceType[javaInterfaceTypeList.size()];
+			javaInterfaceTypeArray = (IJavaInterfaceType[]) javaInterfaceTypeList.toArray(javaInterfaceTypeArray);
+			return javaInterfaceTypeArray;
+		} catch (RuntimeException re) {
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_superclass"), new String[] {re.toString()}), re); //$NON-NLS-1$
+		}
+		return new IJavaInterfaceType[0];
+	}
 
 }
 

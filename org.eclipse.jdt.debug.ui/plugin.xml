@@ -31,6 +31,7 @@
 
 <!-- Extensions Points -->
 <extension-point name="%vmInstallTypePage" id="vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
+<extension-point name="%javaVariablesContentProviders" id="javaVariablesContentProviders"/>
 
 <!-- Extensions -->
 
@@ -1785,7 +1786,6 @@
 </extension>
 
 <!-- Adds the launch and java debug actions whenever a java relevant part is open -->
-
 <extension point="org.eclipse.ui.actionSetPartAssociations">
 	<actionSetPartAssociation 
 		targetID="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
@@ -1813,4 +1813,26 @@
 		<part id="org.eclipse.jdt.ui.MembersView"/>
 	</actionSetPartAssociation>
 </extension>
+
+<extension point="org.eclipse.debug.ui.variablesContentProviders">
+	<variablesContentProvider
+		id="org.eclipse.jdt.debug.ui.JavaVariablesContentProvider"
+		debugModelId="org.eclipse.jdt.debug"
+		class="org.eclipse.jdt.internal.debug.ui.JavaVariablesContentProvider">
+	</variablesContentProvider>	
+</extension>
+
+<extension point="org.eclipse.jdt.debug.ui.javaVariablesContentProviders">
+	<javaVariablesContentProvider
+		id="org.eclipse.jdt.debug.ui.CollectionContentProvider"
+		types="java.util.Collection"
+		class="org.eclipse.jdt.internal.debug.ui.JavaUtilCollectionVariablesContentProvider">
+	</javaVariablesContentProvider>
+	<javaVariablesContentProvider
+		id="org.eclipse.jdt.debug.ui.MapContentProvider"
+		types="java.util.Map"
+		class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapVariablesContentProvider">
+	</javaVariablesContentProvider>
+</extension>
+
 </plugin>

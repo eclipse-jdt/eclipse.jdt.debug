@@ -123,5 +123,34 @@ public interface IJavaClassType  extends IJavaType {
 	 * </ul>
 	 */
 	public IJavaClassObject getClassObject() throws DebugException;
+	
+	/**
+	 * Returns the interface objects associated with the interfaces this class directly implements.
+	 * Only those interfaces declared in the <code>implements</code> clause for this class are included.
+	 * 
+	 * @return the interface objects associated with the interfaces this class directly implements
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 * @since 3.0
+	 */
+	public IJavaInterfaceType[] getInterfaces() throws DebugException;
+
+	/**
+	 * Returns the interface objects associated with <em>all</em> interfaces this class implements,
+	 * directly or indirectly.
+	 * 
+	 * @return the interface objects associated with the interfaces this class directly implements,
+	 * directly or indirectly
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 * @since 3.0
+	 */
+	public IJavaInterfaceType[] getAllInterfaces() throws DebugException;
 }
 
