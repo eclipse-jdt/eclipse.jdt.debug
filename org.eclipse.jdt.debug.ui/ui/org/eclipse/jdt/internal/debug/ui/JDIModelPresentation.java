@@ -1103,45 +1103,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			varLabel= var.getName();
 		} catch (DebugException exception) {
 		}
-		String details= (String) fAttributes.get(SHOW_DETAILS);
-		if (details != null) {
-		    try {
-                IJavaType javaType = var.getJavaType();
-                JavaDetailFormattersManager manager= JavaDetailFormattersManager.getDefault();
-                if (details.equals(IJDIPreferencesConstants.INLINE_ALL) ||
-                   (details.equals(IJDIPreferencesConstants.INLINE_FORMATTERS) &&
-                   manager.hasAssociatedDetailFormatter(javaType))) {
-                    final String[] detail= new String[1];
-                    final Object lock= new Object();
-                    computeDetail(var.getValue(), new IValueDetailListener() {
-                        /* (non-Javadoc)
-                         * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
-                         */
-                        public void detailComputed(IValue value, String result) {
-                            synchronized (lock) {
-                                detail[0]= result;
-                                lock.notifyAll();
-                            }
-                        }
-                    });
-	                synchronized (lock) {
-	                    if (detail[0] == null) {
-		                    try {
-		                        lock.wait(5000);
-		                    } catch (InterruptedException e1) {
-		                        // Fall through
-		                    }
-	                    }
-                    }
-                    if (detail[0] != null) {
-                        StringBuffer buffer= new StringBuffer(varLabel);
-                        buffer.append("= ").append(detail[0]); //$NON-NLS-1$
-                        return buffer.toString();
-                    }
-                }
-            } catch (DebugException e) {
-                // Fall through
-            }
+
+		IJavaValue javaValue= null;
+		try {
+			javaValue = (IJavaValue) var.getValue();
+			if (isShowLabelDetails(javaValue)) {
+	    		String detail = getVariableDetail(var);
+	            if (detail != null) {
+	                StringBuffer buffer= new StringBuffer(varLabel);
+	                buffer.append("= ").append(detail); //$NON-NLS-1$
+	                return buffer.toString();
+	        	}
+			}
+		} catch (DebugException e1) {
 		}
 		boolean showTypes= isShowVariableTypeNames();
 		int spaceIndex= varLabel.lastIndexOf(' ');
@@ -1176,10 +1150,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		
 		String valueString= DebugUIMessages.getString("JDIModelPresentation<unknown_value>_3"); //$NON-NLS-1$
-		try {
-			IJavaValue javaValue= (IJavaValue) var.getValue();
-			valueString= getValueText(javaValue);
-		} catch (DebugException exception) {
+		if (javaValue != null) {
+			try {
+				valueString= getValueText(javaValue);
+			} catch (DebugException exception) {
+			}
 		}
 		//do not put the equal sign for array partitions
 		if (valueString.length() != 0) {
@@ -1189,6 +1164,77 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return buff.toString();
 	}
 	
+	/**
+	 * Returns whether or not details should be shown in the
+	 * label of the given variable.
+	 * @param variable the variable
+	 * @return whether or not details should be shown in the label
+	 *  of the given variable
+	 */
+	private boolean isShowLabelDetails(IJavaValue value) {
+		boolean showDetails= false;
+		String details= (String) fAttributes.get(SHOW_DETAILS);
+		if (details != null) {
+			if (details.equals(IJDIPreferencesConstants.INLINE_ALL)) {
+				showDetails= true;
+			} else if (details.equals(IJDIPreferencesConstants.INLINE_FORMATTERS)){
+				try {
+					IJavaType javaType = value.getJavaType();
+					JavaDetailFormattersManager manager= JavaDetailFormattersManager.getDefault();
+					DetailFormatter formatter = manager.getAssociatedDetailFormatter(javaType);
+					showDetails= formatter != null && formatter.isEnabled();
+				} catch (DebugException e) {
+				}
+			}
+		}
+		return showDetails;
+	}
+	
+	/**
+	 * Returns the detail value for the given variable or <code>null</code>
+	 * if none can be computed.
+	 * @param variable
+	 * @return
+	 * @throws DebugException
+	 */
+	private String getVariableDetail(IJavaVariable variable) {
+		IJavaType javaType;
+		try {
+			javaType = variable.getJavaType();
+		} catch (DebugException e) {
+			return null;
+		}
+		JavaDetailFormattersManager manager = JavaDetailFormattersManager.getDefault();
+    	DetailFormatter detailFormatter = manager.getAssociatedDetailFormatter(javaType);
+		final String[] detail= new String[1];
+		final Object lock= new Object();
+		try {
+			computeDetail(variable.getValue(), new IValueDetailListener() {
+			    /* (non-Javadoc)
+			     * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
+			     */
+			    public void detailComputed(IValue value, String result) {
+			        synchronized (lock) {
+			            detail[0]= result;
+			            lock.notifyAll();
+			        }
+			    }
+			});
+			synchronized (lock) {
+			    if (detail[0] == null) {
+			        try {
+			            lock.wait(5000);
+			        } catch (InterruptedException e1) {
+			            // Fall through
+			        }
+			    }
+			}
+		} catch (DebugException e) {
+			// Fall through
+		}
+		return detail[0];
+	}
+
 	protected String getExpressionText(IExpression expression) throws DebugException {
 		boolean showTypes= isShowVariableTypeNames();
 		StringBuffer buff= new StringBuffer();
