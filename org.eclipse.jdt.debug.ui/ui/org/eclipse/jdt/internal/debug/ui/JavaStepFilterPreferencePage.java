@@ -38,8 +38,6 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Font;
@@ -64,7 +62,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class JavaStepFilterPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
-	private static final String DEFAULT_NEW_FILTER_TEXT = ""; //$NON-NLS-1$
+	
 
 	// Step filter widgets
 	private CheckboxTableViewer fFilterViewer;
@@ -84,7 +82,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	private String fInvalidEditorText= null;
 	private TableEditor fTableEditor;
 	private TableItem fNewTableItem;
-	private Filter fNewStepFilter;
 	private Label fTableLabel;
 	
 	private StepFilterContentProvider fStepFilterContentProvider;
@@ -233,6 +230,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fFilterStaticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
 		fFilterConstructorButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
 	}
+	
 	private void createStepFilterButtons(Composite container) {
 		Font font = container.getFont();
 		initializeDialogUnits(container);
@@ -254,7 +252,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fAddFilterButton.setFont(font);
 		fAddFilterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				editFilter();
+				addFilter();
 			}
 		});
 		
@@ -338,112 +336,32 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		fFilterViewer.setAllChecked(check);
 	}
 	
-	/**
-	 * Create a new filter in the table (with the default 'new filter' value),
-	 * then open up an in-place editor on it.
-	 */
-	private void editFilter() {
-		// if a previous edit is still in progress, finish it
-		if (fEditorText != null) {
-			validateChangeAndCleanup();
-		}
+	private void addFilter() {
+		Shell shell = getShell();
 		
-		fNewStepFilter = fStepFilterContentProvider.addFilter(DEFAULT_NEW_FILTER_TEXT, true);		
+		Filter[] existingFilters= (Filter[])fStepFilterContentProvider.getElements(null);
+		Filter newFilter = CreateStepFilterDialog.showCreateStepFilterDialog(shell, existingFilters);
+		if (newFilter != null)
+			commitNewFilter(newFilter);
+	}
+	
+	private void commitNewFilter(Filter newFilter) {
+		String newFilterName = newFilter.getName();
+		
+	// if newFilter is a duplicate of existing, just set state of existing to checked.
+		Object[] filters= fStepFilterContentProvider.getElements(null);
+		for (int i = 0; i < filters.length; i++) {
+			Filter filter = (Filter)filters[i];
+			if (filter.getName().equals(newFilterName)) {
+				fStepFilterContentProvider.setChecked(filter, true);
+				cleanupEditor();
+				return;
+			}	
+		}
+		fStepFilterContentProvider.addFilter(newFilterName, true);
 		fNewTableItem = fFilterTable.getItem(0);
-		
-		// create & configure Text widget for editor
-		// Fix for bug 1766.  Border behavior on for text fields varies per platform.
-		// On Motif, you always get a border, on other platforms,
-		// you don't.  Specifying a border on Motif results in the characters
-		// getting pushed down so that only there very tops are visible.  Thus,
-		// we have to specify different style constants for the different platforms.
-		int textStyles = SWT.SINGLE | SWT.LEFT;
-		if (!SWT.getPlatform().equals("motif")) {  //$NON-NLS-1$
-			textStyles |= SWT.BORDER;
-		}
-		fEditorText = new Text(fFilterTable, textStyles);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		fEditorText.setLayoutData(gd);
-		fEditorText.setFont(fFilterTable.getFont());
-		
-		// set the editor
-		fTableEditor.horizontalAlignment = SWT.LEFT;
-		fTableEditor.grabHorizontal = true;
-		fTableEditor.setEditor(fEditorText, fNewTableItem, 0);
-		
-		// get the editor ready to use
-		fEditorText.setText(fNewStepFilter.getName());
-		fEditorText.selectAll();
-		setEditorListeners(fEditorText);
-		fEditorText.setFocus();
-	}
-	
-	private void setEditorListeners(Text text) {
-		// CR means commit the changes, ESC means abort and don't commit
-		text.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent event) {				
-				if (event.character == SWT.CR) {
-					if (fInvalidEditorText != null) {
-						fEditorText.setText(fInvalidEditorText);
-						fInvalidEditorText= null;
-					} else {
-						validateChangeAndCleanup();
-					}
-				} else if (event.character == SWT.ESC) {
-					removeNewFilter();
-					cleanupEditor();
-				}
-			}
-		});
-		// Consider loss of focus on the editor to mean the same as CR
-		text.addFocusListener(new FocusAdapter() {
-			public void focusLost(FocusEvent event) {
-				if (fInvalidEditorText != null) {
-					fEditorText.setText(fInvalidEditorText);
-					fInvalidEditorText= null;
-				} else {
-					validateChangeAndCleanup();
-				}
-			}
-		});
-		// Consume traversal events from the text widget so that CR doesn't 
-		// traverse away to dialog's default button.  Without this, hitting
-		// CR in the text field closes the entire dialog.
-		text.addListener(SWT.Traverse, new Listener() {
-			public void handleEvent(Event event) {
-				event.doit = false;
-			}
-		});
-	}
-	
-	private void validateChangeAndCleanup() {
-		String trimmedValue = fEditorText.getText().trim();
-		// if the new value is blank, remove the filter
-		if (trimmedValue.length() < 1) {
-			removeNewFilter();
-		}
-		// if it's invalid, beep and leave sitting in the editor
-		else if (!validateEditorInput(trimmedValue)) {
-			fInvalidEditorText= trimmedValue;
-			fEditorText.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Invalid_step_filter._Return_to_continue;_escape_to_exit._1")); //$NON-NLS-1$
-			getShell().getDisplay().beep();			
-			return;
-		// otherwise, commit the new value if not a duplicate
-		} else {		
-			
-			Object[] filters= fStepFilterContentProvider.getElements(null);
-			for (int i = 0; i < filters.length; i++) {
-				Filter filter = (Filter)filters[i];
-				if (filter.getName().equals(trimmedValue)) {
-					removeNewFilter();
-					cleanupEditor();
-					return;
-				}	
-			}
-			fNewTableItem.setText(trimmedValue);
-			fNewStepFilter.setName(trimmedValue);
-			fFilterViewer.refresh();
-		}
+		fNewTableItem.setText(newFilterName);
+		fFilterViewer.refresh();
 		cleanupEditor();
 	}
 	
@@ -452,47 +370,11 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 */
 	private void cleanupEditor() {
 		if (fEditorText != null) {
-			fNewStepFilter = null;
 			fNewTableItem = null;
 			fTableEditor.setEditor(null, null, 0);	
 			fEditorText.dispose();
 			fEditorText = null;
 		}
-	}
-	
-	private void removeNewFilter() {
-		fStepFilterContentProvider.removeFilters(new Object[] {fNewStepFilter});
-	}
-	
-	/**
-	 * A valid step filter is simply one that is a valid Java identifier.
-	 * and, as defined in the JDI spec, the regular expressions used for
-	 * step filtering must be limited to exact matches or patterns that
-	 * begin with '*' or end with '*'. Beyond this, a string cannot be validated
-	 * as corresponding to an existing type or package (and this is probably not
-	 * even desirable).  
-	 */
-	private boolean validateEditorInput(String trimmedValue) {
-		char firstChar= trimmedValue.charAt(0);
-		if (!Character.isJavaIdentifierStart(firstChar)) {
-			if (!(firstChar == '*')) {
-				return false;
-			}
-		}
-		int length= trimmedValue.length();
-		for (int i= 1; i < length; i++) {
-			char c= trimmedValue.charAt(i);
-			if (!Character.isJavaIdentifierPart(c)) {
-				if (c == '.' && i != (length - 1)) {
-					continue;
-				}
-				if (c == '*' && i == (length - 1)) {
-					continue;
-				}
-				return false;
-			}
-		}
-		return true;
 	}
 	
 	private void addType() {
@@ -714,6 +596,11 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			updateActions();
 		}
 		
+		public void setChecked(Filter filter, boolean checked) {
+			filter.setChecked(checked);
+			fViewer.setChecked(filter, checked);
+		}
+		
 		public void toggleFilter(Filter filter) {
 			boolean newState = !filter.isChecked();
 			filter.setChecked(newState);
@@ -724,7 +611,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return fFilters.toArray();
+			return fFilters.toArray(new Filter[0]);
 		}
 		
 		/**
