@@ -25,10 +25,15 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.eval.EvaluationManager;
+import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
+import org.eclipse.jdt.debug.eval.IEvaluationListener;
+import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
@@ -38,9 +43,11 @@ import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
 /**
  * Tests for launch configurations
  */
-public abstract class AbstractDebugTest extends TestCase {
+public abstract class AbstractDebugTest extends TestCase implements  IEvaluationListener {
 	
 	public static final int DEFAULT_TIMEOUT = 30000;
+	
+	public IEvaluationResult fEvaluationResult;
 	
 	/**
 	 * The last relevent event set - for example, that caused
@@ -286,5 +293,35 @@ public abstract class AbstractDebugTest extends TestCase {
 		}
 		return null;
 	}
+	
+	/**
+	 * Evaluates the given snippet in the context of the given stack frame and returns
+	 * the result.
+	 * 
+	 * @param snippet code snippet
+	 * @param frame stack frame context
+	 * @return evaluation result
+	 */
+	protected IEvaluationResult evaluate(String snippet, IJavaStackFrame frame) throws Exception {
+		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
+		waiter.setTimeout(DEFAULT_TIMEOUT);
+		
+		IAstEvaluationEngine engine = EvaluationManager.newAstEvaluationEngine(getJavaProject(), (IJavaDebugTarget)frame.getDebugTarget());
+		engine.evaluate(snippet, frame, this, DebugEvent.EVALUATION, true);
+
+		Object suspendee= waiter.waitForEvent();
+		setEventSet(waiter.getEventSet());
+		assertNotNull("Program did not suspend.", suspendee);
+		engine.dispose();
+		return fEvaluationResult;
+	}		
+	
+	/**
+	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
+	 */
+	public void evaluationComplete(IEvaluationResult result) {
+		fEvaluationResult = result;
+	}
+
 }
 
