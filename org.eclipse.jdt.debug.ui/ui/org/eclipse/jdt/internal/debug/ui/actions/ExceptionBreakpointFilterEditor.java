@@ -178,7 +178,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	
 	public ExceptionBreakpointFilterEditor(Composite parent, IJavaExceptionBreakpoint breakpoint) {
 		fBreakpoint= breakpoint;
-		init(JavaBreakpointPreferenceStore.EXCEPTION_FILTER, "Re&strict to Selected Location(s):\nChecked locations are inclusive (stop in the specified location)\nUnchecked locations are exclusive (do not stop in the specified location)"); //$NON-NLS-1$
+		init(JavaBreakpointPreferenceStore.EXCEPTION_FILTER, ActionMessages.getString("ExceptionBreakpointFilterEditor.Re&strict_to_Selected_Location(s)__nChecked_locations_are_inclusive_(stop_in_the_specified_location)_nUnchecked_locations_are_exclusive_(do_not_stop_in_the_specified_location)_1")); //$NON-NLS-1$
 		createControl(parent);
 	}
 	
