@@ -388,11 +388,15 @@ public interface IJavaLaunchConfigurationConstants {
 	/**
 	 * Status code indicating that the applet launcher was asked to
 	 * launch a resource that did not extend <code>java.applet.Applet</code>.
+	 * 
+	 * @since 2.1
 	 */
 	public static final int ERR_NOT_AN_APPLET = 121;		
 
 	/**
 	 * Status code indicating that no launch configuration was specified.
+	 * 
+	 * @since 2.1
 	 */
 	public static final int ERR_UNSPECIFIED_LAUNCH_CONFIG = 122;		
 
