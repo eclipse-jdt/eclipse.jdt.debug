@@ -261,14 +261,16 @@
 		targetID="org.eclipse.debug.ui.VariableView.detail">
 		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
-			menubarPath="additions" 
-			icon="icons/full/etool16/disp_sbook.gif" 
+			menubarPath="variableGroup" 
+			icon="icons/full/etool16/disp_sbook.gif"
+			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
-			menubarPath="additions" 
+			menubarPath="variableGroup" 
 			icon="icons/full/etool16/insp_sbook.gif" 
+			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
 	</viewerContribution>
@@ -280,6 +282,7 @@
 			menubarPath="evaluationGroup"
 			icon="icons/full/etool16/disp_sbook.gif" 
 			helpContextId="display_action_context"
+			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.Inspect" 
@@ -287,6 +290,7 @@
 			menubarPath="evaluationGroup"
 			icon="icons/full/etool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
+			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
 	</viewerContribution>
@@ -385,7 +389,7 @@
 		targetID="org.eclipse.jdt.debug.ui.DisplayView">
 			<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
-			tooltip="Display"
+			tooltip="%Display.tooltip"
 			toolbarPath="evaluationGroup"
 			icon="icons/full/etool16/disp_sbook.gif" 
 			helpContextId="display_action_context"
@@ -393,7 +397,7 @@
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
-			tooltip="Inspect"
+			tooltip="%Inspect.tooltip"
 			toolbarPath="evaluationGroup"
 			icon="icons/full/etool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
@@ -466,12 +470,14 @@
 			label="%Display.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/disp_sbook.gif" 
+			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/insp_sbook.gif" 
+			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
      </viewerContribution>
@@ -487,13 +493,15 @@
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
-			icon="icons/full/etool16/disp_sbook.gif" 
+			icon="icons/full/etool16/disp_sbook.gif"
+			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/insp_sbook.gif" 
+			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.AddBreakpoint" 
@@ -513,13 +521,15 @@
 		</action> 
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
-			menubarPath="additions" 
+			menubarPath="additions"
+			enablesFor="+"
 			icon="icons/full/etool16/disp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
-			menubarPath="additions" 
+			menubarPath="additions"
+			enablesFor="+"
 			icon="icons/full/etool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
@@ -559,19 +569,20 @@
 			label="%Display.label"
 			tooltip="%Display.tooltip"
 			toolbarPath="evaluationGroup" 
-			icon="icons/full/etool16/disp_sbook.gif" 
+			icon="icons/full/etool16/disp_sbook.gif"
+			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			tooltip="%Inspect.tooltip"
 			toolbarPath="evaluationGroup" 
+			enablesFor="+"
 			icon="icons/full/etool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
       </editorContribution> 
    </extension> 
-
 
 <extension
 	point="org.eclipse.ui.propertyPages">

@@ -48,10 +48,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
@@ -75,15 +73,9 @@ import com.sun.jdi.ObjectReference;
  * Action to do simple code evaluation. The evaluation
  * is done in the UI thread and the expression and result are
  * displayed using the IDataDisplay.
- * 
- * [Issue: this class is a part listener because the workbench
- * does not fire selection change events to action delegates when
- * the selection is a text selection. Thus we have to listen to parts
- * and do manual updating].
  */
-public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchWindowActionDelegate, IObjectActionDelegate, IEditorActionDelegate, IPartListener, ISelectionChangedListener, IViewActionDelegate, IPageListener {
+public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchWindowActionDelegate, IObjectActionDelegate, IEditorActionDelegate, IPartListener, IViewActionDelegate, IPageListener {
 
-	private String fExpression;
 	private IAction fAction;
 	private IWorkbenchPart fTargetPart;
 	private IEditorPart fTargetEditor;
@@ -165,7 +157,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	
 	protected void run() {
 			
-		fExpression= null;
+		String expression= null;
 		
 		// eval in context of object or stack frame
 		IJavaObject object = getObjectContext();		
@@ -189,18 +181,18 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					if (!(selection instanceof String)) {
 						return;
 					}
-					fExpression= (String)selection;
+					expression= (String)selection;
 					
 					IDataDisplay dataDisplay= getDataDisplay();
 					if (dataDisplay != null) {
-						dataDisplay.displayExpression(fExpression);
+						dataDisplay.displayExpression(expression);
 					}
 					
 					IEvaluationEngine engine = getEvaluationEngine((IJavaDebugTarget)jFrame.getDebugTarget(), project);
 					if (object == null) {
-						engine.evaluate(fExpression, jFrame, this);
+						engine.evaluate(expression, jFrame, this);
 					} else {
-						engine.evaluate(fExpression, object, (IJavaThread)jFrame.getThread(), this);
+						engine.evaluate(expression, object, (IJavaThread)jFrame.getThread(), this);
 					}
 					
 				} catch (CoreException e) {
@@ -260,7 +252,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 * Updates the enabled state of the action that this is a
 	 * delegate for.
 	 */
-	public void update() {
+	protected void update() {
 		IAction action= getAction();
 		if (action != null) {
 			boolean enabled = false;
@@ -284,10 +276,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	
 	/**
 	 * Returns the selected object in the target part, or <code>null</code>
-	 * if there is no text selection.
+	 * if there is no selection.
 	 * 
-	 * @return the selected text in the active view, or <code>null</code>
-	 *  if there is no text selection
+	 * @return the selected object in the active view, or <code>null</code>
+	 *  if there is no selection
 	 */
 	protected Object getExpressionSelection() {
 		ISelection selection= getTargetSelection();
@@ -337,25 +329,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 	
 	/**
-	 * Returns true if the current stack frame context can be used for an
-	 * evaluation, false otherwise.  For a Snippet editor, always returns true.
-	 */
-	protected boolean isValidStackFrame() {
-		if (getTargetPart() instanceof JavaSnippetEditor) {
-			return true;
-		}
-		IStackFrame stackFrame = getContext();
-		if (stackFrame == null) {
-			return false;
-		}
-		if (isUsedInEditor()) {
-			return compareToEditorInput(stackFrame);
-		} else {
-			return true;
-		}
-	}
-	
-	/**
 	 * Resolve an editor input from the source element of the stack frame
 	 * argument, and return whether it's equal to the editor input for the
 	 * editor that owns this action.
@@ -384,12 +357,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (getTargetPart() != null) {
 			return getTargetPart().getSite().getShell();
 		} else {
-			return getWorkbenchWindow().getShell();
+			return JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell();
 		}
-	}
-	
-	protected IWorkbenchWindow getWorkbenchWindow() {
-		return JDIDebugUIPlugin.getActiveWorkbenchWindow();
 	}
 	
 	protected IDataDisplay getDataDisplay() {
@@ -523,10 +492,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			reportError(exception);
 	}
 	
-	protected boolean isUsedInEditor() {
-		return getTargetPart() instanceof IEditorPart;
-	}
-		
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
@@ -610,10 +575,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 */
 	public void partActivated(IWorkbenchPart part) {
 		setTargetPart(part);
-		/*ISelectionProvider provider = part.getSite().getSelectionProvider();
-		if (provider != null) {
-			provider.addSelectionChangedListener(this);
-		}*/
 	}
 
 	/**
@@ -635,23 +596,12 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
 	public void partDeactivated(IWorkbenchPart part) {
-		/*ISelectionProvider provider = part.getSite().getSelectionProvider();
-		if (provider != null) {
-			provider.removeSelectionChangedListener(this);
-		}*/
 	}
 
 	/**
 	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
 	public void partOpened(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		selectionChanged(getAction(), event.getSelection());
 	}
 	
 	/**
