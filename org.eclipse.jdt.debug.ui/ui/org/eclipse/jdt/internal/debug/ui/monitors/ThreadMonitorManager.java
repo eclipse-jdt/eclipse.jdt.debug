@@ -80,9 +80,9 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 				switch (eventKind) {
 					case DebugEvent.SUSPEND:
 					case DebugEvent.RESUME:
-						// refresh on thread suspend/resume
+						// refresh on suspend/resume
 						if (debugEvent.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
-							handleThreadSuspendResume();
+							handleSuspendResume();
 						}
 						break;
 					case DebugEvent.TERMINATE:
@@ -91,15 +91,24 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 						break;
 				}
 			} else if (eventSource instanceof IJavaDebugTarget) {
-				if (eventKind == DebugEvent.TERMINATE) {
-					// clean the maps when a target terminates
-					handleDebugTargetTerminate((IJavaDebugTarget) eventSource);
+				switch (eventKind) {
+					case DebugEvent.SUSPEND:
+					case DebugEvent.RESUME:
+						// refresh on suspend/resume
+						if (debugEvent.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+							handleSuspendResume();
+						}
+						break;
+					case DebugEvent.TERMINATE:
+						// clean the maps when a target terminates
+						handleDebugTargetTerminate((IJavaDebugTarget) eventSource);
+						break;
 				}
 			}
 		}
 	}
 	
-	private void handleThreadSuspendResume() {
+	private void handleSuspendResume() {
 		for (Iterator iter= ((HashMap)fJavaMonitorThreads.clone()).values().iterator(); iter.hasNext();) {
 			((JavaMonitorThread) iter.next()).setToUpdate();
 		}
@@ -255,11 +264,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		if (!fIsEnabled) {
 			return false;
 		}
-		JavaMonitorThread monitorThread = (JavaMonitorThread)fJavaMonitorThreads.get(thread);
-		if (monitorThread == null) {
-			return false;
-		}
-		return monitorThread.isInDeadlock();
+		return getJavaMonitorThread(thread).isInDeadlock();
 	}
 
 }

@@ -221,12 +221,12 @@ public class JavaMonitorThread extends PlatformObject {
 			Object element= elements[i];
 			if (element instanceof JavaOwningThread) {
 				if (((JavaOwningThread)element).getParent() == null) {
-					element= ((JavaOwningThread)element).getThread();
+					element= ((JavaOwningThread)element).getThread().getThread();
 				}
 			}
 			if (element instanceof JavaWaitingThread) {
 				if (((JavaWaitingThread)element).getParent() == null) {
-					element= ((JavaWaitingThread)element).getThread();
+					element= ((JavaWaitingThread)element).getThread().getThread();
 				}
 			}
 			changeEvents[i]= new DebugEvent(element, DebugEvent.CHANGE, detail);
