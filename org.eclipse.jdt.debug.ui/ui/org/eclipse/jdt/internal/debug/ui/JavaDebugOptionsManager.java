@@ -418,6 +418,12 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 				int kind = REMOVED;
 				if (isSuspendOnCompilationErrors()) {
 					kind = ADDED;
+                    if (!fProblemMap.isEmpty()) {
+                        try {
+                            breakpoint.setEnabled(true);
+                        } catch (CoreException e) {
+                        }
+                    }
 				}
 				notifyTargets(breakpoint, kind);
 			}

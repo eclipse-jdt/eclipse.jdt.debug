@@ -58,10 +58,8 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	/**
 	 * This method DEPENDS on the default setting of the 'suspend on compilation errors'
 	 * preference being TRUE.
-	 * 
-	 * REMOVED FROM BUILD
 	 */
-	public void XXXtestSuspendOnCompilationErrors() throws Exception {
+	public void testSuspendOnCompilationErrors() throws Exception {
 		String typeName = "CompileError";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);		
