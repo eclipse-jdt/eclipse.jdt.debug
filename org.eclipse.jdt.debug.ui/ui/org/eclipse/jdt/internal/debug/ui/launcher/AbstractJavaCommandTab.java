@@ -130,7 +130,7 @@ public abstract class AbstractJavaCommandTab extends AbstractLaunchConfiguration
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String javaCommand = fJavaCommandText.getText();
 		Map attributeMap = new HashMap(1);
-		attributeMap.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand); //$NON-NLS-1$
+		attributeMap.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, attributeMap);	
 	}
 
