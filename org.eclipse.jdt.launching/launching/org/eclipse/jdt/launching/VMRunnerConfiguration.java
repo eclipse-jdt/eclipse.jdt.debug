@@ -29,9 +29,6 @@ public class VMRunnerConfiguration {
 	private String[] fProgramArgs;
 	private String[] fEnvironment;
 	private String[] fClassPath;
-	private String[] fPrependBootClassPath;
-	private String[] fMainBootClassPath;
-	private String[] fAppendBootClassPath;
 	private String[] fBootClassPath;
 	private String fWorkingDirectory;
 	private Map fVMSpecificAttributesMap;
@@ -111,53 +108,7 @@ public class VMRunnerConfiguration {
 	public void setEnvironment(String[] environment) {
 		fEnvironment= environment;
 	}
-	
-	/**
-	 * Sets the classpath entries to prepend to the boot classpath - <code>null</code>
-	 * or empty if none.
-	 * 
-	 * @param prependBootClassPath the classpath entries to prepend to the boot classpath - <code>null</code>
-	 * or empty if none
-	 * @since 3.0
-	 * @deprecated - to be removed
-	 */
-	public void setPrependBootClassPath(String[] prependBootClassPath) {
-		fPrependBootClassPath= prependBootClassPath;
-		if (prependBootClassPath != null && prependBootClassPath.length == 0) {
-			fPrependBootClassPath = null;
-		}
-	}
-	
-	/**
-	 * Sets the main boot classpath entries. A value of 
-	 * <code>null</code> indicates the default boot classpath should be used
-	 * (i.e. not specified on the command line), and empty array indicates
-	 * an empty boot classpath attribute.
-	 * 
-	 * @param bootClassPath the main boot classpath entries, possibly <code>null</code>
-	 * @since 3.0
-	 * @deprecated - to be removed
-	 */
-	public void setMainBootClassPath(String[] bootClassPath) {
-		fMainBootClassPath= bootClassPath;
-	}
-	
-	/**
-	 * Sets the classpath entries to append to the boot classpath - <code>null</code>
-	 * or empty if none.
-	 * 
-	 * @param appendBootClassPath the entries to append to the boot classpath - 
-	 *  <code>null</code> or empty indicates none.
-	 * @since 3.0
-	 * @deprecated - to be removed
-	 */
-	public void setAppendBootClassPath(String[] appendBootClassPath) {
-		fAppendBootClassPath= appendBootClassPath;
-		if (appendBootClassPath != null && appendBootClassPath.length == 0) {
-			fAppendBootClassPath = null;
-		}
-	}
-	
+		
 	/**
 	 * Sets the boot classpath. Note that the boot classpath will be passed to the 
 	 * VM "as is". This means it has to be complete. Interpretation of the boot class path
@@ -205,44 +156,6 @@ public class VMRunnerConfiguration {
 		return fClassPath;
 	}
 	
-	/**
-	 * Return the classpath entries to prepend to the boot classpath,
-	 * or <code>null</code> if none.
-	 * 
-	 * @return the classpath entries to prepend to the boot classpath, or
-	 *  <code>null</code> if none
-	 * @since 3.0
-	 * @deprecated - to be removed
-	 */
-	public String[] getPrependBootClassPath() {
-		return fPrependBootClassPath;
-	}
-	
-	/**
-	 * Return the main part of the boot classpath -
-	 * <code>null</code> represents the default boot classpath.
-	 * 
-	 * @return the main part of the boot classpath
-	 * @since 3.0
-	 * @deprecated - to be removed
-	 */
-	public String[] getMainBootClassPath() {
-		return fMainBootClassPath;
-	}
-	
-	/**
-	 * Return the classpath entries to append to the boot classpath,
-	 * or <code>null</code> null if none
-	 * 
-	 * @return the classpath entries to append to the boot classpath,
-	 *  or <code>null</code> if none
-	 * @since 3.0
-	 * @deprecated - to be removed
-	 */
-	public String[] getAppendBootClassPath() {
-		return fAppendBootClassPath;
-	}
-
 	/**
 	 * Returns the boot classpath. An empty array indicates an empty
 	 * bootpath and <code>null</code> indicates a default bootpah.
