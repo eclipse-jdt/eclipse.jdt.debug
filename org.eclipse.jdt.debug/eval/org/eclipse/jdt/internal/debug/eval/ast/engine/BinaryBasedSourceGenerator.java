@@ -354,8 +354,21 @@ public class BinaryBasedSourceGenerator {
 		if (arguments.size() != 0) {
 			Iterator iterator= arguments.iterator();
 			source.append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
-			while (iterator.hasNext()) {
-				source.append(',').append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
+			if (method.isVarargs()) {
+				while (iterator.hasNext()) {
+					source.append(',');
+					String argName = getDotName((String) iterator.next());
+					if (!iterator.hasNext()) {
+						source.append(argName.substring(0,argName.length() - 2)).append("..."); //$NON-NLS-1$
+					} else {
+						source.append(argName);
+					}
+					source.append(" arg").append(i++); //$NON-NLS-1$
+				}
+			} else {
+				while (iterator.hasNext()) {
+					source.append(',').append(getDotName((String) iterator.next())).append(" arg").append(i++); //$NON-NLS-1$
+				}
 			}
 		}
 		source.append(')');

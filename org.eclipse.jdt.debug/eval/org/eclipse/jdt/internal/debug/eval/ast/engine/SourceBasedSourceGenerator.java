@@ -320,6 +320,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				source.append(',');
 			}
 			source.append(getDotName(getTypeName(singleVariableDeclaration.getType())));
+			if (singleVariableDeclaration.isVarargs()) {
+				source.append("..."); //$NON-NLS-1$
+			}
 			source.append(' ');
 			source.append(singleVariableDeclaration.getName().getIdentifier());
 			appendExtraDimensions(source, singleVariableDeclaration.getExtraDimensions());

@@ -2405,7 +2405,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 
-		int argCount= methodBinding.getParameterTypes().length;
+		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
+		int paramCount= parameterTypes.length;
 		String selector= methodBinding.getName();
 
 		String signature= getMethodSignature(methodBinding, null).replace('.','/');
@@ -2415,13 +2416,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		if (isStatic) {
 			String typeName= getTypeName(methodBinding.getDeclaringClass());
-			push(new SendStaticMessage(typeName, selector, signature, argCount, fCounter));
+			push(new SendStaticMessage(typeName, selector, signature, paramCount, fCounter));
 			if (expression != null) {
 				node.getExpression().accept(this);
 				addPopInstruction();
 			}
 		} else {
-			push(new SendMessage(selector, signature, argCount, null, fCounter));
+			push(new SendMessage(selector, signature, paramCount, null, fCounter));
 			if (expression == null) {
 				push(new PushThis(getEnclosingLevel(node, methodBinding.getDeclaringClass())));
 				storeInstruction();
@@ -2430,10 +2431,29 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 		}
 
-		Iterator iterator= node.arguments().iterator();
-		while (iterator.hasNext()) {
-			((Expression) iterator.next()).accept(this);
-		}
+		List arguments = node.arguments();
+		ITypeBinding varargsParameterType= parameterTypes[paramCount - 1];
+		int argCount = arguments.size();
+		if (methodBinding.isVarargs() && !(paramCount == argCount && varargsParameterType.getDimensions() == ((Expression)arguments.get(argCount - 1)).resolveTypeBinding().getDimensions())) {
+			// if this method is a varargs, and if the method is invoked using the varargs syntax
+			// (multiple arguments) and not an array
+			Iterator iterator= arguments.iterator();
+			// process the first arguments (no part of the var argument)
+			for (int i= 1; i < paramCount;) {
+				((Expression) iterator.next()).accept(this);
+			}
+			// create a array of the remainder arguments
+			push(new ArrayInitializerInstruction(getTypeSignature(varargsParameterType.getElementType()), argCount - paramCount + 1, varargsParameterType.getDimensions(), fCounter));
+			while (iterator.hasNext()) {
+				((Expression) iterator.next()).accept(this);
+			}
+			storeInstruction();
+		} else {
+			Iterator iterator= arguments.iterator();
+			while (iterator.hasNext()) {
+				((Expression) iterator.next()).accept(this);
+			}
+		} 
 
 		return false;
 	}
@@ -2954,15 +2974,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
-		int argCount = parameterTypes.length;
+		int paramCount = parameterTypes.length;
 		String selector = methodBinding.getName();
 		String signature = getMethodSignature(methodBinding, null);
 
 		Name qualifier= node.getQualifier();
 		if (Modifier.isStatic(methodBinding.getModifiers())) {
-			push(new SendStaticMessage(getTypeName(methodBinding.getDeclaringClass()), selector, signature, argCount, fCounter));
+			push(new SendStaticMessage(getTypeName(methodBinding.getDeclaringClass()), selector, signature, paramCount, fCounter));
 		} else {
-			push(new SendMessage(selector, signature, argCount, getTypeSignature(methodBinding.getDeclaringClass()), fCounter));
+			push(new SendMessage(selector, signature, paramCount, getTypeSignature(methodBinding.getDeclaringClass()), fCounter));
 			int enclosingLevel= 0;
 			if (qualifier != null) {
 				enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
@@ -2971,10 +2991,29 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			storeInstruction();
 		}
 
-		Iterator iterator = node.arguments().iterator();
-		while (iterator.hasNext()) {
-			((Expression) iterator.next()).accept(this);
-		}
+		List arguments = node.arguments();
+		ITypeBinding varargsParameterType= parameterTypes[paramCount - 1];
+		int argCount = arguments.size();
+		if (methodBinding.isVarargs() && !(paramCount == argCount && varargsParameterType.getDimensions() == ((Expression)arguments.get(argCount - 1)).resolveTypeBinding().getDimensions())) {
+			// if this method is a varargs, and if the method is invoked using the varargs syntax
+			// (multiple arguments) and not an array
+			Iterator iterator= arguments.iterator();
+			// process the first arguments (no part of the var argument)
+			for (int i= 1; i < paramCount;) {
+				((Expression) iterator.next()).accept(this);
+			}
+			// create a array of the remainder arguments
+			push(new ArrayInitializerInstruction(getTypeSignature(varargsParameterType.getElementType()), argCount - paramCount + 1, varargsParameterType.getDimensions(), fCounter));
+			while (iterator.hasNext()) {
+				((Expression) iterator.next()).accept(this);
+			}
+			storeInstruction();
+		} else {
+			Iterator iterator= arguments.iterator();
+			while (iterator.hasNext()) {
+				((Expression) iterator.next()).accept(this);
+			}
+		} 
 
 		return false;
 	}
