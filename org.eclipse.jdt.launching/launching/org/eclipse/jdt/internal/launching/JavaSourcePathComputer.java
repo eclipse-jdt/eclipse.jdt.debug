@@ -46,10 +46,10 @@ import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSour
 public class JavaSourcePathComputer implements ISourcePathComputerDelegate {
 	
 	/**
-	 * Unique identifier for the local Java application source path computer
-	 * (value <code>org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer</code>).
+	 * Unique identifier for the local Java source path computer
+	 * (value <code>org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer</code>).
 	 */
-	public static final String ID = "org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer"; //$NON-NLS-1$
+	public static final String ID = "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer#getId()

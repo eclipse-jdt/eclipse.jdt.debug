@@ -50,7 +50,7 @@
             modes="run, debug"
             id="org.eclipse.jdt.launching.localJavaApplication"
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer">
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
             name="%remoteJavaApplication"
@@ -58,7 +58,7 @@
             modes="debug"
             id="org.eclipse.jdt.launching.remoteJavaApplication"
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer">            
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">            
       </launchConfigurationType>
       <launchConfigurationType
             name="%appletLabel"
@@ -66,7 +66,7 @@
             modes="run, debug"
             id="org.eclipse.jdt.launching.javaApplet"
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
-            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer">            
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">            
       </launchConfigurationType>
    </extension>
    <extension
@@ -165,7 +165,7 @@
    </extension>
    <extension point="org.eclipse.debug.core.sourcePathComputers">
    		<sourcePathComputer
-   			id="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer"
+   			id="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
    			class="org.eclipse.jdt.internal.launching.JavaSourcePathComputer">
    		</sourcePathComputer>
    </extension>
