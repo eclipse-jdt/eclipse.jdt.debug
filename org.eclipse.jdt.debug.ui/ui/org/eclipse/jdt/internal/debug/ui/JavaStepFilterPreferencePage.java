@@ -199,6 +199,9 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		// filter table
 		fFilterTable= new Table(container, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fFilterTable.setLayoutData(gd);
+		
 		TableLayout tableLayout= new TableLayout();
 		ColumnLayoutData[] columnLayoutData= new ColumnLayoutData[1];
 		columnLayoutData[0]= new ColumnWeightData(100);		
