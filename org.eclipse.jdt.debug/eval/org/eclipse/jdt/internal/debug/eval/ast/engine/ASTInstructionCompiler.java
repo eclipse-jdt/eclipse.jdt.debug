@@ -1637,8 +1637,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return true;
 		}
-		
-		addPopInstructionIfNeeded(node.getExpression());
+
 		return true;
 	}
 
@@ -2463,7 +2462,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Expression initializer= node.getInitializer();
 		boolean hasInitializer= initializer != null;
 		
-		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeName(node.getType().resolveBinding()), hasInitializer, fCounter));
+		ITypeBinding typeBinding= node.getType().resolveBinding();
+		int typeDimension= typeBinding.getDimensions();
+		if (typeDimension != 0) {
+			typeBinding= typeBinding.getElementType();
+		}
+		
+		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, hasInitializer, fCounter));
 		if (hasInitializer) {
 			initializer.accept(this);
 		}
@@ -2710,25 +2715,29 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		// get the type of the variable
-		String typeName;
+		ITypeBinding typeBinding;
 		ASTNode parent= node.getParent();
 		switch (parent.getNodeType()) {
 			case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
-				typeName= getTypeName(((VariableDeclarationExpression)parent).getType().resolveBinding());
+				typeBinding= ((VariableDeclarationExpression)parent).getType().resolveBinding();
 				break;
 			case ASTNode.VARIABLE_DECLARATION_STATEMENT:
-				typeName= getTypeName(((VariableDeclarationStatement)parent).getType().resolveBinding());
+				typeBinding= ((VariableDeclarationStatement)parent).getType().resolveBinding();
 				break;
 			default:
 				setHasError(true);
 				addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Error_in_type_declaration_statement"), node.getStartPosition())); //$NON-NLS-1$
 				return false;
 		}
+		int typeDimension= typeBinding.getDimensions();
+		if (typeDimension != 0) {
+			typeBinding= typeBinding.getElementType();
+		}
 
 		Expression initializer= node.getInitializer();
 		boolean hasInitializer= initializer != null;
 		
-		push(new LocalVariableCreation(node.getName().getIdentifier(), typeName, hasInitializer, fCounter));
+		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, hasInitializer, fCounter));
 		
 		if (hasInitializer) {
 			initializer.accept(this);

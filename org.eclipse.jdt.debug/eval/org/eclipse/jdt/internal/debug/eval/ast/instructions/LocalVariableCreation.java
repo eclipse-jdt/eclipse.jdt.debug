@@ -15,6 +15,8 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.debug.core.IJavaType;
 
 public class LocalVariableCreation extends CompoundInstruction {
 
@@ -24,37 +26,54 @@ public class LocalVariableCreation extends CompoundInstruction {
 	private String fName;
 	
 	/**
-	 * The the type signature of the variable to create.
+	 * The signature of the type, or of the element type in case of an array type.
 	 */
-	private String fTypeName;
+	private String fTypeSignature;
 	
 	/**
-	 * 
+	 * The dimension of the array type.
+	 */
+	private int fDimension;
+	
+	/**
+	 * Indicate if there is an initializer for this variable.
 	 */
 	private boolean fHasInitializer;
 
 	/**
 	 * Constructor for LocalVariableCreation.
+	 * 
+	 * @param name the name of the variable to create.
+	 * @param typeSignature the signature of the type, or of the element type in case of an array type.
+	 * @param dimension the dimension of the array type, <code>0</code> if it's not an array type.
+	 * @param hasInitializer indicate if there is an initializer for this variable.
 	 * @param start
 	 */
-	public LocalVariableCreation(String name, String typeName, boolean hasInitializer, int start) {
+	public LocalVariableCreation(String name, String typeSignature, int dimension, boolean hasInitializer, int start) {
 		super(start);
 		fName= name;
-		fTypeName= typeName;
+		fTypeSignature= typeSignature.replace('/', '.');
 		fHasInitializer= hasInitializer;
+		fDimension= dimension;
 	}
 
 	/**
 	 * @see org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		IVariable var= createInternalVariable(fName, fTypeName);
+		IJavaType type;
+		if (fDimension == 0) {
+			type= getType(Signature.toString(fTypeSignature));
+		} else {
+			type= getArrayType(fTypeSignature, fDimension);
+		}
+		IVariable var= createInternalVariable(fName, type);
 		if (fHasInitializer) {
 			var.setValue(popValue());
 		}
 	}
 
 	public String toString() {
-		return MessageFormat.format(InstructionsEvaluationMessages.getString("LocalVariableCreation.create_local_variable_{0}_{1}__1"), new String[]{fName, fTypeName}); //$NON-NLS-1$
+		return MessageFormat.format(InstructionsEvaluationMessages.getString("LocalVariableCreation.create_local_variable_{0}_{1}__1"), new String[]{fName, fTypeSignature}); //$NON-NLS-1$
 	}
 }

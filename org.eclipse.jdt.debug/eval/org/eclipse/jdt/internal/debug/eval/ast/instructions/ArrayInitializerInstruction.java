@@ -32,7 +32,7 @@ public class ArrayInitializerInstruction extends ArrayInstruction {
 	 */
 	public void execute() throws CoreException {
 		
-		IJavaArrayType arrayType = getType(fTypeSignature.replace('/','.'), fDimensions);
+		IJavaArrayType arrayType = getArrayType(fTypeSignature.replace('/','.'), fDimensions);
 		IJavaArray array = arrayType.newInstance(fLength);
 		
 		for (int i = fLength - 1; i >= 0; i--) {

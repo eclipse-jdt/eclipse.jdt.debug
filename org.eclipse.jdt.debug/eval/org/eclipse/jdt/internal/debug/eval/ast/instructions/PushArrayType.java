@@ -23,7 +23,7 @@ public class PushArrayType extends ArrayInstruction {
 	 * @see Instruction#execute()
 	 */
 	public void execute() throws CoreException {
-		push(getType(fTypeSignature.replace('/','.'), fDimension));
+		push(getArrayType(fTypeSignature.replace('/','.'), fDimension));
 	}
 
 }

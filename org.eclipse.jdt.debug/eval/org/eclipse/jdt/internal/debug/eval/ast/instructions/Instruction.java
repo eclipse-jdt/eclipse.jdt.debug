@@ -9,6 +9,8 @@ import com.sun.jdi.InvocationException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
@@ -68,8 +70,8 @@ public abstract class Instruction {
 	 * 
 	 * @see Interpreter#createInternalVariable(String, String)
 	 */
-	protected IVariable createInternalVariable(String name, String referencTypeName) throws CoreException {
-		return fInterpreter.createInternalVariable(name, getType(referencTypeName));
+	protected IVariable createInternalVariable(String name, IJavaType referencType) throws CoreException {
+		return fInterpreter.createInternalVariable(name, referencType);
 	}
 	
 
@@ -221,6 +223,43 @@ public abstract class Instruction {
 	}
 
 
+	protected IJavaArrayType getArrayType(String typeSignature, int dimension) throws CoreException {
+		String qualifiedName = Signature.toString(typeSignature);
+		String braces = ""; //$NON-NLS-1$
+		for (int i = 0; i < dimension; i++) {
+			qualifiedName += "[]"; //$NON-NLS-1$
+			braces += "["; //$NON-NLS-1$
+		}
+		String signature = braces + typeSignature;
+		// Force the class to be loaded, and record the class reference
+		// for later use if there are multiple classes with the same name.
+		IJavaObject classReference= classForName(signature);
+		if (classReference == null) {
+			throw new CoreException(null); // could not resolve type
+		}
+		IJavaType[] types= getVM().getJavaTypes(qualifiedName);
+		checkTypes(types);
+		if (types.length == 1) {
+			// Found only one class.
+			return (IJavaArrayType)types[0];
+		} else {
+			// Found many classes, look for the right one for this scope.
+			for(int i= 0, length= types.length; i < length; i++) {
+				IJavaType type= types[i];
+				if (classReference.equals(getClassObject(type))) {
+					return (IJavaArrayType)type;
+				}
+			}
+
+			// At this point a very strange thing has happened,
+			// the VM was able to return multiple types in the classesByName
+			// call, but none of them were the class that was returned in
+			// the classForName call.
+
+			throw new CoreException(null);
+		}
+	}
+	
 	protected IJavaObject classForName(String qualifiedName) throws CoreException {
 		IJavaType[] types= getVM().getJavaTypes(CLASS);
 		checkTypes(types);
