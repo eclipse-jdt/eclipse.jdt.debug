@@ -134,6 +134,9 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 				if (unit == null) {
 					return null;
 				}
+				synchronized (unit) {
+					unit.reconcile();
+				}
 				IJavaElement e = unit.getElementAt(selection.getOffset());
 				if (e instanceof IMember) {
 					m= (IMember)e;

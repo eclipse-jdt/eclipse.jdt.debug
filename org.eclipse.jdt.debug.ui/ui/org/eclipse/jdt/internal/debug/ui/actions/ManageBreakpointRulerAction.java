@@ -220,11 +220,16 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 				} else if (editorInput instanceof IFileEditorInput) {
 					IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
 					ICompilationUnit unit= manager.getWorkingCopy(editorInput);
-					IJavaElement e = unit.getElementAt(line.getOffset());
-					if (e instanceof IType) {
-						type = (IType)e;
-					} else if (e != null && e instanceof IMember) {
-						type = ((IMember)e).getDeclaringType();
+					if (unit != null) {
+						synchronized (unit) {
+							unit.reconcile();
+						}
+						IJavaElement e = unit.getElementAt(line.getOffset());
+						if (e instanceof IType) {
+							type = (IType)e;
+						} else if (e != null && e instanceof IMember) {
+							type = ((IMember)e).getDeclaringType();
+						}
 					}
 				}
 				if (type != null) {
