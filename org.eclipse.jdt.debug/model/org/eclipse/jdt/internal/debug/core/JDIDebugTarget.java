@@ -69,7 +69,7 @@ import com.sun.jdi.request.EventRequestManager;
  * Debug target for JDI debug model.
  */
 
-public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget, IJDIEventListener {
+public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget {
 		
 	/**
 	 * Threads contained in this debug target. When a thread
@@ -211,28 +211,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * Starts listening for thread starts, deaths, and class loads
 	 */
 	protected void initializeRequests() {
-		EventRequest req= null;
-		EventRequestManager manager= getEventRequestManager();
-		try {
-			req= manager.createThreadStartRequest();
-			req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
-			req.enable();
-		} catch (RuntimeException e) {
-			internalError(e);
-		}
-		addJDIEventListener(this, req);
-		
-
-		try {
-			req= manager.createThreadDeathRequest();
-			req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
-			req.enable();
-		} catch (RuntimeException e) {
-			internalError(e);
-		}
-		addJDIEventListener(this, req);
-		
-		// Listen for all class loads so we can create an instance of ThreadDeath to terminate threads. 
+		new ThreadStartHandler();
+		new ThreadDeathtHandler();		
 		new ThreadTerminator();
 	}
 
@@ -447,58 +427,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 	}
 	
-	/**
-	 * A debug target regisiters for the following types of events:
-	 * <ul>
-	 * <li>ThreadStartEvent</li>
-	 * <li>ThreadDeathEvent</li>
-	 * </ul>
-	 * <p>
-	 * This method delegates based on the type of event received.
-	 * </p>
-	 * 
-	 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
-	 * @return <code>true</code> - any threads suspended due to
-	 * 	either event should be resumed.
-	 */
-	public boolean handleEvent(Event event, JDIDebugTarget target) {
-		if (event instanceof ThreadDeathEvent) {
-			handleThreadDeath((ThreadDeathEvent)event);
-		} else if (event instanceof ThreadStartEvent) {
-			handleThreadStart((ThreadStartEvent)event);
-		}
-		return true;
-	}
-
-	/**
-	 * Locates the model thread associated with the underlying jdi thread
-	 * that has terminated, and removes it from the collection of
-	 * threads belonging to this debug target. A terminate event is
-	 * fired for the model thread.
-	 */
-	protected void handleThreadDeath(ThreadDeathEvent event) {
-		JDIThread thread= findThread(event.thread());
-		if (thread != null) {
-			fThreads.remove(thread);
-			thread.terminated();
-		}
-	}
-
-	/**
-	 * Creates a model thread for the underlying jdi thread
-	 * and adds it to the collection of threads for this 
-	 * debug target. As a side effect of creating the threadm
-	 * a create event is fired for the model thread.
-	 */
-	protected void handleThreadStart(ThreadStartEvent event) {
-		ThreadReference thread= event.thread();
-		JDIThread jdiThread= findThread(thread);
-		if (jdiThread == null) {
-			jdiThread = createThread(thread);
-		}
-		jdiThread.setRunning(true);
-	}
-
 	/**
 	 * Handles a VM death event.
 	 */
@@ -1103,6 +1031,100 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				setRequest(null);
 			}
 		}
+	}
+	
+	/**
+	 * An event handler for thread start events. When a thread
+	 * starts in the target VM, a model thread is created.
+	 */
+	class ThreadStartHandler implements IJDIEventListener {
+		
+		protected ThreadStartHandler() {
+			createRequest();
+		} 
+		
+		/**
+		 * Creates and registers a request to handle all thread start
+		 * events
+		 */
+		protected void createRequest() {
+			try {
+				EventRequest req= getEventRequestManager().createThreadStartRequest();
+				req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
+				req.enable();
+				addJDIEventListener(this, req);
+			} catch (RuntimeException e) {
+				logError(e);
+			}
+		}
+
+		/**
+		 * Creates a model thread for the underlying jdi thread
+		 * and adds it to the collection of threads for this 
+		 * debug target. As a side effect of creating the thread,
+		 * a create event is fired for the model thread.
+		 * 
+		 * @param event a thread start event
+		 * @param target the target in which the thread started
+		 * @return <code>true</code> - the thread should be resumed
+		 */
+		public boolean handleEvent(Event event, JDIDebugTarget target) {
+			ThreadReference thread= ((ThreadStartEvent)event).thread();
+			JDIThread jdiThread= findThread(thread);
+			if (jdiThread == null) {
+				jdiThread = createThread(thread);
+			}	
+			jdiThread.setRunning(true);
+			return true;
+		}
+	}
+	
+	/**
+	 * An event handler for thread death events. When a thread
+	 * dies in the target VM, its associated model thread is
+	 * removed from the debug target.
+	 */
+	class ThreadDeathtHandler implements IJDIEventListener {
+		
+		protected ThreadDeathtHandler() {
+			createRequest();
+		}
+		
+		/**
+		 * Creates and registers a request to listen to thread
+		 * death events.
+		 */
+		protected void createRequest() {
+			try {
+				EventRequest req= getEventRequestManager().createThreadDeathRequest();
+				req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
+				req.enable();
+				addJDIEventListener(this, req);	
+			} catch (RuntimeException e) {
+				logError(e);
+			}	
+		}
+				
+		/**
+		 * Locates the model thread associated with the underlying jdi thread
+		 * that has terminated, and removes it from the collection of
+		 * threads belonging to this debug target. A terminate event is
+		 * fired for the model thread.
+		 *
+		 * @param event a thread death event
+		 * @param target the target in which the thread died
+		 * @return <code>true</code> - the thread should be resumed
+		 */
+		public boolean handleEvent(Event event, JDIDebugTarget target) {
+			ThreadReference ref= ((ThreadDeathEvent)event).thread();
+			JDIThread thread= findThread(ref);
+			if (thread != null) {
+				fThreads.remove(thread);
+				thread.terminated();
+			}
+			return true;
+		}
+		
 	}
 }
 
