@@ -164,8 +164,11 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					// the source file name and the package of the declaring
 					// type
 					
-					// @see bug# 12966 - remove absolute path prefix
-					int index = sourceName.lastIndexOf(File.pathSeparatorChar);
+					// @see bug# 21518 - remove absolute path prefix
+					int index = sourceName.lastIndexOf('\\');
+					if (index == -1) {
+						index = sourceName.lastIndexOf('/');
+					}
 					if (index >= 0) {
 						sourceName = sourceName.substring(index + 1);
 					}
