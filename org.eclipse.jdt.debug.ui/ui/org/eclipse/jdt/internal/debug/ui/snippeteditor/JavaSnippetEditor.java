@@ -333,24 +333,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			|| !javaProject.hasBuildState();
 		
 		if (build) {
-			IRunnableWithProgress r= new IRunnableWithProgress() {
-				public void run(IProgressMonitor pm) throws InvocationTargetException {
-					try {
-						getJavaProject().getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, pm);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			};
-			try {
-				new ProgressMonitorDialog(getShell()).run(true, false, r);		
-			} catch (InterruptedException e) {
-				JDIDebugUIPlugin.log(e);
-				evaluationEnds();
-				return;
-			} catch (InvocationTargetException e) {
-				JDIDebugUIPlugin.log(e);
-				evaluationEnds();
+			if (!performIncrementalBuild()) {
 				return;
 			}
 		}
@@ -368,9 +351,55 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			shutDownVM();
 		}
 	
-		if (launch) {
+		if (fVM == null) {
+			checkMultipleEditors();
+		}
+		if (launch && fVM == null) {
 			launchVM();
 			fVM= ScrapbookLauncher.getDefault().getDebugTarget(getPage());
+		}
+	}
+	
+	protected boolean performIncrementalBuild() {
+		IRunnableWithProgress r= new IRunnableWithProgress() {
+			public void run(IProgressMonitor pm) throws InvocationTargetException {
+				try {
+					getJavaProject().getProject().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, pm);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		};
+		try {
+			new ProgressMonitorDialog(getShell()).run(true, false, r);		
+		} catch (InterruptedException e) {
+			JDIDebugUIPlugin.log(e);
+			evaluationEnds();
+			return false;
+		} catch (InvocationTargetException e) {
+			JDIDebugUIPlugin.log(e);
+			evaluationEnds();
+			return false;
+		}
+		return true;
+	}
+	
+	protected void checkMultipleEditors() {
+		fVM= ScrapbookLauncher.getDefault().getDebugTarget(getPage());
+		//multiple editors are opened on the same page
+		if (fVM != null) {
+			DebugPlugin.getDefault().addDebugEventFilter(this);
+			try {
+				IThread[] threads= fVM.getThreads();
+				for (int i = 0; i < threads.length; i++) {
+					IThread iThread = threads[i];
+					if (iThread.isSuspended()) {
+						iThread.resume();
+					}
+				}
+			} catch (DebugException de) {
+				JDIDebugUIPlugin.log(de);
+			}
 		}
 	}
 	
@@ -436,6 +465,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				if (getThread() != null) {
 					getThread().resume();
 				}
+				
 				fVM.terminate();
 			} catch (DebugException e) {
 				JDIDebugUIPlugin.log(e);
@@ -635,7 +665,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		showError(status);
 	}
 	
-	public void displayResult(IJavaValue result, IJavaThread thread) {
+	protected void displayResult(IJavaValue result, IJavaThread thread) {
 		StringBuffer resultString= new StringBuffer();
 		try {
 			IJavaType type = result.getJavaType();

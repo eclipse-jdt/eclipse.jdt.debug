@@ -26,9 +26,9 @@ public abstract class SnippetAction extends Action implements ISnippetStateChang
 		}
 		fEditor= editor;
 		if (fEditor != null) {
-			fEditor.addSnippetStateChangedListener(this);
-			snippetStateChanged(fEditor);
+			fEditor.addSnippetStateChangedListener(this);	
 		}
+		snippetStateChanged(fEditor);
 	} 
 	
 	/**
