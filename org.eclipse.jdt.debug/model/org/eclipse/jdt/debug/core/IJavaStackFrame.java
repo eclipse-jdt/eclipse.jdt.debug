@@ -14,6 +14,7 @@ package org.eclipse.jdt.debug.core;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDropToFrame;
 import org.eclipse.debug.core.model.IFilteredStep;
 import org.eclipse.debug.core.model.IStackFrame;
 
@@ -25,7 +26,7 @@ import org.eclipse.debug.core.model.IStackFrame;
  * @see org.eclipse.debug.core.model.IStackFrame
  */
 
-public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredStep {
+public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredStep, IDropToFrame {
 
 	/**
 	 * Status code indicating a stack frame is invalid. A stack frame becomes invalid
@@ -35,31 +36,15 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredS
 	 * 
 	 * @since 3.1
 	 */
-	public static final int ERR_INVALID_STACK_FRAME = 130;	
-
-	/**
-	 * Drops to this stack frame by popping frames in this 
-	 * frame's owning thread until this stack frame is the top stack frame.
-	 * The execution location is set to the beginning of this frame's
-	 * associated method.
-	 *
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul>
-	 * <li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
-	 * <li>The capability is not supported by the target.</li>
-	 * <li>This stack frame is no longer valid. That is, the thread
-	 *   containing this stack frame has since been resumed.</li>
-	 * </ul>
-	 */
-	void dropToFrame() throws DebugException;
+	public static final int ERR_INVALID_STACK_FRAME = 130;
 	
 	/**
 	 * Returns whether this stack frame currently supports the drop
 	 * to frame operation. Note that not all VMs support the operation.
 	 *
 	 * @return whether this stack frame currently supports drop to frame
+     * @deprecated since 3.1, IJavaStackFrame extends org.eclipse.debug.core.IDropToFrame
+     *  which defines canDropToFrame(). Use this method instead.
 	 */
 	boolean supportsDropToFrame();
 	/**

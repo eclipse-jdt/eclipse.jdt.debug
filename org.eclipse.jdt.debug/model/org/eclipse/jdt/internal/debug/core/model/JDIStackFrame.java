@@ -536,6 +536,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			fVariables.add(local);
 		}
 	}
+    
+    /**
+     * @see org.eclipse.debug.core.model.IDropToFrame#canDropToFrame()
+     */
+    public boolean canDropToFrame() {
+        return supportsDropToFrame();
+    }
 
 	/**
 	 * @see IJavaStackFrame#supportsDropToFrame()

@@ -471,24 +471,6 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.debug.core.model.IStackFrame"
-            id="org.eclipse.jdt.debug.DropToFrameActions">
-         <filter
-               name="DropToFrameActionFilter"
-               value="supportsDropToFrame">
-         </filter>
-         <action
-               label="%dropFrameAction.label"
-               helpContextId="drop_to_frame_action_context"
-               tooltip="%dropFrameAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameAction"
-               menubarPath="stepReturnGroup"
-               icon="icons/full/elcl16/drop_to_frame.gif"
-               enablesFor="1"
-               id="org.eclipse.jdt.debug.ui.actions.DropToFrame">
-         </action>
-      </objectContribution>
-      <objectContribution
             objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame"
             id="org.eclipse.jdt.debug.AddStepFilterActions">
          <action
@@ -837,15 +819,6 @@
                label="%showSystemThreads.label"
                menubarPath="javaActions"
                tooltip="%showSystemThreads.tooltip">
-         </action>
-		<action
-               id="org.eclipse.jdt.debug.ui.launchViewActions.DropToFrame"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameButton"
-               icon="icons/full/elcl16/drop_to_frame.gif"
-               helpContextId="drop_to_frame_context"
-               label="%dropFrameAction.label"
-               toolbarPath="emptyStepGroup"
-               tooltip="%dropFrameAction.tooltip">
          </action>
   <action
         helpContextId="show_monitor_thread_info_context"
