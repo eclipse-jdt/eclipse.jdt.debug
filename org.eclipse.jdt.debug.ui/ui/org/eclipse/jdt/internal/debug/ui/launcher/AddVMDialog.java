@@ -286,11 +286,11 @@ public class AddVMDialog extends StatusDialog {
 	private IStatus validateJDKLocation() {
 		String locationName= fJDKRoot.getText();
 		if (locationName.length() == 0) {//$NON-NLS-1$
-			return new StatusInfo(IStatus.ERROR, LauncherMessages.getString("addVMDialog.enterLocation"));
+			return new StatusInfo(IStatus.ERROR, LauncherMessages.getString("addVMDialog.enterLocation")); //$NON-NLS-1$
 		}
 		File file= new File(locationName);
 		if (!file.exists()) {
-			return new StatusInfo(IStatus.ERROR, LauncherMessages.getString("addVMDialog.locationNotExists"));
+			return new StatusInfo(IStatus.ERROR, LauncherMessages.getString("addVMDialog.locationNotExists")); //$NON-NLS-1$
 		}
 		return getVMType().validateInstallLocation(file);
 	}
@@ -321,7 +321,7 @@ public class AddVMDialog extends StatusDialog {
 				status.setError(LauncherMessages.getFormattedString("addVMDialog.timeoutLarge", Integer.toString(Integer.MAX_VALUE))); //$NON-NLS-1$
 			}			
 		} catch (NumberFormatException e) {
-			status.setError(LauncherMessages.getString("addVMDialog.timeoutNotANumber"));
+			status.setError(LauncherMessages.getString("addVMDialog.timeoutNotANumber")); //$NON-NLS-1$
 		}
 		return status;
 			
@@ -333,8 +333,8 @@ public class AddVMDialog extends StatusDialog {
 	
 	private void updateLibraryFieldDefaults() {
 		LibraryLocation location= fSelectedVMType.getDefaultLibraryLocation(getInstallLocation());
-		String libJar= "";
-		String srcJar= "";
+		String libJar= ""; //$NON-NLS-1$
+		String srcJar= ""; //$NON-NLS-1$
 		
 		IPath systemLibraryPath= location.getSystemLibraryPath();
 		if (systemLibraryPath.toFile().isFile()) {
@@ -396,10 +396,10 @@ public class AddVMDialog extends StatusDialog {
 			
 		File f= new File(locationName);
 		if (!f.isFile()) {
-			status.setError(LauncherMessages.getString("addVMDialog.missingJRESource"));
+			status.setError(LauncherMessages.getString("addVMDialog.missingJRESource")); //$NON-NLS-1$
 		} else {
 			if (determinePackagePrefix(new Path(locationName)) == null) {
-				status.setError(LauncherMessages.getString("addVMDialog.noObjectSource"));
+				status.setError(LauncherMessages.getString("addVMDialog.noObjectSource")); //$NON-NLS-1$
 			}
 		}
 		return status;

@@ -53,7 +53,7 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 	 * @see IVMRunner#run
 	 */
 	public VMRunnerResult run(VMRunnerConfiguration config) throws CoreException {
-		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000);
+		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
 		if (port == -1) {
 			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.noPort"), null)); //$NON-NLS-1$
 		}

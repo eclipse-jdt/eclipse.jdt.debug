@@ -82,13 +82,13 @@ public class JavaUISourceLocator implements ISourceLocator {
 				
 				
 		protected Control createDialogArea(Composite parent) {
-			getShell().setText(LauncherMessages.getString("JavaUISourceLocator.selectprojects.title"));
+			getShell().setText(LauncherMessages.getString("JavaUISourceLocator.selectprojects.title")); //$NON-NLS-1$
 			
 			Composite composite= (Composite) super.createDialogArea(parent);
 			composite.setLayout(new GridLayout());
 			
 			Label message= new Label(composite, SWT.LEFT + SWT.WRAP);
-			message.setText(LauncherMessages.getFormattedString("JavaUISourceLocator.selectprojects.message", fTypeName));
+			message.setText(LauncherMessages.getFormattedString("JavaUISourceLocator.selectprojects.message", fTypeName)); //$NON-NLS-1$
 			GridData data= new GridData();
 			data.widthHint= SWTUtil.convertWidthInCharsToPixels(70, message);
 			message.setLayoutData(data);
@@ -96,9 +96,9 @@ public class JavaUISourceLocator implements ISourceLocator {
 			Control inner= fSourceLookupBlock.createControl(composite);
 			inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 			fAskAgainCheckBox= new Button(composite, SWT.CHECK);
-			fAskAgainCheckBox.setText(LauncherMessages.getString("JavaUISourceLocator.askagain.message"));
+			fAskAgainCheckBox.setText(LauncherMessages.getString("JavaUISourceLocator.askagain.message")); //$NON-NLS-1$
 			Label askmessage= new Label(composite, SWT.LEFT + SWT.WRAP);
-			askmessage.setText(LauncherMessages.getString("JavaUISourceLocator.askagain.description"));
+			askmessage.setText(LauncherMessages.getString("JavaUISourceLocator.askagain.description")); //$NON-NLS-1$
 			data= new GridData();
 			data.widthHint= SWTUtil.convertWidthInCharsToPixels(70, message);
 			askmessage.setLayoutData(data);

@@ -28,7 +28,7 @@ public class JDK12Launcher extends JavaLauncher {
 	public VMRunnerResult run(VMRunnerConfiguration config) throws CoreException {
 		String location= getJDKLocation(""); //$NON-NLS-1$
 		if ("".equals(location)) { //$NON-NLS-1$
-			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.noJDKHome"), null));
+			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.noJDKHome"), null)); //$NON-NLS-1$
 		}
 		
 		String program= location+File.separator+"bin"+File.separator+"java"; //$NON-NLS-2$ //$NON-NLS-1$
@@ -71,7 +71,7 @@ public class JDK12Launcher extends JavaLauncher {
 			process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
 			return new VMRunnerResult(null, new IProcess[] { process });
 		} catch (IOException e) {
-			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.startMV"), e));
+			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.startMV"), e)); //$NON-NLS-1$
 		}
 	}
 

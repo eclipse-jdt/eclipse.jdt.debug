@@ -38,7 +38,7 @@ public abstract class JavaProjectPropertyPage extends PropertyPage {
 		
 	protected Control createClosedContents(Composite parent) {
 		Label label= new Label(parent, SWT.LEFT);
-		label.setText(LauncherMessages.getString("javaProjectPropertyPage.closed"));
+		label.setText(LauncherMessages.getString("javaProjectPropertyPage.closed")); //$NON-NLS-1$
 		return label;
 	}
 		

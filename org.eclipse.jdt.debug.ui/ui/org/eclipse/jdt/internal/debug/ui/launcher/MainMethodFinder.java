@@ -42,7 +42,7 @@ public class MainMethodFinder {
 			IRunnableWithProgress runnable= new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm) throws InterruptedException {
 					int nElements= elements.length;
-					pm.beginTask(LauncherMessages.getString("MainMethodFinder.description"), nElements);
+					pm.beginTask(LauncherMessages.getString("MainMethodFinder.description"), nElements); //$NON-NLS-1$
 					try {
 						for (int i= 0; i < nElements; i++) {
 							try {

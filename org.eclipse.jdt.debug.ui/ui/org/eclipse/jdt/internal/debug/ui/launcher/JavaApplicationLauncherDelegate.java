@@ -177,7 +177,7 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 			} catch (InterruptedException e) {
 				return true;
 			} catch (InvocationTargetException e) {
-				ExceptionHandler.handle(e, JDIDebugUIPlugin.getActiveWorkbenchShell(), "Java Application Launcher", "Launching failed.");
+				ExceptionHandler.handle(e, JDIDebugUIPlugin.getActiveWorkbenchShell(), LauncherMessages.getString("JavaApplicationLauncherDelegate.Java_Application_Launcher_1"), LauncherMessages.getString("JavaApplicationLauncherDelegate.Launching_failed._2")); //$NON-NLS-2$ //$NON-NLS-1$
 				return false;
 			}
 			if (result[0] != null) {

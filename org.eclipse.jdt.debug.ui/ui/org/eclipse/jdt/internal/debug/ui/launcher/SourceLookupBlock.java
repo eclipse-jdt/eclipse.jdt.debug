@@ -57,22 +57,22 @@ public class SourceLookupBlock {
 		
 		fUseDefaultRadioButton= new SelectionButtonDialogField(SWT.RADIO);
 		fUseDefaultRadioButton.setDialogFieldListener(adapter);
-		fUseDefaultRadioButton.setLabelText(LauncherMessages.getString("SourceLookupBlock.default.label"));
+		fUseDefaultRadioButton.setLabelText(LauncherMessages.getString("SourceLookupBlock.default.label")); //$NON-NLS-1$
 
 		fUseDefinedRadioButton= new SelectionButtonDialogField(SWT.RADIO);
 		fUseDefinedRadioButton.setDialogFieldListener(adapter);
-		fUseDefinedRadioButton.setLabelText(LauncherMessages.getString("SourceLookupBlock.defined.label"));
+		fUseDefinedRadioButton.setLabelText(LauncherMessages.getString("SourceLookupBlock.defined.label")); //$NON-NLS-1$
 
 		String[] buttonLabels= new String[] {
-			/* 0 */ LauncherMessages.getString("SourceLookupBlock.projects.checkall"),
-			/* 1 */ LauncherMessages.getString("SourceLookupBlock.projects.uncheckall"),
+			/* 0 */ LauncherMessages.getString("SourceLookupBlock.projects.checkall"), //$NON-NLS-1$
+			/* 1 */ LauncherMessages.getString("SourceLookupBlock.projects.uncheckall"), //$NON-NLS-1$
 			/* 2 */ null,
-			/* 3 */ LauncherMessages.getString("SourceLookupBlock.projects.up"),
-			/* 4 */ LauncherMessages.getString("SourceLookupBlock.projects.down"),
+			/* 3 */ LauncherMessages.getString("SourceLookupBlock.projects.up"), //$NON-NLS-1$
+			/* 4 */ LauncherMessages.getString("SourceLookupBlock.projects.down"), //$NON-NLS-1$
 		};
 		
 		fProjectList= new CheckedListDialogField(adapter, buttonLabels, new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_BASICS));
-		fProjectList.setLabelText(LauncherMessages.getString("SourceLookupBlock.projects.label"));
+		fProjectList.setLabelText(LauncherMessages.getString("SourceLookupBlock.projects.label")); //$NON-NLS-1$
 		fProjectList.setCheckAllButtonIndex(0);
 		fProjectList.setUncheckAllButtonIndex(1);
 		fProjectList.setUpButtonIndex(3);
