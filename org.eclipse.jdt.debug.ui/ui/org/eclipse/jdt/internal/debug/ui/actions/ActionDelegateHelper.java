@@ -52,8 +52,11 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 		if (fCurrentWindow != null) {
 			fCurrentWindow.getWorkbench().addWindowListener(this);
 			fCurrentWindow.getPartService().addPartListener(this);
-			IEditorPart part= fCurrentWindow.getActivePage().getActiveEditor();
-			checkToSetTextEditor(part);
+			IWorkbenchPage page= fCurrentWindow.getActivePage();
+			if (page != null) {
+				IEditorPart part= page.getActiveEditor();
+				checkToSetTextEditor(part);
+			}
 		}
 	}
 	

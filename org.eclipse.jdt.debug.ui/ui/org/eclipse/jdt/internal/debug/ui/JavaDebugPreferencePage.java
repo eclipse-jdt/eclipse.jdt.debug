@@ -199,8 +199,10 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 				IWorkbenchPage page= null;
 				for (int i= 0; i < windows.length; i++) {
 					page= windows[i].getActivePage();
-					refreshViews(page, IDebugUIConstants.ID_EXPRESSION_VIEW);
-					refreshViews(page, IDebugUIConstants.ID_VARIABLE_VIEW);
+					if (page != null) {
+						refreshViews(page, IDebugUIConstants.ID_EXPRESSION_VIEW);
+						refreshViews(page, IDebugUIConstants.ID_VARIABLE_VIEW);
+					}
 				}
 			}
 		});

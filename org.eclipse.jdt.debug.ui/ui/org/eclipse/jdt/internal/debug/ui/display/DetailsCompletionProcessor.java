@@ -24,6 +24,8 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
  
 public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 
@@ -40,7 +42,18 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 			return new ICompletionProposal[0];
 		}
 		
-		IDebugView view= (IDebugView)JDIDebugUIPlugin.getActiveWorkbenchWindow().getActivePage().getActivePart();
+		IWorkbenchWindow window= JDIDebugUIPlugin.getActiveWorkbenchWindow();
+		if (window == null) {
+			return new ICompletionProposal[0];
+		}
+		IWorkbenchPage page= window.getActivePage();
+		if (page == null) {
+			return new ICompletionProposal[0];
+		}
+		IDebugView view= (IDebugView)page.getActivePart();
+		if (view == null) {
+			return new ICompletionProposal[0];
+		}
 		ISelection selection= view.getViewer().getSelection();
 		if (selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
 			return super.computeCompletionProposals(stackFrame, viewer, documentOffset);
