@@ -398,6 +398,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	
 	public void setEnabledSuspendOnUncaughtException(boolean enable) {
 		
+		if (isTerminated() || isDisconnected()) {
+			return;
+		}
 		try {
 			IJavaExceptionBreakpoint breakpoint= getSuspendOnUncaughtExceptionBreakpoint();
 			if (enable && breakpoint == null) {
@@ -1191,6 +1194,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (getSuspendOnUncaughtExceptionBreakpoint() != null) {
 			try {
 				getSuspendOnUncaughtExceptionBreakpoint().delete();
+				setSuspendOnUncaughtExceptionBreakpoint(null);
 			} catch (CoreException ce) {
 				logError(ce);
 			}
