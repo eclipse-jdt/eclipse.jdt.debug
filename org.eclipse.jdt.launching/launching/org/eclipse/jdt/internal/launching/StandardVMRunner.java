@@ -52,13 +52,31 @@ public class StandardVMRunner extends AbstractVMRunner {
 	protected static String renderCommandLine(String[] commandLine) {
 		if (commandLine.length < 1)
 			return ""; //$NON-NLS-1$
-		StringBuffer buf= new StringBuffer(commandLine[0]);
-		for (int i= 1; i < commandLine.length; i++) {
+		StringBuffer buf= new StringBuffer();
+		for (int i= 0; i < commandLine.length; i++) {
 			buf.append(' ');
-			buf.append(commandLine[i]);
+			char[] characters= commandLine[i].toCharArray();
+			StringBuffer command= new StringBuffer();
+			boolean containsSpace= false;
+			for (int j = 0; j < characters.length; j++) {
+				char character= characters[j];
+				if (character == '\"') {
+					command.append('\\');
+				} else if (character == ' ') {
+					containsSpace = true;
+				}
+				command.append(character);
+			}
+			if (containsSpace) {
+				buf.append('\"');
+				buf.append(command);
+				buf.append('\"');
+			} else {
+				buf.append(command);
+			}
 		}	
 		return buf.toString();
-	}
+	}	
 	
 	protected void addArguments(String[] args, List v) {
 		if (args == null) {
