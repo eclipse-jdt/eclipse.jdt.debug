@@ -1,5 +1,10 @@
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
@@ -19,10 +24,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
- * @author Dwright
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
+ * Page to set working directory property on scrapbook page.
  */
 public class SnippetEditorPropertyPage extends PropertyPage {
 	
