@@ -16,6 +16,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -89,8 +90,16 @@ public class JavaLaunchConfigurationHelper implements IResourceChangeListener,
 				return false;
 			}
 			
-			// If resource is NOT an IFile, do nothing, but do examine any children
 			IResource resource = delta.getResource();
+			
+			// if this is a project closing, do nothing
+			if (resource instanceof IProject) {
+				if (!((IProject)resource).isOpen()) {
+					return false;
+				}
+			}
+			
+			// If resource is NOT an IFile, do nothing, but do examine any children
 			if (!(resource instanceof IFile)) {
 				return true;
 			}			
