@@ -20,13 +20,13 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-public class BreakPointConditionCompletionProcessor extends DisplayCompletionProcessor {
+public class BreakpointConditionCompletionProcessor extends DisplayCompletionProcessor {
 
 	private IType fType;
 	
 	private int fPosition;
 		
-	public BreakPointConditionCompletionProcessor(IType type) {
+	public BreakpointConditionCompletionProcessor(IType type) {
 		fType= type;
 	}
 

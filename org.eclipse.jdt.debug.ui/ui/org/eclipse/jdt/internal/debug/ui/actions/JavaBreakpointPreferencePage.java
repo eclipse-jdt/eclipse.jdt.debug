@@ -19,7 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.internal.debug.ui.BreakPointConditionCompletionProcessor;
+import org.eclipse.jdt.internal.debug.ui.BreakpointConditionCompletionProcessor;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -175,7 +175,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		
 		private SourceViewer fViewer;
 		
-		private BreakPointConditionCompletionProcessor fCompletionProcessor;
+		private BreakpointConditionCompletionProcessor fCompletionProcessor;
 		
 		private boolean fIsValid;
 		
@@ -329,9 +329,9 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		
 		/**
 		 * Return the completion processor associated with this viewer.		 * @return BreakPointConditionCompletionProcessor		 */
-		private BreakPointConditionCompletionProcessor getCompletionProcessor() {
+		private BreakpointConditionCompletionProcessor getCompletionProcessor() {
 			if (fCompletionProcessor == null) {
-				fCompletionProcessor= new BreakPointConditionCompletionProcessor(null);
+				fCompletionProcessor= new BreakpointConditionCompletionProcessor(null);
 			}
 			return fCompletionProcessor;
 		}
