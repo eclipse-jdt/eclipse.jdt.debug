@@ -43,4 +43,10 @@
   </consoleLineTracker>
 </extension>
 
+<extension point = "org.eclipse.jdt.core.classpathVariableInitializer">
+	<classpathVariableInitializer
+		variable="NULL_VARIALBE"
+		class="org.eclipse.jdt.debug.testplugin.NullVariableInitializer"/>
+</extension>	
+
 </plugin>

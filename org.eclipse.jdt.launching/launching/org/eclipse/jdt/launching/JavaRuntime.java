@@ -698,31 +698,9 @@ public final class JavaRuntime {
 			case IRuntimeClasspathEntry.VARIABLE:
 				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
 				if (resolver == null) {
-					// default resolution - an archive
-					IPath archPath = JavaCore.getClasspathVariable(entry.getVariableName());
-					if (entry.getPath().segmentCount() > 1) {
-						archPath = archPath.append(entry.getPath().removeFirstSegments(1));
-					}
-					IPath srcPath = null;
-					IPath srcVar = entry.getSourceAttachmentPath();
-					IPath srcRootPath = null;
-					IPath srcRootVar = entry.getSourceAttachmentRootPath();
-					if (archPath != null) {
-						if (srcVar != null && !srcVar.isEmpty()) {
-							srcPath = JavaCore.getClasspathVariable(srcVar.segment(0));
-							if (srcVar.segmentCount() > 1) {
-								srcPath = srcPath.append(srcVar.removeFirstSegments(1));
-							}
-							if (srcRootVar != null && !srcRootVar.isEmpty()) {
-								srcRootPath = JavaCore.getClasspathVariable(srcRootVar.segment(0));	
-								if (srcRootVar.segmentCount() > 1) {
-									srcRootPath = srcRootPath.append(srcRootVar.removeFirstSegments(1));					
-								}
-							}
-						}
-						// now resolve the archive (recursively)
-						IClasspathEntry archEntry = JavaCore.newLibraryEntry(archPath, srcPath, srcRootPath, entry.getClasspathEntry().isExported());
-						return resolveRuntimeClasspathEntry(newRuntimeClasspathEntry(archEntry), configuration);
+					IRuntimeClasspathEntry[] resolved = resolveVariableEntry(entry, null, configuration);
+					if (resolved != null) { 
+						return resolved;
 					}
 					break;
 				} else {
@@ -750,6 +728,56 @@ public final class JavaRuntime {
 				break;
 		}
 		return new IRuntimeClasspathEntry[] {entry};
+	}
+	
+	/**
+	 * Default resolution for a classpath variable - resolve to an archive. Only
+	 * one of project/configuration can be non-null.
+	 * 
+	 * @param entry
+	 * @param project the project context or <code>null</code>
+	 * @param configuration configuration context or <code>null</code>
+	 * @return IRuntimeClasspathEntry[]
+	 * @throws CoreException
+	 */
+	private static IRuntimeClasspathEntry[] resolveVariableEntry(IRuntimeClasspathEntry entry, IJavaProject project, ILaunchConfiguration configuration) throws CoreException {
+		// default resolution - an archive
+		IPath archPath = JavaCore.getClasspathVariable(entry.getVariableName());
+		if (archPath != null) {
+			if (entry.getPath().segmentCount() > 1) {
+				archPath = archPath.append(entry.getPath().removeFirstSegments(1));
+			}
+			IPath srcPath = null;
+			IPath srcVar = entry.getSourceAttachmentPath();
+			IPath srcRootPath = null;
+			IPath srcRootVar = entry.getSourceAttachmentRootPath();
+			if (archPath != null && !archPath.isEmpty()) {
+				if (srcVar != null && !srcVar.isEmpty()) {
+					srcPath = JavaCore.getClasspathVariable(srcVar.segment(0));
+					if (srcPath != null) {
+						if (srcVar.segmentCount() > 1) {
+							srcPath = srcPath.append(srcVar.removeFirstSegments(1));
+						}
+						if (srcRootVar != null && !srcRootVar.isEmpty()) {
+							srcRootPath = JavaCore.getClasspathVariable(srcRootVar.segment(0));	
+							if (srcRootPath != null) {
+								if (srcRootVar.segmentCount() > 1) {
+									srcRootPath = srcRootPath.append(srcRootVar.removeFirstSegments(1));					
+								}
+							}
+						}
+					}
+				}
+				// now resolve the archive (recursively)
+				IClasspathEntry archEntry = JavaCore.newLibraryEntry(archPath, srcPath, srcRootPath, entry.getClasspathEntry().isExported());
+				if (configuration == null) {
+					return resolveRuntimeClasspathEntry(newRuntimeClasspathEntry(archEntry), project);
+				} else {
+					return resolveRuntimeClasspathEntry(newRuntimeClasspathEntry(archEntry), configuration);
+				}
+			}		
+		}
+		return null;
 	}
 	
 	/**
@@ -832,31 +860,9 @@ public final class JavaRuntime {
 			case IRuntimeClasspathEntry.VARIABLE:
 				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
 				if (resolver == null) {
-					// default resolution - an archive
-					IPath archPath = JavaCore.getClasspathVariable(entry.getVariableName());
-					if (entry.getPath().segmentCount() > 1) {
-						archPath = archPath.append(entry.getPath().removeFirstSegments(1));
-					}
-					IPath srcPath = null;
-					IPath srcVar = entry.getSourceAttachmentPath();
-					IPath srcRootPath = null;
-					IPath srcRootVar = entry.getSourceAttachmentRootPath();
-					if (archPath != null) {
-						if (srcVar != null && !srcVar.isEmpty()) {
-							srcPath = JavaCore.getClasspathVariable(srcVar.segment(0));
-							if (srcVar.segmentCount() > 1) {
-								srcPath = srcPath.append(srcVar.removeFirstSegments(1));
-							}
-							if (srcRootVar != null && !srcRootVar.isEmpty()) {
-								srcRootPath = JavaCore.getClasspathVariable(srcRootVar.segment(0));	
-								if (srcRootVar.segmentCount() > 1) {
-									srcRootPath = srcRootPath.append(srcRootVar.removeFirstSegments(1));					
-								}
-							}
-						}
-						// now resolve the archive (recursively)
-						IClasspathEntry archEntry = JavaCore.newLibraryEntry(archPath, srcPath, srcRootPath, entry.getClasspathEntry().isExported());
-						return resolveRuntimeClasspathEntry(newRuntimeClasspathEntry(archEntry), project);
+					IRuntimeClasspathEntry[] resolved = resolveVariableEntry(entry, project, null);
+					if (resolved != null) { 
+						return resolved;
 					}
 					break;
 				} else {
