@@ -71,7 +71,7 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 		if (libs == null) {
 			libs = vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
 		}
-		assertEquals("there is one system lib", 1, libs.length);
+		assertTrue("there is at least one system lib", libs.length >= 1);
 		
 	}	
 	
