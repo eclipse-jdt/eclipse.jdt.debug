@@ -182,12 +182,13 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			for (int i = 0; i < projects.length; i++) {
 				IJavaProject project = projects[i];
 				IClasspathEntry[] entries = project.getRawClasspath();
+				boolean replace = false;
 				for (int j = 0; j < entries.length; j++) {
 					IClasspathEntry entry = entries[j];
 					switch (entry.getEntryKind()) {
 						case IClasspathEntry.CPE_CONTAINER:
 							IPath reference = entry.getPath();
-							IPath newBinding = reference;
+							IPath newBinding = null;
 							String firstSegment = reference.segment(0);
 							if (JavaRuntime.JRE_CONTAINER.equals(firstSegment)) {
 								if (reference.segmentCount() > 1) {
@@ -199,12 +200,23 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 									}									
 								}
 								JREContainerInitializer initializer = new JREContainerInitializer();
-								initializer.initialize(newBinding, project);
+								if (newBinding == null){
+									// rebind old path
+									initializer.initialize(reference, project);
+								} else {
+									// replace old cp entry with a new one
+									IClasspathEntry newEntry = JavaCore.newContainerEntry(newBinding, entry.isExported());
+									entries[j] = newEntry;
+									replace = true;
+								}
 							}
 							break;
 						default:
 							break;
 					}
+				}
+				if (replace) {
+					project.setRawClasspath(entries, null);
 				}
 			}
 
