@@ -110,7 +110,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
 	 */
-	public void streamClosed() {
+	public void consoleClosed() {
 	}
 
 }
