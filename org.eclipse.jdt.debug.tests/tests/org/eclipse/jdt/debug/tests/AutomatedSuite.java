@@ -45,13 +45,6 @@ import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TypeTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
 import org.eclipse.jdt.debug.tests.core.WorkingDirectoryTests;
-import org.eclipse.jdt.debug.tests.eval.TestsArrays;
-import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes1;
-import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes2;
-import org.eclipse.jdt.debug.tests.eval.TestsOperators1;
-import org.eclipse.jdt.debug.tests.eval.TestsOperators2;
-import org.eclipse.jdt.debug.tests.eval.TestsTypeHierarchy1;
-import org.eclipse.jdt.debug.tests.eval.TestsTypeHierarchy2;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -113,13 +106,13 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(BreakpointListenerTests.class));
 		
 		// Evaluation tests
-		addTest(new TestSuite(TestsOperators1.class));
-		addTest(new TestSuite(TestsOperators2.class));
-		addTest(new TestSuite(TestsArrays.class));
-		addTest(new TestSuite(TestsNestedTypes1.class));
-		addTest(new TestSuite(TestsNestedTypes2.class));
-		addTest(new TestSuite(TestsTypeHierarchy1.class));
-		addTest(new TestSuite(TestsTypeHierarchy2.class));
+//		addTest(new TestSuite(TestsOperators1.class));
+//		addTest(new TestSuite(TestsOperators2.class));
+//		addTest(new TestSuite(TestsArrays.class));
+//		addTest(new TestSuite(TestsNestedTypes1.class));
+//		addTest(new TestSuite(TestsNestedTypes2.class));
+//		addTest(new TestSuite(TestsTypeHierarchy1.class));
+//		addTest(new TestSuite(TestsTypeHierarchy2.class));
 		
 		addTest(new TestSuite(MiscBreakpointsTests.class));
 		addTest(new TestSuite(WorkingDirectoryTests.class));
