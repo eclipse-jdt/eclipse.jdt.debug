@@ -146,7 +146,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return the test project
 	 */
 	protected IJavaProject getJavaProject() {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("DebugTests");
+		return getJavaProject("DebugTests");
+	}
+	
+	/**
+	 * Returns the Java project with the given name.
+	 * 
+	 * @param name project name
+	 * @return the Java project with the given name
+	 */
+	protected IJavaProject getJavaProject(String name) {
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		return JavaCore.create(project);
 	}
 	

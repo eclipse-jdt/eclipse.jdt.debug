@@ -509,12 +509,26 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
-	public String getVMArguments(ILaunchConfiguration configuration)
-			throws CoreException {
-		String arguments = configuration.getAttribute(
-				IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
-		return VariablesPlugin.getDefault().getStringVariableManager()
-				.performStringSubstitution(arguments);
+	public String getVMArguments(ILaunchConfiguration configuration) throws CoreException {
+		String arguments = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
+		String args = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(arguments);
+		int libraryPath = args.indexOf("-Djava.library.path"); //$NON-NLS-1$
+		if (libraryPath < 0) {
+			// if a library path is alread specified, do not override
+			String[] javaLibraryPath = getJavaLibraryPath(configuration);
+			if (javaLibraryPath != null && javaLibraryPath.length > 0) {
+				StringBuffer path = new StringBuffer(args);
+				path.append(" -Djava.library.path="); //$NON-NLS-1$
+				for (int i = 0; i < javaLibraryPath.length; i++) {
+					if (i > 0) {
+						path.append(";"); //$NON-NLS-1$
+					}
+					path.append(javaLibraryPath[i]);
+				}
+				args = path.toString();
+			}
+		}
+		return args;
 	}
 	/**
 	 * Returns the Map of VM-specific attributes specified by the given launch
@@ -930,5 +944,26 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 */	
 	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
 		return DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
+	}
+	
+	/**
+	 * Returns an array of paths to be used for the <code>java.library.path</code>
+	 * system property, or <code>null</code> if unspecified.
+	 * 
+	 * @param configuration
+	 * @return an array of paths to be used for the <code>java.library.path</code>
+	 * system property, or <code>null</code>
+	 * @throws CoreException if unable to determine the attribute
+	 * @since 3.1
+	 */
+	public String[] getJavaLibraryPath(ILaunchConfiguration configuration) throws CoreException {
+		IJavaProject project = getJavaProject(configuration);
+		if (project != null) {
+			String[] paths = JavaRuntime.computeJavaLibraryPath(project, true);
+			if (paths.length > 0) {
+				return paths;
+			}
+		}
+		return null;
 	}
 }

@@ -20,9 +20,11 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,8 +46,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
@@ -187,6 +192,27 @@ public final class JavaRuntime {
 	 * @deprecated - use <code>IProcess.ATTR_CMDLINE</code>
 	 */
 	public final static String ATTR_CMDLINE= LaunchingPlugin.getUniqueIdentifier() + ".launcher.cmdLine"; //$NON-NLS-1$
+	
+	/**
+	 * Attribute key for a classpath attribute corresponding to a shared
+	 * library that should appear on the <code>-Djava.library.path</code>
+	 * system property.
+	 * <p>
+	 * The value is a string used to create an <code>IPath</code>
+	 * from the factory method <code>Path.fromPortableString(String)</code>.
+	 * The string may contain <code>IStringVariable</code>'s or be the name of a
+	 * Java classpath variable. The string will be translated before a path
+	 * is created from the string.  
+	 * </p>
+	 * <p>
+	 * If the resulting <code>IPath</code> is a relative path, it is interpretted
+	 * as relative to the workspace location. If the path is absolute, it is 
+	 * interpretted as an absolute path in the local file system.
+	 * </p>
+	 * @since 3.1
+	 * @see org.eclipse.jdt.core.IClasspathAttribute
+	 */
+	public static final String CLASSPATH_ATTR_LIBRARY_PATH_ENTRY =  LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH_ATTR_LIBRARY_PATH_ENTRY"; //$NON-NLS-1$
 
 	private static IVMInstallType[] fgVMTypes= null;
 	private static String fgDefaultVMId= null;
@@ -1839,5 +1865,133 @@ public final class JavaRuntime {
 	 */
 	public static ISourceContainer[] getSourceContainers(IRuntimeClasspathEntry[] entries) {
 		return JavaSourceLookupUtil.translate(entries);
+	}
+	
+	/**
+	 * Returns a collection of paths that should be appended to the given project's
+	 * <code>java.library.path</code> system property when launched. Entries are
+	 * searched for on the project's build path as extra classpath attributes.
+	 * Each entry represents an absolute path in the local file system.
+	 *
+	 * @param project the project to compute the <code>java.library.path</code> for
+	 * @param requiredProjects whether to consider entries in required projects
+	 * @return a collection of paths representing entries that should be appended
+	 *  to the given project's <code>java.library.path</code>
+	 * @throws CoreException if unable to compute the Java library path
+	 * @since 3.1
+	 * @see org.eclipse.jdt.core.IClasspathAttribute
+	 * @see JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY
+	 */
+	public static String[] computeJavaLibraryPath(IJavaProject project, boolean requiredProjects) throws CoreException {
+		Set visited = new HashSet();
+		List entries = new ArrayList();
+		gatherJavaLibraryPathEntries(project, requiredProjects, visited, entries);
+		List resolved = new ArrayList(entries.size());
+		Iterator iterator = entries.iterator();
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		while (iterator.hasNext()) {
+			String entry = (String) iterator.next();
+			String resolvedEntry = manager.performStringSubstitution(entry);
+			IPath path = JavaCore.getClasspathVariable(resolvedEntry);
+			if (path == null) {
+				path = Path.fromPortableString(resolvedEntry);
+			}
+			if (path.isAbsolute()) {
+				File file = path.toFile();
+				resolved.add(file.getAbsolutePath());
+			} else {
+				IResource resource = root.findMember(path);
+				if (resource != null) {
+					IPath location = resource.getLocation();
+					if (location != null) {
+						resolved.add(location.toFile().getAbsolutePath());
+					}
+				}
+			}
+		}
+		return (String[])resolved.toArray(new String[entries.size()]);
+	}
+
+	/**
+	 * Gathers all Java library entries for the given project and optionally its required
+	 * projects.
+	 * 
+	 * @param project project to gather entries for
+	 * @param requiredProjects whether to consider required projects 
+	 * @param visited projects already considered
+	 * @param entries collection to add library entries to
+	 * @throws CoreException if unable to gather classpath entries
+	 * @since 3.1
+	 */
+	private static void gatherJavaLibraryPathEntries(IJavaProject project, boolean requiredProjects, Set visited, List entries) throws CoreException {
+		if (visited.contains(project)) {
+			return;
+		}
+		visited.add(project);
+		IClasspathEntry[] rawClasspath = project.getRawClasspath();
+		IClasspathEntry[] required = processJavaLibraryPathEntries(project, requiredProjects, rawClasspath, entries);
+		if (required != null) {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			for (int i = 0; i < required.length; i++) {
+				IClasspathEntry entry = required[i];
+				String projectName = entry.getPath().segment(0);
+				IProject p = root.getProject(projectName);
+				if (p.exists()) {
+					IJavaProject requiredProject = JavaCore.create(p);
+					if (requiredProject != null) {
+						gatherJavaLibraryPathEntries(requiredProject, requiredProjects, visited, entries);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Adds all java library path extra classpath entry values to the given entries collection
+	 * specified on the gvien project's classpath, and returns a collection of required
+	 * projects, or <code>null</code>.
+	 *  
+	 * @param project project being processed
+	 * @param collectRequired whether to collect required projects
+	 * @param classpathEntries the project's raw classpath
+	 * @param entries collection to add java library path entries to
+	 * @return required project classpath entries or <code>null</code>
+	 * @throws CoreException
+	 * @since 3.1
+	 */
+	private static IClasspathEntry[] processJavaLibraryPathEntries(IJavaProject project, boolean collectRequired, IClasspathEntry[] classpathEntries, List entries) throws CoreException {
+		List req = null;
+		for (int i = 0; i < classpathEntries.length; i++) {
+			IClasspathEntry entry = classpathEntries[i];
+			IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();
+			for (int j = 0; j < extraAttributes.length; j++) {
+				IClasspathAttribute attribute = extraAttributes[j];
+				if (attribute.getName().equals(CLASSPATH_ATTR_LIBRARY_PATH_ENTRY)) {
+					entries.add(attribute.getValue());
+				}
+			}
+			if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+				IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
+				IClasspathEntry[] requiredProjects = processJavaLibraryPathEntries(project, collectRequired, container.getClasspathEntries(), entries);
+				if (requiredProjects != null) {
+					if (req == null) {
+						req = new ArrayList();
+					}
+					for (int j = 0; j < requiredProjects.length; j++) {
+						req.add(requiredProjects[j]);
+					}
+				}
+			} else if (collectRequired && entry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+				if (req == null) {
+					req = new ArrayList();
+				}
+				req.add(entry);
+			}
+		}
+		if (req != null) {
+			return (IClasspathEntry[]) req.toArray(new IClasspathEntry[req.size()]);
+		}
+		return null;
 	}
 }
