@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMConnector;
@@ -38,10 +37,6 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			return;
 		}						
 						
-		// Allow termination of remote VM
-		boolean allowTerminate = isAllowTerminate(configuration);
-		
-		IDebugTarget debugTarget = null;
 		String connectorId = getVMConnectorId(configuration);
 		IVMConnector connector = null;
 		if (connectorId == null) {
