@@ -704,10 +704,10 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		Iterator allMethods = methods().iterator();
 		while (allMethods.hasNext()) {
 			MethodImpl method = (MethodImpl)allMethods.next();
-			try {
-				if (method.isNative()) {
+			if (method.isAbstract() || method.isNative()) {
 					continue;
-				}
+			}
+			try {	
 				return method.locationsOfLine(line);
 			} catch (InvalidLineNumberException e) {
 				continue;
