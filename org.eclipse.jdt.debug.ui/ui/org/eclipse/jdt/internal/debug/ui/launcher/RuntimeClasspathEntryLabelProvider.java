@@ -136,7 +136,9 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 							IJavaProject project = JavaRuntime.getJavaProject(fLaunchConfuration);
 							if (project != null) {
 								IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
-								return container.getDescription();
+								if (container != null) {
+									return container.getDescription();
+								}
 							}
 						} catch (CoreException e) {
 							JDIDebugUIPlugin.log(e);
