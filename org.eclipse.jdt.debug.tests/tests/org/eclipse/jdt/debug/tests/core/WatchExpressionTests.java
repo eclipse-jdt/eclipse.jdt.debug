@@ -13,11 +13,13 @@ package org.eclipse.jdt.debug.tests.core;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
@@ -102,6 +104,52 @@ public class WatchExpressionTests extends AbstractDebugTest {
 		}				
 	}
 	
+	/**
+	 * Test a watch expression updates while stepping.
+	 */
+	public void testStepping() throws Exception {
+		IWatchExpression expression = getExpressionManager().newWatchExpression("i");
+		getExpressionManager().addExpression(expression);
+		String typeName = "WatchItemTests";
+		createLineBreakpoint(37, typeName);
+		IJavaThread thread= null;
+		try {
+			DebugElementEventWaiter waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
+			waiter.setTimeout(60000);
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread); 
+			Object source = waiter.waitForEvent();
+			assertNotNull("Watch expression did not change", source);
+			IValue value = expression.getValue();
+			// create comparison value
+			IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+			IJavaValue compare = target.newValue(0);
+			assertEquals("Watch expression should be 0", compare, value);
+			
+			// now step once - should still be 0
+			waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
+			stepOver((IJavaStackFrame)thread.getTopStackFrame());
+			source = waiter.waitForEvent();
+			assertNotNull("Watch expression did not change", source);
+			
+			// now step again - should be 1
+			waiter = new ExpressionWaiter(DebugEvent.CHANGE, expression);
+			stepOver((IJavaStackFrame)thread.getTopStackFrame());
+			source = waiter.waitForEvent();
+			assertNotNull("Watch expression did not change", source);
+			
+			value = expression.getValue();			
+			// create comparison value
+			compare = target.newValue(1);
+			assertEquals("Watch expression should be 1", compare, value);
+						
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+			removeAllExpressions();
+		}				
+	}
+		
 	/**
 	 * Returns the expression manager
 	 * 
