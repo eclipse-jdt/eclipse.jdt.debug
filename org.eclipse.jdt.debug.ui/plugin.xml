@@ -219,7 +219,19 @@
     	targetID="org.eclipse.debug.ui.DebugPerspective"> 
     	<view id="org.eclipse.jdt.debug.ui.DisplayView" 
         	relative="org.eclipse.debug.ui.ExpressionView" 
-    		relationship="stack"/> 
+    		relationship="stack"/>	
+        <view id="org.eclipse.jdt.ui.PackageExplorer" 
+                relative="org.eclipse.debug.ui.DebugView" 
+                relationship="stack"
+                visible="false"/>
+        <view id="org.eclipse.jdt.ui.TypeHierarchy" 
+                relative="org.eclipse.debug.ui.DebugView" 
+                relationship="stack"
+                visible="false"/>
+         <view id="org.eclipse.search.SearchResultView" 
+                relative="org.eclipse.debug.ui.DebugView" 
+                relationship="stack"
+                visible="false"/> 
     	<viewShortcut id="org.eclipse.jdt.debug.ui.DisplayView"/>
      </perspectiveExtension> 
 </extension>
