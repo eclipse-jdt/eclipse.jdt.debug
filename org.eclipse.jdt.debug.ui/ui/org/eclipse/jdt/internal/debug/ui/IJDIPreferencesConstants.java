@@ -26,7 +26,6 @@ public interface IJDIPreferencesConstants {
 	 * execution when a compilation error is encountered
 	 * (while debugging).
 	 */
-	
 	public static final String PREF_SUSPEND_ON_COMPILATION_ERRORS= JavaDebugUI.PLUGIN_ID + ".suspend_on_compilation_errors"; //$NON-NLS-1$
 	
 	/**
@@ -36,7 +35,7 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_USE_FILTERS = JavaDebugUI.PLUGIN_ID + ".use_filters"; //$NON-NLS-1$
 	
 	/**
-	 * Boolean preference controlling whether sythetic
+	 * Boolean preference controlling whether synthetic
 	 * methods are to be filtered when stepping (and step
 	 * filters are enabled).
 	 */	
@@ -73,5 +72,4 @@ public interface IJDIPreferencesConstants {
 	static final String VARIABLE_RENDERING = "VARIABLE_RENDERING"; //$NON-NLS-1$
 	static final String ALERT_HCR_FAILED = "org.eclipse.jdt.debug.ui.javaDebug.alertHCRFailed"; //$NON-NLS-1$
 	static final String ALERT_OBSOLETE_METHODS = "org.eclipse.jdt.debug.ui.javaDebug.alertObsoleteMethods"; //$NON-NLS-1$
-	
 }
