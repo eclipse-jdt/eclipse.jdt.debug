@@ -71,7 +71,7 @@ public class BreakpointUtils {
 	public static IResource getBreakpointResource(IMember member) {
 		ICompilationUnit cu = member.getCompilationUnit();
 		if (cu != null && cu.isWorkingCopy()) {
-			member = (IMember)cu.getOriginal(member);
+			member = (IMember)member.getPrimaryElement();
 		}
 		IResource res = member.getResource();
 		if (res == null) {

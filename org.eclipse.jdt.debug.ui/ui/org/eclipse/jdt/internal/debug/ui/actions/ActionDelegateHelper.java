@@ -140,7 +140,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 				ICompilationUnit unit= manager.getWorkingCopy(editorInput);
 				if (unit != null) {
 					synchronized (unit) {
-						unit.reconcile();
+						unit.reconcile(false, null);
 					}
 					IJavaElement e = unit.getElementAt(selection.getOffset());
 					if (e instanceof IMember) {

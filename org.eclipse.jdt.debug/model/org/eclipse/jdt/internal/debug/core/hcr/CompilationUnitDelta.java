@@ -29,7 +29,6 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IWorkingCopy;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.compiler.IProblem;
@@ -137,7 +136,7 @@ public class CompilationUnitDelta {
 	public CompilationUnitDelta(ICompilationUnit cu, long timestamp) throws CoreException {
 		
 		if (cu.isWorkingCopy()) {
-			cu= (ICompilationUnit) cu.getOriginalElement();
+			cu= cu.getPrimary();
 		}
 		
 		// find underlying file
@@ -243,7 +242,7 @@ public class CompilationUnitDelta {
 		//Assert.isNotNull(member);
 		ICompilationUnit cu= member.getCompilationUnit();
 		if (cu.isWorkingCopy()) {
-			cu= (ICompilationUnit) cu.getOriginalElement();
+			cu= cu.getPrimary();
 		}
 		//Assert.isTrue(cu.equals(fCompilationUnit));
 		
@@ -293,7 +292,7 @@ public class CompilationUnitDelta {
 	private static String[] createPath(IJavaElement je) {
 			
 		// build a path starting at the given Java element and walk
-		// up the parent chain until we reach a IWorkingCopy or ICompilationUnit
+		// up the parent chain until we reach an ICompilationUnit
 		List args= new ArrayList();
 		while (je != null) {
 			// each path component has a name that uses the same
@@ -302,8 +301,9 @@ public class CompilationUnitDelta {
 			if (name == null)
 				return null;
 			args.add(name);
-			if (je instanceof IWorkingCopy || je instanceof ICompilationUnit)
+			if (je instanceof ICompilationUnit) {
 				break;
+			}
 			je= je.getParent();
 		}
 		
