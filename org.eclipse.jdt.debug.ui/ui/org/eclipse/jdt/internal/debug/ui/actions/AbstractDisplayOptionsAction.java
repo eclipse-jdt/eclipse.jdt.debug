@@ -142,7 +142,7 @@ public abstract class AbstractDisplayOptionsAction implements IViewActionDelegat
 	public static String getStringPreferenceValue(String id, String preference) {
 		String compositeKey = id + "." + preference; //$NON-NLS-1$
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		String value= "";
+		String value= ""; //$NON-NLS-1$
 		if (store.contains(compositeKey)) {
 			value = store.getString(compositeKey);
 		} else {
