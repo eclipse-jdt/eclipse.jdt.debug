@@ -269,17 +269,16 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	}	
 
 	/**
-	 * @see IAddVMDialogRequestor#isDuplicateName(IVMInstallType, String)
+	 * @see IAddVMDialogRequestor#isDuplicateName(String)
 	 */
-	public boolean isDuplicateName(IVMInstallType type, String name) {
+	public boolean isDuplicateName(String name) {
 		if (name.equals(fDefaultVMName)) {
 			return true;
 		}
 		for (int i = 0; i < fVMStandins.size(); i++) {
-			IVMInstall vm= (IVMInstall)fVMStandins.get(i);
-			if (vm.getVMInstallType() == type) {
-				if (vm.getName().equals(name))
-					return true;
+			IVMInstall vm = (IVMInstall)fVMStandins.get(i);
+			if (vm.getName().equals(name)) {
+				return true;
 			}
 		}
 		return false;

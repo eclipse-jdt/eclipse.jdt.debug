@@ -272,7 +272,7 @@ public class AddVMDialog extends StatusDialog {
 			status.setInfo(LauncherMessages.getString("addVMDialog.enterName")); //$NON-NLS-1$
 		} else {
 			IVMInstallType type= getVMType();
-			if (fRequestor.isDuplicateName(type, name) && (fEditedVM == null || !name.equals(fEditedVM.getName()))) {
+			if (fRequestor.isDuplicateName(name) && (fEditedVM == null || !name.equals(fEditedVM.getName()))) {
 				status.setError(LauncherMessages.getString("addVMDialog.duplicateName")); //$NON-NLS-1$
 			} else {
 				IStatus s = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);

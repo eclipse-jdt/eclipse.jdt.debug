@@ -14,14 +14,13 @@ import org.eclipse.jdt.launching.IVMInstallType;
 public interface IAddVMDialogRequestor {
 
 	/**
-	 * Reply whether or not a new VM of the specified name and type would
+	 * Reply whether or not a new VM of the specified name would
 	 * constitute a duplicate.
 	 * 
-	 * @param type the type of a potential new VM
 	 * @param name the name of a potential new VM
-	 * @return whether a new VM of the specified type and name would be a duplicate VM
+	 * @return whether a new VM with the specified name would be a duplicate VM
 	 */
-	public boolean isDuplicateName(IVMInstallType type, String name);
+	public boolean isDuplicateName(String name);
 	
 	/**
 	 * Notification that a VM has been added from the <code>AddVMDialog</code>.
