@@ -67,8 +67,8 @@
    <extension
          point="org.eclipse.debug.core.launchDelegates">
       <launchDelegate
-            type="org.eclipse.jdt.launching.localJavaApplication"
             delegate="org.eclipse.jdt.debug.testplugin.TestModeLaunchDelegate"
+            type="org.eclipse.jdt.launching.localJavaApplication"
             modes="TEST_MODE"
             id="org.eclipse.jdt.debug.tests.testModeLaunchDelegate">
       </launchDelegate>
@@ -88,8 +88,8 @@
    <extension
          point="org.eclipse.core.variables.valueVariables">
       <variable
-            name="VALUE_VAR_WITH_INITIALIZER"
             initializerClass="org.eclipse.jdt.debug.testplugin.ValueVariableInitializer"
+            name="VALUE_VAR_WITH_INITIALIZER"
             description="sample variable with initializer">
       </variable>
       <variable
@@ -114,7 +114,7 @@
             label="Message Console Test"
             description="Tests the message (generic) console"
             id="org.eclipse.jdt.debug.tests.messageConsoleActionSet">
-            <menu
+         <menu
                label="Run"
                path="additions"
                id="org.eclipse.ui.run">
@@ -127,7 +127,7 @@
                class="org.eclipse.jdt.debug.tests.console.TestBufferredOutputActionDelegate"
                menubarPath="org.eclipse.ui.run/TestGroup"
                id="org.eclipse.jdt.debug.tests.testBufferredOutputAction">
-         </action>         
+         </action>
          <action
                label="Test Message Console"
                class="org.eclipse.jdt.debug.tests.console.TestMessageConsoleActionDelegate"
@@ -135,6 +135,15 @@
                id="org.eclipse.jdt.debug.tests.testMessageConsoleAction">
          </action>
       </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            name="Test Config Type"
+            delegate="org.eclipse.jdt.debug.testplugin.TestLaunchDelegate"
+            modes="run, debug"
+            id="org.eclipse.jdt.debug.tests.testConfigType">
+      </launchConfigurationType>
    </extension>
 
 </plugin>
