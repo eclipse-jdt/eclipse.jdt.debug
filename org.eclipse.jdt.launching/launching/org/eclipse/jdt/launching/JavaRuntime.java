@@ -494,10 +494,13 @@ public final class JavaRuntime {
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
 	 * 
-	 * Computes the default (unresolved) runtime claspath for a given project.
+	 * Computes and returns the default unresolved runtime claspath for the
+	 * given project.
 	 * 
 	 * @return runtime classpath entries
 	 * @exception CoreException if unable to compute the runtime classpath
+	 * @see IRuntimeClasspathEntry
+	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] computeRuntimeClasspath(IJavaProject project) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(project.getProject().getFullPath());
@@ -1239,15 +1242,16 @@ public final class JavaRuntime {
 	/**
 	 * Evaluates library locations for a IVMInstall. If no library locations are set on the install, a default
 	 * location is evaluated and checked if it exists.
-	 * @return Returns library locations with paths that exist or are empty
+	 * @return library locations with paths that exist or are empty
+	 * @since 2.0
 	 */
-	public static LibraryLocation[] getLibraryLocations(IVMInstall defaultVM)  {
+	public static LibraryLocation[] getLibraryLocations(IVMInstall vm)  {
 		IPath[] libraryPaths;
 		IPath[] sourcePaths;
 		IPath[] sourceRootPaths;
-		LibraryLocation[] locations= defaultVM.getLibraryLocations();
+		LibraryLocation[] locations= vm.getLibraryLocations();
 		if (locations == null) {
-			LibraryLocation[] dflts= defaultVM.getVMInstallType().getDefaultLibraryLocations(defaultVM.getInstallLocation());
+			LibraryLocation[] dflts= vm.getVMInstallType().getDefaultLibraryLocations(vm.getInstallLocation());
 			libraryPaths = new IPath[dflts.length];
 			sourcePaths = new IPath[dflts.length];
 			sourceRootPaths = new IPath[dflts.length];

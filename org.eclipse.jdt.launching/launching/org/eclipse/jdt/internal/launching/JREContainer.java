@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 
 /**
@@ -50,10 +51,7 @@ public class JREContainer implements IClasspathContainer {
 	 * @see IClasspathContainer#getClasspathEntries()
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
-		LibraryLocation[] libs = fVMInstall.getLibraryLocations();
-		if (libs == null) {
-			libs = fVMInstall.getVMInstallType().getDefaultLibraryLocations(fVMInstall.getInstallLocation());
-		}
+		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(fVMInstall);
 		IClasspathEntry[] entries = new IClasspathEntry[libs.length];
 		for (int i = 0; i < libs.length; i++) {
 			entries[i] = JavaCore.newLibraryEntry(libs[i].getSystemLibraryPath(), libs[i].getSystemLibrarySourcePath(), libs[i].getPackageRootPath());
