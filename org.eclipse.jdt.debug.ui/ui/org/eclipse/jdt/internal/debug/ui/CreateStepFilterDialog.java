@@ -1,5 +1,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -20,7 +21,6 @@ public class CreateStepFilterDialog extends StatusDialog {
 	private Text text;
 	private Filter filter;
 	private Button okButton;
-	private Button cancelButton;
 	private boolean filterValid;
 	private boolean okClicked;
 	private Filter[] existingFilters;
@@ -50,9 +50,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 	
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton= createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		okButton.setEnabled(false);	
-
-		cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);		
+		okButton.setEnabled(false);			
 	}
 	
 	protected Control createDialogArea(Composite parent) {
@@ -88,9 +86,9 @@ public class CreateStepFilterDialog extends StatusDialog {
 			public void modifyText(ModifyEvent e) {
 				validateChange();
 				if (!filterValid) 
-					updateStatus(new StatusInfo(StatusInfo.ERROR, DebugUIMessages.getString("CreateStepFilterDialog.4"))); //$NON-NLS-1$
+					updateStatus(new StatusInfo(IStatus.ERROR, DebugUIMessages.getString("CreateStepFilterDialog.4"))); //$NON-NLS-1$
 				else if (isDuplicateFilter(text.getText().trim())) {
-					updateStatus(new StatusInfo(StatusInfo.WARNING, DebugUIMessages.getString("CreateStepFilterDialog.5"))); //$NON-NLS-1$
+					updateStatus(new StatusInfo(IStatus.WARNING, DebugUIMessages.getString("CreateStepFilterDialog.5"))); //$NON-NLS-1$
 					return;
 				} else 
 					updateStatus(new StatusInfo());		
