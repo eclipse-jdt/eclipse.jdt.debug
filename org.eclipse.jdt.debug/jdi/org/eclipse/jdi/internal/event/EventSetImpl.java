@@ -120,11 +120,18 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 		List resumedThreads= new ArrayList(fEvents.size());
 		while (iter.hasNext()) {
 			EventImpl event = (EventImpl)iter.next();
-			ThreadReference thread= event.thread();			
-			if (thread != null && !resumedThreads.contains(thread)) {
-				thread.resume();
+			ThreadReference thread= event.thread();
+			if (thread == null) {
+				event.virtualMachine().resume();
+				return;
+			}	
+			if (!resumedThreads.contains(thread)) {
 				resumedThreads.add(thread);
 			}
+		}
+		Iterator resumeIter= resumedThreads.iterator();
+		while (resumeIter.hasNext()) {
+			((ThreadReference)resumeIter.next()).resume();
 		}
 	}
 	
