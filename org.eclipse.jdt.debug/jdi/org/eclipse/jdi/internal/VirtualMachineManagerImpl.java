@@ -37,7 +37,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/** Major interface version. */
 	public static int MAJOR_INTERFACE_VERSION = 1;
 	/** Minor interface version. */
-	public static int MINOR_INTERFACE_VERSION = 0;
+	public static int MINOR_INTERFACE_VERSION = 4;
 	/** PrintWriter where verbose info is written to, null if no verbose must be given. */
 	private PrintWriter fVerbosePrintWriter = null;
 	/** List of all VMs that are currently connected. */
