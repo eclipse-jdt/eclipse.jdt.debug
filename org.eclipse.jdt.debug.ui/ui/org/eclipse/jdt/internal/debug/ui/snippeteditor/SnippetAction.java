@@ -33,9 +33,8 @@ public abstract class SnippetAction extends Action implements ISnippetStateChang
 			if (fEditor.getFile() == null) { //external file
 				setEnabled(false);
 				return;
-			} else {
-				fEditor.addSnippetStateChangedListener(this);
-			}
+			} 
+			fEditor.addSnippetStateChangedListener(this);
 		}
 		snippetStateChanged(fEditor);
 	} 
