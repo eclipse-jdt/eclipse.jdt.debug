@@ -797,10 +797,10 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 						try {
 							IJavaStackFrame f= (IJavaStackFrame)jt.getTopStackFrame();
 							if (f != null) {
-								IBreakpoint bp = jt.getBreakpoint();
+								IBreakpoint[] bps = jt.getBreakpoints();
 								if (e.getDetail() == DebugEvent.STEP_END && f.getLineNumber() == 14 && f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1")) { //$NON-NLS-1$
 									fThread = jt;
-								} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bp != null && bp.equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
+								} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bps.length > 0 && bps[0].equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
 									// locate the 'eval' method and step over
 									IStackFrame[] frames = jt.getStackFrames();
 									for (int j = 0; j < frames.length; j++) {

@@ -312,8 +312,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Running)_12"), thread.getName()); //$NON-NLS-1$
 			}
 		}
-		IJavaBreakpoint breakpoint= (IJavaBreakpoint)thread.getBreakpoint();
-		if (breakpoint != null) {
+		IBreakpoint[] breakpoints= thread.getBreakpoints();
+		if (breakpoints.length > 0) {
+			IJavaBreakpoint breakpoint = (IJavaBreakpoint)breakpoints[0];
 			String typeName= getMarkerTypeName(breakpoint, qualified);
 			if (BreakpointUtils.isProblemBreakpoint(breakpoint)) {
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();

@@ -121,7 +121,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * The breakpoint that caused the last suspend, or
 	 * <code>null</code> if none.
 	 */
-	private IJavaBreakpoint fCurrentBreakpoint;
+	private List fCurrentBreakpoints = new ArrayList(2);
 
 	/**
 	 * The cached named of the underlying thread.
@@ -218,13 +218,18 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 
 	/**
-	 * @see IThread#getBreakpoint()
+	 * Adds the given breakpoint to the list of breakpoints
+	 * this thread is suspended at
 	 */
-	public IBreakpoint getBreakpoint() {
-		if (fCurrentBreakpoint != null && !fCurrentBreakpoint.getMarker().exists()) {
-			fCurrentBreakpoint= null;
-		}
-		return fCurrentBreakpoint;
+	protected void addCurrentBreakpoint(IBreakpoint bp) {
+		fCurrentBreakpoints.add(bp);
+	}
+	
+	/**
+	 * @see org.eclipse.debug.core.model.IThread#getBreakpoints()
+	 */
+	public IBreakpoint[] getBreakpoints() {
+		return (IBreakpoint[])fCurrentBreakpoints.toArray(new IBreakpoint[fCurrentBreakpoints.size()]);
 	}
 
 	/**
@@ -838,7 +843,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @return whether this thread suspended
 	 */
 	public boolean handleSuspendForBreakpoint(JavaBreakpoint breakpoint, boolean queueEvent) {
-		fCurrentBreakpoint= breakpoint;
+		addCurrentBreakpoint(breakpoint);
 		try {
 			// update state to suspended but don't actually
 			// suspend unless a registered listener agrees
@@ -882,7 +887,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * of the suspend.
 	 */
 	public boolean handleSuspendForBreakpointQuiet(JavaBreakpoint breakpoint) {
-		fCurrentBreakpoint= breakpoint;
+		addCurrentBreakpoint(breakpoint);
 		setRunning(false);
 		abortStep();
 		return true;
@@ -1015,7 +1020,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected void setRunning(boolean running) {
 		fRunning = running;
 		if (running) {
-			fCurrentBreakpoint = null;
+			fCurrentBreakpoints.clear();
 		} 
 	}
 
