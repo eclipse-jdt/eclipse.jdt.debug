@@ -34,7 +34,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
@@ -154,16 +153,16 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		run(null, wr);
 	}
 	
-	/**
-	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#addToTarget(org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
 		clearCachedExpressionFor(target);
 		super.addToTarget(target);
 	}
-	
-	/**
-	 * @see JavaBreakpoint#removeFromTarget(JDIDebugTarget)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#removeFromTarget(org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
 	 */
 	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
 		clearCachedExpressionFor(target);
@@ -205,22 +204,22 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		removeCachedThreads(fCompiledExpressions, target);
 	}
 	
-	/**
-	 * @see ILineBreakpoint#getLineNumber()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getLineNumber()
 	 */
 	public int getLineNumber() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 	}
 
-	/**
-	 * @see ILineBreakpoint#getCharStart()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharStart()
 	 */
 	public int getCharStart() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.CHAR_START, -1);
 	}
 
-	/**
-	 * @see ILineBreakpoint#getCharEnd()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharEnd()
 	 */
 	public int getCharEnd() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.CHAR_END, -1);
@@ -232,8 +231,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		return JAVA_LINE_BREAKPOINT;
 	}
 		
-	/**
-	 * @see JavaBreakpoint#newRequest(JDIDebugTarget, ReferenceType)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#newRequest(org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, com.sun.jdi.ReferenceType)
 	 */
 	protected EventRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		Location location= null;
@@ -360,7 +359,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	/**
-	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget, JDIThread)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#handleBreakpointEvent(com.sun.jdi.event.Event, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, org.eclipse.jdt.internal.debug.core.model.JDIThread)
 	 * 
 	 * (From referenced JavaDoc:
 	 * 	Returns whethers the thread should be resumed
@@ -620,22 +619,22 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		return ((JDIDebugTarget)vm).getEvaluationEngine(project);
 	}
 	
-	/**
-	 * @see IJavaLineBreakpoint#supportsCondition
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#supportsCondition()
 	 */
 	public boolean supportsCondition() {
 		return true;
 	}
 	
-	/**
-	 * @see IJavaLineBreakpoint#getCondition()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#getCondition()
 	 */
 	public String getCondition() throws CoreException {
 		return ensureMarker().getAttribute(CONDITION, null);
 	}
 	
-	/**
-	 * @see IJavaLineBreakpoint#setCondition(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setCondition(java.lang.String)
 	 */
 	public void setCondition(String condition) throws CoreException {
 		// Clear the cached compiled expressions
@@ -660,23 +659,24 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			
 		return message.toString();
 	}
-	
-	/**
-	 * @see IJavaLineBreakpoint#isConditionEnabled()
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#isConditionEnabled()
 	 */
 	public boolean isConditionEnabled() throws CoreException {
 		return ensureMarker().getAttribute(CONDITION_ENABLED, false);
 	}
 	
-	/**
-	 * @see IJavaLineBreakpoint#setConditionEnabled(boolean)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setConditionEnabled(boolean)
 	 */
 	public void setConditionEnabled(boolean conditionEnabled) throws CoreException {	
 		setAttributes(new String[]{CONDITION_ENABLED}, new Object[]{new Boolean(conditionEnabled)});
 		recreate();
 	}
-	/**
-	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#cleanupForThreadTermination(JDIThread)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#cleanupForThreadTermination(org.eclipse.jdt.internal.debug.core.model.JDIThread)
 	 */
 	protected void cleanupForThreadTermination(JDIThread thread) {
 		fSuspendEvents.remove(thread);
@@ -684,8 +684,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		super.cleanupForThreadTermination(thread);
 	}
 	
-	/**
-	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#addInstanceFilter(EventRequest, ObjectReference)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#addInstanceFilter(com.sun.jdi.request.EventRequest, com.sun.jdi.ObjectReference)
 	 */
 	protected void addInstanceFilter(EventRequest request,ObjectReference object) {
 		if (request instanceof BreakpointRequest) {
@@ -693,14 +693,14 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#isConditionSuspendOnTrue()
 	 */
 	public boolean isConditionSuspendOnTrue() throws DebugException {
 		return ensureMarker().getAttribute(CONDITION_SUSPEND_ON_TRUE, true);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setConditionSuspendOnTrue(boolean)
 	 */
 	public void setConditionSuspendOnTrue(boolean suspendOnTrue) throws CoreException {
