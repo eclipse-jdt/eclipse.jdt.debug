@@ -369,9 +369,9 @@ public class VMDefinitionsContainer {
 	}
 	
 	private static Element versionInfoAsElement(Document doc, JavaVersionInfo versionInfo) {
-		Element versionInfoElement = doc.createElement("versionInfo");
-		versionInfoElement.setAttribute("version", versionInfo.getVersionString());
-		versionInfoElement.setAttribute("ibm", new Boolean(versionInfo.ibmFound()).toString());
+		Element versionInfoElement = doc.createElement("versionInfo"); //$NON-NLS-1$
+		versionInfoElement.setAttribute("version", versionInfo.getVersionString()); //$NON-NLS-1$
+		versionInfoElement.setAttribute("ibm", new Boolean(versionInfo.ibmFound()).toString()); //$NON-NLS-1$
 		return versionInfoElement;
 	}
 			
@@ -511,7 +511,7 @@ public class VMDefinitionsContainer {
 					} else if (subElementName.equals("libraryLocations")) { //$NON-NLS-1$
 						setLibraryLocations(vmStandin, subElement);
 						break;
-					} else if (subElementName.equals("versionInfo")) {
+					} else if (subElementName.equals("versionInfo")) { //$NON-NLS-1$
 						JavaVersionInfo versionInfo = parseJavaVersionInfo(subElement);
 						container.addJavaVersionInfo(installPath, versionInfo);
 						break;
@@ -534,8 +534,8 @@ public class VMDefinitionsContainer {
 	}	
 	
 	private static JavaVersionInfo parseJavaVersionInfo(Element versionInfoElement) {
-		String versionString = versionInfoElement.getAttribute("version");
-		String ibmString = versionInfoElement.getAttribute("ibm");
+		String versionString = versionInfoElement.getAttribute("version"); //$NON-NLS-1$
+		String ibmString = versionInfoElement.getAttribute("ibm"); //$NON-NLS-1$
 		boolean ibmFlag = Boolean.valueOf(ibmString).booleanValue();
 		JavaVersionInfo versionInfo = new JavaVersionInfo(versionString, ibmFlag);
 		return versionInfo;		
