@@ -432,7 +432,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				if (exception instanceof VMDisconnectedException) {
 					JDIDebugPlugin.log((VMDisconnectedException)exception);
 					try {
-						thread.resumeForEvaluation();
+						thread.resumeQuiet();
 					} catch(DebugException e) {
 						JDIDebugPlugin.log(e);
 					}
@@ -452,7 +452,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 						return;
 					}
 				}
-				thread.resumeForEvaluation();
+				thread.resumeQuiet();
 				return;
 			} catch (DebugException e) {
 				JDIDebugPlugin.log(e);

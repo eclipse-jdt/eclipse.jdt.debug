@@ -116,17 +116,17 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 					public void run() {
 						while (!fEvaluationComplete && !fEvaluationCancelled) {
 							try {
-								Thread.currentThread().sleep(10000); // 10 second timeout for now
+								Thread.currentThread().sleep(3000); // 10 second timeout for now
 							} catch(InterruptedException e) {
 							}
 							if (!fEvaluationComplete) {
 								try {
-									thread.suspend();
+									((JDIThread)thread).suspendQuiet();
 									if (!listener.evaluationTimedOut(thread)) {
 										fEvaluationCancelled= true;
 									} else {
 										// Keep waiting
-										thread.resume();
+										((JDIThread)thread).resumeQuiet();
 									}
 								} catch(DebugException e) {
 								}

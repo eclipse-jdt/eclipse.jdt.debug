@@ -140,7 +140,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	/**
 	 * Finds the currently selected stack frame in the UI
 	 */
-	protected IStackFrame getContext() {
+	protected IStackFrame getStackFrameContext() {
 		IAdaptable context = DebugUITools.getDebugContext();
 		if (context != null) {
 			if (context instanceof IStackFrame) {
@@ -212,7 +212,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected void run() {		
 		// eval in context of object or stack frame
 		IJavaObject object = getObjectContext();		
-		IStackFrame stackFrame= getContext();
+		IStackFrame stackFrame= getStackFrameContext();
 		if (stackFrame == null) {
 			reportError(ActionMessages.getString("Evaluate.error.message.stack_frame_context")); //$NON-NLS-1$
 			return;
@@ -314,7 +314,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					if (getTargetPart() instanceof JavaSnippetEditor) {
 						enabled= true;
 					} else {
-						enabled = getContext() != null;
+						enabled = getStackFrameContext() != null;
 					}
 				}
 			}

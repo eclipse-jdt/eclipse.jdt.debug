@@ -675,7 +675,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * </ul>
 	 */
 	protected ObjectReference newInstance(ClassType receiverClass, Method constructor, List args) throws DebugException {
-		if (fInEvaluation) {
+		if (isPerformingEvaluation()) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations_2"), null); //$NON-NLS-1$
 		}
 		ObjectReference result= null;
@@ -970,36 +970,31 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
+		resumeThread(true);
+	}
+	
+	/**
+	 * @see ISuspendResume#resume()
+	 * 
+	 * Updates the state of this thread to resumed,
+	 * but does not fire notification of the resumption.
+	 */
+	public void resumeQuiet() throws DebugException {
+		resumeThread(false);
+	}
+	
+	private void resumeThread(boolean fireNotification) throws DebugException {
 		if (!isSuspended()) {
 			return;
 		}
 		try {
 			setRunning(true);
 			disposeStackFrames();
-			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+			if (fireNotification) {
+				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+			}
 			getUnderlyingThread().resume();
 		} catch (VMDisconnectedException e) {
-			disconnected();
-		} catch (RuntimeException e) {
-			setRunning(false);
-			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_resuming"), new String[] {e.toString()}), e); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * Updates the state of this thread to resumed,
-	 * but does not fire notification of the resumption.
-	 */
-	public void resumeForEvaluation() throws DebugException {
-		if (!isSuspended()) {
-			return;
-		}
-		setRunning(true);
-		disposeStackFrames();
-		try {
-			getUnderlyingThread().resume();
-		} catch (VMDisconnectedException exception) {
 			disconnected();
 		} catch (RuntimeException e) {
 			setRunning(false);
@@ -1159,17 +1154,35 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
+		suspendThread(true);
+	}
+	
+	/**
+	 * @see ISuspendResume#suspend()
+	 * 
+	 * Updates the state of this thread to suspended,
+	 * but does not fire notification of the suspention.
+	 */
+	public void suspendQuiet() throws DebugException {
+		suspendThread(false);
+	}
+	
+	private void suspendThread(boolean fireNotification) throws DebugException {
 		try {
 			// Abort any pending step request
 			abortStep();
 			getUnderlyingThread().suspend();
 			setRunning(false);
-			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			if (fireNotification) {
+				fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			}
 		} catch (RuntimeException e) {
 			setRunning(true);
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_suspending"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 	}
+	
+
 
 	/**
 	 * Notifies this thread that it has been suspended due
