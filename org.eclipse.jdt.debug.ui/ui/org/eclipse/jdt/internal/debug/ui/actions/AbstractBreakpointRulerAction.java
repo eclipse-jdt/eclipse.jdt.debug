@@ -18,6 +18,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
@@ -40,8 +41,7 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 	private IBreakpoint fBreakpoint;
 
 	protected IBreakpoint determineBreakpoint() {
-		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-		IBreakpoint[] breakpoints= breakpointManager.getBreakpoints();
+		IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getUniqueIdentifier());
 		for (int i= 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint= breakpoints[i];
 			if (breakpoint instanceof IJavaLineBreakpoint) {
