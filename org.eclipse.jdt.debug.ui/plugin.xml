@@ -1,850 +1,1028 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.jdt.debug.ui"
    name="%pluginName"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="%providerName"
    class="org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin">
-<!-- Required plugins -->
-<requires>
-  <import plugin="org.eclipse.ui"/>
-  <import plugin="org.eclipse.core.resources"/>
-  <import plugin="org.eclipse.jdt.core"/>
-  <import plugin="org.apache.xerces"/>
-  <import plugin="org.eclipse.search"/>
-  <import plugin="org.eclipse.debug.core"/>
-  <import plugin="org.eclipse.debug.ui"/> 
-  <import plugin="org.eclipse.jdt.debug"/>
-  <import plugin="org.eclipse.jdt.launching"/>
-  <import plugin="org.eclipse.compare"/>
-  <import plugin="org.eclipse.jdt.ui"/>
-</requires>
 
-<!-- Runtime -->
-<runtime>
-   <library name="jdiui.jar">
-      <export name="*"/>
-      <packages prefixes="org.eclipse.jdt.debug.ui,org.eclipse.jdt.internal.debug.ui"/>
-   </library>
-</runtime>
+   <runtime>
+      <library name="jdiui.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.jdt.debug.ui,org.eclipse.jdt.internal.debug.ui"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.jdt.debug"/>
+      <import plugin="org.eclipse.jdt.launching"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+   </requires>
+
 
 <!-- Extensions Points -->
-<extension-point name="%vmInstallTypePage" id="vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
-<extension-point name="%javaObjectBrowsers" id="javaObjectBrowsers"/>
+   <extension-point id="vmInstallTypePage" name="%vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
+   <extension-point id="javaObjectBrowsers" name="%javaObjectBrowsers"/>
 
 <!-- Extensions -->
-
-<extension point="org.eclipse.jdt.ui.javaEditorTextHovers">
-  <hover
-  	id="org.eclipse.jdt.internal.debug.ui.JavaDebugHover" 
-  	class="org.eclipse.jdt.internal.debug.ui.JavaDebugHover"
-  	label = "%javaVariableHoverLabel"
-  	description="%javaVariableHoverDescription"/> 
-</extension>
-<extension
-    point= "org.eclipse.ui.editors"
-    id= "org.eclipse.jdt.debug.ui.editors">
-   <editor
-      id="org.eclipse.jdt.debug.ui.SnippetEditor"
-      icon="icons/full/obj16/jsbook_obj.gif"
-      name="%JavaSnippetEditor.label"
-      extensions="jpage"
-      symbolicFontName= "org.eclipse.jdt.ui.editors.textfont"
-      class="org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor"
-      contributorClass="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorActionContributor">
-   </editor>
-</extension>
-
-<extension point="org.eclipse.ui.editorActions">
-	<editorContribution
-		id="org.eclipse.jdt.debug.CompilationUnitEditor.BreakpointRulerActions"
-		targetID="org.eclipse.jdt.ui.CompilationUnitEditor">
-		<action
-			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerAction"
-			actionID="RulerDoubleClick"
-			label="%Dummy.label"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
-		</action>
-	</editorContribution>	
-	<editorContribution
-		id="org.eclipse.jdt.debug.ClassFileEditor.BreakpointRulerActions"
-		targetID="org.eclipse.jdt.ui.ClassFileEditor">
-		<action
-			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerAction"
-			actionID="RulerDoubleClick"
-			label="%Dummy.label"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
-		</action>
-	</editorContribution>
-</extension>
-
-<extension point="org.eclipse.ui.actionSets">
-	<actionSet 
-		label="%JDTDebugActionSet.label" 
-		visible="false" 
-		id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
-	<menu
-        label="%RunMenu.label"
-        id="org.eclipse.ui.run"
-		path="additions">
-        <separator name="jdtGroup"/>
-        <separator name="breakpointGroup"/>
-     </menu>
-        <action id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
-        	definitionId="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
-  			label="%manageWatchpointAction.label"
-  			icon="icons/full/obj16/readwrite_obj.gif"
-  			helpContextId="manage_watchpoint_action_context"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
-  			menubarPath="org.eclipse.ui.run/breakpointGroup">
-  			<enablement>
-  				<or>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-            		<objectClass name="org.eclipse.jdt.core.IField"/>
-            		<objectClass name="org.eclipse.jdt.debug.core.IJavaFieldVariable"/>
-            	</or>
+   <extension
+         point="org.eclipse.jdt.ui.javaEditorTextHovers">
+      <hover
+            label="%javaVariableHoverLabel"
+            description="%javaVariableHoverDescription"
+            class="org.eclipse.jdt.internal.debug.ui.JavaDebugHover"
+            id="org.eclipse.jdt.internal.debug.ui.JavaDebugHover">
+      </hover>
+   </extension>
+   <extension
+         id="org.eclipse.jdt.debug.ui.editors"
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%JavaSnippetEditor.label"
+            icon="icons/full/obj16/jsbook_obj.gif"
+            extensions="jpage"
+            contributorClass="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorActionContributor"
+            class="org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor"
+            symbolicFontName="org.eclipse.jdt.ui.editors.textfont"
+            id="org.eclipse.jdt.debug.ui.SnippetEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="org.eclipse.jdt.ui.CompilationUnitEditor"
+            id="org.eclipse.jdt.debug.CompilationUnitEditor.BreakpointRulerActions">
+         <action
+               label="%Dummy.label"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
+               actionID="RulerDoubleClick"
+               id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerAction">
+         </action>
+      </editorContribution>
+      <editorContribution
+            targetID="org.eclipse.jdt.ui.ClassFileEditor"
+            id="org.eclipse.jdt.debug.ClassFileEditor.BreakpointRulerActions">
+         <action
+               label="%Dummy.label"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
+               actionID="RulerDoubleClick"
+               id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerAction">
+         </action>
+      </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%JDTDebugActionSet.label"
+            visible="false"
+            id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
+         <menu
+               label="%RunMenu.label"
+               path="additions"
+               id="org.eclipse.ui.run">
+            <separator
+                  name="jdtGroup">
+            </separator>
+            <separator
+                  name="breakpointGroup">
+            </separator>
+         </menu>
+         <action
+               definitionId="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
+               label="%manageWatchpointAction.label"
+               icon="icons/full/obj16/readwrite_obj.gif"
+               helpContextId="manage_watchpoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.jdt.debug.ui.ManageWatchpointAction">
+            <enablement>
+               <or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+                  <objectClass
+                        name="org.eclipse.jdt.core.IField">
+                  </objectClass>
+                  <objectClass
+                        name="org.eclipse.jdt.debug.core.IJavaFieldVariable">
+                  </objectClass>
+               </or>
             </enablement>
-        </action>
-      	<action id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
-	      	definitionId="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
-  			label="%manageMethodBreakpointAction.label"
-  			icon="icons/full/obj16/brkpi_obj.gif"
-  			helpContextId="manage_method_breakpoint_action_context"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
-  			menubarPath="org.eclipse.ui.run/breakpointGroup">
-  			<enablement>
-  				<or>
-	         		<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	            	<objectClass name="org.eclipse.jdt.core.IMethod"/>
-	            </or>
-			</enablement>
-  	    </action>
-  	    <action id="org.eclipse.jdt.debug.ui.actionSet.AddException"
-  	    	definitionId="org.eclipse.jdt.debug.ui.actionSet.AddException"
-			label="%exceptionAction.accel.label"
-			icon="icons/full/clcl16/exc_catch.gif"
-			helpContextId="add_exception_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction"
-			menubarPath="org.eclipse.ui.run/breakpointGroup">
-		</action>
-      	<action id="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
-      		definitionId="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
-  			label="%ManageBreakpointAction.label"
-  			icon="icons/full/obj16/brkpi_obj.gif"
-  			helpContextId="manage_breakpoint_action_context"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate"
-  			menubarPath="org.eclipse.ui.run/breakpointGroup">
-  	    </action>
-  	  	<action id="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
-  	  		definitionId="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
-  			label="%stepIntoSelectionAction.label"
-  			helpContextId="step_into_selection_action_context"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-  			menubarPath="org.eclipse.ui.run/jdtGroup"
-  			enablesFor="*">
-  			<enablement>
-  				<and>
-  					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/>
-	  				<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-  				</and>
+         </action>
+         <action
+               definitionId="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
+               label="%manageMethodBreakpointAction.label"
+               icon="icons/full/obj16/brkpi_obj.gif"
+               helpContextId="manage_method_breakpoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction">
+            <enablement>
+               <or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+                  <objectClass
+                        name="org.eclipse.jdt.core.IMethod">
+                  </objectClass>
+               </or>
             </enablement>
-  	    </action>  	    
-  	  	<action id="org.eclipse.jdt.debug.ui.RunToLineAction"
-  	  		definitionId="org.eclipse.jdt.debug.ui.RunToLineAction"
-  			label="%runToLineAction.label"
-  			icon="icons/full/elcl16/runtoline_co.gif"
-  			disabledIcon="icons/full/dlcl16/runtoline_co.gif"
-  			hoverIcon="icons/full/clcl16/runtoline_co.gif"
-  			helpContextId="run_to_line_action_context"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
-  			menubarPath="org.eclipse.ui.run/jdtGroup">
-  			<enablement>
-  				<and>
-	  				<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/>
-		  			<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	  			</and>
+         </action>
+         <action
+               definitionId="org.eclipse.jdt.debug.ui.actionSet.AddException"
+               label="%exceptionAction.accel.label"
+               icon="icons/full/clcl16/exc_catch.gif"
+               helpContextId="add_exception_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.jdt.debug.ui.actionSet.AddException">
+         </action>
+         <action
+               definitionId="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
+               label="%ManageBreakpointAction.label"
+               icon="icons/full/obj16/brkpi_obj.gif"
+               helpContextId="manage_breakpoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.jdt.debug.ui.ManageBreakpointAction">
+         </action>
+         <action
+               definitionId="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
+               label="%stepIntoSelectionAction.label"
+               helpContextId="step_into_selection_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
+               menubarPath="org.eclipse.ui.run/jdtGroup"
+               enablesFor="*"
+               id="org.eclipse.jdt.debug.ui.StepIntoSelectionAction">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
             </enablement>
-  	    </action>
-  		<action id="org.eclipse.jdt.debug.ui.Execute"
-  			definitionId="org.eclipse.jdt.debug.ui.Execute"
-			label="%Execute.label" 
-			menubarPath="org.eclipse.ui.run/jdtGroup"
-			icon="icons/full/etool16/run_sbook.gif"
-			disabledIcon="icons/full/dtool16/run_sbook.gif"
-  		 	hoverIcon="icons/full/ctool16/run_sbook.gif"
-			helpContextId="execute_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor="+">
-			<enablement> 
-             	<and>
-					<or>
-						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
-					</or>
-	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
+         </action>
+         <action
+               id="org.eclipse.jdt.debug.ui.RunToLineAction"
+               hoverIcon="icons/full/clcl16/runtoline_co.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
+               definitionId="org.eclipse.jdt.debug.ui.RunToLineAction"
+               disabledIcon="icons/full/dlcl16/runtoline_co.gif"
+               icon="icons/full/elcl16/runtoline_co.gif"
+               helpContextId="run_to_line_action_context"
+               label="%runToLineAction.label"
+               menubarPath="org.eclipse.ui.run/jdtGroup">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
             </enablement>
-		</action>
-  		<action id="org.eclipse.jdt.debug.ui.Display"
-  			definitionId="org.eclipse.jdt.debug.ui.Display" 
-			label="%Display.label" 
-			menubarPath="org.eclipse.ui.run/jdtGroup"
-			icon="icons/full/etool16/disp_sbook.gif"
-			disabledIcon="icons/full/dtool16/disp_sbook.gif"
-  		 	hoverIcon="icons/full/ctool16/disp_sbook.gif"
-			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor="+">
-			<enablement>
-				<and>
-					<or>
-						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
-					</or>
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
+         </action>
+         <action
+               id="org.eclipse.jdt.debug.ui.Execute"
+               hoverIcon="icons/full/ctool16/run_sbook.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
+               definitionId="org.eclipse.jdt.debug.ui.Execute"
+               disabledIcon="icons/full/dtool16/run_sbook.gif"
+               enablesFor="+"
+               icon="icons/full/etool16/run_sbook.gif"
+               label="%Execute.label"
+               helpContextId="execute_action_context"
+               menubarPath="org.eclipse.ui.run/jdtGroup">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
             </enablement>
-		</action>
-		<action id="org.eclipse.jdt.debug.ui.Inspect"
-			definitionId="org.eclipse.jdt.debug.ui.Inspect"
-			label="%Inspect.label" 
-			menubarPath="org.eclipse.ui.run/jdtGroup"
-			icon="icons/full/etool16/insp_sbook.gif"
-			disabledIcon="icons/full/dtool16/insp_sbook.gif"
-  		 	hoverIcon="icons/full/ctool16/insp_sbook.gif"
-			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor="+">
-			<enablement> 
-             	<and>
-					<or>
-						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
-					</or>
-					<or>
-						<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-						<objectClass name="org.eclipse.jdt.debug.core.IJavaVariable"/>
-					</or>
-	             </and>
+         </action>
+         <action
+               id="org.eclipse.jdt.debug.ui.Display"
+               hoverIcon="icons/full/ctool16/disp_sbook.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               definitionId="org.eclipse.jdt.debug.ui.Display"
+               disabledIcon="icons/full/dtool16/disp_sbook.gif"
+               enablesFor="+"
+               icon="icons/full/etool16/disp_sbook.gif"
+               label="%Display.label"
+               helpContextId="display_action_context"
+               menubarPath="org.eclipse.ui.run/jdtGroup">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
             </enablement>
-		</action> 
-		<action id="org.eclipse.jdt.debug.ui.Watch"
-			definitionId="org.eclipse.jdt.debug.ui.Watch"
-			label="%Watch.label" 
-			menubarPath="org.eclipse.ui.run/jdtGroup"
-			icon="icons/full/ctool16/watch_exp.gif"
-			disabledIcon="icons/full/dtool16/watch_exp.gif"
-  		 	hoverIcon="icons/full/ctool16/watch_exp.gif"
-			helpContextId="watch_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
-			enablesFor="+">
-			<enablement> 
-             	<and>
-	             	<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<or>
-						<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-						<objectClass name="org.eclipse.jdt.debug.core.IJavaVariable"/>
-					</or>
-	             </and>
+         </action>
+         <action
+               id="org.eclipse.jdt.debug.ui.Inspect"
+               hoverIcon="icons/full/ctool16/insp_sbook.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               definitionId="org.eclipse.jdt.debug.ui.Inspect"
+               disabledIcon="icons/full/dtool16/insp_sbook.gif"
+               enablesFor="+"
+               icon="icons/full/etool16/insp_sbook.gif"
+               label="%Inspect.label"
+               helpContextId="inspect_action_context"
+               menubarPath="org.eclipse.ui.run/jdtGroup">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <or>
+                     <objectClass
+                           name="org.eclipse.jface.text.ITextSelection">
+                     </objectClass>
+                     <objectClass
+                           name="org.eclipse.jdt.debug.core.IJavaVariable">
+                     </objectClass>
+                  </or>
+               </and>
             </enablement>
-		</action> 
-   </actionSet>
-</extension>
-
-<extension 
-	point="org.eclipse.ui.views">
-	<view
-		id="org.eclipse.jdt.debug.ui.DisplayView"
-		name="%displayViewName"
-		category="org.eclipse.debug.ui"
-	   	icon="icons/full/ctool16/disp_sbook.gif"
-	   	class="org.eclipse.jdt.internal.debug.ui.display.DisplayView">
-	</view>
-	<view
-      	name="%MonitorsView.name"
-		icon="icons/full/cview16/thread_and_monitor_view.gif"
-		category="org.eclipse.debug.ui"
-		class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorsView"
-		id="org.eclipse.jdt.debug.ui.MonitorsView">
-	</view>
-</extension>
-
-<extension point="org.eclipse.ui.perspectiveExtensions">
-	<perspectiveExtension 
-		targetID="org.eclipse.debug.ui.DebugPerspective">
-		<actionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
-	</perspectiveExtension>
-	<perspectiveExtension 
-		targetID="org.eclipse.jdt.ui.JavaPerspective">
-		<actionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
-	</perspectiveExtension>
-	<perspectiveExtension 
-		targetID="org.eclipse.jdt.ui.JavaHierarchyPerspective">
-		<actionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
-	</perspectiveExtension>
-	<perspectiveExtension 
-		targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
-		<actionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
-	</perspectiveExtension>
-    <perspectiveExtension 
-    	targetID="org.eclipse.debug.ui.DebugPerspective"> 
-    	<view id="org.eclipse.jdt.debug.ui.DisplayView" 
-        	relative="org.eclipse.debug.ui.ExpressionView" 
-    		relationship="stack"/>
-		<view id="org.eclipse.jdt.debug.ui.MonitorsView"
-			relative="org.eclipse.jdt.debug.ui.DisplayView"
-			relationship="stack"
-			visible="false"/>
-        <view id="org.eclipse.jdt.ui.PackageExplorer" 
-                relative="org.eclipse.debug.ui.DebugView" 
-                relationship="stack"
-                visible="false"/>
-        <view id="org.eclipse.jdt.ui.TypeHierarchy" 
-                relative="org.eclipse.debug.ui.DebugView" 
-                relationship="stack"
-                visible="false"/>
-         <view id="org.eclipse.search.SearchResultView" 
-                relative="org.eclipse.debug.ui.ConsoleView" 
-                relationship="stack"
-                visible="false"/> 
-    	<viewShortcut id="org.eclipse.jdt.debug.ui.DisplayView"/>
-		<viewShortcut id="org.eclipse.jdt.debug.ui.MonitorsView"/>
-     </perspectiveExtension> 
-</extension>
-
-<extension point="org.eclipse.ui.popupMenus">
-	<objectContribution
-		id="org.eclipse.jdt.debug.WatchpointToggleActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaWatchpoint">
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.AccessToggle"
-			label="%accessAction.label"
-			menubarPath="emptyBreakpointGroup"
-			state="false"
-			helpContextId="access_toggle_action_context" 
-			class="org.eclipse.jdt.internal.debug.ui.actions.AccessWatchpointToggleAction"
-			enablesFor="+">
-		</action>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.ModificationToggle"
-			label="%modificationAction.label"
-			menubarPath="emptyBreakpointGroup"
-			state="true"
-			helpContextId="modification_toggle_action_context" 
-			class="org.eclipse.jdt.internal.debug.ui.actions.ModificationWatchpointToggleAction"
-			enablesFor="+">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.MethodBreakpointToggleActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaMethodBreakpoint">
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.EntryToggle"
-			label="%entryAction.label"
-			menubarPath="emptyBreakpointGroup"
-			state="false"
-			helpContextId="entry_toggle_action_context" 
-			class="org.eclipse.jdt.internal.debug.ui.actions.EntryToggleAction"
-			enablesFor="+">
-		</action>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.ExitToggle"
-			label="%exitAction.label"
-			menubarPath="emptyBreakpointGroup"
-			state="false"
-			helpContextId="exit_toggle_action_context" 
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExitToggleAction"
-			enablesFor="+">
-		</action>		
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.JavaBreakpointActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaBreakpoint">
-		<action
-			id="org.eclipse.jdt.ui.actions.BreakpointHitCount"
-			label="%hitCount.label"
-			icon="icons/full/elcl16/sethitcount_co.gif"
-			disabledIcon="icons/full/dlcl16/sethitcount_co.gif"
-			hoverIcon="icons/full/clcl16/sethitcount_co.gif"
-			menubarPath="emptyBreakpointGroup"
-			helpContextId="hit_count_action_context" 
-			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
-			enablesFor="1">
-		</action>
-		<action
-			id="org.eclipse.jdt.ui.actions.SuspendPolicy"
-			label="%suspendPolicy.label"
-			icon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"
-			menubarPath="emptyBreakpointGroup"
-			helpContextId="breakpoint_suspend_policy_toggle_action_context" 
-			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointSuspendPolicyToggleAction"
-			enablesFor="1">
-		</action>
-		<action
-			id="org.eclipse.jdt.ui.actions.JavaBreakpointProperties"
-			label="%breakpointPropertiesAction.label"
-			menubarPath="additions"
-			helpContextId="breakpoint_properties_action_context" 
-			class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>	
-	<objectContribution
-		id="org.eclipse.jdt.debug.ExceptionToggleActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
-		<action
-			id="org.eclipse.jdt.ui.actions.CaughtToggle"
-			label="%caughtAction.label"
-			menubarPath="emptyBreakpointGroup"
-			state="true"
-			helpContextId="exception_caught_toggle_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionCaughtToggleAction"
-			enablesFor="+">
-		</action>
-		<action
-			id="org.eclipse.jdt.ui.actions.UncaughtToggle"
-			label="%uncaughtAction.label"
-			menubarPath="emptyBreakpointGroup"
-			state="true"
-			helpContextId="exception_uncaught_toggle_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionUncaughtToggleAction"
-			enablesFor="+">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.TerminateEvaluationActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaThread">
-		<filter name="TerminateEvaluationActionFilter" value="supportsTerminateEvaluation"/>
-		<action
-			id="org.eclipse.jdt.ui.actions.TerminateEvaluation"
-			label="%terminateEvaluationAction.label"
-			tooltip="%terminateEvaluationAction.tooltip"
-			menubarPath="emptyThreadGroup"
-			helpContextId="terminate_evaluation_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.TerminateEvaluationAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ExcludeExceptionAction"
-		objectClass="org.eclipse.jdt.debug.core.IJavaThread">
-		<filter name="ExcludeExceptionLocationFilter" value="suspendedAtException"/>
-		<action
-			id="org.eclipse.jdt.ui.actions.ExcludeExceptionLocation"
-			label="%excludeExceptionLocationAction.label"
-			tooltip="%excludeExceptionLocationAction.tooltip"
-			menubarPath="emptyThreadGroup"
-			helpContextId="exclude_exception_location_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExcludeExceptionLocationAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.DropToFrameActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
-		<filter name="DropToFrameActionFilter" value="supportsDropToFrame"/>
-		<action
-			id="org.eclipse.jdt.ui.actions.DropToFrame"
-			label="%dropFrameAction.label"
-			tooltip="%dropFrameAction.tooltip"
-			menubarPath="emptyThreadGroup"
-			helpContextId="drop_to_frame_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.AddStepFilterActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
-		<action
-			id="org.eclipse.jdt.ui.actions.AddPackageStepFilterAction"
-			label="%addPackageStepFilterAction.label"
-			tooltip="%addPackageStepFilterAction.tooltip"
-			menubarPath="emptyThreadGroup"
-			helpContextId="add_package_step_filter_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.AddPackageStepFilterAction"
-			enablesFor="+">
-		</action>
-		<action
-			id="org.eclipse.jdt.ui.actions.AddTypeStepFilterAction"
-			label="%addTypeStepFilterAction.label"
-			tooltip="%addTypeStepFilterAction.tooltip"
-			menubarPath="emptyThreadGroup"
-			helpContextId="add_type_step_filter_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.AddTypeStepFilterAction"
-			enablesFor="+">
-		</action>
-	</objectContribution>
-	  <objectContribution
-	objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression"
-	id="org.eclipse.jdt.debug.ui.JavaInspectExpressionActions">
-	 <action
-	   label="%convertToWatchExpressionAction.label"
-	   helpContextId="convert_to_watch_expression_context"
-	   tooltip="%convertToWatchExpressionAction.tooltip"
-	   class="org.eclipse.jdt.internal.debug.ui.actions.ConvertToWatchExpressionAction"
-	   menubarPath="additions"
-	   enablesFor="*"
-	   id="org.eclipse.jdt.debug.ui.actions.ConvertToWatchExpression">
-	 </action>
-	  </objectContribution>
-	  <objectContribution
-	objectClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpression"
-	id="org.eclipse.jdt.debug.WatchExpressionActions">
-	 <action
-	   label="%editWatchExpressionAction.label"
-	   helpContextId="edit_watch_expression_context"
-	   tooltip="%editWatchExpressionAction.tooltip"
-	   class="org.eclipse.jdt.internal.debug.ui.actions.EditWatchExpressionAction"
-	   menubarPath="additions"
-	   enablesFor="1"
-	   id="org.eclipse.jdt.ui.watchExpressionActions.EditWatchExpression">
-	 </action>
-	  </objectContribution>
-	<objectContribution
-		objectClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpression"
-		id="org.eclipse.jdt.debug.WatchExpressionActions">
-		<filter name="ReevaluateWatchExpressionActionFilter" value="availableJavaDebugTarget"/>
-	 <action
-	   label="%reevaluateWatchExpressionAction.label"
-	   helpContextId="reevaluate_watch_expression_context"
-	   tooltip="%reevaluateWatchExpressionAction.tooltip"
-	   class="org.eclipse.jdt.internal.debug.ui.actions.ReevaluateWatchExpressionAction"
-	   menubarPath="additions"
-	   enablesFor="1"
-	   id="org.eclipse.jdt.ui.watchExpressionActions.ReevaluateWatchExpression">
-	 </action>
-	</objectContribution>
-	<viewerContribution
-		id="org.eclipse.jdt.debug.ExpressionViewPopupActions"
-		targetID="org.eclipse.debug.ui.ExpressionView">
+         </action>
+         <action
+               id="org.eclipse.jdt.debug.ui.Watch"
+               hoverIcon="icons/full/ctool16/watch_exp.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
+               definitionId="org.eclipse.jdt.debug.ui.Watch"
+               disabledIcon="icons/full/dtool16/watch_exp.gif"
+               enablesFor="+"
+               icon="icons/full/ctool16/watch_exp.gif"
+               label="%Watch.label"
+               helpContextId="watch_action_context"
+               menubarPath="org.eclipse.ui.run/jdtGroup">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <or>
+                     <objectClass
+                           name="org.eclipse.jface.text.ITextSelection">
+                     </objectClass>
+                     <objectClass
+                           name="org.eclipse.jdt.debug.core.IJavaVariable">
+                     </objectClass>
+                  </or>
+               </and>
+            </enablement>
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            name="%displayViewName"
+            icon="icons/full/ctool16/disp_sbook.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.jdt.internal.debug.ui.display.DisplayView"
+            id="org.eclipse.jdt.debug.ui.DisplayView">
+      </view>
+      <view
+            name="%MonitorsView.name"
+            icon="icons/full/cview16/thread_and_monitor_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorsView"
+            id="org.eclipse.jdt.debug.ui.MonitorsView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <actionSet
+               id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
+         </actionSet>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <actionSet
+               id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
+         </actionSet>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         <actionSet
+               id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
+         </actionSet>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         <actionSet
+               id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
+         </actionSet>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.debug.ui.ExpressionView"
+               relationship="stack"
+               id="org.eclipse.jdt.debug.ui.DisplayView">
+         </view>
+         <view
+               relative="org.eclipse.jdt.debug.ui.DisplayView"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.jdt.debug.ui.MonitorsView">
+         </view>
+         <view
+               relative="org.eclipse.debug.ui.DebugView"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.jdt.ui.PackageExplorer">
+         </view>
+         <view
+               relative="org.eclipse.debug.ui.DebugView"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.jdt.ui.TypeHierarchy">
+         </view>
+         <view
+               relative="org.eclipse.debug.ui.ConsoleView"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.search.SearchResultView">
+         </view>
+         <viewShortcut
+               id="org.eclipse.jdt.debug.ui.DisplayView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.jdt.debug.ui.MonitorsView">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaWatchpoint"
+            id="org.eclipse.jdt.debug.WatchpointToggleActions">
+         <action
+               label="%accessAction.label"
+               helpContextId="access_toggle_action_context"
+               state="false"
+               class="org.eclipse.jdt.internal.debug.ui.actions.AccessWatchpointToggleAction"
+               menubarPath="emptyBreakpointGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.actions.AccessToggle">
+         </action>
+         <action
+               label="%modificationAction.label"
+               helpContextId="modification_toggle_action_context"
+               state="true"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ModificationWatchpointToggleAction"
+               menubarPath="emptyBreakpointGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.actions.ModificationToggle">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaMethodBreakpoint"
+            id="org.eclipse.jdt.debug.MethodBreakpointToggleActions">
+         <action
+               label="%entryAction.label"
+               helpContextId="entry_toggle_action_context"
+               state="false"
+               class="org.eclipse.jdt.internal.debug.ui.actions.EntryToggleAction"
+               menubarPath="emptyBreakpointGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.actions.EntryToggle">
+         </action>
+         <action
+               label="%exitAction.label"
+               helpContextId="exit_toggle_action_context"
+               state="false"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExitToggleAction"
+               menubarPath="emptyBreakpointGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.actions.ExitToggle">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaBreakpoint"
+            id="org.eclipse.jdt.debug.JavaBreakpointActions">
+         <action
+               id="org.eclipse.jdt.ui.actions.BreakpointHitCount"
+               hoverIcon="icons/full/clcl16/sethitcount_co.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
+               disabledIcon="icons/full/dlcl16/sethitcount_co.gif"
+               enablesFor="1"
+               icon="icons/full/elcl16/sethitcount_co.gif"
+               helpContextId="hit_count_action_context"
+               label="%hitCount.label"
+               menubarPath="emptyBreakpointGroup">
+         </action>
+         <action
+               label="%suspendPolicy.label"
+               icon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"
+               helpContextId="breakpoint_suspend_policy_toggle_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointSuspendPolicyToggleAction"
+               menubarPath="emptyBreakpointGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.ui.actions.SuspendPolicy">
+         </action>
+         <action
+               label="%breakpointPropertiesAction.label"
+               helpContextId="breakpoint_properties_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.jdt.ui.actions.JavaBreakpointProperties">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint"
+            id="org.eclipse.jdt.debug.ExceptionToggleActions">
+         <action
+               label="%caughtAction.label"
+               helpContextId="exception_caught_toggle_action_context"
+               state="true"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionCaughtToggleAction"
+               menubarPath="emptyBreakpointGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.ui.actions.CaughtToggle">
+         </action>
+         <action
+               label="%uncaughtAction.label"
+               helpContextId="exception_uncaught_toggle_action_context"
+               state="true"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionUncaughtToggleAction"
+               menubarPath="emptyBreakpointGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.ui.actions.UncaughtToggle">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaThread"
+            id="org.eclipse.jdt.debug.TerminateEvaluationActions">
+         <filter
+               name="TerminateEvaluationActionFilter"
+               value="supportsTerminateEvaluation">
+         </filter>
+         <action
+               label="%terminateEvaluationAction.label"
+               helpContextId="terminate_evaluation_action_context"
+               tooltip="%terminateEvaluationAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.TerminateEvaluationAction"
+               menubarPath="emptyThreadGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.ui.actions.TerminateEvaluation">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaThread"
+            id="org.eclipse.jdt.debug.ExcludeExceptionAction">
+         <filter
+               name="ExcludeExceptionLocationFilter"
+               value="suspendedAtException">
+         </filter>
+         <action
+               label="%excludeExceptionLocationAction.label"
+               helpContextId="exclude_exception_location_action_context"
+               tooltip="%excludeExceptionLocationAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExcludeExceptionLocationAction"
+               menubarPath="emptyThreadGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.ui.actions.ExcludeExceptionLocation">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame"
+            id="org.eclipse.jdt.debug.DropToFrameActions">
+         <filter
+               name="DropToFrameActionFilter"
+               value="supportsDropToFrame">
+         </filter>
+         <action
+               label="%dropFrameAction.label"
+               helpContextId="drop_to_frame_action_context"
+               tooltip="%dropFrameAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameAction"
+               menubarPath="emptyThreadGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.ui.actions.DropToFrame">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame"
+            id="org.eclipse.jdt.debug.AddStepFilterActions">
+         <action
+               label="%addPackageStepFilterAction.label"
+               helpContextId="add_package_step_filter_action_context"
+               tooltip="%addPackageStepFilterAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.AddPackageStepFilterAction"
+               menubarPath="emptyThreadGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.ui.actions.AddPackageStepFilterAction">
+         </action>
+         <action
+               label="%addTypeStepFilterAction.label"
+               helpContextId="add_type_step_filter_action_context"
+               tooltip="%addTypeStepFilterAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.AddTypeStepFilterAction"
+               menubarPath="emptyThreadGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.ui.actions.AddTypeStepFilterAction">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression"
+            id="org.eclipse.jdt.debug.ui.JavaInspectExpressionActions">
+         <action
+               label="%convertToWatchExpressionAction.label"
+               helpContextId="convert_to_watch_expression_context"
+               tooltip="%convertToWatchExpressionAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ConvertToWatchExpressionAction"
+               menubarPath="additions"
+               enablesFor="*"
+               id="org.eclipse.jdt.debug.ui.actions.ConvertToWatchExpression">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpression"
+            id="org.eclipse.jdt.debug.WatchExpressionActions">
+         <action
+               label="%editWatchExpressionAction.label"
+               helpContextId="edit_watch_expression_context"
+               tooltip="%editWatchExpressionAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.EditWatchExpressionAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.jdt.ui.watchExpressionActions.EditWatchExpression">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpression"
+            id="org.eclipse.jdt.debug.WatchExpressionActions">
+         <filter
+               name="ReevaluateWatchExpressionActionFilter"
+               value="availableJavaDebugTarget">
+         </filter>
+         <action
+               label="%reevaluateWatchExpressionAction.label"
+               helpContextId="reevaluate_watch_expression_context"
+               tooltip="%reevaluateWatchExpressionAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ReevaluateWatchExpressionAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.jdt.ui.watchExpressionActions.ReevaluateWatchExpression">
+         </action>
+      </objectContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.ExpressionView"
+            id="org.eclipse.jdt.debug.ExpressionViewPopupActions">
          <action
                label="%addWatchExpressionAction.label"
                icon="icons/full/ctool16/watch_exp.gif"
                helpContextId="add_watch_expression_context"
                tooltip="%addWatchExpressionAction.tooltip"
-               menubarPath="additions"
                class="org.eclipse.jdt.internal.debug.ui.actions.AddWatchExpressionAction"
+               menubarPath="additions"
                id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression">
          </action>
-	</viewerContribution>
-	<viewerContribution
-		id="org.eclipse.jdt.debug.DetailsEvaluationActions"
-		targetID="org.eclipse.debug.ui.VariableView.detail">
-		<visibility>
-			<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-		</visibility>
-		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Execute" 
-			label="%Execute.label" 
-			menubarPath="variableGroup" 
-			icon="icons/full/ctool16/run_sbook.gif"
-			helpContextId="execute_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
-		</action> 	
-		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display" 
-			label="%Display.label" 
-			menubarPath="variableGroup" 
-			icon="icons/full/ctool16/disp_sbook.gif"
-			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
-		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Inspect" 
-			label="%Inspect.label" 
-			menubarPath="variableGroup" 
-			icon="icons/full/ctool16/insp_sbook.gif" 
-			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/> 
-		</action>
-	</viewerContribution>
-	<viewerContribution
-		id="org.eclipse.jdt.debug.DisplayEvaluationActions"
-		targetID="org.eclipse.jdt.debug.ui.DisplayView">
-		<visibility>
-			<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-		</visibility>
-		<action id="org.eclipse.jdt.debug.ui.displayView.Execute" 
-			label="%Execute.label" 
-			menubarPath="evaluationGroup"
-			icon="icons/full/ctool16/run_sbook.gif" 
-			helpContextId="execute_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor="+">
-			<enablement>
-				<and>
-					<or>
-						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
-					</or>
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
-            </enablement>			
-		</action>
-		<action id="org.eclipse.jdt.debug.ui.displayView.Display" 
-			label="%Display.label" 
-			menubarPath="evaluationGroup"
-			icon="icons/full/ctool16/disp_sbook.gif" 
-			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor="+">
-			<enablement>
-				<and>
-					<or>
-						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
-					</or>
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.VariableView.detail"
+            id="org.eclipse.jdt.debug.DetailsEvaluationActions">
+         <visibility>
+            <systemProperty
+                  name="org.eclipse.jdt.debug.ui.debuggerActive"
+                  value="true">
+            </systemProperty>
+         </visibility>
+         <action
+               label="%Execute.label"
+               icon="icons/full/ctool16/run_sbook.gif"
+               helpContextId="execute_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
+               menubarPath="variableGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.variablesViewDetail.Execute">
+            <selection
+                  class="org.eclipse.jface.text.ITextSelection">
+            </selection>
+         </action>
+         <action
+               label="%Display.label"
+               icon="icons/full/ctool16/disp_sbook.gif"
+               helpContextId="display_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               menubarPath="variableGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display">
+            <selection
+                  class="org.eclipse.jface.text.ITextSelection">
+            </selection>
+         </action>
+         <action
+               label="%Inspect.label"
+               icon="icons/full/ctool16/insp_sbook.gif"
+               helpContextId="inspect_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               menubarPath="variableGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.variablesViewDetail.Inspect">
+            <selection
+                  class="org.eclipse.jface.text.ITextSelection">
+            </selection>
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.jdt.debug.ui.DisplayView"
+            id="org.eclipse.jdt.debug.DisplayEvaluationActions">
+         <visibility>
+            <systemProperty
+                  name="org.eclipse.jdt.debug.ui.debuggerActive"
+                  value="true">
+            </systemProperty>
+         </visibility>
+         <action
+               label="%Execute.label"
+               icon="icons/full/ctool16/run_sbook.gif"
+               helpContextId="execute_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
+               menubarPath="evaluationGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.displayView.Execute">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
             </enablement>
-		</action>
-		<action id="org.eclipse.jdt.debug.ui.displayView.Inspect" 
-			label="%Inspect.label" 
-			menubarPath="evaluationGroup"
-			icon="icons/full/ctool16/insp_sbook.gif"
-			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor="+">
-			<enablement>
-				<and>
-					<or>
-						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
-					</or>
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
+         </action>
+         <action
+               label="%Display.label"
+               icon="icons/full/ctool16/disp_sbook.gif"
+               helpContextId="display_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               menubarPath="evaluationGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.displayView.Display">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
             </enablement>
-		</action> 
-	</viewerContribution>
-	<viewerContribution
+         </action>
+         <action
+               label="%Inspect.label"
+               icon="icons/full/ctool16/insp_sbook.gif"
+               helpContextId="inspect_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               menubarPath="evaluationGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.displayView.Inspect">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+      </viewerContribution>
+      <viewerContribution
             targetID="org.eclipse.jdt.debug.ui.MonitorsView"
             id="org.eclipse.jdt.debug.MonitorsViewPopupActions">
          <action
                id="org.eclipse.jdt.ui.actions.MonitorTraceAction"
+               hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
-               icon="../org.eclipse.debug.ui/icons/full/elcl16/suspend_co.gif"
                disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/suspend_co.gif"
-			   hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"             
+               icon="../org.eclipse.debug.ui/icons/full/elcl16/suspend_co.gif"
                helpContextId="monitor_trace_action_context"
                label="%MonitorTraceAction.label"
                menubarPath="vmGroup"
                tooltip="%MonitorTraceAction.tooltip">
          </action>
-        <action
+         <action
                id="org.eclipse.jdt.ui.actions.MonitorQuitAction"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
-               icon="../org.eclipse.debug.ui/icons/full/elcl16/resume_co.gif"
                hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/resume_co.gif"
-               disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/resume_co.gif"            
+               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
+               disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/resume_co.gif"
+               icon="../org.eclipse.debug.ui/icons/full/elcl16/resume_co.gif"
                helpContextId="monitor_quit_action_context"
                label="%MonitorQuitAction.label"
                menubarPath="vmGroup"
                tooltip="%MonitorQuitAction.tooltip">
          </action>
       </viewerContribution>
-</extension>
-
-<extension point="org.eclipse.ui.viewActions">
-	<viewContribution
-		id="org.eclipse.jdt.ui.debug.VariableViewActions"
-		targetID="org.eclipse.debug.ui.VariableView">
-		<action id="org.eclipse.jdt.ui.variableViewActions.PrimitiveOptions"
-			label="%primitiveOptionsAction.label"
-			menubarPath="javaActions"
-			tooltip="%primitiveOptionsAction.tooltip"
-			helpContextId="primitive_options_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction">
-		</action>		
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"
-			label="%showQualifiedAction.label"
-			menubarPath="javaActions"
-			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			tooltip="%showQualifiedAction.tooltip"
-			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-			style="toggle"
-			state="false">
-		</action>
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStatic"
-			label="%showStaticAction.label"
-			menubarPath="javaActions"
-			icon="icons/full/clcl16/static_co.gif"
-			tooltip="%showStaticAction.tooltip"
-			helpContextId="show_static_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
-			style="toggle"
-			state="false">
-		</action>		
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowConstants"
-			label="%showConstantsAction.label"
-			menubarPath="javaActions"
-			icon="icons/full/clcl16/constant_co.gif"
-			tooltip="%showConstantsAction.tooltip"
-			helpContextId="show_constants_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
-			style="toggle"
-			state="false">
-		</action>		
-	</viewContribution>
-	<viewContribution
-		id="org.eclipse.jdt.ui.debug.ExpressionViewActions"
-		targetID="org.eclipse.debug.ui.ExpressionView">
-		<action id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions"
-			label="%primitiveOptionsAction.label"
-			menubarPath="javaActions"
-			tooltip="%primitiveOptionsAction.tooltip"
-			helpContextId="primitive_options_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction">
-		</action>		
-		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"
-			label="%showQualifiedAction.label"
-			menubarPath="javaActions"
-			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			tooltip="%showQualifiedAction.tooltip"
-			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-			style="toggle"
-			state="false">
-		</action>
-		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStatic"
-			label="%showStaticAction.label"
-			menubarPath="javaActions"
-			icon="icons/full/clcl16/static_co.gif"
-			tooltip="%showStaticAction.tooltip"
-			helpContextId="show_static_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
-			style="toggle"
-			state="false">
-		</action>		
-		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowConstants"
-			label="%showConstantsAction.label"
-			menubarPath="javaActions"
-			icon="icons/full/clcl16/constant_co.gif"
-			tooltip="%showConstantsAction.tooltip"
-			helpContextId="show_constants_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
-			style="toggle"
-			state="false">
-		</action>		
-	</viewContribution>	
-	<viewContribution
-		id="org.eclipse.jdt.debug.ui.BreakpointViewActions"
-		targetID="org.eclipse.debug.ui.BreakpointView">
-		<action id="org.eclipse.jdt.debug.ui.actions.AddException"
-			label="%exceptionAction.label"
-			toolbarPath="javaExceptions"
-			icon="icons/full/elcl16/exc_catch.gif"
-			disabledIcon="icons/full/dlcl16/exc_catch.gif"
-			hoverIcon="icons/full/clcl16/exc_catch.gif"
-			tooltip="%exceptionAction.tooltip"
-			helpContextId="add_exception_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction">
-		</action>
-			<action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"
-			label="%showQualifiedAction.label"
-			menubarPath="javaActions"
-			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			tooltip="%showQualifiedAction.tooltip"
-			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-			style="toggle"
-			state="false">
-		</action>
-	</viewContribution>
-	<viewContribution
-		id="org.eclipse.jdt.debug.ui.LaunchViewActions"
-		targetID="org.eclipse.debug.ui.DebugView">
-			<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"
-			label="%showQualifiedAction.label"
-			menubarPath="javaActions"
-			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			tooltip="%showQualifiedAction.tooltip"
-			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
-			style="toggle"
-			state="false">
-		</action>
-	</viewContribution>
-	<viewContribution
-		id="org.eclipse.jdt.debug.ui.DisplayViewActions"
-		targetID="org.eclipse.jdt.debug.ui.DisplayView">
-		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Execute" 
-			label="%Execute.label" 
-			tooltip="%Execute.tooltip"
-			toolbarPath="evaluationGroup"
-			icon="icons/full/etool16/run_sbook.gif"
-			disabledIcon="icons/full/dtool16/run_sbook.gif"
-  		 	hoverIcon="icons/full/ctool16/run_sbook.gif"
-			helpContextId="execute_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor="+">
-			<enablement>
-				<and>
-					<or>
-						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
-					</or>
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            targetID="org.eclipse.debug.ui.VariableView"
+            id="org.eclipse.jdt.ui.debug.VariableViewActions">
+         <action
+               label="%primitiveOptionsAction.label"
+               helpContextId="primitive_options_action_context"
+               tooltip="%primitiveOptionsAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction"
+               menubarPath="javaActions"
+               id="org.eclipse.jdt.ui.variableViewActions.PrimitiveOptions">
+         </action>
+         <action
+               state="false"
+               style="toggle"
+               id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+               icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
+               helpContextId="show_qualified_action_context"
+               label="%showQualifiedAction.label"
+               menubarPath="javaActions"
+               tooltip="%showQualifiedAction.tooltip">
+         </action>
+         <action
+               state="false"
+               style="toggle"
+               id="org.eclipse.jdt.ui.variableViewActions.ShowStatic"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
+               icon="icons/full/clcl16/static_co.gif"
+               helpContextId="show_static_action_context"
+               label="%showStaticAction.label"
+               menubarPath="javaActions"
+               tooltip="%showStaticAction.tooltip">
+         </action>
+         <action
+               state="false"
+               style="toggle"
+               id="org.eclipse.jdt.ui.variableViewActions.ShowConstants"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
+               icon="icons/full/clcl16/constant_co.gif"
+               helpContextId="show_constants_action_context"
+               label="%showConstantsAction.label"
+               menubarPath="javaActions"
+               tooltip="%showConstantsAction.tooltip">
+         </action>
+      </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.debug.ui.ExpressionView"
+            id="org.eclipse.jdt.ui.debug.ExpressionViewActions">
+         <action
+               label="%primitiveOptionsAction.label"
+               helpContextId="primitive_options_action_context"
+               tooltip="%primitiveOptionsAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction"
+               menubarPath="javaActions"
+               id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions">
+         </action>
+         <action
+               state="false"
+               style="toggle"
+               id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+               icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
+               helpContextId="show_qualified_action_context"
+               label="%showQualifiedAction.label"
+               menubarPath="javaActions"
+               tooltip="%showQualifiedAction.tooltip">
+         </action>
+         <action
+               state="false"
+               style="toggle"
+               id="org.eclipse.jdt.ui.expressionViewActions.ShowStatic"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
+               icon="icons/full/clcl16/static_co.gif"
+               helpContextId="show_static_action_context"
+               label="%showStaticAction.label"
+               menubarPath="javaActions"
+               tooltip="%showStaticAction.tooltip">
+         </action>
+         <action
+               state="false"
+               style="toggle"
+               id="org.eclipse.jdt.ui.expressionViewActions.ShowConstants"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
+               icon="icons/full/clcl16/constant_co.gif"
+               helpContextId="show_constants_action_context"
+               label="%showConstantsAction.label"
+               menubarPath="javaActions"
+               tooltip="%showConstantsAction.tooltip">
+         </action>
+      </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.debug.ui.BreakpointView"
+            id="org.eclipse.jdt.debug.ui.BreakpointViewActions">
+         <action
+               id="org.eclipse.jdt.debug.ui.actions.AddException"
+               toolbarPath="javaExceptions"
+               hoverIcon="icons/full/clcl16/exc_catch.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction"
+               disabledIcon="icons/full/dlcl16/exc_catch.gif"
+               icon="icons/full/elcl16/exc_catch.gif"
+               helpContextId="add_exception_action_context"
+               label="%exceptionAction.label"
+               tooltip="%exceptionAction.tooltip">
+         </action>
+         <action
+               state="false"
+               style="toggle"
+               id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+               icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
+               helpContextId="show_qualified_action_context"
+               label="%showQualifiedAction.label"
+               menubarPath="javaActions"
+               tooltip="%showQualifiedAction.tooltip">
+         </action>
+      </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.debug.ui.DebugView"
+            id="org.eclipse.jdt.debug.ui.LaunchViewActions">
+         <action
+               state="false"
+               style="toggle"
+               id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+               icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
+               helpContextId="show_qualified_action_context"
+               label="%showQualifiedAction.label"
+               menubarPath="javaActions"
+               tooltip="%showQualifiedAction.tooltip">
+         </action>
+      </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.jdt.debug.ui.DisplayView"
+            id="org.eclipse.jdt.debug.ui.DisplayViewActions">
+         <action
+               toolbarPath="evaluationGroup"
+               id="org.eclipse.jdt.debug.ui.displayViewToolbar.Execute"
+               hoverIcon="icons/full/ctool16/run_sbook.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
+               disabledIcon="icons/full/dtool16/run_sbook.gif"
+               enablesFor="+"
+               icon="icons/full/etool16/run_sbook.gif"
+               helpContextId="execute_action_context"
+               label="%Execute.label"
+               tooltip="%Execute.tooltip">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
             </enablement>
-		</action>
-		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Display" 
-			label="%Display.label" 
-			tooltip="%Display.tooltip"
-			toolbarPath="evaluationGroup"
-			icon="icons/full/etool16/disp_sbook.gif"
-			disabledIcon="icons/full/dtool16/disp_sbook.gif"
-			hoverIcon="icons/full/ctool16/disp_sbook.gif"
-			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor="+">
-			<enablement>
-				<and>
-					<or>
-						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
-					</or>
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
+         </action>
+         <action
+               toolbarPath="evaluationGroup"
+               id="org.eclipse.jdt.debug.ui.displayViewToolbar.Display"
+               hoverIcon="icons/full/ctool16/disp_sbook.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               disabledIcon="icons/full/dtool16/disp_sbook.gif"
+               enablesFor="+"
+               icon="icons/full/etool16/disp_sbook.gif"
+               helpContextId="display_action_context"
+               label="%Display.label"
+               tooltip="%Display.tooltip">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
             </enablement>
-		</action>
-		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Inspect" 
-			label="%Inspect.label" 
-			tooltip="%Inspect.tooltip"
-			toolbarPath="evaluationGroup"
-			icon="icons/full/etool16/insp_sbook.gif"
-			disabledIcon="icons/full/dtool16/insp_sbook.gif"
-			hoverIcon="icons/full/ctool16/insp_sbook.gif"
-			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor="+">
-			<enablement>
-				<and>
-					<or>
-						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
-					</or>
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-	             </and>
+         </action>
+         <action
+               toolbarPath="evaluationGroup"
+               id="org.eclipse.jdt.debug.ui.displayViewToolbar.Inspect"
+               hoverIcon="icons/full/ctool16/insp_sbook.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               disabledIcon="icons/full/dtool16/insp_sbook.gif"
+               enablesFor="+"
+               icon="icons/full/etool16/insp_sbook.gif"
+               helpContextId="inspect_action_context"
+               label="%Inspect.label"
+               tooltip="%Inspect.tooltip">
+            <enablement>
+               <and>
+                  <or>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.debuggerActive"
+                           value="true">
+                     </systemProperty>
+                     <systemProperty
+                           name="org.eclipse.jdt.debug.ui.scrapbookActive"
+                           value="true">
+                     </systemProperty>
+                  </or>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
             </enablement>
-		</action> 
-	</viewContribution>
-
-	   <viewContribution
+         </action>
+      </viewContribution>
+      <viewContribution
             targetID="org.eclipse.jdt.debug.ui.MonitorsView"
             id="org.eclipse.jdt.debug.MonitorsActions">
          <action
                id="org.eclipse.jdt.ui.actions.MonitorTraceAction"
                toolbarPath="vmGroup"
+               hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
-               icon="../org.eclipse.debug.ui/icons/full/elcl16/suspend_co.gif"
                disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/suspend_co.gif"
-               hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/suspend_co.gif"             
+               icon="../org.eclipse.debug.ui/icons/full/elcl16/suspend_co.gif"
                helpContextId="monitor_trace_action_context"
                label="%MonitorTraceAction.label"
                tooltip="%MonitorTraceAction.tooltip">
@@ -852,1002 +1030,1218 @@
          <action
                id="org.eclipse.jdt.ui.actions.MonitorQuitAction"
                toolbarPath="vmGroup"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
-               icon="../org.eclipse.debug.ui/icons/full/elcl16/resume_co.gif"
                hoverIcon="../org.eclipse.debug.ui/icons/full/clcl16/resume_co.gif"
-               disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/resume_co.gif"                           
+               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
+               disabledIcon="../org.eclipse.debug.ui/icons/full/dlcl16/resume_co.gif"
+               icon="../org.eclipse.debug.ui/icons/full/elcl16/resume_co.gif"
                helpContextId="monitor_quit_action_context"
                label="%MonitorQuitAction.label"
                tooltip="%MonitorQuitAction.tooltip">
          </action>
          <action
-               label="%DeadlockView.label"
-               icon="icons/full/elcl16/deadlock_view.gif"
-               disabledIcon="icons/full/dlcl16/deadlock_view.gif"
+               state="false"
+               toolbarPath="vmGroup"
+               id="org.eclipse.jdt.ui.actions.DeadlockView"
                hoverIcon="icons/full/clcl16/deadlock_view.gif"
-               helpContextId="deadlock_view_action_context"
-               tooltip="%DeadlockView.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleDeadLocksViewAction"
-               state="false"
-               toolbarPath="vmGroup"
-               id="org.eclipse.jdt.ui.actions.DeadlockView">
+               disabledIcon="icons/full/dlcl16/deadlock_view.gif"
+               icon="icons/full/elcl16/deadlock_view.gif"
+               helpContextId="deadlock_view_action_context"
+               label="%DeadlockView.label"
+               tooltip="%DeadlockView.tooltip">
          </action>
          <action
-               label="%ThreadView.label"
-               icon="icons/full/elcl16/thread_view.gif"
-               disabledIcon="icons/full/dlcl16/thread_view.gif"
-   			   hoverIcon="icons/full/clcl16/thread_view.gif"
-               helpContextId="thread_view_action_context"
-               tooltip="%ThreadView.tooltip"
+               state="false"
+               toolbarPath="vmGroup"
+               id="org.eclipse.jdt.ui.actions.ThreadView"
+               hoverIcon="icons/full/clcl16/thread_view.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleThreadsViewAction"
-               toolbarPath="vmGroup"
-               state="false"
-               id="org.eclipse.jdt.ui.actions.ThreadView">
+               disabledIcon="icons/full/dlcl16/thread_view.gif"
+               icon="icons/full/elcl16/thread_view.gif"
+               helpContextId="thread_view_action_context"
+               label="%ThreadView.label"
+               tooltip="%ThreadView.tooltip">
          </action>
          <action
-               label="%MonitorView.label"
-               icon="icons/full/elcl16/monitor_view.gif"
-               disabledIcon="icons/full/dlcl16/monitor_view.gif"
-               hoverIcon="icons/full/clcl16/monitor_view.gif"
-               helpContextId="monitor_view_action_context"
-               tooltip="%MonitorView.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleMonitorsViewAction"
                state="true"
                toolbarPath="vmGroup"
-               id="org.eclipse.jdt.ui.actions.MonitorView">
+               id="org.eclipse.jdt.ui.actions.MonitorView"
+               hoverIcon="icons/full/clcl16/monitor_view.gif"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleMonitorsViewAction"
+               disabledIcon="icons/full/dlcl16/monitor_view.gif"
+               icon="icons/full/elcl16/monitor_view.gif"
+               helpContextId="monitor_view_action_context"
+               label="%MonitorView.label"
+               tooltip="%MonitorView.tooltip">
          </action>
-      </viewContribution> 
-</extension>
-
+      </viewContribution>
+   </extension>
 <!--Java debug model presentation -->
-<extension point = "org.eclipse.debug.ui.debugModelPresentations"> 
-         <debugModelPresentation
-             class = "org.eclipse.jdt.internal.debug.ui.JDIModelPresentation"
-             id = "org.eclipse.jdt.debug"
-             detailsViewerConfiguration = "org.eclipse.jdt.internal.debug.ui.display.DetailsViewerConfiguration">
-          </debugModelPresentation> 
-</extension>
-
-<extension point="org.eclipse.ui.popupMenus">
-	<objectContribution
-		id="org.eclipse.jdt.debug.ui.ReceivingStackFrameActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
-		<filter name="ReceivingStackFrameActionFilter" value="isReceivingType"/>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.OpenReceivingTypeHierarchy"
-			label="%openRecTypeHierarchy.label"
-			tooltip="%openRecTypeHierarchy.tooltip"
-			menubarPath="emptyEditGroup"
-			helpContextId="open_receiving_type_hierarchy_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenReceivingTypeHierarchyAction"
-			enablesFor="1">
-		</action>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.OpenReceivingType"
-			label="%openRecType.label"
-			tooltip="%openRecType.tooltip"
-			menubarPath="emptyEditGroup"
-			helpContextId="open_on_receiving_type_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenReceivingTypeAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ui.DeclaringStackFrameActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.OpenDeclaringTypeHierarchy"
-			label="%openDeclTypeHierarchy.label"
-			tooltip="%openDeclTypeHierarchy.tooltip"
-			menubarPath="emptyEditGroup"
-			helpContextId="open_declaring_type_hierarchy_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenDeclaringTypeHierarchyAction"
-			enablesFor="1">
-		</action>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.OpenDeclaringType"
-			label="%openDeclType.label"
-			tooltip="%openDeclType.tooltip"
-			menubarPath="emptyEditGroup"
-			helpContextId="open_on_declaring_type_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenDeclaringTypeAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
-		<filter name="PrimitiveVariableActionFilter" value="isPrimitive"/>
-		<filter name="ConcreteVariableActionFilter" value="isConcrete"/>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.OpenVariableConcreteTypeHierarchy"
-			label="%openConcreteVarTypeHierarchy.label"
-			tooltip="%openConcreteVarTypeHierarchy.tooltip"
-			menubarPath="emptyNavigationGroup"
-			helpContextId="open_variable_concrete_type_hierarchy_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableConcreteTypeHierarchyAction"
-			enablesFor="1">
-		</action>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.OpenVariableConcreteType"
-			label="%openConcreteVarType.label"
-			tooltip="%openConcreteVarType.tooltip"
-			menubarPath="emptyNavigationGroup"
-			helpContextId="open_variable_concrete_type_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableConcreteTypeAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
-		<filter name="PrimitiveVariableActionFilter" value="isPrimitive"/>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.OpenVariableDeclaredTypeHierarchy"
-			label="%openDeclVarTypeHierarchy.label"
-			tooltip="%openDeclVarTypeHierarchy.tooltip"
-			menubarPath="emptyNavigationGroup"
-			helpContextId="open_variable_declared_type_hierarchy_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableDeclaredTypeHierarchyAction"
-			enablesFor="1">
-		</action>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.OpenVariableDeclaredType"
-			label="%openDeclVarType.label"
-			tooltip="%openDeclVarType.tooltip"
-			menubarPath="emptyNavigationGroup"
-			helpContextId="open_on_variable_type_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableDeclaredTypeAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
-		<visibility>
-			<and>
-				<objectState name="PrimitiveVariableActionFilter" value="isValuePrimitive"/>
-				<not>
-					<objectState name="DetailFormatterFilter" value="isDefined"/>
-				</not>
-			</and>
-		</visibility>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.NewDetailFormatter"
-			label="%newDetailFormatter.label"
-			tooltip="%newDetailFormatter.tooltip"
-			menubarPath="emptyNavigationGroup"
-			helpContextId="new_detail_formatter_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.NewDetailFormatterAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
-		<filter name="PrimitiveVariableActionFilter" value="isValuePrimitive"/>
-		<filter name="DetailFormatterFilter" value="isDefined"/>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter"
-			label="%editDetailFormatter.label"
-			tooltip="%editDetailFormatter.tooltip"
-			menubarPath="emptyNavigationGroup"
-			helpContextId="edit_detail_formatter_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.EditDetailFormatterAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ui.FilteredJavaInspectExpressionActions"
-		objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression">
-		<visibility>
-			<and>
-				<objectState name="PrimitiveVariableActionFilter" value="isNotPrimitive"/>
-				<not>
-					<objectState name="DetailFormatterFilter" value="isDefined"/>
-				</not>
-			</and>
-		</visibility>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.NewDetailFormatter"
-			label="%newDetailFormatter.label"
-			tooltip="%newDetailFormatter.tooltip"
-			menubarPath="emptyNavigationGroup"
-			helpContextId="new_detail_formatter_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.NewDetailFormatterAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ui.FilteredJavaInspectExpressionActions"
-		objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression">
-		<filter name="PrimitiveVariableActionFilter" value="isNotPrimitive"/>
-		<filter name="DetailFormatterFilter" value="isDefined"/>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter"
-			label="%editDetailFormatter.label"
-			tooltip="%editDetailFormatter.tooltip"
-			menubarPath="emptyNavigationGroup"
-			helpContextId="edit_detail_formatter_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.EditDetailFormatterAction"
-			enablesFor="1">
-		</action>
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ui.JavaVariableActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.VariableInspectAction"
-			label="%Inspect.label"
-			menubarPath="openOnGroup"
-			icon="icons/full/ctool16/insp_sbook.gif"
-			helpContextId="variable_inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor="+">
-		</action>		
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.WatchAction"
-			label="%Watch.label"
-			menubarPath="openOnGroup"
-			icon="icons/full/ctool16/watch_exp.gif"
-			helpContextId="variable_watch_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
-			enablesFor="+">
-		</action>		
-	</objectContribution>	
-	<viewerContribution 
-    	id="org.eclipse.jdt.debug.ui.JavaSnippetPopupActions" 
-    	targetID="#JavaSnippetEditorContext">
-    	<action id="org.eclipse.jdt.debug.ui.Execute" 
-			label="%Execute.label" 
-			menubarPath="additions" 
-			icon="icons/full/ctool16/run_sbook.gif"
-			helpContextId="execute_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
-		</action> 	
-    	<action id="org.eclipse.jdt.debug.ui.Display" 
-			label="%Display.label" 
-			menubarPath="additions" 
-			icon="icons/full/ctool16/disp_sbook.gif"
-			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
-		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.Inspect" 
-			label="%Inspect.label" 
-			menubarPath="additions" 
-			icon="icons/full/ctool16/insp_sbook.gif" 
-			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
-		</action>
-     </viewerContribution>
-	<viewerContribution 
-    	id="org.eclipse.jdt.debug.ui.ClassFileRulerPopupActions" 
-    	targetID="#ClassFileRulerContext">
-    	<action
-			id="org.eclipse.jdt.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
-			label="%JavaBreakpointProperties.label"
-			menubarPath="debug"
-			helpContextId="breakpoint_properties_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
-		</action>
-    	<action
-			id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate"
-			label="%EnableBreakpoint.label"
-			menubarPath="debug"
-			helpContextId="enable_disable_breakpoint_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
-		</action>
-		<action
-			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate"
-			label="%AddBreakpoint.label"
-			menubarPath="debug"
-			helpContextId="manage_breakpoint_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
-		</action>
-	</viewerContribution>
-	<viewerContribution 
-    	id="org.eclipse.jdt.debug.ui.CompilationUnitRulerPopupActions" 
-    	targetID="#CompilationUnitRulerContext">
-    	<action
-			id="org.eclipse.jdt.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
-			label="%JavaBreakpointProperties.label"
-			menubarPath="debug"
-			helpContextId="breakpoint_properties_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
-		</action>
-		<action
-			id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate"
-			label="%EnableBreakpoint.label"
-			menubarPath="debug"
-			helpContextId="enable_disable_breakpoint_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
-		</action>
-		<action
-			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate"
-			label="%AddBreakpoint.label"
-			menubarPath="debug"
-			helpContextId="manage_breakpoint_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
-		</action>
-	</viewerContribution>	
-	<viewerContribution 
-    	id="org.eclipse.jdt.debug.ui.CUPopupActions" 
-    	targetID="#CompilationUnitEditorContext">
-    	<visibility>
-  			<and>
-				<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-				<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-			</and>
-		</visibility>
-    	<action id="org.eclipse.jdt.debug.ui.cuPopup.StepIntoSelection"
-    		label="%stepIntoSelectionAction.label"
-    		menubarPath="additions"
-    		helpContextId="step_into_selection_action_context"
-    		class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-    		enablesFor="*">
-    		<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action>
-    	<action id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine"
-    		label="%runToLineAction.label"
-    		icon="icons/full/clcl16/runtoline_co.gif"
-    		menubarPath="additions"
-    		helpContextId="run_to_line_action_context"
-    		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate">
-    		<enablement>
-    		<and>
-				<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/>
-				<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-			</and>
-			</enablement>
-		</action>
-    	<action id="org.eclipse.jdt.debug.ui.cuPopup.Execute" 
-			label="%Execute.label" 
-			menubarPath="additions" 
-			icon="icons/full/ctool16/run_sbook.gif"
-			helpContextId="execute_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor="+">
-			<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action> 	
-    	<action id="org.eclipse.jdt.debug.ui.cuPopup.Display" 
-			label="%Display.label" 
-			menubarPath="additions" 
-			icon="icons/full/ctool16/disp_sbook.gif"
-			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor="+">
-			<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.cuPopup.Inspect" 
-			label="%Inspect.label" 
-			menubarPath="additions" 
-			icon="icons/full/ctool16/insp_sbook.gif"
-			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor="+">
-			<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action>
-        <action id="org.eclipse.jdt.debug.ui.cuPopup.Watch" 
-			label="%Watch.label" 
-			menubarPath="additions" 
-			icon="icons/full/ctool16/watch_exp.gif"
-			helpContextId="watch_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
-			enablesFor="+">
-			<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action>
-     </viewerContribution>
-     <viewerContribution 
-    	id="org.eclipse.jdt.debug.ui.CFPopupActions" 
-    	targetID="#ClassFileEditorContext">
-    	<visibility>
-  			<and>
-				<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-				<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-			</and>
-		</visibility>
-    	<action id="org.eclipse.jdt.debug.ui.cfPopup.StepIntoSelection"
-    		label="%stepIntoSelectionAction.label"
-    		menubarPath="additions"
-    		helpContextId="step_into_selection_action_context"
-    		class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-    		enablesFor="*">
-    		<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action>    	
-    	<action id="org.eclipse.jdt.debug.ui.cfPopup.RunToLine"
- 		   	icon="icons/full/clcl16/runtoline_co.gif"
-    		label="%runToLineAction.label"
-    		menubarPath="additions"
-     		helpContextId="run_to_line_action_context"
-    		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate">
-    		<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action> 
-    	<action id="org.eclipse.jdt.debug.ui.cfPopup.Execute" 
-			label="%Execute.label" 
-			menubarPath="additions"
-			icon="icons/full/ctool16/run_sbook.gif"
-			helpContextId="execute_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor="+">
-			<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action> 	
-    	<action id="org.eclipse.jdt.debug.ui.cfPopup.Display" 
-			label="%Display.label" 
-			menubarPath="additions"
-			icon="icons/full/ctool16/disp_sbook.gif"
-			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor="+">
-			<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.cfPopup.Inspect" 
-			label="%Inspect.label" 
-			menubarPath="additions"
-			icon="icons/full/ctool16/insp_sbook.gif"
-			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor="+">
-			<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action>
-        <action id="org.eclipse.jdt.debug.ui.cfPopup.Watch" 
-			label="%Watch.label" 
-			menubarPath="additions" 
-			icon="icons/full/ctool16/watch_exp.gif"
-			helpContextId="watch_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
-			enablesFor="+">
-			<enablement>
-	  			<and>
-					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
-				</and>
-			</enablement>
-		</action>
-     </viewerContribution>
-     <objectContribution 
-     	id="org.eclipse.jdt.debug.ui.MethodBreakpointActions"
-     	objectClass="org.eclipse.jdt.core.IMethod">
-     	<filter name="MethodActionFilter" value="isNotAbstract"/>
-		<action id="org.eclipse.jdt.debug.ui.MethodBreakpoint"
-		 	label="%manageMethodBreakpointAction.label"
-		 	helpContextId="manage_method_breakpoint_action_context"
-		 	menubarPath="additions"
-		 	class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
-		 	enablesFor="1">
-	  </action>
-  	</objectContribution>
-	<objectContribution 
-		id="org.eclipse.jdt.debug.ui.WatchpointActions"
-		objectClass="org.eclipse.jdt.core.IField">
-  		<action id="org.eclipse.jdt.debug.ui.Watchpoint"
-  			label="%manageWatchpointAction.label"
-  			helpContextId="manage_watchpoint_action_context"
-  			menubarPath="additions"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
-  			enablesFor="1">
-  		</action> 
-    </objectContribution>
-	<objectContribution 
-		id="org.eclipse.jdt.debug.ui.InstanceFiltersActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
-		<filter name="JavaVariableActionFilter" value="instanceFilter"/>
-  		<action id="org.eclipse.jdt.debug.ui.InstanceFilterAction"
-  			label="%instanceFiltersAction.label"
-  			helpContextId="instance_filters_action_context"
-  			menubarPath="additions"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.InstanceFiltersAction"
-  			enablesFor="1">
-  		</action> 
-    </objectContribution>    
-  	<objectContribution 
-		id="org.eclipse.jdt.debug.ui.WatchpointActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaFieldVariable">
-  		<action id="org.eclipse.jdt.debug.ui.VariableWatchpoint"
-  			label="%manageWatchpointAction.label"
-  			helpContextId="manage_watchpoint_action_context"
-  			menubarPath="additions"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
-  			enablesFor="1">
-  		</action> 
-    </objectContribution>
-    <viewerContribution
-		targetID="#JavaSnippetRulerContext"
-        id="org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetRulerContext">
-		<action
-			label="%AddTask.label"
-			helpContextId="org.eclipse.ui.AddTask_action_context"
-			tooltip="%AddTask.tooltip"
-			class="org.eclipse.ui.texteditor.TaskRulerAction"
-			menubarPath="additions"
-			id="org.eclipse.ui.texteditor.TaskRulerAction">
-		</action>
-		<action
-			label="%AddBookmark.label"
-			helpContextId="org.eclipse.ui.bookmark_action_context"
-			tooltip="%AddBookmark.tooltip"
-			class="org.eclipse.ui.texteditor.BookmarkRulerAction"
-			menubarPath="additions"
-			id="org.eclipse.ui.texteditor.BookmarkRulerAction">
-		</action>
-	</viewerContribution>
-</extension>
-
-<extension point="org.eclipse.ui.editorActions"> 
-      <editorContribution 
-         id="org.eclipse.jdt.debug.ui.JavaSnippetToolbarActions" 
-         targetID="org.eclipse.jdt.debug.ui.SnippetEditor"> 
-         <action id="org.eclipse.jdt.debug.ui.SnippetExecute" 
-			label="%Execute.label"
-			tooltip="%Execute.tooltip"
-			toolbarPath="evaluationGroup" 
-			icon="icons/full/etool16/run_sbook.gif"
-			disabledIcon="icons/full/dtool16/run_sbook.gif"
-			hoverIcon="icons/full/ctool16/run_sbook.gif"
-			helpContextId="execute_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
-			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/> 
-		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.SnippetDisplay" 
-			label="%Display.label"
-			tooltip="%Display.tooltip"
-			toolbarPath="evaluationGroup" 
-			icon="icons/full/etool16/disp_sbook.gif"
-			disabledIcon="icons/full/dtool16/disp_sbook.gif"
-			hoverIcon="icons/full/ctool16/disp_sbook.gif"
-			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
-			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
-		</action> 	
-        <action id="org.eclipse.jdt.debug.ui.SnippetInspect" 
-			label="%Inspect.label" 
-			tooltip="%Inspect.tooltip"
-			toolbarPath="evaluationGroup" 
-			icon="icons/full/etool16/insp_sbook.gif"
-			disabledIcon="icons/full/dtool16/insp_sbook.gif"
-			hoverIcon="icons/full/ctool16/insp_sbook.gif"
-			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
-			enablesFor="+">
-			<selection class="org.eclipse.jface.text.ITextSelection"/>
-		</action>
-      </editorContribution> 
-   </extension> 
-
-<extension
-	point="org.eclipse.ui.propertyPages">
-	<page
-		id="org.eclipse.jdt.debug.ui.snippeteditor.SnippetEditorPage" 
-		name="%snippetEditorPageName"
-		objectClass="org.eclipse.core.resources.IFile"
-		class="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorPropertyPage"
-		nameFilter="*.jpage"> 
-    </page>    
-</extension>
-
-<extension point = "org.eclipse.ui.preferencePages">
-	<page
-		id = "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.VMPreferencePage"
-		name= "%installJREPageName"
-		category= "org.eclipse.jdt.ui.preferences.JavaBasePreferencePage">
-	</page>
-	<page name="%javaDebugPrefName"
-         id="org.eclipse.jdt.ui.JavaDebugPreferencePage"   
-	     class="org.eclipse.jdt.internal.debug.ui.JavaDebugPreferencePage"
-         category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage">
-	</page>
-	<page name="%javaStepFilterPrefName"
-         id="org.eclipse.jdt.ui.JavaStepFilterPreferencePage"   
-         class="org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage"
-         category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
-	</page>
-	<page name="%javaDetailFormattersPrefName"
-         id="org.eclipse.jdt.ui.JavaDetailFormattersPreferencePage"
-         class="org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage"
-         category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
-	</page>
-</extension>
-
-<extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
-	<launchConfigurationTypeImage
-		id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.localJavaApplication"
-		configTypeID="org.eclipse.jdt.launching.localJavaApplication"
-		icon="icons/full/ctool16/java_app.gif">
-	</launchConfigurationTypeImage>	
-	<launchConfigurationTypeImage
-		id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.remoteJavaApplication"
-		configTypeID="org.eclipse.jdt.launching.remoteJavaApplication"
-		icon="icons/full/ctool16/java_attach.gif">
-	</launchConfigurationTypeImage>	
-    <launchConfigurationTypeImage
-        id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.javaApplet"
-        configTypeID="org.eclipse.jdt.launching.javaApplet"
-        icon="icons/full/ctool16/java_applet.gif">
-    </launchConfigurationTypeImage>
-</extension>
-
-<extension point = "org.eclipse.debug.ui.launchConfigurationTabGroups">
-	<launchConfigurationTabGroup
-		id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
-		type ="org.eclipse.jdt.launching.localJavaApplication"
-		helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.local_java_application"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.LocalJavaApplicationTabGroup">
-	</launchConfigurationTabGroup>
-	<launchConfigurationTabGroup
-		id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.remoteJavaApplication"
-		type ="org.eclipse.jdt.launching.remoteJavaApplication"
-		helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.remote_java_application"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.RemoteJavaApplicationTabGroup">
-	</launchConfigurationTabGroup>
-    <launchConfigurationTabGroup
-        id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.javaApplet"
-        type="org.eclipse.jdt.launching.javaApplet"
-		helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.java_applet"
-        class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletTabGroup">
-    </launchConfigurationTabGroup>
-</extension>
-
-<extension point = "org.eclipse.debug.core.statusHandlers">
-	<statusHandler
-		id="org.eclipse.jdt.debug.ui.statusHandler.vmConnectTimeout"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.VMConnectTimeoutStatusHandler"
-		plugin ="org.eclipse.jdt.launching"
-		code="117">
-	</statusHandler>	
-	<statusHandler
-		id="org.eclipse.jdt.debug.ui.statusHandler.suspendTimeout"
-		class="org.eclipse.jdt.internal.debug.ui.SuspendTimeoutStatusHandler"
-		plugin = "org.eclipse.jdt.debug"
-		code="161">
-	</statusHandler>
-	<statusHandler
-		id="org.eclipse.jdt.debug.ui.statusHandler.noLineNumberAttributes"
-		class="org.eclipse.jdt.internal.debug.ui.NoLineNumberAttributesStatusHandler"
-		plugin = "org.eclipse.jdt.debug"
-		code="162">
-	</statusHandler>
-</extension>
-
-<extension point = "org.eclipse.debug.core.sourceLocators">
-	<sourceLocator
-		id = "org.eclipse.jdt.debug.ui.javaSourceLocator"
-	   	class="org.eclipse.jdt.debug.ui.JavaUISourceLocator"
-	   	name="%JavaSourceLocator.name"/>
-</extension>
-
-<extension point = "org.eclipse.debug.ui.debugActionGroups">
-	<debugActionGroup
-		id = "org.eclipse.jdt.debug.ui.javaDebugActionGroup"
-	   	visible="true"
-	   	name="%JavaDebugActionGroup.name">
-	   	<action id="org.eclipse.jdt.debug.ui.actions.AddException"/>
-	   	<action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"/>
-	   	<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression"/>
-		<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStatic"/>
-		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStatic"/>
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowConstants"/>
-		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowConstants"/>
-		<action id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions"/>
-		<action id="org.eclipse.jdt.ui.variableViewActions.PrimitiveOptions"/>
-	</debugActionGroup>
-</extension>
-
-<extension point = "org.eclipse.debug.ui.launchShortcuts">
-	<shortcut
-		id="org.eclipse.jdt.debug.ui.localJavaShortcut"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
-		helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
-		label="%JavaApplicationShortcut.label"
-		icon="icons/full/ctool16/java_app.gif"
-		modes="run, debug">
-		<perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
-		<perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
-		<perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
-		<perspective id="org.eclipse.debug.ui.DebugPerspective"/>
-	</shortcut>
-    <shortcut
-        id="org.eclipse.jdt.debug.ui.javaAppletShortcut"
-        class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
-		helpContextId="org.eclipse.jdt.debug.ui.shortcut_java_applet"
-        label="%AppletShortcut.label"
-        icon="icons/full/ctool16/java_applet.gif"
-        modes="run, debug">
-        <perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
-        <perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
-        <perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
-        <perspective id="org.eclipse.debug.ui.DebugPerspective"/>
-    </shortcut>
-</extension>
-
-<!-- commands and their bindings -->   
-<extension point="org.eclipse.ui.commands">
-	<command
-		category="org.eclipse.debug.ui.category.run"
-		 id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
-  		 name="%ActionDefinition.manageWatchpoint.name"
-  		 description= "%ActionDefinition.manageWatchpoint.description"
-	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-	
-	<command
-		category="org.eclipse.debug.ui.category.run"
-		id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
-		name="%ActionDefinition.manageMethodBreakpoint.name"
-  		description="%ActionDefinition.manageMethodBreakpoint.description"
-	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-	
-	<command
-		category="org.eclipse.debug.ui.category.run"
-		id="org.eclipse.jdt.debug.ui.actionSet.AddException"
-		name="%ActionDefinition.addException.name"
-		description= "%ActionDefinition.addException.description"
-	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.actionSet.AddException"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-	
-	<command
-		category="org.eclipse.debug.ui.category.run"
-		id="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
-		name="%ActionDefinition.manageBreakpoint.name"
-		description= "%ActionDefinition.manageBreakpoint.description"
-	/>
-	<keyBinding
-		string="Ctrl+Shift+B"
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-	
-	<command
-		category="org.eclipse.debug.ui.category.run"
-		id="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
-		name="%ActionDefinition.stepIntoSelection.name"
-  		description= "%ActionDefinition.stepIntoSelection.description"
-	/>
-	<keyBinding
-		string="Ctrl+F5"
-		scope="org.eclipse.jdt.ui.javaEditorScope"
-		command="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-	
-	<command
-		category="org.eclipse.debug.ui.category.run"
-		id="org.eclipse.jdt.debug.ui.RunToLineAction"
-		name="%ActionDefinition.runToLine.name"
-		description= "%ActionDefinition.runToLine.description"
-	/>
-	<keyBinding
-		string="Ctrl+R"
-		scope="org.eclipse.jdt.ui.javaEditorScope"
-		command="org.eclipse.jdt.debug.ui.RunToLineAction"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-	
-	<command
-		category="org.eclipse.debug.ui.category.run"
-		id="org.eclipse.jdt.debug.ui.Execute" 
-		name="%ActionDefinition.execute.name" 
-		description= "%ActionDefinition.execute.description"
-	/>
-	<keyBinding
-		string="Ctrl+U"
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.Execute"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-	
-	<command
-		category="org.eclipse.debug.ui.category.run"
-		id="org.eclipse.jdt.debug.ui.Display" 
-		name="%ActionDefinition.display.name" 
-		description= "%ActionDefinition.display.description"
-	/>
-	<keyBinding
-		string="Ctrl+D"
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.Display"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-	
-	<command
-		category="org.eclipse.debug.ui.category.run"
-		id="org.eclipse.jdt.debug.ui.Inspect" 
-		name="%ActionDefinition.inspect.name" 
-		description= "%ActionDefinition.inspect.description"
-	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.Inspect"
-		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-	/>
-
-</extension>
-
-<extension point = "org.eclipse.jdt.ui.classpathContainerPage">
-	<classpathContainerPage
-		id= "org.eclipse.jdt.launching.JRE_CONTAINER"
-		name= "%jreSystemLibrary.name"
-		class= "org.eclipse.jdt.internal.debug.ui.launcher.JREContainerWizardPage"/>
-</extension>
-
-<extension point = "org.eclipse.jdt.debug.ui.vmInstallTypePage">
-	<vmInstallTypePage
-		id="org.eclipse.jdt.debug.ui.StandardVMCommandTab"
-		vmInstallTypeID="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMCommandTab">
-	</vmInstallTypePage>
-	<vmInstallTypePage
-		id="org.eclipse.jdt.debug.ui.StandardVMCommandTab"
-		vmInstallTypeID="org.eclipse.jdt.launching.Standard11xVMType"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMCommandTab">
-	</vmInstallTypePage>	
-</extension>
-
-<extension point="org.eclipse.team.core.fileTypes">
-  <fileTypes extension="jpage" type="text"/>
-</extension>
-
-<extension point="org.eclipse.ui.markerResolution">
-	<markerResolutionGenerator
-		class="org.eclipse.jdt.internal.debug.ui.launcher.JreResolutionGenerator"
-		markerType="org.eclipse.jdt.core.buildpath_problem">
-	</markerResolutionGenerator>
-</extension>
-
-<extension point="org.eclipse.debug.ui.consoleLineTrackers">
-  <consoleLineTracker
-    id = "org.eclipse.jdt.debug.ui.JavaConsoleTracker"
-    class ="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
-    processType = "java">
-  </consoleLineTracker>
-  <consoleLineTracker
-    id = "org.eclipse.jdt.debug.ui.J9ConsoleTracker"
-    class ="org.eclipse.jdt.internal.debug.ui.console.J9ConsoleTracker"
-    processType = "j9">
-  </consoleLineTracker>  
-</extension>
-
+   <extension
+         point="org.eclipse.debug.ui.debugModelPresentations">
+      <debugModelPresentation
+            detailsViewerConfiguration="org.eclipse.jdt.internal.debug.ui.display.DetailsViewerConfiguration"
+            class="org.eclipse.jdt.internal.debug.ui.JDIModelPresentation"
+            id="org.eclipse.jdt.debug">
+      </debugModelPresentation>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame"
+            id="org.eclipse.jdt.debug.ui.ReceivingStackFrameActions">
+         <filter
+               name="ReceivingStackFrameActionFilter"
+               value="isReceivingType">
+         </filter>
+         <action
+               label="%openRecTypeHierarchy.label"
+               helpContextId="open_receiving_type_hierarchy_action_context"
+               tooltip="%openRecTypeHierarchy.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.OpenReceivingTypeHierarchyAction"
+               menubarPath="emptyEditGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.OpenReceivingTypeHierarchy">
+         </action>
+         <action
+               label="%openRecType.label"
+               helpContextId="open_on_receiving_type_action_context"
+               tooltip="%openRecType.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.OpenReceivingTypeAction"
+               menubarPath="emptyEditGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.OpenReceivingType">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame"
+            id="org.eclipse.jdt.debug.ui.DeclaringStackFrameActions">
+         <action
+               label="%openDeclTypeHierarchy.label"
+               helpContextId="open_declaring_type_hierarchy_action_context"
+               tooltip="%openDeclTypeHierarchy.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.OpenDeclaringTypeHierarchyAction"
+               menubarPath="emptyEditGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.OpenDeclaringTypeHierarchy">
+         </action>
+         <action
+               label="%openDeclType.label"
+               helpContextId="open_on_declaring_type_action_context"
+               tooltip="%openDeclType.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.OpenDeclaringTypeAction"
+               menubarPath="emptyEditGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.OpenDeclaringType">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
+            id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions">
+         <filter
+               name="PrimitiveVariableActionFilter"
+               value="isPrimitive">
+         </filter>
+         <filter
+               name="ConcreteVariableActionFilter"
+               value="isConcrete">
+         </filter>
+         <action
+               label="%openConcreteVarTypeHierarchy.label"
+               helpContextId="open_variable_concrete_type_hierarchy_action_context"
+               tooltip="%openConcreteVarTypeHierarchy.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableConcreteTypeHierarchyAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.OpenVariableConcreteTypeHierarchy">
+         </action>
+         <action
+               label="%openConcreteVarType.label"
+               helpContextId="open_variable_concrete_type_action_context"
+               tooltip="%openConcreteVarType.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableConcreteTypeAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.OpenVariableConcreteType">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
+            id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions">
+         <filter
+               name="PrimitiveVariableActionFilter"
+               value="isPrimitive">
+         </filter>
+         <action
+               label="%openDeclVarTypeHierarchy.label"
+               helpContextId="open_variable_declared_type_hierarchy_action_context"
+               tooltip="%openDeclVarTypeHierarchy.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableDeclaredTypeHierarchyAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.OpenVariableDeclaredTypeHierarchy">
+         </action>
+         <action
+               label="%openDeclVarType.label"
+               helpContextId="open_on_variable_type_action_context"
+               tooltip="%openDeclVarType.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.OpenVariableDeclaredTypeAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.OpenVariableDeclaredType">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
+            id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions">
+         <visibility>
+            <and>
+               <objectState
+                     name="PrimitiveVariableActionFilter"
+                     value="isValuePrimitive">
+               </objectState>
+               <not>
+                  <objectState
+                        name="DetailFormatterFilter"
+                        value="isDefined">
+                  </objectState>
+               </not>
+            </and>
+         </visibility>
+         <action
+               label="%newDetailFormatter.label"
+               helpContextId="new_detail_formatter_action_context"
+               tooltip="%newDetailFormatter.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.NewDetailFormatterAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.NewDetailFormatter">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
+            id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions">
+         <filter
+               name="PrimitiveVariableActionFilter"
+               value="isValuePrimitive">
+         </filter>
+         <filter
+               name="DetailFormatterFilter"
+               value="isDefined">
+         </filter>
+         <action
+               label="%editDetailFormatter.label"
+               helpContextId="edit_detail_formatter_action_context"
+               tooltip="%editDetailFormatter.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.EditDetailFormatterAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression"
+            id="org.eclipse.jdt.debug.ui.FilteredJavaInspectExpressionActions">
+         <visibility>
+            <and>
+               <objectState
+                     name="PrimitiveVariableActionFilter"
+                     value="isNotPrimitive">
+               </objectState>
+               <not>
+                  <objectState
+                        name="DetailFormatterFilter"
+                        value="isDefined">
+                  </objectState>
+               </not>
+            </and>
+         </visibility>
+         <action
+               label="%newDetailFormatter.label"
+               helpContextId="new_detail_formatter_action_context"
+               tooltip="%newDetailFormatter.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.NewDetailFormatterAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.NewDetailFormatter">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression"
+            id="org.eclipse.jdt.debug.ui.FilteredJavaInspectExpressionActions">
+         <filter
+               name="PrimitiveVariableActionFilter"
+               value="isNotPrimitive">
+         </filter>
+         <filter
+               name="DetailFormatterFilter"
+               value="isDefined">
+         </filter>
+         <action
+               label="%editDetailFormatter.label"
+               helpContextId="edit_detail_formatter_action_context"
+               tooltip="%editDetailFormatter.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.EditDetailFormatterAction"
+               menubarPath="emptyNavigationGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
+            id="org.eclipse.jdt.debug.ui.JavaVariableActions">
+         <action
+               label="%Inspect.label"
+               icon="icons/full/ctool16/insp_sbook.gif"
+               helpContextId="variable_inspect_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               menubarPath="openOnGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.actions.VariableInspectAction">
+         </action>
+         <action
+               label="%Watch.label"
+               icon="icons/full/ctool16/watch_exp.gif"
+               helpContextId="variable_watch_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
+               menubarPath="openOnGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.actions.WatchAction">
+         </action>
+      </objectContribution>
+      <viewerContribution
+            targetID="#JavaSnippetEditorContext"
+            id="org.eclipse.jdt.debug.ui.JavaSnippetPopupActions">
+         <action
+               label="%Execute.label"
+               icon="icons/full/ctool16/run_sbook.gif"
+               helpContextId="execute_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.Execute">
+            <selection
+                  class="org.eclipse.jface.text.ITextSelection">
+            </selection>
+         </action>
+         <action
+               label="%Display.label"
+               icon="icons/full/ctool16/disp_sbook.gif"
+               helpContextId="display_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.Display">
+            <selection
+                  class="org.eclipse.jface.text.ITextSelection">
+            </selection>
+         </action>
+         <action
+               label="%Inspect.label"
+               icon="icons/full/ctool16/insp_sbook.gif"
+               helpContextId="inspect_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.Inspect">
+            <selection
+                  class="org.eclipse.jface.text.ITextSelection">
+            </selection>
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#ClassFileRulerContext"
+            id="org.eclipse.jdt.debug.ui.ClassFileRulerPopupActions">
+         <action
+               label="%JavaBreakpointProperties.label"
+               helpContextId="breakpoint_properties_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.jdt.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
+         </action>
+         <action
+               label="%EnableBreakpoint.label"
+               helpContextId="enable_disable_breakpoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+         </action>
+         <action
+               label="%AddBreakpoint.label"
+               helpContextId="manage_breakpoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#CompilationUnitRulerContext"
+            id="org.eclipse.jdt.debug.ui.CompilationUnitRulerPopupActions">
+         <action
+               label="%JavaBreakpointProperties.label"
+               helpContextId="breakpoint_properties_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.jdt.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
+         </action>
+         <action
+               label="%EnableBreakpoint.label"
+               helpContextId="enable_disable_breakpoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+         </action>
+         <action
+               label="%AddBreakpoint.label"
+               helpContextId="manage_breakpoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#CompilationUnitEditorContext"
+            id="org.eclipse.jdt.debug.ui.CUPopupActions">
+         <visibility>
+            <and>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.debuggerActive"
+                     value="true">
+               </systemProperty>
+               <objectClass
+                     name="org.eclipse.jface.text.ITextSelection">
+               </objectClass>
+            </and>
+         </visibility>
+         <action
+               label="%stepIntoSelectionAction.label"
+               helpContextId="step_into_selection_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
+               menubarPath="additions"
+               enablesFor="*"
+               id="org.eclipse.jdt.debug.ui.cuPopup.StepIntoSelection">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+         <action
+               label="%runToLineAction.label"
+               icon="icons/full/clcl16/runtoline_co.gif"
+               helpContextId="run_to_line_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+         <action
+               label="%Execute.label"
+               icon="icons/full/ctool16/run_sbook.gif"
+               helpContextId="execute_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.cuPopup.Execute">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+         <action
+               label="%Display.label"
+               icon="icons/full/ctool16/disp_sbook.gif"
+               helpContextId="display_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.cuPopup.Display">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+         <action
+               label="%Inspect.label"
+               icon="icons/full/ctool16/insp_sbook.gif"
+               helpContextId="inspect_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.cuPopup.Inspect">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+         <action
+               label="%Watch.label"
+               icon="icons/full/ctool16/watch_exp.gif"
+               helpContextId="watch_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.cuPopup.Watch">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="#ClassFileEditorContext"
+            id="org.eclipse.jdt.debug.ui.CFPopupActions">
+         <visibility>
+            <and>
+               <systemProperty
+                     name="org.eclipse.jdt.debug.ui.debuggerActive"
+                     value="true">
+               </systemProperty>
+               <objectClass
+                     name="org.eclipse.jface.text.ITextSelection">
+               </objectClass>
+            </and>
+         </visibility>
+         <action
+               label="%stepIntoSelectionAction.label"
+               helpContextId="step_into_selection_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
+               menubarPath="additions"
+               enablesFor="*"
+               id="org.eclipse.jdt.debug.ui.cfPopup.StepIntoSelection">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+         <action
+               label="%runToLineAction.label"
+               icon="icons/full/clcl16/runtoline_co.gif"
+               helpContextId="run_to_line_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.jdt.debug.ui.cfPopup.RunToLine">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+         <action
+               label="%Execute.label"
+               icon="icons/full/ctool16/run_sbook.gif"
+               helpContextId="execute_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.cfPopup.Execute">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+         <action
+               label="%Display.label"
+               icon="icons/full/ctool16/disp_sbook.gif"
+               helpContextId="display_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.cfPopup.Display">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+         <action
+               label="%Inspect.label"
+               icon="icons/full/ctool16/insp_sbook.gif"
+               helpContextId="inspect_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.cfPopup.Inspect">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+         <action
+               label="%Watch.label"
+               icon="icons/full/ctool16/watch_exp.gif"
+               helpContextId="watch_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.cfPopup.Watch">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.jdt.debug.ui.debuggerActive"
+                        value="true">
+                  </systemProperty>
+                  <objectClass
+                        name="org.eclipse.jface.text.ITextSelection">
+                  </objectClass>
+               </and>
+            </enablement>
+         </action>
+      </viewerContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.core.IMethod"
+            id="org.eclipse.jdt.debug.ui.MethodBreakpointActions">
+         <filter
+               name="MethodActionFilter"
+               value="isNotAbstract">
+         </filter>
+         <action
+               label="%manageMethodBreakpointAction.label"
+               helpContextId="manage_method_breakpoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.MethodBreakpoint">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.core.IField"
+            id="org.eclipse.jdt.debug.ui.WatchpointActions">
+         <action
+               label="%manageWatchpointAction.label"
+               helpContextId="manage_watchpoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.Watchpoint">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
+            id="org.eclipse.jdt.debug.ui.InstanceFiltersActions">
+         <filter
+               name="JavaVariableActionFilter"
+               value="instanceFilter">
+         </filter>
+         <action
+               label="%instanceFiltersAction.label"
+               helpContextId="instance_filters_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.InstanceFiltersAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.InstanceFilterAction">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaFieldVariable"
+            id="org.eclipse.jdt.debug.ui.WatchpointActions">
+         <action
+               label="%manageWatchpointAction.label"
+               helpContextId="manage_watchpoint_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.jdt.debug.ui.VariableWatchpoint">
+         </action>
+      </objectContribution>
+      <viewerContribution
+            targetID="#JavaSnippetRulerContext"
+            id="org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetRulerContext">
+         <action
+               label="%AddTask.label"
+               helpContextId="org.eclipse.ui.AddTask_action_context"
+               tooltip="%AddTask.tooltip"
+               class="org.eclipse.ui.texteditor.TaskRulerAction"
+               menubarPath="additions"
+               id="org.eclipse.ui.texteditor.TaskRulerAction">
+         </action>
+         <action
+               label="%AddBookmark.label"
+               helpContextId="org.eclipse.ui.bookmark_action_context"
+               tooltip="%AddBookmark.tooltip"
+               class="org.eclipse.ui.texteditor.BookmarkRulerAction"
+               menubarPath="additions"
+               id="org.eclipse.ui.texteditor.BookmarkRulerAction">
+         </action>
+      </viewerContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="org.eclipse.jdt.debug.ui.SnippetEditor"
+            id="org.eclipse.jdt.debug.ui.JavaSnippetToolbarActions">
+         <action
+               toolbarPath="evaluationGroup"
+               id="org.eclipse.jdt.debug.ui.SnippetExecute"
+               hoverIcon="icons/full/ctool16/run_sbook.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
+               disabledIcon="icons/full/dtool16/run_sbook.gif"
+               enablesFor="+"
+               icon="icons/full/etool16/run_sbook.gif"
+               helpContextId="execute_action_context"
+               label="%Execute.label"
+               tooltip="%Execute.tooltip">
+            <selection
+                  class="org.eclipse.jface.text.ITextSelection">
+            </selection>
+         </action>
+         <action
+               toolbarPath="evaluationGroup"
+               id="org.eclipse.jdt.debug.ui.SnippetDisplay"
+               hoverIcon="icons/full/ctool16/disp_sbook.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               disabledIcon="icons/full/dtool16/disp_sbook.gif"
+               enablesFor="+"
+               icon="icons/full/etool16/disp_sbook.gif"
+               helpContextId="display_action_context"
+               label="%Display.label"
+               tooltip="%Display.tooltip">
+            <selection
+                  class="org.eclipse.jface.text.ITextSelection">
+            </selection>
+         </action>
+         <action
+               toolbarPath="evaluationGroup"
+               id="org.eclipse.jdt.debug.ui.SnippetInspect"
+               hoverIcon="icons/full/ctool16/insp_sbook.gif"
+               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               disabledIcon="icons/full/dtool16/insp_sbook.gif"
+               enablesFor="+"
+               icon="icons/full/etool16/insp_sbook.gif"
+               helpContextId="inspect_action_context"
+               label="%Inspect.label"
+               tooltip="%Inspect.tooltip">
+            <selection
+                  class="org.eclipse.jface.text.ITextSelection">
+            </selection>
+         </action>
+      </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IFile"
+            name="%snippetEditorPageName"
+            nameFilter="*.jpage"
+            class="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorPropertyPage"
+            id="org.eclipse.jdt.debug.ui.snippeteditor.SnippetEditorPage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%installJREPageName"
+            category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.VMPreferencePage"
+            id="org.eclipse.jdt.debug.ui.preferences.VMPreferencePage">
+      </page>
+      <page
+            name="%javaDebugPrefName"
+            category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.JavaDebugPreferencePage"
+            id="org.eclipse.jdt.ui.JavaDebugPreferencePage">
+      </page>
+      <page
+            name="%javaStepFilterPrefName"
+            category="org.eclipse.jdt.ui.JavaDebugPreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage"
+            id="org.eclipse.jdt.ui.JavaStepFilterPreferencePage">
+      </page>
+      <page
+            name="%javaDetailFormattersPrefName"
+            category="org.eclipse.jdt.ui.JavaDebugPreferencePage"
+            class="org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage"
+            id="org.eclipse.jdt.ui.JavaDetailFormattersPreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/full/ctool16/java_app.gif"
+            configTypeID="org.eclipse.jdt.launching.localJavaApplication"
+            id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.localJavaApplication">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/full/ctool16/java_attach.gif"
+            configTypeID="org.eclipse.jdt.launching.remoteJavaApplication"
+            id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.remoteJavaApplication">
+      </launchConfigurationTypeImage>
+      <launchConfigurationTypeImage
+            icon="icons/full/ctool16/java_applet.gif"
+            configTypeID="org.eclipse.jdt.launching.javaApplet"
+            id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.javaApplet">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.eclipse.jdt.launching.localJavaApplication"
+            helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.local_java_application"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.LocalJavaApplicationTabGroup"
+            id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.jdt.launching.remoteJavaApplication"
+            helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.remote_java_application"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.RemoteJavaApplicationTabGroup"
+            id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.remoteJavaApplication">
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            type="org.eclipse.jdt.launching.javaApplet"
+            helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.java_applet"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletTabGroup"
+            id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.javaApplet">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            plugin="org.eclipse.jdt.launching"
+            code="117"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.VMConnectTimeoutStatusHandler"
+            id="org.eclipse.jdt.debug.ui.statusHandler.vmConnectTimeout">
+      </statusHandler>
+      <statusHandler
+            plugin="org.eclipse.jdt.debug"
+            code="161"
+            class="org.eclipse.jdt.internal.debug.ui.SuspendTimeoutStatusHandler"
+            id="org.eclipse.jdt.debug.ui.statusHandler.suspendTimeout">
+      </statusHandler>
+      <statusHandler
+            plugin="org.eclipse.jdt.debug"
+            code="162"
+            class="org.eclipse.jdt.internal.debug.ui.NoLineNumberAttributesStatusHandler"
+            id="org.eclipse.jdt.debug.ui.statusHandler.noLineNumberAttributes">
+      </statusHandler>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            name="%JavaSourceLocator.name"
+            class="org.eclipse.jdt.debug.ui.JavaUISourceLocator"
+            id="org.eclipse.jdt.debug.ui.javaSourceLocator">
+      </sourceLocator>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.debugActionGroups">
+      <debugActionGroup
+            name="%JavaDebugActionGroup.name"
+            visible="true"
+            id="org.eclipse.jdt.debug.ui.javaDebugActionGroup">
+         <action
+               id="org.eclipse.jdt.debug.ui.actions.AddException">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.launchViewActions.ShowQualified">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.variableViewActions.ShowQualified">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.variableViewActions.ShowStatic">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.expressionViewActions.ShowStatic">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.variableViewActions.ShowConstants">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.expressionViewActions.ShowConstants">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.variableViewActions.PrimitiveOptions">
+         </action>
+      </debugActionGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            label="%JavaApplicationShortcut.label"
+            icon="icons/full/ctool16/java_app.gif"
+            helpContextId="org.eclipse.jdt.debug.ui.shortcut_local_java_application"
+            modes="run, debug"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
+            id="org.eclipse.jdt.debug.ui.localJavaShortcut">
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
+         </perspective>
+      </shortcut>
+      <shortcut
+            label="%AppletShortcut.label"
+            icon="icons/full/ctool16/java_applet.gif"
+            helpContextId="org.eclipse.jdt.debug.ui.shortcut_java_applet"
+            modes="run, debug"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
+            id="org.eclipse.jdt.debug.ui.javaAppletShortcut">
+         <perspective
+               id="org.eclipse.jdt.ui.JavaPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         </perspective>
+         <perspective
+               id="org.eclipse.debug.ui.DebugPerspective">
+         </perspective>
+      </shortcut>
+   </extension>
+<!-- commands and their bindings -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            name="%ActionDefinition.manageWatchpoint.name"
+            description="%ActionDefinition.manageWatchpoint.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.ManageWatchpointAction">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.manageMethodBreakpoint.name"
+            description="%ActionDefinition.manageMethodBreakpoint.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.addException.name"
+            description="%ActionDefinition.addException.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.actionSet.AddException">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.actionSet.AddException"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.manageBreakpoint.name"
+            description="%ActionDefinition.manageBreakpoint.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.ManageBreakpointAction">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+B"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.stepIntoSelection.name"
+            description="%ActionDefinition.stepIntoSelection.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.StepIntoSelectionAction">
+      </command>
+      <keyBinding
+            string="Ctrl+F5"
+            scope="org.eclipse.jdt.ui.javaEditorScope"
+            command="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.runToLine.name"
+            description="%ActionDefinition.runToLine.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.RunToLineAction">
+      </command>
+      <keyBinding
+            string="Ctrl+R"
+            scope="org.eclipse.jdt.ui.javaEditorScope"
+            command="org.eclipse.jdt.debug.ui.RunToLineAction"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.execute.name"
+            description="%ActionDefinition.execute.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.Execute">
+      </command>
+      <keyBinding
+            string="Ctrl+U"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.Execute"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.display.name"
+            description="%ActionDefinition.display.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.Display">
+      </command>
+      <keyBinding
+            string="Ctrl+D"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.Display"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.inspect.name"
+            description="%ActionDefinition.inspect.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.Inspect">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.Inspect"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.classpathContainerPage">
+      <classpathContainerPage
+            name="%jreSystemLibrary.name"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.JREContainerWizardPage"
+            id="org.eclipse.jdt.launching.JRE_CONTAINER">
+      </classpathContainerPage>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.debug.ui.vmInstallTypePage">
+      <vmInstallTypePage
+            vmInstallTypeID="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMCommandTab"
+            id="org.eclipse.jdt.debug.ui.StandardVMCommandTab">
+      </vmInstallTypePage>
+      <vmInstallTypePage
+            vmInstallTypeID="org.eclipse.jdt.launching.Standard11xVMType"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMCommandTab"
+            id="org.eclipse.jdt.debug.ui.StandardVMCommandTab">
+      </vmInstallTypePage>
+   </extension>
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            type="text"
+            extension="jpage">
+      </fileTypes>
+   </extension>
+   <extension
+         point="org.eclipse.ui.markerResolution">
+      <markerResolutionGenerator
+            markerType="org.eclipse.jdt.core.buildpath_problem"
+            class="org.eclipse.jdt.internal.debug.ui.launcher.JreResolutionGenerator">
+      </markerResolutionGenerator>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.consoleLineTrackers">
+      <consoleLineTracker
+            class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
+            processType="java"
+            id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
+      </consoleLineTracker>
+      <consoleLineTracker
+            class="org.eclipse.jdt.internal.debug.ui.console.J9ConsoleTracker"
+            processType="j9"
+            id="org.eclipse.jdt.debug.ui.J9ConsoleTracker">
+      </consoleLineTracker>
+   </extension>
 <!-- Adds the launch and java debug actions whenever a java relevant part is open -->
-<extension point="org.eclipse.ui.actionSetPartAssociations">
-	<actionSetPartAssociation 
-		targetID="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
-		<part id="org.eclipse.jdt.ui.PackageExplorer"/>
-		<part id="org.eclipse.jdt.ui.TypeHierarchy" />
-		<part id="org.eclipse.jdt.ui.CompilationUnitEditor"/>
-		<part id="org.eclipse.jdt.ui.ClassFileEditor"/>
-		<part id="org.eclipse.jdt.ui.ProjectsView"/>
-		<part id="org.eclipse.jdt.ui.PackagesView"/>
-		<part id="org.eclipse.jdt.ui.TypesView"/>
-		<part id="org.eclipse.jdt.ui.MembersView"/>
-	</actionSetPartAssociation>
-</extension>
-
-<extension point="org.eclipse.ui.actionSetPartAssociations">
-	<actionSetPartAssociation 
-		targetID="org.eclipse.debug.ui.launchActionSet">
-		<part id="org.eclipse.jdt.ui.PackageExplorer"/>
-		<part id="org.eclipse.jdt.ui.TypeHierarchy" />
-		<part id="org.eclipse.jdt.ui.CompilationUnitEditor"/>
-		<part id="org.eclipse.jdt.ui.ClassFileEditor"/>
-		<part id="org.eclipse.jdt.ui.ProjectsView"/>
-		<part id="org.eclipse.jdt.ui.PackagesView"/>
-		<part id="org.eclipse.jdt.ui.TypesView"/>
-		<part id="org.eclipse.jdt.ui.MembersView"/>
-	</actionSetPartAssociation>
-</extension>
-
-<extension point="org.eclipse.debug.ui.objectBrowsers">
-	<objectBrowser
-		id="org.eclipse.jdt.debug.ui.JavaObjectBrowser"
-		debugModelId="org.eclipse.jdt.debug"
-		class="org.eclipse.jdt.internal.debug.ui.JavaObjectBrowser">
-	</objectBrowser>	
-</extension>
-
-<extension point="org.eclipse.jdt.debug.ui.javaObjectBrowsers">
-	<javaObjectBrowser
-		id="org.eclipse.jdt.debug.ui.CollectionObjectBrowser"
-		types="java.util.Collection"
-		class="org.eclipse.jdt.internal.debug.ui.JavaUtilCollectionObjectBrowser">
-	</javaObjectBrowser>
-	<javaObjectBrowser
-		id="org.eclipse.jdt.debug.ui.MapObjectBrowser"
-		types="java.util.Map"
-		class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapObjectBrowser">
-	</javaObjectBrowser>
-	<javaObjectBrowser
-		id="org.eclipse.jdt.debug.ui.MapEntryObjectBrowser"
-		types="java.util.Map$Entry"
-		class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapEntryObjectBrowser">
-	</javaObjectBrowser>
-	<javaObjectBrowser
-		id="org.eclipse.jdt.debug.ui.SWTCompositeObjectBrowser"
-		types="org.eclipse.swt.widgets.Composite"
-		class="org.eclipse.jdt.internal.debug.ui.SWTCompositeObjectBrowser">
-	</javaObjectBrowser>
-	<javaObjectBrowser
-		id="org.eclipse.jdt.debug.ui.CoreResourcesIContainerObjectBrowser"
-		types="org.eclipse.core.resources.IContainer"
-		class="org.eclipse.jdt.internal.debug.ui.CoreResourcesIContainerObjectBrowser">
-	</javaObjectBrowser>
-</extension>
+   <extension
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation
+            targetID="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
+         <part
+               id="org.eclipse.jdt.ui.PackageExplorer">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.TypeHierarchy">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.CompilationUnitEditor">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.ClassFileEditor">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.ProjectsView">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.PackagesView">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.TypesView">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.MembersView">
+         </part>
+      </actionSetPartAssociation>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation
+            targetID="org.eclipse.debug.ui.launchActionSet">
+         <part
+               id="org.eclipse.jdt.ui.PackageExplorer">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.TypeHierarchy">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.CompilationUnitEditor">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.ClassFileEditor">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.ProjectsView">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.PackagesView">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.TypesView">
+         </part>
+         <part
+               id="org.eclipse.jdt.ui.MembersView">
+         </part>
+      </actionSetPartAssociation>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.objectBrowsers">
+      <objectBrowser
+            debugModelId="org.eclipse.jdt.debug"
+            class="org.eclipse.jdt.internal.debug.ui.JavaObjectBrowser"
+            id="org.eclipse.jdt.debug.ui.JavaObjectBrowser">
+      </objectBrowser>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.debug.ui.javaObjectBrowsers">
+      <javaObjectBrowser
+            types="java.util.Collection"
+            class="org.eclipse.jdt.internal.debug.ui.JavaUtilCollectionObjectBrowser"
+            id="org.eclipse.jdt.debug.ui.CollectionObjectBrowser">
+      </javaObjectBrowser>
+      <javaObjectBrowser
+            types="java.util.Map"
+            class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapObjectBrowser"
+            id="org.eclipse.jdt.debug.ui.MapObjectBrowser">
+      </javaObjectBrowser>
+      <javaObjectBrowser
+            types="java.util.Map$Entry"
+            class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapEntryObjectBrowser"
+            id="org.eclipse.jdt.debug.ui.MapEntryObjectBrowser">
+      </javaObjectBrowser>
+      <javaObjectBrowser
+            types="org.eclipse.swt.widgets.Composite"
+            class="org.eclipse.jdt.internal.debug.ui.SWTCompositeObjectBrowser"
+            id="org.eclipse.jdt.debug.ui.SWTCompositeObjectBrowser">
+      </javaObjectBrowser>
+      <javaObjectBrowser
+            types="org.eclipse.core.resources.IContainer"
+            class="org.eclipse.jdt.internal.debug.ui.CoreResourcesIContainerObjectBrowser"
+            id="org.eclipse.jdt.debug.ui.CoreResourcesIContainerObjectBrowser">
+      </javaObjectBrowser>
+   </extension>
 
 </plugin>

@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.jdt.debug.tests"
    name="%pluginName"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="%providerName"
    class="org.eclipse.jdt.debug.testplugin.JavaTestPlugin">
 
@@ -80,8 +80,8 @@
    <extension
          point="org.eclipse.debug.core.simpleLaunchVariables">
       <variable
-            initializerClass="org.eclipse.jdt.debug.testplugin.SimpleVariableInitializer"
             name="TEST_VAR_WITH_INITIALIZER"
+            initializerClass="org.eclipse.jdt.debug.testplugin.SimpleVariableInitializer"
             description="testing">
       </variable>
    </extension>

@@ -1,156 +1,254 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.jdt.debug"
    name="%pluginName"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="%providerName"
    class="org.eclipse.jdt.internal.debug.core.JDIDebugPlugin">
-<!-- Required plugins -->
-<requires>
-   <import plugin="org.apache.xerces"/>
-   <import plugin="org.eclipse.core.resources"/>
-   <import plugin="org.eclipse.debug.core"/>
-   <import plugin="org.eclipse.jdt.core"/>
-</requires>
 
-<!-- Runtime -->
-<runtime>
-   <library name="jdi.jar">
-      <export name="*"/>
-      <packages prefixes="com.sun.jdi"/>
-   </library>
-   <library name="jdimodel.jar">
-      <export name="*"/>
-      <packages prefixes="org.eclipse.jdi,org.eclipse.jdt.debug,org.eclipse.jdt.internal.debug"/>
-   </library>
-   <library name="tools.jar">
-   	  <export name="*"/>
-   	  <packages prefixes="com.sun.jdi"/>
-   </library>
-</runtime>
+   <runtime>
+      <library name="jdi.jar">
+         <export name="*"/>
+         <packages prefixes="com.sun.jdi"/>
+      </library>
+      <library name="jdimodel.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.jdi,org.eclipse.jdt.debug,org.eclipse.jdt.internal.debug"/>
+      </library>
+      <library name="tools.jar">
+         <export name="*"/>
+         <packages prefixes="com.sun.jdi"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.jdt.core"/>
+   </requires>
+
 
 <!-- Not to be extended com.sun.tools.jdi.VirtualMachineManagerImpl or org.eclipse.jdi.internal.VirtualMachineManagerImpl -->
-<extension-point name="org.eclipse.jdi.internal.VirtualMachineManagerImpl" id="jdiclient"/>
+   <extension-point id="jdiclient" name="org.eclipse.jdi.internal.VirtualMachineManagerImpl"/>
 
 <!-- Extensions -->
-
-<extension point="org.eclipse.debug.core.breakpoints">
-	<breakpoint
-		id="javaLineBreakpoint"
-		markerType="org.eclipse.jdt.debug.javaLineBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint">
-	</breakpoint>
-	<breakpoint
-		id="javaPatternBreakpoint"
-		markerType="org.eclipse.jdt.debug.javaPatternBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint">
-	</breakpoint>
-	<breakpoint
-		id="javaTargetPatternBreakpoint"
-		markerType="org.eclipse.jdt.debug.javaTargetPatternBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaTargetPatternBreakpoint">
-	</breakpoint>	
-	<breakpoint
-		id="javaExceptionBreakpoint"
-		markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint">
-	</breakpoint>
-	<breakpoint
-		id="javaWatchpoint"
-		markerType="org.eclipse.jdt.debug.javaWatchpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint">
-	</breakpoint>
-	<breakpoint
-		id="javaMethodBreakpoint"
-		markerType="org.eclipse.jdt.debug.javaMethodBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint">
-	</breakpoint>	
-	<breakpoint
-		id="javaMethodEntryBreakpoint"
-		markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint">
-	</breakpoint>		
-	<breakpoint
-		id="javaStratumLineBreakpointMarker"
-		markerType="org.eclipse.jdt.debug.javaStratumLineBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaStratumLineBreakpoint">
-	</breakpoint>		
-</extension>
-
-<extension id="javaBreakpointMarker" point="org.eclipse.core.resources.markers">
-	<super type="org.eclipse.debug.core.breakpointMarker"/>
-</extension>
-
-<extension id="commonJavaLineBreakpointMarker" point="org.eclipse.core.resources.markers">
-	<super type="org.eclipse.jdt.debug.javaBreakpointMarker"/>
-	<super type="org.eclipse.debug.core.lineBreakpointMarker"/>
-	<persistent value="true"/>
-	<attribute name="org.eclipse.jdt.debug.core.typeName"/>
-	<attribute name="org.eclipse.jdt.debug.core.installCount"/>
-	<attribute name="org.eclipse.jdt.debug.core.hitCount"/>
-	<attribute name="org.eclipse.jdt.debug.core.expired"/>
-</extension>
-	
-<extension id="javaLineBreakpointMarker" point="org.eclipse.core.resources.markers">
-	<super type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker"/>
-	<persistent value="true"/>
-</extension>
-
-<extension id="javaPatternBreakpointMarker" point="org.eclipse.core.resources.markers">
-	<super type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker"/>
-	<persistent value="true"/>
-	<attribute name="org.eclipse.jdt.debug.core.pattern"/>
-	<attribute name="org.eclipse.jdt.debug.core.sourceName"/>
-</extension>	
-
-<extension id="javaTargetPatternBreakpointMarker" point="org.eclipse.core.resources.markers">
-	<super type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker"/>
-	<persistent value="true"/>
-	<attribute name="org.eclipse.jdt.debug.core.sourceName"/>
-</extension>	
-
-<extension id="javaExceptionBreakpointMarker" point="org.eclipse.core.resources.markers">
-	<super type="org.eclipse.jdt.debug.javaBreakpointMarker"/>
-	<persistent value="true"/>
-	<attribute name="org.eclipse.jdt.debug.core.caught"/>
-	<attribute name="org.eclipse.jdt.debug.core.uncaught"/>
-	<attribute name="org.eclipse.jdt.debug.core.checked"/>
-</extension>
-
-<extension id="javaWatchpointMarker" point="org.eclipse.core.resources.markers">
-	<super type="org.eclipse.jdt.debug.javaLineBreakpointMarker"/>
-	<persistent value="true"/>
-	<attribute name="org.eclipse.jdt.debug.core.fieldName"/>
-	<attribute name="org.eclipse.jdt.debug.core.access"/>
-	<attribute name="org.eclipse.jdt.debug.core.modification"/>
-	<attribute name="org.eclipse.jdt.debug.core.auto_disabled"/>
-</extension>
-
-<extension id="javaMethodBreakpointMarker" point="org.eclipse.core.resources.markers">
-   <super type="org.eclipse.jdt.debug.javaLineBreakpointMarker"/>
-   <persistent value="true"/>
-   <attribute name="org.eclipse.jdt.debug.core.methodName"/>
-   <attribute name="org.eclipse.jdt.debug.core.methodSignature"/>
-   <attribute name="org.eclipse.jdt.debug.core.entry"/>
-   <attribute name="org.eclipse.jdt.debug.core.exit"/>   
-   <attribute name="org.eclipse.jdt.debug.core.native"/>
-</extension>
-
-<extension id="javaMethodEntryBreakpointMarker" point="org.eclipse.core.resources.markers">
-   <super type="org.eclipse.jdt.debug.javaLineBreakpointMarker"/>
-   <persistent value="true"/>
-   <attribute name="org.eclipse.jdt.debug.core.methodName"/>
-   <attribute name="org.eclipse.jdt.debug.core.methodSignature"/>
-</extension>
-
-<extension id="javaStratumLineBreakpointMarker" point="org.eclipse.core.resources.markers">
-   <super type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker"/>
-   <persistent value="true"/>
-   <attribute name="org.eclipse.jdt.debug.core.stratum"/>
-   <attribute name="org.eclipse.jdt.debug.core.sourceName"/>
-   <attribute name="org.eclipse.jdt.debug.core.sourcePath"/>
-   <attribute name="org.eclipse.jdt.debug.core.pattern"/>
-</extension>
+   <extension
+         point="org.eclipse.debug.core.breakpoints">
+      <breakpoint
+            markerType="org.eclipse.jdt.debug.javaLineBreakpointMarker"
+            class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint"
+            id="javaLineBreakpoint">
+      </breakpoint>
+      <breakpoint
+            markerType="org.eclipse.jdt.debug.javaPatternBreakpointMarker"
+            class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint"
+            id="javaPatternBreakpoint">
+      </breakpoint>
+      <breakpoint
+            markerType="org.eclipse.jdt.debug.javaTargetPatternBreakpointMarker"
+            class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaTargetPatternBreakpoint"
+            id="javaTargetPatternBreakpoint">
+      </breakpoint>
+      <breakpoint
+            markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker"
+            class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint"
+            id="javaExceptionBreakpoint">
+      </breakpoint>
+      <breakpoint
+            markerType="org.eclipse.jdt.debug.javaWatchpointMarker"
+            class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint"
+            id="javaWatchpoint">
+      </breakpoint>
+      <breakpoint
+            markerType="org.eclipse.jdt.debug.javaMethodBreakpointMarker"
+            class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint"
+            id="javaMethodBreakpoint">
+      </breakpoint>
+      <breakpoint
+            markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"
+            class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint"
+            id="javaMethodEntryBreakpoint">
+      </breakpoint>
+      <breakpoint
+            markerType="org.eclipse.jdt.debug.javaStratumLineBreakpointMarker"
+            class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaStratumLineBreakpoint"
+            id="javaStratumLineBreakpointMarker">
+      </breakpoint>
+   </extension>
+   <extension
+         id="javaBreakpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.debug.core.breakpointMarker">
+      </super>
+   </extension>
+   <extension
+         id="commonJavaLineBreakpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.jdt.debug.javaBreakpointMarker">
+      </super>
+      <super
+            type="org.eclipse.debug.core.lineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="org.eclipse.jdt.debug.core.typeName">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.installCount">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.hitCount">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.expired">
+      </attribute>
+   </extension>
+   <extension
+         id="javaLineBreakpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="javaPatternBreakpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="org.eclipse.jdt.debug.core.pattern">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.sourceName">
+      </attribute>
+   </extension>
+   <extension
+         id="javaTargetPatternBreakpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="org.eclipse.jdt.debug.core.sourceName">
+      </attribute>
+   </extension>
+   <extension
+         id="javaExceptionBreakpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.jdt.debug.javaBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="org.eclipse.jdt.debug.core.caught">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.uncaught">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.checked">
+      </attribute>
+   </extension>
+   <extension
+         id="javaWatchpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="org.eclipse.jdt.debug.core.fieldName">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.access">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.modification">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.auto_disabled">
+      </attribute>
+   </extension>
+   <extension
+         id="javaMethodBreakpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="org.eclipse.jdt.debug.core.methodName">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.methodSignature">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.entry">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.exit">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.native">
+      </attribute>
+   </extension>
+   <extension
+         id="javaMethodEntryBreakpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="org.eclipse.jdt.debug.core.methodName">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.methodSignature">
+      </attribute>
+   </extension>
+   <extension
+         id="javaStratumLineBreakpointMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="org.eclipse.jdt.debug.core.stratum">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.sourceName">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.sourcePath">
+      </attribute>
+      <attribute
+            name="org.eclipse.jdt.debug.core.pattern">
+      </attribute>
+   </extension>
 
 </plugin>

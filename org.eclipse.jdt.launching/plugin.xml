@@ -1,117 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ======================================================================= -->
-<!-- Java Launching Plugin                                                   -->
-<!-- ======================================================================= -->
 <plugin
-	name= "%pluginName"
-	id= "org.eclipse.jdt.launching"
-	version= "2.1.0"
-	provider-name="%providerName"
-	class= "org.eclipse.jdt.internal.launching.LaunchingPlugin">
+   id="org.eclipse.jdt.launching"
+   name="%pluginName"
+   version="3.0.0"
+   provider-name="%providerName"
+   class="org.eclipse.jdt.internal.launching.LaunchingPlugin">
 
-<requires>
-  <import plugin="org.eclipse.core.resources"/>
-  <import plugin="org.eclipse.jdt.core"/>
-  <import plugin="org.eclipse.debug.core"/>
-  <import plugin="org.eclipse.jdt.debug"/>
-  <import plugin="org.apache.xerces"/>
-</requires>
-
-<runtime>
-	<library name="launching.jar" >
-		<export name = "*"/>
-		<packages prefixes="org.eclipse.jdt.launching,org.eclipse.jdt.internal.launching"/>
-	</library>
-</runtime>
+   <runtime>
+      <library name="launching.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.jdt.launching,org.eclipse.jdt.internal.launching"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.jdt.debug"/>
+      <import plugin="org.apache.xerces"/>
+   </requires>
 
 
 <!-- Extension point definitions -->
-
-<extension-point name="%classpathProviders" id="classpathProviders" schema="schema/classpathProviders.exsd"/>
-<extension-point name="%runtimeClasspathEntryResolvers" id="runtimeClasspathEntryResolvers" schema="schema/runtimeClasspathEntryResolvers.exsd"/>
-<extension-point name="%vmConnectors" id="vmConnectors" schema="schema/vmConnectors.exsd"/>
-<extension-point name="%vmInstallTypes" id="vmInstallTypes" schema="schema/vmInstallTypes.exsd"/>
+   <extension-point id="classpathProviders" name="%classpathProviders" schema="schema/classpathProviders.exsd"/>
+   <extension-point id="runtimeClasspathEntryResolvers" name="%runtimeClasspathEntryResolvers" schema="schema/runtimeClasspathEntryResolvers.exsd"/>
+   <extension-point id="vmConnectors" name="%vmConnectors" schema="schema/vmConnectors.exsd"/>
+   <extension-point id="vmInstallTypes" name="%vmInstallTypes" schema="schema/vmInstallTypes.exsd"/>
 
 <!-- Extensions -->
-
-<extension point = "org.eclipse.jdt.launching.vmInstallTypes">
-	<vmInstallType
-	   	class="org.eclipse.jdt.internal.launching.StandardVMType"
-	    id="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"/>
-	<vmInstallType
-	   	class="org.eclipse.jdt.internal.launching.Standard11xVMType"
-	    id="org.eclipse.jdt.launching.Standard11xVMType"/>	    
-</extension>
-
-<extension point = "org.eclipse.debug.core.launchConfigurationTypes">
-   <launchConfigurationType
-   	   id="org.eclipse.jdt.launching.localJavaApplication"
-	   name="%localJavaApplication"
-	   delegate="org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate"
-	   modes= "run, debug">
-   </launchConfigurationType>
-   <launchConfigurationType
-   	   id="org.eclipse.jdt.launching.remoteJavaApplication"
-	   name="%remoteJavaApplication"
-	   delegate="org.eclipse.jdt.internal.launching.JavaRemoteApplicationLaunchConfigurationDelegate"
-	   modes= "debug">
-   </launchConfigurationType>
-   <launchConfigurationType
-       id="org.eclipse.jdt.launching.javaApplet"
-       name="%appletLabel"
-       delegate="org.eclipse.jdt.internal.launching.JavaAppletLaunchConfigurationDelegate"
-       modes="run, debug">
-   </launchConfigurationType>
-</extension>
-
-<extension point = "org.eclipse.debug.core.sourceLocators">
-	<sourceLocator
-		id = "org.eclipse.jdt.launching.javaSourceLocator"
-	   	class="org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator"
-	   	name="%javaSourceLocatorName"/>
-</extension>
-
-<extension point = "org.eclipse.jdt.launching.vmConnectors">
-	<vmConnector
-		id="org.eclipse.jdt.launching.socketAttachConnector"
-		class="org.eclipse.jdt.internal.launching.SocketAttachConnector"/>
-</extension>
-
-<extension point = "org.eclipse.jdt.core.classpathVariableInitializer">
-	<classpathVariableInitializer
-		variable="JRE_LIB"
-		class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer"/>
-	<classpathVariableInitializer
-		variable="JRE_SRC"
-		class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer"/>
-	<classpathVariableInitializer
-		variable="JRE_SRCROOT"
-		class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer"/>
-</extension>		
-
-<extension point = "org.eclipse.jdt.core.classpathContainerInitializer">
-	<classpathContainerInitializer
-		id="org.eclipse.jdt.launching.JRE_CONTAINER"
-		class="org.eclipse.jdt.internal.launching.JREContainerInitializer"/>
-</extension>
-
-<extension point = "org.eclipse.jdt.launching.runtimeClasspathEntryResolvers">
-	<runtimeClasspathEntryResolver
-		id = "org.eclipse.jdt.launching.JRE_RESOLVER"
-		class = "org.eclipse.jdt.internal.launching.JRERuntimeClasspathEntryResolver"
-		variable = "JRE_LIB"
-		container = "org.eclipse.jdt.launching.JRE_CONTAINER"/>
-</extension>
-
-<extension point = "org.eclipse.debug.core.launchConfigurationComparators">
-	<launchConfigurationComparator
-		id = "org.eclipse.jdt.launching.classpathComparator"
-		class = "org.eclipse.jdt.internal.launching.RuntimeClasspathEntryListComparator"
-		attribute = "org.eclipse.jdt.launching.CLASSPATH"/>
-	<launchConfigurationComparator
-		id = "org.eclipse.jdt.launching.sourcepathComparator"
-		class = "org.eclipse.jdt.internal.launching.RuntimeClasspathEntryListComparator"
-		attribute = "org.eclipse.jdt.launching.SOURCE_PATH"/>		
-</extension>
+   <extension
+         point="org.eclipse.jdt.launching.vmInstallTypes">
+      <vmInstallType
+            class="org.eclipse.jdt.internal.launching.StandardVMType"
+            id="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">
+      </vmInstallType>
+      <vmInstallType
+            class="org.eclipse.jdt.internal.launching.Standard11xVMType"
+            id="org.eclipse.jdt.launching.Standard11xVMType">
+      </vmInstallType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            name="%localJavaApplication"
+            delegate="org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate"
+            modes="run, debug"
+            id="org.eclipse.jdt.launching.localJavaApplication">
+      </launchConfigurationType>
+      <launchConfigurationType
+            name="%remoteJavaApplication"
+            delegate="org.eclipse.jdt.internal.launching.JavaRemoteApplicationLaunchConfigurationDelegate"
+            modes="debug"
+            id="org.eclipse.jdt.launching.remoteJavaApplication">
+      </launchConfigurationType>
+      <launchConfigurationType
+            name="%appletLabel"
+            delegate="org.eclipse.jdt.internal.launching.JavaAppletLaunchConfigurationDelegate"
+            modes="run, debug"
+            id="org.eclipse.jdt.launching.javaApplet">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            name="%javaSourceLocatorName"
+            class="org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator"
+            id="org.eclipse.jdt.launching.javaSourceLocator">
+      </sourceLocator>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.launching.vmConnectors">
+      <vmConnector
+            class="org.eclipse.jdt.internal.launching.SocketAttachConnector"
+            id="org.eclipse.jdt.launching.socketAttachConnector">
+      </vmConnector>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathVariableInitializer">
+      <classpathVariableInitializer
+            variable="JRE_LIB"
+            class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer">
+      </classpathVariableInitializer>
+      <classpathVariableInitializer
+            variable="JRE_SRC"
+            class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer">
+      </classpathVariableInitializer>
+      <classpathVariableInitializer
+            variable="JRE_SRCROOT"
+            class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer">
+      </classpathVariableInitializer>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+            class="org.eclipse.jdt.internal.launching.JREContainerInitializer"
+            id="org.eclipse.jdt.launching.JRE_CONTAINER">
+      </classpathContainerInitializer>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.launching.runtimeClasspathEntryResolvers">
+      <runtimeClasspathEntryResolver
+            container="org.eclipse.jdt.launching.JRE_CONTAINER"
+            variable="JRE_LIB"
+            class="org.eclipse.jdt.internal.launching.JRERuntimeClasspathEntryResolver"
+            id="org.eclipse.jdt.launching.JRE_RESOLVER">
+      </runtimeClasspathEntryResolver>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationComparators">
+      <launchConfigurationComparator
+            attribute="org.eclipse.jdt.launching.CLASSPATH"
+            class="org.eclipse.jdt.internal.launching.RuntimeClasspathEntryListComparator"
+            id="org.eclipse.jdt.launching.classpathComparator">
+      </launchConfigurationComparator>
+      <launchConfigurationComparator
+            attribute="org.eclipse.jdt.launching.SOURCE_PATH"
+            class="org.eclipse.jdt.internal.launching.RuntimeClasspathEntryListComparator"
+            id="org.eclipse.jdt.launching.sourcepathComparator">
+      </launchConfigurationComparator>
+   </extension>
 
 </plugin>
