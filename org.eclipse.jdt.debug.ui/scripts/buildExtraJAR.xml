@@ -29,7 +29,7 @@
 			<src path="Snippet Support/"/>
 		</javac>
 		<mkdir dir="${build.result.folder}"/>
-		<jar jarfile="${build.result.folder}/snippetsupport.jar" basedir="${temp.folder}/snippetsupport.jar.bin"/>
+		<jar destfile="${build.result.folder}/snippetsupport.jar" basedir="${temp.folder}/snippetsupport.jar.bin"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 

@@ -23,7 +23,7 @@
 			<src path="support/"/>
 		</javac>
 		<mkdir dir="${build.result.folder}/lib"/>
-		<jar jarfile="${build.result.folder}/lib/launchingsupport.jar" basedir="${temp.folder}/lib/launchingsupport.jar.bin"/>
+		<jar destfile="${build.result.folder}/lib/launchingsupport.jar" basedir="${temp.folder}/lib/launchingsupport.jar.bin"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
