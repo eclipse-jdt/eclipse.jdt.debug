@@ -365,26 +365,57 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					}
 				} 
 				List frames= getUnderlyingFrames();
+				
+				boolean topDown = false;
+				// what was the last method on the top of the stack
+				Method lastMethod = ((JDIStackFrame)fStackFrames.get(0)).getLastMethod();
+				// what is the method on top of the stack now
+				if (frames.size() > 0) {
+					Method currMethod = ((StackFrame)frames.get(0)).location().method();
+					if (currMethod.equals(lastMethod)) {
+						// preserve frames top down
+						topDown = true;					
+					}
+				}
+				
 				// compute new or removed stack frames
-				int length= frames.size();
+				int offset= 0, length= frames.size();
 				if (length > fStackFrames.size()) {
-					// add new (empty) frames at the end to preserve frames top-down
-					int num = length - fStackFrames.size();
-					for (int i= 0; i < num; i++) {
-						JDIStackFrame newStackFrame= new JDIStackFrame(this, null);
-						fStackFrames.add(newStackFrame);
+					if (topDown) {
+						// add new (empty) frames to the bottom of the stack to preserve frames top-down
+						int num = length - fStackFrames.size();
+						for (int i = 0; i < num; i++) {
+							fStackFrames.add(new JDIStackFrame(this, null));
+						}
+					} else {
+						// add new frames to the top of the stack, preserve bottom up
+						offset= length - fStackFrames.size();
+						for (int i= offset - 1; i >= 0; i--) {
+							JDIStackFrame newStackFrame= new JDIStackFrame(this, (StackFrame) frames.get(i));
+							fStackFrames.add(0, newStackFrame);
+						}
+						length= fStackFrames.size() - offset;
 					}
 				} else if (length < fStackFrames.size()) {
-					// remove frames from the end to preserve frames top-down
 					int removed= fStackFrames.size() - length;
-					for (int i= 0; i < removed; i++) {
-						fStackFrames.remove(fStackFrames.size() - 1);
+					if (topDown) {
+						// remove frames from the bottom of the stack, preserve top-down
+						for (int i = 0; i < removed; i++) {
+							fStackFrames.remove(fStackFrames.size() - 1);
+						}
+					} else {
+						// remove frames from the top of the stack, preserve bottom up
+						for (int i= 0; i < removed; i++) {
+							fStackFrames.remove(0);
+						}
 					}
 				} else if (length == 0) {
 					fStackFrames = Collections.EMPTY_LIST;
 				}
 				// update preserved frames
-				updateStackFrames(frames, 0, length);
+				if (offset < fStackFrames.size()) {
+					updateStackFrames(frames, offset, length);
+				}
 			}
 			fRefreshChildren = false;
 		} else {
