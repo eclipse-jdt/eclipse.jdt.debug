@@ -164,7 +164,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 		Process p= null;
 		File workingDir = getWorkingDir(config);
-		p= exec(cmdLine, config.getEnvironmentVariables(), workingDir);
+		p= exec(cmdLine, workingDir);
 		if (p == null) {
 			return;
 		}

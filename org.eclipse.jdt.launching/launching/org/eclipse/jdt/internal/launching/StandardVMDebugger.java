@@ -109,7 +109,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 				connector.startListening(map);
 				
 				File workingDir = getWorkingDir(config);
-				p = exec(cmdLine, config.getEnvironmentVariables(), workingDir);				
+				p = exec(cmdLine, workingDir);				
 				if (p == null) {
 					return;
 				}

@@ -23,14 +23,9 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -40,12 +35,10 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
@@ -73,14 +66,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	// Collections used to populating the JRE Combo box
 	protected IVMInstallType[] fVMTypes;
 	protected java.util.List fVMStandins;	
-	
-	// Environment variables UI widgets
-	protected Label fEnvLabel;
-	protected Table fEnvTable;
-	protected Button fEnvAddButton;
-	protected Button fEnvEditButton;
-	protected Button fEnvRemoveButton;
-	
+		
 	// Remember last directory when browsing for archives or directories
 	protected String fLastBrowsedDirectory;
 	
@@ -96,13 +82,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	protected static final String PATH_XML_ENTRIES = "pathEntries"; //$NON-NLS-1$
 	protected static final String PATH_XML_ENTRY = "pathEntry"; //$NON-NLS-1$
 	protected static final String PATH_XML_PATH = "path"; //$NON-NLS-1$
-	
-	// Constants used in reading & persisting XML documents containing env. vars.
-	protected static final String ENV_XML_ENTRIES = "envVarEntries"; //$NON-NLS-1$
-	protected static final String ENV_XML_ENTRY = "envVarEntry"; //$NON-NLS-1$
-	protected static final String ENV_XML_NAME = "envVarName"; //$NON-NLS-1$
-	protected static final String ENV_XML_VALUE = "envVarValue"; //$NON-NLS-1$
-		
+			
 	/**
 	 * @see ILaunchConfigurationTab#createTabControl(ILaunchConfigurationDialog, TabItem)
 	 */
@@ -236,79 +216,13 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		
 		setPathButtonsEnableState();
 		
-		createVerticalSpacer(comp, 2);
-		
-		fEnvLabel = new Label(comp, SWT.NONE);
-		fEnvLabel.setText(LauncherMessages.getString("JavaEnvironmentTab.Environment_Variable&s__20")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fEnvLabel.setLayoutData(gd);
-		
-		fEnvTable = new Table(comp, SWT.BORDER | SWT.MULTI);
-		fEnvTable.setData(IJavaLaunchConfigurationConstants.ATTR_ENVIRONMENT_VARIABLES);
-		TableLayout tableLayout = new TableLayout();
-		fEnvTable.setLayout(tableLayout);
-		gd = new GridData(GridData.FILL_BOTH);
-		fEnvTable.setLayoutData(gd);
-		TableColumn column1 = new TableColumn(fEnvTable, SWT.NONE);
-		column1.setText(LauncherMessages.getString("JavaEnvironmentTab.Name_21")); //$NON-NLS-1$
-		TableColumn column2 = new TableColumn(fEnvTable, SWT.NONE);
-		column2.setText(LauncherMessages.getString("JavaEnvironmentTab.Value_22"));		 //$NON-NLS-1$
-		tableLayout.addColumnData(new ColumnWeightData(100));
-		tableLayout.addColumnData(new ColumnWeightData(100));
-		fEnvTable.setHeaderVisible(true);
-		fEnvTable.setLinesVisible(true);
-		fEnvTable.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				setEnvButtonsEnableState();
-			}
-		});
-		fEnvTable.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent e) {
-				setEnvButtonsEnableState();
-				if (fEnvEditButton.isEnabled()) {
-					handleEnvEditButtonSelected();
-				}
-			}
-		});
-	
-		Composite envButtonComp = new Composite(comp, SWT.NONE);
-		GridLayout envButtonLayout = new GridLayout();
-		envButtonLayout.marginHeight = 0;
-		envButtonLayout.marginWidth = 0;
-		envButtonComp.setLayout(envButtonLayout);
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		envButtonComp.setLayoutData(gd);
-		
-		fEnvAddButton = createPushButton(envButtonComp ,LauncherMessages.getString("JavaEnvironmentTab.A&dd_23"), null); //$NON-NLS-1$
-		fEnvAddButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleEnvAddButtonSelected();
-			}
-		});
-		
-		fEnvEditButton = createPushButton(envButtonComp, LauncherMessages.getString("JavaEnvironmentTab.Ed&it_24"), null); //$NON-NLS-1$
-		fEnvEditButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleEnvEditButtonSelected();
-			}
-		});
-		
-		fEnvRemoveButton = createPushButton(envButtonComp, LauncherMessages.getString("JavaEnvironmentTab.Rem&ove_25"), null); //$NON-NLS-1$
-		fEnvRemoveButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleEnvRemoveButtonSelected();
-			}
-		});
 		
 		fPathTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				setPathButtonsEnableState();
 			}			
 		});
-	
-		setEnvButtonsEnableState();
-		
+			
 	}
 	
 	/**
@@ -373,7 +287,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	protected void updateWidgetsFromConfig(ILaunchConfiguration config) {
 		updateBootPathFromConfig(config);
 		updateClassPathFromConfig(config);
-		updateEnvVarsFromConfig(config);
 	}
 	
 	protected void updateBootPathFromConfig(ILaunchConfiguration config) {
@@ -403,19 +316,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			JDIDebugUIPlugin.log(ce);		
 		}
 	}
-		
-	protected void updateEnvVarsFromConfig(ILaunchConfiguration config) {
-		Map envVars = null;
-		try {
-			if (config != null) {
-				envVars = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ENVIRONMENT_VARIABLES, (Map)null);
-			}
-			updateTable(envVars, fEnvTable);
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
-		}
-	}
-	
+			
 	protected void updatePathList(java.util.List listStructure, List listWidget) {
 		listWidget.removeAll();
 		if (listStructure == null) {
@@ -647,91 +548,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		fPathAddDirectoryButton.setEnabled(enabledList);
 	
 	}
-	
-	protected void handleEnvAddButtonSelected() {
-		NameValuePairDialog dialog = new NameValuePairDialog(getShell(), 
-												LauncherMessages.getString("JavaEnvironmentTab.Add_Environment_Variable_28"),  //$NON-NLS-1$
-												new String[] {LauncherMessages.getString("JavaEnvironmentTab.&Name__29"), LauncherMessages.getString("JavaEnvironmentTab.&Value__30")},  //$NON-NLS-1$ //$NON-NLS-2$
-												new String[] {"", ""}); //$NON-NLS-1$ //$NON-NLS-2$
-		doEnvVarDialog(dialog, null);
-		setEnvButtonsEnableState();
-	}
-	
-	protected void handleEnvEditButtonSelected() {
-		TableItem selectedItem = fEnvTable.getSelection()[0];
-		String name = selectedItem.getText(0);
-		String value = selectedItem.getText(1);
-		NameValuePairDialog dialog = new NameValuePairDialog(getShell(), 
-												LauncherMessages.getString("JavaEnvironmentTab.Edit_Environment_Variable_33"),  //$NON-NLS-1$
-												new String[] {LauncherMessages.getString("JavaEnvironmentTab.&Name_34"), LauncherMessages.getString("JavaEnvironmentTab.&Value_35")},  //$NON-NLS-1$ //$NON-NLS-2$
-												new String[] {name, value});
-		doEnvVarDialog(dialog, selectedItem);		
-	}
-	
-	/**
-	 * Show the specified dialog and update the env var table based on its results.
-	 * 
-	 * @param updateItem the item to update, or <code>null</code> if
-	 *  adding a new item
-	 */
-	protected void doEnvVarDialog(NameValuePairDialog dialog, TableItem updateItem) {
-		if (dialog.open() != Window.OK) {
-			return;
-		}
-		String[] nameValuePair = dialog.getNameValuePair();
-		TableItem tableItem = updateItem;
-		if (tableItem == null) {
-			tableItem = getTableItemForName(nameValuePair[0]);
-			if (tableItem == null) {
-				tableItem = new TableItem(fEnvTable, SWT.NONE);
-			}
-		}
-		tableItem.setText(nameValuePair);
-		fEnvTable.setSelection(new TableItem[] {tableItem});
-		updateLaunchConfigurationDialog();	
-	}
-
-	protected void handleEnvRemoveButtonSelected() {
-		int[] selectedIndices = fEnvTable.getSelectionIndices();
-		fEnvTable.remove(selectedIndices);
-		setEnvButtonsEnableState();
-	}
-	
-	/**
-	 * Set the enabled state of the three environment variable-related buttons based on the
-	 * selection in the Table widget.
-	 */
-	protected void setEnvButtonsEnableState() {
-		int selectCount = fEnvTable.getSelectionIndices().length;
-		if (selectCount < 1) {
-			fEnvEditButton.setEnabled(false);
-			fEnvRemoveButton.setEnabled(false);
-		} else {
-			fEnvRemoveButton.setEnabled(true);
-			if (selectCount == 1) {
-				fEnvEditButton.setEnabled(true);
-			} else {
-				fEnvEditButton.setEnabled(false);
-			}
-		}		
-		fEnvAddButton.setEnabled(true);
-	}
-	
-	/**
-	 * Helper method that indicates whether the specified env var name is already present 
-	 * in the env var table.
-	 */
-	protected TableItem getTableItemForName(String candidateName) {
-		TableItem[] items = fEnvTable.getItems();
-		for (int i = 0; i < items.length; i++) {
-			String name = items[i].getText(0);
-			if (name.equals(candidateName)) {
-				return items[i];
-			}
-		}
-		return null;
-	}
-
+			
 	/**
 	 * Return the List widget that is currently visible in the paths tab folder.
 	 */
@@ -820,7 +637,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		setProjectFrom(configuration);
 		updateBootPathFromConfig(configuration);
 		updateClassPathFromConfig(configuration);
-		updateEnvVarsFromConfig(configuration);
 		updateJREFromConfig(configuration);
 	}
 	
@@ -836,7 +652,6 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		updateConfigFromEnvTable(fEnvTable, configuration);
 		if (isUseDefaultClasspath()) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (String)null);
 		} else {

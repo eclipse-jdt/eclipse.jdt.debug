@@ -53,12 +53,12 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * @return plug-in identifier
 	 */
 	protected abstract String getPluginIdentifier();
-
+	
 	/**
 	 * Performs a runtime exec on the given command line in the context
-	 * of the specified working directory and returns the resulting process.
-	 * If the current runtime does not support the specification of a working
-	 * directory, the status handler for error code
+	 * of the specified working directory, and returns
+	 * the resulting process. If the current runtime does not support the
+	 * specification of a working directory, the status handler for error code
 	 * <code>ERR_WORKING_DIRECTORY_NOT_SUPPORTED</code> is queried to see if the
 	 * exec should be re-executed without specifying a working directory.
 	 * 
@@ -69,32 +69,12 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	 * @see Runtime
 	 */
 	protected Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
-		return exec(cmdLine, null, workingDirectory);
-	}	
-	
-	/**
-	 * Performs a runtime exec on the given command line in the context
-	 * of the specified working directory and environment variables, and returns
-	 * the resulting process. If the current runtime does not support the
-	 * specification of a working directory, the status handler for error code
-	 * <code>ERR_WORKING_DIRECTORY_NOT_SUPPORTED</code> is queried to see if the
-	 * exec should be re-executed without specifying a working directory.
-	 * 
-	 * @param cmdLine the command line
-	 * @param envVars environment variables, each in the format of
-	 *  "name=value", or <code>null</code> to use the default environment
-	 * @param workingDirectory the working directory, or <code>null</code>
-	 * @return the resulting process or <code>null</code> if the exec is
-	 *  cancelled
-	 * @see Runtime
-	 */
-	protected Process exec(String[] cmdLine, String[] envVars, File workingDirectory) throws CoreException {
 		Process p= null;
 		try {
 			if (workingDirectory == null) {
-				p= Runtime.getRuntime().exec(cmdLine, envVars);
+				p= Runtime.getRuntime().exec(cmdLine, null);
 			} else {
-				p= Runtime.getRuntime().exec(cmdLine, envVars, workingDirectory);
+				p= Runtime.getRuntime().exec(cmdLine, null, workingDirectory);
 			}
 		} catch (IOException e) {
 				if (p != null) {

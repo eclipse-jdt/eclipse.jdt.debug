@@ -260,32 +260,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		String[] defaultClasspath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);		
 		return removeRtJarFromClasspath(defaultClasspath);
 	}
-
-	/**
-	 * Returns the environment variables specified by the given launch
-	 * configuration, as an array of Strings. Each entry is of the form 'var=value'.
-	 * The returned array is <code>null</cdo> if no environment variables are specified.
-	 * 
-	 * @param configuration launch configuration
-	 * @return the environment variables specified by the given 
-	 *  launch configuration, or <code>null</code>
-	 * @exception CoreException if unable to retrieve the attribute
-	 */	
-	protected String[] getEnvironmentVariables(ILaunchConfiguration configuration) throws CoreException {
-		Map map = (Map)configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ENVIRONMENT_VARIABLES, (Map)null);
-		String[] vars = null;
-		if (map != null) {
-			vars = new String[map.size()];
-			Iterator keys = map.keySet().iterator();
-			int i = 0;
-			while (keys.hasNext()) {
-				String key= (String)keys.next();
-				vars[i] = key + "=" + (String)map.get(key); //$NON-NLS-1$
-				i++;
-			}
-		}
-		return vars;
-	}
 	
 	/**
 	 * Remove any entry in the String array argument that corresponds to an 'rt.jar' file.

@@ -114,14 +114,6 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_DEFAULT_CLASSPATH = LaunchingPlugin.PLUGIN_ID + ".DEFAULT_CLASSPATH"; //$NON-NLS-1$
 		
 	/**
-	 * Environment variables launch configuration attribute name.
-	 * This attribute is a map containing name value pairs specifiying environment variables
-	 * that will be set in the launched environment, or <code>null</code> if the default
-	 * environment should be used.
-	 */
-	public static final String ATTR_ENVIRONMENT_VARIABLES = LaunchingPlugin.PLUGIN_ID + ".ENVIRONMENT_VARIABLES";	 //$NON-NLS-1$
-	
-	/**
 	 * Host name launch configuration attribute name.
 	 * This attribute is used for attach launching.
 	 */

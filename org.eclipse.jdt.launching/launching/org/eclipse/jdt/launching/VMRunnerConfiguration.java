@@ -1,3 +1,4 @@
+
 package org.eclipse.jdt.launching;
 
 /*
@@ -26,7 +27,6 @@ public class VMRunnerConfiguration {
 	private String[] fProgramArgs;
 	private String[] fClassPath;
 	private String[] fBootClassPath;
-	private String[] fEnvVars;
 	private String fWorkingDirectory;
 	
 	private static final String[] fgEmpty= new String[0];
@@ -177,28 +177,4 @@ public class VMRunnerConfiguration {
 		return fWorkingDirectory;
 	}	
 	
-	/**
-	 * Sets the environment variables to be used when launching the VM.
-	 * 
-	 * @param envVars the environment variables to use when launching 
-	 *  the VM, or <code>null</code> to use the default environment. Each
-	 *  entry is in the form of "name=value".
-	 * @since 2.0
-	 */
-	public void setEnvironmentVariables(String[] envVars) {
-		fEnvVars = envVars;
-	}
-
-	/**
-	 * Returns the environment variables to be used when launching the VM,
-	 * or <code>null</code> when using the default environment.
-	 * 
-	 * @return the environment variables to use when launching 
-	 *  the VM, or <code>null</code> when using the default environment. Each
-	 *  entry is in the form of "name=value".
-	 * @since 2.0
-	 */
-	public String[] getEnvironmentVariables() {
-		return fEnvVars;
-	}
 }
