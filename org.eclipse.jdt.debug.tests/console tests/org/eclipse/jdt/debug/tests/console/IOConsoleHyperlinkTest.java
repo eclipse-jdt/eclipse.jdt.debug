@@ -12,6 +12,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleHyperlink;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IPatternMatchNotifier;
@@ -32,8 +33,7 @@ public class IOConsoleHyperlinkTest implements IActionDelegate2, IWorkbenchWindo
             }
 
             public void matchFound(String text, int offset) {
-                matches++;
-                System.out.println("match # " + matches + "- offset:" + offset + " text: " + text);
+                console.addHyperlink(new MyHyperlink(), offset, text.length());
             }
         };
         
@@ -49,7 +49,19 @@ public class IOConsoleHyperlinkTest implements IActionDelegate2, IWorkbenchWindo
         }).start();
     }
     
-    
+    private class MyHyperlink implements IConsoleHyperlink {
+        public void linkEntered() {
+            System.out.println("link entered");
+        }
+
+        public void linkExited() {
+            System.out.println("link exited");
+        }
+
+        public void linkActivated() {
+            System.out.println("link activated");
+        }
+    }
     
     
     
