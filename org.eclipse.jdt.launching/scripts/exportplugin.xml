@@ -1,0 +1,36 @@
+<!-- build script to create a plugin from org.eclipse.jdt.launching -->
+<project name="Export jdt.launching" default="export" basedir="..">
+	<target name="init">
+		<tstamp/>
+		<property name="destdir" value="../../plugin-export" />
+		<property name="plugin"  value="org.eclipse.jdt.launching_3.0.0" />
+		<property name="dest"  value="${destdir}/${plugin}" />
+	</target>
+
+	<target name="build" depends="init">
+    	<eclipse.incrementalBuild project="${plugin}" kind="incr"/>
+	</target>
+
+	<target name="export" depends="build">
+		<mkdir dir="${destdir}" />
+		<delete dir="${dest}" />
+		<mkdir dir="${dest}" />
+		
+		<!-- Create the launching jar -->
+		<jar 
+			jarfile="${dest}/launching.jar"
+			basedir="bin"
+			excludes="org/eclipse/jdt/internal/launching/support/**"
+		/>
+		
+		<!-- Copy the launching support jar -->
+		<copy file="lib/launchingsupport.jar" todir="${dest}/lib"/> 
+				
+		<copy file="plugin.xml" todir="${dest}"/>
+		<copy file="plugin.properties" todir="${dest}"/>
+		<copy file="java.policy.applet" todir="${dest}"/>
+		<zip zipfile="${dest}/launchingsrc.zip">
+		    <fileset dir="launching" />
+  		</zip>
+	</target>
+</project>
