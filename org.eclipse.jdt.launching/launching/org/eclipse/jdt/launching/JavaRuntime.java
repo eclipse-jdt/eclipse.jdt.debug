@@ -644,7 +644,10 @@ public final class JavaRuntime {
 		if (providerId == null) {
 			provider = fgDefaultClasspathProvider;
 		} else {
-			provider = (IRuntimeClasspathProvider)getClasspathProviders().get(providerId);	
+			provider = (IRuntimeClasspathProvider)getClasspathProviders().get(providerId);
+			if (provider == null) {
+				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.26"), new String[]{providerId}), null); //$NON-NLS-1$
+			}
 		}
 		return provider;
 	}	
@@ -664,6 +667,9 @@ public final class JavaRuntime {
 			provider = fgDefaultSourcePathProvider;
 		} else {
 			provider = (IRuntimeClasspathProvider)getClasspathProviders().get(providerId);
+			if (provider == null) {
+				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.27"), new String[]{providerId}), null); //$NON-NLS-1$
+			}
 		}
 		return provider;
 	}	
