@@ -262,8 +262,6 @@ public class BinaryBasedSourceGenerator {
 					}
 				}
 			} else if (referenceType instanceof InterfaceType) {
-				InterfaceType interfaceType= (InterfaceType) referenceType;
-				
 				if (buffer != null) {
 					source.append("abstract class "); //$NON-NLS-1$
 					source.append(getSimpleName(typeName)).append("___ implements "); //$NON-NLS-1$
@@ -272,26 +270,7 @@ public class BinaryBasedSourceGenerator {
 					source.append(buffer).append("}\n"); //$NON-NLS-1$
 				}
 				
-				source.append("interface "); //$NON-NLS-1$
-				
-				source.append(getSimpleName(typeName)).append(' ');
-				
-				List interfaces;
-				try {
-					interfaces= interfaceType.superinterfaces();
-				} catch (ClassNotPreparedException e) {
-					return new StringBuffer();
-				}
-				if (interfaces.size() != 0) {
-					source.append("extends "); //$NON-NLS-1$
-					Iterator iterator= interfaces.iterator();
-					InterfaceType interface_= (InterfaceType)iterator.next();
-					source.append(getDotName(interface_.name()));
-					while (iterator.hasNext()) {
-						source.append(',').append(getDotName(((InterfaceType)iterator.next()).name()));
-					}
-				}
-				
+				return source;
 			}
 		}
 		
