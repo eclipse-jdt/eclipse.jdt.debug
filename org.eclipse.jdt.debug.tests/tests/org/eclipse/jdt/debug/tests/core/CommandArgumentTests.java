@@ -40,6 +40,8 @@ public class CommandArgumentTests extends AbstractDebugTest {
 		public void streamAppended(String text, IStreamMonitor monitor) {
 			fOutput.append(text);
 		}
+		public void streamClosed(IStreamMonitor monitor) {
+		}
 		public void clear() {
 			fOutput.setLength(0);
 		}
