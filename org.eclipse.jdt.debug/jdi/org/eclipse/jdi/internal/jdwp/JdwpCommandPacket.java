@@ -62,8 +62,9 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static final int VM_DISPOSE_OBJECTS = 14				 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_HOLD_EVENTS = 15					 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_RELEASE_EVENTS = 16				 + (CSET_VIRTUAL_MACHINE << 8);
-	public static final int VM_CAPABILITIES_NEW = 17				 + (CSET_VIRTUAL_MACHINE << 8);
+	public static final int VM_CAPABILITIES_NEW = 17			 + (CSET_VIRTUAL_MACHINE << 8);
 	public static final int VM_REDEFINE_CLASSES = 18			 + (CSET_VIRTUAL_MACHINE << 8);
+	public static final int VM_SET_DEFAULT_STRATUM = 19			 + (CSET_VIRTUAL_MACHINE << 8);
 
 	/** Commands ReferenceType. */
 	public static final int RT_SIGNATURE = 1					 + (CSET_REFERENCE_TYPE << 8);
