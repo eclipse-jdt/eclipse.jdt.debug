@@ -197,11 +197,6 @@ public final class JavaRuntime {
 	private static ListenerList fgVMListeners = new ListenerList(5);
 	
 	/**
-	 * Progress monitor to use for processing VM property change events.
-	 */
-	private static IProgressMonitor fgMonitor = null;
-	
-	/**
 	 * This class contains only static methods, and is not intended
 	 * to be instantiated.
 	 */
@@ -1708,28 +1703,6 @@ public final class JavaRuntime {
 			listener.vmRemoved(vm);
 		}		
 	}		
-	
-	/**
-	 * Sets a progress monitor to be used when building projects due to changes
-	 * in VM installs.
-	 * 
-	 * @param monitor progress monitor, or <code>null</code>
-	 * @since 2.1
-	 */
-	public static void setProgressMonitor(IProgressMonitor monitor) {
-		fgMonitor = monitor;
-	}
-	
-	/**
-	 * Returns a progress monitor to be used when building projects due to
-	 * changes in VM installs.
-	 * 
-	 * @return progress monitor or <code>null</code>
-	 * @since 2.1
-	 */
-	public static IProgressMonitor getProgressMonitor() {
-		return fgMonitor;
-	}
 	
 	/**
 	 * Return the String representation of the default output directory of the

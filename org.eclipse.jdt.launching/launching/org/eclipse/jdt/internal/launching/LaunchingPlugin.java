@@ -16,12 +16,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,34 +28,24 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.internal.events.ResourceChangeEvent;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -66,7 +54,6 @@ import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 import org.w3c.dom.Document;
@@ -90,11 +77,6 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	private String fOldVMPrefString = EMPTY_STRING;
 	
 	private boolean fIgnoreVMDefPropertyChangeEvents = false;
-	
-	/**
-	 * Status code indicating that a workspace runnable needs to be run.
-	 */
-	public static final int WORKSPACE_RUNNABLE_STATUS = 191;
 		
 	private static final String EMPTY_STRING = "";    //$NON-NLS-1$
 	
@@ -120,11 +102,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	class VMChanges implements IVMInstallChangedListener {
 		
+		// true if the default VM changes
 		private boolean fDefaultChanged = false;
-		private IPath fOldDefaultConatinerId = null;
 		
-		private List fRemovedContainerIds = new ArrayList();
-		private List fChangedContainerIds = new ArrayList();
 		// old container ids to new
 		private HashMap fRenamedContainerIds = new HashMap();
 		
@@ -153,7 +133,6 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		 */
 		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 			fDefaultChanged = true;
-			fOldDefaultConatinerId = getContainerId(previous);
 		}
 
 		/**
@@ -168,31 +147,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
 			String property = event.getProperty();
 			IVMInstall vm = (IVMInstall)event.getSource();
-			if (property.equals(IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION)) {
-				IPath id = getContainerId(vm);
-				if (id != null) {
-					fChangedContainerIds.add(id);
-				}
-			} else if (property.equals(IVMInstallChangedListener.PROPERTY_NAME)) {
+			if (property.equals(IVMInstallChangedListener.PROPERTY_NAME)) {
 				IPath newId = getContainerId(vm);
 				IPath oldId = new Path(JavaRuntime.JRE_CONTAINER);
 				oldId = oldId.append(vm.getVMInstallType().getId());
 				oldId = oldId.append((String)event.getOldValue());
 				fRenamedContainerIds.put(oldId, newId);
-			} else if (property.equals(IVMInstallChangedListener.PROPERTY_LIBRARY_LOCATIONS)) {
-				// determine if it is more than a source attachment change
-				LibraryLocation[] prevs = (LibraryLocation[])event.getOldValue();
-				LibraryLocation[] currs = (LibraryLocation[])event.getNewValue();
-				if (prevs.length == currs.length) {
-					for (int i = 0; i < currs.length; i++) {
-						if (!currs[i].getSystemLibraryPath().equals(prevs[i].getSystemLibraryPath())) {
-							fChangedContainerIds.add(getContainerId(vm));
-							return;
-						}
-					}
-				} else {
-					fChangedContainerIds.add(getContainerId(vm));
-				}
 			}
 		}
 
@@ -200,110 +160,56 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 		 */
 		public void vmRemoved(IVMInstall vm) {
-			IPath id = getContainerId(vm);
-			if (id != null) {
-				fRemovedContainerIds.add(id);
-			}
 		}
 	
 		/**
-		 * Determine the projects that have been affected by the JRE changes and
-		 * re-build them. Re-bind any classpath variables or containers that
-		 * have changed.
+		 * Re-bind classpath variables and containers affected by the JRE
+		 * changes.
 		 */
 		public void process() throws CoreException {
-						
-			IWorkspace ws = ResourcesPlugin.getWorkspace();
-			boolean wasAutobuild= setAutobuild(ws, false);
-			try {
-				Set buildList = new HashSet();
-				IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
-				 
-				if (fDefaultChanged) {
-					// re-bin JRELIB if the default VM changed
-					JavaClasspathVariablesInitializer initializer = new JavaClasspathVariablesInitializer();
-					initializer.initialize(JavaRuntime.JRELIB_VARIABLE);
-					initializer.initialize(JavaRuntime.JRESRC_VARIABLE);
-					initializer.initialize(JavaRuntime.JRESRCROOT_VARIABLE);
-				} else {
-					// the old default is the same as the current default
-					fOldDefaultConatinerId = getContainerId(JavaRuntime.getDefaultVMInstall());				
-				}
-															
-				// re-bind all container entries, noting which project need to be re-built
-				for (int i = 0; i < projects.length; i++) {
-					IJavaProject project = projects[i];
-					IClasspathEntry[] entries = project.getRawClasspath();
-					for (int j = 0; j < entries.length; j++) {
-						IClasspathEntry entry = entries[j];
-						switch (entry.getEntryKind()) {
-							case IClasspathEntry.CPE_CONTAINER:
-								IPath reference = entry.getPath();
-								IPath newBinding = reference;
-								boolean defRef = false;
-								String firstSegment = reference.segment(0);
-								if (JavaRuntime.JRE_CONTAINER.equals(firstSegment)) {
-									if (reference.segmentCount() == 1) {
-										// resolve to explicit reference
-										defRef = true;
-										reference = fOldDefaultConatinerId;
-										if (fDefaultChanged) {
-											buildList.add(project);
-										}
-									}
-									if (requiresRebuild(reference)) {
-										buildList.add(project);
-									}
+			
+			IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
+			 
+			if (fDefaultChanged) {
+				// re-bind JRELIB if the default VM changed
+				JavaClasspathVariablesInitializer initializer = new JavaClasspathVariablesInitializer();
+				initializer.initialize(JavaRuntime.JRELIB_VARIABLE);
+				initializer.initialize(JavaRuntime.JRESRC_VARIABLE);
+				initializer.initialize(JavaRuntime.JRESRCROOT_VARIABLE);
+			}
+														
+			// re-bind all container entries, noting which project need to be re-built
+			for (int i = 0; i < projects.length; i++) {
+				IJavaProject project = projects[i];
+				IClasspathEntry[] entries = project.getRawClasspath();
+				for (int j = 0; j < entries.length; j++) {
+					IClasspathEntry entry = entries[j];
+					switch (entry.getEntryKind()) {
+						case IClasspathEntry.CPE_CONTAINER:
+							IPath reference = entry.getPath();
+							IPath newBinding = reference;
+							String firstSegment = reference.segment(0);
+							if (JavaRuntime.JRE_CONTAINER.equals(firstSegment)) {
+								if (reference.segmentCount() > 1) {
 									IPath renamed = (IPath)fRenamedContainerIds.get(reference);
 									if (renamed != null) {
-										if (!defRef) {
-											// The JRE was re-named. This changes the identifier of
-											// the container entry, so we must re-build.
-											buildList.add(project);
-										}
-									}
-									JREContainerInitializer initializer = new JREContainerInitializer();
-									initializer.initialize(newBinding, project);
+										// The JRE was re-named. This changes the identifier of
+										// the container entry.
+										newBinding = renamed;
+									}									
 								}
-								break;
-							case IClasspathEntry.CPE_VARIABLE:
-								reference = entry.getPath();
-								if (JavaRuntime.JRELIB_VARIABLE.equals(reference.segment(0))) {
-									reference = fOldDefaultConatinerId;
-									if (fDefaultChanged) {
-										buildList.add(project);
-									}
-									if (requiresRebuild(reference)) {
-										buildList.add(project);
-									}
-								}
-								break;								
-							default:
-								break;
-						}
+								JREContainerInitializer initializer = new JREContainerInitializer();
+								initializer.initialize(newBinding, project);
+							}
+							break;
+						default:
+							break;
 					}
 				}
+			}
 
-				buildProjects(buildList);
-				
-			} finally {
-				setAutobuild(ws, wasAutobuild);
-			}
 		}
-		
-		private boolean requiresRebuild(IPath containerId) {
-			return  fChangedContainerIds.contains(containerId) || fRemovedContainerIds.contains(containerId);
-		}
-		
-		private boolean setAutobuild(IWorkspace ws, boolean newState) throws CoreException {
-			IWorkspaceDescription wsDescription= ws.getDescription();
-			boolean oldState= wsDescription.isAutoBuilding();
-			if (oldState != newState) {
-				wsDescription.setAutoBuilding(newState);
-				ws.setDescription(wsDescription);
-			}
-			return oldState;
-		}			
+
 	}
 	
 	
@@ -631,55 +537,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		}
 		return new VMDefinitionsContainer(); 
 	}
-			
-	/**
-	 * Build the Java projects in the specified Set.  Because we're in a non-UI plugin,
-	 * we can't directly put up a progress monitor.  Finesse this by using a status 
-	 * handler to do the build and put up a progress monitor if the status handler is
-	 * available (if UI is loaded), or just use a workspace runnable to do the build otherwise.	 */
-	private void buildProjects(final Set projects) throws CoreException {
-		
-		if (projects.isEmpty()) {
-			return;
-		}
-		
-		// Workspace runnable that builds the specified projects
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask(EMPTY_STRING, projects.size() * 100);
-				Iterator iter = projects.iterator();
-				while (iter.hasNext()) {
-					IJavaProject jp = (IJavaProject)iter.next();
-					IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 100);
-					IProject pro = jp.getProject();
-					pro.build(IncrementalProjectBuilder.FULL_BUILD, subMonitor);
-					subMonitor.done();
-				}
-				monitor.done();				
-			}
-		};
-		
-		
-		// Try to retrieve a progress monitor. Delegate to status hanlder if none found.
-		IProgressMonitor monitor = JavaRuntime.getProgressMonitor();
-		if (monitor == null) {
-			// try status handler
-			IStatus status = new Status(IStatus.INFO, getUniqueIdentifier(), WORKSPACE_RUNNABLE_STATUS, LaunchingMessages.getString("LaunchingPlugin.Build_in_progress_1"), null); //$NON-NLS-1$
-			IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
-			if (handler == null) {
-				monitor = new NullProgressMonitor(); 
-			} else	{		
-				try {
-					handler.handleStatus(status, runnable);
-				} catch (CoreException ce) {
-					log(ce);
-				}
-				return;
-			}
-		}
-		ResourcesPlugin.getWorkspace().run(runnable, monitor);
-	}	
-			
+						
 	/**
 	 * @see IVMInstallChangedListener#defaultVMInstallChanged(IVMInstall, IVMInstall)
 	 */
