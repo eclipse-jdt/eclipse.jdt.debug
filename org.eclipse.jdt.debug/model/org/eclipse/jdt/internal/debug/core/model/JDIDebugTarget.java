@@ -120,7 +120,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private List fBreakpoints;
 	
 	/**
-	 * Collection of types (Strings) that have attempted HCR, but failed.
+	 * Collection of types that have attempted HCR, but failed.
+	 * The types are stored by their fully qualified names.
 	 */
 	private List fOutOfSynchTypes;
 	 
@@ -616,10 +617,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 					break;
 				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE:
 					targetRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.hcr_failed"), null); //$NON-NLS-1$
+					typesFailedHCR(qualifiedNames);
 					break;
 			}
 		} else {
 			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_hcr")); //$NON-NLS-1$
+			typesFailedHCR(qualifiedNames);
 		}
 	}
 	
@@ -635,25 +638,25 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			try {
 				getVM().redefineClasses(typesToBytes);
 			} catch (UnsupportedOperationException exception) {
-				typesFailedHCR(typesToBytes.keySet());
+				typesFailedHCR(qualifiedNames);
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_unsupported_redefinition"), exception); //$NON-NLS-1$
 			} catch (NoClassDefFoundError exception) {
-				typesFailedHCR(typesToBytes.keySet());
+				typesFailedHCR(qualifiedNames);
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_bad_bytes"), exception); //$NON-NLS-1$
 			} catch (VerifyError exception) {
-				typesFailedHCR(typesToBytes.keySet());
+				typesFailedHCR(qualifiedNames);
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_verify_error"), exception); //$NON-NLS-1$
 			} catch (UnsupportedClassVersionError exception) {
-				typesFailedHCR(typesToBytes.keySet());
+				typesFailedHCR(qualifiedNames);
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_unsupported_class_version"), exception); //$NON-NLS-1$
 			} catch (ClassFormatError exception) {
-				typesFailedHCR(typesToBytes.keySet());
+				typesFailedHCR(qualifiedNames);
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_class_format_error"), exception); //$NON-NLS-1$
 			} catch (ClassCircularityError exception) {
-				typesFailedHCR(typesToBytes.keySet());
+				typesFailedHCR(qualifiedNames);
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_class_circularity_error"), exception); //$NON-NLS-1$
 			} catch (RuntimeException exception) {
-				typesFailedHCR(typesToBytes.keySet());
+				typesFailedHCR(qualifiedNames);
 				targetRequestFailed(getString("JDIDebugTarget.hcr_failed"), exception); //$NON-NLS-1$
 			}
 			reinstallBreakpointsIn(resources, qualifiedNames);
@@ -662,30 +665,19 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 	}
 	
-	public void typesFailedReload(List resources, List qualifiedNames) {
-		Set failedClasses= new HashSet(qualifiedNames.size());
-		Iterator iter= qualifiedNames.iterator();
-		while (iter.hasNext()) {
-			String name= (String) iter.next();
-			List classes= jdiClassesByName(name);
-			failedClasses.addAll(classes);
-		}
-		typesFailedHCR(failedClasses);
-	}
-	
 	/**
 	 * Sets the list of out of synch types
 	 * to the given list.
 	 */
-	private void setOutOfSynchTypes(List types) {
-		fOutOfSynchTypes= types;
+	private void setOutOfSynchTypes(List qualifiedNames) {
+		fOutOfSynchTypes= qualifiedNames;
 	}
 	
 	/**
 	 * The given types have failed to be reloaded by HCR.
 	 */
-	private void typesFailedHCR(Set types) {
-		fOutOfSynchTypes.addAll(types);
+	public void typesFailedHCR(List qualifiedNames) {
+		fOutOfSynchTypes.addAll(qualifiedNames);
 		fireChangeEvent();
 	}
 	
@@ -693,11 +685,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * Returns whether the given type is out of synch in this
 	 * target.
 	 */
-	public boolean isOutOfSynch(ReferenceType type) {
+	public boolean isOutOfSynch(String qualifiedName) {
 		if (fOutOfSynchTypes == null) {
 			return false;
 		}
-		return fOutOfSynchTypes.contains(type);
+		return fOutOfSynchTypes.contains(qualifiedName);
 	}
 	
 	/**

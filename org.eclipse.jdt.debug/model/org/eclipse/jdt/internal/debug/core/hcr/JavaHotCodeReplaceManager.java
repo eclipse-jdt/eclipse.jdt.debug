@@ -368,7 +368,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	
 	protected void notifyFailedHCR(JDIDebugTarget target, List resources, List qualifiedNames) {
 		if (target.isAvailable()) {
-			target.typesFailedReload(resources, qualifiedNames);
+			target.typesFailedHCR(qualifiedNames);
 		}
 	}	
 	
@@ -455,7 +455,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			} catch (DebugException de) {
 				// target update failed
 				fireHCRFailed(target, de);
-				notifyFailedHCR(target, resources, qualifiedNames);
+//				notifyFailedHCR(target, resources, qualifiedNames);
 			}
 		}
 		if (!ms.isOK()) {
