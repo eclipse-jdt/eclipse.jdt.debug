@@ -334,7 +334,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/** 
 	 * @return Returns an array containing the bytecodes for this method. 
 	 */
-	public byte bytecodes()[] {
+	public byte[] bytecodes() {
 		if (fByteCodes != null) {
 			return fByteCodes;
 		}

@@ -219,7 +219,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	/**
 	 * @see java.util.Collection#toArray()
 	 */
-	public Object toArray()[] {
+	public Object[] toArray() {
 		return fEvents.toArray();
 	}
 
