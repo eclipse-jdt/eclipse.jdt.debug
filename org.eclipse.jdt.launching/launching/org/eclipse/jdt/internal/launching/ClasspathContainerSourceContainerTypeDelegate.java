@@ -53,7 +53,7 @@ public class ClasspathContainerSourceContainerTypeDelegate extends AbstractSourc
 		ClasspathContainerSourceContainer var =  (ClasspathContainerSourceContainer) container;
 		Document document = newDocument();
 		Element element = document.createElement("classpathContainer"); //$NON-NLS-1$
-		element.setAttribute("path", var.getClasspathContainer().getPath().toString()); //$NON-NLS-1$
+		element.setAttribute("path", var.getPath().toString()); //$NON-NLS-1$
 		document.appendChild(element);
 		return serializeDocument(document);
 	}
