@@ -70,7 +70,7 @@ public class JDK12Launcher extends JavaLauncher {
 			process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
 			return new VMRunnerResult(null, new IProcess[] { process });
 		} catch (IOException e) {
-			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.startMV"), e)); //$NON-NLS-1$
+			throw new CoreException(createStatus(LauncherMessages.getString("jdkLauncher.error.startVM"), e)); //$NON-NLS-1$
 		}
 	}
 
