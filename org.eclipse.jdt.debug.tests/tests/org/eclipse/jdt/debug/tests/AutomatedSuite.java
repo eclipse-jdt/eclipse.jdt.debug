@@ -34,7 +34,6 @@ import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
 import org.eclipse.jdt.debug.tests.core.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
-import org.eclipse.jdt.debug.tests.core.StepFilterTests;
 import org.eclipse.jdt.debug.tests.core.SuspendVMBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
