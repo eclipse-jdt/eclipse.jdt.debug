@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
@@ -130,11 +131,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);		
 		
-		Composite comp= createLabelledComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_Execution_1")); //$NON-NLS-1$
+		Composite comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_Execution_1")); //$NON-NLS-1$
 		fSuspendButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_&execution_on_uncaught_exceptions_1")); //$NON-NLS-1$
 		fSuspendOnCompilationErrors= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_execution_on_co&mpilation_errors_1")); //$NON-NLS-1$
 		
-		comp= createLabelledComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Hot_Code_Replace_Error_Reporting_2")); //$NON-NLS-1$
+		comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Hot_Code_Replace_Error_Reporting_2")); //$NON-NLS-1$
 		fAlertHCRButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
 		fAlertObsoleteButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_obsolete_methods_remain_1")); //$NON-NLS-1$
 		
@@ -148,7 +149,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 * Create the primitive display preferences composite widget
 	 */
 	private void createPrimitiveDisplayPreferences(Composite parent) {
-		Composite comp= createLabelledComposite(parent, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Primitive_type_display_options_2"));	 //$NON-NLS-1$
+		Composite comp= createGroupComposite(parent, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Primitive_type_display_options_2"));	 //$NON-NLS-1$
 		
 		fHexButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Display_&hexadecimal_values_(byte,_short,_char,_int,_long)_3")); //$NON-NLS-1$
 		fCharButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Display_ASCII_&character_values_(byte,_short,_int,_long)_4")); //$NON-NLS-1$
@@ -209,16 +210,15 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	}
 	
 	/**
-	 * Creates composite control and sets the default layout data.
+	 * Creates composite group and sets the default layout data.
 	 *
 	 * @param parent  the parent of the new composite
 	 * @param numColumns  the number of columns for the new composite
 	 * @param labelText  the text label of the new composite
 	 * @return the newly-created composite
 	 */
-	private Composite createLabelledComposite(Composite parent, int numColumns, String labelText) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		
+	private Composite createGroupComposite(Composite parent, int numColumns, String labelText) {
+		Group comp = new Group(parent, SWT.NONE);
 		//GridLayout
 		GridLayout layout = new GridLayout();
 		layout.numColumns = numColumns;
@@ -228,13 +228,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		gd.verticalAlignment = GridData.FILL;
 		gd.horizontalAlignment = GridData.FILL;
 		comp.setLayoutData(gd);
-		
-		//Label
-		Label label = new Label(comp, SWT.NONE);
-		label.setText(labelText);
-		gd = new GridData();
-		gd.horizontalSpan = numColumns;
-		label.setLayoutData(gd);
+		comp.setText(labelText);
 		return comp;
 	}
 		
