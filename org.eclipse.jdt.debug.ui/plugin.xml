@@ -1358,7 +1358,7 @@
          <action
                label="%runToLineAction.label"
                helpContextId="run_to_line_action_context"
-               class="org.eclipse.debug.internal.ui.actions.RunToLineActionDelegate"
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
                menubarPath="additions"
                id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine">
          </action>
@@ -1479,7 +1479,7 @@
          <action
                label="%runToLineAction.label"
                helpContextId="run_to_line_action_context"
-               class="org.eclipse.debug.internal.ui.actions.RunToLineActionDelegate"
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
                menubarPath="additions"
                id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine">
          </action>         
@@ -1575,7 +1575,7 @@
          <action
                label="%manageMethodBreakpointAction.label"
                helpContextId="manage_method_breakpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.ToggleMethodBreakpointObjectActionDelegate"
+               class="org.eclipse.debug.ui.actions.ToggleMethodBreakpointActionDelegate"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.MethodBreakpoint">
@@ -1587,7 +1587,7 @@
          <action
                label="%manageWatchpointAction.label"
                helpContextId="manage_watchpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.ToggleWatchpointObjectActionDelegate"
+               class="org.eclipse.debug.ui.actions.ToggleWatchpointActionDelegate"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.Watchpoint">
@@ -1615,7 +1615,7 @@
          <action
                label="%manageWatchpointAction.label"
                helpContextId="manage_watchpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.ToggleWatchpointObjectActionDelegate"
+               class="org.eclipse.debug.ui.actions.ToggleWatchpointActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.VariableWatchpoint">
