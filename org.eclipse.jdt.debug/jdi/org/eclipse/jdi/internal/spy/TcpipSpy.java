@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -131,6 +132,7 @@ public class TcpipSpy extends Thread {
 				fDataOut.flush();
 			}
 		} catch (EOFException e) {
+		} catch (SocketException e) {
 		} catch (IOException e) {
 			out.println(MessageFormat.format(TcpIpSpyMessages.getString("TcpipSpy.Caught_exception__{0}_5"), new String[] {e.toString()})); //$NON-NLS-1$
 			e.printStackTrace(out);
@@ -166,12 +168,15 @@ public class TcpipSpy extends Thread {
 		}
 	}
 
-	public static int getCommand(JdwpPacket packet) {
+	public static int getCommand(JdwpPacket packet) throws UnableToParseData {
 		JdwpCommandPacket command= null;
 		if (packet instanceof JdwpCommandPacket) {
 			command= (JdwpCommandPacket) packet;
 		} else {
 			command= getCommand(packet.getId());
+			if (command == null) {
+				throw new UnableToParseData(TcpIpSpyMessages.getString("TcpIpSpy.This_packet_is_marked_as_reply,_but_there_is_no_command_with_the_same_id._1"), null); //$NON-NLS-1$
+			}
 		}
 		return command.getCommand();
 	}

@@ -143,12 +143,24 @@ public class VerbosePacketStream extends PrintStream {
 	}
 	
 	public synchronized void print(JdwpPacket packet, boolean fromVM) throws IOException {
-		printHeader(packet, fromVM);
-		printData(packet);
-		println();
+		try {
+			printHeader(packet, fromVM);
+			printData(packet);
+			println();
+		} catch (UnableToParseData e) {
+			println("\n" + e.getMessage() + ':'); //$NON-NLS-1$
+			printDescription("Remaining data:");
+			byte[] data= e.getRemainingData();
+			if (data == null) {
+				printHex(packet.data());
+			} else {
+				printHex(e.getRemainingData());
+			}
+			println();
+		}
 	}
 	
-	protected void printHeader(JdwpPacket packet, boolean fromVM) throws IOException {
+	protected void printHeader(JdwpPacket packet, boolean fromVM) throws IOException, UnableToParseData {
 		if (fromVM) {
 			println(TcpIpSpyMessages.getString("VerbosePacketStream.From_VM_1")); //$NON-NLS-1$
 		} else {
@@ -213,16 +225,11 @@ public class VerbosePacketStream extends PrintStream {
 		println();
 	}
 
-	protected void printData(JdwpPacket packet) throws IOException {
-		try {
-			if ((packet.getFlags() & JdwpPacket.FLAG_REPLY_PACKET) != 0) {
-				printReplyData((JdwpReplyPacket) packet);
-			} else {
-				printCommandData((JdwpCommandPacket) packet);
-			}
-		} catch (UnableToParseData e) {
-			printDescription(e.getMessage() + ':');
-			printHex(e.getRemainingData());
+	protected void printData(JdwpPacket packet) throws IOException, UnableToParseData {
+		if ((packet.getFlags() & JdwpPacket.FLAG_REPLY_PACKET) != 0) {
+			printReplyData((JdwpReplyPacket) packet);
+		} else {
+			printCommandData((JdwpCommandPacket) packet);
 		}
 	}
 
@@ -2508,6 +2515,10 @@ public class VerbosePacketStream extends PrintStream {
 	}	
 	
 	protected void printHex(byte[] b) {
+		if (b == null) {
+			println("NULL");
+			return;
+		}
 		int i, length;
 		for (i= 0, length= b.length; i < length; i ++) {
 			String hexa= Integer.toHexString(b[i]).toUpperCase();
