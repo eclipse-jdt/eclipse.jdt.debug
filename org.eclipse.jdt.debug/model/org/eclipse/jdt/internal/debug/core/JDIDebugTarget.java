@@ -1472,6 +1472,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			fTempFiles = new HashMap(10);
 		}
 		IJavaProject javaProject = context.getProject();
+		final IProject project= javaProject.getProject();
+		IPath projectPath= project.getFullPath();
+		
 		// determine the folder in which output packages are located
 		IPath oPath = null;
 		try {
@@ -1483,13 +1486,20 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		// create the files in a workspace runnable
 		final IWorkspace workspace= javaProject.getProject().getWorkspace();
 		final IPath outputPath= oPath;
+		final boolean outputToProject= outputPath.equals(projectPath);
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					IFolder outputFolder= workspace.getRoot().getFolder(outputPath);
+				public void run(IProgressMonitor monitor) throws CoreException {					
+					// allow for output path to be project itself
+					IContainer outputContainer= null;
+					if (outputToProject) {
+						outputContainer= project;
+					} else {
+						outputContainer= workspace.getRoot().getFolder(outputPath);
+					}
 					for (int i = 0; i < classFiles.length; i++) {
 						String[] compoundName = classFileNames[i];
 						//create required folders
-						IFolder parent = outputFolder;
+						IContainer parent = outputContainer;
 						for (int j = 0; j < (compoundName.length - 1); j++) {
 							IFolder folder = parent.getFolder(new Path(compoundName[j]));
 							if (!folder.exists()) {
