@@ -8,6 +8,7 @@ package org.eclipse.jdt.internal.debug.core.model;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
@@ -195,7 +196,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 		} 
 
 		setValue(value);
-		fireChangeEvent();
+		fireChangeEvent(DebugEvent.CONTENT);
 	}
 
 	/**

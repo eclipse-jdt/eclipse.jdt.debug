@@ -687,7 +687,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public void typesFailedHCR(List qualifiedNames) {
 		fOutOfSynchTypes.addAll(qualifiedNames);
-		fireChangeEvent();
+		fireChangeEvent(DebugEvent.CONTENT);
 	}
 	
 	/**

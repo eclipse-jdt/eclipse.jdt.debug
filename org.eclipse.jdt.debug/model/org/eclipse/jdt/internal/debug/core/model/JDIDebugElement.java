@@ -155,10 +155,13 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 
 	/**
-	 * Fires a debug event marking the CHANGE of this element.
+	 * Fires a debug event marking the CHANGE of this element
+	 * with the specifed detail code.
+	 * 
+	 * @param detail one of <code>STATE</code> or <code>CONTENT</code>
 	 */
-	public void fireChangeEvent() {
-		fireEvent(new DebugEvent(this, DebugEvent.CHANGE));
+	public void fireChangeEvent(int detail) {
+		fireEvent(new DebugEvent(this, DebugEvent.CHANGE, detail));
 	}
 	
 	/**

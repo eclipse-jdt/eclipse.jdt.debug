@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -796,7 +797,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	
 	public void setOutOfSynch(boolean outOfSynch) {
 		fIsOutOfSynch= outOfSynch;
-		fireChangeEvent();
+		fireChangeEvent(DebugEvent.STATE);
 	}
 	
 	/**
@@ -1018,7 +1019,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	private void setLocalsAvailable(boolean available) {
 		if (available != fLocalsAvailable) {
 			fLocalsAvailable = available;
-			fireChangeEvent();
+			fireChangeEvent(DebugEvent.STATE);
 		}
 	}	
 }

@@ -434,7 +434,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				target.typesHaveChanged(resources, qualifiedNames);
 				if (containsObsoleteMethods(target)) {
 					fireObsoleteMethods(target);
-					target.fireChangeEvent();
+					target.fireChangeEvent(DebugEvent.CONTENT);
 				}
 				if (target.getVM().canPopFrames() && framesPopped) {
 					// Second half of JDK 1.4 drop to frame support:

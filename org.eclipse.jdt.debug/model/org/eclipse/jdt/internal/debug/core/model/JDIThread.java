@@ -1367,7 +1367,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				// InvalidStackFrameException can be thrown when all but the
 				// deepest frame were popped. Fire a changed notification
 				// in case this has occured.
-				fireChangeEvent();
+				fireChangeEvent(DebugEvent.CONTENT);
 				targetRequestFailed(exception.toString(),exception); //$NON-NLS-1$
 			} catch (RuntimeException exception) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_popping"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
