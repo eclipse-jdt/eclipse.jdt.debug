@@ -60,7 +60,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 			public IStatus validate(Object[] selection) {
 				for (int i= 0; i < selection.length; i++) {
 					if (!(selection[i] instanceof IContainer)) {
-						return new Status(IStatus.OK, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.getString("AddFolderAction.Selection_must_be_a_folder_2"), null); //$NON-NLS-1$
+						return new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.getString("AddFolderAction.Selection_must_be_a_folder_2"), null); //$NON-NLS-1$
 					}
 					
 				}
