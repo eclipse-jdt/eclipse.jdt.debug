@@ -407,7 +407,10 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			evaluationEnds();
 		}
 	}
-
+	
+	/**
+	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
+	 */
 	public void evaluationComplete(final IEvaluationResult result) {
 		Runnable r = new Runnable() {
 			public void run() {
@@ -463,6 +466,13 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		if (!control.isDisposed()) {
 			control.getDisplay().asyncExec(r);
 		}		
+	}
+	
+	/**
+	 * @see IEvaluationListener#evaluationTimedOut(IJavaThread)
+	 */
+	public boolean evaluationTimedOut(IJavaThread thread) {
+		return true; // Keep waiting
 	}
 	
 	/**

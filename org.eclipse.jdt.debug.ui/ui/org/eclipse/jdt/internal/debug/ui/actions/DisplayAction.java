@@ -20,13 +20,21 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Displays the result of an evaluation in the display view
  */
 public class DisplayAction extends EvaluateAction implements IValueDetailListener {
+	
+	/**
+	 * Used in evaluationTimedOut
+	 */
+	private boolean fKeepWaiting;
 	
 	/**
 	 * The debug model presentation used for computing toString
@@ -70,6 +78,27 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 				}
 			});
 		}
+	}
+	
+	/**
+	 * @see IEvaluationListener#evaluationTimedOut(IJavaThread)
+	 */
+	public boolean evaluationTimedOut(final IJavaThread thread) {
+		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+			public void run() {
+				boolean answer= MessageDialog.openQuestion(getShell(), "Evaluation timed out", "Do you want to suspend the evaluation? Answer no to keep waiting");
+				if (answer) {
+					try {
+						thread.suspend();
+					} catch (DebugException exception) {
+					}
+					fKeepWaiting= false;
+				} else {
+					fKeepWaiting= true; // Keep waiting
+				}
+			}
+		});
+		return fKeepWaiting;
 	}
 	
 	protected void insertResult(IJavaValue result, IJavaThread thread) {
