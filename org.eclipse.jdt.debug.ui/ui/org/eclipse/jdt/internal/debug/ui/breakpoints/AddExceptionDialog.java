@@ -212,6 +212,7 @@ public class AddExceptionDialog extends TypeSelectionDialog {
 				return false;
 			}
 		}
+		updateStatus(new StatusInfo(IStatus.OK, null));
 		return true;
 	}	
 
