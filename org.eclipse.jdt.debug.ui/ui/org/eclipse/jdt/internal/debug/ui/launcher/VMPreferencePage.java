@@ -61,6 +61,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Font;
@@ -485,15 +486,19 @@ public class VMPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		return super.performOk();
 	}	
 	
-	private void saveVMDefinitions(VMDefinitionsContainer container) {
-		// Generate XML for the VM defs and save it as the new value of the VM preference
-		try {
-			String vmDefXML = container.getAsXML();
-			JavaRuntime.getPreferences().setValue(JavaRuntime.PREF_VM_XML, vmDefXML);
-			JavaRuntime.savePreferences();
-		} catch (IOException ioe) {
-			JDIDebugUIPlugin.log(ioe);
-		}			
+	private void saveVMDefinitions(final VMDefinitionsContainer container) {
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				// Generate XML for the VM defs and save it as the new value of the VM preference
+				try {
+					String vmDefXML = container.getAsXML();
+					JavaRuntime.getPreferences().setValue(JavaRuntime.PREF_VM_XML, vmDefXML);
+					JavaRuntime.savePreferences();
+				} catch (IOException ioe) {
+					JDIDebugUIPlugin.log(ioe);
+				}
+			}
+		});
 	}
 	
 	protected IJavaModel getJavaModel() {

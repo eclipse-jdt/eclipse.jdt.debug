@@ -33,14 +33,17 @@ import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.internal.events.ResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
@@ -174,6 +177,19 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		 * changes.
 		 */
 		public void process() throws CoreException {
+			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					rebind();
+				}
+			};
+			ResourcesPlugin.getWorkspace().run(runnable, new NullProgressMonitor());
+		}
+				
+		/**
+		 * Re-bind classpath variables and containers affected by the JRE
+		 * changes.
+		 */
+		private void rebind() throws CoreException {
 			
 			IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
 			 
