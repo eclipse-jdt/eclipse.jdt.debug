@@ -1257,19 +1257,18 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			// JDK 1.4 support
 			try {
 				// Pop the drop frame and all frames above it
-				StackFrame jdiFrame = ((JDIStackFrame) frame).getUnderlyingStackFrame();
-				List frames = computeStackFrames();
-				Object lastFrame = frames.get(frames.size() - 1);
-				boolean last = frame.equals(lastFrame);	
+				StackFrame jdiFrame = ((JDIStackFrame) frame).getUnderlyingStackFrame();	
 				fThread.popFrames(jdiFrame);
 				disposeStackFrames();
 				computeStackFrames();
-				if (last) {
-					fireSuspendEvent(DebugEvent.STEP_END);
-				} else {
-					stepInto();	
-				}
+				stepInto();
 			} catch (IncompatibleThreadStateException exception) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
+			} catch (InvalidStackFrameException exception) {
+				// InvalidStackFrameException can be thrown when all but the
+				// deepest frame were popped. Fire a changed notification
+				// in case this has occured.
+				fireChangeEvent();
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
 			} catch (RuntimeException exception) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
