@@ -551,7 +551,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void removeFromTarget(final JDIDebugTarget target) throws CoreException {
 		removeRequests(target);
-		fFilteredThreadsByTarget.remove(target);
+		Object removed = fFilteredThreadsByTarget.remove(target);
+		boolean changed = removed != null;
 		boolean markerExists = markerExists();
 		if (!markerExists || (markerExists && getInstallCount() == 0)) {
 			fInstalledTypeName = null;
@@ -559,7 +560,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		
 		// remove instance filters 
 		if (fInstanceFilters != null && !fInstanceFilters.isEmpty()) {
-			boolean changed = false;
 			for (int i = 0; i < fInstanceFilters.size(); i++) {
 				IJavaObject object = (IJavaObject)fInstanceFilters.get(i);
 				if (object.getDebugTarget().equals(target)) {
@@ -569,9 +569,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 					i++;
 				}
 			}
-			if (changed) {
-				fireChanged();
-			}
+		}
+		
+		// fire change notification if required
+		if (changed) {
+			fireChanged();
 		}
 		
 		// notification
