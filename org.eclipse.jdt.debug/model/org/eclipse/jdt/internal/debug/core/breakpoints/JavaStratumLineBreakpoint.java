@@ -162,6 +162,11 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 				sourceNames= type.sourceNames(stratum);
 			} catch (AbsentInformationException e1) {
 				return false;
+			} catch (VMDisconnectedException e) {
+				if (!target.isAvailable()) {
+					return false;
+				}
+				throw e;
 			}
 			if (!containsMatch(sourceNames, bpSourceName)) {
 				return false;
@@ -176,6 +181,11 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 				sourcePaths= type.sourcePaths(stratum);
 			} catch (AbsentInformationException e1) {
 				return false;
+			} catch (VMDisconnectedException e) {
+				if (!target.isAvailable()) {
+					return false;
+				}
+				throw e;
 			}
 			if (!containsMatch(sourcePaths, bpSourcePath)) {
 				return false;

@@ -27,6 +27,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
 
 public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPatternBreakpoint {
@@ -94,6 +95,14 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 				sourceName = type.sourceName();
 			} catch (AbsentInformationException e) {
 				// unable to compare
+			} catch (VMDisconnectedException e) {
+				if (!target.isAvailable()) {
+					return false;
+				}
+				target.targetRequestFailed(MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.exception_source_name"),new String[] {e.toString(), type.name()}) ,e); //$NON-NLS-1$
+				// execution will not reach this line, as 
+				// #targetRequestFailed will throw an exception			
+				return false;
 			} catch (RuntimeException e) {
 				target.targetRequestFailed(MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.exception_source_name"),new String[] {e.toString(), type.name()}) ,e); //$NON-NLS-1$
 				// execution will not reach this line, as 
