@@ -54,5 +54,23 @@ public class BreakpointsLocation {
 		=
 		3
 		;
+	
+	public void code() {
+		boolean
+			i
+			=
+			1
+			>
+			2
+			;
+		
+		int 
+			s
+			=
+			i
+			-
+			12
+			;
+	}
 
 }

@@ -64,7 +64,9 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 	
 	public void testLineAfterAllCode() throws Exception {
-		testLocation(58, -1, null);
+		// ********* this test need to be updated everytime BreakpointsLocation.java is modified *************
+		testLocation(74, -1, null);
+		// ******************************
 	}
 	
 	public void testLineVariableDeclarationWithAssigment() throws Exception {
@@ -73,6 +75,30 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	
 	public void testLineFieldDeclarationWithAssigment() throws Exception {
 		testLocation(51, 53, "BreakpointsLocation");
+	}
+	
+	public void testLineExpressionReplacedByConstant1() throws Exception {
+		testLocation(62, 62, "BreakpointsLocation");
+	}
+	
+	public void testLineExpressionReplacedByConstant2() throws Exception {
+		testLocation(64, 62, "BreakpointsLocation");
+	}
+	
+	public void testLineExpressionNotReplacedByConstant1() throws Exception {
+		testLocation(70, 70, "BreakpointsLocation");
+	}
+	
+	public void testLineExpressionNotReplacedByConstant2() throws Exception {
+		testLocation(72, 72, "BreakpointsLocation");
+	}
+	
+	public void testLineLitteral1() throws Exception {
+		testLocation(46, 46, "BreakpointsLocation");
+	}
+	
+	public void testLineLitteral2() throws Exception {
+		testLocation(55, 55, "BreakpointsLocation");
 	}
 	
 	public void testField(int line, int offsetInLine, String expectedFieldName, String expectedTypeName) throws Exception {

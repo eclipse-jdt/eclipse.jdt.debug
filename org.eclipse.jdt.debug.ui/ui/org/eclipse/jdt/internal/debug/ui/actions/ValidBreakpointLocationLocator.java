@@ -80,6 +80,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
+import org.eclipse.jdt.core.dom.PrefixExpression.Operator;
 
 /**
  * Compute a valid location where to put a breakpoint from an JDOM CompilationUnit.
@@ -156,9 +157,11 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	}
 
 	/**
+	 * Return <code>true</code> if this node children may contain a valid location
+	 * for the breakpoint.
 	 * @param node the node.
-	 * @param isCode true indicated that the first line of the given node always contains some executable code, even if split in multiple lines.
-	 * @return
+	 * @param isCode true indicated that the first line of the given node always
+	 *	contains some executable code, even if split in multiple lines.
 	 */
 	private boolean visit(ASTNode node, boolean isCode) {
 		int startPosition= node.getStartPosition();
@@ -181,6 +184,47 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return true;
 	}
 	
+	private boolean isReplacedByConstantValue(Expression node) {
+		switch (node.getNodeType()) {
+			// litterals are constant
+			case ASTNode.BOOLEAN_LITERAL:
+			case ASTNode.CHARACTER_LITERAL:
+			case ASTNode.NUMBER_LITERAL:
+			case ASTNode.STRING_LITERAL:
+				return true;
+			case ASTNode.INFIX_EXPRESSION:
+				return isReplacedByConstantValue((InfixExpression)node);
+			case ASTNode.PREFIX_EXPRESSION:
+				return isReplacedByConstantValue((PrefixExpression)node);
+			default:
+				return false;
+		}
+	}
+	
+	private boolean isReplacedByConstantValue(InfixExpression node) {
+		// if all operands are constant value, the expression is replaced by a constant value
+		if (!(isReplacedByConstantValue(node.getLeftOperand()) && isReplacedByConstantValue(node.getRightOperand()))) {
+			return false;
+		}
+		if (node.hasExtendedOperands()) {
+			for (Iterator iter = node.extendedOperands().iterator(); iter.hasNext(); ) {
+				if (!isReplacedByConstantValue((Expression) iter.next())) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	private boolean isReplacedByConstantValue(PrefixExpression node) {
+		// for '-', '+', '~' and '!', if the operand is a constant value,
+		// the expression is replaced by a constant value
+		Operator operator = node.getOperator();
+		if (operator != PrefixExpression.Operator.INCREMENT && operator != PrefixExpression.Operator.DECREMENT) {
+			return isReplacedByConstantValue(node.getOperand());
+		}
+		return false;
+	}
 
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnonymousClassDeclaration)
@@ -252,7 +296,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.BooleanLiteral)
 	 */
 	public boolean visit(BooleanLiteral node) {
-		return visit(node, false);
+		return visit(node, true);
 	}
 
 	/**
@@ -280,7 +324,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.CharacterLiteral)
 	 */
 	public boolean visit(CharacterLiteral node) {
-		return visit(node, false);
+		return visit(node, true);
 	}
 
 	/**
@@ -386,7 +430,16 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.InfixExpression)
 	 */
 	public boolean visit(InfixExpression node) {
-		return visit(node, false);
+		if (visit(node, false)) {
+			if (isReplacedByConstantValue(node)) {
+				fLocation= fCompilationUnit.lineNumber(node.getStartPosition());
+				fLocationFound= true;
+				fTypeName= computeTypeName(node);
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -449,7 +502,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.NumberLiteral)
 	 */
 	public boolean visit(NumberLiteral node) {
-		return visit(node, false);
+		return visit(node, true);
 	}
 
 	/**
@@ -477,7 +530,16 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.PrefixExpression)
 	 */
 	public boolean visit(PrefixExpression node) {
-		return visit(node, false);
+		if (visit(node, false)) {
+			if (isReplacedByConstantValue(node)) {
+				fLocation= fCompilationUnit.lineNumber(node.getStartPosition());
+				fLocationFound= true;
+				fTypeName= computeTypeName(node);
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -527,7 +589,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.StringLiteral)
 	 */
 	public boolean visit(StringLiteral node) {
-		return visit(node, false);
+		return visit(node, true);
 	}
 
 	/**
