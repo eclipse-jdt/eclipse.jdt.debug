@@ -73,7 +73,7 @@
 	<sourceLocator
 		id = "org.eclipse.jdt.launching.javaSourceLocator"
 	   	class="org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator"
-	   	name="Basic Java Source Locator"/>
+	   	name="%javaSourceLocatorName"/>
 </extension>
 
 <extension point = "org.eclipse.jdt.launching.vmConnectors">
