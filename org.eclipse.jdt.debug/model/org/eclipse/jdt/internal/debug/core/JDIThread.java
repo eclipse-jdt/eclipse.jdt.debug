@@ -463,20 +463,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			return getUnderlyingThread().frames();
 		} catch (IncompatibleThreadStateException e) {
-			// The debug model is not in synch with the underlying
-			// thread - update the model to reflect the underlying
-			// thread. This can happen when a thread is first created and
-			// its running state is initialized to "suspended". The VM can
-			// resume the thread without notifying the model. 
-			// (1) set this thread to "running"
-			// (2) fire a resume event
-			// This will not corrupt the 'refresh children' flag, as when
-			// a thread starts it has no stack frames, and the flag
-			// will remain as 'true' until stack frames are retrieved
-			// (bug 6518)
-			setRunning(true);
-			fireResumeEvent(DebugEvent.UNSPECIFIED);
-			return Collections.EMPTY_LIST;
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
@@ -586,6 +576,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected Value invokeMethod(ClassType receiverClass, ObjectReference receiverObject, Method method, List args) throws DebugException {
 		if (receiverClass != null && receiverObject != null) {
 			throw new IllegalArgumentException(JDIDebugModelMessages.getString("JDIThread.can_only_specify_one_receiver_for_a_method_invocation")); //$NON-NLS-1$
+		}
+		synchronized (this) {
+			if (!isSuspended()) {
+				requestFailed(JDIDebugModelMessages.getString("JDIThread.Evaluation_failed_-_thread_not_suspended"), null); //$NON-NLS-1$
+			}
 		}
 		if (isPerformingEvaluation()) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null); //$NON-NLS-1$
@@ -1065,7 +1060,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see IStep#stepInto()
 	 */
-	public void stepInto() throws DebugException {
+	public synchronized void stepInto() throws DebugException {
 		if (!canStepInto()) {
 			return;
 		}
@@ -1073,10 +1068,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		handler.step();
 	}
 
-	/**
+	/** 
 	 * @see IStep#stepOver()
 	 */
-	public void stepOver() throws DebugException {
+	public synchronized void stepOver() throws DebugException {
 		if (!canStepOver()) {
 			return;
 		}
@@ -1087,7 +1082,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see IStep#stepReturn()
 	 */
-	public void stepReturn() throws DebugException {
+	public synchronized void stepReturn() throws DebugException {
 		if (!canStepReturn()) {
 			return;
 		}

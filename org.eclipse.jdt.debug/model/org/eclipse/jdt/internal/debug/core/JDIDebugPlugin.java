@@ -33,6 +33,35 @@ public class JDIDebugPlugin extends Plugin {
 	private JavaHotCodeReplaceManager fJavaHCRMgr;
 	
 	/**
+	 * Whether this plug-in is in trace mode.
+	 * Extra messages are logged in trace mode.
+	 */
+	private boolean fTrace = false;
+	
+	/**
+	 * Returns whether the debug UI plug-in is in trace
+	 * mode.
+	 * 
+	 * @return whether the debug UI plug-in is in trace
+	 *  mode
+	 */
+	public boolean isTraceMode() {
+		return fTrace;
+	}
+	
+	/**
+	 * Logs the given message if in trace mode.
+	 * 
+	 * @param String message to log
+	 */
+	public static void logTraceMessage(String message) {
+		if (getDefault().isTraceMode()) {
+			IStatus s = new Status(IStatus.WARNING, JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, message, null);
+			getDefault().getLog().log(s);
+		}
+	}	
+	
+	/**
 	 * Return the singleton instance of the JDI Debug Model plug-in.  
 	 * @return the singleton instance of JDIDebugPlugin
 	 */
