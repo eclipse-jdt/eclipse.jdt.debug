@@ -18,6 +18,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -50,6 +51,7 @@ import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -324,6 +326,103 @@ public final class JavaRuntime {
 		return id.toString();
 	}
 	
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
+	 * 
+	 * Computes the default runtime claspath for a given project.
+	 * 
+	 * @return runtime classpath entries
+	 * @exception CoreException if unable to compute the runtime classpath
+	 * 
+	 * [XXX: fix for libraries
+	 */
+	public static IRuntimeClasspathEntry[] computeRuntimeClasspath(IJavaProject project) throws CoreException {
+		IClasspathEntry entry = JavaCore.newProjectEntry(project.getPath());
+		List classpathEntries = expandProject(entry);
+		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries == null ? 0 : classpathEntries.size()];
+		for (int i = 0; i < runtimeEntries.length; i++) {
+			IClasspathEntry e = (IClasspathEntry)classpathEntries.get(i);
+			IRuntimeClasspathEntry re = null;
+			switch (e.getEntryKind()) {
+				case IClasspathEntry.CPE_PROJECT:
+					re = new RuntimeClasspathEntry(IRuntimeClasspathEntry.PROJECT, e);
+					break;
+				case IClasspathEntry.CPE_LIBRARY:
+					re = new RuntimeClasspathEntry(IRuntimeClasspathEntry.ARCHIVE, e);
+					break;
+				case IClasspathEntry.CPE_VARIABLE:
+					re = new RuntimeClasspathEntry(IRuntimeClasspathEntry.VARIABLE, e);
+					break;
+				default:
+					break;
+			}
+			runtimeEntries[i] = re;
+		}
+		return runtimeEntries;
+	}
+	
+	/**
+	 * Retursn the transitive closure of classpath entries for the
+	 * given project entry.
+	 * 
+	 * @param projectEntry project classpath entry
+	 * @return list of classpath entries
+	 * @exception CoreException if unable to expand the classpath
+	 */
+	public static List expandProject(IClasspathEntry projectEntry) throws CoreException {
+		// 1. Get the raw classpath
+		// 2. Replace source folder entries with a project entry
+		IPath projectPath = projectEntry.getPath();
+		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(projectPath);
+		if (res == null) {
+			return null;
+		}
+		IJavaProject project = (IJavaProject)JavaCore.create(res);
+		if (project == null) {
+			return null;
+		}
+		IClasspathEntry[] buildPath = project.getRawClasspath();
+		List unexpandedPath = new ArrayList(buildPath.length);
+		boolean projectAdded = false;
+		for (int i = 0; i < buildPath.length; i++) {
+			if (buildPath[i].getEntryKind() == IClasspathEntry.CPE_SOURCE && !projectAdded) {
+				projectAdded = true;
+				unexpandedPath.add(projectEntry);
+			} else {
+				unexpandedPath.add(buildPath[i]);
+			}
+		}
+		// 3. expand each project entry (except for the root project)
+		List expandedPath = new ArrayList(unexpandedPath.size());
+		Iterator iter = unexpandedPath.iterator();
+		while (iter.hasNext()) {
+			IClasspathEntry entry = (IClasspathEntry)iter.next();
+			if (entry == projectEntry) {
+				expandedPath.add(entry);
+			} else {
+				if (entry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+					if (!expandedPath.contains(entry)) {
+						List projectEntries = expandProject(entry);
+						if (projectEntries != null) {
+							Iterator entries = projectEntries.iterator();
+							while (entries.hasNext()) {
+								IClasspathEntry e = (IClasspathEntry)entries.next();
+								if (!expandedPath.contains(e)) {
+									expandedPath.add(e);
+								}
+							}
+						}
+					}
+				} else {
+					if (!expandedPath.contains(entry)) {
+						expandedPath.add(entry);
+					}
+				}
+			}
+		}
+		return expandedPath;
+	}
+		
 	/**
 	 * Computes the default classpath for a given <code>project</code> 
 	 * from it's build classpath following this algorithm:
