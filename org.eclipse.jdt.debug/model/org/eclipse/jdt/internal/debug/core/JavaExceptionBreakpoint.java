@@ -35,20 +35,20 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * When this attribute is <code>true</code>, a caught exception of the associated
 	 * type will cause excecution to suspend .
 	 */
-	private static final String CAUGHT = "caught"; //$NON-NLS-1$
+	protected static final String CAUGHT = "caught"; //$NON-NLS-1$
 	/**
 	 * Exception breakpoint attribute storing the suspend on uncaught value
 	 * (value <code>"uncaught"</code>). This attribute is stored as a
 	 * <code>boolean</code>. When this attribute is <code>true</code>, an uncaught
 	 * exception of the associated type will cause excecution to suspend. .
 	 */
-	public static final String UNCAUGHT = "uncaught"; //$NON-NLS-1$	
+	protected static final String UNCAUGHT = "uncaught"; //$NON-NLS-1$	
 	/**
 	 * Exception breakpoint attribute storing the checked value (value <code>"checked"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether an
 	 * exception is a checked exception.
 	 */
-	private static final String CHECKED = "checked"; //$NON-NLS-1$	
+	protected static final String CHECKED = "checked"; //$NON-NLS-1$	
 	
 	// Attribute strings
 	protected static final String[] fgExceptionBreakpointAttributes= new String[]{CHECKED, TYPE_HANDLE};		
@@ -123,33 +123,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		Object[] values= new Object[]{Boolean.TRUE, Boolean.TRUE};
 		String[] attributes= new String[]{CAUGHT, UNCAUGHT};
 		ensureMarker().setAttributes(attributes, values);
-	}
-	
-	/**
-	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
-	 */
-	public void addToTarget(JDIDebugTarget target) throws CoreException {
-		
-		IType exceptionType = getType();
-		if (exceptionType == null) {
-			return;
-		}
-		String referenceName = getReferenceTypeName();
-		if (referenceName.equals("")) {
-			return;
-		}
-
-		// listen to class loads
-		registerRequest(target.createClassPrepareRequest(referenceName), target);
-					
-		List classes= target.jdiClassesByName(referenceName);
-		if (!classes.isEmpty()) {
-			Iterator iter = classes.iterator();
-			while (iter.hasNext()) {
-				ReferenceType exClass = (ReferenceType)iter.next();				
-				createRequest(target, exClass);
-			}
-		}	
 	}
 	
 	/**

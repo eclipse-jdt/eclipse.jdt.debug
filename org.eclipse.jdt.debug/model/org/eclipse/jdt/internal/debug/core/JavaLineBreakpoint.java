@@ -39,8 +39,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 
 	private static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpointMarker"; //$NON-NLS-1$
 	// Marker label String keys
-	private static final String LINE= "line"; //$NON-NLS-1$
-	private static final String HITCOUNT= "hitCount"; //$NON-NLS-1$	
+	protected static final String LINE= "line"; //$NON-NLS-1$
 	/**
 	 * Sets of attributes used to configure a line breakpoint
 	 */
@@ -121,29 +120,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			resource= type.getJavaProject().getProject();
 		}
 		return resource;
-	}
-	
-	/**
-	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
-	 */
-	protected void addToTarget(JDIDebugTarget target) throws CoreException {
-		String referenceTypeName= getReferenceTypeName();
-		if (referenceTypeName.equals("")) {
-			return;
-		}
-		
-		// create request to listen to class loads
-		registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
-		
-		// create breakpoint requests for each class currently loaded
-		List classes= target.jdiClassesByName(referenceTypeName);
-		if (!classes.isEmpty()) {
-			Iterator iter = classes.iterator();
-			while (iter.hasNext()) {
-				ReferenceType type= (ReferenceType) iter.next();
-				createRequest(target, type);
-			}
-		}
 	}
 	
 	/**

@@ -41,36 +41,50 @@ import com.sun.jdi.request.WatchpointRequest;
 
 public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoint {
 	
-	public static final String JAVA_WATCHPOINT= "org.eclipse.jdt.debug.javaWatchpointMarker"; //$NON-NLS-1$
-	
+	private static final String JAVA_WATCHPOINT= "org.eclipse.jdt.debug.javaWatchpointMarker"; //$NON-NLS-1$
 	/**
 	 * Watchpoint attribute storing the access value (value <code>"access"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether a
 	 * watchpoint is an access watchpoint.
 	 */
-	private static final String ACCESS= "access"; //$NON-NLS-1$
+	protected static final String ACCESS= "access"; //$NON-NLS-1$
 	/**
 	 * Watchpoint attribute storing the modification value (value <code>"modification"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether a
 	 * watchpoint is a modification watchpoint.
 	 */
-	private static final String MODIFICATION= "modification"; //$NON-NLS-1$	
+	protected static final String MODIFICATION= "modification"; //$NON-NLS-1$	
 	/**
 	 * Watchpoint attribute storing the auto_disabled value (value <code>"auto_disabled"</code>).
 	 * This attribute is stored as a <code>boolean</code>, indicating whether a
 	 * watchpoint has been auto-disabled (as opposed to being disabled explicitly by the user)
 	 */
-	private static final String AUTO_DISABLED="auto_disabled"; //$NON-NLS-1$
+	protected static final String AUTO_DISABLED="auto_disabled"; //$NON-NLS-1$
 	/**
 	 * Breakpoint attribute storing the handle identifier of the Java element
 	 * corresponding to the field on which a breakpoint is set
 	 * (value <code>"fieldHandle"</code>). This attribute is a <code>String</code>.
 	 */
-	private static final String FIELD_HANDLE= "fieldHandle"; //$NON-NLS-1$	
-	
-	private final static Integer ACCESS_EVENT= new Integer(0);
-	private final static Integer MODIFICATION_EVENT= new Integer(1);
-	private HashMap fLastEventTypes= new HashMap(10); // maps targets to reason for suspension
+	protected static final String FIELD_HANDLE= "fieldHandle"; //$NON-NLS-1$		
+	/**
+	 * Flag indicating that this breakpoint last suspended execution
+	 * due to a field access
+	 */
+	protected static final Integer ACCESS_EVENT= new Integer(0); // $NON-NLS-1$
+	/**
+	 * Flag indicating that this breakpoint last suspended execution
+	 * due to a field modification
+	 */	
+	protected static final Integer MODIFICATION_EVENT= new Integer(1); // $NON-NLS-1$
+	/**
+	 * Maps each debug target that is suspended for this breakpiont to reason that 
+	 * this breakpoint suspended it. Reasons include:
+	 * <ol>
+	 * <li>Field access (value <code>ACCESS_EVENT</code>)</li>
+	 * <li>Field modification (value <code>MODIFICATION_EVENT</code>)</li>
+	 * </ol>
+	 */
+	private HashMap fLastEventTypes= new HashMap(10); // $NON-NLS-1$
 	
 	public JavaWatchpoint() {
 	}

@@ -21,7 +21,6 @@ public class SnippetSupportLineBreakpoint extends JavaLineBreakpoint implements 
 	 * Constructor for SnippetSupportLineBreakpoint
 	 */
 	public SnippetSupportLineBreakpoint() {
-		super();
 	}
 
 	/**

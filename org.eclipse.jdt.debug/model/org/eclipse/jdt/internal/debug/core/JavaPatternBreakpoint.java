@@ -30,7 +30,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	 * file in which a breakpoint is created
 	 * (value <code>"patternHandle"</code>). This attribute is a <code>String</code>.
 	 */
-	private static final String PATTERN = "pattern"; //$NON-NLS-1$	
+	protected static final String PATTERN = "pattern"; //$NON-NLS-1$	
 	
 	protected static final String[] fgPatternAndHitCountAttributes= new String[]{PATTERN, HIT_COUNT, EXPIRED};		
 	
@@ -61,7 +61,11 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	 */
 	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		String typeName= type.name();
-		if (typeName != null && typeName.startsWith(getReferenceTypeName())) {
+		String installableTypeName= getReferenceTypeName();
+		if (typeName == null || installableTypeName == null) {
+			return;
+		}
+		if (typeName.startsWith(getReferenceTypeName())) {
 			super.createRequest(target, type);
 		}		
 	}
@@ -85,6 +89,9 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	protected boolean installableReferenceType(ReferenceType type) {
 		String pattern= getReferenceTypeName();
 		String queriedType= type.name();
+		if (pattern == null || queriedType == null) {
+			return false;
+		}
 		if (queriedType.startsWith(pattern)) {
 			return true;
 		}
