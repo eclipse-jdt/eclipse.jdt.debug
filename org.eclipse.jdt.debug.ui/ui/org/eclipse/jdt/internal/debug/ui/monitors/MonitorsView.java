@@ -119,23 +119,12 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 	}
 
 	/**
-	 * Sets the current view (see view id)
-	 * called from ToggleViewAction. Must be called after creation of the viewpart.
+	 * Sets the current view.
+	 * Must be called after creation of the viewpart.
 	 */	
 	public void setViewId(int viewerIndex) {
 		fViewId = viewerIndex;
-		switch (fViewId) {
-			case VIEW_ID_THREAD:
-				showViewer();
-				break;
-			case VIEW_ID_DEADLOCK:
-				showDeadLocksViewer();
-				break;
-			case VIEW_ID_MONITOR:
-				showMonitorsViewer();
-				break;
-		}
-		updateObjects();
+		refreshCurrentViewer(fMonitorInformationAvailable, true);
 	}
 	
 	/**
@@ -281,37 +270,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		fMonitorsViewer = monitorsViewer;
 	}
 
-	public void showDeadLocksViewer() {
-		if (getPageBook().isDisposed()) {
-			return;
-		}
-		if (!fMonitorInformationAvailable) {
-			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
-			return;
-		}
-		if(MonitorManager.getDefault().getNumberOfDeadlocks() == 0 && MonitorManager.getDefault().getThreads().length > 0) {
-			showMessage(MonitorMessages.getString("MonitorsView.No_deadlock_detected_3")); //$NON-NLS-1$
-		} else {
-			((TreeViewer)getDeadLocksViewer()).expandAll();
-			getDeadLocksViewer().refresh();
-			getPageBook().showPage(getDeadLocksViewer().getControl());
-		}
-	}
-	
-	public void showMonitorsViewer() {
-		if (getPageBook().isDisposed()) {
-			return;
-		}
-		if (!fMonitorInformationAvailable) {
-			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
-			return;
-		}
-		((TreeViewer)getMonitorsViewer()).expandAll();
-		getPageBook().showPage(getMonitorsViewer().getControl());
-	}
-
-	
-	public void refreshViewers(boolean monitorInformationAvailable) {
+	protected void refreshCurrentViewer(boolean monitorInformationAvailable, boolean showPage) {
 		if (getPageBook().isDisposed()) {
 			return;
 		}
@@ -319,46 +278,42 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		fMonitorInformationAvailable= monitorInformationAvailable;
 		if (!monitorInformationAvailable) {
 			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
+			updateObjects();
 			return;
 		}
 		Control page= null;
 		switch (fViewId) {
 			case VIEW_ID_THREAD:
+				page= getViewer().getControl();
+				page.setRedraw(false);
 				getViewer().refresh();
 				((TreeViewer)getViewer()).expandAll();
-				page= getViewer().getControl();
+				page.setRedraw(true);
 				break;
 			case VIEW_ID_DEADLOCK:
 				if(MonitorManager.getDefault().getNumberOfDeadlocks() == 0 && MonitorManager.getDefault().getThreads().length > 0) {
 					showMessage(MonitorMessages.getString("MonitorsView.No_deadlock_detected_3")); //$NON-NLS-1$
-					return;
+					break;
 				} else {
 					changeFromShowMessagePage= true;
 				}
+				page= getDeadLocksViewer().getControl();
+				page.setRedraw(false);
 				getDeadLocksViewer().refresh();
 				((TreeViewer)getDeadLocksViewer()).expandAll();
-				page= getDeadLocksViewer().getControl();
+				page.setRedraw(true);
 				break;
 			case VIEW_ID_MONITOR:
+				page= getMonitorsViewer().getControl();
+				page.setRedraw(false);
 				getMonitorsViewer().refresh();
 				((TreeViewer)getMonitorsViewer()).expandAll();
-				page= getMonitorsViewer().getControl();
+				page.setRedraw(true);				
 				break;
 		}
-		if (changeFromShowMessagePage) {
+		if (showPage | changeFromShowMessagePage) {
 			getPageBook().showPage(page);
 		}
 		updateObjects();
-	}
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#showViewer()
-	 */
-	public void showViewer() {
-		if (!fMonitorInformationAvailable) {
-			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
-			return;
-		}
-		((TreeViewer)getViewer()).expandAll();
-		super.showViewer();
 	}
 }

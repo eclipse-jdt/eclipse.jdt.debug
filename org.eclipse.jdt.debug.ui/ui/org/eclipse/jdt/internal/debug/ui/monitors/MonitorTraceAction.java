@@ -25,6 +25,6 @@ public class MonitorTraceAction extends MonitorAction {
 			return;
 		}
 		MonitorManager.getDefault().update(target);
-		fView.refreshViewers(target.supportsMonitorInformation());
+		fView.refreshCurrentViewer(target.supportsMonitorInformation(), false);
 	}
 }

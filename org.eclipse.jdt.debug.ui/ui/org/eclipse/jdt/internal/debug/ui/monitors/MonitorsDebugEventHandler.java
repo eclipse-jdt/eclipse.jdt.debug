@@ -74,7 +74,7 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 			}
 		}
 		if (updateNeeded) {
-			((MonitorsView)getView()).refreshViewers(monitorInformationAvailable);
+			((MonitorsView)getView()).refreshCurrentViewer(monitorInformationAvailable, false);
 		}
 	}
 }
