@@ -1449,28 +1449,19 @@
 		id = "org.eclipse.jdt.debug.ui.javaDebugActionGroup"
 	   	visible="true"
 	   	name="%JavaDebugActionGroup.name">
-	   	<action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"/>
 	   	<action id="org.eclipse.jdt.debug.ui.actions.AddException"/>
+	   	<action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"/>
 	   	<action id="org.eclipse.jdt.ui.breakpointViewPopupActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.debug.ui.breakpointViewPopupActions.AddException"/>
 	   	<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStaticFields"/>
-		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowFinalFields"/>
-		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowStaticFields"/>
-		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowFinalFields"/>
 		<action id="org.eclipse.jdt.ui.expressionViewPopupActions.ShowQualified"/>
+		<action id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression"/>
 		<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.ui.debugViewPopupActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.ui.actions.ToggleStepFilter"/>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStaticFields"/>
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowFinalFields"/>
-		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowStaticFields"/>
-		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowFinalFields"/>
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display"/>
         <action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Inspect"/>
-		<action id="org.eclipse.jdt.ui.actions.OpenOnConsoleType"/>
 	</debugActionGroup>
 </extension>
 
