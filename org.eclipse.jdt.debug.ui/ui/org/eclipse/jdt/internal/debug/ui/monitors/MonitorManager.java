@@ -368,7 +368,7 @@ public class MonitorManager {
 	 * If the thread is in a deadlock, returns the list to the deadlock
 	 * This list has the following structure:
 	 * <ul>
-	 * 	<li>First element: Thread in the deadlock</li>
+	 * 	<li>First element: Thread in the deadlock or waiting on a monitor that is involved in a deadlock</li>
 	 * 	<li>Second element: Monitor contended by the first element</li>
 	 * 	<li>Third element: Thread owning the second element</li>
 	 * 	<li>Fourth element: Monitor contended by the third element</li>

@@ -37,6 +37,11 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 		public boolean caughtInADeadLock;
 		public Object fChild= null;
 		
+		protected ContentThreadWrapper(IJavaThread thread, Object parent) {
+			fThread= thread;
+			fParent= parent;
+		}
+		
 		/**
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
@@ -65,6 +70,11 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 		public IJavaObject fMonitor;
 		public Object fParent= null;
 		public Object fChild= null;
+		
+		protected ContentMonitorWrapper(IJavaObject monitor, Object parent) {
+			fMonitor= monitor;
+			fParent= parent;
+		}
 		
 		/**
 		 * @see java.lang.Object#equals(java.lang.Object)
@@ -140,10 +150,8 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 			fRoots= new Object[numDeadLocks];
 			
 			for (int i = 0; i < numDeadLocks; i++) {
-				
 				//all the root elements are ContentThreadWrapper
-				ContentThreadWrapper rootWrapper = new ContentThreadWrapper();
-				rootWrapper.fThread = manager.getStartThread(i);
+				ContentThreadWrapper rootWrapper = new ContentThreadWrapper(null, manager.getStartThread(i));
 				List deadlockList = manager.getDeadlockList(i);
 				Map tree= new HashMap(deadlockList.size());
 				tree.put(rootWrapper, rootWrapper);
@@ -162,15 +170,9 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 			next= deadlockList.get(j);
 			
 			if (next instanceof IJavaObject) {
-				ContentMonitorWrapper wrapper= new ContentMonitorWrapper();
-				wrapper.fMonitor = (IJavaObject)next;
-				wrapper.fParent = parent;
-				object= wrapper;
+				object= new ContentMonitorWrapper((IJavaObject)next, parent);
 			} else {
-				ContentThreadWrapper wrapper= new ContentThreadWrapper();
-				wrapper.fThread = (IJavaThread)next;
-				wrapper.fParent = parent;
-				object = wrapper;
+				object= new ContentThreadWrapper((IJavaThread)next, parent);
 			}
 			if (j == 1) {
 				ctw.fChild= object;
