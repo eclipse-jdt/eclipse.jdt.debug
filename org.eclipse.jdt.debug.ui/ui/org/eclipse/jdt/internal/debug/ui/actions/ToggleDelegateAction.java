@@ -6,12 +6,9 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
 
 import org.eclipse.debug.ui.IDebugViewAdapter;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
@@ -19,12 +16,15 @@ import org.eclipse.ui.IViewPart;
  * A generic Toggle view action delegate, meant to be subclassed to provide
  * a specific filter.
  */
-public abstract class ToggleDelegateAction extends Action implements IViewActionDelegate {
+public abstract class ToggleDelegateAction implements IViewActionDelegate {
 
 	/**
 	 * The viewer that this action works for
 	 */
 	private StructuredViewer fViewer;
+	
+	private IAction fAction;
+	private boolean fNeedsInitialization= true;
 
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
@@ -60,11 +60,7 @@ public abstract class ToggleDelegateAction extends Action implements IViewAction
 	
 	protected abstract void valueChanged(boolean on);
 	
-	/**
-	 * @see IAction#run()
-	 */
-	public void run() {
-	}
+	protected abstract String getActionId();
 	
 	protected StructuredViewer getViewer() {
 		return fViewer;
@@ -78,5 +74,17 @@ public abstract class ToggleDelegateAction extends Action implements IViewAction
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		if (fNeedsInitialization) {
+			setAction(action);
+			action.setId(getActionId());
+		}
+	}
+	
+	protected IAction getAction() {
+		return fAction;
+	}
+
+	protected void setAction(IAction action) {
+		fAction = action;
 	}
 }

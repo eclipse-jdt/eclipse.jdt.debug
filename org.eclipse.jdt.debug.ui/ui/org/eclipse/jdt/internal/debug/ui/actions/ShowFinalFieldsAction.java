@@ -49,7 +49,10 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 
 	public ShowFinalFieldsAction() {
 		setViewerFilter(new FinalFilter());
-		setId(JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowFinalFieldsAction"); //$NON-NLS-1$
+	}
+	
+	protected String getActionId() {
+		return JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowFinalFieldsAction"; //$NON-NLS-1$
 	}
 
 	/**

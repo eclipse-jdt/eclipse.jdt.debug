@@ -12,14 +12,13 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.custom.BusyIndicator;
 
 /**
- * An action that toggles the state of its viewer to
+ * An action delegate that toggles the state of its viewer to
  * show/hide qualified names.
  */
 public class ShowQualifiedAction extends ToggleDelegateAction {
-
-	public ShowQualifiedAction() {
-		super();			
-		setId(JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowQualifiedAction"); //$NON-NLS-1$
+	
+	protected String getActionId() {
+		return JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowQualifiedAction"; //$NON-NLS-1$
 	}
 
 	protected void valueChanged(final boolean on) {
@@ -33,7 +32,7 @@ public class ShowQualifiedAction extends ToggleDelegateAction {
 			BusyIndicator.showWhile(getViewer().getControl().getDisplay(), new Runnable() {
 				public void run() {
 					getViewer().refresh();					
-					setToolTipText(getToolTipText(on));
+					getAction().setToolTipText(getToolTipText(on));
 				}
 			});
 		}

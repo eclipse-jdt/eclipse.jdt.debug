@@ -40,7 +40,7 @@ public abstract class ToggleFilterAction extends ToggleDelegateAction {
 				} else {
 					getViewer().removeFilter(getViewerFilter());
 				}
-				setToolTipText(getToolTipText(on));
+				getAction().setToolTipText(getToolTipText(on));
 			}
 		});
 	}
