@@ -32,12 +32,13 @@ public class ClasspathLabelProvider implements ILabelProvider, IColorProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		if (element instanceof ClasspathEntry) {
-			ClasspathEntry entry = (ClasspathEntry) element;
-			return runtimeClasspathLabelProvider.getImage(entry);
-		}
-		
-		return JavaClasspathTab.getClasspathImage();
+//		if (element instanceof ClasspathEntry) {
+//			ClasspathEntry entry = (ClasspathEntry) element;
+//			return runtimeClasspathLabelProvider.getImage(entry);
+//		}
+//		
+//		return JavaClasspathTab.getClasspathImage();
+		return null;
 	}
 
 	/* (non-Javadoc)

@@ -165,13 +165,14 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#isDefaultEntry()
 	 */
 	public boolean isDefaultEntry() {
-		return entry.isDefaultEntry();
+	//	return entry.isDefaultEntry();
+		return true;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#setDefaultEntry(boolean)
 	 */
 	public void setDefaultEntry(boolean defaultEntry) {
-		entry.setDefaultEntry(defaultEntry);
+	//	entry.setDefaultEntry(defaultEntry);
 	}
 }
