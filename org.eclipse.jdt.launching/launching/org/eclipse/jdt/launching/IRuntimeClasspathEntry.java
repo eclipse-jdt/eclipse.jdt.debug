@@ -22,10 +22,9 @@ import org.eclipse.core.runtime.IPath;
  * 		files. An archive may have attached source.</li>
  * 	<li>A variable (type <code>VARIABLE</code>) - a variable refers to a 
  * 		classpath variable, which may refer to a jar.</li>
- * 	<li>A library (type <code>LIBRARY</code>) - a library refers to a collection
- * 		of archives derived dynamically. A library determines whether its archives
- * 		should appear on the classpath or bootpath (explicitly or implicitly,
- * 		as a whole). A library refers to a classpath continer variable.</li>
+ * 	<li>A library (type <code>LIBRARY</code>) - a library refers to classpath
+ * 		conatiner variable which refers to a collection of archives derived
+ * 		dynamically.</li>
  * </ul>
  * <p>
  * Clients are not intended to implement this interface.
@@ -45,12 +44,12 @@ public interface IRuntimeClasspathEntry {
 	public static final int ARCHIVE = 2;	
 		
 	/**
-	 * Identifier for folder entries.
+	 * Identifier for variable entries.
 	 */
 	public static final int VARIABLE = 3;
 	
 	/**
-	 * Identifier for folder entries.
+	 * Identifier for library entries.
 	 */
 	public static final int LIBRARY = 4;
 
