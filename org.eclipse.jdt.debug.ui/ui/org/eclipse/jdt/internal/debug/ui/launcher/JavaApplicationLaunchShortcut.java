@@ -43,7 +43,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
- * Performs single click launching for local java applications.
+ * Performs single click launching for local Java applications.
  */
 public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 	
@@ -212,7 +212,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 	protected void reportCreatingConfiguration(final CoreException exception) {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				ErrorDialog.openError(getShell(), "Error Launching", "An exception occurred attempting to create launch configuration", exception.getStatus()); //new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, exception.getMessage(), exception));
+				ErrorDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationLaunchShortcut.Error_Launching_1"), LauncherMessages.getString("JavaApplicationLaunchShortcut.Exception"), exception.getStatus()); //new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, exception.getMessage(), exception)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 	}
@@ -244,7 +244,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 		if (je != null) {
 			searchAndLaunch(new Object[] {je}, mode, true);
 		} else {
-			MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationLaunchShortcut.The_active_editor_does_not_contain_a_main_type._3")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationLaunchShortcut.The_active_editor_does_not_contain_a_main_type._1")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 	}
@@ -256,7 +256,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 		if (selection instanceof IStructuredSelection) {
 			searchAndLaunch(((IStructuredSelection)selection).toArray(), mode, false);
 		} else {
-			MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationLaunchShortcut.The_selection_does_not_contain_a_main_type._4")); //$NON-NLS-1$ //$NON-NLS-2$
+			MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationLaunchShortcut.The_selection_does_not_contain_a_main_type._2")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
