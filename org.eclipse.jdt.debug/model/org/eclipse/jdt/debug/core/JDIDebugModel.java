@@ -112,7 +112,7 @@ public class JDIDebugModel {
 	
 	
 	private static boolean fgSuspendOnUncaughtExceptions= false;
-	private static final String SUSPEND_ON_UNCAUGHT_EXCEPTIONS_KEY= "suspend_on_uncaught_exceptions";
+	private static final String SUSPEND_ON_UNCAUGHT_EXCEPTIONS_KEY= "suspend_on_uncaught_exceptions"; //$NON-NLS-1$
 	
 	/**
 	 * Not to be instantiated.
