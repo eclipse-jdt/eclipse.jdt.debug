@@ -35,12 +35,10 @@ public class ClasspathVariableSourceContainerBrowser extends AbstractSourceConta
 	 */
 	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
 		ClasspathVariableSourceContainer container = (ClasspathVariableSourceContainer) containers[0];
-		IPath[] paths = BuildPathDialogAccess.chooseVariableEntries(shell, new IPath[]{container.getPath()});
-		if (paths != null) {			
-			containers = new ISourceContainer[paths.length];
-			for (int i = 0; i < containers.length; i++) {
-				containers[i] = new ClasspathVariableSourceContainer(paths[i]);
-			}
+		IPath path = BuildPathDialogAccess.configureVariableEntry(shell, container.getPath(), new IPath[]{container.getPath()});
+		if (path != null) {			
+			containers = new ISourceContainer[1];
+			containers[0] = new ClasspathVariableSourceContainer(path);
 			return containers;
 		}
 		return new ISourceContainer[0];

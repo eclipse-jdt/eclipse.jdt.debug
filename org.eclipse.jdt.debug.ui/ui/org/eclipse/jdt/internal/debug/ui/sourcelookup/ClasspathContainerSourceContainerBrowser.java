@@ -73,23 +73,26 @@ public class ClasspathContainerSourceContainerBrowser extends AbstractSourceCont
 			}
 		}
 		IClasspathEntry[] edits = null;
+		IClasspathEntry[] created = null;
 		if (classpathEntry == null) {
 			edits = new IClasspathEntry[0];
+			created = BuildPathDialogAccess.chooseContainerEntries(shell, project, edits);
 		} else {
 			edits = new IClasspathEntry[]{classpathEntry};
-		}
-		IClasspathEntry[] created = BuildPathDialogAccess.chooseContainerEntries(shell, project, edits);
-		if (created != null) {
-			if (created != null) {	
-				ISourceContainer[] newContainers = new ISourceContainer[created.length];
-				for (int i = 0; i < created.length; i++) {
-					IClasspathEntry entry = created[i];
-					ClasspathContainerSourceContainer container = new ClasspathContainerSourceContainer(entry.getPath());
-					container.init(director);
-					newContainers[i] = container;
-				}
-				return newContainers;
+			IClasspathEntry edit = BuildPathDialogAccess.configureContainerEntry(shell, classpathEntry, project, edits);
+			if (edit != null) {
+				created = new IClasspathEntry[]{edit};
 			}
+		}
+		if (created != null) {
+			ISourceContainer[] newContainers = new ISourceContainer[created.length];
+			for (int i = 0; i < created.length; i++) {
+				IClasspathEntry entry = created[i];
+				ClasspathContainerSourceContainer container = new ClasspathContainerSourceContainer(entry.getPath());
+				container.init(director);
+				newContainers[i] = container;
+			}
+			return newContainers;
 		}			
 		return new ISourceContainer[0];
 	}	
