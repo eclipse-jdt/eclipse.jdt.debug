@@ -67,7 +67,9 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 					} else if (typeId.equals(VariableClasspathEntry.TYPE_ID)) {
 						// add the archive itself - we currently do not allow a source attachment
 						res = JavaRuntime.resolveRuntimeClasspathEntry(entry, configuration);
-					}
+					} else {
+                        res = JavaRuntime.resolveRuntimeClasspathEntry(entry, configuration);
+                    }
 					if (res != null) {
 						for (int j = 0; j < res.length; j++) {
 							all.add(res[j]);
