@@ -161,7 +161,10 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 					if (part instanceof ITextEditor) {
 						if (!(part instanceof JavaSnippetEditor)) {
 							setTextEditor((ITextEditor)part);
-							update(getTextEditor().getSelectionProvider().getSelection());
+							ISelectionProvider sp= getTextEditor().getSelectionProvider();
+							if (sp != null) {
+								update(sp.getSelection());
+							}
 						}
 					}
 				}
