@@ -115,70 +115,65 @@
 </extension>
 
 <extension point="org.eclipse.ui.popupMenus">
-	<viewerContribution
+	<objectContribution
 		id="org.eclipse.jdt.debug.AccessWatchpointToggleActions"
-		targetID="org.eclipse.debug.ui.BreakpointView">
+		objectClass="org.eclipse.jdt.debug.core.IJavaWatchpoint">
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.AccessToggle"
 			label="%accessAction.label"
-			tooltip="%accessAction.tooltip"
 			menubarPath="emptyBreakpointGroup"
 			state="false"
 			class="org.eclipse.jdt.internal.debug.ui.actions.AccessWatchpointToggleAction"
 			enablesFor="+">
 		</action>
-	</viewerContribution>
-	<viewerContribution
+	</objectContribution>
+	<objectContribution
 		id="org.eclipse.jdt.debug.ModificationWatchpointToggleActions"
-		targetID="org.eclipse.debug.ui.BreakpointView">
+		objectClass="org.eclipse.jdt.debug.core.IJavaWatchpoint">
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.ModificationToggle"
 			label="%modificationAction.label"
-			tooltip="%modificationAction.tooltip"
 			menubarPath="emptyBreakpointGroup"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ModificationWatchpointToggleAction"
 			enablesFor="+">
 		</action>
-	</viewerContribution>
-	<viewerContribution
+	</objectContribution>
+	<objectContribution
 		id="org.eclipse.jdt.debug.BreakpointHitCountActions"
-		targetID="org.eclipse.debug.ui.BreakpointView">
+		objectClass="org.eclipse.jdt.debug.core.IJavaBreakpoint">
 		<action
 			id="org.eclipse.jdt.ui.actions.BreakpointHitCount"
 			label="%hitCount.label"
-			tooltip="%hitCount.tooltip"
 			menubarPath="emptyBreakpointGroup"
 			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
 			enablesFor="1">
 		</action>
-	</viewerContribution>	
-	<viewerContribution
+	</objectContribution>	
+	<objectContribution
 		id="org.eclipse.jdt.debug.ExceptionCaughtToggleActions"
-		targetID="org.eclipse.debug.ui.BreakpointView">
+		objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
 		<action
 			id="org.eclipse.jdt.ui.actions.CaughtToggle"
 			label="%caughtAction.label"
-			tooltip="%caughtAction.tooltip"
 			menubarPath="emptyBreakpointGroup"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionCaughtToggleAction"
 			enablesFor="+">
 		</action>
-	</viewerContribution>
-	<viewerContribution
+	</objectContribution>
+	<objectContribution
 		id="org.eclipse.jdt.debug.ExceptionUncaughtToggleActions"
-		targetID="org.eclipse.debug.ui.BreakpointView">
+		objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint">
 		<action
 			id="org.eclipse.jdt.ui.actions.UncaughtToggle"
 			label="%uncaughtAction.label"
-			tooltip="%uncaughtAction.tooltip"
 			menubarPath="emptyBreakpointGroup"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ExceptionUncaughtToggleAction"
 			enablesFor="+">
 		</action>
-	</viewerContribution>
+	</objectContribution>
 	<viewerContribution
 		id="org.eclipse.jdt.debug.DropToFrameActions"
 		targetID="org.eclipse.debug.ui.DebugView">
