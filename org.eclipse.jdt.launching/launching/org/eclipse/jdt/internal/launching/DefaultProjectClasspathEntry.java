@@ -222,8 +222,18 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 											duplicate = ((IRuntimeContainerComparator)container).isDuplicate(re.getPath());
 										} else {
 											ClasspathContainerInitializer initializer2 = JavaCore.getClasspathContainerInitializer(re.getPath().segment(0));
-											Object id1 = initializer.getComparisonID(r.getPath(), project);
-											Object id2 = initializer2.getComparisonID(re.getPath(), project);
+											Object id1 = null;
+											Object id2 = null;
+											if (initializer == null) {
+												id1 = r.getPath().segment(0);
+											} else {
+												id1 = initializer.getComparisonID(r.getPath(), project);
+											}
+											if (initializer2 == null) {
+												id2 = re.getPath().segment(0);
+											} else {
+												id2 = initializer2.getComparisonID(re.getPath(), project);
+											}
 											if (id1 == null) {
 												duplicate = id2 == null;
 											} else {
