@@ -20,12 +20,10 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 
@@ -126,7 +124,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		fJRETab = new JavaJRETab();
 		fJRETab.createControl(parent);
 		setControl(fJRETab.getControl());
-		setTitle(LauncherMessages.getString("JREContainerWizardPage.JRE_System_Library_3")); //$NON-NLS-1$
+		setTitle(LauncherMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
 		setMessage(LauncherMessages.getString("JREContainerWizardPage.Select_the_JRE_used_to_build_this_project._4")); //$NON-NLS-1$
 		
 		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);

@@ -35,7 +35,7 @@ public class AddAdvancedAction extends RuntimeClasspathAction {
 	 * @see IAction#run()
 	 */	
 	public void run() {
-		Dialog dialog = new RuntimeClasspathAdvancedDialog(getShell(), fActions);
+		Dialog dialog = new RuntimeClasspathAdvancedDialog(getShell(), fActions, getViewer());
 		dialog.open();			
 	}
 
