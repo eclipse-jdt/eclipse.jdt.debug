@@ -177,7 +177,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		
 		// snippet label
 		label= new Label(container, SWT.NONE);
-		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Associated_&code__5")); //$NON-NLS-1$
+		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Detail_formatter_&code_snippet__1")); //$NON-NLS-1$
 		gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
 		label.setFont(font);

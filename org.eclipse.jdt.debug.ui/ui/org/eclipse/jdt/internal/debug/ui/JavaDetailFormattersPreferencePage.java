@@ -68,7 +68,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	public JavaDetailFormattersPreferencePage() {
 		super();
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
-		setDescription(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Management_of_detail_formatters._3")); //$NON-NLS-1$
+		setDescription(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Override_default___toString()___for_Variables_and_Expressions_view_details._1")); //$NON-NLS-1$
 	}
 
 	protected Control createContents(Composite parent) {
@@ -103,7 +103,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		
 		//table label
 		fTableLabel= new Label(container, SWT.NONE);
-		fTableLabel.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Defined_&types__4")); //$NON-NLS-1$
+		fTableLabel.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.&Types_with_detail_formatters__2")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fTableLabel.setLayoutData(gd);
@@ -140,6 +140,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 
 		createDetailFormatsButtons(container);
 
+		Label label = new Label(container, SWT.NONE);
+		label.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Detail_formatter_code_snippet_defined_for_selected_type__3")); //$NON-NLS-1$
 		createSourceViewer(container);
 		
 		fFormatViewerContentProvider.refreshViewer();
