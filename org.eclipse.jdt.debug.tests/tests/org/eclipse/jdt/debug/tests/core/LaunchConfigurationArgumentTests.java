@@ -227,6 +227,24 @@ public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
 	}
 	
 	/**
+	 * Test a program argument with one empty string
+     *
+	 * Program output should be: 1
+	 */
+	public void testProgramArgEmptyString() throws CoreException {
+		testProgramArgCount("\"\"", "1");
+	}
+	
+	/**
+	 * Test a program with an empty string among other args.
+	 * 
+	 * Program output should be: 4
+	 */
+	public void testProgramArgEmptyStringWithOthers() throws CoreException {
+		testProgramArgCount("word1 \"\" \"part1 part2\" word2", "4");
+	}		
+	
+	/**
 	 * Runs the FooPropertyPrinter with the given VM arguments and checks for
 	 * the given output.
 	 * @param argString the VM arguments
@@ -237,7 +255,7 @@ public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Runs the ArgumentPrinter with the given VM arguments
+	 * Runs the ArgumentPrinter with the given program arguments
 	 * @param argString
 	 * @param outputValue
 	 * @throws CoreException
@@ -245,6 +263,16 @@ public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
 	private void testWithProgramArg(String argString, String outputValue) throws CoreException {
 		testOutput("ArgumentPrinter", null, argString, outputValue);
 	}
+	
+	/**
+	 * Runs the ArgumentCounter with the given program arguments
+	 * @param argString
+	 * @param outputValue
+	 * @throws CoreException
+	 */
+	private void testProgramArgCount(String argString, String outputValue) throws CoreException {
+		testOutput("ArgumentCounter", null, argString, outputValue);
+	}	
 	
 	/**
 	 * Runs the given program with the given VM arguments and the given program arguments and

@@ -138,6 +138,9 @@ public class ExecutionArguments {
 	
 			ch= getNext();
 			
+			if (buf.length() == 0) {
+				return "\"\""; // empty string argument //$NON-NLS-1$
+			}
 			return buf.toString();
 		}
 		
