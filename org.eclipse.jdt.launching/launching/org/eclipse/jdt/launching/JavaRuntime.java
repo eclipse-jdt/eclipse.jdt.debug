@@ -1173,7 +1173,12 @@ public final class JavaRuntime {
 		for (int i= 0; i < vmTypes.length; i++) {
 			File detectedLocation= vmTypes[i].detectInstallLocation();
 			if (detectedLocation != null) {
-				IVMInstall detected= vmTypes[i].createVMInstall(String.valueOf(i));
+				int unique = i;
+				IVMInstallType vmType = vmTypes[i];
+				while (vmType.findVMInstall(String.valueOf(unique)) != null) {
+					unique++;
+				}
+				IVMInstall detected= vmTypes[i].createVMInstall(String.valueOf(unique));
 				detected.setName(vmTypes[i].getName()+LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
 				detected.setInstallLocation(detectedLocation);
 				if (detected != null && !defaultSet) {
