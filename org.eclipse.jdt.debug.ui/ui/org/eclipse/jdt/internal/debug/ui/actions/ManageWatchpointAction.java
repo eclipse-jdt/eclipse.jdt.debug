@@ -81,6 +81,10 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 		if (getBreakpoint() == null) {
 			try {
 				IMember element= getElement();
+				if (element == null) {
+					update();
+					return;
+				}
 				IType type = element.getDeclaringType();
 				int start = -1;
 				int end = -1;
