@@ -746,7 +746,7 @@
                id="org.eclipse.jdt.ui.variableViewActions.PrimitiveOptions">
          </action>
          <action
-               state="false"
+               state="true"
                style="toggle"
                id="org.eclipse.jdt.ui.variableViewActions.ShowNullEntries"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowNullArrayEntriesAction"
@@ -801,7 +801,7 @@
                id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions">
          </action>
          <action
-               state="false"
+               state="true"
                style="toggle"
                id="org.eclipse.jdt.ui.variableViewActions.ShowNullEntries"
                class="org.eclipse.jdt.internal.debug.ui.actions.ShowNullArrayEntriesAction"

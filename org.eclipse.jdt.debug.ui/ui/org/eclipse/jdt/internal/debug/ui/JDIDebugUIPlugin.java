@@ -314,6 +314,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_HEX, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_NULL_ARRAY_ENTRIES, true);
 	}
 	
 	/**
