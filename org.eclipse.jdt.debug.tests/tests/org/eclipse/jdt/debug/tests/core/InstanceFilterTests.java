@@ -13,6 +13,7 @@ Contributors:
 
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
@@ -53,20 +54,23 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("hit un-registered breakpoint", breakpoint, hit);
 			
-			// add instance filter
-			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IJavaObject thisObject = frame.getThis();
-			assertNotNull("Unable to access 'this'", thisObject);
-			((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
-			
-			// launch a second target
-			thread2= launchToBreakpoint(typeName);
-			assertNotNull("Breakpoint not hit in second target", thread2);
-			
-			// should miss first breakpoint
-			IBreakpoint hit2 = getBreakpoint(thread2);
-			assertNotNull("suspended, but not by breakpoint", hit2);
-			assertEquals("did not hit 2nd breakpoint", breakpoint2, hit2);
+			// can only do test if the VM supports instance filters
+			if (supportsIntsanceBreakpoints(thread)) {
+				// add instance filter
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				IJavaObject thisObject = frame.getThis();
+				assertNotNull("Unable to access 'this'", thisObject);
+				((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
+				
+				// launch a second target
+				thread2= launchToBreakpoint(typeName);
+				assertNotNull("Breakpoint not hit in second target", thread2);
+				
+				// should miss first breakpoint
+				IBreakpoint hit2 = getBreakpoint(thread2);
+				assertNotNull("suspended, but not by breakpoint", hit2);
+				assertEquals("did not hit 2nd breakpoint", breakpoint2, hit2);
+			}
 			
 			
 		} finally {
@@ -92,20 +96,23 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			assertNotNull("suspended, but not by breakpoint", hit);
 			assertEquals("hit un-registered breakpoint", breakpoint, hit);
 			
-			// add instance filter
-			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IJavaObject thisObject = frame.getThis();
-			assertNotNull("Unable to access 'this'", thisObject);
-			((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
-			
-			// launch a second target
-			thread2= launchToBreakpoint(typeName);
-			assertNotNull("Breakpoint not hit in second target", thread2);
-			
-			// should miss first breakpoint
-			IBreakpoint hit2 = getBreakpoint(thread2);
-			assertNotNull("suspended, but not by breakpoint", hit2);
-			assertEquals("did not hit 2nd breakpoint", breakpoint2, hit2);
+			// can only do test if the VM supports instance filters
+			if (supportsIntsanceBreakpoints(thread)) { 
+				// add instance filter
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				IJavaObject thisObject = frame.getThis();
+				assertNotNull("Unable to access 'this'", thisObject);
+				((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
+				
+				// launch a second target
+				thread2= launchToBreakpoint(typeName);
+				assertNotNull("Breakpoint not hit in second target", thread2);
+				
+				// should miss first breakpoint
+				IBreakpoint hit2 = getBreakpoint(thread2);
+				assertNotNull("suspended, but not by breakpoint", hit2);
+				assertEquals("did not hit 2nd breakpoint", breakpoint2, hit2);
+			}
 			
 			
 		} finally {
@@ -130,22 +137,25 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("No breakpoint", hit);
 			assertEquals("did not hit watch point", wp, hit);
+			
+			// can only do test if the VM supports instance filters
+			if (supportsIntsanceBreakpoints(thread)) {			
 
-			// add instance filter
-			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IJavaObject thisObject = frame.getThis();
-			assertNotNull("Unable to access 'this'", thisObject);
-			((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
-			
-			// launch a second target
-			thread2= launchToBreakpoint(typeName);
-			assertNotNull("Breakpoint not hit in second target", thread2);
-			
-			// should miss watchpoint
-			IBreakpoint hit2 = getBreakpoint(thread2);
-			assertNotNull("suspended, but not by breakpoint", hit2);
-			assertEquals("did not hit line breakpoint", bp, hit2);			
-						
+				// add instance filter
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				IJavaObject thisObject = frame.getThis();
+				assertNotNull("Unable to access 'this'", thisObject);
+				((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
+				
+				// launch a second target
+				thread2= launchToBreakpoint(typeName);
+				assertNotNull("Breakpoint not hit in second target", thread2);
+				
+				// should miss watchpoint
+				IBreakpoint hit2 = getBreakpoint(thread2);
+				assertNotNull("suspended, but not by breakpoint", hit2);
+				assertEquals("did not hit line breakpoint", bp, hit2);			
+			}
 			
 		} finally {
 			terminateAndRemove(thread);
@@ -171,20 +181,24 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			assertNotNull("No breakpoint", hit);
 			assertEquals("did not hit exception breakpoint", ex, hit);
 
-			// add instance filter
-			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IJavaObject thisObject = frame.getThis();
-			assertNotNull("Unable to access 'this'", thisObject);
-			((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
+			// can only do test if the VM supports instance filters
+			if (supportsIntsanceBreakpoints(thread)) {
 			
-			// launch a second target
-			thread2= launchToBreakpoint(typeName);
-			assertNotNull("Breakpoint not hit in second target", thread2);
-			
-			// should miss exception breakpoint
-			IBreakpoint hit2 = getBreakpoint(thread2);
-			assertNotNull("suspended, but not by breakpoint", hit2);
-			assertEquals("did not hit line breakpoint", bp, hit2);			
+				// add instance filter
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				IJavaObject thisObject = frame.getThis();
+				assertNotNull("Unable to access 'this'", thisObject);
+				((IJavaBreakpoint)hit).addInstanceFilter(thisObject);
+				
+				// launch a second target
+				thread2= launchToBreakpoint(typeName);
+				assertNotNull("Breakpoint not hit in second target", thread2);
+				
+				// should miss exception breakpoint
+				IBreakpoint hit2 = getBreakpoint(thread2);
+				assertNotNull("suspended, but not by breakpoint", hit2);
+				assertEquals("did not hit line breakpoint", bp, hit2);
+			}			
 						
 			
 		} finally {
@@ -192,6 +206,17 @@ public class InstanceFilterTests extends AbstractDebugTest {
 			terminateAndRemove(thread2);
 			removeAllBreakpoints();
 		}		
+	}
+
+	/**
+	 * Returns whether the associated target supports instance breakpoints
+	 * 
+	 * @param thread
+	 * @return boolean
+	 */
+	private boolean supportsIntsanceBreakpoints(IJavaThread thread) {
+		IJavaDebugTarget target = (IJavaDebugTarget)thread.getDebugTarget();
+		return target.supportsInstanceBreakpoints();
 	}	
 
 }
