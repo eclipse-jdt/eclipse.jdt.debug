@@ -530,6 +530,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 										"([Ljava/lang/String;)V", true, false, false, -1, -1, -1, 1, false, map); //$NON-NLS-1$
 									bp.setPersisted(false);
 									target.breakpointAdded(bp);
+									DebugPlugin.getDefault().removeDebugEventListener(this);
 								}
 							}
 						} catch (CoreException e) {
