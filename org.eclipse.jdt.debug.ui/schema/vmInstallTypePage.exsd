@@ -19,21 +19,21 @@ The UI is shown only when a VM of the specified install type is selected in the 
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                 an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -52,7 +52,7 @@ The UI is shown only when a VM of the specified install type is selected in the 
          <attribute name="vmInstallTypeID" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies VM install type that this UI page is applicable to. (corresponds to the id of a VM install type).
+                  specifies VM install type that this UI page is applicable to (corresponds to the id of a VM install type).
                </documentation>
             </annotation>
          </attribute>
