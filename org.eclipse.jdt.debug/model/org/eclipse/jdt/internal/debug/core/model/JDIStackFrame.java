@@ -417,9 +417,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		try {
 			locals= getUnderlyingStackFrame().visibleVariables();
 		} catch (AbsentInformationException e) {
-			locals= new ArrayList(0);
+			locals= Collections.EMPTY_LIST;
 		} catch (NativeMethodException e) {
-			locals= new ArrayList(0);
+			locals= Collections.EMPTY_LIST;
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables"),new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as 
