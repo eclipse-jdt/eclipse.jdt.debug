@@ -106,6 +106,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 			if (accept(events[i])) {
 				fEvent= events[i];
 				fEventSet = events;
+				unregister();
 				notifyAll();
 				return;
 			}
@@ -145,7 +146,6 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 				System.err.println("Interrupted waiting for event");
 			}
 		}
-		unregister();
 		if (fEvent == null)
 			return null;
 		return fEvent.getSource();
