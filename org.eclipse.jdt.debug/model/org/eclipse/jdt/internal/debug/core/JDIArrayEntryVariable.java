@@ -34,6 +34,11 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	private ArrayReference fArray;
 	
 	/**
+	 * The reference type name of this variable. Cached lazily.
+	 */
+	private String fReferenceTypeName= null;
+	
+	/**
 	 * Constructs an array entry at the given index in an array.
 	 */
 	public JDIArrayEntryVariable(JDIDebugTarget target, ArrayReference array, int index) {
@@ -90,13 +95,16 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	 */
 	public String getReferenceTypeName() throws DebugException {
 		try {
-			return stripBrackets(getArrayReference().referenceType().name());
+			if (fReferenceTypeName == null) {
+				fReferenceTypeName= stripBrackets(getArrayReference().referenceType().name());
+			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_reference_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception
 			return null;
 		}
+		return fReferenceTypeName;
 	}
 	
 	/**
