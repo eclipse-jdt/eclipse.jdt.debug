@@ -611,6 +611,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		fEvaluationRunnable= evaluation;
 		fHonorBreakpoints= hitBreakpoints;
 		fireResumeEvent(evaluationDetail);
+		//save and restore current breakpoint information - bug 30837
+		IBreakpoint[] breakpoints = getBreakpoints();
 		try {
 			evaluation.run(this, monitor);			
 		} catch (DebugException e) {
@@ -619,6 +621,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			fIsPerformingEvaluation = false;
 			fEvaluationRunnable= null;
 			fHonorBreakpoints= true;
+			if (getBreakpoints().length == 0 && breakpoints.length > 0) {
+				for (int i = 0; i < breakpoints.length; i++) {
+					addCurrentBreakpoint(breakpoints[i]);
+				} 
+			}
 			fireSuspendEvent(evaluationDetail);
 		}
 	}
