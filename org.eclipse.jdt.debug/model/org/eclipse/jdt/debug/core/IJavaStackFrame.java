@@ -131,6 +131,23 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 */
 	public boolean isOutOfSynch() throws DebugException;
 	/**
+	 * Returns whether the method associated with this stack frame is
+	 * obsolete, that is, it is running old bytecodes that have been
+	 * replaced in the VM. This can occur when a hot code replace
+	 * succeeds but the VM is unable to pop a call to an affected
+	 * method from the call stack.
+	 * @return whether this stack frame's method is obsolete
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
+	 */
+	public boolean isObsolete() throws DebugException;
+	/**
 	 * Returns the fully qualified name of the type that declares the method
 	 * associated with this stack frame.
 	 *

@@ -380,30 +380,27 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					}
 				} 
 				List frames= getUnderlyingFrames();
-				if (JDIDebugModel.useStepFilters() && !JDIDebugModel.getActiveStepFilters().isEmpty()) {
-					// If step filters are active, stepping can invalidate cached stack frame
-					// data. If any of the cached stack frame are out of synch with the underlying
-					// frames, discard the cached frames.
-					int numModelFrames= fStackFrames.size();
-					int numUnderlyingFrames= frames.size();
+				// Stepping can invalidate cached stack frame data. If any of the cached 
+				// stack frame are out of synch with the underlying frames, discard the cached frames.
+				int numModelFrames= fStackFrames.size();
+				int numUnderlyingFrames= frames.size();
 					
-					int modelFramesIndex = 0;
-					int underlyingFramesIndex = 0;
-					if (numModelFrames > numUnderlyingFrames) {
-						modelFramesIndex = numModelFrames - numUnderlyingFrames;
-					} else {
-						underlyingFramesIndex = numUnderlyingFrames - numModelFrames;
-					}
+				int modelFramesIndex = 0;
+				int underlyingFramesIndex = 0;
+				if (numModelFrames > numUnderlyingFrames) {
+					modelFramesIndex = numModelFrames - numUnderlyingFrames;
+				} else {
+					underlyingFramesIndex = numUnderlyingFrames - numModelFrames;
+				}
 					
-					StackFrame underlyingFrame= null;
-					JDIStackFrame modelFrame= null;
-					for ( ; modelFramesIndex < numModelFrames; modelFramesIndex++, underlyingFramesIndex++) {
-						underlyingFrame= (StackFrame) frames.get(underlyingFramesIndex);
-						modelFrame= (JDIStackFrame) fStackFrames.get(modelFramesIndex);
-						if (!underlyingFrame.equals(modelFrame.getLastUnderlyingStackFrame())) {
-							// Replace the out of synch frame
-							fStackFrames.set(modelFramesIndex, new JDIStackFrame(this, underlyingFrame));
-						}
+				StackFrame underlyingFrame= null;
+				JDIStackFrame modelFrame= null;
+				for ( ; modelFramesIndex < numModelFrames; modelFramesIndex++, underlyingFramesIndex++) {
+					underlyingFrame= (StackFrame) frames.get(underlyingFramesIndex);
+					modelFrame= (JDIStackFrame) fStackFrames.get(modelFramesIndex);
+					if (!underlyingFrame.equals(modelFrame.getLastUnderlyingStackFrame())) {
+						// Replace the out of synch frame
+						fStackFrames.set(modelFramesIndex, new JDIStackFrame(this, underlyingFrame));
 					}
 				}
 				// compute new or removed stack frames
@@ -426,17 +423,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					} else {
 						if (frames.isEmpty()) {
 							fStackFrames = Collections.EMPTY_LIST;
-						} else {
-							// same number of stack frames - if the TOS is different, remove/replace all stack frames
-							Method oldMethod= ((JDIStackFrame) fStackFrames.get(0)).getUnderlyingMethod();
-							StackFrame newTOS= (StackFrame) frames.get(0);
-							Method newMethod= getUnderlyingMethod(newTOS);
-							if (!oldMethod.equals(newMethod)) {
-								// remove & replace all stack frames
-								fStackFrames= createAllStackFrames();
-								// no stack frames to update
-								offset= fStackFrames.size();
-							}
 						}
 					}
 				// update preserved frames
@@ -1243,9 +1229,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// JDK 1.4 support
 			try {
 				// Pop the drop frame and all frames above it
-				StackFrame jdiFrame = ((JDIStackFrame) frame).getUnderlyingStackFrame();	
+				StackFrame jdiFrame = ((JDIStackFrame) frame).getUnderlyingStackFrame();
+				preserveStackFrames();
 				fThread.popFrames(jdiFrame);
-				disposeStackFrames();
 				computeStackFrames();
 				stepInto();
 			} catch (IncompatibleThreadStateException exception) {

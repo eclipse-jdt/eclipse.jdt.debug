@@ -107,6 +107,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * Gets line table from VM.
 	 */
 	private void getLineTable() throws AbsentInformationException {
+		if (isObsolete()) {
+			return;
+		}
 		if (fCodeIndexToLine != null) {
 			if (fCodeIndexToLine.isEmpty())
 				throw new AbsentInformationException("Got empty line number table for this method.");
@@ -165,6 +168,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * @return Returns the line number that corresponds to the given lineCodeIndex.
 	 */
 	public int findLineNr(long lineCodeIndex) throws AbsentInformationException {
+		if (isObsolete()) {
+			return -1;
+		}
 		getLineTable();
 		if (lineCodeIndex > fHighestValidCodeIndex)
 			throw new InvalidCodeIndexException ("Invalid code index of a location given.");
@@ -549,7 +555,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			target.fVerboseWriter.println("method", ID.value());
 
 		ID.read(in);
-		if (ID.isNull() || ID.value() == 0)
+		if (ID.isNull())
 			return null;
 			
 		// The method must be part of a known reference type.
@@ -629,6 +635,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * @see Method#isObsolete()
 	 */
 	public boolean isObsolete() {
+		if (fMethodID.value() == 0) {
+			return true;
+		}
 		boolean obsolete= false;
 		initJdwpRequest();
 		try {
@@ -637,7 +646,12 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			writeWithReferenceType(this, outData);
 			
 			JdwpReplyPacket reply= requestVM(JdwpCommandPacket.M_OBSOLETE, outBytes);
-			defaultReplyErrorHandler(reply.errorCode());
+			switch (reply.errorCode()) {
+				case JdwpReplyPacket.NOT_IMPLEMENTED:
+					return false;
+				default:
+					defaultReplyErrorHandler(reply.errorCode());
+			}
 			
 			DataInputStream replyData = reply.dataInStream();
 			obsolete = readBoolean("is obsolete", replyData);			

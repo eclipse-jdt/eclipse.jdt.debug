@@ -1156,12 +1156,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (frame != null) {
 			StringBuffer label= new StringBuffer();
 
+			String dec= frame.getDeclaringTypeName();			
+			if (frame.isObsolete()) {
+				label.append("<obsolete method in ");
+				label.append(dec);
+				label.append('>');
+				return label.toString();
+			}
+
 			// receiver name
 			String rec= frame.getReceivingTypeName();
 			label.append(getQualifiedName(rec));
 
-			// declaring type name if different
-			String dec= frame.getDeclaringTypeName();
+			// append declaring type name if different
 			if (!dec.equals(rec)) {
 				label.append('(');
 				label.append(getQualifiedName(dec));

@@ -628,7 +628,12 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	public String getDeclaringTypeName() throws DebugException {
 		if (fDeclaringTypeName == null) {
 			try {
-				fDeclaringTypeName = getUnderlyingMethod().declaringType().name();
+				Method underlyingMethod= getUnderlyingMethod();
+				if (underlyingMethod.isObsolete()) {
+					fDeclaringTypeName=  "<unknown declaring type>";
+				} else {
+					fDeclaringTypeName= getUnderlyingMethod().declaringType().name();
+				}
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_declaring_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 				// execution will not reach this line, as 
@@ -645,11 +650,15 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	public String getReceivingTypeName() throws DebugException {
 		if (fReceivingTypeName == null) {
 			try {
-				ObjectReference thisObject = getUnderlyingThisObject();
-				if (thisObject == null) {
-					fReceivingTypeName = getDeclaringTypeName();
+				if (getUnderlyingMethod().isObsolete()) {
+					fReceivingTypeName="<unknown receiving type>";
 				} else {
-					fReceivingTypeName = thisObject.referenceType().name();
+					ObjectReference thisObject = getUnderlyingThisObject();
+					if (thisObject == null) {
+						fReceivingTypeName = getDeclaringTypeName();
+					} else {
+						fReceivingTypeName = thisObject.referenceType().name();
+					}
 				}
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_receiving_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
@@ -779,8 +788,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 	
 	/**
-	 * Returns whether this stack frame's declaring type is out of synch with
-	 * the declaring type loaded in the VM.
+	 * @see IJavaStackFrame#isOutOfSynch()
 	 */
 	public boolean isOutOfSynch() throws DebugException {
 		if (fIsOutOfSynch) {
@@ -791,6 +799,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * @see IJavaStackFrame#isObsolete()
+	 */
+	public boolean isObsolete() throws DebugException {
+		return getUnderlyingMethod().isObsolete();
 	}
 	
 	protected boolean exists() throws DebugException {

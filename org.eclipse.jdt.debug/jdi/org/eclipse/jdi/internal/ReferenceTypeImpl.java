@@ -556,6 +556,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns MethodImpl of a method in the reference specified by a given methodID, or null if not found.
 	 */
 	public MethodImpl findMethod(JdwpMethodID methodID) {
+		if (methodID.value() == 0) {
+			return new MethodImpl(virtualMachineImpl(), this, methodID, "Obsolete method", "", -1);
+		}
 		Iterator iter = allMethods().iterator();
 		while(iter.hasNext()) {
 			MethodImpl method = (MethodImpl)iter.next();
