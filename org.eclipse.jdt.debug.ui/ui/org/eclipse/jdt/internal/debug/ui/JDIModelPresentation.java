@@ -113,7 +113,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	
-
 	public JDIModelPresentation() {
 		super();
 	}
@@ -398,10 +397,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * Build the text for an IJavaValue.
 	 */
 	protected String getValueText(IJavaValue value) throws DebugException {
-		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		boolean showHexValues= store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES);		
-		boolean showCharValues= store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES);
-		boolean showUnsignedValues= store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES);
 		
 		String refTypeName= value.getReferenceTypeName();
 		String valueString= value.getValueString();
@@ -438,6 +433,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 		}
 		
+		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		boolean showHexValues= store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES);		
+		boolean showCharValues= store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES);
+		boolean showUnsignedValues= store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES);
+		
 		// show unsigned value second, if applicable
 		if (showUnsignedValues) {
 			buffer= appendUnsignedText(value, buffer);
@@ -465,7 +465,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return buffer;	
 	}
 		
-	private StringBuffer appendHexText(IJavaValue value, StringBuffer buffer) throws DebugException {
+	protected StringBuffer appendHexText(IJavaValue value, StringBuffer buffer) throws DebugException {
 		String hexText = getValueHexText(value);
 		if (hexText != null) {
 			buffer.append(" ["); //$NON-NLS-1$
@@ -475,7 +475,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return buffer;
 	}
 	
-	private StringBuffer appendCharText(IJavaValue value, StringBuffer buffer) throws DebugException {
+	protected StringBuffer appendCharText(IJavaValue value, StringBuffer buffer) throws DebugException {
 		String charText= getValueCharText(value);
 		if (charText != null) {
 			buffer.append(" ["); //$NON-NLS-1$
@@ -505,17 +505,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return true;
 		}
 		return false;
-	}
-	
-	/**
-	 * Given a JNI-style signature String for a IJavaValue, return true
-	 * if the signature represents a ByteValue
-	 */
-	protected boolean isByteValue(String signature) {
-		if (signature == null) {
-			return false;
-		}
-		return signature.equals("B"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -1407,7 +1396,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return;
 			} else if (value instanceof IJavaPrimitiveValue) {
 				// no need to spawn a thread for a primitive value
-				appendJDIValueString(value);
+				appendJDIPrimitiveValueString(value);
 				notifyListener();
 				return;
 			} else if (thread == null || !thread.isSuspended()) {
@@ -1455,6 +1444,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 		}
 				
+		protected void appendJDIPrimitiveValueString(IValue value) {
+			if (value instanceof IJavaValue) {
+				try {
+					fResultBuffer.append(getValueText(((IJavaValue)value)));
+				} catch (DebugException de) {
+					JDIDebugUIPlugin.log(de);
+					fResultBuffer.append(de.getStatus().getMessage());
+				}
+			} else {
+				appendJDIValueString(value);
+			}
+		}
+		
 		protected void appendJDIValueString(IValue value) {
 			try {
 				String result= value.getValueString();
