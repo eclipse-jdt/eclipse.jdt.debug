@@ -14,10 +14,6 @@ package org.eclipse.jdt.internal.launching;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.JavaRuntime;
-
 /**
  * Compares lists of runtime classpath entry mementos
  */
@@ -34,20 +30,39 @@ public class RuntimeClasspathEntryListComparator implements Comparator {
 			for (int i = 0; i < list1.size(); i++) {
 				String memento1 = (String)list1.get(i);
 				String memento2 = (String)list2.get(i);
-				try {
-					IRuntimeClasspathEntry entry1 = JavaRuntime.newRuntimeClasspathEntry(memento1);
-					IRuntimeClasspathEntry entry2 = JavaRuntime.newRuntimeClasspathEntry(memento2);
-					if (!entry1.equals(entry2)) {
-						return -1;
-					}
-				} catch (CoreException e) {
-					LaunchingPlugin.log(e);
+				if (!equalsIgnoreWhitespace(memento1, memento2)) {
 					return -1;
 				}
 			}
 			return 0;
 		}
 		return -1;
+	}
+	
+	protected boolean equalsIgnoreWhitespace(String one, String two) {
+		int i1 = 0;
+		int i2 = 0;
+		int l1 = one.length();
+		int l2 = two.length();
+		char ch1 = ' ';
+		char ch2 = ' ';
+		while (i1 < l1 && i2 < l2) {
+			while (i1 < l1 && Character.isWhitespace(ch1 = one.charAt(i1))) {
+				i1++;
+			}
+			while (i2 < l2 && Character.isWhitespace(ch2 = two.charAt(i2))) {
+				i2++;
+			}
+			if (i1 == l1 && i2 == l2) {
+				return true;
+			}
+			if (ch1 != ch2) {
+				return false;
+			}			
+			i1++;
+			i2++;
+		}
+		return true;
 	}
 
 }

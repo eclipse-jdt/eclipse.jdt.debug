@@ -13,6 +13,7 @@ import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xerces.dom.DocumentImpl;
@@ -65,6 +66,11 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * The entry's resolved entry (lazily initialized)
 	 */
 	private IClasspathEntry fResolvedEntry = null;
+	
+	/**
+	 * Documet builder is cached for efficiency
+	 */
+	private static DocumentBuilder fgParser = null;
 	
 	/**
 	 * Constructs a new runtime classpath entry based on the
@@ -120,8 +126,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		Exception ex = null;
 		try {
 			Element root = null;
-			DocumentBuilder parser =
-				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = getParser();
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
@@ -200,6 +205,13 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			ex = e;
 		}
 		abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_parsing_error_8"), ex);	 //$NON-NLS-1$
+	}
+	
+	private static DocumentBuilder getParser() throws ParserConfigurationException, FactoryConfigurationError {
+		if (fgParser == null) {
+			fgParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		}
+		return fgParser;
 	}
 	
 	/**
