@@ -11,12 +11,15 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.IWorkingCopy;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
@@ -333,8 +336,16 @@ public class DetailFormatterDialog extends StatusDialog {
 				return null;
 			}
 		};
-	
-		SearchEngine engine= new SearchEngine(JavaUI.getSharedWorkingCopies());
+		
+		IWorkingCopy[] workingCopies = JavaUI.getSharedWorkingCopies();
+		List compilationUnits= new ArrayList(workingCopies.length);
+		for (int i = 0; i < workingCopies.length; i++) {
+			IWorkingCopy copy = workingCopies[i];
+			if (copy instanceof ICompilationUnit) {
+				compilationUnits.add(copy);
+			}
+		}
+		SearchEngine engine= new SearchEngine((ICompilationUnit[]) compilationUnits.toArray(new ICompilationUnit[compilationUnits.size()]));
 		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
 		try {
 			engine.search(JavaPlugin.getWorkspace(), SearchEngine.createSearchPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, true), scope, collector);
