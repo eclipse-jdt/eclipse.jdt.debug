@@ -121,7 +121,18 @@ public class BreakpointLocationVerifierJob extends Job {
 		ASTParser parser = ASTParser.newParser(apiLevel);
 		parser.setSource(fDocument.get().toCharArray());
 		parser.setProject(project);
-		parser.setUnitName(fResource.getName());
+		String unitName;
+		if (fType.isBinary()) {
+			String className= fType.getClassFile().getElementName();
+			int nameLength= className.indexOf('$');
+			if (nameLength < 0) {
+				nameLength= className.indexOf('.');
+			}
+			unitName= className.substring(0, nameLength) + ".java"; //$NON-NLS-1$
+		} else {
+			unitName= fType.getCompilationUnit().getElementName();
+		}
+		parser.setUnitName(unitName);
 		parser.setResolveBindings(true);
 		CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber, fBestMatch);
