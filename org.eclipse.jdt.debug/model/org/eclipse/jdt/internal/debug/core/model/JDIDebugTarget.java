@@ -553,7 +553,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return whether this debug target supports JDK hot code replace
 	 */
 	public boolean supportsJDKHotCodeReplace() {
-		if (isAvailable() && JDIDebugPlugin.getJDIVersion() >= 1.4) {
+		if (isAvailable() && JDIDebugPlugin.getJDIVersion() >= (float)1.4) {
 			return getVM().canRedefineClasses();
 		}
 		return false;
