@@ -865,11 +865,13 @@
 	<objectContribution
 		id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
-		<filter name="PrimitiveVariableActionFilter" value="isPrimitive"/>
 		<visibility>
-			<not>
-				<objectState name="DetailFormatterFilter" value="isDefined"/>
-			</not>
+			<and>
+				<objectState name="PrimitiveVariableActionFilter" value="isPrimitive"/>
+				<not>
+					<objectState name="DetailFormatterFilter" value="isDefined"/>
+				</not>
+			</and>
 		</visibility>
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.NewDetailFormatter"
