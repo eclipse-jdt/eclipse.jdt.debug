@@ -120,7 +120,11 @@ public class RuntimeClasspathAdvancedDialog extends TitleAreaDialog {
 			int index = fContainerCombo.getSelectionIndex();
 			IRuntimeClasspathEntry entry = chooseContainerEntry(fDescriptors[index]);
 			if (entry != null) {
-				fViewer.addEntries(new IRuntimeClasspathEntry[]{entry});
+				// check if duplicate
+				int pos = fViewer.indexOf(entry);
+				if (pos == -1) {
+					fViewer.addEntries(new IRuntimeClasspathEntry[]{entry});
+				}
 			}
 		} else {
 			for (int i = 0; i < fButtons.length; i++) {

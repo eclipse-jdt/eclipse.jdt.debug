@@ -172,4 +172,13 @@ public class RuntimeClasspathViewer extends TableViewer {
 			((IEntriesChangedListener)listeners[i]).entriesChanged(this);
 		}
 	}
+	
+	/**
+	 * Returns the index of an equivalent entry, or -1 if none.
+	 * 
+	 * @return the index of an equivalent entry, or -1 if none
+	 */
+	public int indexOf(IRuntimeClasspathEntry entry) {
+		return fEntries.indexOf(entry);
+	}
 }
