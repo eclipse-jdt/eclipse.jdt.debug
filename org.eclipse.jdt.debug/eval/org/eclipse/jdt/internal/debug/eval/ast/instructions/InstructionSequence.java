@@ -91,6 +91,10 @@ public class InstructionSequence implements ICompiledExpression {
 		fInstructions.add(instruction);
 	}
 	
+	public int indexOf(Instruction instruction) {
+		return fInstructions.indexOf(instruction);
+	}
+
 	/**
 	 * Answers true if there are no instructions in this sequence
 	 */

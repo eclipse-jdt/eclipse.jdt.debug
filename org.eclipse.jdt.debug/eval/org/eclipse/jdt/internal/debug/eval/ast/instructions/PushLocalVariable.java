@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
@@ -29,6 +30,11 @@ public class PushLocalVariable extends SimpleInstruction {
 	}
 	
 	public void execute() throws CoreException {
+		IVariable internalVariable= getInternalVariable(fName);
+		if (internalVariable != null) {
+			push(internalVariable);
+			return;
+		}
 		IRuntimeContext context= getContext();
 		IJavaVariable[] locals = context.getLocals();
 		for (int i = 0; i < locals.length; i++) {

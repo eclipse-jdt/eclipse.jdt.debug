@@ -4,9 +4,13 @@
  */
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction;
@@ -19,11 +23,17 @@ public class Interpreter {
 	private Stack fStack;
 	private IJavaValue fLastValue;
 	
+	/**
+	 * The list of internal variables
+	 */
+	private Map fInternalVariables;
+	
 	private boolean fStopped= false;
 	
 	public Interpreter(InstructionSequence instructions, IRuntimeContext context) {
 		fInstructions= instructions.getInstructions();
 		fContext= context;
+		fInternalVariables= new HashMap();
 	}
 	
 	public void execute() throws CoreException {
@@ -104,5 +114,31 @@ public class Interpreter {
 	
 	public void setLastValue(IJavaValue value) {
 		fLastValue= value;
+	}
+	
+	/**
+	 * Create a new variable in the interpreter with the given name
+	 * and the given type.
+	 * 
+	 * @param name the name of the variable to create.
+	 * @param type the type of the variable to create.
+	 * @return the created variable.
+	 */
+	public IVariable createInternalVariable(String name, IJavaType referencType) {
+		IVariable var= new InterpreterVariable(name, referencType, fContext.getVM());
+		fInternalVariables.put(name, var);
+		return var;
+	}
+	
+	/**
+	 * Return the variable with the given name.
+	 * This method only looks in the list of internal variable (i.e. created by
+	 * Interpreter#createInternalVariable(String, IJavaType))
+	 * 
+	 * @param name the name of the variable to retrieve.
+	 * @return the corresponding variable, or <code>null</code> if there is none.
+	 */	
+	public IVariable getInternalVariable(String name) {
+		return (IVariable)fInternalVariables.get(name);
 	}
 }

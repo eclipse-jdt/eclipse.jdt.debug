@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
@@ -49,6 +50,26 @@ public abstract class Instruction {
 	protected IJavaDebugTarget getVM() {
 		return getContext().getVM();
 	}
+	
+	/**
+	 * Return the internal variable with the given name.
+	 * 
+	 * @see Interpreter#getInternalVariable(String)
+	 */
+	protected IVariable getInternalVariable(String name) {
+		return fInterpreter.getInternalVariable(name);
+	}
+	
+	/**
+	 * Create and return a new internal variable with the given name
+	 * and the given type.
+	 * 
+	 * @see Interpreter#createInternalVariable(String, String)
+	 */
+	protected IVariable createInternalVariable(String name, String referencTypeName) throws CoreException {
+		return fInterpreter.createInternalVariable(name, getType(referencTypeName));
+	}
+	
 
 	/**
 	 * Answers the instance of Class that the given type represents.
