@@ -112,6 +112,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("org.eclipse.debug.tests.targets.CallStack");
 		createLaunchConfiguration("org.eclipse.debug.tests.targets.HcrClass");
 		createLaunchConfiguration("org.eclipse.debug.tests.targets.StepIntoSelectionClass");
+		createLaunchConfiguration("WatchItemTests");
 	}
 	
 	/**
