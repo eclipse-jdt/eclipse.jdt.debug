@@ -260,8 +260,9 @@ public class JDIDebugModel {
 	}	
 	
 	/**
-	 * Creates and returns an exception breakpoint for the
-	 * given (throwable) type. Caught and uncaught specify where the exception
+	 * Creates and returns an exception breakpoint in a type with the given name.
+	 * The marker associated with the breakpoint will be created on the specified resource.
+	 * Caught and uncaught specify where the exception
 	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
 	 * Checked indicates if the given exception is a checked exception.
 	 * 
@@ -274,7 +275,7 @@ public class JDIDebugModel {
  	 * @param checked whether the exception is a checked exception
  	 * @param register whether to add this breakpoint to the breakpoint manager
  	 * @param attributes a map of client defined attributes that should be assigned
- 	 *  to the underlying breakpoint marker on creation
+ 	 *  to the underlying breakpoint marker on creation or <code>null</code> if none.
 	 * @return an exception breakpoint
 	 * @exception CoreException If this method fails. Reasons include:<ul> 
 	 *<li>Failure creating underlying marker.  The exception's status contains
@@ -289,8 +290,9 @@ public class JDIDebugModel {
 	}
 
 	/**
-	 * Creates and returns a watchpoint on the
-	 * given field.
+	 * Creates and returns a watchpoint on a field with the given name
+	 * in a type with the given name.
+	 * The marker associated with the breakpoint will be created on the specified resource.
 	 * If hitCount > 0, the breakpoint will suspend execution when it is
 	 * "hit" the specified number of times.
 	 * 
@@ -330,8 +332,9 @@ public class JDIDebugModel {
 	}
 
 	/**
-	 * Creates and returns a method entry breakpoint in the
-	 * given binary method.
+	 * Creates and returns a method entry breakpoint in a
+	 * binary method with the given name in a type with the given name.
+	 * The marker associated with the breakpoint will be created on the specified resource.
 	 * If hitCount is > 0, the breakpoint will suspend execution when it is
 	 * "hit" the specified number of times.
 	 *
