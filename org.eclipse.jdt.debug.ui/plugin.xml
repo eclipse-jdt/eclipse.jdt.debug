@@ -93,6 +93,13 @@
            name="breakpointGroup">
          </separator>
       </menu>
+        <action id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
+  			label="%manageWatchpointAction.label"
+  			icon="icons/full/obj16/brkpi_obj.gif"
+  			helpContextId="manage_watchpoint_breakpoint_action_context"
+  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
+  			menubarPath="org.eclipse.debug.ui.DebugMenu/breakpointGroup">
+  	    </action>
       	<action id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
   			label="%manageMethodBreakpointAction.label"
   			icon="icons/full/obj16/brkpi_obj.gif"
@@ -115,6 +122,9 @@
   			helpContextId="run_to_line_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
   			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup">
+  			<enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+            </enablement> 
   	    </action>
   	    <action id="org.eclipse.jdt.debug.ui.RunSnippet" 
 			label="%RunSnippet.label" 
@@ -123,7 +133,10 @@
 			disabledIcon="icons/full/dtool16/run_sbook.gif"
   		 	hoverIcon="icons/full/ctool16/run_sbook.gif"
 			helpContextId="run_snippet_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.snippeteditor.RunSnippetAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.snippeteditor.RunSnippetAction">
+			<enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+            </enablement> 
 		</action>
   		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
@@ -132,7 +145,10 @@
 			disabledIcon="icons/full/dtool16/disp_sbook.gif"
   		 	hoverIcon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction">
+			<enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+            </enablement>
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
@@ -141,7 +157,10 @@
 			disabledIcon="icons/full/dtool16/insp_sbook.gif"
   		 	hoverIcon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction">
+			<enablement> 
+             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
+            </enablement>
 		</action> 
         <action
             label="%DebugJavaApplicationAction.label"
@@ -685,7 +704,7 @@
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
-			icon="icons/full/ctool16/insp_sbook.gif" 
+			icon="icons/full/ctool16/insp_sbook.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
      </viewerContribution>
