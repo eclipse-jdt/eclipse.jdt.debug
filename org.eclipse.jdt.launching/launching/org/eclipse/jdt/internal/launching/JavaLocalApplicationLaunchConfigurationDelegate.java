@@ -33,6 +33,11 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, ILaunch, IProgressMonitor)
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		
+		// check for cancellation
+		if (isCancelled(monitor)) {
+			return;
+		}
 								
 		String mainTypeName = verifyMainTypeName(configuration);
 
@@ -71,8 +76,18 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		String[] bootpath = getBootpath(configuration);
 		runConfig.setBootClassPath(bootpath);
 		
+		// check for cancellation
+		if (isCancelled(monitor)) {
+			return;
+		}		
+		
 		// Launch the configuration
-		runner.run(runConfig, launch, monitor);		
+		runner.run(runConfig, launch, monitor);
+		
+		// check for cancellation
+		if (isCancelled(monitor)) {
+			return;
+		}		
 		
 		// set the default source locator if required
 		setDefaultSourceLocator(launch, configuration);

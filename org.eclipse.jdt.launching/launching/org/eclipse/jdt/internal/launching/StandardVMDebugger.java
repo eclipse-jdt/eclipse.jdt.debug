@@ -57,6 +57,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 			abort(LaunchingMessages.getString("StandardVMDebugger.Could_not_find_a_free_socket_for_the_debugger_1"), null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE); //$NON-NLS-1$
 		}
 		
+		// check for cancellation
+		if (isCancelled(monitor)) {
+			return;
+		}		
+		
 		String program= constructProgramString(config);
 
 		List arguments= new ArrayList(12);
@@ -86,6 +91,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 		addArguments(config.getProgramArguments(), arguments);
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
+		
+		// check for cancellation
+		if (isCancelled(monitor)) {
+			return;
+		}		
 
 		ListeningConnector connector= getConnector();
 		if (connector == null) {
@@ -97,6 +107,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 		Process p= null;
 		try {
 			try {
+				// check for cancellation
+				if (isCancelled(monitor)) {
+					return;
+				}				
+				
 				connector.startListening(map);
 				
 				File workingDir = getWorkingDir(config);
@@ -104,6 +119,12 @@ public class StandardVMDebugger extends StandardVMRunner {
 				if (p == null) {
 					return;
 				}
+				
+				// check for cancellation
+				if (isCancelled(monitor)) {
+					p.destroy();
+					return;
+				}				
 				
 				IProcess process= DebugPlugin.getDefault().newProcess(launch, p, renderProcessLabel(cmdLine));
 				process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));

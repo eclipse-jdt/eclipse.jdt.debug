@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -445,6 +446,20 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Returns whether the progress monitor indicates it has been cancelled.
+	 * 
+	 * @param monitor progress monitor or <code>null</code>
+	 * @return whether the progress monitor indicates it has been cancelled,
+	 * 	or <code>false</code> if the monitor is <code>null</code>
+	 */
+	protected boolean isCancelled(IProgressMonitor monitor) {
+		if (monitor != null) {
+			return monitor.isCanceled();
+		}
+		return false;
 	}
 }
 

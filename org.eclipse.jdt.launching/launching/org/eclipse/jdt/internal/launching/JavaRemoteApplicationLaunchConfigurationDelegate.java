@@ -32,7 +32,11 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, ILaunch, IProgressMonitor)
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-						
+
+		// check for cancellation
+		if (isCancelled(monitor)) {
+			return;
+		}						
 						
 		// Allow termination of remote VM
 		boolean allowTerminate = isAllowTerminate(configuration);
@@ -51,8 +55,20 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		
 		Map argMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map)null);
 
+		// check for cancellation
+		if (isCancelled(monitor)) {
+			return;
+		}
+		
 		VirtualMachine vm= connector.connect(argMap, monitor);
+		
+		// check for cancellation
+		if (isCancelled(monitor)) {
+			return;
+		}
+				
 		String vmLabel = constructVMLabel(vm);
+						
 		debugTarget= JDIDebugModel.newDebugTarget(launch, vm, vmLabel, null, allowTerminate, true);
 		
 		launch.addDebugTarget(debugTarget);

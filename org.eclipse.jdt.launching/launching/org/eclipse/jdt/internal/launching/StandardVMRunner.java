@@ -180,12 +180,23 @@ public class StandardVMRunner extends AbstractVMRunner {
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
 
+		// check for cancellation
+		if (isCancelled(monitor)) {
+			return;
+		}
+		
 		Process p= null;
 		File workingDir = getWorkingDir(config);
 		p= exec(cmdLine, workingDir);
 		if (p == null) {
 			return;
 		}
+		
+		// check for cancellation
+		if (isCancelled(monitor)) {
+			p.destroy();
+			return;
+		}		
 		
 		IProcess process= DebugPlugin.getDefault().newProcess(launch, p, renderProcessLabel(cmdLine));
 		process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
@@ -203,4 +214,5 @@ public class StandardVMRunner extends AbstractVMRunner {
 		
 		return program;
 	}	
+
 }
