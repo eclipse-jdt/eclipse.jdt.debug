@@ -916,7 +916,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	public String getThreadGroupName() throws DebugException {
 		ThreadGroupReference tgr= getUnderlyingThreadGroup();
 		try {
-			return fThreadGroup.name();
+			return tgr.name();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_group_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
@@ -1345,12 +1345,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			} catch (UnsupportedOperationException e) {
 				requestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_group"), new String[] {e.toString()}), e); //$NON-NLS-1$
 				// execution will not reach this line, as
-				// #requestFailed will thrown an exception				
+				// #requestFailed will throw an exception				
 				return null;
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_group"), new String[] {e.toString()}), e); //$NON-NLS-1$
 				// execution will not reach this line, as
-				// #targetRequestFailed will thrown an exception				
+				// #targetRequestFailed will throw an exception				
 				return null;
 			}
 		}
@@ -1374,7 +1374,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * disposed and a change event is fired.
 	 */
 	public void timeout() {
-		System.out.println("timeout");
 		disposeStackFrames();
 		interrupted();
 		fireChangeEvent();
