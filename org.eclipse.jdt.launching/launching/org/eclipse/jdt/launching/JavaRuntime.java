@@ -8,9 +8,9 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -153,6 +153,13 @@ public final class JavaRuntime {
 	public static final String PREF_CONNECT_TIMEOUT = LaunchingPlugin.getUniqueIdentifier() + ".PREF_CONNECT_TIMEOUT"; //$NON-NLS-1$
 	
 	/**
+	 * Preference key for the String of XML that defines all installed VMs.
+	 * 
+	 * @since 2.1
+	 */
+	public static final String PREF_VM_XML = LaunchingPlugin.getUniqueIdentifier() + ".PREF_VM_XML"; //$NON-NLS-1$
+	
+	/**
 	 * Default launch/connect timeout (ms).
 	 * 
 	 * @since 2.0
@@ -201,20 +208,6 @@ public final class JavaRuntime {
 	private JavaRuntime() {
 	}
 
-	/**
-	 * Returns the list of registered VM types. VM types are registered via
-	 * <code>"org.eclipse.jdt.launching.vmTypes"</code> extension point.
-	 * Returns an empty list if there are no registered VM types.
-	 * 
-	 * @return the list of registered VM types
-	 */
-	public static IVMInstallType[] getVMInstallTypes() {
-		if (fgVMTypes == null) {
-			initializeVMTypes();
-		}
-		return fgVMTypes; 
-	}
-	
 	private static synchronized void initializeVMTypes() {
 		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(LaunchingPlugin.getUniqueIdentifier() + ".vmInstallTypes"); //$NON-NLS-1$
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
@@ -287,20 +280,6 @@ public final class JavaRuntime {
 		return null;
 	}
 	
-	private static IVMInstall getVMFromId(String idString) {
-		if (idString == null || idString.length() == 0) {
-			return null;
-		}
-		CompositeId id= CompositeId.fromString(idString);
-		if (id.getPartCount() == 2) {
-			IVMInstallType vmType= getVMInstallType(id.get(0));
-			if (vmType != null) {
-				return vmType.findVMInstall(id.get(1));
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Returns the VM install type with the given unique id. 
 	 * @return	The VM install type for the given id, or <code>null</code> if no
@@ -325,21 +304,37 @@ public final class JavaRuntime {
 	 * @param monitor progress monitor or <code>null</code>
 	 */
 	public static void setDefaultVMInstall(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
+		setDefaultVMInstall(vm, monitor, true);
+	}	
+	
+	/**
+	 * Sets a VM as the system-wide default VM, and notifies registered VM install
+	 * change listeners of the change.
+	 * 
+	 * @param vm	The vm to make the default. May be <code>null</code> to clear 
+	 * 				the default.
+	 * @param monitor progress monitor or <code>null</code>
+	 * @param savePreference If <code>true</code>, update workbench preferences to reflect
+	 * 		   				  the new default VM.
+	 */
+	public static void setDefaultVMInstall(IVMInstall vm, IProgressMonitor monitor, boolean savePreference) throws CoreException {
 		IVMInstall previous = null;
 		if (fgDefaultVMId != null) {
-			previous = getVMFromId(fgDefaultVMId);
+			previous = getVMFromCompositeId(fgDefaultVMId);
 		}
-		fgDefaultVMId= getIdFromVM(vm);
+		fgDefaultVMId= getCompositeIdFromVM(vm);
 		updateJREVariables(monitor);
-		saveVMConfiguration();
+		if (savePreference) {
+			saveVMConfiguration();
+		}
 		IVMInstall current = null;
 		if (fgDefaultVMId != null) {
-			current = getVMFromId(fgDefaultVMId);
+			current = getVMFromCompositeId(fgDefaultVMId);
 		}
 		if (previous != current) {
 			notifyDefaultVMChanged(previous, current);
 		}
-	}	
+	}
 	
 	/**
 	 * Sets a VM connector as the system-wide default VM. This setting is persisted when
@@ -359,13 +354,14 @@ public final class JavaRuntime {
 		JREContainerInitializer conatinerUpdater = new JREContainerInitializer();
 		conatinerUpdater.updateDefaultJREContainers(monitor);
 	}
+	
 	/**
 	 * Return the default VM set with <code>setDefaultVM()</code>.
 	 * @return	Returns the default VM. May return <code>null</code> when no default
 	 * 			VM was set or when the default VM has been disposed.
 	 */
 	public static IVMInstall getDefaultVMInstall() {
-		IVMInstall install= getVMFromId(getDefaultVMId());
+		IVMInstall install= getVMFromCompositeId(getDefaultVMId());
 		if (install != null && install.getInstallLocation().exists()) {
 			return install;
 		} else {
@@ -381,7 +377,7 @@ public final class JavaRuntime {
 				LaunchingPlugin.log(e);
 			}
 			detectVMConfiguration();
-			return getVMFromId(getDefaultVMId());
+			return getVMFromCompositeId(getDefaultVMId());
 		}
 	}
 	
@@ -402,6 +398,20 @@ public final class JavaRuntime {
 		return connector;
 	}	
 	
+	/**
+	 * Returns the list of registered VM types. VM types are registered via
+	 * <code>"org.eclipse.jdt.launching.vmTypes"</code> extension point.
+	 * Returns an empty list if there are no registered VM types.
+	 * 
+	 * @return the list of registered VM types
+	 */
+	public static IVMInstallType[] getVMInstallTypes() {
+		if (fgVMTypes == null) {
+			initializeVMTypes();
+		}
+		return fgVMTypes; 
+	}
+	
 	private static String getDefaultVMId() {
 		if (fgVMTypes == null) {
 			initializeVMTypes();
@@ -416,7 +426,13 @@ public final class JavaRuntime {
 		return fgDefaultVMConnectorId;
 	}	
 	
-	private static String getIdFromVM(IVMInstall vm) {
+	/** 
+	 * Returns a String that uniquely identifies the specified VM across all VM types.
+	 * 
+	 * @param vm the instance of IVMInstallType to be indentified
+	 * 
+	 * @since 2.1	 */
+	public static String getCompositeIdFromVM(IVMInstall vm) {
 		if (vm == null) {
 			return null;
 		}
@@ -426,6 +442,27 @@ public final class JavaRuntime {
 		return id.toString();
 	}
 	
+	/**
+	 * Return the VM corrseponding to the specified composite Id.  The id uniquely
+	 * identifies a VM across all vm types.  
+	 * 
+	 * @param idString the composite id that specifies an instance of IVMInstall	 * 
+	 * @since 2.1
+	 */
+	public static IVMInstall getVMFromCompositeId(String idString) {
+		if (idString == null || idString.length() == 0) {
+			return null;
+		}
+		CompositeId id= CompositeId.fromString(idString);
+		if (id.getPartCount() == 2) {
+			IVMInstallType vmType= getVMInstallType(id.get(0));
+			if (vmType != null) {
+				return vmType.findVMInstall(id.get(1));
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Returns a new runtime classpath entry for the given project.
 	 * 
@@ -1036,7 +1073,7 @@ public final class JavaRuntime {
 	}	
 		
 	/**
-	 * Saves the VM configuration information to disk. This includes
+	 * Saves the VM configuration information to the preferences. This includes
 	 * the following information:
 	 * <ul>
 	 * <li>The list of all defined IVMInstall instances.</li>
@@ -1046,20 +1083,24 @@ public final class JavaRuntime {
 	 * configuration information.
 	 */
 	public static void saveVMConfiguration() throws CoreException {
-		IPath stateLocation= LaunchingPlugin.getDefault().getStateLocation();
-		IPath stateFile= stateLocation.append("vmConfiguration.xml"); //$NON-NLS-1$
-		File f= new File(stateFile.toOSString());
 		try {
 			String xml = getVMsAsXML();
-			FileOutputStream stream = new FileOutputStream(f);
-			stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
-			stream.close();			
+			getPreferences().setValue(PREF_VM_XML, xml);
+			savePreferences();
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.ioExceptionOccurred"), e)); //$NON-NLS-1$
 		}
-		
 	}
 	
+	/**
+	 * Write out the specified String as the new value of the VM definitions preference
+	 * and save all preferences.
+	 */
+	public static void saveVMDefinitions(String vmDefXML) {
+		LaunchingPlugin.getDefault().getPluginPreferences().setValue(PREF_VM_XML, vmDefXML);
+		LaunchingPlugin.getDefault().savePluginPreferences();		
+	}
+
 	private static String getVMsAsXML() throws IOException {
 		Document doc = new DocumentImpl();
 		Element config = doc.createElement("vmSettings"); //$NON-NLS-1$
@@ -1122,21 +1163,94 @@ public final class JavaRuntime {
 		return root;
 	}
 	
+	/**
+	 * Parse the XML contained in the specified InputStream, and return a result collector
+	 * containing the results.  Return <code>null</code> if there were any problems.
+	 */
+	public static VMDefinitionsContainer parseVMDefinitionXML(InputStream inputStream) {
+		VMDefinitionsContainer vmDefs = null;
+		try {
+			vmDefs = loadVMConfiguration(inputStream);
+		} catch (IOException ioe) {
+			LaunchingPlugin.log(ioe);
+			return null;
+		}
+		return vmDefs;
+	}
+	
+	/**
+	 * This method loads the set of installed JREs.  This definition is stored in the
+	 * workbench preferences, however older workspaces may store this information in
+	 * a meta-data file.  In both cases, the VMs are described as an XML document.
+	 * If neither the preference nor the meta-data file is found, the file system is
+	 * searched for VMs.
+	 */
 	private static void initializeVMConfiguration() throws IOException {
-		IPath stateLocation= LaunchingPlugin.getDefault().getStateLocation();
-		IPath stateFile= stateLocation.append("vmConfiguration.xml"); //$NON-NLS-1$
-		File f= new File(stateFile.toOSString());
-		if (f.isFile()) {
-			loadVMConfiguration(f);
-		} else {
-			detectVMConfiguration();
+		// Try retrieving the VM preferences from the preference store
+		String vmXMLString = getPreferences().getString(PREF_VM_XML);
+		
+		// If the preference was found, load VMs from it into memory
+		if (vmXMLString.length() > 0) {
+			try {
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(vmXMLString.getBytes());
+				VMDefinitionsContainer vmDefs = VMDefinitionsContainer.parseXMLIntoContainer(inputStream);
+				loadVMDefsIntoMemory(vmDefs);
+			} catch (IOException ioe) {
+				LaunchingPlugin.log(ioe);
+			}			
+		} else {			
+			// Otherwise, look for the old file that previously held the VM defs
+			IPath stateLocation= LaunchingPlugin.getDefault().getStateLocation();
+			IPath stateFile= stateLocation.append("vmConfiguration.xml"); //$NON-NLS-1$
+			File file = new File(stateFile.toOSString());
+			
+			VMDefinitionsContainer vmDefs = null;
+			if (file.exists()) {        
+				// If file exists, load VM defs from it into memory and write the defs to
+				// the preference store WITHOUT triggering any processing of the new value
+				FileInputStream fileInputStream = new FileInputStream(file);
+				vmDefs = VMDefinitionsContainer.parseXMLIntoContainer(fileInputStream);
+				loadVMDefsIntoMemory(vmDefs);
+				LaunchingPlugin.getDefault().setIgnoreVMDefPropertyChangeEvents(true);
+				saveVMDefinitions(vmDefs.getAsXML());
+				LaunchingPlugin.getDefault().setIgnoreVMDefPropertyChangeEvents(false);				
+			} else {				 
+				// Otherwise go looking for VMs in the file system.  Write the results
+				// to the preference store.  This will be treated just like a user change
+				// to the VM prefs with full notification to all VM listeners.
+				detectAndSaveVMDefinitions();
+			}			
 		}
 	}
 	
-	private static void loadVMConfiguration(File f) throws IOException {
-		InputStream stream= new BufferedInputStream(new FileInputStream(f));
-		Reader reader= new InputStreamReader(stream, "UTF-8"); //$NON-NLS-1$
-		Element config= null;
+	/**
+	 * For each VMStandin object in the specified VM container, convert it into a 'real' VM.	 */
+	private static void loadVMDefsIntoMemory(VMDefinitionsContainer vmContainer) {
+		fgDefaultVMId = vmContainer.getDefaultVMInstallCompositeID();
+		fgDefaultVMConnectorId = vmContainer.getDefaultVMInstallConnectorTypeID();
+		
+		List vmList = vmContainer.getVMList();
+		Iterator vmListIterator = vmList.iterator();
+		while (vmListIterator.hasNext()) {
+			VMStandin vmStandin = (VMStandin) vmListIterator.next();
+			vmStandin.convertToRealVM();
+		}
+	}
+	
+	/**
+	 * Parse the set of installed JREs out of the XML contained in the specified InputStream,
+	 * put the results in a VMDefinitionsContainer and return it.
+	 * 
+	 * Calling this method does NOT affect the internal memory model used to manage VMs.
+	 * Thus, it does not create 'real' VMInstall objects.  It only creates VStandin
+	 * objects, and puts all the results in the result collector.	 */
+	private static VMDefinitionsContainer loadVMConfiguration(InputStream inputStream) throws IOException {
+		// Wrapper the stream for efficient parsing
+		InputStream stream= new BufferedInputStream(inputStream);
+		Reader reader= new InputStreamReader(stream);
+
+		// Do the parsing and obtain the top-level node
+		Element config= null;		
 		try {
 			DocumentBuilder parser= DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			config = parser.parse(new InputSource(reader)).getDocumentElement();
@@ -1148,11 +1262,20 @@ public final class JavaRuntime {
 		} finally {
 			reader.close();
 		}
+		
+		// If the top-level node wasn't what we expected, bail out
 		if (!config.getNodeName().equalsIgnoreCase("vmSettings")) { //$NON-NLS-1$
 			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
 		}
-		fgDefaultVMId= config.getAttribute("defaultVM"); //$NON-NLS-1$
-		fgDefaultVMConnectorId = config.getAttribute("defaultVMConnector"); //$NON-NLS-1$
+		
+		// Construct the result collector that will hold the results of traversing the 
+		// parsed structure and populate the default VM related values
+		VMDefinitionsContainer resultCollector = new VMDefinitionsContainer();
+		resultCollector.setDefaultVMInstallCompositeID(config.getAttribute("defaultVM")); //$NON-NLS-1$
+		resultCollector.setDefaultVMInstallConnectorTypeID(config.getAttribute("defaultVMConnector")); //$NON-NLS-1$
+		
+		// Traverse the parsed structure.  This consists of processing each VMType node, and
+		// then processing each VM node underneath these
 		NodeList list = config.getChildNodes();
 		int length = list.getLength();
 		for (int i = 0; i < length; ++i) {
@@ -1161,47 +1284,18 @@ public final class JavaRuntime {
 			if (type == Node.ELEMENT_NODE) {
 				Element vmTypeElement = (Element) node;
 				if (vmTypeElement.getNodeName().equalsIgnoreCase("vmType")) { //$NON-NLS-1$
-					createFromVMType(vmTypeElement);
+					createFromVMType(vmTypeElement, resultCollector);
 				}
 			}
 		}
+		
+		return resultCollector;
 	}
 	
-	private static void detectVMConfiguration() {
-		IVMInstallType[] vmTypes= getVMInstallTypes();
-		boolean defaultSet= false;
-		for (int i= 0; i < vmTypes.length; i++) {
-			File detectedLocation= vmTypes[i].detectInstallLocation();
-			if (detectedLocation != null) {
-				int unique = i;
-				IVMInstallType vmType = vmTypes[i];
-				while (vmType.findVMInstall(String.valueOf(unique)) != null) {
-					unique++;
-				}
-				IVMInstall detected= vmTypes[i].createVMInstall(String.valueOf(unique));
-				StringBuffer nameBuffer = new StringBuffer(LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
-				nameBuffer.append(" ("); //$NON-NLS-1$
-				try {
-					nameBuffer.append(detectedLocation.getCanonicalPath());
-				} catch (IOException ioe) {
-					nameBuffer.append(LaunchingMessages.getString("JavaRuntime.Unknown_location_1")); //$NON-NLS-1$
-				}
-				nameBuffer.append(')');
-				detected.setName(nameBuffer.toString());
-				detected.setInstallLocation(detectedLocation);
-				if (detected != null && !defaultSet) {
-					try {
-						setDefaultVMInstall(detected, null);
-						defaultSet= true;
-					} catch (CoreException e) {
-						LaunchingPlugin.log(e);
-					}
-				}
-			}
-		}
-	}
-	
-	private static void createFromVMType(Element vmTypeElement) {
+	/**
+	 * For the specified vm type node, parse all subordinate VM definitions and add them
+	 * to the specified result collector.	 */
+	private static void createFromVMType(Element vmTypeElement, VMDefinitionsContainer resultCollector) {
 		String id = vmTypeElement.getAttribute("id"); //$NON-NLS-1$
 		IVMInstallType vmType= getVMInstallType(id);
 		if (vmType != null) {
@@ -1213,7 +1307,7 @@ public final class JavaRuntime {
 				if (type == Node.ELEMENT_NODE) {
 					Element vmElement = (Element) node;
 					if (vmElement.getNodeName().equalsIgnoreCase("vm")) { //$NON-NLS-1$
-						createVM(vmType, vmElement);
+						createVM(vmType, vmElement, resultCollector);
 					}
 				}
 			}
@@ -1222,7 +1316,10 @@ public final class JavaRuntime {
 		}
 	}
 
-	private static void createVM(IVMInstallType vmType, Element vmElement) {
+	/**
+	 * Parse the specified VM node, create a VMStandin for it, and add this to the 
+	 * specified result collector.	 */
+	private static void createVM(IVMInstallType vmType, Element vmElement, VMDefinitionsContainer resultCollector) {
 		String id= vmElement.getAttribute("id"); //$NON-NLS-1$
 		if (id != null) {
 			String installPath= vmElement.getAttribute("path"); //$NON-NLS-1$
@@ -1233,9 +1330,11 @@ public final class JavaRuntime {
 			if (!installLocation.exists()) {
 				return;
 			}
-			IVMInstall vm= vmType.createVMInstall(id);
-			vm.setName(vmElement.getAttribute("name")); //$NON-NLS-1$
-			vm.setInstallLocation(installLocation);
+			
+			VMStandin vmStandin = new VMStandin(vmType, id);
+			resultCollector.addVM(vmStandin);
+			vmStandin.setName(vmElement.getAttribute("name")); //$NON-NLS-1$
+			vmStandin.setInstallLocation(installLocation);
 			
 			NodeList list = vmElement.getChildNodes();
 			int length = list.getLength();
@@ -1245,11 +1344,11 @@ public final class JavaRuntime {
 				if (type == Node.ELEMENT_NODE) {
 					Element libraryLocationElement= (Element)node;
 					if (libraryLocationElement.getNodeName().equals("libraryLocation")) { //$NON-NLS-1$
-						LibraryLocation loc = getLibraryLocation(vm, libraryLocationElement);
-						vm.setLibraryLocations(new LibraryLocation[]{loc});
+						LibraryLocation loc = getLibraryLocation(vmStandin, libraryLocationElement);
+						vmStandin.setLibraryLocations(new LibraryLocation[]{loc});
 						break;
 					} else if (libraryLocationElement.getNodeName().equals("libraryLocations")) { //$NON-NLS-1$
-						setLibraryLocations(vm, libraryLocationElement);
+						setLibraryLocations(vmStandin, libraryLocationElement);
 						break;
 					}
 				}
@@ -1334,6 +1433,74 @@ public final class JavaRuntime {
 			locations[i] = new LibraryLocation(libraryPaths[i], sourcePaths[i], sourceRootPaths[i]);
 		}
 		return locations;
+	}
+	
+	/**
+	 * Look out on the file system for VMs.  Try to find one VM for each VM type.
+	 * Put the results in a result collector and return it.	 */
+	private static VMDefinitionsContainer detectVMConfiguration() {
+		VMDefinitionsContainer resultCollector = new VMDefinitionsContainer();
+		
+		// Try to detect a VM for each declared VM type
+		IVMInstallType[] vmTypes= getVMInstallTypes();
+		for (int i = 0; i < vmTypes.length; i++) {
+			
+			File detectedLocation= vmTypes[i].detectInstallLocation();
+			if (detectedLocation != null) {
+				
+				// Make sure the VM id is unique
+				int unique = i;
+				IVMInstallType vmType = vmTypes[i];
+				while (vmType.findVMInstall(String.valueOf(unique)) != null) {
+					unique++;
+				}
+
+				// Create a standin for the detected VM and add it to the result collector
+				String vmID = String.valueOf(unique);
+				VMStandin detectedVMStandin = new VMStandin(vmType, vmID);
+				if (detectedVMStandin != null) {
+					resultCollector.addVM(detectedVMStandin);				
+					detectedVMStandin.setInstallLocation(detectedLocation);
+					detectedVMStandin.setName(generateDetectedVMName(detectedVMStandin));
+					
+					// Only set one default VM
+					if (resultCollector.getDefaultVMInstallCompositeID() == null) {
+						String compositeId = getCompositeIdFromVM(detectedVMStandin);
+						resultCollector.setDefaultVMInstallCompositeID(compositeId);
+					}
+				}				
+			}
+		}
+		
+		return resultCollector;
+	}
+
+	/**
+	 * Look on the file system for VMs, convert the results to XML, and write this
+	 * as the new value of the VM preference.	 */
+	private static VMDefinitionsContainer detectAndSaveVMDefinitions() {
+		VMDefinitionsContainer vmDefs = detectVMConfiguration();
+		try {
+			String vmDefXML = vmDefs.getAsXML();
+			saveVMDefinitions(vmDefXML);
+		} catch (IOException ioe) {
+			LaunchingPlugin.log(ioe);
+		}
+		return vmDefs;
+	}
+	
+	/**
+	 * Make the name of a detected VM stand out.
+	 */	private static String generateDetectedVMName(IVMInstall vm) {
+		StringBuffer nameBuffer = new StringBuffer(LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
+		nameBuffer.append(" ("); //$NON-NLS-1$
+		try {
+			nameBuffer.append(vm.getInstallLocation().getCanonicalPath());
+		} catch (IOException ioe) {
+			nameBuffer.append(LaunchingMessages.getString("JavaRuntime.Unknown_location_1")); //$NON-NLS-1$
+		}
+		nameBuffer.append(')');
+		return nameBuffer.toString();
 	}
 	
 	/**
@@ -1445,7 +1612,7 @@ public final class JavaRuntime {
 		}
 		return fgContainerResolvers;
 	}
-	
+
 	private static void initializeResolvers() {
 		IExtensionPoint point = LaunchingPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRY_RESOLVERS);
 		IConfigurationElement[] extensions = point.getConfigurationElements();
@@ -1589,4 +1756,5 @@ public final class JavaRuntime {
 			listener.vmRemoved(vm);
 		}		
 	}		
+	
 }

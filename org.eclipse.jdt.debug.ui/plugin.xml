@@ -1169,6 +1169,12 @@
 		plugin = "org.eclipse.jdt.debug"
 		code="162">
 	</statusHandler>
+	<statusHandler
+		id="org.eclipse.jdt.debug.ui.statusHandler.projectBuilderWithProgressMonitor"
+		class="org.eclipse.jdt.internal.debug.ui.ProjectBuilderWithProgressMonitorStatusHandler"
+		plugin = "org.eclipse.jdt.launching"
+		code="191">
+	</statusHandler>
 </extension>
 
 <extension point = "org.eclipse.debug.core.sourceLocators">
