@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.ui.classpath;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 
 public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeClasspathEntry {
@@ -160,5 +161,40 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 	 */
 	public org.eclipse.jdt.core.IClasspathEntry getClasspathEntry() {
 		return entry.getClasspathEntry();
+	}
+	
+	public IRuntimeClasspathEntry getDelegate() {
+		return entry;
+	}
+	
+	public boolean hasChildren() {
+		IRuntimeClasspathEntry rpe = getDelegate();
+		return rpe instanceof IRuntimeClasspathEntry2 &&
+		 ((IRuntimeClasspathEntry2)rpe).isComposite();
+	}
+	
+	public IClasspathEntry[] getChildren() {
+		IRuntimeClasspathEntry rpe = getDelegate();
+		if (rpe instanceof IRuntimeClasspathEntry2) {
+			IRuntimeClasspathEntry2 r2 = (IRuntimeClasspathEntry2) rpe;
+			try {
+				IRuntimeClasspathEntry[] entries = r2.getRuntimeClasspathEntries();
+				IClasspathEntry[] cps = new IClasspathEntry[entries.length];
+				for (int i = 0; i < entries.length; i++) {
+					IRuntimeClasspathEntry entry = entries[i];
+					cps[i] = new ClasspathEntry(entry, this);
+				}
+				return cps;
+			} catch (CoreException e) {
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry#isEditable()
+	 */
+	public boolean isEditable() {
+		return getParent() instanceof ClasspathGroup;
 	}
 }

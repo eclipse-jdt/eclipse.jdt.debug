@@ -110,6 +110,9 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	}
 	
 	public ClasspathEntry createEntry(IRuntimeClasspathEntry entry, IClasspathEntry entryParent) {
+		if (entry instanceof ClasspathEntry) {
+			entry = ((ClasspathEntry)entry).getDelegate();
+		}
 		if (entryParent == null) {
 			entryParent= this;
 		} 
@@ -199,6 +202,13 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		super();
 		getBootstrapEntry();
 		getUserEntry();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry#isEditable()
+	 */
+	public boolean isEditable() {
+		return false;
 	}
 
 }

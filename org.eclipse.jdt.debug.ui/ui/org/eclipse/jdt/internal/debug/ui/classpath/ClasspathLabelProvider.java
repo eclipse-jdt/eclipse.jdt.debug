@@ -46,7 +46,7 @@ public class ClasspathLabelProvider implements ILabelProvider, IColorProvider {
 	public String getText(Object element) {
 		if (element instanceof ClasspathEntry) {
 			ClasspathEntry entry = (ClasspathEntry) element;
-			return runtimeClasspathLabelProvider.getText(entry);
+			return runtimeClasspathLabelProvider.getText(entry.getDelegate());
 		}
 		return element.toString();
 	}

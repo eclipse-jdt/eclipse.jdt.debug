@@ -56,4 +56,11 @@ public class ClasspathGroup extends AbstractClasspathEntry {
 	public boolean canBeRemoved() {
 		return canBeRemoved;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry#isEditable()
+	 */
+	public boolean isEditable() {
+		return false;
+	}
 }

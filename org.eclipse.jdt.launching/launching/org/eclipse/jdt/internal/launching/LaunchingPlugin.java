@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -78,11 +80,21 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	/**
 	 * Identifier for 'vmConnectors' extension point
 	 */
-	public static final String ID_EXTENSION_POINT_VM_CONNECTORS = getUniqueIdentifier() + ".vmConnectors"; //$NON-NLS-1$
+	public static final String ID_EXTENSION_POINT_VM_CONNECTORS = "vmConnectors"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for 'runtimeClasspathEntries' extension point
+	 */
+	public static final String ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES = "runtimeClasspathEntries"; //$NON-NLS-1$	
 	
 	private static LaunchingPlugin fgLaunchingPlugin;
 	
 	private HashMap fVMConnectors = null;
+	
+	/**
+	 * Runtime classpath extensions
+	 */
+	private HashMap fClasspathEntryExtensions = null;
 
 	private String fOldVMPrefString = EMPTY_STRING;
 	
@@ -101,6 +113,11 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * the plug-in can ignore processing and changes.
 	 */
 	private boolean fBatchingChanges = false;
+	
+	/**
+	 * Shared XML parser
+	 */
+	private static DocumentBuilder fgXMLParser = null;
 	
 	/**
 	 * Stores VM changes resulting from a JRE preference change.
@@ -345,6 +362,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		JavaRuntime.removeVMInstallChangedListener(this);
 		JavaRuntime.saveVMConfiguration();
 		savePluginPreferences();
+		fgXMLParser = null;
 		super.shutdown();
 	}
 		
@@ -412,7 +430,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Loads VM connector extensions
 	 */
 	private void initializeVMConnectors() {
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(ID_EXTENSION_POINT_VM_CONNECTORS);
+		IExtensionPoint extensionPoint= getDescriptor().getExtensionPoint(ID_EXTENSION_POINT_VM_CONNECTORS);
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
 		MultiStatus status= new MultiStatus(getUniqueIdentifier(), IStatus.OK, LaunchingMessages.getString("LaunchingPlugin.Exception_occurred_reading_vmConnectors_extensions_1"), null); //$NON-NLS-1$
 		fVMConnectors = new HashMap(configs.length);
@@ -428,6 +446,36 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			LaunchingPlugin.log(status);
 		}			
 	}
+	
+	/**
+	 * Returns a new runtime classpath entry of the specified type.
+	 * 
+	 * @param id extension type id
+	 * @return new uninitialized runtime classpath entry
+	 * @throws CoreException if unable to create an entry
+	 */
+	public IRuntimeClasspathEntry2 newRuntimeClasspathEntry(String id) throws CoreException {
+		if (fClasspathEntryExtensions == null) {
+			initializeRuntimeClasspathExtensions();
+		}
+		IConfigurationElement config = (IConfigurationElement) fClasspathEntryExtensions.get(id);
+		if (config == null) {
+			abort(MessageFormat.format(LaunchingMessages.getString("LaunchingPlugin.32"), new String[]{id}), null); //$NON-NLS-1$
+		}
+		return (IRuntimeClasspathEntry2) config.createExecutableExtension("class"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Loads runtime classpath extensions
+	 */
+	private void initializeRuntimeClasspathExtensions() {
+		IExtensionPoint extensionPoint= getDescriptor().getExtensionPoint(ID_EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRIES);
+		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
+		fClasspathEntryExtensions = new HashMap(configs.length);
+		for (int i= 0; i < configs.length; i++) {
+			fClasspathEntryExtensions.put(configs[i].getAttribute("id"), configs[i]); //$NON-NLS-1$
+		}
+	}	
 	
 	/**
 	 * Save preferences whenever the connect timeout changes.
@@ -856,6 +904,38 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			}
 		}
 	}
+	
+	/**
+	 * Returns a shared XML parser.
+	 * 
+	 * @return an XML parser 
+	 * @throws CoreException if unable to create a parser
+	 * @since 3.0
+	 */
+	public static DocumentBuilder getParser() throws CoreException {
+		if (fgXMLParser == null) {
+			try {
+				fgXMLParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			} catch (ParserConfigurationException e) {
+				abort(LaunchingMessages.getString("LaunchingPlugin.33"), e); //$NON-NLS-1$
+			} catch (FactoryConfigurationError e) {
+				abort(LaunchingMessages.getString("LaunchingPlugin.34"), e); //$NON-NLS-1$
+			}
+		}
+		return fgXMLParser;
+	}	
+	
+	/**
+	 * Throws an exception with the given message and underlying exception.
+	 * 
+	 * @param message error message
+	 * @param exception underlying exception or <code>null</code> if none
+	 * @throws CoreException
+	 */
+	protected static void abort(String message, Throwable exception) throws CoreException {
+		IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, message, exception);
+		throw new CoreException(status);
+	}	
 }
 
  

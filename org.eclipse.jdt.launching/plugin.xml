@@ -26,6 +26,7 @@
 <!-- Extension point definitions -->
    <extension-point id="classpathProviders" name="%classpathProviders" schema="schema/classpathProviders.exsd"/>
    <extension-point id="runtimeClasspathEntryResolvers" name="%runtimeClasspathEntryResolvers" schema="schema/runtimeClasspathEntryResolvers.exsd"/>
+   <extension-point id="runtimeClasspathEntries" name="%runtimeClasspathEntries" schema="schema/runtimeClasspathEntries.exsd"/>
    <extension-point id="vmConnectors" name="%vmConnectors" schema="schema/vmConnectors.exsd"/>
    <extension-point id="vmInstallTypes" name="%vmInstallTypes" schema="schema/vmInstallTypes.exsd"/>
 
@@ -107,7 +108,19 @@
             class="org.eclipse.jdt.internal.launching.JRERuntimeClasspathEntryResolver"
             id="org.eclipse.jdt.launching.JRE_RESOLVER">
       </runtimeClasspathEntryResolver>
+      <runtimeClasspathEntryResolver
+			runtimeClasspathEntryId="org.eclipse.jdt.launching.classpathentry.defaultClasspath"
+            class="org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntryResolver"
+            id="org.eclipse.jdt.launching.classpathentry.project.resolver">
+      </runtimeClasspathEntryResolver>      
    </extension>
+   <extension
+         point="org.eclipse.jdt.launching.runtimeClasspathEntries">
+      <runtimeClasspathEntry
+            id="org.eclipse.jdt.launching.classpathentry.defaultClasspath"
+            class="org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry">
+      </runtimeClasspathEntry>
+   </extension>   
    <extension
          point="org.eclipse.debug.core.launchConfigurationComparators">
       <launchConfigurationComparator

@@ -42,4 +42,11 @@ public interface IClasspathEntry {
 	 * @param child the child entry to move
 	 */
 	public void moveChild(boolean up, IClasspathEntry child);
+	
+	/**
+	 * Returns whether this entry is editable.
+	 * 
+	 * @return whether this entry is editable
+	 */
+	public boolean isEditable();
 }

@@ -31,11 +31,18 @@ import org.eclipse.jdt.core.IClasspathEntry;
  * 	<li>A library (type <code>CONTAINER</code>) - a container refers to classpath
  * 		container variable which refers to a collection of archives derived
  * 		dynamically, on a per project basis.</li>
+ *  <li>A contributed classpath entry (type <code>OTHER</code>) - a contributed
+ *      classpath entry is an extension contributed by a plug-in. The resolution
+ *      of a contributed classpath entry is client defined. See
+ * 		<code>IRuntimeClasspathEntry2</code>.
  * </ul>
  * <p>
- * Clients are not intended to implement this interface.
+ * Clients may implement this interface for contributed a classpath entry
+ * types (i.e. type <code>OTHER</code>). Note, contributed classpath entries
+ * are new in 3.0, and are only intended to be contributed by the Java debugger.
  * </p>
  * @since 2.0
+ * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2
  */
 public interface IRuntimeClasspathEntry {
 	
@@ -58,6 +65,12 @@ public interface IRuntimeClasspathEntry {
 	 * Type identifier for container entries.
 	 */
 	public static final int CONTAINER = 4;
+	
+	/**
+	 * Type identifier for contributed entries.
+	 * @since 3.0
+	 */
+	public static final int OTHER = 5;	
 
 	/**
 	 * Classpath property identifier for entries that appear on the
@@ -85,14 +98,33 @@ public interface IRuntimeClasspathEntry {
 	 * <li><code>ARCHIVE</code></li>
 	 * <li><code>VARIABLE</code></li>
 	 * <li><code>CONTAINER</code></li>
+	 * <li><code>OTHER</code></li>
 	 * </ul>
-	 * 
+	 * <p>
+	 * Since 3.0, a type of <code>OTHER</code> may be returned.
+	 * </p>
 	 * @return this classpath entry's type
 	 */
 	public int getType();
 	
 	/**
 	 * Returns a memento for this classpath entry.
+	 * <p>
+	 * Since 3.0, the memento for a contributed classpath entry must
+	 * be in the form of an XML document, with the following node structure:
+	 * <pre>
+	 * <runtimeClasspathEntry id="exampleId">
+	 *    <memento>
+	 *        value="exampleMemento"
+	 *    </memento>
+	 * </runtimeClasspathEntry>
+	 * </pre>
+	 * The <code>typeId</code> attribute identifies the extension that contributed
+	 * the classpath entry type. The <code>memento</code> attribute value will be
+	 * used to initialize the runtime classpath entry, via the method
+	 * <code>IRuntimeClasspathEntry2.initializeFrom(String memento)</code>. The 
+	 * <code>memento</code> node attributes are client defined.
+	 * </p>
 	 * 
 	 * @return a memento for this classpath entry
 	 * @exception CoreException if an exception occurs generating a memento
@@ -100,7 +132,8 @@ public interface IRuntimeClasspathEntry {
 	public String getMemento() throws CoreException;
 	
 	/**
-	 * Returns the path associated with this entry. The format of the
+	 * Returns the path associated with this entry, or <code>null</code>
+	 * if none. The format of the
 	 * path returned depends on this entry's type:
 	 * <ul>
 	 * <li><code>PROJECT</code> - a workspace relative path to the associated
@@ -111,9 +144,12 @@ public interface IRuntimeClasspathEntry {
 	 * 		classpath variable entry.</li>
 	 * <li><code>CONTAINER</code> - the path corresponding to the associated
 	 * 		classpath container variable entry.</li>
+	 * <li><code>OTHER</code> - the path returned is client defined.</li>
 	 * </ul>
-	 * 
-	 * @return the path associated with this entry
+	 * <p>
+	 * Since 3.0, this method may return <code>null</code>.
+	 * </p>
+	 * @return the path associated with this entry, or <code>null</code>
 	 * @see org.eclipse.jdt.core.IClasspathEntry#getPath()
 	 */
 	public IPath getPath();
@@ -261,9 +297,13 @@ public interface IRuntimeClasspathEntry {
 	public String getVariableName();
 	
 	/**
-	 * Returns a classpath entry equivalent to this runtime classpath entry.
-	 * 
-	 * @return a classpath entry equivalent to this runtime classpath entry
+	 * Returns a classpath entry equivalent to this runtime classpath entry,
+	 * or <code>null</code> if none.
+	 * <p>
+	 * Since 3.0, this method may return <code>null</code>.
+	 * </p>
+	 * @return a classpath entry equivalent to this runtime classpath entry,
+	 *  or <code>null</code>
 	 * @since 2.1
 	 */
 	public IClasspathEntry getClasspathEntry();

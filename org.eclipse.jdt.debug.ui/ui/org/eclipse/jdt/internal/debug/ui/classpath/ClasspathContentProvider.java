@@ -95,7 +95,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 	 */
 	public boolean hasChildren(Object element) {
 		if (element instanceof ClasspathEntry) {
-			return false;
+			return (((ClasspathEntry)element).hasChildren());
 		}
 		if (element instanceof ClasspathGroup) {
 			return ((ClasspathGroup)element).hasEntries();
@@ -148,6 +148,9 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 		}
 		if (parentElement instanceof ClasspathModel) {
 			return ((ClasspathModel)parentElement).getEntries();
+		}
+		if (parentElement instanceof ClasspathEntry) {
+			return ((ClasspathEntry)parentElement).getChildren();
 		}
 		if (parentElement == null) {
 			List all= new ArrayList();
@@ -204,18 +207,10 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 			entry= entries[i];
 			switch (entry.getClasspathProperty()) {
 				case IRuntimeClasspathEntry.USER_CLASSES:
-//					if (entry.isDefaultEntry()) {
-//						model.addEntry(ClasspathModel.DEFAULT_USER, entry);
-//					} else {
-						model.addEntry(ClasspathModel.USER, entry);
-					//}
+					model.addEntry(ClasspathModel.USER, entry);
 					break;
 				default:
-					//if (entry.isDefaultEntry()) {
-					//	model.addEntry(ClasspathModel.DEFAULT_BOOTSTRAP, entry);
-					//} else {
-						model.addEntry(ClasspathModel.BOOTSTRAP, entry);
-					//}
+					model.addEntry(ClasspathModel.BOOTSTRAP, entry);
 					break;
 			}
 		}	

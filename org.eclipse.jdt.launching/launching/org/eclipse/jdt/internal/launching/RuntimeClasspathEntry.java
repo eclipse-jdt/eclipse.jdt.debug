@@ -12,12 +12,8 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.text.MessageFormat;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -41,8 +37,6 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * An entry on the runtime classpath that the user can manipulate
@@ -72,11 +66,6 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * The entry's resolved entry (lazily initialized)
 	 */
 	private IClasspathEntry fResolvedEntry = null;
-	
-	/**
-	 * Document builder is cached for efficiency
-	 */
-	private static DocumentBuilder fgParser = null;
 	
 	/**
 	 * Constructs a new runtime classpath entry based on the
@@ -119,105 +108,81 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}
 		setClasspathEntry(entry);
 		setClasspathProperty(classpathProperty);
-	}
-	
+	}	
+
 	/**
 	 * Reconstructs a runtime classpath entry from the given
-	 * memento.
+	 * XML document root not.
 	 * 
-	 * @param memento a memento created by this class
+	 * @param root a memento root doc element created by this class
 	 * @exception CoreException if unable to restore from the given memento
 	 */
-	public RuntimeClasspathEntry(String memento) throws CoreException {
-		Exception ex = null;
+	public RuntimeClasspathEntry(Element root) throws CoreException {									
 		try {
-			Element root = null;
-			DocumentBuilder parser = getParser();
-			StringReader reader = new StringReader(memento);
-			InputSource source = new InputSource(reader);
-			root = parser.parse(source).getDocumentElement();
-												
-			try {
-				setType(Integer.parseInt(root.getAttribute("type"))); //$NON-NLS-1$
-			} catch (NumberFormatException e) {
-				abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_type_2"), e); //$NON-NLS-1$
-			}
-			try {
-				setClasspathProperty(Integer.parseInt(root.getAttribute("path"))); //$NON-NLS-1$
-			} catch (NumberFormatException e) {
-				abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_location_3"), e); //$NON-NLS-1$
-			}			
+			setType(Integer.parseInt(root.getAttribute("type"))); //$NON-NLS-1$
+		} catch (NumberFormatException e) {
+			abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_type_2"), e); //$NON-NLS-1$
+		}
+		try {
+			setClasspathProperty(Integer.parseInt(root.getAttribute("path"))); //$NON-NLS-1$
+		} catch (NumberFormatException e) {
+			abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_location_3"), e); //$NON-NLS-1$
+		}			
 
-			// source attachment
-			IPath sourcePath = null;
-			IPath rootPath = null;
-			String path = root.getAttribute("sourceAttachmentPath"); //$NON-NLS-1$
-			if (path != null && path.length() > 0) {
-				sourcePath = new Path(path);
-			}
-			path = root.getAttribute("sourceRootPath"); //$NON-NLS-1$
-			if (path != null && path.length() > 0) {
-				rootPath = new Path(path);
-			}			
+		// source attachment
+		IPath sourcePath = null;
+		IPath rootPath = null;
+		String path = root.getAttribute("sourceAttachmentPath"); //$NON-NLS-1$
+		if (path != null && path.length() > 0) {
+			sourcePath = new Path(path);
+		}
+		path = root.getAttribute("sourceRootPath"); //$NON-NLS-1$
+		if (path != null && path.length() > 0) {
+			rootPath = new Path(path);
+		}			
 
-			switch (getType()) {
-				case PROJECT :
-					String name = root.getAttribute("projectName"); //$NON-NLS-1$
-					if (isEmpty(name)) {
-						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_project_name_4"), null); //$NON-NLS-1$
-					} else {
-						IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-						setClasspathEntry(JavaCore.newProjectEntry(proj.getFullPath()));
-					}
-					break;
-				case ARCHIVE :
-					path = root.getAttribute("externalArchive"); //$NON-NLS-1$
+		switch (getType()) {
+			case PROJECT :
+				String name = root.getAttribute("projectName"); //$NON-NLS-1$
+				if (isEmpty(name)) {
+					abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_project_name_4"), null); //$NON-NLS-1$
+				} else {
+					IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+					setClasspathEntry(JavaCore.newProjectEntry(proj.getFullPath()));
+				}
+				break;
+			case ARCHIVE :
+				path = root.getAttribute("externalArchive"); //$NON-NLS-1$
+				if (isEmpty(path)) {
+					// internal
+					path = root.getAttribute("internalArchive"); //$NON-NLS-1$
 					if (isEmpty(path)) {
-						// internal
-						path = root.getAttribute("internalArchive"); //$NON-NLS-1$
-						if (isEmpty(path)) {
-							abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_archive_path_5"), null); //$NON-NLS-1$
-						} else {
-							setClasspathEntry(JavaCore.newLibraryEntry(new Path(path), sourcePath, rootPath));
-						}
+						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_archive_path_5"), null); //$NON-NLS-1$
 					} else {
-						// external
 						setClasspathEntry(JavaCore.newLibraryEntry(new Path(path), sourcePath, rootPath));
 					}
-					break;
-				case VARIABLE :
-					String var = root.getAttribute("containerPath"); //$NON-NLS-1$
-					if (isEmpty(var)) {
-						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_6"), null); //$NON-NLS-1$
-					} else {
-						setClasspathEntry(JavaCore.newVariableEntry(new Path(var), sourcePath, rootPath));
-					}
-					break;
-				case CONTAINER :
-					var = root.getAttribute("containerPath"); //$NON-NLS-1$
-					if (isEmpty(var)) {
-						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_6"), null); //$NON-NLS-1$
-					} else {
-						setClasspathEntry(JavaCore.newContainerEntry(new Path(var)));
-					}
-					break;
-			}	
-			return;
-		} catch (ParserConfigurationException e) {
-			ex = e;			
-		} catch (SAXException e) {
-			ex = e;
-		} catch (IOException e) {
-			ex = e;
-		}
-		abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_parsing_error_8"), ex);	 //$NON-NLS-1$
-	}
-	
-	private static DocumentBuilder getParser() throws ParserConfigurationException, FactoryConfigurationError {
-		if (fgParser == null) {
-			fgParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		}
-		return fgParser;
+				} else {
+					// external
+					setClasspathEntry(JavaCore.newLibraryEntry(new Path(path), sourcePath, rootPath));
+				}
+				break;
+			case VARIABLE :
+				String var = root.getAttribute("containerPath"); //$NON-NLS-1$
+				if (isEmpty(var)) {
+					abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_6"), null); //$NON-NLS-1$
+				} else {
+					setClasspathEntry(JavaCore.newVariableEntry(new Path(var), sourcePath, rootPath));
+				}
+				break;
+			case CONTAINER :
+				var = root.getAttribute("containerPath"); //$NON-NLS-1$
+				if (isEmpty(var)) {
+					abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_6"), null); //$NON-NLS-1$
+				} else {
+					setClasspathEntry(JavaCore.newContainerEntry(new Path(var)));
+				}
+				break;
+		}	
 	}
 	
 	/**

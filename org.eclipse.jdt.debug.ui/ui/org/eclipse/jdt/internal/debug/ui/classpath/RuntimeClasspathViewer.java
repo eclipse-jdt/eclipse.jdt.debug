@@ -230,30 +230,24 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 		}
 		switch (actionType) {
 			case RuntimeClasspathAction.ADD :
-				resolveCurrentParent(selection);
-				if (fCurrentParent instanceof ClasspathGroup) {
-					return !((ClasspathGroup)fCurrentParent).canBeRemoved();
-				} else {
-					return fCurrentParent != null;
-				}
-			case RuntimeClasspathAction.REMOVE :
 				Iterator selected= selection.iterator();
 				while (selected.hasNext()) {
-					Object element = selected.next();
-					if (element instanceof ClasspathGroup) {
-						return ((ClasspathGroup)element).canBeRemoved();
+					IClasspathEntry entry = (IClasspathEntry)selected.next();
+					if (!entry.isEditable() && entry instanceof ClasspathEntry) {
+						return false;
 					}
 				}
-				return true;
+				return selection.size() > 0;
+			case RuntimeClasspathAction.REMOVE :
 			case RuntimeClasspathAction.MOVE :
 				selected= selection.iterator();
 				while (selected.hasNext()) {
-					Object element = selected.next();
-					if (element instanceof ClasspathGroup) {
-						return ((ClasspathGroup)element).canBeRemoved();
+					IClasspathEntry entry = (IClasspathEntry)selected.next();
+					if (!entry.isEditable()) {
+						return false;
 					}
 				}
-				return resolveCurrentParent(selection);
+				return selection.size() > 0;
 			default :
 				break;
 		}

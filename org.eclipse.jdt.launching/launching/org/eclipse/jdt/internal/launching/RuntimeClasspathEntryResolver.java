@@ -66,6 +66,14 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	public String getContainerId() {
 		return fConfigurationElement.getAttribute("container"); //$NON-NLS-1$
 	}	
+	
+	/**
+	 * Returns the runtime classpath entry id this resolver is registered
+	 * for,or <code>null</code> if none.
+	 */
+	public String getRuntimeClasspathEntryId() {
+		return fConfigurationElement.getAttribute("runtimeClasspathEntryId"); //$NON-NLS-1$
+	}
 
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveVMInstall(IClasspathEntry)

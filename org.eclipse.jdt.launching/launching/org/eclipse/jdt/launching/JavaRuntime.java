@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -48,14 +50,22 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
+import org.eclipse.jdt.internal.launching.DefaultEntryResolver;
+import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.ListenerList;
+import org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * The central access point for launching support. This class manages
@@ -180,10 +190,12 @@ public final class JavaRuntime {
 	private static String fgDefaultVMConnectorId = null;
 	
 	/**
-	 * Resolvers keyed by variable name and container id.
+	 * Resolvers keyed by variable name, container id,
+	 * and runtime classpath entry id.
 	 */
 	private static Map fgVariableResolvers = null;
 	private static Map fgContainerResolvers = null;
+	private static Map fgRuntimeClasspathEntryResolvers = null;
 	
 	/**
 	 * Path providers keyed by id
@@ -544,7 +556,38 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry newRuntimeClasspathEntry(String memento) throws CoreException {
-		return new RuntimeClasspathEntry(memento);
+		try {
+			Element root = null;
+			DocumentBuilder parser = LaunchingPlugin.getParser();
+			StringReader reader = new StringReader(memento);
+			InputSource source = new InputSource(reader);
+			root = parser.parse(source).getDocumentElement();
+												
+			String id = root.getAttribute("id"); //$NON-NLS-1$
+			if (id == null || id.length() == 0) {
+				// assume an old format
+				return new RuntimeClasspathEntry(root);
+			} else {
+				// get the extension & create a new one
+				IRuntimeClasspathEntry2 entry = LaunchingPlugin.getDefault().newRuntimeClasspathEntry(id);
+				NodeList list = root.getChildNodes();
+				for (int i = 0; i < list.getLength(); i++) {
+					Node node = list.item(i);
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						Element element = (Element)node;
+						if ("memento".equals(element.getNodeName())) { //$NON-NLS-1$
+							entry.initializeFrom(element);
+						}
+					}
+				}
+				return entry;
+			}
+		} catch (SAXException e) {
+			abort(LaunchingMessages.getString("JavaRuntime.31"), e); //$NON-NLS-1$
+		} catch (IOException e) {
+			abort(LaunchingMessages.getString("JavaRuntime.32"), e); //$NON-NLS-1$
+		}
+		return null;
 	}
 	
 	/**
@@ -570,37 +613,42 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeClasspath(IJavaProject project) throws CoreException {
-		IClasspathEntry entry = JavaCore.newProjectEntry(project.getProject().getFullPath());
-		List classpathEntries = new ArrayList(5);
-		List expanding = new ArrayList(5);
-		expandProject(entry, classpathEntries, expanding);
-		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries == null ? 0 : classpathEntries.size()];
-		for (int i = 0; i < runtimeEntries.length; i++) {
-			Object e = classpathEntries.get(i);
-			if (e instanceof IClasspathEntry) {
-				IClasspathEntry cpe = (IClasspathEntry)e;
-				runtimeEntries[i] = newRuntimeClasspathEntry(cpe);
-			} else {
-				runtimeEntries[i] = (IRuntimeClasspathEntry)e;				
+		IClasspathEntry[] entries = project.getRawClasspath();
+		List classpathEntries = new ArrayList(3);
+		for (int i = 0; i < entries.length; i++) {
+			IClasspathEntry entry = entries[i];
+			switch (entry.getEntryKind()) {
+				case IClasspathEntry.CPE_CONTAINER:
+					IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
+					if (container != null) {
+						switch (container.getKind()) {
+							case IClasspathContainer.K_APPLICATION:
+								// don't look at application entries
+								break;
+							case IClasspathContainer.K_DEFAULT_SYSTEM:
+								classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.STANDARD_CLASSES));
+								break;	
+							case IClasspathContainer.K_SYSTEM:
+								classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.BOOTSTRAP_CLASSES));
+								break;
+						}						
+					}
+					break;
+				case IClasspathEntry.CPE_VARIABLE:
+					if (JRELIB_VARIABLE.equals(entry.getPath().segment(0))) {
+						IRuntimeClasspathEntry jre = newVariableRuntimeClasspathEntry(entry.getPath());
+						jre.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+						classpathEntries.add(jre);
+					}
+					break;
+				default:
+					break;
 			}
 		}
-		// sort bootpath and standard entries first
-		IRuntimeClasspathEntry[] ordered = new IRuntimeClasspathEntry[runtimeEntries.length];
-		int index = 0;
-		for (int i = 0; i < runtimeEntries.length; i++) {
-			if (runtimeEntries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
-				ordered[index] = runtimeEntries[i];
-				index++;
-				runtimeEntries[i] = null;
-			} 
-		}
-		for (int i = 0; i < runtimeEntries.length; i++) {
-			if (runtimeEntries[i] != null) {
-				ordered[index] = runtimeEntries[i];
-				index++;
-			}
-		}
-		return ordered;
+		classpathEntries.add(new DefaultProjectClasspathEntry(project));
+		return (IRuntimeClasspathEntry[]) classpathEntries.toArray(new IRuntimeClasspathEntry[classpathEntries.size()]);
+		
+
 	}
 	
 	/**
@@ -747,6 +795,9 @@ public final class JavaRuntime {
 					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_archive__{0}_4"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
 				}
 				break;
+			case IRuntimeClasspathEntry.OTHER:
+				resolver = getContributedResolver(((IRuntimeClasspathEntry2)entry).getTypeId());
+				return resolver.resolveRuntimeClasspathEntry(entry, configuration);
 			default:
 				break;
 		}
@@ -902,6 +953,9 @@ public final class JavaRuntime {
 				} else {
 					return resolver.resolveRuntimeClasspathEntry(entry, project);
 				}
+			case IRuntimeClasspathEntry.OTHER:
+				resolver = getContributedResolver(((IRuntimeClasspathEntry2)entry).getTypeId());
+				return resolver.resolveRuntimeClasspathEntry(entry, project);				
 			default:
 				break;
 		}
@@ -1091,125 +1145,6 @@ public final class JavaRuntime {
 	private static void abort(String message, int code, Throwable exception) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception));
 	}	
-					
-	/**
-	 * Returns the transitive closure of classpath entries for the
-	 * given project entry.
-	 * 
-	 * @param projectEntry project classpath entry
-	 * @param expandedPath a list of entries already expanded, should be empty
-	 * to begin, and contains the result
-	 * @param expanding a list of projects that have been or are currently being
-	 * expanded (to detect cycles)
-	 * @exception CoreException if unable to expand the classpath
-	 */
-	private static void expandProject(IClasspathEntry projectEntry, List expandedPath, List expanding) throws CoreException {
-		expanding.add(projectEntry);
-		// 1. Get the raw classpath
-		// 2. Replace source folder entries with a project entry
-		IPath projectPath = projectEntry.getPath();
-		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(projectPath.lastSegment());
-		if (res == null) {
-			// add project entry and return
-			expandedPath.add(projectEntry);
-			return;
-		}
-		IJavaProject project = (IJavaProject)JavaCore.create(res);
-		if (project == null || !project.exists() || !project.getProject().isOpen()) {
-			// add project entry and return
-			expandedPath.add(projectEntry);
-			return;
-		}
-		
-		IClasspathEntry[] buildPath = project.getRawClasspath();
-		List unexpandedPath = new ArrayList(buildPath.length);
-		boolean projectAdded = false;
-		for (int i = 0; i < buildPath.length; i++) {
-			if (buildPath[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-				if (!projectAdded) {
-					projectAdded = true;
-					unexpandedPath.add(projectEntry);
-				}
-			} else {
-				unexpandedPath.add(buildPath[i]);
-			}
-		}
-		// 3. expand each project entry (except for the root project)
-		// 4. replace each container entry with a runtime entry associated with the project
-		Iterator iter = unexpandedPath.iterator();
-		while (iter.hasNext()) {
-			IClasspathEntry entry = (IClasspathEntry)iter.next();
-			if (entry == projectEntry) {
-				expandedPath.add(entry);
-			} else {
-				switch (entry.getEntryKind()) {
-					case IClasspathEntry.CPE_PROJECT:
-						if (!expanding.contains(entry)) {
-							expandProject(entry, expandedPath, expanding);
-						}
-						break;
-					case IClasspathEntry.CPE_CONTAINER:
-						IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
-						int property = -1;
-						if (container != null) {
-							switch (container.getKind()) {
-								case IClasspathContainer.K_APPLICATION:
-									property = IRuntimeClasspathEntry.USER_CLASSES;
-									break;
-								case IClasspathContainer.K_DEFAULT_SYSTEM:
-									property = IRuntimeClasspathEntry.STANDARD_CLASSES;
-									break;	
-								case IClasspathContainer.K_SYSTEM:
-									property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-									break;
-							}
-							IRuntimeClasspathEntry r = newRuntimeContainerClasspathEntry(entry.getPath(), property);
-							// check for duplicate/redundant entries 
-							boolean duplicate = false;
-							for (int i = 0; i < expandedPath.size(); i++) {
-								Object o = expandedPath.get(i);
-								if (o instanceof IRuntimeClasspathEntry) {
-									IRuntimeClasspathEntry re = (IRuntimeClasspathEntry)o;
-									if (re.getType() == IRuntimeClasspathEntry.CONTAINER) {
-										if (container instanceof IRuntimeContainerComparator) {
-											duplicate = ((IRuntimeContainerComparator)container).isDuplicate(re.getPath());
-											if (duplicate) {
-												break;
-											}
-										} else if (re.getVariableName().equals(r.getVariableName())) {
-											duplicate = true;
-											break;
-										}
-									}
-								}
-							}
-							if (!duplicate) {
-								expandedPath.add(r);
-							}	
-						}
-						break;
-					case IClasspathEntry.CPE_VARIABLE:
-						if (entry.getPath().segment(0).equals(JRELIB_VARIABLE)) {
-							IRuntimeClasspathEntry r = newVariableRuntimeClasspathEntry(entry.getPath());
-							r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
-							r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
-							r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
-							if (!expandedPath.contains(r)) {
-								expandedPath.add(r);
-							}
-							break;
-						}
-						// fall through if not the special JRELIB variable
-					default:
-						if (!expandedPath.contains(entry)) {
-							expandedPath.add(entry);
-						}
-						break;
-				}
-			}
-		}
-		return;
-	}
 		
 	/**
 	 * Computes the default application classpath entries for the given 
@@ -1620,21 +1555,36 @@ public final class JavaRuntime {
 		}
 		return fgContainerResolvers;
 	}
+	
+	/**
+	 * Returns all registered runtime classpath entry resolvers.
+	 */
+	private static Map getEntryResolvers() {
+		if (fgRuntimeClasspathEntryResolvers == null) {
+			initializeResolvers();
+		}
+		return fgRuntimeClasspathEntryResolvers;
+	}	
 
 	private static void initializeResolvers() {
 		IExtensionPoint point = LaunchingPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRY_RESOLVERS);
 		IConfigurationElement[] extensions = point.getConfigurationElements();
 		fgVariableResolvers = new HashMap(extensions.length);
 		fgContainerResolvers = new HashMap(extensions.length);
+		fgRuntimeClasspathEntryResolvers = new HashMap(extensions.length);
 		for (int i = 0; i < extensions.length; i++) {
 			RuntimeClasspathEntryResolver res = new RuntimeClasspathEntryResolver(extensions[i]);
 			String variable = res.getVariableName();
 			String container = res.getContainerId();
+			String entryId = res.getRuntimeClasspathEntryId();
 			if (variable != null) {
 				fgVariableResolvers.put(variable, res);
 			}
 			if (container != null) {
 				fgContainerResolvers.put(container, res);
+			}
+			if (entryId != null) {
+				fgRuntimeClasspathEntryResolvers.put(entryId, res);
 			}
 		}		
 	}
@@ -1681,6 +1631,21 @@ public final class JavaRuntime {
 	 */	
 	private static IRuntimeClasspathEntryResolver getContainerResolver(String containerId) {
 		return (IRuntimeClasspathEntryResolver)getContainerResolvers().get(containerId);
+	}
+	
+	/**
+	 * Returns the resolver registered for the given contributed classpath
+	 * entry type.
+	 * 
+	 * @param typeId the id of the contributed classpath entry
+	 * @return the resolver registered for the given clsspath entry
+	 */	
+	private static IRuntimeClasspathEntryResolver getContributedResolver(String typeId) {
+		IRuntimeClasspathEntryResolver resolver = (IRuntimeClasspathEntryResolver)getEntryResolvers().get(typeId);
+		if (resolver == null) {
+			return new DefaultEntryResolver();
+		}
+		return resolver;
 	}	
 	
 	/**

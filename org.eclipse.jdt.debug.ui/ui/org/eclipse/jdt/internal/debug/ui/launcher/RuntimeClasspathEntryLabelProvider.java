@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.internal.launching.JREContainer;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
@@ -86,6 +87,8 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 			case IRuntimeClasspathEntry.CONTAINER:
 				// TODO: illegal internal access
 				return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
+			case IRuntimeClasspathEntry.OTHER:
+				return lp.getImage(entry.getResource());
 		}	
 		return null;
 	}
@@ -163,6 +166,8 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					}
 				}
 				return entry.getPath().toString();
+			case IRuntimeClasspathEntry.OTHER:
+				return ((IRuntimeClasspathEntry2)entry).getName();	
 		}	
 		return ""; //$NON-NLS-1$
 	}
