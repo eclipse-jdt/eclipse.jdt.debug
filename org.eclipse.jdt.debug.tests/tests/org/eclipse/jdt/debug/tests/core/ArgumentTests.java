@@ -15,12 +15,13 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -72,8 +73,8 @@ public class ArgumentTests extends AbstractDebugTest {
 		 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
 		 */
 		public void consoleClosed() {
-			closed = true;
 			synchronized (fLock) {
+				closed = true;
 			    fLock.notifyAll();
             }
 		}
@@ -81,10 +82,12 @@ public class ArgumentTests extends AbstractDebugTest {
 		public String getOutput() {
 			// wait to be closed
 		    synchronized (fLock) {
-		        try {
-                    fLock.wait(60000);
-                } catch (InterruptedException e) {
-                }
+		    	if (!closed) {
+			        try {
+	                    fLock.wait(60000);
+	                } catch (InterruptedException e) {
+	                }
+		    	}
 		    }
 			// even if not closed yet - see what's in the buffer. Sometimes
 			// we miss the close notification (due to a different bug).
@@ -298,18 +301,27 @@ public class ArgumentTests extends AbstractDebugTest {
 		
 		ConsoleArgumentOutputRetriever retriever = new ConsoleArgumentOutputRetriever();
 		ConsoleLineTracker.setDelegate(retriever);
-		IJavaDebugTarget target= null;
+		IProcess process = null;
+		ILaunch launch = null;
 		try {
-			IJavaThread thread = launchAndSuspend(workingCopy);
-			target= resumeAndExit(thread);
+			launch = workingCopy.launch(ILaunchManager.RUN_MODE, null);
+			process = launch.getProcesses()[0];
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
-			assertEquals(outputValue, retriever.getOutput());
+			String output = retriever.getOutput();
+			System.out.println("Expected: " + outputValue);
+			System.out.println("Actual:   " + output);
+			assertEquals(outputValue, output);
 		} finally {
-			terminateAndRemove(target);
 			ConsoleLineTracker.setDelegate(null);
+			if (process != null) {
+				process.terminate();
+			}
+			if (launch != null) {
+				getLaunchManager().removeLaunch(launch);
+			}
 		}
 	}
 	
