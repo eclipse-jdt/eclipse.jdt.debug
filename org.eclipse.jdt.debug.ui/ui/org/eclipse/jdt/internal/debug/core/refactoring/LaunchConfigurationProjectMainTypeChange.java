@@ -26,6 +26,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -136,6 +137,22 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		changes.addAll(createChangesForPackageRename(configs, packageFragment, newName));
 		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.getString("LaunchConfigurationProjectMainTypeChange.7")); //$NON-NLS-1$
 	}
+	
+	/**
+	 * Create a change for each launch configuration which needs to be updated for this IPackageFragment move.
+	 */
+	public static Change createChangesForPackageMove(IPackageFragment packageFragment, IPackageFragmentRoot destination) throws CoreException {
+		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+		// Java application launch configurations
+		ILaunchConfigurationType configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
+		ILaunchConfiguration configs[]= manager.getLaunchConfigurations(configurationType);
+		List changes= createChangesForPackageMove(configs, packageFragment, destination);
+		// Java applet launch configurations
+		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
+		configs= manager.getLaunchConfigurations(configurationType);
+		changes.addAll(createChangesForPackageMove(configs, packageFragment, destination));
+		return JDTDebugRefactoringUtil.createChangeFromList(changes, RefactoringMessages.getString("LaunchConfigurationProjectMainTypeChange.7")); //$NON-NLS-1$
+	}
 
 	/**
 	 * Create a change for each launch configuration which needs to be updated for this IType change.
@@ -244,6 +261,34 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 				if (packageFragmentName.equals(packageName)) {
 					String newTypeName= newName + '.' + mainTypeName.substring(index + 1);
 					changes.add(new LaunchConfigurationProjectMainTypeChange(launchConfiguration, newTypeName, null));
+				}
+			}
+		}
+		return changes;
+	}
+	
+	/**
+	 * Create a change for each launch configuration from the given list which needs 
+	 * to be updated for this IPackageFragment move.
+	 */
+	private static List createChangesForPackageMove(ILaunchConfiguration[] configs, IPackageFragment packageFragment, IPackageFragmentRoot destination) throws CoreException {
+		List changes= new ArrayList();
+		String packageFragmentName= packageFragment.getElementName();
+		String projectName= packageFragment.getJavaProject().getElementName();
+		for (int i= 0; i < configs.length; i++) {
+			ILaunchConfiguration launchConfiguration = configs[i];
+			String lcProjectName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+			if (projectName.equals(lcProjectName)) {
+				String mainTypeName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
+				String packageName;
+				int index= mainTypeName.lastIndexOf('.');
+				if (index < 0) {
+					packageName= ""; //$NON-NLS-1$
+				} else {
+					packageName= mainTypeName.substring(0, index);
+				}
+				if (packageFragmentName.equals(packageName)) {
+					changes.add(new LaunchConfigurationProjectMainTypeChange(launchConfiguration, null, destination.getJavaProject().getElementName()));
 				}
 			}
 		}
