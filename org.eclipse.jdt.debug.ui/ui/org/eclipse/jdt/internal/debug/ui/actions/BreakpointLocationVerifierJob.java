@@ -30,6 +30,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Job used to verify the position of a breakpoint
@@ -167,6 +168,10 @@ public class BreakpointLocationVerifierJob extends Job {
 	}
 
 	private void beep() {
-		JDIDebugUIPlugin.getStandardDisplay().beep();
+		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {
+				Display.getCurrent().beep();
+			}
+		});
 	}
 }
