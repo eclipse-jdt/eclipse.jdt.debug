@@ -23,7 +23,6 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -31,7 +30,6 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
@@ -52,7 +50,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
@@ -210,8 +207,9 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 					fExpression= getExpressionText();
 					
 					IDataDisplay dataDisplay= getDataDisplay();
-					if (dataDisplay != null && displayExpression())
+					if (dataDisplay != null) {
 						dataDisplay.displayExpression(fExpression);
+					}
 					
 					IEvaluationEngine engine = getEvauationEngine((IJavaDebugTarget)jFrame.getDebugTarget(), project);
 					if (object == null) {
@@ -370,7 +368,6 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	}
 	
 	protected IDataDisplay getDataDisplay() {
-		
 		IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
 		if (page != null) {
 			IWorkbenchPart activePart= page.getActivePart();
@@ -491,14 +488,6 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 			reportError(MessageFormat.format(DisplayMessages.getString("Evaluate.error.message.wrapped_exception"), new Object[] { ref.referenceType().name() })); //$NON-NLS-1$
 		} else
 			reportError(exception);
-	}
-	
-	/**
-	 * Returns whether to display the expression via
-	 * the data display.
-	 */
-	protected boolean displayExpression() {
-		return true;
 	}
 	
 	protected boolean isUsedInEditor() {

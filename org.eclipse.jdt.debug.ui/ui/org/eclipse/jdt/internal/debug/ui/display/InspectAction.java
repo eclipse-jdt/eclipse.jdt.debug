@@ -8,6 +8,7 @@ package org.eclipse.jdt.internal.debug.ui.display;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -19,7 +20,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Places the result of an evaluation in the debug inspector
+ * Places the result of an evaluation in the debug expression view.
  */
 public class InspectAction extends EvaluateAction {
 
@@ -31,6 +32,9 @@ public class InspectAction extends EvaluateAction {
 		WorkbenchHelp.setHelp(this, new Object[] { IHelpContextIds.INSPECT_ACTION });	
 	}
 	
+	/**
+	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
+	 */
 	public void evaluationComplete(final IEvaluationResult res) {
 		final IJavaValue value= res.getValue();
 		if (res.hasProblems() || value != null) {
@@ -53,15 +57,7 @@ public class InspectAction extends EvaluateAction {
 			});
 		}
 	}
-	
-	/**
-	 * Returns whether to display the expression via
-	 * the data display.
-	 */
-	protected boolean displayExpression() {
-		return false;
-	}
-	
+		
 	/**
 	 * Hook to let snippet editor use it's action
 	 */
@@ -89,4 +85,10 @@ public class InspectAction extends EvaluateAction {
 		}
 	}
 
+	/**
+	 * @see EvaluateAction#getDataDisplay()
+	 */
+	protected IDataDisplay getDataDisplay() {
+		return null;
+	}
 }
