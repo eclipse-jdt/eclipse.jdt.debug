@@ -54,7 +54,7 @@
       <documentation>
          The JDI client used by the Java debugger, is by default the JDI implementation that is provided with the Eclipse SDK:
 &lt;pre&gt;
-	&lt;extension-point id=&quot;jdiclient&quot; name=&quot;org.eclipse.jdi.internal.VirtualMachineManagerImpl&quot;/&gt;
+ &lt;extension-point id=&quot;jdiclient&quot; name=&quot;org.eclipse.jdi.internal.VirtualMachineManagerImpl&quot;/&gt;
 &lt;/pre&gt;
       </documentation>
    </annotation>
@@ -82,7 +82,12 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2002, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
