@@ -33,6 +33,11 @@
 		class="org.eclipse.jdt.internal.debug.core.JavaLineBreakpoint">
 	</breakpoint>
 	<breakpoint
+		id="javaPatternBreakpoint"
+		markerType="org.eclipse.jdt.debug.javaPatternBreakpointMarker"
+		class="org.eclipse.jdt.internal.debug.core.JavaPatternBreakpoint">
+	</breakpoint>
+	<breakpoint
 		id="javaRunToLineBreakpoint"
 		markerType="org.eclipse.jdt.debug.javaRunToLineBreakpointMarker"
 		class="org.eclipse.jdt.internal.debug.core.JavaRunToLineBreakpoint">
@@ -62,20 +67,17 @@
 	</super>
 </extension>
 <extension
-      id="javaLineBreakpointMarker"
-      point="org.eclipse.core.resources.markers">
+	id="commonJavaLineBreakpointMarker"
+	point="org.eclipse.core.resources.markers">
 	<super
 		type="org.eclipse.jdt.debug.javaBreakpointMarker">
 	</super>
-   <super
-         type="org.eclipse.debug.core.lineBreakpointMarker">
-   </super>
-   <persistent
-         value="true">
-   </persistent>
-   <attribute
-         name="typeHandle">
-   </attribute>
+	<super
+		type="org.eclipse.debug.core.lineBreakpointMarker">
+	</super>
+	<persistent
+		value="true">
+	</persistent>
    <attribute
          name="installCount">
    </attribute>
@@ -86,6 +88,34 @@
          name="expired">
    </attribute>
 </extension>
+	
+<extension
+      id="javaLineBreakpointMarker"
+      point="org.eclipse.core.resources.markers">
+	<super
+		type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
+	</super>
+   <persistent
+         value="true">
+   </persistent>
+   <attribute
+         name="typeHandle">
+   </attribute>
+</extension>
+
+<extension
+	id="javaPatternBreakpointMarker"
+	point="org.eclipse.core.resources.markers">
+	<super
+		type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker">
+	</super>
+	<persistent
+		value="true">
+	</persistent>
+	<attribute
+		name="pattern">
+	</attribute>
+</extension>	
 
 <extension
       id="javaRunToLineBreakpointMarker"

@@ -8,8 +8,7 @@ package org.eclipse.jdt.debug.core;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.*;
@@ -130,8 +129,7 @@ public class JDIDebugModel {
 	 * given type, at the given line number. If a character range within the
 	 * line is known, it may be specified by charStart/charEnd.
 	 * If hitCount is > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times. Note: the breakpoint is not
-	 * added to the breakpoint manager - it is merely created.
+	 * "hit" the specified number of times.
 	 *
 	 * @param type the type in which to create the breakpoint
 	 * @param lineNumber the lineNumber on which the breakpoint is created - line
@@ -151,6 +149,28 @@ public class JDIDebugModel {
 		return new JavaLineBreakpoint(type, lineNumber, charStart, charEnd, hitCount);
 	}
 	
+	/**
+	 * Creates and returns a pattern breakpoint for the given resource at the
+	 * given line number, which will be installed in all classes whose fully 
+	 * qualified name matches the given pattern.
+	 * If hitCount > 0, the breakpoint will suspend execution when it is
+	 * "hit" the specified number of times. 
+	 * @param resource the original source file
+	 * @param pattern the class name pattern in which the pattern breakpoint should
+	 *   be installed. The pattern breakpoint will install itself in every class which
+	 *   matches the pattern.
+	 * @param lineNumber the line number in the generated java file on which
+	 *   this breakpoint should be placed. Note that clients are responsible
+	 *   for determining which line in the java file corresponds to the desired
+	 *   line in the original source
+	 * @param hitCount the number of times the breakpoint will be hit before
+	 *   suspending execution - 0 if it should always suspend
+	 * @return a pattern breakpoint
+	 */
+	public static IJavaPatternBreakpoint createPatternBreakpoint(IResource resource, String pattern, int lineNumber, int hitCount) throws DebugException {
+		return new JavaPatternBreakpoint(resource, pattern, lineNumber, hitCount);
+	}
+	
 	public static ISnippetSupportLineBreakpoint createSnippetSupportLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd, int hitCount) throws DebugException {
 		return new SnippetSupportLineBreakpoint(type, lineNumber, charStart, charEnd, hitCount);
 	}
@@ -160,8 +180,6 @@ public class JDIDebugModel {
 	 * given type, at the given line number. If a character range within the
 	 * line is known, it may be specified by charStart/charEnd. Run-to-line
 	 * breakpoints have a hit count of 1.
-	 * Note: the breakpoint is not added to the breakpoint manager
-	 * - it is merely created.
 	 *
 	 * @param type the type in which to create the breakpoint
 	 * @param lineNumber the lineNumber on which the breakpoint is created - line
@@ -184,8 +202,6 @@ public class JDIDebugModel {
 	 * given (throwable) type. Caught and uncaught specify where the exception
 	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
 	 * Checked indicates if the given exception is a checked exception.
-	 * Note: the breakpoint is not added to the breakpoint manager
-	 * - it is merely created.
 	 *
 	 * @param type the exception for which to create the breakpoint
 	 * @param caught whether to suspend in caught locations
@@ -203,8 +219,7 @@ public class JDIDebugModel {
 	 * Creates and returns a watchpoint on the
 	 * given field.
 	 * If hitCount > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times. Note: the breakpoint is not
-	 * added to the breakpoint manager - it is merely created.
+	 * "hit" the specified number of times.
 	 * 
 	 * @param field the field on which to suspend (on access or modification)
 	 * @param hitCount the number of times the breakpoint will be hit before
@@ -221,8 +236,7 @@ public class JDIDebugModel {
 	 * Creates and returns a method entry breakpoint in the
 	 * given method.
 	 * If hitCount is > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times. Note: the breakpoint is not
-	 * added to the breakpoint manager - it is merely created.
+	 * "hit" the specified number of times.
 	 *
 	 * @param method the method in which to suspend on entry
 	 * @param hitCount the number of times the breakpoint will be hit before

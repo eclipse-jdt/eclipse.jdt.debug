@@ -57,6 +57,12 @@ public interface IJavaDebugConstants {
 	public static final String JAVA_METHOD_ENTRY_BREAKPOINT = "org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker";
 	
 	/**
+	 * Pattern breakpoint marker type
+	 * (value <code>"org.eclipse.jdt.debug.patternBreakpointMarker"</code>).
+	 */
+	public static final String PATTERN_BREAKPOINT = "org.eclipse.jdt.debug.patternBreakpointMarker";
+	
+	/**
 	 * Snippet support line breakpoint marker type
 	 * (value <code>"org.eclipse.jdt.debug.snippetSupportLineBreakpointMarker"</code>).
 	 */
@@ -82,6 +88,13 @@ public interface IJavaDebugConstants {
 	 * (value <code>"methodHandle"</code>). This attribute is a <code>String</code>.
 	 */
 	public static final String METHOD_HANDLE = "methodHandle";
+	
+	/**
+	 * Breakpoint attribute storing the pattern identifier of the source
+	 * file in which a breakpoint is created
+	 * (value <code>"patternHandle"</code>). This attribute is a <code>String</code>.
+	 */
+	public static final String PATTERN = "pattern";
 	
 	/**
 	 * Breakpoint attribute storing the number of debug targets a
