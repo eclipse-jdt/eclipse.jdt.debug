@@ -1,13 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+div.dtd-fragment {
+	width: 100%;
+	border: none;
+	background-color: #eee;
+}
+</STYLE>
 </HEAD>
 <HTML>
 <BODY>
 <H1><CENTER>Java Runtime Classpath Providers</CENTER></H1>
 <b><i>Identifier: </i></b>org.eclipse.jdt.launching.classpathProviders<p>
 <b><i>Since: </i></b>2.1<p>
-<b><i>Description: </i></b>This extension point allows clients to dynamically compute and resolve classpaths and source lookup paths for Java launch configurations.<p><b><i>Configuration Markup:</i></b><p>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT extension EMPTY&gt;</font></samp>
+<b><i>Description: </i></b>This extension point allows clients to dynamically compute and resolve classpaths and source lookup paths for Java launch configurations. A Java launch configuration is can be associated with a custom classpath provider via the launch configuration attriubte ATTR_CLASSPATH_PROVIDER and a custom source path provider via the attribute ATTR_SOURCE_PATH_PROVIDER. When specified, the launch configuration attribues correspond to the id of a classpath provider extension.<p><b><i>Configuration Markup:</i></b><p>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.classpathProvider">classpathProvider</a>*)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
@@ -18,8 +25,8 @@
 <li><b>id</b> - an optional identifier of the extension instance</li>
 <li><b>name</b> - an optional name of the extension instance</li>
 </ul>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT classpathProviders EMPTY&gt;</font></samp>
-<br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST classpathProviders</samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.classpathProvider">classpathProvider</a> EMPTY&gt;</font></samp>
+<br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST classpathProvider</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp; &gt;</font></samp>
@@ -31,7 +38,7 @@
 
 <p>
 <pre>
- <font color="#000080">&lt;extension point=<font color="#008000">&quot;org.eclipse.jdt.launching.classpathProvider&quot;</font>&gt;</font>
+ <font color="#000080">&lt;extension point=<font color="#008000">&quot;org.eclipse.jdt.launching.classpathProviders&quot;</font>&gt;</font>
   <font color="#000080">&lt;classpathProvider
    class=<font color="#008000">&quot;com.example.ProviderImplementation&quot;</font>
    id=<font color="#008000">&quot;com.example.ProviderId&quot;</font>&gt;</font>
@@ -39,6 +46,7 @@
  <font color="#000080">&lt;/extension&gt;</font>
 </pre>
 </p><p>
+<b><i>Supplied Implementation: </i></b>A default implementation is provided for all launch configurations that do not specify a custom classpath provider.<p>
 <font size="-1" color="#336699">
 <a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195></a><p>
 </font>

@@ -2,20 +2,20 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.jdt.launching">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.jdt.launching" id="classpathProviders" name="Java Runtime Classpath Providers"/>
-   </appInfo>
-   <documentation>
-      This extension point allows clients to dynamically compute and resolve classpaths and source lookup paths for Java launch configurations.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.jdt.launching" id="classpathProviders" name="Java Runtime Classpath Providers"/>
+      </appInfo>
+      <documentation>
+         This extension point allows clients to dynamically compute and resolve classpaths and source lookup paths for Java launch configurations. A Java launch configuration is can be associated with a custom classpath provider via the launch configuration attriubte ATTR_CLASSPATH_PROVIDER and a custom source path provider via the attribute ATTR_SOURCE_PATH_PROVIDER. When specified, the launch configuration attribues correspond to the id of a classpath provider extension.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
             <element ref="classpathProvider" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-                 <attribute name="point" type="string" use="required">
+         <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
                   a fully qualified identifier of the target extension point
@@ -32,14 +32,14 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-	<element name="classpathProvider">
+   <element name="classpathProvider">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -60,6 +60,7 @@
          </attribute>
       </complexType>
    </element>
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -74,14 +75,14 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-          The following is an example of a classpath provider: 
+         The following is an example of a classpath provider: 
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.jdt.launching.classpathProviders"&gt;
+ &lt;extension point=&quot;org.eclipse.jdt.launching.classpathProviders&quot;&gt;
   &lt;classpathProvider
-   class="com.example.ProviderImplementation"
-   id="com.example.ProviderId"&gt;
+   class=&quot;com.example.ProviderImplementation&quot;
+   id=&quot;com.example.ProviderId&quot;&gt;
   &lt;/classpathProvider&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
@@ -91,10 +92,19 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         A default implementation is provided for all launch configurations that do not specify a custom classpath provider.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+         &lt;a href=&quot;hglegal.htm&quot;&gt;&lt;img SRC=&quot;ngibmcpy.gif&quot; ALT=&quot;Copyright IBM Corp. 2000, 2003.  All Rights Reserved.&quot; BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 
