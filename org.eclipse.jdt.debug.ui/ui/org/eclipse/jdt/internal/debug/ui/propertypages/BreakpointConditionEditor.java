@@ -58,7 +58,7 @@ public class BreakpointConditionEditor {
 	private JavaLineBreakpointPage fPage;
 	private IJavaLineBreakpoint fBreakpoint;
 		
-	public BreakpointConditionEditor(Composite parent, String labelText, JavaLineBreakpointPage page) {
+	public BreakpointConditionEditor(Composite parent, JavaLineBreakpointPage page) {
 		
 		fPage= page;
 		fBreakpoint= (IJavaLineBreakpoint) fPage.getBreakpoint();
