@@ -35,8 +35,6 @@ public class ClassPrepareEventImpl extends EventImpl implements ClassPrepareEven
 
 	/** Reference type for which this event was generated. */
 	private ReferenceTypeImpl fReferenceType;
-	/** Status of type, see JDWP.ClassStatus. */
-	private int fStatus;
 	
 	/**
 	 * Creates new BreakpointEventImpl.
@@ -53,7 +51,7 @@ public class ClassPrepareEventImpl extends EventImpl implements ClassPrepareEven
 		ClassPrepareEventImpl event = new ClassPrepareEventImpl(vmImpl, requestID);
 		event.fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
 		event.fReferenceType = ReferenceTypeImpl.readWithTypeTagAndSignature(target, dataInStream);
-		event.fStatus = target.readInt("class status", ReferenceTypeImpl.classStatusStrings(), dataInStream); //$NON-NLS-1$
+		target.readInt("class status", ReferenceTypeImpl.classStatusStrings(), dataInStream); //$NON-NLS-1$
 		return event;
    	}
    	
