@@ -25,6 +25,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.core.model.IStepFilters;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdi.hcr.OperationRefusedException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -113,7 +114,9 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	public Object getAdapter(Class adapter) {
 		if (adapter == IDebugElement.class) {
 			return this;
-		}			
+		} if (adapter == IStepFilters.class) {
+			return getDebugTarget();
+		}
 		return super.getAdapter(adapter);
 	}
 	
@@ -468,4 +471,10 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 		return getDebugTarget().isDisconnected();
 	}
 
+	/**
+	 * @see org.eclipse.debug.core.model.IStepFilters#isStepFiltersEnabled()
+	 */
+	public boolean isStepFiltersEnabled() {
+		return getJavaDebugTarget().isStepFiltersEnabled();
+	}
 }

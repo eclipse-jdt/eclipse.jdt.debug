@@ -581,6 +581,15 @@
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.actions.AddTypeStepFilterAction">
          </action>
+         <action
+               label="%editStepFiltersAction.label"
+               helpContextId="edit_step_filters_action_context"
+               tooltip="%editStepFiltersAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.EditStepFiltersAction"
+               menubarPath="emptyThreadGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.actions.EditStepFiltersAction">
+         </action>              
       </objectContribution>
       <viewerContribution
             targetID="org.eclipse.debug.ui.VariableView.detail"

@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.core;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IStepFilters;
 
 /**
  * A Java virtual machine.
@@ -23,7 +24,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
  * @see org.eclipse.core.runtime.IAdaptable 
  */
 
-public interface IJavaDebugTarget extends IDebugTarget {
+public interface IJavaDebugTarget extends IDebugTarget, IStepFilters {
 	/**
 	 * Searches for and returns a variable with the given name,
 	 * or <code>null</code> if unable to resolve a variable with the name.
@@ -215,25 +216,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @since 2.1
 	 */
 	public boolean supportsInstanceBreakpoints();
-	
-	/**
-	 * Returns whether step filters are enabled
-	 * in this target.
-	 * 
-	 * @return whether step filters are enabled
-	 * in this target
-	 */
-	public abstract boolean isStepFiltersEnabled();
-	
-	/**
-	 * Sets whether step filters are enabled in this
-	 * target.
-	 * 
-	 * @param enabled whether step filters are enabled in this
-	 * target
-	 */
-	public abstract void setStepFiltersEnabled(boolean enabled);
-	
+		
 	/**
 	 * Returns whether synthetic methods are filtered
 	 * when stepping, if step filters are enabled.

@@ -2051,5 +2051,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		return getVM().getDefaultStratum();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IStepFilters#supportsStepFilters()
+	 */
+	public boolean supportsStepFilters() {
+		return isAvailable();
+	}
 }
 

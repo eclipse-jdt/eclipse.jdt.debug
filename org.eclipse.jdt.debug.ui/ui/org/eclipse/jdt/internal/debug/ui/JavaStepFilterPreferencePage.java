@@ -88,6 +88,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	public JavaStepFilterPreferencePage() {
 		super();
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
+		// only used when the page is used programatically (edit step filters action)
+		setTitle(DebugUIMessages.getString("JavaStepFilterPreferencePage.title")); //$NON-NLS-1$
 		setDescription(DebugUIMessages.getString("JavaStepFilterPreferencePage.description")); //$NON-NLS-1$
 	}
 

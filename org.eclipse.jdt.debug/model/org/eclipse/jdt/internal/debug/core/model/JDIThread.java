@@ -40,7 +40,6 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 
 import com.sun.jdi.ClassNotLoadedException;
@@ -55,7 +54,6 @@ import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadGroupReference;
 import com.sun.jdi.ThreadReference;
@@ -178,11 +176,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private int fOriginalStepStackDepth;
 	
-	/**
-	 * Whether step filters should be used for the next step request.
-	 */
-	private boolean fUseStepFilters = false;
-
 	/**
 	 * Whether or not this thread is currently suspending (user-requested).
 	 */
@@ -1877,22 +1870,23 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 */
 		protected void attachFiltersToStepRequest(StepRequest request) {
 			
-			if (applyStepFilters() && (getJavaDebugTarget().isStepFiltersEnabled() || fUseStepFilters)) {
+			if (applyStepFilters() && isStepFiltersEnabled()) {
 				Location currentLocation= getOriginalStepLocation();
 				if (currentLocation == null) {
 					return;
 				}
-				//check if the user has already stopped in a filtered location
-				//is so do not filter @see bug 5587
-				ReferenceType type= currentLocation.declaringType();
-				String typeName= type.name();
+// Removed the fix for bug 5587, to address bug 41510				
+//				//check if the user has already stopped in a filtered location
+//				//is so do not filter @see bug 5587
+//				ReferenceType type= currentLocation.declaringType();
+//				String typeName= type.name();
 				String[] activeFilters = getJavaDebugTarget().getStepFilters();
-				for (int i = 0; i < activeFilters.length; i++) {
-					StringMatcher matcher = new StringMatcher(activeFilters[i], false, false);
-					if (matcher.match(typeName)) {
-						return;
-					}
-				}
+//				for (int i = 0; i < activeFilters.length; i++) {
+//					StringMatcher matcher = new StringMatcher(activeFilters[i], false, false);
+//					if (matcher.match(typeName)) {
+//						return;
+//					}
+//				}
 				for (int i = 0; i < activeFilters.length; i++) {
 					request.addClassExclusionFilter(activeFilters[i]);
 				}
@@ -1902,14 +1896,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		/**
 		 * Returns whether this step handler should use step
 		 * filters when creating its step request. By default,
-		 * step filters are not used. Subclasses must override 
-		 * if/when required.
+		 * step filters can be used by any step request.
+		 * Subclasses must override if/when required.
 		 * 
 		 * @return whether this step handler should use step
 		 * filters when creating its step request
 		 */
 		protected boolean applyStepFilters() {
-			return false;
+			return true;
 		}
 		
 		/**
@@ -1966,7 +1960,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * filtered.  Returns <code>false</code> otherwise.
 		 */
 		protected boolean locationIsFiltered(Method method) {
-			if (getJavaDebugTarget().isStepFiltersEnabled() || fUseStepFilters) {
+			if (isStepFiltersEnabled()) {
 				boolean filterStatics = getJavaDebugTarget().isFilterStaticInitializers();
 				boolean filterSynthetics = getJavaDebugTarget().isFilterSynthetics();
 				boolean filterConstructors = getJavaDebugTarget().isFilterConstructors();
@@ -1995,7 +1989,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * </ul>
 		 */
 		protected void stepEnd() {
-			fUseStepFilters = false;
 			setRunning(false);
 			deleteStepRequest();
 			setPendingStepHandler(null);
@@ -2453,7 +2446,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		if (!canStepWithFilters()) {
 			return;
 		}
-		fUseStepFilters = true;
 		stepInto();
 	}
 	
@@ -2539,4 +2531,5 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_stoping_thread"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 	}
+	
 }
