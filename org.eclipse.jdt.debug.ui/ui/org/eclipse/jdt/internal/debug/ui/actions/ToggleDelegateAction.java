@@ -61,7 +61,10 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		valueChanged(action.isChecked());
+		//do nothing.."run" will occur from the property change
+		//this allows for setting the checked state of the IAction
+		//to drive the execution of this delegate.
+		//see propertyChange(PropertyChangeEvent)
 	}
 	
 	protected abstract void valueChanged(boolean on);
@@ -107,6 +110,7 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 			getAction().setChecked(checked);
 		} else if (event.getProperty().equals(IAction.CHECKED)) {
 			JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(getActionId(), getAction().isChecked());
+			valueChanged(getAction().isChecked());
 		}
 	}
 	/**
