@@ -47,7 +47,7 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 		topLayout.marginHeight = 0;
 		topLayout.marginWidth = 0;
 		comp.setLayout(topLayout);	
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
 				
 		fVMArgumentsLabel = new Label(comp, SWT.NONE);

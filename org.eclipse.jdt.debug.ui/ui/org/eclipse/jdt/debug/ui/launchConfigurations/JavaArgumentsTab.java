@@ -102,9 +102,11 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
+		createSeparator(comp, 1);
+		
 		fVMArgumentsBlock.createControl(comp);
 				
-		createVerticalSpacer(comp, 1);
+		createSeparator(comp, 1);
 						
 		fWorkingDirectoryBlock.createControl(comp);		
 	}

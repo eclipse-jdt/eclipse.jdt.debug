@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
@@ -96,6 +97,11 @@ public class JREsComboBlock implements ISelectionProvider {
 	 * Selected JRE radio button
 	 */
 	private Button fSpecificButton = null;
+	
+	/**
+	 * The title used for the JRE block
+	 */
+	private String fTitle = null;
 			
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
@@ -166,6 +172,16 @@ public class JREsComboBlock implements ISelectionProvider {
 		
 		GridData data;
 		
+		if (fTitle == null) {
+			fTitle = JREMessages.getString("JREsComboBlock.3"); //$NON-NLS-1$
+		}
+		Label label = new Label(parent, SWT.NONE);
+		label.setFont(font);
+		label.setText(fTitle);
+		data = new GridData(GridData.BEGINNING);
+		data.horizontalSpan = 3;
+		label.setLayoutData(data);
+		
 		// display a 'use default JRE' check box
 		if (fDefaultDescriptor != null) {
 			fDefaultButton = new Button(parent, SWT.RADIO);
@@ -229,6 +245,8 @@ public class JREsComboBlock implements ISelectionProvider {
 					// clear the old selection so that a selection changed is fired
 					fPrevSelection = null;
 				}
+				// udate text
+				setDefaultJREDescriptor(fDefaultDescriptor);
 				if (isDefaultJRE()) {
 					// reset in case default has changed
 					setUseDefaultJRE();
@@ -407,6 +425,15 @@ public class JREsComboBlock implements ISelectionProvider {
 			fManageButton.setEnabled(false);
 			fireSelectionChanged();
 		}
+	}
+	
+	/**
+	 * Sets the title used for this JRE block
+	 * 
+	 * @param title title for this JRE block 
+	 */
+	public void setTitle(String title) {
+		fTitle = title;
 	}
 	
 }

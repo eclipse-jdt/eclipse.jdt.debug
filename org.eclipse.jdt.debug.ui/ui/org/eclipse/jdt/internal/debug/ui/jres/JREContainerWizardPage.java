@@ -123,6 +123,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	public void createControl(Composite parent) {
 		fJREBlock = new JREsComboBlock();
 		fJREBlock.setDefaultJREDescriptor(new BuildJREDescriptor());
+		fJREBlock.setTitle(JREMessages.getString("JREContainerWizardPage.3")); //$NON-NLS-1$
 		fJREBlock.createControl(parent);
 		setControl(fJREBlock.getControl());	
 		

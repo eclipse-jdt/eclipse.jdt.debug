@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
 
-import org.eclipse.jdt.launching.IVMInstall;
 
 /**
  * Used to provide a description for a default JRE selection in the 
@@ -25,10 +24,4 @@ public abstract class DefaultJREDescriptor {
 	 */
 	public abstract String getDescription();
 	
-	/**
-	 * Returns the default JRE for this setting.
-	 * 
-	 * @return the default JRE for this setting
-	 */
-	public abstract IVMInstall getDefaultJRE();
 }

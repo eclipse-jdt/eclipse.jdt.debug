@@ -2110,12 +2110,12 @@
          point="org.eclipse.jdt.debug.ui.vmInstallTypePage">
       <vmInstallTypePage
             vmInstallTypeID="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"
-            class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMCommandTab"
+            class="org.eclipse.jdt.internal.debug.ui.jres.StandardVMCommandTab"
             id="org.eclipse.jdt.debug.ui.StandardVMCommandTab">
       </vmInstallTypePage>
       <vmInstallTypePage
             vmInstallTypeID="org.eclipse.jdt.launching.Standard11xVMType"
-            class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMCommandTab"
+            class="org.eclipse.jdt.internal.debug.ui.jres.StandardVMCommandTab"
             id="org.eclipse.jdt.debug.ui.StandardVMCommandTab">
       </vmInstallTypePage>
    </extension>

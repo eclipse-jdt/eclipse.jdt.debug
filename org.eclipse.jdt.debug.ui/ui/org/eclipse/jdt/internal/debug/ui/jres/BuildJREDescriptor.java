@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.jres;
 
-import org.eclipse.jdt.launching.IVMInstall;
+import java.text.MessageFormat;
+
 import org.eclipse.jdt.launching.JavaRuntime;
+
 
 /**
  * JRE Descriptor used for the JRE container wizard page.
@@ -22,14 +24,7 @@ public class BuildJREDescriptor extends DefaultJREDescriptor {
 	 * @see org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor#getDescription()
 	 */
 	public String getDescription() {
-		return JREMessages.getString("BuildJREDescriptor.0"); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor#getDefaultJRE()
-	 */
-	public IVMInstall getDefaultJRE() {
-		return JavaRuntime.getDefaultVMInstall();
+		return MessageFormat.format(JREMessages.getString("BuildJREDescriptor.0"), new String[]{JavaRuntime.getDefaultVMInstall().getName()}); //$NON-NLS-1$
 	}
 
 }

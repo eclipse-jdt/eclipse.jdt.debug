@@ -450,32 +450,29 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 
 	protected DefaultJREDescriptor getDefaultJREDescriptor() {
 		return new DefaultJREDescriptor() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor#getDefaultJRE()
-			 */
-			public IVMInstall getDefaultJRE() {
-				IJavaProject project = getJavaProject();
-				if (project == null) {
-					return JavaRuntime.getDefaultVMInstall();
-				} else {
-					try {
-						return JavaRuntime.getVMInstall(project);
-					} catch (CoreException e) {
-						JDIDebugUIPlugin.log(e);
-						return null;
-					}
-				}
-			}
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor#getDescription()
 			 */
 			public String getDescription() {
 				IJavaProject project = getJavaProject();
+				String name = LauncherMessages.getString("JavaJRETab.7"); //$NON-NLS-1$
 				if (project == null) {
-					return LauncherMessages.getString("JavaJRETab.7"); //$NON-NLS-1$
+					IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+					if (vm != null) {
+						name = vm.getName();
+					}
+					return MessageFormat.format(LauncherMessages.getString("JavaJRETab.8"), new String[]{name}); //$NON-NLS-1$
 				} else {
-					return LauncherMessages.getString("JavaJRETab.8"); //$NON-NLS-1$
+					try {
+						IVMInstall vm = JavaRuntime.getVMInstall(project);
+						if (vm != null) {
+							name = vm.getName();
+						}
+					} catch (CoreException e) {
+						JDIDebugUIPlugin.log(e);
+					}
+					return MessageFormat.format(LauncherMessages.getString("JavaJRETab.9"), new String[]{name}); //$NON-NLS-1$
 				}
 			}
 		};

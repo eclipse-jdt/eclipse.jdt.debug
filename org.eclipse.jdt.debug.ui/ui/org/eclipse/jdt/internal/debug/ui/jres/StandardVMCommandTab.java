@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.internal.debug.ui.jres;
 
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	
 	protected Text fJavaCommandText;
 	protected Button fDefaultButton;
+	protected Button fSpecificButton;
 	
 	protected static final Map EMPTY_MAP = new HashMap(1);
 	
@@ -50,6 +52,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		setControl(comp);
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);
+		topLayout.numColumns = 2;
 		topLayout.marginWidth= 0;
 		topLayout.marginHeight= 0;
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -59,9 +62,34 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		createVerticalSpacer(comp, 2);
 		
 		Label javaCommandLabel= new Label(comp, SWT.NONE);
-		javaCommandLabel.setText(LauncherMessages.getString("AbstractJavaCommandTab.Name_of_Java_e&xecutable__1"));  //$NON-NLS-1$
+		javaCommandLabel.setText(JREMessages.getString("AbstractJavaCommandTab.1"));  //$NON-NLS-1$
 		javaCommandLabel.setFont(font);
 		
+		fDefaultButton = new Button(comp, SWT.RADIO);
+		fDefaultButton.setFont(font);
+		gd = new GridData(GridData.BEGINNING);
+		gd.horizontalSpan = 2;
+		fDefaultButton.setLayoutData(gd);
+		fDefaultButton.setText(MessageFormat.format(JREMessages.getString("AbstractJavaCommandTab.2"), new String[]{getDefaultCommand()})); //$NON-NLS-1$
+		
+		fDefaultButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleSelection();
+			}
+		});
+		
+		fSpecificButton = new Button(comp, SWT.RADIO);
+		fSpecificButton.setFont(font);
+		gd = new GridData(GridData.BEGINNING);
+		fSpecificButton.setLayoutData(gd);
+		fSpecificButton.setText(JREMessages.getString("AbstractJavaCommandTab.4")); //$NON-NLS-1$
+		
+		fSpecificButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleSelection();
+			}
+		});
+				
 		fJavaCommandText= new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fJavaCommandText.setLayoutData(gd);
@@ -72,26 +100,15 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		
-		fDefaultButton = new Button(comp, SWT.CHECK);
-		fDefaultButton.setText(LauncherMessages.getString("AbstractJavaCommandTab.Use_de&fault_Java_executable_2")); //$NON-NLS-1$
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 2;
-		fDefaultButton.setLayoutData(gd);
-		fDefaultButton.setFont(font);
-		fDefaultButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleDefaultButtonSelected(fDefaultButton.getSelection());
-			}
-		});
-
 		setControl(comp);
 	}
 
-	protected void handleDefaultButtonSelected(boolean useDefault) {
-		if (useDefault) {
-			fJavaCommandText.setText(getDefaultCommand());
-		} 
+	protected void handleSelection() {
+		boolean useDefault = fDefaultButton.getSelection();
+		fDefaultButton.setSelection(useDefault);
+		fSpecificButton.setSelection(!useDefault);
 		fJavaCommandText.setEnabled(!useDefault);
+		updateLaunchConfigurationDialog();
 	}
 	
 	protected String getDefaultCommand() {
@@ -102,7 +119,7 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LauncherMessages.getString("AbstractJavaCommandTab.Standard_VM_Java_Command_3"); //$NON-NLS-1$
+		return JREMessages.getString("AbstractJavaCommandTab.3"); //$NON-NLS-1$
 	}
 
 	/**
@@ -125,11 +142,10 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		if (javaCommand.equals(getDefaultCommand())) {
 			//using the default
 			fDefaultButton.setSelection(true);
-			handleDefaultButtonSelected(true);
 		} else {
 			fDefaultButton.setSelection(false);
-			handleDefaultButtonSelected(false);
 		}
+		handleSelection();
 	}
 
 	/**
@@ -157,12 +173,12 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		boolean valid= fJavaCommandText.getText().length() != 0;
+		boolean valid= fDefaultButton.getSelection() || fJavaCommandText.getText().length() != 0;
 		if (valid) {
 			setErrorMessage(null);
 			setMessage(null);
 		} else {
-			setErrorMessage(LauncherMessages.getString("AbstractJavaCommandTab.Java_executable_must_be_specified_5")); //$NON-NLS-1$
+			setErrorMessage(JREMessages.getString("AbstractJavaCommandTab.Java_executable_must_be_specified_5")); //$NON-NLS-1$
 			setMessage(null);
 		}
 		return valid;
