@@ -257,7 +257,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @deprecated Intended to be removed after thread rework
 	 */
 	protected boolean hasPendingEvents() {
-		return ((JDIDebugTarget)getDebugTarget()).fEventDispatcher.hasPendingEvents();
+		return ((JDIDebugTarget)getDebugTarget()).getEventDispatcher().hasPendingEvents();
 	}
 	
 	/**

@@ -118,7 +118,7 @@ class EventDispatcher implements Runnable {
 	 * Continuously reads events that are coming from the event queue.
 	 */
 	public void run() {
-		EventQueue q= fTarget.fVirtualMachine.eventQueue();
+		EventQueue q= fTarget.getVM().eventQueue();
 		fKeepReading= true;
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {

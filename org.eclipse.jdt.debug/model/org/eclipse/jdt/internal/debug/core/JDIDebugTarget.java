@@ -31,8 +31,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
@@ -76,45 +74,45 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * starts it is added to the list. When a thread ends it
 	 * is removed from the list.
 	 */
-	protected List fThreads;
+	private List fThreads;
 	/**
 	 * Associated system process, or <code>null</code> if not available.
 	 */
-	protected IProcess fProcess;
+	private IProcess fProcess;
 	/**
 	 * Underlying virtual machine.
 	 */
-	protected VirtualMachine fVirtualMachine;
+	private VirtualMachine fVirtualMachine;
 	/**
 	 * Whether terminate is supported. Not all targets
 	 * support terminate. For example, a VM that was attached
 	 * to remotely may not allow the user to terminate it.
 	 */
-	protected boolean fSupportsTerminate;
+	private boolean fSupportsTerminate;
 	/**
 	 * Whether terminated or disconnected
 	 */
-	protected boolean fTerminated;
+	private boolean fTerminated;
 	/**
 	 * Whether disconnect is supported.
 	 */
-	protected boolean fSupportsDisconnect;
+	private boolean fSupportsDisconnect;
 	/**
 	 * Collection of breakpoints added to this target. Values are of type <code>IJavaBreakpoint</code>.
 	 */
-	protected List fBreakpoints;
+	private List fBreakpoints;
 	 
 	/**
 	 * The instance of <code>java.lang.ThreadDeath</code> used to
 	 * interrupt threads on this target.
 	 */
-	protected ObjectReference fThreadDeath;
+	private ObjectReference fThreadDeath;
 
 	/**
 	 * The name of this target - set by the client on creation, or retrieved from the
 	 * underlying VM.
 	 */
-	protected String fName;
+	private String fName;
 	
 	/**
 	 * A cache of evaluation contexts keyed by java projects. When 
@@ -122,19 +120,19 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * is cached for the associated java project. Contexts are discarded
 	 * when this VM terminates.
 	 */
-	protected HashMap fEvaluationContexts;
+	private HashMap fEvaluationContexts;
 	
 	/**
 	 * Collection of temporary files deployed to the target for evaluation.
 	 * These files are deleted when this target terminates.
 	 */
-	protected HashMap fTempFiles;
+	private HashMap fTempFiles;
 
 	/**
 	 * The event dispatcher for this debug target, which runs in its
 	 * own thread.
 	 */
-	protected EventDispatcher fEventDispatcher= null;
+	private EventDispatcher fEventDispatcher= null;
 	 
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
@@ -156,6 +154,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		initialize();
 	}
 
+	/**
+	 * Returns the event dispatcher for this debug target.
+	 * There is one event dispatcher per debug target.
+	 * 
+	 * @return event dispatcher
+	 */
+	protected EventDispatcher getEventDispatcher() {
+		return fEventDispatcher;
+	}
+	
 	/**
 	 * This is the first event we receive from the VM.
 	 * The VM is resumed. This event is not generated when
