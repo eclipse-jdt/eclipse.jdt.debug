@@ -22,14 +22,14 @@ public class JDTDebugRefactoringUtil {
 	/**
 	 * Take a list of Changes, and return a unique Change, a CompositeChange, or null.
 	 */
-	public static Change createChangeFromList(List changes) {
+	public static Change createChangeFromList(List changes, String changeLabel) {
 		int nbChanges= changes.size();
 		if (nbChanges == 0) {
 			return null;
 		} else if (nbChanges == 1) {
 			return (Change) changes.get(0);
 		} else {
-			return new CompositeChange("Breakpoint updates", (Change[])changes.toArray(new Change[changes.size()])); //$NON-NLS-1$
+			return new CompositeChange(changeLabel, (Change[])changes.toArray(new Change[changes.size()]));
 		}
 	}
 
