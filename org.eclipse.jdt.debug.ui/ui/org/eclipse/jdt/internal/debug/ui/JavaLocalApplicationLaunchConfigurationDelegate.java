@@ -103,25 +103,29 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	protected void initializeDefaults(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
 		
 		// First look for a default config for this config type and the specified resource
-		try {
-			IResource resource = javaElement.getUnderlyingResource();
-			if (resource != null) {
-				String configTypeID = workingCopy.getType().getIdentifier();
-				boolean foundDefault = getLaunchManager().initializeFromDefaultLaunchConfiguration(resource, workingCopy, configTypeID);
-				if (foundDefault) {
-					initializeFromContextJavaProject(workingCopy, javaElement);
-					initializeFromContextMainTypeAndName(workingCopy, javaElement);
-					return;
+		if (javaElement != null) {
+			try {
+				IResource resource = javaElement.getUnderlyingResource();
+				if (resource != null) {
+					String configTypeID = workingCopy.getType().getIdentifier();
+					boolean foundDefault = getLaunchManager().initializeFromDefaultLaunchConfiguration(resource, workingCopy, configTypeID);
+					if (foundDefault) {
+						initializeFromContextJavaProject(workingCopy, javaElement);
+						initializeFromContextMainTypeAndName(workingCopy, javaElement);
+						return;
+					}
 				}
+			} catch (JavaModelException jme) {			
+			} catch (CoreException ce) {			
 			}
-		} catch (JavaModelException jme) {			
-		} catch (CoreException ce) {			
 		}
 				
 		// If no default config was found, initialize all attributes we can from the specified 
 		// context object and from 'hard-coded' defaults known to this delegate
-		initializeFromContextJavaProject(workingCopy, javaElement);
-		initializeFromContextMainTypeAndName(workingCopy, javaElement);
+		if (javaElement != null) {
+			initializeFromContextJavaProject(workingCopy, javaElement);
+			initializeFromContextMainTypeAndName(workingCopy, javaElement);
+		}
 		initializeFromDefaultVM(workingCopy);
 		initializeFromDefaultContainer(workingCopy);
 		initializeFromDefaultPerspectives(workingCopy);	
@@ -309,10 +313,6 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 			runConfig.setBootClassPath(bootpath);
 		}
 		
-		// Get the configuration's perspective id's
-		String runPerspID = configuration.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
-		String debugPerspID = configuration.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
-				
 		// Launch the configuration
 		VMRunnerResult result = runner.run(runConfig);
 		
