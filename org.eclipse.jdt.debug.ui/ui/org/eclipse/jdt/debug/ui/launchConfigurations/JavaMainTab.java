@@ -148,8 +148,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		comp.setLayout(topLayout);
 		comp.setFont(font);
 		
-		createVerticalSpacer(comp, 2);
-		
 		Label projLabel = new Label(comp, SWT.NONE);
 		projLabel.setText(LauncherMessages.getString("JavaMainTab.&Project__2")); //$NON-NLS-1$
 		GridData gd = new GridData();

@@ -119,8 +119,6 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
-		createVerticalSpacer(comp);
-		
 		Composite widthHeightNameComp = new Composite(comp, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		widthHeightNameComp.setLayoutData(gd);

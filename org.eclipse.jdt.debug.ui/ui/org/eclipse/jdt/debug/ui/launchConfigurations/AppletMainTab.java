@@ -116,8 +116,6 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		projLayout.numColumns= 2;
 		projComp.setLayout(projLayout);
 		projComp.setFont(font);
-		
-		createVerticalSpacer(projComp, 2);
 
 		GridData gd;
 		fProjLabel= new Label(projComp, SWT.NONE);
