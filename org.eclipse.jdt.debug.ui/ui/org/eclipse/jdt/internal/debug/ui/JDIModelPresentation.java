@@ -1644,47 +1644,55 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				label.append('>');
 				return label.toString();
 			}
+			
+			boolean javaStratum= frame.getDeclaringType().getDefaultStratum().equals("Java"); //$NON-NLS-1$
+			
+			if (javaStratum) {
+				// receiver name
+				String rec= DebugUIMessages.getString("JDIModelPresentation<unknown_receiving_type>_5"); //$NON-NLS-1$
+				try {
+					rec= frame.getReceivingTypeName();
+				} catch (DebugException exception) {
+				}
+				label.append(getQualifiedName(rec));
 
-			// receiver name
-			String rec= DebugUIMessages.getString("JDIModelPresentation<unknown_receiving_type>_5"); //$NON-NLS-1$
-			try {
-				rec= frame.getReceivingTypeName();
-			} catch (DebugException exception) {
-			}
-			label.append(getQualifiedName(rec));
-
-			// append declaring type name if different
-			if (!dec.equals(rec)) {
-				label.append('(');
-				label.append(getQualifiedName(dec));
-				label.append(')');
-			}
-
-			// append a dot separator and method name
-			label.append('.');
-			try {
-				label.append(frame.getMethodName());
-			} catch (DebugException exception) {
-				label.append(DebugUIMessages.getString("JDIModelPresentation<unknown_method_name>_6")); //$NON-NLS-1$
-			}
-
-			try {
-				List args= frame.getArgumentTypeNames();
-				if (args.isEmpty()) {
-					label.append("()"); //$NON-NLS-1$
-				} else {
+				// append declaring type name if different
+				if (!dec.equals(rec)) {
 					label.append('(');
-					Iterator iter= args.iterator();
-					while (iter.hasNext()) {
-						label.append(getQualifiedName((String) iter.next()));
-						if (iter.hasNext()) {
-							label.append(", "); //$NON-NLS-1$
-						}
-					}
+					label.append(getQualifiedName(dec));
 					label.append(')');
 				}
-			} catch (DebugException exception) {
-				label.append(DebugUIMessages.getString("JDIModelPresentation(<unknown_arguements>)_7")); //$NON-NLS-1$
+				// append a dot separator and method name
+				label.append('.');
+				try {
+					label.append(frame.getMethodName());
+				} catch (DebugException exception) {
+					label.append(DebugUIMessages.getString("JDIModelPresentation<unknown_method_name>_6")); //$NON-NLS-1$
+				}
+				try {
+					List args= frame.getArgumentTypeNames();
+					if (args.isEmpty()) {
+						label.append("()"); //$NON-NLS-1$
+					} else {
+						label.append('(');
+						Iterator iter= args.iterator();
+						while (iter.hasNext()) {
+							label.append(getQualifiedName((String) iter.next()));
+							if (iter.hasNext()) {
+								label.append(", "); //$NON-NLS-1$
+							}
+						}
+						label.append(')');
+					}
+				} catch (DebugException exception) {
+					label.append(DebugUIMessages.getString("JDIModelPresentation(<unknown_arguements>)_7")); //$NON-NLS-1$
+				}
+			} else {
+				if (isShowQualifiedNames()) {
+					label.append(frame.getSourcePath());
+				} else {
+					label.append(frame.getSourceName());
+				}
 			}
 
 			try {
