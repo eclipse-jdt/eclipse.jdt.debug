@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -191,8 +192,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Returns the requests that this breakpoint has installed
 	 * in the given target.
 	 */
-	protected ArrayList getRequests(JDIDebugTarget target) {
-		ArrayList list= (ArrayList)fRequestsByTarget.get(target);
+	protected List getRequests(JDIDebugTarget target) {
+		List list= (List)fRequestsByTarget.get(target);
 		if (list == null) {
 			list= new ArrayList(2);
 		}
@@ -220,9 +221,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * and replaces it with <code>newRequest</code>
 	 */
 	protected void replaceRequest(JDIDebugTarget target, EventRequest oldRequest, EventRequest newRequest) {
-		List list = getRequests(target);
-		list.remove(oldRequest);
-		list.add(newRequest);
 		target.removeJDIEventListener(this, oldRequest);
 		target.addJDIEventListener(this, newRequest);
 		// delete old request
@@ -486,16 +484,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * given target to reflect the current state of this breakpoint.
 	 */
 	public void changeForTarget(JDIDebugTarget target) throws CoreException {
-		// Must iterate over a copy of the requests because updating a
-		// request will modify the underlying list.
-		List requests = (List) getRequests(target).clone();
+		List requests = getRequests(target);
 		if (!requests.isEmpty()) {
-			Iterator iter = requests.iterator();
+			ListIterator iter = requests.listIterator();
 			EventRequest req;
 			while (iter.hasNext()) {
 				req = (EventRequest)iter.next();
 				if (!(req instanceof ClassPrepareRequest)) {
-					updateRequest(req, target);
+					if(updateRequest(req, target)) {
+						iter.set(req);
+					}
 				}
 			}
 		}
@@ -503,16 +501,19 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 
 	/**
 	 * Update the given request in the given target to reflect
-	 * the current state of this breakpoint.
+	 * the current state of this breakpoint.  Returns whether
+	 * a new request was generated as a result of the required changes.
 	 */
-	protected void updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
+	protected boolean updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		updateEnabledState(request);
 		updateSuspendPolicy(request, target);
 		EventRequest newRequest = updateHitCount(request, target);
 		if (newRequest != request) {
 			replaceRequest(target, request, newRequest);
-			request = newRequest;
+			request= newRequest;
+			return true;
 		}
+		return false;
 	}
 	
 	/**
@@ -853,8 +854,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		// are transient properties, they are not set on
 		// the marker. Thus we must update the request
 		// here.
-		List requests = (List) getRequests(target).clone();
-		Iterator iter= requests.iterator();
+		List requests= getRequests(target);
+		ListIterator iter= requests.listIterator();
 		EventRequest request= null;
 		while (iter.hasNext()) {
 			request= (EventRequest)iter.next();
@@ -864,6 +865,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			EventRequest newRequest = recreateRequest(request, target);
 			if (newRequest != request) {
 				replaceRequest(target, request, newRequest);
+				iter.set(newRequest);
 				DebugPlugin.getDefault().addDebugEventListener(this);
 				// Since thread filters don't affect the underlying marker, fire
 				// a changed notification manually
@@ -936,8 +938,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		JDIDebugTarget target= (JDIDebugTarget)javaTarget;
 		fFilteredThreadsByTarget.remove(target);
-		List requests = (List) getRequests(target).clone();
-		Iterator iter= requests.iterator();
+		List requests = getRequests(target);
+		ListIterator iter= requests.listIterator();
 		EventRequest request= null;
 		while (iter.hasNext()) {
 			request= (EventRequest)iter.next();
@@ -949,6 +951,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			// and replace the old.
 			EventRequest newRequest = recreateRequest(request, target);
 			if (newRequest != request) {
+				iter.set(newRequest);
 				replaceRequest(target, request, newRequest);
 				DebugPlugin.getDefault().removeDebugEventListener(this);
 				// Since thread filters don't affect the underlying marker, fire
