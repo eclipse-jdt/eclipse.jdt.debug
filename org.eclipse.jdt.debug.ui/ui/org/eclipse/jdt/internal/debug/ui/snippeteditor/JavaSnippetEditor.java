@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - bug 38919
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
@@ -86,7 +87,6 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -103,8 +103,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.part.IShowInSource;
-import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -117,7 +115,7 @@ import com.sun.jdi.ObjectReference;
 /**
  * An editor for Java snippets.
  */
-public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEventFilter, IEvaluationListener, IValueDetailListener, IShowInSource {			
+public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEventFilter, IEvaluationListener, IValueDetailListener {			
 	public static final String IMPORTS_CONTEXT = "SnippetEditor.imports"; //$NON-NLS-1$
 	
 	public final static int RESULT_DISPLAY= 1;
@@ -219,14 +217,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
-	 */
-	public ShowInContext getShowInContext() {
-		IFile file = ((FileEditorInput)getEditorInput()).getFile();
-		return new ShowInContext(ResourcesPlugin.getWorkspace().getRoot(), new StructuredSelection(file));
-	}
-
 	public JavaSnippetEditor() {
 		super();
 		setDocumentProvider(JDIDebugUIPlugin.getDefault().getSnippetDocumentProvider());
@@ -261,6 +251,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		Action action = new TextOperationAction(SnippetMessages.getBundle(), "SnippetEditor.ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", action);//$NON-NLS-1$
+		setAction("ShowInPackageView", new ShowInPackageViewAction(this)); //$NON-NLS-1$
 		setAction("Stop", new StopAction(this));  //$NON-NLS-1$
 		setAction("SelectImports", new SelectImportsAction(this));  //$NON-NLS-1$
 	} 
@@ -273,6 +264,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_GENERATE);		
 		addGroup(menu, ITextEditorActionConstants.GROUP_FIND, IContextMenuConstants.GROUP_SEARCH);		
 		addGroup(menu, IContextMenuConstants.GROUP_SEARCH,  IContextMenuConstants.GROUP_SHOW);
+		addAction(menu, IContextMenuConstants.GROUP_SHOW, "ShowInPackageView"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Run"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Stop"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "SelectImports"); //$NON-NLS-1$
