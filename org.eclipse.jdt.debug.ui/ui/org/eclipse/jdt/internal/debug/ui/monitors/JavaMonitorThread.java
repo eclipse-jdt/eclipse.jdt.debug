@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.PlatformObject;
@@ -21,6 +22,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
+
+import com.sun.jdi.IncompatibleThreadStateException;
 
 /**
  * Represent a Java thread in the threads and monitors model.
@@ -198,8 +201,15 @@ public class JavaMonitorThread extends PlatformObject {
 					fOwnedMonitors= tmp;
 				}
 			} catch (DebugException e) {
-				fContendedMonitor= null;
-				fOwnedMonitors= new JavaMonitor[0];
+			    Throwable cause= e.getStatus().getException();
+			    if (!(cause instanceof IncompatibleThreadStateException)) {
+			        // IncompatibleThreadStateException are expected from Sun VMs
+			        // if the thread is not suspended.
+			        // For all other exceptions, null the values.
+					fContendedMonitor= null;
+					changed= fOwnedMonitors != null && fOwnedMonitors.length != 0;
+					fOwnedMonitors= new JavaMonitor[0];
+			    }
 			} finally {
 				fToUpdate= false;
 			}
@@ -216,21 +226,21 @@ public class JavaMonitorThread extends PlatformObject {
 	 */
 	private void fireChangeEvent(int detail) {
 		Object[] elements= fElements.toArray();
-		DebugEvent[] changeEvents= new DebugEvent[elements.length];
+		List changedElement= new ArrayList();
 		for (int i= 0; i < elements.length; i++) {
 			Object element= elements[i];
-			if (element instanceof JavaOwningThread) {
-				if (((JavaOwningThread)element).getParent() == null) {
-					element= ((JavaOwningThread)element).getThread().getThread();
-				}
+			// the two 'base' elements are not part of the hierarchy, they are 
+			// used to get the children of the Thread.
+			if (element != fBaseOwningThread && element != fBaseWaitingThread) {
+			    changedElement.add(element);
 			}
-			if (element instanceof JavaWaitingThread) {
-				if (((JavaWaitingThread)element).getParent() == null) {
-					element= ((JavaWaitingThread)element).getThread().getThread();
-				}
-			}
-			changeEvents[i]= new DebugEvent(element, DebugEvent.CHANGE, detail);
 		}
+		DebugEvent[] changeEvents= new DebugEvent[changedElement.size() + 1];
+		changeEvents[0]= new DebugEvent(fThread, DebugEvent.CHANGE, detail);
+		int i= 1;
+		for (Iterator iter= changedElement.iterator(); iter.hasNext();) {
+		    changeEvents[i++]= new DebugEvent(iter.next(), DebugEvent.CHANGE, detail);
+        }
 		DebugPlugin.getDefault().fireDebugEventSet(changeEvents);
 	}
 
