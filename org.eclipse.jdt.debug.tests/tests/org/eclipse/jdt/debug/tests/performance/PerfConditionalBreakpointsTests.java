@@ -34,7 +34,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
     private boolean fConditionalBreakpointSet = false;
     private boolean fWarmUpComplete = false;
     private int fWarmUpRuns = 5;
-    private int fMeasuredRuns = 100;
+    private int fMeasuredRuns = 25;
 
     private class BreakpointListener implements IDebugEventSetListener {
         public void handleDebugEvents(DebugEvent[] events) {
@@ -61,7 +61,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
 
         DebugPlugin.getDefault().addDebugEventListener(new BreakpointListener());
         ILaunchConfiguration config = getLaunchConfiguration(fTypeName);
-        fTarget = launchAndTerminate(config, 5 * 60 * 60 * 1000);
+        fTarget = launchAndTerminate(config, 5 * 60 * 1000);
         
         if(fException != null) {
             throw fException;
@@ -77,7 +77,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
         try {
             if (!fConditionalBreakpointSet) {
                 fBP.delete();
-                fBP = createConditionalLineBreakpoint(22, fTypeName, "i%100==0", true);
+                fBP = createConditionalLineBreakpoint(22, fTypeName, "i%20==0", true);
                 fConditionalBreakpointSet = true;
             } else if (!fWarmUpComplete) {
                 fHitCount++;
