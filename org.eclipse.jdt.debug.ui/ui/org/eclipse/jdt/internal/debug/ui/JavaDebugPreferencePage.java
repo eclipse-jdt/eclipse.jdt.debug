@@ -75,8 +75,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	// Timeout preference widgets
 	private JavaDebugIntegerFieldEditor fTimeoutText;
 	private JavaDebugIntegerFieldEditor fConnectionTimeoutText;
-	// View settings
-	private Button fPackagesButton;
 	
 	public JavaDebugPreferencePage() {
 		super();
@@ -151,9 +149,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fConnectionTimeoutText.load();
 		fConnectionTimeoutText.setPropertyChangeListener(this);
 		// cannot set preference store, as it is a core preference
-		createSpacer(composite, 1);
-		comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Opened_View_Default_Settings_1")); //$NON-NLS-1$
-		fPackagesButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Show_&qualified_names_2")); //$NON-NLS-1$		
 		
 		setValues();
 		return composite;		
@@ -196,7 +191,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPerformHCRWithCompilationErrors.setSelection(store.getDefaultBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS));
 		fTimeoutText.setStringValue(new Integer(store.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(store.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
-		fPackagesButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
 	}
 	
 	/**
@@ -253,7 +247,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPerformHCRWithCompilationErrors.setSelection(JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS));
 		fTimeoutText.setStringValue(new Integer(JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
-		fPackagesButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
 	}
 	
 	/**
@@ -270,7 +263,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, fPerformHCRWithCompilationErrors.getSelection());
 		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 		JavaRuntime.getPreferences().setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
-		store.setValue(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, fPackagesButton.getSelection());
 	}
 	
 	protected void createSpacer(Composite composite, int columnSpan) {

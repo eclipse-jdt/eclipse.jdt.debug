@@ -100,40 +100,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private boolean fShuttingDown= false;
 
 	/**
-	 * The names of the allowable Java access modifiers.
-	 */
-	public static final String[] fgAccessModifierNames = new String[] {"public", //$NON-NLS-1$
-															"package", //$NON-NLS-1$
-															"protected", //$NON-NLS-1$
-															"private", //$NON-NLS-1$
-															"local"}; //$NON-NLS-1$
-
-	/**
-	 * The names of the allowable Java 'mode' modifiers.
-	 */
-	public static final String[] fgModeModifierNames = new String[] {"static", //$NON-NLS-1$
-															"final", //$NON-NLS-1$
-															"none", //$NON-NLS-1$
-															"synthetic"}; //$NON-NLS-1$
-
-	/**
-	 * Same mode modifiers as defined in <code>fgModeModifierNames</code>, with
-	 * the addition of mnemonics for keyboard shortcut accessibility.
-	 */
-	public static final String[] fgAccessibleModeModifierNames = new String[] {"&static", //$NON-NLS-1$
-															"&final", //$NON-NLS-1$
-															"&none", //$NON-NLS-1$
-															"s&ynthetic"}; //$NON-NLS-1$
-
-	public static final String DEFAULT_VARIABLES_FILTER_PREFIX = getUniqueIdentifier() + ".default_variables_filters"; //$NON-NLS-1$
-	public static final String VARIABLES_VIEW_FILTER_PREFIX = getUniqueIdentifier() + ".variables_view_filters"; //$NON-NLS-1$
-	public static final String EXPRESSIONS_VIEW_FILTER_PREFIX = getUniqueIdentifier() + ".expressions_view_filters"; //$NON-NLS-1$
-
-	private static final String SHOW_HEX_PREFERENCE_SUFFIX = "show_hex"; //$NON-NLS-1$
-	private static final String SHOW_CHAR_PREFERENCE_SUFFIX = "show_char"; //$NON-NLS-1$
-	private static final String SHOW_UNSIGNED_PREFERENCE_SUFFIX = "show_unsigned"; //$NON-NLS-1$
-
-	/**
 	 * @see Plugin(IPluginDescriptor)
 	 */
 	public JDIDebugUIPlugin(IPluginDescriptor descriptor) {
@@ -299,84 +265,14 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		// JavaStepFilterPreferencePage
 		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "java.lang.ClassLoader"); //$NON-NLS-1$
 		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*"); //$NON-NLS-1$
-		
-		// JavaVariableFilterPreferencePage
-		initializeDefaultDefaultJavaVariablesPreferences(store);
-		initializeDefaultJavaVariablesPreferences(store, VARIABLES_VIEW_FILTER_PREFIX);
-		initializeDefaultJavaVariablesPreferences(store, EXPRESSIONS_VIEW_FILTER_PREFIX);
+				
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CONSTANTS, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_STATIC_VARIALBES, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_HEX, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, false);
 	}
 	
-	private void initializeDefaultJavaVariablesPreferences(IPreferenceStore store, String preferencePrefix) {
-		for (int row = 0; row < fgModeModifierNames.length; row++) {
-			for (int col = 0; col < fgAccessModifierNames.length; col++) {
-				boolean value = store.getBoolean(generateVariableFilterPreferenceName(row, col, DEFAULT_VARIABLES_FILTER_PREFIX));
-				store.setDefault(generateVariableFilterPreferenceName(row, col, preferencePrefix), value);				
-			}
-		}
-		
-		// Hex, char & unsigned options
-		store.setDefault(getShowHexPreferenceKey(preferencePrefix), store.getBoolean(getShowHexPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX)));
-		store.setDefault(getShowCharPreferenceKey(preferencePrefix), store.getBoolean(getShowCharPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX)));
-		store.setDefault(getShowUnsignedPreferenceKey(preferencePrefix), store.getBoolean(getShowUnsignedPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX)));
-	}
-	
-	/**
-	 * Set the default values for all variable filtering combinations.
-	 */
-	private void initializeDefaultDefaultJavaVariablesPreferences(IPreferenceStore store) {
-		// static
-		initializeDefaultJavaVariablesRowPrefs(store, 0, new boolean[] {false, false, false, false, true});
-
-		// final
-		initializeDefaultJavaVariablesRowPrefs(store, 1, new boolean[] {false, false, false, false, true});
-
-		// normal
-		initializeDefaultJavaVariablesRowPrefs(store, 2, new boolean[] {true, true, true, true, true});
-
-		// synthetic
-		initializeDefaultJavaVariablesRowPrefs(store, 3, new boolean[] {true, true, true, true, true});
-	
-		// Hex, char & unsigned options
-		store.setDefault(getShowHexPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX), false);
-		store.setDefault(getShowCharPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX), false);
-		store.setDefault(getShowUnsignedPreferenceKey(DEFAULT_VARIABLES_FILTER_PREFIX), false);		
-	}
-
-	/**
-	 * Set the specified default pref. values for the given row.
-	 */
-	private void initializeDefaultJavaVariablesRowPrefs(IPreferenceStore store, int row, boolean[] values) {
-		for (int col = 0; col < values.length; col++) {
-			String prefName = generateVariableFilterPreferenceName(row, col, DEFAULT_VARIABLES_FILTER_PREFIX);
-			store.setDefault(prefName, values[col]);
-		}
-	}
-
-	/**
-	 * Use the specified row & column indices to generate preference names that
-	 * have the specified prefix.
-	 */
-	public static String generateVariableFilterPreferenceName(int rowIndex, int colIndex, String preferencePrefix) {
-		StringBuffer buffer = new StringBuffer(preferencePrefix);
-		buffer.append('_');
-		buffer.append(fgModeModifierNames[rowIndex]);
-		buffer.append('_');
-		buffer.append(fgAccessModifierNames[colIndex]);
-		return buffer.toString();
-	}
-	
-	public static String getShowHexPreferenceKey(String prefix) {
-		return prefix + '.' + SHOW_HEX_PREFERENCE_SUFFIX;
-	}
-
-	public static String getShowCharPreferenceKey(String prefix) {
-		return prefix + '.' + SHOW_CHAR_PREFERENCE_SUFFIX;
-	}
-
-	public static String getShowUnsignedPreferenceKey(String prefix) {
-		return prefix + '.' + SHOW_UNSIGNED_PREFERENCE_SUFFIX;
-	}
-
 	/**
 	 * @see AbstractUIPlugin#startup()
 	 */

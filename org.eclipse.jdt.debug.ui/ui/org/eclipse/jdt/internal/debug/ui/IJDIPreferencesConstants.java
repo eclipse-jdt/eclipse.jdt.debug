@@ -93,4 +93,48 @@ public interface IJDIPreferencesConstants {
 	 */
 	public static final String PREF_DETAIL_FORMATTERS_LIST= IJavaDebugUIConstants.PLUGIN_ID + ".detail_formatters"; //$NON-NLS-1$
 	
+	/**
+	 * Boolean preference indicating whether (non-final) static varibles should be shown
+	 * in variable views. A view may over-ride this preference, and if so, stores
+	 * its preference, prefixed by view id.
+	 * 
+	 * @since 2.1
+	 */
+	public static final String PREF_SHOW_STATIC_VARIALBES= IJavaDebugUIConstants.PLUGIN_ID + ".show_static_variables"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference indicating whether constant (final static) varibles should be shown
+	 * in variable views. A view may over-ride this preference, and if so, stores
+	 * its preference, prefixed by view id.
+	 * 
+	 * @since 2.1
+	 */	
+	public static final String PREF_SHOW_CONSTANTS= IJavaDebugUIConstants.PLUGIN_ID + ".show_constants"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference indicating whether hex values should be shown for primitives
+	 * in variable views. A view may over-ride this preference, and if so, stores
+	 * its preference, prefixed by view id.
+	 * 
+	 * @since 2.1
+	 */	
+	public static final String PREF_SHOW_HEX = IJavaDebugUIConstants.PLUGIN_ID + ".show_hex"; //$NON-NLS-1$	
+	
+	/**
+	 * Boolean preference indicating whether char values should be shown for primitives
+	 * in variable views. A view may over-ride this preference, and if so, stores
+	 * its preference, prefixed by view id.
+	 * 
+	 * @since 2.1
+	 */	
+	public static final String PREF_SHOW_CHAR = IJavaDebugUIConstants.PLUGIN_ID + ".show_char"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference indicating whether unsigned values should be shown for primitives
+	 * in variable views. A view may over-ride this preference, and if so, stores
+	 * its preference, prefixed by view id.
+	 * 
+	 * @since 2.1
+	 */	
+	public static final String PREF_SHOW_UNSIGNED = IJavaDebugUIConstants.PLUGIN_ID + ".show_unsigned"; //$NON-NLS-1$	
 }

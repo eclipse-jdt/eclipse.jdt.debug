@@ -619,43 +619,59 @@
 	<viewContribution
 		id="org.eclipse.jdt.ui.debug.VariableViewActions"
 		targetID="org.eclipse.debug.ui.VariableView">
+		<action id="org.eclipse.jdt.ui.variableViewActions.PrimitiveOptions"
+			label="%primitiveOptionsAction.label"
+			menubarPath="javaActions"
+			tooltip="%primitiveOptionsAction.tooltip"
+			helpContextId="primitive_options_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction">
+		</action>		
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"
 			label="%showQualifiedAction.label"
-			toolbarPath="renderGroup"
+			menubarPath="javaActions"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
 			state="false">
 		</action>
-		<action id="org.eclipse.jdt.ui.variableViewActions.FilterPreferences"
-			label="%filterPreferencesAction.label"
-			menubarPath="filterActions"
-			icon="icons/full/ctool16/var_filters.gif"
-			tooltip="%filterPreferencesAction.tooltip"
-			helpContextId="java_variables_filter_preference_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.JavaVariablesViewFilterPreferenceAction">
-		</action>
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStatic"
+			label="%showStaticAction.label"
+			menubarPath="javaActions"
+			icon="icons/full/clcl16/static_co.gif"
+			tooltip="%showStaticAction.tooltip"
+			helpContextId="show_static_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
+			state="false">
+		</action>		
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowConstants"
+			label="%showConstantsAction.label"
+			menubarPath="javaActions"
+			icon="icons/full/clcl16/final_co.gif"
+			tooltip="%showConstantsAction.tooltip"
+			helpContextId="show_constants_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
+			state="false">
+		</action>		
 	</viewContribution>
 	<viewContribution
 		id="org.eclipse.jdt.ui.debug.ExpressionViewActions"
 		targetID="org.eclipse.debug.ui.ExpressionView">
+		<action id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions"
+			label="%primitiveOptionsAction.label"
+			menubarPath="javaActions"
+			tooltip="%primitiveOptionsAction.tooltip"
+			helpContextId="primitive_options_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction">
+		</action>		
 		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"
 			label="%showQualifiedAction.label"
-			toolbarPath="renderGroup"
+			menubarPath="javaActions"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
 			state="false">
-		</action>
-		<action id="org.eclipse.jdt.ui.expressionViewActions.FilterPreferences"
-			label="%filterPreferencesAction.label"
-			menubarPath="filterActions"
-			icon="icons/full/ctool16/var_filters.gif"
-			tooltip="%filterPreferencesAction.tooltip"
-			helpContextId="java_variables_filter_preference_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.JavaExpressionsViewFilterPreferenceAction">
 		</action>
 	</viewContribution>	
 	<viewContribution
@@ -673,7 +689,7 @@
 		</action>
 			<action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"
 			label="%showQualifiedAction.label"
-			toolbarPath="renderGroup"
+			menubarPath="javaActions"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
@@ -686,7 +702,7 @@
 		targetID="org.eclipse.debug.ui.DebugView">
 			<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"
 			label="%showQualifiedAction.label"
-			toolbarPath="renderGroup"
+			menubarPath="javaActions"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
@@ -1382,11 +1398,6 @@
          class="org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage"
          category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
 	</page>
-	<page name="%javaVariableFiltersPrefName"
-         id="org.eclipse.jdt.ui.JavaVariablesFilterPreferencePage"
-         class="org.eclipse.jdt.internal.debug.ui.JavaVariablesFilterPreferencePage"
-         category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
-	</page>
 </extension>
 
 <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -1467,8 +1478,8 @@
 		<action id="org.eclipse.jdt.ui.expressionViewActions.AddWatchExpression"/>
 		<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"/>
-		<action id="org.eclipse.jdt.ui.expressionViewActions.FilterPreferences"/>
-		<action id="org.eclipse.jdt.ui.variableViewActions.FilterPreferences"/>
+		<action id="org.eclipse.jdt.ui.expressionViewActions.PrimitiveOptions"/>
+		<action id="org.eclipse.jdt.ui.variableViewActions.PrimitiveOptions"/>
 	</debugActionGroup>
 </extension>
 
