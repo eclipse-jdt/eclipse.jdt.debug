@@ -123,6 +123,9 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 			} else {
 				IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
 				ICompilationUnit unit= manager.getWorkingCopy(editorInput);
+				if (unit == null) {
+					return null;
+				}
 				IJavaElement e = unit.getElementAt(selection.getOffset());
 				if (e instanceof IType)
 						type = (IType)e;
@@ -161,8 +164,10 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		setPluginAction(action);
-		update();
+		if (selection instanceof ITextSelection) {
+			setPluginAction(action);
+			update();
+		}
 	}
 		
 	public void update() {
