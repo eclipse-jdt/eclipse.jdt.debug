@@ -174,7 +174,7 @@ public class SocketLaunchingConnectorImpl extends ConnectorImpl implements Launc
 			throw new VMStartException(message, proc);
 		}
 		
-		virtualMachine.setLauncedProcess(proc);
+		virtualMachine.setLaunchedProcess(proc);
 		return virtualMachine;
 	}
 }

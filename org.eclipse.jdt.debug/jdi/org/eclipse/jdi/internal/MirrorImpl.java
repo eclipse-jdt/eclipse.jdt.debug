@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
+import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
@@ -288,7 +289,10 @@ public class MirrorImpl implements Mirror {
 	 * Disconnects VM.
 	 */
 	public void disconnectVM() {
+	    fVirtualMachineImpl.setDisconnected(true);
 		fVirtualMachineImpl.packetSendManager().disconnectVM();
+		fVirtualMachineImpl.packetReceiveManager().disconnectVM();
+		((VirtualMachineManagerImpl) Bootstrap.virtualMachineManager()).removeConnectedVM(fVirtualMachineImpl);
 	}
 
 	/**

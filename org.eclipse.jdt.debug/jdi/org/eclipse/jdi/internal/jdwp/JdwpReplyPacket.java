@@ -11,8 +11,6 @@
 package org.eclipse.jdi.internal.jdwp;
 
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -113,15 +111,18 @@ public class JdwpReplyPacket extends JdwpPacket {
 	/**
 	 * Reads header fields that are specific for this type of packet.
 	 */
-	protected void readSpecificHeaderFields(DataInputStream dataInStream) throws IOException {
-		fErrorCode = dataInStream.readShort();
+	protected int readSpecificHeaderFields(byte[] bytes, int index) throws IOException {
+		fErrorCode =  (short)((bytes[index] << 8) + (bytes[index+1] << 0));
+		return 2;
 	}
 
 	/**
 	 * Writes header fields that are specific for this type of packet.
 	 */
-	protected void writeSpecificHeaderFields(DataOutputStream dataOutStream) throws IOException {
-		dataOutStream.writeShort(fErrorCode);
+	protected int writeSpecificHeaderFields(byte[] bytes, int index) throws IOException {
+        bytes[index] = (byte) ((fErrorCode >>> 8) & 0xFF);
+        bytes[index+1] = (byte) ((fErrorCode >>> 0) & 0xFF);
+        return 2;
 	}
 
 	/**

@@ -132,7 +132,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 			throw new VMStartException(message, proc);
 		}
 		
-		virtualMachine.setLauncedProcess(proc);
+		virtualMachine.setLaunchedProcess(proc);
 		return virtualMachine;
 	}
 }

@@ -13,7 +13,7 @@ package org.eclipse.jdi.internal.connect;
 
 import java.io.IOException;
 
-import org.eclipse.jdi.internal.VirtualMachineImpl;
+import com.sun.jdi.connect.spi.Connection;
 
 /**
  * This class implements threads that receive/send packets from/to the Virtual Machine.
@@ -21,7 +21,7 @@ import org.eclipse.jdi.internal.VirtualMachineImpl;
  */
 public abstract class PacketManager implements Runnable {
 	/** Connector that performs IO to Virtual Machine. */
-	private ConnectorImpl fConnector;
+	private Connection fConnection;
 	/** Thread that handles the communication the other way (e.g. if we are sending, the receiving thread). */
 	private Thread fPartnerThread;
 	private IOException fDisconnectException;
@@ -29,16 +29,20 @@ public abstract class PacketManager implements Runnable {
 	/**
 	 * Creates new PacketManager.
 	 */
-	protected PacketManager(ConnectorImpl connector) {
-		fConnector = connector;
+	protected PacketManager(Connection connection) {
+		fConnection = connection;
 	}
 	
+    public Connection getConnection() {
+        return fConnection;
+    }
+    
 	/**
 	 * Used to indicate that an IO exception occurred, closes connection to Virtual Machine.
 	 * 
 	 * @param disconnectException the IOException that occurred
 	 */
-	public synchronized void disconnectVM(IOException disconnectException) {
+	public void disconnectVM(IOException disconnectException) {
 		fDisconnectException= disconnectException;
 		disconnectVM();
 	}
@@ -46,22 +50,23 @@ public abstract class PacketManager implements Runnable {
 	/**
 	 * Closes connection to Virtual Machine.
 	 */
-	public synchronized void disconnectVM() {
-		VirtualMachineImpl vm = fConnector.virtualMachine();
-
-		vm.setDisconnected(true);
-		fConnector.close();
-		// Notify any waiting threads.
-		notifyAll();
+	public void disconnectVM() {
+		try {
+            fConnection.close();
+        } catch (IOException e) {
+            fDisconnectException = e;
+        }
 		// Interrupt the sending thread if we are the receiving thread and vice versa.
-		fPartnerThread.interrupt();
+		if (fPartnerThread != null) {
+		    fPartnerThread.interrupt();
+		}
 	}
 	
 	/**
 	 * @return Returns whether an IO exception has occurred.
 	 */
-	public boolean VMIsDisconnected() {
-		return fConnector.virtualMachine().isDisconnected();
+	public boolean VMIsDisconnected() {	    
+		return fConnection == null || !fConnection.isOpen();
 	}
 	
 	/**

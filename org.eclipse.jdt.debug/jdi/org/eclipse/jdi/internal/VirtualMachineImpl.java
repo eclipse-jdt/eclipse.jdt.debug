@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jdi.internal.connect.ConnectorImpl;
+import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdi.internal.connect.PacketReceiveManager;
 import org.eclipse.jdi.internal.connect.PacketSendManager;
 import org.eclipse.jdi.internal.event.EventQueueImpl;
@@ -47,6 +47,7 @@ import com.sun.jdi.ShortValue;
 import com.sun.jdi.StringReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.connect.spi.Connection;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.request.EventRequestManager;
 
@@ -81,8 +82,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	/** EventQueue that returns EventSets from the Virtual Manager. */
 	private EventQueueImpl fEventQueue;
 	
-	/** Connector to VM. */
-	private ConnectorImpl fConnector;
 	/** If a launchingconnector is used, we store the process. */
 	private Process fLaunchedProcess;
 	
@@ -146,16 +145,27 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * The name of the current default stratum.
 	 */	
 	private String fDefaultStratum;
+    private PacketReceiveManager fPacketReceiveManager;
+    private PacketSendManager fPacketSendManager;
 	
 	/** 
 	 * Creates a new Virtual Machine.
 	 */
-	public VirtualMachineImpl(ConnectorImpl connector) {
+	public VirtualMachineImpl(Connection connection) {
 		super("VirtualMachine"); //$NON-NLS-1$
 		fEventReqMgr = new EventRequestManagerImpl(this);
 		fEventQueue = new EventQueueImpl(this);
-		fConnector = connector;
-		fRequestTimeout = connector.virtualMachineManager().getGlobalRequestTimeout();
+		fRequestTimeout = ((VirtualMachineManagerImpl) Bootstrap.virtualMachineManager()).getGlobalRequestTimeout();
+		
+		fPacketReceiveManager = new PacketReceiveManager(connection, this);
+		Thread receiveThread = new Thread(fPacketReceiveManager, JDIMessages.getString("VirtualMachineImpl.0"));  //$NON-NLS-1$
+		fPacketReceiveManager.setPartnerThread(receiveThread);
+		receiveThread.start();
+		
+		fPacketSendManager = new PacketSendManager(connection);
+		Thread sendThread = new Thread(fPacketSendManager, JDIMessages.getString("VirtualMachineImpl.1")); //$NON-NLS-1$
+		fPacketReceiveManager.setPartnerThread(sendThread);
+		sendThread.start();
 	}
 
 	/** 
@@ -296,7 +306,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * @return Returns Manager for receiving packets from the Virtual Machine.
 	 */
 	public final PacketReceiveManager packetReceiveManager() {
-		return fConnector.packetReceiveManager();
+		return fPacketReceiveManager;
 	}
 
 	/*
@@ -320,7 +330,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			eventRequestManagerImpl().enableInternalClasUnloadEvent();
 		}
 
-		return fConnector.packetSendManager();
+		return fPacketSendManager;
 	}
 
 	/**
@@ -697,7 +707,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	/**
 	 * Sets Process object for this virtual machine if launched by a LaunchingConnector.
 	 */
-	public void setLauncedProcess(Process proc) {
+	public void setLaunchedProcess(Process proc) {
 		fLaunchedProcess = proc;
 	}
 	
@@ -852,6 +862,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			}
 
 		} catch (IOException e) {
+e.printStackTrace();		    
 			fVersionDescription = null;
 			defaultIOExceptionHandler(e);
 		} finally {

@@ -17,5 +17,5 @@ import java.util.Map;
 import com.sun.jdi.VirtualMachine;
 
 public interface AttachingConnector extends Connector {
-	public VirtualMachine attach(Map arg1) throws IOException, IllegalConnectorArgumentsException;
+	public VirtualMachine attach(Map arguments) throws IOException, IllegalConnectorArgumentsException;
 }

@@ -11,8 +11,6 @@
 package org.eclipse.jdi.internal.jdwp;
 
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -217,17 +215,19 @@ public class JdwpCommandPacket extends JdwpPacket {
 	/**
 	 * Reads header fields that are specific for this type of packet.
 	 */
-	protected void readSpecificHeaderFields(DataInputStream dataInStream) throws IOException {
-		byte commandSet = dataInStream.readByte();
-		fCommand = dataInStream.readByte()  + (commandSet << 8);
+	protected int readSpecificHeaderFields(byte[] bytes, int index) {
+		byte commandSet = bytes[index];
+		fCommand = bytes[index+1]  + (commandSet << 8);
+		return 2;
 	}
 
 	/**
 	 * Writes header fields that are specific for this type of packet.
 	 */
-	protected void writeSpecificHeaderFields(DataOutputStream dataOutStream) throws IOException {
-		dataOutStream.writeByte(getCommandSet());
-		dataOutStream.writeByte((byte)fCommand);
+	protected int writeSpecificHeaderFields(byte[] bytes, int index) throws IOException {
+	    bytes[index] = getCommandSet();
+	    bytes[index+1] = (byte) fCommand;
+	    return 2;
 	}
 	
 	/**

@@ -23,8 +23,8 @@ public abstract class TransportService {
 	public abstract static class ListenKey {
 		public abstract String address();
 	}
-	public abstract Connection accept(TransportService.ListenKey arg1, long arg2, long arg3) throws IOException;
-	public abstract Connection attach(String arg1, long arg2, long arg3) throws IOException;
+	public abstract Connection accept(ListenKey listenKey, long attachTimeout, long handshakeTimeout) throws IOException;
+	public abstract Connection attach(String address, long attachTimeout, long handshakeTimeout) throws IOException;
 	public abstract TransportService.Capabilities capabilities();
 	public abstract String description();
 	public abstract String name();

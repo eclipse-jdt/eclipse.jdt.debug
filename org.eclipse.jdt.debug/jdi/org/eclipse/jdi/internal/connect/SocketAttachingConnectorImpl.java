@@ -23,6 +23,7 @@ import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.AttachingConnector;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
+import com.sun.jdi.connect.spi.Connection;
 
 public class SocketAttachingConnectorImpl extends ConnectorImpl implements AttachingConnector {
 	/** Hostname to which is attached. */
@@ -99,14 +100,15 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 	 */
 	public VirtualMachine attach(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
+		Connection connection = null;
 		try {
-			((SocketTransportImpl)fTransport).attach(fHostname, fPort);
+			connection = ((SocketTransportImpl)fTransport).attach(fHostname, fPort);
 		} catch (IllegalArgumentException e) {
 			List args = new ArrayList();
 			args.add("hostname"); //$NON-NLS-1$
 			args.add("port"); //$NON-NLS-1$
 			throw new IllegalConnectorArgumentsException(e.getMessage(), args);
 		}
-		return establishedConnection();
+		return establishedConnection(connection);
 	}
 }

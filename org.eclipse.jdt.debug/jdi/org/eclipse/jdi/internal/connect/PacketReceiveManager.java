@@ -12,7 +12,6 @@ package org.eclipse.jdi.internal.connect;
 
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.text.MessageFormat;
 import java.util.LinkedList;
@@ -25,53 +24,57 @@ import org.eclipse.jdi.internal.jdwp.JdwpPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 
 import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.connect.spi.Connection;
 
 /**
  * This class implements a thread that receives packets from the Virtual Machine.
  *
  */
 public class PacketReceiveManager extends PacketManager {
-	/** Generic timeout value for not blocking. */
+
+    /** Generic timeout value for not blocking. */
 	public static final int TIMEOUT_NOT_BLOCKING = 0;
 	/** Generic timeout value for infinite timeout. */
 	public static final int TIMEOUT_INFINITE = -1;
 
-	/** Virtual Machine. */
-	private VirtualMachineImpl fVM;
-	/** Input Stream from Virtual Machine. */
-	private InputStream fInStream;
 	/** List of Command packets received from Virtual Machine. */
 	private LinkedList fCommandPackets;
 	/** List of Reply packets received from Virtual Machine. */
 	private LinkedList fReplyPackets;
+    private VirtualMachineImpl fVM;
 
 	/** 
 	 * Create a new thread that receives packets from the Virtual Machine.
 	 */
-	public PacketReceiveManager(ConnectorImpl connector) {
-		super(connector);
-		try {
-			fVM = connector.virtualMachine();
-			fInStream = connector.getInputStream();
-			fCommandPackets = new LinkedList();
-			fReplyPackets = new LinkedList();
-		} catch (IOException e) {
-			disconnectVM(e);
-		}
+	public PacketReceiveManager(Connection connection, VirtualMachineImpl vmImpl) {
+		super(connection);
+		fVM = vmImpl;
+		fCommandPackets = new LinkedList();
+		fReplyPackets = new LinkedList();
 	}
+
+    public void disconnectVM() {
+        super.disconnectVM();
+        synchronized(fCommandPackets) {
+            fCommandPackets.notifyAll();
+        }
+        synchronized (fReplyPackets) {
+            fReplyPackets.notifyAll();
+        }
+    }
 
 	/** 
 	 * Thread's run method.
 	 */
 	public void run() {
 		try {
-			while (true) {
+			while (!VMIsDisconnected()) {
 				// Read a packet from the input stream.
 				readAvailablePacket();
 			}
 		} catch (InterruptedIOException e) {
 			// Stop running.
-		} catch (IOException e) {
+		} catch (IOException e) {		    
 			disconnectVM(e);
 		}
 	}
@@ -79,22 +82,24 @@ public class PacketReceiveManager extends PacketManager {
 	/** 
 	 * @return Returns a specified Command Packet from the Virtual Machine.
 	 */
-	public synchronized JdwpCommandPacket getCommand(int  command, long timeToWait) throws InterruptedException {
+	public JdwpCommandPacket getCommand(int command, long timeToWait) throws InterruptedException {
 		JdwpCommandPacket packet = null;
-		long remainingTime = timeToWait;
-		long timeBeforeWait;
-		long waitedTime;
 		
-		// Wait until command is available.
-		while (!VMIsDisconnected()
-					&& (packet = removeCommandPacket(command)) == null
-					&& (timeToWait < 0 || remainingTime > 0)) {
-			timeBeforeWait = System.currentTimeMillis();
-			waitForPacketAvailable(remainingTime);
-			waitedTime = System.currentTimeMillis() - timeBeforeWait;
-			remainingTime -= waitedTime;
+		synchronized(fCommandPackets) {
+			long remainingTime = timeToWait;
+			long timeBeforeWait;
+			long waitedTime;
+			
+			// Wait until command is available.
+			while (!VMIsDisconnected()
+						&& (packet = removeCommandPacket(command)) == null
+						&& (timeToWait < 0 || remainingTime > 0)) {
+				timeBeforeWait = System.currentTimeMillis();
+				waitForPacketAvailable(remainingTime, fCommandPackets);
+				waitedTime = System.currentTimeMillis() - timeBeforeWait;
+				remainingTime -= waitedTime;
+			}
 		}
-		
 		// Check for an IO Exception.
 		if (VMIsDisconnected()) {
 			String message;
@@ -121,23 +126,29 @@ public class PacketReceiveManager extends PacketManager {
 	/** 
 	 * @return Returns a specified Reply Packet from the Virtual Machine.
 	 */
-	public synchronized JdwpReplyPacket getReply(int id, long timeToWait) {
+	public JdwpReplyPacket getReply(int id, long timeToWait) {
 		JdwpReplyPacket packet = null;
-		long remainingTime = timeToWait;
-		long timeBeforeWait;
-		long waitedTime;
 		
-		// Wait until reply is available.
-		while (!VMIsDisconnected()
-					&& (packet = removeReplyPacket(id)) == null
-					&& (timeToWait < 0 || remainingTime > 0)) {
-			timeBeforeWait = System.currentTimeMillis();
-			try {
-				waitForPacketAvailable(remainingTime);
-			} catch (InterruptedException e) {
-			}
-			waitedTime = System.currentTimeMillis() - timeBeforeWait;
-			remainingTime -= waitedTime;
+		synchronized(fReplyPackets) {
+		    long remainingTime = timeToWait;
+		    long timeBeforeWait;
+		    long waitedTime;
+		    
+		    // Wait until reply is available.
+		    while (!VMIsDisconnected() && (timeToWait < 0 || remainingTime > 0)) {
+		        packet = removeReplyPacket(id);
+		        if (packet != null) {
+		            break;
+		        }
+		        
+		        timeBeforeWait = System.currentTimeMillis();
+		        try {
+		            waitForPacketAvailable(remainingTime, fReplyPackets);
+		        } catch (InterruptedException e) {
+		        }
+		        waitedTime = System.currentTimeMillis() - timeBeforeWait;
+		        remainingTime -= waitedTime;
+		    }
 		}
 		
 		// Check for an IO Exception.
@@ -146,7 +157,7 @@ public class PacketReceiveManager extends PacketManager {
 			
 		// Check for a timeout.
 		if (packet == null)
-			throw new TimeoutException();
+			throw new TimeoutException(MessageFormat.format(ConnectMessages.getString("PacketReceiveManager.0"), new String[] {id+""})); //$NON-NLS-1$ //$NON-NLS-2$
 
 		return packet;
 	}
@@ -161,13 +172,13 @@ public class PacketReceiveManager extends PacketManager {
 	/** 
 	 * Wait for an available packet from the Virtual Machine.
 	 */
-	private void waitForPacketAvailable(long timeToWait) throws InterruptedException {
+	private void waitForPacketAvailable(long timeToWait, Object lock) throws InterruptedException {
 		if (timeToWait == 0)
 			return;
 		else if (timeToWait < 0)
-			wait();
+			lock.wait();
 		else
-			wait(timeToWait);
+			lock.wait(timeToWait);
 	}
 	
 	/** 
@@ -203,26 +214,30 @@ public class PacketReceiveManager extends PacketManager {
 	/** 
 	 * Add a command packet to the command packet list.
 	 */
-	private synchronized void addCommandPacket(JdwpCommandPacket packet) {
-		fCommandPackets.add(packet);
-		notifyAll();
+	private void addCommandPacket(JdwpCommandPacket packet) {
+	    synchronized (fCommandPackets) {
+			fCommandPackets.add(packet);
+			fCommandPackets.notifyAll();
+        }
 	}
 
 	/** 
 	 * Add a reply packet to the reply packet list.
 	 */
-	private synchronized void addReplyPacket(JdwpReplyPacket packet) {
-		fReplyPackets.add(packet);
-		notifyAll();
+	private void addReplyPacket(JdwpReplyPacket packet) {
+	    synchronized (fReplyPackets) {
+			fReplyPackets.add(packet);
+			fReplyPackets.notifyAll();
+        }
 	}
 	
 	/** 
 	 * Read a packet from the input stream and add it to the appropriate packet list.
 	 */
-	private void readAvailablePacket() throws IOException {
+	private void readAvailablePacket() throws IOException {	    
 		// Read a packet from the Input Stream.
-		JdwpPacket packet = JdwpPacket.read(fInStream);
-		
+	    byte[] bytes = getConnection().readPacket();
+		JdwpPacket packet = JdwpPacket.build(bytes);
 		// Add packet to command or reply queue.
 		if (packet instanceof JdwpCommandPacket)
 			addCommandPacket((JdwpCommandPacket)packet);

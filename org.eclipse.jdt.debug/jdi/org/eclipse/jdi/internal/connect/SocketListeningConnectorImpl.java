@@ -100,7 +100,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 		getConnectionArguments(connectionArgs);
 		String result = ConnectMessages.getString("SocketListeningConnectorImpl.ListeningConnector_Socket_Port") + fPort; //$NON-NLS-1$
 		try {
-			((SocketTransportImpl)fTransport).listen(fPort);
+			((SocketTransportImpl)fTransport).startListening(fPort);
 		} catch (IllegalArgumentException e) {
 			throw new IllegalConnectorArgumentsException(e.getMessage(), "port"); //$NON-NLS-1$
 		}
@@ -111,7 +111,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * Cancels listening for connections. 
 	 */
 	public void stopListening(Map connectionArgs) throws IOException {
-		((SocketTransportImpl)fTransport).closeListen();
+		((SocketTransportImpl)fTransport).stopListening();
 	}
 		
 	/**
@@ -119,13 +119,9 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * @return Returns a connected Virtual Machine.
 	 */
 	public VirtualMachine accept(Map connectionArgs) throws IOException {
-		// TODO TransportTimeoutException ?
-		((SocketTransportImpl)fTransport).setAcceptTimeout(fTimeout);
-		((SocketTransportImpl)fTransport).accept();
-		if (fTransport.isOpen()) {
-			return establishedConnection();
-		} 
-		return null;
+		// TODO handshake timeout???
+		SocketConnection connection = (SocketConnection) ((SocketTransportImpl)fTransport).accept(fTimeout, 0);
+		return establishedConnection(connection);
 	}
 	
 	/**
@@ -139,6 +135,6 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * @return Returns port number that is listened to. 
 	 */
 	public int listeningPort() {
-		return ((SocketTransportImpl)fTransport).listeningPort();
+		return fPort;
 	}
 }

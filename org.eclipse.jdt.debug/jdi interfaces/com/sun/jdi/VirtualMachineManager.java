@@ -21,8 +21,8 @@ public interface VirtualMachineManager {
 	public List allConnectors();
 	public List attachingConnectors();
 	public List connectedVirtualMachines();
-	public VirtualMachine createVirtualMachine(Connection arg1) throws IOException;
-	public VirtualMachine createVirtualMachine(Connection arg1, Process arg2) throws IOException;
+	public VirtualMachine createVirtualMachine(Connection connection) throws IOException;
+	public VirtualMachine createVirtualMachine(Connection connection, Process process) throws IOException;
 	public LaunchingConnector defaultConnector();
 	public List launchingConnectors();
 	public List listeningConnectors();

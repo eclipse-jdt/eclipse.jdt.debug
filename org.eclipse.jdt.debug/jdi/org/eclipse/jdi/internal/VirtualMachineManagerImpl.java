@@ -211,11 +211,14 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 		return fVerbosePrintWriter;
 	}
 	
-	public VirtualMachine createVirtualMachine(Connection arg1) throws IOException {
-		return null;
+	public VirtualMachine createVirtualMachine(Connection connection) throws IOException {
+	    VirtualMachineImpl vmImpl = new VirtualMachineImpl(connection);
+		return vmImpl;
 	}
 	
-	public VirtualMachine createVirtualMachine(Connection arg1, Process arg2) throws IOException {
-		return null;
+	public VirtualMachine createVirtualMachine(Connection connection, Process process) throws IOException {
+	    VirtualMachineImpl vmImpl = new VirtualMachineImpl(connection);
+	    vmImpl.setLaunchedProcess(process);
+		return vmImpl;
 	}
 }
