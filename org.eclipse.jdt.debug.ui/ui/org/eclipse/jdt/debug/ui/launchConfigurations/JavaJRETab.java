@@ -106,8 +106,6 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
-		topLayout.marginHeight = 0;
-		topLayout.marginWidth = 0;
 		topComp.setLayout(topLayout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		topComp.setLayoutData(gd);
