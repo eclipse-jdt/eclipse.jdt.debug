@@ -1049,7 +1049,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 
 	 * @see computeStackFrames()
 	 */
-	protected void disposeStackFrames() {
+	protected synchronized void disposeStackFrames() {
 		fStackFrames= Collections.EMPTY_LIST;
 		fRefreshChildren = true;
 	}
