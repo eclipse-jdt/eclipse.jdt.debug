@@ -174,6 +174,8 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, false);
 		// Set the timeout preference to a high value, to avoid timeouts while testing
 		JDIDebugModel.getPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, 10000);
+		// turn off monitor information
+		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO, false);
 	}
 	
 	/**

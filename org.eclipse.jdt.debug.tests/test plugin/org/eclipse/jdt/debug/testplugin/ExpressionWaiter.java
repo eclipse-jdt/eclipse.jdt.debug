@@ -12,6 +12,7 @@ package org.eclipse.jdt.debug.testplugin;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IWatchExpression;
 
 /**
  * ExpressionWaiter
@@ -23,6 +24,11 @@ public class ExpressionWaiter extends DebugElementEventWaiter {
 	}
 	
 	public boolean accept(DebugEvent event) {
-		return super.accept(event) && ((IExpression)fElement).getValue() != null;
+		IExpression expression = (IExpression)fElement;
+		boolean pending = false;
+		if (expression instanceof IWatchExpression) {
+		    pending = ((IWatchExpression)expression).isPending();
+		}
+        return super.accept(event) && !pending && expression.getValue() != null;
 	}
 }
