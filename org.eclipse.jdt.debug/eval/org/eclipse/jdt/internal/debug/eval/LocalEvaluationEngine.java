@@ -179,7 +179,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 				try {
 					codeSnippetInstance = newInstance(codeSnippetClassName);
 					initializeLocals(codeSnippetInstance);	
-					codeSnippetInstance.sendMessage(RUN_METHOD, "()V", null, getThread(), false);
+					codeSnippetInstance.sendMessage(RUN_METHOD, "()V", null, getThread(), false); //$NON-NLS-1$
 					restoreLocals(codeSnippetInstance);
 					
 					// now retrieve the description of the result
@@ -206,7 +206,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 							try {
 								try {
 									IJavaObject v = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), theException);
-									v.sendMessage("printStackTrace", "()V", null, getThread(), false);
+									v.sendMessage("printStackTrace", "()V", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
 								} catch (DebugException de) {
 									JDIDebugPlugin.logError(de);
 								}
@@ -247,7 +247,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 				if (field == null) {
 					throw new DebugException(
 						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						DebugException.REQUEST_FAILED, "Evaluation failed - unable to initialize local variables.", null)
+						DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_unable_to_initialize_local_variables._4"), null) //$NON-NLS-1$
 					);
 				} else {
 					field.setValue(local.getValue());
@@ -260,7 +260,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 			if (field == null) {
 				throw new DebugException(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-					DebugException.REQUEST_FAILED, "Evaluation failed - unable to initialize 'this' context.", null)
+					DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_unable_to_initialize___this___context._5"), null) //$NON-NLS-1$
 				);				
 			} else {
 				field.setValue(thisObject);
@@ -291,7 +291,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 				if (field == null) {
 					throw new DebugException(
 						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						DebugException.REQUEST_FAILED, "Evaluation failed - unable to initialize local variables.", null)
+						DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_unable_to_initialize_local_variables._6"), null) //$NON-NLS-1$
 					);
 				} else {
 					local.setValue(field.getValue());
@@ -485,7 +485,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		if (isDisposed()) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, "Evaluation failed - evaluation context has been disposed.", null)
+				DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_evaluation_context_has_been_disposed._7"), null) //$NON-NLS-1$
 			);
 		}
 	}
@@ -501,7 +501,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		if (!getThread().isSuspended()) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, "Evaluation failed - evaluation thread must be suspended.", null)
+				DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_evaluation_thread_must_be_suspended._8"), null) //$NON-NLS-1$
 			);
 		}
 	}	
@@ -653,7 +653,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 						} catch (IOException e) {
 							throw new DebugException(
 								new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-									MessageFormat.format("{0} occurred deploying class file for evaluation", new String[] {e.toString()}), e)
+									MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.{0}_occurred_deploying_class_file_for_evaluation_9"), new String[] {e.toString()}), e) //$NON-NLS-1$
 							);
 						}
 					}	
@@ -757,19 +757,19 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		if (clazz == null) {
 			// The class is not loaded on the target VM.
 			// Force the load of the class.
-			IJavaClassType classClass = (IJavaClassType)getDebugTarget().getJavaType("java.lang.Class");
+			IJavaClassType classClass = (IJavaClassType)getDebugTarget().getJavaType("java.lang.Class"); //$NON-NLS-1$
 			if (classClass == null) {
 				// unable to load the class
 				throw new DebugException(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-					DebugException.REQUEST_FAILED, "Evaluation failed - unable to instantiate code snippet class.", null)
+					DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_unable_to_instantiate_code_snippet_class._11"), null) //$NON-NLS-1$
 				);				
 			}
 			IJavaValue[] args = new IJavaValue[] {getDebugTarget().newValue(className)};
-			IJavaObject classObject = (IJavaObject)classClass.sendMessage("forName", "(Ljava/lang/String;)Ljava/lang/Class;", args, getThread());
-			object = (IJavaObject)classObject.sendMessage("newInstance", "()Ljava/lang/Object;", null, getThread(), false);
+			IJavaObject classObject = (IJavaObject)classClass.sendMessage("forName", "(Ljava/lang/String;)Ljava/lang/Class;", args, getThread()); //$NON-NLS-2$ //$NON-NLS-1$
+			object = (IJavaObject)classObject.sendMessage("newInstance", "()Ljava/lang/Object;", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
 		} else {
-			object = (IJavaObject)clazz.newInstance("<init>", null, getThread());
+			object = (IJavaObject)clazz.newInstance("<init>", null, getThread()); //$NON-NLS-1$
 		}
 		return object;
 	}
@@ -836,7 +836,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		}
 		throw new DebugException(
 			new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			DebugException.REQUEST_FAILED, "Evaluation failed - internal error retreiving result.", null)
+			DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_internal_error_retreiving_result._17"), null) //$NON-NLS-1$
 		);
 	}
 	
@@ -1010,14 +1010,14 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		if (type == null) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, "Evaluation failed - unable to determine receiving type context.", null)
+				DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_failed_-_unable_to_determine_receiving_type_context._18"), null) //$NON-NLS-1$
 			);
 		}
 		
 		if (type.getParent() instanceof IType) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.REQUEST_FAILED, "Evaluation in context of inner type not supported.", null)
+				DebugException.REQUEST_FAILED, EvaluationMessages.getString("LocalEvaluationEngine.Evaluation_in_context_of_inner_type_not_supported._19"), null) //$NON-NLS-1$
 			);
 		}	
 		

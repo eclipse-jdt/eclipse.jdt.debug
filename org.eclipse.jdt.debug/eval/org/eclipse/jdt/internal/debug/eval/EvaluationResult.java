@@ -94,14 +94,14 @@ public class EvaluationResult implements IEvaluationResult {
 		fValue = value;
 	}	
 
-	/*
+	/**
 	 * @see IEvaluationResult#hasProblems()
 	 */
 	public boolean hasProblems() {
 		return getProblems().length > 0 || getException() != null;
 	}
 
-	/*
+	/**
 	 * @see IEvaluationResult#getProblems()
 	 */
 	public IMarker[] getProblems() {
@@ -111,7 +111,7 @@ public class EvaluationResult implements IEvaluationResult {
 		return (IMarker[])fProblems.toArray(new IMarker[fProblems.size()]);
 	}
 
-	/*
+	/**
 	 * @see IEvaluationResult#getSourceFragment(IMarker)
 	 */
 	public String getSourceFragment(IMarker problem) {
@@ -119,10 +119,10 @@ public class EvaluationResult implements IEvaluationResult {
 		if (index >= 0) {
 			return (String)fFragments.get(index);
 		}
-		throw new IllegalArgumentException("Problem marker does not exist in this evaluation result.");
+		throw new IllegalArgumentException(EvaluationMessages.getString("EvaluationResult.Problem_marker_does_not_exist_in_this_evaluation_result._1")); //$NON-NLS-1$
 	}
 
-	/*
+	/**
 	 * @see IEvaluationResult#getKind(IMarker)
 	 */
 	public int getKind(IMarker problem) {
@@ -130,7 +130,7 @@ public class EvaluationResult implements IEvaluationResult {
 		if (index >= 0) {
 			return ((Integer)fKinds.get(index)).intValue();
 		}
-		throw new IllegalArgumentException("Problem marker does not exist in this evaluation result.");
+		throw new IllegalArgumentException(EvaluationMessages.getString("EvaluationResult.Problem_marker_does_not_exist_in_this_evaluation_result._1")); //$NON-NLS-1$
 	}
 
 	/**
@@ -227,6 +227,5 @@ public class EvaluationResult implements IEvaluationResult {
 		fKinds.add(new Integer(kind));
 		fFragments.add(fragment);
 	}
-
 }
 
