@@ -213,12 +213,10 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	}
 	
 	public VirtualMachine createVirtualMachine(Connection arg1) throws IOException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	public VirtualMachine createVirtualMachine(Connection arg1, Process arg2) throws IOException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
