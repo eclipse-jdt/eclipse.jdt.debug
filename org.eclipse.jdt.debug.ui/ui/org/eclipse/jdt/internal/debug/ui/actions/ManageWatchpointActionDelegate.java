@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -42,7 +43,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -178,25 +178,37 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 		}
 		
 		ILaunchConfiguration configuration= launch.getLaunchConfiguration();
-		IJavaProject javaProject = null;
+		IJavaProject[] javaProjects = null;
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		if (configuration != null) {
 			// Launch configuration support
 			try {
 				String projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 				if (projectName.length() != 0) {
-					javaProject= JavaCore.create(workspace.getRoot().getProject(projectName));
+					javaProjects= new IJavaProject[] {JavaCore.create(workspace.getRoot().getProject(projectName))};
+				} else {
+					IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
+					IProject project;
+					List projectList= new ArrayList();
+					for (int i= 0, numProjects= projects.length; i < numProjects; i++) {
+						project= projects[i];
+						if (project.hasNature(JavaCore.NATURE_ID)) {
+							projectList.add(JavaCore.create(project));
+						}
+					}
+					javaProjects= new IJavaProject[projectList.size()];
+					projectList.toArray(javaProjects);
 				}
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
 			}
 		}
-		if (javaProject == null) {
+		if (javaProjects == null) {
 			return types;
 		}
 
 		SearchEngine engine= new SearchEngine();
-		IJavaSearchScope scope= engine.createJavaSearchScope(new IJavaProject[] {javaProject}, true);
+		IJavaSearchScope scope= engine.createJavaSearchScope(javaProjects, true);
 		String declaringType= null;
 		try {
 			declaringType= variable.getDeclaringType().getName();
