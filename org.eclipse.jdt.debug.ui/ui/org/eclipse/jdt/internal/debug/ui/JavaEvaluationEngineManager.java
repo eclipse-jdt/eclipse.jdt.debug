@@ -24,7 +24,7 @@ public class JavaEvaluationEngineManager implements IDebugEventSetListener {
 	HashMap fTargetMap= new HashMap();
 
 	/**
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventSetListener#handleDebugEvent(DebugEvent)
 	 * 
 	 * Removes debug targets from the engine map when they terminate,
 	 * and dispose of engines.

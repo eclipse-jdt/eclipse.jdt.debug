@@ -586,7 +586,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 * When a Java debug target is created, install options in
 	 * the target.
 	 * 
-	 * @see IDebugEventListener#handleDebugEvents(DebugEvent[])
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {

@@ -85,7 +85,7 @@ public class JavaInspectExpression extends PlatformObject implements IExpression
 	}
 
 	/**
-	 * @see IDebugEventListener#handleDebugEvents(DebugEvent[])
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
@@ -102,5 +102,4 @@ public class JavaInspectExpression extends PlatformObject implements IExpression
 	public void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);		
 	}
-
 }
