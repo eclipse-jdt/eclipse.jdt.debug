@@ -194,7 +194,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);		
 		
-		getStandardDisplay().getDefault().asyncExec(
+		getStandardDisplay().asyncExec(
 			new Runnable() {
 				public void run() {
 					createImageRegistry();
@@ -235,8 +235,15 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 				}
 			}
 		}
-		getDisplay().asyncExec(new Runnable() {
+		final Display display= getStandardDisplay();
+		if (display.isDisposed()) {
+			return;
+		}
+		display.asyncExec(new Runnable() {
 			public void run() {
+				if (display.isDisposed()) {
+					return;
+				}
 				Shell shell= getActiveWorkbenchShell();
 				String vmName= fLabelProvider.getText(target);
 				IStatus status;
@@ -266,8 +273,15 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		if (!getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS)) {
 			return;
 		}
-		getDisplay().asyncExec(new Runnable() {
+		final Display display= getStandardDisplay();
+		if (display.isDisposed()) {
+			return;
+		}
+		display.asyncExec(new Runnable() {
 			public void run() {
+				if (display.isDisposed()) {
+					return;
+				}
 				Shell shell= getActiveWorkbenchShell();
 				String vmName= fLabelProvider.getText(target);
 				IStatus status;
@@ -279,15 +293,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 				dialog.open();
 			}
 		});
-	}
-
-	/**
-	 * Debug ui thread safe access to a display
-	 */
-	protected Display getDisplay() {
-		//we can rely on not creating a display as we 
-		//prereq the base eclipse ui plugin.
-		return Display.getDefault();
 	}
 	
 	/**
@@ -302,7 +307,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	
 	/**
 	 * Returns the standard display to be used. The method first checks, if
-	 * the thread calling this method has an associated disaply. If so, this
+	 * the thread calling this method has an associated display. If so, this
 	 * display is returned. Otherwise the method returns the default display.
 	 */
 	public static Display getStandardDisplay() {
@@ -312,6 +317,5 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 			display= Display.getDefault();
 		return display;		
 	}
-		
 }
 
