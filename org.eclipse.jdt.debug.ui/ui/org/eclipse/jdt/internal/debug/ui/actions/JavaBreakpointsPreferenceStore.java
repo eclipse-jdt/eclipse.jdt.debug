@@ -14,7 +14,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * A preference store that presents the state of the properties
- * of a Java breakpoint.  Default settings are not supported.
+ * of a Java breakpoint. Default settings are not supported.
  */
 class JavaBreakpointPreferenceStore implements IPreferenceStore {
 	
