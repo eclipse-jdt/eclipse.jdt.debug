@@ -20,6 +20,8 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayCreation;
@@ -28,6 +30,7 @@ import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.AssertStatement;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BlockComment;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.BreakStatement;
 import org.eclipse.jdt.core.dom.CastExpression;
@@ -40,6 +43,9 @@ import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
@@ -57,21 +63,31 @@ import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.LabeledStatement;
+import org.eclipse.jdt.core.dom.LineComment;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
+import org.eclipse.jdt.core.dom.MemberRef;
+import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.MethodRef;
+import org.eclipse.jdt.core.dom.MethodRefParameter;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.StringLiteral;
@@ -81,6 +97,8 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
+import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
@@ -88,10 +106,12 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.TypeLiteral;
+import org.eclipse.jdt.core.dom.TypeParameter;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
+import org.eclipse.jdt.core.dom.WildcardType;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.AndAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.AndOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.ArrayAllocation;
@@ -300,7 +320,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 			return name.toString();
 		}
-		name= new StringBuffer(typeBinding.getName());
+		String typeName= typeBinding.getName();
+		int parameters= typeName.indexOf('<');
+		if (parameters >= 0) {
+			typeName= typeName.substring(0, parameters);
+		}
+		name= new StringBuffer(typeName);
 		IPackageBinding packageBinding= typeBinding.getPackage();
 		typeBinding= typeBinding.getDeclaringClass();
 		while(typeBinding != null) {
@@ -943,6 +968,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/**
+	 * @see ASTVisitor#endVisit(SimpleType)
+	 */
+	public void endVisit(ParameterizedType node) {
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();
+	}
+
+	/**
 	 * @see ASTVisitor#endVisit(ParenthesizedExpression)
 	 */
 	public void endVisit(ParenthesizedExpression node) {
@@ -977,6 +1011,15 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(QualifiedName)
 	 */
 	public void endVisit(QualifiedName node) {
+	}
+
+	/**
+	 * @see ASTVisitor#endVisit(SimpleType)
+	 */
+	public void endVisit(QualifiedType node) {
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();
 	}
 
 	/**
@@ -1203,7 +1246,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		storeInstruction();
 	}
 
-	/**
+	/*
 	 * Visit methods
 	 *
 	 * There are two variations of node visiting:
@@ -1217,6 +1260,20 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 *  default child visiting implementation).</li>
 	 * </ol>
 	 */
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
+	 */
+	public boolean visit(AnnotationTypeDeclaration node) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration)
+	 */
+	public boolean visit(AnnotationTypeMemberDeclaration node) {
+		return false;
+	}
 
 	/**
 	 * @see ASTVisitor#visit(AnonymousClassDeclaration)
@@ -1403,6 +1460,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.BlockComment)
+	 */
+	public boolean visit(BlockComment node) {
+		return false;
+	}
+	
 	/**
 	 * @see ASTVisitor#visit(BooleanLiteral)
 	 */
@@ -1647,14 +1711,42 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return true;
 	}
 
-	/**
-	 * @see ASTVisitor#visit(ExpressionStatement)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnhancedForStatement)
 	 */
-	public boolean visit(ExpressionStatement node) {
+	public boolean visit(EnhancedForStatement node) {
+		// TODO Auto-generated method stub
+		return super.visit(node);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumConstantDeclaration)
+	 */
+	public boolean visit(EnumConstantDeclaration node) {
 		if (!isActive()) {
 			return true;
 		}
 
+		// nothing to do, we shouldn't hit this node
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
+	 */
+	public boolean visit(EnumDeclaration node) {
+		if (!isActive()) {
+			return true;
+		}
+		setHasError(true);
+		addErrorMessage("Enum declaration cannot be used in an evaluation expression");
+		return false;
+	}
+
+	/**
+	 * @see ASTVisitor#visit(ExpressionStatement)
+	 */
+	public boolean visit(ExpressionStatement node) {
 		return true;
 	}
 
@@ -2048,6 +2140,35 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.LineComment)
+	 */
+	public boolean visit(LineComment node) {
+		return false;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MarkerAnnotation)
+	 */
+	public boolean visit(MarkerAnnotation node) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MemberRef)
+	 */
+	public boolean visit(MemberRef node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MemberValuePair)
+	 */
+	public boolean visit(MemberValuePair node) {
+		return false;
+	}
+	
 	/**
 	 * @see ASTVisitor#visit(MethodDeclaration)
 	 */
@@ -2112,6 +2233,34 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			((Expression) iterator.next()).accept(this);
 		}
 
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodRef)
+	 */
+	public boolean visit(MethodRef node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodRefParameter)
+	 */
+	public boolean visit(MethodRefParameter node) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Modifier)
+	 */
+	public boolean visit(Modifier node) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.NormalAnnotation)
+	 */
+	public boolean visit(NormalAnnotation node) {
 		return false;
 	}
 
@@ -2231,6 +2380,18 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#visit(PackageDeclaration)
 	 */
 	public boolean visit(PackageDeclaration node) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.ParameterizedType)
+	 */
+	public boolean visit(ParameterizedType node) {
+		if (!isActive()) {
+			return false;
+		}
+		ITypeBinding typeBinding  = node.resolveBinding();
+		push(new PushType(getTypeName(typeBinding)));
 		return false;
 	}
 
@@ -2391,6 +2552,18 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.QualifiedType)
+	 */
+	public boolean visit(QualifiedType node) {
+		if (!isActive()) {
+			return false;
+		}
+		ITypeBinding typeBinding  = node.resolveBinding();
+		push(new PushType(getTypeName(typeBinding)));
+		return false;
+	}
+
 	/**
 	 * @see ASTVisitor#visit(ReturnStatement)
 	 */
@@ -2468,6 +2641,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.SingleMemberAnnotation)
+	 */
+	public boolean visit(SingleMemberAnnotation node) {
+		return false;
+	}
+	
 	/**
 	 * @see ASTVisitor#visit(SingleVariableDeclaration)
 	 * return <code>false</code>, don't use the standart accept order.
@@ -2631,6 +2811,20 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TagElement)
+	 */
+	public boolean visit(TagElement node) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TextElement)
+	 */
+	public boolean visit(TextElement node) {
+		return false;
+	}
+
 	/**
 	 * @see ASTVisitor#visit(ThisExpression)
 	 */
@@ -2681,7 +2875,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		setHasError(true);
 		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Type_declaration_cannot_be_used_in_an_evaluation_expression_24")); //$NON-NLS-1$
-		return true;
+		return false;
 	}
 
 	/**
@@ -2693,6 +2887,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		setHasError(true);
 		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Type_declaration_statement_cannot_be_used_in_an_evaluation_expression_25")); //$NON-NLS-1$
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeParameter)
+	 */
+	public boolean visit(TypeParameter node) {
 		return false;
 	}
 
@@ -2774,6 +2975,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		for (Iterator iter= node.fragments().iterator(); iter.hasNext();) {
 			((VariableDeclarationFragment) iter.next()).accept(this);
 		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.WildcardType)
+	 */
+	public boolean visit(WildcardType node) {
+		// we shouldn't have to do anything
 		return false;
 	}
 

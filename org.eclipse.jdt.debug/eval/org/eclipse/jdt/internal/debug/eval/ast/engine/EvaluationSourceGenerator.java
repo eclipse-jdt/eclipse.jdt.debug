@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -145,8 +146,8 @@ public class EvaluationSourceGenerator {
 		return fCodeSnippet;
 	}
 
-	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber, boolean createInAStaticMethod) throws DebugException {
-		ASTParser parser = ASTParser.newParser(AST.JLS2);
+	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber, boolean createInAStaticMethod, int apiLevel) throws DebugException {
+		ASTParser parser = ASTParser.newParser(apiLevel);
 		parser.setSource(source.toCharArray());
 		CompilationUnit unit= (CompilationUnit)parser.createAST(null);
 		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
@@ -188,13 +189,19 @@ public class EvaluationSourceGenerator {
 		return objectToEvaluationSourceMapper;
 	}
 			
-	public String getSource(IJavaStackFrame frame) throws DebugException {
+	public String getSource(IJavaStackFrame frame, IJavaProject javaProject) throws DebugException {
 		if (fSource == null) {
 			try {
 				String baseSource= getSourceFromFrame(frame);
 				int lineNumber= frame.getLineNumber();
 				if (baseSource != null && lineNumber != -1) {
-					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true, frame.isStatic());
+					int apiLevel;
+					if ("1.5".equals(javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true))) { //$NON-NLS-1$
+						apiLevel= AST.JLS3;
+					} else {
+						apiLevel= AST.JLS2;
+					}
+					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true, frame.isStatic(), apiLevel);
 				} 
 				if (fSource == null) {
 					JDIObjectValue object= (JDIObjectValue)frame.getThis();
@@ -220,7 +227,13 @@ public class EvaluationSourceGenerator {
 				String baseSource= getTypeSourceFromProject(thisObject.getJavaType().getName(), javaProject);
 				int lineNumber= getLineNumber((JDIObjectValue) thisObject);
 				if (baseSource != null && lineNumber != -1) {
-					createEvaluationSourceFromSource(baseSource, lineNumber, true, false);
+					int apiLevel;
+					if ("1.5".equals(javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true))) { //$NON-NLS-1$
+						apiLevel= AST.JLS3;
+					} else {
+						apiLevel= AST.JLS2;
+					}
+					createEvaluationSourceFromSource(baseSource, lineNumber, true, false, apiLevel);
 				}
 				if (fSource == null) {
 					BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIObjectValue) thisObject, false);

@@ -33,6 +33,7 @@ import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
 import org.eclipse.jdi.internal.jdwp.JdwpReferenceTypeID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+import org.eclipse.jdt.core.Signature;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassLoaderReference;
@@ -1065,7 +1066,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	public String name() {
 		// Make sure that we know the signature, from which the name is derived.
 		if (fName == null) {
-			setName(GenericSignature.signatureToName(signature()));
+			setName(Signature.toString(signature()).replace('/','.'));
 		}
 		return fName;
 	}
@@ -1279,7 +1280,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			}
 		}
 
-		throw new ClassNotLoadedException(GenericSignature.signatureToName(signature), JDIMessages.getString("ReferenceTypeImpl.Type_has_not_been_loaded_10")); //$NON-NLS-1$
+		throw new ClassNotLoadedException(Signature.toString(signature).replace('/','.'), JDIMessages.getString("ReferenceTypeImpl.Type_has_not_been_loaded_10")); //$NON-NLS-1$
 	}
 	
 	/**

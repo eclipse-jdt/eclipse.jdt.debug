@@ -52,11 +52,11 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	 */
 	public static TypeImpl create(VirtualMachineImpl vmImpl, String signature, ClassLoaderReference classLoader) throws ClassNotLoadedException {
 		// For void values, a VoidType is always returned.
-		if (GenericSignature.isVoidSignature(signature))
+		if (isVoidSignature(signature))
 			return new VoidTypeImpl(vmImpl);
 		
 		// For primitive variables, an appropriate PrimitiveType is always returned. 
-		if (GenericSignature.isPrimitiveSignature(signature))
+		if (isPrimitiveSignature(signature))
 			return PrimitiveTypeImpl.create(vmImpl, signature);
 		
 		// For object variables, the appropriate ReferenceType is returned if it has
@@ -230,4 +230,31 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 		}
 		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____10") + signature + JDIMessages.getString("TypeImpl.__11")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
+	/**
+	 * @returns Returns true if signature is an primitive signature.
+	 */
+	public static boolean isPrimitiveSignature(String signature) {
+		switch (signature.charAt(0)) {
+			case 'Z':
+			case 'B':
+			case 'C':
+			case 'S':
+			case 'I':
+			case 'J':
+			case 'F':
+			case 'D':
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @returns Returns true if signature is void signature.
+	 */
+	public static boolean isVoidSignature(String signature) {
+		return (signature.charAt(0) == 'V');
+	}
+	
+
 }

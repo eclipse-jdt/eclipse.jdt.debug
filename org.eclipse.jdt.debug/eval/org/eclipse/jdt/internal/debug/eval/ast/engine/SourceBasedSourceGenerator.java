@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -54,11 +55,13 @@ import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
@@ -77,10 +80,12 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.TypeLiteral;
+import org.eclipse.jdt.core.dom.TypeParameter;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
+import org.eclipse.jdt.core.dom.WildcardType;
 
 public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
@@ -91,6 +96,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	private String[] fLocalVariableTypeNames;
 	private String[] fLocalVariableNames;
 	private String fCodeSnippet;
+	
+	private boolean fIsJLS3;
 		
 	private boolean fRightTypeFound;
 	
@@ -130,6 +137,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		fCodeSnippet= codeSnippet;
 		fIsLineNumber= isLineNumber;
 		fCreateInAStaticMethod= createInAStaticMethod;
+		fIsJLS3= unit.getAST().apiLevel() == AST.JLS3;
 	}
 	
 	/**
@@ -296,7 +304,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		boolean isConstructor= methodDeclaration.isConstructor();
 		
 		if (!isConstructor) {
-			source.append(getDotName(getTypeName(methodDeclaration.getReturnType())));
+			source.append(getDotName(getTypeName(fIsJLS3 ? methodDeclaration.getReturnType2() : methodDeclaration.getReturnType())));
 			source.append(' ');
 		}
 		
@@ -338,7 +346,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			source.append(";\n"); //$NON-NLS-1$
 		} else {
 			source.append('{').append('\n');
-			source.append(getReturnExpression(methodDeclaration.getReturnType())); 
+			if (!isConstructor) {
+				source.append(getReturnExpression(fIsJLS3 ? methodDeclaration.getReturnType2() : methodDeclaration.getReturnType())); 
+			}
 			source.append('}').append('\n');
 		}
 		
@@ -363,24 +373,77 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		} else {
 			source.append(" class "); //$NON-NLS-1$
 		}
+		
 		source.append(typeDeclaration.getName().getIdentifier());
-		
-		Name superClass = typeDeclaration.getSuperclass();
-		if (superClass != null) {
-			source.append(" extends "); //$NON-NLS-1$
-			source.append(getQualifiedIdentifier(superClass));
-		}
-		
-		boolean first = true;
-		for (Iterator iterator = typeDeclaration.superInterfaces().iterator(); iterator.hasNext();) {
-			Name name = (Name) iterator.next();
-			if (first) {
-				first = false;
-				source.append(" implements "); //$NON-NLS-1$
-			} else {
-				source.append(',');
+
+		if (fIsJLS3) {
+			List typeParameters= typeDeclaration.typeParameters();
+			if (!typeParameters.isEmpty()) {
+				source.append('<');
+				Iterator iter= typeParameters.iterator();
+				TypeParameter typeParameter= (TypeParameter) iter.next();
+				source.append(typeParameter.getName().getIdentifier());
+				List typeBounds= typeParameter.typeBounds();
+				if (!typeBounds.isEmpty()) {
+					source.append(" extends "); //$NON-NLS-1$
+					Iterator iter2= typeBounds.iterator();
+					source.append(getTypeName((Type) iter2.next()));
+					while (iter.hasNext()) {
+						source.append('&');
+						source.append(getTypeName((Type) iter2.next()));
+					}
+				}
+				while (iter.hasNext()) {
+					source.append(',');
+					typeParameter= (TypeParameter) iter.next();
+					source.append(typeParameter.getName().getIdentifier());
+					typeBounds= typeParameter.typeBounds();
+					if (!typeBounds.isEmpty()) {
+						source.append(" extends "); //$NON-NLS-1$
+						Iterator iter2= typeBounds.iterator();
+						source.append(getTypeName((Type) iter2.next()));
+						while (iter.hasNext()) {
+							source.append('&');
+							source.append(getTypeName((Type) iter2.next()));
+						}
+					}
+				}
+				source.append('>');
 			}
-			source.append(getQualifiedIdentifier(name));
+
+			Type superClass = typeDeclaration.getSuperclassType();
+			if (superClass != null) {
+				source.append(" extends "); //$NON-NLS-1$
+				source.append(getTypeName(superClass));
+			}
+
+			Iterator iter= typeDeclaration.superInterfaceTypes().iterator();
+			if (iter.hasNext()) {
+				source.append(" implements "); //$NON-NLS-1$
+				source.append(getTypeName((Type) iter.next()));
+				while (iter.hasNext()) {
+					source.append(',');
+					source.append(getTypeName((Type) iter.next()));
+				}
+			}
+		} else {
+			Name superClass = typeDeclaration.getSuperclass();
+			if (superClass != null) {
+				source.append(" extends "); //$NON-NLS-1$
+				source.append(getQualifiedIdentifier(superClass));
+			}
+
+			boolean first = true;
+			for (Iterator iterator = typeDeclaration.superInterfaces().iterator(); iterator.hasNext();) {
+				Name name = (Name) iterator.next();
+				if (first) {
+					first = false;
+					source.append(" implements "); //$NON-NLS-1$
+				} else {
+					source.append(',');
+				}
+				source.append(getQualifiedIdentifier(name));
+			}
 		}
 		
 		if (buffer != null) {
@@ -496,25 +559,44 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	public String getTypeName(Type type) {
 		if (type.isSimpleType()) {
-			SimpleType simpleType= (SimpleType) type;
-			return getQualifiedIdentifier(simpleType.getName());
+			return getQualifiedIdentifier(((SimpleType) type).getName());
 		} else if (type.isArrayType()) {
-			ArrayType arrayType= (ArrayType) type;
-			String res = getTypeName(arrayType.getElementType());
-			for (int i = 0, dim= arrayType.getDimensions(); i < dim; i++) {
-				res += "[]"; //$NON-NLS-1$
-			}
-			return res;
+			return getTypeName(((ArrayType) type).getComponentType()) + "[]"; //$NON-NLS-1$
 		} else if (type.isPrimitiveType()) {
-			PrimitiveType primitiveType = (PrimitiveType) type;
-			return primitiveType.getPrimitiveTypeCode().toString();
+			return ((PrimitiveType) type).getPrimitiveTypeCode().toString();
+		} else if (type.isQualifiedType()) {
+			QualifiedType qualifiedType= (QualifiedType) type;
+			return getTypeName(qualifiedType.getQualifier()) + '.' + qualifiedType.getName().getIdentifier();
+		} else if (type.isParameterizedType()) {
+			ParameterizedType parameterizedType= (ParameterizedType)type;
+			StringBuffer buff= new StringBuffer(getTypeName(parameterizedType.getType()));
+			Iterator iter= parameterizedType.typeArguments().iterator();
+			if (iter.hasNext()) {
+				buff.append('<');
+				buff.append(getTypeName((Type)iter.next()));
+				while (iter.hasNext()) {
+					buff.append(',');
+					buff.append(getTypeName((Type)iter.next()));
+				}
+				buff.append('>');
+			}
+			return buff.toString();
+		} else if (type.isWildcardType()) {
+			WildcardType wildcardType= (WildcardType)type;
+			StringBuffer buff= new StringBuffer("?"); //$NON-NLS-1$
+			Type bound= wildcardType.getBound();
+			if (bound != null) {
+				buff.append(wildcardType.isUpperBound() ? " extends " : " super "); //$NON-NLS-1$ //$NON-NLS-2$
+				buff.append(getTypeName(bound));
+			}
+			return buff.toString();
 		}
 		return null;
 		
 	}
 	
 	public String getReturnExpression(Type type) {
-		if (type.isSimpleType() || type.isArrayType()) {
+		if (type.isSimpleType() || type.isArrayType() || type.isQualifiedType() || type.isWildcardType() || type.isParameterizedType()) {
 			return "return null;"; //$NON-NLS-1$
 		} else if (type.isPrimitiveType()) {
 			String typeName= ((PrimitiveType) type).getPrimitiveTypeCode().toString();

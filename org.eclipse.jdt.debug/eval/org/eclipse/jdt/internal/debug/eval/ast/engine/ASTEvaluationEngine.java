@@ -148,7 +148,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				localTypesNames[i] = locals[i].getReferenceTypeName();
 			}
 			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, snippet);
-			unit = parseCompilationUnit(mapper.getSource(frame).toCharArray(), mapper.getCompilationUnitName(), javaProject);
+			unit = parseCompilationUnit(mapper.getSource(frame, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());
@@ -159,13 +159,20 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	}
 	
 	private CompilationUnit parseCompilationUnit(char[] source, String unitName, IJavaProject project) {
-		ASTParser parser= ASTParser.newParser(AST.JLS2);
+		ASTParser parser;
+		String compilerCompliance= project.getOption(JavaCore.COMPILER_COMPLIANCE, true);
+		if ("1.5".equals(compilerCompliance)) { //$NON-NLS-1$
+			parser= ASTParser.newParser(AST.JLS3);
+		} else {
+			parser= ASTParser.newParser(AST.JLS2);
+		}
 		parser.setSource(source);
 		parser.setUnitName(unitName);
 		parser.setProject(project);
 		parser.setResolveBindings(true);
 		Map options=JavaCore.getDefaultOptions();
-		options.put(JavaCore.COMPILER_COMPLIANCE, project.getOption(JavaCore.COMPILER_COMPLIANCE, true));
+		options.put(JavaCore.COMPILER_COMPLIANCE, compilerCompliance);
+		options.put(JavaCore.COMPILER_SOURCE, project.getOption(JavaCore.COMPILER_SOURCE, true));
 		parser.setCompilerOptions(options);
 		return (CompilationUnit) parser.createAST(null);
 	}

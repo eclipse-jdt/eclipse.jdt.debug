@@ -32,6 +32,7 @@ import java.util.TreeSet;
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+import org.eclipse.jdt.core.Signature;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassLoaderReference;
@@ -275,10 +276,14 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fArgumentTypeNames != null) {
 			return fArgumentTypeNames;
 		}
-		List result= GenericSignature.listSignaturetoListName(argumentTypeSignatures());
-		if (isVarargs()) { // add '...' to the last argument, if the method has variable arguments
-			String lastArgument= (String)result.remove(result.size() - 1);
-			result.add(lastArgument.substring(0, lastArgument.length() - 2) + "..."); //$NON-NLS-1$
+		List argumentTypeSignatures= argumentTypeSignatures();
+		List result= new ArrayList();
+		for (Iterator iter= argumentTypeSignatures.iterator(); iter.hasNext();) {
+			String argumentTypeName= Signature.toString((String) iter.next()).replace('/','.');
+			if (isVarargs() && !iter.hasNext()) { // add '...' to the last argument, if the method has variable arguments
+				argumentTypeName= argumentTypeName.substring(0, argumentTypeName.length() - 2) + "..."; //$NON-NLS-1$
+			}
+			result.add(argumentTypeName);
 		}
 		
 		fArgumentTypeNames= result;
@@ -294,12 +299,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return fArgumentTypeSignatures;
 		}
 		
-		String signature= genericSignature();
-		if (signature == null) {
-			signature= signature();
-		}
-		
-		fArgumentTypeSignatures= GenericSignature.getArgumentsSignature(signature);
+		fArgumentTypeSignatures= Arrays.asList(Signature.getParameterTypes(signature()));
 		return fArgumentTypeSignatures;
 	}
 
@@ -472,11 +472,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fReturnTypeName != null) {
 			return fReturnTypeName;
 		}
-		String signature= genericSignature();
-		if (signature == null) {
-			signature= signature();
-		}
-		fReturnTypeName= GenericSignature.signatureToName(GenericSignature.getReturnType(signature));
+		fReturnTypeName= Signature.toString(Signature.getReturnType(signature())).replace('/','.');
 		return fReturnTypeName;
 	}	
 	
@@ -555,14 +551,12 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		
 		// try to generate the right generic signature for each argument
 		String genericSignature= genericSignature();
-		List parameterSignatures= GenericSignature.getArgumentsSignature(signature());
-		String[] signatures= (String[]) parameterSignatures.toArray(new String[parameterSignatures.size()]);
+		String[] signatures= Signature.getParameterTypes(signature());
 		String[] genericSignatures;
 		if (genericSignature == null) {
 			genericSignatures= new String[signatures.length];
 		} else {
-			List parameterGenericSignatures= GenericSignature.getArgumentsSignature(genericSignature);
-			genericSignatures= (String[]) parameterGenericSignatures.toArray(new String[parameterGenericSignatures.size()]);
+			genericSignatures= Signature.getParameterTypes(genericSignature);
 			for (int i= 0; i < genericSignatures.length; i++) {
 				if (genericSignatures[i].equals(signatures[i])) {
 					genericSignatures[i]= null;
