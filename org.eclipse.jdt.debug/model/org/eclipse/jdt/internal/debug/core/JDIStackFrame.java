@@ -60,7 +60,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		super(thread);
 		fStackFrame= stackFrame;
 	}
-
+	
 	/**
 	 * @see IDebugElement
 	 */
@@ -520,7 +520,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @see IAdaptable
 	 */
-	protected Object getAdpater(Class adapter) {
+	public Object getAdapter(Class adapter) {
 		if (adapter == IJavaStackFrame.class || adapter == IJavaModifiers.class) {
 			return this;
 		}

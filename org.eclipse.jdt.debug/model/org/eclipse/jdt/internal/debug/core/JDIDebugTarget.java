@@ -1792,7 +1792,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * 
 	 * @see IAdaptable
 	 */
-	protected Object getAdpater(Class adapter) {
+	public Object getAdapter(Class adapter) {
 		if (adapter == IJavaDebugTarget.class) {
 			return this;
 		}
