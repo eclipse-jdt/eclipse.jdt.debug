@@ -234,6 +234,13 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	}
 	
 	/**
+	 * @see IJavaLineBreakpoint#getMember()
+	 */	
+	public IMember getMember() throws CoreException {
+		return getMethod();
+	}
+	
+	/**
 	 * @see IJavaLineBreakpoint#getMethod()		
 	 */
 	public IMethod getMethod() throws CoreException {
