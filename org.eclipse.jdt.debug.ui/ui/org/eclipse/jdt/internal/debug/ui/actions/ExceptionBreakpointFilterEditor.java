@@ -246,7 +246,14 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 					fRemoveFilterButton.setEnabled(true);					
 				}
 			}
-		});		
+		});
+		fFilterViewer.getTable().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
+					removeFilters();
+				}
+			}
+		});
 		
 		createFilterButtons(fOuter);
 	}
