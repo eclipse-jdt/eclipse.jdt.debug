@@ -1809,26 +1809,29 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 		
-		int literalType = getTypeId(node);
-		String token = node.getToken();
+		int literalType= getTypeId(node);
+		String token= node.getToken();
+		int tokenLastCharOffset= token.length() - 1;
+		char lastChar= token.charAt(tokenLastCharOffset);
+		String subToken= token.substring(0, tokenLastCharOffset);
 		
-		char lastChar = token.charAt(token.length() - 1);
-		if ((lastChar < '0' || lastChar > '9') && lastChar != '.') {
-			token = token.substring(0,token.length() - 1);
-		}
 		
 		switch (literalType) {
 			case Instruction.T_int:
 				push(new PushInt(Integer.decode(token).intValue()));
 				break;
 			case Instruction.T_long:
-				push(new PushLong(Long.decode(token).longValue()));
+				push(new PushLong(Long.decode(subToken).longValue()));
 				break;
 			case Instruction.T_float:
-				push(new PushFloat(Float.parseFloat(token)));
+				push(new PushFloat(Float.parseFloat(subToken)));
 				break;
 			case Instruction.T_double:
-				push(new PushDouble(Double.parseDouble(token)));
+				if (lastChar == 'D' || lastChar == 'd') {
+					push(new PushDouble(Double.parseDouble(subToken)));
+				} else {
+					push(new PushDouble(Double.parseDouble(token)));
+				}
 				break;
 		}
 		
@@ -2452,5 +2455,4 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		// throw exception
 		return null;
 	}
-
 }
