@@ -2163,6 +2163,11 @@
             id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
       </consoleLineTracker>
       <consoleLineTracker
+            class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
+            processType="org.eclipse.ant.ui.antProcess"
+            id="org.eclipse.jdt.debug.ui.AntJavaConsoleTracker">
+      </consoleLineTracker>      
+      <consoleLineTracker
             class="org.eclipse.jdt.internal.debug.ui.console.J9ConsoleTracker"
             processType="j9"
             id="org.eclipse.jdt.debug.ui.J9ConsoleTracker">
