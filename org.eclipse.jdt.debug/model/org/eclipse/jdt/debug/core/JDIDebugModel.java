@@ -37,7 +37,6 @@ import org.eclipse.jdt.internal.debug.core.JavaMethodEntryBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JavaPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JavaRunToLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JavaWatchpoint;
-import org.eclipse.jdt.internal.debug.core.SnippetSupportLineBreakpoint;
 
 import com.sun.jdi.VirtualMachine;
 
@@ -203,29 +202,6 @@ public class JDIDebugModel {
 	 */
 	public static IJavaPatternBreakpoint createPatternBreakpoint(IResource resource, String pattern, int lineNumber, int hitCount) throws DebugException {
 		return new JavaPatternBreakpoint(resource, pattern, lineNumber, hitCount);
-	}
-	
-	/**
-	 * Creates and returns a snippet support breakpoint in the
-	 * given type, at the given line number. If a character range within the
-	 * line is known, it may be specified by charStart/charEnd. 
-	 *
-	 * @param type the type in which to create the breakpoint
-	 * @param lineNumber the lineNumber on which the breakpoint is created - line
-	 *   numbers are 1 based, associated with the compilation unit in which
-	 *   the type is defined
-	 * @param charStart the first character index associated with the breakpoint,
-	 *   or -1 if unspecified
- 	 * @param charEnd the last character index associated with the breakpoint,
-	 *   or -1 if unspecified
-	 * @return a snippet support breakpoint
-	 * @exception DebugException If this method fails. Reasons include:<ul> 
-	 *<li>Failure creating underlying marker.  The DebugException's status contains
-	 * the underlying exception responsible for the failure.</li></ul>
-	 * @deprecated Attempt to hide the creation of snippet support breakpoints
-	 */
-	public static ISnippetSupportLineBreakpoint createSnippetSupportLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd, int hitCount) throws DebugException {
-		return new SnippetSupportLineBreakpoint(type, lineNumber, charStart, charEnd, hitCount);
 	}
 	
 	/**

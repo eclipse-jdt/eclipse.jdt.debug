@@ -13,12 +13,14 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -115,7 +117,16 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	protected IResource getResource(IType type) throws CoreException {
 		IResource resource= null;
-		resource= type.getUnderlyingResource();
+		try {
+			resource= type.getUnderlyingResource();
+		} catch (JavaModelException e) {
+			IStatus status = e.getStatus();
+			if (status.getCode() != IJavaModelStatusConstants.ELEMENT_DOES_NOT_EXIST) {
+				throw e;
+			}
+			// use the associated project if the type does
+			// not actually exist as a resource
+		}
 		if (resource == null) {
 			resource= type.getJavaProject().getProject();
 		}
