@@ -369,9 +369,11 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 			return;
 		}		
 		IType type = (IType)results[0];
-		fMainText.setText(type.getFullyQualifiedName());
-		javaProject = type.getJavaProject();
-		fProjText.setText(javaProject.getElementName());
+		if (type != null) {
+			fMainText.setText(type.getFullyQualifiedName());
+			javaProject = type.getJavaProject();
+			fProjText.setText(javaProject.getElementName());
+		}
 	}
 	
 	/**
