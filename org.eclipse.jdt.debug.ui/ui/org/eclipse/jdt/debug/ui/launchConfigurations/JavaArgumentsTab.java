@@ -37,11 +37,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		
-	// Program arguments UI widgets
+	// Program arguments widgets
 	protected Label fPrgmArgumentsLabel;
 	protected Text fPrgmArgumentsText;
 
-	// VM arguments UI widgets
+	// VM arguments widgets
 	protected Label fVMArgumentsLabel;
 	protected Text fVMArgumentsText;
 	
