@@ -39,18 +39,25 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
             public void run() {
                 Shell shell = DebugUIPlugin.getStandardDisplay().getActiveShell();
                 Menu menu = action.getMenu(new Menu(shell));
-                for(int i=0; i<5; i++) {
-                    action.showMenu(menu);
-                }
+                showMenu(action, menu, 5);
                 
-                for(int i=0; i<50; i++) {
+                for(int i=0; i<10; i++) {
+                    try {
+                    System.gc();
                     startMeasuring();
-                    action.showMenu(menu);
-                    action.showMenu(menu);
-                    action.showMenu(menu);
-                    action.showMenu(menu);
-                    action.showMenu(menu);
+                    showMenu(action, menu, 40);
                     stopMeasuring();
+                    } catch (Throwable t) {
+                        System.err.println("Error on iteration: " + i);
+                        t.printStackTrace();
+                        break;
+                    }
+                }
+            }
+
+            private void showMenu(PerfTestContextualLaunchAction action, Menu menu, int repeat) {
+                for (int j = 0; j < repeat; j++) {
+                    action.showMenu(menu);
                 }
             }
         });

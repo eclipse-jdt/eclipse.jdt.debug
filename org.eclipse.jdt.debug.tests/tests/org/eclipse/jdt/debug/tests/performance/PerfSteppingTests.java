@@ -107,7 +107,7 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 			frame = (IJavaStackFrame)thread.getTopStackFrame();
 			for (int n= 0; n < 10; n++) {
 				startMeasuring();
-				for (int i = 0; i < 100; i++) {
+				for (int i = 0; i < 500; i++) {
 					filter.step();
 				}
 				stopMeasuring();
