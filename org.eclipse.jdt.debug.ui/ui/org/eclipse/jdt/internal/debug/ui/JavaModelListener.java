@@ -12,9 +12,13 @@ Contributors:
 **********************************************************************/
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ElementChangedEvent;
@@ -34,29 +38,34 @@ class JavaModelListener implements IElementChangedListener {
 	 * @see IElementChangedListener#elementChanged(ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent e) {
-		List removedRoots= new ArrayList();
+		final List removedRoots= new ArrayList();
 		getRemovedPackageFragmentRoots(e.getDelta(), removedRoots);
 		if (removedRoots.size() == 0) {
 			return;
 		}
-		IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getUniqueIdentifier());
-		IJavaBreakpoint breakpoint= null;
-		for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
-			if (!(breakpoints[i] instanceof IJavaBreakpoint)) {
-				continue;
-			}
-			breakpoint= (IJavaBreakpoint)breakpoints[i];
-			try {
-				IType type= BreakpointUtils.getType(breakpoint);
-				if (type != null) {
-					if (removedRoots.contains(type.getPackageFragment().getParent())) {
-						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
+		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getUniqueIdentifier());
+				IJavaBreakpoint breakpoint= null;
+				for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
+					if (!(breakpoints[i] instanceof IJavaBreakpoint)) {
+						continue;
+					}
+					breakpoint= (IJavaBreakpoint)breakpoints[i];
+					try {
+						IType type= BreakpointUtils.getType(breakpoint);
+						if (type != null) {
+							if (removedRoots.contains(type.getPackageFragment().getParent())) {
+								DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
+							}
+						}
+					} catch (CoreException x) {
+						JDIDebugUIPlugin.log(x);
 					}
 				}
-			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x);
 			}
-		}	
+		};
+		fork(wr);
 	}
 	
 	/**
@@ -77,4 +86,17 @@ class JavaModelListener implements IElementChangedListener {
 			getRemovedPackageFragmentRoots(subdeltas[i], removedRoots);
 		}
 	}
+	
+	protected void fork(final IWorkspaceRunnable wRunnable) {
+		Runnable runnable= new Runnable() {
+			public void run() {
+				try {
+					ResourcesPlugin.getWorkspace().run(wRunnable, null);
+				} catch (CoreException ce) {
+					DebugPlugin.log(ce);
+				}
+			}
+		};
+		new Thread(runnable).start();
+	}	
 }
