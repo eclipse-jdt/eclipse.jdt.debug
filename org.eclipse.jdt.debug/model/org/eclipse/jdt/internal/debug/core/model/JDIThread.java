@@ -1330,9 +1330,20 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// JDK 1.4 support
 			try {
 				// Pop the frame and all frames above it
-				StackFrame jdiFrame = ((JDIStackFrame) frame).getUnderlyingStackFrame();
-				preserveStackFrames();
-				fThread.popFrames(jdiFrame);
+				StackFrame jdiFrame= null;
+				int desiredSize= fStackFrames.size() - fStackFrames.indexOf(frame) - 1;
+				int lastSize= fStackFrames.size() + 1; // Set up to pass the first test
+				int size= fStackFrames.size();
+				while (size < lastSize && size > desiredSize) {
+					// Keep popping frames until the stack stops getting smaller
+					// or popFrame is gone.
+					// see Bug 8054
+					jdiFrame = ((JDIStackFrame) frame).getUnderlyingStackFrame();
+					preserveStackFrames();
+					fThread.popFrames(jdiFrame);
+					lastSize= size;
+					size= computeStackFrames().size();
+				}
 			} catch (IncompatibleThreadStateException exception) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_popping"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
 			} catch (InvalidStackFrameException exception) {
