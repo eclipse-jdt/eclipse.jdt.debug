@@ -96,7 +96,15 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		}
 	}
 	
-	protected IType findTypeInWorkspace(String typeName) throws JavaModelException {
+	/**
+	 * Searches for and returns a type with the given name in the workspace,
+	 * or <code>null</code> if none.
+	 * 
+	 * @param typeName fully qualified type name
+	 * @return type or <code>null</code>
+	 * @throws JavaModelException
+	 */
+	public static IType findTypeInWorkspace(String typeName) throws JavaModelException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IJavaProject[] projects= JavaCore.create(root).getJavaProjects();
 		for (int i= 0; i < projects.length; i++) {
@@ -115,7 +123,7 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	 * @return The type found, or <code>null<code> if no type found
 	 * The method does not find inner types. Waiting for a Java Core solution
 	 */	
-	private IType findType(IJavaProject jproject, String fullyQualifiedName) throws JavaModelException {
+	private static IType findType(IJavaProject jproject, String fullyQualifiedName) throws JavaModelException {
 		
 		String pathStr= fullyQualifiedName.replace('.', '/') + ".java"; //$NON-NLS-1$
 		IJavaElement jelement= jproject.findElement(new Path(pathStr));
@@ -147,49 +155,66 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 		if (e instanceof IDebugElement) {
 			IDebugElement de= (IDebugElement)e;
 			ISourceLocator sourceLocator= de.getLaunch().getSourceLocator();
-		
 			String typeName = null;
 			try {
 				typeName = getTypeNameToOpen(de);
-				if (sourceLocator instanceof ISourceLookupDirector) {
-					ISourceLookupDirector director = (ISourceLookupDirector)sourceLocator;
-					String fileName = typeName.replace('.', File.separatorChar);
-					fileName = fileName + ".java"; //$NON-NLS-1$
-					Object object = director.getSourceElement(fileName);
-					if (object != null) {
-						// return the java element adapter if it exists
-						if (object instanceof IAdaptable) {
-							IJavaElement element = (IJavaElement) ((IAdaptable)object).getAdapter(IJavaElement.class);
-							if (element != null) {
-								return element;
-							}
-						}
-						return object;
-					}
-				}
-				// still support deprecated source locators for 'open type'
-				IJavaSourceLocation[] locations= null;
-				if (sourceLocator instanceof JavaUISourceLocator) {
-					JavaUISourceLocator javaSourceLocator= (JavaUISourceLocator)sourceLocator;
-					locations= javaSourceLocator.getSourceLocations();
-				} else if (sourceLocator instanceof JavaSourceLocator) {
-					JavaSourceLocator javaSourceLocator= (JavaSourceLocator)sourceLocator;
-					locations= javaSourceLocator.getSourceLocations();
-				}
-				if (locations != null) {
-					for (int i = 0; i < locations.length; i++) {
-						IJavaSourceLocation location = locations[i];
-						Object sourceElement= location.findSourceElement(typeName);
-						if (sourceElement != null) {
-							return sourceElement;
-						}
-					}
-				}
+				return findSourceElement(typeName, sourceLocator);
 			} catch (CoreException ex) {
 				JDIDebugUIPlugin.errorDialog(ActionMessages.getString("OpenTypeAction.2"), ex.getStatus()); //$NON-NLS-1$
-			}
-					
+			}	
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the source element for the given type using the specified
+	 * source locator, or <code>null</code> if none.
+	 * 
+	 * @param typeName fully qualified type name
+	 * @param locator source locator
+	 * @return the source element for the given type using the specified
+	 * source locator, or <code>null</code> if none
+	 */
+	public static Object findSourceElement(String typeName, ISourceLocator sourceLocator) {
+		
+		if (sourceLocator instanceof ISourceLookupDirector) {
+			ISourceLookupDirector director = (ISourceLookupDirector)sourceLocator;
+			String fileName = typeName.replace('.', File.separatorChar);
+			fileName = fileName + ".java"; //$NON-NLS-1$
+			Object object = director.getSourceElement(fileName);
+			if (object != null) {
+				// return the java element adapter if it exists
+				if (object instanceof IAdaptable) {
+					IJavaElement element = (IJavaElement) ((IAdaptable)object).getAdapter(IJavaElement.class);
+					if (element != null) {
+						return element;
+					}
+				}
+				return object;
+			}
+		}
+		// still support deprecated source locators for 'open type'
+		IJavaSourceLocation[] locations= null;
+		if (sourceLocator instanceof JavaUISourceLocator) {
+			JavaUISourceLocator javaSourceLocator= (JavaUISourceLocator)sourceLocator;
+			locations= javaSourceLocator.getSourceLocations();
+		} else if (sourceLocator instanceof JavaSourceLocator) {
+			JavaSourceLocator javaSourceLocator= (JavaSourceLocator)sourceLocator;
+			locations= javaSourceLocator.getSourceLocations();
+		}
+		if (locations != null) {
+			for (int i = 0; i < locations.length; i++) {
+				IJavaSourceLocation location = locations[i];
+				Object sourceElement = null;
+				try {
+					sourceElement = location.findSourceElement(typeName);
+				} catch (CoreException e) {
+				}
+				if (sourceElement != null) {
+					return sourceElement;
+				}
+			}
+		}
+		return null;		
 	}
 }

@@ -12,8 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.console;
 
 
 import java.text.MessageFormat;
-
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,13 +20,9 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
-import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
-import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
+import org.eclipse.jdt.internal.debug.ui.actions.OpenTypeAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -75,32 +69,27 @@ public class JavaStackTraceHyperlink implements IConsoleHyperlink {
 			if (lineNumber > 0) {
 				lineNumber--;
 			}
-			IJavaSourceLocation[] sourceLocations = getSourceLocations();
-		
-			for (int i = 0; i < sourceLocations.length; i++) {
-				IJavaSourceLocation location = sourceLocations[i];
-				Object sourceElement = location.findSourceElement(typeName);
-				if (sourceElement != null) {
-					IDebugModelPresentation presentation = JDIDebugUIPlugin.getDefault().getModelPresentation();
-					IEditorInput editorInput = presentation.getEditorInput(sourceElement);
-					if (editorInput != null) {
-						String editorId = presentation.getEditorId(editorInput, sourceElement);
-						if (editorId != null) {
-							IEditorPart editorPart = JDIDebugUIPlugin.getActivePage().openEditor(editorInput, editorId);
-							if (editorPart instanceof ITextEditor && lineNumber >= 0) {
-								ITextEditor textEditor = (ITextEditor)editorPart;
-								IDocumentProvider provider = textEditor.getDocumentProvider();
-								provider.connect(editorInput);
-								IDocument document = provider.getDocument(editorInput);
-								try {
-									IRegion line = document.getLineInformation(lineNumber);
-									textEditor.selectAndReveal(line.getOffset(), line.getLength());
-								} catch (BadLocationException e) {
-								}
-								provider.disconnect(editorInput);
+			Object sourceElement = getSourceElement(typeName);
+			if (sourceElement != null) {
+				IDebugModelPresentation presentation = JDIDebugUIPlugin.getDefault().getModelPresentation();
+				IEditorInput editorInput = presentation.getEditorInput(sourceElement);
+				if (editorInput != null) {
+					String editorId = presentation.getEditorId(editorInput, sourceElement);
+					if (editorId != null) {
+						IEditorPart editorPart = JDIDebugUIPlugin.getActivePage().openEditor(editorInput, editorId);
+						if (editorPart instanceof ITextEditor && lineNumber >= 0) {
+							ITextEditor textEditor = (ITextEditor)editorPart;
+							IDocumentProvider provider = textEditor.getDocumentProvider();
+							provider.connect(editorInput);
+							IDocument document = provider.getDocument(editorInput);
+							try {
+								IRegion line = document.getLineInformation(lineNumber);
+								textEditor.selectAndReveal(line.getOffset(), line.getLength());
+							} catch (BadLocationException e) {
 							}
-							return;
+							provider.disconnect(editorInput);
 						}
+						return;
 					}
 				}
 			}
@@ -113,40 +102,42 @@ public class JavaStackTraceHyperlink implements IConsoleHyperlink {
 	}
 	
 	/**
-	 * Returns the locations in which to look for source associatd with the
-	 * stack trace, or <code>null</code> if none.
-	 *  
-	 * @return IJavaSourceLocation[]
+	 * Returns the source element associated with the given type name,
+	 * or <code>null</code> if none.
+	 * 
+	 * @param typeName type name to search for source element
+	 * @return the source element associated with the given type name,
+	 * or <code>null</code> if none
 	 */
-	protected IJavaSourceLocation[] getSourceLocations() {
+	protected Object getSourceElement(String typeName) {
+		ISourceLocator locator = getSourceLocator();
+		if (locator == null) {
+			try {
+				// search for the type in the workspace
+				return OpenTypeAction.findTypeInWorkspace(typeName);
+			} catch (JavaModelException e) {
+				return null;
+			}
+		}
+		return OpenTypeAction.findSourceElement(typeName, locator);
+	}
+	
+	/**
+	 * Returns the source locator associated with this hyperlink, or
+	 *  <code>null</code> if none
+	 * 
+	 * @return the source locator associated with this hyperlink, or
+	 *  <code>null</code> if none
+	 */
+	private ISourceLocator getSourceLocator() {
 		ISourceLocator sourceLocator = null;
 		ILaunch launch = getConsole().getProcess().getLaunch();
 		if (launch != null) {
 			sourceLocator = launch.getSourceLocator();
 		}
-		IJavaSourceLocation[] sourceLocations = null;
-		if (sourceLocator instanceof JavaSourceLocator) {
-			sourceLocations = ((JavaSourceLocator)sourceLocator).getSourceLocations();
-		} else if (sourceLocator instanceof JavaUISourceLocator) {
-			sourceLocations = ((JavaUISourceLocator)sourceLocator).getSourceLocations();
-		}
-		if (sourceLocations == null) {
-			// create a source locator using all projects in the workspace
-			IJavaModel javaModel = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-			if (javaModel == null) {
-				return null;
-			}
-			try {
-				sourceLocator = new JavaUISourceLocator(javaModel.getJavaProjects(), false);
-			} catch (JavaModelException e) {
-				JDIDebugUIPlugin.errorDialog(ConsoleMessages.getString("JavaStackTraceHyperlink.Unable_to_retrieve_workspace_source._4"), e); //$NON-NLS-1$
-				return null;
-			}
-			sourceLocations = ((JavaUISourceLocator)sourceLocator).getSourceLocations();
-		}
-		return sourceLocations;
+		return sourceLocator;
 	}
-	
+
 	/**
 	 * Returns the fully qualified name of the type to open
 	 *  

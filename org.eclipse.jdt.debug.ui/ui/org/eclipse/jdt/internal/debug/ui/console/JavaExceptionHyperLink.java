@@ -25,7 +25,6 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionDialog;
-import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
@@ -64,36 +63,31 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 				}
 			}
 			// create a new exception breakpoint
-			IJavaSourceLocation[] sourceLocations = getSourceLocations();
-			for (int i = 0; i < sourceLocations.length; i++) {
-				IJavaSourceLocation location = sourceLocations[i];
-				Object sourceElement = location.findSourceElement(fExceptionName);
+			Object sourceElement = getSourceElement(fExceptionName);
+			if (sourceElement != null) {
+				IResource res = null;
 				IType type = null;
-				if (sourceElement != null) {
-					IResource res = null;
-					if (sourceElement instanceof IJavaElement) {
-						IJavaElement element = (IJavaElement)sourceElement;
-						res = element.getResource();
-						if (res == null) {
-							res = element.getJavaProject().getResource();
-						}
-					}
+				if (sourceElement instanceof IJavaElement) {
+					IJavaElement element = (IJavaElement)sourceElement;
+					res = element.getResource();
 					if (res == null) {
-						res = ResourcesPlugin.getWorkspace().getRoot();
+						res = element.getJavaProject().getResource();
 					}
-					if (sourceElement instanceof ICompilationUnit) {
-						type = ((ICompilationUnit)sourceElement).findPrimaryType();
-					} else if (sourceElement instanceof IClassFile) {
-						type = ((IClassFile)sourceElement).getType();
-					}
-					boolean checked = false;
-					if (type != null) {
-						checked = AddExceptionDialog.getExceptionType(type) == AddExceptionDialog.CHECKED_EXCEPTION;
-					}
-					IJavaExceptionBreakpoint breakpoint = JDIDebugModel.createExceptionBreakpoint(res, fExceptionName, true, true, checked, true, null);
-					showProperties(breakpoint);
-					return;
 				}
+				if (res == null) {
+					res = ResourcesPlugin.getWorkspace().getRoot();
+				}
+				if (sourceElement instanceof ICompilationUnit) {
+					type = ((ICompilationUnit)sourceElement).findPrimaryType();
+				} else if (sourceElement instanceof IClassFile) {
+					type = ((IClassFile)sourceElement).getType();
+				}
+				boolean checked = false;
+				if (type != null) {
+					checked = AddExceptionDialog.getExceptionType(type) == AddExceptionDialog.CHECKED_EXCEPTION;
+				}
+				IJavaExceptionBreakpoint breakpoint = JDIDebugModel.createExceptionBreakpoint(res, fExceptionName, true, true, checked, true, null);
+				showProperties(breakpoint);
 			}
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.errorDialog(ConsoleMessages.getString("JavaStackTraceHyperlink.An_exception_occurred_while_following_link._3"), e); //$NON-NLS-1$
