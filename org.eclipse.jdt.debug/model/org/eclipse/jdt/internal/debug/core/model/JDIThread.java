@@ -836,7 +836,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @param breakpoint the breakpoint that caused the suspend
 	 * @return whether this thread suspended
 	 */
-	public boolean handleSuspendForBreakpoint(JavaBreakpoint breakpoint) {
+	public boolean handleSuspendForBreakpoint(JavaBreakpoint breakpoint, boolean queueEvent) {
 		fCurrentBreakpoint= breakpoint;
 		try {
 			// update state to suspended but don't actually
@@ -856,7 +856,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint);
 				}
 				abortStep();
-				queueSuspendEvent(DebugEvent.BREAKPOINT);
+				if (queueEvent) {
+					queueSuspendEvent(DebugEvent.BREAKPOINT);
+				} else {
+					fireSuspendEvent(DebugEvent.BREAKPOINT);
+				}
 			} else {
 				if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
 					((JDIDebugTarget)getDebugTarget()).cancelSuspendByBreakpoint(breakpoint);
