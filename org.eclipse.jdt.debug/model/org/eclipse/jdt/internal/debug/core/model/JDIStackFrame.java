@@ -419,7 +419,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					index= 1;
 				} else {
 					if (oldThisObject != null) {
-						// 'this' still exists
+						// 'this' still exists, replace with new 'this' (could be a different receiver)
+						fVariables.remove(0);
+						fVariables.add(0, new JDIThisVariable((JDIDebugTarget)getDebugTarget(),thisObject));
 						index= 1;
 					}
 				}
@@ -947,6 +949,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 		fStackFrame = frame;
 		fRefreshVariables = true;
+		// always clear 'this', as we could be in a different receiver next time
+		fThisObject = null;		
 	}
 	
 	/**
