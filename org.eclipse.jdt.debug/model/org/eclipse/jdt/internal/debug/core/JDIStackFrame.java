@@ -426,10 +426,26 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	public boolean supportsDropToFrame() {
 		try {
 			JDIThread thread= (JDIThread) getThread();
-			return !thread.isTerminated()
+			boolean supported = !thread.isTerminated()
 				&& thread.isSuspended()
 				&& thread.getUnderlyingThread() instanceof org.eclipse.jdi.hcr.ThreadReference
-				&& ((org.eclipse.jdi.hcr.VirtualMachine) ((JDIDebugTarget) getDebugTarget()).getVM()).canDoReturn(); 
+				&& ((org.eclipse.jdi.hcr.VirtualMachine) ((JDIDebugTarget) getDebugTarget()).getVM()).canDoReturn();
+			if (supported) {
+				// Also ensure that this frame and no frames above this
+				// frame are native. Unable to pop native stack frames.
+				IDebugElement[] frames = thread.getChildren();
+				for (int i = 0; i < frames.length; i++) {
+					JDIStackFrame frame = (JDIStackFrame)frames[i];
+					if (frame.isNative()) {
+						return false;
+					}
+					if (frame.equals(this)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		} catch (DebugException e) {
 		} catch (UnsupportedOperationException e) {
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
