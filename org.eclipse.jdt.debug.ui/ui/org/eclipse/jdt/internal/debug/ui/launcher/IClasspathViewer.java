@@ -1,17 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-
-/**********************************************************************
-Copyright (c) 2003 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 /**
  * Defines a classpath viewer to abstract between classpath viewers that are tree or table viewers.
