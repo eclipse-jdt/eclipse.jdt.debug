@@ -44,14 +44,16 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public JDIImageDescriptor(ImageDescriptor baseImage, int flags) {
 		setBaseImage(baseImage);
 		setFlags(flags);
-		ImageData data= baseImage.getImageData();
-		setSize(new Point(data.width, data.height));
 	}
 	
 	/**
 	 * @see CompositeImageDescriptor#getSize()
 	 */
 	protected Point getSize() {
+		if (fSize == null) {
+			ImageData data= getBaseImage().getImageData();
+			setSize(new Point(data.width, data.height));
+		}
 		return fSize;
 	}
 	
@@ -64,15 +66,14 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		}
 			
 		JDIImageDescriptor other= (JDIImageDescriptor)object;
-		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other.getFlags() 
-			&& getSize().equals(other.getSize()));
+		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other.getFlags());
 	}
 	
 	/**
 	 * @see Object#hashCode()
 	 */
 	public int hashCode() {
-		return getBaseImage().hashCode() | getFlags() | getSize().hashCode();
+		return getBaseImage().hashCode() | getFlags();
 	}
 	
 	/**
