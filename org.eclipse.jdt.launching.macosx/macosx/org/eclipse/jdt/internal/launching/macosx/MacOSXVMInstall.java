@@ -1,9 +1,8 @@
-package org.eclipse.jdt.internal.launching.macosx;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+package org.eclipse.jdt.internal.launching.macosx;
 
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.launching.AbstractVMInstall;
@@ -23,11 +22,12 @@ public class MacOSXVMInstall extends AbstractVMInstall {
 	 * @see IVMInstall#getVMRunner(String)
 	 */
 	public IVMRunner getVMRunner(String mode) {
-		if (ILaunchManager.RUN_MODE.equals(mode)) {
+		if (ILaunchManager.RUN_MODE.equals(mode))
 			return new MacOSXVMRunner(this);
-		} else if (ILaunchManager.DEBUG_MODE.equals(mode)) {
+		
+		if (ILaunchManager.DEBUG_MODE.equals(mode))
 			return new MacOSXDebugVMRunner(this);
-		}
+		
 		return null;
 	}
 }
