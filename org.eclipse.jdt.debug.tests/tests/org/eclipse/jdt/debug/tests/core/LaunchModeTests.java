@@ -21,6 +21,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.CommonTab;
+import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -160,13 +161,14 @@ public class LaunchModeTests extends AbstractDebugTest {
 		testGroup.createTabs(dialog, "TEST_MODE");
 		
 		ILaunchConfigurationTab[] tabs = standardGroup.getTabs();
-		assertEquals("Wrong number of tabs in the standard group", 6, tabs.length);
+		assertEquals("Wrong number of tabs in the standard group", 7, tabs.length);
 		assertTrue("Tab 0 should be 'Main'", tabs[0] instanceof JavaMainTab);
 		assertTrue("Tab 1 should be 'Arguments'", tabs[1] instanceof JavaArgumentsTab);
 		assertTrue("Tab 2 should be 'JRE'", tabs[2] instanceof JavaJRETab);
 		assertTrue("Tab 3 should be 'Classpath'", tabs[3] instanceof JavaClasspathTab);
 		assertTrue("Tab 4 should be 'Sourcepath'", tabs[4] instanceof JavaSourceLookupTab);
-		assertTrue("Tab 5 should be 'Common'", tabs[5] instanceof CommonTab);
+		assertTrue("Tab 5 should be 'Environment'", tabs[5] instanceof EnvironmentTab);
+		assertTrue("Tab 6 should be 'Common'", tabs[6] instanceof CommonTab);
 		
 		tabs = testGroup.getTabs();
 		assertEquals("Wrong number of tabs in the test group", 4, tabs.length);
