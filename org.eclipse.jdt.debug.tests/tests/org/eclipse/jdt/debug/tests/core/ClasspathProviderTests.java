@@ -147,9 +147,8 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 	public void testBootpathContainerResolution() throws Exception {
 		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, getJavaProject());
-		// each resovled entry should be on the bootpath
+		// each resolved entry should be on the bootpath
 		for (int i = 0; i < resolved.length; i++) {
-			IRuntimeClasspathEntry entry2 = resolved[i];
 			assertEquals("Entry should be on bootpath", IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, resolved[i].getClasspathProperty());
 		}
 	}
@@ -268,9 +267,8 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 	public void testUserClassesContainerResolution() throws Exception {
 		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.USER_CLASSES);
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, getJavaProject());
-		// each resovled entry should be on the bootpath
+		// each resolved entry should be on the bootpath
 		for (int i = 0; i < resolved.length; i++) {
-			IRuntimeClasspathEntry entry2 = resolved[i];
 			assertEquals("Entry should be on user classpath", IRuntimeClasspathEntry.USER_CLASSES, resolved[i].getClasspathProperty());
 		}
 	}
@@ -390,9 +388,8 @@ public class ClasspathProviderTests extends AbstractDebugTest {
 	public void testStandardClassesContainerResolution() throws Exception {
 		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.STANDARD_CLASSES);
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, getJavaProject());
-		// each resovled entry should be on the bootpath
+		// each resolved entry should be on the bootpath
 		for (int i = 0; i < resolved.length; i++) {
-			IRuntimeClasspathEntry entry2 = resolved[i];
 			assertEquals("Entry should be on default bootpath", IRuntimeClasspathEntry.STANDARD_CLASSES, resolved[i].getClasspathProperty());
 		}
 	}
