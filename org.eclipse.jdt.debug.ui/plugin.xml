@@ -2209,19 +2209,6 @@
       </actionSetPartAssociation>
    </extension>
    
-<!-- Roles and Activities -->
-   <extension
-         point="org.eclipse.ui.activities">
-      <activityPatternBinding
-            activityId="org.eclipse.javaDevelopment"
-            pattern="org.eclipse.jdt.debug.*">
-      </activityPatternBinding>
-      <activityPatternBinding
-            activityId="org.eclipse.javaDevelopment"
-            pattern="org.eclipse.jdt.launching.*">
-      </activityPatternBinding>
-   </extension>
-
 <!-- refactoring -->
    
    <extension point="org.eclipse.jdt.ui.renameParticipants">
