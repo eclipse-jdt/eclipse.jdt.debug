@@ -25,6 +25,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewActionDelegate;
@@ -45,7 +46,10 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	public RunToLineAction() {			
 	}
 	
-	protected void run() {
+	/**
+	 * @see IActionDelegate#run(IAction)
+	 */
+	public void run(IAction action) {
 		try {
 			IDebugTarget target= getContext();
 			if (target == null) {
@@ -53,6 +57,8 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 				return;
 			}
 			
+			ITextSelection selection= (ITextSelection)getTextEditor().getSelectionProvider().getSelection();
+			setLineNumber(selection.getStartLine() + 1);
 			IType type= getType(getTextEditor().getEditorInput());
 			if (type == null) {
 				return;

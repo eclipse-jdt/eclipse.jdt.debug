@@ -88,8 +88,6 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 		}
 		ISelection s= sp.getSelection();
 		if (!s.isEmpty() && s instanceof ITextSelection) {
-			ITextSelection selection= (ITextSelection) s;
-			setLineNumber(selection.getStartLine() + 1);
 			IType type= getType(editorInput);
 			if (type != null) {
 				try {
@@ -119,6 +117,7 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 	}
 	
 	protected IType getType0(ITextSelection selection, IEditorInput editorInput) {
+		setLineNumber(selection.getStartLine() + 1);
 		IType type= null;
 		try {
 			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
