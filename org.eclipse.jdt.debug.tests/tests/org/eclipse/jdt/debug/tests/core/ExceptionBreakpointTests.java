@@ -150,4 +150,102 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
+	
+	public void testMultiExclusiveScopedExceptionHit() throws Exception {
+		String typeName = "ThrowsNPE";
+		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
+		ex.setExclusionFilters(new String[] {"TestIO", "Breakpoints"});
+		
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("Did not suspend", thread);
+			assertEquals("Should have suspended at NPE", ex, thread.getBreakpoints()[0]);
+			ex.delete();
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
+	
+	public void testMultiExclusiveScopedExceptionMissed() throws Exception {
+		String typeName = "ThrowsNPE";
+		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
+		ex.setExclusionFilters(new String[] {"TestIO", "ThrowsNPE"});
+		
+		IJavaDebugTarget target= null;
+		try {
+			target = launchAndTerminate(typeName, 10000);
+			ex.delete();
+		} finally {
+			terminateAndRemove(target);
+			removeAllBreakpoints();
+		}		
+	}			
+	
+	public void testMultiInclusiveScopedExceptionHit() throws Exception {
+		String typeName = "ThrowsNPE";
+		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
+		ex.setInclusionFilters(new String[] {"ThrowsNPE", "Breakpoints"});
+		
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("Did not suspend", thread);
+			assertEquals("Should have suspended at NPE", ex, thread.getBreakpoints()[0]);
+			ex.delete();
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
+	
+	public void testMultiInclusiveScopedExceptionMissed() throws Exception {
+		String typeName = "ThrowsNPE";
+		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
+		ex.setInclusionFilters(new String[] {"TestIO", "Breakpoints"});
+		
+		IJavaDebugTarget target= null;
+		try {
+			target = launchAndTerminate(typeName, 10000);
+			ex.delete();
+		} finally {
+			terminateAndRemove(target);
+			removeAllBreakpoints();
+		}		
+	}	
+	
+	public void testMultiInclusiveExclusiveScopedExceptionHit() throws Exception {
+		String typeName = "ThrowsNPE";
+		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
+		ex.setInclusionFilters(new String[] {"ThrowsNPE", "Breakpoints"});
+		ex.setExclusionFilters(new String[] {"HitCountException", "MethodLoop"});
+		
+		IJavaThread thread = null;
+		try {
+			thread = launchToBreakpoint(typeName);
+			assertNotNull("Did not suspend", thread);
+			assertEquals("Should have suspended at NPE", ex, thread.getBreakpoints()[0]);
+			ex.delete();
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
+	
+	public void testMultiInclusiveExclusiveScopedExceptionMissed() throws Exception {
+		String typeName = "ThrowsNPE";
+		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
+		ex.setInclusionFilters(new String[] {"TestIO", "Breakpoints"});
+		ex.setExclusionFilters(new String[] {"ThrowsNPE", "MethodLoop"});
+		
+		IJavaDebugTarget target= null;
+		try {
+			target = launchAndTerminate(typeName, 10000);
+			ex.delete();
+		} finally {
+			terminateAndRemove(target);
+			removeAllBreakpoints();
+		}		
+	}		
 }
