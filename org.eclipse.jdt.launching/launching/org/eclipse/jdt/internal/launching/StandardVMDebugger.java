@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IStatusHandler;
@@ -102,17 +103,25 @@ public class StandardVMDebugger extends StandardVMRunner {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
+		
+		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+		subMonitor.beginTask(LaunchingMessages.getString("StandardVMDebugger.Launching_VM..._1"), 4); //$NON-NLS-1$
+		subMonitor.subTask(LaunchingMessages.getString("StandardVMDebugger.Finding_free_socket..._2")); //$NON-NLS-1$
 
 		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
 		if (port == -1) {
 			abort(LaunchingMessages.getString("StandardVMDebugger.Could_not_find_a_free_socket_for_the_debugger_1"), null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE); //$NON-NLS-1$
 		}
 		
+		subMonitor.worked(1);
+		
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
 		}		
 		
+		subMonitor.subTask(LaunchingMessages.getString("StandardVMDebugger.Constructing_command_line..._3")); //$NON-NLS-1$
+				
 		String program= constructProgramString(config);
 
 		List arguments= new ArrayList(12);
@@ -152,6 +161,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 		if (monitor.isCanceled()) {
 			return;
 		}		
+		
+		subMonitor.worked(1);
+		subMonitor.subTask(LaunchingMessages.getString("StandardVMDebugger.Starting_virtual_machine..._4")); //$NON-NLS-1$
 
 		ListeningConnector connector= getConnector();
 		if (connector == null) {
@@ -184,7 +196,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 				
 				IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine), getDefaultProcessMap());
 				process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
-				
+				subMonitor.worked(1);
+				subMonitor.subTask(LaunchingMessages.getString("StandardVMDebugger.Establishing_debug_connection..._5")); //$NON-NLS-1$
 				boolean retry= false;
 				do  {
 					try {
@@ -229,6 +242,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 						
 						VirtualMachine vm= runnable.getVirtualMachine();
 						JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
+						subMonitor.worked(1);
+						subMonitor.done();
 						return;
 					} catch (InterruptedIOException e) {
 						checkErrorMessage(process);

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
@@ -185,6 +186,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 			monitor = new NullProgressMonitor();
 		}
 		
+		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+		subMonitor.beginTask(LaunchingMessages.getString("StandardVMRunner.Launching_VM..._1"), 2); //$NON-NLS-1$
+		subMonitor.subTask(LaunchingMessages.getString("StandardVMRunner.Constructing_command_line..._2")); //$NON-NLS-1$
+		
 		String program= constructProgramString(config);
 		
 		List arguments= new ArrayList();
@@ -217,12 +222,15 @@ public class StandardVMRunner extends AbstractVMRunner {
 				
 		String[] cmdLine= new String[arguments.size()];
 		arguments.toArray(cmdLine);
+		
+		subMonitor.worked(1);
 
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
 		}
 		
+		subMonitor.subTask(LaunchingMessages.getString("StandardVMRunner.Starting_virtual_machine..._3")); //$NON-NLS-1$
 		Process p= null;
 		File workingDir = getWorkingDir(config);
 		p= exec(cmdLine, workingDir);
@@ -238,6 +246,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 		
 		IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine), getDefaultProcessMap());
 		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
+		subMonitor.worked(1);
+		subMonitor.done();
 	}
 
 	protected String adjustProgramString(String program) {

@@ -32,11 +32,13 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			monitor = new NullProgressMonitor();
 		}
 
-		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Attaching_to_{0}..._1"), new String[]{configuration.getName()}), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Attaching_to_{0}..._1"), new String[]{configuration.getName()}), 3); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
 		}						
+					
+		monitor.subTask(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Verifying_launch_attributes..._1")); //$NON-NLS-1$
 						
 		String connectorId = getVMConnectorId(configuration);
 		IVMConnector connector = null;
@@ -56,6 +58,8 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			return;
 		}
 		
+		monitor.worked(1);
+		
 		// connect to remote VM
 		connector.connect(argMap, monitor, launch);
 		
@@ -64,8 +68,10 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			return;
 		}
 		
+		monitor.subTask(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
 		// set the default source locator if required
 		setDefaultSourceLocator(launch, configuration);
+		monitor.worked(1);
 		
 		monitor.done();
 	}

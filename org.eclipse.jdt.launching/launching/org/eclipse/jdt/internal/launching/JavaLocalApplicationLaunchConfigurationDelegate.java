@@ -38,12 +38,14 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 			monitor = new NullProgressMonitor();
 		}
 		
-		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.Launching_{0}..._1"), new String[]{configuration.getName()}), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.Launching_{0}..._1"), new String[]{configuration.getName()}), 3); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
 		}
-								
+		
+		monitor.subTask(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.Verifying_launch_attributes..._1")); //$NON-NLS-1$
+						
 		String mainTypeName = verifyMainTypeName(configuration);
 
 		IVMInstall vm = verifyVMInstall(configuration);
@@ -93,7 +95,10 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		// stop in main
 		prepareStopInMain(configuration);
 		
-		// Launch the configuration
+		// done the verification phase
+		monitor.worked(1);
+		
+		// Launch the configuration - 1 unit of work
 		runner.run(runConfig, launch, monitor);
 		
 		// check for cancellation
@@ -101,8 +106,10 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 			return;
 		}	
 		
+		monitor.subTask(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
 		// set the default source locator if required
 		setDefaultSourceLocator(launch, configuration);
+		monitor.worked(1);
 		
 		monitor.done();
 	}	

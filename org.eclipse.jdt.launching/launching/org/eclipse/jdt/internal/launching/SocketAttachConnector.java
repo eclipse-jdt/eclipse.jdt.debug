@@ -17,7 +17,9 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -90,6 +92,14 @@ public class SocketAttachConnector implements IVMConnector {
 	 * @see IVMConnector#connect(Map, IProgressMonitor)
 	 */
 	public void connect(Map arguments, IProgressMonitor monitor, ILaunch launch) throws CoreException {
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		
+		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+		subMonitor.beginTask(LaunchingMessages.getString("SocketAttachConnector.Connecting..._1"), 2); //$NON-NLS-1$
+		subMonitor.subTask(LaunchingMessages.getString("SocketAttachConnector.Configuring_connection..._1")); //$NON-NLS-1$
+		
 		AttachingConnector connector= getAttachingConnector();
 		String portNumberString = (String)arguments.get("port"); //$NON-NLS-1$
 		if (portNumberString == null) {
@@ -109,11 +119,15 @@ public class SocketAttachConnector implements IVMConnector {
 		if (configuration != null) {
 			allowTerminate = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
 		}
+		subMonitor.worked(1);
+		subMonitor.subTask(LaunchingMessages.getString("SocketAttachConnector.Establishing_connection..._2")); //$NON-NLS-1$
 		try {
 			VirtualMachine vm = connector.attach(map);
 			String vmLabel = constructVMLabel(vm, host, portNumberString, configuration);
 			IDebugTarget debugTarget= JDIDebugModel.newDebugTarget(launch, vm, vmLabel, null, allowTerminate, true);
 			launch.addDebugTarget(debugTarget);
+			subMonitor.worked(1);
+			subMonitor.done();
 		} catch (UnknownHostException e) {
 			abort(MessageFormat.format(LaunchingMessages.getString("SocketAttachConnector.Failed_to_connect_to_remote_VM_because_of_unknown_host___{0}__1"), new String[]{host}), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
 		} catch (ConnectException e) {

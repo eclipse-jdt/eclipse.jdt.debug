@@ -59,7 +59,9 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 			
-		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Starting_Applet_{0}..._1"), new String[]{configuration.getName()}), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Starting_Applet_{0}..._1"), new String[]{configuration.getName()}), 3); //$NON-NLS-1$
+		monitor.subTask(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Verifying_launch_attributes..._1")); //$NON-NLS-1$
+		
 		String mainTypeName = verifyMainTypeName(configuration);
 
 		IJavaProject javaProject = getJavaProject(configuration);
@@ -112,10 +114,13 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		String[] bootpath = getBootpath(configuration);
 		runConfig.setBootClassPath(bootpath);
 		
+		monitor.worked(1);
+		
 		// Launch the configuration
 		this.fCurrentLaunchConfiguration = configuration;
 		runner.run(runConfig, launch, monitor);		
 		
+		monitor.subTask(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
 		// Set default source locator if none specified
 		if (launch.getSourceLocator() == null) {
 			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
@@ -125,6 +130,8 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 				launch.setSourceLocator(sourceLocator);
 			}
 		}
+		monitor.worked(1);
+		monitor.done();
 	}
 
 	/**

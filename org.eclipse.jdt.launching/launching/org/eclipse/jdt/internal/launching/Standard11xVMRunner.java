@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
@@ -43,6 +44,10 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
+		
+		IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1);
+		subMonitor.beginTask(LaunchingMessages.getString("StandardVMRunner.Launching_VM..._1"), 2); //$NON-NLS-1$
+		subMonitor.subTask(LaunchingMessages.getString("StandardVMRunner.Constructing_command_line..._2")); //$NON-NLS-1$		
 		
 		String program= constructProgramString(config);
 		
@@ -94,6 +99,9 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			return;
 		}
 		
+		subMonitor.worked(1);
+		subMonitor.subTask(LaunchingMessages.getString("StandardVMRunner.Starting_virtual_machine..._3")); //$NON-NLS-1$
+		
 		Process p= null;
 		File workingDir = getWorkingDir(config);
 		p= exec(cmdLine, workingDir);
@@ -109,6 +117,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 		
 		IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine));
 		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
+		subMonitor.worked(1);
 	}
 }
 
