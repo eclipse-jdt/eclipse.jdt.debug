@@ -177,7 +177,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 			dialog.setInitialSelections(new Object[] {path});
 		}
 		
-		
+		dialog.showClosedProjects(false);
 		dialog.open();
 		Object[] results = dialog.getResult();		
 		if ((results != null) && (results.length > 0) && (results[0] instanceof IPath)) {
