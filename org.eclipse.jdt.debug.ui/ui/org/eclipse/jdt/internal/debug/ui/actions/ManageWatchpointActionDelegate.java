@@ -44,8 +44,8 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActionDelegate {
@@ -59,9 +59,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 			try {
 				IMember element= getMember();
 				if (element == null || !enableForMember(element)) {
-					if (JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
-						JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
-					}
+					beep();
 					return;
 				}
 				IType type = element.getDeclaringType();
@@ -276,14 +274,12 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	}
 	
 	protected void setEnabledState(ITextEditor editor) {
-		if (getAction() != null) {
-			if (getWorkbenchWindow() != null) {
-				IWorkbenchPage page= getWorkbenchWindow().getActivePage();
-				if (page != null) {
-					getAction().setEnabled(page.getActiveEditor() != null && page.getActivePart() == page.getActiveEditor());
-				}
+		if (getAction() != null && getPage() != null) {
+			if (getPage().getActivePart() != getPage().getActiveEditor()) {
+				ISelectionProvider sp= getPage().getActivePart().getSite().getSelectionProvider();
+				getAction().setEnabled(sp != null && enableForMember(getMember(sp.getSelection())));
 			}
-		}
+		}	
 	}
 }
 

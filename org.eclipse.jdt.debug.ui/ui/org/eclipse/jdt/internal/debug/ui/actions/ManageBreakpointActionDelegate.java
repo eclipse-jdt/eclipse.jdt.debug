@@ -58,9 +58,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	protected void manageBreakpoint(IEditorInput editorInput) {
 		ISelectionProvider sp= getTextEditor().getSelectionProvider();
 		if (sp == null || getType() == null) {
-			if (getTextEditor() != null) {
-				getTextEditor().getSite().getShell().getDisplay().beep();
-			}
+			beep();
 			return;
 		}
 		ISelection selection= sp.getSelection();
@@ -165,7 +163,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 					if (part instanceof ITextEditor) {
 						if (!(part instanceof JavaSnippetEditor)) {
 							setTextEditor((ITextEditor)part);
-							update(page.getSelection());
+							update(getTextEditor().getSelectionProvider().getSelection());
 						}
 					}
 				}
@@ -177,11 +175,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	}
 		
 	protected void update(ISelection selection) {
-		if (selection instanceof ITextSelection) {
-			setEnabledState(getTextEditor());
-		} else {
-			getAction().setEnabled(false);
-		}
+		setEnabledState(getTextEditor());
 	}
 	
 	protected void update() {
@@ -228,8 +222,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 			} else {
 				setTextEditor((ITextEditor)part);
 			}	
-		} else {
-			setTextEditor(null);
 		}
 	}
 
@@ -308,4 +300,11 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	protected void setWorkbenchWindow(IWorkbenchWindow workbenchWindow) {
 		fWorkbenchWindow = workbenchWindow;
 	}
+
+	protected void beep() {
+		if (JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
+			JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
+		}
+	}
+
 }

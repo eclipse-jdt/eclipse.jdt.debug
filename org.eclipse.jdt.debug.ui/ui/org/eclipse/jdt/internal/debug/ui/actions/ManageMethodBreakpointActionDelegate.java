@@ -24,6 +24,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -76,10 +77,8 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 			// add breakpoint
 			try {
 				IMethod method = (IMethod)getMember();
-				if (method == null) {
-					if (getTextEditor() != null) {
-						getTextEditor().getSite().getShell().getDisplay().beep();
-					}
+				if (method == null || !enableForMember(method)) {
+					beep();
 					return;
 				} 
 				int start = -1;
@@ -131,11 +130,12 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 	
 	protected void setEnabledState(ITextEditor editor) {
 		if (getAction() != null && getPage() != null) {
-			if (getPage().getActiveEditor() != null) {
+			if (getPage().getActivePart() == getPage().getActiveEditor()) {
 				IClassFile classFile= (IClassFile)getPage().getActiveEditor().getEditorInput().getAdapter(IClassFile.class);
 				getAction().setEnabled(classFile != null);
 			} else {
-				getAction().setEnabled(false);
+				ISelectionProvider sp= getPage().getActivePart().getSite().getSelectionProvider();
+				getAction().setEnabled(sp != null && enableForMember(getMember(sp.getSelection())));
 			}
 		}	
 	}
