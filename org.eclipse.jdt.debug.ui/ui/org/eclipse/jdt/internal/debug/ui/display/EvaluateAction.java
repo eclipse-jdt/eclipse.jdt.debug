@@ -116,7 +116,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 									IJavaVariable var = (IJavaVariable)ss.getFirstElement();
 									// if 'this' is selected, use stack frame context
 									try {
-										if (!var.getName().equals("this")) {
+										if (!var.getName().equals("this")) { //$NON-NLS-1$
 											if (var.getValue() instanceof IJavaObject) {
 												return (IJavaObject)var.getValue();
 											}

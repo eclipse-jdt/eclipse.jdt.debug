@@ -553,7 +553,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 */
 	protected String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
 		if (value instanceof IJavaObject) {
-			IJavaValue result = ((IJavaObject)value).sendMessage("toString","()Ljava/lang/String;", null, thread, false);
+			IJavaValue result = ((IJavaObject)value).sendMessage("toString","()Ljava/lang/String;", null, thread, false); //$NON-NLS-1$ //$NON-NLS-2$
 			return result.getValueString();
 		} else {
 			return value.getValueString();
