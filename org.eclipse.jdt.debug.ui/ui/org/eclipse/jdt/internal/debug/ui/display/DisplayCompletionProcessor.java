@@ -59,7 +59,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	};
 	
 	public DisplayCompletionProcessor() {
-		fCollector= new ResultCollector();
+		fCollector= new DisplayResultCollector();
 	}
 	
 	/**
