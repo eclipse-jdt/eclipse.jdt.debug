@@ -908,17 +908,17 @@
   		</action> 
     </objectContribution>
 	<objectContribution 
-		id="org.eclipse.jdt.debug.ui.InstanceWatchpointActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaFieldVariable">
-		<filter name="JavaVariableActionFilter" value="instanceWatchpoint"/>
-  		<action id="org.eclipse.jdt.debug.ui.InstanceWatchpoint"
-  			label="%manageInstanceWatchpointAction.label"
-  			helpContextId="manage_instance_watchpoint_action_context"
+		id="org.eclipse.jdt.debug.ui.InstanceFiltersActions"
+		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
+		<filter name="JavaVariableActionFilter" value="instanceFilter"/>
+  		<action id="org.eclipse.jdt.debug.ui.InstanceFilterAction"
+  			label="%instanceFiltersAction.label"
+  			helpContextId="instance_filters_action_context"
   			menubarPath="additions"
-  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageInstanceWatchpointActionDelegate"
+  			class="org.eclipse.jdt.internal.debug.ui.actions.InstanceFiltersAction"
   			enablesFor="1">
   		</action> 
-    </objectContribution>
+    </objectContribution>    
   	<objectContribution 
 		id="org.eclipse.jdt.debug.ui.WatchpointActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaFieldVariable">

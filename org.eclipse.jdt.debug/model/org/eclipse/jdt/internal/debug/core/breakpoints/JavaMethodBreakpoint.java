@@ -372,7 +372,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	/**
 	 * @see JavaBreakpoint#updateEnabledState(EventRequest)
 	 */
-	protected void updateEnabledState(EventRequest request) throws CoreException  {
+	protected void updateEnabledState(EventRequest request, JDIDebugTarget target) throws CoreException  {
 		boolean enabled= isEnabled();
 		if (request instanceof MethodEntryRequest || request instanceof BreakpointRequest) {
 			enabled= enabled && isEntry();
@@ -381,28 +381,10 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		}
 		
 		if (enabled != request.isEnabled()) {
-			internalUpdateEnabledState(request, enabled);
+			internalUpdateEnabledState(request, enabled, target);
 		}
 	}	
 	
-	/**
-	 * Set the enabled state of the given request to the given
-	 * value
-	 */
-	private void internalUpdateEnabledState(EventRequest request, boolean enabled) {
-		// change the enabled state
-		try {
-			// if the request has expired, do not enable/disable.
-			// Requests that have expired cannot be deleted.
-			if (!isExpired(request)) {
-				request.setEnabled(enabled);
-			}
-		} catch (VMDisconnectedException e) {
-		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
-		}
-	}
-		
 	/**
 	 * Adds the method name and signature attributes to the
 	 * given attribute map, and intializes the local cache
@@ -724,6 +706,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			((MethodEntryRequest)request).addInstanceFilter(object);
 		} else if (request instanceof MethodExitRequest) {
 			((MethodExitRequest)request).addInstanceFilter(object);
+		} else {
+			super.addInstanceFilter(request, object);
 		}
 	}	
 }

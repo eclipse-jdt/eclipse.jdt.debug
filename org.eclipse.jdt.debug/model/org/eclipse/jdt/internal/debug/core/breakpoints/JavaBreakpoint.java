@@ -378,24 +378,19 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		request.putProperty(JAVA_BREAKPOINT_PROPERTY, this);
 		configureRequestThreadFilter(request, target);
 		configureRequestHitCount(request);
-		// Important: only enable a request after it has been configured
-		updateEnabledState(request);
 		updateInstanceFilters(request, target);
+		// Important: only enable a request after it has been configured
+		updateEnabledState(request, target);
 	}
 	
-	protected void updateInstanceFilters(EventRequest request, JDIDebugTarget target) {
+	protected void updateInstanceFilters(EventRequest request, JDIDebugTarget target) throws CoreException {
 		if (fInstanceFilters != null && !fInstanceFilters.isEmpty()) {
 			Iterator iter = fInstanceFilters.iterator();
-			boolean inTarget = false;
 			while (iter.hasNext()) {
 				IJavaObject object = (IJavaObject)iter.next();
 				if (object.getDebugTarget().equals(target)) {
 					addInstanceFilter(request, ((JDIObjectValue)object).getUnderlyingObject());
-					inTarget = true;
 				}
-			}
-			if (!inTarget) {
-				request.disable();
 			}
 		}		
 	}
@@ -543,7 +538,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * request
 	 */
 	protected EventRequest updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
-		updateEnabledState(request);
+		updateEnabledState(request, target);
 		updateSuspendPolicy(request, target);
 		updateInstanceFilters(request, target);
 		EventRequest newRequest = updateHitCount(request, target);
@@ -671,13 +666,18 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		
 		// instance filters
 		if (fInstanceFilters != null && !fInstanceFilters.isEmpty()) {
+			boolean changed = false;
 			for (int i = 0; i < fInstanceFilters.size(); i++) {
 				IJavaObject object = (IJavaObject)fInstanceFilters.get(i);
 				if (object.getDebugTarget().equals(target)) {
 					fInstanceFilters.remove(i);
+					changed = true;
 				} else {
 					i++;
 				}
+			}
+			if (changed) {
+				fireChanged();
 			}
 		}
 		
@@ -686,12 +686,32 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}		
 	
 	/**
-	 * Update the enabled state of the given request, which is associated
+	 * Update the enabled state of the given request in the given target, which is associated
 	 * with this breakpoint. Set the enabled state of the request
 	 * to the enabled state of this breakpoint.
 	 */
-	protected void updateEnabledState(EventRequest request) throws CoreException  {
-		boolean enabled = isEnabled();
+	protected void updateEnabledState(EventRequest request, JDIDebugTarget target) throws CoreException  {
+		internalUpdateEnabledState(request, isEnabled(), target);
+	}
+	
+	/**
+	 * Set the enabled state of the given request to the given
+	 * value, also taking into account instance filters.
+	 */
+	protected void internalUpdateEnabledState(EventRequest request, boolean enabled, JDIDebugTarget target) {
+		// check for instance filters in this target, and only enable
+		// in this target if there are applicable instance filters		
+		if (fInstanceFilters != null && !fInstanceFilters.isEmpty() && enabled) {
+			enabled = false;
+			Iterator iter = fInstanceFilters.iterator();
+			while (iter.hasNext()) {
+				IJavaObject obj = (IJavaObject)iter.next();
+				if (obj.getDebugTarget().equals(target)) {
+					enabled = true;
+					break;
+				}
+			}
+		}		
 		if (request.isEnabled() != enabled) {
 			// change the enabled state
 			try {
@@ -706,7 +726,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			}
 		}
 	}
-	
+		
 	/**
 	 * Returns whether this breakpoint has expired.
 	 */
@@ -949,7 +969,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				DebugPlugin.getDefault().addDebugEventListener(this);
 				// Since thread filters don't affect the underlying marker, fire
 				// a changed notification manually
-				DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);
+				fireChanged();
 			}
 		}
 	}
@@ -1083,7 +1103,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (!fInstanceFilters.contains(object)) {
 			fInstanceFilters.add(object);
 			updateInstanceFilters((JDIDebugTarget)object.getDebugTarget());
+			fireChanged();
 		}
+	}
+	
+	/**
+	 * Change notification when there are no marker changes	 */
+	protected void fireChanged() {
+		DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);					
 	}
 
 	/**
@@ -1105,6 +1132,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		if (fInstanceFilters.remove(object)) {
 			updateInstanceFilters((JDIDebugTarget)object.getDebugTarget());
+			fireChanged();
 		}
 	}
 
@@ -1122,10 +1150,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				if (newRequest != request) {
 					iter.set(newRequest);
 					replaceRequest(target, request, newRequest);
-					DebugPlugin.getDefault().removeDebugEventListener(this);
-					// Since instance filters don't affect the underlying marker, fire
-					// a changed notification manually
-					DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);
 				}
 			}
 		}

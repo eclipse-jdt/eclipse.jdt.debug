@@ -1136,6 +1136,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (breakpoint.getExclusionFilters().length > 0 || breakpoint.getInclusionFilters().length > 0) {
 			buffer.append(DebugUIMessages.getString("JDIModelPresentation._[scoped]_1")); //$NON-NLS-1$
 		}
+		appendInstanceFilter(breakpoint, buffer);
 		String state= null;
 		boolean c= breakpoint.isCaught();
 		boolean u= breakpoint.isUncaught();
