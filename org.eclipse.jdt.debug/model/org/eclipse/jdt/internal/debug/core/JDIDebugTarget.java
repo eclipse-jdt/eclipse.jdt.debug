@@ -1223,6 +1223,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Removes all of the children from this element.
 	 */
 	public void removeAllChildren() {
+		if  (fChildren == null) {
+			return;
+		}
 		Iterator itr= fChildren.iterator();
 		fChildren= null;
 		while (itr.hasNext()) {
