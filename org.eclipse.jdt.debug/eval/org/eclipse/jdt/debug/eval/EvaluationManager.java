@@ -64,7 +64,7 @@ public class EvaluationManager {
 	 * @param target the Java debug target in which expressions are to be evaluated
 	 * @return an evaluation engine
 	 */
-	public static ASTEvaluationEngine newAstEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
+	public static IAstEvaluationEngine newAstEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
 		return new ASTEvaluationEngine(project, target);
 	}
 }
