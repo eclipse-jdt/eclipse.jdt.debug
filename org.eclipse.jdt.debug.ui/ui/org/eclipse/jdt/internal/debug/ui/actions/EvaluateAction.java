@@ -450,6 +450,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			reportError(result.getException());
 		} else {
 			severeProblems= reportProblems(problems);
+			if (!severeProblems) {
+				//warnings...may be an exception
+				severeProblems= result.getException() != null;
+				reportError(result.getException());
+			}
 		}
 		return severeProblems;
 	}

@@ -392,43 +392,47 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	public void evaluationComplete(final IEvaluationResult result) {
 		Runnable r = new Runnable() {
 			public void run() {
+				boolean severeProblems= true;
 				if (result.hasProblems()) {
 					IMarker[] problems = result.getProblems();
 					int count= problems.length;
 					if (count == 0) {
 						showException(result.getException());
 					} else {
-						showAllProblems(problems);
-					}
-				} else {
-					final IJavaValue value= result.getValue();
-					if (value != null) {
-						switch (fResultMode) {
-						case RESULT_DISPLAY:
-							Runnable r = new Runnable() {
-								public void run() {
-									displayResult(value, result.getThread());
-								}
-							};
-							getSite().getShell().getDisplay().asyncExec(r);
-							break;
-						case RESULT_INSPECT:
-							String snippet= result.getSnippet().trim();
-							int snippetLength= snippet.length();
-							if (snippetLength > 30) {
-								snippet = snippet.substring(0, 15) + SnippetMessages.getString("SnippetEditor.ellipsis") + snippet.substring(snippetLength - 15, snippetLength);  //$NON-NLS-1$
-							}
-							snippet= snippet.replace('\n', ' ');
-							snippet= snippet.replace('\r', ' ');
-							snippet= snippet.replace('\t', ' ');
-							showExpressionView();
-							JavaInspectExpression exp = new JavaInspectExpression(snippet, value);
-							DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
-							break;
-						case RESULT_RUN:
-							// no action
-							break;
+						severeProblems= showAllProblems(problems);
+						if (!severeProblems) {
+							//warnings only..check for exception
+							showException(result.getException());
 						}
+					}
+				} 
+				final IJavaValue value= result.getValue();
+				if (value != null && !severeProblems) {
+					switch (fResultMode) {
+					case RESULT_DISPLAY:
+						Runnable r = new Runnable() {
+							public void run() {
+								displayResult(value, result.getThread());
+							}
+						};
+						getSite().getShell().getDisplay().asyncExec(r);
+						break;
+					case RESULT_INSPECT:
+						String snippet= result.getSnippet().trim();
+						int snippetLength= snippet.length();
+						if (snippetLength > 30) {
+							snippet = snippet.substring(0, 15) + SnippetMessages.getString("SnippetEditor.ellipsis") + snippet.substring(snippetLength - 15, snippetLength);  //$NON-NLS-1$
+						}
+						snippet= snippet.replace('\n', ' ');
+						snippet= snippet.replace('\r', ' ');
+						snippet= snippet.replace('\t', ' ');
+						showExpressionView();
+						JavaInspectExpression exp = new JavaInspectExpression(snippet, value);
+						DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
+						break;
+					case RESULT_RUN:
+						// no action
+						break;
 					}
 				}
 				evaluationEnds();
@@ -544,7 +548,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}	
 	
-	protected void showAllProblems(IMarker[] problems) {
+	protected boolean showAllProblems(IMarker[] problems) {
 		IDocument document = getSourceViewer().getDocument();
 		String delimiter = document.getLegalLineDelimiters()[0];
 		int insertionPoint = fSnippetStart;
@@ -553,11 +557,20 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		} catch (BadLocationException ble) {
 		}
 		int firstInsertionPoint = insertionPoint;
+		boolean severeProblem=false;
 		for (int i = 0; i < problems.length; i++) {
-			insertionPoint = showOneProblem(document, problems[i], insertionPoint, delimiter);
+			IMarker problem= problems[i];
+			if (problem.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
+				//only show problems that are greater severity than a warning
+				insertionPoint = showOneProblem(document, problem, insertionPoint, delimiter);
+				severeProblem= true;
+			}
 		}
-		selectAndReveal(firstInsertionPoint, insertionPoint - firstInsertionPoint);
-		fSnippetStart = insertionPoint;
+		if (severeProblem) {
+			selectAndReveal(firstInsertionPoint, insertionPoint - firstInsertionPoint);
+			fSnippetStart = insertionPoint;
+		}
+		return severeProblem;
 	}
 
 	protected int showOneProblem(IDocument document, IMarker problem, int insertionPoint, String delimiter) {
@@ -581,7 +594,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			}
 		}
 		ByteArrayOutputStream bos= new ByteArrayOutputStream();
-		PrintStream ps= new java.io.PrintStream(bos, true);
+		PrintStream ps= new PrintStream(bos, true);
 		exception.printStackTrace(ps);
 		try {
 			getSourceViewer().getDocument().replace(fSnippetEnd, 0, bos.toString());
@@ -591,7 +604,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	protected void showUnderlyingException(Throwable t) {
-		if (t instanceof com.sun.jdi.InvocationException) {
+		if (t instanceof InvocationException) {
 			InvocationException ie= (InvocationException)t;
 			ObjectReference ref= ie.exception();
 			String eName= ref.referenceType().name();
@@ -647,7 +660,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				fThread.resume();
 				fThread = null;
 			} catch (DebugException e) {
-				// XXX: error
+				showException(e);
+				return;
 			}
 		}		
 		fEvaluating = true;
