@@ -588,7 +588,7 @@
 	<page name="%javaDebugPrefName"
          id="org.eclipse.jdt.ui.JavaDebugPreferencePage"   
 	     class="org.eclipse.jdt.internal.debug.ui.JavaDebugPreferencePage"
-         category="org.eclipse.debug.ui.DebugPreferencePage">
+         category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage">
 	</page>	
 </extension>
 
