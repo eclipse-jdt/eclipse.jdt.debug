@@ -114,7 +114,11 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	public Object getAdapter(Class adapter) {
 		if (adapter == IDebugElement.class) {
 			return this;
-		} if (adapter == IStepFilters.class) {
+		}
+		if (adapter == IStepFilters.class) {
+			return getDebugTarget();
+		}
+		if (adapter == IDebugTarget.class) {
 			return getDebugTarget();
 		}
 		return super.getAdapter(adapter);

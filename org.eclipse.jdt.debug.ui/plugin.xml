@@ -186,28 +186,6 @@
             </enablement>
          </action>
          <action
-               id="org.eclipse.jdt.debug.ui.actions.RunToLine"
-               hoverIcon="icons/full/clcl16/runtoline_co.gif"
-               class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
-               definitionId="org.eclipse.jdt.debug.ui.commands.RunToLine"
-               disabledIcon="icons/full/dlcl16/runtoline_co.gif"
-               icon="icons/full/elcl16/runtoline_co.gif"
-               helpContextId="run_to_line_action_context"
-               label="%runToLineAction.label"
-               menubarPath="org.eclipse.ui.run/jdtGroup">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
-         </action>
-         <action
                id="org.eclipse.jdt.debug.ui.actions.Execute"
                hoverIcon="icons/full/ctool16/run_sbook.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
@@ -1422,25 +1400,6 @@
             </enablement>
          </action>
          <action
-               label="%runToLineAction.label"
-               icon="icons/full/clcl16/runtoline_co.gif"
-               helpContextId="run_to_line_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
-               menubarPath="additions"
-               id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
-         </action>
-         <action
                label="%Execute.label"
                icon="icons/full/ctool16/run_sbook.gif"
                helpContextId="execute_action_context"
@@ -1542,25 +1501,6 @@
                menubarPath="additions"
                enablesFor="*"
                id="org.eclipse.jdt.debug.ui.cfPopup.StepIntoSelection">
-            <enablement>
-               <and>
-                  <systemProperty
-                        name="org.eclipse.jdt.debug.ui.debuggerActive"
-                        value="true">
-                  </systemProperty>
-                  <objectClass
-                        name="org.eclipse.jface.text.ITextSelection">
-                  </objectClass>
-               </and>
-            </enablement>
-         </action>
-         <action
-               label="%runToLineAction.label"
-               icon="icons/full/clcl16/runtoline_co.gif"
-               helpContextId="run_to_line_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
-               menubarPath="additions"
-               id="org.eclipse.jdt.debug.ui.cfPopup.RunToLine">
             <enablement>
                <and>
                   <systemProperty
@@ -2116,18 +2056,6 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
-            name="%ActionDefinition.runToLine.name"
-            description="%ActionDefinition.runToLine.description"
-            category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.commands.RunToLine">
-      </command>
-      <keyBinding
-            string="Ctrl+R"
-            scope="org.eclipse.debug.ui.debugging"
-            command="org.eclipse.jdt.debug.ui.commands.RunToLine"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <command
             name="%ActionDefinition.execute.name"
             description="%ActionDefinition.execute.description"
             category="org.eclipse.debug.ui.category.run"
@@ -2419,6 +2347,20 @@
             description="%java_type_name.description"
             resolver="org.eclipse.jdt.internal.debug.ui.TypeNameResolver">
       </variable>
-   </extension>   	
+   </extension> 
+   
+   <!-- Adapters for retargettable actions -->
+	<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor">
+            <adapter type="org.eclipse.debug.internal.ui.actions.IRunToLineTarget"/>
+         </factory>
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
+            adaptableType="org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor">
+            <adapter type="org.eclipse.debug.internal.ui.actions.IRunToLineTarget"/>
+         </factory>         
+      </extension>     	
       
 </plugin>
