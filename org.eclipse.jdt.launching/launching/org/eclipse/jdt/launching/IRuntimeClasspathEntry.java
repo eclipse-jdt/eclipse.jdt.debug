@@ -99,11 +99,9 @@ public interface IRuntimeClasspathEntry {
 	 * 		project.</li>
 	 * <li><code>ARCHIVE</code> - the absolute path of the assoicated archive,
 	 * 		which may or may not be in the workspace.</li>
-	 * <li><code>FOLDER</code> - the absolute path of the assoicated folder,
-	 * 		which may or may not be in the workspace.</li>
 	 * <li><code>VARIALBE</code> - the path corresponding to the associated
 	 * 		classpath variable entry.</li>
-	 * <li><code>LIBRARY</code> - the path corresponding to the associated
+	 * <li><code>CONTAINER</code> - the path corresponding to the associated
 	 * 		classpath container variable entry.</li>
 	 * </ul>
 	 * 
