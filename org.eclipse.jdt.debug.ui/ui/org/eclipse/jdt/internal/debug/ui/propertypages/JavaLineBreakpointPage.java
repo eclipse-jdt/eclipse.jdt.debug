@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.propertypages;
 
+import java.text.MessageFormat;
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
@@ -27,6 +29,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 
 /**
  * Property page for editing breakpoints of type
@@ -47,7 +56,8 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	private Button fMethodExit;
 	
 	private static final String fgWatchpointError= PropertyPageMessages.getString("JavaLineBreakpointPage.0"); //$NON-NLS-1$
-	private static final String fgMethodBreakpointError= PropertyPageMessages.getString("JavaLineBreakpointPage.1"); //$NON-NLS-1$
+	private static final String fgMethodBreakpointError= PropertyPageMessages.getString("JavaLineBreakpointPage.1");//$NON-NLS-1$
+	private Shell shell; 
 
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage#doStore()
@@ -201,10 +211,25 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) getBreakpoint();
 		IType type = BreakpointUtils.getType(breakpoint);
 		
+		shell = parent.getShell();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);
+		
 		String label = null;
-		if (type == null) {
-			label = PropertyPageMessages.getString("JavaLineBreakpointPage.12"); //$NON-NLS-1$
-		} else {
+		if (type != null) {
+			ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
+			ICommand command = commandManager.getCommand("org.eclipse.ui.edit.text.contentAssist.proposals"); //$NON-NLS-1$
+			if (command != null) {
+				List keyBindings = command.getKeySequenceBindings();
+				if (keyBindings != null && keyBindings.size() > 0) {
+					IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
+					label = MessageFormat.format(PropertyPageMessages.getString("JavaLineBreakpointPage.12"), new String[] {lastBinding.getKeySequence().format()}); //$NON-NLS-1$
+				} 
+			}
+		}
+		if (label == null) {
 			label = PropertyPageMessages.getString("JavaLineBreakpointPage.13"); //$NON-NLS-1$
 		}
 		Composite conditionComposite= new Group(parent, SWT.NONE);
@@ -263,6 +288,9 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
+		IWorkbenchContextSupport contextSupport = PlatformUI.getWorkbench().getContextSupport();
+		contextSupport.unregisterShell(shell);
+		
 		if (fConditionEditor != null) {
 			fConditionEditor.dispose();
 		}

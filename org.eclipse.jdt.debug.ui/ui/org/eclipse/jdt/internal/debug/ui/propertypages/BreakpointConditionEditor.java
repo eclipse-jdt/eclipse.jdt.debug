@@ -42,7 +42,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.AbstractHandler;
@@ -50,7 +49,6 @@ import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 
 public class BreakpointConditionEditor {
 	
@@ -66,7 +64,6 @@ public class BreakpointConditionEditor {
 	private IJavaLineBreakpoint fBreakpoint;
 	
 	private List submissions;
-	private Shell shell;
 		
 	public BreakpointConditionEditor(Composite parent, JavaLineBreakpointPage page) {
 		fPage= page;
@@ -147,12 +144,8 @@ public class BreakpointConditionEditor {
 		document.set(condition);
 		valueChanged();
 		
-		shell = parent.getShell();
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		
-		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);
-		
+			
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 		IHandler handler = new AbstractHandler() {
 			public Object execute(Map parameter) throws ExecutionException {
@@ -160,6 +153,7 @@ public class BreakpointConditionEditor {
 				return null;
 			}
 		};
+		
 		submissions = Collections.singletonList(new HandlerSubmission(null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, 4, null)); //$NON-NLS-1$
 		commandSupport.addHandlerSubmissions(submissions);
 		
@@ -248,10 +242,9 @@ public class BreakpointConditionEditor {
 	
 	public void dispose() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 		commandSupport.removeHandlerSubmissions(submissions); 
-		contextSupport.unregisterShell(shell);		
+		
 		fViewer.dispose();
 	}
 }

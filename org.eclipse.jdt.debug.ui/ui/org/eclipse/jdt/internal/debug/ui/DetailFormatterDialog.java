@@ -11,8 +11,10 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
+import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
-
+import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
@@ -40,10 +42,8 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -55,6 +55,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -93,6 +104,10 @@ public class DetailFormatterDialog extends StatusDialog {
 	private IType fType;
 	
 	private List fDefinedTypes;
+
+	private List submissions;
+
+	private Shell shell;
 	
 	/**
 	 * DetailFormatterDialog constructor.
@@ -130,9 +145,27 @@ public class DetailFormatterDialog extends StatusDialog {
 			IJavaDebugHelpContextIds.EDIT_DETAIL_FORMATTER_DIALOG);			
 		
 		Font font = parent.getFont();
+
+		IHandler handler = new AbstractHandler() {
+			public Object execute(Map parameterValuesByName) throws ExecutionException {
+				findCorrespondingType();
+				fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);				
+				return null;
+			}
+		};
+		
+		shell = parent.getShell();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);		
+		
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();		
+		submissions = Collections.singletonList(new HandlerSubmission(null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, 4, null)); //$NON-NLS-1$
+		commandSupport.addHandlerSubmissions(submissions);	
 		
 		Composite container = (Composite)super.createDialogArea(parent);
-
+		
 		// type name label
 		Label label= new Label(container, SWT.NONE);
 		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_&name__2")); //$NON-NLS-1$
@@ -177,8 +210,22 @@ public class DetailFormatterDialog extends StatusDialog {
 		});
 		
 		// snippet label
+		String labelText = null;
+		ICommandManager commandManager = PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
+		ICommand command = commandManager.getCommand("org.eclipse.ui.edit.text.contentAssist.proposals"); //$NON-NLS-1$
+		if (command != null) {
+			List keyBindings = command.getKeySequenceBindings();
+			if (keyBindings != null && keyBindings.size() > 0) {
+				IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
+				labelText = MessageFormat.format(DebugUIMessages.getString("DetailFormatterDialog.17"), new String[] {lastBinding.getKeySequence().format()});  //$NON-NLS-1$
+			} 
+		}
+		if (labelText == null) {
+			labelText = DebugUIMessages.getString("DetailFormatterDialog.Detail_formatter_&code_snippet__1"); //$NON-NLS-1$
+		}
+		
 		label= new Label(container, SWT.NONE);
-		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Detail_formatter_&code_snippet__1")); //$NON-NLS-1$
+		label.setText(labelText); //$NON-NLS-1$
 		gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
 		label.setFont(font);
@@ -205,20 +252,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		gd.heightHint= convertHeightInCharsToPixels(10);
 		gd.widthHint= convertWidthInCharsToPixels(80);
 		control.setLayoutData(gd);
-		document.set(fDetailFormatter.getSnippet());
-		
-		fSnippetViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
-			public void verifyKey(VerifyEvent event) {
-				//do code assist for CTRL-SPACE
-				if (event.stateMask == SWT.CTRL) {
-					if (event.keyCode == ' ') {
-						findCorrespondingType();
-						fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-						event.doit= false;
-					}
-				}
-			}
-		});
+		document.set(fDetailFormatter.getSnippet());	
 		
 		fSnippetViewer.getDocument().addDocumentListener(new IDocumentListener() {
 			public void documentAboutToBeChanged(DocumentEvent event) {
@@ -357,6 +391,12 @@ public class DetailFormatterDialog extends StatusDialog {
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+		contextSupport.unregisterShell(shell);
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		commandSupport.removeHandlerSubmissions(submissions);
+		
 		fSnippetViewer.dispose();
 		return super.close();
 	}
