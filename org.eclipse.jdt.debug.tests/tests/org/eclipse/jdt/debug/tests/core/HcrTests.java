@@ -11,8 +11,6 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -48,19 +46,13 @@ public class HcrTests extends AbstractDebugTest {
 				IJavaVariable variable = frame.findVariable("x");
 				assertNotNull("Could not find 'x'", variable);
 				assertEquals("value of 'x' should be 'One'", "One", variable.getValue().getValueString());
-				
-				// close the editor
-				DebugPlugin.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-							public void run() {
-								DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().closeAllEditors(false);
-							}
-						});
-					}
-				});
+				removeAllBreakpoints();
 				// now do the HCR
 				ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "HcrClass.java");
+				cu = cu.getPrimary();
+				if (!cu.isWorkingCopy()) {
+					cu = cu.getWorkingCopy(null);
+				}
 				assertTrue("HcrClass.java does not exist", cu.exists());
 				IBuffer buffer = cu.getBuffer();
 				String contents = buffer.getContents();
@@ -69,21 +61,18 @@ public class HcrTests extends AbstractDebugTest {
 				String newCode = contents.substring(0, index) + "\"Two\"" + contents.substring(index + 5);
 				buffer.setContents(newCode);
 				
-				// set up event listener for "suspend" (end of HCR)
-				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
 				// save contents
-				buffer.save(null, false);
-				
-				Object source = waiter.waitForEvent();
-				assertNotNull("HCR did not complete", source);
-				assertTrue(source instanceof IJavaThread);
-				thread = (IJavaThread)source;
+				DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
+				cu.commitWorkingCopy(false, null);
+				waitForAutoBuild();
+				waiter.waitForEvent();
 	
 				// should have dropped to frame 'one'
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertEquals("Should have dropped to method 'one'", "one", frame.getMethodName());
 				
 				// resume to breakpoint
+				createLineBreakpoint(39, typeName);
 				thread = resume(thread);
 				
 				// value of 'x' should now be "Two"
@@ -94,7 +83,6 @@ public class HcrTests extends AbstractDebugTest {
 			} else {
 				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
-						
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
