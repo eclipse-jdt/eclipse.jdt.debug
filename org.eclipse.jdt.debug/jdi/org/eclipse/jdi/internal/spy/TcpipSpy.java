@@ -46,7 +46,6 @@ import java.util.Map;
 public class TcpipSpy extends Thread {
 
 	private static final byte[] handshakeBytes= "JDWP-Handshake".getBytes(); //$NON-NLS-1$
-	private String fDescription;
 	private boolean fVMtoDebugger;
 	private DataInputStream fDataIn;
 	private DataOutputStream fDataOut;
@@ -61,8 +60,7 @@ public class TcpipSpy extends Thread {
 	private static int fFrameIDSize;
 	private static boolean fHasSizes;
 
-	public TcpipSpy(String description, boolean VMtoDebugger, InputStream in, OutputStream out) throws IOException {
-		fDescription= description;
+	public TcpipSpy(boolean VMtoDebugger, InputStream in, OutputStream out) throws IOException {
 		fVMtoDebugger= VMtoDebugger;
 		fDataIn= new DataInputStream(new BufferedInputStream(in));
 		fDataOut= new DataOutputStream(new BufferedOutputStream(out));
@@ -71,16 +69,18 @@ public class TcpipSpy extends Thread {
 
 	public static void main(String[] args) {
 		int inPort= 0;
+		String serverHost= null;
 		int outPort= 0;
 		String outputFile= null;
 		try {
 			inPort= Integer.parseInt(args[0]);
-			outPort= Integer.parseInt(args[1]);
-			if (args.length > 2) {
-				outputFile= args[2];
+			serverHost= args[1];
+			outPort= Integer.parseInt(args[2]);
+			if (args.length > 3) {
+				outputFile= args[3];
 			}
 		} catch (Exception e) {
-			out.println(TcpIpSpyMessages.getString("TcpipSpy.usage__TcpipSpy_<client_port>_<server_port>_[<output_file>]_1")); //$NON-NLS-1$
+			out.println(TcpIpSpyMessages.getString("TcpipSpy.usage__TcpipSpy_<client_port>_<server_host>_<server_port>_[<output_file>]_1")); //$NON-NLS-1$
 			System.exit(-1);
 		}
 
@@ -97,9 +97,9 @@ public class TcpipSpy extends Thread {
 		try {
 			ServerSocket serverSock= new ServerSocket(inPort);
 			Socket inSock= serverSock.accept();
-			Socket outSock= new Socket(InetAddress.getLocalHost(), outPort);
-			new TcpipSpy(TcpIpSpyMessages.getString("TcpIpSpy.From_debugger_6"), false, inSock.getInputStream(), outSock.getOutputStream()).start(); //$NON-NLS-1$
-			new TcpipSpy(TcpIpSpyMessages.getString("TcpIpSpy.From_VM_7"), true, outSock.getInputStream(), inSock.getOutputStream()).start(); //$NON-NLS-1$
+			Socket outSock= new Socket(InetAddress.getByName(serverHost), outPort);
+			new TcpipSpy(false, inSock.getInputStream(), outSock.getOutputStream()).start(); //$NON-NLS-1$
+			new TcpipSpy(true, outSock.getInputStream(), inSock.getOutputStream()).start(); //$NON-NLS-1$
 		} catch (Exception e) {
 			out.println(e);
 		}

@@ -68,6 +68,8 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private static final int HCR_CAN_DO_RETURN = 2;
 	private static final int HCR_CAN_REENTER_ON_EXIT = 3;
 	
+	protected static final String JAVA_STRATUM_NAME= "Java";
+	
 	/** Timeout value for requests to VM if not overriden for a particular VM. */
 	private int fRequestTimeout;
 	/** Mapping of command codes to strings. */
@@ -139,6 +141,11 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * Disconnected flag
 	 */
 	private boolean fIsDisconnected = false;
+
+	/**
+	 * The name of the current default stratum.
+	 */	
+	private String fDefaultStratum;
 	
 	/** 
 	 * Creates a new Virtual Machine.
@@ -1149,16 +1156,38 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * @see VirtualMachine#setDefaultStratum(String)
 	 */
 	public void setDefaultStratum(String stratum) {
-		if (!canSetDefaultStratum()) {
-			throw new UnsupportedOperationException();
-		}
+		// see next todo
+//		if (!canSetDefaultStratum()) {
+//			throw new UnsupportedOperationException();
+//		}
+		fDefaultStratum= stratum;
+		
+		// TODO: check the usefulness of the command VIRTUAL_MACHINE SET_DEFAULT_STRATUM
+		// need to test on Sun 1.4.1 to see what it does.
+//		if (stratum == null) {
+//			stratum= "";
+//		}
+//		initJdwpRequest();
+//		try {
+//			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+//			DataOutputStream outData = new DataOutputStream(outBytes);
+//			writeString(stratum, "stratum ID", outData); //$NON-NLS-1$
+//	
+//			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_SET_DEFAULT_STRATUM, outBytes);
+//			defaultReplyErrorHandler(replyPacket.errorCode());
+//			
+//		} catch (IOException e) {
+//			defaultIOExceptionHandler(e);
+//		} finally {
+//			handledJdwpRequest();
+//		}
 	}
 
 	/*
 	 * @see VirtualMachine#getDefaultStratum()
 	 */
 	public String getDefaultStratum() {
-		return null;
+		return fDefaultStratum;
 	}
 	
 	/*

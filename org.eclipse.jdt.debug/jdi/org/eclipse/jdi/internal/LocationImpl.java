@@ -19,7 +19,6 @@ import java.text.MessageFormat;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
-import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ReferenceType;
 
 /**
@@ -107,13 +106,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	 * @return Returns an int specifying the line in the source, return -1 if the information is not available.
 	 */
 	public int lineNumber() {
-		try {
-			return fMethod.findLineNr(fIndex);
-		} catch (NativeMethodException e) {	// Occurs in SUN VM.
-			return LINE_NR_NOT_AVAILABLE;
-		} catch (AbsentInformationException e) {
-			return LINE_NR_NOT_AVAILABLE;
-		}
+		return lineNumber(virtualMachine().getDefaultStratum());
 	}
 	
 	/** 
@@ -127,7 +120,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	 * @return a string specifying the source.
 	 */
 	public String sourceName() throws AbsentInformationException {
-		return fMethod.declaringType().sourceName();
+		return sourceName(virtualMachine().getDefaultStratum());
 	}
 	
 	/**
@@ -167,28 +160,28 @@ public class LocationImpl extends MirrorImpl implements Location {
 	 * @see Location#lineNumber(String)
 	 */
 	public int lineNumber(String stratum) {
-		return 0;
+		return fMethod.referenceTypeImpl().lineNumber(fIndex, fMethod, stratum);
 	}
 
 	/**
 	 * @see Location#sourceName(String)
 	 */
 	public String sourceName(String stratum) throws AbsentInformationException {
-		return null;
+		return fMethod.referenceTypeImpl().sourceName(fIndex, fMethod, stratum);
 	}
 
 	/**
 	 * @see Location#sourcePath(String)
 	 */
 	public String sourcePath(String stratum) throws AbsentInformationException {
-		return null;
+		return fMethod.referenceTypeImpl().sourcePath(fIndex, fMethod, stratum);
 	}
 
 	/**
 	 * @see Location#sourcePath()
 	 */
 	public String sourcePath() throws AbsentInformationException {
-		return null;
+		return sourcePath(virtualMachine().getDefaultStratum());
 	}
 
 }

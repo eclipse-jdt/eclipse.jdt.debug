@@ -19,11 +19,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
@@ -37,7 +40,6 @@ import com.sun.jdi.InvalidLineNumberException;
 import com.sun.jdi.Locatable;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
-import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.Type;
 
 
@@ -61,13 +63,15 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	private long fHighestValidCodeIndex = -1;
 	private Map fCodeIndexToLine = null;
 	private Map fLineToCodeIndexes = null;
-	private List fAllLineLocations = null;
+	private Map fStratumAllLineLocations = null;
 	private int fArgumentSlotsCount = -1;
 	private List fArguments = null;
 	private List fArgumentTypes = null;
 	private List fArgumentTypeNames = null;
 	private List fArgumentTypeSignatures = null;
 	private byte[] fByteCodes = null;
+	private long[] fCodeIndexTable;
+	private int[] fJavaStratumLineNumberTable;
 	
 	private String fReturnTypeName= null;
 	
@@ -88,7 +92,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		fHighestValidCodeIndex = -1;
 		fCodeIndexToLine = null;
 		fLineToCodeIndexes = null;
-		fAllLineLocations = null;
+		fStratumAllLineLocations = null;
+		fCodeIndexTable= null;
+		fJavaStratumLineNumberTable= null;
 		fArgumentSlotsCount = -1;
 		fArguments = null;
 		fArgumentTypes = null;
@@ -107,7 +113,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/** 
 	 * @return Returns map of location to line number.
 	 */
-	protected Map codeIndexToLine() throws AbsentInformationException {
+	protected Map javaStratumCodeIndexToLine() throws AbsentInformationException {
 		if (isAbstract()) {
 			return Collections.EMPTY_MAP;
 		}
@@ -118,7 +124,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/** 
 	 * @return Returns map of line number to locations.
 	 */
-	protected List lineToCodeIndexes(int line) throws AbsentInformationException {
+	protected List javaStratumLineToCodeIndexes(int line) throws AbsentInformationException {
 		if (isAbstract() || isNative()) {
 			return null;
 		}
@@ -137,9 +143,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fCodeIndexToLine != null) {
 			if (fCodeIndexToLine.isEmpty()) {
 				throw new AbsentInformationException(JDIMessages.getString("MethodImpl.Got_empty_line_number_table_for_this_method_1")); //$NON-NLS-1$
-			} else {
-				return;
 			}
+			return;
 		}
 
 		initJdwpRequest();
@@ -166,6 +171,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			if (nrOfElements == 0) {
 				throw new AbsentInformationException(JDIMessages.getString("MethodImpl.Got_empty_line_number_table_for_this_method_3")); //$NON-NLS-1$
 			}
+			fCodeIndexTable= new long[nrOfElements];
+			fJavaStratumLineNumberTable= new int[nrOfElements];
 			for (int i = 0; i < nrOfElements; i++) {
 				long lineCodeIndex = readLong("code index", replyData); //$NON-NLS-1$
 				Long lineCodeIndexLong = new Long(lineCodeIndex);
@@ -175,10 +182,14 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 				// Add entry to code-index to line mapping.
 				fCodeIndexToLine.put(lineCodeIndexLong, lineNrInt);
 				
-				if (fLineToCodeIndexes.get(lineNrInt) == null) {
-					fLineToCodeIndexes.put(lineNrInt, new ArrayList());
-				}
+				fCodeIndexTable[i]= lineCodeIndex;
+				fJavaStratumLineNumberTable[i]= lineNr;
+				
 				List lineNrEntry = (List)fLineToCodeIndexes.get(lineNrInt);
+				if (lineNrEntry == null) {
+					lineNrEntry= new ArrayList();
+					fLineToCodeIndexes.put(lineNrInt, lineNrEntry);
+				}
 				lineNrEntry.add(lineCodeIndexLong);
 			}
 		} catch (IOException e) {
@@ -193,7 +204,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	/** 
 	 * @return Returns the line number that corresponds to the given lineCodeIndex.
 	 */
-	protected int findLineNr(long lineCodeIndex) throws AbsentInformationException {
+	protected int javaStratumLineNumber(long lineCodeIndex) throws AbsentInformationException {
 		if (isAbstract() || isNative() || isObsolete()) {
 			return -1;
 		}
@@ -208,14 +219,14 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		// Search for the line where this code index is located.
 		do {
 			lineCodeIndexObj = new Long(index);
-			lineNrObj = (Integer)codeIndexToLine().get(lineCodeIndexObj);
+			lineNrObj = (Integer)javaStratumCodeIndexToLine().get(lineCodeIndexObj);
 		} while (lineNrObj == null && --index >= fLowestValidCodeIndex);
 		if (lineNrObj == null) {
 			if (lineCodeIndex >= fLowestValidCodeIndex) {
 				index= lineCodeIndex;
 				do {
 					lineCodeIndexObj = new Long(index);
-					lineNrObj = (Integer)codeIndexToLine().get(lineCodeIndexObj);
+					lineNrObj = (Integer)javaStratumCodeIndexToLine().get(lineCodeIndexObj);
 				} while (lineNrObj == null && ++index <= fHighestValidCodeIndex);
 				if (lineNrObj != null) {
 					return lineNrObj.intValue();
@@ -231,31 +242,15 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * @see com.sun.jdi.Method#allLineLocations()
 	 */
 	public List allLineLocations() throws AbsentInformationException {
-		if (fAllLineLocations != null) {
-			return fAllLineLocations;
-		}
-		
-		if (isAbstract() || isNative()) {
-			fAllLineLocations= Collections.EMPTY_LIST;
-			return fAllLineLocations;
-		}
-			
-		Iterator locations = codeIndexToLine().keySet().iterator();
-		List result = new ArrayList();
-		while (locations.hasNext()) {
-			Long lineCodeIndex = (Long)locations.next();
-			result.add(new LocationImpl(virtualMachineImpl(), this, lineCodeIndex.longValue()));
-		}
-		fAllLineLocations = result;
-		return fAllLineLocations;
+		return allLineLocations(virtualMachine().getDefaultStratum(), null);
 	}
 	
 	/**
 	 * @see com.sun.jdi.Method#arguments()
 	 */
 	public List arguments() throws AbsentInformationException {
-		if (isNative()) {
-			throw new NativeMethodException(JDIMessages.getString("MethodImpl.Attempt_to_retrieve_argument_information_from_a_native_method_1")); //$NON-NLS-1$
+		if (isNative() || isAbstract()) {
+			throw new AbsentInformationException(JDIMessages.getString("MethodImpl.No_local_variable_information_available_9")); //$NON-NLS-1$
 		}
 		if (fArguments != null) {
 			return fArguments;
@@ -452,7 +447,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			return null;
 		}
 		try {
-			Integer lineNrInt = (Integer)codeIndexToLine().get(new Long(index));
+			Integer lineNrInt = (Integer)javaStratumCodeIndexToLine().get(new Long(index));
 			if (lineNrInt == null) {
 				throw new InvalidCodeIndexException(MessageFormat.format(JDIMessages.getString("MethodImpl.No_valid_location_at_the_specified_code_index_{0}_2"), new Object[]{Long.toString(index)})); //$NON-NLS-1$
 			}
@@ -465,21 +460,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * @see com.sun.jdi.Method#locationsOfLine(int)
 	 */
 	public List locationsOfLine(int line) throws AbsentInformationException, InvalidLineNumberException {
-		if (isAbstract() || isNative()) {
-			return Collections.EMPTY_LIST;
-		}
-		List indexes = lineToCodeIndexes(line);
-		if (indexes == null) {
-			throw new InvalidLineNumberException(MessageFormat.format(JDIMessages.getString("MethodImpl.No_executable_code_at_line__7"), new String[]{Integer.toString(line)})); //$NON-NLS-1$
-		}
-		
-		Iterator codeIndexes = indexes.iterator();
-		List locations = new ArrayList();
-		while (codeIndexes.hasNext()) {
-			long codeIndex = ((Long)codeIndexes.next()).longValue();
-			locations.add(new LocationImpl(virtualMachineImpl(), this, codeIndex));
-		}
-		return locations;
+		return locationsOfLine(virtualMachine().getDefaultStratum(), null, line);
 	}
 	
 	/**
@@ -508,8 +489,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * @see com.sun.jdi.Method#variables()
 	 */
 	public List variables() throws AbsentInformationException {
-		if (isNative()) {
-			throw new NativeMethodException(JDIMessages.getString("MethodImpl.Attempt_to_retrieve_variable_information_from_a_native_method_3")); //$NON-NLS-1$
+		if (isNative() || isAbstract()) {
+			throw new AbsentInformationException(JDIMessages.getString("MethodImpl.No_local_variable_information_available_9")); //$NON-NLS-1$
 		}
 		
 		if (fVariables != null) {
@@ -737,13 +718,66 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * @see Method#allLineLocations(String, String)
 	 */
 	public List allLineLocations(String stratum, String sourceName) throws AbsentInformationException {
-		return new ArrayList(0);
+		if (isAbstract() || isNative()) {
+			return Collections.EMPTY_LIST;
+		}
+		if (stratum == null) { // if stratum not defined use the default stratum for the declaring type
+			stratum= declaringType().defaultStratum();
+		}
+		List allLineLocations= null;
+		Map sourceNameAllLineLocations= null;
+		if (fStratumAllLineLocations == null) { // the stratum map doesn't exist, create it
+			fStratumAllLineLocations= new HashMap();
+		} else {
+			// get the source name map
+			sourceNameAllLineLocations= (Map)fStratumAllLineLocations.get(stratum);
+		}
+		if (sourceNameAllLineLocations == null) { // the source name map doesn't exist, create it
+			sourceNameAllLineLocations= new HashMap();
+			fStratumAllLineLocations.put(stratum, sourceNameAllLineLocations);
+		} else {
+			// get the line locations
+			allLineLocations= (List)sourceNameAllLineLocations.get(sourceName);
+		}
+		if (allLineLocations == null) { // the line locations are not know, compute and store them
+			allLineLocations= referenceTypeImpl().allLineLocations(stratum, sourceName, this, fCodeIndexTable, fJavaStratumLineNumberTable);
+			sourceNameAllLineLocations.put(sourceName, allLineLocations);
+		}
+		return allLineLocations;
 	}
 
 	/**
 	 * @see Method#locationsOfLine(String, String, int)
 	 */
 	public List locationsOfLine(String stratum, String sourceName, int lineNumber) throws AbsentInformationException {
-		return new ArrayList(0);
+		if (isAbstract() || isNative()) {
+			return Collections.EMPTY_LIST;
+		}
+		return referenceTypeImpl().locationsOfLine(stratum, sourceName, lineNumber, this);
+	}
+
+	/**
+	 * Return a list which contains a location for the each disjoin range of code indice
+	 * that have bean assigned to the given lines (by the compiler or/and the VM).
+	 * Return an empty list if there is not executable code at the specified lines.
+	 */
+	protected List javaStratumLocationsOfLines(List javaLines) throws AbsentInformationException {
+		Set	tmpLocations= new TreeSet();
+		for (Iterator iter = javaLines.iterator(); iter.hasNext();) {
+			Integer key = (Integer)iter.next();
+			List indexes= javaStratumLineToCodeIndexes(key.intValue());
+			if (indexes != null) {
+				tmpLocations.addAll(indexes);
+			}
+		}
+		List locations = new ArrayList();
+		for (Iterator iter = tmpLocations.iterator(); iter.hasNext();) {
+			long index = ((Long)iter.next()).longValue();
+			int position= Arrays.binarySearch(fCodeIndexTable, index);
+			if (position == 0 || !tmpLocations.contains(new Long(fCodeIndexTable[position - 1]))) {
+				locations.add(new LocationImpl(virtualMachineImpl(), this, index));
+			}
+		}
+		return locations;
 	}
 }

@@ -16,6 +16,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ import com.sun.jdi.ClassObjectReference;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.InternalException;
-import com.sun.jdi.InvalidLineNumberException;
+import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Value;
 
@@ -61,7 +62,222 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 
 	/** Mapping of command codes to strings. */
 	private static String[] fgClassStatusStrings = null;
+
+	/**
+	 * Represent the datat about one file info contained in one stratum in the Smap.
+	 */	
+	protected static class FileInfo {
+		
+		/**
+		 * The id.
+		 */
+		protected int fFileId;
+
+		/**
+		 * The name of the source file.
+		 */
+		protected String fFileName;
+
+		/**
+		 * The path of the source file.
+		 */
+		protected String fAbsoluteFileName;
+		
+		/**
+		 * Map line number in the input source file 
+		 *   -> list of [start line in the output source file, range in the output source file].
+		 * (Integer -> List of int[2]).
+		 */
+		private HashMap fLineInfo;
+
+		/**
+		 * FileInfo constructor.
+		 * 
+		 * @param fileId the id.
+		 * @param fileName the name of the source file.
+		 * @param absoluteFileName the path of the source file (can be <code>null</code>).
+		 */
+		public FileInfo(int fileId, String fileName, String absoluteFileName) {
+			fFileId= fileId;
+			fFileName= fileName;
+			fAbsoluteFileName= absoluteFileName;
+			fLineInfo= new HashMap();
+		}
+		
+		/**
+		 * Add information about the mapping of one line.
+		 * Associate a line in the input source file to a snippet of code
+		 * in the output source file.
+		 * 
+		 * @param inputLine the line number in the input source file.
+		 * @param outputStartLine the number of the first line of the corresponding snippet in the output source file.
+		 * @param outputLineRange the size of the corresponding snippet in the output source file.
+		 */
+		public void addLineInfo(int inputLine, int outputStartLine, int outputLineRange) {
+			Integer key= new Integer(inputLine);
+			List outputLines= (List)fLineInfo.get(key);
+			if (outputLines == null) {
+				outputLines= new ArrayList();
+				fLineInfo.put(key, outputLines);
+			}
+			outputLines.add(new int[] {outputStartLine, outputLineRange});
+		}
+
+		/**
+		 * Return a list of line information about the code in the output source file
+		 * associated to the given line in the input source file.
+		 * 
+		 * @param lineNumber the line number in the input source file.
+		 * @return a List of int[2].
+		 */
+		public List getOutputLinesForLine(int lineNumber) {
+			List list= new ArrayList();
+			List outputLines= (List)fLineInfo.get(new Integer(lineNumber));
+			if (outputLines != null) {
+				for (Iterator iter = outputLines.iterator(); iter.hasNext();) {
+					int[] info = (int[])iter.next();
+					int outputLineNumber= info[0];
+					for (int i= 0, length= info[1]; i < length; i++) {
+						list.add(new Integer(outputLineNumber++));
+					}
+				}
+			}
+			return list;
+		}
+
+		/**
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object object) {
+			if (!(object instanceof FileInfo)) {
+				return false;
+			}
+			return fFileId == ((FileInfo)object).fFileId;
+		}
+
+	}
 	
+	/**
+	 * Represent the information contains in the Smap about one stratum.
+	 */
+	protected static class Stratum {
+
+		/**
+		 * The id of this stratum.
+		 */
+		private String fId;
+		
+		/**
+		 * The file info data associated to this stratum.
+		 */
+		private List fFileInfos;
+	
+		/**
+		 * Id of the primary file for this stratum.
+		 */		
+		private int fPrimaryFileId;
+		
+		/**
+		 * Map line number in the output source file -> list of line numbers in the intput source file.
+		 * (Integer -> List of Integer)
+		 */
+		private HashMap fOutputLineToInputLine;
+		
+		/**
+		 * Stratum constructor.
+		 * @param id The id of this stratum.
+		 */
+		public Stratum(String id) {
+			fId= id;
+			fFileInfos= new ArrayList();
+			fOutputLineToInputLine= new HashMap();
+			fPrimaryFileId= -1;
+		}
+		
+		/**
+		 * Add a file info to this stratum.
+		 * 
+		 * @param fileId the id.
+		 * @param fileName the name of the source file.
+		 */
+		public void addFileInfo(int fileId, String fileName) throws AbsentInformationException {
+			addFileInfo(fileId, fileName, null);
+		}
+		
+		/**
+		 * Add a file info to this stratum.
+		 * 
+		 * @param fileId the id.
+		 * @param fileName the name of the source file.
+		 * @param absoluteFileName the path of the source file.
+		 */
+		public void addFileInfo(int fileId, String fileName, String absoluteFileName) throws AbsentInformationException {
+			if (fPrimaryFileId == -1) {
+				fPrimaryFileId= fileId;
+			}
+			FileInfo fileInfo= new FileInfo(fileId, fileName, absoluteFileName);
+			if (fFileInfos.contains(fileInfo)) {
+				throw new AbsentInformationException(MessageFormat.format("SMAP parsing: {0} already used as file id in {1}", new String[] {Integer.toString(fileId), fId}));
+			}
+			fFileInfos.add(fileInfo);
+		}
+
+		/**
+		 * Add line mapping information.
+		 * 
+		 * @param inputStartLine number of the first line in the input source file.
+		 * @param lineFileId id of the input source file.
+		 * @param repeatCount number of iterations.
+		 * @param outputStartLine number of the first line in the output source file.
+		 * @param outputLineIncrement number of line to increment at each iteration.
+		 * @throws AbsentInformationException
+		 */
+		public void addLineInfo(int inputStartLine, int lineFileId, int repeatCount, int outputStartLine, int outputLineIncrement) throws AbsentInformationException {
+			FileInfo fileInfo= null;
+			// get the FileInfo object
+			for (Iterator iter = fFileInfos.iterator(); iter.hasNext();) {
+				FileInfo element = (FileInfo)iter.next();
+				if (element.fFileId == lineFileId) {
+					fileInfo= element;
+				}
+			}
+			if (fileInfo == null) {
+				throw new AbsentInformationException(MessageFormat.format("SMAP parsing: {0} is not a valid lineFileId.", new String[] {Integer.toString(lineFileId)}));
+			}
+			// add the data to the different hash maps.
+			for (int i= 0; i < repeatCount; i++, inputStartLine++) {
+				fileInfo.addLineInfo(inputStartLine, outputStartLine, outputLineIncrement);
+				for (int j= 0; j < outputLineIncrement; j++, outputStartLine++) {
+					Integer key= new Integer(outputStartLine);
+					List inputLines= (List)fOutputLineToInputLine.get(key);
+					if (inputLines == null) {
+						inputLines= new ArrayList();
+						fOutputLineToInputLine.put(key, inputLines);
+					}
+					inputLines.add(new int[] {lineFileId, inputStartLine});
+				}
+			}
+		}
+
+		/**
+		 * Return the FileInfo object for the specified source name.
+		 * Return <code>null</code> if the specified name is the source name of no file info.
+		 * @param sourceName the source name to search.
+		 */
+		public FileInfo getFileInfo(String sourceName) {
+			for (Iterator iter = fFileInfos.iterator(); iter.hasNext();) {
+				FileInfo fileInfo = (FileInfo)iter.next();
+				if (fileInfo.fFileName.equals(sourceName)) {
+					return fileInfo;
+				}
+			}
+			return null;
+		}
+
+	}
+	
+
+
 	/** ReferenceTypeID that corresponds to this reference. */
 	private JdwpReferenceTypeID fReferenceTypeID;
 
@@ -75,8 +291,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	private List fAllFields = null;
 	private List fVisibleFields = null;
 	private List fAllInterfaces = null;
-	private List fAllLineLocations = null;
-	private String fSourcename = null;
+	private Map fStratumAllLineLocations = null;
+	private String fSourceName = null;
 	private int fModifierBits = -1;
 	private ClassLoaderReferenceImpl fClassLoader = null;
 	private ClassObjectReferenceImpl fClassObject = null;
@@ -85,6 +301,25 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	private int fClassFileVersion;	// HCR addition.
 	private boolean fIsHCREligible;	// HCR addition.
 	private boolean fIsVersionKnown;	// HCR addition.
+	
+	private boolean fSourceDebugExtensionAvailable= true; // JSR-045 addition
+	
+	/**
+	 * The default stratum id.
+	 */
+	private String fDefaultStratumId; // JSR-045 addition
+
+	/**
+	 * A map of the defined strata.
+	 * Map stratum id -> Stratum object.
+	 * (String -> Stratum).
+	 */
+	private Map fStrata; // JSR-045 addition
+
+	/**
+	 * The source map string returned by the VM.
+	 */
+	private String fSmap; // JSR-045 addition
 	
 	/**
 	 * Creates new instance.
@@ -141,16 +376,22 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		fAllFields = null;
 		fVisibleFields = null;
 		fAllInterfaces = null;
-		fAllLineLocations = null;
-		fSourcename = null;
+		fStratumAllLineLocations = null;
+		fSourceName = null;
 		fModifierBits = -1;
 		fClassLoader = null;
 		fClassObject = null;
 		fGotClassFileVersion = false;
 		
+		// JSR-045
+		fSourceDebugExtensionAvailable= true;
+		fDefaultStratumId= null;
+		fStrata= null;
+		fSmap= null;
+		
 		// The following cached results are stored higher up in the class hierarchy.
 		fSignature = null;
-		fSourcename = null;
+		fSourceName = null;
 	}
 	
 	/** 
@@ -716,25 +957,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns a List filled with all Location objects that map to the given line number. 
 	 */
 	public List locationsOfLine(int line) throws AbsentInformationException {
-		Iterator allMethods = methods().iterator();
-		AbsentInformationException absentInformationException = null;
-		while (allMethods.hasNext()) {
-			MethodImpl method = (MethodImpl)allMethods.next();
-			if (method.isAbstract() || method.isNative()) {
-					continue;
-			}
-			try {	
-				return method.locationsOfLine(line);
-			} catch (InvalidLineNumberException e) {
-				continue;
-			} catch (AbsentInformationException e) {
-				absentInformationException = e;
-			}
-		}
-		if (absentInformationException != null) {
-			throw absentInformationException;
-		}
-		throw new InvalidLineNumberException(JDIMessages.getString("ReferenceTypeImpl.No_executable_code_at_line__5") + line  + JDIMessages.getString("ReferenceTypeImpl._6")); //$NON-NLS-1$ //$NON-NLS-2$
+		return locationsOfLine(virtualMachine().getDefaultStratum(), null, line);
 	}
 	
 	/**
@@ -806,9 +1029,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	public String name() {
 		// Make sure that we know the signature, from which the name is derived.
-		if (fName == null)
+		if (fName == null) {
 			setName(signatureToName(signature()));
-		
+		}
 		return fName;
 	}
 	
@@ -816,9 +1039,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns the JNI-style signature for this type. 
 	 */
 	public String signature() {
-		if (fSignature != null)
+		if (fSignature != null) {
 			return fSignature;
-
+		}
 		initJdwpRequest();
 		try {
 	   		JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SIGNATURE, this);
@@ -860,27 +1083,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns an identifing name for the source corresponding to the declaration of this type.
 	 */
 	public String sourceName() throws AbsentInformationException {
-		if (fSourcename != null) {
-			return fSourcename;
-		}
-
-		initJdwpRequest();
-		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SOURCE_FILE, this);
-			if (replyPacket.errorCode() == JdwpReplyPacket.ABSENT_INFORMATION)
-				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.Source_name_is_not_known_7")); //$NON-NLS-1$
-			else
-				defaultReplyErrorHandler(replyPacket.errorCode());
-		
-			DataInputStream replyData = replyPacket.dataInStream();
-			fSourcename = readString("source name", replyData); //$NON-NLS-1$
-			return fSourcename;
-		} catch (IOException e) {
-			defaultIOExceptionHandler(e);
-			return null;
-		} finally {
-			handledJdwpRequest();
-		}
+		// sourceNames list in never empty, an AbsentInformationException is thrown
+		// if the source name is not known.
+		return (String)sourceNames(virtualMachine().getDefaultStratum()).get(0);
 	}
 
 	/**
@@ -975,21 +1180,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns the Location objects for each executable source line in this reference type.
 	 */
 	public List allLineLocations() throws AbsentInformationException {
-		if (fAllLineLocations != null) {
-			return fAllLineLocations;
-		}
-
-		Iterator allMethods = methods().iterator();
-		List locations = new ArrayList();
-		while (allMethods.hasNext()) {
-			MethodImpl method = (MethodImpl)allMethods.next();
-			if (method.isAbstract() || method.isNative()) {
-				continue;
-			}
-			locations.addAll(method.allLineLocations());
-		}
-		fAllLineLocations = locations;
-		return fAllLineLocations;
+		return allLineLocations(virtualMachine().getDefaultStratum(), null);
 	}
 	
 	/**
@@ -1118,51 +1309,526 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	/**
 	 * @see ReferenceType#sourceNames(String)
 	 */
-	public List sourceNames(String arg0) throws AbsentInformationException {
-		return null;
+	public List sourceNames(String stratumId) throws AbsentInformationException {
+		List list= new ArrayList();
+		Stratum stratum= getStratum(stratumId);
+		if (stratum != null) {
+			// return the source names defined for this stratum in the Smap.
+			List fileInfos= stratum.fFileInfos;
+			if (fileInfos.isEmpty()) {
+				throw new AbsentInformationException("No source names for this stratum.");
+			}
+			for (Iterator iter = stratum.fFileInfos.iterator(); iter.hasNext();) {
+				list.add(((FileInfo) iter.next()).fFileName);
+			}
+			return list;
+		}
+		// Java stratum
+		if (fSourceName == null) {
+			getSourceName();
+		}
+		list.add(fSourceName);
+		return list;
 	}
 
 	/**
 	 * @see ReferenceType#sourcePaths(String)
 	 */
-	public List sourcePaths(String arg0) throws AbsentInformationException {
-		return null;
+	public List sourcePaths(String stratumId) throws AbsentInformationException {
+		List list= new ArrayList();
+		Stratum stratum= getStratum(stratumId);
+		if (stratum != null) {
+			// return the source paths defined for this stratum in the Smap.
+			for (Iterator iter = stratum.fFileInfos.iterator(); iter.hasNext();) {
+				FileInfo fileInfo= (FileInfo) iter.next();
+				String path= fileInfo.fAbsoluteFileName;
+				if (path == null) {
+					path= getPath(fileInfo.fFileName);
+				}
+				list.add(path);
+			}
+			return list;
+		}
+		// Java stratum
+		if (fSourceName == null) {
+			getSourceName();
+		}
+		list.add(getPath(fSourceName));
+		return list;
 	}
-
+	
 	/**
 	 * @see ReferenceType#sourceDebugExtension()
 	 */
 	public String sourceDebugExtension() throws AbsentInformationException {
-		return null;
+		if (isSourceDebugExtensionAvailable()) {
+			return fSmap;
+		}
+		if (!virtualMachine().canGetSourceDebugExtension()) {
+			throw new UnsupportedOperationException();
+		}
+		throw new AbsentInformationException();
 	}
 
 	/**
 	 * @see ReferenceType#allLineLocations(String, String)
 	 */
-	public List allLineLocations(String arg0, String arg1)
-		throws AbsentInformationException {
-		return null;
+	public List allLineLocations(String stratum, String sourceName) throws AbsentInformationException {
+		Iterator allMethods = methods().iterator();
+		if (stratum == null) { // if stratum not defined use the default stratum
+			stratum= defaultStratum();
+		}
+		List allLineLocations= null;
+		Map sourceNameAllLineLocations= null;
+		if (fStratumAllLineLocations == null) { // the stratum map doesn't exist, create it
+			fStratumAllLineLocations= new HashMap();
+		} else {
+			// get the source name map
+			sourceNameAllLineLocations= (Map)fStratumAllLineLocations.get(stratum);
+		}
+		if (sourceNameAllLineLocations == null) { // the source name map doesn't exist, create it
+			sourceNameAllLineLocations= new HashMap();
+			fStratumAllLineLocations.put(stratum, sourceNameAllLineLocations);
+		} else {
+			// get the line locations
+			allLineLocations= (List)sourceNameAllLineLocations.get(sourceName);
+		}
+		if (allLineLocations == null) { // the line locations are not know, compute and store them
+			allLineLocations = new ArrayList();
+			while (allMethods.hasNext()) {
+				MethodImpl method = (MethodImpl)allMethods.next();
+				if (method.isAbstract() || method.isNative()) {
+					continue;
+				}
+				allLineLocations.addAll(method.allLineLocations(stratum, sourceName));
+			}
+			sourceNameAllLineLocations.put(sourceName, allLineLocations);
+		}
+		return allLineLocations;
 	}
 
 	/**
 	 * @see ReferenceType#locationsOfLine(String, String, int)
 	 */
-	public List locationsOfLine(String arg0, String arg1, int arg2)
-		throws AbsentInformationException {
-		return null;
+	public List locationsOfLine(String stratum, String sourceName, int lineNumber) throws AbsentInformationException {
+		Iterator allMethods = methods().iterator();
+		List locations= new ArrayList();
+		while (allMethods.hasNext()) {
+			MethodImpl method = (MethodImpl)allMethods.next();
+			if (method.isAbstract() || method.isNative()) {
+					continue;
+			}
+			// one line in the input source can be translate in multiple lines in different
+			// methods in the output source. We need all these locations.
+			locations.addAll(locationsOfLine(stratum, sourceName, lineNumber, method));
+		}
+		return locations;
 	}
 
 	/**
 	 * @see ReferenceType#availableStrata()
 	 */
 	public List availableStrata() {
-		return null;
+		List list= new ArrayList();
+		// The strata defined in the Smap.
+		if (isSourceDebugExtensionAvailable()) {
+			list.add(fStrata.keySet());
+		}
+		// plus the Java stratum
+		list.add(VirtualMachineImpl.JAVA_STRATUM_NAME);
+		return list;
 	}
 
 	/**
 	 * @see ReferenceType#defaultStratum()
 	 */
 	public String defaultStratum() {
+		if (isSourceDebugExtensionAvailable()) {
+			return fDefaultStratumId;
+		}
+		// if not defined, return Java.
+		return VirtualMachineImpl.JAVA_STRATUM_NAME;
+	}
+
+	/**
+	 * Generate a source path from the given source name.
+	 * The returned string is the package name of this type converted to a platform dependent path
+	 * followed by the given source name.
+	 * For example, on a Unix platform, the type org.my.TestJsp with the source name test.jsp would
+	 * return "org/my/test.jsp".
+	 */
+	private String getPath(String sourceName) {
+		String name= name();
+		int lastDotOffset= name.lastIndexOf('.');
+		if (lastDotOffset == -1) {
+			return sourceName;
+		}
+		char fileSeparator= System.getProperty("file.separator").charAt(0);
+		return name.substring(0, lastDotOffset).replace('.', fileSeparator) + fileSeparator + sourceName;
+	}
+
+	/**
+	 * Return the stratum object for this stratum Id.
+	 * If the the specified stratum id is not defined for this reference type,
+	 * return the stratum object for the default stratum.
+	 * If the specified stratum id (or the default stratum id, if the specified
+	 * stratum id is not defined) is <code>Java</code>, return <code>null</code>.
+	 */
+	private Stratum getStratum(String stratumId) {
+		if (!VirtualMachineImpl.JAVA_STRATUM_NAME.equals(stratumId) && isSourceDebugExtensionAvailable()) {
+			if (stratumId == null || !fStrata.keySet().contains(stratumId)) {
+				stratumId= fDefaultStratumId;
+			}
+			if (!VirtualMachineImpl.JAVA_STRATUM_NAME.equals(stratumId)) {
+				return (Stratum)fStrata.get(stratumId);
+			}
+		}
 		return null;
 	}
+
+	/**
+	 * Get the source debug extension from the VM.
+	 * @throws AbsentInformationException
+	 */	
+	private void getSourceDebugExtension() throws AbsentInformationException {
+		initJdwpRequest();
+		try {
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SOURCE_DEBUG_EXTENSION, this);
+			if (replyPacket.errorCode() == JdwpReplyPacket.ABSENT_INFORMATION) {
+				throw new AbsentInformationException("Source Debug Extension not defined");
+			}
+			defaultReplyErrorHandler(replyPacket.errorCode());
+			DataInputStream replyData = replyPacket.dataInStream();
+			fSmap= readString("source debug extension", replyData);
+		} catch (IOException e) {
+			defaultIOExceptionHandler(e);
+		} finally {
+			handledJdwpRequest();
+		}
+		// TODO: remove the workaround when the J9SC20030415 bug is fixed (see bug 96485 of the vendor bug system).
+		// Workaround to a J9SC bug. It returns an empty string instead of a ABSENT_INFORMATION
+		// error if the source debug extension is not available.
+		if ("".equals(fSmap)) {
+			throw new AbsentInformationException("Source Debug Extension not defined");
+		}
+		// parse the source map.
+		fStrata= new HashMap();
+		SourceDebugExtensionParser.parse(fSmap, this);
+	}
+	
+	/**
+	 * Get the name of the Java source file from the VM.
+	 * @throws AbsentInformationException
+	 */
+	private void getSourceName() throws AbsentInformationException {
+		if (fSourceName != null || isSourceDebugExtensionAvailable()) {
+			return;
+		}
+		initJdwpRequest();
+		try {
+			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SOURCE_FILE, this);
+			if (replyPacket.errorCode() == JdwpReplyPacket.ABSENT_INFORMATION)
+				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.Source_name_is_not_known_7")); //$NON-NLS-1$
+			else
+				defaultReplyErrorHandler(replyPacket.errorCode());
+		
+			DataInputStream replyData = replyPacket.dataInStream();
+			fSourceName = readString("source name", replyData); //$NON-NLS-1$
+		} catch (IOException e) {
+			defaultIOExceptionHandler(e);
+		} finally {
+			handledJdwpRequest();
+		}
+	}
+
+	/**
+	 * Check in the source debug extension is available.
+	 * To call before doing operations which need data from the Smap.
+	 * Return <code>false</code> if the source debug extension is not available
+	 * for any reason. <code>true</code> indicates that the source debug extension
+	 * is available and the information has been parsed and stored in the 
+	 * maps and lists.
+	 */
+	private synchronized boolean isSourceDebugExtensionAvailable() {
+		if (!fSourceDebugExtensionAvailable) {
+			return false;
+		}
+		if (!virtualMachine().canGetSourceDebugExtension()) {
+			fSourceDebugExtensionAvailable= false;
+			return false;
+		}
+		if (fSmap == null) {
+			try {
+				 getSourceDebugExtension();
+			} catch (AbsentInformationException e) {
+				fSourceDebugExtensionAvailable= false;
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Set the output file name, i.e. the .java file used to generate
+	 * the bytecode.
+	 */
+	protected void setOutputFileName(String outputFileName) {
+		fSourceName= outputFileName;
+	}
+	
+	/**
+	 * Set the default stratum. This stratum will be used for the method
+	 * on strata related data, but with no stratum parameter.
+	 */
+	protected void setDefaultStratumId(String defaultStratumId) {
+		fDefaultStratumId= defaultStratumId;
+	}
+	
+	/**
+	 * Add a new stratum to this type.
+	 */
+	protected void addStratum(Stratum stratum) {
+		fStrata.put(stratum.fId, stratum);
+	}
+
+	/**
+	 * Return the name of the input source file of which the given code index
+	 * is part of the translation, for this stratum.
+	 * If the code at the given index is not a part of the translation of
+	 * the given stratum code, return the name of the primary input source file.
+	 * 
+	 * @param codeIndex the index of the code.
+	 * @param method the method where is the code.
+	 * @param stratumId
+	 */
+	protected String sourceName(long codeIndex, MethodImpl method, String stratumId) throws AbsentInformationException {
+		Stratum stratum= getStratum(stratumId);
+		if (stratum != null) {
+			FileInfo fileInfo= fileInfo(codeIndex, method, stratum);
+			if (fileInfo != null) {
+				return fileInfo.fFileName;
+			}
+		}
+		// Java stratum
+		if (fSourceName == null) {
+			getSourceName();
+		}
+		return fSourceName;
+	}
+	
+	/**
+	 * Return the FileInfo object of the input source file of which the given code index
+	 * is part of the translation, for this stratum.
+	 * If the code at the given index is not a part of the translation of
+	 * the given stratum code, return the FileInfo of the primary input source file.
+	 * 
+	 * @param codeIndex the index of the code.
+	 * @param method the method where is the code.
+	 * @param stratum
+	 */
+	private FileInfo fileInfo(long codeIndex, MethodImpl method, Stratum stratum) {
+		int fileId= stratum.fPrimaryFileId;
+		if (stratum.fFileInfos.size() > 1) {
+			List lineInfos= null;
+			try {
+				lineInfos = lineInfos(codeIndex, method, stratum);
+			} catch (AbsentInformationException e) {
+				// nothing to do, use the primary file id.
+			}
+			if (lineInfos != null) {
+				fileId= ((int[])lineInfos.get(0))[0];
+			}
+		}
+		for (Iterator iter = stratum.fFileInfos.iterator(); iter.hasNext();) {
+			FileInfo fileInfo = (FileInfo)iter.next();
+			if (fileInfo.fFileId == fileId) {
+				return fileInfo;
+			}
+		}
+		// should never return null
+		return null;
+	}
+
+	/**
+	 * Return the list of line number in the input files of the stratum associated
+	 * with the code at the given address.
+	 * 
+	 * @param codeIndex the index of the code.
+	 * @param method the method where is the code.
+	 * @param stratum
+	 * @return List of int[2]: [fileId, inputLineNumber]
+	 */
+	private List lineInfos(long codeIndex, MethodImpl method, Stratum stratum) throws AbsentInformationException {
+		int outputLineNumber= -1;
+		try {
+			outputLineNumber = method.javaStratumLineNumber(codeIndex);
+		} catch (NativeMethodException e) { // Occurs in SUN VM.
+			return null;
+		}
+		if (outputLineNumber != -1) {
+			return (List)stratum.fOutputLineToInputLine.get(new Integer(outputLineNumber));
+		}
+		return null;
+	}
+
+	/**
+	 * Return the path of the input source file of which the given code index
+	 * is part of the translation, for this stratum.
+	 * If the code at the given index is not a part of the translation of
+	 * the given stratum code, return the path of the primary input source file.
+	 * 
+	 * @param codeIndex the index of the code.
+	 * @param method the method where is the code.
+	 * @param stratumId
+	 */
+	protected String sourcePath(long codeIndex, MethodImpl method, String stratumId) throws AbsentInformationException {
+		Stratum stratum= getStratum(stratumId);
+		if (stratum != null) {
+			FileInfo fileInfo= fileInfo(codeIndex, method, stratum);
+			if (fileInfo != null) {
+				String path= fileInfo.fAbsoluteFileName;
+				if (path == null) {
+					return getPath(fileInfo.fFileName);
+				}
+				return path;
+			}
+		}
+		// Java stratum
+		if (fSourceName == null) {
+			getSourceName();
+		}
+		return getPath(fSourceName);
+	}
+
+	/**
+	 * Return the number of the line of which the given code index
+	 * is part of the translation, for this stratum.
+	 * 
+	 * @param codeIndex the index of the code.
+	 * @param method the method where is the code.
+	 * @param stratumId
+	 */
+	protected int lineNumber(long codeIndex, MethodImpl method, String stratumId) {
+		Stratum stratum= getStratum(stratumId);
+		try {
+			if (stratum != null) {
+				List lineInfos = lineInfos(codeIndex, method, stratum);
+				if (lineInfos != null) {
+					return ((int[])lineInfos.get(0))[1];
+				}
+				return LocationImpl.LINE_NR_NOT_AVAILABLE;
+			}
+			// Java stratum
+			try {
+				return method.javaStratumLineNumber(codeIndex);
+			} catch (NativeMethodException e) { // Occurs in SUN VM.
+				return LocationImpl.LINE_NR_NOT_AVAILABLE;
+			}
+		} catch (AbsentInformationException e) {
+			return LocationImpl.LINE_NR_NOT_AVAILABLE;
+		}
+	}
+
+	/**
+	 * Return the location which are part of the translation of the given line,
+	 * in the given stratum in the source file with the given source name.
+	 * If sourceName is <code>null</code>, return the locations for all source file
+	 * in the given stratum.
+	 * The returned location are in the given method.
+	 * 
+	 * @param stratumId the stratum id.
+	 * @param sourceName the name of the source file.
+	 * @param lineNumber  the number of the line.
+	 * @param method
+	 * @throws AbsentInformationException if the specified sourceName is not valid.
+	 */
+	public List locationsOfLine(String stratumId, String sourceName, int lineNumber, MethodImpl method) throws AbsentInformationException {
+		Stratum stratum= getStratum(stratumId);
+		List javaLines= new ArrayList();
+		if (stratum != null) {
+			boolean found= false;
+			for (Iterator iter = stratum.fFileInfos.iterator(); iter.hasNext() && !found;) {
+				FileInfo fileInfo = (FileInfo)iter.next();
+				if (sourceName == null || (found= sourceName.equals(fileInfo.fFileName))) {
+					javaLines.addAll(fileInfo.getOutputLinesForLine(lineNumber));
+				}
+			}
+			if (sourceName != null && !found) {
+				throw new AbsentInformationException("No information for the specified sourceName.");
+			}
+		} else {   // Java stratum
+			javaLines.add(new Integer(lineNumber));
+		}
+		return method.javaStratumLocationsOfLines(javaLines);
+	}
+
+	/**
+	 * Return the locations of all lines in the given source file of the given stratum which
+	 * are included in the given method.
+	 * If sourceName is <code>null</code>, return the locations for all source file
+	 * in the given stratum.
+	 * 
+	 * @param stratumId the stratum id
+	 * @param sourceName the name of the source file
+	 * @param method 
+	 * @param codeIndexTable the list of code indexes for the method, as get from the VM/JDWP
+	 * @param javaStratumLineNumberTable the list of line numbers in the java stratum for the method, as get from the VM/JDWP
+	 * @return
+	 */
+	public List allLineLocations(String stratumId, String sourceName, MethodImpl method, long[] codeIndexTable, int[] javaStratumLineNumberTable) throws AbsentInformationException {
+		Stratum stratum= getStratum(stratumId);
+		if (stratum != null) {
+			int[][] lineInfoTable= new int[codeIndexTable.length][];
+			if (sourceName == null) {
+				int lastIndex=0;
+				for (int i = 0, length= javaStratumLineNumberTable.length; i < length; i++) {
+					// for each executable line in the java source, get the associated lines in the stratum source
+					List lineInfos= (List)stratum.fOutputLineToInputLine.get(new Integer(javaStratumLineNumberTable[i]));
+					if (lineInfos != null) {
+						int[] lineInfo= (int[])lineInfos.get(0);
+						if (!lineInfo.equals(lineInfoTable[lastIndex])) {
+							lineInfoTable[i]= lineInfo;
+							lastIndex= i;
+						}
+					}
+				}
+			} else { // sourceName != null
+				FileInfo fileInfo= stratum.getFileInfo(sourceName);
+				if (fileInfo == null) {
+					throw new AbsentInformationException("No information for the specified sourceName.");
+				}
+				int fileId= fileInfo.fFileId;
+				int lastIndex= 0;
+				for (int i = 0, length= javaStratumLineNumberTable.length; i < length; i++) {
+					List lineInfos= (List)stratum.fOutputLineToInputLine.get(new Integer(javaStratumLineNumberTable[i]));
+					if (lineInfos != null) {
+						for (Iterator iter = lineInfos.iterator(); iter.hasNext();) {
+							int[] lineInfo= (int[])iter.next();
+							if (lineInfo[0] == fileId) {
+								if (!lineInfo.equals(lineInfoTable[lastIndex])) {
+									lineInfoTable[i]= lineInfo;
+									lastIndex= i;
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
+			List locations= new ArrayList();
+			for (int i = 0, length= lineInfoTable.length; i < length; i++) {
+				if (lineInfoTable[i] != null) {
+					locations.add(new LocationImpl(virtualMachineImpl(), method, codeIndexTable[i]));
+				}
+			}
+			return locations;
+		}
+		// Java stratum
+		List result = new ArrayList();
+		for (int i = 0; i < codeIndexTable.length; i++) {
+			result.add(new LocationImpl(virtualMachineImpl(), method, codeIndexTable[i]));
+		}
+		return result;
+	}
+
 }
