@@ -1088,7 +1088,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 							if (f != null) {
 								IBreakpoint[] bps = jt.getBreakpoints();
 								//last line of the eval method in ScrapbookMain1?
-								if (e.getDetail() == DebugEvent.STEP_END && f.getLineNumber() == 20
+								int lineNumber = f.getLineNumber();
+								if (e.getDetail() == DebugEvent.STEP_END && (lineNumber == 20 || lineNumber == 21)
 									&& f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") //$NON-NLS-1$
 									&& jt.getDebugTarget() == fVM) { 
 									setThread(jt);
