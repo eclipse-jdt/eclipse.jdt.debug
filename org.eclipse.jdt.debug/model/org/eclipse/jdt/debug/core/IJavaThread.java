@@ -154,7 +154,19 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * @since 2.0
 	 */
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail, boolean hitBreakpoints) throws DebugException; 
-	
+
+	/**
+	 * Add the given runnable to the list of runnables associated with this thread.
+	 * Those runnables are executed one after the other, this ensure that one runnable
+	 * have no side effect to an other.
+	 * This method should be use to execute any code which performs an operation like
+	 * a method invocation.
+	 * 
+	 * @param runnable the runnable to execute.
+	 * @since 2.1
+	 */	
+	public void queueRunnable(Runnable runnable); 
+
 	/**
 	 * Attempts to terminate the currently executing <code>IEvaluationRunnable</code>
 	 * in this thread, if any. 

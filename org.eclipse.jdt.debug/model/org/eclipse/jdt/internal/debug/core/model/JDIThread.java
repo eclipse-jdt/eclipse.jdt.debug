@@ -167,6 +167,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Whether or not this thread is currently suspending (user-requested).
 	 */
 	private boolean fIsSuspending= false;
+
+	private AsyncThread fAsyncThread;
 		
 	/**
 	 * Creates a new thread on the underlying thread reference
@@ -606,6 +608,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			fHonorBreakpoints= true;
 			fireSuspendEvent(evaluationDetail);
 		}
+	}
+	
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#queueRunnable(Runnable)
+	 */
+	public void queueRunnable(Runnable evaluation) {
+		if (fAsyncThread == null) {
+			fAsyncThread= new AsyncThread();
+		}
+		fAsyncThread.addRunnable(evaluation);
 	}
 	
 	/**
@@ -2335,4 +2347,59 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		stepInto();
 	}
 	
+	/**
+	 * Class which managed the queue of runnable associated with this thread.
+	 */
+	private class AsyncThread implements Runnable {
+		
+		private ArrayList fRunnables;
+		
+		private Thread fThread;
+		
+		public AsyncThread() {
+			fRunnables= new ArrayList();
+		}
+		
+		public void addRunnable(Runnable runnable) {
+			synchronized (this) {
+				fRunnables.add(runnable);
+				if (fThread == null) {
+					try {
+						fThread= new Thread(this, "JDI async thread - " + getName()); //$NON-NLS-1$
+					} catch (DebugException e) {
+						JDIDebugPlugin.log(e);
+						return;
+					}
+					fThread.start();
+				} 
+			}
+		}
+		
+		public void clearQueue() {
+			synchronized (this) {
+				fRunnables.clear();
+			}
+		}
+		
+		public void run() {
+			while (true) {
+				Runnable nextRunnable= null;
+				synchronized (this) {
+					if (fRunnables.isEmpty()) {
+						fThread= null;
+						return;
+					} else {
+						nextRunnable= (Runnable)fRunnables.get(0);
+						fRunnables.remove(0);
+					}
+				}
+				try {
+					nextRunnable.run();
+				} catch (Throwable e) {
+					JDIDebugPlugin.log(e);
+				}
+			}
+		}
+		
+	}
 }

@@ -33,7 +33,6 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * A watch expression is an expression which is re-evaluated after every thread
@@ -52,15 +51,14 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 	 */
 	private final class EvaluationRunnable implements Runnable {
 		
-		private final IJavaStackFrame javaStackFrame;
+		private final IJavaStackFrame fJavaStackFrame;
 		
 		private EvaluationRunnable(IJavaStackFrame javaStackFrame) {
-			super();
-			this.javaStackFrame= javaStackFrame;
+			fJavaStackFrame= javaStackFrame;
 		}
 		
 		public void run() {
-			IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(getProject(javaStackFrame), fDebugTarget);
+			IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(getProject(fJavaStackFrame), fDebugTarget);
 			// the evaluation listener
 			IEvaluationListener listener= new IEvaluationListener() {
 				public void evaluationComplete(IEvaluationResult result) {
@@ -71,21 +69,12 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 					}
 					setPending(false);
 					refresh();
-					synchronized (this) {
-						notifyAll();
-					}
 				}
 			};
-			synchronized (listener) {
-				try {
-					evaluationEngine.evaluate(fExpressionText, javaStackFrame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-				} catch (DebugException e) {
-					JDIDebugPlugin.log(e);
-				}
-				try {
-					listener.wait();
-				} catch (InterruptedException e) {
-				}
+			try {
+				evaluationEngine.evaluate(fExpressionText, fJavaStackFrame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
+			} catch (DebugException e) {
+				JDIDebugPlugin.log(e);
 			}
 		}
 	}
@@ -191,7 +180,7 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 								stackFrame= (IJavaStackFrame) ((IJavaThread) source).getTopStackFrame();
 							} catch (DebugException e) {
 							}
-							if (stackFrame != null) {
+							if (preEvaluationCheck(stackFrame, true)) {
 								final IJavaStackFrame finalStackFrame= stackFrame;
 								Runnable runnable= new Runnable() {
 									public void run() {
@@ -259,17 +248,24 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 	 * @param implicit indicate if the evaluation is implicite or not. If the
 	 * expression is disabled, implicite evaluation wont be performed.
 	 */
-	public void evaluateExpression(final IJavaStackFrame javaStackFrame, boolean implicit) {
+	public void evaluateExpression(IJavaStackFrame javaStackFrame, boolean implicit) {
+		if (preEvaluationCheck(javaStackFrame, implicit)) {
+			fDebugTarget= (IJavaDebugTarget)javaStackFrame.getDebugTarget();
+			((IJavaThread)javaStackFrame.getThread()).queueRunnable(new EvaluationRunnable(javaStackFrame));
+		}
+	}
+
+	private boolean preEvaluationCheck(IJavaStackFrame javaStackFrame, boolean implicit) {
 		if (javaStackFrame == null) {
 			refresh();
-			return;
+			return false;
 		}
 		if (implicit && !isEnabled()) {
 			if (fResultValue != null || hasError()) {
 				setObsolete(true);
 				refresh();
 			}
-			return;
+			return false;
 		}
 		fResultValue= null;
 		setHasError(false);
@@ -277,15 +273,11 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 		if (getProject(javaStackFrame) == null) {
 			setHasError(true);
 			refresh();
-			return;
+			return false;
 		}
 		setPending(true);
 		refresh();
-		fDebugTarget= (IJavaDebugTarget)javaStackFrame.getDebugTarget();
-		Display display = JDIDebugUIPlugin.getStandardDisplay(); 
-		if (!display.isDisposed()) {
-			display.asyncExec(new EvaluationRunnable(javaStackFrame));
-		}
+		return true;
 	}
 
 	/**

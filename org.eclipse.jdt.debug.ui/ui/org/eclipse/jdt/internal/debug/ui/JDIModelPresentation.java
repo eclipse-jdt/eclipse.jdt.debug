@@ -11,21 +11,16 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
@@ -34,11 +29,8 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -49,7 +41,6 @@ import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -130,19 +121,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	
 	protected HashMap fAttributes= new HashMap(3);
 	
-	/**
-	 * A mapping of detail listeners (IValueDetailListener) to the values (IValue) that they
-	 * are currently expecting details from.
-	 */
-	private HashMap fRequestedValues= new HashMap();
-	
-	/**
-	 * A map of <code>IJavaThread</code>s to the detail computers active/waiting to
-	 * perform a detail evaluation. When one evaluation completes, another may
-	 * start (as evaluations must be serial).
-	 */
-	private static HashMap fgDetailQueue = new HashMap(5);
-	
 	static final Point BIG_SIZE= new Point(22, 16);
 	
 	private ImageDescriptorRegistry fJavaElementImageRegistry;
@@ -150,17 +128,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected static final String fgStringName= "java.lang.String"; //$NON-NLS-1$
 	
-	/**
-	 * The signature of <code>java.lang.Object#toString()</code>,
-	 * used to evaluate 'toString()' for displaying details of values.
-	 */
-	private static final String fgToStringSignature = "()Ljava/lang/String;"; //$NON-NLS-1$
-	/**
-	 * The selector of <code>java.lang.Object#toString()</code>,
-	 * used to evaluate 'toString()' for displaying details of values.
-	 */
-	private static final String fgToString = "toString"; //$NON-NLS-1$
-
 	private JavaElementLabelProvider fJavaLabelProvider;
 	
 	public JDIModelPresentation() {
@@ -172,11 +139,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	public void computeDetail(IValue value, IValueDetailListener listener) {
 		IJavaThread thread = getEvaluationThread((IJavaDebugTarget)value.getDebugTarget());
-		try {
-			DefaultJavaValueDetailProvider detailProvider = new DefaultJavaValueDetailProvider();
-			detailProvider.computeDetail(value, thread, listener);
-		} catch (DebugException de) {
-			JDIDebugUIPlugin.log(de);
+		if (thread == null) {
+			listener.detailComputed(value, DebugUIMessages.getString("JDIModelPresentation.no_suspended_threads")); //$NON-NLS-1$
+		} else {
+			JavaDetailFormattersManager.getDefault().computeValueDetail((IJavaValue)value, thread, listener);
 		}
 	}
 	
@@ -1517,262 +1483,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	interface IValueDetailProvider {
 		public void computeDetail(IValue value, IJavaThread thread, IValueDetailListener listener) throws DebugException;
 	}
-	
-	class DefaultJavaValueDetailProvider implements IValueDetailProvider {		
-		private StringBuffer fResultBuffer;
-		private Thread fDetailThread;
-		private IValue fValue;
-		private IJavaThread fJavaThread;
-		private IJavaProject fJavaProject;
-		private IValueDetailListener fListener;
-		private static final int EVAL_TIMEOUT = 3000;		
-		
-		public DefaultJavaValueDetailProvider() {
-			fResultBuffer = new StringBuffer(50);
-		}
-		
-		private void notifyListener() {
-			fListener.detailComputed(fValue, fResultBuffer.toString());
-			List queue = (List)fgDetailQueue.get(fJavaThread);
-			queue.remove(this);
-			if (queue.isEmpty()) {
-				fgDetailQueue.remove(fJavaThread);
-			} else {
-				DefaultJavaValueDetailProvider next = (DefaultJavaValueDetailProvider)queue.get(0);
-				try {
-					next.computeDetail();
-				} catch (DebugException e) {
-					JDIDebugUIPlugin.log(e);
-				}
-			}								
-		}
-		
-		public void computeDetail(IValue value, IJavaThread thread, IValueDetailListener listener) throws DebugException {
-			
-			fValue = value;
-			fListener = listener;
-			fJavaThread = thread;
-			fJavaProject= getJavaProject();
-						
-			// check the queue to avoid concurrent evaluations
-			List queue = (List)fgDetailQueue.get(fJavaThread);
-			if (queue == null) {
-				queue = new Vector(2);
-				fgDetailQueue.put(fJavaThread, queue);
-			}
-			synchronized (queue) {
-				queue.add(this);
-				if (queue.size() > 1) {
-					return;
-				}
-			}
-				
-				
-			Runnable r = new Runnable() {
-				public void run() {
-					JDIDebugUIPlugin.getStandardDisplay().asyncExec(
-						new Runnable() {
-							public void run() {
-								try {
-									computeDetail();
-								} catch (DebugException e) {
-									JDIDebugUIPlugin.log(e);
-								}
-							}
-						}
-					);
-				}
-			};		
-			DebugPlugin.getDefault().asyncExec(r);
-		}
-		
-		public void computeDetail() throws DebugException {	
-			if (((IJavaValue)fValue).getSignature() == null) {
-				// no need to spawn a thread for a null fValue
-				fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.null_78")); //$NON-NLS-1$
-				notifyListener();
-				return;
-			} else if (fValue instanceof IJavaPrimitiveValue) {
-				// no need to spawn a thread for a primitive value
-				appendJDIPrimitiveValueString(fValue);
-				notifyListener();
-				return;
-			} else if (fJavaThread == null || !fJavaThread.isSuspended()) {
-				// no thread available
-				fResultBuffer = new StringBuffer(DebugUIMessages.getString("JDIModelPresentation.no_suspended_threads_1")); //$NON-NLS-1$
-				appendJDIValueString(fValue);
-				notifyListener();
-				return;
-			}
-			
-			fRequestedValues.put(fListener, fValue);
-			
-			Runnable detailRunnable = new Runnable() {	
-				public void run() {
-					IJavaValue detailFormatterResult= null;
-					if (fValue instanceof IJavaObject && !(fValue instanceof IJavaArray)) {
-						// try to use the detail formatters system on the object
-						try {
-							detailFormatterResult= JavaDetailFormattersManager.getDefault().getValueDetail((IJavaObject)fValue, fJavaThread, fJavaProject);
-						} catch (DebugException e) {
-							handleDebugException(e, (IJavaValue)fValue);
-							return;
-						}
-						if (detailFormatterResult != null) {
-							if (detailFormatterResult instanceof IJavaPrimitiveValue) {
-								appendJDIPrimitiveValueString(detailFormatterResult);
-								if (fValue == fRequestedValues.remove(fListener)) {
-									notifyListener();
-								}
-								return;
-							}
-						}
-					}
-					final IValue value= detailFormatterResult == null ? fValue : detailFormatterResult;
-					IEvaluationRunnable er = new IEvaluationRunnable() {
-						public void run(IJavaThread jt, IProgressMonitor pm) {
-							if (value instanceof IJavaArray) {
-								appendArrayDetail((IJavaArray)fValue, jt);
-							} else if (value instanceof IJavaObject) {
-								try {
-									appendObjectDetail((IJavaObject)value, jt);
-								} catch (DebugException e) {
-									handleDebugException(e, (IJavaValue)fValue);
-								}
-							} else {
-								appendJDIValueString(value);
-							}
-						}
-					};
-					try {
-						fJavaThread.runEvaluation(er, null, DebugEvent.EVALUATION_IMPLICIT, false);
-					} catch (DebugException e) {
-						handleDebugException(e, (IJavaValue)fValue);
-					}
-					if (fValue == fRequestedValues.remove(fListener)) {
-						// If another evaluation occurs before this one finished,
-						// don't display this result
-						notifyListener();
-					}
-				}
-			};
-			
-			fDetailThread = new Thread(detailRunnable);
-			fDetailThread.start();
-
-		}
-
-		private IJavaProject getJavaProject() {
-			IAdaptable context = DebugUITools.getDebugContext();
-			if (context instanceof IThread) {
-				try {
-					context = ((IThread)context).getTopStackFrame();
-				} catch (DebugException e) {
-					JDIDebugUIPlugin.log(e);
-				}
-			}
-			if (context == null) {
-				return null;
-			}
-			IJavaStackFrame stackFrame = (IJavaStackFrame) context.getAdapter(IJavaStackFrame.class);
-			ILaunch launch = stackFrame.getLaunch();
-			if (launch == null) {
-				return null;
-			}
-			ISourceLocator locator= launch.getSourceLocator();
-			if (locator == null)
-				return null;
-			
-			Object sourceElement = locator.getSourceElement(stackFrame);
-			if (sourceElement instanceof IJavaElement) {
-				return ((IJavaElement) sourceElement).getJavaProject();
-			}			
-			return null;
-		}
-	
-				
-		protected void appendJDIPrimitiveValueString(IValue value) {
-			if (value instanceof IJavaValue) {
-				try {
-					fResultBuffer.append(getValueText(((IJavaValue)value)));
-				} catch (DebugException de) {
-					JDIDebugUIPlugin.log(de);
-					fResultBuffer.append(de.getStatus().getMessage());
-				}
-			} else {
-				appendJDIValueString(value);
-			}
-		}
-		
-		protected void appendJDIValueString(IValue value) {
-			try {
-				String result= value.getValueString();
-				fResultBuffer.append(result);
-			} catch (DebugException de) {
-				JDIDebugUIPlugin.log(de);
-				fResultBuffer.append(de.getStatus().getMessage());
-			}
-		}
-		
-		protected void appendObjectDetail(IJavaObject objectValue, IJavaThread thread) throws DebugException {			
-			IJavaValue toStringValue = objectValue.sendMessage(JDIModelPresentation.fgToString, JDIModelPresentation.fgToStringSignature, null, thread, false);
-			if (toStringValue == null) {
-				fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.<unknown>_80")); //$NON-NLS-1$
-			} else {
-				appendJDIValueString(toStringValue);
-			}
-		}
-		
-		protected void handleDebugException(DebugException de, IJavaValue value) {
-			String reason = null;
-			switch (de.getStatus().getCode()) {
-				case IJavaThread.ERR_THREAD_NOT_SUSPENDED:
-					reason = DebugUIMessages.getString("JDIModelPresentation.thread_not_suspended_2"); //$NON-NLS-1$
-					break;
-				case IJavaThread.ERR_NESTED_METHOD_INVOCATION:
-					reason = DebugUIMessages.getString("JDIModelPresentation.evaluation_in_progress_3"); //$NON-NLS-1$
-					break;
-				case IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE:
-					reason = DebugUIMessages.getString("JDIModelPresentation.thread_must_be_suspended_by_breakpoint_or_step_1"); //$NON-NLS-1$
-					break;
-				default:
-					reason = de.getStatus().getMessage();
-					break;
-			}
-			fResultBuffer = new StringBuffer(reason);
-		}
-
-		protected void appendArrayDetail(IJavaArray arrayValue, IJavaThread thread) {
-			fResultBuffer.append('[');
-			IJavaValue[] arrayValues;
-			try {
-				arrayValues = arrayValue.getValues();
-			} catch (DebugException de) {
-				JDIDebugUIPlugin.log(de);
-				fResultBuffer.append(de.getStatus().getMessage());
-				return;
-			}
-			try {
-				for (int i = 0; i < arrayValues.length; i++) {
-					IJavaValue value = arrayValues[i];
-					if (value instanceof IJavaArray) {
-						appendArrayDetail((IJavaArray)value, thread);	
-					} else if (value instanceof IJavaObject) {
-						appendObjectDetail((IJavaObject)value, thread);
-					} else {
-						appendJDIValueString(value);
-					}
-					if (i < arrayValues.length - 1) {
-						fResultBuffer.append(',');
-						fResultBuffer.append(' ');
-					}
-				}
-				fResultBuffer.append(']');
-			} catch (DebugException e) {
-				handleDebugException(e, arrayValue);
-			}
-		}
-	}	
 	
 	protected void appendSuspendPolicy(IJavaBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
 		if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {

@@ -7,26 +7,32 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
+import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 
 public class ASTEvaluationEngine implements IAstEvaluationEngine {
@@ -35,8 +41,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	
 	private IJavaDebugTarget fDebugTarget;
 	
-	private List fEvaluationThreads= new ArrayList();
-
 	public ASTEvaluationEngine(IJavaProject project, IJavaDebugTarget debugTarget) {
 		setJavaProject(project);
 		setDebugTarget(debugTarget);
@@ -86,56 +90,10 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * Evaluates the given expression in the given thread and the given runtime context.
 	 */
 	private void doEvaluation(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {		
-		getEvaluationThread().evaluate(expression, context, thread, listener, evaluationDetail, hitBreakpoints);
-	}
-	
-	/**
-	 * Returns an evaluation thread which can be used to perform an evaluation.
-	 * This method will return an existing thread if a one exists that is 
-	 * currently not performing an evaluation. Otherwise, a new thread will 
-	 * be created.
-	 */
-	private EvaluationThread getEvaluationThread() {
-		Iterator iter= fEvaluationThreads.iterator();
-		EvaluationThread thread= null;
-		while (iter.hasNext()) {
-			thread= (EvaluationThread)iter.next();
-			if (!thread.isEvaluating()) {
-				return thread;
-			}
-		}
-		thread= new EvaluationThread(this);
-		fEvaluationThreads.add(thread);
-		return thread;
-	}
-	
-	/**
-	 * Notifies this evaluation engine that the given evaluation thread
-	 * has completed an evaluation. If there are any threads available
-	 * (not currently evaluating), the given thread is stopped. Otherwise
-	 * the thread is allowed to keep running - it will be reused for the
-	 * next evaluation.
-	 */
-	protected void evaluationThreadFinished(EvaluationThread thread) {
-		if (fEvaluationThreads.size() == 1) {
-			// Always leave at least one thread running
-			return;
-		}
-		boolean allBusy= true;
-		Iterator iter= fEvaluationThreads.iterator();
-		EvaluationThread tempThread= null;
-		while (iter.hasNext()) {
-			tempThread= (EvaluationThread)iter.next();
-			if (!tempThread.isEvaluating()) {
-				// Another thread is available. The given thread
-				// can be stopped
-				allBusy= false;
-				break;
-			}
-		}
-		if (!allBusy) {
-			thread.stop();
-			fEvaluationThreads.remove(thread);
+		if (expression instanceof InstructionSequence) {
+			thread.queueRunnable(new EvalRunnable((InstructionSequence)expression, thread, context, listener, evaluationDetail, hitBreakpoints));
+		} else {
+			throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, EvaluationEngineMessages.getString("ASTEvaluationEngine.AST_evaluation_engine_cannot_evaluate_expression"), null)); //$NON-NLS-1$
 		}
 	}
 
@@ -281,15 +239,105 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see IEvaluationEngine#dispose()
 	 */
 	public void dispose() {
-		// Kill evaluation threads.
-		Iterator iter= fEvaluationThreads.iterator();
-		while (iter.hasNext()) {
-			((EvaluationThread)iter.next()).kill();
-		}
 	}
 	
-	protected void finalize() throws Throwable {
-		dispose();
-		super.finalize();
+	class EvalRunnable implements Runnable {
+		
+		private InstructionSequence fExpression;
+		
+		private IJavaThread fThread;
+		
+		private int fEvaluationDetail;
+		
+		private boolean fHitBreakpoints;
+		
+		private IRuntimeContext fContext;
+		
+		private IEvaluationListener fListener;
+		
+		public EvalRunnable(InstructionSequence expression, IJavaThread thread, IRuntimeContext context, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) {
+			fExpression= expression;
+			fThread= thread;
+			fContext= context;
+			fListener= listener;
+			fEvaluationDetail= evaluationDetail;
+			fHitBreakpoints= hitBreakpoints;
+		}
+
+		public void run() {
+			EvaluationResult result = new EvaluationResult(ASTEvaluationEngine.this, fExpression.getSnippet(), fThread);
+			if (fExpression.hasErrors()) {
+				String[] errors = fExpression.getErrorMessages();
+				for (int i = 0, numErrors = errors.length; i < numErrors; i++) {
+					result.addError(errors[i]);
+				}
+				evaluationFinished(result);
+				return;
+			}
+			final Interpreter interpreter = new Interpreter((InstructionSequence) fExpression, fContext);
+		
+			class EvaluationRunnable implements IEvaluationRunnable, ITerminate {
+				
+				CoreException fException;
+				
+				public void run(IJavaThread jt, IProgressMonitor pm) {
+					try {
+						interpreter.execute();
+					} catch (CoreException exception) {
+						fException = exception;
+					} catch (Throwable exception) {
+						JDIDebugPlugin.log(exception);
+						fException = new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, EvaluationEngineMessages.getString("ASTEvaluationEngine.Runtime_exception_occurred_during_evaluation._See_log_for_details"), exception)); //$NON-NLS-1$
+					}
+				}
+				public void terminate() {
+					interpreter.stop();
+				}
+				public boolean canTerminate() {
+					return true;
+				}
+				public boolean isTerminated() {
+					return false;
+				}
+				
+				public CoreException getException() {
+					return fException;
+				}
+			}
+
+			EvaluationRunnable er = new EvaluationRunnable();
+			CoreException exception = null;
+			try {
+				fThread.runEvaluation(er, null, fEvaluationDetail, fHitBreakpoints);
+			} catch (DebugException e) {
+				exception = e;
+			}
+			IJavaValue value = interpreter.getResult();
+
+			if (exception == null) {
+				exception = er.getException();
+			}
+
+			if (value != null) {
+				result.setValue(value);
+			} else {
+				result.addError(EvaluationEngineMessages.getString("ASTEvaluationEngine.An_unknown_error_occurred_during_evaluation")); //$NON-NLS-1$
+			}
+			if (exception != null) {
+				if (exception instanceof DebugException) {
+					result.setException((DebugException)exception);
+				} else {
+					result.setException(new DebugException(exception.getStatus()));
+				}
+			}
+			evaluationFinished(result);
+		}
+		private void evaluationFinished(IEvaluationResult result) {
+			// only notify if plugin not yet shutdown - bug# 8693
+			if(JDIDebugPlugin.getDefault() != null) {
+				fListener.evaluationComplete(result);
+			}
+		}
+		
 	}
 }

@@ -22,11 +22,16 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -67,8 +72,6 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * Associate a pair type name/debug target to a compiled expression.	 */
 	private HashMap fCacheMap;
 	
-	private IJavaValue fToStringValue;
-	
 	/**
 	 * JavaDetailFormattersManager constructor.	 */
 	private JavaDetailFormattersManager() {
@@ -92,64 +95,80 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			fDetailFormattersMap.put(typeName, new DetailFormatter(typeName, snippet, enabled));
 		}
 	}
-	
+
 	/**
-	 * Apply on the given object the formatter defined for its type.
-	 * If no formatter is find for the type of the given object,
-	 * return <code>null</code>.
-	 * 	 * @param objectValue the object to	 * @param thread thread in which the code snippet will be executed. 	 * @return a string which represent the object	 * @throws DebugException	 */
-	public IJavaValue getValueDetail(IJavaObject objectValue, final IJavaThread thread, IJavaProject project) throws DebugException {
-		if (project == null) {
-			return null;
-		}
-		// get the evaluation engine
-		JDIDebugTarget debugTarget= (JDIDebugTarget) thread.getDebugTarget();
-		IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, debugTarget);
-		// get the compiled expression to use
-		ICompiledExpression compiledExpression= getCompiledExpression(objectValue, debugTarget, evaluationEngine);
-		if (compiledExpression == null) {
-			return null;
-		}
-		IEvaluationListener listener= new IEvaluationListener() {
-			public void evaluationComplete(IEvaluationResult result) {
-				if (!result.hasErrors()) {
-					fToStringValue= result.getValue();
-				} else {
-					StringBuffer error= new StringBuffer(DebugUIMessages.getString("JavaDetailFormattersManager.Detail_formatter_error___1")); //$NON-NLS-1$
-					DebugException exception= result.getException();
-					if (exception != null) {
-						Throwable throwable= exception.getStatus().getException();
-						error.append("\n\t\t"); //$NON-NLS-1$
-						if (throwable instanceof InvocationException) {
-							error.append(MessageFormat.format(DebugUIMessages.getString("JavaDetailFormattersManager.An_exception_occurred__{0}_3"), new String[] {((InvocationException) throwable).exception().referenceType().name()})); //$NON-NLS-1$
-						} else {
-							error.append(exception.getStatus().getMessage());
-						}
-					} else {
-						String[] errors= result.getErrorMessages();
-						for (int i= 0, length= errors.length; i < length; i++) {
-							error.append("\n\t\t").append(errors[i]); //$NON-NLS-1$
-						}
-					}
-					fToStringValue= ((IJavaDebugTarget)thread.getDebugTarget()).newValue(error.toString());
-				}
-				synchronized(this) {
-					notify();
-				}
+	 * Compute asynchronously the 'toString' of the given value. If a formatter is associated to
+	 * the type of the given value, this formatter is used instead of the <code>toString()</code>
+	 * method.
+	 * The result is return through the listener.
+	 * 
+	 * @param objectValue the value to 'format' 
+	 * @param thread the thread to use to performed the evaluation
+	 * @param listener the listener
+	 */	
+	public void computeValueDetail(final IJavaValue objectValue, final IJavaThread thread, final IValueDetailListener listener) {
+		thread.queueRunnable(new Runnable() {
+			public void run() {
+				resolveFormatter(objectValue, thread, listener);
 			}
-		};
-		synchronized(listener) {
-			// evaluate
-			evaluationEngine.evaluateExpression(compiledExpression, objectValue, thread, listener, DebugEvent.EVALUATION_IMPLICIT, false);
-			// wait until the evaluation completion
-			try {
-				listener.wait();
-			} catch (InterruptedException e) {
-			}
-		}
-		return fToStringValue;
+		});
 	}
 	
+	private void resolveFormatter(final IJavaValue value, final IJavaThread thread, final IValueDetailListener listener) {
+		ICompiledExpression compiledExpression= null;
+		EvaluationListener evaluationListener= new EvaluationListener(value, thread, listener);
+		if (value instanceof IJavaObject) {
+			IJavaObject objectValue= (IJavaObject) value;
+			IJavaProject project= getJavaProject(thread);
+			if (project != null) {
+				// get the evaluation engine
+				JDIDebugTarget debugTarget= (JDIDebugTarget) thread.getDebugTarget();
+				IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, debugTarget);
+				// get the compiled expression to use
+				try {
+					compiledExpression= getCompiledExpression(objectValue, debugTarget, evaluationEngine);
+					if (compiledExpression != null) {
+						evaluationEngine.evaluateExpression(compiledExpression, objectValue, thread, evaluationListener, DebugEvent.EVALUATION_IMPLICIT, false);
+						return;
+					}
+				} catch (DebugException e) {
+					DebugUIPlugin.log(e);
+					return;
+				}
+			}
+		}
+		try {
+			evaluationListener.valueToString(value);
+		} catch (DebugException e) {
+			JDIDebugUIPlugin.log(e);
+			listener.detailComputed(value, e.getStatus().getMessage());
+		}
+	}
+	
+	private IJavaProject getJavaProject(IJavaThread thread) {
+		ILaunch launch= thread.getLaunch();
+		if (launch == null) {
+			return null;
+		}
+		ISourceLocator locator= launch.getSourceLocator();
+		if (locator == null)
+			return null;
+
+		Object sourceElement;
+		try {
+			sourceElement= locator.getSourceElement(thread.getTopStackFrame());
+		} catch (DebugException e) {
+			DebugUIPlugin.log(e);
+			return null;
+		}
+		if (sourceElement instanceof IJavaElement) {
+			return ((IJavaElement) sourceElement).getJavaProject();
+		}
+		return null;
+	}
+
+
+
 	public boolean hasAssociatedDetailFormatter(IJavaType type) {
 		return getAssociatedDetailFormatter(type) != null;
 	}
@@ -318,6 +337,138 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		public int hashCode() {
 			return fTypeName.hashCode() / 2 + fDebugTarget.hashCode() / 2;
 		}
+	}
+	
+	/**
+	 * Listener use to manage the result of the formatter.
+	 * Utilise the 'standart' pretty printer methods to return the result.
+	 */
+	static private class EvaluationListener implements IEvaluationListener {
+
+		/**
+		 * The selector of <code>java.lang.Object#toString()</code>,
+		 * used to evaluate 'toString()' for displaying details of values.
+		 */
+		private static final String fgToString= "toString"; //$NON-NLS-1$
+
+
+		/**
+		 * The signature of <code>java.lang.Object#toString()</code>,
+		 * used to evaluate 'toString()' for displaying details of values.
+		 */
+		private static final String fgToStringSignature= "()Ljava/lang/String;"; //$NON-NLS-1$
+			
+		private IJavaValue fValue;
+		
+		private IValueDetailListener fListener;
+		
+		private IJavaThread fThread;
+		
+		public EvaluationListener(IJavaValue value, IJavaThread thread, IValueDetailListener listener) {
+			fValue= value;
+			fThread= thread;
+			fListener= listener;
+		}
+
+		public void evaluationComplete(IEvaluationResult result) {
+			if (result.hasErrors()) {
+				StringBuffer error= new StringBuffer(DebugUIMessages.getString("JavaDetailFormattersManager.Detail_formatter_error___1")); //$NON-NLS-1$
+				DebugException exception= result.getException();
+				if (exception != null) {
+					Throwable throwable= exception.getStatus().getException();
+					error.append("\n\t\t"); //$NON-NLS-1$
+					if (throwable instanceof InvocationException) {
+						error.append(MessageFormat.format(DebugUIMessages.getString("JavaDetailFormattersManager.An_exception_occurred__{0}_3"), new String[] {((InvocationException) throwable).exception().referenceType().name()})); //$NON-NLS-1$
+					} else {
+						error.append(exception.getStatus().getMessage());
+					}
+				} else {
+					String[] errors= result.getErrorMessages();
+					for (int i= 0, length= errors.length; i < length; i++) {
+						error.append("\n\t\t").append(errors[i]); //$NON-NLS-1$
+					}
+				}
+				fListener.detailComputed(fValue, error.toString());
+			} else {
+				try {
+					valueToString(result.getValue());
+				} catch (DebugException e) {
+					JDIDebugUIPlugin.log(e);
+					fListener.detailComputed(fValue, e.getStatus().getMessage());
+				}
+			}
+		}
+		
+		public void valueToString(IJavaValue objectValue) throws DebugException {
+			StringBuffer result= new StringBuffer();
+			if (fValue.getSignature() == null) {
+				// no need to spawn a thread for a null fValue
+				result.append(DebugUIMessages.getString("JavaDetailFormattersManager.null")); //$NON-NLS-1$
+			} else if (fValue instanceof IJavaPrimitiveValue) {
+				// no need to spawn a thread for a primitive value
+				appendJDIPrimitiveValueString(result, fValue);
+			} else if (fThread == null || !fThread.isSuspended()) {
+				// no thread available
+				result.append(DebugUIMessages.getString("JavaDetailFormattersManager.no_suspended_threads")); //$NON-NLS-1$
+				appendJDIValueString(result, fValue);
+			} else if (fValue instanceof IJavaArray) {
+				appendArrayDetail(result, (IJavaArray) fValue);
+			} else if (fValue instanceof IJavaObject) {
+				appendObjectDetail(result, (IJavaObject) fValue);
+			} else {
+				appendJDIValueString(result, fValue);
+			}
+			fListener.detailComputed(fValue, result.toString());
+		}
+		
+		protected void appendArrayDetail(StringBuffer result, IJavaArray arrayValue) throws DebugException {
+			result.append('[');
+			IJavaValue[] arrayValues;
+			try {
+				arrayValues= arrayValue.getValues();
+			} catch (DebugException de) {
+				JDIDebugUIPlugin.log(de);
+				result.append(de.getStatus().getMessage());
+				return;
+			}
+			for (int i= 0; i < arrayValues.length; i++) {
+				IJavaValue value= arrayValues[i];
+				if (value instanceof IJavaArray) {
+					appendArrayDetail(result, (IJavaArray) value);
+				} else if (value instanceof IJavaObject) {
+					appendObjectDetail(result, (IJavaObject) value);
+				} else {
+					appendJDIValueString(result, value);
+				}
+				if (i < arrayValues.length - 1) {
+					result.append(',');
+					result.append(' ');
+				}
+			}
+			result.append(']');
+		}
+
+		protected void appendJDIPrimitiveValueString(StringBuffer result, IJavaValue value) throws DebugException {
+			result.append(value.getValueString());
+		}
+
+
+		protected void appendJDIValueString(StringBuffer result, IJavaValue value) throws DebugException {
+			result.append(value.getValueString());
+		}
+
+
+		protected void appendObjectDetail(StringBuffer result, IJavaObject objectValue) throws DebugException {
+			IJavaValue toStringValue= objectValue.sendMessage(EvaluationListener.fgToString, EvaluationListener.fgToStringSignature, null, fThread, false);
+			if (toStringValue == null) {
+				result.append(DebugUIMessages.getString("JavaDetailFormattersManager.<unknown>")); //$NON-NLS-1$
+			} else {
+				appendJDIValueString(result, toStringValue);
+			}
+		}
+
+
+	
 	}
 
 }
