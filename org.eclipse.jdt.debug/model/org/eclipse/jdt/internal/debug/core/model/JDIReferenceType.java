@@ -76,7 +76,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 		try {
 			ReferenceType type = (ReferenceType)getUnderlyingType();
 			Field field = type.fieldByName(name);
-			if (field != null) {
+			if (field != null && field.isStatic()) {
 				return new JDIFieldVariable(getDebugTarget(), field, type);
 			}			
 		} catch (RuntimeException e) {

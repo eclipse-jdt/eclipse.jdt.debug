@@ -109,7 +109,12 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
             		    IField field = (IField)javaElement;
             		    String typeSignature = Signature.createTypeSignature(field.getDeclaringType().getFullyQualifiedName(), true);
             		    typeSignature = typeSignature.replace('.', '/');
-            			IJavaFieldVariable fieldVariable = frame.getThis().getField(field.getElementName(), typeSignature);
+            		    IJavaFieldVariable fieldVariable = null;
+            		    if (frame.isStatic()) {
+            		        fieldVariable = frame.getDeclaringType().getField(field.getElementName());
+            		    } else {
+            		        fieldVariable = frame.getThis().getField(field.getElementName(), typeSignature);
+            		    }
             		    if (fieldVariable != null) {
             		        StringBuffer buf = new StringBuffer();
             		        appendVariable(buf, fieldVariable);
