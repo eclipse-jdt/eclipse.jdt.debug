@@ -184,12 +184,15 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		JDIDebugModel.addHotCodeReplaceListener(this);
 		super.startup();
 		
+		ProblemManager.getDefault().startup();
+		
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);		
 	}
 	
 	public void shutdown() throws CoreException {
 		JDIDebugModel.removeHotCodeReplaceListener(this);
+		ProblemManager.getDefault().shutdown();
 		super.shutdown();
 	}
 	/**

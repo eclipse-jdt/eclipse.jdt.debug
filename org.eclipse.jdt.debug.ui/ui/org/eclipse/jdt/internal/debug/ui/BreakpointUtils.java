@@ -261,4 +261,16 @@ public class BreakpointUtils {
 	public static boolean isRunToLineBreakpoint(IJavaLineBreakpoint breakpoint) throws CoreException {
 		return breakpoint.getMarker().getAttribute(RUN_TO_LINE, false);
 	}
+	
+	/**
+	 * Returns whether the given breakpoint is a compilation
+	 * problem breakpoint
+	 * 
+	 * @param breakpoint breakpoint
+	 * @return whether the given breakpoint is a run to line
+	 *  breakpoint
+	 */
+	public static boolean isProblemBreakpoint(IBreakpoint breakpoint) throws CoreException {
+		return breakpoint.getMarker().getAttribute(ProblemManager.ATTR_PROBLEM_BREAKPOINT, false);
+	}	
 }
