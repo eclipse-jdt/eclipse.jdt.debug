@@ -511,7 +511,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			default :
 				break;
 		}
-		return resolveToOSPath(path);
+		return path.toOSString();
 	}
 
 	/**

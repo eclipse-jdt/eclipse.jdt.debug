@@ -445,13 +445,59 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry[] computeSourceLookupPath(ILaunchConfiguration configuration) throws CoreException {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
+		IRuntimeClasspathEntry[] entries = null;
 		if (useDefault) {
 			// the default source lookup path is the same as the classpath
-			return computeRuntimeClasspath(configuration);
+			entries = computeRuntimeClasspath(configuration);
 		} else {
 			// recover persisted source path
-			return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH);
+			entries = recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH);
 		}
+		// handle JRE_LIB - remove from source lookup path if config JRE equals workspace JRE
+		// othewise place alternate JRE first on source lookup path
+		for (int i = 0; i < entries.length; i++) {
+			IRuntimeClasspathEntry entry = entries[i];
+			if (entry.getType() == IRuntimeClasspathEntry.VARIABLE && entry.getVariableName().equals(JRELIB_VARIABLE)) {
+				// remove from source lookup path if the config JRE == workspace JRE
+				IVMInstall configJRE = computeVMInstall(configuration);
+				IVMInstall defJRE = getDefaultVMInstall();
+				if (configJRE.equals(defJRE)) {
+					IRuntimeClasspathEntry[] newEntries = new IRuntimeClasspathEntry[entries.length - 1];
+					int length = i;
+					if (length > 0) {
+						System.arraycopy(entries, 0, newEntries, 0, length);
+					}
+					length = entries.length - i - 1;
+					if (length > 0) {
+						System.arraycopy(entries, i + 1, newEntries, i, length);
+					}
+					entries = newEntries;
+					break;
+				} else {
+					LibraryLocation[] libs = configJRE.getLibraryLocations();
+					if (libs == null) {
+						libs = new LibraryLocation[] {configJRE.getVMInstallType().getDefaultLibraryLocation(configJRE.getInstallLocation())};
+					}
+					List newPath = new ArrayList(entries.length - 1 + libs.length);
+					for (int j = 0; j < libs.length; j++) {
+						LibraryLocation lib = libs[j];
+						IRuntimeClasspathEntry libEntry = newArchiveRuntimeClasspathEntry(lib.getSystemLibraryPath());
+						libEntry.setSourceAttachmentPath(lib.getSystemLibrarySourcePath());
+						libEntry.setSourceAttachmentRootPath(lib.getPackageRootPath());
+						newPath.add(libEntry);
+					}
+					// add the rest
+					for (int j = 0; j < entries.length; j++) {
+						if (j != i) {
+							newPath.add(entries[j]);
+						}
+					}
+					entries = (IRuntimeClasspathEntry[])newPath.toArray(new IRuntimeClasspathEntry[newPath.size()]);
+					break;
+				}
+			}
+		}
+		return entries;
 	}
 	
 	/**

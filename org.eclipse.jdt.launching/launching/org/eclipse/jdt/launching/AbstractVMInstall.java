@@ -101,7 +101,7 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	/**
 	 * @see IVMInstall#setLibraryLocation(LibraryLocation)	 * 	 * XXX: to be removed
 	 */
-	public void setLibraryLocation(LibraryLocation description) {		setLibraryLocations(new LibraryLocation[] {description});
+	public void setLibraryLocation(LibraryLocation description) {		if (description == null) {			fSystemLibraryDescriptions = null;		} else {			setLibraryLocations(new LibraryLocation[] {description});		}
 	}
 
 	/**	 * @see IVMInstall#getLibraryLocations()	 */	public LibraryLocation[] getLibraryLocations() {		return fSystemLibraryDescriptions;	}	/**	 * @see IVMInstall#setLibraryLocations(LibraryLocation[])	 */	public void setLibraryLocations(LibraryLocation[] locations) {		fSystemLibraryDescriptions = locations;	}}

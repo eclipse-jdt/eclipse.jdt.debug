@@ -319,10 +319,6 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					}
 					break;
 				case IRuntimeClasspathEntry.VARIABLE:
-					if (entry.getPath().toString().equals(JavaRuntime.JRELIB_VARIABLE)) {
-						// do not add - it is in the workspace
-						break;
-					}
 					try {
 						location = new ArchiveSourceLocation(entry.getResolvedSourceAttachmentPath(), entry.getResolvedSourceAttachmentRootPath());
 					} catch (IOException e) {
