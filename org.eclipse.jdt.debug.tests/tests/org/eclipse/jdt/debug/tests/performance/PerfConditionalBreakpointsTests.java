@@ -59,7 +59,8 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
 
         fBP = createLineBreakpoint(22, fTypeName);
 
-        DebugPlugin.getDefault().addDebugEventListener(new BreakpointListener());
+		BreakpointListener listener = new BreakpointListener();
+        DebugPlugin.getDefault().addDebugEventListener(listener);
         ILaunchConfiguration config = getLaunchConfiguration(fTypeName);
         fTarget = launchAndTerminate(config, 5 * 60 * 1000);
         
@@ -71,6 +72,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
         assertPerformance();
         
         removeAllBreakpoints();
+		DebugPlugin.getDefault().removeDebugEventListener(listener);
     }
 
     private synchronized void breakpointHit(IJavaThread thread) {
