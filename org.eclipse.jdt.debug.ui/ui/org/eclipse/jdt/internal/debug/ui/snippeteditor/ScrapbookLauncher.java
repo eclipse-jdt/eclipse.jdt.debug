@@ -118,7 +118,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	private ILaunch doLaunch(IJavaProject p, IFile page, String[] classPath) {
 		try {
 			ILaunchConfigurationType lcType = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
-			String name = page.getName() + SnippetMessages.getString("ScrapbookLauncher.-Scrapbook-_3") + System.currentTimeMillis(); //$NON-NLS-1$
+			String name = page.getName() + "-Scrapbook-" + System.currentTimeMillis(); //$NON-NLS-1$
 			ILaunchConfigurationWorkingCopy wc = lcType.newInstance(null, name);
 			wc.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
 						
