@@ -266,13 +266,21 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	 * launch configuration.
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
-		setLaunchConfiguration(config);
 		boolean useDefault = true;
 		try {
 			useDefault = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
+		}		
+		if (config == getLaunchConfiguration()) {
+			// same as previously viewed launch config
+			if (!useDefault && !fDefaultButton.getSelection()) {
+				// If an explicit classpath is being used, it must be the same as before.
+				// No need to refresh
+				return;
+			}
 		}
+		setLaunchConfiguration(config);
 		fDefaultButton.setSelection(useDefault);
 		try {
 			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);

@@ -223,13 +223,23 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		setLaunchConfiguration(configuration);
 		boolean useDefault = true;
 		try {
 			useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
-		}			
+		}
+		
+		if (configuration == getLaunchConfiguration()) {
+			// no need to update if an explicit path is being used and this setting
+			// has not changed (and viewing the same config as last time)
+			if (!useDefault && !fClassPathDefaultButton.getSelection()) {
+				return;			
+			}
+		}
+		
+		getControl().setRedraw(false);
+		setLaunchConfiguration(configuration);
 		fClassPathDefaultButton.setSelection(useDefault);
 		try {
 			setClasspathEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(configuration));
@@ -243,7 +253,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		fBootpathViewer.setEnabled(!useDefault);
 		fClasspathViewer.setLaunchConfiguration(configuration);
 		fBootpathViewer.setLaunchConfiguration(configuration);
-
+		getControl().setRedraw(true);
 	}
 
 	/**

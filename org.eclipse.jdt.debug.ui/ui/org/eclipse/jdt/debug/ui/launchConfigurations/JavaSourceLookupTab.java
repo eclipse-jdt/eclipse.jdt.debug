@@ -73,7 +73,9 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		getControl().setRedraw(false);
 		fSourceLookupBlock.initializeFrom(configuration);
+		getControl().setRedraw(true);
 	}
 	
 	/**
