@@ -105,7 +105,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		buff.append(File.separator);
 		buff.append("bin"); //$NON-NLS-1$
 		buff.append(File.separator);
-		
+		String jdkLocation= buff.toString();
 		if (command == null) {
 			buff.append("java"); //$NON-NLS-1$
 			return adjustProgramString(buff.toString());
@@ -115,12 +115,13 @@ public class StandardVMRunner extends AbstractVMRunner {
 		String program= buff.toString();
 		File exe= new File(program + ".exe"); //$NON-NLS-1$
 		File javaCommand= new File(program); 
-		File java= new File("java.exe"); //$NON-NLS-1$
+		
 		if (!exe.isFile() && !javaCommand.isFile()) {
+			File java= new File(jdkLocation + "java.exe"); //$NON-NLS-1$
 			if (java.isFile()) {
 				program= java.getAbsolutePath();
 			} else {
-				java= new File("java"); //$NON-NLS-1$
+				java= new File(jdkLocation + "java"); //$NON-NLS-1$
 				if (java.isFile()) {
 					program= java.getAbsolutePath();
 				}
