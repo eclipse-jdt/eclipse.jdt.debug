@@ -245,17 +245,17 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * and forces a drop to frame.  Does this for all of the active
 	 * stack frames in the target.
 	 */
-	protected void attemptDropToFrame(IDebugTarget target, List replacedClassNames) throws DebugException {
-		IThread[] threads= target.getThreads();
+	protected void attemptDropToFrame(JDIDebugTarget target, List replacedClassNames) throws DebugException {
+		JDIThread[] threads= (JDIThread[])target.getThreads();
 		List dropFrames= new ArrayList(1);
 		int numThreads= threads.length;
 		for (int i = 0; i < numThreads; i++) {
-			IThread thread= (IThread) threads[i];
+			JDIThread thread= (JDIThread) threads[i];
 			if (thread.isSuspended()) {
-				IStackFrame[] frames= thread.getStackFrames();
-				IJavaStackFrame dropFrame= null;
-				for (int j= frames.length - 1; j >= 0; j--) {
-					IJavaStackFrame f= (IJavaStackFrame) frames[j];
+				List frames= thread.computeStackFrames();
+				JDIStackFrame dropFrame= null;
+				for (int j= frames.size() - 1; j >= 0; j--) {
+					JDIStackFrame f= (JDIStackFrame) frames.get(j);
 					if (replacedClassNames.contains(f.getDeclaringTypeName())) {
 						dropFrame = f;
 						break;
@@ -271,7 +271,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					// if any thread that should drop does not support the drop,
 					// do not drop in any threads.
 					for (int j= 0; j < numThreads; j++) {
-						notifyFailedDrop(threads[i].getStackFrames(), replacedClassNames);
+						notifyFailedDrop(threads[i].computeStackFrames(), replacedClassNames);
 					}
 					throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 						DebugException.NOT_SUPPORTED, JDIDebugModelMessages.getString("JDIStackFrame.Drop_to_frame_not_supported"), null)); //$NON-NLS-1$
@@ -287,16 +287,16 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				dropFrame= ((IJavaStackFrame)iter.next());
 				dropFrame.dropToFrame();
 			} catch (DebugException de) {
-				notifyFailedDrop(dropFrame.getThread().getStackFrames(), replacedClassNames);
+				notifyFailedDrop(((JDIThread)dropFrame.getThread()).computeStackFrames(), replacedClassNames);
 			}
 		}
 	}
 	
-	private void notifyFailedDrop(IStackFrame[] frames, List replacedClassNames) throws DebugException {
-		int length= frames.length;
+	private void notifyFailedDrop(List frames, List replacedClassNames) throws DebugException {
 		JDIStackFrame frame;
-		for (int i=0; i < length; i++) {
-			frame= (JDIStackFrame) frames[i];
+		Iterator iter= frames.iterator();
+		while (iter.hasNext()) {
+			frame= (JDIStackFrame) iter.next();
 			if (replacedClassNames.contains(frame.getDeclaringTypeName())) {
 				frame.setOutOfSynch(true);
 			}
