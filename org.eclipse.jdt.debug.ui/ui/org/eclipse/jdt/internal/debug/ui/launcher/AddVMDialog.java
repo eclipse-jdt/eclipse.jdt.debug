@@ -16,33 +16,25 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.jdt.internal.ui.wizards.buildpaths.ArchiveFileFilter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ComboDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
-import org.eclipse.jdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.jdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
-import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -93,7 +85,6 @@ public class AddVMDialog extends StatusDialog {
 		super.configureShell(newShell);
 		WorkbenchHelp.setHelp(newShell, IJavaDebugHelpContextIds.EDIT_JRE_DIALOG);
 	}		
-	
 	
 	protected void createDialogFields() {
 		fVMTypeCombo= new ComboDialogField(SWT.READ_ONLY);
@@ -152,14 +143,14 @@ public class AddVMDialog extends StatusDialog {
 		parent.setLayout(layout);
 		
 		fVMTypeCombo.doFillIntoGrid(parent, 3);
-		LayoutUtil.setWidthHint(fVMTypeCombo.getComboControl(null), convertWidthInCharsToPixels(50));
-		
+		((GridData)fVMTypeCombo.getComboControl(null).getLayoutData()).widthHint= convertWidthInCharsToPixels(50);
+
 		fVMName.doFillIntoGrid(parent, 3);
 	
 		fJRERoot.doFillIntoGrid(parent, 3);
 		
 		fJavadocURL.doFillIntoGrid(parent, 3);
-	
+		
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(LauncherMessages.getString("AddVMDialog.JRE_system_libraries__1")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -172,24 +163,16 @@ public class AddVMDialog extends StatusDialog {
 		gd.horizontalSpan = 3;
 		block.setLayoutData(gd);
 		
-		// Layout hacks - make buttons the same size
-		Button standard = fLibraryBlock.fAddJarButton;
-		GridData gds = (GridData)standard.getLayoutData();
+		Text t= fJRERoot.getTextControl(parent);
+		gd= (GridData)t.getLayoutData();
+		gd.grabExcessHorizontalSpace=true;
+		gd.widthHint= convertWidthInCharsToPixels(50);
 		
-		Button b = fJRERoot.getChangeControl(parent);
-		gd = (GridData)b.getLayoutData();
-		gd.heightHint = gds.heightHint;
-		gd.widthHint = gds.widthHint;
-		gd.horizontalAlignment = GridData.END;
-		LayoutUtil.setHorizontalGrabbing(fJRERoot.getTextControl(null));
+		t= fJavadocURL.getTextControl(parent);
+		gd= (GridData)t.getLayoutData();
+		gd.grabExcessHorizontalSpace=true;
+		gd.widthHint= convertWidthInCharsToPixels(50);
 		
-		b = fJavadocURL.getChangeControl(parent);
-		gd = (GridData)b.getLayoutData();
-		gd.heightHint = gds.heightHint;
-		gd.widthHint = gds.widthHint;
-		gd.horizontalAlignment = GridData.END;		
-		LayoutUtil.setHorizontalGrabbing(fJavadocURL.getTextControl(null));
-			
 		initializeFields();
 		
 		return parent;
