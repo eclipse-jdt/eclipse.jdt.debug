@@ -102,6 +102,42 @@ public class StepIntoSelectionTests extends AbstractDebugTest {
 	}
 	
 	/**
+	 * Step into 'method1(int[], String[])'
+	 * 
+	 * @throws Exception
+	 */
+	public void testStepIntoSourceMethodWithParameters() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.StepIntoSelectionClass";
+		createLineBreakpoint(35, typeName);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			ICompilationUnit cu = getCompilationUnit(getJavaProject(), "src", "org.eclipse.debug.tests.targets", "StepIntoSelectionClass.java");
+			IType type = cu.getType("StepIntoSelectionClass");
+			IMethod method = type.getMethod("method1", new String[] {"[I", "[QString;"});
+			assertTrue("Could not find method 'method1'", method.exists());
+			
+			StepIntoSelectionHandler handler = new StepIntoSelectionHandler(thread, (IJavaStackFrame)thread.getTopStackFrame(), method);
+			DebugElementEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.SUSPEND, thread);
+			handler.step();
+			Object source = waiter.waitForEvent();
+			assertEquals("Step did not complete", thread, source);
+			thread = (IJavaThread)source;
+			
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			assertEquals("Should be in method 'step'", "method1", frame.getMethodName());
+			
+						
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+	
+	/**
 	 * Step into 'Vector.addElement(Object)'
 	 * 
 	 * @throws Exception

@@ -32,5 +32,14 @@ public class StepIntoSelectionClass {
 		for (int i= 0; i < 100; i++) {
 			vector.addElement(new Integer(i));
 		}		
+		method1(method2(), new String[0]);
+	}
+	
+	public void method1(int[] i, String[] s) {
+		new String("test");
+	}
+	
+	public int[] method2() {
+		return new int[0];
 	}
 }

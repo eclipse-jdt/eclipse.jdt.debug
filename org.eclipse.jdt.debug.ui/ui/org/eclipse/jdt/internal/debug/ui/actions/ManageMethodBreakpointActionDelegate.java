@@ -223,55 +223,42 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 
 	public static String resolveMethodSignature(IType type, String methodSignature) throws JavaModelException {
 		String[] parameterTypes= Signature.getParameterTypes(methodSignature);
+		int length= length= parameterTypes.length;
+		String[] resolvedParameterTypes= new String[length];
 		
-		StringBuffer resolvedSig= new StringBuffer("("); //$NON-NLS-1$
-		for (int i = 0; i < parameterTypes.length; i++) {
-			String parameterType = parameterTypes[i];
-			if (parameterType.length() > 1) {
-				if (!generateQualifiedName(type, resolvedSig, parameterType)) {
-					return null;
-				}
-				resolvedSig.append(';');
-			} else {
-				resolvedSig.append(parameterType);
-			}
-		}
-		resolvedSig.append(')');
-		String returnType= Signature.getReturnType(methodSignature);
-		if (returnType.length() > 1) {
-			if (!generateQualifiedName(type, resolvedSig, returnType)) {
+		for (int i = 0; i < length; i++) {
+			resolvedParameterTypes[i]= resolveType(type, parameterTypes[i]);
+			if (resolvedParameterTypes[i] == null) {
 				return null;
 			}
-			resolvedSig.append(';');
-		} else {
-			resolvedSig.append(returnType);
 		}
-		methodSignature= resolvedSig.toString();
-		return methodSignature;
-	}
-
-	protected static boolean generateQualifiedName(IType type, StringBuffer resolvedSig, String typeName) throws JavaModelException {
-		int count= Signature.getArrayCount(typeName);
-		typeName= Signature.getElementType(typeName.substring(1 + count, typeName.length() - 1));
-		String[][] resolvedType= type.resolveType(typeName);
-		if (resolvedType != null && resolvedType.length == 1) {
-			String[] typeNames= resolvedType[0];
-			String qualifiedName= Signature.toQualifiedName(typeNames);
-			if (qualifiedName.startsWith(".")) { //$NON-NLS-1$
-				// remove leading "."
-				qualifiedName = qualifiedName.substring(1);
-			}
-			for (int j = 0; j < count; j++) {
-				resolvedSig.append('[');
-			}
-			resolvedSig.append(Signature.C_RESOLVED);
-			resolvedSig.append(qualifiedName.replace('.', '/'));	
-			return true;
-		} else {
-			return false;
+		
+		String resolvedReturnType= resolveType(type, Signature.getReturnType(methodSignature));
+		if (resolvedReturnType == null) {
+			return null;
 		}
+				
+		return Signature.createMethodSignature(resolvedParameterTypes, resolvedReturnType);
 	}
 	
+	private static String resolveType(IType type, String typeSignature) throws JavaModelException {
+		int count= Signature.getArrayCount(typeSignature);
+		String elementTypeSignature= Signature.getElementType(typeSignature);
+		if (elementTypeSignature.length() == 1) {
+			// no need to resolve primitive types
+			return typeSignature;
+		}
+		String elementTypeName= Signature.toString(elementTypeSignature);
+		String[][] resolvedElementTypeNames= type.resolveType(elementTypeName);
+		if (resolvedElementTypeNames == null || resolvedElementTypeNames.length != 1) {
+			// the type name cannot be resolved
+			return null;
+		}
+		String resolvedElementTypeName= Signature.toQualifiedName(resolvedElementTypeNames[0]);
+		String resolvedElementTypeSignature= Signature.createTypeSignature(resolvedElementTypeName, true).replace('.', '/');
+		return Signature.createArraySignature(resolvedElementTypeSignature, count);
+	}
+
 	/**
 	 * @see AbstractManageBreakpointActionDelegate#enableForMember(IMember)
 	 */
