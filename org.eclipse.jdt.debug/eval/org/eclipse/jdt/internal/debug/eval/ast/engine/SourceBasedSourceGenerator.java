@@ -744,11 +744,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		
 			if (rightTypeFound()) {
 				
-				if (!node.arguments().isEmpty()) {
-					setError(EvaluationEngineMessages.getString("SourceBasedSourceGenerator.Cannot_evaluate_an_expression_in_the_context_of_anonymous_type_with_no_default_constructor._1")); //$NON-NLS-1$
-					return;
-				}
-				
 				List bodyDeclarations= anonymousClassDeclaration.bodyDeclarations();
 				
 				StringBuffer source = buildTypeBody(fSource, bodyDeclarations);
