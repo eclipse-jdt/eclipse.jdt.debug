@@ -31,13 +31,13 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * A label provider for source element qaulifiers found with a JavaSourceLocator
+ * A label provider for source element qualifiers found with a JavaSourceLocator
  */
 public class SourceElementQualifierProvider extends LabelProvider implements ILabelProvider {
 	
 	private JavaElementLabelProvider fJavaLabels;
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
@@ -54,7 +54,7 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 				// external
 				return zipFile.getName();
 			} else {
-				// intenral
+				// internal
 				return res.getName();
 			}
 		} else if (element instanceof LocalFileStorage) {
@@ -65,7 +65,7 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 		return super.getText(element);
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
@@ -96,5 +96,4 @@ public class SourceElementQualifierProvider extends LabelProvider implements ILa
 		fJavaLabels.dispose();
 		fJavaLabels = null;
 	}
-
 }
