@@ -26,7 +26,7 @@ public class MoveResultToViewerAction extends Action {
 	private Runnable runnable;
 
 
-	MoveResultToViewerAction(Runnable runnable) {
+	public MoveResultToViewerAction(Runnable runnable) {
 		this.runnable = runnable;
 	}
 	

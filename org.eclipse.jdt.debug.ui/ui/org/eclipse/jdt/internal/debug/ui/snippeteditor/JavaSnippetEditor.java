@@ -44,6 +44,8 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
+import org.eclipse.debug.ui.actions.PopupInformationControl;
 import org.eclipse.jdt.core.ICompletionRequestor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -66,6 +68,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
+import org.eclipse.jdt.internal.debug.ui.actions.MoveResultToViewerAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -75,24 +78,38 @@ import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -729,28 +746,83 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		if (errors.length > 0) {
 			Runnable r = new Runnable() {
 				public void run() {
-					IDocument document = getSourceViewer().getDocument();
+					final IDocument document = getSourceViewer().getDocument();
 					String delimiter = document.getLegalLineDelimiters()[0];
-					int insertionPoint = fSnippetStart;
-					try {
-						insertionPoint = document.getLineOffset(document.getLineOfOffset(fSnippetStart));
-					} catch (BadLocationException ble) {
-						JDIDebugUIPlugin.log(ble);
-					}
-					int firstInsertionPoint = insertionPoint;
+					
+					final StringBuffer errorString = new StringBuffer();
 					for (int i = 0; i < errors.length; i++) {
-						String error= errors[i];
-			
-						String message= error + delimiter;
-						try {
-							document.replace(insertionPoint, 0, message);
-						} catch (BadLocationException e) {
-							JDIDebugUIPlugin.log(e);
-						}
-						insertionPoint += message.length();
+						errorString.append(errors[i] + delimiter);
 					}
-					selectAndReveal(firstInsertionPoint, insertionPoint - firstInsertionPoint);
-					fSnippetStart = insertionPoint;
+					
+					final IAction action = new MoveResultToViewerAction(new Runnable() {
+						public void run() {
+							int insertionPoint = fSnippetStart;
+							try {
+								document.replace(insertionPoint, 0, errorString.toString());
+							} catch (BadLocationException e) {
+							}
+							selectAndReveal(insertionPoint, errorString.length());
+							fSnippetStart = insertionPoint;	
+						}
+					});
+
+					action.setText(SnippetMessages.getString("JavaSnippetEditor.46"));  //$NON-NLS-1$
+					
+					final IPopupInformationControlAdapter adapter = new IPopupInformationControlAdapter() {
+						public boolean isFocusControl() {
+							return false;
+						}
+
+						public boolean hasContents() {
+							return true;
+						}
+
+						public void setInformation(String information) {
+						}
+
+						public Composite createInformationComposite(Shell parent) {
+							Composite comp = new Composite(parent, parent.getStyle());
+							comp.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+							comp.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+							
+							comp.setLayout(new GridLayout());
+							Label label = new Label(comp, SWT.NONE);
+							label.setText(errorString.toString());
+							label.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+							label.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+							Dialog.applyDialogFont(comp);
+							label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
+							return comp;
+						}
+
+						public IDialogSettings getDialogSettings() {
+							return JDIDebugUIPlugin.getDefault().getDialogSettings();
+						}
+					};
+							
+					final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
+						public IInformationControl createInformationControl(Shell parent) {
+							return new PopupInformationControl(parent, adapter, action);
+						}
+					});
+					
+					try {
+						String contentType = document.getContentType(fSnippetStart);
+						IInformationProvider infoProvider = new IInformationProvider(){
+							public IRegion getSubject(ITextViewer textViewer, int offset) {						
+								return new Region(fSnippetStart, fSnippetEnd-fSnippetStart);
+							}
+							public String getInformation(ITextViewer textViewer, IRegion subject) {
+								return errorString.toString();
+							}
+						};
+						
+						infoPresenter.setInformationProvider(infoProvider, contentType);				
+						infoPresenter.install(getSourceViewer());
+						infoPresenter.showInformation();
+					} catch (BadLocationException e) {
+						return;
+					}	
 				}
 			};
 			async(r);
