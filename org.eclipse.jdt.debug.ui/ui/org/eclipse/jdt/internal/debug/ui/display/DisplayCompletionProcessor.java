@@ -40,8 +40,8 @@ import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
-import org.eclipse.jdt.ui.text.java.JavaCompletionProposalComparator;
-import org.eclipse.jdt.ui.text.java.ResultCollector;
+import org.eclipse.jdt.ui.text.java.CompletionProposalComparator;
+import org.eclipse.jdt.ui.text.java.CompletionProposalCollector;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -62,19 +62,19 @@ import com.sun.jdi.ClassNotLoadedException;
  */
 public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		
-	private ResultCollector fCollector;
+	private CompletionProposalCollector fCollector;
 	private IContextInformationValidator fValidator;
 	private TemplateEngine fTemplateEngine;
 	
 	private char[] fProposalAutoActivationSet;
-	private JavaCompletionProposalComparator fComparator;
+	private CompletionProposalComparator fComparator;
 		
 	public DisplayCompletionProcessor() {
 		TemplateContextType contextType= JavaPlugin.getDefault().getTemplateContextRegistry().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
 			fTemplateEngine= new TemplateEngine(contextType);
 		}
-		fComparator= new JavaCompletionProposalComparator();
+		fComparator= new CompletionProposalComparator();
 	}
 	
 	/**
@@ -299,7 +299,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 * Configures the display result collection for the current code assist session
 	 */
 	protected void configureResultCollector(IJavaProject project, ITextSelection selection) {
-		fCollector = new ResultCollector(project);
+		fCollector = new CompletionProposalCollector(project);
 		if (selection.getLength() != 0) {
 			fCollector.setReplacementLength(selection.getLength());
 		} 
@@ -422,11 +422,11 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		fProposalAutoActivationSet= activationSet;
 	}
 	
-	protected ResultCollector getCollector() {
+	protected CompletionProposalCollector getCollector() {
 		return fCollector;
 	}
 
-	protected void setCollector(ResultCollector collector) {
+	protected void setCollector(CompletionProposalCollector collector) {
 		fCollector = collector;
 	}
 

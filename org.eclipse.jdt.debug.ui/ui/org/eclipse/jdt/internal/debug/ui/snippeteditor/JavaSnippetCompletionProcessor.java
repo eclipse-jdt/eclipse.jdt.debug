@@ -20,8 +20,8 @@ import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateProposal;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
-import org.eclipse.jdt.ui.text.java.JavaCompletionProposalComparator;
-import org.eclipse.jdt.ui.text.java.ResultCollector;
+import org.eclipse.jdt.ui.text.java.CompletionProposalComparator;
+import org.eclipse.jdt.ui.text.java.CompletionProposalCollector;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -36,11 +36,11 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	
-	private ResultCollector fCollector;
+	private CompletionProposalCollector fCollector;
 	private JavaSnippetEditor fEditor;
 	private IContextInformationValidator fValidator;
 	private TemplateEngine fTemplateEngine;
-	private JavaCompletionProposalComparator fComparator;
+	private CompletionProposalComparator fComparator;
 	
 	private char[] fProposalAutoActivationSet;
 			
@@ -51,7 +51,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 			fTemplateEngine= new TemplateEngine(contextType);
 		}
 		
-		fComparator= new JavaCompletionProposalComparator();
+		fComparator= new CompletionProposalComparator();
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int position) {
 		try {
-			fCollector = new ResultCollector(fEditor.getJavaProject());
+			fCollector = new CompletionProposalCollector(fEditor.getJavaProject());
 			fEditor.codeComplete(fCollector);
 		} catch (JavaModelException x) {
 			Shell shell= viewer.getTextWidget().getShell();
