@@ -1063,11 +1063,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 		if (supportsBreakpoint(breakpoint)) {
 			try {
-				if (DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-					// If the breakpoint manager is disabled, don't add the breakpoint
+				JavaBreakpoint javaBreakpoint= (JavaBreakpoint) breakpoint;
+				if (!javaBreakpoint.shouldSkipBreakpoint()) {
+					// If the breakpoint should be skipped, don't add the breakpoint
 					// request to the VM. Just add the breakpoint to the collection so
 					// we have it if the manager is later enabled.
-					((JavaBreakpoint)breakpoint).addToTarget(this);
+					javaBreakpoint.addToTarget(this);
 				}
 				if (!getBreakpoints().contains(breakpoint)) {
 					getBreakpoints().add(breakpoint);
@@ -1088,12 +1089,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @param breakpoint the breakpoint that has changed
 	 */
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
-		if (!isAvailable()) {
-			return;
-		}		
-		if (supportsBreakpoint(breakpoint) && DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-			((JavaBreakpoint)breakpoint).changeForTarget(this);
-		}
 	}
 	
 	/**
@@ -1321,16 +1316,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * is cleared.
 	 */
 	protected void removeAllBreakpoints() {
-		uninstallAllBreakpoints();
-		getBreakpoints().clear();
-	}
-	
-	/**
-	 * Removes all breakpoints from this target, such
-	 * that each breakpoint can update its install count.
-	 * This target maintains its collection of breakpoints.
-	 */
-	protected void uninstallAllBreakpoints() {
 		Iterator breakpoints= ((ArrayList)((ArrayList)getBreakpoints()).clone()).iterator();
 		while (breakpoints.hasNext()) {
 			JavaBreakpoint breakpoint= (JavaBreakpoint) breakpoints.next();
@@ -1340,6 +1325,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				logError(e);
 			}
 		}
+		getBreakpoints().clear();
 	}
 	
 	/**
@@ -2093,14 +2079,22 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 
 	/**
-	 * When the breakpoint manager disables, remove all breakpoint
-	 * requests from the VM. When it enabled, reinstall them.
+	 * When the breakpoint manager disables, remove all registered breakpoints
+	 * requests from the VM. When it enables, reinstall them.
 	 */
 	public void breakpointManagerEnablementChanged(boolean enabled) {
-		if (enabled) {
-			reinstallAllBreakpoints();
-		} else {
-			uninstallAllBreakpoints();
+		Iterator breakpoints= ((ArrayList)((ArrayList)getBreakpoints()).clone()).iterator();
+		while (breakpoints.hasNext()) {
+			JavaBreakpoint breakpoint= (JavaBreakpoint) breakpoints.next();
+			try {
+				if (enabled) {
+					breakpoint.addToTarget(this);
+				} else if (breakpoint.shouldSkipBreakpoint()) {
+					breakpoint.removeFromTarget(this);
+				}
+			} catch (CoreException e) {
+				logError(e);
+			}
 		}
 	}
 }

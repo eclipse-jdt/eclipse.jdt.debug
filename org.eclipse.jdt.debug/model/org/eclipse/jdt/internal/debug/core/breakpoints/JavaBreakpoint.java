@@ -362,7 +362,18 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				JDIDebugPlugin.log(ce);
 			}
 		}
-	}	
+	}
+	
+	/**
+	 * Returns whether this breakpoint should be "skipped". Breakpoints
+	 * are skipped if the breakpoint manager is disabled and the breakpoint
+	 * is registered with the manager
+	 * 
+	 * @return whether this breakpoint should be skipped
+	 */
+	public boolean shouldSkipBreakpoint() throws CoreException {
+		return isRegistered() && !DebugPlugin.getDefault().getBreakpointManager().isEnabled();
+	}
 
 	/**
 	 * Attempts to create a breakpoint request for this breakpoint in the given
@@ -371,7 +382,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @return Whether a request was created
 	 */
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
-		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+		if (shouldSkipBreakpoint()) {
 			return false;
 		}
 		EventRequest request= newRequest(target, type);
@@ -476,7 +487,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Creates event requests for the given target
 	 */
 	protected void createRequests(JDIDebugTarget target) throws CoreException {
-		if (target.isTerminated() || !DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+		if (target.isTerminated() || shouldSkipBreakpoint()) {
 			return;
 		}
 		String referenceTypeName= getTypeName();
@@ -544,12 +555,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				}
 			}
 		}
-	}
-	
-	/**
-	 * Do nothing - we update the request when an API call changes an attribute
-	 */
-	public void changeForTarget(JDIDebugTarget target) {
 	}
 			
 	/**

@@ -19,9 +19,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -651,17 +653,16 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
 	 */
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
-		if (type.name().equals(getTypeName()) && DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-			EventRequest entryRequest= createMethodEntryRequest(target, type);
-			EventRequest exitRequest= createMethodExitRequest(target, type);
-			
-			registerRequest(entryRequest, target);
-			registerRequest(exitRequest, target);
-			return true;
-		} else {
-			// do not create requests for inner/outer types if since this is for a specific type
+		if (!type.name().equals(getTypeName()) || shouldSkipBreakpoint()) {
+			// do not create requests for inner/outer types if this is for a specific type
 			return false;
 		}
+		EventRequest entryRequest= createMethodEntryRequest(target, type);
+		EventRequest exitRequest= createMethodExitRequest(target, type);
+		
+		registerRequest(entryRequest, target);
+		registerRequest(exitRequest, target);
+		return true;
 	}
 	/**
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#setTypeName(String)
