@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.internal.debug.ui.actions;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -9,10 +9,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 
-/**
- * A generic example Java properties action. Subclass and provide
- * specific action and enabling code.
- */
 public abstract class StackFrameAction extends OpenTypeAction {
 	
 	public boolean isEnabledFor(Object element) {

@@ -255,26 +255,6 @@
 		</action>
 	</viewContribution>
 	<viewContribution
-		id="org.eclipse.jdt.ui.debug.InspectorViewActions"
-		targetID="org.eclipse.debug.ui.InspectorView">
-		<action id="org.eclipse.jdt.ui.actions.ShowFinalFields"
-			label="%showFinalAction.label"
-			toolbarPath="javaVariableFilters"
-			icon="icons/full/elcl16/final_co.gif"
-			tooltip="%showFinalAction.tooltip"
-			state="true"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
-		</action>
-		<action id="org.eclipse.jdt.ui.actions.ShowStaticFields"
-			label="%showStaticAction.label"
-			toolbarPath="javaVariableFilters"
-			icon="icons/full/elcl16/static_co.gif"
-			tooltip="%showStaticAction.tooltip"
-			state="true"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
-		</action>
-	</viewContribution>
-	<viewContribution
 		id="org.eclipse.jdt.ui.debug.ExpressionViewActions"
 		targetID="org.eclipse.debug.ui.ExpressionView">
 		<action id="org.eclipse.jdt.ui.actions.ShowFinalFields"
@@ -302,7 +282,7 @@
 			toolbarPath="javaExceptions"
 			icon="icons/full/clcl16/exc_catch.gif"
 			tooltip="%exceptionAction.tooltip"
-			class="org.eclipse.jdt.internal.debug.ui.launcher.AddExceptionAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction">
 		</action>
 	</viewContribution>
 </extension>
@@ -355,7 +335,7 @@
 			label="%openRecType.label"
 			tooltip="%openRecType.tooltip"
 			menubarPath="org.eclipse.jdt.debug.ui.actions.OpenOnMenu/group.openOn"
-			class="org.eclipse.jdt.internal.debug.ui.launcher.OpenOnReceivingTypeAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnReceivingTypeAction">
 		</action>
 	</objectContribution>
 	<objectContribution
@@ -366,7 +346,7 @@
 			label="%openDeclVarType.label"
 			tooltip="%openDeclVarType.tooltip"
 			menubarPath="openOnGroup"
-			class="org.eclipse.jdt.internal.debug.ui.launcher.OpenOnVariableAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnVariableAction">
 		</action>
 	</objectContribution>
 	<objectContribution
@@ -377,7 +357,7 @@
 			label="%openDeclType.label"
 			tooltip="%openDeclType.tooltip"
 			menubarPath="org.eclipse.jdt.debug.ui.actions.OpenOnMenu/group.openOn"
-			class="org.eclipse.jdt.internal.debug.ui.launcher.OpenOnDeclaringTypeAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnDeclaringTypeAction">
 		</action>
 	</objectContribution>
 	<viewerContribution 

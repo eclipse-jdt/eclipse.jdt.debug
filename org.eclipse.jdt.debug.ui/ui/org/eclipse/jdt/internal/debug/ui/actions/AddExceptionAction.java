@@ -1,5 +1,5 @@
 
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.internal.debug.ui.actions;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -19,8 +19,7 @@ import org.eclipse.ui.IViewPart;
 
 public class AddExceptionAction implements IViewActionDelegate {
 
-	public void run(IAction action) {
-		
+	public void run(IAction action) {		
 		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
 		AddExceptionDialog dialog= new AddExceptionDialog(shell);
 		if (dialog.open() == dialog.OK) {
@@ -34,9 +33,8 @@ public class AddExceptionAction implements IViewActionDelegate {
 			try {
 				JDIDebugModel.createExceptionBreakpoint(result, caught, uncaught, exceptionKind == AddExceptionDialog.CHECKED_EXCEPTION);
 			} catch (DebugException exc) {
-				ExceptionHandler.handle(exc, LauncherMessages.getString("addExceptionAction.error.title"), LauncherMessages.getString("addExceptionAction.error.message")); //$NON-NLS-2$ //$NON-NLS-1$
+				ExceptionHandler.handle(exc, ActionMessages.getString("AddExceptionAction.error.title"), ActionMessages.getString("AddExceptionAction.error.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			}
-			
 		}
 	}
 	

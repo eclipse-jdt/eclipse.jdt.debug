@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.internal.debug.ui.actions;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
