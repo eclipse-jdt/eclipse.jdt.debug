@@ -952,7 +952,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	protected StackFrame getUnderlyingStackFrame() throws DebugException {
 		if (fStackFrame == null) {
-			fStackFrame = ((JDIThread)getThread()).getUnderlyingFrame(getDepth());
+			setUnderlyingStackFrame(((JDIThread)getThread()).getUnderlyingFrame(getDepth()));
 		}
 		return fStackFrame;
 	}
