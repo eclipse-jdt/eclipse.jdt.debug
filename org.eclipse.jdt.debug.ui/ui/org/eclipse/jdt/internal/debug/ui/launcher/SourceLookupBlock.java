@@ -67,6 +67,12 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
 		
+		Label viewerLabel= new Label(comp, SWT.LEFT);
+		viewerLabel.setText(LauncherMessages.getString("SourceLookupBlock.&Source_Lookup_Path__1")); //$NON-NLS-1$
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		viewerLabel.setLayoutData(gd);
+		
 		fPathViewer = new RuntimeClasspathViewer(comp);
 		fPathViewer.addEntriesChangedListener(this);
 		gd = new GridData(GridData.FILL_BOTH);

@@ -323,6 +323,4 @@ public class VMLibraryBlock {
 	protected IVMInstallType getVMInstallType() {
 		return fVmInstallType;
 	}	
-	
-
 }
