@@ -52,6 +52,13 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			}
 			return super.checkState();
 		}
+		
+		protected void doStore() {
+			Text text = getTextControl();
+			if (text.isEnabled()) {
+				super.doStore();
+			}
+		}
 
 		/**
 		 * @see FieldEditor#refreshValidState()
