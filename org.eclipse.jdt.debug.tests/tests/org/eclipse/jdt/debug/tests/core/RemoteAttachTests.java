@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -74,7 +75,24 @@ public class RemoteAttachTests extends AbstractDebugTest {
 		// attach	
 		IJavaThread thread= null;
 		try {
-			thread= launchToBreakpoint(attachConfig);
+			CoreException exception = null;
+			int attempts = 0;
+			boolean connected = false;
+			while ((attempts < 2) && !connected) {
+				try {
+					attempts++;
+					exception = null;
+					thread= launchToBreakpoint(attachConfig);
+					connected = true;
+				} catch (CoreException e) {
+					// try again, in case the VM is not yet ready
+					exception = e;
+					Thread.sleep(2000);
+				}
+			}
+			if (exception != null) {
+				throw exception;
+			}
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			IBreakpoint hit = getBreakpoint(thread);
 			assertNotNull("suspended, but not by breakpoint", hit);

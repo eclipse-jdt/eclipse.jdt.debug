@@ -137,7 +137,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return Object the source of the event
 	 * @exception Exception if the event is never received.
 	 */
-	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter) throws Exception {
+	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter) throws CoreException {
 		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null);
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
@@ -204,7 +204,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param config the configuration to launch
 	 * @return thread in which the first suspend event occurred
 	 */	
-	protected IJavaThread launchToBreakpoint(ILaunchConfiguration config) throws Exception {
+	protected IJavaThread launchToBreakpoint(ILaunchConfiguration config) throws CoreException {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 
