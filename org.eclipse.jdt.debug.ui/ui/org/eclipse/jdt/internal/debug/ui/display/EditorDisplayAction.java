@@ -5,16 +5,9 @@ package org.eclipse.jdt.internal.debug.ui.display;
  * All Rights Reserved.
  */
 
-import org.eclipse.jdt.internal.debug.ui.display.DisplayAction;
-import org.eclipse.jdt.internal.debug.ui.display.DisplayView;
-import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
