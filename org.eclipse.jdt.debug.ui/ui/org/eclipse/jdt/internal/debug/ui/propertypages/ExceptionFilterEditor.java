@@ -47,6 +47,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
@@ -95,6 +96,7 @@ public class ExceptionFilterEditor {
 		outer.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		outer.setLayoutData(gd);
+		outer.setFont(parent.getFont());
 		// filter table
 		Label label= new Label(outer, SWT.NONE);
 		label.setText(PropertyPageMessages.getString("ExceptionFilterEditor.5")); //$NON-NLS-1$
@@ -110,6 +112,7 @@ public class ExceptionFilterEditor {
 		columnLayoutData[0] = new ColumnWeightData(100);
 		tableLayout.addColumnData(columnLayoutData[0]);
 		fFilterTable.setLayout(tableLayout);
+		fFilterTable.setFont(parent.getFont());
 		new TableColumn(fFilterTable, SWT.NONE);
 
 		fFilterViewer = new CheckboxTableViewer(fFilterTable);
@@ -177,7 +180,9 @@ public class ExceptionFilterEditor {
 
 	private void createFilterButtons(Composite container) {
 		// button container
+		Font font= container.getFont();
 		Composite buttonContainer = new Composite(container, SWT.NONE);
+		buttonContainer.setFont(font);
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		buttonContainer.setLayoutData(gd);
 		GridLayout buttonLayout = new GridLayout();
@@ -188,6 +193,7 @@ public class ExceptionFilterEditor {
 
 		// Add filter button
 		fAddFilterButton = new Button(buttonContainer, SWT.PUSH);
+		fAddFilterButton.setFont(font);
 		fAddFilterButton.setText(PropertyPageMessages.getString("ExceptionFilterEditor.6")); //$NON-NLS-1$
 		fAddFilterButton.setToolTipText(PropertyPageMessages.getString("ExceptionFilterEditor.7")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
@@ -202,6 +208,7 @@ public class ExceptionFilterEditor {
 
 		// Add type button
 		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
+		fAddTypeButton.setFont(font);
 		fAddTypeButton.setText(PropertyPageMessages.getString("ExceptionFilterEditor.8")); //$NON-NLS-1$
 		fAddTypeButton.setToolTipText(PropertyPageMessages.getString("ExceptionFilterEditor.9")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddTypeButton);
@@ -216,6 +223,7 @@ public class ExceptionFilterEditor {
 
 		// Add package button
 		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
+		fAddPackageButton.setFont(font);
 		fAddPackageButton.setText(PropertyPageMessages.getString("ExceptionFilterEditor.10")); //$NON-NLS-1$
 		fAddPackageButton.setToolTipText(PropertyPageMessages.getString("ExceptionFilterEditor.11")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddPackageButton);
@@ -230,6 +238,7 @@ public class ExceptionFilterEditor {
 
 		// Remove button
 		fRemoveFilterButton = new Button(buttonContainer, SWT.PUSH);
+		fRemoveFilterButton.setFont(font);
 		fRemoveFilterButton.setText(PropertyPageMessages.getString("ExceptionFilterEditor.12")); //$NON-NLS-1$
 		fRemoveFilterButton.setToolTipText(PropertyPageMessages.getString("ExceptionFilterEditor.13")); //$NON-NLS-1$
 		gd = getButtonGridData(fRemoveFilterButton);
