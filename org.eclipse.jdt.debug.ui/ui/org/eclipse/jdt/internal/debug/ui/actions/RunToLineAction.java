@@ -25,6 +25,8 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewActionDelegate;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -33,7 +35,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Action to support run to line (i.e. where the cursor is in the active editor)
  */
-public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWindowActionDelegate {
+public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWindowActionDelegate, IViewActionDelegate {
 
 	private IWorkbenchWindow fWorkbenchWindow= null;
 	
@@ -55,7 +57,7 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	
 			IBreakpoint breakpoint= null;
 			try {
-				Map attributes = new HashMap(10);
+				Map attributes = new HashMap(4);
 				BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
 				BreakpointUtils.addRunToLineAttributes(attributes);
 				breakpoint= JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), getLineNumber(), -1, -1, 1, false, attributes);
@@ -251,5 +253,11 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 				update();
 			}
 		}
+	}
+	/**
+	 * @see IViewActionDelegate#init(IViewPart)
+	 */
+	public void init(IViewPart view) {
+		init(view.getViewSite().getWorkbenchWindow());
 	}
 }
