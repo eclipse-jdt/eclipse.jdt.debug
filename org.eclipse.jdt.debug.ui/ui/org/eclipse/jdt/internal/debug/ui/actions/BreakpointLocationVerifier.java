@@ -34,10 +34,7 @@ public class BreakpointLocationVerifier {
 				lastToken= 0;
 
 				while (token != TerminalSymbols.TokenNameEOF) {
-					if (isNonIdentifierValidToken(token)) {
-						found= true;
-						break;
-					} else if (token == TerminalSymbols.TokenNameIdentifier) {
+					if (token == TerminalSymbols.TokenNameIdentifier) {
 						if (lastToken == TerminalSymbols.TokenNameIdentifier || isPrimitiveTypeToken(lastToken)
 						|| lastToken == TerminalSymbols.TokenNameRBRACKET) {
 							//var declaration..is there initialization
@@ -46,16 +43,33 @@ public class BreakpointLocationVerifier {
 							if (token == TerminalSymbols.TokenNameSEMICOLON) {
 								//no init
 								break;
-							} else {
+							} else if (token == TerminalSymbols.TokenNameEQUAL) {
 								found= true;
 								break;
 							}
+							continue;
 						}
+					} else if (isNonIdentifierValidToken(token)) {
+						found= true;
+						break;
 					} else if (lastToken == TerminalSymbols.TokenNameIdentifier 
 								&& token != TerminalSymbols.TokenNameLBRACKET) {
 						found= true;
 						break;
-					} 
+					} else if (lastToken == TerminalSymbols.TokenNameLBRACKET 
+								&& token == TerminalSymbols.TokenNameRBRACKET) {
+							//var declaration..is there initialization
+							lastToken= token;
+							token= scanner.getNextToken();
+							if (token == TerminalSymbols.TokenNameSEMICOLON) {
+								//no init
+								break;
+							} else if (token == TerminalSymbols.TokenNameEQUAL) {
+								found= true;
+								break;
+							}
+							continue;
+					}
 						
 					lastToken= token;
 					token= scanner.getNextToken();
@@ -75,21 +89,31 @@ public class BreakpointLocationVerifier {
 	
 	
 	protected boolean isPrimitiveTypeToken(int token) {
-		return token == TerminalSymbols.TokenNameboolean ||
-			token == TerminalSymbols.TokenNameint ||
-			token == TerminalSymbols.TokenNamechar ||
-			token == TerminalSymbols.TokenNamebyte ||
-			token == TerminalSymbols.TokenNamefloat ||
-			token == TerminalSymbols.TokenNamedouble ||
-			token == TerminalSymbols.TokenNamelong ||
-			token == TerminalSymbols.TokenNameshort;
+		switch(token) {
+			case TerminalSymbols.TokenNameboolean:
+			case TerminalSymbols.TokenNameint:
+			case TerminalSymbols.TokenNamechar:
+			case TerminalSymbols.TokenNamebyte:
+			case TerminalSymbols.TokenNamefloat:
+			case TerminalSymbols.TokenNamedouble:
+			case TerminalSymbols.TokenNamelong:
+			case TerminalSymbols.TokenNameshort:
+				return true;
+			default : 
+				return false;
+		}		
 	}
 	
 	protected boolean isNonIdentifierValidToken(int token) {
-		return token == TerminalSymbols.TokenNamebreak ||
-				token == TerminalSymbols.TokenNamecontinue ||
-				token == TerminalSymbols.TokenNamereturn ||
-				token == TerminalSymbols.TokenNamethis ||
-				token == TerminalSymbols.TokenNamesuper;
+		switch(token) {
+			case TerminalSymbols.TokenNamebreak:
+			case TerminalSymbols.TokenNamecontinue:
+			case TerminalSymbols.TokenNamereturn:
+			case TerminalSymbols.TokenNamethis:
+			case TerminalSymbols.TokenNamesuper:
+				return true;	
+			default:
+				return false;
+		}
 	}
 }
