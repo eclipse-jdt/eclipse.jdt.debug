@@ -673,7 +673,7 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
 			state="false">
 		</action>
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStatic"
+		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStatic"
 			label="%showStaticAction.label"
 			menubarPath="javaActions"
 			icon="icons/full/clcl16/static_co.gif"
@@ -682,7 +682,7 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
 			state="false">
 		</action>		
-		<action id="org.eclipse.jdt.ui.variableViewActions.ShowConstants"
+		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowConstants"
 			label="%showConstantsAction.label"
 			menubarPath="javaActions"
 			icon="icons/full/clcl16/constant_co.gif"
