@@ -223,8 +223,16 @@
 		<actionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
 	</perspectiveExtension>
 	<perspectiveExtension 
+		targetID="org.eclipse.jdt.ui.JavaHierarchyPerspective">
+		<actionSet id="org.eclipse.jdt.debug.ui.JDTLaunchActionSet"/>
+	</perspectiveExtension>
+	<perspectiveExtension 
 		targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
 		<actionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
+	</perspectiveExtension>
+	<perspectiveExtension 
+		targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+		<actionSet id="org.eclipse.jdt.debug.ui.JDTLaunchActionSet"/>
 	</perspectiveExtension>
     <perspectiveExtension 
     	targetID="org.eclipse.debug.ui.DebugPerspective"> 
