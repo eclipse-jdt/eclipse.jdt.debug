@@ -150,18 +150,17 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 			}
 		});
 		
-		createVerticalSpacer(comp, 1);
+		createVerticalSpacer(comp, 2);
 		
 		Group group = new Group(comp, SWT.NONE);
 		group.setText(LauncherMessages.getString("JavaConnectTab.Connection_Properties_1")); //$NON-NLS-1$
 		y = new GridLayout();
-		y.numColumns = 2;
 		group.setLayout(y);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(gd);		
 		fArgumentComposite = group;
 		
-		createVerticalSpacer(comp, 1);		
+		createVerticalSpacer(comp, 2);		
 		
 		fAllowTerminateButton = new Button(comp, SWT.CHECK);
 		fAllowTerminateButton.setText(LauncherMessages.getString("JavaConnectTab.&Allow_termination_of_remote_VM_6")); //$NON-NLS-1$
@@ -211,7 +210,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 				field = new StringFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);
 			} else if (arg instanceof Connector.BooleanArgument) {
 				store.setDefault(arg.name(), ((Connector.BooleanArgument)arg).booleanValue());
-				field = new BooleanFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);				
+				field = new BooleanFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);					
 			} else if (arg instanceof Connector.SelectedArgument) {
 				List choices = ((Connector.SelectedArgument)arg).choices();
 				String[][] namesAndValues = new String[choices.size()][2];
@@ -226,6 +225,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 				store.setDefault(arg.name(), arg.value());
 				field = new ComboFieldEditor(arg.name(), getLabel(arg.label()), namesAndValues, fArgumentComposite);
 			}
+			field.fillIntoGrid(fArgumentComposite, 2);
 			field.setPreferenceStore(store);
 			field.loadDefault();
 			field.setPropertyChangeListener(this);
