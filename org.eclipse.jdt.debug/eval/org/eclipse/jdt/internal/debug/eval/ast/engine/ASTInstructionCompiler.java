@@ -1012,10 +1012,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		ITypeBinding typeBinding= node.getElementType().resolveBinding();
-		
-		int dimension= node.getDimensions();
-		String signature= getTypeSignature(typeBinding);
+		ITypeBinding arrayTypeBinding= node.resolveBinding();
+		int dimension= arrayTypeBinding.getDimensions();
+		String signature= getTypeSignature(arrayTypeBinding.getElementType());
 
 		push(new PushArrayType(signature, dimension, fCounter));
 		
