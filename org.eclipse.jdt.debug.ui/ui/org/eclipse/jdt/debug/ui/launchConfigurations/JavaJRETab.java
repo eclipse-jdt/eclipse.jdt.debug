@@ -25,7 +25,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor;
+import org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.jres.JREsComboBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
@@ -115,6 +115,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 				
 		fJREBlock = new JREsComboBlock();
 		fJREBlock.setDefaultJREDescriptor(getDefaultJREDescriptor());
+		fJREBlock.setSpecificJREDescriptor(getSpecificJREDescriptor());
 		fJREBlock.createControl(topComp);
 		Control control = fJREBlock.getControl();
 		fJREBlock.addSelectionChangedListener(fCheckListener);
@@ -446,8 +447,8 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		return fUseDynamicArea;
 	}
 
-	protected DefaultJREDescriptor getDefaultJREDescriptor() {
-		return new DefaultJREDescriptor() {
+	protected JREDescriptor getDefaultJREDescriptor() {
+		return new JREDescriptor() {
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor#getDescription()
@@ -475,8 +476,12 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		};
 	}
 	
+	protected JREDescriptor getSpecificJREDescriptor() {
+		return null;
+	}
+	
 	/**
-	 * Returns the java project assocaited with the current config being edited,
+	 * Returns the Java project associated with the current config being edited,
 	 * or <code>null</code> if none.
 	 * 
 	 * @return java project or <code>null</code>
