@@ -85,7 +85,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	/**
 	 * Returns a list (copy) of the entries in the viewer
 	 */
-	protected List getEntiresAsList() {
+	protected List getEntriesAsList() {
 		IRuntimeClasspathEntry[] entries = getViewer().getEntries();
 		List list = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
@@ -112,7 +112,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 			return false;
 		}
 		Iterator entries = selection.iterator();
-		List list = getEntiresAsList();
+		List list = getEntriesAsList();
 		while (entries.hasNext()) {
 			Object next = entries.next();
 			if (list.indexOf(next) == index) {

@@ -32,7 +32,7 @@ public class MoveDownAction extends RuntimeClasspathAction {
 		if (targets.isEmpty()) {
 			return;
 		}
-		List list = getEntiresAsList();
+		List list = getEntriesAsList();
 		int bottom = list.size() - 1;
 		int index = 0;
 		for (int i = targets.size() - 1; i >= 0; i--) {
@@ -53,6 +53,6 @@ public class MoveDownAction extends RuntimeClasspathAction {
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		return getViewer().isEnabled() && !selection.isEmpty() && !isIndexSelected(selection, getEntiresAsList().size() - 1);	
+		return getViewer().isEnabled() && !selection.isEmpty() && !isIndexSelected(selection, getEntriesAsList().size() - 1);	
 	}
 }

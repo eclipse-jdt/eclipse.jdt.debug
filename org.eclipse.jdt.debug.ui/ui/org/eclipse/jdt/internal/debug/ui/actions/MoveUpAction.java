@@ -37,7 +37,7 @@ public class MoveUpAction extends RuntimeClasspathAction {
 		}
 		int top = 0;
 		int index = 0;
-		List list = getEntiresAsList();
+		List list = getEntriesAsList();
 		Iterator entries = targets.iterator();
 		while (entries.hasNext()) {
 			Object target = entries.next();

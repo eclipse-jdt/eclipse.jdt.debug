@@ -31,7 +31,7 @@ public class RemoveAction extends RuntimeClasspathAction {
 	 */
 	public void run() {
 		List targets = getOrderedSelection();
-		List list = getEntiresAsList();
+		List list = getEntriesAsList();
 		list.removeAll(targets);
 		setEntries(list);
 	}

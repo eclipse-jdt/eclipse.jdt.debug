@@ -99,7 +99,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 	 * Returns a list of resources of currently selected jars
 	 */
 	protected List getSelectedFolders() {
-		List list = getEntiresAsList();
+		List list = getEntriesAsList();
 		List jars = new ArrayList();
 		Iterator iter = list.iterator();
 		while (iter.hasNext()) {

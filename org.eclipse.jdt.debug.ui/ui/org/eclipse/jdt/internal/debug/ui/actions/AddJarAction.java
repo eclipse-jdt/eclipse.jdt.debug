@@ -109,7 +109,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 	 * Returns a list of resources of currently selected jars
 	 */
 	protected List getSelectedJars() {
-		List list = getEntiresAsList();
+		List list = getEntriesAsList();
 		List jars = new ArrayList();
 		Iterator iter = list.iterator();
 		while (iter.hasNext()) {
