@@ -181,7 +181,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 					rebind();
 				}
 			};
-			ResourcesPlugin.getWorkspace().run(runnable, new NullProgressMonitor());
+			JavaCore.run(runnable, new NullProgressMonitor());
 		}
 				
 		/**
