@@ -61,7 +61,7 @@ public class WorkspaceRunnableStatusHandler implements IStatusHandler {
 				}
 			}
 		};
-		JDIDebugUIPlugin.getStandardDisplay().syncExec(r);
+		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
 		
 		return null;
 	}

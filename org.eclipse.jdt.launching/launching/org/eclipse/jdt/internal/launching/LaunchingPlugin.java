@@ -55,7 +55,9 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -651,23 +653,25 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			}
 		};
 		
-		// Try to retrieve a status handler.  If found, have it run the build, otherwise
-		// just do it with a null progress monitor
-//		IStatus status = new Status(IStatus.INFO, getUniqueIdentifier(), WORKSPACE_RUNNABLE_STATUS, LaunchingMessages.getString("LaunchingPlugin.Build_in_progress_1"), null); //$NON-NLS-1$
-//		IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
-//		if (handler != null) {			
-//			try {
-//				handler.handleStatus(status, runnable);
-//			} catch (CoreException ce) {
-//				log(ce);
-//			}
-//		} else {
-			IProgressMonitor monitor = JavaRuntime.getProgressMonitor();
-			if (monitor == null) {
+		
+		// Try to retrieve a progress monitor. Delegate to status hanlder if none found.
+		IProgressMonitor monitor = JavaRuntime.getProgressMonitor();
+		if (monitor == null) {
+			// try status handler
+			IStatus status = new Status(IStatus.INFO, getUniqueIdentifier(), WORKSPACE_RUNNABLE_STATUS, LaunchingMessages.getString("LaunchingPlugin.Build_in_progress_1"), null); //$NON-NLS-1$
+			IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
+			if (handler == null) {
 				monitor = new NullProgressMonitor(); 
+			} else	{		
+				try {
+					handler.handleStatus(status, runnable);
+				} catch (CoreException ce) {
+					log(ce);
+				}
+				return;
 			}
-			ResourcesPlugin.getWorkspace().run(runnable, monitor);
-//		}
+		}
+		ResourcesPlugin.getWorkspace().run(runnable, monitor);
 	}	
 			
 	/**
