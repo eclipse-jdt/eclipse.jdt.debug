@@ -177,15 +177,7 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 				case '>':
 					buffer.append("&gt;"); //$NON-NLS-1$
 					break;
-				/*
-				case '\t':
-					buffer.append("    "); //$NON-NLS-1$
-					break;
 
-				case '\n':
-					buffer.append("<br>"); //$NON-NLS-1$
-					break;
-				*/
 				default:
 					buffer.append(ch);
 					break;
