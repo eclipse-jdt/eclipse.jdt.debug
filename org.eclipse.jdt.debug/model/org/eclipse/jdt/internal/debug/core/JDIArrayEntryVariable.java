@@ -136,11 +136,11 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 			try {
 				getArrayReference().setValue(getIndex(), value.getUnderlyingValue());
 			} catch (InvalidTypeException e) {
-				targetRequestFailed(MessageFormat.format("{0} occurred while attempting to set value of field.", new String[]{e.toString()}), e);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_attempting_to_set_value_of_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
 			} catch (ClassNotLoadedException e) {
-				targetRequestFailed(MessageFormat.format("{0} occurred while attempting to set value of field.", new String[]{e.toString()}), e);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_attempting_to_set_value_of_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format("{0} occurred while attempting to set value of field.", new String[]{e.toString()}), e);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_attempting_to_set_value_of_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
 			}
 		}
 	}	
@@ -152,9 +152,9 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 		try {
 			return ((ArrayType)getArrayReference().type()).componentType();
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving type of array entry.", new String[]{e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_while_retrieving_type_of_array_entry"), new String[]{e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving type of array entry.", new String[]{e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_while_retrieving_type_of_array_entry"), new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// this line will not be exceucted as an exception
 		// will be throw in type retrieval fails

@@ -138,7 +138,7 @@ public class JDIArrayPartition extends JDIVariable {
 		try {
 			return getArrayReference().type();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving type of array.", new String[]{e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartition.exception_while_retrieving_type_of_array"), new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// this line will not be exceucted as an exception
 		// will be throw in type retrieval fails
