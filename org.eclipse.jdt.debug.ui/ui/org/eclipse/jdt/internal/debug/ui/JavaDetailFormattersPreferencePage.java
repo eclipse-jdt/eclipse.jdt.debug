@@ -27,8 +27,6 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ColumnLayoutData;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -36,7 +34,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -52,7 +49,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -62,7 +58,6 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	static public final String DETAIL_FORMATTER_IS_DISABLED= "0"; //$NON-NLS-1$
 	
 	private CheckboxTableViewer fFormatterListViewer;
-	private Table fFormattersTable;
 	private Button fAddFormatterButton;
 	private Button fRemoveFormatterButton;
 	private Button fEditFormatterButton;
@@ -109,21 +104,11 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fTableLabel.setLayoutData(gd);
-		
-		// formats table
-		fFormattersTable= new Table(container, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
-		
+
+		fFormatterListViewer= CheckboxTableViewer.newCheckList(container, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		Table table = (Table)fFormatterListViewer.getControl();
 		gd = new GridData(GridData.FILL_BOTH);
-		fFormattersTable.setLayoutData(gd);
-
-		TableLayout tableLayout= new TableLayout();
-		ColumnLayoutData[] columnLayoutData= new ColumnLayoutData[1];
-		columnLayoutData[0]= new ColumnWeightData(100);		
-		tableLayout.addColumnData(columnLayoutData[0]);
-		fFormattersTable.setLayout(tableLayout);
-		new TableColumn(fFormattersTable, SWT.NONE);
-
-		fFormatterListViewer= new CheckboxTableViewer(fFormattersTable);
+		table.setLayoutData(gd);
 		fFormatViewerContentProvider= new FormatterListViewerContentProvider(fFormatterListViewer);
 		fFormatterListViewer.setContentProvider(fFormatViewerContentProvider);
 		fFormatterListViewer.setLabelProvider(new LabelProvider() {

@@ -60,9 +60,9 @@ class DetailFormatterDialog extends StatusDialog {
 		fDetailFormat= detailFormat;
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		if (editDialog) {
-			setTitle(DebugUIMessages.getString(DebugUIMessages.getString("DetailFormatterDialog.Edit_Detail_Formatter_1"))); //$NON-NLS-1$
+			setTitle(DebugUIMessages.getString("DetailFormatterDialog.Edit_Detail_Formatter_1")); //$NON-NLS-1$
 		} else {
-			setTitle(DebugUIMessages.getString(DebugUIMessages.getString("DetailFormatterDialog.Add_Detail_Formatter_2"))); //$NON-NLS-1$
+			setTitle(DebugUIMessages.getString("DetailFormatterDialog.Add_Detail_Formatter_2")); //$NON-NLS-1$
 		}
 	}
 	
@@ -72,7 +72,6 @@ class DetailFormatterDialog extends StatusDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
 		container.setLayout(layout);
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
@@ -82,11 +81,18 @@ class DetailFormatterDialog extends StatusDialog {
 		Label label= new Label(container, SWT.NONE);
 		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_&name__2")); //$NON-NLS-1$
 		gd= new GridData(GridData.BEGINNING);
-		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
 
+		Composite innerContainer = new Composite(container, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 2;
+		innerContainer.setLayout(layout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		innerContainer.setLayoutData(gd);
 		// type name text
-		fTypeNameText= new Text(container, SWT.SINGLE | SWT.BORDER);
+		fTypeNameText= new Text(innerContainer, SWT.SINGLE | SWT.BORDER);
 		fTypeNameText.setText(fDetailFormat.getTypeName());
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fTypeNameText.setLayoutData(gd);
@@ -96,11 +102,10 @@ class DetailFormatterDialog extends StatusDialog {
 			}
 		});
 		
-		
 		// type search button
-		Button typeSearchButton= new Button(container, SWT.PUSH);
-		typeSearchButton.setText(DebugUIMessages.getString("DetailFormatterDialog.Select_&type_4")); //$NON-NLS-1$
-		gd= new GridData();
+		Button typeSearchButton = SWTUtil.createPushButton(innerContainer, DebugUIMessages.getString("DetailFormatterDialog.Select_&type_4"), null);  //$NON-NLS-1$
+		gd= (GridData)typeSearchButton.getLayoutData();
+		gd.horizontalAlignment = GridData.END;
 		typeSearchButton.setLayoutData(gd);
 		typeSearchButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -112,7 +117,6 @@ class DetailFormatterDialog extends StatusDialog {
 		label= new Label(container, SWT.NONE);
 		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Associated_&code__5")); //$NON-NLS-1$
 		gd= new GridData(GridData.BEGINNING);
-		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
 
 		// snippet viewer
@@ -134,7 +138,6 @@ class DetailFormatterDialog extends StatusDialog {
 		gd= new GridData(GridData.FILL_BOTH);
 		gd.heightHint= convertHeightInCharsToPixels(10);
 		gd.widthHint= convertWidthInCharsToPixels(80);
-		gd.horizontalSpan= 2;
 		control.setLayoutData(gd);
 		document.set(fDetailFormat.getSnippet());
 		
