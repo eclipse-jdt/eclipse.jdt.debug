@@ -287,15 +287,18 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		reportError(message);
 	}
 	
-	protected void reportProblems(IEvaluationResult result) {
+	protected boolean reportProblems(IEvaluationResult result) {
 		IMarker[] problems= result.getProblems();
-		if (problems.length == 0)
+		boolean severeProblems= true;
+		if (problems.length == 0) {
 			reportError(result.getException());
-		else
-			reportProblems(problems);
+		} else {
+			severeProblems= reportProblems(problems);
+		}
+		return severeProblems;
 	}
 	
-	protected void reportProblems(IMarker[] problems) {
+	protected boolean reportProblems(IMarker[] problems) {
 		
 		String defaultMsg= DisplayMessages.getString("Evaluate.error.message.unqualified_error"); //$NON-NLS-1$
 		
@@ -303,6 +306,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		for (int i= 0; i < problems.length; i++) {
 			IMarker problem= problems[i];
 			if (problem.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
+				//more than a warning
 				String msg= problems[i].getAttribute(IMarker.MESSAGE, defaultMsg);
 				if (i == 0) {
 					message= msg;
@@ -314,7 +318,9 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		
 		if (message.length() != 0) {
 			reportError(message);
+			return true;
 		}
+		return false;
 	}
 	
 	protected void reportWrappedException(Throwable exception) {

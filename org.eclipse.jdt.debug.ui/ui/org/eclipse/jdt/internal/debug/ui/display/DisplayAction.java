@@ -42,10 +42,12 @@ public class DisplayAction extends EvaluateAction {
 			display.asyncExec(new Runnable() {
 				public void run() {
 					if (result.hasProblems()) {
-						reportProblems(result);
-						IDataDisplay dataDisplay= getDataDisplay();
-						if (dataDisplay != null) {
-							dataDisplay.displayExpressionValue(DisplayMessages.getString("DisplayAction.(evaluation_failed)_1")); //$NON-NLS-1$
+						boolean severeProblems= reportProblems(result);
+						if (severeProblems) {
+							IDataDisplay dataDisplay= getDataDisplay();
+							if (dataDisplay != null) {
+								dataDisplay.displayExpressionValue(DisplayMessages.getString("DisplayAction.(evaluation_failed)_1")); //$NON-NLS-1$
+							}
 						}
 					}
 					if (value != null) {
