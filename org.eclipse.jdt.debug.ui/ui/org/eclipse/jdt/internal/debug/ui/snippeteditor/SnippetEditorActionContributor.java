@@ -88,12 +88,10 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 	}	
 	
 	protected void updateStatus(JavaSnippetEditor editor) {
-		String message;
-		if (editor.isEvaluating()) {
+		String message= ""; //$NON-NLS-1$
+		if (editor != null && editor.isEvaluating()) {
 			message= SnippetMessages.getString("SnippetActionContributor.evalMsg");  //$NON-NLS-1$
-		} else {
-			message= ""; //$NON-NLS-1$
-		}
+		} 
 		getActionBars().getStatusLineManager().setMessage(message);
 	}
 }

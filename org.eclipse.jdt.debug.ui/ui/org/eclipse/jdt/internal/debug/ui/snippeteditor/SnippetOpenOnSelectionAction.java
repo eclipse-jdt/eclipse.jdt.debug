@@ -1,9 +1,10 @@
+package org.eclipse.jdt.internal.debug.ui.snippeteditor;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.jdt.internal.debug.ui.snippeteditor;
-
+ 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -11,9 +12,8 @@ import org.eclipse.jdt.internal.ui.actions.AbstractOpenJavaElementAction;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 
-
 /**
- * This action opens a java editor on the element represented by text selection of
+ * This action opens a Java editor on the element represented by text selection of
  * the code snippet.
  */
 public class SnippetOpenOnSelectionAction extends AbstractOpenJavaElementAction {
@@ -54,7 +54,9 @@ public class SnippetOpenOnSelectionAction extends AbstractOpenJavaElementAction 
 	}
 			
 	public void run() {
-		
+		if (fEditor == null) {
+			return;
+		}
 		try {
 			IJavaElement[] result= fEditor.codeResolve();
 			if (result != null && result.length > 0) {
