@@ -53,6 +53,8 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 	}
 
 	public void createContents(Composite c) {
+		
+		final Shell shell= c.getShell();
 				
 		Composite c1= createComposite(c, 2);
 			createLabel(c1, Util.getString("page1.launchConfig.label"), GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
@@ -77,7 +79,15 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 			Composite c7a= createHBox(c2);
 			
 				fMainClass= createText(c7a, MAINCLASS, 1);
-				createButton(c7a, SWT.NONE, Util.getString("page1.mainClass.chooseButton.label")); //$NON-NLS-1$
+				Button b1= createButton(c7a, SWT.NONE, Util.getString("page1.mainClass.chooseButton.label")); //$NON-NLS-1$
+				b1.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						MessageBox mb= new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+						mb.setMessage(Util.getString("page1.mainClass.dialog.message")); //$NON-NLS-1$
+						mb.setText(Util.getString("page1.mainClass.dialog.title")); //$NON-NLS-1$
+						mb.open();
+					}
+				});
 				
 				createLabel(c2, Util.getString("page1.arguments.label"), GridData.VERTICAL_ALIGN_BEGINNING); //$NON-NLS-1$
 				fArguments= createText(c2, ARGUMENTS, 2);
@@ -113,7 +123,6 @@ public class BundleWizardPage1 extends BundleWizardBasePage {
 				for (int i= 0; i < JVMS.length; i++)
 					fJVMVersion.add(JVMS[i]);
 				fJVMVersion.setText(JVMS[4]);
-				fJVMVersion.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				hookField(fJVMVersion, JVMVERSION);
 				createLabel(c8, "      ", GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
 				createLabel(c8, Util.getString("page1.useSWT.label"), GridData.VERTICAL_ALIGN_CENTER); //$NON-NLS-1$
