@@ -1007,6 +1007,11 @@
 		vmInstallTypeID="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMCommandTab">
 	</vmInstallTypePage>
+	<vmInstallTypePage
+		id="org.eclipse.jdt.debug.ui.StandardVMCommandTab"
+		vmInstallTypeID="org.eclipse.jdt.launching.Standard11xVMType"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMCommandTab">
+	</vmInstallTypePage>	
 </extension>
 
 <extension point="org.eclipse.team.core.fileTypes">

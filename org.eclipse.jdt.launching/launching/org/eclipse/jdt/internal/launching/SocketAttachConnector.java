@@ -139,7 +139,7 @@ public class SocketAttachConnector implements IVMConnector {
 		}
 		if (name == null) {
 			if (configuration == null) {
-				name = "";
+				name = ""; //$NON-NLS-1$
 			} else {
 				name = configuration.getName();
 			}
