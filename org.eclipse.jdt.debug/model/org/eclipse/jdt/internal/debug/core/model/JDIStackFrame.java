@@ -949,8 +949,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 		fStackFrame = frame;
 		fRefreshVariables = true;
-		// always clear 'this', as we could be in a different receiver next time
+		// always clear 'this' and receiver type name, as we could be in a
+		// different receiver next time, but still in the same location (method)
 		fThisObject = null;		
+		fReceivingTypeName = null;
 	}
 	
 	/**
