@@ -563,4 +563,11 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			}
 		}
 	}
+	/**
+	 * @see IJavaLineBreakpoint#supportsCondition()
+	 */
+	public boolean supportsCondition() {
+		return false;
+	}
+
 }

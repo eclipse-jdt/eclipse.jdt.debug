@@ -431,4 +431,11 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		}
 		return lastEventType.equals(ACCESS_EVENT);
 	}
+	/**
+	 * @see IJavaLineBreakpoint#supportsCondition()
+	 */
+	public boolean supportsCondition() {
+		return false;
+	}
+
 }
