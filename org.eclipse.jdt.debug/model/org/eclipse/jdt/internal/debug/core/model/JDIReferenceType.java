@@ -19,6 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
 
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
@@ -142,6 +143,20 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 			}			
 		}
 		return fDeclaredFields;
+	}
+	
+	/**
+	 * Return the source path of the default stratum.
+	 */
+	public String getSourcePath() {
+		try {
+			List sourcePaths= getReferenceType().sourcePaths(null);
+			if (!sourcePaths.isEmpty()) {
+				return (String)sourcePaths.get(0);
+			}
+		} catch (AbsentInformationException e) {
+		}
+		return null;
 	}
 
 }

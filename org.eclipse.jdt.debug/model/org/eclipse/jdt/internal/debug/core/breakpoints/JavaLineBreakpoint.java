@@ -36,6 +36,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -475,7 +476,17 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		if (locator == null)
 			return null;
 		
-		Object sourceElement = locator.getSourceElement(stackFrame);
+		Object sourceElement= null;
+		if (locator instanceof ISourceLookupDirector) {
+			try {
+				sourceElement= ((ISourceLookupDirector)locator).getSourceElement(stackFrame.getThis().getJavaType());
+			} catch (DebugException e) {
+				// do nothing
+			}
+		}
+		if (sourceElement == null) {
+			sourceElement = locator.getSourceElement(stackFrame);
+		}
 		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
 			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
 		}
