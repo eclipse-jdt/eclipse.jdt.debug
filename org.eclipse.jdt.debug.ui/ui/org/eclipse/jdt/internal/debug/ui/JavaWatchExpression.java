@@ -223,10 +223,10 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 			return;
 		}
 		setPending(true);
-		refresh();
 		fDebugTarget= (IJavaDebugTarget)javaStackFrame.getDebugTarget();
 		DebugPlugin.getDefault().asyncExec(new Runnable() {
 			public void run() {
+				refresh();
 				IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, fDebugTarget);
 				IEvaluationListener listener= new IEvaluationListener() {
 					public void evaluationComplete(IEvaluationResult result) {
