@@ -46,7 +46,7 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
         
         final Display display = Display.getDefault();
         
-        final IOConsoleInputStream in = (IOConsoleInputStream) console.getInputStream();
+        final IOConsoleInputStream in = console.getInputStream();
         display.asyncExec(new Runnable() {
             public void run() {        
                 in.setColor(display.getSystemColor(SWT.COLOR_BLUE));
