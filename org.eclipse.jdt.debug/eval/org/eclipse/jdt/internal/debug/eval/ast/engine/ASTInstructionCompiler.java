@@ -1968,7 +1968,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
 					storeInstruction();
 				} else {
-					String typeSignature= null;
 					if (declaringTypeBinding == null) {
 						push(new PushArrayLength(fCounter));
 					} else {
