@@ -37,7 +37,7 @@ public class ExceptionEventImpl extends LocatableEventImpl implements ExceptionE
 	 * Creates new ExceptionEventImpl.
 	 */
 	private ExceptionEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("ExceptionEvent", vmImpl, requestID);
+		super("ExceptionEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 		
 	/**

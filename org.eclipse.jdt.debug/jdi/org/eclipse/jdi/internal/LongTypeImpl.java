@@ -19,7 +19,7 @@ public class LongTypeImpl extends PrimitiveTypeImpl implements LongType {
 	 * Creates new instance.
 	 */
 	public LongTypeImpl(VirtualMachineImpl vmImpl) {
-		super("LongType", vmImpl, "long" , "J");
+		super("LongType", vmImpl, "long" , "J"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**

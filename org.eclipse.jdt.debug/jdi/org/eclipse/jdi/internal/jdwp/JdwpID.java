@@ -142,10 +142,10 @@ public abstract class JdwpID {
 			try {
 				String name = field.getName();
 				Integer intValue = new Integer(field.getInt(null));
-				if (name.startsWith("TYPE_TAG_")) {
+				if (name.startsWith("TYPE_TAG_")) { //$NON-NLS-1$
 					name = name.substring(9);
 					fTypeTagMap.put(intValue, name);
-				} else if (name.endsWith("_TAG")) {
+				} else if (name.endsWith("_TAG")) { //$NON-NLS-1$
 					fTagMap.put(intValue, name);
 				}
 			} catch (IllegalAccessException e) {

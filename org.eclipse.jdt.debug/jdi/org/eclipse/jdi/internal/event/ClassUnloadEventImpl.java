@@ -32,7 +32,7 @@ public class ClassUnloadEventImpl extends EventImpl implements ClassUnloadEvent 
 	 * Creates new ClassUnloadEventImpl.
 	 */
 	private ClassUnloadEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("ClassUnloadEvent", vmImpl, requestID);
+		super("ClassUnloadEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 
 	/**
@@ -41,7 +41,7 @@ public class ClassUnloadEventImpl extends EventImpl implements ClassUnloadEvent 
 	public static ClassUnloadEventImpl read(MirrorImpl target, RequestID requestID, DataInputStream dataInStream) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		ClassUnloadEventImpl event = new ClassUnloadEventImpl(vmImpl, requestID);
-		event.fSignature = target.readString("signature", dataInStream);
+		event.fSignature = target.readString("signature", dataInStream); //$NON-NLS-1$
 		// Remove the class from classes that are known by the application to be loaded in the VM.
 		vmImpl.removeKnownRefType(event.fSignature);
 		return event;

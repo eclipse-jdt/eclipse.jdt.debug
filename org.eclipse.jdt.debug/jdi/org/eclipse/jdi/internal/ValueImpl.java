@@ -44,7 +44,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	 * @return Reads JDWP representation and returns new instance.
 	 */
 	public static ValueImpl readWithTag(MirrorImpl target, DataInputStream in) throws IOException {
-		byte tag = target.readByte("object tag", JdwpID.tagMap(), in);
+		byte tag = target.readByte("object tag", JdwpID.tagMap(), in); //$NON-NLS-1$
 	   	return readWithoutTag(target, tag, in);
 	}
 	
@@ -98,7 +98,7 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 	 * Writes value with value tag.
 	 */
 	public void writeWithTag(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeByte(getTag(), "tag", JdwpID.tagMap(), out);
+		target.writeByte(getTag(), "tag", JdwpID.tagMap(), out); //$NON-NLS-1$
 		write(target, out);
 	}
 
@@ -114,14 +114,14 @@ public abstract class ValueImpl extends MirrorImpl implements Value {
 		JdwpObjectID nullID = new JdwpObjectID(target.virtualMachineImpl());
 		nullID.write(out);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("objectReference", nullID.value());
+			target.fVerboseWriter.println("objectReference", nullID.value()); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Writes null value with value tag.
 	 */
 	public static void writeNullWithTag(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeByte(ObjectReferenceImpl.tag, "tag", JdwpID.tagMap(), out);
+		target.writeByte(ObjectReferenceImpl.tag, "tag", JdwpID.tagMap(), out); //$NON-NLS-1$
 		writeNull(target, out);
 	}
 }

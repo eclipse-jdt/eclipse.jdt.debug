@@ -21,7 +21,7 @@ public class ClassUnloadRequestImpl extends EventRequestImpl implements ClassUnl
 	 * Creates new ClassUnloadRequest.
 	 */
 	public ClassUnloadRequestImpl(VirtualMachineImpl vmImpl) {
-		super("ClassUnloadRequest", vmImpl);
+		super("ClassUnloadRequest", vmImpl); //$NON-NLS-1$
 	}
 	
 	/**

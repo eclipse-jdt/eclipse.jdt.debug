@@ -30,7 +30,7 @@ public class StringReferenceImpl extends ObjectReferenceImpl implements StringRe
 	 * Creates new StringReferenceImpl.
 	 */
 	public StringReferenceImpl(VirtualMachineImpl vmImpl, JdwpStringID stringID) {
-		super("StringReference", vmImpl, stringID);
+		super("StringReference", vmImpl, stringID); //$NON-NLS-1$
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class StringReferenceImpl extends ObjectReferenceImpl implements StringRe
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
-			String result = readString("value", replyData);
+			String result = readString("value", replyData); //$NON-NLS-1$
 			return result;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -69,7 +69,7 @@ public class StringReferenceImpl extends ObjectReferenceImpl implements StringRe
 		JdwpStringID ID = new JdwpStringID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("stringReference", ID.value());
+			target.fVerboseWriter.println("stringReference", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;

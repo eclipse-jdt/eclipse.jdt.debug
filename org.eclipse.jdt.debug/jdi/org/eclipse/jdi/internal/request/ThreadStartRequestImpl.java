@@ -21,7 +21,7 @@ public class ThreadStartRequestImpl extends EventRequestImpl implements ThreadSt
 	 * Creates new ThreadStartRequest.
 	 */
 	public ThreadStartRequestImpl(VirtualMachineImpl vmImpl) {
-		super("ThreadStartRequest", vmImpl);
+		super("ThreadStartRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

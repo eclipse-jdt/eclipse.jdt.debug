@@ -30,7 +30,7 @@ public class ClassObjectReferenceImpl extends ObjectReferenceImpl implements Cla
 	 * Creates new ClassObjectReferenceImpl.
 	 */
 	public ClassObjectReferenceImpl(VirtualMachineImpl vmImpl, JdwpClassObjectID classObjectID) {
-		super("ClassObjectReference", vmImpl, classObjectID);
+		super("ClassObjectReference", vmImpl, classObjectID); //$NON-NLS-1$
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class ClassObjectReferenceImpl extends ObjectReferenceImpl implements Cla
 		JdwpClassObjectID ID = new JdwpClassObjectID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("classObjectReference", ID.value());
+			target.fVerboseWriter.println("classObjectReference", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;

@@ -23,7 +23,7 @@ public class BreakpointRequestImpl extends EventRequestImpl implements Breakpoin
 	 * Creates new BreakpointRequest.
 	 */
 	public BreakpointRequestImpl(VirtualMachineImpl vmImpl) {
-		super("BreakpointRequest", vmImpl);
+		super("BreakpointRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

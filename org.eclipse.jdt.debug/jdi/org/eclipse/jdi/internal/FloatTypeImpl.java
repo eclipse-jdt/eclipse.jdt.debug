@@ -19,7 +19,7 @@ public class FloatTypeImpl extends PrimitiveTypeImpl implements FloatType {
 	 * Creates new instance.
 	 */
 	public FloatTypeImpl(VirtualMachineImpl vmImpl) {
-		super("FloatType", vmImpl, "float" , "F");
+		super("FloatType", vmImpl, "float" , "F"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**

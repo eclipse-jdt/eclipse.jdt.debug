@@ -161,7 +161,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_MODIFIERS, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			fModifierBits = readInt("modifiers", AccessibleImpl.modifierVector(), replyData);
+			fModifierBits = readInt("modifiers", AccessibleImpl.modifierVector(), replyData); //$NON-NLS-1$
 			return fModifierBits;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -275,7 +275,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			Vector elements = new Vector();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				InterfaceTypeImpl ref = InterfaceTypeImpl.read(this, replyData);
 				if (ref == null)
@@ -473,7 +473,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_STATUS, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			int status = readInt("status", classStatusVector(), replyData);
+			int status = readInt("status", classStatusVector(), replyData); //$NON-NLS-1$
 			return status;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -539,7 +539,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			Vector elements = new Vector();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				FieldImpl elt = FieldImpl.readWithNameSignatureModifiers(this, this, replyData);
 				if (elt == null)
@@ -605,7 +605,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			int fieldsSize = fields.size();
 			write(this, outData);
-			writeInt(fieldsSize, "size", outData);
+			writeInt(fieldsSize, "size", outData); //$NON-NLS-1$
 			for (int i = 0; i < fieldsSize; i++) {
 				FieldImpl field = (FieldImpl)fields.get(i);
 				checkVM(field);
@@ -617,7 +617,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			
 			DataInputStream replyData = replyPacket.dataInStream();
 			HashMap map = new HashMap();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			if (nrOfElements != fieldsSize) 
 				throw new InternalError("Retrieved a different number of values from the VM than requested.");
 				
@@ -720,7 +720,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			Vector elements = new Vector();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				MethodImpl elt = MethodImpl.readWithNameSignatureModifiers(this, this, replyData);
 				if (elt == null)
@@ -788,7 +788,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	   		JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SIGNATURE, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			setSignature(readString("signature", replyData));
+			setSignature(readString("signature", replyData)); //$NON-NLS-1$
 			return fSignature;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -835,7 +835,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				defaultReplyErrorHandler(replyPacket.errorCode());
 		
 			DataInputStream replyData = replyPacket.dataInStream();
-			fSourcename = readString("source name", replyData);
+			fSourcename = readString("source name", replyData); //$NON-NLS-1$
 			return fSourcename;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -858,9 +858,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	   		JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.HCR_GET_CLASS_VERSION, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			fIsHCREligible = readBoolean("HCR eligible", replyData);
-			fIsVersionKnown = readBoolean("version known", replyData);
-			fClassFileVersion = readInt("class file version", replyData);
+			fIsHCREligible = readBoolean("HCR eligible", replyData); //$NON-NLS-1$
+			fIsVersionKnown = readBoolean("version known", replyData); //$NON-NLS-1$
+			fClassFileVersion = readInt("class file version", replyData); //$NON-NLS-1$
 			fGotClassFileVersion = true;
 			return fClassFileVersion;
 		} catch (IOException e) {
@@ -893,7 +893,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
 		fReferenceTypeID.write(out);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("referenceType", fReferenceTypeID.value());
+			target.fVerboseWriter.println("referenceType", fReferenceTypeID.value()); //$NON-NLS-1$
 	}
 	
 	/**
@@ -904,14 +904,14 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		JdwpReferenceTypeID ID = new JdwpReferenceTypeID(target.virtualMachineImpl());
 		ID.write(out);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("referenceType", ID.value());
+			target.fVerboseWriter.println("referenceType", ID.value()); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Writes JDWP representation.
 	 */
 	public void writeWithTag(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeByte(typeTag(), "type tag", JdwpID.typeTagMap(), out);
+		target.writeByte(typeTag(), "type tag", JdwpID.typeTagMap(), out); //$NON-NLS-1$
 		write(target, out);
 	}
 	
@@ -919,7 +919,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Reads JDWP representation and returns new or cached instance.
 	 */
 	public static ReferenceTypeImpl readWithTypeTag(MirrorImpl target, DataInputStream in) throws IOException {
-		byte typeTag = target.readByte("type tag", JdwpID.typeTagMap(), in);
+		byte typeTag = target.readByte("type tag", JdwpID.typeTagMap(), in); //$NON-NLS-1$
 		switch (typeTag) {
 	   		case 0:
 				return null;
@@ -954,7 +954,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Reads JDWP representation and returns new or cached instance.
 	 */
 	public static ReferenceTypeImpl readWithTypeTagAndSignature(MirrorImpl target, DataInputStream in) throws IOException {
-		byte typeTag = target.readByte("type tag", JdwpID.typeTagMap(), in);
+		byte typeTag = target.readByte("type tag", JdwpID.typeTagMap(), in); //$NON-NLS-1$
 		switch (typeTag) {
 	   		case 0:
 				return null;
@@ -1032,7 +1032,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				continue;
 				
 			String name = field.getName();
-			if (!name.startsWith("JDWP_CLASS_STATUS_"))
+			if (!name.startsWith("JDWP_CLASS_STATUS_")) //$NON-NLS-1$
 				continue;
 				
 			name = name.substring(18);

@@ -21,7 +21,7 @@ public class MethodExitRequestImpl extends EventRequestImpl implements MethodExi
 	 * Creates new MethodExitRequest.
 	 */
 	public MethodExitRequestImpl(VirtualMachineImpl vmImpl) {
-		super("MethodExitRequest", vmImpl);
+		super("MethodExitRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

@@ -84,7 +84,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	 * Creates new EventRequestManager.
 	 */
 	public EventRequestManagerImpl(VirtualMachineImpl vmImpl) {
-		super("EventRequestManager", vmImpl);
+		super("EventRequestManager", vmImpl); //$NON-NLS-1$
 		
 		// Initialize list of requests.
 		fRequests = new HashSet[THREAD_START_INDEX + 1];

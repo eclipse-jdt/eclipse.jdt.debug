@@ -60,14 +60,14 @@ public class RequestID {
 	 * Writes IDto stream.
 	 */
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeInt(fRequestID, "request ID", out);
+		target.writeInt(fRequestID, "request ID", out); //$NON-NLS-1$
 	}
 	
 	/**
 	 * @return Returns a new request ID read from stream.
 	 */
 	public static RequestID read(MirrorImpl target, DataInputStream in) throws IOException {
-		int result = target.readInt("request ID", in);
+		int result = target.readInt("request ID", in); //$NON-NLS-1$
 		return new RequestID(result);
 	}
 }

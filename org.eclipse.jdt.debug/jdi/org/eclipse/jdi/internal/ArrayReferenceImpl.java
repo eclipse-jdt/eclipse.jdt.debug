@@ -39,7 +39,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	 * Creates new ArrayReferenceImpl.
 	 */
 	public ArrayReferenceImpl(VirtualMachineImpl vmImpl, JdwpObjectID objectID) {
-		super("ArrayReference", vmImpl, objectID);
+		super("ArrayReference", vmImpl, objectID); //$NON-NLS-1$
 	}
 	
 	/**
@@ -84,8 +84,8 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			write(this, outData);	// arrayObject
-			writeInt(firstIndex, "firstIndex", outData);
-			writeInt(length, "length", outData);
+			writeInt(firstIndex, "firstIndex", outData); //$NON-NLS-1$
+			writeInt(length, "length", outData); //$NON-NLS-1$
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.AR_GET_VALUES, outBytes);
 			switch (replyPacket.errorCode()) {
@@ -102,8 +102,8 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			 * - values of elements.
 			 */
 
-			int type = readByte("type", JdwpID.tagMap(), replyData);
-			int readLength = readInt("length", replyData);
+			int type = readByte("type", JdwpID.tagMap(), replyData); //$NON-NLS-1$
+			int readLength = readInt("length", replyData); //$NON-NLS-1$
 			// See also ValueImpl.
 			switch(type) {
 				// Multidimensional array.
@@ -174,7 +174,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.AR_LENGTH, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			return readInt("length", replyData);
+			return readInt("length", replyData); //$NON-NLS-1$
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return 0;
@@ -219,8 +219,8 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			write(this, outData);
-			writeInt(index, "index", outData);
-			writeInt(length, "length", outData);
+			writeInt(index, "index", outData); //$NON-NLS-1$
+			writeInt(length, "length", outData); //$NON-NLS-1$
 			for (int i = srcIndex; i < srcIndex + length; i++) {
 				ValueImpl value = (ValueImpl)values.get(i);
 				if (value != null) {
@@ -273,7 +273,7 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 		JdwpObjectID ID = new JdwpObjectID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("arrayReference", ID.value());
+			target.fVerboseWriter.println("arrayReference", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;

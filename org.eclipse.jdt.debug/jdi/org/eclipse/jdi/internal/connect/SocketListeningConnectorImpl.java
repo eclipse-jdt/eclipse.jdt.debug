@@ -43,11 +43,11 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 		HashMap arguments = new HashMap(1);
 		
 		// Port
-		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", "Port number at which to listen for VM connections", "Port", true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR);
+		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", "Port number at which to listen for VM connections", "Port", true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$
 		arguments.put(intArg.name(), intArg);
 		
 		// Timeout
-		intArg = new IntegerArgumentImpl("timeout", "Timeout before accept returns", "Timeout", false, 0, Integer.MAX_VALUE);
+		intArg = new IntegerArgumentImpl("timeout", "Timeout before accept returns", "Timeout", false, 0, Integer.MAX_VALUE); //$NON-NLS-1$
 		arguments.put(intArg.name(), intArg);
 		
 		return arguments;
@@ -57,7 +57,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * @return Returns a short identifier for the connector.
 	 */	
 	public String name() {
-		return "com.sun.jdi.SocketListen";
+		return "com.sun.jdi.SocketListen"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -71,13 +71,13 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
  	 * Retrieves connection arguments.
  	 */
 	private void getConnectionArguments(Map connectionArgs) throws IllegalConnectorArgumentsException {
-		String attribute = "";
+		String attribute = ""; //$NON-NLS-1$
 		try {
-		 	attribute = "port";
+		 	attribute = "port"; //$NON-NLS-1$
 		 	fPort = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
 		 	// Note that timeout is not used in SUN's ListeningConnector, but is used by our
 		 	// LaunchingConnector.
-		 	attribute = "timeout";
+		 	attribute = "timeout"; //$NON-NLS-1$
 		 	fTimeout = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
 		} catch (ClassCastException e) {
 			throw new IllegalConnectorArgumentsException("Connection argument is not of the right type.", attribute);
@@ -98,7 +98,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 		try {
 			((SocketTransportImpl)fTransport).listen(fPort);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalConnectorArgumentsException(e.getMessage(), "port");
+			throw new IllegalConnectorArgumentsException(e.getMessage(), "port"); //$NON-NLS-1$
 		}
 		return result;
 	}

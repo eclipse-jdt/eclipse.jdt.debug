@@ -21,7 +21,7 @@ public class ModificationWatchpointRequestImpl extends WatchpointRequestImpl imp
 	 * Creates new ModificationWatchpointRequest.
 	 */
 	public ModificationWatchpointRequestImpl(VirtualMachineImpl vmImpl) {
-		super("ModificationWatchpointRequest", vmImpl);
+		super("ModificationWatchpointRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

@@ -60,14 +60,14 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	 * Creates new ClassTypeImpl.
 	 */
 	public ClassTypeImpl(VirtualMachineImpl vmImpl, JdwpClassID classID) {
-		super("ClassType", vmImpl, classID);
+		super("ClassType", vmImpl, classID); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Creates new ClassTypeImpl.
 	 */
 	public ClassTypeImpl(VirtualMachineImpl vmImpl, JdwpClassID classID, String signature) {
-		super("ClassType", vmImpl, classID, signature);
+		super("ClassType", vmImpl, classID, signature); //$NON-NLS-1$
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			threadImpl.write(this, outData);
 			methodImpl.write(this, outData);
 			
-			writeInt(arguments.size(), "size", outData);
+			writeInt(arguments.size(), "size", outData); //$NON-NLS-1$
 			Iterator iter = arguments.iterator();
 			while(iter.hasNext()) {
 				ValueImpl elt = (ValueImpl)iter.next();
@@ -180,7 +180,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 				}
 			}
 			
-			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.invokeOptionsVector(), outData);
+			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.invokeOptionsVector(), outData); //$NON-NLS-1$
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CT_INVOKE_METHOD, outBytes);
 			switch (replyPacket.errorCode()) {
@@ -236,7 +236,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			threadImpl.write(this, outData);
 			methodImpl.write(this, outData);
 			
-			writeInt(arguments.size(), "size", outData);
+			writeInt(arguments.size(), "size", outData); //$NON-NLS-1$
 			Iterator iter = arguments.iterator();
 			while(iter.hasNext()) {
 				ValueImpl elt = (ValueImpl)iter.next();
@@ -248,7 +248,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 				}
 			}
 			
-			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.invokeOptionsVector(), outData);
+			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.invokeOptionsVector(), outData); //$NON-NLS-1$
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CT_NEW_INSTANCE, outBytes);
 			switch (replyPacket.errorCode()) {
@@ -288,7 +288,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			write(this, outData);
-			writeInt(1, "size", outData);	// We only set one field
+			writeInt(1, "size", outData);	// We only set one field //$NON-NLS-1$
 			checkVM(field);
 			((FieldImpl)field).write(this, outData);
 			
@@ -366,7 +366,7 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		JdwpClassID ID = new JdwpClassID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("classType", ID.value());
+			target.fVerboseWriter.println("classType", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;
@@ -387,9 +387,9 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 		JdwpClassID ID = new JdwpClassID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("classType", ID.value());
+			target.fVerboseWriter.println("classType", ID.value()); //$NON-NLS-1$
 
-		String signature = target.readString("signature", in);
+		String signature = target.readString("signature", in); //$NON-NLS-1$
 		if (ID.isNull())
 			return null;
 			

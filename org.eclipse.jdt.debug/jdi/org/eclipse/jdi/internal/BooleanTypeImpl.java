@@ -19,7 +19,7 @@ public class BooleanTypeImpl extends PrimitiveTypeImpl implements BooleanType {
 	 * Creates new instance.
 	 */
 	public BooleanTypeImpl(VirtualMachineImpl vmImpl) {
-		super("BooleanType", vmImpl, "boolean" , "Z");
+		super("BooleanType", vmImpl, "boolean" , "Z"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**

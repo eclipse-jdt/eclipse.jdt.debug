@@ -22,7 +22,7 @@ public class StepRequestImpl extends EventRequestImpl implements StepRequest {
 	 * Creates new StepRequest.
 	 */
 	public StepRequestImpl(VirtualMachineImpl vmImpl) {
-		super("StepRequest", vmImpl);
+		super("StepRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

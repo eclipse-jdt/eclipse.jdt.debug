@@ -34,7 +34,7 @@ import java.net.Socket;
  */ 
 public class TcpipSpy extends Thread {
 		
-	private static final byte[] handshakeBytes = "JDWP-Handshake".getBytes();
+	private static final byte[] handshakeBytes = "JDWP-Handshake".getBytes(); //$NON-NLS-1$
 	private String fDescription;
 	private DataInputStream fDataIn;
 	private DataOutputStream fDataOut;

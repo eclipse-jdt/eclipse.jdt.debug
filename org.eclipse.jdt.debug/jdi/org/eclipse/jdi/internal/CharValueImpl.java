@@ -28,7 +28,7 @@ public class CharValueImpl extends PrimitiveValueImpl implements CharValue {
 	 * Creates new instance.
 	 */
 	public CharValueImpl(VirtualMachineImpl vmImpl, Character value) {
-		super("CharValue", vmImpl, value);
+		super("CharValue", vmImpl, value); //$NON-NLS-1$
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class CharValueImpl extends PrimitiveValueImpl implements CharValue {
 	 */
 	public static CharValueImpl read(MirrorImpl target, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		char value = target.readChar("charValue", in);
+		char value = target.readChar("charValue", in); //$NON-NLS-1$
 		return new CharValueImpl(vmImpl, new Character(value));
 	}
 	
@@ -65,6 +65,6 @@ public class CharValueImpl extends PrimitiveValueImpl implements CharValue {
 	 * Writes value without value tag.
 	 */
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeChar(((Character)fValue).charValue(), "charValue", out);
+		target.writeChar(((Character)fValue).charValue(), "charValue", out); //$NON-NLS-1$
 	}
 }

@@ -34,7 +34,7 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 	 * Creates new ClassLoaderReferenceImpl.
 	 */
 	public ClassLoaderReferenceImpl(VirtualMachineImpl vmImpl, JdwpClassLoaderID classLoaderID) {
-		super("ClassLoaderReference", vmImpl, classLoaderID);
+		super("ClassLoaderReference", vmImpl, classLoaderID); //$NON-NLS-1$
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			Vector elements = new Vector();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this, replyData);
 				if (elt == null)
@@ -99,7 +99,7 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 		JdwpClassLoaderID ID = new JdwpClassLoaderID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("classLoaderReference", ID.value());
+			target.fVerboseWriter.println("classLoaderReference", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;

@@ -28,7 +28,7 @@ public class AccessWatchpointEventImpl extends WatchpointEventImpl implements Ac
 	 * Creates new AccessWatchpointEventImpl.
 	 */
 	protected AccessWatchpointEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("AccessWatchpointEvent", vmImpl, requestID);
+		super("AccessWatchpointEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 
 	/**

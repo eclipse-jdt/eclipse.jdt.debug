@@ -33,7 +33,7 @@ public class ModificationWatchpointEventImpl extends WatchpointEventImpl impleme
 	 * Creates new ModificationWatchpointEventImpl.
 	 */
 	private ModificationWatchpointEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("ModificationWatchpointEvent", vmImpl, requestID);
+		super("ModificationWatchpointEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 
 	/**

@@ -21,7 +21,7 @@ public class SocketTransportImpl extends TransportImpl {
 	public static final int MAX_PORTNR = 65535;
 	
 	/** Handshake bytes used just after connecting VM. */
-	private static final byte[] handshakeBytes = "JDWP-Handshake".getBytes();
+	private static final byte[] handshakeBytes = "JDWP-Handshake".getBytes(); //$NON-NLS-1$
 	/** Socket on which VM is connected. */
 	private Socket fSocket = null;
 	/** ServerSocker used to listen to connecting VMs. */
@@ -31,7 +31,7 @@ public class SocketTransportImpl extends TransportImpl {
 	 * Constructs new SocketTransportImpl.
 	 */	
 	public SocketTransportImpl() {
-		super("dt_socket");
+		super("dt_socket"); //$NON-NLS-1$
 	}
 
 	/**

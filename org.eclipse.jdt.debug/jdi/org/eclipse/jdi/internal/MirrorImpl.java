@@ -94,12 +94,12 @@ public class MirrorImpl implements Mirror {
 	 */
 	public void initJdwpEventSet(JdwpCommandPacket commandPacket) {
 		if (fVerboseWriter != null) {
-			fVerboseWriter.println("Received event set");
-			fVerboseWriter.println("length", commandPacket.getLength());
-			fVerboseWriter.println("id", commandPacket.getId());
-			fVerboseWriter.println("flags", commandPacket.getFlags(), JdwpPacket.flagVector());
-			fVerboseWriter.println("command set", (byte)(commandPacket.getCommand() >>> 8));
-			fVerboseWriter.println("command", (byte)commandPacket.getCommand());
+			fVerboseWriter.println("Received event set"); //$NON-NLS-1$
+			fVerboseWriter.println("length", commandPacket.getLength()); //$NON-NLS-1$
+			fVerboseWriter.println("id", commandPacket.getId()); //$NON-NLS-1$
+			fVerboseWriter.println("flags", commandPacket.getFlags(), JdwpPacket.flagVector()); //$NON-NLS-1$
+			fVerboseWriter.println("command set", (byte)(commandPacket.getCommand() >>> 8)); //$NON-NLS-1$
+			fVerboseWriter.println("command", (byte)commandPacket.getCommand()); //$NON-NLS-1$
 		}
 	}
 	
@@ -131,14 +131,14 @@ public class MirrorImpl implements Mirror {
 			int command = commandPacket.getCommand();
 			int currentPosition = fVerboseWriter.position();
 			fVerboseWriter.gotoPosition(0);
-			fVerboseWriter.print("Sending command (");
+			fVerboseWriter.print("Sending command ("); //$NON-NLS-1$
 			fVerboseWriter.printValue(command, JdwpCommandPacket.commandMap());
-			fVerboseWriter.println(")");
-			fVerboseWriter.println("length", commandPacket.getLength());
-			fVerboseWriter.println("id", commandPacket.getId());
-			fVerboseWriter.println("flags", commandPacket.getFlags(), JdwpPacket.flagVector());
-			fVerboseWriter.println("command set", (byte)(command >>> 8));
-			fVerboseWriter.println("command", (byte)command);
+			fVerboseWriter.println(")"); //$NON-NLS-1$
+			fVerboseWriter.println("length", commandPacket.getLength()); //$NON-NLS-1$
+			fVerboseWriter.println("id", commandPacket.getId()); //$NON-NLS-1$
+			fVerboseWriter.println("flags", commandPacket.getFlags(), JdwpPacket.flagVector()); //$NON-NLS-1$
+			fVerboseWriter.println("command set", (byte)(command >>> 8)); //$NON-NLS-1$
+			fVerboseWriter.println("command", (byte)command); //$NON-NLS-1$
 			fVerboseWriter.gotoPosition(currentPosition);
 		}
 	}
@@ -168,11 +168,11 @@ public class MirrorImpl implements Mirror {
 		JdwpReplyPacket reply = fVirtualMachineImpl.packetReceiveManager().getReply(commandPacket);
 		if (fVerboseWriter != null) {
 			fVerboseWriter.println();
-			fVerboseWriter.println("Received reply");
-			fVerboseWriter.println("length", reply.getLength());
-			fVerboseWriter.println("id", reply.getId());
-			fVerboseWriter.println("flags", reply.getFlags(), JdwpPacket.flagVector());
-			fVerboseWriter.println("error code", reply.errorCode(), JdwpReplyPacket.errorMap());
+			fVerboseWriter.println("Received reply"); //$NON-NLS-1$
+			fVerboseWriter.println("length", reply.getLength()); //$NON-NLS-1$
+			fVerboseWriter.println("id", reply.getId()); //$NON-NLS-1$
+			fVerboseWriter.println("flags", reply.getFlags(), JdwpPacket.flagVector()); //$NON-NLS-1$
+			fVerboseWriter.println("error code", reply.errorCode(), JdwpReplyPacket.errorMap()); //$NON-NLS-1$
 		}
 		
 		return reply;

@@ -51,7 +51,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * Creates new ObjectReferenceImpl.
 	 */
 	public ObjectReferenceImpl(VirtualMachineImpl vmImpl, JdwpObjectID objectID) {
-		this("ObjectReference", vmImpl, objectID);
+		this("ObjectReference", vmImpl, objectID); //$NON-NLS-1$
 	}
 
 	/**
@@ -131,8 +131,8 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			DataInputStream replyData = replyPacket.dataInStream();
 			MonitorInfo result = new MonitorInfo();
 			result.owner = ThreadReferenceImpl.read(this, replyData);
-			result.entryCount = readInt("entry count", replyData);
-			int nrOfWaiters = readInt("nr of waiters", replyData);
+			result.entryCount = readInt("entry count", replyData); //$NON-NLS-1$
+			int nrOfWaiters = readInt("nr of waiters", replyData); //$NON-NLS-1$
 			result.waiters = new ArrayList(nrOfWaiters);
 			for (int i = 0; i < nrOfWaiters; i++)
 				result.waiters.add(ThreadReferenceImpl.read(this, replyData));
@@ -209,7 +209,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			// Then get the values for the non-static fields.
 			int nonStaticFieldsSize = nonStaticFields.size();
 			write(this, outData);
-			writeInt(nonStaticFieldsSize, "size", outData);
+			writeInt(nonStaticFieldsSize, "size", outData); //$NON-NLS-1$
 			for (int i = 0; i < nonStaticFieldsSize; i++) {
 				FieldImpl field = (FieldImpl)nonStaticFields.get(i);
 				field.write(this, outData);
@@ -219,7 +219,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			if (nrOfElements != nonStaticFieldsSize) 
 				throw new InternalError("Retrieved a different number of values from the VM than requested.");
 				
@@ -294,7 +294,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			((ReferenceTypeImpl)referenceType()).write(this, outData);
 			methodImpl.write(this, outData);
 			
-			writeInt(arguments.size(), "size", outData);
+			writeInt(arguments.size(), "size", outData); //$NON-NLS-1$
 			Iterator iter = arguments.iterator();
 			while(iter.hasNext()) {
 				ValueImpl elt = (ValueImpl)iter.next();
@@ -306,7 +306,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 				}
 			}
 			
-			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.invokeOptionsVector(), outData);
+			writeInt(optionsToJdwpOptions(options),"options", MethodImpl.invokeOptionsVector(), outData); //$NON-NLS-1$
 			
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.OR_INVOKE_METHOD, outBytes);
 			switch (replyPacket.errorCode()) {
@@ -391,7 +391,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			write(this, outData);
-			writeInt(1, "size", outData);	// We only set one field
+			writeInt(1, "size", outData);	// We only set one field //$NON-NLS-1$
 			checkVM(field);
 			((FieldImpl)field).write(this, outData);
 
@@ -430,7 +430,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Returns string with value of ID.
 	 */
 	public String idString() {
-		return "(id=" + fObjectID + ")";
+		return "(id=" + fObjectID + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -438,7 +438,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 */
 	public String toString() {
 		try {
-			return type().toString() + " " + idString();
+			return type().toString() + " " + idString(); //$NON-NLS-1$
 		} catch (ObjectCollectedException e) {
 			return "(Garbage Collected) ObjectReference " + idString();
 		} catch (Exception e) {
@@ -454,7 +454,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 		JdwpObjectID ID = new JdwpObjectID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("objectReference", ID.value());
+			target.fVerboseWriter.println("objectReference", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;
@@ -467,7 +467,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 * @return Reads JDWP representation and returns new instance.
 	 */
 	public static ObjectReferenceImpl readObjectRefWithTag(MirrorImpl target, DataInputStream in) throws IOException {
-		byte tag = target.readByte("object tag", JdwpID.tagMap(), in);
+		byte tag = target.readByte("object tag", JdwpID.tagMap(), in); //$NON-NLS-1$
 		switch (tag) {
 	   		case 0:
 				return null;
@@ -495,6 +495,6 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
 		fObjectID.write(out);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("objectReference", fObjectID.value());
+			target.fVerboseWriter.println("objectReference", fObjectID.value()); //$NON-NLS-1$
 	}
 }

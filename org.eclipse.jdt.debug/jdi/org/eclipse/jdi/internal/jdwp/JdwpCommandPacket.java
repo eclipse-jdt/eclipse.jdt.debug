@@ -240,7 +240,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 				String name = field.getName();
 				int value = field.getInt(null);
 				// If it is not a set, continue.
-				if (!name.startsWith("CSET_"))
+				if (!name.startsWith("CSET_")) //$NON-NLS-1$
 					continue;
 					
 				if (setNames.size() <= value)
@@ -267,12 +267,12 @@ public class JdwpCommandPacket extends JdwpPacket {
 				Integer val = (Integer)field.get(null);
 				int value = val.intValue();
 				// If it is a set, continue.
-				if (name.startsWith("CSET_"))
+				if (name.startsWith("CSET_")) //$NON-NLS-1$
 					continue;
 					
 				int set = value >>> 8;
 				String setName = (String)setNames.elementAt(set);
-				String entryName = setName + " - " + VerboseWriter.removePrefix(name);
+				String entryName = setName + " - " + VerboseWriter.removePrefix(name); //$NON-NLS-1$
 				
 				fCommandMap.put(val, entryName);
 				

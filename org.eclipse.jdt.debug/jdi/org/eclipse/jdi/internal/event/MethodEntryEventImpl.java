@@ -29,7 +29,7 @@ public class MethodEntryEventImpl extends LocatableEventImpl implements MethodEn
 	 * Creates new MethodEntryEventImpl.
 	 */
 	private MethodEntryEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("MethodEntryEvent", vmImpl, requestID);
+		super("MethodEntryEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 		
 	/**

@@ -36,7 +36,7 @@ public class ClassPrepareEventImpl extends EventImpl implements ClassPrepareEven
 	 * Creates new BreakpointEventImpl.
 	 */
 	private ClassPrepareEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("ClassPrepareEvent", vmImpl, requestID);
+		super("ClassPrepareEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 		
 	/**
@@ -47,7 +47,7 @@ public class ClassPrepareEventImpl extends EventImpl implements ClassPrepareEven
 		ClassPrepareEventImpl event = new ClassPrepareEventImpl(vmImpl, requestID);
 		event.fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
 		event.fReferenceType = ReferenceTypeImpl.readWithTypeTagAndSignature(target, dataInStream);
-		event.fStatus = target.readInt("class status", ReferenceTypeImpl.classStatusVector(), dataInStream);
+		event.fStatus = target.readInt("class status", ReferenceTypeImpl.classStatusVector(), dataInStream); //$NON-NLS-1$
 		// Events that do not have status prepared are not given to the application.
 		if ((event.fStatus & ReferenceTypeImpl.JDWP_CLASS_STATUS_PREPARED) == 0)
 			return null;

@@ -19,7 +19,7 @@ public class CharTypeImpl extends PrimitiveTypeImpl implements CharType {
 	 * Creates new instance.
 	 */
 	public CharTypeImpl(VirtualMachineImpl vmImpl) {
-		super("CharType", vmImpl, "char" , "C");
+		super("CharType", vmImpl, "char" , "C"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**

@@ -21,7 +21,7 @@ public class MethodEntryRequestImpl extends EventRequestImpl implements MethodEn
 	 * Creates new MethodEntryRequest.
 	 */
 	public MethodEntryRequestImpl(VirtualMachineImpl vmImpl) {
-		super("MethodEntryRequest", vmImpl);
+		super("MethodEntryRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

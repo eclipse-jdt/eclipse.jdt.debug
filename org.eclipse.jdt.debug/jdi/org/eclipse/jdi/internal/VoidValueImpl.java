@@ -27,7 +27,7 @@ public class VoidValueImpl extends ValueImpl implements VoidValue {
 	 * Creates new instance.
 	 */
 	public VoidValueImpl(VirtualMachineImpl vmImpl) {
-		super("VoidValue", vmImpl);
+		super("VoidValue", vmImpl); //$NON-NLS-1$
 	}
 	
 	/**
@@ -71,6 +71,6 @@ public class VoidValueImpl extends ValueImpl implements VoidValue {
 	 * @return Returns description of Mirror object.
 	 */
 	public String toString() {
-		return "(void)";
+		return "(void)"; //$NON-NLS-1$
 	}
 }

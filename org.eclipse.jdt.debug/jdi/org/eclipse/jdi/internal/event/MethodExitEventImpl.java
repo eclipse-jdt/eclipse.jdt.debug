@@ -29,7 +29,7 @@ public class MethodExitEventImpl extends LocatableEventImpl implements MethodExi
 	 * Creates new MethodExitEventImpl.
 	 */
 	private MethodExitEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("MethodExitEvent", vmImpl, requestID);
+		super("MethodExitEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 		
 	/**

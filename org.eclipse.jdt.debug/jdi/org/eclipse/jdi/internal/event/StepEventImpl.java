@@ -28,7 +28,7 @@ public class StepEventImpl extends LocatableEventImpl implements StepEvent {
 	 * Creates new StepEventImpl.
 	 */
 	private StepEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("StepEvent", vmImpl, requestID);
+		super("StepEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 		
 	/**

@@ -28,7 +28,7 @@ public class BooleanValueImpl extends PrimitiveValueImpl implements BooleanValue
 	 * Creates new instance.
 	 */
 	public BooleanValueImpl(VirtualMachineImpl vmImpl, Boolean value) {
-		super("BooleanValue", vmImpl, value);
+		super("BooleanValue", vmImpl, value); //$NON-NLS-1$
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class BooleanValueImpl extends PrimitiveValueImpl implements BooleanValue
 	 */
 	public static BooleanValueImpl read(MirrorImpl target, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		boolean value = target.readBoolean("booleanValue", in);
+		boolean value = target.readBoolean("booleanValue", in); //$NON-NLS-1$
 		return new BooleanValueImpl(vmImpl, new Boolean(value));
 	}
 
@@ -65,6 +65,6 @@ public class BooleanValueImpl extends PrimitiveValueImpl implements BooleanValue
 	 * Writes value without value tag.
 	 */
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeBoolean(((Boolean)fValue).booleanValue(), "booleanValue", out);
+		target.writeBoolean(((Boolean)fValue).booleanValue(), "booleanValue", out); //$NON-NLS-1$
 	}
 }

@@ -22,7 +22,7 @@ public class ExceptionRequestImpl extends EventRequestImpl implements ExceptionR
 	 * Creates new EventRequestManager.
 	 */
 	public ExceptionRequestImpl(VirtualMachineImpl vmImpl) {
-		super("ExceptionRequest", vmImpl);
+		super("ExceptionRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

@@ -185,7 +185,7 @@ public abstract class JdwpPacket {
 				continue;
 				
 			String name = field.getName();
-			if (!name.startsWith("FLAG_"))
+			if (!name.startsWith("FLAG_")) //$NON-NLS-1$
 				continue;
 				
 			name = name.substring(5);

@@ -21,7 +21,7 @@ public class ThreadDeathRequestImpl extends EventRequestImpl implements ThreadDe
 	 * Creates new ThreadDeathRequest.
 	 */
 	public ThreadDeathRequestImpl(VirtualMachineImpl vmImpl) {
-		super("ThreadDeathRequest", vmImpl);
+		super("ThreadDeathRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

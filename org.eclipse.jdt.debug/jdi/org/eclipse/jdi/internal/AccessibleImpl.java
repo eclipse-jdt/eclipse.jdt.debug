@@ -99,7 +99,7 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 				continue;
 				
 			String name = field.getName();
-			if (!name.startsWith("MODIFIER_"))
+			if (!name.startsWith("MODIFIER_")) //$NON-NLS-1$
 				continue;
 				
 			name = name.substring(9);

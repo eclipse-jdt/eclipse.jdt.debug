@@ -29,7 +29,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	 * Creates new FieldImpl.
 	 */
 	public FieldImpl(VirtualMachineImpl vmImpl, ReferenceTypeImpl declaringType, JdwpFieldID ID, String name, String signature, int modifierBits) {
-		super("Field", vmImpl, declaringType, name, signature, modifierBits);
+		super("Field", vmImpl, declaringType, name, signature, modifierBits); //$NON-NLS-1$
 		fFieldID = ID;
 	}
 	
@@ -121,7 +121,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
 		fFieldID.write(out);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("field", fFieldID.value());
+			target.fVerboseWriter.println("field", fFieldID.value()); //$NON-NLS-1$
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 		JdwpFieldID ID = new JdwpFieldID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("field", ID.value());
+			target.fVerboseWriter.println("field", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;
@@ -164,13 +164,13 @@ public class FieldImpl extends TypeComponentImpl implements Field {
 		JdwpFieldID ID = new JdwpFieldID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("field", ID.value());
+			target.fVerboseWriter.println("field", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;
-		String name = target.readString("name", in);
-		String signature = target.readString("signature", in);
-		int modifierBits = target.readInt("modifiers", AccessibleImpl.modifierVector(), in);
+		String name = target.readString("name", in); //$NON-NLS-1$
+		String signature = target.readString("signature", in); //$NON-NLS-1$
+		int modifierBits = target.readInt("modifiers", AccessibleImpl.modifierVector(), in); //$NON-NLS-1$
 		
 		FieldImpl mirror = new FieldImpl(vmImpl, referenceType, ID, name, signature, modifierBits);
 		return mirror;

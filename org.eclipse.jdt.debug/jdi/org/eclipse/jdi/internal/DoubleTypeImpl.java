@@ -19,7 +19,7 @@ public class DoubleTypeImpl extends PrimitiveTypeImpl implements DoubleType {
 	 * Creates new instance.
 	 */
 	public DoubleTypeImpl(VirtualMachineImpl vmImpl) {
-		super("DoubleType", vmImpl, "double" , "D");
+		super("DoubleType", vmImpl, "double" , "D"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**

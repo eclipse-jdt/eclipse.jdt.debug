@@ -38,7 +38,7 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 	 * Creates new EventSetImpl.
 	 */
 	private EventSetImpl(VirtualMachineImpl vmImpl) {
-		super("EventSet", vmImpl);
+		super("EventSet", vmImpl); //$NON-NLS-1$
 	}
 
    	/**
@@ -131,9 +131,9 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 		EventSetImpl eventSet = new EventSetImpl(vmImpl);
 		
 		// Read suspend policy.
-		eventSet.fSuspendPolicy = target.readByte("suspendPolicy", EventRequestImpl.suspendPolicyMap(), in);
+		eventSet.fSuspendPolicy = target.readByte("suspendPolicy", EventRequestImpl.suspendPolicyMap(), in); //$NON-NLS-1$
 		// Read size.
-		int size = target.readInt("size", in);
+		int size = target.readInt("size", in); //$NON-NLS-1$
 		// Create event list.
 		eventSet.fEvents = new ArrayList(size);
 		

@@ -21,7 +21,7 @@ public class AccessWatchpointRequestImpl extends WatchpointRequestImpl implement
 	 * Creates new AccessWatchpointRequest.
 	 */
 	public AccessWatchpointRequestImpl(VirtualMachineImpl vmImpl) {
-		super("AccessWatchpointRequest", vmImpl);
+		super("AccessWatchpointRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

@@ -51,7 +51,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	 * Creates new StackFrameImpl.
 	 */
 	public StackFrameImpl(VirtualMachineImpl vmImpl, JdwpFrameID ID, ThreadReferenceImpl thread, LocationImpl location) {
-		super("StackFrame", vmImpl);
+		super("StackFrame", vmImpl); //$NON-NLS-1$
 		fFrameID = ID;
 		fThread = thread;
 		fLocation = location;
@@ -106,18 +106,18 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			writeWithThread(this, outData);
-			writeInt(sizeNotThis, "size", outData);
+			writeInt(sizeNotThis, "size", outData); //$NON-NLS-1$
 			for (int i = 0; i < sizeNotThis; i++) {
 				LocalVariableImpl var = (LocalVariableImpl)variables.get(i);
 				checkVM(var);
-				writeInt(var.slot(), "slot", outData);
-				writeByte(var.tag(), "tag", JdwpID.tagMap(), outData);
+				writeInt(var.slot(), "slot", outData); //$NON-NLS-1$
+				writeByte(var.tag(), "tag", JdwpID.tagMap(), outData); //$NON-NLS-1$
 			}
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.SF_GET_VALUES, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 		
 			DataInputStream replyData = replyPacket.dataInStream();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			if (nrOfElements != sizeNotThis) 
 				throw new InternalError("Retrieved a different number of values from the VM than requested.");
 			
@@ -152,9 +152,9 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			((ThreadReferenceImpl)thread()).write(this, outData);
 			write(this, outData);
-			writeInt(1, "size", outData);	// We only set one field
+			writeInt(1, "size", outData);	// We only set one field //$NON-NLS-1$
 			checkVM(var);
-			writeInt(((LocalVariableImpl)var).slot(), "slot", outData);
+			writeInt(((LocalVariableImpl)var).slot(), "slot", outData); //$NON-NLS-1$
 			if (value != null) {
 				checkVM(value);
 				((ValueImpl)value).writeWithTag(this, outData);
@@ -259,7 +259,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
 		fFrameID.write(out);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("stackFrame", fFrameID.value());
+			target.fVerboseWriter.println("stackFrame", fFrameID.value()); //$NON-NLS-1$
 	}
 	
 	/**
@@ -278,7 +278,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		JdwpFrameID ID = new JdwpFrameID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("stackFrame", ID.value());
+			target.fVerboseWriter.println("stackFrame", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;

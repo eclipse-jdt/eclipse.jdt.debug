@@ -32,7 +32,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 	 * Creates new ThreadGroupReferenceImpl.
 	 */
 	public ThreadGroupReferenceImpl(VirtualMachineImpl vmImpl, JdwpThreadGroupID threadGroupID) {
-		super("ThreadGroupReference", vmImpl, threadGroupID);
+		super("ThreadGroupReference", vmImpl, threadGroupID); //$NON-NLS-1$
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TGR_NAME, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			return readString("name", replyData);
+			return readString("name", replyData); //$NON-NLS-1$
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return null;
@@ -119,11 +119,11 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			ChildrenInfo result = new ChildrenInfo();
-			int nrThreads = readInt("nr threads", replyData);
+			int nrThreads = readInt("nr threads", replyData); //$NON-NLS-1$
 			result.childThreads = new ArrayList(nrThreads);
 			for (int i = 0; i < nrThreads; i++)
 				result.childThreads.add(ThreadReferenceImpl.read(this, replyData));
-			int nrThreadGroups = readInt("nr thread groups", replyData);
+			int nrThreadGroups = readInt("nr thread groups", replyData); //$NON-NLS-1$
 			result.childThreadGroups = new ArrayList(nrThreadGroups);
 			for (int i = 0; i < nrThreadGroups; i++)
 				result.childThreads.add(ThreadGroupReferenceImpl.read(this, replyData));
@@ -184,7 +184,7 @@ public class ThreadGroupReferenceImpl extends ObjectReferenceImpl implements Thr
 		JdwpThreadGroupID ID = new JdwpThreadGroupID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("threadGroupReference", ID.value());
+			target.fVerboseWriter.println("threadGroupReference", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;

@@ -19,7 +19,7 @@ public class IntegerTypeImpl extends PrimitiveTypeImpl implements IntegerType {
 	 * Creates new instance.
 	 */
 	public IntegerTypeImpl(VirtualMachineImpl vmImpl) {
-		super("IntegerType", vmImpl, "int" , "I");
+		super("IntegerType", vmImpl, "int" , "I"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**

@@ -63,7 +63,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * Creates new MethodImpl.
 	 */
 	public MethodImpl(VirtualMachineImpl vmImpl, ReferenceTypeImpl declaringType, JdwpMethodID methodID, String name, String signature, int modifierBits) {
-		super("Method", vmImpl, declaringType, name, signature, modifierBits);
+		super("Method", vmImpl, declaringType, name, signature, modifierBits); //$NON-NLS-1$
 		fMethodID = methodID;
 	}
 
@@ -140,17 +140,17 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
-			fLowestValidCodeIndex = readLong("lowest index", replyData);
-			fHighestValidCodeIndex = readLong("highest index", replyData);
-			int nrOfElements = readInt("elements", replyData);
+			fLowestValidCodeIndex = readLong("lowest index", replyData); //$NON-NLS-1$
+			fHighestValidCodeIndex = readLong("highest index", replyData); //$NON-NLS-1$
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			fCodeIndexToLine = new HashMap();
 			fLineToCodeIndexes = new Vector();
 			if (nrOfElements == 0)
 				throw new AbsentInformationException("Got empty line number table for this method.");
 			for (int i = 0; i < nrOfElements; i++) {
-				long lineCodeIndex = readLong("code index", replyData);
+				long lineCodeIndex = readLong("code index", replyData); //$NON-NLS-1$
 				Long lineCodeIndexLong = new Long(lineCodeIndex);
-				int lineNr = readInt("line nr", replyData);
+				int lineNr = readInt("line nr", replyData); //$NON-NLS-1$
 				Integer lineNrInt = new Integer(lineNr);
 				
 				// Add entry to code-index to line mapping.
@@ -306,8 +306,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
-			int length = readInt("length", replyData);
-			fByteCodes = readByteArray(length, "bytecodes", replyData);
+			int length = readInt("length", replyData); //$NON-NLS-1$
+			fByteCodes = readByteArray(length, "bytecodes", replyData); //$NON-NLS-1$
 			return fByteCodes;
 		} catch (IOException e) {
 			fByteCodes = null;
@@ -369,7 +369,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * @return Returns true if method is constructor.
 	 */
 	public boolean isConstructor() {
-		return name().equals("<init>");
+		return name().equals("<init>"); //$NON-NLS-1$
 	}
 	
 	/** 
@@ -383,7 +383,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * @return Returns true if method is a static initializer.
 	 */
 	public boolean isStaticInitializer() {
-		return name().equals("<clinit>");
+		return name().equals("<clinit>"); //$NON-NLS-1$
 	}
 	
 	/** 
@@ -460,15 +460,15 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
-			fArgumentSlotsCount = readInt("arg count", replyData);
-			int nrOfElements = readInt("elements", replyData);
+			fArgumentSlotsCount = readInt("arg count", replyData); //$NON-NLS-1$
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			fVariables = new Vector(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
-				long codeIndex = readLong("code index", replyData);
-				String name = readString("name", replyData);
-				String signature = readString("signature", replyData);
-				int length = readInt("length", replyData);
-				int slot = readInt("slot", replyData);
+				long codeIndex = readLong("code index", replyData); //$NON-NLS-1$
+				String name = readString("name", replyData); //$NON-NLS-1$
+				String signature = readString("signature", replyData); //$NON-NLS-1$
+				int length = readInt("length", replyData); //$NON-NLS-1$
+				int slot = readInt("slot", replyData); //$NON-NLS-1$
 				boolean isArgument = slot < fArgumentSlotsCount;
 
 				// Note that for static methods, the first variable will be the this reference.
@@ -530,7 +530,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
 		fMethodID.write(out);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("method", fMethodID.value());
+			target.fVerboseWriter.println("method", fMethodID.value()); //$NON-NLS-1$
 	}
 	
 	/**
@@ -561,7 +561,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 
 		JdwpMethodID ID = new JdwpMethodID(vmImpl);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("method", ID.value());
+			target.fVerboseWriter.println("method", ID.value()); //$NON-NLS-1$
 
 		ID.read(in);
 		if (ID.isNull())
@@ -582,13 +582,13 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		JdwpMethodID ID = new JdwpMethodID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("method", ID.value());
+			target.fVerboseWriter.println("method", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;
-		String name = target.readString("name", in);
-		String signature = target.readString("signature", in);
-		int modifierBits = target.readInt("modifiers", AccessibleImpl.modifierVector(), in);
+		String name = target.readString("name", in); //$NON-NLS-1$
+		String signature = target.readString("signature", in); //$NON-NLS-1$
+		int modifierBits = target.readInt("modifiers", AccessibleImpl.modifierVector(), in); //$NON-NLS-1$
 
 		MethodImpl mirror = new MethodImpl(vmImpl, referenceType, ID, name, signature, modifierBits);
 		return mirror;
@@ -614,7 +614,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 				String name = field.getName();
 				int value = field.getInt(null);
 
-				if (name.startsWith("INVOKE_")) {
+				if (name.startsWith("INVOKE_")) { //$NON-NLS-1$
 					//fInvokeOptionsMap.put(intValue, name);
 					for (int j = 0; j < fInvokeOptionsVector.size(); j++) {
 						if ((1 << j & value) != 0) {

@@ -33,14 +33,14 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 	 * Creates new InterfaceTypeImpl.
 	 */
 	public InterfaceTypeImpl(VirtualMachineImpl vmImpl, JdwpInterfaceID interfaceID) {
-		super("InterfaceType", vmImpl, interfaceID);
+		super("InterfaceType", vmImpl, interfaceID); //$NON-NLS-1$
 	}
 
 	/**
 	 * Creates new InterfaceTypeImpl.
 	 */
 	public InterfaceTypeImpl(VirtualMachineImpl vmImpl, JdwpInterfaceID interfaceID, String signature) {
-		super("InterfaceType", vmImpl, interfaceID, signature);
+		super("InterfaceType", vmImpl, interfaceID, signature); //$NON-NLS-1$
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		JdwpInterfaceID ID = new JdwpInterfaceID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("interfaceType", ID.value());
+			target.fVerboseWriter.println("interfaceType", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;
@@ -163,9 +163,9 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		JdwpInterfaceID ID = new JdwpInterfaceID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("interfaceType", ID.value());
+			target.fVerboseWriter.println("interfaceType", ID.value()); //$NON-NLS-1$
 
-		String signature = target.readString("signature", in);
+		String signature = target.readString("signature", in); //$NON-NLS-1$
 		if (ID.isNull())
 			return null;
 			

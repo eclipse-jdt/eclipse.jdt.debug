@@ -28,7 +28,7 @@ public class VMDisconnectEventImpl extends EventImpl implements VMDisconnectEven
 	 * Creates new VMDisconnectEventImpl.
 	 */
 	public VMDisconnectEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("VMDisconnectEvent", vmImpl, requestID);
+		super("VMDisconnectEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 
 	/**

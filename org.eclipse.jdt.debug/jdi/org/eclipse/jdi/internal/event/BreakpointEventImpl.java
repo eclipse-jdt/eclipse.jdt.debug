@@ -29,7 +29,7 @@ public class BreakpointEventImpl extends LocatableEventImpl implements Breakpoin
 	 * Creates new BreakpointEventImpl.
 	 */
 	private BreakpointEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("BreakpointEvent", vmImpl, requestID);
+		super("BreakpointEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 	
 	/**

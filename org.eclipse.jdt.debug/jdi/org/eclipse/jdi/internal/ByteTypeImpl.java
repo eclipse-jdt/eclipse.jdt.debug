@@ -19,7 +19,7 @@ public class ByteTypeImpl extends PrimitiveTypeImpl implements ByteType {
 	 * Creates new instance.
 	 */
 	public ByteTypeImpl(VirtualMachineImpl vmImpl) {
-		super("ByteType", vmImpl, "byte" , "B");
+		super("ByteType", vmImpl, "byte" , "B"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**

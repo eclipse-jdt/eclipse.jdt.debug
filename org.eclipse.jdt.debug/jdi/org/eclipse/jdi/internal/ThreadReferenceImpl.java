@@ -69,7 +69,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 	 * Creates new ThreadReferenceImpl.
 	 */
 	public ThreadReferenceImpl(VirtualMachineImpl vmImpl, JdwpThreadID threadID) {
-		super("ThreadReference", vmImpl, threadID);
+		super("ThreadReference", vmImpl, threadID); //$NON-NLS-1$
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
-			int result = readInt("frame count", replyData);
+			int result = readInt("frame count", replyData); //$NON-NLS-1$
 			return result;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -168,8 +168,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			write(this, outData);
-			writeInt(start, "start", outData);
-			writeInt(length, "length", outData);
+			writeInt(start, "start", outData); //$NON-NLS-1$
+			writeInt(length, "length", outData); //$NON-NLS-1$
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TR_FRAMES, outBytes);
 			switch (replyPacket.errorCode()) {
@@ -183,7 +183,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			Vector frames = new Vector();
 			for (int i = 0; i < nrOfElements; i++) {
 				StackFrameImpl frame = StackFrameImpl.readWithLocation(this, this, replyData);
@@ -235,8 +235,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			//remove the thread status reply
-			readInt("thread status", threadStatusMap(), replyData);
-			int suspendStatus = readInt("suspend status", suspendStatusVector(), replyData);
+			readInt("thread status", threadStatusMap(), replyData); //$NON-NLS-1$
+			int suspendStatus = readInt("suspend status", suspendStatusVector(), replyData); //$NON-NLS-1$
 			boolean result = suspendStatus == SUSPEND_STATUS_SUSPENDED;
 			return result;
 		} catch (IOException e) {
@@ -260,7 +260,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			return readString("name", replyData);
+			return readString("name", replyData); //$NON-NLS-1$
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 			return null;
@@ -286,7 +286,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			Vector result = new Vector();
-			int nrOfMonitors = readInt("nr of monitors", replyData);
+			int nrOfMonitors = readInt("nr of monitors", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfMonitors; i++)
 				result.add(ObjectReferenceImpl.readObjectRefWithTag(this, replyData));
 			return result;
@@ -332,8 +332,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			int threadStatus = readInt("thread status", threadStatusMap(), replyData);
-			readInt("suspend status", suspendStatusVector(), replyData);
+			int threadStatus = readInt("thread status", threadStatusMap(), replyData); //$NON-NLS-1$
+			readInt("suspend status", suspendStatusVector(), replyData); //$NON-NLS-1$
 			switch (threadStatus) {
 				case JDWP_THREAD_STATUS_ZOMBIE:
 					return THREAD_STATUS_ZOMBIE;
@@ -411,7 +411,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.TR_SUSPEND_COUNT, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			int result = readInt("suspend count", replyData);
+			int result = readInt("suspend count", replyData); //$NON-NLS-1$
 			return result;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -471,7 +471,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			write(this, outData);
 			valueImpl.writeWithTag(this, outData);
-			writeBoolean(triggerFinallyAndSynchronized, "trigger finaly+sync", outData);
+			writeBoolean(triggerFinallyAndSynchronized, "trigger finaly+sync", outData); //$NON-NLS-1$
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.HCR_DO_RETURN, outBytes);
 			switch (replyPacket.errorCode()) {
@@ -481,7 +481,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
-			boolean result = readBoolean("is enclosed", replyData);
+			boolean result = readBoolean("is enclosed", replyData); //$NON-NLS-1$
 			return result;
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
@@ -512,7 +512,7 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 		JdwpThreadID ID = new JdwpThreadID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("threadReference", ID.value());
+			target.fVerboseWriter.println("threadReference", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;
@@ -547,10 +547,10 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				int value = field.getInt(null);
 				Integer intValue = new Integer(value);
 
-				if (name.startsWith("JDWP_THREAD_STATUS_")) {
+				if (name.startsWith("JDWP_THREAD_STATUS_")) { //$NON-NLS-1$
 					name = name.substring(19);
 					fThreadStatusMap.put(intValue, name);
-				} else if (name.startsWith("SUSPEND_STATUS_")) {
+				} else if (name.startsWith("SUSPEND_STATUS_")) { //$NON-NLS-1$
 					name = name.substring(15);
 					for (int j = 0; j < fSuspendStatusVector.size(); j++) {
 						if ((1 << j & value) != 0) {

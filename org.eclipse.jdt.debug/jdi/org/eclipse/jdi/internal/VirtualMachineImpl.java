@@ -119,7 +119,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * Creates a new Virtual Machine.
 	 */
 	public VirtualMachineImpl(ConnectorImpl connector) {
-		super("VirtualMachine");
+		super("VirtualMachine"); //$NON-NLS-1$
 		fEventReqMgr = new EventRequestManagerImpl(this);
 		fEventQueue = new EventQueueImpl(this);
 		fConnector = connector;
@@ -243,7 +243,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * @exception Throws UnsupportedOperationException if VM does not support HCR.
 	 */
 	public void checkHCRSupported() throws UnsupportedOperationException {
-		if (!name().equals("j9"))
+		if (!name().equals("j9")) //$NON-NLS-1$
 			throw new UnsupportedOperationException("Target VM " + name() + "does not support Hot Code Replacement.");
 	}
 
@@ -290,13 +290,13 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			Vector elements = new Vector();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTagAndSignature(this, replyData);
 				if (elt == null) {
 					continue;
 				}
-				readInt("status", ReferenceTypeImpl.classStatusVector(), replyData);
+				readInt("status", ReferenceTypeImpl.classStatusVector(), replyData); //$NON-NLS-1$
 				elements.add(elt);
 			}
 			return elements;
@@ -335,7 +335,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			Vector elements = new Vector();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				ThreadReferenceImpl elt = ThreadReferenceImpl.read(this, replyData);
 				if (elt == null)
@@ -369,22 +369,22 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 		
-			fCanWatchFieldModification = readBoolean("watch field modification", replyData);
-			fCanWatchFieldAccess = readBoolean("watch field access", replyData);
-			fCanGetBytecodes = readBoolean("get bytecodes", replyData);
-			fCanGetSyntheticAttribute = readBoolean("synth. attr", replyData);
-			fCanGetOwnedMonitorInfo = readBoolean("owned monitor info", replyData);
-			fCanGetCurrentContendedMonitor = readBoolean("curr. contended monitor", replyData);
-			fCanGetMonitorInfo = readBoolean("monitor info", replyData);
+			fCanWatchFieldModification = readBoolean("watch field modification", replyData); //$NON-NLS-1$
+			fCanWatchFieldAccess = readBoolean("watch field access", replyData); //$NON-NLS-1$
+			fCanGetBytecodes = readBoolean("get bytecodes", replyData); //$NON-NLS-1$
+			fCanGetSyntheticAttribute = readBoolean("synth. attr", replyData); //$NON-NLS-1$
+			fCanGetOwnedMonitorInfo = readBoolean("owned monitor info", replyData); //$NON-NLS-1$
+			fCanGetCurrentContendedMonitor = readBoolean("curr. contended monitor", replyData); //$NON-NLS-1$
+			fCanGetMonitorInfo = readBoolean("monitor info", replyData); //$NON-NLS-1$
 			if (command == JdwpCommandPacket.VM_CAPABILITIES_NEW) {
 				// extended capabilities
-				fCanRedefineClasses = readBoolean("redefine classes", replyData);
-				fCanAddMethod = readBoolean("add method", replyData);
-				fCanUnrestrictedlyRedefineClasses = readBoolean("unrestrictedly redefine classes", replyData);
-				fCanPopFrames = readBoolean("pop frames", replyData);
-				fCanUseInstanceFilters = readBoolean("use instance filters", replyData);
-				fCanGetSourceDebugExtension = readBoolean("get source debug extension", replyData);
-				fCanRequestVMDeathEvent = readBoolean("request vm death", replyData);
+				fCanRedefineClasses = readBoolean("redefine classes", replyData); //$NON-NLS-1$
+				fCanAddMethod = readBoolean("add method", replyData); //$NON-NLS-1$
+				fCanUnrestrictedlyRedefineClasses = readBoolean("unrestrictedly redefine classes", replyData); //$NON-NLS-1$
+				fCanPopFrames = readBoolean("pop frames", replyData); //$NON-NLS-1$
+				fCanUseInstanceFilters = readBoolean("use instance filters", replyData); //$NON-NLS-1$
+				fCanGetSourceDebugExtension = readBoolean("get source debug extension", replyData); //$NON-NLS-1$
+				fCanRequestVMDeathEvent = readBoolean("request vm death", replyData); //$NON-NLS-1$
 			} else {
 				fCanRedefineClasses = false;
 				fCanAddMethod = false;
@@ -469,16 +469,16 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
-			writeString(signature, "signature", outData);
+			writeString(signature, "signature", outData); //$NON-NLS-1$
 
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_CLASSES_BY_SIGNATURE, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 			Vector elements = new Vector();
-			int nrOfElements = readInt("elements", replyData);
+			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this, replyData);
-				readInt("status", ReferenceTypeImpl.classStatusVector(), replyData);
+				readInt("status", ReferenceTypeImpl.classStatusVector(), replyData); //$NON-NLS-1$
 				if (elt == null) {
 					continue;
 				}
@@ -545,7 +545,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
-			writeInt(exitCode, "exit code", outData);
+			writeInt(exitCode, "exit code", outData); //$NON-NLS-1$
 			requestVM(JdwpCommandPacket.VM_EXIT, outBytes);
 			disconnectVM();
 		} catch (VMDisconnectedException e) {
@@ -621,7 +621,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
-			writeString(value, "string value", outData);
+			writeString(value, "string value", outData); //$NON-NLS-1$
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_CREATE_STRING, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
@@ -690,7 +690,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
-			int nrGroups = readInt("nr of groups", replyData);
+			int nrGroups = readInt("nr of groups", replyData); //$NON-NLS-1$
 			ArrayList result = new ArrayList(nrGroups);
 			for (int i = 0; i < nrGroups; i++) {
 				ThreadGroupReferenceImpl threadGroup = ThreadGroupReferenceImpl.read(this, replyData);
@@ -766,11 +766,11 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			mirror.defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 		
-			fFieldIDSize = mirror.readInt("field ID size", replyData);
-			fMethodIDSize = mirror.readInt("method ID size", replyData);
-			fObjectIDSize = mirror.readInt("object ID size", replyData);
-			fReferenceTypeIDSize = mirror.readInt("refType ID size", replyData);
-			fFrameIDSize = mirror.readInt("frame ID size", replyData);
+			fFieldIDSize = mirror.readInt("field ID size", replyData); //$NON-NLS-1$
+			fMethodIDSize = mirror.readInt("method ID size", replyData); //$NON-NLS-1$
+			fObjectIDSize = mirror.readInt("object ID size", replyData); //$NON-NLS-1$
+			fReferenceTypeIDSize = mirror.readInt("refType ID size", replyData); //$NON-NLS-1$
+			fFrameIDSize = mirror.readInt("frame ID size", replyData); //$NON-NLS-1$
 		} catch (IOException e) {
 			fGotIDSizes = false;
 			mirror.defaultIOExceptionHandler(e);
@@ -792,11 +792,11 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 		
-			fVersionDescription = readString("version descr.", replyData);
-			fJdwpMajorVersion = readInt("major version", replyData);
-			fJdwpMinorVersion = readInt("minor version", replyData);
-			fVMVersion = readString("version", replyData);
-			fVMName = readString("name", replyData);
+			fVersionDescription = readString("version descr.", replyData); //$NON-NLS-1$
+			fJdwpMajorVersion = readInt("major version", replyData); //$NON-NLS-1$
+			fJdwpMinorVersion = readInt("minor version", replyData); //$NON-NLS-1$
+			fVMVersion = readString("version", replyData); //$NON-NLS-1$
+			fVMName = readString("name", replyData); //$NON-NLS-1$
 		} catch (IOException e) {
 			fVersionDescription = null;
 			defaultIOExceptionHandler(e);
@@ -820,10 +820,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 		
-			fHcrCapabilities[HCR_CAN_RELOAD_CLASSES] = readBoolean("reload classes", replyData);
-			fHcrCapabilities[HCR_CAN_GET_CLASS_VERSION] = readBoolean("get class version", replyData);
-			fHcrCapabilities[HCR_CAN_DO_RETURN] = readBoolean("do return", replyData);
-			fHcrCapabilities[HCR_CAN_REENTER_ON_EXIT] = readBoolean("reenter on exit", replyData);
+			fHcrCapabilities[HCR_CAN_RELOAD_CLASSES] = readBoolean("reload classes", replyData); //$NON-NLS-1$
+			fHcrCapabilities[HCR_CAN_GET_CLASS_VERSION] = readBoolean("get class version", replyData); //$NON-NLS-1$
+			fHcrCapabilities[HCR_CAN_DO_RETURN] = readBoolean("do return", replyData); //$NON-NLS-1$
+			fHcrCapabilities[HCR_CAN_REENTER_ON_EXIT] = readBoolean("reenter on exit", replyData); //$NON-NLS-1$
 		} catch (IOException e) {
 			fHcrCapabilities = null;
 			defaultIOExceptionHandler(e);
@@ -877,17 +877,17 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
-			writeInt(names.length, "length", outData);
+			writeInt(names.length, "length", outData); //$NON-NLS-1$
 			for (int i = 0; i < names.length; i++) {
 				signatures[i] = TypeImpl.classNameToSignature(names[i]);
-				writeString(signatures[i], "signature", outData);
+				writeString(signatures[i], "signature", outData); //$NON-NLS-1$
 			}
 		
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.HCR_CLASSES_HAVE_CHANGED, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 		
-			byte resultFlag = readByte("result", resultHCRMap(), replyData);
+			byte resultFlag = readByte("result", resultHCRMap(), replyData); //$NON-NLS-1$
 			switch (resultFlag) {
 				case HCR_RELOAD_SUCCESS:
 					return RELOAD_SUCCESS;
@@ -933,7 +933,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			try {
 				String name = field.getName();
 				Integer intValue = new Integer(field.getInt(null));
-				if (name.startsWith("HCR_RELOAD_")) {
+				if (name.startsWith("HCR_RELOAD_")) { //$NON-NLS-1$
 					name = name.substring(4);
 					fHCRResultMap.put(intValue, name);
 				}
@@ -996,7 +996,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
-			writeInt(typesToBytes.size(), "classes", outData);
+			writeInt(typesToBytes.size(), "classes", outData); //$NON-NLS-1$
 			
 			Set types = typesToBytes.keySet();
 			Iterator iter = types.iterator();
@@ -1004,9 +1004,9 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				ReferenceTypeImpl type = (ReferenceTypeImpl) iter.next();
 				type.write(this, outData);
 				byte[] bytes = (byte[]) typesToBytes.get(type);
-				writeInt(bytes.length, "classfile", outData);
+				writeInt(bytes.length, "classfile", outData); //$NON-NLS-1$
 				for (int i=0; i < bytes.length; i++) {
-					writeByte(bytes[i], "classByte", outData);
+					writeByte(bytes[i], "classByte", outData); //$NON-NLS-1$
 				}
 				fCachedReftypes.remove(type.getRefTypeID()); // flush local cache of redefined types
 			}

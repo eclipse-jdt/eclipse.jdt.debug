@@ -28,7 +28,7 @@ public class VMDeathEventImpl extends EventImpl implements VMDeathEvent {
 	 * Creates new VMDeathEventImpl.
 	 */
 	public VMDeathEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("VMDeathEvent", vmImpl, requestID);
+		super("VMDeathEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 
 	/**

@@ -28,7 +28,7 @@ public class FloatValueImpl extends PrimitiveValueImpl implements FloatValue {
 	 * Creates new instance.
 	 */
 	public FloatValueImpl(VirtualMachineImpl vmImpl, Float value) {
-		super("FloatValue", vmImpl, value);
+		super("FloatValue", vmImpl, value); //$NON-NLS-1$
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class FloatValueImpl extends PrimitiveValueImpl implements FloatValue {
 	 */
 	public static FloatValueImpl read(MirrorImpl target, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		float value = target.readFloat("floatValue", in);
+		float value = target.readFloat("floatValue", in); //$NON-NLS-1$
 		return new FloatValueImpl(vmImpl, new Float(value));
 	}
 	
@@ -65,6 +65,6 @@ public class FloatValueImpl extends PrimitiveValueImpl implements FloatValue {
 	 * Writes value without value tag.
 	 */
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeFloat(((Float)fValue).floatValue(), "floatValue", out);
+		target.writeFloat(((Float)fValue).floatValue(), "floatValue", out); //$NON-NLS-1$
 	}
 }

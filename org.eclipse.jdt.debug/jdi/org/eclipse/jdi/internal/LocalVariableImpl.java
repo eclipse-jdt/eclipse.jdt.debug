@@ -34,7 +34,7 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	private boolean fIsArgument;
 	
 	public LocalVariableImpl(VirtualMachineImpl vmImpl, MethodImpl method, long codeIndex, String name, String signature, int length, int slot, boolean isArgument) {
-		super("LocalVariable", vmImpl);
+		super("LocalVariable", vmImpl); //$NON-NLS-1$
 		fMethod = method;
 		fCodeIndex = codeIndex;
 		fName = name;

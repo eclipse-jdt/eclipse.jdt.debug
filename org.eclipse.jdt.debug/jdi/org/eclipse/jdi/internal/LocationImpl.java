@@ -34,7 +34,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	 * Creates new instance.
 	 */
 	public LocationImpl(VirtualMachineImpl vmImpl, MethodImpl method, long index) {
-		super("Location", vmImpl);
+		super("Location", vmImpl); //$NON-NLS-1$
 		fMethod = method;
 		fIndex = index;
 	}
@@ -139,7 +139,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	 */
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
 		fMethod.writeWithReferenceTypeWithTag(target, out);
-		target.writeLong(fIndex, "index", out);
+		target.writeLong(fIndex, "index", out); //$NON-NLS-1$
 	}
 	
 	/**
@@ -149,7 +149,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		// Notice that Locations are not stored or cached because they don't 'remember' any information.
 		MethodImpl method = MethodImpl.readWithReferenceTypeWithTag(target, in);
-		long index = target.readLong("index", in);
+		long index = target.readLong("index", in); //$NON-NLS-1$
 		if (method == null)
 			return null;
 		return new LocationImpl(vmImpl, method, index);

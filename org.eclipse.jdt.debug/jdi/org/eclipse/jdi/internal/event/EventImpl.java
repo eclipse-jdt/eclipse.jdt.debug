@@ -87,14 +87,14 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 	 * @return Returns string representation.
 	 */
 	public String toString() {
-		return super.toString() + ": " + fRequestID;
+		return super.toString() + ": " + fRequestID; //$NON-NLS-1$
 	}
 
 	/**
 	 * @return Creates, reads and returns new EventImpl.
 	 */
 	public static EventImpl read(MirrorImpl target, DataInputStream dataInStream) throws IOException {
-		byte eventKind = target.readByte("event kind", eventKindMap(), dataInStream);
+		byte eventKind = target.readByte("event kind", eventKindMap(), dataInStream); //$NON-NLS-1$
 		RequestID requestID = RequestID.read(target, dataInStream);
 
 		// Create, read and return Event of eventKind.
@@ -180,7 +180,7 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 				String name = field.getName();
 				Integer intValue = new Integer(field.getInt(null));
 
-				if (name.startsWith("EVENT_")) {
+				if (name.startsWith("EVENT_")) { //$NON-NLS-1$
 					name = name.substring(6);
 					fEventKindMap.put(intValue, name);
 				}

@@ -305,35 +305,35 @@ public class VerboseWriter extends BufWriter {
 	 * Prints hex representation of a long.
 	 */
 	public void printHex(boolean b) {
-		printHexSubstitution("<boolean>");
+		printHexSubstitution("<boolean>"); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Prints hex representation of a long.
 	 */
 	public void printHex(char c) {
-		printHexSubstitution("<char>");
+		printHexSubstitution("<char>"); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Prints hex representation of a long.
 	 */
 	public void printHex(double d) {
-		printHexSubstitution("<double>");
+		printHexSubstitution("<double>"); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Prints hex representation of a long.
 	 */
 	public void printHex(float f) {
-		printHexSubstitution("<float>");
+		printHexSubstitution("<float>"); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Prints hex representation of a String.
 	 */
 	public void printHex(String str) {
-		printHexSubstitution("<string>");
+		printHexSubstitution("<string>"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -352,7 +352,7 @@ public class VerboseWriter extends BufWriter {
 			if (byteOnLine == VERBOSE_HEX_BYTES_PER_LINE) {
 				appendHexSpaces(linebuf, VERBOSE_HEX_BYTES_PER_LINE);
 				if (extraLines++ > 0)
-					printDescription("");
+					printDescription(""); //$NON-NLS-1$
 				print(linebuf);
 				super.println();
 				byteOnLine = 0;
@@ -361,7 +361,7 @@ public class VerboseWriter extends BufWriter {
 		}
 		appendHexSpaces(linebuf, byteOnLine);
 		if (extraLines > 0)
-			printDescription("");
+			printDescription(""); //$NON-NLS-1$
 			
 		fExtraVerboseLines += extraLines;
 		print(linebuf);

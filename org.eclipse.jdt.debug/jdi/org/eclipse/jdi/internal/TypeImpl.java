@@ -175,46 +175,46 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 		switch (name.charAt(0)) {
 			// Check for primitive array type
 			case 'b':
-				if (name.equals("byte")) {
+				if (name.equals("byte")) { //$NON-NLS-1$
 					signature.append('B');
 					return signature.toString();
-				} else if (name.equals("boolean")) {
+				} else if (name.equals("boolean")) { //$NON-NLS-1$
 					signature.append('Z');
 					return signature.toString();
 				}
 				break;
 			case 'i':
-				if (name.equals("int")) {
+				if (name.equals("int")) { //$NON-NLS-1$
 					signature.append('I');
 					return signature.toString();
 				}
 				break;
 			case 'd':
-				if (name.equals("double")) {
+				if (name.equals("double")) { //$NON-NLS-1$
 					signature.append('D');
 					return signature.toString();
 				}
 				break;
 			case 's':
-				if (name.equals("short")) {
+				if (name.equals("short")) { //$NON-NLS-1$
 					signature.append('S');
 					return signature.toString();
 				}
 				break;
 			case 'c':
-				if (name.equals("char")) {
+				if (name.equals("char")) { //$NON-NLS-1$
 					signature.append('C');
 					return signature.toString();
 				}
 				break;
 			case 'l':			
-				if (name.equals("long")) {
+				if (name.equals("long")) { //$NON-NLS-1$
 					signature.append('J');
 					return signature.toString();
 				}
 				break;
 			case 'f':
-				if (name.equals("float")) {
+				if (name.equals("float")) { //$NON-NLS-1$
 					signature.append('F');
 					return signature.toString();
 				}
@@ -254,7 +254,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 		while ((index= (signature.indexOf('[', index) + 1)) > 0) {
 			name.append('[').append(']');
 		}
-		return signatureToName(signature.substring(1)) + "[]";
+		return signatureToName(signature.substring(1)) + "[]"; //$NON-NLS-1$
 	}
 
 	/**
@@ -268,7 +268,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 		}
 		switch (signature.charAt(0)) {
 			case 'V':
-				return "void";
+				return "void"; //$NON-NLS-1$
 			case 'L':
 				return classSignatureToName(signature);
 			case '[':
@@ -282,21 +282,21 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	private static String getPrimitiveSignatureToName(char signature) {
 		switch (signature) {
 			case 'Z':
-				return "boolean";
+				return "boolean"; //$NON-NLS-1$
 			case 'B':
-				return "byte";
+				return "byte"; //$NON-NLS-1$
 			case 'C':
-				return "char";
+				return "char"; //$NON-NLS-1$
 			case 'S':
-				return "short";
+				return "short"; //$NON-NLS-1$
 			case 'I':
-				return "int";
+				return "int"; //$NON-NLS-1$
 			case 'J':
-				return "long";
+				return "long"; //$NON-NLS-1$
 			case 'F':
-				return "float";
+				return "float"; //$NON-NLS-1$
 			case 'D':
-				return "double";
+				return "double"; //$NON-NLS-1$
 			default:
 				return null;
 		}

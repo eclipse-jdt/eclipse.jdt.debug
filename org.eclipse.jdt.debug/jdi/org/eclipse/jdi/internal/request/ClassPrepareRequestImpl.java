@@ -21,7 +21,7 @@ public class ClassPrepareRequestImpl extends EventRequestImpl implements ClassPr
 	 * Creates new ClassPrepareRequest.
 	 */
 	public ClassPrepareRequestImpl(VirtualMachineImpl vmImpl) {
-		super("ClassPrepareRequest", vmImpl);
+		super("ClassPrepareRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

@@ -13,7 +13,7 @@ import com.sun.jdi.request.VMDeathRequest;
 public class VMDeathRequestImpl extends EventRequestImpl implements VMDeathRequest {
 	
 	public VMDeathRequestImpl(VirtualMachineImpl vmImpl) {
-		super("VMDeathRequest", vmImpl);
+		super("VMDeathRequest", vmImpl); //$NON-NLS-1$
 	}
 
 	/**

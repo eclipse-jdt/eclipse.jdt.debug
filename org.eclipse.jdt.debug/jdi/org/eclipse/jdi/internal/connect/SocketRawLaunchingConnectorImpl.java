@@ -50,16 +50,16 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 		HashMap arguments = new HashMap(6);
 		
 		// Command
-		StringArgumentImpl strArg = new StringArgumentImpl("command", "Raw command to start the debugged application VM.", "Command", true);
+		StringArgumentImpl strArg = new StringArgumentImpl("command", "Raw command to start the debugged application VM.", "Command", true); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 		
 		// Address
-		strArg = new StringArgumentImpl("address", "Address from which to listen for a connection after the raw command is run.", "Address", true);
+		strArg = new StringArgumentImpl("address", "Address from which to listen for a connection after the raw command is run.", "Address", true); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 		
 		// Quote
-		strArg = new StringArgumentImpl("quote", "Character used to combine space-delimited text into a single command line argument.", "Quote", true);
-		strArg.setValue("\"");
+		strArg = new StringArgumentImpl("quote", "Character used to combine space-delimited text into a single command line argument.", "Quote", true); //$NON-NLS-1$
+		strArg.setValue("\""); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
 		return arguments;
@@ -69,7 +69,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 	 * @return Returns a short identifier for the connector.
 	 */	
 	public String name() {
-		return "com.sun.jdi.RawCommandLineLaunch";
+		return "com.sun.jdi.RawCommandLineLaunch"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -83,13 +83,13 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
  	 * Retrieves connection arguments.
  	 */
 	private void getConnectionArguments(Map connectionArgs) throws IllegalConnectorArgumentsException {
-		String attribute = "";
+		String attribute = ""; //$NON-NLS-1$
 		try {
-			attribute = "command";
+			attribute = "command"; //$NON-NLS-1$
 		 	fCommand = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
-		 	attribute = "address";
+		 	attribute = "address"; //$NON-NLS-1$
 		 	fAddress = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
-		 	attribute = "quote";
+		 	attribute = "quote"; //$NON-NLS-1$
 		 	fQuote = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		} catch (ClassCastException e) {
 			throw new IllegalConnectorArgumentsException("Connection argument is not of the right type.", attribute);
@@ -111,8 +111,8 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 		// Note that port number zero means that a free port is chosen.
 		SocketListeningConnectorImpl listenConnector = new SocketListeningConnectorImpl(virtualMachineManager());
 		Map args = listenConnector.defaultArguments();
-		((Connector.IntegerArgument)args.get("port")).setValue(fAddress);
-		((Connector.IntegerArgument)args.get("timeout")).setValue(ACCEPT_TIMEOUT);
+		((Connector.IntegerArgument)args.get("port")).setValue(fAddress); //$NON-NLS-1$
+		((Connector.IntegerArgument)args.get("timeout")).setValue(ACCEPT_TIMEOUT); //$NON-NLS-1$
 		listenConnector.startListening(args);
 		
 		// Start VM.
@@ -124,7 +124,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 			virtualMachine = (VirtualMachineImpl)listenConnector.accept(args);
 		} catch (InterruptedIOException e) {
 			proc.destroy();
-			throw new VMStartException("VM did not connect within given time: " + ((Connector.IntegerArgument)args.get("timeout")).value() + " ms.", proc);
+			throw new VMStartException("VM did not connect within given time: " + ((Connector.IntegerArgument)args.get("timeout")).value() + " ms.", proc); //$NON-NLS-2$
 		}
 		
 		virtualMachine.setLauncedProcess(proc);

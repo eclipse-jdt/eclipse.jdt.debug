@@ -41,14 +41,14 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * Creates new ArrayTypeImpl.
 	 */
 	public ArrayTypeImpl(VirtualMachineImpl vmImpl, JdwpArrayID arrayID) {
-		super("ArrayType", vmImpl, arrayID);
+		super("ArrayType", vmImpl, arrayID); //$NON-NLS-1$
 	}
 
 	/**
 	 * Creates new ArrayTypeImpl.
 	 */
 	public ArrayTypeImpl(VirtualMachineImpl vmImpl, JdwpArrayID arrayID, String signature) {
-		super("ArrayType", vmImpl, arrayID, signature);
+		super("ArrayType", vmImpl, arrayID, signature); //$NON-NLS-1$
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
 			write(this, outData);
-			writeInt(length, "length", outData);
+			writeInt(length, "length", outData); //$NON-NLS-1$
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.AT_NEW_INSTANCE, outBytes);
 			defaultReplyErrorHandler(replyPacket.errorCode());
@@ -128,7 +128,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 		JdwpArrayID ID = new JdwpArrayID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("arrayType", ID.value());
+			target.fVerboseWriter.println("arrayType", ID.value()); //$NON-NLS-1$
 
 		if (ID.isNull())
 			return null;
@@ -208,9 +208,9 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 		JdwpArrayID ID = new JdwpArrayID(vmImpl);
 		ID.read(in);
 		if (target.fVerboseWriter != null)
-			target.fVerboseWriter.println("arrayType", ID.value());
+			target.fVerboseWriter.println("arrayType", ID.value()); //$NON-NLS-1$
 
-		String signature = target.readString("signature", in);
+		String signature = target.readString("signature", in); //$NON-NLS-1$
 		if (ID.isNull())
 			return null;
 			

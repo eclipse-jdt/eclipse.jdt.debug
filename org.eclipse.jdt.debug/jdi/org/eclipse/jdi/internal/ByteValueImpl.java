@@ -28,7 +28,7 @@ public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue {
 	 * Creates new instance.
 	 */
 	public ByteValueImpl(VirtualMachineImpl vmImpl, Byte value) {
-		super("ByteValue", vmImpl, value);
+		super("ByteValue", vmImpl, value); //$NON-NLS-1$
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue {
 	 */
 	public static ByteValueImpl read(MirrorImpl target, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		byte value = target.readByte("byteValue", in);
+		byte value = target.readByte("byteValue", in); //$NON-NLS-1$
 		return new ByteValueImpl(vmImpl, new Byte(value));
 	}
 	
@@ -65,6 +65,6 @@ public class ByteValueImpl extends PrimitiveValueImpl implements ByteValue {
 	 * Writes value without value tag.
 	 */
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeByte(((Byte)fValue).byteValue(), "byteValue", out);
+		target.writeByte(((Byte)fValue).byteValue(), "byteValue", out); //$NON-NLS-1$
 	}
 }

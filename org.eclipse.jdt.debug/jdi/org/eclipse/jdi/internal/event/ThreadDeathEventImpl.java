@@ -29,7 +29,7 @@ public class ThreadDeathEventImpl extends EventImpl implements ThreadDeathEvent 
 	 * Creates new ThreadDeathEventImpl.
 	 */
 	private ThreadDeathEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("ThreadDeathEvent", vmImpl, requestID);
+		super("ThreadDeathEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 		
 	/**

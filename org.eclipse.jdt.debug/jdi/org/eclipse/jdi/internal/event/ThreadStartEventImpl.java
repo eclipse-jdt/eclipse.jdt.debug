@@ -29,7 +29,7 @@ public class ThreadStartEventImpl extends EventImpl implements ThreadStartEvent 
 	 * Creates new ThreadDeathEventImpl.
 	 */
 	private ThreadStartEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("ThreadStartEvent", vmImpl, requestID);
+		super("ThreadStartEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 		
 	/**

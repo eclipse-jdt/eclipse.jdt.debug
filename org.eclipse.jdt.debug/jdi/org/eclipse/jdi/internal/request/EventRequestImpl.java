@@ -180,7 +180,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
-			writeByte(eventKind(), "event kind", EventImpl.eventKindMap(), outData);
+			writeByte(eventKind(), "event kind", EventImpl.eventKindMap(), outData); //$NON-NLS-1$
 			fRequestID.write(this, outData);
 	
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.ER_CLEAR, outBytes);
@@ -204,9 +204,9 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
-			writeByte(eventKind(), "event kind", EventImpl.eventKindMap(), outData);
-			writeByte(suspendPolicyJDWP(), "suspend policy", EventRequestImpl.suspendPolicyMap(), outData);
-			writeInt(modifierCount(), "modifiers", outData);
+			writeByte(eventKind(), "event kind", EventImpl.eventKindMap(), outData); //$NON-NLS-1$
+			writeByte(suspendPolicyJDWP(), "suspend policy", EventRequestImpl.suspendPolicyMap(), outData); //$NON-NLS-1$
+			writeInt(modifierCount(), "modifiers", outData); //$NON-NLS-1$
 			writeModifiers(outData);
 			
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.ER_SET, outBytes);
@@ -511,70 +511,70 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 		if (fThreadStepFilters != null) {
 			for (int i = 0; i < fThreadStepFilters.size(); i++) {
 				ThreadStepFilter filter = (ThreadStepFilter)fThreadStepFilters.get(i);
-				writeByte(MODIF_KIND_STEP, "modifier", modifierKindMap(), outData);
+				writeByte(MODIF_KIND_STEP, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
 				filter.fThread.write(this, outData);
-				writeInt(threadStepSizeJDWP(filter.fThreadStepSize), "step size", outData);
-				writeInt(threadStepDepthJDWP(filter.fThreadStepDepth), "step depth", outData);
+				writeInt(threadStepSizeJDWP(filter.fThreadStepSize), "step size", outData); //$NON-NLS-1$
+				writeInt(threadStepDepthJDWP(filter.fThreadStepDepth), "step depth", outData); //$NON-NLS-1$
 			}
 		}
 		if (fFieldFilters != null) {
 			for (int i = 0; i < fFieldFilters.size(); i++) {
-				writeByte(MODIF_KIND_FIELDONLY, "modifier", modifierKindMap(), outData);
+				writeByte(MODIF_KIND_FIELDONLY, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
 				((FieldImpl)fFieldFilters.get(i)).writeWithReferenceType(this, outData);
 			}
 		}
 		if (fExceptionFilters != null) {
 			for (int i = 0; i < fExceptionFilters.size(); i++) {
 				ExceptionFilter filter = (ExceptionFilter)fExceptionFilters.get(i);
-				writeByte(MODIF_KIND_EXCEPTIONONLY, "modifier", modifierKindMap(), outData);
+				writeByte(MODIF_KIND_EXCEPTIONONLY, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
 				if (filter.fException != null)
 					filter.fException.write(this, outData);
 				else
 					ReferenceTypeImpl.writeNull(this, outData);
 	
-				writeBoolean(filter.fNotifyCaught, "notify caught", outData);
-				writeBoolean(filter.fNotifyUncaught, "notify uncaught", outData);
+				writeBoolean(filter.fNotifyCaught, "notify caught", outData); //$NON-NLS-1$
+				writeBoolean(filter.fNotifyUncaught, "notify uncaught", outData); //$NON-NLS-1$
 			}
 		}
 		if (fLocationFilters != null) {
 			for (int i = 0; i < fLocationFilters.size(); i++) {
-				writeByte(MODIF_KIND_LOCATIONONLY, "modifier", modifierKindMap(), outData);
+				writeByte(MODIF_KIND_LOCATIONONLY, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
 				((LocationImpl)fLocationFilters.get(i)).write(this, outData);
 			}
 		}
 		if (fClassExclusionFilters != null) {
 			for (int i = 0; i < fClassExclusionFilters.size(); i++) {
-				writeByte(MODIF_KIND_CLASSEXCLUDE, "modifier", modifierKindMap(), outData);
-				writeString((String)fClassExclusionFilters.get(i), "class excl. filter", outData);
+				writeByte(MODIF_KIND_CLASSEXCLUDE, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
+				writeString((String)fClassExclusionFilters.get(i), "class excl. filter", outData); //$NON-NLS-1$
 			}
 		}
 		if (fClassFilters != null) {
 			for (int i = 0; i < fClassFilters.size(); i++) {
-				writeByte(MODIF_KIND_CLASSMATCH, "modifier", modifierKindMap(), outData);
-				writeString((String)fClassFilters.get(i), "class filter", outData);
+				writeByte(MODIF_KIND_CLASSMATCH, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
+				writeString((String)fClassFilters.get(i), "class filter", outData); //$NON-NLS-1$
 			}
 		}
 		if (fClassFilterRefs != null) {
 			for (int i = 0; i < fClassFilterRefs.size(); i++) {
-				writeByte(MODIF_KIND_CLASSONLY, "modifier", modifierKindMap(), outData);
+				writeByte(MODIF_KIND_CLASSONLY, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
 				((ReferenceTypeImpl)fClassFilterRefs.get(i)).write(this, outData);
 			}
 		}
 		if (fThreadFilters != null) {
 			for (int i = 0; i < fThreadFilters.size(); i++) {
-				writeByte(MODIF_KIND_THREADONLY, "modifier", modifierKindMap(), outData);
+				writeByte(MODIF_KIND_THREADONLY, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
 				((ThreadReferenceImpl)fThreadFilters.get(i)).write(this, outData);
 			}
 		}
 		if (fCountFilters != null) {
 			for (int i = 0; i < fCountFilters.size(); i++) {
-				writeByte(MODIF_KIND_COUNT, "modifier", modifierKindMap(), outData);
-				writeInt(((Integer)fCountFilters.get(i)).intValue(), "count filter", outData);
+				writeByte(MODIF_KIND_COUNT, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
+				writeInt(((Integer)fCountFilters.get(i)).intValue(), "count filter", outData); //$NON-NLS-1$
 			}
 		}
 		if (fInstanceFilters != null) {
 			for (int i = 0; i < fInstanceFilters.size(); i++) {
-				writeByte(MODIF_KIND_INSTANCE, "modifier", modifierKindMap(), outData);
+				writeByte(MODIF_KIND_INSTANCE, "modifier", modifierKindMap(), outData); //$NON-NLS-1$
 				((ObjectReferenceImpl)fInstanceFilters.get(i)).write(this, outData);
 			}
 		}
@@ -600,16 +600,16 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			try {
 				String name = field.getName();
 				Integer intValue = new Integer(field.getInt(null));
-				if (name.startsWith("STEP_SIZE_")) {
+				if (name.startsWith("STEP_SIZE_")) { //$NON-NLS-1$
 					name = name.substring(10);
 					fStepSizeMap.put(intValue, name);
-				} else if (name.startsWith("STEP_DEPTH_")) {
+				} else if (name.startsWith("STEP_DEPTH_")) { //$NON-NLS-1$
 					name = name.substring(11);
 					fStepDepthMap.put(intValue, name);
-				} else if (name.startsWith("SUSPENDPOL_")) {
+				} else if (name.startsWith("SUSPENDPOL_")) { //$NON-NLS-1$
 					name = name.substring(11);
 					fSuspendPolicyMap.put(intValue, name);
-				} else if (name.startsWith("MODIF_KIND_")) {
+				} else if (name.startsWith("MODIF_KIND_")) { //$NON-NLS-1$
 					name = name.substring(11);
 					fModifierKindMap.put(intValue, name);
 				}

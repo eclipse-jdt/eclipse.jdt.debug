@@ -29,7 +29,7 @@ public class VMStartEventImpl extends EventImpl implements VMStartEvent {
 	 * Creates new VMStartEventImpl.
 	 */
 	private VMStartEventImpl(VirtualMachineImpl vmImpl, RequestID requestID) {
-		super("VMStartEvent", vmImpl, requestID);
+		super("VMStartEvent", vmImpl, requestID); //$NON-NLS-1$
 	}
 		
 	/**

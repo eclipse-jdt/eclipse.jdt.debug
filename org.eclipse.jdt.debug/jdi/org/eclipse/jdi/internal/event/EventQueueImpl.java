@@ -32,7 +32,7 @@ public class EventQueueImpl extends MirrorImpl implements EventQueue {
 	 * Creates new EventQueueImpl.
 	 */
 	public EventQueueImpl(VirtualMachineImpl vmImpl) {
-		super("EventQueue", vmImpl);
+		super("EventQueue", vmImpl); //$NON-NLS-1$
 	}
 
 	/*

@@ -93,7 +93,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 */
 	private void getPreferences() {
 		// Get jdi.ini info.
-		URL url = getClass().getResource("/jdi.ini");
+		URL url = getClass().getResource("/jdi.ini"); //$NON-NLS-1$
 		if (url == null)
 			return;
 			
@@ -103,18 +103,18 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 
 				
 			try {
-				fGlobalRequestTimeout = Integer.parseInt(prefs.getString("User.timeout"));
+				fGlobalRequestTimeout = Integer.parseInt(prefs.getString("User.timeout")); //$NON-NLS-1$
 			} catch (NumberFormatException e) {
 			} catch (MissingResourceException e) {
 			}
 			
 			try {		
-				fVerbose = Boolean.valueOf(prefs.getString("User.verbose")).booleanValue();
+				fVerbose = Boolean.valueOf(prefs.getString("User.verbose")).booleanValue(); //$NON-NLS-1$
 			} catch (MissingResourceException e) {
 			}
 			
 			try {
-				fVerboseFile = prefs.getString("Verbose.out");
+				fVerboseFile = prefs.getString("Verbose.out"); //$NON-NLS-1$
 			} catch (MissingResourceException e) {
 			}
 

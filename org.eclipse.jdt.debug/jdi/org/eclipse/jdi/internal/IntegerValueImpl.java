@@ -28,7 +28,7 @@ public class IntegerValueImpl extends PrimitiveValueImpl implements IntegerValue
 	 * Creates new instance.
 	 */
 	public IntegerValueImpl(VirtualMachineImpl vmImpl, Integer value) {
-		super("IntegerValue", vmImpl, value);
+		super("IntegerValue", vmImpl, value); //$NON-NLS-1$
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class IntegerValueImpl extends PrimitiveValueImpl implements IntegerValue
 	 */
 	public static IntegerValueImpl read(MirrorImpl target, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		int value = target.readInt("integerValue", in);
+		int value = target.readInt("integerValue", in); //$NON-NLS-1$
 		return new IntegerValueImpl(vmImpl, new Integer(value));
 	}
 	
@@ -65,6 +65,6 @@ public class IntegerValueImpl extends PrimitiveValueImpl implements IntegerValue
 	 * Writes value without value tag.
 	 */
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeInt(((Integer)fValue).intValue(), "intValue", out);
+		target.writeInt(((Integer)fValue).intValue(), "intValue", out); //$NON-NLS-1$
 	}
 }

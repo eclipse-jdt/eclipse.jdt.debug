@@ -28,7 +28,7 @@ public class LongValueImpl extends PrimitiveValueImpl implements LongValue {
 	 * Creates new instance.
 	 */
 	public LongValueImpl(VirtualMachineImpl vmImpl, Long value) {
-		super("LongValue", vmImpl, value);
+		super("LongValue", vmImpl, value); //$NON-NLS-1$
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class LongValueImpl extends PrimitiveValueImpl implements LongValue {
 	 */
 	public static LongValueImpl read(MirrorImpl target, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		long value = target.readLong("longValue", in);
+		long value = target.readLong("longValue", in); //$NON-NLS-1$
 		return new LongValueImpl(vmImpl, new Long(value));
 	}
 	
@@ -65,6 +65,6 @@ public class LongValueImpl extends PrimitiveValueImpl implements LongValue {
 	 * Writes value without value tag.
 	 */
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeLong(((Long)fValue).longValue(), "longValue", out);
+		target.writeLong(((Long)fValue).longValue(), "longValue", out); //$NON-NLS-1$
 	}
 }

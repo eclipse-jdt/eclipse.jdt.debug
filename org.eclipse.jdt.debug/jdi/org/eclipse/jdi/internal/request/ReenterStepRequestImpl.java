@@ -26,7 +26,7 @@ public class ReenterStepRequestImpl extends StepRequestImpl implements org.eclip
 	 * Creates new ReenterStepRequestImpl.
 	 */
 	public ReenterStepRequestImpl(VirtualMachineImpl vmImpl) {
-		super("ReenterStepRequest", vmImpl);
+		super("ReenterStepRequest", vmImpl); //$NON-NLS-1$
 	}
 	
 	/**
@@ -47,9 +47,9 @@ public class ReenterStepRequestImpl extends StepRequestImpl implements org.eclip
 		try {
 			ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
 			DataOutputStream outData = new DataOutputStream(outBytes);
-			writeByte(eventKind(), "event kind", EventImpl.eventKindMap(), outData);	// Always 01 for Step event.
-			writeByte(suspendPolicyJDWP(), "suspend policy", outData);
-			writeInt(modifierCount(), "modifiers", outData);
+			writeByte(eventKind(), "event kind", EventImpl.eventKindMap(), outData);	// Always 01 for Step event. //$NON-NLS-1$
+			writeByte(suspendPolicyJDWP(), "suspend policy", outData); //$NON-NLS-1$
+			writeInt(modifierCount(), "modifiers", outData); //$NON-NLS-1$
 			writeModifiers(outData);
 			
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.HCR_REENTER_ON_EXIT, outBytes);

@@ -43,12 +43,12 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		HashMap arguments = new HashMap(2);
 		
 		// Hostname
-		StringArgumentImpl strArg = new StringArgumentImpl("hostname", "Machine name to which to attach for VM connections.", "Host", false);
-		strArg.setValue("localhost");
+		StringArgumentImpl strArg = new StringArgumentImpl("hostname", "Machine name to which to attach for VM connections.", "Host", false); //$NON-NLS-1$
+		strArg.setValue("localhost"); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 		
 		// Port
-		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", "Port number to which to attach for VM connections.", "Port", true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR);
+		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", "Port number to which to attach for VM connections.", "Port", true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$
 		arguments.put(intArg.name(), intArg);
 		
 		return arguments;
@@ -58,7 +58,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 	 * @return Returns a short identifier for the connector.
 	 */	
 	public String name() {
-		return "com.sun.jdi.SocketAttach";
+		return "com.sun.jdi.SocketAttach"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -72,11 +72,11 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
  	 * Retrieves connection arguments.
  	 */
 	private void getConnectionArguments(Map connectionArgs) throws IllegalConnectorArgumentsException {
-		String attribute = "";
+		String attribute = ""; //$NON-NLS-1$
 		try {
-			attribute = "hostname";
+			attribute = "hostname"; //$NON-NLS-1$
 		 	fHostname = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
-		 	attribute = "port";
+		 	attribute = "port"; //$NON-NLS-1$
 		 	fPort = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
 		} catch (ClassCastException e) {
 			throw new IllegalConnectorArgumentsException("Connection argument is not of the right type.", attribute);
@@ -97,8 +97,8 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 			((SocketTransportImpl)fTransport).attach(fHostname, fPort);
 		} catch (IllegalArgumentException e) {
 			Vector args = new Vector();
-			args.add("hostname");
-			args.add("port");
+			args.add("hostname"); //$NON-NLS-1$
+			args.add("port"); //$NON-NLS-1$
 			throw new IllegalConnectorArgumentsException(e.getMessage(), args);
 		}
 		return establishedConnection();

@@ -19,7 +19,7 @@ public class ShortTypeImpl extends PrimitiveTypeImpl implements ShortType {
 	 * Creates new instance.
 	 */
 	public ShortTypeImpl(VirtualMachineImpl vmImpl) {
-		super("ShortType", vmImpl, "short" , "S");
+		super("ShortType", vmImpl, "short" , "S"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**

@@ -19,7 +19,7 @@ public class VoidTypeImpl extends TypeImpl implements VoidType {
 	 * Creates new instance.
 	 */
 	public VoidTypeImpl(VirtualMachineImpl vmImpl) {
-		super("VoidType", vmImpl, "void" , "V");
+		super("VoidType", vmImpl, "void" , "V"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**

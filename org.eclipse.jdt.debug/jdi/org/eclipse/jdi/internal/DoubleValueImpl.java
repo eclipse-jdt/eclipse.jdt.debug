@@ -28,7 +28,7 @@ public class DoubleValueImpl extends PrimitiveValueImpl implements DoubleValue {
 	 * Creates new instance.
 	 */
 	public DoubleValueImpl(VirtualMachineImpl vmImpl, Double value) {
-		super("DoubleValue", vmImpl, value);
+		super("DoubleValue", vmImpl, value); //$NON-NLS-1$
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class DoubleValueImpl extends PrimitiveValueImpl implements DoubleValue {
 	 */
 	public static DoubleValueImpl read(MirrorImpl target, DataInputStream in) throws IOException {
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
-		double value = target.readDouble("doubleValue", in);
+		double value = target.readDouble("doubleValue", in); //$NON-NLS-1$
 		return new DoubleValueImpl(vmImpl, new Double(value));
 	}
 	
@@ -65,6 +65,6 @@ public class DoubleValueImpl extends PrimitiveValueImpl implements DoubleValue {
 	 * Writes value without value tag.
 	 */
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
-		target.writeDouble(((Double)fValue).doubleValue(), "doubleValue", out);
+		target.writeDouble(((Double)fValue).doubleValue(), "doubleValue", out); //$NON-NLS-1$
 	}
 }
