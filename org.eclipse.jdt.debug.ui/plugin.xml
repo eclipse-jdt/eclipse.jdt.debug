@@ -184,13 +184,13 @@
 	   	icon="icons/full/ctool16/disp_sbook.gif"
 	   	class="org.eclipse.jdt.internal.debug.ui.display.DisplayView">
 	</view>
-	<!-- <view
-      	name="Threads and Monitors"
+	<view
+      	name="%MonitorsView.name"
 		icon="icons/full/monitor/thread_and_monitor_icon.gif"
 		category="org.eclipse.debug.ui"
 		class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorsView"
 		id="org.eclipse.jdt.debug.ui.MonitorsView">
-	</view> -->
+	</view>
 </extension>
 
 <extension point="org.eclipse.ui.perspectiveExtensions">
@@ -215,10 +215,10 @@
     	<view id="org.eclipse.jdt.debug.ui.DisplayView" 
         	relative="org.eclipse.debug.ui.ExpressionView" 
     		relationship="stack"/>
-		<!-- <view id="org.eclipse.jdt.debug.ui.MonitorsView"
+		<view id="org.eclipse.jdt.debug.ui.MonitorsView"
 			relative="org.eclipse.jdt.debug.ui.DisplayView"
 			relationship="stack"
-			visible="false"/> -->
+			visible="false"/>
         <view id="org.eclipse.jdt.ui.PackageExplorer" 
                 relative="org.eclipse.debug.ui.DebugView" 
                 relationship="stack"
@@ -232,7 +232,7 @@
                 relationship="stack"
                 visible="false"/> 
     	<viewShortcut id="org.eclipse.jdt.debug.ui.DisplayView"/>
-		<!-- <viewShortcut id="org.eclipse.jdt.debug.ui.MonitorsView"/> -->
+		<viewShortcut id="org.eclipse.jdt.debug.ui.MonitorsView"/>
      </perspectiveExtension> 
 </extension>
 
@@ -535,7 +535,7 @@
 			enablesFor="+">
 		</action> 
 	</viewerContribution>
-	<!-- <viewerContribution
+	<viewerContribution
             targetID="org.eclipse.jdt.debug.ui.MonitorsView"
             id="org.eclipse.jdt.debug.MonitorsViewPopupActions">
          <action
@@ -560,7 +560,7 @@
                menubarPath="vmGroup"
                tooltip="%MonitorQuitAction.tooltip">
          </action>
-      </viewerContribution> -->
+      </viewerContribution>
 </extension>
 
 <extension point="org.eclipse.ui.viewActions">
@@ -686,7 +686,7 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
 	</viewContribution>
-<!--
+
 	   <viewContribution
             targetID="org.eclipse.jdt.debug.ui.MonitorsView"
             id="org.eclipse.jdt.debug.MonitorsActions">
@@ -742,7 +742,7 @@
                toolbarPath="vmGroup"
                id="org.eclipse.jdt.ui.actions.MonitorView">
          </action>
-      </viewContribution> -->
+      </viewContribution> 
 </extension>
 
 <!--Java debug model presentation -->
