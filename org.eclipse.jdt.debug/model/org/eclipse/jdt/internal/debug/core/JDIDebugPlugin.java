@@ -75,13 +75,6 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	private static int[] fJDIVersion = null;
 	
 	/**
-	 * Notifiers using safe runnables to guard against exceptions
-	 */
-	private BreakpointNotifier fBreakpointNotifier = null;
-	private InstallingNotifier fInstallingNotifier = null;
-	private HitNotifier fHitNotifier = null;
-	
-	/**
 	 * Returns whether the debug UI plug-in is in trace
 	 * mode.
 	 * 
@@ -355,10 +348,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	}
 	
 	private BreakpointNotifier getBreakpointNotifier() {
-		if (fBreakpointNotifier == null) {
-			fBreakpointNotifier = new BreakpointNotifier();
-		}
-		return fBreakpointNotifier;
+		return new BreakpointNotifier();
 	}
 
 	class BreakpointNotifier implements ISafeRunnable {
@@ -420,14 +410,16 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 				fListener = (IJavaBreakpointListener)listeners[i];
 				Platform.run(this);
 			}
+			fTarget = null;
+			fBreakpoint = null;
+			fErrors = null;
+			fException = null;
+			fListener = null;
 		}
 	}
 	
 	private InstallingNotifier getInstallingNotifier() {
-		if (fInstallingNotifier == null) {
-			fInstallingNotifier = new InstallingNotifier();
-		}
-		return fInstallingNotifier;
+		return new InstallingNotifier();
 	}
 		
 	class InstallingNotifier implements ISafeRunnable {
@@ -450,6 +442,13 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		public void run() throws Exception {
 			fInstall = fListener.installingBreakpoint(fTarget, fBreakpoint, fType);		
 		}
+		
+		private void dispose() {
+			fTarget = null;
+			fBreakpoint = null;
+			fType = null;
+			fListener = null;
+		}
 
 		/**
 		 * Notifies listeners that the given breakpoint is about to be installed
@@ -471,18 +470,17 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 				fListener = (IJavaBreakpointListener)listeners[i];
 				Platform.run(this);
 				if (!fInstall) {
+					dispose();
 					return false;
 				}
 			}
+			dispose();
 			return true;
 		}
 	}	
 	
 	private HitNotifier getHitNotifier() {
-		if (fHitNotifier == null) {
-			fHitNotifier = new HitNotifier();
-		}
-		return fHitNotifier;
+		return new HitNotifier();
 	}
 		
 	class HitNotifier implements ISafeRunnable {
@@ -522,6 +520,9 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 				fListener = (IJavaBreakpointListener)listeners[i];
 				Platform.run(this);
 			}
+			fThread = null;
+			fBreakpoint = null;
+			fListener = null;
 			return fSuspend;
 		}
 	}	
