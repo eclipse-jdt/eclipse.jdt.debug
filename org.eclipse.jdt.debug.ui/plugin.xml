@@ -141,7 +141,7 @@
   			helpContextId="step_into_selection_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
   			menubarPath="org.eclipse.ui.run/jdtGroup"
-  			enablesFor="+">
+  			enablesFor="*">
   			<enablement>
   				<and>
   					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/>
@@ -1122,7 +1122,7 @@
     		menubarPath="additions"
     		helpContextId="step_into_selection_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-    		enablesFor="+">
+    		enablesFor="*">
     		<enablement>
 	  			<and>
 					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
@@ -1214,7 +1214,7 @@
     		menubarPath="additions"
     		helpContextId="step_into_selection_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
-    		enablesFor="+">
+    		enablesFor="*">
     		<enablement>
 	  			<and>
 					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 

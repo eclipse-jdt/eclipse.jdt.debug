@@ -8,8 +8,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICodeAssist;
 import org.eclipse.jdt.core.IJavaElement;
@@ -17,6 +15,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
@@ -25,56 +24,109 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Steps into the selected method.
  */
-public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, IWorkbenchWindowActionDelegate, IPartListener {
+public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, IWorkbenchWindowActionDelegate {
 	
 	private IEditorPart fEditorPart = null;
-	private ITextSelection fTextSelection = null;
-	private ICodeAssist fCodeAssist = null;
 	private IWorkbenchWindow fWindow = null;
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		ICodeAssist codeAssist = getCodeAssist();
-		ITextSelection textSelection = getTextSelection();
-		
-		IMethod method = null;
-		try {
-			IJavaElement[] resolve = codeAssist.codeSelect(textSelection.getOffset(), textSelection.getLength());
-			for (int i = 0; i < resolve.length; i++) {
-				IJavaElement javaElement = resolve[i];
-				if (javaElement instanceof IMethod) {
-					method = (IMethod)javaElement;
-					break;
+		if (getActiveEditor() != null) {
+			ICodeAssist codeAssist = null;
+			ITextSelection textSelection = null;
+			IJavaStackFrame frame = getStackFrame();
+			if (frame != null && frame.isSuspended()) {
+				IEditorPart part = getActiveEditor();
+				if (part instanceof ITextEditor) { 
+					ITextEditor editor = (ITextEditor)part;
+					textSelection = (ITextSelection)editor.getSelectionProvider().getSelection();
+					try {
+						// ensure top stack frame
+						if (frame.getThread().getTopStackFrame().equals(frame)) {
+							int lineNumber = frame.getLineNumber();
+							// debug line numbers are 1 based, document line numbers are 0 based
+							if (textSelection.getStartLine() == (lineNumber - 1)) {
+								IEditorInput input = getActiveEditor().getEditorInput();
+								Object element = JavaUI.getWorkingCopyManager().getWorkingCopy(input);
+								if (element == null) {
+									element = input.getAdapter(IClassFile.class);
+								}
+								if (element instanceof ICodeAssist) {
+									codeAssist = ((ICodeAssist)element);
+								} else {
+									// editor does not support code assist
+									showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.Step_into_selection_only_available_for_types_in_Java_projects._1")); //$NON-NLS-1$
+									return;
+								}
+							} else {
+								// not on current line
+								showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.Step_into_selection_only_available_on_current_line_of_execution._2")); //$NON-NLS-1$
+								return;
+							}
+						} else {
+							showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.Step_into_selection_only_available_in_top_stack_frame._3")); //$NON-NLS-1$
+							return;
+						}
+					} catch (CoreException e) {
+						showErrorMessage(e.getStatus().getMessage());
+						return;
+					}
+				} else {
+					showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.Step_into_selection_only_available_in_Java_editor._4")); //$NON-NLS-1$
+					return;
 				}
+			} else {
+				// no longer suspended - unexpected
+				return;
 			}
-		} catch (CoreException e) {
-			JDIDebugPlugin.log(e);
-		}
-		
-		if (method == null) {
-			// no resolved method
-			if (getActiveEditor() != null) {
-				IEditorStatusLine statusLine= (IEditorStatusLine) getActiveEditor().getAdapter(IEditorStatusLine.class);
-				if (statusLine != null) {
-					statusLine.setMessage(true, ActionMessages.getString("StepIntoSelectionActionDelegate.No_Method"), null); //$NON-NLS-1$
+			
+			IMethod method = null;
+			try {
+				IJavaElement[] resolve = codeAssist.codeSelect(textSelection.getOffset(), textSelection.getLength());
+				for (int i = 0; i < resolve.length; i++) {
+					IJavaElement javaElement = resolve[i];
+					if (javaElement instanceof IMethod) {
+						method = (IMethod)javaElement;
+						break;
+					}
 				}
-			}		
-			JDIDebugUIPlugin.getStandardDisplay().beep();
-		} else {
-			StepIntoSelectionHandler handler = new StepIntoSelectionHandler((IJavaThread)getStackFrame().getThread(), getStackFrame(), method);
-			handler.step();
+			} catch (CoreException e) {
+				JDIDebugPlugin.log(e);
+			}
+		
+			if (method == null) {
+				// no resolved method
+				showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.No_Method")); //$NON-NLS-1$
+			} else {
+				StepIntoSelectionHandler handler = new StepIntoSelectionHandler((IJavaThread)getStackFrame().getThread(), getStackFrame(), method);
+				handler.step();
+			}			
 		}
+	}
+	
+	/**
+	 * Displays an error message in the status area
+	 * 
+	 * @param message
+	 */
+	protected void showErrorMessage(String message) {	
+		if (getActiveEditor() != null) {
+			IEditorStatusLine statusLine= (IEditorStatusLine) getActiveEditor().getAdapter(IEditorStatusLine.class);
+			if (statusLine != null) {
+				statusLine.setMessage(true, message, null);
+			}
+		}		
+		JDIDebugUIPlugin.getStandardDisplay().beep();		
 	}
 
 
@@ -89,100 +141,32 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * Returns the active editor or <code>null</code>.
 	 * 	 * @return active editor or <code>null</code>	 */
 	protected IEditorPart getActiveEditor() {
-		return fEditorPart;
+		if (fWindow != null) {
+			// global action
+			return fWindow.getActivePage().getActiveEditor();
+		} else {
+			// pop-up action
+			return fEditorPart;
+		}
 	}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		setCodeAssist(null);
-		setTextSelection(null);
-		if (!action.isEnabled()) {
-			//the xml specified enabler has already determined that this action
-			//should not be enabled...debugger must be active and + text selection
-			return;
-		}
-		boolean enabled = false;
-		if (getActiveEditor() != null) {
-			IJavaStackFrame frame = getStackFrame();
-			if (frame != null && frame.isSuspended()) {
-				ITextSelection textSelection = (ITextSelection)selection;
-				try {
-					int lineNumber = frame.getLineNumber();
-					// debug line numbers are 1 based, document line numbers are 0 based
-					if (textSelection.getStartLine() == (lineNumber - 1)) {
-						IEditorInput input = getActiveEditor().getEditorInput();
-						Object element = JavaUI.getWorkingCopyManager().getWorkingCopy(input);
-						if (element == null) {
-							element = input.getAdapter(IClassFile.class);
-						}
-						if (element instanceof ICodeAssist) {
-							setCodeAssist((ICodeAssist)element);
-							setTextSelection(textSelection);
-							enabled = true;
-						}
-					}
-				} catch (CoreException e) {
-					if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
-						// do not log "thread not suspended" errors
-						JDIDebugUIPlugin.log(e);
-					}
-				}
-			}
-		}
-		action.setEnabled(enabled);
 	}
 
 	/**
 	 * Returns the current stack frame context, or <code>null</code> if none.
 	 * 	 * @return the current stack frame context, or <code>null</code> if none	 */
 	protected IJavaStackFrame getStackFrame() {
-		IAdaptable context = DebugUITools.getDebugContext();
-		if (context instanceof IJavaStackFrame) {
-			return (IJavaStackFrame)context;
-		}
-		return null;
+		return EvaluationContextManager.getEvaluationContext(getActiveEditor());
 	}
-	
-	/**
-	 * Sets the resolved code assist element
-	 * 	 * @param codeAssist	 */
-	protected void setCodeAssist(ICodeAssist codeAssist) {
-		fCodeAssist = codeAssist;
-	}
-	
-	/**
-	 * Returns the resolved code assist element, or <code>null</code>
-	 * 
-	 * @return the resolved code assist element, or <code>null</code>
-	 */
-	protected ICodeAssist getCodeAssist() {
-		return fCodeAssist;
-	}
-	
-	/**
-	 * Sets the resolved text selection
-	 * 
-	 * @param textSelection
-	 */
-	protected void setTextSelection(ITextSelection textSelection) {
-		fTextSelection = textSelection;
-	}
-	
-	/**
-	 * Returns the resolved text selection, or <code>null</code>
-	 * 
-	 * @return the resolved text selection, or <code>null</code>
-	 */
-	protected ITextSelection getTextSelection() {
-		return fTextSelection;
-	}	
+		
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
-		fWindow.getPartService().removePartListener(this);
 	}
 
 	/**
@@ -190,46 +174,6 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 */
 	public void init(IWorkbenchWindow window) {
 		fWindow = window;
-		window.getPartService().addPartListener(this);
-	}
-
-	/**
-	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart part) {
-		if (part instanceof IEditorPart) {
-			fEditorPart = (IEditorPart)part;
-		}
-	}
-
-	/**
-	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partBroughtToTop(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart part) {
-		if (part == fEditorPart) {
-			fEditorPart = null;
-		}
-	}
-
-	/**
-	 * @see org.eclipse.ui.IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partDeactivated(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart part) {
-		if (part instanceof IEditorPart) {
-			fEditorPart = (IEditorPart)part;
-		}
 	}
 
 }
