@@ -414,6 +414,11 @@
 	   enablesFor="1"
 	   id="org.eclipse.jdt.ui.watchExpressionActions.EditWatchExpression">
 	 </action>
+	  </objectContribution>
+	<objectContribution
+		objectClass="org.eclipse.jdt.internal.debug.ui.JavaWatchExpression"
+		id="org.eclipse.jdt.debug.WatchExpressionActions">
+		<filter name="ReevaluateWatchExpressionActionFilter" value="availableJavaDebugTarget"/>
 	 <action
 	   label="%reevaluateWatchExpressionAction.label"
 	   helpContextId="reevaluate_watch_expression_context"
@@ -423,7 +428,7 @@
 	   enablesFor="1"
 	   id="org.eclipse.jdt.ui.watchExpressionActions.ReevaluateWatchExpression">
 	 </action>
-	  </objectContribution>
+	</objectContribution>
 	<viewerContribution
 		id="org.eclipse.jdt.debug.ToggleStepFilterActions"
 		targetID="org.eclipse.debug.ui.DebugView">

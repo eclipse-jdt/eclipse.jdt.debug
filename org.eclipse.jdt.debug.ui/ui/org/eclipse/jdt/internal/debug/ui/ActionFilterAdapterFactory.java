@@ -38,6 +38,8 @@ import org.eclipse.ui.IActionFilter;
 				return new MethodActionFilter();
 			} else if (obj instanceof JavaInspectExpression) {
 				return new JavaInspectExpressionActionFilter();
+			} else if (obj instanceof JavaWatchExpression) {
+				return new JavaWatchExpressionActionFilter();
 			}
 		}
 		return null;

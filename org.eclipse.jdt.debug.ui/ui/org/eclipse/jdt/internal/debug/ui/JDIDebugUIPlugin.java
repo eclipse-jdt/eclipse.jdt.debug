@@ -258,6 +258,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(fActionFilterAdapterFactory, IJavaStackFrame.class);
 		manager.registerAdapters(fActionFilterAdapterFactory, IJavaThread.class);
 		manager.registerAdapters(fActionFilterAdapterFactory, JavaInspectExpression.class);
+		manager.registerAdapters(fActionFilterAdapterFactory, JavaWatchExpression.class);
 		fSourceLocationAdapterFactory = new JavaSourceLocationWorkbenchAdapterFactory();
 		manager.registerAdapters(fSourceLocationAdapterFactory, IJavaSourceLocation.class);
 		
