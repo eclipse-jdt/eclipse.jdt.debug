@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaElement;
@@ -36,7 +37,11 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					return lp.getImage(proj);
 				case IRuntimeClasspathEntry.ARCHIVE:
 					// XXX: illegal access to images
-					boolean external = entry.getResource() == null;
+					res = entry.getResource();
+					if (res instanceof IContainer) {
+						return lp.getImage(res);
+					}
+					boolean external = res == null;
 					boolean source = entry.getSourceAttachmentPath() != null;
 					String key = null;
 					if (external) {
