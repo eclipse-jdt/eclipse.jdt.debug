@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -54,9 +55,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
@@ -64,7 +71,7 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class DisplayView extends ViewPart implements ITextInputListener {
+public class DisplayView extends ViewPart implements ITextInputListener, IPartListener2 {
 		
 	class DataDisplay implements IDataDisplay {
 		/**
@@ -126,6 +133,13 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 	protected List fSelectionActions= new ArrayList(3);
 
 	protected String fRestoredContents= null;
+	/**
+	 * This memento allows the Display view to save and restore state
+	 * when it is closed and opened within a session. A different
+	 * memento is supplied by the platform for persistance at
+	 * workbench shutdown.
+	 */
+	private static IMemento tempMemento;
 	
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
@@ -157,7 +171,14 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 		getSite().registerContextMenu(menuMgr, fSourceViewer.getSelectionProvider());
 		
 		getSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
-		WorkbenchHelp.setHelp(fSourceViewer.getTextWidget(), IJavaDebugHelpContextIds.DISPLAY_VIEW);		
+		WorkbenchHelp.setHelp(fSourceViewer.getTextWidget(), IJavaDebugHelpContextIds.DISPLAY_VIEW);
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				page.addPartListener(this);
+			}
+		}
 	}
 
 	protected IDocument getRestoredDocument() {
@@ -350,8 +371,10 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 	public void saveState(IMemento memento) {
 		if (fSourceViewer != null) {
 			IDocument doc= fSourceViewer.getDocument();
-			String contents= doc.get().trim();
-			memento.putTextData(contents);
+			if (doc != null) {
+				String contents= doc.get().trim();
+				memento.putTextData(contents);
+			}
 		} else if (fRestoredContents != null) {
 			memento.putTextData(fRestoredContents);
 		}
@@ -364,6 +387,9 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
+		if (tempMemento != null) {
+			memento= tempMemento;
+		}
 		if (memento != null) {
 			fRestoredContents= memento.getTextData();
 		}
@@ -413,10 +439,84 @@ public class DisplayView extends ViewPart implements ITextInputListener {
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		tempMemento= null;
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				page.removePartListener(this);
+			}
+		}
 		if (fSourceViewer != null) {
 			fSourceViewer.dispose();
 		}
 		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partHidden(IWorkbenchPartReference partRef) {
+		if (partRef instanceof IViewReference) {
+			String id = ((IViewReference) partRef).getId();
+			// partHidden is sent whenever the view is made not
+			// visible. To tell that the view has been "closed",
+			// try to find it.
+			if (id.equals(getViewSite().getId())) {
+				IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+				if (window != null) {
+					IWorkbenchPage activePage = window.getActivePage();
+					if (activePage != null && activePage.findView(id) == null) {
+						// Display view closed
+						tempMemento= XMLMemento.createWriteRoot("DisplayViewMemento"); //$NON-NLS-1$
+						saveState(tempMemento);
+					}
+				}
+				
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partActivated(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partBroughtToTop(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partClosed(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partDeactivated(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partOpened(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partVisible(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 
 }
