@@ -7,13 +7,22 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugElement;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -23,13 +32,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.Page;
 
 /**
  * Handles the different viewers: Thread, Monitor and Deadlock
  */
-public class MonitorsView extends AbstractDebugEventHandlerView {
+public class MonitorsView extends AbstractDebugEventHandlerView implements ISelectionListener {
 
 	public static final int VIEW_ID_THREAD = 1;
 	public static final int VIEW_ID_MONITOR = 2;
@@ -41,6 +52,10 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 	private Viewer fMonitorsViewer;
 	
 	private boolean fMonitorInformationAvailable= true;
+	
+	private boolean fValidSelection= false;
+	
+	private IJavaDebugTarget fLastSelectedTarget;
 	
 	/**
 	 * A page in this view's page book that contains this
@@ -210,6 +225,12 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		createContextMenu(getMonitorsViewer().getControl());
 		
 		setViewId(VIEW_ID_MONITOR);
+
+		// listen to selection in debug view
+		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		
+		// initialize the view
+		selectionChanged(null, getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW));
 	}
 
 	/**
@@ -278,6 +299,10 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		if (getPageBook().isDisposed()) {
 			return;
 		}
+		if (!fValidSelection) {
+			showMessage(MonitorMessages.getString("MonitorsView.select_one_java_debug_target")); //$NON-NLS-1$
+			return;
+		}
 		boolean changeFromShowMessagePage= monitorInformationAvailable && !fMonitorInformationAvailable;
 		fMonitorInformationAvailable= monitorInformationAvailable;
 		if (!monitorInformationAvailable) {
@@ -320,5 +345,38 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 			getPageBook().showPage(page);
 		}
 		updateObjects();
+	}
+
+	/** 
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection= (IStructuredSelection)selection;
+			Set targets= new HashSet();
+			for (Iterator iter= structuredSelection.iterator(); iter.hasNext();) {
+				Object element= iter.next();
+				if (element instanceof JDIDebugElement) {
+					targets.add(((JDIDebugElement)element).getDebugTarget());
+				}
+			}
+			if (targets.size() == 1) {
+				IJavaDebugTarget debugTarget= (IJavaDebugTarget)targets.toArray()[0];
+				if (debugTarget != fLastSelectedTarget || !fValidSelection) {
+					boolean monitorInformationAvailable= debugTarget.supportsMonitorInformation();
+					if (monitorInformationAvailable) {
+						MonitorManager.getDefault().updatePartial(debugTarget);
+					}
+					fValidSelection= true;
+					refreshCurrentViewer(monitorInformationAvailable, true);
+					fLastSelectedTarget= debugTarget;
+				}
+				return;
+			}
+		}
+		if (fValidSelection) {
+			fValidSelection= false;
+			refreshCurrentViewer(false, true);
+		}
 	}
 }
