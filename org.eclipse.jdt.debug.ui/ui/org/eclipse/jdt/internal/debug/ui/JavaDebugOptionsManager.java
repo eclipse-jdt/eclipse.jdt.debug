@@ -203,13 +203,20 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 * @exception CoreException if unable to initialize
 	 */
 	protected void initialize() throws CoreException {
-		// compilation error breakpoint
-		IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Error", true, true, false, false, null); //$NON-NLS-1$
-		bp.setPersisted(false);
-		bp.setRegistered(false);
-		// disabled until there are errors
-		bp.setEnabled(false);
-		setSuspendOnCompilationErrorsBreakpoint(bp);
+		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				// compilation error breakpoint
+				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Error", true, true, false, false, null); //$NON-NLS-1$
+				bp.setPersisted(false);
+				bp.setRegistered(false);
+				// disabled until there are errors
+				bp.setEnabled(false);
+				setSuspendOnCompilationErrorsBreakpoint(bp);
+			}
+		};
+		fork(wr);
+		
+
 		
 		// note compilation errors
 		IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
@@ -219,12 +226,18 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 			}
 		}
 		
-		// uncaught exception breakpoint
-		bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
-		bp.setPersisted(false);
-		bp.setRegistered(false);
-		bp.setEnabled(isSuspendOnUncaughtExceptions());
-		setSuspendOnUncaughtExceptionBreakpoint(bp);
+		wr = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				// uncaught exception breakpoint
+				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
+				bp.setPersisted(false);
+				bp.setRegistered(false);
+				bp.setEnabled(isSuspendOnUncaughtExceptions());
+				setSuspendOnUncaughtExceptionBreakpoint(bp);
+			}
+		};
+		fork(wr);
+
 		
 		// step filters
 		updateActiveFilters();
