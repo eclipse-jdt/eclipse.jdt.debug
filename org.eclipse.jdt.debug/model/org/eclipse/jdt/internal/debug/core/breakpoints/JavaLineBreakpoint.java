@@ -63,6 +63,7 @@ import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
 
 public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreakpoint {
 
@@ -247,8 +248,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	protected BreakpointRequest createLineBreakpointRequest(Location location, JDIDebugTarget target) throws CoreException {
 		BreakpointRequest request = null;
+		EventRequestManager manager = target.getEventRequestManager();
+		if (manager == null) {
+			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaLineBreakpoint.Unable_to_create_breakpoint_request_-_VM_disconnected._1"), null);  //$NON-NLS-1$
+		}
 		try {
-			request= target.getEventRequestManager().createBreakpointRequest(location);
+			request= manager.createBreakpointRequest(location);
 			configureRequest(request, target);
 		} catch (VMDisconnectedException e) {
 			if (!target.isAvailable()) {			

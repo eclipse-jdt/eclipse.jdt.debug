@@ -32,12 +32,12 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.AccessWatchpointEvent;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.ModificationWatchpointEvent;
 import com.sun.jdi.request.AccessWatchpointRequest;
 import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.ModificationWatchpointRequest;
 import com.sun.jdi.request.WatchpointRequest;
 
@@ -136,13 +136,13 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		}
 		AccessWatchpointRequest accessRequest= null;
 		ModificationWatchpointRequest modificationRequest= null;			
-		if (accessSupportedBy(target.getVM())) {
+		if (target.supportsAccessWatchpoints()) {
 			accessRequest= createAccessWatchpoint(target, field);
 			registerRequest(accessRequest, target);
 		} else {
 			notSupported(JDIDebugBreakpointMessages.getString("JavaWatchpoint.no_access_watchpoints"));				 //$NON-NLS-1$
 		}
-		if (modificationSupportedBy(target.getVM())) {
+		if (target.supportsModificationWatchpoints()) {
 			modificationRequest= createModificationWatchpoint(target, field);
 			if (modificationRequest == null) {
 				return false;
@@ -160,20 +160,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 */
 	protected void setRequestThreadFilter(EventRequest request, ThreadReference thread) {
 		((WatchpointRequest)request).addThreadFilter(thread);
-	}
-	
-	/**
-	 * Returns whether the given virtual machine supports modification watchpoints
-	 */
-	protected boolean modificationSupportedBy(VirtualMachine vm) {
-		return vm.canWatchFieldModification();
-	}
-	
-	/**
-	 * Returns whether the given virtual machine supports access watchpoints
-	 */
-	protected boolean accessSupportedBy(VirtualMachine vm) {
-		return vm.canWatchFieldAccess();
 	}
 	
 	/**
@@ -215,23 +201,27 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 */
 	protected WatchpointRequest createWatchpoint(JDIDebugTarget target, Field field, boolean access) throws CoreException {
 		WatchpointRequest request= null;
-			try {
-				if (access) {
-					request= target.getEventRequestManager().createAccessWatchpointRequest(field);
-				} else {
-					request= target.getEventRequestManager().createModificationWatchpointRequest(field);
-				}
-				configureRequest(request, target);
-			} catch (VMDisconnectedException e) {
-				if (!target.isAvailable()) {
-					return null;
-				}
-				target.internalError(e);
-				return null;
-			} catch (RuntimeException e) {
-				target.internalError(e);
+		EventRequestManager manager = target.getEventRequestManager();
+		if (manager == null) {
+			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaWatchpoint.Unable_to_create_breakpoint_request_-_VM_disconnected._1"), null);  //$NON-NLS-1$
+		}		
+		try {
+			if (access) {
+				request= manager.createAccessWatchpointRequest(field);
+			} else {
+				request= manager.createModificationWatchpointRequest(field);
+			}
+			configureRequest(request, target);
+		} catch (VMDisconnectedException e) {
+			if (!target.isAvailable()) {
 				return null;
 			}
+			target.internalError(e);
+			return null;
+		} catch (RuntimeException e) {
+			target.internalError(e);
+			return null;
+		}
 		return request;
 	}
 

@@ -1767,8 +1767,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * </ul>
 		 */
 		protected StepRequest createStepRequest() throws DebugException {
+			EventRequestManager manager = getEventRequestManager();
+			if (manager == null) {
+				requestFailed(JDIDebugModelMessages.getString("JDIThread.Unable_to_create_step_request_-_VM_disconnected._1"), null); //$NON-NLS-1$
+			}
 			try {
-				StepRequest request = getEventRequestManager().createStepRequest(getUnderlyingThread(), StepRequest.STEP_LINE, getStepKind());
+				StepRequest request = manager.createStepRequest(getUnderlyingThread(), StepRequest.STEP_LINE, getStepKind());
 				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 				request.addCountFilter(1);
 				attachFiltersToStepRequest(request);
@@ -1828,7 +1832,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		protected void deleteStepRequest() {
 			removeJDIEventListener(this, getStepRequest());
 			try {
-				getEventRequestManager().deleteEventRequest(getStepRequest());
+				EventRequestManager manager = getEventRequestManager();
+				if (manager != null) {
+					manager.deleteEventRequest(getStepRequest());
+				}				
 				setStepRequest(null);
 			} catch (RuntimeException e) {
 				logError(e);
@@ -2276,13 +2283,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * </ul>
 		 */
 		protected StepRequest createStepRequest() throws DebugException {
+			EventRequestManager manager = getEventRequestManager();
+			if (manager == null) {
+				requestFailed(JDIDebugModelMessages.getString("JDIThread.Unable_to_create_step_request_-_VM_disconnected._2"), null); //$NON-NLS-1$
+			}
 			int num = getFramesToDrop();
 			if (num > 0) {
 				return super.createStepRequest();
 			} else if (num == 0) {
 				try {
-					EventRequestManager erm= getEventRequestManager();
-					StepRequest request = ((org.eclipse.jdi.hcr.EventRequestManager) erm).createReenterStepRequest(getUnderlyingThread());
+					StepRequest request = ((org.eclipse.jdi.hcr.EventRequestManager) manager).createReenterStepRequest(getUnderlyingThread());
 					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 					request.addCountFilter(1);
 					request.enable();
@@ -2292,7 +2302,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}			
 			} else if (num == -1) {
 				try {
-					StepRequest request = getEventRequestManager().createStepRequest(getUnderlyingThread(), StepRequest.STEP_LINE, StepRequest.STEP_INTO);
+					StepRequest request = manager.createStepRequest(getUnderlyingThread(), StepRequest.STEP_LINE, StepRequest.STEP_INTO);
 					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 					request.addCountFilter(1);
 					request.enable();

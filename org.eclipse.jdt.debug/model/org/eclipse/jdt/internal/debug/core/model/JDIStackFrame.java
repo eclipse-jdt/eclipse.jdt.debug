@@ -41,6 +41,7 @@ import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.Type;
+import com.sun.jdi.VirtualMachine;
 
 /**
  * Proxy to a stack frame on the target.
@@ -514,9 +515,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			} 
 			boolean j9Support= false;
 			boolean jdkSupport= target.canPopFrames();
+			VirtualMachine vm = getVM();
+			if (vm == null) {
+				return false;
+			}
 			try {
 				j9Support= (thread.getUnderlyingThread() instanceof org.eclipse.jdi.hcr.ThreadReference) &&
-						((org.eclipse.jdi.hcr.VirtualMachine) ((JDIDebugTarget) getDebugTarget()).getVM()).canDoReturn();
+						((org.eclipse.jdi.hcr.VirtualMachine)vm).canDoReturn();
 			} catch (UnsupportedOperationException uoe) {
 				j9Support= false;
 			}

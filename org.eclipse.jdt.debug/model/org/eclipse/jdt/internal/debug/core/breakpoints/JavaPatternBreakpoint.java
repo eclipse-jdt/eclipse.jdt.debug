@@ -27,6 +27,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VirtualMachine;
 
 public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPatternBreakpoint {
 
@@ -93,7 +94,11 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 		registerRequest(target.createClassPrepareRequest(classPrepareTypeName), target);
 		
 		// create breakpoint requests for each class currently loaded
-		List classes= target.getVM().allClasses();
+		VirtualMachine vm = target.getVM();
+		if (vm == null) {
+			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.Unable_to_add_breakpoint_-_VM_disconnected._1"), null); //$NON-NLS-1$
+		}
+		List classes= vm.allClasses();
 		if (classes != null) {
 			Iterator iter = classes.iterator();
 			String typeName= null;

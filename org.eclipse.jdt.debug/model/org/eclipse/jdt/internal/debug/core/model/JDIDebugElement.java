@@ -336,17 +336,29 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 		return (JDIDebugTarget)fDebugTarget;
 	}
 
+	/**
+	 * Returns the target VM associated with this element, or <code>null</code>
+	 * if none.
+	 * 
+	 * @return target VM or <code>null</code> if none
+	 */
 	protected VirtualMachine getVM() {
 		return ((JDIDebugTarget)getDebugTarget()).getVM();
 	}
 	
 	/**
-	 * Returns the underlying VM's event request manager.
+	 * Returns the underlying VM's event request manager, or <code>null</code>
+	 * if none (disconnected/terminated)
 	 * 
-	 * @return event request manager
+	 * @return event request manager or <code>null</code>
 	 */
 	public EventRequestManager getEventRequestManager() {
-		return getVM().eventRequestManager();
+		VirtualMachine vm = getVM();
+		if (vm == null) {
+			return null;
+		} else {
+			return vm.eventRequestManager();
+		}
 	}
 	
 	/**
@@ -399,7 +411,10 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	public void setRequestTimeout(int timeout) {
 		if (supportsRequestTimeout()) {
-			((org.eclipse.jdi.VirtualMachine) getVM()).setRequestTimeout(timeout);
+			VirtualMachine vm = getVM();
+			if (vm != null) {
+				((org.eclipse.jdi.VirtualMachine)vm).setRequestTimeout(timeout);
+			}
 		}
 	}
 	
@@ -408,7 +423,10 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	public int getRequestTimeout() {
 		if (supportsRequestTimeout()) {
-			return ((org.eclipse.jdi.VirtualMachine) getVM()).getRequestTimeout();
+			VirtualMachine vm = getVM();
+			if (vm != null) {
+				return ((org.eclipse.jdi.VirtualMachine)vm).getRequestTimeout();
+			}
 		}
 		return -1;
 	}	

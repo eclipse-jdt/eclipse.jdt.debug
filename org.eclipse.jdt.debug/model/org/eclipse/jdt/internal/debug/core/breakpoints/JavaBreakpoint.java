@@ -54,6 +54,7 @@ import com.sun.jdi.event.Event;
 import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
 
 public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener, IDebugEventSetListener {
 
@@ -613,7 +614,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			req = (EventRequest)iter.next();
 			try {
 				if (target.isAvailable() && !isExpired(req)) { // cannot delete an expired request
-					target.getEventRequestManager().deleteEventRequest(req); // disable & remove
+					EventRequestManager manager = target.getEventRequestManager();
+					if (manager != null) {
+						manager.deleteEventRequest(req); // disable & remove 
+					}					
 				}
 			} catch (VMDisconnectedException e) {
 				if (target.isAvailable()) {

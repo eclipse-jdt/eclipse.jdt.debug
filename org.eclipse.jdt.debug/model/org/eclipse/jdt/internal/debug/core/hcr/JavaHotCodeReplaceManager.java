@@ -72,6 +72,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VirtualMachine;
 
 /**
  * The hot code replace manager listens for changes to
@@ -440,6 +441,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (target.supportsJ9HotCodeReplace()) {
 			target.setHCROccurred(true);
 			org.eclipse.jdi.hcr.VirtualMachine vm= (org.eclipse.jdi.hcr.VirtualMachine) target.getVM();
+			if (vm == null) {
+				target.requestFailed(JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.Hot_code_replace_failed_-_VM_disconnected._1"), null); //$NON-NLS-1$
+			}
 			int result= org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE;
 			try {
 				result= vm.classesHaveChanged(typeNames);
@@ -473,7 +477,11 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			target.setHCROccurred(true);
 			Map typesToBytes= getTypesToBytes(target, resources, qualifiedNames);
 			try {
-				target.getVM().redefineClasses(typesToBytes);
+				VirtualMachine vm = target.getVM();
+				if (vm == null) {
+					target.requestFailed(JDIDebugHCRMessages.getString("JavaHotCodeReplaceManager.Hot_code_replace_failed_-_VM_disconnected._2"), null); //$NON-NLS-1$
+				}
+				vm.redefineClasses(typesToBytes);
 			} catch (UnsupportedOperationException exception) {
 				String detail= exception.getMessage();
 				if (detail != null) {

@@ -40,6 +40,7 @@ import com.sun.jdi.event.MethodEntryEvent;
 import com.sun.jdi.event.MethodExitEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.MethodEntryRequest;
 import com.sun.jdi.request.MethodExitRequest;
 
@@ -246,6 +247,10 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 */
 	private EventRequest createMethodRequest(JDIDebugTarget target, Object classFilter, boolean entry) throws CoreException {
 		EventRequest request = null;
+		EventRequestManager manager = target.getEventRequestManager();
+		if (manager == null) {
+			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaMethodBreakpoint.Unable_to_create_breakpoint_request_-_VM_disconnected._1"), null);  //$NON-NLS-1$
+		}		
 		try {
 			if (entry) {
 				if (classFilter instanceof ClassType && getMethodName() != null && getMethodSignature() != null) {
@@ -257,13 +262,13 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 						if (method != null && !method.isNative()) {
 							Location location = method.location();
 							if (location != null && location.codeIndex() != -1) {
-								request = target.getEventRequestManager().createBreakpointRequest(location);
+								request = manager.createBreakpointRequest(location);
 							}
 						}
 					}
 				}
 				if (request == null) {
-					request= target.getEventRequestManager().createMethodEntryRequest();
+					request= manager.createMethodEntryRequest();
 					if (classFilter instanceof String) {
 						((MethodEntryRequest)request).addClassFilter((String)classFilter);
 					} else if (classFilter instanceof ReferenceType) {
@@ -271,7 +276,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 					}
 				}
 			} else {
-				request= target.getEventRequestManager().createMethodExitRequest();
+				request= manager.createMethodExitRequest();
 				if (classFilter instanceof String) {
 					((MethodExitRequest)request).addClassFilter((String)classFilter);
 				} else if (classFilter instanceof ReferenceType) {

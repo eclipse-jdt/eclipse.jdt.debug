@@ -233,7 +233,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		setSupportsTerminate(supportTerminate);
 		setSupportsDisconnect(supportDisconnect);
 		setVM(jvm);
-		getVM().setDebugTraceMode(VirtualMachine.TRACE_NONE);
+		jvm.setDebugTraceMode(VirtualMachine.TRACE_NONE);
 		setProcess(process);
 		setTerminated(false);
 		setTerminating(false);
@@ -374,16 +374,19 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	protected void initializeState() {
 
 		List threads= null;
-		try {
-			threads= getVM().allThreads();
-		} catch (RuntimeException e) {
-			internalError(e);
-		}
-		if (threads != null) {
-			Iterator initialThreads= threads.iterator();
-			while (initialThreads.hasNext()) {
-				createThread((ThreadReference) initialThreads.next());
+		VirtualMachine vm = getVM();
+		if (vm != null) {
+			try {
+				threads= vm.allThreads();
+			} catch (RuntimeException e) {
+				internalError(e);
 			}
+			if (threads != null) {
+				Iterator initialThreads= threads.iterator();
+				while (initialThreads.hasNext()) {
+					createThread((ThreadReference) initialThreads.next());
+				}
+			}			
 		}
 		
 		if (isResumeOnStartup()) {
@@ -539,7 +542,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public boolean supportsInstanceBreakpoints() {
 		if (isAvailable() && JDIDebugPlugin.isJdiVersionGreaterThanOrEqual(new int[] {1,4})) {
-			return getVM().canUseInstanceFilters();
+			VirtualMachine vm = getVM();
+			if (vm != null) {
+				return vm.canUseInstanceFilters();
+			}
 		}
 		return false;
 	}
@@ -550,9 +556,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return whether this debug target supports J9 hot code replace
 	 */
 	public boolean supportsJ9HotCodeReplace() {
-		if (isAvailable() && getVM() instanceof org.eclipse.jdi.hcr.VirtualMachine) {
+		VirtualMachine vm = getVM();
+		if (isAvailable() && vm instanceof org.eclipse.jdi.hcr.VirtualMachine) {
 			try {
-				return ((org.eclipse.jdi.hcr.VirtualMachine) getVM()).canReloadClasses();
+				return ((org.eclipse.jdi.hcr.VirtualMachine)vm).canReloadClasses();
 			} catch (UnsupportedOperationException e) {
 				// This is not an error condition - UnsupportedOperationException is thrown when a VM does
 				// not support HCR
@@ -568,7 +575,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public boolean supportsJDKHotCodeReplace() {
 		if (isAvailable() && JDIDebugPlugin.isJdiVersionGreaterThanOrEqual(new int[] {1,4})) {
-			return getVM().canRedefineClasses();
+			VirtualMachine vm = getVM();
+			if (vm != null) {
+				return vm.canRedefineClasses();
+			}
 		}
 		return false;
 	}
@@ -580,7 +590,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public boolean canPopFrames() {
 		if (isAvailable() && JDIDebugPlugin.isJdiVersionGreaterThanOrEqual(new int[] {1,4})) {
-			return getVM().canPopFrames();
+			VirtualMachine vm = getVM();
+			if (vm != null) {
+				return vm.canPopFrames();
+			}
 		}
 		return false;
 	}
@@ -601,7 +614,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 
 		try {
 			getThreadStartHandler().deleteRequest();
-			getVM().dispose();
+			VirtualMachine vm = getVM();
+			if (vm != null) {
+				vm.dispose();
+			}
 		} catch (VMDisconnectedException e) {
 			// if the VM disconnects while disconnecting, perform
 			// normal disconnect handling
@@ -614,9 +630,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	
 	/**
 	 * Returns the underlying virtual machine associated with this
-	 * debug target.
+	 * debug target, or <code>null</code> if none (disconnected/terminated)
 	 * 
-	 * @return the underlying VM
+	 * @return the underlying VM or <code>null</code>
 	 */
 	public VirtualMachine getVM() {
 		return fVirtualMachine;
@@ -767,8 +783,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public String getName() throws DebugException {
 		if (fName == null) {
+			VirtualMachine vm = getVM();
+			if (vm == null) {
+				requestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.Unable_to_retrieve_name_-_VM_disconnected._1"), null); //$NON-NLS-1$
+			}
 			try {
-				setName(getVM().name());
+				setName(vm.name());
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_retrieving_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 				// execution will not reach this line, as 
@@ -893,15 +913,23 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		return fDisconnected;
 	}
 	
-	
-	public ClassPrepareRequest createClassPrepareRequest(String classPattern) {
+	/**
+	 * Creates, enables and returns a class prepare request for the
+	 * specified class name in this target.
+	 * 
+	 * @param classPattern regular expression specifying the pattern of
+	 * 	class names that will cause the event request to fire. Regular
+	 * 	expressions may begin with a '*', end with a '*', or be an exact
+	 * 	match.
+	 * @exception CoreException if unable to create the request
+	 */	
+	public ClassPrepareRequest createClassPrepareRequest(String classPattern) throws CoreException {
 		return createClassPrepareRequest(classPattern, null);
 	}
 	
 	/**
 	 * Creates, enables and returns a class prepare request for the
-	 * specified class name in this target, or <code>null</code> if
-	 * unable to create the request. Can specify a class exclusion filter
+	 * specified class name in this target. Can specify a class exclusion filter
 	 * as well.
 	 * This is a utility method used by event requesters that need to
 	 * create class prepare requests.
@@ -914,9 +942,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * 	class names that will not cause the event request to fire. Regular
 	 * 	expressions may begin with a '*', end with a '*', or be an exact
 	 * 	match.  May be <code>null</code>.
+	 * @exception CoreException if unable to create the request
 	 */
-	public ClassPrepareRequest createClassPrepareRequest(String classPattern, String classExclusionPattern) {
+	public ClassPrepareRequest createClassPrepareRequest(String classPattern, String classExclusionPattern) throws CoreException {
 		EventRequestManager manager= getEventRequestManager();
+		if (!isAvailable() || manager == null) {
+			requestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.Unable_to_create_class_prepare_request_-_VM_disconnected._2"), null); //$NON-NLS-1$
+		}
 		ClassPrepareRequest req= null;
 		try {
 			req= manager.createClassPrepareRequest();
@@ -927,7 +959,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			req.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			req.enable();
 		} catch (RuntimeException e) {
-			internalError(e);
+			targetRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.Unable_to_create_class_prepare_request._3"), e); //$NON-NLS-1$
+			// execution will not reach here
 			return null;
 		}
 		return req;
@@ -968,7 +1001,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		try {
 			setSuspended(false);
 			resumeThreads();
-			getVM().resume();
+			VirtualMachine vm = getVM();
+			if (vm != null) {
+				vm.resume();
+			}
 			if (fireNotification) {
 				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			}
@@ -1072,7 +1108,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		try {
 			setSuspended(true);
 			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-			getVM().suspend();
+			VirtualMachine vm = getVM();
+			if (vm != null) {
+				vm.suspend();
+			}
 			suspendThreads();
 		} catch (RuntimeException e) {
 			setSuspended(false);
@@ -1153,7 +1192,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		try {
 			setTerminating(true);
 			getThreadStartHandler().deleteRequest();
-			getVM().exit(1);
+			VirtualMachine vm = getVM();
+			if (vm != null) {
+				vm.exit(1);
+			}
 			IProcess process= getProcess();
 			if (process != null) {
 				process.terminate();
@@ -1269,15 +1311,18 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see com.sun.jdi.VirtualMachine
 	 */
 	public List jdiClassesByName(String className) {
-		try {
-			return getVM().classesByName(className);
-		} catch (VMDisconnectedException e) {
-			if (!isAvailable()) {
-				return Collections.EMPTY_LIST;
+		VirtualMachine vm = getVM();
+		if (vm != null) {
+			try {
+				return vm.classesByName(className);
+			} catch (VMDisconnectedException e) {
+				if (!isAvailable()) {
+					return Collections.EMPTY_LIST;
+				}
+				logError(e);
+			} catch (RuntimeException e) {
+				internalError(e);
 			}
-			logError(e);
-		} catch (RuntimeException e) {
-			internalError(e);
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -1370,7 +1415,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public IJavaType[] getJavaTypes(String name) throws DebugException {
 		try {
 			// get java.lang.Class
-			List classes = getVM().classesByName(name);
+			VirtualMachine vm = getVM();
+			if (vm == null) {
+				requestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.Unable_to_retrieve_types_-_VM_disconnected._4"), null); //$NON-NLS-1$
+			}
+			List classes = vm.classesByName(name);
 			if (classes.size() == 0) {
 				switch (name.charAt(0)) {
 					case 'b':
@@ -1431,72 +1480,108 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see IJavaDebugTarget#newValue(boolean)
 	 */
 	public IJavaValue newValue(boolean value) {
-		Value v = getVM().mirrorOf(value);
-		return JDIValue.createValue(this, v);
+		VirtualMachine vm = getVM();
+		if (vm != null) {
+			Value v = vm.mirrorOf(value);
+			return JDIValue.createValue(this, v);
+		}
+		return null;
 	}
 	
 	/**
 	 * @see IJavaDebugTarget#newValue(byte)
 	 */
 	public IJavaValue newValue(byte value) {
-		Value v = getVM().mirrorOf(value);
-		return JDIValue.createValue(this, v);
+		VirtualMachine vm = getVM();
+		if (vm != null) {
+			Value v = vm.mirrorOf(value);
+			return JDIValue.createValue(this, v);
+		}
+		return null;
 	}
 
 	/**
 	 * @see IJavaDebugTarget#newValue(char)
 	 */
 	public IJavaValue newValue(char value) {
-		Value v = getVM().mirrorOf(value);
-		return JDIValue.createValue(this, v);
+		VirtualMachine vm = getVM();
+		if (vm != null) {
+			Value v = vm.mirrorOf(value);
+			return JDIValue.createValue(this, v);
+		}
+		return null;
 	}
 
 	/**
 	 * @see IJavaDebugTarget#newValue(double)
 	 */
 	public IJavaValue newValue(double value) {
-		Value v = getVM().mirrorOf(value);
-		return JDIValue.createValue(this, v);
+		VirtualMachine vm = getVM();
+		if (vm != null) {		
+			Value v = vm.mirrorOf(value);
+			return JDIValue.createValue(this, v);
+		}
+		return null;
 	}
 	
 	/**
 	 * @see IJavaDebugTarget#newValue(float)
 	 */
 	public IJavaValue newValue(float value) {
-		Value v = getVM().mirrorOf(value);
-		return JDIValue.createValue(this, v);
+		VirtualMachine vm = getVM();
+		if (vm != null) {		
+			Value v = vm.mirrorOf(value);
+			return JDIValue.createValue(this, v);
+		}
+		return null;
 	}
 						
 	/**
 	 * @see IJavaDebugTarget#newValue(int)
 	 */
 	public IJavaValue newValue(int value) {
-		Value v = getVM().mirrorOf(value);
-		return JDIValue.createValue(this, v);
+		VirtualMachine vm = getVM();
+		if (vm != null) {		
+			Value v = vm.mirrorOf(value);
+			return JDIValue.createValue(this, v);
+		}
+		return null;
 	}
 	
 	/**
 	 * @see IJavaDebugTarget#newValue(long)
 	 */
 	public IJavaValue newValue(long value) {
-		Value v = getVM().mirrorOf(value);
-		return JDIValue.createValue(this, v);
+		VirtualMachine vm = getVM();
+		if (vm != null) {		
+			Value v = vm.mirrorOf(value);
+			return JDIValue.createValue(this, v);
+		}
+		return null;
 	}	
 	
 	/**
 	 * @see IJavaDebugTarget#newValue(short)
 	 */
 	public IJavaValue newValue(short value) {
-		Value v = getVM().mirrorOf(value);
-		return JDIValue.createValue(this, v);
+		VirtualMachine vm = getVM();
+		if (vm != null) {		
+			Value v = vm.mirrorOf(value);
+			return JDIValue.createValue(this, v);
+		}
+		return null;
 	}
 	
 	/**
 	 * @see IJavaDebugTarget#newValue(String)
 	 */
 	public IJavaValue newValue(String value) {
-		Value v = getVM().mirrorOf(value);
-		return JDIValue.createValue(this, v);
+		VirtualMachine vm = getVM();
+		if (vm != null) {		
+			Value v = vm.mirrorOf(value);
+			return JDIValue.createValue(this, v);
+		}
+		return null;
 	}
 		
 	/**
@@ -1538,14 +1623,17 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		 * events
 		 */
 		protected void createRequest() {
-			try {
-				EventRequest req= getEventRequestManager().createThreadStartRequest();
-				req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
-				req.enable();
-				addJDIEventListener(this, req);
-				setRequest(req);
-			} catch (RuntimeException e) {
-				logError(e);
+			EventRequestManager manager = getEventRequestManager();
+			if (manager != null) {			
+				try {
+					EventRequest req= manager.createThreadStartRequest();
+					req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
+					req.enable();
+					addJDIEventListener(this, req);
+					setRequest(req);
+				} catch (RuntimeException e) {
+					logError(e);
+				}
 			}
 		}
 
@@ -1623,14 +1711,17 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		 * death events.
 		 */
 		protected void createRequest() {
-			try {
-				EventRequest req= getEventRequestManager().createThreadDeathRequest();
-				req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
-				req.enable();
-				addJDIEventListener(this, req);	
-			} catch (RuntimeException e) {
-				logError(e);
-			}	
+			EventRequestManager manager = getEventRequestManager();
+			if (manager != null) {
+				try {
+					EventRequest req= manager.createThreadDeathRequest();
+					req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
+					req.enable();
+					addJDIEventListener(this, req);	
+				} catch (RuntimeException e) {
+					logError(e);
+				}					
+			}
 		}
 				
 		/**
@@ -1881,7 +1972,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		if (!isAvailable()) {
 			return false;
 		}
-		return getVM().canGetCurrentContendedMonitor() && getVM().canGetMonitorInfo() && getVM().canGetOwnedMonitorInfo();
+		VirtualMachine vm = getVM();
+		if (vm != null) {
+			return vm.canGetCurrentContendedMonitor() && vm.canGetMonitorInfo() && vm.canGetOwnedMonitorInfo();
+		}
+		return false;
 	}
 	
 	/**
@@ -1898,5 +1993,28 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public boolean isPerformingHotCodeReplace() {
 		return fIsPerformingHotCodeReplace;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsAccessWatchpoints()
+	 */
+	public boolean supportsAccessWatchpoints() {
+		VirtualMachine vm = getVM();
+		if (isAvailable() && vm != null) {
+			return vm.canWatchFieldAccess();
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsModificationWatchpoints()
+	 */
+	public boolean supportsModificationWatchpoints() {
+		VirtualMachine vm = getVM();
+		if (isAvailable() && vm != null) {
+			return vm.canWatchFieldModification();
+		}
+		return false;
+	}
+
 }
 

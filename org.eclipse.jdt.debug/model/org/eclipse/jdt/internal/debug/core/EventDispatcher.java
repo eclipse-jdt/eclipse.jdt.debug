@@ -23,6 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventIterator;
 import com.sun.jdi.event.EventQueue;
@@ -194,24 +195,27 @@ public class EventDispatcher implements Runnable {
 	 * @see #shutdown()
 	 */
 	public void run() {
-		EventQueue q= fTarget.getVM().eventQueue();
-		EventSet eventSet= null;
-		while (!isShutdown()) {
-			try {
+		VirtualMachine vm = fTarget.getVM();
+		if (vm != null) {
+			EventQueue q= vm.eventQueue();
+			EventSet eventSet= null;
+			while (!isShutdown()) {
 				try {
-					// Get the next event set.
-					eventSet= q.remove();
-					if (eventSet == null)
+					try {
+						// Get the next event set.
+						eventSet= q.remove();
+						if (eventSet == null)
+							break;
+					} catch (VMDisconnectedException e) {
 						break;
-				} catch (VMDisconnectedException e) {
+					}
+									
+					if(!isShutdown()) {
+						dispatch(eventSet);
+					}
+				} catch (InterruptedException e) {
 					break;
 				}
-								
-				if(!isShutdown()) {
-					dispatch(eventSet);
-				}
-			} catch (InterruptedException e) {
-				break;
 			}
 		}
 	}

@@ -21,6 +21,8 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIType;
 
+import com.sun.jdi.VirtualMachine;
+
 public class LocalVariableCreation extends CompoundInstruction {
 
 	/**
@@ -74,7 +76,11 @@ public class LocalVariableCreation extends CompoundInstruction {
 		IJavaType type;
 		if (fIsPrimitiveType) {
 			JDIDebugTarget debugTarget= (JDIDebugTarget)getVM();
-			type= JDIType.createType(debugTarget, PrimitiveTypeImpl.create((VirtualMachineImpl)debugTarget.getVM(), fTypeSignature));
+			VirtualMachine vm = debugTarget.getVM();
+			if (vm == null) {
+				debugTarget.requestFailed(InstructionsEvaluationMessages.getString("LocalVariableCreation.Execution_failed_-_VM_disconnected._1"), null); //$NON-NLS-1$
+			}			
+			type= JDIType.createType(debugTarget, PrimitiveTypeImpl.create((VirtualMachineImpl)vm, fTypeSignature));
 		} else if (fDimension == 0) {
 			type= getType(RuntimeSignature.toString(fTypeSignature)); // See Bug 22165
 		} else {

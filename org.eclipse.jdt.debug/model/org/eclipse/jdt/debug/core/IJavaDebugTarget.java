@@ -339,4 +339,20 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @since 2.1
 	 */
 	public boolean supportsMonitorInformation();
+	
+	/**
+	 * Returns whether this target supports access watchpoints.
+	 * 
+	 * @return whether this target supports access watchpoints
+	 * @since 3.0
+	 */
+	public boolean supportsAccessWatchpoints();
+	
+	/**
+	 * Returns whether this target supports modification watchpoints.
+	 * 
+	 * @return whether this target supports modification watchpoints
+	 * @since 3.0
+	 */
+	public boolean supportsModificationWatchpoints();	
 }

@@ -38,6 +38,7 @@ import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.ExceptionEvent;
 import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.ExceptionRequest;
 
 public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExceptionBreakpoint {
@@ -149,20 +150,25 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		if (!isCaught() && !isUncaught()) {
 			return null;
 		}
-			ExceptionRequest request= null;
-			try {
-				request= target.getEventRequestManager().createExceptionRequest(type, isCaught(), isUncaught());
-				configureRequest(request, target);
-			} catch (VMDisconnectedException e) {
-				if (target.isAvailable()) {
-					JDIDebugPlugin.log(e);
-				}
-				return null;
-			} catch (RuntimeException e) {
+		ExceptionRequest request= null;
+		EventRequestManager manager = target.getEventRequestManager();
+		if (manager == null) {
+			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaExceptionBreakpoint.Unable_to_create_breakpoint_request_-_VM_disconnected._1"), null);  //$NON-NLS-1$
+		}
+
+		try {
+			request= manager.createExceptionRequest(type, isCaught(), isUncaught());
+			configureRequest(request, target);
+		} catch (VMDisconnectedException e) {
+			if (target.isAvailable()) {
 				JDIDebugPlugin.log(e);
-				return null;
-			}	
-			return request;
+			}
+			return null;
+		} catch (RuntimeException e) {
+			JDIDebugPlugin.log(e);
+			return null;
+		}	
+		return request;
 	}
 
 	/**
