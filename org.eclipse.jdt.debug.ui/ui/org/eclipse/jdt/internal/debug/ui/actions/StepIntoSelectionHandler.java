@@ -151,15 +151,14 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 					//  -> this means that we have hit a suspend event at the same location
 					// that our step ended.
 					if (events.length > 1) {
-						for (int j = 1; j < events.length; j++) {
+						for (int j = i + 1; j < events.length; j++) {
 							DebugEvent debugEvent = events[j];
 							if (debugEvent.getKind() == DebugEvent.SUSPEND) {
 								cleanup();
-								DebugEvent[] filtered = new DebugEvent[events.length - 1];
-								for (int k = 1; k < events.length; k++) {
-									filtered[k-1]= events[k];
-									return filtered;
-								}
+								int filteredLength= events.length - j;
+								DebugEvent[] filtered = new DebugEvent[filteredLength];
+								System.arraycopy(events, j, filtered, 0, filteredLength);
+								return filtered;
 							}
 						}
 					}
