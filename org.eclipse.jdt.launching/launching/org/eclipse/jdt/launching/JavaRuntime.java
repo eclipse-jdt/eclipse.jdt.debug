@@ -435,7 +435,7 @@ public final class JavaRuntime {
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
 	 * 
-	 * Returns the source lookup path for the given (Java) launch configuration,
+	 * Returns the (unresolved) source lookup path for the given (Java) launch configuration,
 	 * computing the path if required (i.e. is not explicitly set on the
 	 * launch configuration).
 	 * 
@@ -457,7 +457,7 @@ public final class JavaRuntime {
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
 	 * 
-	 * Returns the class path for the given (Java) launch configuration,
+	 * Returns the (unresolved) class path for the given (Java) launch configuration,
 	 * computing the default path if required (i.e. is not explicitly set on the
 	 * launch configuration).
 	 * 

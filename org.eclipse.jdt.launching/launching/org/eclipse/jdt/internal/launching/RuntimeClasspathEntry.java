@@ -92,7 +92,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				setType(VARIABLE);
 				break;
 			case IClasspathEntry.CPE_CONTAINER:
-				setType(LIBRARY);
+				setType(CONTAINER);
 			default:
 				throw new IllegalArgumentException(LaunchingMessages.getString("RuntimeClasspathEntry.Illegal_classpath_entry_kind_1")); //$NON-NLS-1$
 		}		
@@ -165,7 +165,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 						setClasspathEntry(JavaCore.newVariableEntry(new Path(var), null, null));
 					}
 					break;
-				case LIBRARY :
+				case CONTAINER :
 					var = root.getAttribute("variablePath"); //$NON-NLS-1$
 					if (var == null) {
 						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_7"), null); //$NON-NLS-1$
@@ -260,7 +260,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				}
 				break;
 			case VARIABLE :
-			case LIBRARY :
+			case CONTAINER :
 				node.setAttribute("variablePath", getPath().toString()); //$NON-NLS-1$
 				break;
 		}		
@@ -355,7 +355,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					setClasspathProperty(USER_CLASSES);
 				}
 				break;
-			case LIBRARY:
+			case CONTAINER:
 				// XXX: fix for libraries
 				break;
 			default:
@@ -403,7 +403,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					path = resolved.getPath();
 				}
 				break;
-			case LIBRARY :
+			case CONTAINER :
 				break;
 		}
 		if (path != null) {
@@ -422,7 +422,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getVariableName()
 	 */
 	public String getVariableName() {
-		if (getType() == IRuntimeClasspathEntry.VARIABLE || getType() == IRuntimeClasspathEntry.LIBRARY) {
+		if (getType() == IRuntimeClasspathEntry.VARIABLE || getType() == IRuntimeClasspathEntry.CONTAINER) {
 			return getPath().segment(0);
 		} else {
 			return null;

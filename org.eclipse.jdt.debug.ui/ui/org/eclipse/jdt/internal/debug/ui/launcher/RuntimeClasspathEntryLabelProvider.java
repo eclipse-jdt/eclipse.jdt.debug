@@ -54,7 +54,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					}
 					return JavaPluginImages.get(key);
 				case IRuntimeClasspathEntry.VARIABLE:
-				case IRuntimeClasspathEntry.LIBRARY:
+				case IRuntimeClasspathEntry.CONTAINER:
 					// XXX: illegal internal access
 					return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_ENV_VAR);
 			}	
@@ -93,7 +93,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 						buf.append(']'); //$NON-NLS-1$
 					}
 					return buf.toString();
-				case IRuntimeClasspathEntry.LIBRARY:
+				case IRuntimeClasspathEntry.CONTAINER:
 					return entry.getPath().toString();
 			}	
 			return ""; //$NON-NLS-1$

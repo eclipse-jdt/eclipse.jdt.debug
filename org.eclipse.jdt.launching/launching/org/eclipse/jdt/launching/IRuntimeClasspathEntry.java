@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
  * 		files. An archive may have attached source.</li>
  * 	<li>A variable (type <code>VARIABLE</code>) - a variable refers to a 
  * 		classpath variable, which may refer to a jar.</li>
- * 	<li>A library (type <code>LIBRARY</code>) - a library refers to classpath
+ * 	<li>A library (type <code>CONTAINER</code>) - a container refers to classpath
  * 		conatiner variable which refers to a collection of archives derived
  * 		dynamically.</li>
  * </ul>
@@ -50,9 +50,9 @@ public interface IRuntimeClasspathEntry {
 	public static final int VARIABLE = 3;
 	
 	/**
-	 * Identifier for library entries.
+	 * Identifier for container entries.
 	 */
-	public static final int LIBRARY = 4;
+	public static final int CONTAINER = 4;
 
 	/**
 	 * Identifier for entries that appear on the
@@ -78,7 +78,7 @@ public interface IRuntimeClasspathEntry {
 	 * <li><code>PROJECT</code></li>
 	 * <li><code>ARCHIVE</code></li>
 	 * <li><code>VARIABLE</code></li>
-	 * <li><code>LIBRARY</code></li>
+	 * <li><code>CONTAINER</code></li>
 	 * </ul>
 	 * 
 	 * @return this classpath entry's type
@@ -214,7 +214,7 @@ public interface IRuntimeClasspathEntry {
 	public void setClasspathProperty(int location);	
 	
 	/**
-	 * Retunrns absolute resolved entries for this entry, that should appear
+	 * Returns absolute resolved entries for this entry, that should appear
 	 * on the runtime classpath.
 	 * 
 	 * @return absolute resolved entries for this entry, that should appear
@@ -224,10 +224,10 @@ public interface IRuntimeClasspathEntry {
 	
 	/**
 	 * Returns the name of the variable associated with this entry, or <code>null</code>
-	 * if this entry is not of type <code>VARIABLE</code> or <code>LIBRARY</code>.
+	 * if this entry is not of type <code>VARIABLE</code> or <code>CONTAINER</code>.
 	 * 
 	 * @return the name of the variable associated with this entry, or <code>null</code>
-	 *  if this entry is not of type <code>VARIABLE</code> or <code>LIBRARY</code>
+	 *  if this entry is not of type <code>VARIABLE</code> or <code>CONTAINER</code>
 	 */
 	public String getVariableName();
 }
