@@ -99,7 +99,7 @@ public class MainMethodSearchEngine{
 	 * @param style search style
 	 * @param includeSubtypes whether to consider types that inherit a main method
 	 */	
-	public IType[] searchMainMethods(IProgressMonitor pm, IJavaSearchScope scope, int style, boolean includeSubtypes) throws JavaModelException {
+	public IType[] searchMainMethods(IProgressMonitor pm, IJavaSearchScope scope, int style, boolean includeSubtypes) {
 		pm.beginTask(LauncherMessages.getString("MainMethodSearchEngine.1"), 100); //$NON-NLS-1$
 		int searchTicks = 100;
 		if (includeSubtypes) {
@@ -120,13 +120,13 @@ public class MainMethodSearchEngine{
 		if (includeSubtypes) {
 			IProgressMonitor subtypesMonitor = new SubProgressMonitor(pm, 75);
 			subtypesMonitor.beginTask(LauncherMessages.getString("MainMethodSearchEngine.2"), result.size()); //$NON-NLS-1$
-			Set set = addSubtypes(result, subtypesMonitor);
+			Set set = addSubtypes(result, subtypesMonitor, scope);
 			return (IType[]) set.toArray(new IType[set.size()]);
 		}
 		return (IType[]) result.toArray(new IType[result.size()]);
 	}
 
-	private Set addSubtypes(List types, IProgressMonitor monitor) {
+	private Set addSubtypes(List types, IProgressMonitor monitor, IJavaSearchScope scope) {
 		Iterator iterator = types.iterator();
 		Set result = new HashSet(types.size());
 		while (iterator.hasNext()) {
@@ -138,7 +138,9 @@ public class MainMethodSearchEngine{
 					IType[] subtypes = hierarchy.getAllSubtypes(type);
 					for (int i = 0; i < subtypes.length; i++) {
 						IType t = subtypes[i];
-						result.add(t);
+						if (scope.encloses(t)) {
+							result.add(t);
+						}
 					}				
 				} catch (JavaModelException e) {
 					JDIDebugUIPlugin.log(e);
@@ -173,11 +175,7 @@ public class MainMethodSearchEngine{
 		
 		IRunnableWithProgress runnable= new IRunnableWithProgress() {
 			public void run(IProgressMonitor pm) throws InvocationTargetException {
-				try {
-					res[0]= searchMainMethods(pm, scope, style, includeSubtypes);
-				} catch (JavaModelException e) {
-					throw new InvocationTargetException(e);
-				}
+				res[0]= searchMainMethods(pm, scope, style, includeSubtypes);
 			}
 		};
 		context.run(true, true, runnable);
