@@ -49,6 +49,11 @@ import com.sun.jdi.Type;
 public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
+	 * This frame's depth in the call stack
+	 */
+	private int fDepth;
+	
+	/**
 	 * Underlying JDI stack frame.
 	 */
 	private StackFrame fStackFrame;
@@ -110,10 +115,28 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @param thread The parent JDI thread
 	 * @param stackFrame The underlying stack frame
 	 */
-	public JDIStackFrame(JDIThread thread, StackFrame stackFrame) {
+	public JDIStackFrame(JDIThread thread, int depth) {
 		super((JDIDebugTarget)thread.getDebugTarget());
-		setUnderlyingStackFrame(stackFrame);
+		setDepth(depth);
 		setThread(thread);
+	}
+	
+	/**
+	 * Sets this frame's depth in the call stack.
+	 * 
+	 * @param depth index in the call stack
+	 */
+	protected void setDepth(int depth) {
+		fDepth = depth;
+	}
+	
+	/**
+	 * Returns this fame's depth in the call stack.
+	 * 
+	 * @return this frame's depth in the call stack
+	 */
+	protected int getDepth() {
+		return fDepth;
 	}
 	
 	/**
@@ -924,12 +947,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	protected StackFrame getUnderlyingStackFrame() throws DebugException {
 		if (fStackFrame == null) {
-			// In the case of preserved stack frames, the underlying stack frame
-			// could have been set via a call to JDIThread#updateStackFrames
-			((JDIThread)getThread()).computeStackFrames();
-			if (fStackFrame == null) {
-				requestFailed(JDIDebugModelMessages.getString("JDIStackFrame.Thread_not_suspended,_stack_frame_unavailable._3"), null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
-			}
+			fStackFrame = ((JDIThread)getThread()).getUnderlyingFrame(getDepth());
 		}
 		return fStackFrame;
 	}
