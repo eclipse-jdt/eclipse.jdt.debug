@@ -16,7 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
-import org.eclipse.jdt.debug.tests.core.ArchiveSourceContainerTests;
+import org.eclipse.jdt.debug.tests.core.ExternalArchiveSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.ArchiveSourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.ArrayTests;
 import org.eclipse.jdt.debug.tests.core.BootpathTests;
@@ -137,7 +137,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(WorkspaceSourceContainerTests.class));		
 		addTest(new TestSuite(DefaultSourceContainerTests.class));
 		addTest(new TestSuite(DirectorySourceLookupTests.class));
-		addTest(new TestSuite(ArchiveSourceContainerTests.class));
+		addTest(new TestSuite(ExternalArchiveSourceContainerTests.class));
 		addTest(new TestSuite(ArchiveSourceLookupTests.class));
 		addTest(new TestSuite(MiscBreakpointsTests.class));
 		// removed for M5 - see bug 46991

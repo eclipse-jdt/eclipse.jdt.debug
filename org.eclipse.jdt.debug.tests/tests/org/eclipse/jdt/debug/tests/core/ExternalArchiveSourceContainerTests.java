@@ -12,7 +12,7 @@ package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
@@ -21,11 +21,11 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 
 /**
- * Tests archive source containers
+ * Tests external archive source containers
  */
-public class ArchiveSourceContainerTests extends AbstractDebugTest {
+public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 	
-	public ArchiveSourceContainerTests(String name) {
+	public ExternalArchiveSourceContainerTests(String name) {
 		super(name);
 	}
 	
@@ -35,7 +35,7 @@ public class ArchiveSourceContainerTests extends AbstractDebugTest {
 	 * @return
 	 * @throws Exception
 	 */
-	protected ArchiveSourceContainer getContainer(boolean detect, boolean duplicates) throws Exception {
+	protected ExternalArchiveSourceContainer getContainer(boolean detect, boolean duplicates) throws Exception {
 		JavaSourceLookupDirector director = new JavaSourceLookupDirector();
 		director.setFindDuplicates(duplicates);
 		director.addSourceLookupParticipant(new JavaSourceLookupParticipant());
@@ -44,7 +44,7 @@ public class ArchiveSourceContainerTests extends AbstractDebugTest {
 			LibraryLocation location = locations[i];
 			IPath path = location.getSystemLibrarySourcePath();
 			if (path != null && !path.isEmpty()) {
-				ArchiveSourceContainer container = new ArchiveSourceContainer(path.toOSString(), detect);
+				ExternalArchiveSourceContainer container = new ExternalArchiveSourceContainer(path.toOSString(), detect);
 				director.setSourceContainers(new ISourceContainer[]{container});
 				return container;
 			}
@@ -59,18 +59,18 @@ public class ArchiveSourceContainerTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testArchiveSourceContainerMemento() throws Exception {
-		ArchiveSourceContainer container = getContainer(true, false);
+		ExternalArchiveSourceContainer container = getContainer(true, false);
 		assertFalse(container.isComposite());
 		assertTrue(container.isDetectRoot());
 		String memento = container.getType().getMemento(container);
-		ArchiveSourceContainer restore = (ArchiveSourceContainer) container.getType().createSourceContainer(memento);
+		ExternalArchiveSourceContainer restore = (ExternalArchiveSourceContainer) container.getType().createSourceContainer(memento);
 		assertEquals("Directory source container memento failed", container, restore);
 		assertFalse(restore.isComposite());
 		assertTrue(restore.isDetectRoot());
 	}	
 
 	public void testAutoDetectRootSourceLookupPositive() throws Exception {
-		ArchiveSourceContainer container = getContainer(true, false);
+		ExternalArchiveSourceContainer container = getContainer(true, false);
 		Object[] objects = container.findSourceElements("java/lang/Object.java");
 		assertEquals("Expected 1 result", 1, objects.length);
 		ZipEntryStorage storage = (ZipEntryStorage) objects[0];
@@ -78,13 +78,13 @@ public class ArchiveSourceContainerTests extends AbstractDebugTest {
 	}
 	
 	public void testAutoDetectRootSourceLookupNegative() throws Exception {
-		ArchiveSourceContainer container = getContainer(true, false);
+		ExternalArchiveSourceContainer container = getContainer(true, false);
 		Object[] objects = container.findSourceElements("java/lang/FileNotFound.java");
 		assertEquals("Expected 0 files", 0, objects.length);
 	}	
 	
 	public void testSourceLookupPositive() throws Exception {
-		ArchiveSourceContainer container = getContainer(false, false);
+		ExternalArchiveSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("java/lang/Object.java");
 		assertEquals("Expected 1 result", 1, objects.length);
 		ZipEntryStorage storage = (ZipEntryStorage) objects[0];
@@ -92,13 +92,13 @@ public class ArchiveSourceContainerTests extends AbstractDebugTest {
 	}
 	
 	public void testSourceLookupNegative() throws Exception {
-		ArchiveSourceContainer container = getContainer(false, false);
+		ExternalArchiveSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("java/lang/FileNotFound.java");
 		assertEquals("Expected 0 files", 0, objects.length);
 	}
 		
 	public void testPartiallyQualifiedSourceLookupPositive() throws Exception {
-		ArchiveSourceContainer container = getContainer(false, false);
+		ExternalArchiveSourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("lang/Object.java");
 		assertEquals("Expected 1 result", 1, objects.length);
 		ZipEntryStorage storage = (ZipEntryStorage) objects[0];

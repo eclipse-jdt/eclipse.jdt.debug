@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputerDelegate;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainer;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -76,13 +76,14 @@ public class JavaApplicationSourcePathComputer implements ISourcePathComputerDel
 				case IRuntimeClasspathEntry.ARCHIVE:
 					IPackageFragmentRoot root = getPackageFragmentRoot(entry, considerSourceAttachments);
 					if (root == null) {
+						// TODO: check if in the workspace
 						String path = entry.getSourceAttachmentLocation();
 						ISourceContainer container = null;
 						if (path == null) {
 							// use the archive itself
-							container = new ArchiveSourceContainer(entry.getLocation(), true);
+							container = new ExternalArchiveSourceContainer(entry.getLocation(), true);
 						} else {
-							container = new ArchiveSourceContainer(path, true);
+							container = new ExternalArchiveSourceContainer(path, true);
 
 						}
 						if (!containers.contains(container)) {
