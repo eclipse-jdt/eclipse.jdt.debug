@@ -117,7 +117,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	private void resolveFormatter(final IJavaValue value, final IJavaThread thread, final IValueDetailListener listener) {
 		ICompiledExpression compiledExpression= null;
 		EvaluationListener evaluationListener= new EvaluationListener(value, thread, listener);
-		if (value instanceof IJavaObject) {
+		if (value instanceof IJavaObject && !(value instanceof IJavaArray)) {
 			IJavaObject objectValue= (IJavaObject) value;
 			IJavaProject project= getJavaProject(thread);
 			if (project != null) {
@@ -449,9 +449,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 
 		protected void appendJDIPrimitiveValueString(StringBuffer result, IJavaValue value) throws DebugException {
-			JDIModelPresentation modelPresentation= new JDIModelPresentation();
-			result.append(modelPresentation.getValueText(value));
-			modelPresentation.dispose();
+			result.append(value.getValueString());
 		}
 
 
