@@ -1071,6 +1071,7 @@
 		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStaticFields"/>
 		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowFinalFields"/>
 		<action id="org.eclipse.jdt.ui.launchViewActions.ShowQualified"/>
+		<action id="org.eclipse.jdt.ui.debugViewPopupActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.ui.actions.ToggleStepFilter"/>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStaticFields"/>
