@@ -75,8 +75,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 				if (p != null) {
 					p.destroy();
 				}
-				String errorCmdLine= getCmdLineAsString(cmdLine);
-				abort(MessageFormat.format(LaunchingMessages.getString("AbstractVMRunner.Exception_starting_process_1"), new String[]{errorCmdLine}), e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+				abort(MessageFormat.format(LaunchingMessages.getString("AbstractVMRunner.Exception_starting_process_1"), new String[]{getCmdLineAsString(cmdLine)}), e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory
 			
@@ -95,9 +94,8 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	
 	protected String getCmdLineAsString(String[] cmdLine) {
 		StringBuffer buff= new StringBuffer();
-		for (int i = 0; i < cmdLine.length; i++) {
-			String string = cmdLine[i];
-			buff.append(string);
+		for (int i = 0, numStrings= cmdLine.length; i < numStrings; i++) {
+			buff.append(cmdLine[i]);
 			buff.append(' ');	
 		} 
 		return buff.toString().trim();
