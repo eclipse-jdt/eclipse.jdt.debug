@@ -141,7 +141,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		try {
 			thread= launchToBreakpoint(typeName);
 			IJavaStackFrame frame= (IJavaStackFrame)thread.getTopStackFrame();
-			assertTrue("Should have been suspended at linenumber", frame.getLineNumber() == 35);
+			assertEquals("Should have been suspended at linenumber", 35, frame.getLineNumber());
 			
 			ex.delete();
 		} finally {
