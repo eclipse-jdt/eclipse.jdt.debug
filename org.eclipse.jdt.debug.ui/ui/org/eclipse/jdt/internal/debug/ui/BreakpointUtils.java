@@ -132,11 +132,7 @@ public class BreakpointUtils {
 		
 		IMember member = null;
 		if ((type != null) && (end >= start) && (start >= 0)) {
-			try {
-				member= binSearch(type, start, end);
-			} catch (CoreException ce) {
-				JDIDebugUIPlugin.log(ce);
-			}
+			member= binSearch(type, start, end);
 		}
 		if (member == null) {
 			member= type;

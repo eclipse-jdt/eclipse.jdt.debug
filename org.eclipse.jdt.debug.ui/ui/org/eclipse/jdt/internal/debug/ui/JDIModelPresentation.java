@@ -252,9 +252,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		} catch (CoreException e) {
-			if (!(e.getStatus().getException() instanceof VMDisconnectedException)) {
-				JDIDebugUIPlugin.log(e);
-			}
 			return DebugUIMessages.getString("JDIModelPresentation.<not_responding>_6"); //$NON-NLS-1$
 		}
 		return null;
