@@ -145,7 +145,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				localTypesNames[i] = locals[i].getReferenceTypeName();
 			}
 			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, snippet);
-			unit = AST.parseCompilationUnit(mapper.getSource(frame).toCharArray(), mapper.getCompilationUnitName(), javaProject);
+			unit = AST.parseCompilationUnit(mapper.getSource(frame).toCharArray(), mapper.getCompilationUnitName(), javaProject, null, null);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());
@@ -187,7 +187,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		mapper = new EvaluationSourceGenerator(new String[0], new String[0], snippet);
 
 		try {
-			unit = AST.parseCompilationUnit(mapper.getSource(thisContext, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
+			unit = AST.parseCompilationUnit(mapper.getSource(thisContext, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject, null, null);
 		} catch (CoreException e) {
 			InstructionSequence expression= new InstructionSequence(snippet);
 			expression.addError(e.getStatus().getMessage());
