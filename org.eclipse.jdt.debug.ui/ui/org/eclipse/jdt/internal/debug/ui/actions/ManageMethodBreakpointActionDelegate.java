@@ -29,10 +29,12 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -89,8 +91,11 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 			try {
 				IMethod method = (IMethod)getMember();
 				if (method == null || !enableForMember(method)) {
-					IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), Status.ERROR, ActionMessages.getString("ManageMethodBreakpointActionDelegate.Method_breakpoints_can_only_be_added_to_concrete,_binary_methods._1"), null); //$NON-NLS-1$
-					JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageMethodBreakpointActionDelegate.Add_Method_Breakpoint_Failed_2"), status); //$NON-NLS-1$
+					IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), Status.ERROR, ActionMessages.getString("ManageMethodBreakpointActionDelegate.CantAdd"), null); //$NON-NLS-1$
+					Shell shell = JDIDebugUIPlugin.getActiveWorkbenchShell();
+					if (shell != null) {
+						ErrorDialog.openError(shell, "Action Failed", ActionMessages.getString("ManageMethodBreakpointActionDelegate.Add_Method_Breakpoint_Failed_2"), status); //$NON-NLS-1$
+					}
 					return;
 				} 
 				int start = -1;
