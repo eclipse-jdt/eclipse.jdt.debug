@@ -332,16 +332,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			setErrorMessage(LauncherMessages.getString("JavaMainTab.Main_type_not_specified_16")); //$NON-NLS-1$
 			return false;
 		}
-		IJavaProject jp = getJavaProject();
-		if (jp != null) {
-			// only verify type exists if Java project is specified
-			try {
-				JavaLaunchConfigurationUtils.getMainType(name, jp);
-			} catch (CoreException e) {
-				setErrorMessage(e.getMessage());
-				return false;
-			}
-		}	
 		
 		return true;
 	}
