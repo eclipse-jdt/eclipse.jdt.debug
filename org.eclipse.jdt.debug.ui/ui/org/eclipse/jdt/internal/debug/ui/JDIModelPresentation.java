@@ -419,12 +419,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	protected String getDebugTargetText(IJavaDebugTarget debugTarget, boolean qualified) throws DebugException {
 		String labelString= debugTarget.getName();
-		if (!qualified) {
-			int index= labelString.lastIndexOf('.');
-			if (index != -1) {
-				labelString= labelString.substring(index + 1);
-			}
-		}
 		if (debugTarget.isSuspended()) {
 			labelString += DebugUIMessages.getString("JDIModelPresentation.target_suspended"); //$NON-NLS-1$
 		}
