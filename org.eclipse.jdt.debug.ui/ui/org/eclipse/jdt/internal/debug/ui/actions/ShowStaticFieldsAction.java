@@ -57,7 +57,7 @@ public class ShowStaticFieldsAction extends ToggleFilterAction {
 	
 	protected void setAction(IAction action) {
 		super.setAction(action);
-		action.setChecked(!JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS));
+		action.setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS));
 	}
 }
 

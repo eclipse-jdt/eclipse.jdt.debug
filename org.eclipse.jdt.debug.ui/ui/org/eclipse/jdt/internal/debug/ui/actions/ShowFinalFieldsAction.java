@@ -58,7 +58,7 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 	
 	protected void setAction(IAction action) {
 		super.setAction(action);
-		action.setChecked(!JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS));
+		action.setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS));
 	}
 }
 
