@@ -419,9 +419,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					index= 1;
 				} else {
 					if (oldThisObject != null) {
-						// 'this' still exists, replace with new 'this' (could be a different receiver)
-						fVariables.remove(0);
-						fVariables.add(0, new JDIThisVariable((JDIDebugTarget)getDebugTarget(),thisObject));
+						// 'this' still exists, replace with new 'this' if a different receiver
+						if (!oldThisObject.retrieveValue().equals(thisObject)) {
+							fVariables.remove(0);
+							fVariables.add(0, new JDIThisVariable((JDIDebugTarget)getDebugTarget(),thisObject));
+						}
 						index= 1;
 					}
 				}
