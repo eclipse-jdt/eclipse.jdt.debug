@@ -662,14 +662,15 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		return JavaLaunchConfigurationUtils.serializeDocument(doc);
 	}	
 	
+	/**
+	 * Returns a Document that can be used to build a DOM tree
+	 * @return the Document
+	 * @throws ParserConfigurationException if an exception occurs creating the document builder
+	 */
 	public static Document getDocument() throws ParserConfigurationException {
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-
-		dfactory.setNamespaceAware(true);
-		dfactory.setValidating(true);
-
-		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
-		Document doc =docBuilder.newDocument();
+		DocumentBuilderFactory dfactory= DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder= dfactory.newDocumentBuilder();
+		Document doc= docBuilder.newDocument();
 		return doc;
 	}
 
