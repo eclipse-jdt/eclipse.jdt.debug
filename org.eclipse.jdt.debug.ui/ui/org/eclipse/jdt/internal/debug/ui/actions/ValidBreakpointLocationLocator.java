@@ -547,10 +547,14 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 				// check if the line contains a single field declaration.
 				List fragments = node.fragments();
 				if (fragments.size() == 1) {
-					fMemberOffset= ((VariableDeclarationFragment)fragments.get(0)).getName().getStartPosition();
-					fLocationType= LOCATION_FIELD;
-					fLocationFound= true;
-					return false;
+					int offset= ((VariableDeclarationFragment)fragments.get(0)).getName().getStartPosition();
+					// check if the breakpoint is to be set on the line which contains the name of the field
+					if (fCompilationUnit.lineNumber(offset) == fLineNumber) {
+						fMemberOffset= offset;
+						fLocationType= LOCATION_FIELD;
+						fLocationFound= true;
+						return false;
+					}
 				}
 			}
 			// visit only the variable declaration fragments, no the variable names.
