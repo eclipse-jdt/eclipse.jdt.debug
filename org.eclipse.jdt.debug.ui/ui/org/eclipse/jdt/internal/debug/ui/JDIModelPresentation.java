@@ -298,9 +298,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				String label= getStackFrameText((IStackFrame) item);
 				if (item instanceof IJavaStackFrame) {
 					if (((IJavaStackFrame)item).isOutOfSynch()) {
-						label= label + " (out of synch)";
+						label= label + DebugUIMessages.getString("JDIModelPresentation._(out_of_synch)_1"); //$NON-NLS-1$
 					} else if (((IJavaStackFrame)item).mayBeOutOfSynch()) {
-						label= label + " (may be out of synch)";
+						label= label + DebugUIMessages.getString("JDIModelPresentation._(may_be_out_of_synch)_2"); //$NON-NLS-1$
 					}
 				}
 				return label;
@@ -323,15 +323,15 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 				if (item instanceof IJavaThread) {
 					if (((IJavaThread)item).isOutOfSynch()) {
-						label= label + " (out of synch)";
+						label= label + DebugUIMessages.getString("JDIModelPresentation._(out_of_synch)_1"); //$NON-NLS-1$
 					} else if (((IJavaThread)item).mayBeOutOfSynch()) {
-						label= label + " (may be out of synch)";
+						label= label + DebugUIMessages.getString("JDIModelPresentation._(may_be_out_of_synch)_2"); //$NON-NLS-1$
 					}
 				} else if (item instanceof IJavaDebugTarget) {
 					if (((IJavaDebugTarget)item).isOutOfSynch()) {
-						label= label + " (out of synch)";
+						label= label + DebugUIMessages.getString("JDIModelPresentation._(out_of_synch)_1"); //$NON-NLS-1$
 					} else if (((IJavaDebugTarget)item).mayBeOutOfSynch()) {
-						label= label + " (may be out of synch)";
+						label= label + DebugUIMessages.getString("JDIModelPresentation._(may_be_out_of_synch)_2"); //$NON-NLS-1$
 					}
 				}		
 				if (item instanceof ITerminate) {
