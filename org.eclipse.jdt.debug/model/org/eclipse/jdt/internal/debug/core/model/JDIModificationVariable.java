@@ -47,13 +47,15 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	
 	public boolean supportsValueModification() {
 		try {
-			Value currentValue= getCurrentValue();
-			if (currentValue != null) {
-				String signature = currentValue.type().signature();
-				return fgValidSignatures.contains(signature);
-			} else {
-				String signature = getSignature();
-				return fgValidSignatures.contains(signature);
+			if (!isFinal()) {
+				Value currentValue= getCurrentValue();
+				if (currentValue != null) {
+					String signature = currentValue.type().signature();
+					return fgValidSignatures.contains(signature);
+				} else {
+					String signature = getSignature();
+					return fgValidSignatures.contains(signature);
+				}
 			}
 		} catch (DebugException e) {
 			logError(e);
