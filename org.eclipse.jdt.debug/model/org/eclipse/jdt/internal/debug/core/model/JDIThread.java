@@ -1677,7 +1677,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * step filter criteria (e.g., synthetic methods, static initializers),
 		 * then continue stepping.
 		 * 
-		 * @see IJDIDebugEventListener#handleEvent(Event, JDIDebugTarget)
+		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
 		 */
 		public boolean handleEvent(Event event, JDIDebugTarget target) {
 			try {
@@ -1917,7 +1917,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * another step request is created and this thread
 		 * is resumed.
 		 * 
-		 * @see IJDIDebugEventListener#handleEvent(Event, JDIDebugTarget)
+		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
 		 */
 		public boolean handleEvent(Event event, JDIDebugTarget target) {
 			try {
