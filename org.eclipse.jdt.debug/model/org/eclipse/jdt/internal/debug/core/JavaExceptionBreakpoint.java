@@ -88,7 +88,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				// configure the standard attributes
 				setEnabled(true);
 				// configure caught, uncaught, checked, and the type attributes
-				setDefaultCaughtAndUncaught();
+				setCaughtAndUncaught(caught, uncaught);
 				setTypeAndChecked(exception, checked);
 
 				// configure the marker as a Java marker
@@ -115,12 +115,12 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}
 	
 	/**
-	 * Sets the default values for whether this breakpoint will
+	 * Sets the values for whether this breakpoint will
 	 * suspend execution when the associated exception is thrown
 	 * and caught or not caught..
 	 */
-	public void setDefaultCaughtAndUncaught() throws CoreException {
-		Object[] values= new Object[]{Boolean.TRUE, Boolean.TRUE};
+	public void setCaughtAndUncaught(boolean caught, boolean uncaught) throws CoreException {
+		Object[] values= new Object[]{new Boolean(caught), new Boolean(uncaught)};
 		String[] attributes= new String[]{CAUGHT, UNCAUGHT};
 		ensureMarker().setAttributes(attributes, values);
 	}
@@ -155,7 +155,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * Enable this exception breakpoint.
 	 * 
 	 * If the exception breakpoint is not catching caught or uncaught,
-	 * set the default values. If this isn't done, the resulting
+	 * turn both modes on. If this isn't done, the resulting
 	 * state (enabled with caught and uncaught both disabled)
 	 * is ambiguous.
 	 */
@@ -163,7 +163,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		super.setEnabled(enabled);
 		if (isEnabled()) {
 			if (!(isCaught() || isUncaught())) {
-				setDefaultCaughtAndUncaught();
+				setCaughtAndUncaught(true, true);
 			}
 		}
 	}
