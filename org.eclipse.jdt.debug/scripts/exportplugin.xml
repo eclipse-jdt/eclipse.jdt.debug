@@ -15,19 +15,34 @@
 		<mkdir dir="${destdir}" />
 		<delete dir="${dest}" />
 		<mkdir dir="${dest}" />
+		
+		<!-- Create the jdi model jar -->
 		<jar 
 			jarfile="${dest}/jdimodel.jar"
 			basedir="../bin"
+			includes="org/**"
 		/>
+		
+		<!-- Create the jdi interfaces jar -->
+		<jar 
+			jarfile="${dest}/jdi.jar"
+			basedir="../bin"
+			includes="com/**"
+		/>
+		
 		<!-- Create the source zip -->
 		<zip zipfile="${dest}/jdimodelsrc.zip">
 			<fileset dir="../model"/>
 			<fileset dir="../jdi"/>
 			<fileset dir="../eval"/>
 		</zip>
+		<!-- Create the jdi interfaces source zip -->
+		<zip zipfile="${dest}/jdiinterfacessrc.zip">
+			<fileset dir="../jdi interfaces"/>
+		</zip>
+		
 		<copy file="../plugin.xml" todir="${dest}"/>
 		<copy file="../plugin.properties" todir="${dest}"/>
-		<copy file="../jdi.jar" todir="${dest}"/>
 		<copy file="../.classpath" todir="${dest}"/>
 		<copy file="../.options" todir="${dest}"/>
 	</target>
