@@ -126,11 +126,22 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		// old container ids to new
 		private HashMap fRenamedContainerIds = new HashMap();
 		
-		private IPath getConatinerId(IVMInstall vm) {
-			IPath path = new Path(JavaRuntime.JRE_CONTAINER);
-			path = path.append(new Path(vm.getVMInstallType().getId()));
-			path = path.append(new Path(vm.getName()));
-			return path;			
+		/**
+		 * Returns the JRE container id that the given VM would map to, or
+		 * <code>null</code> if none.
+		 * 
+		 * @param vm
+		 * @return container id or <code>null</code>
+		 */
+		private IPath getContainerId(IVMInstall vm) {
+			String name = vm.getName();
+			if (name != null) {
+				IPath path = new Path(JavaRuntime.JRE_CONTAINER);
+				path = path.append(new Path(vm.getVMInstallType().getId()));				
+				path = path.append(new Path(name));
+				return path;
+			}
+			return null;
 		}
 		
 		/**
@@ -138,7 +149,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		 */
 		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
 			fDefaultChanged = true;
-			fOldDefaultConatinerId = getConatinerId(previous);
+			fOldDefaultConatinerId = getContainerId(previous);
 		}
 
 		/**
@@ -154,9 +165,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			String property = event.getProperty();
 			IVMInstall vm = (IVMInstall)event.getSource();
 			if (property.equals(IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION)) {
-				fChangedContainerIds.add(getConatinerId(vm));
+				IPath id = getContainerId(vm);
+				if (id != null) {
+					fChangedContainerIds.add(id);
+				}
 			} else if (property.equals(IVMInstallChangedListener.PROPERTY_NAME)) {
-				IPath newId = getConatinerId(vm);
+				IPath newId = getContainerId(vm);
 				IPath oldId = new Path(JavaRuntime.JRE_CONTAINER);
 				oldId = oldId.append(vm.getVMInstallType().getId());
 				oldId = oldId.append((String)event.getOldValue());
@@ -168,12 +182,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 				if (prevs.length == currs.length) {
 					for (int i = 0; i < currs.length; i++) {
 						if (!currs[i].getSystemLibraryPath().equals(prevs[i].getSystemLibraryPath())) {
-							fChangedContainerIds.add(getConatinerId(vm));
+							fChangedContainerIds.add(getContainerId(vm));
 							return;
 						}
 					}
 				} else {
-					fChangedContainerIds.add(getConatinerId(vm));
+					fChangedContainerIds.add(getContainerId(vm));
 				}
 			}
 		}
@@ -182,7 +196,10 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
 		 */
 		public void vmRemoved(IVMInstall vm) {
-			fRemovedContainerIds.add(getConatinerId(vm));
+			IPath id = getContainerId(vm);
+			if (id != null) {
+				fRemovedContainerIds.add(id);
+			}
 		}
 	
 		/**
@@ -206,7 +223,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 					initializer.initialize(JavaRuntime.JRESRCROOT_VARIABLE);
 				} else {
 					// the old default is the same as the current default
-					fOldDefaultConatinerId = getConatinerId(JavaRuntime.getDefaultVMInstall());				
+					fOldDefaultConatinerId = getContainerId(JavaRuntime.getDefaultVMInstall());				
 				}
 															
 				// re-bind all container entries, noting which project need to be re-built
