@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -56,7 +57,7 @@ public class SendMessage extends CompoundInstruction {
 		if (receiver instanceof IJavaObject) {
 			result = ((IJavaObject)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread(), fDeclaringType);
 		} else {
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("SendMessage.Attempt_to_send_a_message_to_a_non_object_value_1"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.getString("SendMessage.Attempt_to_send_a_message_to_a_non_object_value_1"), null)); //$NON-NLS-1$
 		}
 		setLastValue(result);
 		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$

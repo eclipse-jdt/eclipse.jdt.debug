@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
@@ -216,7 +217,7 @@ public abstract class Instruction {
 		} else {
 			// Found many classes, look for the right one for this scope.
 			if (classReference == null) {
-				throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
 			}
 			for(int i= 0, length= types.length; i < length; i++) {
 				IJavaType type= types[i];
@@ -230,7 +231,7 @@ public abstract class Instruction {
 			// call, but none of them were the class that was returned in
 			// the classForName call.
 
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
 		}
 	}
 
@@ -247,7 +248,7 @@ public abstract class Instruction {
 		// for later use if there are multiple classes with the same name.
 		IJavaObject classReference= classForName(signature);
 		if (classReference == null) {
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
 		}
 		IJavaType[] types= getVM().getJavaTypes(qualifiedName);
 		checkTypes(types, qualifiedName);
@@ -268,7 +269,7 @@ public abstract class Instruction {
 			// call, but none of them were the class that was returned in
 			// the classForName call.
 
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
 		}
 	}
 
@@ -276,7 +277,7 @@ public abstract class Instruction {
 		IJavaType[] types= getVM().getJavaTypes(CLASS);
 		checkTypes(types, qualifiedName);
 		if (types.length != 1) {
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
 		}
 		IJavaType receiver= types[0];
 		IJavaValue[] args = new IJavaValue[] {newValue(qualifiedName)};
@@ -296,7 +297,7 @@ public abstract class Instruction {
 
 	protected void checkTypes(IJavaType[] types, String qualifiedName) throws CoreException {
 		if (types == null || types.length == 0) {
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Instruction.No_type"), new String[]{qualifiedName}), null)); //$NON-NLS-1$
 		}
 	}
 

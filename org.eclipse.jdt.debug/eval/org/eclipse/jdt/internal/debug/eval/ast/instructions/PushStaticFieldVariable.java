@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
@@ -49,7 +50,7 @@ public class PushStaticFieldVariable extends CompoundInstruction {
 		}
 		if (field == null) {
 			String message= MessageFormat.format(InstructionsEvaluationMessages.getString("PushStaticFieldVariable.Cannot_find_the_field_{0}_in_{1}_1"), new String[]{fFieldName, fQualifiedTypeName}); //$NON-NLS-1$
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, message, null)); // couldn't find the field
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, message, null)); // couldn't find the field
 		}
 		push(field);
 	}

@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArray;
@@ -36,7 +37,7 @@ public class ArrayAccess extends ArrayInstruction {
 		int index = ((IJavaPrimitiveValue)popValue()).getIntValue();
 		IJavaArray array = (IJavaArray)popValue();
 		if (index >= array.getLength() || index < 0) {
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("ArrayAccess.illegal_index"), new Object[] {new Integer(index)}), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("ArrayAccess.illegal_index"), new Object[] {new Integer(index)}), null)); //$NON-NLS-1$
 		}
 		IVariable[] variables= array.getVariables();
 		// JDIArrayValue#getVariables() may return a array of JDIArrayPartition instead of

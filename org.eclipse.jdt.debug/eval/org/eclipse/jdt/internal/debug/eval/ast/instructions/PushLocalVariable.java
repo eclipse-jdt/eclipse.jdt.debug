@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -50,7 +51,7 @@ public class PushLocalVariable extends SimpleInstruction {
 			}
 		}
 
-		throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("PushLocalVariable.Cannot_find_the_variable____1"), new String[]{fName}), null)); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("PushLocalVariable.Cannot_find_the_variable____1"), new String[]{fName}), null)); //$NON-NLS-1$
 	}
 	
 	/**

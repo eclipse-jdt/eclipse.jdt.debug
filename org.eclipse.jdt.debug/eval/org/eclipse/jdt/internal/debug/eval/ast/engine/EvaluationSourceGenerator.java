@@ -14,6 +14,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -148,7 +149,7 @@ public class EvaluationSourceGenerator {
 		unit.accept(visitor);
 		
 		if (visitor.hasError()) {
-			throw new DebugException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, visitor.getError(), null));
+			throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, visitor.getError(), null));
 		}
 		
 		String sourceRes= visitor.getSource();

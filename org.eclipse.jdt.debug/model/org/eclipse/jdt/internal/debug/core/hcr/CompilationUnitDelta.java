@@ -330,18 +330,18 @@ public class CompilationUnitDelta {
 		StringBuffer sb= new StringBuffer();
 		
 		switch (je.getElementType()) {
-		case JavaElement.COMPILATION_UNIT:
+		case IJavaElement.COMPILATION_UNIT:
 			sb.append(JavaElement.JEM_COMPILATIONUNIT);
 			break;
-		case JavaElement.TYPE:
+		case IJavaElement.TYPE:
 			sb.append(JavaElement.JEM_TYPE);
 			sb.append(je.getElementName());
 			break;
-		case JavaElement.FIELD:
+		case IJavaElement.FIELD:
 			sb.append(JavaElement.JEM_FIELD);
 			sb.append(je.getElementName());
 			break;
-		case JavaElement.METHOD:
+		case IJavaElement.METHOD:
 			sb.append(JavaElement.JEM_METHOD);
 			
 			IMethod method= (IMethod) je;			
@@ -361,19 +361,19 @@ public class CompilationUnitDelta {
 			}
 			sb.append(')');
 			break;
-		case JavaElement.INITIALIZER:
+		case IJavaElement.INITIALIZER:
 			String id= je.getHandleIdentifier();
 			int pos= id.lastIndexOf(JavaElement.JEM_INITIALIZER);
 			if (pos >= 0)
 				sb.append(id.substring(pos));
 			break;
-		case JavaElement.PACKAGE_DECLARATION:
+		case IJavaElement.PACKAGE_DECLARATION:
 			sb.append(JavaElement.JEM_PACKAGEDECLARATION);
 			break;
-		case JavaElement.IMPORT_CONTAINER:
+		case IJavaElement.IMPORT_CONTAINER:
 			sb.append('<');
 			break;
-		case JavaElement.IMPORT_DECLARATION:
+		case IJavaElement.IMPORT_DECLARATION:
 			sb.append(JavaElement.JEM_IMPORTDECLARATION);
 			sb.append(je.getElementName());			
 			break;

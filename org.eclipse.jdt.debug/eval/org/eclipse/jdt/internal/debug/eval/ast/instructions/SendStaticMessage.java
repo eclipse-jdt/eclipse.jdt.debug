@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -52,7 +53,7 @@ public class SendStaticMessage extends CompoundInstruction {
 		if (receiver instanceof IJavaClassType) {
 			result= ((IJavaClassType)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread());
 		} else {
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("SendStaticMessage.Cannot_send_a_static_message_to_a_non_class_type_object_1"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, InstructionsEvaluationMessages.getString("SendStaticMessage.Cannot_send_a_static_message_to_a_non_class_type_object_1"), null)); //$NON-NLS-1$
 		}
 		setLastValue(result);
 		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$

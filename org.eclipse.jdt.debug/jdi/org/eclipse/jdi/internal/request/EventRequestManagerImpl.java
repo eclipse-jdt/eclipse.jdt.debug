@@ -252,7 +252,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		// tbd: It is now yet possible to only ask for unload events for
 		// classes that we know of due to a limitation in the J9 VM.
 		// reqUnload.addClassFilter(refType);
-		reqUnload.setSuspendPolicy(ClassPrepareRequest.SUSPEND_NONE);
+		reqUnload.setSuspendPolicy(EventRequest.SUSPEND_NONE);
 		reqUnload.enable();
 	}
 
