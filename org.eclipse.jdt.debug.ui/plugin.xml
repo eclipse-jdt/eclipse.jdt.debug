@@ -1181,6 +1181,21 @@
                id="org.eclipse.jdt.debug.ui.actions.VariableInspectAction">
          </action>
       </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
+            id="org.eclipse.jdt.debug.ui.JavaLogicalStructureActions">
+         <action
+               enablesFor="1"
+               label="%EditLogicalStructure.label"
+               class="org.eclipse.jdt.internal.debug.ui.actions.EditVariableLogicalStructureAction"
+               menubarPath="variableGroup"
+               id="EditLogicalStructure"/>
+         <visibility>
+            <objectState
+                  value="canEditLogicalStructure"
+                  name="JavaLogicalStructureFilter"/>
+         </visibility>
+      </objectContribution>
       <viewerContribution
             targetID="#JavaSnippetEditorContext"
             id="org.eclipse.jdt.debug.ui.JavaSnippetPopupActions">

@@ -192,7 +192,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	private DisplayViewerConfiguration fViewerConfiguration;
 	private HandlerSubmission fSubmission;
 
-	protected EditLogicalStructureDialog(Shell parentShell, JavaLogicalStructure logicalStructure) {
+	public EditLogicalStructureDialog(Shell parentShell, JavaLogicalStructure logicalStructure) {
 		super(parentShell);
 		setShellStyle(SWT.DIALOG_TRIM | SWT.MAX | SWT.RESIZE);
 		setTitle(DebugUIMessages.getString("EditLogicalStructureDialog.31")); //$NON-NLS-1$
