@@ -135,7 +135,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	 */
 	public String getSignature() throws DebugException {
 		try {
-			return getArrayReference().type().signature();
+			return ((ArrayType) getArrayReference().type()).componentSignature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
