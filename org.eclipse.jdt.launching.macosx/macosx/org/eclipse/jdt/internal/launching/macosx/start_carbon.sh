@@ -50,6 +50,13 @@ VM_OPTIONS=""
 #	echo "$JDI not found" > /dev/console
 #fi
 
+# extract JVM version from 1st argument
+JVM_VERSION="1.3.1"
+if test "$1" = "/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Home/bin/java"
+then
+	JVM_VERSION="1.4.1"
+fi
+
 # skip 1st argument
 shift
 
@@ -102,7 +109,7 @@ cd "$APP_NAME.app/Contents"
 #
 # Copy the JavaAppLauncher into the bundle 
 #
-cp "$JAVASTUB" "MacOS/$APP_NAME"
+cp "$JAVASTUB"/* "MacOS/$APP_NAME"
 
 #
 # Create the Info.plist file.
@@ -130,6 +137,8 @@ cat > Info.plist <<End_Of_Input
 		<string>1.0.1</string>
 	<key>Java</key>
 	<dict>
+	    <key>JVMVersion</key>
+			<string>$JVM_VERSION</string>
 		<key>VMOptions</key>
 			<array>$VM_OPTIONS</array>
 		<key>ClassPath</key>
