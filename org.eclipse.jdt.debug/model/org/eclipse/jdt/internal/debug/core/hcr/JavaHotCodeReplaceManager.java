@@ -387,6 +387,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					// have been reloaded. Step into the first changed
 					// frame of each affected thread.
 					try {
+						// must re-set 'is doing HCR' to be able to step
+						target.setIsPerformingHotCodeReplace(false);
 						attemptStepIn(poppedThreads);
 					} catch (DebugException de) {
 						ms.merge(de.getStatus());
@@ -401,6 +403,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				// target update failed
 				fireHCRFailed(target, de);
 			}
+			// also re-set 'is doing HCR' here incase HCR failed
 			target.setIsPerformingHotCodeReplace(false);
 			target.fireChangeEvent(DebugEvent.CONTENT);
 		}
