@@ -1,9 +1,11 @@
 package org.eclipse.jdt.launching.sourcelookup;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.File;
 import java.io.IOException;
@@ -185,16 +187,22 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 						name += sourceName.substring(0, index) ;
 					}					
 				}
-				IJavaSourceLocation[] locations = getSourceLocations();
-				for (int i = 0; i < locations.length; i++) {
+			} catch (CoreException e) {
+				// if the thread has since resumed, return null
+				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+					LaunchingPlugin.log(e);
+				}
+				return null;
+			}
+			IJavaSourceLocation[] locations = getSourceLocations();
+			for (int i = 0; i < locations.length; i++) {
+				try {
 					Object sourceElement = locations[i].findSourceElement(name);
 					if (sourceElement != null) {
 						return sourceElement;
 					}
-				}
-			} catch (CoreException e) {
-				// if the thread has since resumed, return null
-				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+				} catch (CoreException e) {
+					// log the error and try the next source location
 					LaunchingPlugin.log(e);
 				}
 			}
