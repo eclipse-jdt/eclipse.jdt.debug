@@ -123,7 +123,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 
 		Composite mainComp = new Composite(comp, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
-		mainLayout.numColumns = 3;
+		mainLayout.numColumns = 2;
 		mainLayout.marginHeight = 0;
 		mainLayout.marginWidth = 0;
 		mainComp.setLayout(mainLayout);
@@ -133,7 +133,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		fMainLabel = new Label(mainComp, SWT.NONE);
 		fMainLabel.setText(LauncherMessages.getString("JavaMainTab.Main_cla&ss__4")); //$NON-NLS-1$
 		gd = new GridData();
-		gd.horizontalSpan = 3;
+		gd.horizontalSpan = 2;
 		fMainLabel.setLayoutData(gd);
 
 		fMainText = new Text(mainComp, SWT.SINGLE | SWT.BORDER);
@@ -154,9 +154,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		
 		fSearchExternalJarsCheckButton = new Button(mainComp, SWT.CHECK);
 		fSearchExternalJarsCheckButton.setText(LauncherMessages.getString("JavaMainTab.E&xt._jars_6")); //$NON-NLS-1$
-		fSearchExternalJarsCheckButton.setToolTipText(LauncherMessages.getString("JavaMainTab.Include_external_jars_when_searching_for_a_main_class_7")); //$NON-NLS-1$
-		
-				
 	}
 		
 	/**
