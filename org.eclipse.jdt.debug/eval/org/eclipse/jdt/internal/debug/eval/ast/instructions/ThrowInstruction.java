@@ -39,7 +39,6 @@ public class ThrowInstruction extends CompoundInstruction {
 				try {
 					javaThread.resume();
 				} catch (DebugException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
