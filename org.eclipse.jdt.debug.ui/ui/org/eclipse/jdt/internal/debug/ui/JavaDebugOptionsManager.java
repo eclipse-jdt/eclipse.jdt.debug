@@ -139,9 +139,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		
 		public InitJob() {
 			super(DebugUIMessages.getString("JavaDebugOptionsManager.0")); //$NON-NLS-1$
-			// we create markers on the workspace root
-			setRule(ResourcesPlugin.getWorkspace().getRuleFactory().markerRule(
-					ResourcesPlugin.getWorkspace().getRoot()));
 		}
 		
 		protected IStatus run(IProgressMonitor monitor) {
