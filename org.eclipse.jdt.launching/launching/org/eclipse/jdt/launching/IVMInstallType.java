@@ -101,6 +101,23 @@ public interface IVMInstallType {
 	 * @see IVMInstallType#validateInstallLocation(File)
 	 * 
 	 * @return A default library location based on the given <code>installLocation</code>.
+	 * @deprecated use #getDefaultLibraryLocations
 	 */
 	LibraryLocation getDefaultLibraryLocation(File installLocation);
+	
+	/**
+	 * Returns a collection of <code>LibraryLocation</code>s that represent the
+	 * default system libraries of this IVMInstallType if the VM was installed
+	 * at <code>installLocation</code>.
+	 * The returned <code>LibraryLocation</code>s may not exist if the
+	 * <code>installLocation</code> is not a valid install location.
+	 * 
+	 * @param installLocation home location
+	 * @see LibraryLocation
+	 * @see IVMInstallType#validateInstallLocation(File)
+	 * 
+	 * @return default library locations based on the given <code>installLocation</code>.
+	 * @since 2.0
+	 */
+	LibraryLocation[] getDefaultLibraryLocations(File installLocation);	
 }

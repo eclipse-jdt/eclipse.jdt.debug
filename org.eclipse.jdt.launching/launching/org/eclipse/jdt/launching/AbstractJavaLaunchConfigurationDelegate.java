@@ -216,10 +216,9 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
 				allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
-				if (entries[i].getType() == IRuntimeClasspathEntry.CONTAINER) {
-					// XXX: fix for containers
-				} else {
-					bootEntries.add(entries[i].getResolvedPath());
+				IRuntimeClasspathEntry[] resolved = JavaRuntime.resolve(entries[i], configuration);
+				for (int j = 0; j < resolved.length; j++) {
+					bootEntries.add(resolved[j].getResolvedPath());
 				}
 			}
 		}
@@ -247,7 +246,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				if (entries[i].getType() == IRuntimeClasspathEntry.CONTAINER) {
-					// XXX: fix for containers
+					IRuntimeClasspathEntry[] containedEntries = entries[i].getContainedEntries();
+					for (int j = 0; j < containedEntries.length; j++) {
+						userEntries.add(containedEntries[j].getResolvedPath());
+					}
 				} else {
 					userEntries.add(entries[i].getResolvedPath());
 				}
@@ -267,22 +269,9 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @param configuration launch configuration
 	 * @return the classpath specified by the given launch configuration
 	 * @exception CoreException if unable to retrieve the attribute
-	 * 
-	 * [XXX: need to support persisted classpaths
 	 */
 	protected IRuntimeClasspathEntry[] getRuntimeClasspath(ILaunchConfiguration configuration) throws CoreException {
-		if (configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false)) {
-			IJavaProject pro = getJavaProject(configuration);
-			if (pro == null) {			
-				// XXX: return the VMs default runtime classpath
-				return null;
-			} else {
-				return JavaRuntime.computeRuntimeClasspath(pro);
-			}
-		} else {
-			// XXX: need to support peristed classpaths
-			return null;
-		}		
+		return JavaRuntime.computeRuntimeClasspath(configuration);
 	}
 	
 	/**

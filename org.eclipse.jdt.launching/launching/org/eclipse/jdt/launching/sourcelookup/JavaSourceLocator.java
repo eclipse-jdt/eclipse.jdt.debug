@@ -261,7 +261,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				setSourceLocations(getDefaultSourceLocations(jp));
 			}
 		} else {
-			setSourceLocations(getSourceLocations(entries));
+			IRuntimeClasspathEntry[] resolved = resolveSourceLocations(entries, configuration);
+			setSourceLocations(getSourceLocations(resolved));
 		}
 	}
 
@@ -326,6 +327,15 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					}
 					break;
 				case IRuntimeClasspathEntry.CONTAINER:
+					try {
+						IRuntimeClasspathEntry[] containedEntries = entry.getContainedEntries();
+						IJavaSourceLocation[] containedLocations = getSourceLocations(containedEntries);
+						for (int j = 0; j < containedLocations.length; j++) {
+							locations.add(containedLocations[j]);
+						}
+					} catch (CoreException e) {
+						LaunchingPlugin.log(e);
+					}
 					break;
 			}
 			if (location != null) {
@@ -333,6 +343,54 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			}
 		}
 		return (IJavaSourceLocation[])locations.toArray(new IJavaSourceLocation[locations.size()]);		
+	}
+	
+	/**
+	 * Resolves the given unresolved source lookup path in the context of the
+	 * given launch configuration.
+	 */
+	private static IRuntimeClasspathEntry[] resolveSourceLocations(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
+		List resolved = new ArrayList(entries.length);
+		for (int i = 0; i < entries.length; i++) {
+			IRuntimeClasspathEntry entry = entries[i];
+			switch (entries[i].getType()) {
+				case IRuntimeClasspathEntry.PROJECT:
+				case IRuntimeClasspathEntry.ARCHIVE:
+					resolved.add(entry);
+					break;
+				case IRuntimeClasspathEntry.VARIABLE:
+					if (entry.getVariableName().equals(JavaRuntime.JRELIB_VARIABLE)) {
+						IRuntimeClasspathEntry[] rs = JavaRuntime.resolve(entry, configuration);
+						// omit from path unless JRE_LIB resolves to a library different
+						// than the config's project's JRE
+						if (rs.length == 1 && !rs[0].equals(entry)) {
+							// add to the beginning
+							for (int j = 0; j < rs.length; j++) {
+								resolved.add(j, rs[j]);
+							}
+						}
+					} else {
+						resolved.add(entry);
+					}
+					break;
+				case IRuntimeClasspathEntry.CONTAINER:
+					if (entry.getVariableName().equals(JavaRuntime.JRE_CONTAINER)) {
+						IRuntimeClasspathEntry[] rs = JavaRuntime.resolve(entry, configuration);
+						// omit from path unless JRE_LIB resolves to a library different
+						// than the config's project's JRE
+						if (rs.length == 1 && !rs[0].equals(entry)) {
+							// add to the beginning
+							for (int j = 0; j < rs.length; j++) {
+								resolved.add(j, rs[j]);
+							}
+						}
+					} else {
+						resolved.add(entry);
+					}				
+					break;
+			}
+		}	
+		return (IRuntimeClasspathEntry[])resolved.toArray(new IRuntimeClasspathEntry[resolved.size()]);
 	}
 
 }

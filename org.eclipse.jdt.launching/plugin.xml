@@ -88,4 +88,11 @@
 		variable="JRE_SRCROOT"
 		class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer"/>
 </extension>		
+
+<extension point = "org.eclipse.jdt.core.classpathContainerInitializer">
+	<classpathContainerInitializer
+		id="org.eclipse.jdt.launching.JRE_CONTAINER"
+		class="org.eclipse.jdt.internal.launching.JREContainerInitializer"/>
+</extension>
+
 </plugin>

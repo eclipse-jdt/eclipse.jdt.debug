@@ -1,4 +1,4 @@
-/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */package org.eclipse.jdt.launching;import java.text.MessageFormat;import java.util.ArrayList;import java.util.List;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IConfigurationElement;import org.eclipse.core.runtime.IExecutableExtension;
+/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */package org.eclipse.jdt.launching;import java.io.File;import java.text.MessageFormat;import java.util.ArrayList;import java.util.List;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IConfigurationElement;import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jdt.internal.launching.*;
 
 
@@ -101,4 +101,4 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 		return fId;
 	}
 
-}
+	/**	 * XXX: Default implementation for backwards compatibility. To be removed.	 * 	 * @see IVMInstallType#getDefaultLibraryLocations(File)	 */	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {		return new LibraryLocation[] {getDefaultLibraryLocation(installLocation)};	}}

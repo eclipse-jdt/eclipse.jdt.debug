@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -69,6 +70,11 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * The entry's resolved entry (lazily initialized)
 	 */
 	private IClasspathEntry fResolvedEntry = null;
+	
+	/**
+	 * Project context of container entry
+	 */
+	private String fProjectName = null;
 
 	/**
 	 * Constructs a new runtime classpath entry based on the
@@ -87,8 +93,6 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case IClasspathEntry.CPE_VARIABLE:
 				setType(VARIABLE);
 				break;
-			case IClasspathEntry.CPE_CONTAINER:
-				setType(CONTAINER);
 			default:
 				throw new IllegalArgumentException(MessageFormat.format(LaunchingMessages.getString("RuntimeClasspathEntry.Illegal_classpath_entry_{0}_1"), new String[] {entry.toString()})); //$NON-NLS-1$
 		}
@@ -96,6 +100,37 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		initializeClasspathProperty();
 	}
 	
+	/**
+	 * Constructs a new container entry in the context of the given project
+	 * 
+	 * @param entry classpath entry
+	 * @param projectName Java project name
+	 * @exception CoreException if unable to resolve the given entry
+	 */
+	public RuntimeClasspathEntry(IClasspathEntry entry, String projectName) throws CoreException {
+		switch (entry.getEntryKind()) {
+			case IClasspathEntry.CPE_CONTAINER:
+				setType(CONTAINER);
+				break;
+			default:
+				throw new IllegalArgumentException(MessageFormat.format(LaunchingMessages.getString("RuntimeClasspathEntry.Illegal_classpath_entry_{0}_1"), new String[] {entry.toString()})); //$NON-NLS-1$
+		}
+		setProjectName(projectName);
+		setClasspathEntry(entry);
+		IJavaProject p = getProject();
+		IClasspathContainer container = getClasspathContainer();
+		switch (container.getKind()) {
+			case IClasspathContainer.K_APPLICATION:
+				setType(IRuntimeClasspathEntry.USER_CLASSES);
+				break;
+			case IClasspathContainer.K_DEFAULT_SYSTEM:
+				setType(IRuntimeClasspathEntry.STANDARD_CLASSES);
+				break;
+			case IClasspathContainer.K_SYSTEM:
+				setType(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+				break;
+		}
+	}
 	
 	/**
 	 * Reconstructs a runtime classpath entry from the given
@@ -164,7 +199,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					}
 					break;
 				case VARIABLE :
-					String var = root.getAttribute("variablePath"); //$NON-NLS-1$
+					String var = root.getAttribute("containerPath"); //$NON-NLS-1$
 					if (var == null) {
 						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_6"), null); //$NON-NLS-1$
 					} else {
@@ -172,6 +207,12 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					}
 					break;
 				case CONTAINER :
+					name = root.getAttribute("projectName"); //$NON-NLS-1$
+					if (name == null) {
+						abort("Unable to recover runtime classpath entry - missing project name.", null);
+					} else {
+						setProjectName(name);
+					}
 					var = root.getAttribute("variablePath"); //$NON-NLS-1$
 					if (var == null) {
 						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_7"), null); //$NON-NLS-1$
@@ -260,7 +301,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				break;
 			case VARIABLE :
 			case CONTAINER :
-				node.setAttribute("variablePath", getPath().toString()); //$NON-NLS-1$
+				node.setAttribute("projectName", getProjectName()); //$NON-NLS-1$
+				node.setAttribute("containerPath", getPath().toString()); //$NON-NLS-1$
 				break;
 		}		
 		if (getSourceAttachmentPath() != null) {
@@ -304,6 +346,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		switch (getType()) {
 			case PROJECT:
 				return root.findMember(getPath());
+			case CONTAINER:
+				return null;
 			default:
 				IPath path = getPath();
 				IPath rootPath = root.getLocation();
@@ -347,8 +391,6 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	
 	/**
 	 * Initlaizes the classpath property based on this entry's type.
-	 * 
-	 * XXX: fix for containers
 	 */
 	private void initializeClasspathProperty() {
 		switch (getType()) {
@@ -359,11 +401,11 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					setClasspathProperty(USER_CLASSES);
 				}
 				break;
-			case CONTAINER:
-				// XXX: fix for containers
+			case PROJECT:
+			case ARCHIVE:
+				setClasspathProperty(USER_CLASSES);
 				break;
 			default:
-				setClasspathProperty(USER_CLASSES);
 				break;
 		}
 	}
@@ -447,7 +489,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		if (obj instanceof IRuntimeClasspathEntry) {
 			IRuntimeClasspathEntry r = (IRuntimeClasspathEntry)obj;
 			if (getType() == r.getType()) {
-				if (getPath().equals(r.getPath())) {
+				if (getType() == IRuntimeClasspathEntry.CONTAINER) {
+					// containers are equal if their ID is equal
+					return getPath().segment(0).equals(r.getPath().segment(0));
+				} else if (getPath().equals(r.getPath())) {
 					IPath sa1 = getSourceAttachmentPath();
 					IPath root1 = getSourceAttachmentRootPath();
 					IPath sa2 = r.getSourceAttachmentPath();
@@ -474,7 +519,11 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see Object#hashCode()
 	 */
 	public int hashCode() {
-		return getPath().hashCode() + getType();
+		if (getType() == CONTAINER) {
+			return getPath().segment(0).hashCode() + getType();
+		} else {
+			return getPath().hashCode() + getType();
+		}
 	}
 
 	/**
@@ -547,4 +596,56 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}
 		return fResolvedEntry;
 	}
+	
+	/**
+	 * Sets the project context for a container entry
+	 * 
+	 * @param project Java project
+	 */
+	protected void setProjectName(String name) {
+		fProjectName = name;
+	}
+	
+	/**
+	 * Returns the project context for a container entry,
+	 * or <code>null</code> if none.
+	 * 
+	 * @return project context for a container entry,
+	 *  or <code>null</code> if none
+	 */
+	protected String getProjectName() {
+		return fProjectName;
+	}	
+	
+	/**
+	 * Returns the Java project associated with this
+	 * container entry
+	 */
+	protected IJavaProject getProject() {
+		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectName()));
+	}
+	
+	/**
+	 * Returns the classpath container for this container entry
+	 * 
+	 * @return the classpath container for this container entry
+	 * @exception CoreException if unable to resolve
+	 */
+	protected IClasspathContainer getClasspathContainer() throws CoreException {
+		return JavaCore.getClasspathContainer(getPath(), getProject());
+	}
+	
+	/**
+	 * @see IRuntimeClasspathEntry#getContainedEntries()
+	 */
+	public IRuntimeClasspathEntry[] getContainedEntries() throws CoreException {
+		IClasspathContainer container = getClasspathContainer();
+		IClasspathEntry[] cpes = container.getClasspathEntries();
+		IRuntimeClasspathEntry[] entries = new IRuntimeClasspathEntry[cpes.length];
+		for (int i = 0; i < cpes.length; i++) {
+			entries[i] = new RuntimeClasspathEntry(cpes[i]);
+		}
+		return entries;
+	}
+
 }

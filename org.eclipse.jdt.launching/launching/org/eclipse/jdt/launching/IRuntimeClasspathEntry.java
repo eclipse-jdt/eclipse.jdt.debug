@@ -8,6 +8,7 @@ package org.eclipse.jdt.launching;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IJavaProject;
 
 /**
  * <b>THIS INTERFACE IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>.
@@ -215,14 +216,22 @@ public interface IRuntimeClasspathEntry {
 	
 	/**
 	 * Returns an absolute resolved path in the local file system for this entry,
-	 * or <code>null</code> if none. To resolve a runtime entry of type
-	 * <code>CONTAINER</code> a project context is required - see
-	 * <code>resolveContainer(IJavaProject)</code>.
+	 * or <code>null</code> if none, or if this entry is of type <code>CONTAINER</code>.
 	 * 
 	 * @return an absolute resolved path in the local file system for this entry,
 	 *  or <code>null</code> if none
 	 */
 	public String getResolvedPath();
+	
+	/**
+	 * If this entry is of type <code>CONTAINER</code> the entries that are 
+	 * contained within this container are returned, or <code>null</code>
+	 * if unable to resolve the contained entries.
+	 * 
+	 * @return runtime entries contained in this entry
+	 * @exception CoreException if unable to resolve contained entries
+	 */
+	public IRuntimeClasspathEntry[] getContainedEntries() throws CoreException;
 	
 	/**
 	 * Returns an absolute resolved path in the local file system for the source

@@ -47,10 +47,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
+import org.eclipse.jdt.internal.launching.JREContainer;
 import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
 import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
@@ -92,6 +94,27 @@ public final class JavaRuntime {
 	 * Classpath variable name used for the default JRE's library source root.
 	 */	
 	public static final String JRESRCROOT_VARIABLE= "JRE_SRCROOT"; //$NON-NLS-1$
+	
+	/**
+	 * Classpath container used for a project's JRE. A container
+	 * is resolved in the context of a specific Java project, to
+	 * one or more system libraries contained in a JRE. The container
+	 * can have zero or two path segments following the container name. When
+	 * no segments follow the container name, the workspace default JRE is used
+	 * to build a project. Otherwise the segments identify a specific JRE used
+	 * to build a project:
+	 * <ol>
+	 * <li>VM Install Type Identifier - identifies the type of JRE used to build the
+	 * 	project. For example, the standard VM.</li>
+	 * <li>VM Install Name - a user defined name that identifies that a specific VM
+	 * 	of the above kind. For example, <code>IBM 1.3.1</code>. This information is
+	 *  shared in a projects classpath file, so teams must agree on JRE naming
+	 * 	conventions.</li>
+	 * </ol>
+	 * 
+	 * @since 2.0
+	 */
+	public static final String JRE_CONTAINER = LaunchingPlugin.getUniqueIdentifier() + ".JRE_CONTAINER";
 	
 	/**
 	 * The class org.eclipse.debug.core.model.IProcess allows attaching
@@ -164,7 +187,7 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns the VM assigned to run the given Java project.
+	 * Returns the VM assigned to build the given Java project.
 	 * The project must exist.
 	 * 
 	 * @return the VM instance that is selected for the given Java project
@@ -207,7 +230,7 @@ public final class JavaRuntime {
 		return null;
 	}
 	/**
-	 * Sets the VM to be used for running the given Java project.
+	 * Sets the VM to be used for building the given Java project.
 	 * Note that this setting will be persisted between workbench sessions.
 	 * The project needs to exist.
 	 * 
@@ -384,7 +407,23 @@ public final class JavaRuntime {
 		IClasspathEntry cpe = JavaCore.newVariableEntry(new Path(name), null, null);
 		return newRuntimeClasspathEntry(cpe);
 	}
-	
+
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
+	 * 
+	 * Returns a runtime classpath entry for the given container path in the
+	 * conext of the project with the given name.
+	 * 
+	 * @param path container path
+	 * @param name Java project name
+	 * @return runtime classpath entry
+	 * @exception CoreException if unable to construct a runtime classpath entry
+	 */
+	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, String name) throws CoreException {
+		IClasspathEntry cpe = JavaCore.newContainerEntry(new Path(name));
+		return new RuntimeClasspathEntry(cpe, name);
+	}
+		
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
 	 * 
@@ -402,12 +441,13 @@ public final class JavaRuntime {
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
 	 * 
 	 * Returns a runtime classpath entry that corresponds to the given
-	 * classpath entry. The classpath entry may not be of type <code>CPE_SOURCE</code>.
+	 * classpath entry. The classpath entry may not be of type <code>CPE_SOURCE</code>
+	 * or <code>CPE_CONTAINER</code>.
 	 * 
 	 * @param entry a classpath entry
 	 * @return runtime classpath entry
 	 */
-	public static IRuntimeClasspathEntry newRuntimeClasspathEntry(IClasspathEntry entry) {
+	private static IRuntimeClasspathEntry newRuntimeClasspathEntry(IClasspathEntry entry) {
 		return new RuntimeClasspathEntry(entry);
 	}	
 			
@@ -418,16 +458,19 @@ public final class JavaRuntime {
 	 * 
 	 * @return runtime classpath entries
 	 * @exception CoreException if unable to compute the runtime classpath
-	 * 
-	 * [XXX: fix for libraries
 	 */
 	public static IRuntimeClasspathEntry[] computeRuntimeClasspath(IJavaProject project) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(project.getProject().getFullPath());
 		List classpathEntries = expandProject(entry);
 		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries == null ? 0 : classpathEntries.size()];
 		for (int i = 0; i < runtimeEntries.length; i++) {
-			IClasspathEntry e = (IClasspathEntry)classpathEntries.get(i);
-			runtimeEntries[i] = newRuntimeClasspathEntry(e);
+			Object e = classpathEntries.get(i);
+			if (e instanceof IClasspathEntry) {
+				IClasspathEntry cpe = (IClasspathEntry)e;
+				runtimeEntries[i] = newRuntimeClasspathEntry(cpe);
+			} else {
+				runtimeEntries[i] = (IRuntimeClasspathEntry)e;				
+			}
 		}
 		return runtimeEntries;
 	}
@@ -453,51 +496,66 @@ public final class JavaRuntime {
 			// recover persisted source path
 			entries = recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH);
 		}
-		// handle JRE_LIB - remove from source lookup path if config JRE equals workspace JRE
-		// othewise place alternate JRE first on source lookup path
-		for (int i = 0; i < entries.length; i++) {
-			IRuntimeClasspathEntry entry = entries[i];
-			if (entry.getType() == IRuntimeClasspathEntry.VARIABLE && entry.getVariableName().equals(JRELIB_VARIABLE)) {
-				// remove from source lookup path if the config JRE == workspace JRE
-				IVMInstall configJRE = computeVMInstall(configuration);
-				IVMInstall defJRE = getDefaultVMInstall();
-				if (configJRE.equals(defJRE)) {
-					IRuntimeClasspathEntry[] newEntries = new IRuntimeClasspathEntry[entries.length - 1];
-					int length = i;
-					if (length > 0) {
-						System.arraycopy(entries, 0, newEntries, 0, length);
-					}
-					length = entries.length - i - 1;
-					if (length > 0) {
-						System.arraycopy(entries, i + 1, newEntries, i, length);
-					}
-					entries = newEntries;
-					break;
-				} else {
-					LibraryLocation[] libs = configJRE.getLibraryLocations();
-					if (libs == null) {
-						libs = new LibraryLocation[] {configJRE.getVMInstallType().getDefaultLibraryLocation(configJRE.getInstallLocation())};
-					}
-					List newPath = new ArrayList(entries.length - 1 + libs.length);
-					for (int j = 0; j < libs.length; j++) {
-						LibraryLocation lib = libs[j];
-						IRuntimeClasspathEntry libEntry = newArchiveRuntimeClasspathEntry(lib.getSystemLibraryPath());
-						libEntry.setSourceAttachmentPath(lib.getSystemLibrarySourcePath());
-						libEntry.setSourceAttachmentRootPath(lib.getPackageRootPath());
-						newPath.add(libEntry);
-					}
-					// add the rest
-					for (int j = 0; j < entries.length; j++) {
-						if (j != i) {
-							newPath.add(entries[j]);
+		return entries;
+	}
+	
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
+	 * 
+	 * Returns a resolved entries for the given entry in the context of the given
+	 * launch configuration.
+	 * 
+	 * @param entry runtime classpath entry
+	 * @param configuration launch configuration
+	 * @return resolved runtime classpath entry
+	 * @exception CoreException if unable to resolve
+	 */
+	public static IRuntimeClasspathEntry[] resolve(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
+		IRuntimeClasspathEntry[] resolved = null;
+		switch (entry.getType()) {
+			case IRuntimeClasspathEntry.VARIABLE:
+				if (entry.getVariableName().equals(JRELIB_VARIABLE)) {
+					IVMInstall configJRE = computeVMInstall(configuration);
+					IVMInstall defJRE = getDefaultVMInstall();
+					if (!configJRE.equals(defJRE)) {
+						IPath path = new Path(JRE_CONTAINER);
+						path = path.append(new Path(configJRE.getVMInstallType().getId()));
+						path = path.append(new Path(configJRE.getName()));
+						JREContainer jre = new JREContainer(configJRE, path);
+						IClasspathEntry[] cpes = jre.getClasspathEntries();
+						resolved = new IRuntimeClasspathEntry[cpes.length];
+						for (int i = 0; i < cpes.length; i++) {
+							resolved[i] = newRuntimeClasspathEntry(cpes[i]);
+							resolved[i].setClasspathProperty(entry.getClasspathProperty());
 						}
 					}
-					entries = (IRuntimeClasspathEntry[])newPath.toArray(new IRuntimeClasspathEntry[newPath.size()]);
-					break;
 				}
-			}
+				break;
+			case IRuntimeClasspathEntry.CONTAINER:
+				if (entry.getVariableName().equals(JRE_CONTAINER)) {
+					IVMInstall configJRE = computeVMInstall(configuration);
+					// XXX: should be project JRE once supported
+					IVMInstall defJRE = getDefaultVMInstall();
+					if (!configJRE.equals(defJRE)) {
+						IPath path = new Path(JRE_CONTAINER);
+						path = path.append(new Path(configJRE.getVMInstallType().getId()));
+						path = path.append(new Path(configJRE.getName()));
+						JREContainer jre = new JREContainer(configJRE, path);
+						IClasspathEntry[] cpes = jre.getClasspathEntries();
+						resolved = new IRuntimeClasspathEntry[cpes.length];
+						for (int i = 0; i < cpes.length; i++) {
+							resolved[i] = newRuntimeClasspathEntry(cpes[i]);
+							resolved[i].setClasspathProperty(entry.getClasspathProperty());
+						}
+					}					
+				}
+			default:
+				break;
 		}
-		return entries;
+		if (resolved == null) {
+			return new IRuntimeClasspathEntry[] {entry};
+		}
+		return resolved;
 	}
 	
 	/**
@@ -628,7 +686,7 @@ public final class JavaRuntime {
 	 * given project entry.
 	 * 
 	 * @param projectEntry project classpath entry
-	 * @return list of classpath entries
+	 * @return list of classpath entries and runtime classpath entries for containers
 	 * @exception CoreException if unable to expand the classpath
 	 */
 	protected static List expandProject(IClasspathEntry projectEntry) throws CoreException {
@@ -657,6 +715,7 @@ public final class JavaRuntime {
 			}
 		}
 		// 3. expand each project entry (except for the root project)
+		// 4. replace each container entry with a runtime entry associated with the project
 		List expandedPath = new ArrayList(unexpandedPath.size());
 		Iterator iter = unexpandedPath.iterator();
 		while (iter.hasNext()) {
@@ -676,6 +735,11 @@ public final class JavaRuntime {
 								}
 							}
 						}
+					}
+				} else if (entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+					IRuntimeClasspathEntry r = newRuntimeContainerClasspathEntry(entry.getPath(), project.getElementName());
+					if (!expandedPath.contains(r)) {
+						expandedPath.add(r);
 					}
 				} else {
 					if (!expandedPath.contains(entry)) {
