@@ -6,7 +6,10 @@ package org.eclipse.jdt.debug.core;
  */
 
 /**
- * Evaluation results are reported to evaluation listeners.
+ * Evaluation results are reported to evaluation listeners 
+ * on the completion of an evaluation.  The evaluation
+ * may fail but a result will be supplied indicating the
+ * problems.
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -15,18 +18,17 @@ package org.eclipse.jdt.debug.core;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
- * @see IValue
  * @see IJavaEvaluationResult
  */
 
 public interface IJavaEvaluationListener {
 	
 	/**
-	 * Notifies this listener that an evaluation is complete, with the
+	 * Notifies this listener that an evaluation has completed, with the
 	 * given result.
 	 * 
+	 * @param result The result from the evaluation
 	 * @see IJavaEvaluationResult
 	 */
 	void evaluationComplete(IJavaEvaluationResult result);
-	
 }

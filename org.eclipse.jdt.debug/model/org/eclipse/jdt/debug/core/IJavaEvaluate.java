@@ -10,11 +10,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 
 /**
- * The capability to perform an evaluation, given a Java project context.
+ * Provides the capability to perform an evaluation within a given context.
  * This interface is supported by Java stack frames and Java threads. 
  * An evaluation performed in a stack frame has access to local variables
  * and "this". A Java project or an evaluation context may be provided as a context
- * for an evaluition. When a Java project is specified, a new evaluation context
+ * for an evaluation. When a Java project is specified, a new evaluation context
  * is created for that project.
  * <p>
  * Clients are not intended to implement this interface.
@@ -30,7 +30,6 @@ import org.eclipse.jdt.core.eval.IEvaluationContext;
  * @see IEvaluationContext
  */
 
-
 public interface IJavaEvaluate {
 
 	/**
@@ -44,11 +43,12 @@ public interface IJavaEvaluate {
 	 * the evaluation result will contain problem markers describing the
 	 * reason for the failure.
 	 *
-	 * @param expression the expression to evaluate
-	 * @param listener the object that will be notified of the evaluation result
-	 * @param project the Java project context to use when evaluating/compiling
-	 *    the expression
-	 * @exception DebugException on failure. Reasons include:<ul>
+	 * @param expression The expression to evaluate.
+	 * @param listener The object that will be notified, in a separate thread,
+	 *  of the evaluation result when the evaluation completes or fails.
+	 * @param project The Java project context to use when evaluating/compiling
+	 *    the expression.
+	 * @exception DebugException If this method fails. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target</li>
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
 	 * </ul>
@@ -56,7 +56,7 @@ public interface IJavaEvaluate {
 	 */
 	void evaluate(String expression, IJavaEvaluationListener listener, IJavaProject project) throws DebugException;
 
-      /**
+    /**
 	 * Evaluates the given expression, in the context of this Java debug
 	 * element and the given evaluation context, reporting the result
 	 * to the given listener. The thread associated with this element must be
@@ -67,11 +67,12 @@ public interface IJavaEvaluate {
 	 * In this case the evaluation result will contain problem markers describing
 	 * the reason for the failure.
 	 *
-	 * @param expression the expression to evaluate
-	 * @param listener the object that will be notified of the evaluation result
-	 * @param context the evaluation context to use when evaluating/compiling
-	 *    the expression
-	 * @exception DebugException on failure. Reasons include:<ul>
+	 * @param expression The expression to evaluate.
+	 * @param listener The object that will be notified, in a separate thread,
+	 *  of the evaluation result when the evaluation completes or fails.
+	 * @param context The evaluation context to use when evaluating/compiling
+	 *    the expression.
+	 * @exception DebugException If this method fails. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target</li>
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target</li>
 	 * </ul>
@@ -83,8 +84,8 @@ public interface IJavaEvaluate {
 	/**
 	 * Returns whether this element can currently perform an evaluation.
 	 * An evaluation can only be performed if the thread associated with
-	 * this element is suspended, and is not currently in an evaluation (i.e
-	 * nested evaluations are not supported).
+	 * this element is suspended, and is not currently in an evaluation 
+	 * (i.e. nested evaluations are not supported).
 	 *
 	 * @return whether this element can currently perform an evaluation
 	 */
