@@ -28,6 +28,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -658,5 +659,19 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, on);
 	}
 
+	/**
+	 * Returns the compilation unit with the given name.
+	 * 
+	 * @param project the project containing the CU
+	 * @param root the name of the source folder in the project
+	 * @param pkg the name of the package (empty string for default package)
+	 * @param name the name of the CU (ex. Something.java)
+	 * @return compilation unit
+	 */
+	protected ICompilationUnit getCompilationUnit(IJavaProject project, String root, String pkg, String name) {
+		IProject p = project.getProject();
+		IResource r = p.getFolder(root);
+		return project.getPackageFragmentRoot(r).getPackageFragment(pkg).getCompilationUnit(name);
+	}
 }
 
