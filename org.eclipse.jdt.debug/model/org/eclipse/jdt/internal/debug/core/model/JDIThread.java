@@ -43,6 +43,7 @@ import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
+import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
@@ -163,8 +164,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 
 	 * @param target the debug target in which this thread is contained
 	 * @param thread the underlying thread on the VM
+	 * @exception ObjectCollectedException if the underlying thread has been
+	 * garbage collected and cannot be properly initialized
 	 */
-	public JDIThread(JDIDebugTarget target, ThreadReference thread) {
+	public JDIThread(JDIDebugTarget target, ThreadReference thread) throws ObjectCollectedException {
 		super(target);
 		setUnderlyingThread(thread);
 		initialize();
@@ -177,8 +180,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * <li>Determines suspended state from underlying thread</li> 
 	 * <li>Sets this threads stack frames to an empty collection</li>
 	 * </ul>
+	 * @exception ObjectCollectedException if the thread has been garbage
+	 * collected and cannot be initialized
 	 */
-	protected void initialize() {
+	protected void initialize() throws ObjectCollectedException {
 		fStackFrames= Collections.EMPTY_LIST;
 		// system thread
 		try {
@@ -191,7 +196,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				// the time we hear about the thread creation.
 				disconnected();
 				return;
-			}			
+			}	
+			if (underlyingException instanceof ObjectCollectedException) {
+				throw (ObjectCollectedException)underlyingException;
+			}		
 			logError(e);
 		}
 
@@ -203,6 +211,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (VMDisconnectedException e) {
 			disconnected();
 			return;
+		} catch (ObjectCollectedException e){
+			throw e;
 		} catch (RuntimeException e) {
 			logError(e);
 		}
