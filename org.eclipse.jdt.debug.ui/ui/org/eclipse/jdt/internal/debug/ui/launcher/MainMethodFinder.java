@@ -12,7 +12,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.core.IClassFile;
@@ -74,13 +73,13 @@ public class MainMethodFinder {
 		if (element instanceof IAdaptable) {
 			IJavaElement jelem= (IJavaElement) ((IAdaptable) element).getAdapter(IJavaElement.class);
 			if (jelem != null) {
-				IType parentType= (IType) JavaModelUtil.findElementOfKind(jelem, IJavaElement.TYPE);
+				IType parentType= (IType)jelem.getAncestor(IJavaElement.TYPE);
 				if (parentType != null && JavaModelUtil.hasMainMethod((IType) parentType)) {
 					result.add(parentType);
 					monitor.done();
 					return;
 				}
-				IJavaElement openable= (IJavaElement) JavaModelUtil.getOpenable(jelem);
+				IJavaElement openable= (IJavaElement) jelem.getOpenable();
 				if (openable != null) {
 					if (openable.getElementType() == IJavaElement.COMPILATION_UNIT) {
 						ICompilationUnit cu= (ICompilationUnit) openable;
