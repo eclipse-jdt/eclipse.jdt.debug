@@ -328,9 +328,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 								// unable to print stack trace
 							}
 						}
-					} catch (Throwable exception) {
-						JDIDebugPlugin.log(exception);
-						fException = new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, EvaluationEngineMessages.getString("ASTEvaluationEngine.Runtime_exception_occurred_during_evaluation._See_log_for_details"), exception)); //$NON-NLS-1$
 					}
 				}
 				public void terminate() {
