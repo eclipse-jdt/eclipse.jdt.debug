@@ -26,6 +26,9 @@ import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 
 
 class BundleDescription implements BundleAttributes {
+	
+	private static final String STUB= "/System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/MacOS/JavaApplicationStub"; //$NON-NLS-1$
+	private static final String ICON= "/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Resources/GenericApp.icns"; //$NON-NLS-1$
 		
 	private ListenerList fListeners= new ListenerList();
 	private Properties fProperties= new Properties();
@@ -44,7 +47,7 @@ class BundleDescription implements BundleAttributes {
 		fResources.clear();
 		fProperties2.clear();
 		fProperties.put(SIGNATURE, "????"); //$NON-NLS-1$
-		fProperties.put(ICONFILE, "/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Resources/GenericApp.icns"); //$NON-NLS-1$
+		fProperties.put(ICONFILE, ICON);
 	}
 	
 	void addResource(ResourceInfo ri, boolean onClasspath) {
@@ -176,7 +179,7 @@ class BundleDescription implements BundleAttributes {
 				break;
 			}
 		}
-		fProperties.put(USES_SWT, new Boolean(isSWT));
+		fProperties.put(USES_SWT, Boolean.valueOf(isSWT));
 		
 		String launcher= null;
 		if (isSWT)
@@ -184,7 +187,7 @@ class BundleDescription implements BundleAttributes {
 		
 		if (launcher == null) {
 			setValue(JVMVERSION, "1.4*"); //$NON-NLS-1$
-			launcher= "/System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/MacOS/JavaApplicationStub";	//$NON-NLS-1$			
+			launcher= STUB;	//$NON-NLS-1$			
 		}
 		setValue(LAUNCHER, launcher);
 

@@ -118,6 +118,9 @@ public class BundleBuilder implements BundleAttributes {
 		pair(jdict, "MainClass", MAINCLASS, null); //$NON-NLS-1$
 		pair(jdict, "WorkingDirectory", WORKINGDIR, null); //$NON-NLS-1$
 		
+		if (fBundleDescription.get(USES_SWT, false))
+			addTrue(jdict, "StartOnMainThread"); //$NON-NLS-1$
+		
 		String arguments= fBundleDescription.get(ARGUMENTS, null);
 		if (arguments != null) {
 			Element argArray= doc.createElement("array");	//$NON-NLS-1$
@@ -187,12 +190,26 @@ public class BundleBuilder implements BundleAttributes {
 		type.appendChild(document.createTextNode(s));
 	}
 
+	private void createTrue(Element parent) {
+		Document document= parent.getOwnerDocument();
+		Element type= document.createElement("true"); //$NON-NLS-1$
+		parent.appendChild(type);	
+	}
+
 	private void add(Element dict, String key, String value) {
 		Document document= dict.getOwnerDocument();
 		Element k= document.createElement("key"); //$NON-NLS-1$
 		dict.appendChild(k);
 		k.appendChild(document.createTextNode(key));
 		create(dict, value);
+	}
+	
+	private void addTrue(Element dict, String key) {
+		Document document= dict.getOwnerDocument();
+		Element k= document.createElement("key"); //$NON-NLS-1$
+		dict.appendChild(k);
+		k.appendChild(document.createTextNode(key));
+		createTrue(dict);
 	}
 	
 	private void pair(Element dict, String outkey, String inkey, String dflt) {
