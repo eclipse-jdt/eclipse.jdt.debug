@@ -58,9 +58,10 @@ public class LaunchModeTests extends AbstractDebugTest {
 	 * @param mode
 	 * @param launch
 	 */
-	public void launch(ILaunchConfiguration configuration, String mode) {
+	public synchronized void launch(ILaunchConfiguration configuration, String mode) {
 		fConfiguration = configuration;
 		fMode = mode;
+		notifyAll();
 	}
 
 	/**
@@ -79,7 +80,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 			ILaunchConfiguration configuration = getLaunchConfiguration("Breakpoints");
 			assertNotNull(configuration);
 			launch = configuration.launch("TEST_MODE", null);
-			assertEquals("Launch delegate not invoked", configuration, fConfiguration);
+			assertEquals("Launch delegate not invoked", configuration, getLaunchConfigurationSetByDelegate());
 			assertEquals("Launch delegate not invoked in correct mode", "TEST_MODE", fMode);
 		} finally {
 			TestModeLaunchDelegate.setTestCase(null);
@@ -89,6 +90,22 @@ public class LaunchModeTests extends AbstractDebugTest {
 				getLaunchManager().removeLaunch(launch);
 			}
 		}
+	}
+	
+	/**
+	 * Returns the source of the accepted event, or <code>null</code>
+	 * if no event was accepted.
+	 */
+	private synchronized Object getLaunchConfigurationSetByDelegate() {
+		if (fConfiguration == null) {
+			try {
+				wait(10000);
+			} catch (InterruptedException ie) {
+				System.err.println("Interrupted waiting for event");
+			}
+		}
+		
+		return fConfiguration;
 	}
 	
 	/**
