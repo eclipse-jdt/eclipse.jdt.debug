@@ -1758,9 +1758,11 @@ public final class JavaRuntime {
 					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 					IPath outputLocation = javaProject.getOutputLocation();
 					IResource resource = root.findMember(outputLocation);
-					IPath path = resource.getFullPath();
-					if (path != null)  {
-						return path.makeRelative().toString();
+					if (resource != null) {
+						IPath path = resource.getFullPath();
+						if (path != null)  {
+							return path.makeRelative().toString();
+						}
 					}
 				} 
 			}
