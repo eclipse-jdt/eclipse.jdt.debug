@@ -70,14 +70,16 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 				if (!fInTrace) {
 					fInTrace = true;
 					// look for exception name
-					Matcher m = fJavaQualifiedNamePattern.matcher(fPrevText);
-					if (m.find()) {
-						int start = m.start();
-						int end = m.end();
-						int size = end - start;
-						IConsoleHyperlink link = new JavaExceptionHyperLink(fConsole, fPrevText.substring(start, end));
-						start += fPrevLine.getOffset();
-						fConsole.addLink(link, start, size);
+					if (fPrevText != null) {
+						Matcher m = fJavaQualifiedNamePattern.matcher(fPrevText);
+						if (m.find()) {
+							int start = m.start();
+							int end = m.end();
+							int size = end - start;
+							IConsoleHyperlink link = new JavaExceptionHyperLink(fConsole, fPrevText.substring(start, end));
+							start += fPrevLine.getOffset();
+							fConsole.addLink(link, start, size);
+						}
 					}
 				}
 				int linkOffset = offset + index + 1;
