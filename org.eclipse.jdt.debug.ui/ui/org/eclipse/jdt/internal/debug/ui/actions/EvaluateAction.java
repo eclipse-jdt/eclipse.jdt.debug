@@ -448,10 +448,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			CoreException ce = (CoreException)exception;
 			Throwable throwable= ce.getStatus().getException();
 			if (throwable instanceof com.sun.jdi.InvocationException) {
-				return getInvocationExceptionMessage((com.sun.jdi.InvocationException)t);
+				return getInvocationExceptionMessage((com.sun.jdi.InvocationException)throwable);
 			} else if (throwable instanceof CoreException) {
 				// Traverse nested CoreExceptions
-				return getExceptionMessage(t);
+				return getExceptionMessage(throwable);
 			}
 			return ce.getStatus().getMessage();
 		}
