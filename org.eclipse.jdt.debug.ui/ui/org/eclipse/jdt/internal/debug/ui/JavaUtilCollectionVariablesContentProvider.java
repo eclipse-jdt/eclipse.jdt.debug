@@ -26,8 +26,8 @@ import org.eclipse.jdt.debug.ui.AbstractJavaVariablesContentProvider;
  */
 public class JavaUtilCollectionVariablesContentProvider extends AbstractJavaVariablesContentProvider {
 
-	private static final String TO_ARRAY_METHOD_SELECTOR = "toArray";	
-	private static final String TO_ARRAY_METHOD_SIGNATURE = "()[Ljava/lang/Object;";
+	private static final String TO_ARRAY_METHOD_SELECTOR = "toArray";	//$NON-NLS-1$
+	private static final String TO_ARRAY_METHOD_SIGNATURE = "()[Ljava/lang/Object;"; //$NON-NLS-1$
 	private static final IJavaValue[] EMPTY_VALUE_ARRAY = new IJavaValue[0];
 
 	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaVariable parent) throws DebugException {

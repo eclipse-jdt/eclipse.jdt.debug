@@ -26,11 +26,11 @@ import org.eclipse.jdt.debug.ui.AbstractJavaVariablesContentProvider;
  */
 public class JavaUtilMapVariablesContentProvider extends AbstractJavaVariablesContentProvider {
 
-	private static final String ENTRY_SET_METHOD_SELECTOR = "entrySet";
-	private static final String ENTRY_SET_METHOD_SIGNATURE = "()Ljava/util/Set;";
+	private static final String ENTRY_SET_METHOD_SELECTOR = "entrySet"; //$NON-NLS-1$
+	private static final String ENTRY_SET_METHOD_SIGNATURE = "()Ljava/util/Set;"; //$NON-NLS-1$
 	
-	private static final String TO_ARRAY_METHOD_SELECTOR = "toArray";	
-	private static final String TO_ARRAY_METHOD_SIGNATURE = "()[Ljava/lang/Object;";
+	private static final String TO_ARRAY_METHOD_SELECTOR = "toArray"; //$NON-NLS-1$
+	private static final String TO_ARRAY_METHOD_SIGNATURE = "()[Ljava/lang/Object;"; //$NON-NLS-1$
 	
 	private static final IJavaValue[] EMPTY_VALUE_ARRAY = new IJavaValue[0];
 

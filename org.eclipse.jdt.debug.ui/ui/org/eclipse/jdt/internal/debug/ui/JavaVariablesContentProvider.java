@@ -171,13 +171,14 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 		if (contentProvider == null) {	
 			Object executable = null;		
 			try {
-				executable = JDIDebugUIPlugin.createExtension(configElement, "class");
+				executable = JDIDebugUIPlugin.createExtension(configElement, "class"); //$NON-NLS-1$
 			} catch (CoreException ce) {
 				JDIDebugUIPlugin.log(ce);
 				return null;
 			}
 			if (!(executable instanceof IJavaVariablesContentProvider)) {
-				JDIDebugUIPlugin.logErrorMessage("Class " + configElement.getAttribute("class") + " is not an instance of org.eclipse.debug.ui.IJavaVariablesContentProvider");				
+				String classAttribute = configElement.getAttribute("class"); //$NON-NLS-1$
+				JDIDebugUIPlugin.logErrorMessage(DebugUIMessages.getString("JavaVariablesContentProvider.4") + classAttribute + DebugUIMessages.getString("JavaVariablesContentProvider.5"));				 //$NON-NLS-1$ //$NON-NLS-2$
 				return null;
 			}	
 			contentProvider = (IJavaVariablesContentProvider) executable;

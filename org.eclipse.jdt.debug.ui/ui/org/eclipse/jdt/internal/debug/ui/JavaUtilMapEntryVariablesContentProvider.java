@@ -20,10 +20,10 @@ import org.eclipse.jdt.debug.ui.AbstractJavaVariablesContentProvider;
 
 public class JavaUtilMapEntryVariablesContentProvider extends AbstractJavaVariablesContentProvider {
 
-	private static final String GET_KEY_METHOD_SELECTOR = "getKey";
+	private static final String GET_KEY_METHOD_SELECTOR = "getKey"; //$NON-NLS-1$
 	
-	private static final String GET_VALUE_METHOD_SELECTOR = "getValue";	
-	private static final String GET_METHOD_SIGNATURE = "()Ljava/lang/Object;";
+	private static final String GET_VALUE_METHOD_SELECTOR = "getValue";	//$NON-NLS-1$
+	private static final String GET_METHOD_SIGNATURE = "()Ljava/lang/Object;"; //$NON-NLS-1$
 	
 	private static final IJavaValue[] EMPTY_VALUE_ARRAY = new IJavaValue[0];
 
