@@ -364,27 +364,26 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 						fStackFrames.add(0, newStackFrame);
 					}
 					length= fStackFrames.size() - offset;
-				} else
-					if (length < fStackFrames.size()) {
-						// compute removed children
-						int removed= fStackFrames.size() - length;
-						for (int i= 0; i < removed; i++) {
-							fStackFrames.remove(0);
-						}
+				} else if (length < fStackFrames.size()) {
+					// compute removed children
+					int removed= fStackFrames.size() - length;
+					for (int i= 0; i < removed; i++) {
+						fStackFrames.remove(0);
+					}
+				} else {
+					if (frames.isEmpty()) {
+						fStackFrames = Collections.EMPTY_LIST;
 					} else {
-						if (frames.isEmpty()) {
-							fStackFrames = Collections.EMPTY_LIST;
-						} else {
-							// same number of frames - if top frames are in different
-							// method, replace all frames
-							StackFrame newTop = (StackFrame)frames.get(0);
-							StackFrame oldTop = ((JDIStackFrame)fStackFrames.get(0)).getLastUnderlyingStackFrame();
-							if (!JDIStackFrame.equalFrame(newTop, oldTop)) {
-								fStackFrames = createAllStackFrames();
-								offset = fStackFrames.size();
-							}
+						// same number of frames - if top frames are in different
+						// method, replace all frames
+						StackFrame newTop = (StackFrame)frames.get(0);
+						StackFrame oldTop = ((JDIStackFrame)fStackFrames.get(0)).getLastUnderlyingStackFrame();
+						if (!JDIStackFrame.equalFrame(newTop, oldTop)) {
+							fStackFrames = createAllStackFrames();
+							offset = fStackFrames.size();
 						}
 					}
+				}
 				// update preserved frames
 				if (offset < fStackFrames.size()) {
 					updateStackFrames(frames, offset, fStackFrames, length);
