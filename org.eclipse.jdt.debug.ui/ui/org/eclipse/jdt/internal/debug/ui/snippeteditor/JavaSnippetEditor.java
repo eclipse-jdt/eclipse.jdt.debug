@@ -238,8 +238,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		super.createActions();
 		setAction("Run", new RunAction(this)); //$NON-NLS-1$
 		setAction("ContentAssistProposal", new TextOperationAction(SnippetMessages.getBundle(), "SnippetEditor.ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS));			 //$NON-NLS-2$ //$NON-NLS-1$
-		setAction("OpenOnSelection", new SnippetOpenOnSelectionAction(this));			 //$NON-NLS-1$
-		setAction("OpenHierarchyOnSelection", new SnippetOpenHierarchyOnSelectionAction(this));  //$NON-NLS-1$
 		setAction("Stop", new StopAction(this));  //$NON-NLS-1$
 		setAction("SelectImports", new SelectImportsAction(this));  //$NON-NLS-1$
 	} 
@@ -253,8 +251,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		addGroup(menu, ITextEditorActionConstants.GROUP_FIND, IContextMenuConstants.GROUP_SEARCH);		
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$
 		addGroup(menu, IContextMenuConstants.GROUP_SEARCH,  IContextMenuConstants.GROUP_SHOW);
-		addAction(menu, IContextMenuConstants.GROUP_SHOW, "OpenOnSelection"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_SHOW, "OpenHierarchyOnSelection"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Run"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Stop"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "SelectImports"); //$NON-NLS-1$
@@ -573,8 +569,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		int start= selection.getOffset();
 		String snippet= d.get();	
 		IEvaluationContext e= getEvaluationContext();
-		if (e != null) 
+		if (e != null) {
 			e.codeComplete(snippet, start, requestor);
+		}
 	}
 		 
 	public IJavaElement[] codeResolve() throws JavaModelException {
@@ -585,8 +582,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		
 		String snippet= d.get();	
 		IEvaluationContext e= getEvaluationContext();
-		if (e != null) 
+		if (e != null) {
 			return e.codeSelect(snippet, start, len);
+		}
 		return null;
 	}	
 	public void showError(IStatus status) {

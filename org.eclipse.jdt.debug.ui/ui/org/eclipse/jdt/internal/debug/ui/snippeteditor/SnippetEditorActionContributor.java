@@ -7,7 +7,6 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.ui.javaeditor.BasicEditorActionContributor;
-import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -52,10 +51,11 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		
 		super.contributeToMenu(menu);
 		
-		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		if (editMenu != null) {	
-			editMenu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenOnSelectionAction);
-			editMenu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenOnTypeSelectionAction);
+		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
+		if (navigateMenu != null) {
+			navigateMenu.appendToGroup(IWorkbenchActionConstants.NAV_START, new Separator());
+			navigateMenu.appendToGroup(IWorkbenchActionConstants.NAV_START, fOpenOnSelectionAction);
+			navigateMenu.appendToGroup(IWorkbenchActionConstants.NAV_START, fOpenOnTypeSelectionAction);
 		}
 	}
 	
