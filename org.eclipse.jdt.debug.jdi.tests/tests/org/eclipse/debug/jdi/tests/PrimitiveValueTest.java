@@ -97,27 +97,27 @@ public class PrimitiveValueTest extends AbstractJDITest {
 	 * Test JDI doubleValue().
 	 */
 	public void testJDIDoubleValue() {
-		assertEquals("1", (double) 1, fBoolean.doubleValue(), 0);
-		assertEquals("2", (double) 1, fByte.doubleValue(), 0);
-		assertEquals("3", (double) 97, fChar.doubleValue(), 0);
-		assertEquals("4", (double) 12345.6789, fDouble.doubleValue(), 0);
-		assertEquals("5", (double) 12345.6789, fFloat.doubleValue(), 0.001);
-		assertEquals("6", (double) 12345, fInt.doubleValue(), 0);
-		assertEquals("7", (double) 123456789, fLong.doubleValue(), 0);
-		assertEquals("8", (double) 12345, fShort.doubleValue(), 0);
+		assertEquals("1", 1, fBoolean.doubleValue(), 0);
+		assertEquals("2", 1, fByte.doubleValue(), 0);
+		assertEquals("3", 97, fChar.doubleValue(), 0);
+		assertEquals("4", 12345.6789, fDouble.doubleValue(), 0);
+		assertEquals("5", 12345.6789, fFloat.doubleValue(), 0.001);
+		assertEquals("6", 12345, fInt.doubleValue(), 0);
+		assertEquals("7", 123456789, fLong.doubleValue(), 0);
+		assertEquals("8", 12345, fShort.doubleValue(), 0);
 	}
 	/**
 	 * Test JDI floatValue().
 	 */
 	public void testJDIFloatValue() {
-		assertEquals("1", (float) 1, fBoolean.floatValue(), 0);
-		assertEquals("2", (float) 1, fByte.floatValue(), 0);
-		assertEquals("3", (float) 97, fChar.floatValue(), 0);
-		assertEquals("4", (float) 12345.6789, fDouble.floatValue(), 0);
-		assertEquals("5", (float) 12345.6789, fFloat.floatValue(), 0.001);
-		assertEquals("6", (float) 12345, fInt.floatValue(), 0);
-		assertEquals("7", (float) 123456789, fLong.floatValue(), 100);
-		assertEquals("8", (float) 12345, fShort.floatValue(), 0);
+		assertEquals("1", 1, fBoolean.floatValue(), 0);
+		assertEquals("2", 1, fByte.floatValue(), 0);
+		assertEquals("3", 97, fChar.floatValue(), 0);
+		assertEquals("4", 12345.6789f, fDouble.floatValue(), 0);
+		assertEquals("5", 12345.6789f, fFloat.floatValue(), 0.001);
+		assertEquals("6", 12345, fInt.floatValue(), 0);
+		assertEquals("7", 123456789, fLong.floatValue(), 100);
+		assertEquals("8", 12345, fShort.floatValue(), 0);
 	}
 	/**
 	 * Test JDI intValue().
