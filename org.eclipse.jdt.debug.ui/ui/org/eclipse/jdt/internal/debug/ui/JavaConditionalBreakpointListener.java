@@ -27,21 +27,17 @@ public class JavaConditionalBreakpointListener implements IJavaConditionalBreakp
 	/**
 	 * @see IJavaConditionalBreakpointListener#breakpointHasRuntimeException(IJavaLineBreakpoint, Throwable)
 	 */
-	public void breakpointHasRuntimeException(final IJavaLineBreakpoint breakpoint, final Throwable exception) {
-		if (!(exception instanceof CoreException)) {
-			return;
-		}
-		CoreException coreException= (CoreException)exception;
+	public void breakpointHasRuntimeException(final IJavaLineBreakpoint breakpoint, final DebugException exception) {
 		IStatus status;
-		Throwable wrappedException= coreException.getStatus().getException();
+		Throwable wrappedException= exception.getStatus().getException();
 		if (wrappedException instanceof InvocationException) {
 			InvocationException ie= (InvocationException) wrappedException;
 			ObjectReference ref= ie.exception();		
 			status= new Status(IStatus.ERROR,JDIDebugUIPlugin.getPluginId(), IStatus.ERROR, ref.referenceType().name(), null);
 		} else {
-			status= coreException.getStatus();
+			status= exception.getStatus();
 		}
-		openConditionErrorDialog(breakpoint, "An exception occurred while evaluating the condition for breakpoint: {0} ", status);
+		openConditionErrorDialog(breakpoint, "Conditional breakpoint evaluation failed", "An exception occurred while evaluating the condition for breakpoint: {0} ", status);
 	}
 
 	/**
@@ -56,37 +52,10 @@ public class JavaConditionalBreakpointListener implements IJavaConditionalBreakp
 			message.append("\n ");
 		}
 		IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IStatus.ERROR, message.toString(), null);
-		openConditionErrorDialog(breakpoint, "Errors detected compiling the condition for breakpoint {0}", status);
+		openConditionErrorDialog(breakpoint, "Conditional breakpoint compilation failed", "Errors detected compiling the condition for breakpoint {0}", status);
 	}
 	
-	/**
-	 * @see IJavaConditionalBreakpointListener#breakpointHasTimedOut(IJavaLineBreakpoint, IJavaThread)
-	 */
-	public void breakpointHasTimedOut(final IJavaLineBreakpoint breakpoint, final IJavaThread thread) {
-/*		final Display display= JDIDebugUIPlugin.getStandardDisplay();
-		if (display.isDisposed()) {
-			return;
-		}
-		display.asyncExec(new Runnable() {
-			public void run() {
-				if (display.isDisposed()) {
-					return;
-				}
-				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-				String breakpointText= fLabelProvider.getText(breakpoint);
-				boolean answer= MessageDialog.openQuestion(shell, MessageFormat.format("Timeout occurred evaluating the condition for breakpoint {0}", new String[] {breakpointText}), "Do you want to suspend the evaluation? Answer no to keep waiting");
-				if (answer) {
-					try {
-						thread.suspend();
-					} catch (DebugException exception) {
-					}
-				}
-			}
-		});
-*/
-	}
-	
-	private void openConditionErrorDialog(final IJavaLineBreakpoint breakpoint, final String errorMessage, final IStatus status) {
+	private void openConditionErrorDialog(final IJavaLineBreakpoint breakpoint, final String title, final String errorMessage, final IStatus status) {
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
 		if (display.isDisposed()) {
 			return;
@@ -98,7 +67,7 @@ public class JavaConditionalBreakpointListener implements IJavaConditionalBreakp
 				}
 				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
 				String breakpointText= fLabelProvider.getText(breakpoint);
-				ConditionalBreakpointErrorDialog dialog= new ConditionalBreakpointErrorDialog(shell, "Conditional breakpoint compilation failed",
+				ConditionalBreakpointErrorDialog dialog= new ConditionalBreakpointErrorDialog(shell, title,
 					MessageFormat.format(errorMessage, new String[] {breakpointText}), status, breakpoint);
 				dialog.open();
 			}

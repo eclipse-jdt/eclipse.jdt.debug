@@ -12,7 +12,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -43,7 +45,6 @@ import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -175,34 +176,12 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					}
 					if (result.hasErrors()) {
 						reportErrors(result);
-					}
-					if (value != null) {
+					} else if (value != null) {
 						displayResult(result);
 					}
 				}
 			});
 		}
-	}
-	
-	/**
-	 * @see IEvaluationListener#evaluationTimedOut(IJavaThread)
-	 */
-	public boolean evaluationTimedOut(final IJavaThread thread) {
-		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-			public void run() {
-				boolean answer= MessageDialog.openQuestion(getShell(), "Evaluation timed out", "Do you want to suspend the evaluation? Answer no to keep waiting");
-				if (answer) {
-					try {
-						thread.suspend();
-					} catch (DebugException exception) {
-					}
-					fKeepWaiting= false;
-				} else {
-					fKeepWaiting= true; // Keep waiting
-				}
-			}
-		});
-		return fKeepWaiting;
 	}
 	
 	/**
@@ -241,11 +220,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					}
 					
 					IEvaluationEngine engine = getEvaluationEngine((IJavaDebugTarget)jFrame.getDebugTarget(), project);
-					int timeout= JDIDebugUIPlugin.getDefault().getPreferenceStore().getInt(IJDIPreferencesConstants.PREF_EVALUATION_TIMEOUT) * 1000;
 					if (object == null) {
-						engine.evaluate(expression, jFrame, this, timeout); // TO DO: Use preference
+						engine.evaluate(expression, jFrame, this);
 					} else {
-						engine.evaluate(expression, object, (IJavaThread)jFrame.getThread(), this, timeout); // TO DO: Use preference
+						engine.evaluate(expression, object, (IJavaThread)jFrame.getThread(), this);
 					}
 					
 				} catch (CoreException e) {
@@ -497,24 +475,16 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		reportError(message);
 	}
 	
-	protected boolean reportErrors(IEvaluationResult result) {
+	protected void reportErrors(IEvaluationResult result) {
 		Message[] errors= result.getErrors();
-		boolean severeErrors= true;
 		if (errors.length == 0) {
 			reportError(result.getException());
 		} else {
-			severeErrors= reportErrors(errors);
-			if (!severeErrors) {
-				//warnings...may be an exception
-				severeErrors= result.getException() != null;
-				reportError(result.getException());
-			}
+			reportErrors(errors);
 		}
-		return severeErrors;
 	}
 	
-	protected boolean reportErrors(Message[] errors) {
-		
+	protected void reportErrors(Message[] errors) {
 		String message= ""; //$NON-NLS-1$
 		for (int i= 0; i < errors.length; i++) {
 			Message error= errors[i];
@@ -529,9 +499,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		
 		if (message.length() != 0) {
 			reportError(message);
-			return true;
 		}
-		return false;
 	}
 	
 	protected void reportWrappedException(Throwable exception) {

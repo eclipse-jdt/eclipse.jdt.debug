@@ -8,7 +8,7 @@ package org.eclipse.jdt.internal.debug.eval;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IMarker;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -47,7 +47,7 @@ public class EvaluationResult implements IEvaluationResult {
 	 * Exception that occurred during evaluation,
 	 * or <code>null</code> if none.
 	 */
-	private Throwable fException;
+	private DebugException fException;
 	
 	/**
 	 * List of <code>Message</code>s describing compilation
@@ -116,7 +116,7 @@ public class EvaluationResult implements IEvaluationResult {
 	/**
 	 * @see IEvaluationResult#getException()
 	 */
-	public Throwable getException() {
+	public DebugException getException() {
 		return fException;
 	}
 	
@@ -126,7 +126,7 @@ public class EvaluationResult implements IEvaluationResult {
 	 * 
 	 * @param e exception
 	 */
-	public void setException(Throwable e) {
+	public void setException(DebugException e) {
 		fException = e;
 	}
 

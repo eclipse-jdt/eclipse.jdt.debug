@@ -207,20 +207,10 @@ public class JDIDebugPlugin extends Plugin {
 	/**
 	 * @see IJavaConditionalBreakpointListener#breakpointHasCompilationErrors(IJavaLineBreakpoint, Message[])
 	 */
-	public void fireBreakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, Throwable exception) {
+	public void fireBreakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception) {
 		Object listeners[]= fConditionalBreakpointListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			((IJavaConditionalBreakpointListener)listeners[i]).breakpointHasRuntimeException(breakpoint, exception);
-		}
-	}
-	
-	/**
-	 * @see IJavaConditionalBreakpointListener#breakpointHasTimedOut(IJavaLineBreakpoint, IJavaThread)
-	 */
-	public void fireBreakpointHasTimedOut(IJavaLineBreakpoint breakpoint, IJavaThread thread) {
-		Object listeners[]= fConditionalBreakpointListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IJavaConditionalBreakpointListener)listeners[i]).breakpointHasTimedOut(breakpoint, thread);
 		}
 	}
 	

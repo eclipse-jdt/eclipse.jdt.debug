@@ -292,6 +292,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Stepping)_10"), thread.getName()); //$NON-NLS-1$
 			}
 		}
+		if (thread.isPerformingEvaluation()) {
+			if (thread.isSystemThread()) {
+				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Evaluating)_9"), thread.getName()); //$NON-NLS-1$
+			} else {
+				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Evaluating)_10"), thread.getName()); //$NON-NLS-1$
+			}
+		}
 		if (!thread.isSuspended()) {
 			if (thread.isSystemThread()) {
 				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Running)_11"), thread.getName()); //$NON-NLS-1$
@@ -763,7 +770,27 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * if none is defined.
 	 */
 	protected Image getDebugElementImage(Object element) {
-		ImageDescriptor image= DebugUITools.getDefaultImageDescriptor(element);
+		ImageDescriptor image= null;
+		if (element instanceof IJavaStackFrame) {
+			IJavaStackFrame frame= (IJavaStackFrame)element;
+			IJavaThread thread= (IJavaThread) frame.getThread();
+			if (thread.isSuspended() && !thread.isPerformingEvaluation()) {
+				image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME);
+			} else {
+				image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME_RUNNING);					
+			}
+		} else if (element instanceof IJavaThread) {
+			IJavaThread thread = (IJavaThread)element;
+			if (thread.isSuspended() && !thread.isPerformingEvaluation()) {
+				image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED);
+			} else if (thread.isTerminated()) {
+				image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_TERMINATED);
+			} else {
+				image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING);
+			}
+		} else {
+			image= DebugUITools.getDefaultImageDescriptor(element);
+		}
 		if (image == null) {
 			return null;
 		}

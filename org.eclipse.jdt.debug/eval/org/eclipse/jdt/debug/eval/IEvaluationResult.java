@@ -5,7 +5,7 @@ package org.eclipse.jdt.debug.eval;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IMarker;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -83,7 +83,7 @@ public interface IEvaluationResult {
 	 * @see com.sun.jdi.InvocationException
 	 * @see org.eclipse.debug.core.DebugException
 	 */
-	Throwable getException();
+	DebugException getException();
 	
 	/**
 	 * Returns the thread in which the evaluation was performed.

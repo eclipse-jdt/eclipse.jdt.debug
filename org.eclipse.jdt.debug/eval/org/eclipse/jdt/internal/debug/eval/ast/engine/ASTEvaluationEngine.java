@@ -5,7 +5,9 @@
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -21,18 +23,18 @@ import org.eclipse.jdt.debug.eval.model.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.model.IRuntimeContext;
 import org.eclipse.jdt.debug.eval.model.IValue;
 import org.eclipse.jdt.debug.eval.model.IVariable;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
-import org.eclipse.jdt.internal.debug.eval.model.*;
+import org.eclipse.jdt.internal.debug.eval.model.EvaluationValue;
+import org.eclipse.jdt.internal.debug.eval.model.JavaObjectRuntimeContext;
+import org.eclipse.jdt.internal.debug.eval.model.RuntimeContext;
 
 public class ASTEvaluationEngine implements IEvaluationEngine {
 
 	private IJavaProject fProject;
 	
 	private IJavaDebugTarget fDebugTarget;
-	
-	private boolean fEvaluationCancelled;
-	private boolean fEvaluationComplete;
 
 	public ASTEvaluationEngine(IJavaProject project, IJavaDebugTarget debugTarget) {
 		setJavaProject(project);
@@ -52,49 +54,47 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 	 * 
 	 * Not yet implemented
 	 */
-	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener, long timeout) {
+	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener) {
 	}
 
 	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener)
 	 */
-	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, long timeout) {
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) {
 		ICompiledExpression expression= getCompiledExpression(snippet, frame);
-		evaluateExpression(expression, frame, listener, timeout);
+		evaluateExpression(expression, frame, listener);
 	}
 	
 	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, long timeout) {
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) {
 		ICompiledExpression expression= getCompiledExpression(snippet, thisContext, thread);
-		evaluateExpression(expression, thisContext, thread, listener, timeout);
+		evaluateExpression(expression, thisContext, thread, listener);
 	}
 	
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaStackFrame, IEvaluationListener)
 	 */
-	public void evaluateExpression(final ICompiledExpression expression, final IJavaStackFrame frame, final IEvaluationListener listener, long timeout) {
+	public void evaluateExpression(final ICompiledExpression expression, final IJavaStackFrame frame, final IEvaluationListener listener) {
 		RuntimeContext context = new RuntimeContext(getJavaProject(), frame);
-		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener, timeout);
+		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener);
 	}
 
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluateExpression(final ICompiledExpression expression, final IJavaObject thisContext, final IJavaThread thread, final IEvaluationListener listener, long timeout) {
+	public void evaluateExpression(final ICompiledExpression expression, final IJavaObject thisContext, final IJavaThread thread, final IEvaluationListener listener) {
 		IRuntimeContext context = new JavaObjectRuntimeContext(thisContext, getJavaProject(), thread);
-		doEvaluation(expression, context, thread, listener, timeout);
+		doEvaluation(expression, context, thread, listener);
 	}
 	
 	/**
 	 * Evaluates the given expression in the given thread and the given runtime context.
 	 */
-	private void doEvaluation(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener, final long timeout) {
+	private void doEvaluation(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener) {
 		Thread evaluationThread= new Thread(new Runnable() {
 			public void run() {
-				fEvaluationCancelled= false;
-				fEvaluationComplete= false;
 
 				EvaluationResult result = new EvaluationResult(ASTEvaluationEngine.this, expression.getSnippet(), thread);
 				if (expression.hasErrors()) {
@@ -107,33 +107,18 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 				}
 		
 				IValue value = null;
-				Thread timeoutThread= new Thread(new Runnable() {
-					public void run() {
-						while (!fEvaluationComplete && !fEvaluationCancelled) {
-							try {
-								Thread.currentThread().sleep(timeout);
-							} catch(InterruptedException e) {
-							}
-							if (!fEvaluationComplete && !listener.evaluationTimedOut(thread)) {
-								fEvaluationCancelled= true;
-							}
-						}
-					}
-				}, "Evaluation timeout thread");
-				timeoutThread.start();
+				((JDIThread)thread).setPerformingEvaluation(true);
 				value= expression.evaluate(context);
-				fEvaluationComplete= true;
-				if (fEvaluationCancelled) {
-					// Don't notify the listener if the evaluation has been cancelled
-					return;
-				}
+				((JDIThread)thread).setPerformingEvaluation(false);
 				CoreException exception= expression.getException();
 				
 				if (value != null) {
 					IJavaValue jv = ((EvaluationValue)value).getJavaValue();
 					result.setValue(jv);
 				}
-				result.setException(exception);
+				if (exception != null) {
+					result.setException(new DebugException(exception.getStatus()));
+				}
 				listener.evaluationComplete(result);
 			}
 		}, "Evaluation thread");
@@ -260,7 +245,7 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener, long timeout) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener) throws DebugException {
 	}
 
 	/**

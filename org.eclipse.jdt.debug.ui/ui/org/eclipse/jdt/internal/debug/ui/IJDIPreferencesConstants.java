@@ -28,12 +28,6 @@ public interface IJDIPreferencesConstants {
 	 */
 	public static final String PREF_USE_AST_EVALUATION= IJavaDebugUIConstants.PLUGIN_ID + ".use_ast_evaluation"; //$NON-NLS-1$
 	/**
-	 * Integer preference controlling how long evaluations
-	 * are allowed to proceed before the user is prompted
-	 * to suspend the evalution. Represented in seconds.
-	 */
-	public static final String PREF_EVALUATION_TIMEOUT= IJavaDebugUIConstants.PLUGIN_ID + ".evaluation_timeout"; // $NON-NLS-1$
-	/**
 	 * Boolean preference controlling whether to suspend
 	 * execution when a compilation error is encountered
 	 * (while debugging).

@@ -41,15 +41,16 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	 */
 	private String fResult;
 	
-	protected boolean reportErrors(IEvaluationResult result) {
-		boolean severeProblems= super.reportErrors(result);
-		if (severeProblems) {
-			IDataDisplay dataDisplay= getDataDisplay();
-			if (dataDisplay != null) {
-				dataDisplay.displayExpressionValue(ActionMessages.getString("DisplayAction.(evaluation_failed)_1")); //$NON-NLS-1$
-			}
+	/**
+	 * Reports errors to the user via the normal means (@see EvaluateAction#reportErrors(IEvaluationResult))
+	 * and displays a failed evaluation message in the display view.
+	 */
+	protected void reportErrors(IEvaluationResult result) {
+		super.reportErrors(result);
+		IDataDisplay dataDisplay= getDataDisplay();
+		if (dataDisplay != null) {
+			dataDisplay.displayExpressionValue(ActionMessages.getString("DisplayAction.(evaluation_failed)_1")); //$NON-NLS-1$
 		}
-		return severeProblems;
 	}
 	
 	/**

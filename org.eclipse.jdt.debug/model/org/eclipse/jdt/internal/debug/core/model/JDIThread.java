@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
@@ -127,12 +128,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private String fName= null;
 	
+	private boolean fIsPerformingEvaluation= false;
 	/**
 	 * Whether this thread is currently performing
 	 * an evaluation (invoke method). Nested method
 	 * invocations cannot be performed.
 	 */
-	private boolean fInEvaluation = false;
+	private boolean fIsInvokingMethod = false;
 	
 		
 	/**
@@ -597,11 +599,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// might be resuming this thread has a chance to complete before
 		// we test if this thread is already runnnig. See bug 6518.
 		synchronized (this) {
-			if (!isSuspended()) {
+			if (!isSuspended() && !isPerformingEvaluation()) {
 				requestFailed(JDIDebugModelMessages.getString("JDIThread.Evaluation_failed_-_thread_not_suspended"), null); //$NON-NLS-1$
 			}
 		}
-		if (isPerformingEvaluation()) {
+		if (isInvokingMethod()) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null); //$NON-NLS-1$
 		}
 		Value result= null;
@@ -610,9 +612,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// set the request timeout to be infinite
 			setRequestTimeout(Integer.MAX_VALUE);
 			setRunning(true);
-			setPerformingEvaluation(true);
+			setInvokingMethod(true);
 			preserveStackFrames();
-			
 			if (receiverClass == null) {
 				result= receiverObject.invokeMethod(getUnderlyingThread(), method, args, ClassType.INVOKE_SINGLE_THREADED);
 			} else {
@@ -675,7 +676,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * </ul>
 	 */
 	protected ObjectReference newInstance(ClassType receiverClass, Method constructor, List args) throws DebugException {
-		if (isPerformingEvaluation()) {
+		if (isInvokingMethod()) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations_2"), null); //$NON-NLS-1$
 		}
 		ObjectReference result= null;
@@ -684,7 +685,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// set the request timeout to be infinite
 			setRequestTimeout(Integer.MAX_VALUE);
 			setRunning(true);
-			setPerformingEvaluation(true);
+			setInvokingMethod(true);
 			preserveStackFrames();
 			result= receiverClass.newInstance(getUnderlyingThread(), constructor, args, ClassType.INVOKE_SINGLE_THREADED);
 		} catch (InvalidTypeException e) {
@@ -738,7 +739,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected void invokeComplete(int restoreTimeout) {
 		setRunning(false);
-		setPerformingEvaluation(false);
+		setInvokingMethod(false);
 		setRequestTimeout(restoreTimeout);
 		// update preserved stack frames
 		try {
@@ -1431,25 +1432,42 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 		 	
 	/**
-	 * Returns whether this thread is currently performing
-	 * an evaluation.
-	 * 
-	 * @return whether this thread is currently performing
-	 * 	an evaluation
+	 * @see IJavaThread#isPerformingEvaluation()
 	 */
-	protected boolean isPerformingEvaluation() {
-		return fInEvaluation;
+	public boolean isPerformingEvaluation() {
+		return fIsPerformingEvaluation;
 	}
 	
 	/**
-	 * Sets whether this thread is currently performing
-	 * an evaluation.
+	 * Returns whether this thread is currently performing
+	 * a method invokation 
+	 */
+	public boolean isInvokingMethod() {
+		return fIsInvokingMethod;
+	}
+	
+	/**
+	 * Sets whether this thread is currently invoking a method
 	 * 
 	 * @param evaluating whether this thread is currently
-	 *  performing an evaluation
+	 *  invoking a method
 	 */
-	protected void setPerformingEvaluation(boolean evaluating) {
-		fInEvaluation= evaluating;
+	protected void setInvokingMethod(boolean invoking) {
+		fIsInvokingMethod= invoking;
+	}
+	
+	/**
+	 * Sets whether this thread is currently performing an
+	 * evaluation. An evaluation consists of a sequence
+	 * of method invokations
+	 */
+	public void setPerformingEvaluation(boolean evaluating) {
+		fIsPerformingEvaluation= evaluating;
+		if (evaluating) {
+			fireResumeEvent(DebugEvent.EVALUATION);
+		} else {
+			fireChangeEvent(DebugEvent.EVALUATION);
+		}
 	}
 	
 	/**

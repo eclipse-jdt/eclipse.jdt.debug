@@ -68,6 +68,14 @@ public interface IJavaThread extends IThread {
 	 */
 	boolean mayBeOutOfSynch() throws DebugException;	
 	/**
+	 * Returns whether this thread is currently performing
+	 * an evaluation.
+	 * 
+	 * @return whether this thread is currently performing
+	 * 	an evaluation
+	 */
+	boolean isPerformingEvaluation();
+	/**
 	 * Returns the name of the thread group this thread belongs to.
 	 *
 	 * @return thread group name

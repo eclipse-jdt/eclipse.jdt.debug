@@ -2166,7 +2166,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	
 	private String getQualifiedName(ITypeBinding typeBinding) {
 		IPackageBinding packageBinding = typeBinding.getPackage();
-		return ((packageBinding == null)? "" : packageBinding.getName() + ".") + typeBinding.getName();
+		return ((packageBinding == null || packageBinding.isUnnamed())? "" : packageBinding.getName() + ".") + typeBinding.getName();
 	}
 	
 	private int getTypeId(Expression expression) {

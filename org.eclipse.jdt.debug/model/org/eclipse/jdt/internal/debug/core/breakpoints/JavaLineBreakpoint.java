@@ -84,12 +84,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	private Map fSuspendEvents= new HashMap();
 	/**
-	 * Collection of targets in which an evaluation is occurring. This collection
-	 * is maintained to assure that conditional breakpoints don't attempt nested
-	 * evaluations.
-	 */
-	private Set fEvaluatingTargets= new HashSet();
-	/**
 	 * The cached compiled expression for this breakpoint. This value must be cleared
 	 * everytime the breakpoint is added to a target.
 	 */
@@ -135,7 +129,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
-		fEvaluatingTargets.remove(target);
 		super.removeFromTarget(target);
 	}
 	
@@ -380,7 +373,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * the thread should resume.
 	 */
 	protected boolean handleConditionalBreakpointEvent(Event event, JDIThread thread, JDIDebugTarget target) throws CoreException {
-		if (fEvaluatingTargets.contains(target)) {
+		if (thread.isPerformingEvaluation()) {
 			// If an evaluation is already being computed for this thread,
 			// we can't perform another
 			return !suspendForEvent(event, thread);
@@ -411,9 +404,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			fireConditionHasErrors();
 			return !suspendForEvent(event, thread);
 		}
-		fEvaluatingTargets.add(target);
 		fSuspendEvents.put(thread, event);
-		engine.evaluateExpression(fCompiledExpression, frame, listener, 10000); // 10 second timeout for now
+		engine.evaluateExpression(fCompiledExpression, frame, listener);
 
 		// Do not resume. When the evaluation returns, the evaluation listener
 		// will resume the thread if necessary or update for suspension.
@@ -432,12 +424,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		public void evaluationComplete(IEvaluationResult result) {
 			fResult= result;
 			JDIThread thread= (JDIThread)result.getThread();
-			fEvaluatingTargets.remove(thread.getDebugTarget());
 			Event event= (Event)fSuspendEvents.get(thread);
 			if (result.hasErrors()) {
-				Throwable exception= result.getException();
-				if (exception instanceof VMDisconnectedException) {
-					JDIDebugPlugin.log((VMDisconnectedException)exception);
+				DebugException exception= result.getException();
+				Throwable wrappedException= exception.getStatus().getException();
+				if (wrappedException instanceof VMDisconnectedException) {
+					JDIDebugPlugin.log((VMDisconnectedException)wrappedException);
 					try {
 						thread.resumeQuiet();
 					} catch(DebugException e) {
@@ -477,7 +469,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 	};
 	
-	private void fireConditionHasRuntimeErrors(Throwable exception) {
+	private void fireConditionHasRuntimeErrors(DebugException exception) {
 		JDIDebugPlugin.getDefault().fireBreakpointHasRuntimeException(this, exception);
 	}
 	

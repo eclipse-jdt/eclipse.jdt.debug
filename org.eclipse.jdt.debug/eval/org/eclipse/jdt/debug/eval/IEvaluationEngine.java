@@ -60,7 +60,7 @@ public interface IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener, long timeout) throws DebugException;
+	void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener) throws DebugException;
 	/**
 	 * Asynchronously evaluates the given snippet in the context of
 	 * the specified stack frame, reporting the result back to the given listener.
@@ -89,7 +89,7 @@ public interface IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, long timeout) throws DebugException;
+	void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException;
 	/**
 	 * Asynchronously evaluates the given snippet in the context of
 	 * the specified type, reporting the result back to the given listener.
@@ -119,7 +119,7 @@ public interface IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, long timeout) throws DebugException;
+	void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException;
 
 	/**
 	 * Asynchronously evaluates the given expression in the context of
@@ -149,7 +149,7 @@ public interface IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener, long timeout) throws DebugException;
+	void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException;
 	/**
 	 * Asynchronously evaluates the given expression in the specified
 	 * target thread, reporting the result back to the given listener.
@@ -177,7 +177,7 @@ public interface IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	void evaluateExpression(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener, long timeout) throws DebugException;
+	void evaluateExpression(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener) throws DebugException;
 	/**
 	 * Asynchronously evaluates the given expression in the context of
 	 * the specified type, reporting the result back to the given listener.
@@ -206,7 +206,7 @@ public interface IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	void evaluateExpression(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener, long timeout) throws DebugException;
+	void evaluateExpression(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener) throws DebugException;
 
 	/**
 	 * Synchronously generates a compiled expression from the given snippet

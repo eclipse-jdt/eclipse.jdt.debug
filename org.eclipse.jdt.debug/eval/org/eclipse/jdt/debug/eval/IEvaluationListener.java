@@ -34,16 +34,4 @@ public interface IEvaluationListener {
 	 * @see IEvaluationResult
 	 */
 	void evaluationComplete(IEvaluationResult result);
-	
-	/**
-	 * Notifies this listener that an evaluation has timed out
-	 * and returns whether this listener wants to keep waiting.
-	 * If this listener returns false, it will not be notified
-	 * when (if) the evaluation completes
-	 * 
-	 * @param thread the thread in which the evaluation is
-	 *  occurring
-	 * @return whether to continue waiting
-	 */
-	boolean evaluationTimedOut(IJavaThread thread);
 }
