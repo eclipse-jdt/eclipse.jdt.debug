@@ -80,6 +80,12 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean fCanGetOwnedMonitorInfo;
 	private boolean fCanGetCurrentContendedMonitor;
 	private boolean fCanGetMonitorInfo;
+	private boolean fCanRedefineClasses;
+	private boolean fCanAddMethod;
+	private boolean fCanUnrestrictedlyRedefineClasses;
+	private boolean fCanPopTopFrame;
+	private boolean fCanPopFrames;
+	private boolean fCanPopObsoleteFrames;
 	private boolean[] fHcrCapabilities = null;
 	
 	/** 
@@ -324,9 +330,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		if (fGotCapabilities)
 			return;
 		
+		int command =  JdwpCommandPacket.VM_CAPABILITIES;
+		if (isJdwpVersionGreaterOrEqual(1, 4)) {
+			command = JdwpCommandPacket.VM_CAPABILITIES_NEW;
+		}
+		
 		initJdwpRequest();
 		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_CAPABILITIES);
+			JdwpReplyPacket replyPacket = requestVM(command);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
 		
@@ -337,6 +348,22 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			fCanGetOwnedMonitorInfo = readBoolean("owned monitor info", replyData);
 			fCanGetCurrentContendedMonitor = readBoolean("curr. cont. monitor", replyData);
 			fCanGetMonitorInfo = readBoolean("monitor info", replyData);
+			if (command == JdwpCommandPacket.VM_CAPABILITIES_NEW) {
+				// extended capabilities
+				fCanRedefineClasses = readBoolean("redefine classes", replyData);
+				fCanAddMethod = readBoolean("add method", replyData);
+				fCanUnrestrictedlyRedefineClasses = readBoolean("unrestrictedly redefine classes", replyData);
+				fCanPopTopFrame = readBoolean("pop top frame", replyData);
+				fCanPopFrames = readBoolean("pop frames", replyData);
+				fCanPopObsoleteFrames = readBoolean("pop obsolete frames", replyData);
+			} else {
+				fCanRedefineClasses = false;
+				fCanAddMethod = false;
+				fCanUnrestrictedlyRedefineClasses = false;
+				fCanPopTopFrame = false;
+				fCanPopFrames = false;
+				fCanPopObsoleteFrames = false;				
+			}
 			fGotCapabilities = true;
 		} catch (IOException e) {
 			fGotIDSizes = false;
@@ -910,4 +937,20 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	public int getRequestTimeout() {
 		return fRequestTimeout;
 	}
+	
+	/**
+	 * Returns whether the JDWP version is greater
+	 * than or equal to the specified major/minor
+	 * version numbers.
+	 * 
+	 * @return whether the JDWP version is greater
+	 * than or equal to the specified major/minor
+	 * version numbers
+	 */
+	public boolean isJdwpVersionGreaterOrEqual(int major, int minor) {
+		getVersionInfo();
+		return (fJdwpMajorVersion > major) ||
+			(fJdwpMajorVersion == major && fJdwpMinorVersion >= minor);
+	}
+	
 }
