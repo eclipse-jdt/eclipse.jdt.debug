@@ -300,16 +300,12 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 	}
 	
 	protected void report(final String message) {
-		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IEditorStatusLine statusLine= (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class);
-				if (statusLine != null) {
-					statusLine.setMessage(true, message, null);
-				}
-				if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
-					Display.getCurrent().beep();
-				}
-			}
-		});
-	}	
+		IEditorStatusLine statusLine= (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class);
+		if (statusLine != null) {
+			statusLine.setMessage(true, message, null);
+		}
+		if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
+			Display.getCurrent().beep();
+		}
+	}
 }
