@@ -13,7 +13,6 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
  
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -62,9 +61,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A launch configuration tab that displays and edits project and
@@ -140,7 +139,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
 		GridLayout topLayout = new GridLayout();
 		topLayout.verticalSpacing = 0;
 		comp.setLayout(topLayout);

@@ -19,8 +19,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A dialog to select a type from a list of types. The dialog allows
@@ -71,7 +71,7 @@ public class MainTypeSelectionDialog extends TwoPaneElementSelector {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		WorkbenchHelp.setHelp(newShell, IJavaDebugHelpContextIds.MAIN_TYPE_SELECTION_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IJavaDebugHelpContextIds.MAIN_TYPE_SELECTION_DIALOG);
 	}
 
 	/*

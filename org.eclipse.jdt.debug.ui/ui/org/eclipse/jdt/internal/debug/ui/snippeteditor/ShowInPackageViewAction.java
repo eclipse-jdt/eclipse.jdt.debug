@@ -19,7 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This action reveals the snippet editor in the package explorer. 
@@ -42,7 +42,7 @@ public class ShowInPackageViewAction extends Action {
 		super(SnippetMessages.getString("ShowInPackageViewAction.label")); //$NON-NLS-1$
 		setDescription(SnippetMessages.getString("ShowInPackageViewAction.description")); //$NON-NLS-1$
 		setToolTipText(SnippetMessages.getString("ShowInPackageViewAction.tooltip")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IJavaHelpContextIds.SHOW_IN_PACKAGEVIEW_ACTION);	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaHelpContextIds.SHOW_IN_PACKAGEVIEW_ACTION);	
 	}
 	
 	/**

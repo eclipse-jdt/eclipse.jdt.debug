@@ -53,7 +53,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class JavaStepFilterPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
@@ -85,7 +84,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	}
 
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_STEP_FILTER_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_STEP_FILTER_PREFERENCE_PAGE);
 		
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);

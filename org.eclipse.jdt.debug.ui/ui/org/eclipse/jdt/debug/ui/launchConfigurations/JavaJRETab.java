@@ -14,7 +14,6 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Map;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -44,7 +43,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A launch configuration tab that displays and edits the VM install 
@@ -104,7 +103,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		
 		Composite topComp = new Composite(parent, SWT.NONE);
 		setControl(topComp);
-		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
 		topLayout.marginHeight=0;
@@ -113,8 +112,6 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		topComp.setLayoutData(gd);
 		topComp.setFont(font);
-		
-//		createVerticalSpacer(topComp, 1);
 				
 		fJREBlock = new JREsComboBlock();
 		fJREBlock.setDefaultJREDescriptor(getDefaultJREDescriptor());

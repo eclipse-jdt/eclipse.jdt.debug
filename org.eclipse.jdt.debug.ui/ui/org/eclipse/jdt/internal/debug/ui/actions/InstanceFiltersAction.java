@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -42,8 +41,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Action to associate an object with one or more breakpoints.
@@ -68,7 +67,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		 */
 		protected Control createDialogArea(Composite parent) {
 			Control control = super.createDialogArea(parent);
-			WorkbenchHelp.setHelp(
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(
 				parent,
 				IJavaDebugHelpContextIds.INSTANCE_BREAKPOINT_SELECTION_DIALOG);				
 			return control;

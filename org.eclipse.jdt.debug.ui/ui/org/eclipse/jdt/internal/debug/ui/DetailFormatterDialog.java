@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -67,7 +66,6 @@ import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
@@ -139,7 +137,7 @@ public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCo
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		WorkbenchHelp.setHelp(
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			parent,
 			IJavaDebugHelpContextIds.EDIT_DETAIL_FORMATTER_DIALOG);			
 		

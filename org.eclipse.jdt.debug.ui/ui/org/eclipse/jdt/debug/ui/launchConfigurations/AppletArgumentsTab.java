@@ -13,7 +13,7 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.launcher.AppletWorkingDirectoryBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A launch configuration tab that displays and edits program arguments,
@@ -37,7 +37,7 @@ public class AppletArgumentsTab extends JavaArgumentsTab {
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab#setHelpContextId()
 	 */
 	protected void setHelpContextId() {
-		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_APPLET_ARGUMENTS_TAB);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_APPLET_ARGUMENTS_TAB);		
 	}
 			
 }

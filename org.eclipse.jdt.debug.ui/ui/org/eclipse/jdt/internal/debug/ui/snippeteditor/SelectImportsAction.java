@@ -14,7 +14,7 @@ import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 public class SelectImportsAction extends SnippetAction {
 	
@@ -25,7 +25,7 @@ public class SelectImportsAction extends SnippetAction {
 		setDescription(SnippetMessages.getString("SelectImports.description")); //$NON-NLS-1$
 		ISharedImages sharedImages= JavaUI.getSharedImages();
 		setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_OBJS_IMPCONT));
-		WorkbenchHelp.setHelp(this, IJavaDebugHelpContextIds.SCRAPBOOK_IMPORTS_ACTION);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IJavaDebugHelpContextIds.SCRAPBOOK_IMPORTS_ACTION);
 	}
 	
 	/**

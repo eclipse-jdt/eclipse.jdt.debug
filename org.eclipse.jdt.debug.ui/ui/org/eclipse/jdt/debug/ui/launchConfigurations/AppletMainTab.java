@@ -53,8 +53,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This tab appears for java applet launch configurations and allows the user to edit
@@ -110,7 +110,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		
 		Composite projComp= new Composite(parent, SWT.NONE);
 		setControl(projComp);
-		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_APPLET_MAIN_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_APPLET_MAIN_TAB);
 		
 		GridLayout projLayout= new GridLayout();
 		projLayout.numColumns= 2;

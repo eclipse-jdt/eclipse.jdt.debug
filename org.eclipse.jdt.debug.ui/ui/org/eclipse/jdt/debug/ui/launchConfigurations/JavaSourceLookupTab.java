@@ -12,7 +12,6 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 
 import java.util.List;
-
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
@@ -28,7 +27,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A launch configuration tab that displays and edits source lookup
@@ -57,7 +55,7 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_SOURCE_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_SOURCE_TAB);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
 		topLayout.marginHeight= 0;

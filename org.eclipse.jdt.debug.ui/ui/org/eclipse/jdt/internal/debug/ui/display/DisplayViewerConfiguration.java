@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.ui.display;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -30,7 +31,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 		
 	public DisplayViewerConfiguration() {
-		super(JavaPlugin.getDefault().getJavaTextTools().getColorManager(), JavaPlugin.getDefault().getPreferenceStore(), null, null);
+		super(JavaPlugin.getDefault().getJavaTextTools().getColorManager(), PreferenceConstants.getPreferenceStore(), null, null);
 	}
 
 	public IContentAssistProcessor getContentAssistantProcessor() {

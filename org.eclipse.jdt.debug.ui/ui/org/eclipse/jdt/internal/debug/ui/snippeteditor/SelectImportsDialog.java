@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -57,7 +56,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SelectImportsDialog extends TitleAreaDialog {
 
@@ -138,7 +136,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	}
 	
 	private void createImportButtons(Composite container) {
-		WorkbenchHelp.setHelp(container, IJavaDebugHelpContextIds.SNIPPET_IMPORTS_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IJavaDebugHelpContextIds.SNIPPET_IMPORTS_DIALOG);
 		Font font = container.getFont();
 		
 		// button container

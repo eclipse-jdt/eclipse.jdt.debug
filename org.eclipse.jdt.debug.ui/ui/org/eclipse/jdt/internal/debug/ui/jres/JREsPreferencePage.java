@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
-
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -36,7 +35,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The Installed JREs preference page.
@@ -103,7 +102,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		
 		fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
 						
-		WorkbenchHelp.setHelp(ancestor, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(ancestor, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);		
 		initDefaultVM();
 		fJREBlock.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
