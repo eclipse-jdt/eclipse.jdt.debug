@@ -33,6 +33,6 @@ public class FloatTypeImpl extends PrimitiveTypeImpl implements FloatType {
 	 * @return Create a null value instance of the type.
 	 */
 	public Value createNullValue() {
-		return virtualMachineImpl().mirrorOf((float)0);
+		return virtualMachineImpl().mirrorOf(0.0f);
 	}
 }

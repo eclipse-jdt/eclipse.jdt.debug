@@ -33,6 +33,6 @@ public class DoubleTypeImpl extends PrimitiveTypeImpl implements DoubleType {
 	 * @return Create a null value instance of the type.
 	 */
 	public Value createNullValue() {
-		return virtualMachineImpl().mirrorOf((double)0);
+		return virtualMachineImpl().mirrorOf(0.0D);
 	}
 }

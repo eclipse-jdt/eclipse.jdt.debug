@@ -33,6 +33,6 @@ public class IntegerTypeImpl extends PrimitiveTypeImpl implements IntegerType {
 	 * @return Create a null value instance of the type.
 	 */
 	public Value createNullValue() {
-		return virtualMachineImpl().mirrorOf((int)0);
+		return virtualMachineImpl().mirrorOf(0);
 	}
 }

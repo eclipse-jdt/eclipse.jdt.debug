@@ -33,6 +33,6 @@ public class LongTypeImpl extends PrimitiveTypeImpl implements LongType {
 	 * @return Create a null value instance of the type.
 	 */
 	public Value createNullValue() {
-		return virtualMachineImpl().mirrorOf((long)0);
+		return virtualMachineImpl().mirrorOf(0L);
 	}
 }

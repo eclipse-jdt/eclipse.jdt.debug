@@ -28,7 +28,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	
 	/** Method that holds the location. */
 	MethodImpl fMethod;
-	/** Index of location within the method, not: this value must be treated as UNSIGNED! */
+	/** Index of location within the method, note: this value must be treated as UNSIGNED! */
 	long fIndex;
 	
 	/**

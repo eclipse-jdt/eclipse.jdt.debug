@@ -133,7 +133,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 	 * @return Returns true if this type has been initialized.
 	 */
 	public boolean isInitialized() {
-		return (status() & ReferenceTypeImpl.JDWP_CLASS_STATUS_PREPARED) != 0;
+		return isPrepared();
 	}
 
 	/**
