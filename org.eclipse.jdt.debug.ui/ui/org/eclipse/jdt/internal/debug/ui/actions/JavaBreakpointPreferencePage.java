@@ -264,10 +264,8 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			Control control= fViewer.getControl();
 			GridData gd = new GridData();
 			gd.horizontalSpan = numColumns - 1;
-			gd.horizontalAlignment = gd.FILL;
+			gd.horizontalAlignment = GridData.FILL;
 			gd.grabExcessHorizontalSpace = true;
-			gd.heightHint= convertHeightInCharsToPixels(10);
-			gd.widthHint= convertWidthInCharsToPixels(40);
 			control.setLayoutData(gd);
 		
 			// listener for activate the code assist
@@ -359,7 +357,9 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				}
 			}
 			getCompletionProcessor().setPosition(position);
-			
+			GridData gd= (GridData)fViewer.getControl().getLayoutData();
+			gd.heightHint= convertHeightInCharsToPixels(10);
+			gd.widthHint= convertWidthInCharsToPixels(40);			
 		}
 
 		/**
