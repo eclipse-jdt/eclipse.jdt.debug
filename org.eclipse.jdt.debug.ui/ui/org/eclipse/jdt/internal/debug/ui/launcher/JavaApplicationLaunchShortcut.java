@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -34,11 +35,14 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.console.StringMatcher;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -66,7 +70,12 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFi
 		if (search != null) {
 			try {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-				types = MainMethodFinder.findTargets(dialog, search);
+				IJavaElement[] elements = getJavaElements(search);
+				MainMethodSearchEngine engine = new MainMethodSearchEngine();
+				IJavaSearchScope scope = SearchEngine.createJavaSearchScope(elements, false);
+				types = engine.searchMainMethods(dialog, scope,
+						IJavaElementSearchConstants.CONSIDER_BINARIES | IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS,
+						true);
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
@@ -93,6 +102,26 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFi
 		}
 
 	}	
+	
+	/**
+	 * Returns the Java elements corresponding to the given objects.
+	 * 
+	 * @param objects selected objects
+	 * @return corresponding Java elements
+	 */
+	private IJavaElement[] getJavaElements(Object[] objects) {
+		List list= new ArrayList(objects.length);
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			if (object instanceof IAdaptable) {
+				IJavaElement element = (IJavaElement) ((IAdaptable)object).getAdapter(IJavaElement.class);
+				if (element != null) {
+					list.add(element);
+				}
+			}
+		}
+		return (IJavaElement[]) list.toArray(new IJavaElement[list.size()]);
+	}
 
 	/**
 	 * Prompts the user to select a type
