@@ -267,7 +267,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	
 	public void editType() {
 		IStructuredSelection selection= (IStructuredSelection)fFormatterListViewer.getSelection();
-		if (new DetailFormatterDialog(getShell(), (DetailFormatter)(selection).getFirstElement(), null, false, true).open() == Window.OK) {
+		if (new DetailFormatterDialog(getShell(), (DetailFormatter)(selection).getFirstElement(), null, true, true).open() == Window.OK) {
 			fFormatterListViewer.refresh();
 			fFormatViewerContentProvider.refreshViewer();
 			updatePage(selection);
