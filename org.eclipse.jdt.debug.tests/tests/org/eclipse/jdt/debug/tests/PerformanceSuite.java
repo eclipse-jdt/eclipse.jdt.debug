@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.jdt.debug.tests.performance.PerfConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.performance.PerfConsoleTests;
+import org.eclipse.jdt.debug.tests.performance.PerfDebugBaselineTest;
 import org.eclipse.jdt.debug.tests.performance.PerfSteppingTests;
 
 /**
@@ -36,6 +37,7 @@ public class PerformanceSuite extends DebugSuite {
 	public PerformanceSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 		
+		addTest(new TestSuite(PerfDebugBaselineTest.class));
 		addTest(new TestSuite(PerfConditionalBreakpointsTests.class));
 		addTest(new TestSuite(PerfSteppingTests.class));
 		addTest(new TestSuite(PerfConsoleTests.class));
