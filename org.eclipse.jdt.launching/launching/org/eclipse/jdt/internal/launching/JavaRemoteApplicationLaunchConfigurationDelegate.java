@@ -43,7 +43,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		int portNumber = verifyPortNumber(configuration);
 						
 		// Allow termination of remote VM
-		boolean allowTerminate = isAllowTermiante(configuration);
+		boolean allowTerminate = isAllowTerminate(configuration);
 		
 		IDebugTarget debugTarget = null;
 		String connectorId = getVMConnectorId(configuration);

@@ -532,7 +532,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @return whether termination is allowed
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected boolean isAllowTermiante(ILaunchConfiguration configuration) throws CoreException {
+	protected boolean isAllowTerminate(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
 	}					
 }
