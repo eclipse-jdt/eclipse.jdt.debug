@@ -5,16 +5,39 @@ package org.eclipse.jdt.debug.core;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.debug.core.*;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.JavaExceptionBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JavaLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JavaMethodEntryBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JavaPatternBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JavaRunToLineBreakpoint;
+import org.eclipse.jdt.internal.debug.core.JavaWatchpoint;
+import org.eclipse.jdt.internal.debug.core.SnippetSupportLineBreakpoint;
 
 import com.sun.jdi.VirtualMachine;
 
@@ -110,7 +133,7 @@ public class JDIDebugModel {
 		try {
 			ResourcesPlugin.getWorkspace().run(r, null);
 		} catch (CoreException e) {
-			DebugJavaUtils.logError(e);
+			JDIDebugPlugin.logError(e);
 		}
 		return fgTarget;
 	}

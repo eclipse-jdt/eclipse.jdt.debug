@@ -152,7 +152,7 @@ class EventDispatcher implements Runnable {
 					try {
 						workspace.run(runnable, null);
 					} catch (CoreException e) {
-						DebugJavaUtils.logError(e);
+						JDIDebugPlugin.logError(e);
 						break;
 					}
 				}

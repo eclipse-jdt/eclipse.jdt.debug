@@ -95,7 +95,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			try {
 				createRequest(target, cpe.referenceType());
 			} catch (CoreException e) {
-				logError(e);
+				JDIDebugPlugin.logError(e);
 			}
 			return true;
 		} else {
@@ -124,7 +124,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				// make a note that we auto-disabled this breakpoint.
 				setExpired(true);
 			} catch (CoreException ce) {
-				logError(ce);
+				JDIDebugPlugin.logError(ce);
 			}
 		}
 	}	
@@ -177,7 +177,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				try {
 					ResourcesPlugin.getWorkspace().run(wRunnable, null);
 				} catch (CoreException ce) {
-					logError(ce);
+					JDIDebugPlugin.logError(ce);
 				}
 			}
 		};
@@ -204,7 +204,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				}
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
-				logError(e);
+				JDIDebugPlugin.logError(e);
 			}
 			deregisterRequest(req, target);
 		}
@@ -228,7 +228,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				}
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
-				logError(e);
+				JDIDebugPlugin.logError(e);
 			}
 		}
 	}
@@ -347,13 +347,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public static String getPluginIdentifier() {
 		return JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier();
-	}	
-	
-	/**
-	 * Convenience method to log internal errors
-	 */
-	protected void logError(Exception e) {
-		DebugJavaUtils.logError(e);
 	}	
 	
 	protected void run(IWorkspaceRunnable wr) throws DebugException {

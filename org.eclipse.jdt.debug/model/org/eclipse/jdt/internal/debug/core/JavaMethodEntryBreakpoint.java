@@ -101,7 +101,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 		} catch (VMDisconnectedException e) {
 			return;
 		} catch (RuntimeException e) {
-			logError(e);
+			JDIDebugPlugin.logError(e);
 			return;
 		}
 		registerRequest(target, request);
@@ -123,7 +123,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				request.putProperty(IJavaDebugConstants.HIT_COUNT, hc);
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
-				logError(e);
+				JDIDebugPlugin.logError(e);
 			}
 		}
 		return request;
@@ -176,7 +176,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				return true;
 				}
 		} catch (CoreException e) {
-			logError(e);
+			JDIDebugPlugin.logError(e);
 		}
 		return true;
 		
@@ -220,7 +220,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 					setExpired(true);
 					setEnabled(false);
 				} catch (CoreException e) {
-					logError(e);
+					JDIDebugPlugin.logError(e);
 				}
 				return false;
 			}  else {
@@ -262,6 +262,5 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 		nameSignature[1]= aMethod.getSignature();
 		return nameSignature;
 	}		
-
 }
 

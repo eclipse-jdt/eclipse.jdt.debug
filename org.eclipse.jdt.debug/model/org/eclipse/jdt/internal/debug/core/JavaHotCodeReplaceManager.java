@@ -135,7 +135,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 				attemptDropToFrame(target, typeNames);
 			} catch (DebugException de) {
 				//target update failed
-				DebugJavaUtils.logError(de);
+				JDIDebugPlugin.logError(de);
 			}
 		}
 	}
@@ -190,7 +190,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 				try {
 					outputPath= javaProject.getOutputLocation();
 				} catch (JavaModelException e) {
-					DebugJavaUtils.logError(e);
+					JDIDebugPlugin.logError(e);
 					project = null;
 					continue;
 				}
@@ -216,7 +216,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 		try {
 			delta.accept(fVisitor);
 		} catch (CoreException e) {
-			DebugJavaUtils.logError(e);
+			JDIDebugPlugin.logError(e);
 			return null; // quiet failure
 		}
 

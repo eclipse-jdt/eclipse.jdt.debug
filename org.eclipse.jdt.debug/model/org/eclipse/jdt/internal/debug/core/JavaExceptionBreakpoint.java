@@ -139,7 +139,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			} catch (VMDisconnectedException e) {
 				return null;
 			} catch (RuntimeException e) {
-				logError(e);
+				JDIDebugPlugin.logError(e);
 				return null;
 			}
 			request.setEnabled(isEnabled());	
@@ -246,7 +246,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				request = newRequest(target, exClass);
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
-				logError(e);
+				JDIDebugPlugin.logError(e);
 			}
 		}
 		return request;

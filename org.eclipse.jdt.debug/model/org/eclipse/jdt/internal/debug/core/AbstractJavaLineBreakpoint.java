@@ -79,7 +79,7 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 		} catch (VMDisconnectedException e) {
 			return null;
 		} catch (RuntimeException e) {
-			logError(e);
+			JDIDebugPlugin.logError(e);
 			return null;
 		}
 		return request;
@@ -107,7 +107,7 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 			return null;
 		} catch (RuntimeException e) {
 			// not able to retrieve line info
-			logError(e);
+			JDIDebugPlugin.logError(e);
 			return null;
 		}
 		
@@ -119,7 +119,7 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 				nestedTypes= type.nestedTypes().iterator();
 			} catch (RuntimeException e) {
 				// not able to retrieve line info
-				logError(e);
+				JDIDebugPlugin.logError(e);
 				return null;
 			}
 			while (nestedTypes.hasNext()) {
@@ -154,7 +154,7 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 				request = createLineBreakpointRequest(location, target);
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
-				logError(e);
+				JDIDebugPlugin.logError(e);
 			}
 		}
 		return request;
@@ -230,7 +230,7 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 					member= binSearch(type.getCompilationUnit(), type, start, end);
 				}
 			} catch (CoreException ce) {
-				logError(ce);
+				JDIDebugPlugin.logError(ce);
 			}
 		}
 		if (member == null) {

@@ -121,7 +121,7 @@ public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint implements IJ
 			return null;
 		} catch (RuntimeException e) {
 			// not able to retrieve line info
-			logError(e);
+			JDIDebugPlugin.logError(e);
 			return null;
 		}
 		
@@ -133,7 +133,7 @@ public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint implements IJ
 				nestedTypes= type.nestedTypes().iterator();
 			} catch (RuntimeException e) {
 				// not able to retrieve line info
-				logError(e);
+				JDIDebugPlugin.logError(e);
 				return null;
 			}
 			while (nestedTypes.hasNext()) {
@@ -217,7 +217,6 @@ public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint implements IJ
 		}
 		return null;
 	}
-
 }
 
 

@@ -7,7 +7,9 @@ package org.eclipse.jdt.internal.debug.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -67,5 +69,25 @@ public class JDIDebugPlugin extends Plugin {
 		fgPlugin = null;
 		super.shutdown();
 	}
-		
+	
+	/**
+	 * Convenience method to log internal errors
+	 */
+	public static void logError(Exception e) {
+		Throwable t = e;
+		if (getDefault().isDebugging()) {
+			// this message is intentionally not internationalized, as an exception may
+			// be due to the resource bundle itself
+			System.out.println("Internal error logged from JDI debug model: "); //$NON-NLS-1$
+			if (e instanceof DebugException) {
+				DebugException de = (DebugException)e;
+				IStatus status = de.getStatus();
+				if (status.getException() != null) {
+					t = status.getException();
+				}
+			}
+			t.printStackTrace();
+			System.out.println();
+		}
+	}
 }
