@@ -29,8 +29,6 @@ import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ObjectReference;
-import com.sun.jdi.PrimitiveType;
-import com.sun.jdi.PrimitiveValue;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
@@ -308,43 +306,8 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 		if ((options & INVOKE_NONVIRTUAL) != 0 && method.isAbstract())
 			throw new IllegalArgumentException(JDIMessages.getString("ObjectReferenceImpl.Method_is_abstract_and_can_therefore_not_be_invoked_nonvirtual_5")); //$NON-NLS-1$
 
-		List argumentTypes= method.argumentTypes();
-		Type argumentType;
-		String typeSignature;
-		Value argument;
-		PrimitiveValue primitiveValue;
-		for (int i= 0, numArgs= arguments.size(); i < numArgs; i++) {
-			argumentType= (Type)argumentTypes.get(i);
-			argument= (Value)arguments.get(i);
-			typeSignature= argumentType.signature();
-			if (argumentType instanceof PrimitiveType && !typeSignature.equals(argument.type().signature())) {
-				// Convert primitive value parameters to the type that matches the method signature
-				primitiveValue= (PrimitiveValue)argument;
-				switch (typeSignature.charAt(0)) {
-				case 'B':
-					arguments.set(i, new ByteValueImpl(virtualMachineImpl(), new Byte(primitiveValue.byteValue())));
-					break;
-				case 'C':
-					arguments.set(i, new CharValueImpl(virtualMachineImpl(), new Character(primitiveValue.charValue())));
-					break;
-				case 'S':
-					arguments.set(i, new ShortValueImpl(virtualMachineImpl(), new Short(primitiveValue.shortValue())));
-					break;
-				case 'I':
-					arguments.set(i, new IntegerValueImpl(virtualMachineImpl(), new Integer(primitiveValue.intValue())));
-					break;
-				case 'J':
-					arguments.set(i, new LongValueImpl(virtualMachineImpl(), new Long(primitiveValue.longValue())));
-					break;
-				case 'F':
-					arguments.set(i, new FloatValueImpl(virtualMachineImpl(), new Float(primitiveValue.floatValue())));
-					break;
-				case 'D':
-					arguments.set(i, new DoubleValueImpl(virtualMachineImpl(), new Double(primitiveValue.doubleValue())));
-					break;
-				}
-			}
-		}
+		// check the type and the vm of the argument, convert the value if needed.
+		List checkedArguments= ValueImpl.checkValues(arguments, method.argumentTypes(), virtualMachineImpl());
 
 		initJdwpRequest();
 		try {
@@ -355,12 +318,11 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			((ReferenceTypeImpl)referenceType()).write(this, outData);
 			methodImpl.write(this, outData);
 			
-			writeInt(arguments.size(), "size", outData); //$NON-NLS-1$
-			Iterator iter = arguments.iterator();
+			writeInt(checkedArguments.size(), "size", outData); //$NON-NLS-1$
+			Iterator iter = checkedArguments.iterator();
 			while(iter.hasNext()) {
 				ValueImpl elt = (ValueImpl)iter.next();
 				if (elt != null) {
-					checkVM(elt);
 					elt.writeWithTag(this, outData);
 				} else {
 					ValueImpl.writeNullWithTag(this, outData);
@@ -471,9 +433,11 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			checkVM(field);
 			((FieldImpl)field).write(this, outData);
 
-			if (value != null) {
-				checkVM(value);
-				((ValueImpl)value).write(this, outData);
+			// check the type and the vm of the value. Convert the value if needed
+			ValueImpl checkedValue= ValueImpl.checkValue(value, field.type(), virtualMachineImpl());
+
+			if (checkedValue != null) {
+				checkedValue.write(this, outData);
 			} else {
 				ValueImpl.writeNull(this, outData);
 			}

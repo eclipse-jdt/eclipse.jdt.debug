@@ -1,10 +1,14 @@
 package org.eclipse.jdi.internal;
 
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
 **********************************************************************/
 
 import java.io.ByteArrayOutputStream;
@@ -12,6 +16,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
@@ -24,7 +29,7 @@ import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InternalException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.ObjectCollectedException;
-import com.sun.jdi.PrimitiveValue;
+import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
 /**
@@ -198,17 +203,35 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	 * Replaces a range of array components with other values.
 	 */
 	public void setValues(int index, List values, int srcIndex, int length) throws InvalidTypeException, ClassNotLoadedException {
-		// Negative length indicates all elements.
-		if (length < 0) {
-			length = length() - index;
-		} else if (index + length > length()) {
-			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Attempted_to_set_more_values_in_array_than_length_of_array_3")); //$NON-NLS-1$
+		
+		int valuesSize= values.size();
+		int arrayLength= length();
+		
+		if (index < 0 || index >= arrayLength) {
+			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Invalid_index_1")); //$NON-NLS-1$
 		}
-
-		// Check if enough values are given.
-		if (values.size() < srcIndex + length) {
+		if (srcIndex < 0 || srcIndex >= valuesSize) {
+			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Invalid_srcIndex_2")); //$NON-NLS-1$
+		}
+		
+		if (length < -1) {
+			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Invalid_number_of_value_to_set_in_array_3")); //$NON-NLS-1$
+		} else if (length == -1) {
+			// length == -1 indicates as much values as possible.
+			length = arrayLength - index;
+			int lengthTmp= valuesSize - srcIndex;
+			if (lengthTmp < length) {
+				length= lengthTmp;
+			}
+		} else if (index + length > arrayLength) {
+			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Attempted_to_set_more_values_in_array_than_length_of_array_3")); //$NON-NLS-1$
+		} else if (srcIndex + length > valuesSize) {
+			// Check if enough values are given.
 			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Attempted_to_set_more_values_in_array_than_given_4")); //$NON-NLS-1$
 		}
+		
+		// check and convert the values if needed.
+		List checkedValues= checkValues(values.subList(srcIndex, srcIndex + length), ((ArrayTypeImpl) referenceType()).componentType());
 
 		// Note that this information should not be cached.
 		initJdwpRequest();
@@ -219,12 +242,11 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			writeInt(index, "index", outData); //$NON-NLS-1$
 			writeInt(length, "length", outData); //$NON-NLS-1$
 			String componentSignature= ((ArrayTypeImpl) referenceType()).componentSignature();
-			for (int i = srcIndex; i < srcIndex + length; i++) {
-				ValueImpl value = (ValueImpl)values.get(i);
+			Iterator iterValues= checkedValues.iterator();
+			while (iterValues.hasNext()) {
+				ValueImpl value= (ValueImpl)iterValues.next();
 				if (value != null) {
-					value= convertPrimitiveValue(value, componentSignature);
-					checkVM(value);
-					((ValueImpl)value).write(this, outData);
+					value.write(this, outData);
 				} else {
 					ValueImpl.writeNull(this, outData);
 				}
@@ -244,34 +266,21 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			handledJdwpRequest();
 		}
 	}
-	
-	/**
-	 * Converts the given primitive value to a value of the given primitive signature.
-	 */
-	private ValueImpl convertPrimitiveValue(ValueImpl value, String signature) {
-		if (!(value instanceof PrimitiveValue)) {
-			return value;
-		}
-		PrimitiveValueImpl primitiveValue = (PrimitiveValueImpl) value;
-		switch (signature.charAt(0)) {
-			case 'B' :
-				return new ByteValueImpl(virtualMachineImpl(), new Byte(primitiveValue.byteValue()));
-			case 'C' :
-				return new CharValueImpl(virtualMachineImpl(), new Character(primitiveValue.charValue()));
-			case 'S' :
-				return new ShortValueImpl(virtualMachineImpl(), new Short(primitiveValue.shortValue()));
-			case 'I' :
-				return new IntegerValueImpl(virtualMachineImpl(), new Integer(primitiveValue.intValue()));
-			case 'J' :
-				return new LongValueImpl(virtualMachineImpl(), new Long(primitiveValue.longValue()));
-			case 'F' :
-				return new FloatValueImpl(virtualMachineImpl(), new Float(primitiveValue.floatValue()));
-			case 'D' :
-				return new DoubleValueImpl(virtualMachineImpl(), new Double(primitiveValue.doubleValue()));
-		}
-		return value;
-	}
 
+	/**
+	 * Check the type and the vm of the values. If the given type is a primitive type,
+	 * the values may be convert for match this type.
+	 * @see ValueImpl#checkValue(Value, Type, VirtualMachineImpl)
+	 */
+	private List checkValues(List values, Type type) throws InvalidTypeException {
+		List checkedValues= new ArrayList(values.size());
+		Iterator iterValues= values.iterator();
+		while (iterValues.hasNext()) {
+			checkedValues.add(ValueImpl.checkValue((Value) iterValues.next(), type, virtualMachineImpl()));
+		}
+		return checkedValues;
+	}
+	
 	/**
 	 * @return Returns description of Mirror object.
 	 */

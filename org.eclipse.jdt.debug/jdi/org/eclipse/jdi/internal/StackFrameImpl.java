@@ -163,9 +163,12 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 			writeInt(1, "size", outData);	// We only set one field //$NON-NLS-1$
 			checkVM(var);
 			writeInt(((LocalVariableImpl)var).slot(), "slot", outData); //$NON-NLS-1$
-			if (value != null) {
-				checkVM(value);
-				((ValueImpl)value).writeWithTag(this, outData);
+			
+			// check the type and the vm of the value, convert the value if needed.
+			ValueImpl checkedValue= ValueImpl.checkValue(value, var.type(), virtualMachineImpl());
+			
+			if (checkedValue != null) {
+				checkedValue.writeWithTag(this, outData);
 			} else {
 				ValueImpl.writeNullWithTag(this, outData);
 			}
