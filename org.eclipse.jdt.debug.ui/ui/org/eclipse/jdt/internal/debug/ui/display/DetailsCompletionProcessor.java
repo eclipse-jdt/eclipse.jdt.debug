@@ -16,6 +16,7 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.text.ITextSelection;
@@ -79,6 +80,9 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 	
 	private IType getReceivingType(IJavaProject project, Object element) throws DebugException {
 		String originalTypeName= getReceivingTypeName(element);
+		if (originalTypeName == null) {
+			return null;
+		}
 		String typeName= originalTypeName;
 		int dollarIndex= typeName.indexOf('$');
 		if (dollarIndex >= 0) {
@@ -99,6 +103,9 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 		try {
 			if (element instanceof IVariable) {
 				value= ((IVariable)element).getValue();
+				if (value instanceof IJavaArray) {
+					return null;
+				}
 			} else if (element instanceof IExpression) {
 				value= ((IExpression)element).getValue();	
 			}
