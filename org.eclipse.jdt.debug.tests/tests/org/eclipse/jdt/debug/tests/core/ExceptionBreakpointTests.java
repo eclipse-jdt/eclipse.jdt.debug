@@ -75,7 +75,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		
 		IJavaDebugTarget debugTarget= null;
 		try {
-			debugTarget= launchAndTerminate(typeName, 3000);
+			debugTarget= launchAndTerminate(typeName);
 			ex.delete();
 		} finally {
 			terminateAndRemove(debugTarget);
@@ -90,7 +90,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		
 		IJavaDebugTarget debugTarget= null;
 		try {
-			debugTarget= launchAndTerminate(typeName, 3000);
+			debugTarget= launchAndTerminate(typeName);
 			ex.delete();
 		} finally {
 			terminateAndRemove(debugTarget);
@@ -125,7 +125,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		
 		IJavaDebugTarget debugTarget = null;
 		try {
-			debugTarget = launchAndTerminate(typeName, 3000);
+			debugTarget = launchAndTerminate(typeName);
 			ex.delete();
 		} finally {
 			terminateAndRemove(debugTarget);
@@ -175,7 +175,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		
 		IJavaDebugTarget target= null;
 		try {
-			target = launchAndTerminate(typeName, 10000);
+			target = launchAndTerminate(typeName);
 			ex.delete();
 		} finally {
 			terminateAndRemove(target);
@@ -207,7 +207,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		
 		IJavaDebugTarget target= null;
 		try {
-			target = launchAndTerminate(typeName, 10000);
+			target = launchAndTerminate(typeName);
 			ex.delete();
 		} finally {
 			terminateAndRemove(target);
@@ -241,7 +241,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		
 		IJavaDebugTarget target= null;
 		try {
-			target = launchAndTerminate(typeName, 10000);
+			target = launchAndTerminate(typeName);
 			ex.delete();
 		} finally {
 			terminateAndRemove(target);

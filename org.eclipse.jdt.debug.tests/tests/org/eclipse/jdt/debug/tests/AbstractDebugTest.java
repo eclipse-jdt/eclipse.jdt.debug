@@ -200,10 +200,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param timeout the number of milliseconds to wait for a terminate event
 	 * @return debug target in which the terminate event occurred
 	 */
-	protected IJavaDebugTarget launchAndTerminate(String mainTypeName, int timeout) throws Exception {
+	protected IJavaDebugTarget launchAndTerminate(String mainTypeName) throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration(mainTypeName);
 		assertNotNull("Could not locate launch configuration for " + mainTypeName, config);
-		return launchAndTerminate(config, timeout);
+		return launchAndTerminate(config, DEFAULT_TIMEOUT);
 	}
 
 	/**

@@ -101,7 +101,7 @@ public class WatchpointTests extends AbstractDebugTest {
 		
 		IJavaDebugTarget debugTarget= null;
 		try {
-			debugTarget= launchAndTerminate(typeName, 3000);
+			debugTarget= launchAndTerminate(typeName);
 		} finally {
 			terminateAndRemove(debugTarget);
 			removeAllBreakpoints();
