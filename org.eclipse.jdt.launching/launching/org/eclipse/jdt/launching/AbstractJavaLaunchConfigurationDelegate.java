@@ -22,13 +22,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 /**
  * Provides convenience methods for accessing and
@@ -496,5 +499,28 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	protected boolean isAllowTerminate(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
 	}					
+	
+	/**
+	 * Assigns a default source locator to the given launch if a source
+	 * locator has not yet been assigned to it, and the associated launch
+	 * configuration does not specify a source locator.
+	 * 
+	 * @param launch launch object
+	 * @param configuration configuration being launched
+	 * @exception CoreException if unable to set the source locator
+	 */
+	protected void setDefaultSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
+		//  set default source locator if none specified
+		if (launch.getSourceLocator() == null) {
+			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
+			if (id == null) {
+				IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
+				if (javaProject != null) {
+					ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
+					launch.setSourceLocator(sourceLocator);					
+				}
+			}
+		}
+	}
 }
 

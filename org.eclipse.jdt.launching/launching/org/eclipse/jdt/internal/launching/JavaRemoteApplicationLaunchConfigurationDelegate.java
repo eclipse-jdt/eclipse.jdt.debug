@@ -57,17 +57,8 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		
 		launch.addDebugTarget(debugTarget);
 		
-		if (launch.getSourceLocator() == null) {
-			//  set default source locator if none specified
-			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
-			if (id == null) {
-				IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
-				if (javaProject != null) {
-					ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
-					launch.setSourceLocator(sourceLocator);
-				}
-			}
-		}
+		// set the default source locator if required
+		setDefaultSourceLocator(launch, configuration);
 	}
 	
 	/**

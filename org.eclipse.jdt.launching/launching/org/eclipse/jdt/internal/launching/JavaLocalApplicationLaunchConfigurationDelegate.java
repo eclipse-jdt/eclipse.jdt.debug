@@ -74,17 +74,8 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		// Launch the configuration
 		runner.run(runConfig, launch, monitor);		
 		
-		//  set default source locator if none specified
-		if (launch.getSourceLocator() == null) {
-			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
-			if (id == null) {
-				IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
-				if (javaProject != null) {
-					ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
-					launch.setSourceLocator(sourceLocator);					
-				}
-			}
-		}
+		// set the default source locator if required
+		setDefaultSourceLocator(launch, configuration);
 	}	
 }
 
