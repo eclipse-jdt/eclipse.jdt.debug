@@ -78,12 +78,14 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 				contributeToToolBar(getActionBars().getToolBarManager());
 			}
 		}
-		
-		fStopAction.setEditor(fSnippetEditor);		
-		fRunSnippetAction.setEditor(fSnippetEditor);
-		fSelectImportsAction.setEditor(fSnippetEditor);
-		fOpenOnSelectionAction.setEditor(fSnippetEditor);
-		fOpenOnTypeSelectionAction.setEditor(fSnippetEditor);
+
+		if (fOpenOnSelectionAction != null) {
+			fStopAction.setEditor(fSnippetEditor);		
+			fRunSnippetAction.setEditor(fSnippetEditor);
+			fSelectImportsAction.setEditor(fSnippetEditor);
+			fOpenOnSelectionAction.setEditor(fSnippetEditor);
+			fOpenOnTypeSelectionAction.setEditor(fSnippetEditor);
+		}
 			
 		updateStatus(fSnippetEditor);			
 	}
