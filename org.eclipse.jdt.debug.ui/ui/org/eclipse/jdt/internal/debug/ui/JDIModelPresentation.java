@@ -822,8 +822,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	protected Image getExpressionImage(Object expression) {
 		ImageDescriptor image= null;
+		boolean bigSize = false;
 		if (expression instanceof JavaInspectExpression) {
 			image= JavaDebugImages.DESC_OBJ_JAVA_INSPECT_EXPRESSION;
+			bigSize = true;
 		} else if (expression instanceof JavaWatchExpression) {
 			image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_EXPRESSION);
 		}
@@ -831,6 +833,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return null;
 		}
 		JDIImageDescriptor descriptor= new JDIImageDescriptor(image, 0);
+		if (bigSize) {
+			descriptor.setSize(BIG_SIZE);
+		}
 		return getDebugImageRegistry().get(descriptor);
 	}
 
