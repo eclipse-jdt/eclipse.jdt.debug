@@ -86,6 +86,18 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
 		
+		fDefaultButton = new Button(comp, SWT.CHECK);
+		fDefaultButton.setText(JREMessages.getString("VMLibraryBlock.Use_default_system_libraries_1")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalSpan = 2;
+		fDefaultButton.setLayoutData(gd);
+		fDefaultButton.setFont(font);
+		fDefaultButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleDefaultButtonSelected();
+			}
+		});
+		
 		fPathViewer = new RuntimeClasspathViewer(comp);
 		gd = new GridData(GridData.FILL_BOTH);
 		fPathViewer.getControl().setLayoutData(gd);
@@ -100,20 +112,6 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		pathButtonComp.setLayoutData(gd);
 		pathButtonComp.setFont(font);
-		
-		createVerticalSpacer(comp, 2);
-						
-		fDefaultButton = new Button(comp, SWT.CHECK);
-		fDefaultButton.setText(JREMessages.getString("VMLibraryBlock.Use_default_system_libraries_1")); //$NON-NLS-1$
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 2;
-		fDefaultButton.setLayoutData(gd);
-		fDefaultButton.setFont(font);
-		fDefaultButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleDefaultButtonSelected();
-			}
-		});
 		
 		RuntimeClasspathAction action = new MoveUpAction(fPathViewer);								
 		Button button  = createPushButton(pathButtonComp, action.getText());
