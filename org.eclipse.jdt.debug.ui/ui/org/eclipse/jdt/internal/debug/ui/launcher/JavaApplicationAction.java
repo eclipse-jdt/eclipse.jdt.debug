@@ -227,11 +227,11 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(fWindow.getShell(), labelProvider);
 		dialog.setElements(configList.toArray());
-		dialog.setTitle(LauncherMessages.getString("LauncherMessages.Launch_Configuration_Selection_1"));  //$NON-NLS-1$
+		dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Launch_Configuration_Selection_1"));  //$NON-NLS-1$
 		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
-			dialog.setMessage(LauncherMessages.getString("LauncherMessages.Choose_a_launch_configuration_to_debug_2"));  //$NON-NLS-1$
+			dialog.setMessage(LauncherMessages.getString("JavaApplicationAction.Choose_a_launch_configuration_to_debug_2"));  //$NON-NLS-1$
 		} else {
-			dialog.setMessage(LauncherMessages.getString("LauncherMessages.Choose_a_launch_configuration_to_run_3")); //$NON-NLS-1$
+			dialog.setMessage(LauncherMessages.getString("JavaApplicationAction.Choose_a_launch_configuration_to_run_3")); //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
