@@ -252,7 +252,8 @@ public class MonitorManager {
 	/**
 	 * Updates the data on threads, monitors and deadlocks
 	 * for the suspended threads contained within the specified
-	 * debug target. If <code>suspendThreads</code>, 
+	 * debug target. If <code>suspendThreads</code>, all the non-system 
+	 * threads are suspended.
 	 * 
 	 * @param target The debug target
 	 * @param whether to suspend the threads
