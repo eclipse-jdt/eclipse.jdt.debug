@@ -188,7 +188,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		};
 		DebugPlugin.getDefault().addDebugEventListener(listener);
 		try {
-			runToLineAction.runToLine(fEditorPart, textSelection, startFrame);
+			runToLineAction.runToLine(getActiveEditor(), textSelection, startFrame);
 		} catch (CoreException e) {
 			DebugPlugin.getDefault().removeDebugEventListener(listener);
 			showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.4")); //$NON-NLS-1$
