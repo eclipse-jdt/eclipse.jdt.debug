@@ -324,7 +324,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			return isSuspended()
 				&& !isSuspendedQuiet()
-				&& !(isPerformingEvaluation() || isInvokingMethod())
+				&& (!isPerformingEvaluation() || isInvokingMethod())
 				&& !isStepping()
 				&& getTopStackFrame() != null
 				&& !getJavaDebugTarget().isPerformingHotCodeReplace();
