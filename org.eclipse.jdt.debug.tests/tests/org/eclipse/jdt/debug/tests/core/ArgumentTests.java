@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.console.IConsole;
@@ -35,6 +34,8 @@ import org.eclipse.jface.text.IRegion;
  * Tests for program and VM arguments
  */
 public class ArgumentTests extends AbstractDebugTest {
+    
+    private Object fLock = new Object();
 
 	private class ConsoleArgumentOutputRetriever implements IConsoleLineTrackerExtension {
 
@@ -46,9 +47,6 @@ public class ArgumentTests extends AbstractDebugTest {
 		 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 		 */
 		public void dispose() {
-			document = null;
-			buffer = null;
-
 		}
 
 		/* (non-Javadoc)
@@ -75,18 +73,19 @@ public class ArgumentTests extends AbstractDebugTest {
 		 */
 		public void consoleClosed() {
 			closed = true;
+			synchronized (fLock) {
+			    fLock.notifyAll();
+            }
 		}
 		
 		public String getOutput() {
 			// wait to be closed
-			int attempts = 0;
-			while (!closed && attempts < 600) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-				}
-				attempts++;
-			}
+		    synchronized (fLock) {
+		        try {
+                    fLock.wait(60000);
+                } catch (InterruptedException e) {
+                }
+		    }
 			// even if not closed yet - see what's in the buffer. Sometimes
 			// we miss the close notification (due to a different bug).
 			if (buffer != null) {
@@ -297,12 +296,11 @@ public class ArgumentTests extends AbstractDebugTest {
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "java");
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
 		
-		ILaunchConfiguration config = workingCopy.doSave();
 		ConsoleArgumentOutputRetriever retriever = new ConsoleArgumentOutputRetriever();
 		ConsoleLineTracker.setDelegate(retriever);
 		IJavaDebugTarget target= null;
 		try {
-			IJavaThread thread = launchAndSuspend(config);
+			IJavaThread thread = launchAndSuspend(workingCopy);
 			target= resumeAndExit(thread);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -311,7 +309,6 @@ public class ArgumentTests extends AbstractDebugTest {
 			assertEquals(outputValue, retriever.getOutput());
 		} finally {
 			terminateAndRemove(target);
-			config.delete();
 			ConsoleLineTracker.setDelegate(null);
 		}
 	}
