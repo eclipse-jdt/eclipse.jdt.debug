@@ -1557,6 +1557,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	protected void shutdown() {
 		fEventDispatcher.shutdown();
+		cleanupTempFiles();
 	}
 	
 	public VirtualMachine getVM() {
