@@ -80,7 +80,6 @@ import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -113,7 +112,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPageLayout;
@@ -250,6 +248,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		setRulerContextMenuId("#JavaSnippetRulerContext"); //$NON-NLS-1$
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
+	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
 		String property= getPage().getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getUniqueIdentifier(), IMPORTS_CONTEXT));
@@ -258,6 +259,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}
 		
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
 	public void dispose() {
 		shutDownVM();
 		fPresentation.dispose();
@@ -268,7 +272,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	/**
 	 * Actions for the editor popup menu
-	 * @see AbstractTextEditor#createActions
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
 	 */
 	protected void createActions() {
 		super.createActions();
@@ -581,8 +585,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}
 	
-	/**
-	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.eval.IEvaluationListener#evaluationComplete(org.eclipse.jdt.debug.eval.IEvaluationResult)
 	 */
 	public void evaluationComplete(IEvaluationResult result) {
 		boolean severeErrors = false;
@@ -757,8 +761,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return fResult;
 	}
 	
-	/**
-	 * @see IValueDetailListener#detailComputed(IValue, String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
 	 */
 	public synchronized void detailComputed(IValue value, final String result) {
 		fResult= result;
@@ -1202,18 +1206,18 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return ((FileEditorInput)getEditorInput()).getFile();
 	}
 	
-	/**
-	 * Updates all selection dependent actions.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#updateSelectionDependentActions()
 	 */
 	protected void updateSelectionDependentActions() {
 		super.updateSelectionDependentActions();
 		fireEvalStateChanged();
 	}
 	
-   /**
-    * Terminates existing VM on a rename of the editor
-	* @see WorkbenchPart#setTitle
- 	*/
+	/**
+     * Terminates existing VM on a rename of the editor
+	 * @see org.eclipse.ui.part.WorkbenchPart#setTitle(java.lang.String)
+ 	 */
 	protected void setTitle(String title) {
 		cleanupOnRenameOrMove();
 		super.setTitle(title);
@@ -1274,6 +1278,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	/**
 	 * Asks the user for the workspace path
 	 * of a file resource and saves the document there.
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#performSaveAs(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void performSaveAs(IProgressMonitor progressMonitor) {
 		Shell shell= getSite().getShell();
@@ -1321,8 +1326,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}
 	
-	/**
-	 * @see IEditorPart#isSaveAsAllowed()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
@@ -1342,8 +1347,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return fEngine;
 	}
 	
-	/**
-	 * @see AbstractTextEditor#createSourceViewer(Composite, IVerticalRuler, int)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		return new JDISourceViewer(parent, ruler, styles);
