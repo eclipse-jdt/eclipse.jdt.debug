@@ -31,6 +31,7 @@ import org.eclipse.jdt.debug.tests.core.InstanceFilterTests;
 import org.eclipse.jdt.debug.tests.core.InstanceVariableTests;
 import org.eclipse.jdt.debug.tests.core.JavaBreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.core.LaunchConfigurationTests;
+import org.eclipse.jdt.debug.tests.core.LaunchModeTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.MethodBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.MiscBreakpointsTests;
@@ -81,6 +82,7 @@ public class AutomatedSuite extends TestSuite {
 	public AutomatedSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 		
+		addTest(new TestSuite(LaunchModeTests.class));
 		addTest(new TestSuite(ClasspathVariableTests.class));
 		addTest(new TestSuite(ClasspathContainerTests.class));
 		addTest(new TestSuite(CommandArgumentTests.class));
