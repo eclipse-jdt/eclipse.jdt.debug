@@ -9,9 +9,9 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.IViewPart;
 
 /**
  * An action delegate that toggles the state of its viewer to
@@ -36,8 +36,8 @@ public class ShowQualifiedAction extends ToggleDelegateAction {
 	}
 
 	
-	protected void setAction(IAction action) {
-		super.setAction(action);
-		action.setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
+	public void init(IViewPart viewPart) {
+		super.init(viewPart);
+		getAction().setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
 	}
 }

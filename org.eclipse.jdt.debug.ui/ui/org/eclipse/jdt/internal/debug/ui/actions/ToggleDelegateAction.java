@@ -12,16 +12,16 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.ui.IPartListener;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A generic Toggle view action delegate, meant to be subclassed to provide
  * a specific filter.
  */
-public abstract class ToggleDelegateAction implements IViewActionDelegate, IPropertyChangeListener, IPartListener{
+public abstract class ToggleDelegateAction implements IViewActionDelegate, IPropertyChangeListener, IActionDelegate2 {
 
 	/**
 	 * The viewer that this action works for
@@ -31,12 +31,8 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	private IViewPart fView;
 	
 	private IAction fAction;
-	private boolean fNeedsInitialization= true;
 
-	protected void dispose() {
-		if (fView != null) {
-			fView.getViewSite().getPage().removePartListener(this);
-		}
+	public void dispose() {
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 	}
 	/**
@@ -48,7 +44,6 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 		if (adapter != null && adapter.getViewer() instanceof StructuredViewer) {
 			setViewer((StructuredViewer)adapter.getViewer());
 		}
-		view.getViewSite().getPage().addPartListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
 
@@ -76,17 +71,13 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (fNeedsInitialization) {
-			setAction(action);
-			fNeedsInitialization= false;
-		}
 	}
 	
 	protected IAction getAction() {
 		return fAction;
 	}
 
-	protected void setAction(IAction action) {
+	public void init(IAction action) {
 		fAction = action;
 		action.addPropertyChangeListener(this);
 	}
@@ -102,39 +93,6 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 			valueChanged(getAction().isChecked());
 		}
 	}
-	/**
-	 * @see IPartListener#partActivated(IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-	 */
-	public void partBroughtToTop(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partClosed(IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart part) {
-		if (part.equals(getView())) {
-			dispose();
-		}
-	}
-
-	/**
-	 * @see IPartListener#partDeactivated(IWorkbenchPart)
-	 */
-	public void partDeactivated(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partOpened(IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart part) {
-	}
-	
 	protected IViewPart getView() {
 		return fView;
 	}
@@ -142,4 +100,12 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	protected void setView(IViewPart view) {
 		fView = view;
 	}
+	
+	/**
+	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+	 */
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
+	}
+	
 }
