@@ -222,28 +222,34 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * The given problem has been added. Cross
 	 * reference the problem with its location.
 	 * Enable the error breakpoint if the suspend
-	 * option is on.
+	 * option is on, and this is the first problem
+	 * being added.
 	 */
 	protected void problemAdded(IMarker problem) {
 		if (problem.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) == IMarker.SEVERITY_ERROR) {
 			IResource res = problem.getResource();
 			IJavaElement cu = JavaCore.create(res);
 			if (cu != null && cu instanceof ICompilationUnit) {
+				// auto-enable the exception breakpoint if this is the first problem added
+				// and the preference is turnd on.
+				boolean autoEnable = fProblemMap.isEmpty();
 				int line = problem.getAttribute(IMarker.LINE_NUMBER, -1);
 				String name = cu.getElementName();
 				Location l = new Location(cu.getParent().getElementName(), name, line);
 				fLocationMap.put(l, problem);
 				fProblemMap.put(problem, l);
-				IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
-					public void run(IProgressMonitor monitor) {
-						try {
-							getSuspendOnCompilationErrorBreakpoint().setEnabled(isSuspendOnCompilationErrors());
-						} catch (CoreException e) {
-							JDIDebugPlugin.logError(e);
+				if (autoEnable) {
+					IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
+						public void run(IProgressMonitor monitor) {
+							try {
+								getSuspendOnCompilationErrorBreakpoint().setEnabled(isSuspendOnCompilationErrors());
+							} catch (CoreException e) {
+								JDIDebugPlugin.logError(e);
+							}
 						}
-					}
-				};
-				fork(wRunnable);
+					};
+					fork(wRunnable);
+				}
 			}
 		}
 	}
@@ -254,9 +260,9 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * Disable the breakpoint if there are no errors.
 	 */
 	protected void problemRemoved(IMarker problem) {
-		Object location = fLocationMap.remove(problem);
+		Object location = fProblemMap.remove(problem);
 		if (location != null) {
-			fProblemMap.remove(problem);
+			fLocationMap.remove(location);
 		}
 		if (fProblemMap.isEmpty()) {
 			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
