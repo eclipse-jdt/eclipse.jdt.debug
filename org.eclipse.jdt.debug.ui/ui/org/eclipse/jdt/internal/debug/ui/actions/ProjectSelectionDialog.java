@@ -43,6 +43,7 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 		ILabelProvider labelProvider,
 		String message) {
 		super(parentShell, input, contentProvider, labelProvider, message);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	/**
