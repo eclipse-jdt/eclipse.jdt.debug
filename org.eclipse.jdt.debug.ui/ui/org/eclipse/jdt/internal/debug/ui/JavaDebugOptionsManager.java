@@ -716,14 +716,13 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	public void launchAdded(ILaunch launch) {
 		
 		initializeProblemHandling();
-		
-		if (launch.getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) != null) {
-			// do not use UI source locator for scrapbook
-			return;
-		}
-		
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		try {
+			if (config.getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH, (String)null) != null) {
+				// do not use UI source locator for scrapbook
+				return;
+			}
+			
 			if (config != null && 
 				((config.getType().getIdentifier().equals(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION))
 				|| (config.getType().getIdentifier().equals(IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION)))) {
@@ -739,7 +738,6 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
-
 	}
 	/**
 	 * @see ILaunchListener#launchChanged(ILaunch)

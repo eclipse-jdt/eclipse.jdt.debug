@@ -120,8 +120,6 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			ILaunchConfigurationWorkingCopy wc = lcType.newInstance(null, name);
 			wc.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
 						
-			//IJavaSourceLocation[] locations = JavaSourceLocator.getDefaultSourceLocations(p);
-			//ISourceLocator sl= new JavaSourceLocator(locations);
 			IPath outputLocation =	p.getProject().getPluginWorkingLocation(JDIDebugUIPlugin.getDefault().getDescriptor());
 			File f = outputLocation.toFile();
 			URL u = null;
@@ -164,6 +162,8 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				urlsString.append(urls[i]);
 			}
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, urlsString.toString());
+			wc.setAttribute(SCRAPBOOK_LAUNCH, SCRAPBOOK_LAUNCH);
+			
 			ILaunchConfiguration config = wc.doSave();
 			
 			ILaunch launch = config.launch(ILaunchManager.DEBUG_MODE, null);
