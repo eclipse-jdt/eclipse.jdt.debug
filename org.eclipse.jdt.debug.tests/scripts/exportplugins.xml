@@ -3,6 +3,7 @@
 		<tstamp/>
 		<available file="../../org.eclipse.ui.externaltools/scripts/exportplugin.xml" property="externaltools.exists"/>
 		<available file="../../org.eclipse.ant.core/scripts/exportplugin.xml" property="ant.exists"/>
+		<available file="../../org.eclipse.pde.junit/scripts/exportplugin.xml" property="pde.junit.exists"/>
 	</target>
 
 	<target name="export" depends="init" description="Export all debug plugins">
@@ -14,6 +15,7 @@
 		<ant antfile="scripts/exportplugin.xml" dir="../../org.eclipse.jdt.launching.j9" target="export"/>
 		<antcall target="ui.externaltools"/>
 		<antcall target="ant.core"/>
+		<antcall target="pde.junit"/>
 	</target>
 	
 	<target name="ui.externaltools" depends="init" if="externaltools.exists" description="Export the external tools plugin">
@@ -22,5 +24,9 @@
 	
 	<target name="ant.core" depends="init" if="ant.exists" description="Export the ant core plugin">
 		<ant antfile="scripts/exportplugin.xml" dir="../../org.eclipse.ant.core" target="export"/>
+	</target>
+	
+	<target name="pde.junit" depends="init" if="pde.junit.exists" description="Export the pde junit plugin">
+		<ant antfile="scripts/exportplugin.xml" dir="../../org.eclipse.pde.junit" target="export"/>
 	</target>
 </project>
