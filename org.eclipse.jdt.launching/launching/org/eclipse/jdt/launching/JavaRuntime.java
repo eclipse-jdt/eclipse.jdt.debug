@@ -377,22 +377,21 @@ public final class JavaRuntime {
 		IVMInstall install= getVMFromCompositeId(getDefaultVMId());
 		if (install != null && install.getInstallLocation().exists()) {
 			return install;
-		} else {
-			// if the default JRE goes missing, re-detect
-			if (install != null) {
-				install.getVMInstallType().disposeVMInstall(install.getId());
-			}
-			fgDefaultVMId = null;
-			// re-detect
-			detectDefaultVM();
-			// update VM prefs 
-			try {
-				saveVMConfiguration();
-			} catch(CoreException e) {
-				LaunchingPlugin.log(e);
-			}
-			return getVMFromCompositeId(getDefaultVMId());
 		}
+		// if the default JRE goes missing, re-detect
+		if (install != null) {
+			install.getVMInstallType().disposeVMInstall(install.getId());
+		}
+		fgDefaultVMId = null;
+		// re-detect
+		detectDefaultVM();
+		// update VM prefs 
+		try {
+			saveVMConfiguration();
+		} catch(CoreException e) {
+			LaunchingPlugin.log(e);
+		}
+		return getVMFromCompositeId(getDefaultVMId());
 	}
 	
 	/**
@@ -592,21 +591,20 @@ public final class JavaRuntime {
 			if (id == null || id.length() == 0) {
 				// assume an old format
 				return new RuntimeClasspathEntry(root);
-			} else {
-				// get the extension & create a new one
-				IRuntimeClasspathEntry2 entry = LaunchingPlugin.getDefault().newRuntimeClasspathEntry(id);
-				NodeList list = root.getChildNodes();
-				for (int i = 0; i < list.getLength(); i++) {
-					Node node = list.item(i);
-					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						Element element = (Element)node;
-						if ("memento".equals(element.getNodeName())) { //$NON-NLS-1$
-							entry.initializeFrom(element);
-						}
+			}
+			// get the extension & create a new one
+			IRuntimeClasspathEntry2 entry = LaunchingPlugin.getDefault().newRuntimeClasspathEntry(id);
+			NodeList list = root.getChildNodes();
+			for (int i = 0; i < list.getLength(); i++) {
+				Node node = list.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element element = (Element)node;
+					if ("memento".equals(element.getNodeName())) { //$NON-NLS-1$
+						entry.initializeFrom(element);
 					}
 				}
-				return entry;
 			}
+			return entry;
 		} catch (SAXException e) {
 			abort(LaunchingMessages.getString("JavaRuntime.31"), e); //$NON-NLS-1$
 		} catch (IOException e) {
@@ -799,16 +797,14 @@ public final class JavaRuntime {
 						return resolved;
 					}
 					break;
-				} else {
-					return resolver.resolveRuntimeClasspathEntry(entry, configuration);
-				}				
+				} 
+				return resolver.resolveRuntimeClasspathEntry(entry, configuration);				
 			case IRuntimeClasspathEntry.CONTAINER:
 				resolver = getContainerResolver(entry.getVariableName());
 				if (resolver == null) {
 					return computeDefaultContainerEntries(entry, configuration);
-				} else {
-					return resolver.resolveRuntimeClasspathEntry(entry, configuration);
-				}
+				} 
+				return resolver.resolveRuntimeClasspathEntry(entry, configuration);
 			case IRuntimeClasspathEntry.ARCHIVE:
 				// verify the archive exists
 				String location = entry.getLocation();
@@ -873,9 +869,8 @@ public final class JavaRuntime {
 				runtimeArchEntry.setClasspathProperty(entry.getClasspathProperty());
 				if (configuration == null) {
 					return resolveRuntimeClasspathEntry(runtimeArchEntry, project);
-				} else {
-					return resolveRuntimeClasspathEntry(runtimeArchEntry, configuration);
-				}
+				} 
+				return resolveRuntimeClasspathEntry(runtimeArchEntry, configuration);
 			}		
 		}
 		return null;
@@ -907,20 +902,19 @@ public final class JavaRuntime {
 		}
 		if (nonDefault.isEmpty()) {
 			return null; 
-		} else {
-			// add the default location if not already included
-			IPath def = project.getOutputLocation();
-			if (!nonDefault.contains(def)) {
-				nonDefault.add(def);						
-			}
-			IRuntimeClasspathEntry[] locations = new IRuntimeClasspathEntry[nonDefault.size()];
-			for (int i = 0; i < locations.length; i++) {
-				IClasspathEntry newEntry = JavaCore.newLibraryEntry((IPath)nonDefault.get(i), null, null);
-				locations[i] = new RuntimeClasspathEntry(newEntry);
-				locations[i].setClasspathProperty(classpathProperty);
-			}
-			return locations;						
+		} 
+		// add the default location if not already included
+		IPath def = project.getOutputLocation();
+		if (!nonDefault.contains(def)) {
+			nonDefault.add(def);						
 		}
+		IRuntimeClasspathEntry[] locations = new IRuntimeClasspathEntry[nonDefault.size()];
+		for (int i = 0; i < locations.length; i++) {
+			IClasspathEntry newEntry = JavaCore.newLibraryEntry((IPath)nonDefault.get(i), null, null);
+			locations[i] = new RuntimeClasspathEntry(newEntry);
+			locations[i].setClasspathProperty(classpathProperty);
+		}
+		return locations;						
 	}
 	
 	/**
@@ -968,16 +962,14 @@ public final class JavaRuntime {
 						return resolved;
 					}
 					break;
-				} else {
-					return resolver.resolveRuntimeClasspathEntry(entry, project);
-				}				
+				} 
+				return resolver.resolveRuntimeClasspathEntry(entry, project);				
 			case IRuntimeClasspathEntry.CONTAINER:
 				resolver = getContainerResolver(entry.getVariableName());
 				if (resolver == null) {
 					return computeDefaultContainerEntries(entry, project);
-				} else {
-					return resolver.resolveRuntimeClasspathEntry(entry, project);
-				}
+				} 
+				return resolver.resolveRuntimeClasspathEntry(entry, project);
 			case IRuntimeClasspathEntry.OTHER:
 				resolver = getContributedResolver(((IRuntimeClasspathEntry2)entry).getTypeId());
 				return resolver.resolveRuntimeClasspathEntry(entry, project);				
@@ -1003,56 +995,54 @@ public final class JavaRuntime {
 		if (project == null || entry == null) {
 			// cannot resolve without entry or project context
 			return new IRuntimeClasspathEntry[0];
-		} else {							
-			IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
-			if (container == null) {
-				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Could_not_resolve_classpath_container__{0}_1"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
-				// execution will not reach here - exception will be thrown
-				return null;
-			} else {
-				IClasspathEntry[] cpes = container.getClasspathEntries();
-				int property = -1;
-				switch (container.getKind()) {
-					case IClasspathContainer.K_APPLICATION:
-						property = IRuntimeClasspathEntry.USER_CLASSES;
-						break;
-					case IClasspathContainer.K_DEFAULT_SYSTEM:
-						property = IRuntimeClasspathEntry.STANDARD_CLASSES;
-						break;	
-					case IClasspathContainer.K_SYSTEM:
-						property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
-						break;
-				}			
-				List resolved = new ArrayList(cpes.length);
-				for (int i = 0; i < cpes.length; i++) {
-					IClasspathEntry cpe = cpes[i];
-					if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
-						IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().segment(0));
-						IJavaProject jp = JavaCore.create(p);
-						IRuntimeClasspathEntry classpath = newDefaultProjectClasspathEntry(jp);
-						IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp);
-						for (int j = 0; j < entries.length; j++) {
-							IRuntimeClasspathEntry e = entries[j];
-							if (!resolved.contains(e)) {
-								resolved.add(entries[j]);
-							}
-						}
-					} else {
-						IRuntimeClasspathEntry e = newRuntimeClasspathEntry(cpe);
-						if (!resolved.contains(e)) {
-							resolved.add(e);
-						}
+		} 
+		IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
+		if (container == null) {
+			abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Could_not_resolve_classpath_container__{0}_1"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
+			// execution will not reach here - exception will be thrown
+			return null;
+		} 
+		IClasspathEntry[] cpes = container.getClasspathEntries();
+		int property = -1;
+		switch (container.getKind()) {
+			case IClasspathContainer.K_APPLICATION:
+				property = IRuntimeClasspathEntry.USER_CLASSES;
+				break;
+			case IClasspathContainer.K_DEFAULT_SYSTEM:
+				property = IRuntimeClasspathEntry.STANDARD_CLASSES;
+				break;	
+			case IClasspathContainer.K_SYSTEM:
+				property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
+				break;
+		}			
+		List resolved = new ArrayList(cpes.length);
+		for (int i = 0; i < cpes.length; i++) {
+			IClasspathEntry cpe = cpes[i];
+			if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+				IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().segment(0));
+				IJavaProject jp = JavaCore.create(p);
+				IRuntimeClasspathEntry classpath = newDefaultProjectClasspathEntry(jp);
+				IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp);
+				for (int j = 0; j < entries.length; j++) {
+					IRuntimeClasspathEntry e = entries[j];
+					if (!resolved.contains(e)) {
+						resolved.add(entries[j]);
 					}
 				}
-				// set classpath property
-				IRuntimeClasspathEntry[] result = new IRuntimeClasspathEntry[resolved.size()];
-				for (int i = 0; i < result.length; i++) {
-					result[i] = (IRuntimeClasspathEntry) resolved.get(i);
-					result[i].setClasspathProperty(property);
+			} else {
+				IRuntimeClasspathEntry e = newRuntimeClasspathEntry(cpe);
+				if (!resolved.contains(e)) {
+					resolved.add(e);
 				}
-				return result;
 			}
 		}
+		// set classpath property
+		IRuntimeClasspathEntry[] result = new IRuntimeClasspathEntry[resolved.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = (IRuntimeClasspathEntry) resolved.get(i);
+			result[i].setClasspathProperty(property);
+		}
+		return result;
 	}
 			
 	/**
@@ -1154,14 +1144,13 @@ public final class JavaRuntime {
 				IStatus status = new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL, MessageFormat.format(LaunchingMessages.getString("JavaRuntime.VM_not_fully_specified_in_launch_configuration_{0}_-_missing_VM_name._Reverting_to_default_VM._1"), new String[] {configuration.getName()}), null); //$NON-NLS-1$
 				LaunchingPlugin.log(status);
 				return getDefaultVMInstall();
+			} 
+			vm = vt.findVMInstallByName(name);
+			if (vm == null) {
+				// error - install not found
+				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_not_found__type_{0},_name_{1}_2"), new String[] {vt.getName(), name}), null);					 //$NON-NLS-1$
 			} else {
-				vm = vt.findVMInstallByName(name);
-				if (vm == null) {
-					// error - install not found
-					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_not_found__type_{0},_name_{1}_2"), new String[] {vt.getName(), name}), null);					 //$NON-NLS-1$
-				} else {
-					return vm;
-				}
+				return vm;
 			}
 		}
 		
