@@ -700,6 +700,9 @@ public final class JavaRuntime {
 				if (resolver == null) {
 					// default resolution - an archive
 					IPath archPath = JavaCore.getClasspathVariable(entry.getVariableName());
+					if (entry.getPath().segmentCount() > 1) {
+						archPath = archPath.append(entry.getPath().removeFirstSegments(1));
+					}
 					IPath srcPath = null;
 					IPath srcVar = entry.getSourceAttachmentPath();
 					IPath srcRootPath = null;
@@ -707,8 +710,14 @@ public final class JavaRuntime {
 					if (archPath != null) {
 						if (srcVar != null && !srcVar.isEmpty()) {
 							srcPath = JavaCore.getClasspathVariable(srcVar.segment(0));
+							if (srcVar.segmentCount() > 1) {
+								srcPath = srcPath.append(srcVar.removeFirstSegments(1));
+							}
 							if (srcRootVar != null && !srcRootVar.isEmpty()) {
-								srcRootPath = JavaCore.getClasspathVariable(srcRootVar.segment(0));						
+								srcRootPath = JavaCore.getClasspathVariable(srcRootVar.segment(0));	
+								if (srcRootVar.segmentCount() > 1) {
+									srcRootPath = srcRootPath.append(srcRootVar.removeFirstSegments(1));					
+								}
 							}
 						}
 						// now resolve the archive (recursively)
@@ -825,6 +834,9 @@ public final class JavaRuntime {
 				if (resolver == null) {
 					// default resolution - an archive
 					IPath archPath = JavaCore.getClasspathVariable(entry.getVariableName());
+					if (entry.getPath().segmentCount() > 1) {
+						archPath = archPath.append(entry.getPath().removeFirstSegments(1));
+					}
 					IPath srcPath = null;
 					IPath srcVar = entry.getSourceAttachmentPath();
 					IPath srcRootPath = null;
@@ -832,8 +844,14 @@ public final class JavaRuntime {
 					if (archPath != null) {
 						if (srcVar != null && !srcVar.isEmpty()) {
 							srcPath = JavaCore.getClasspathVariable(srcVar.segment(0));
+							if (srcVar.segmentCount() > 1) {
+								srcPath = srcPath.append(srcVar.removeFirstSegments(1));
+							}
 							if (srcRootVar != null && !srcRootVar.isEmpty()) {
-								srcRootPath = JavaCore.getClasspathVariable(srcRootVar.segment(0));						
+								srcRootPath = JavaCore.getClasspathVariable(srcRootVar.segment(0));	
+								if (srcRootVar.segmentCount() > 1) {
+									srcRootPath = srcRootPath.append(srcRootVar.removeFirstSegments(1));					
+								}
 							}
 						}
 						// now resolve the archive (recursively)
