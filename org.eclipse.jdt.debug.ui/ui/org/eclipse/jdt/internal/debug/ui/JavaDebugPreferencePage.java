@@ -842,7 +842,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			return;
 		}
 	
-		dialog.setTitle(DebugUIMessages.getString("JavaDebugPreferencePage.Add_type_to_step_filters_22")); //$NON-NLS-1$
+		dialog.setTitle(DebugUIMessages.getString("JavaDebugPreferencePage.Add_type_to_step_filters_20")); //$NON-NLS-1$
 		dialog.setMessage(DebugUIMessages.getString("JavaDebugPreferencePage.Select_a_type_to_filter_when_stepping_23")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
@@ -867,7 +867,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			return;			
 		}
 	
-		dialog.setTitle(DebugUIMessages.getString("JavaDebugPreferencePage.Add_package_to_step_filters_26")); //$NON-NLS-1$
+		dialog.setTitle(DebugUIMessages.getString("JavaDebugPreferencePage.Add_package_to_step_filters_24")); //$NON-NLS-1$
 		dialog.setMessage(DebugUIMessages.getString("JavaDebugPreferencePage.Select_a_package_to_filter_when_stepping_27")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
