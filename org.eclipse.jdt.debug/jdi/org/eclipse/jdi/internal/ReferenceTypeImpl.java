@@ -973,26 +973,45 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @throws ClassNotLoadedException when the ReferenceType has not been loaded by the specified class loader.
 	 */
 	public static TypeImpl create(VirtualMachineImpl vmImpl, String signature, ClassLoaderReference classLoader) throws ClassNotLoadedException {
-		Iterator iter = vmImpl.classesBySignature(signature).iterator();
 		ReferenceTypeImpl refTypeBootstrap = null;
-		
+		List classes= vmImpl.classesBySignature(signature);
+		ReferenceTypeImpl type;
+		Iterator iter= classes.iterator();		
 		while (iter.hasNext()) {
-			ReferenceTypeImpl type = (ReferenceTypeImpl)iter.next();
+			// First pass. Look for a class loaded by the given class loader
+			type = (ReferenceTypeImpl)iter.next();
 			if (type.classLoader() == null) {	// bootstrap classloader
-				if (classLoader == null)
+				if (classLoader == null) {
 					return type;
-				else
+				} else {
 					refTypeBootstrap = type;
+				}
 			}
-					
-			if (classLoader != null && classLoader.equals(type.classLoader()))
-				return (ReferenceTypeImpl)type;
+			if (classLoader != null && classLoader.equals(type.classLoader())) {
+				return type;
+			}
 		}
-		
 		// If no ReferenceType is found with the specified classloader, but there is one with the
 		// bootstrap classloader, the latter is returned.
-		if (refTypeBootstrap != null)
+		if (refTypeBootstrap != null) {
 			return refTypeBootstrap;
+		}
+		
+		ClassLoaderReferenceImpl loaderImpl= (ClassLoaderReferenceImpl)classLoader;
+		List visibleTypes;
+		iter= classes.iterator();
+		while (iter.hasNext()) {
+			// Second pass. Look for a class that is visible to
+			// the given class loader
+			type = (ReferenceTypeImpl)iter.next();
+			visibleTypes= classLoader.visibleClasses();
+			Iterator visibleIter= visibleTypes.iterator();
+			while (visibleIter.hasNext()) {
+				if (type.equals(visibleIter.next())) {
+					return type;
+				}
+			}
+		}
 
 		throw new ClassNotLoadedException(TypeImpl.classSignatureToName(signature), "Type has not been loaded.");
 	}
