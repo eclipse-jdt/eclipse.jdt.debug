@@ -74,6 +74,7 @@ import org.eclipse.jdt.debug.tests.eval.StringPlusOpTests;
 import org.eclipse.jdt.debug.tests.eval.TestsArrays;
 import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes1;
 import org.eclipse.jdt.debug.tests.eval.TestsNestedTypes2;
+import org.eclipse.jdt.debug.tests.eval.TestsNumberLiteral;
 import org.eclipse.jdt.debug.tests.eval.TestsOperators1;
 import org.eclipse.jdt.debug.tests.eval.TestsOperators2;
 import org.eclipse.jdt.debug.tests.eval.TestsTypeHierarchy1;
@@ -206,6 +207,8 @@ public class EvalTestSuite extends TestSuite {
 		addTest(new TestSuite(TypeHierarchy_57_3.class));
 		addTest(new TestSuite(TypeHierarchy_108_1.class));
 		addTest(new TestSuite(TypeHierarchy_135_1.class));
+		
+		addTest(new TestSuite(TestsNumberLiteral.class));
 
 	}
 	

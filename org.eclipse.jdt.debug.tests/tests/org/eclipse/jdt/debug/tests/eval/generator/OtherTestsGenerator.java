@@ -26,6 +26,7 @@ public class OtherTestsGenerator extends TestGenerator {
 		genTestsNestedTypes2();
 		genTestsTypeHierarchy1();
 		genTestsTypeHierarchy2();
+		genTestNumberLiteral();
 		
 		genInstanceOfTests();
 
@@ -166,14 +167,119 @@ public class OtherTestsGenerator extends TestGenerator {
 		createJavaFile(code, "TestsTypeHierarchy2", "EvalTypeHierarchyTests",   108, 2, 1);
 	}
 
+	/**
+	 * Method genTestNumberLiteral.
+	 */
+	private static void genTestNumberLiteral() throws Exception {
+		StringBuffer code= new StringBuffer();
+
+		createTestNumberLiteral1("0", T_int, code);
+		createTestNumberLiteral1("00", T_int, code);
+		createTestNumberLiteral1("0x0", T_int, code);
+		createTestNumberLiteral1("-1", T_int, code);
+		createTestNumberLiteral1("1", T_int, code);
+		createTestNumberLiteral1("2147483647", T_int, code);
+		createTestNumberLiteral1("-2147483648", T_int, code);
+		createTestNumberLiteral1("0x7fffffff", T_int, code);
+		createTestNumberLiteral1("0x80000000", T_int, code);
+		createTestNumberLiteral1("0xffffffff", T_int, code);
+		createTestNumberLiteral1("017777777777", T_int, code);
+		createTestNumberLiteral1("020000000000", T_int, code);
+		createTestNumberLiteral1("037777777777", T_int, code);
+		createTestNumberLiteral1("2", T_int, code);
+		createTestNumberLiteral1("0372", T_int, code);
+		createTestNumberLiteral1("0xDadaCafe", T_int, code);
+		createTestNumberLiteral1("1996", T_int, code);
+		createTestNumberLiteral1("0x00FF00FF", T_int, code);
+		
+		createTestNumberLiteral1("0L", T_long, code);
+		createTestNumberLiteral1("00L", T_long, code);
+		createTestNumberLiteral1("0x0L", T_long, code);
+		createTestNumberLiteral1("-1L", T_long, code);
+		createTestNumberLiteral1("1L", T_long, code);
+		createTestNumberLiteral1("9223372036854775807L", T_long, code);
+		createTestNumberLiteral1("-9223372036854775808L", T_long, code);
+		createTestNumberLiteral1("0x7fffffffffffffffL", T_long, code);
+		createTestNumberLiteral1("0x8000000000000000L", T_long, code);
+		createTestNumberLiteral1("0xffffffffffffffffL", T_long, code);
+		createTestNumberLiteral1("0777777777777777777777L", T_long, code);
+		createTestNumberLiteral1("01000000000000000000000L", T_long, code);
+		createTestNumberLiteral1("01777777777777777777777L", T_long, code);
+		createTestNumberLiteral1("0777l", T_long, code);
+		createTestNumberLiteral1("0x100000000L", T_long, code);
+		createTestNumberLiteral1("2147483648L", T_long, code);
+		createTestNumberLiteral1("0xC0B0L", T_long, code);
+		
+		createTestNumberLiteral2("3.40282347e+38f", T_float, code);
+		createTestNumberLiteral2("1.40239846e-45f", T_float, code);
+		createTestNumberLiteral2("1e1f", T_float, code);
+		createTestNumberLiteral2("2.f", T_float, code);
+		createTestNumberLiteral2(".3f", T_float, code);
+		createTestNumberLiteral2("0f", T_float, code);
+		createTestNumberLiteral2("3.14f", T_float, code);
+		createTestNumberLiteral2("6.022137e+23f", T_float, code);
+
+		createTestNumberLiteral2("1.79769313486231570e+308", T_double, code);
+		createTestNumberLiteral2("4.94065645841246544e-324", T_double, code);
+		createTestNumberLiteral2("1e1", T_double, code);
+		createTestNumberLiteral2("2.", T_double, code);
+		createTestNumberLiteral2(".3", T_double, code);
+		createTestNumberLiteral2("0.0", T_double, code);
+		createTestNumberLiteral2("3.14", T_double, code);
+		createTestNumberLiteral2("1e-9d", T_double, code);
+		createTestNumberLiteral2("1e137", T_double, code);
+
+		createJavaFile(code, "TestsNumberLiteral", "EvalSimpleTests", 5, 1, 1);
+	}
+
+	/**
+	 * Method createTestNumberLiteral.
+	 */
+	private static void createTestNumberLiteral1(String literal, int type, StringBuffer code) {
+		String tName= typeName[type];
+		
+		code.append("\tpublic void test" + literal.replace('-', 'N').replace('.', '_').replace('+', 'P') + "() throws Throwable {\n");
+		tryBlockBegin(code);
+		genCodeEval("\"" + literal + '"', true, code);
+		genCodeReturnTypeCheck(literal, tName, true, code);
+		genCodeReturnValueCheckPrimitiveType(literal, tName, typeUpperName[type], literal, true, code);
+		tryBlockEnd(code);
+		code.append("\t}\n\n");
+	}
+
+	/**
+	 * Method createTestNumberLiteral.
+	 */
+	private static void createTestNumberLiteral2(String literal, int type, StringBuffer code) {
+		String tName= typeName[type];
+		
+		code.append("\tpublic void test" + literal.replace('-', 'N').replace('.', '_').replace('+', 'P') + "() throws Throwable {\n");
+		tryBlockBegin(code);
+		genCodeEval("\"" + literal + '"', true, code);
+		genCodeReturnTypeCheck(literal, tName, true, code);
+		genCodeReturnValueCheckFloatDoubleType(literal, tName, typeUpperName[type], literal, true, code);
+		tryBlockEnd(code);
+		code.append("\t}\n\n");
+	}
+
 	public static void genInstanceOfTests() throws Exception {
 	}
+
 
 	public static void createJavaFile(StringBuffer tests, String className, String testClass, int lineNumber, int numberFrames, int hitCount) throws Exception {
 		
 		StringBuffer code= new StringBuffer();
 		
 		code.append("package org.eclipse.jdt.debug.tests.eval;\n\n");
+		code.append("/**********************************************************************\n");
+		code.append("Copyright (c) 2000, 2002 IBM Corp. and others.\n");
+		code.append("All rights reserved. This program and the accompanying materials\n");
+		code.append("are made available under the terms of the Common Public License v0.5\n");
+		code.append("which accompanies this distribution, and is available at\n");
+		code.append("http://www.eclipse.org/legal/cpl-v05.html\n\n");
+		code.append("Contributors:\n");
+		code.append("    IBM Corporation - Initial implementation\n");
+		code.append("*********************************************************************/\n");
 		code.append("import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;\n\n");
 		code.append("import org.eclipse.debug.core.model.IValue;\n");
 		code.append("import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;\n\n");

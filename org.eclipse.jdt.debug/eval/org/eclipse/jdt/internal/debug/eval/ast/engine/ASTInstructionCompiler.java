@@ -1818,10 +1818,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		
 		switch (literalType) {
 			case Instruction.T_int:
-				push(new PushInt(Integer.decode(token).intValue()));
+				push(new PushInt(parseIntValue(token)));
 				break;
 			case Instruction.T_long:
-				push(new PushLong(Long.decode(subToken).longValue()));
+				push(new PushLong(parseLongValue(subToken)));
 				break;
 			case Instruction.T_float:
 				push(new PushFloat(Float.parseFloat(subToken)));
@@ -1836,6 +1836,72 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		
 		return true;
+	}
+
+	/**
+	 * Method parseIntValue.
+	 * @param token
+	 */
+	private int parseIntValue(String token) {
+		int tokenLength= token.length();
+		if (tokenLength < 10) {
+			// Integer.decode can handle tokens with less than 10 digits
+			return Integer.decode(token).intValue();
+		} else {
+			switch (getBase(token)) {
+				case 8:
+					return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 3) | Integer.decode("0" + token.charAt(tokenLength - 1)).intValue();
+				case 10:
+					return Integer.decode(token).intValue();
+				case 16:
+					return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 4) | Integer.decode("0x" + token.charAt(tokenLength - 1)).intValue();
+				default:
+					// getBase(String) only returns 8, 10, or 16. This code is unreachable
+					return 0;
+			}
+		}
+	}
+
+	
+	/**
+	 * Method parseLongValue.
+	 * @param token
+	 */
+	private long parseLongValue(String token) {
+		int tokenLength= token.length();
+		if (tokenLength < 18) {
+			// Long.decode can handle tokens with less than 10 digits
+			return Long.decode(token).longValue();
+		} else {
+			switch (getBase(token)) {
+				case 8:
+					return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 3) | Long.decode("0" + token.charAt(tokenLength - 1)).longValue();
+				case 10:
+					return Long.decode(token).longValue();
+				case 16:
+					return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 4) | Long.decode("0x" + token.charAt(tokenLength - 1)).longValue();
+				default:
+					// getBase(String) only returns 8, 10, or 16. This code is unreachable
+					return 0;
+			}
+		}
+	}
+	
+	/**
+	 * Returns the numeric base for the given token
+	 * according to the Java specification. Returns 
+	 * 8, 10, or 16.
+	 */
+	private int getBase(String token) {
+		if (token.charAt(0) == '0') {
+			if (token.charAt(1) == 'x') {
+				return 16; // "0x" prefix: Hexadecimal
+			} else {
+				return 8; // "0" prefix: Octal
+			}
+		} else {
+			return 10; // No prefix: Decimal
+		}
 	}
 
 	/**
