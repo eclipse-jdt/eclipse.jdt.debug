@@ -11,7 +11,9 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
  
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
@@ -94,15 +96,16 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 		return null;
 	}
 	
-	protected IMember getMember(ISelection s) {
+	protected IMember[] getMembers(ISelection s) {
 		if (s instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection) s;
-			if (ss.size() == 1) {					
-				Object o=  ss.getFirstElement();
+			ArrayList members= new ArrayList();
+			for (Iterator iter= ((IStructuredSelection)s).iterator(); iter.hasNext();) {
+				Object o=  iter.next();
 				if (o instanceof IMethod) {
-					return (IMethod) o;
+					members.add(o);
 				}
 			}
+			return (IMember[])members.toArray(new IMember[0]);
 		}
 		return null;
 	}
@@ -113,104 +116,108 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 	public void run(IAction action) {
 		updateForRun();
 		report(null);
-		if (getBreakpoint() == null) {
-			// add breakpoint
-			try {
-				IMember member = getMember();
-				if (member == null) {
-					IWorkbenchPage page= getPage();
-					if (page != null) {
-						ISelection selection= page.getSelection();
-						if (selection instanceof ITextSelection) {
-							IEditorInput editorInput = getTextEditor().getEditorInput();
-							IResource resource;
-							if (editorInput instanceof IFileEditorInput) {
-								resource= ((IFileEditorInput)editorInput).getFile();
-							} else {
-								resource= ResourcesPlugin.getWorkspace().getRoot();
-							}
-							IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
-							CompilationUnit compilationUnit= AST.parseCompilationUnit(document.get().toCharArray());
-							BreakpointMethodLocator locator= new BreakpointMethodLocator(((ITextSelection)selection).getOffset());
-							compilationUnit.accept(locator);
-							String methodName= locator.getMethodName();
-							if (methodName == null) {
-								report(ActionMessages.getString("ManageMethodBreakpointActionDelegate.CantAdd")); //$NON-NLS-1$
-								return;
-							}
-							String typeName= locator.getTypeName();
-							String methodSignature= locator.getMethodSignature();
-							if (methodSignature == null) {
-								report(ActionMessages.getString("ManageMethodBreakpointActionDelegate.methodNonAvailable")); //$NON-NLS-1$
-								return;
-							}
-							// check if this method breakpoint already exist. If yes, remove it.
-							IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-							IBreakpoint[] breakpoints= breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
-							for (int i= 0; i < breakpoints.length; i++) {
-								IBreakpoint breakpoint= breakpoints[i];
-								if (breakpoint instanceof IJavaMethodBreakpoint) {
-									IJavaMethodBreakpoint methodBreakpoint= (IJavaMethodBreakpoint)breakpoint;
-									if (typeName.equals(methodBreakpoint.getTypeName())
-											&& methodName.equals(methodBreakpoint.getMethodName())
-											&& methodSignature.equals(methodBreakpoint.getMethodSignature())) {
-										breakpointManager.removeBreakpoint(methodBreakpoint, true);
-										return;
-									}
+		try {
+			IMember[] members = getMembers();
+			if (members == null || members.length == 0) {
+				IWorkbenchPage page= getPage();
+				if (page != null) {
+					ISelection selection= page.getSelection();
+					if (selection instanceof ITextSelection) {
+						IEditorInput editorInput = getTextEditor().getEditorInput();
+						IResource resource;
+						if (editorInput instanceof IFileEditorInput) {
+							resource= ((IFileEditorInput)editorInput).getFile();
+						} else {
+							resource= ResourcesPlugin.getWorkspace().getRoot();
+						}
+						IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
+						CompilationUnit compilationUnit= AST.parseCompilationUnit(document.get().toCharArray());
+						BreakpointMethodLocator locator= new BreakpointMethodLocator(((ITextSelection)selection).getOffset());
+						compilationUnit.accept(locator);
+						String methodName= locator.getMethodName();
+						if (methodName == null) {
+							report(ActionMessages.getString("ManageMethodBreakpointActionDelegate.CantAdd")); //$NON-NLS-1$
+							return;
+						}
+						String typeName= locator.getTypeName();
+						String methodSignature= locator.getMethodSignature();
+						if (methodSignature == null) {
+							report(ActionMessages.getString("ManageMethodBreakpointActionDelegate.methodNonAvailable")); //$NON-NLS-1$
+							return;
+						}
+						// check if this method breakpoint already exist. If yes, remove it.
+						IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
+						IBreakpoint[] breakpoints= breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
+						for (int i= 0; i < breakpoints.length; i++) {
+							IBreakpoint breakpoint= breakpoints[i];
+							if (breakpoint instanceof IJavaMethodBreakpoint) {
+								IJavaMethodBreakpoint methodBreakpoint= (IJavaMethodBreakpoint)breakpoint;
+								if (typeName.equals(methodBreakpoint.getTypeName())
+										&& methodName.equals(methodBreakpoint.getMethodName())
+										&& methodSignature.equals(methodBreakpoint.getMethodSignature())) {
+									breakpointManager.removeBreakpoint(methodBreakpoint, true);
+									return;
 								}
 							}
-							// add the breakpoint
-							setBreakpoint(JDIDebugModel.createMethodBreakpoint(resource, typeName, methodName, methodSignature, true, false, false, -1, -1, -1, 0, true, new HashMap(10)));
 						}
+						// add the breakpoint
+						JDIDebugModel.createMethodBreakpoint(resource, typeName, methodName, methodSignature, true, false, false, -1, -1, -1, 0, true, new HashMap(10));
 					}
-				} else {
-					if (!enableForMember(member)) {
+				}
+			} else {
+				// check if all elements support method breakpoint
+				for (int i= 0, length= members.length; i < length; i++) {
+					if (!enableForMember(members[i])) {
 						report(ActionMessages.getString("ManageMethodBreakpointActionDelegate.CantAdd")); //$NON-NLS-1$
 						return;
 					}
-					IMethod method= (IMethod)member;
-					int start = -1;
-					int end = -1;
-					ISourceRange range = method.getNameRange();
-					if (range != null) {
-						start = range.getOffset();
-						end = start + range.getLength();
-					}
-					Map attributes = new HashMap(10);
-					BreakpointUtils.addJavaBreakpointAttributes(attributes, method);
-					String methodName = method.getElementName();
-					if (method.isConstructor()) {
-						methodName = "<init>"; //$NON-NLS-1$
-					}
-					IType type= method.getDeclaringType();
-					String methodSignature= method.getSignature();
-					if (!type.isBinary()) {
-						//resolve the type names
-						methodSignature= resolveMethodSignature(type, methodSignature);
-						if (methodSignature == null) {
-							IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "Source method signature could not be resolved", null); //$NON-NLS-1$
-							JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageMethodBreakpointActionDelegate.Add_Method_Breakpoint_Failed_2"), status); //$NON-NLS-1$
-							return;
+				}
+				// add or remove the breakpoint
+				IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
+				for (int i= 0, length= members.length; i < length; i++) {
+					IMethod method= (IMethod)members[i];
+					IJavaBreakpoint breakpoint= getBreakpoint(method);
+					if (breakpoint == null) {
+						// add breakpoint
+						int start = -1;
+						int end = -1;
+						ISourceRange range = method.getNameRange();
+						if (range != null) {
+							start = range.getOffset();
+							end = start + range.getLength();
+						}
+						Map attributes = new HashMap(10);
+						BreakpointUtils.addJavaBreakpointAttributes(attributes, method);
+						String methodName = method.getElementName();
+						if (method.isConstructor()) {
+							methodName = "<init>"; //$NON-NLS-1$
+						}
+						IType type= method.getDeclaringType();
+						String methodSignature= method.getSignature();
+						if (!type.isBinary()) {
+							//resolve the type names
+							methodSignature= resolveMethodSignature(type, methodSignature);
+							if (methodSignature == null) {
+								IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "Source method signature could not be resolved", null); //$NON-NLS-1$
+								JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageMethodBreakpointActionDelegate.Add_Method_Breakpoint_Failed_2"), status); //$NON-NLS-1$
+								return;
+							}
+						}
+						JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(method), type.getFullyQualifiedName(), methodName, methodSignature, true, false, false, -1, start, end, 0, true, attributes);
+					} else {
+						// remove breakpoint
+						try {
+							breakpointManager.removeBreakpoint(breakpoint, true);
+						} catch (CoreException x) {
+							JDIDebugUIPlugin.log(x);
+							MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodBreakpointAction.Problems_removing_breakpoint_8"), x.getMessage()); //$NON-NLS-1$
 						}
 					}
-					
-					
-					setBreakpoint(JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(method), 
-						type.getFullyQualifiedName(), methodName, methodSignature, true, false, false, -1, start, end, 0, true, attributes));
 				}
-			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x);
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodBreakpointAction.Problems_creating_breakpoint_7"), x.getMessage()); //$NON-NLS-1$
 			}
-		} else {
-			// remove breakpoint
-			try {
-				IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-				breakpointManager.removeBreakpoint(getBreakpoint(), true);
-			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x);
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodBreakpointAction.Problems_removing_breakpoint_8"), x.getMessage()); //$NON-NLS-1$
-			}
+		} catch (CoreException x) {
+			JDIDebugUIPlugin.log(x);
+			MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodBreakpointAction.Problems_creating_breakpoint_7"), x.getMessage()); //$NON-NLS-1$
 		}
 	}
 

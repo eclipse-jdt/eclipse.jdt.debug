@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public abstract class AbstractManageBreakpointActionDelegate extends ManageBreakpointActionDelegate implements IObjectActionDelegate {
 
-	private IMember fMember;
+	private IMember[] fMembers;
 	private IJavaBreakpoint fBreakpoint;
 	private IWorkbenchPart fTargetPart;
 	
@@ -34,29 +34,31 @@ public abstract class AbstractManageBreakpointActionDelegate extends ManageBreak
 		setTargetPart(targetPart);
 	}
 
-	protected IMember getMember() {
-		return fMember;
+	protected IMember[] getMembers() {
+		return fMembers;
 	}
 
-	protected void setMember(IMember element) {
-		fMember = element;
+	protected void setMembers(IMember[] elements) {
+		fMembers = elements;
 	}
 	
-	protected abstract IMember getMember(ISelection s);
+	protected abstract IMember[] getMembers(ISelection s);
 	
 	protected void updateForRun() {
-		IMember member= null;
+		IMember[] members;
 		IWorkbenchPage page= getPage();
 		if (page != null) {
 			ISelection selection= page.getSelection();
 			if (selection instanceof ITextSelection) {
-				member= ActionDelegateHelper.getDefault().getCurrentMember(selection);
+				members= new IMember[] {ActionDelegateHelper.getDefault().getCurrentMember(selection)};
 			} else {
-				member= getMember(selection);
+				members= getMembers(selection);
 			}
+		} else {
+			members= new IMember[0];
 		}
 		
-		setMember(member);
+		setMembers(members);
 		update();
 	}
 	
@@ -68,23 +70,8 @@ public abstract class AbstractManageBreakpointActionDelegate extends ManageBreak
 		}
 		return null;
 	}
-	protected abstract IJavaBreakpoint getBreakpoint(IMember element);
-	
-	protected void update() {
-		if (enableForMember(getMember())) {
-			setBreakpoint(getBreakpoint(getMember()));
-		} else {
-			setBreakpoint(null);
-		}
-	}
-	
-	protected IJavaBreakpoint getBreakpoint() {
-		return fBreakpoint;
-	}
 
-	protected void setBreakpoint(IJavaBreakpoint breakpoint) {
-		fBreakpoint = breakpoint;
-	}
+	protected abstract IJavaBreakpoint getBreakpoint(IMember element);
 	
 	protected abstract boolean enableForMember(IMember member);
 	

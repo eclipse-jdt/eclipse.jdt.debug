@@ -1612,7 +1612,7 @@
                helpContextId="manage_method_breakpoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
                menubarPath="additions"
-               enablesFor="1"
+               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.MethodBreakpoint">
          </action>
       </objectContribution>
@@ -1624,7 +1624,7 @@
                helpContextId="manage_watchpoint_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
                menubarPath="additions"
-               enablesFor="1"
+               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.Watchpoint">
          </action>
       </objectContribution>

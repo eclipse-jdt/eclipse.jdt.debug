@@ -55,7 +55,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -71,81 +70,89 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	public void run(IAction action) {
 		updateForRun();
 		report(null);
-		if (getBreakpoint() == null) {
-			try {
-				IMember element= getMember();
-				if (element == null) {
-					IWorkbenchPage page= getPage();
-					if (page != null) {
-						ISelection selection= page.getSelection();
-						if (selection instanceof ITextSelection) {
-							IEditorInput editorInput = getTextEditor().getEditorInput();
-							IResource resource;
-							if (editorInput instanceof IFileEditorInput) {
-								resource= ((IFileEditorInput)editorInput).getFile();
-							} else {
-								resource= ResourcesPlugin.getWorkspace().getRoot();
-							}
-							IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
-							CompilationUnit compilationUnit= AST.parseCompilationUnit(document.get().toCharArray());
-							BreakpointFieldLocator locator= new BreakpointFieldLocator(((ITextSelection)selection).getOffset());
-							compilationUnit.accept(locator);
-							String fieldName= locator.getFieldName();
-							if (fieldName == null) {
-								report(ActionMessages.getString("ManageWatchpointActionDelegate.CantAdd")); //$NON-NLS-1$
-								return;
-							}
-							String typeName= locator.getTypeName();
-							// check if the watchpoint already exists. If yes, remove it
-							IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-							IBreakpoint[] breakpoints= breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
-							for (int i= 0; i < breakpoints.length; i++) {
-								IBreakpoint breakpoint= breakpoints[i];
-								if (breakpoint instanceof IJavaWatchpoint) {
-									IJavaWatchpoint watchpoint= (IJavaWatchpoint)breakpoint;
-									if (typeName.equals(watchpoint.getTypeName()) && fieldName.equals(watchpoint.getFieldName())) {
-										breakpointManager.removeBreakpoint(watchpoint, true);
-										return;
-									}
+		try {
+			IMember[] elements= getMembers();
+			if (elements == null || elements.length == 0) {
+				IWorkbenchPage page= getPage();
+				if (page != null) {
+					ISelection selection= page.getSelection();
+					if (selection instanceof ITextSelection) {
+						IEditorInput editorInput = getTextEditor().getEditorInput();
+						IResource resource;
+						if (editorInput instanceof IFileEditorInput) {
+							resource= ((IFileEditorInput)editorInput).getFile();
+						} else {
+							resource= ResourcesPlugin.getWorkspace().getRoot();
+						}
+						IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
+						CompilationUnit compilationUnit= AST.parseCompilationUnit(document.get().toCharArray());
+						BreakpointFieldLocator locator= new BreakpointFieldLocator(((ITextSelection)selection).getOffset());
+						compilationUnit.accept(locator);
+						String fieldName= locator.getFieldName();
+						if (fieldName == null) {
+							report(ActionMessages.getString("ManageWatchpointActionDelegate.CantAdd")); //$NON-NLS-1$
+							return;
+						}
+						String typeName= locator.getTypeName();
+						// check if the watchpoint already exists. If yes, remove it
+						IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
+						IBreakpoint[] breakpoints= breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
+						for (int i= 0; i < breakpoints.length; i++) {
+							IBreakpoint breakpoint= breakpoints[i];
+							if (breakpoint instanceof IJavaWatchpoint) {
+								IJavaWatchpoint watchpoint= (IJavaWatchpoint)breakpoint;
+								if (typeName.equals(watchpoint.getTypeName()) && fieldName.equals(watchpoint.getFieldName())) {
+									breakpointManager.removeBreakpoint(watchpoint, true);
+									return;
 								}
 							}
-							// add the watchpoint
-							setBreakpoint(JDIDebugModel.createWatchpoint(resource, typeName, fieldName, -1, -1, -1, 0, true, new HashMap(10)));
 						}
+						// add the watchpoint
+						JDIDebugModel.createWatchpoint(resource, typeName, fieldName, -1, -1, -1, 0, true, new HashMap(10));
 					}
-				} else {
-					if (!enableForMember(element)) {
+				}
+			} else {
+				// check if all elements support watchpoint
+				for (int i= 0, length= elements.length; i < length; i++) {
+					if (!enableForMember(elements[i])) {
 						report(ActionMessages.getString("ManageWatchpointActionDelegate.CantAdd")); //$NON-NLS-1$
 						return;
 					}
-					IType type = element.getDeclaringType();
-					int start = -1;
-					int end = -1;
-					ISourceRange range = element.getNameRange();
-					if (range != null) {
-						start = range.getOffset();
-						end = start + range.getLength();
-					}
-					Map attributes = new HashMap(10);
-					BreakpointUtils.addJavaBreakpointAttributes(attributes, element);
-					setBreakpoint(JDIDebugModel.createWatchpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes));
 				}
-			} catch (JavaModelException e) {
-				JDIDebugUIPlugin.log(e);
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), ActionMessages.getString("ManageWatchpointAction.The_selected_field_is_not_visible_in_the_currently_selected_debug_context._A_stack_frame_or_suspended_thread_which_contains_the_declaring_type_of_this_field_must_be_selected_1")); //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x);
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), x.getMessage()); //$NON-NLS-1$
-			}
-		} else {
-			// remove breakpoint
-			try {
+				// add or remove watchpoint
 				IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-				breakpointManager.removeBreakpoint(getBreakpoint(), true);
-			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x);
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_removing_watchpoint_8"), x.getMessage()); //$NON-NLS-1$
+				for (int i= 0, length= elements.length; i < length; i++) {
+					IField element= (IField)elements[i];
+					IJavaBreakpoint breakpoint= getBreakpoint(element);
+					if (breakpoint == null) {
+						IType type = element.getDeclaringType();
+						int start = -1;
+						int end = -1;
+						ISourceRange range = element.getNameRange();
+						if (range != null) {
+							start = range.getOffset();
+							end = start + range.getLength();
+						}
+						Map attributes = new HashMap(10);
+						BreakpointUtils.addJavaBreakpointAttributes(attributes, element);
+						JDIDebugModel.createWatchpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes);
+					} else {
+						// remove breakpoint
+						try {
+							breakpointManager.removeBreakpoint(breakpoint, true);
+						} catch (CoreException x) {
+							JDIDebugUIPlugin.log(x);
+							MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_removing_watchpoint_8"), x.getMessage()); //$NON-NLS-1$
+						}
+					}
+				}
 			}
+		} catch (JavaModelException e) {
+			JDIDebugUIPlugin.log(e);
+			MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), ActionMessages.getString("ManageWatchpointAction.The_selected_field_is_not_visible_in_the_currently_selected_debug_context._A_stack_frame_or_suspended_thread_which_contains_the_declaring_type_of_this_field_must_be_selected_1")); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (CoreException x) {
+			JDIDebugUIPlugin.log(x);
+			MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), x.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -175,17 +182,21 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 		breakpointField.getDeclaringType().getFullyQualifiedName().equals(watchpoint.getTypeName()));
 	}
 	
-	protected IMember getMember(ISelection s) {
+	protected IMember[] getMembers(ISelection s) {
 		if (s instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection) s;
-			if (ss.size() == 1) {					
-				Object o=  ss.getFirstElement();
+			ArrayList members= new ArrayList();
+			for (Iterator iter= ((IStructuredSelection) s).iterator(); iter.hasNext();) {
+				Object o=  iter.next();
 				if (o instanceof IField) {
-					return (IField) o;
+					members.add(o);
 				} else if (o instanceof IJavaFieldVariable) {
-					return getField((IJavaFieldVariable) o);
+					IField field= getField((IJavaFieldVariable) o);
+					if (field != null) {
+						members.add(field);
+					}
 				}
 			}
+			return (IMember[])members.toArray(new IMember[0]);
 		} 
 		
 		return null;
@@ -335,12 +346,13 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 			IWorkbenchPart part = getPage().getActivePart();
 			if (part == null) {
 				getAction().setEnabled(false);
-			} else if (part != getPage().getActiveEditor()) {
-				ISelectionProvider sp= part.getSite().getSelectionProvider();
-				getAction().setEnabled(sp != null && enableForMember(getMember(sp.getSelection())));
-			} else { //dealing with active editor
-				if (getPage().getActiveEditor() instanceof ITextEditor) {
-					super.setEnabledState((ITextEditor)getPage().getActiveEditor());
+			} else {
+				if (part == getPage().getActiveEditor()) {
+					if (getPage().getActiveEditor() instanceof ITextEditor) {
+						super.setEnabledState((ITextEditor)getPage().getActiveEditor());
+					} else {
+						getAction().setEnabled(false);
+					}
 				}
 			}
 		}	
