@@ -20,6 +20,7 @@ import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 
+import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
@@ -300,7 +301,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 		MethodImpl methodImpl = (MethodImpl)method;
 		
 		// Perform some checks for IllegalArgumentException.
-		if (!referenceType().allMethods().contains(method))
+		if (!isAValidMethod(method))
 			throw new IllegalArgumentException(JDIMessages.getString("ObjectReferenceImpl.Class_does_not_contain_given_method_2")); //$NON-NLS-1$
 		if (method.argumentTypeNames().size() != arguments.size())
 			throw new IllegalArgumentException(JDIMessages.getString("ObjectReferenceImpl.Number_of_arguments_doesn__t_match_3")); //$NON-NLS-1$
@@ -360,6 +361,15 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 		} finally {
 			handledJdwpRequest();
 		}
+	}
+
+	private boolean isAValidMethod(Method method) {
+		ReferenceType refType= referenceType();
+		if (refType instanceof ArrayType) {
+			// if the object is an array, check if the method is declared in java.lang.Object
+			return "java.lang.Object".equals(method.declaringType().name()); //$NON-NLS-1$
+		}
+		return refType.allMethods().contains(method);
 	}
 	
 	/**

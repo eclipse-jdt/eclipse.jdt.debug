@@ -17,6 +17,7 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
+import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.Method;
@@ -60,7 +61,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				// begin lookup in superclass
 				refType = ((ClassType)refType).superclass();
 			}
-			method = ((ClassType)refType).concreteMethodByName(selector, signature);
+			method = concreteMethodByName(refType, selector, signature);
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 		}
@@ -93,12 +94,26 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 					targetRequestFailed(JDIDebugModelMessages.getString("JDIObjectValueMethod_declaring_type_not_found_1"), null); //$NON-NLS-1$
 				}
 			}
-			method = ((ClassType)refType).concreteMethodByName(selector, signature);
+			method= concreteMethodByName(refType, selector, signature);
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 		}
 		Value result = javaThread.invokeMethod(null, object, method, arguments, true);
 		return JDIValue.createValue((JDIDebugTarget)getDebugTarget(), result);
+	}
+
+	private Method concreteMethodByName(ReferenceType refType, String selector, String signature) throws DebugException {
+		if (refType instanceof ClassType) {
+			return ((ClassType)refType).concreteMethodByName(selector, signature);
+		}
+		if (refType instanceof ArrayType) {
+			// the jdi spec specifies that all methods on methods return an empty list for array types.
+			// use a trick to get the right method from java.lang.Object
+			return ((ClassType)refType.classObject().referenceType()).superclass().concreteMethodByName(selector, signature);
+		}
+		targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.method_lookup_failed_for_selector___{0}___with_signature___{1}__1"), new String[] {selector, signature}), null); //$NON-NLS-1$
+		// it is possible to return null
+		return null;
 	}
 	
 	/**
