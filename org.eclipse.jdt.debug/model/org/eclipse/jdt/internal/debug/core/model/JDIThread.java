@@ -21,7 +21,6 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.StringMatcher;
@@ -61,13 +60,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Constant for the name of the main thread group.
 	 */
 	private static final String MAIN_THREAD_GROUP = "main"; //$NON-NLS-1$
-	
-	/**
-	 * Number of milliseconds used as a timeout before
-	 * 'collapsing' stack frames when performing a step
-	 * or method invocation.
-	 */
-	private static final int COLLAPSE_TIMEOUT = 3000;
 
 	/**
 	 * Underlying thread.
@@ -142,27 +134,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private boolean fInEvaluation = false;
 	
-	/**
-	 * When performing an evaluation, a client
-	 * may decide to abort the evaluation, in which
-	 * case this flag gets set to <code>true</code>.
-	 * When an evaluation is aborted, before it completes,
-	 * the evaluation thread is eventually (automatically)
-	 * resumed when the evaluation completes. When 
-	 * an evaluation is not aborted, the evaluation thread
-	 * remains suspended when on completion of the
-	 * evaluation.
-	 */
-	private boolean fEvaluationAborted = false;
-	
-	/**
-	 * Whether this thread has been interrupted during
-	 * the last evaluation. That is, was a breakpoint
-	 * hit, did the user suspend the thread, or did
-	 * the evaluation timeout.
-	 */
-	private boolean fInterrupted = false;
-	
+		
 	/**
 	 * The kind of step that was originally requested.  Zero or
 	 * more 'secondary steps' may be performed programmatically after
@@ -671,18 +643,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			// set the request timeout to be infinite
 			setRequestTimeout(Integer.MAX_VALUE);
-			resetAbortEvaluation();
 			setRunning(true);
 			setPerformingEvaluation(true);
 			preserveStackFrames();
-			resetInterrupted();
-			
-//			if (method.name().equals("toString")) {
-//				setEvaluationDetail(DebugEvent.EVALUATION_READ_ONLY);
-//			} else {
-//				setEvaluationDetail(DebugEvent.EVALUATION);
-//			}
-//			fireResumeEvent(getEvaluationDetail());
 			
 			if (receiverClass == null) {
 				result= receiverObject.invokeMethod(getUnderlyingThread(), method, args, ClassType.INVOKE_SINGLE_THREADED);
@@ -702,73 +665,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 
 		invokeComplete(timeout);
-		if (wasEvaluationAborted()) {
-			resume();
-		}
 		return result;
-	}
-	
-	/**
-	 * Called when this thread suspends. If this thread is performing
-	 * a method invocation, a note is made that the invocation was
-	 * interrupted. When an invocation is interrupted, a suspend
-	 * event must be fired when/if the invocation eventually completes.
-	 * 
-	 * @see #invokeMethod(ClassType, ObjectReference, Method, List)
-	 */
-	protected void interrupted() {
-		if (isPerformingEvaluation()) {
-			fInterrupted = true;
-		}
-	}
-	
-	/**
-	 * Resets the interrupted state to <code>false</code>. 
-	 */
-	protected void resetInterrupted() {
-		fInterrupted = false;
-	}
-	
-	/**
-	 * Returns whether this thread was interrupted during the
-	 * last evaluation.
-	 */
-	protected boolean wasInterrupted() {
-		return fInterrupted;
-	}
-	
-	/**
-	 * Causes this thread to be automatically resumed when
-	 * it returns from its current invocation, if any.
-	 * <p>
-	 * For example, this is called by <code>JDIValue</code>
-	 * when a 'to string' evaluation times out. If the invocation
-	 * ever completes, the thread will not suspend when/if the
-	 * 'to string' evaluation completes.
-	 * </p>
-	 * 
-	 * @see #invokeMethod(ClassType, ObjectReference, Method, List)
-	 */
-	protected void abortEvaluation() {
-		fEvaluationAborted = true;
-	}
-	
-	/**
-	 * Resets the abort flag to <code>false</code> before
-	 * an evaluation.
-	 */
-	protected void resetAbortEvaluation() {
-		fEvaluationAborted = false;
-	}
-	
-	/**
-	 * Returns whether a client asked to abort an evaluation
-	 * while performing a method invocation.
-	 * 
-	 * @see #invokeMethod(ClassType, ObjectReference, Method, List)
-	 */
-	protected boolean wasEvaluationAborted() {
-		return fEvaluationAborted;
 	}
 	
 	/**
@@ -823,7 +720,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			setRunning(true);
 			setPerformingEvaluation(true);
 			preserveStackFrames();
-			resetInterrupted();
 			result= receiverClass.newInstance(getUnderlyingThread(), constructor, args, ClassType.INVOKE_SINGLE_THREADED);
 		} catch (InvalidTypeException e) {
 			invokeFailed(e, timeout);
@@ -867,7 +763,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * <li>Resets the state of this thread to suspended</li>
 	 * <li>Restores the communication timeout value</li>
 	 * <li>Computes the new set of stack frames for this thread</code>
-	 * <li>Fires a suspend event, iff the invocation was interrupted</code>
 	 * </ul>
 	 * 
 	 * @param restoreTimeout the communication timeout value,
@@ -876,7 +771,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
  	 * @see #newInstance(ClassType, Method, List)
 	 */
 	protected void invokeComplete(int restoreTimeout) {
-		boolean interrupted= wasInterrupted();
 		setRunning(false);
 		setPerformingEvaluation(false);
 		setRequestTimeout(restoreTimeout);
@@ -886,13 +780,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		} catch (DebugException e) {
 			logError(e);
 		}
-		//if (interrupted) {
-			//fireSuspendEvent(DebugEvent.UNSPECIFIED);
-		//} else {
-			// fire a suspend event indicating whether
-			// any updates may have occurred in the target
-			//fireSuspendEvent(getEvaluationDetail());
-		//}
 	}
 	
 	/**
@@ -1130,9 +1017,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		fRunning = running;
 		if (running) {
 			fCurrentBreakpoint = null;
-		} else {
-			interrupted();
-		}
+		} 
 	}
 
 	/**
