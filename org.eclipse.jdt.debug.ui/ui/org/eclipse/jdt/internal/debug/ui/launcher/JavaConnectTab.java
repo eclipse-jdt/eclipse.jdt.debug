@@ -266,7 +266,13 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 
 	protected void updateConfigFromPortNumber() {
 		if (getWorkingCopy() != null) {
-			getWorkingCopy().setAttribute(JavaDebugUI.PORT_ATTR, (String)fPortText.getText());
+			String portString = fPortText.getText();
+			int port = -1;
+			try {
+				port = Integer.parseInt(portString);
+			} catch (NumberFormatException nfe) {				
+			}
+			getWorkingCopy().setAttribute(JavaDebugUI.PORT_ATTR, port);
 			refreshStatus();			
 		}		
 	}

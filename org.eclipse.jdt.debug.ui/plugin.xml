@@ -655,12 +655,12 @@
 	<launchConfigurationTypeImage
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.localJavaApplication"
 		configTypeID="org.eclipse.jdt.debug.ui.localJavaApplication"
-		icon="icons/full/obj16/lcl_java_app.gif">
+		icon="icons/full/obj16/java_lcl_cnfg_type.gif">
 	</launchConfigurationTypeImage>	
 	<launchConfigurationTypeImage
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.remoteJavaApplication"
 		configTypeID="org.eclipse.jdt.debug.ui.remoteJavaApplication"
-		icon="icons/full/obj16/rmt_java_app.gif">
+		icon="icons/full/obj16/java_rmt_cnfg_type.gif">
 	</launchConfigurationTypeImage>	
 </extension>
 

@@ -165,7 +165,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		pathButtonLayout.marginHeight = 0;
 		pathButtonLayout.marginWidth = 0;
 		pathButtonComp.setLayout(pathButtonLayout);
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		pathButtonComp.setLayoutData(gd);
 		
 		createVerticalSpacer(pathButtonComp, 1);
@@ -255,7 +255,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		envButtonLayout.marginHeight = 0;
 		envButtonLayout.marginWidth = 0;
 		envButtonComp.setLayout(envButtonLayout);
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		envButtonComp.setLayoutData(gd);
 		
 		fEnvAddButton = new Button(envButtonComp, SWT.PUSH);
