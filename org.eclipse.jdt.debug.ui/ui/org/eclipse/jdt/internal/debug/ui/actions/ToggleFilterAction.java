@@ -31,8 +31,8 @@ public abstract class ToggleFilterAction extends Action implements IViewActionDe
 	 */
 	public void init(IViewPart view) {
 		IDebugViewAdapter adapter= (IDebugViewAdapter) view.getAdapter(IDebugViewAdapter.class);
-		if (adapter != null) {
-			setViewer(adapter.getViewer());
+		if (adapter != null && adapter.getViewer() instanceof StructuredViewer) {
+			setViewer((StructuredViewer)adapter.getViewer());
 		}
 	}
 

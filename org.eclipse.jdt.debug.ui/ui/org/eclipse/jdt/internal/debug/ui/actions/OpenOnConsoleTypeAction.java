@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
@@ -30,8 +30,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -229,7 +231,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 			if (textSelection.getLength() > 0 && !initiatedFromDoubleClick()) {
 				parseSelection(textSelection.getText());
 			} else {
-				IDocument consoleDocument = DebugUIPlugin.getCurrentConsoleDocument();
+				IDocument consoleDocument = getConsoleDocument();
 				if (consoleDocument == null) {
 					return;
 				}
@@ -246,6 +248,17 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 				}
 			}
 		}		
+	}
+	
+	protected IDocument getConsoleDocument() {
+		IDebugViewAdapter dv = (IDebugViewAdapter)getViewPart().getAdapter(IDebugViewAdapter.class);
+		if (dv != null) {
+			Viewer v = dv.getViewer();
+			if (v instanceof TextViewer) {
+				return ((TextViewer)v).getDocument();
+			}
+		}
+		return null;
 	}
 	
 	/**

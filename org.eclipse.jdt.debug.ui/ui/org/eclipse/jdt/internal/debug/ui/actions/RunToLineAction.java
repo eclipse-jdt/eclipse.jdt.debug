@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -130,13 +131,13 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	 * Resolves a stack frame context from the UI
 	 */
 	protected IDebugTarget getContextFromUI() throws DebugException {
-		IDebugElement de= DebugUITools.getDebugContext();
+		IAdaptable de= DebugUITools.getDebugContext();
 		if (de != null) {
 			if (de instanceof IThread) {
 				return getContextFromThread((IThread) de);
+			} else if (de instanceof IDebugElement) {
+				return ((IDebugElement)de).getDebugTarget();
 			}
-			
-			return de.getDebugTarget();
 		}
 		
 		return null;

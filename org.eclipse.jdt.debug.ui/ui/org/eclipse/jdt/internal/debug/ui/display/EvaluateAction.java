@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -90,7 +91,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 * Finds the currently selected stack frame in the UI
 	 */
 	protected IStackFrame getContext() {
-		IDebugElement context = DebugUITools.getDebugContext();
+		IAdaptable context = DebugUITools.getDebugContext();
 		if (context != null) {
 			if (context instanceof IStackFrame) {
 				return (IStackFrame)context;
