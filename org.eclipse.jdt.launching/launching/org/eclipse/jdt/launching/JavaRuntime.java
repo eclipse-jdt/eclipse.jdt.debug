@@ -367,13 +367,14 @@ public final class JavaRuntime {
 				install.getVMInstallType().disposeVMInstall(install.getId());
 			}
 			fgDefaultVMId = null;
+			// re-detect
+			detectDefaultVM();
+			// update VM prefs 
 			try {
-				//get rid of bad values on disk
 				saveVMConfiguration();
 			} catch(CoreException e) {
 				LaunchingPlugin.log(e);
 			}
-			detectVMConfiguration();
 			return getVMFromCompositeId(getDefaultVMId());
 		}
 	}
@@ -1329,17 +1330,19 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Look out on the file system for VMs.  Try to find one VM for each VM type.
-	 * Put the results in a result collector and return it.	 */
-	private static VMDefinitionsContainer detectVMConfiguration() {
-		VMDefinitionsContainer resultCollector = new VMDefinitionsContainer(false);
-		
+	 * Detect the VM that Eclipse is running on.
+	 * 
+	 * @return a VM standin representing the VM that Eclipse is running on, or
+	 * <code>null</code> if unable to detect the runtime VM
+	 */
+	private static VMStandin detectEclipseRuntime() {
+		VMStandin detectedVMStandin = null;
 		// Try to detect a VM for each declared VM type
 		IVMInstallType[] vmTypes= getVMInstallTypes();
 		for (int i = 0; i < vmTypes.length; i++) {
 			
 			File detectedLocation= vmTypes[i].detectInstallLocation();
-			if (detectedLocation != null) {
+			if (detectedLocation != null && detectedVMStandin == null) {
 				
 				// Make sure the VM id is unique
 				int unique = i;
@@ -1350,58 +1353,97 @@ public final class JavaRuntime {
 
 				// Create a standin for the detected VM and add it to the result collector
 				String vmID = String.valueOf(unique);
-				VMStandin detectedVMStandin = new VMStandin(vmType, vmID);
+				detectedVMStandin = new VMStandin(vmType, vmID);
 				if (detectedVMStandin != null) {
 					detectedVMStandin.setInstallLocation(detectedLocation);
-					detectedVMStandin.setName(generateDetectedVMName(detectedVMStandin));
-					resultCollector.addVM(detectedVMStandin);				
-					
-					// Only set one default VM
-					if (resultCollector.getDefaultVMInstallCompositeID() == null) {
-						String compositeId = getCompositeIdFromVM(detectedVMStandin);
-						resultCollector.setDefaultVMInstallCompositeID(compositeId);
-					}
+					detectedVMStandin.setName(generateDetectedVMName(detectedVMStandin));						
 				}				
 			}
 		}
-		
-		if (resultCollector.getDefaultVMInstallCompositeID() == null) {
-			// did not detect VM - register error with the workspace root
-			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			try {
-				IMarker[] markers = root.findMarkers(LaunchingPlugin.NO_DEFAULT_JRE_MARKER_TYPE, false, IResource.DEPTH_ZERO);
-				if (markers.length == 0) {
-					// create a new error - none exist
-					IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-						/**
-						 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
-						 */
-						public void run(IProgressMonitor monitor) throws CoreException {
-							IMarker error = root.createMarker(LaunchingPlugin.NO_DEFAULT_JRE_MARKER_TYPE);
-							error.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-							error.setAttribute(IMarker.MESSAGE, LaunchingMessages.getString("JavaRuntime.Unable_to_detect_default_JRE._See___Preferences_->_Java_->_Installed_JREs___1")); //$NON-NLS-1$
-						}
-					};
-					root.getWorkspace().run(runnable, null);
-				}
-			} catch (CoreException e) {
-			}
-		}
-		return resultCollector;
+		return detectedVMStandin;
 	}
 
 	/**
-	 * Look on the file system for VMs, convert the results to XML, and write this
-	 * as the new value of the VM preference.	 */
-	private static VMDefinitionsContainer detectAndSaveVMDefinitions() {
-		VMDefinitionsContainer vmDefs = detectVMConfiguration();
+	 * Tries to locate a default VM (if one is not currently set). Sets the
+	 * default VM to be the Eclipse runtime or the first VM found. Log an error
+	 * with the workspace if a no VMs can be located.
+	 */
+	private static void detectDefaultVM() {
+		if (getDefaultVMId() == null) {
+			VMStandin eclipseRuntime = detectEclipseRuntime();
+			IVMInstall defaultVM = null;
+			IVMInstallType[] vmTypes= getVMInstallTypes();
+			if  (eclipseRuntime == null) {
+				// No default VM or Eclipse runtime. Set the first VM as the default (if any)
+				for (int i = 0; i < vmTypes.length; i++) {
+					IVMInstallType type = vmTypes[i];
+					IVMInstall[] vms = type.getVMInstalls();
+					for (int j = 0; j < vms.length; j++) {
+						defaultVM = vms[j];
+						break;
+					}
+					if (defaultVM != null) {
+						break;
+					}
+				}
+				if (defaultVM == null) {
+					// did not detect default VM - register error with the workspace root
+					final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+					try {
+						IMarker[] markers = root.findMarkers(LaunchingPlugin.NO_DEFAULT_JRE_MARKER_TYPE, false, IResource.DEPTH_ZERO);
+						if (markers.length == 0) {
+							// create a new error - none exist
+							IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+								/**
+								 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
+								 */
+								public void run(IProgressMonitor monitor) throws CoreException {
+									IMarker error = root.createMarker(LaunchingPlugin.NO_DEFAULT_JRE_MARKER_TYPE);
+									error.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+									error.setAttribute(IMarker.MESSAGE, LaunchingMessages.getString("JavaRuntime.Unable_to_detect_default_JRE._See___Preferences_->_Java_->_Installed_JREs___1")); //$NON-NLS-1$
+								}
+							};
+							root.getWorkspace().run(runnable, null);
+						}
+					} catch (CoreException e) {
+					}
+				}
+			} else {
+				// if there is no default VM, set the Eclipse runtime to be the default
+				// VM. First search for an existing VM install with the same
+				// install location as the detected runtime
+				IVMInstallType type = eclipseRuntime.getVMInstallType();
+				IVMInstall[] vms = type.getVMInstalls();
+				for (int j = 0; j < vms.length; j++) {
+					IVMInstall install = vms[j];
+					if (install.getInstallLocation().equals(eclipseRuntime.getInstallLocation())) {
+						defaultVM = install;
+						break;
+					}
+				}
+				if (defaultVM == null) {
+					// There is no VM install that corresponds to the Eclipse runtime.
+					// Create a VM install for the Eclipse runtime.
+					defaultVM = eclipseRuntime.convertToRealVM();
+				}
+			}
+			if (defaultVM != null) {
+				fgDefaultVMId = getCompositeIdFromVM(defaultVM);
+			}
+		}		
+	}
+	/**
+	 * Detects VM installations, and a default VM (if required). Saves the
+	 * results.
+	 */
+	private static void detectAndSaveVMDefinitions() {
+		detectDefaultVM();
 		try {
-			String vmDefXML = vmDefs.getAsXML();
+			String vmDefXML = getVMsAsXML();
 			saveVMDefinitions(vmDefXML);
 		} catch (IOException ioe) {
 			LaunchingPlugin.log(ioe);
 		}
-		return vmDefs;
 	}
 	
 	/**
