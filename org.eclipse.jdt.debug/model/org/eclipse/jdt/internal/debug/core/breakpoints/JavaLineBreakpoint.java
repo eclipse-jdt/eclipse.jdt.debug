@@ -6,10 +6,8 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  */
  
 import java.util.List;
-
 import java.util.Map;
 
-import javax.naming.directory.Attribute;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
