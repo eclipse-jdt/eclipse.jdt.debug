@@ -41,7 +41,7 @@ public class Standard11xVMType extends StandardVMType {
 	/**
 	 * @see org.eclipse.jdt.internal.launching.StandardVMType#getDefaultSystemLibrarySource(java.io.File)
 	 */
-	protected IPath getDefaultSystemLibrarySource(File installLocation) {
+	protected IPath getDefaultSystemLibrarySource(File libLocation) {
 		setDefaultRootPath(""); //$NON-NLS-1$
 		return Path.EMPTY;
 	}
@@ -76,7 +76,7 @@ public class Standard11xVMType extends StandardVMType {
 		IPath libPath = getDefaultSystemLibrary(installLocation);
 		File lib = libPath.toFile();
 		if (lib.exists()) {
-			return new LibraryLocation[] {new LibraryLocation(libPath, getDefaultSystemLibrarySource(installLocation), getDefaultPackageRootPath())};
+			return new LibraryLocation[] {new LibraryLocation(libPath, getDefaultSystemLibrarySource(lib), getDefaultPackageRootPath())};
 		}
 		return new LibraryLocation[0];
 	}

@@ -188,9 +188,17 @@ public class StandardVMType extends AbstractVMInstallType {
 		return new Path(javaHome.getPath()).append("jre").append("lib").append("rt.jar"); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 	}
 	
-	protected IPath getDefaultSystemLibrarySource(File installLocation) {
-		File parent= installLocation.getParentFile();
-		if (parent != null) {
+	/**
+	 * Returns a path to the source attachment for the given libaray, or
+	 * an empty path if none.
+	 * 
+	 * @param libLocation
+	 * @return a path to the source attachment for the given library, or
+	 *  an empty path if none
+	 */
+	protected IPath getDefaultSystemLibrarySource(File libLocation) {
+		File parent= libLocation.getParentFile();
+		while (parent != null) {
 			File parentsrc= new File(parent, "src.jar"); //$NON-NLS-1$
 			if (parentsrc.isFile()) {
 				setDefaultRootPath("src");//$NON-NLS-1$
@@ -201,16 +209,7 @@ public class StandardVMType extends AbstractVMInstallType {
 				setDefaultRootPath(""); //$NON-NLS-1$
 				return new Path(parentsrc.getPath());
 			}
-			parentsrc= new File(installLocation, "src.jar"); //$NON-NLS-1$
-			if (parentsrc.isFile()) {
-				setDefaultRootPath("src"); //$NON-NLS-1$
-				return new Path(parentsrc.getPath());
-			}			
-			parentsrc= new File(installLocation, "src.zip"); //$NON-NLS-1$
-			if (parentsrc.isFile()) {
-				setDefaultRootPath(""); //$NON-NLS-1$
-				return new Path(parentsrc.getPath());
-			}			
+			parent = parent.getParentFile();
 		}
 		setDefaultRootPath(""); //$NON-NLS-1$
 		return Path.EMPTY; //$NON-NLS-1$
@@ -249,7 +248,7 @@ public class StandardVMType extends AbstractVMInstallType {
 			File lib = path.toFile(); 
 			if (lib.exists() && lib.isFile()) {
 				allLibs.add(new LibraryLocation(path,
-								getDefaultSystemLibrarySource(installLocation),
+								getDefaultSystemLibrarySource(lib),
 								getDefaultPackageRootPath()));
 			}
 			
