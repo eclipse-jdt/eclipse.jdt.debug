@@ -14,7 +14,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructure;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures;
@@ -37,9 +36,10 @@ import org.eclipse.ui.actions.ActionDelegate;
 public class EditVariableLogicalStructureAction extends ActionDelegate implements IObjectActionDelegate {
     
     /**
-     * The currently selected variable in the variable's view.
+     * The editable structure for the currently selected variable or
+     * <code>null</code> if none.
      */
-    private IJavaValue fValue= null;
+    private JavaLogicalStructure fStructure= null;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
@@ -52,17 +52,14 @@ public class EditVariableLogicalStructureAction extends ActionDelegate implement
      * selected variable.
      */
     public void run(IAction action) {
-        if (fValue == null) {
+        if (fStructure == null) {
             return;
         }
-        ILogicalStructureType structure = getLogicalStructure(fValue);
-        if (structure != null && structure instanceof JavaLogicalStructure) {
-            Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-            if (shell != null) {
-                EditLogicalStructureDialog dialog= new EditLogicalStructureDialog(shell, (JavaLogicalStructure) structure);
-                if (dialog.open() == Window.OK) {
-                    JavaLogicalStructures.saveUserDefinedJavaLogicalStructures();
-                }
+        Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
+        if (shell != null) {
+            EditLogicalStructureDialog dialog= new EditLogicalStructureDialog(shell, fStructure);
+            if (dialog.open() == Window.OK) {
+                JavaLogicalStructures.saveUserDefinedJavaLogicalStructures();
             }
         }
     }
@@ -71,19 +68,26 @@ public class EditVariableLogicalStructureAction extends ActionDelegate implement
      * @see ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
     public void selectionChanged(IAction action, ISelection selection) {
+        fStructure= null;
         Object element = ((IStructuredSelection) selection).getFirstElement();
         if (element instanceof IJavaVariable) {
             try {
-                fValue= (IJavaValue) ((IJavaVariable) element).getValue();
-                if (fValue instanceof JavaStructureErrorValue) {
-                    fValue= ((JavaStructureErrorValue) fValue).getParentValue();
+                IValue value= ((IJavaVariable) element).getValue();
+                if (value instanceof JavaStructureErrorValue) {
+                    value= ((JavaStructureErrorValue) value).getParentValue();
+                }
+                ILogicalStructureType type= getLogicalStructure(value);
+                if (type instanceof JavaLogicalStructure) {
+                    JavaLogicalStructure javaStructure= (JavaLogicalStructure) type;
+                    if (!javaStructure.isContributed()) {
+                        fStructure= javaStructure;
+                    }
                 }
             } catch (DebugException e) {
                 JDIDebugUIPlugin.log(e.getStatus());
             }
-        } else {
-            fValue= null;
         }
+        action.setEnabled(fStructure != null);
     }
     
     /**
