@@ -578,7 +578,11 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 	 * @see IAddVMDialogRequestor#vmAdded(IVMInstall)
 	 */
 	public void vmAdded(IVMInstall vm) {
-		((VMStandin)vm).convertToRealVM();
+		((VMStandin)vm).convertToRealVM();		
+		try {
+			JavaRuntime.saveVMConfiguration();
+		} catch(CoreException e) {
+		}
 		fVMStandins.add(vm);
 		populateJREComboBox();
 		selectJREComboBoxEntry(vm.getId());
