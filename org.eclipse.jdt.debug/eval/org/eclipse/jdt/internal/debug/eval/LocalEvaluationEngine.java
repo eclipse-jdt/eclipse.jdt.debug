@@ -156,6 +156,11 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * The name of the code snippet class to instantiate
 	 */
 	private String fCodeSnippetClassName = null;
+	
+	/** 
+	 * Wether to hit breakpoints in the evaluation thread
+	 */
+	private boolean fHitBreakpoints = false;
 		
 	/**
 	 * Constant for empty array of <code>java.lang.String</code>
@@ -200,7 +205,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			if (codeSnippetClassName != null) {
 				setCodeSnippetClassName(codeSnippetClassName);
 				try {
-					getThread().runEvaluation(this, null, DebugEvent.EVALUATION, true);
+					getThread().runEvaluation(this, null, DebugEvent.EVALUATION, getHitBreakpoints());
 				} catch (DebugException e) {
 					// exception handling is in evaluation runnable
 				}
@@ -395,12 +400,13 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * @see IClassFileEvaluationEngine#evaluate(String, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener, boolean hitBreakpoints) throws DebugException {
 			checkDisposed();
 			checkEvaluating();
 			try {
 				evaluationStarted();
 				setListener(listener);
+				setHitBreakpoints(hitBreakpoints);
 				setResult(new EvaluationResult(this, snippet, thread));
 				checkThread();
 				// no receiver/stack frame context
@@ -442,6 +448,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				evaluationStarted();
 				setListener(listener);
 				setStackFrame(frame);
+				setHitBreakpoints(hitBreakpoints);
 				setResult(new EvaluationResult(this, snippet, (IJavaThread)frame.getThread()));
 				checkThread();
 				
@@ -511,6 +518,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			try {
 				evaluationStarted();
 				setListener(listener);
+				setHitBreakpoints(hitBreakpoints);
 				setResult(new EvaluationResult(this, snippet, thread));
 				checkThread();
 							
@@ -1368,6 +1376,23 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 */
 	public boolean isRequestingClassFiles() {
 		return true;
+	}
+
+	/**
+	 * Returns whether to hit breakpoints in the evaluation thread.
+	 * 
+	 * @return whether to hit breakpoints in the evaluation thread
+	 */
+	protected boolean getHitBreakpoints() {
+		return fHitBreakpoints;
+	}
+
+	/**
+	 * Sets whether to hit breakpoints in the evaluation thread.
+	 * @param hit whether to hit breakpoints in the evaluation thread
+	 */
+	private void setHitBreakpoints(boolean hit) {
+		fHitBreakpoints = hit;
 	}
 
 }

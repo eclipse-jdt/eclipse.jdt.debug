@@ -465,7 +465,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			if (getImports() != null) {
 				getEvaluationEngine().setImports(getImports());
 			}
-			getEvaluationEngine().evaluate(snippet,getThread(), this);
+			getEvaluationEngine().evaluate(snippet,getThread(), this, true);
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.log(e);
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.evaluating"), null, e.getStatus()); //$NON-NLS-1$

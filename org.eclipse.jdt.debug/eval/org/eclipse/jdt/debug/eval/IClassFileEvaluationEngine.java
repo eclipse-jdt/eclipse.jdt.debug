@@ -58,6 +58,9 @@ public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	 *   which must be suspended
 	 * @param listener the listener that will receive notification
 	 *   when/if the evalaution completes
+	 * @param hitBreakpoints whether or not breakpoints should be honored
+	 *  in the evaluation thread during the evaluation. If <code>false</code>,
+	 *  breakpoints hit in the evaluation thread will be ignored.
 	 * @exception DebugException if this method fails.  Reasons include:<ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -70,7 +73,7 @@ public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener) throws DebugException;
+	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener, boolean hitBreakpoints) throws DebugException;
 	
 	
 }
