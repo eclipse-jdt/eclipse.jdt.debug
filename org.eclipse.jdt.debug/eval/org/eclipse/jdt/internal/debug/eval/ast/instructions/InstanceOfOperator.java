@@ -29,7 +29,7 @@ public class InstanceOfOperator extends CompoundInstruction {
 			pushNewValue(false);
 			return;
 		}
-		IJavaObject object= (IJavaObject)popValue();
+		IJavaObject object= (IJavaObject)value;
 
 		IJavaObject classObject= getClassObject(type);
 		if (classObject == null) {
