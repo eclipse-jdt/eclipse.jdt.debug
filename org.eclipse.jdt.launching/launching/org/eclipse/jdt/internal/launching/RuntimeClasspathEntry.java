@@ -74,7 +74,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	private IClasspathEntry fResolvedEntry = null;
 	
 	/**
-	 * Documet builder is cached for efficiency
+	 * Document builder is cached for efficiency
 	 */
 	private static DocumentBuilder fgParser = null;
 	
@@ -616,5 +616,13 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		
 	protected boolean isEmpty(String string) {
 		return string == null || string.length() == 0;
+	}
+	
+	public String toString() {
+		if (fClasspathEntry != null) {
+			return fClasspathEntry.toString();
+		}
+		return super.toString();
+		
 	}
 }
