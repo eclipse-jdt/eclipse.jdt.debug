@@ -34,6 +34,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -46,6 +48,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
@@ -53,14 +56,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 import org.w3c.dom.Document;
@@ -102,6 +106,185 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * VM.
 	 */
 	private static Map fgLibraryInfoMap = null;	
+	
+	/**
+	 * Whether changes in VM preferences are being batched. When being batched
+	 * the plug-in can ignore processing and changes.
+	 */
+	private boolean fBatchingChanges = false;
+	
+	/**
+	 * Stores VM changes resulting from a JRE preference change.
+	 */
+	class VMChanges implements IVMInstallChangedListener {
+		
+		private boolean fDefaultChanged = false;
+		private IPath fOldDefaultConatinerId = null;
+		
+		private List fRemovedContainerIds = new ArrayList();
+		private List fChangedContainerIds = new ArrayList();
+		// old container ids to new
+		private HashMap fRenamedContainerIds = new HashMap();
+		
+		private IPath getConatinerId(IVMInstall vm) {
+			IPath path = new Path(JavaRuntime.JRE_CONTAINER);
+			path = path.append(new Path(vm.getVMInstallType().getId()));
+			path = path.append(new Path(vm.getName()));
+			return path;			
+		}
+		
+		/**
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#defaultVMInstallChanged(org.eclipse.jdt.launching.IVMInstall, org.eclipse.jdt.launching.IVMInstall)
+		 */
+		public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
+			fDefaultChanged = true;
+			fOldDefaultConatinerId = getConatinerId(previous);
+		}
+
+		/**
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmAdded(org.eclipse.jdt.launching.IVMInstall)
+		 */
+		public void vmAdded(IVMInstall vm) {
+		}
+
+		/**
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent)
+		 */
+		public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
+			String property = event.getProperty();
+			IVMInstall vm = (IVMInstall)event.getSource();
+			if (property.equals(IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION)) {
+				fChangedContainerIds.add(getConatinerId(vm));
+			} else if (property.equals(IVMInstallChangedListener.PROPERTY_NAME)) {
+				IPath newId = getConatinerId(vm);
+				IPath oldId = new Path(JavaRuntime.JRE_CONTAINER);
+				oldId = oldId.append(vm.getVMInstallType().getId());
+				oldId = oldId.append((String)event.getOldValue());
+				fRenamedContainerIds.put(oldId, newId);
+			} else if (property.equals(IVMInstallChangedListener.PROPERTY_LIBRARY_LOCATIONS)) {
+				// determine if it is more than a source attachment change
+				LibraryLocation[] prevs = (LibraryLocation[])event.getOldValue();
+				LibraryLocation[] currs = (LibraryLocation[])event.getNewValue();
+				if (prevs.length == currs.length) {
+					for (int i = 0; i < currs.length; i++) {
+						if (!currs[i].getSystemLibraryPath().equals(prevs[i].getSystemLibraryPath())) {
+							fChangedContainerIds.add(getConatinerId(vm));
+							return;
+						}
+					}
+				} else {
+					fChangedContainerIds.add(getConatinerId(vm));
+				}
+			}
+		}
+
+		/**
+		 * @see org.eclipse.jdt.launching.IVMInstallChangedListener#vmRemoved(org.eclipse.jdt.launching.IVMInstall)
+		 */
+		public void vmRemoved(IVMInstall vm) {
+			fRemovedContainerIds.add(getConatinerId(vm));
+		}
+	
+		/**
+		 * Determine the projects that have been affected by the JRE changes and
+		 * re-build them. Re-bind any classpath variables or containers that
+		 * have changed.
+		 */
+		public void process() throws CoreException {
+						
+			IWorkspace ws = ResourcesPlugin.getWorkspace();
+			boolean wasAutobuild= setAutobuild(ws, false);
+			try {
+				Set buildList = new HashSet();
+				IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
+				 
+				if (fDefaultChanged) {
+					// re-bin JRELIB if the default VM changed
+					JavaClasspathVariablesInitializer initializer = new JavaClasspathVariablesInitializer();
+					initializer.initialize(JavaRuntime.JRELIB_VARIABLE);
+					initializer.initialize(JavaRuntime.JRESRC_VARIABLE);
+					initializer.initialize(JavaRuntime.JRESRCROOT_VARIABLE);
+				} else {
+					// the old default is the same as the current default
+					fOldDefaultConatinerId = getConatinerId(JavaRuntime.getDefaultVMInstall());				
+				}
+															
+				// re-bind all container entries, noting which project need to be re-built
+				for (int i = 0; i < projects.length; i++) {
+					IJavaProject project = projects[i];
+					IClasspathEntry[] entries = project.getRawClasspath();
+					for (int j = 0; j < entries.length; j++) {
+						IClasspathEntry entry = entries[j];
+						switch (entry.getEntryKind()) {
+							case IClasspathEntry.CPE_CONTAINER:
+								IPath reference = entry.getPath();
+								IPath newBinding = reference;
+								boolean defRef = false;
+								String firstSegment = reference.segment(0);
+								if (JavaRuntime.JRE_CONTAINER.equals(firstSegment)) {
+									if (reference.segmentCount() == 1) {
+										// resolve to explicit reference
+										defRef = true;
+										reference = fOldDefaultConatinerId;
+										if (fDefaultChanged) {
+											buildList.add(project);
+										}
+									}
+									if (requiresRebuild(reference)) {
+										buildList.add(project);
+									}
+									IPath renamed = (IPath)fRenamedContainerIds.get(reference);
+									if (renamed != null) {
+										if (!defRef) {
+											// re-bind to new name if not a default reference
+											newBinding = renamed;
+										}
+									}
+									JREContainerInitializer initializer = new JREContainerInitializer();
+									initializer.initialize(newBinding, project);
+								}
+								break;
+							case IClasspathEntry.CPE_VARIABLE:
+								reference = entry.getPath();
+								if (JavaRuntime.JRELIB_VARIABLE.equals(reference.segment(0))) {
+									reference = fOldDefaultConatinerId;
+									if (fDefaultChanged) {
+										buildList.add(project);
+									}
+									if (requiresRebuild(reference)) {
+										buildList.add(project);
+									}
+								}
+								break;								
+							default:
+								break;
+						}
+					}
+				}
+
+				buildProjects(buildList);
+				
+			} finally {
+				setAutobuild(ws, wasAutobuild);
+			}
+		}
+		
+		private boolean requiresRebuild(IPath containerId) {
+			return  fChangedContainerIds.contains(containerId) || fRemovedContainerIds.contains(containerId);
+		}
+		
+		private boolean setAutobuild(IWorkspace ws, boolean newState) throws CoreException {
+			IWorkspaceDescription wsDescription= ws.getDescription();
+			boolean oldState= wsDescription.isAutoBuilding();
+			if (oldState != newState) {
+				wsDescription.setAutoBuilding(newState);
+				ws.setDescription(wsDescription);
+			}
+			return oldState;
+		}			
+	}
+	
+	
 	
 	public LaunchingPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -323,271 +506,126 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 */
 	protected void processVMPrefsChanged(String oldValue, String newValue) {
 		
-		String oldPrefString;
-		String newPrefString;
-		
-		// If empty new value, save the old value and wait for 2nd propertyChange notification
-		if (newValue == null || newValue.equals(EMPTY_STRING)) {        
-			fOldVMPrefString = oldValue;
-			return;
-		}		
-		
-		// An empty old value signals the second notification in the import preferences
-		// sequence.  Now that we have both old & new prefs, we can parse and compare them.
-		else if (oldValue == null || oldValue.equals(EMPTY_STRING)) {    	
-			oldPrefString = fOldVMPrefString;
-			newPrefString = newValue;
-		} 
-		
-		// If both old & new values are present, this is a normal user change
-		else {
-			oldPrefString = oldValue;
-			newPrefString = newValue;
-		}
-		
-		// Obtain lists of VMStandins corresponding to the VMs specified in the 
-		// old preference value
-		VMDefinitionsContainer oldResults = null;
-		List oldList = null;
-		byte[] oldByteArray = oldPrefString.getBytes();
-		if (oldByteArray.length > 0) {
-			ByteArrayInputStream oldStream = new ByteArrayInputStream(oldByteArray);
-			try {
-				oldResults = VMDefinitionsContainer.parseXMLIntoContainer(oldStream);
-			} catch (IOException e) {
-				LaunchingPlugin.log(e);
-			}
-			if (oldResults != null) {
-				oldList = oldResults.getVMList();
-			} else {
-				oldList = new ArrayList(1);
-			}
-		} else {
-			oldList = new ArrayList(1);
-		}
-		
-		// Obtain lists of VMStandins corresponding to the VMs specified in the 
-		// new preference value
-		VMDefinitionsContainer newResults = null;
-		List newList = null;
-		byte[] newByteArray = newPrefString.getBytes();
-		if (newByteArray.length > 0) {
-			ByteArrayInputStream newStream = new ByteArrayInputStream(newPrefString.getBytes());
-			try {
-				newResults = VMDefinitionsContainer.parseXMLIntoContainer(newStream);
-			} catch (IOException e) {
-				LaunchingPlugin.log(e);
-			}
-			if (newResults != null) {
-				newList = newResults.getVMList();
-			} else {
-				newList = new ArrayList(1);
-			}
-		} else {
-			newList = new ArrayList(1);
-		}
-		
-		// Determine the adds, deletes and changes for the old and new lists
-		List adds = new ArrayList(newList.size());
-		List deletes = new ArrayList(oldList.size());
-		List changes = new ArrayList(oldList.size());
-		determineVMListDifferences(oldList, newList, adds, deletes, changes);
-		
-		// Take action based on the added, changed & deleted VMs and update a set
-		// of affected projects
-		processVMAddsChangesDeletes(adds, changes, deletes, oldResults, newResults);
-	}
-	
-	/**
-	 * Added VMs need to have their underlying VM objects created.  Deleted VMs need to be
-	 * disposed.  Projects that referenced deleted & changed VMs as well as projects that
-	 * referenced a previous default VM need to be rebuilt.
-	 */	private void processVMAddsChangesDeletes(List adds, List changes, List deletes, 
-											  VMDefinitionsContainer oldResults, 
-											  VMDefinitionsContainer newResults) {
-		
-		// The data structure that tracks projects that will need to be rebuilt as a
-		// result of deletions, changes or a change in default VM
-		Set affectedProjects = new HashSet(changes.size() + deletes.size());
-		
-		// In order to track affected projects, we need a mapping of VMs to the projects
-		// that reference them.  Create this mapping only when we need it.
-		Map vmsToProjectsMap = null;
-		if (deletes.size() > 0) {
-			vmsToProjectsMap = getCompositeVMIdsToProjectsMap();
-		}
-		
-		// For all deleted VMs, retrieve the underlying 'real' VM (which we know must exist),
-		// update the set of affected projects with all projects that referenced the VM, and
-		// dispose of the VM.  The 'disposeVMInstall' method fires notification of the 
-		// deletion.
-		Iterator deletedIterator = deletes.iterator();
-		while (deletedIterator.hasNext()) {
-			VMStandin deletedVMStandin = (VMStandin) deletedIterator.next();
-			String deletedVMStandinId = deletedVMStandin.getId();
-			IVMInstall orginal = deletedVMStandin.getVMInstallType().findVMInstall(deletedVMStandinId);
-			List list = (List)vmsToProjectsMap.get(orginal);
-			if (list != null) {
-				affectedProjects.addAll(list);
-			}
-			deletedVMStandin.getVMInstallType().disposeVMInstall(deletedVMStandin.getId());			
-		}
-		
-		// For all added VMs, create the corresponding 'real' VM, and fire a VM added 
-		// notification
-		Iterator addedIterator = adds.iterator();
-		while (addedIterator.hasNext()) {
-			VMStandin addedVMStandin = (VMStandin) addedIterator.next();
-			IVMInstall realAddedVM = addedVMStandin.convertToRealVM();
-			JavaRuntime.fireVMAdded(realAddedVM);
-		}
-				
-		// Get the default VM Ids
-		boolean oldDefaultVMChanged = false;
-		String oldDefaultVMCompositeId = EMPTY_STRING;
-		String newDefaultVMCompositeId = EMPTY_STRING;
-		if (oldResults != null) {
-			oldDefaultVMCompositeId = oldResults.getDefaultVMInstallCompositeID();
-		}
-		if (newResults != null) {
-			newDefaultVMCompositeId = newResults.getDefaultVMInstallCompositeID();
-		}		
-
-		// For all changed VMs, commit the changes.  The 'convertToRealVM' method 
-		// fires notification of the VM change  
-		Iterator changedIterator = changes.iterator();
-		while (changedIterator.hasNext()) {
-			VMStandin changedVMStandin = (VMStandin) changedIterator.next();
-			IVMInstall realChangedVM = changedVMStandin.convertToRealVM();
-			
-			// Determine if the default VM changed
-			String changedVMCompositeId = JavaRuntime.getCompositeIdFromVM(realChangedVM);
-			if (changedVMCompositeId.equals(oldDefaultVMCompositeId)) {
-				oldDefaultVMChanged = true;
-			}
-		}
-		
-		// If a different VM is now the default, or if the old default VM was changed
-		// in some way, add all referencing projects to the set of projects to rebuild
-		if (!oldDefaultVMCompositeId.equals(newDefaultVMCompositeId) || oldDefaultVMChanged) {
-			
-			// If there was no previous default, then ALL projects must be rebuilt
-			if (oldDefaultVMCompositeId == EMPTY_STRING) {
-				try {
-					IJavaProject[] proj = getJavaModel().getJavaProjects();
-					for (int i = 0; i < proj.length; i++) {
-						affectedProjects.add(proj[i]);
-					}
-				} catch (JavaModelException jme) {
-					LaunchingPlugin.log(jme);
-				}
-			} else {
-				if (vmsToProjectsMap == null) {
-					vmsToProjectsMap = getCompositeVMIdsToProjectsMap();
-				}					
-				List list = (List)vmsToProjectsMap.get(oldDefaultVMCompositeId);
-				if (list != null) {
-					affectedProjects.addAll(list);
-				}		 	
-			}
-			IVMInstall newDefaultVM = JavaRuntime.getVMFromCompositeId(newDefaultVMCompositeId);
-			try {
-				JavaRuntime.setDefaultVMInstall(newDefaultVM, null, false);
-			} catch (CoreException ce) {
-				log(ce);
-			}
-		}
-
-		// For all projects that were affected, build them (if autobuild is turned on)
-		if (affectedProjects.size() > 0) {
-			if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-				buildProjects(affectedProjects);
-			}
-		}
-	}
-	
-	/**
-	 * Compare the lists of VMStandins in the first two List arguments and put all
-	 * elements present in the 2nd, but not in the 1st into 'added', put all elements
-	 * present in the 1st but not in the 2nd into 'deleted' and put all elements present
-	 * in both but not identical into 'changed'.
-	 */
-	private void determineVMListDifferences(List first, List second, List added, List deleted, List changed) {		
-		// Scan the first list for deletions & changes
-		Iterator firstIterator = first.iterator();
-		while (firstIterator.hasNext()) {
-			VMStandin firstElement = (VMStandin) firstIterator.next();
-			
-			// If a VM is present in both lists but different, add it to the changed list
-			int secondIndex = second.indexOf(firstElement);
-			if (secondIndex > -1) {
-				VMStandin secondElement = (VMStandin) second.get(secondIndex);
-				if (firstElement.different(secondElement)) {
-					changed.add(secondElement);
-				}				
-			// If a VM is only present in first list, this is a deletion
-			} else {
-				deleted.add(firstElement);
-			}
-		}
-		
-		// Scan the second list for additions
-		Iterator secondIterator = second.iterator();
-		while (secondIterator.hasNext()) {
-			VMStandin secondElement = (VMStandin) secondIterator.next();
-			
-			// If a VM is only present in second list, this is an addition
-			int firstIndex = first.indexOf(secondElement);
-			if (firstIndex == -1) {
-				added.add(secondElement);
-			}
-		}
-	}	
-
-	/**
-	 * Returns a map of composite VM install Ids to projects that reference those VMs.
-	 */
-	private static Map getCompositeVMIdsToProjectsMap() {
-		HashMap map = new HashMap();
+		// batch changes
+		fBatchingChanges = true;
+		VMChanges vmChanges = null;
 		try {
-			IJavaProject[] projects = getJavaModel().getJavaProjects();
-			for (int i = 0; i < projects.length; i++) {
-				IJavaProject jp = projects[i];
-				if (jp.getProject().isOpen()) {
-					IVMInstall vm = JavaRuntime.getVMInstall(jp);
-					if (vm != null) {
-						String compositeVMId = JavaRuntime.getCompositeIdFromVM(vm);
-						List list = (List)map.get(compositeVMId);
-						if (list == null) {
-							list = new ArrayList(2);
-							map.put(compositeVMId, list);
-						}
-						list.add(jp);
-					}
+
+			String oldPrefString;
+			String newPrefString;
+			
+			// If empty new value, save the old value and wait for 2nd propertyChange notification
+			if (newValue == null || newValue.equals(EMPTY_STRING)) {        
+				fOldVMPrefString = oldValue;
+				return;
+			}					
+			// An empty old value signals the second notification in the import preferences
+			// sequence.  Now that we have both old & new prefs, we can parse and compare them.
+			else if (oldValue == null || oldValue.equals(EMPTY_STRING)) {    	
+				oldPrefString = fOldVMPrefString;
+				newPrefString = newValue;
+			} 
+			// If both old & new values are present, this is a normal user change
+			else {
+				oldPrefString = oldValue;
+				newPrefString = newValue;
+			}
+			
+			vmChanges = new VMChanges();
+			JavaRuntime.addVMInstallChangedListener(vmChanges);
+			
+			// Generate the previous VMs
+			VMDefinitionsContainer oldResults = getVMDefinitions(oldPrefString);
+			
+			// Generate the current
+			VMDefinitionsContainer newResults = getVMDefinitions(newPrefString);
+			
+			// Determine the deteled VMs
+			List deleted = oldResults.getVMList();
+			List current = newResults.getVMList();
+			deleted.removeAll(current);
+			
+			// Dispose deleted VMs.  The 'disposeVMInstall' method fires notification of the 
+			// deletion.
+			Iterator deletedIterator = deleted.iterator();
+			while (deletedIterator.hasNext()) {
+				VMStandin deletedVMStandin = (VMStandin) deletedIterator.next();
+				deletedVMStandin.getVMInstallType().disposeVMInstall(deletedVMStandin.getId());			
+			}			
+			
+			// Fire change notification for added and changed VMs. The 'convertToRealVM'
+			// fires the appropriate notification.
+			Iterator iter = current.iterator();
+			while (iter.hasNext()) {
+				VMStandin standin = (VMStandin)iter.next();
+				standin.convertToRealVM();
+			}
+			
+			// set the new default VM install. This will fire a 'defaultVMChanged',
+			// if it in fact changed
+			String newDefaultId = newResults.getDefaultVMInstallCompositeID();
+			if (newDefaultId != null) {
+				IVMInstall newDefaultVM = JavaRuntime.getVMFromCompositeId(newDefaultId);
+				if (newDefaultVM != null) {
+					try {
+						JavaRuntime.setDefaultVMInstall(newDefaultVM, null, false);
+					} catch (CoreException ce) {
+						log(ce);
+					}			
 				}
 			}
-		} catch (CoreException ce) {
-			LaunchingPlugin.log(ce);
+			
+		} finally {
+			// stop batch changes
+			fBatchingChanges = false;	
+			if (vmChanges != null) {
+				JavaRuntime.removeVMInstallChangedListener(vmChanges);
+				try {
+					vmChanges.process();
+				} catch (CoreException e) {
+					log(e);
+				}	
+			}
 		}
-		
-		return map;
+
 	}
 	
+	/**
+	 * Parse the given xml into a VM definitions container, returning an empty
+	 * container if an exception occurrs.
+	 * 
+	 * @param xml
+	 * @return VMDefinitionsContainer
+	 */
+	private VMDefinitionsContainer getVMDefinitions(String xml) {
+		byte[] bytes = xml.getBytes();
+		if (bytes.length > 0) {
+			ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+			try {
+				return VMDefinitionsContainer.parseXMLIntoContainer(stream);
+			} catch (IOException e) {
+				LaunchingPlugin.log(e);
+			}
+		}
+		return new VMDefinitionsContainer(); 
+	}
+			
 	/**
 	 * Build the Java projects in the specified Set.  Because we're in a non-UI plugin,
 	 * we can't directly put up a progress monitor.  Finesse this by using a status 
 	 * handler to do the build and put up a progress monitor if the status handler is
 	 * available (if UI is loaded), or just use a workspace runnable to do the build otherwise.	 */
-	private void buildProjects(final Set projects) {
+	private void buildProjects(final Set projects) throws CoreException {
 		
 		// Workspace runnable that builds the specified projects
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				Iterator iter = projects.iterator();
 				monitor.beginTask(EMPTY_STRING, projects.size() * 100);
+				Iterator iter = projects.iterator();
 				while (iter.hasNext()) {
+					IJavaProject jp = (IJavaProject)iter.next();
 					IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 100);
-					IProject pro = ((IJavaProject)iter.next()).getProject();
+					IProject pro = jp.getProject();
 					pro.build(IncrementalProjectBuilder.FULL_BUILD, subMonitor);
 					subMonitor.done();
 				}
@@ -606,20 +644,27 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 //				log(ce);
 //			}
 //		} else {
-			try {
-				ResourcesPlugin.getWorkspace().run(runnable, new NullProgressMonitor());
-			} catch (CoreException ce) {
-				log(ce);
+			IProgressMonitor monitor = JavaRuntime.getProgressMonitor();
+			if (monitor == null) {
+				monitor = new NullProgressMonitor(); 
 			}
+			ResourcesPlugin.getWorkspace().run(runnable, monitor);
 //		}
 	}	
 			
 	/**
 	 * @see IVMInstallChangedListener#defaultVMInstallChanged(IVMInstall, IVMInstall)
 	 */
-	public void defaultVMInstallChanged(
-		IVMInstall previous,
-		IVMInstall current) {
+	public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
+		if (!fBatchingChanges) {
+			try {
+				VMChanges changes = new VMChanges();
+				changes.defaultVMInstallChanged(previous, current);
+				changes.process();
+			} catch (CoreException e) {
+				log(e);
+			}
+		}
 	}
 
 	/**
@@ -632,17 +677,29 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * @see IVMInstallChangedListener#vmChanged(PropertyChangeEvent)
 	 */
 	public void vmChanged(org.eclipse.jdt.launching.PropertyChangeEvent event) {
+		if (!fBatchingChanges) {
+			try {
+				VMChanges changes = new VMChanges();
+				changes.vmChanged(event);
+				changes.process();
+			} catch (CoreException e) {
+				log(e);
+			}
+		}		
 	}
 
 	/**
 	 * @see IVMInstallChangedListener#vmRemoved(IVMInstall)
 	 */
 	public void vmRemoved(IVMInstall vm) {
-		JREContainerInitializer init = new JREContainerInitializer();
-		try {
-			init.updateRemovedVM(vm);
-		} catch (CoreException ce) {
-			log(ce);
+		if (!fBatchingChanges) {
+			try {
+				VMChanges changes = new VMChanges();
+				changes.vmRemoved(vm);
+				changes.process();
+			} catch (CoreException e) {
+				log(e);
+			}
 		}
 	}
 

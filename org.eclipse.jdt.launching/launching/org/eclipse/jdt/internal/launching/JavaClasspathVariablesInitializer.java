@@ -5,9 +5,6 @@ package org.eclipse.jdt.internal.launching;
  * All Rights Reserved.
  */
  
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -65,41 +62,7 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 			}
 		}
 	}
-	
-	public void updateJREVariables(IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor= new NullProgressMonitor();
-		}
-		IVMInstall vmInstall= JavaRuntime.getDefaultVMInstall();
-		if (vmInstall != null) {
-			IWorkspace workspace= ResourcesPlugin.getWorkspace();
-			boolean wasAutobuild= setAutobuild(workspace, false);
-			try {
-				List changedVars= new ArrayList(3);
-				List changedPaths= new ArrayList(3);
-				LibraryLocation[] locations= JavaRuntime.getLibraryLocations(vmInstall);
-				IPath library= locations[0].getSystemLibraryPath();
-				if (changedJREVariable(library, JavaRuntime.JRELIB_VARIABLE)) {
-					changedVars.add(JavaRuntime.JRELIB_VARIABLE);
-					changedPaths.add(library);
-				}
-				IPath source= locations[0].getSystemLibrarySourcePath();
-				if (changedJREVariable(source, JavaRuntime.JRESRC_VARIABLE)) {
-					changedVars.add(JavaRuntime.JRESRC_VARIABLE);
-					changedPaths.add(source);
-				}
-				IPath pkgRoot= locations[0].getPackageRootPath();
-				if (changedJREVariable(pkgRoot, JavaRuntime.JRESRCROOT_VARIABLE)) {
-					changedVars.add(JavaRuntime.JRESRCROOT_VARIABLE);
-					changedPaths.add(pkgRoot);
-				}
-				JavaCore.setClasspathVariables((String[])changedVars.toArray(new String[changedVars.size()]), (IPath[])changedPaths.toArray(new IPath[changedPaths.size()]), monitor);
-			} finally {
-				setAutobuild(workspace, wasAutobuild);
-			}
-		}
-	}
-	
+
 	
 	private boolean changedJREVariable(IPath newPath, String var) throws CoreException {
 		IPath oldPath= JavaCore.getClasspathVariable(var);
@@ -129,7 +92,4 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 		return fMonitor;
 	}
 
-	protected void setMonitor(IProgressMonitor monitor) {
-		fMonitor = monitor;
-	}
 }

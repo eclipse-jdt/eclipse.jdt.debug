@@ -43,8 +43,6 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
-import org.eclipse.jdt.internal.launching.JREContainerInitializer;
-import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.ListenerList;
@@ -199,6 +197,11 @@ public final class JavaRuntime {
 	private static ListenerList fgVMListeners = new ListenerList(5);
 	
 	/**
+	 * Progress monitor to use for processing VM property change events.
+	 */
+	private static IProgressMonitor fgMonitor = null;
+	
+	/**
 	 * This class contains only static methods, and is not intended
 	 * to be instantiated.
 	 */
@@ -321,7 +324,6 @@ public final class JavaRuntime {
 			previous = getVMFromCompositeId(fgDefaultVMId);
 		}
 		fgDefaultVMId= getCompositeIdFromVM(vm);
-		updateJREVariables(monitor);
 		if (savePreference) {
 			saveVMConfiguration();
 		}
@@ -345,13 +347,6 @@ public final class JavaRuntime {
 		fgDefaultVMConnectorId= connector.getIdentifier();
 		saveVMConfiguration();
 	}		
-	
-	private static void updateJREVariables(IProgressMonitor monitor) throws CoreException {
-		JavaClasspathVariablesInitializer updater= new JavaClasspathVariablesInitializer();
-		updater.updateJREVariables(monitor);
-		JREContainerInitializer conatinerUpdater = new JREContainerInitializer();
-		conatinerUpdater.updateDefaultJREContainers(monitor);
-	}
 	
 	/**
 	 * Return the default VM set with <code>setDefaultVM()</code>.
@@ -1675,10 +1670,6 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static void fireVMChanged(PropertyChangeEvent event) {
-		if (event.getSource() instanceof VMStandin) {
-			// do not fire events for VM standins
-			return;
-		}		
 		Object[] listeners = fgVMListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
@@ -1693,10 +1684,6 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static void fireVMAdded(IVMInstall vm) {
-		if (vm instanceof VMStandin) {
-			// do not fire events for VM standins
-			return;
-		}
 		Object[] listeners = fgVMListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
@@ -1711,15 +1698,33 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static void fireVMRemoved(IVMInstall vm) {
-		if (vm instanceof VMStandin) {
-			// do not fire events for VM standins
-			return;
-		}
 		Object[] listeners = fgVMListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
 			listener.vmRemoved(vm);
 		}		
 	}		
+	
+	/**
+	 * Sets a progress monitor to be used when building projects due to changes
+	 * in VM installs.
+	 * 
+	 * @param monitor progress monitor, or <code>null</code>
+	 * @since 2.1
+	 */
+	public static void setProgressMonitor(IProgressMonitor monitor) {
+		fgMonitor = monitor;
+	}
+	
+	/**
+	 * Returns a progress monitor to be used when building projects due to
+	 * changes in VM installs.
+	 * 
+	 * @return progress monitor or <code>null</code>
+	 * @since 2.1
+	 */
+	public static IProgressMonitor getProgressMonitor() {
+		return fgMonitor;
+	}
 	
 }
