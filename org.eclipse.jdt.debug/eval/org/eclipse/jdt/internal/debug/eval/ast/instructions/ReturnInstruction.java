@@ -1,13 +1,12 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
+/*
+ * (c) Copyright IBM Corp. 2002.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.core.runtime.CoreException;
 
-/**
- * @author jburns
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- */
 public class ReturnInstruction extends CompoundInstruction {
 
 	/**

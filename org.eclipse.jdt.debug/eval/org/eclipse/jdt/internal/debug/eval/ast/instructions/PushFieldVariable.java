@@ -5,6 +5,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -48,14 +50,14 @@ public class PushFieldVariable extends CompoundInstruction {
 		}
 		
 		if (field == null) {
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("PushFieldVariable.Cannot_find_the_field__2") + fName + InstructionsEvaluationMessages.getString("PushFieldVariable._for_the_object__3") + receiver, null)); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("PushFieldVariable.Cannot_find_the_field_{0}_for_the_object_{1}_1"), new String[] {fName, receiver.toString()}), null)); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			push(field);
 		}
 	}
 	
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("PushFieldVariable.push_field__4") + fName; //$NON-NLS-1$
+		return MessageFormat.format(InstructionsEvaluationMessages.getString("PushFieldVariable.push_field_{0}_2"), new String[] {fName}); //$NON-NLS-1$
 	}
 }
 
