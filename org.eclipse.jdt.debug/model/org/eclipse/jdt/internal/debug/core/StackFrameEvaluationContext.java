@@ -338,7 +338,5 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 	}
 	
 	public void acceptAst(CompilationUnitDeclaration ast, CompilationUnitScope scope) {	
-		EvaluationVisitor visitor = new EvaluationVisitor(getModelFrame());
-		ast.traverse(visitor, scope);
 	}
 }
