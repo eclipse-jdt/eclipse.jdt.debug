@@ -945,7 +945,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 *  interim state where this frame's thead has been
 	 *  resumed, and is not yet suspended).
 	 */
-	protected StackFrame getUnderlyingStackFrame() throws DebugException {
+	protected synchronized StackFrame getUnderlyingStackFrame() throws DebugException {
 		if (fStackFrame == null) {
 			setUnderlyingStackFrame(((JDIThread)getThread()).getUnderlyingFrame(getDepth()));
 		}
@@ -958,7 +958,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @param frame The underlying stack frame
 	 */
-	protected void setUnderlyingStackFrame(StackFrame frame) {
+	protected synchronized void setUnderlyingStackFrame(StackFrame frame) {
 		fStackFrame = frame;
 	}
 	
