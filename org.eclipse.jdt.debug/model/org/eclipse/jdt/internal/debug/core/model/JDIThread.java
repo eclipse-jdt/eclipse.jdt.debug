@@ -402,28 +402,35 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				} 
 				int stackSize = getUnderlyingFrameCount();
 				
-				boolean topDown = false;
-				// what was the last method on the top of the stack
-				Method lastMethod = ((JDIStackFrame)fStackFrames.get(0)).getLastMethod();
-				// what is the method on top of the stack now
-				if (stackSize > 0) {
-					Method currMethod = getUnderlyingFrame(0).location().method();
+				// Determine whether to preserve frame objects. If the
+				// stack is now deeper, compare the old TOS with the frame
+				// in the equivalent position on the current stack. If 
+				// the stack is now shorter, compare the current TOS with
+				// the frame in the equivalent position in the old stack.
+				boolean preserve = false;
+				int currIndex = -1;
+				int oldIndex = -1;
+				if (stackSize >=  fStackFrames.size()) {
+					oldIndex =  0;
+					currIndex = stackSize - fStackFrames.size();					
+				} else if (stackSize > 0) {
+					// is the TOS equal to a method futher down the stack in same position?
+					oldIndex = fStackFrames.size() - stackSize;
+					currIndex = 0;
+				}
+				if (currIndex >= 0 && oldIndex >= 0) {
+					Method lastMethod = ((JDIStackFrame)fStackFrames.get(oldIndex)).getLastMethod();
+					Method currMethod = getUnderlyingFrame(currIndex).location().method();
 					if (currMethod.equals(lastMethod)) {
-						// preserve frames top down
-						topDown = true;					
+						// method still in same position
+						preserve = true;					
 					}
 				}
 				
-				// compute new or removed stack frames
-				int offset= 0, length= stackSize;
-				if (length > fStackFrames.size()) {
-					if (topDown) {
-						// add new (empty) frames to the bottom of the stack to preserve frames top-down
-						int num = length - fStackFrames.size();
-						for (int i = 0; i < num; i++) {
-							fStackFrames.add(new JDIStackFrame(this, 0));
-						}
-					} else {
+				if (preserve) {
+					// compute new or removed stack frames
+					int offset= 0, length= stackSize;
+					if (length > fStackFrames.size()) {
 						// add new frames to the top of the stack, preserve bottom up
 						offset= length - fStackFrames.size();
 						for (int i= offset - 1; i >= 0; i--) {
@@ -431,32 +438,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 							fStackFrames.add(0, newStackFrame);
 						}
 						length= fStackFrames.size() - offset;
-					}
-				} else if (length < fStackFrames.size()) {
-					int removed= fStackFrames.size() - length;
-					if (topDown) {
-						// remove frames from the bottom of the stack, preserve top-down
-						for (int i = 0; i < removed; i++) {
-							fStackFrames.remove(fStackFrames.size() - 1);
-						}
-					} else {
+					} else if (length < fStackFrames.size()) {
+						int removed= fStackFrames.size() - length;
 						// remove frames from the top of the stack, preserve bottom up
 						for (int i= 0; i < removed; i++) {
 							fStackFrames.remove(0);
 						}
 					}
-				} else if (length == 0) {
-					fStackFrames = Collections.EMPTY_LIST;
-				} else if (length == fStackFrames.size()) {
-					if (!topDown) {
-						// replace stack frames with new objects such that equality
-						// is not preserved (i.e. the top stack frame is different)
-						fStackFrames = createAllStackFrames();		
-					}
-				}
-				// update frame indicies
-				for (int i= 0; i < stackSize; i++) {
-					((JDIStackFrame)fStackFrames.get(i)).setDepth(i);	
+					// update frame indicies to update stack frames
+					for (int i= 0; i < stackSize; i++) {
+						((JDIStackFrame)fStackFrames.get(i)).setDepth(i);	
+					}					
+				} else {
+					fStackFrames = createAllStackFrames();
 				}
 			}
 			fRefreshChildren = false;

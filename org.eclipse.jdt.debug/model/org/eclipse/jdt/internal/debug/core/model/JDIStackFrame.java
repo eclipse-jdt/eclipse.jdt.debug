@@ -221,6 +221,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (fStackFrame == null || fMethod == null) {
 			try {
 				fMethod= getUnderlyingStackFrame().location().method();
+				fLastMethod = fMethod;
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
@@ -966,15 +967,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @param frame The underlying stack frame
 	 */
 	protected void setUnderlyingStackFrame(StackFrame frame) {
-		if (frame != null) {
-			fLastMethod= fMethod;
-		} else {
-			if (fMethod != null) {
-				// only set the last method if the current method is not null:
-				//     * last method should never be null
-				fLastMethod = fMethod;
-			}
-		}
 		fStackFrame = frame;
 	}
 	
