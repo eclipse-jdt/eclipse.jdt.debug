@@ -115,7 +115,7 @@ public class VMDefinitionsContainer {
 			fVMTypeToVMMap.put(vmInstallType, vmList);			
 		}		
 		vmList.add(vm);
-		if (!verifyInstallLocation(vm)) {
+		if (!vmInstallType.validateInstallLocation(vm.getInstallLocation()).isOK()) {
 			fInvalidVMList.add(vm);
 		}
 		fVMCount++;
