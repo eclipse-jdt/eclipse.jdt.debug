@@ -432,7 +432,7 @@ public class VMDefinitionsContainer {
 			
 			// javadoc URL
 			String externalForm = vmElement.getAttribute("javadocURL"); //$NON-NLS-1$
-			if (externalForm != null) {
+			if (externalForm != null && externalForm.length() > 0) {
 				try {
 					vmStandin.setJavadocLocation(new URL(externalForm));
 				} catch (MalformedURLException e) {
