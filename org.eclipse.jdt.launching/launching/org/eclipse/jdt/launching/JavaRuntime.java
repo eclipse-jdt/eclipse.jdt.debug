@@ -527,7 +527,7 @@ public final class JavaRuntime {
 	/**
 	 * Returns a runtime classpath entry constructed from the given memento.
 	 * 
-	 * @param memento a menento for a runtime classpath entry
+	 * @param memento a memento for a runtime classpath entry
 	 * @return runtime classpath entry
 	 * @exception CoreException if unable to construct a runtime classpath entry
 	 * @since 2.0
