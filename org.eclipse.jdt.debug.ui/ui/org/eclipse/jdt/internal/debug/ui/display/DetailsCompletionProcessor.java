@@ -45,6 +45,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 		if (selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
 			return super.computeCompletionProposals(stackFrame, viewer, documentOffset);
 		}
+		
 		IStructuredSelection viewerSelection= (IStructuredSelection)selection;
 		if (viewerSelection.size() > 1) {
 			return new ICompletionProposal[0];
@@ -64,7 +65,7 @@ public class DetailsCompletionProcessor extends DisplayCompletionProcessor {
 				int insertionPosition= computeInsertionPosition(receivingType, stackFrame);
 				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
 					 new char[0][], new char[0][],
-					 new int[0], stackFrame.isStatic(), getCollector());
+					 new int[0], false, getCollector());
 					 
 				 //Order here and not in result collector to make sure that the order
 				 //applies to all proposals and not just those of the compilation unit. 
