@@ -498,15 +498,17 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				IJavaArrayType javaArrayType = (IJavaArrayType) arrayValue.getJavaType();
 				componentType = javaArrayType.getComponentType();
 			} catch (DebugException de) {
-				if (!(de.getStatus().getException() instanceof ClassNotLoadedException)) {
+				if (de.getStatus().getException() instanceof ClassNotLoadedException) {
+					result.append(DebugUIMessages.getString("JavaDetailFormattersManager.0")); //$NON-NLS-1$
+				} else {
 					JDIDebugUIPlugin.log(de);
+					result.append(de.getStatus().getMessage());
 				}
-				result.append(de.getStatus().getMessage());
 				return;	
 			}
 			
 			if (!(componentType instanceof IJavaReferenceType)) {
-				//if it is an array of primatives, cannot use Arrays.asList()
+				//if it is an array of primitives, cannot use Arrays.asList()
 				appendArrayDetailIndividually(result, arrayValue);
 				return;
 			}
