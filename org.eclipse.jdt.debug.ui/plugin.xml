@@ -2410,5 +2410,15 @@
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.classpathContainer">
       </sourceContainerPresentation>
    </extension>
+   
+   <!-- Dynamic (String Substitution) Variables -->
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            name="java_type_name"
+            description="%java_type_name.description"
+            resolver="org.eclipse.jdt.internal.debug.ui.TypeNameResolver">
+      </variable>
+   </extension>   	
       
 </plugin>

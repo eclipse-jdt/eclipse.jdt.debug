@@ -369,7 +369,8 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	public String getMainTypeName(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
+		String mainType= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null); 
+		return VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(mainType);
 	}
 
 	/**
