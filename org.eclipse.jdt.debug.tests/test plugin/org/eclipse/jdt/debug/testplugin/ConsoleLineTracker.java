@@ -12,6 +12,7 @@ package org.eclipse.jdt.debug.testplugin;
 
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
@@ -23,6 +24,7 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	 * Forwards messages to the delegate when not <code>null</code> 
 	 */
 	private static IConsoleLineTracker fDelegate;
+	private static IConsole fConsole;
 	
 	/**
 	 * Sets the delegate, possilby <code>null</code>
@@ -46,9 +48,14 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
 	 */
 	public synchronized void init(IConsole console) {
+		fConsole= console;
 		if (fDelegate != null) {
 			fDelegate.init(console);
 		}
+	}
+	
+	public static IDocument getDocument() {
+		return fConsole.getDocument();
 	}
 
 	/**
@@ -58,6 +65,12 @@ public class ConsoleLineTracker implements IConsoleLineTracker {
 		if (fDelegate != null) {
 			fDelegate.lineAppended(line);
 		}
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
+	 */
+	public void streamClosed() {
 	}
 	
 }

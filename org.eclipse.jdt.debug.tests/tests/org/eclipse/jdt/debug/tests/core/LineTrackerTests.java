@@ -64,6 +64,12 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			terminateAndRemove(fTarget);
 		}
 	} 
+	
+	public void testHyperLink() throws Exception {
+		ConsoleLineTracker.setDelegate(this);
+		launchAndTerminate("ThrowsNPE");
+		getHyperlink(0, ConsoleLineTracker.getDocument());
+	}
 
 	/**
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
@@ -99,6 +105,12 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			} catch (BadLocationException e) {
 			}
 		}
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
+	 */
+	public void streamClosed() {
 	}
 
 }

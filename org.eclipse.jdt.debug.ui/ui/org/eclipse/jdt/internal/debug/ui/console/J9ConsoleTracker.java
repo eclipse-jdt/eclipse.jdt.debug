@@ -69,4 +69,10 @@ public class J9ConsoleTracker implements IConsoleLineTracker {
 		fJ9Matcher = null;
 	}
 
+	/**
+	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
+	 */
+	public void streamClosed() {
+	}
+
 }
