@@ -30,7 +30,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
@@ -673,25 +672,25 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				getVM().redefineClasses(typesToBytes);
 			} catch (UnsupportedOperationException exception) {
 				typesFailedHCR(qualifiedNames);
-				jdiRequestFailed(getString("JDIDebugTarget.hcr_unsupported_redefinition"), exception); //$NON-NLS-1$
+				jdiRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.hcr_unsupported_redefinition"), exception); //$NON-NLS-1$
 			} catch (NoClassDefFoundError exception) {
 				typesFailedHCR(qualifiedNames);
-				jdiRequestFailed(getString("JDIDebugTarget.hcr_bad_bytes"), exception); //$NON-NLS-1$
+				jdiRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.hcr_bad_bytes"), exception); //$NON-NLS-1$
 			} catch (VerifyError exception) {
 				typesFailedHCR(qualifiedNames);
-				jdiRequestFailed(getString("JDIDebugTarget.hcr_verify_error"), exception); //$NON-NLS-1$
+				jdiRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.hcr_verify_error"), exception); //$NON-NLS-1$
 			} catch (UnsupportedClassVersionError exception) {
 				typesFailedHCR(qualifiedNames);
-				jdiRequestFailed(getString("JDIDebugTarget.hcr_unsupported_class_version"), exception); //$NON-NLS-1$
+				jdiRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.hcr_unsupported_class_version"), exception); //$NON-NLS-1$
 			} catch (ClassFormatError exception) {
 				typesFailedHCR(qualifiedNames);
-				jdiRequestFailed(getString("JDIDebugTarget.hcr_class_format_error"), exception); //$NON-NLS-1$
+				jdiRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.hcr_class_format_error"), exception); //$NON-NLS-1$
 			} catch (ClassCircularityError exception) {
 				typesFailedHCR(qualifiedNames);
-				jdiRequestFailed(getString("JDIDebugTarget.hcr_class_circularity_error"), exception); //$NON-NLS-1$
+				jdiRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.hcr_class_circularity_error"), exception); //$NON-NLS-1$
 			} catch (RuntimeException exception) {
 				typesFailedHCR(qualifiedNames);
-				targetRequestFailed(getString("JDIDebugTarget.hcr_failed"), exception); //$NON-NLS-1$
+				targetRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.hcr_failed"), exception); //$NON-NLS-1$
 			}
 			reinstallBreakpointsIn(resources, qualifiedNames);
 		} else {
@@ -771,10 +770,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public boolean hasHCROccurred() {
 		return fHasHCROccurred;
-	}
-	
-	private String getString(String key) {
-		return JDIDebugModelMessages.getString(key);
 	}
 	
 	/**
