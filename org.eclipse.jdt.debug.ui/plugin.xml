@@ -1870,7 +1870,6 @@
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.jdt.launching.javaApplet"
-            description="%appletTabGroupDescription"
             helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.java_applet"
             class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletTabGroup"
             id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.javaApplet">
@@ -2639,8 +2638,8 @@ M4 = Platform-specific fourth key
    <!--Java Stack Trace Console-->
    <extension
          point="org.eclipse.ui.console.consoleFactories">
-      <consoleFactory
-            label="Java Stack Trace Console"
+      <consoleFactory 
+            label="%javaStackTraceConsole.label"
             class="org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory">
       </consoleFactory>
    </extension>
