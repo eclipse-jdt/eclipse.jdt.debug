@@ -13,6 +13,7 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 
 public class Cast extends CompoundInstruction {
 
@@ -73,6 +74,9 @@ public class Cast extends CompoundInstruction {
 						break;
 			}
 			
+		} else if (value instanceof JDINullValue) {
+			// null value can be cast to all non-primitive types (bug 31637).
+			push(value);
 		} else {
 			IJavaObject classObject;
 			if (fDimension == 0) {
