@@ -274,6 +274,18 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			return null;
 		}
 
+		/**
+		 * @param outputLineNumber
+		 * @return
+		 */
+		public List getInputLineInfos(int outputLineNumber) {
+			List result= null;
+			do {
+				result= (List)fOutputLineToInputLine.get(new Integer(outputLineNumber));
+			} while (result == null && --outputLineNumber > 0);
+			return result;
+		}
+
 	}
 	
 
@@ -1666,7 +1678,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			return null;
 		}
 		if (outputLineNumber != -1) {
-			return (List)stratum.fOutputLineToInputLine.get(new Integer(outputLineNumber));
+			return (List)stratum.getInputLineInfos(outputLineNumber);
 		}
 		return null;
 	}
@@ -1783,7 +1795,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				int lastIndex=0;
 				for (int i = 0, length= javaStratumLineNumberTable.length; i < length; i++) {
 					// for each executable line in the java source, get the associated lines in the stratum source
-					List lineInfos= (List)stratum.fOutputLineToInputLine.get(new Integer(javaStratumLineNumberTable[i]));
+					List lineInfos= (List)stratum.getInputLineInfos(javaStratumLineNumberTable[i]);
 					if (lineInfos != null) {
 						int[] lineInfo= (int[])lineInfos.get(0);
 						if (!lineInfo.equals(lineInfoTable[lastIndex])) {
@@ -1800,7 +1812,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				int fileId= fileInfo.fFileId;
 				int lastIndex= 0;
 				for (int i = 0, length= javaStratumLineNumberTable.length; i < length; i++) {
-					List lineInfos= (List)stratum.fOutputLineToInputLine.get(new Integer(javaStratumLineNumberTable[i]));
+					List lineInfos= (List)stratum.getInputLineInfos(javaStratumLineNumberTable[i]);
 					if (lineInfos != null) {
 						for (Iterator iter = lineInfos.iterator(); iter.hasNext();) {
 							int[] lineInfo= (int[])iter.next();
