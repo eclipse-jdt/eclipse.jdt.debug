@@ -33,7 +33,36 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Preference page for debug preferences that apply specifically to
  * Java Debugging.
  */
-public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IPropertyChangeListener {
+	
+	/**
+	 * This class exists to provide visibility to the
+	 * <code>refreshValidState</code> method and to perform more intelligent
+	 * clearing of the error message.
+	 */
+	protected class JavaDebugIntegerFieldEditor extends IntegerFieldEditor {						
+		
+		public JavaDebugIntegerFieldEditor(String name, String labelText, Composite parent) {
+			super(name, labelText, parent);
+		}
+		
+		/**
+		 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
+		 */
+		protected void refreshValidState() {
+			super.refreshValidState();
+		}
+		
+		/**
+		 * Clears the error message from the message line if the error
+		 * message is the error message from this field editor.
+		 */
+		protected void clearErrorMessage() {
+			if (canClearErrorMessage()) {
+				super.clearErrorMessage();
+			}
+		}
+	}
 	
 	// Suspend preference widgets
 	private Button fSuspendButton;
@@ -44,8 +73,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fAlertObsoleteButton;
 	private Button fPerformHCRWithCompilationErrors;
 	// Timeout preference widgets
-	private IntegerFieldEditor fTimeoutText;
-	private IntegerFieldEditor fConnectionTimeoutText;
+	private JavaDebugIntegerFieldEditor fTimeoutText;
+	private JavaDebugIntegerFieldEditor fConnectionTimeoutText;
 	// View settings
 	private Button fPackagesButton;
 	
@@ -103,7 +132,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		int minValue;
 		
-		fTimeoutText = new IntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.Debugger_&timeout__2"), spacingComposite); //$NON-NLS-1$
+		fTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.Debugger_&timeout__2"), spacingComposite); //$NON-NLS-1$
 		fTimeoutText.setPreferenceStore(store);
 		fTimeoutText.setPreferencePage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
@@ -111,13 +140,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
 		fTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.getString("JavaDebugPreferencePage.Value_must_be_a_valid_integer_greater_than_{0}_ms_1"), new Object[] {new Integer(minValue)})); //$NON-NLS-1$
 		fTimeoutText.load();
-		fTimeoutText.setPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
-					setValid(fTimeoutText.isValid());
-			}
-		});
-		fConnectionTimeoutText = new IntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.&Launch_timeout_(ms)__1"), spacingComposite); //$NON-NLS-1$
+		fTimeoutText.setPropertyChangeListener(this);
+		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.&Launch_timeout_(ms)__1"), spacingComposite); //$NON-NLS-1$
 		fConnectionTimeoutText.setPreferenceStore(store);
 		fConnectionTimeoutText.setPreferencePage(this);
 		fConnectionTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
@@ -125,12 +149,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fConnectionTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
 		fConnectionTimeoutText.setErrorMessage(MessageFormat.format(DebugUIMessages.getString("JavaDebugPreferencePage.Value_must_be_a_valid_integer_greater_than_{0}_ms_1"), new Object[] {new Integer(minValue)})); //$NON-NLS-1$
 		fConnectionTimeoutText.load();
-		fConnectionTimeoutText.setPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
-					setValid(fConnectionTimeoutText.isValid());
-			}
-		});
+		fConnectionTimeoutText.setPropertyChangeListener(this);
 		// cannot set preference store, as it is a core preference
 		createSpacer(composite, 1);
 		comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Opened_View_Default_Settings_1")); //$NON-NLS-1$
@@ -260,4 +279,34 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		gd.horizontalSpan = columnSpan;
 		label.setLayoutData(gd);
 	}
+
+	/**
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+
+		if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+			boolean newValue = ((Boolean) event.getNewValue()).booleanValue();
+			// If the new value is true then we must check all field editors.
+			// If it is false, then the page is invalid in any case.
+			if (newValue) {
+				if (fTimeoutText != null && event.getSource() != fTimeoutText) {
+					fTimeoutText.refreshValidState();
+				} 
+				if (fConnectionTimeoutText != null && event.getSource() != fConnectionTimeoutText) {
+					fConnectionTimeoutText.refreshValidState();
+				}
+			} 
+			setValid(fTimeoutText.isValid() && fConnectionTimeoutText.isValid());
+			getContainer().updateButtons();
+			updateApplyButton();
+		}
+	}
+
+	protected boolean canClearErrorMessage() {
+		if (fTimeoutText.isValid() && fConnectionTimeoutText.isValid()) {
+			return true;
+		}
+		return false;
+	}	
 }
