@@ -5,19 +5,28 @@ package org.eclipse.jdi.internal;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.request.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.spy.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.io.*;
+import java.util.Vector;
+
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.InvalidCodeIndexException;
+import com.sun.jdi.InvalidLineNumberException;
+import com.sun.jdi.Locatable;
+import com.sun.jdi.Location;
+import com.sun.jdi.Method;
+import com.sun.jdi.Type;
 
 /**
  * this class implements the corresponding interfaces

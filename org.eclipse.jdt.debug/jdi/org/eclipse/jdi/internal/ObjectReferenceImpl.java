@@ -5,17 +5,34 @@ package org.eclipse.jdi.internal;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.request.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.spy.*;
-import java.util.*;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpID;
+import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.Field;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InternalException;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
+import com.sun.jdi.Method;
+import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Type;
+import com.sun.jdi.Value;
 
 /**
  * this class implements the corresponding interfaces

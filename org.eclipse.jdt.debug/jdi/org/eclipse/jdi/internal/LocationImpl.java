@@ -5,18 +5,15 @@ package org.eclipse.jdi.internal;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.request.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.spy.*;
-import java.util.*;
-import java.io.*;
+import com.sun.jdi.Location;
+import com.sun.jdi.Method;
+import com.sun.jdi.NativeMethodException;
+import com.sun.jdi.ReferenceType;
 
 /**
  * this class implements the corresponding interfaces

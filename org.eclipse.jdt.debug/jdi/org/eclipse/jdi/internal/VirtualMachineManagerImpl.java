@@ -5,18 +5,25 @@ package org.eclipse.jdi.internal;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.request.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.spy.*;
-import java.util.*;
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.MissingResourceException;
+import java.util.PropertyResourceBundle;
+import java.util.Vector;
+
+import org.eclipse.jdi.internal.connect.SocketAttachingConnectorImpl;
+import org.eclipse.jdi.internal.connect.SocketLaunchingConnectorImpl;
+import org.eclipse.jdi.internal.connect.SocketListeningConnectorImpl;
+import org.eclipse.jdi.internal.connect.SocketRawLaunchingConnectorImpl;
+
+import com.sun.jdi.VirtualMachineManager;
+import com.sun.jdi.connect.LaunchingConnector;
 
 /**
  * this class implements the corresponding interfaces

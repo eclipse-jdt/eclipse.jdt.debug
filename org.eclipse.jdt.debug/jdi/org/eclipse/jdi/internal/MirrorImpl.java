@@ -5,17 +5,30 @@ package org.eclipse.jdi.internal;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.request.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.spy.*;
-import java.util.*;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Vector;
+
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpString;
+import org.eclipse.jdi.internal.spy.VerboseWriter;
+
+import com.sun.jdi.ClassNotPreparedException;
+import com.sun.jdi.InternalException;
+import com.sun.jdi.InvalidStackFrameException;
+import com.sun.jdi.Mirror;
+import com.sun.jdi.NativeMethodException;
+import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.VMMismatchException;
+import com.sun.jdi.VMOutOfMemoryException;
+import com.sun.jdi.VirtualMachine;
 
 /**
  * this class implements the corresponding interfaces
