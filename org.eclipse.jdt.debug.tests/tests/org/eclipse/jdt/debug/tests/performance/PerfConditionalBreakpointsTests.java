@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.performance;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -73,7 +79,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
         removeAllBreakpoints();
     }
 
-    private synchronized void breakpointHit(IJavaThread thread) {
+    private void breakpointHit(final IJavaThread thread) {
         try {
             if (!fConditionalBreakpointSet) {
                 fBP.delete();
@@ -94,7 +100,18 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
                 if (fHitCount <= fMeasuredRuns) {
                     startMeasuring();
                 } else {
-                    fBP.delete();
+                	new Job("Breakpoint Delete Job") {
+						protected IStatus run(IProgressMonitor monitor) {
+							try {
+								fBP.delete();
+								thread.terminate(); 
+							} catch (CoreException e) {
+								fException = e;								
+							}
+							return Status.OK_STATUS;
+						}
+                		
+                	}.schedule();                   
                 }
             }
         } catch (Exception e) {
@@ -102,8 +119,11 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
             removeAllBreakpoints();
         } finally {
             try {
-                thread.resume();
+            	if (thread.canResume()) {
+            		thread.resume();
+            	}
             } catch (DebugException e) {
+            	e.printStackTrace();
                 fException = e;
             }
         }
