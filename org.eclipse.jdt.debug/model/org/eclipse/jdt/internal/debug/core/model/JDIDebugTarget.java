@@ -2025,10 +2025,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	} 
 	
 	/**
-	 * Increments the suspend counter for this target
+	 * Increments the suspend counter for this target based on the reason
+	 * for the suspend event. The suspend count is not updated for
+	 * implicit evaluations.
+	 * 
+	 * @param eventDetail the reason for the suspend event
 	 */
-	protected void incrementSuspendCount() {
-		fSuspendCount++;
+	protected void incrementSuspendCount(int eventDetail) {
+	    if (eventDetail != DebugEvent.EVALUATION_IMPLICIT) {
+	        fSuspendCount++;
+	    }
 	}
 	
 	/**
