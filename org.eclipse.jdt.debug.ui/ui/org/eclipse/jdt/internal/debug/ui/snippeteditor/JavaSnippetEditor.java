@@ -615,7 +615,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				snippet= snippet.replace('\n', ' ');
 				snippet= snippet.replace('\r', ' ');
 				snippet= snippet.replace('\t', ' ');
-				showExpressionView();
 				JavaInspectExpression exp = new JavaInspectExpression(snippet, value);
 				showExpression(exp);
 				break;
@@ -841,6 +840,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				final IAction action = new MoveResultToViewerAction(new Runnable() {
 					public void run() {
 						DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
+						showExpressionView();
 					}
 				});
 				action.setText(SnippetMessages.getString("JavaSnippetEditor.50")); //$NON-NLS-1$
