@@ -100,5 +100,4 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	public String getId() {
 		return fId;
 	}
-
-	/**	 * XXX: Default implementation for backwards compatibility. To be removed.	 * 	 * @see IVMInstallType#getDefaultLibraryLocations(File)	 */	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {		return new LibraryLocation[] {getDefaultLibraryLocation(installLocation)};	}}
+}

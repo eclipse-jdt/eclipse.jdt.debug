@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
@@ -250,7 +252,16 @@ public class VMLibraryBlock {
 			IRuntimeClasspathEntry[] entries = fPathViewer.getEntries();
 			LibraryLocation[] libs = new LibraryLocation[entries.length];
 			for (int i = 0; i < entries.length; i++) {
-				libs[i] = new LibraryLocation(entries[i].getPath(), entries[i].getSourceAttachmentPath(), entries[i].getSourceAttachmentRootPath());
+				IPath lib = entries[i].getPath();
+				IPath src = entries[i].getSourceAttachmentPath();
+				if (src == null) {
+					src = Path.EMPTY;
+				}
+				IPath root = entries[i].getSourceAttachmentRootPath();
+				if (root == null) {
+					root = Path.EMPTY;
+				}
+				libs[i] = new LibraryLocation(lib, src, root);
 			}
 			vm.setLibraryLocations(libs);
 		}		

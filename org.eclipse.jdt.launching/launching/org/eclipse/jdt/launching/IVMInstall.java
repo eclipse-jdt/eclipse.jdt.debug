@@ -73,14 +73,6 @@ public interface IVMInstall {
 	IVMInstallType getVMInstallType();
 	
 	/**
-	 * Returns the library location of this IVMInstall.
-	 * @see IVMInstall#setLibraryLocation(LibraryLocation)
-	 * @return 	The library location of this IVMInstall.
-	 * 			Returns null when not set or previously set to null.
-	 * @deprecated use #getLibraryLocations()
-	 */
-	LibraryLocation getLibraryLocation();
-	/**
 	 * Returns the library locations of this IVMInstall.
 	 * @see IVMInstall#setLibraryLocations(LibraryLocation[])
 	 * @return 	The library locations of this IVMInstall.
@@ -88,14 +80,6 @@ public interface IVMInstall {
 	 * @since 2.0
 	 */
 	LibraryLocation[] getLibraryLocations();	
-	/**
-	 * Sets the library location of this IVMInstall.
-	 * @param	location The <code>LibraryLocation</code> to associate
-	 * 			with this IVMInstall.
-	 * 			May be null to clear the property.
-	 * @deprecated use #setLibraryLocations(LibraryLocation[])
-	 */
-	void setLibraryLocation(LibraryLocation location);
 	
 	/**
 	 * Sets the library locations of this IVMInstall.

@@ -36,13 +36,13 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 		IVMInstall vmInstall= JavaRuntime.getDefaultVMInstall();
 		if (vmInstall != null) {
 			IPath newPath= null;
-			LibraryLocation desc= JavaRuntime.getLibraryLocation(vmInstall);
+			LibraryLocation[] locations= JavaRuntime.getLibraryLocations(vmInstall);
 			if (variable.equals(JavaRuntime.JRELIB_VARIABLE)) {
-				newPath= desc.getSystemLibraryPath();
+				newPath= locations[0].getSystemLibraryPath();
 			} else if (variable.equals(JavaRuntime.JRESRC_VARIABLE)) {
-				newPath= desc.getSystemLibrarySourcePath();
+				newPath= locations[0].getSystemLibrarySourcePath();
 			} else if (variable.equals(JavaRuntime.JRESRCROOT_VARIABLE)){
-				newPath= desc.getPackageRootPath();
+				newPath= locations[0].getPackageRootPath();
 			}
 			if (newPath == null) {
 				return;
@@ -78,18 +78,18 @@ public class JavaClasspathVariablesInitializer extends ClasspathVariableInitiali
 			try {
 				List changedVars= new ArrayList(3);
 				List changedPaths= new ArrayList(3);
-				LibraryLocation desc= JavaRuntime.getLibraryLocation(vmInstall);
-				IPath library= desc.getSystemLibraryPath();
+				LibraryLocation[] locations= JavaRuntime.getLibraryLocations(vmInstall);
+				IPath library= locations[0].getSystemLibraryPath();
 				if (changedJREVariable(library, JavaRuntime.JRELIB_VARIABLE)) {
 					changedVars.add(JavaRuntime.JRELIB_VARIABLE);
 					changedPaths.add(library);
 				}
-				IPath source= desc.getSystemLibrarySourcePath();
+				IPath source= locations[0].getSystemLibrarySourcePath();
 				if (changedJREVariable(source, JavaRuntime.JRESRC_VARIABLE)) {
 					changedVars.add(JavaRuntime.JRESRC_VARIABLE);
 					changedPaths.add(source);
 				}
-				IPath pkgRoot= desc.getPackageRootPath();
+				IPath pkgRoot= locations[0].getPackageRootPath();
 				if (changedJREVariable(pkgRoot, JavaRuntime.JRESRCROOT_VARIABLE)) {
 					changedVars.add(JavaRuntime.JRESRCROOT_VARIABLE);
 					changedPaths.add(pkgRoot);

@@ -926,20 +926,24 @@ public final class JavaRuntime {
 			installPath= installLocation.getAbsolutePath();
 		}
 		element.setAttribute("path", installPath); //$NON-NLS-1$
-		LibraryLocation libraryLocation= vm.getLibraryLocation();
-		if (libraryLocation != null) {
-			Element libLocationElement=  libraryLocationAsElement(doc, libraryLocation);
+		LibraryLocation[] libraryLocations= vm.getLibraryLocations();
+		if (libraryLocations != null) {
+			Element libLocationElement=  libraryLocationsAsElement(doc, libraryLocations);
 			element.appendChild(libLocationElement);
 		}
 		return element;
 	}
 	
-	private static Element libraryLocationAsElement(Document doc, LibraryLocation location) {
-		Element element= doc.createElement("libraryLocation"); //$NON-NLS-1$
-		element.setAttribute("jreJar", location.getSystemLibraryPath().toString()); //$NON-NLS-1$
-		element.setAttribute("jreSrc", location.getSystemLibrarySourcePath().toString()); //$NON-NLS-1$
-		element.setAttribute("pkgRoot", location.getPackageRootPath().toString()); //$NON-NLS-1$
-		return element;
+	private static Element libraryLocationsAsElement(Document doc, LibraryLocation[] locations) {
+		Element root = doc.createElement("libraryLocations"); //$NON-NLS-1$
+		for (int i = 0; i < locations.length; i++) {
+			Element element= doc.createElement("libraryLocation"); //$NON-NLS-1$
+			element.setAttribute("jreJar", locations[i].getSystemLibraryPath().toString()); //$NON-NLS-1$
+			element.setAttribute("jreSrc", locations[i].getSystemLibrarySourcePath().toString()); //$NON-NLS-1$
+			element.setAttribute("pkgRoot", locations[i].getPackageRootPath().toString()); //$NON-NLS-1$
+			root.appendChild(element);
+		}
+		return root;
 	}
 	
 	private static void initializeVMConfiguration() throws IOException {
@@ -1052,7 +1056,11 @@ public final class JavaRuntime {
 				if (type == Node.ELEMENT_NODE) {
 					Element libraryLocationElement= (Element)node;
 					if (libraryLocationElement.getNodeName().equals("libraryLocation")) { //$NON-NLS-1$
-						setLibraryLocation(vm, libraryLocationElement);
+						LibraryLocation loc = getLibraryLocation(vm, libraryLocationElement);
+						vm.setLibraryLocations(new LibraryLocation[]{loc});
+						break;
+					} else if (libraryLocationElement.getNodeName().equals("libraryLocations")) { //$NON-NLS-1$
+						setLibraryLocations(vm, libraryLocationElement);
 						break;
 					}
 				}
@@ -1063,47 +1071,79 @@ public final class JavaRuntime {
 		}
 	}
 	
-	private static void setLibraryLocation(IVMInstall vm, Element libLocationElement) {
+	private static LibraryLocation getLibraryLocation(IVMInstall vm, Element libLocationElement) {
 		String jreJar= libLocationElement.getAttribute("jreJar"); //$NON-NLS-1$
 		String jreSrc= libLocationElement.getAttribute("jreSrc"); //$NON-NLS-1$
 		String pkgRoot= libLocationElement.getAttribute("pkgRoot"); //$NON-NLS-1$
 		if (jreJar != null && jreSrc != null && pkgRoot != null) {
-			vm.setLibraryLocation(new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot)));
+			return new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot));
 		} else {
 			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.Library_location_element_incorrectly_specified_3")); //$NON-NLS-1$
 		}
+		return null;
+	}
+	
+	private static void setLibraryLocations(IVMInstall vm, Element libLocationsElement) {
+		NodeList list = libLocationsElement.getChildNodes();
+		int length = list.getLength();
+		List locations = new ArrayList(length);
+		for (int i = 0; i < length; ++i) {
+			Node node = list.item(i);
+			short type = node.getNodeType();
+			if (type == Node.ELEMENT_NODE) {
+				Element libraryLocationElement= (Element)node;
+				if (libraryLocationElement.getNodeName().equals("libraryLocation")) { //$NON-NLS-1$
+					locations.add(getLibraryLocation(vm, libraryLocationElement));
+				}
+			}
+		}	
+		vm.setLibraryLocations((LibraryLocation[])locations.toArray(new LibraryLocation[locations.size()]));
 	}
 		
 	/**
-	 * Evaluates a library location for a IVMInstall. If no library location is set on the install, a default
+	 * Evaluates library locations for a IVMInstall. If no library locations are set on the install, a default
 	 * location is evaluated and checked if it exists.
-	 * @return Returns a library location with paths that exist or are empty
+	 * @return Returns library locations with paths that exist or are empty
 	 */
-	public static LibraryLocation getLibraryLocation(IVMInstall defaultVM)  {
-		IPath libraryPath;
-		IPath sourcePath;
-		IPath sourceRootPath;
-		LibraryLocation location= defaultVM.getLibraryLocation();
-		if (location == null) {
-			LibraryLocation dflt= defaultVM.getVMInstallType().getDefaultLibraryLocation(defaultVM.getInstallLocation());
-			libraryPath= dflt.getSystemLibraryPath();
-			if (!libraryPath.toFile().isFile()) {
-				libraryPath= Path.EMPTY;
-			}
-			
-			sourcePath= dflt.getSystemLibrarySourcePath();
-			if (sourcePath.toFile().isFile()) {
-				sourceRootPath= dflt.getPackageRootPath();
-			} else {
-				sourcePath= Path.EMPTY;
-				sourceRootPath= Path.EMPTY;
+	public static LibraryLocation[] getLibraryLocations(IVMInstall defaultVM)  {
+		IPath[] libraryPaths;
+		IPath[] sourcePaths;
+		IPath[] sourceRootPaths;
+		LibraryLocation[] locations= defaultVM.getLibraryLocations();
+		if (locations == null) {
+			LibraryLocation[] dflts= defaultVM.getVMInstallType().getDefaultLibraryLocations(defaultVM.getInstallLocation());
+			libraryPaths = new IPath[dflts.length];
+			sourcePaths = new IPath[dflts.length];
+			sourceRootPaths = new IPath[dflts.length];
+			for (int i = 0; i < dflts.length; i++) {
+				libraryPaths[i]= dflts[i].getSystemLibraryPath();
+				if (!libraryPaths[i].toFile().isFile()) {
+					libraryPaths[i]= Path.EMPTY;
+				}
+				
+				sourcePaths[i]= dflts[i].getSystemLibrarySourcePath();
+				if (sourcePaths[i].toFile().isFile()) {
+					sourceRootPaths[i]= dflts[i].getPackageRootPath();
+				} else {
+					sourcePaths[i]= Path.EMPTY;
+					sourceRootPaths[i]= Path.EMPTY;
+				}
 			}
 		} else {
-			libraryPath= location.getSystemLibraryPath();
-			sourcePath= location.getSystemLibrarySourcePath();
-			sourceRootPath= location.getPackageRootPath();
+			libraryPaths = new IPath[locations.length];
+			sourcePaths = new IPath[locations.length];
+			sourceRootPaths = new IPath[locations.length];
+			for (int i = 0; i < locations.length; i++) {			
+				libraryPaths[i]= locations[i].getSystemLibraryPath();
+				sourcePaths[i]= locations[i].getSystemLibrarySourcePath();
+				sourceRootPaths[i]= locations[i].getPackageRootPath();
+			}
 		}
-		return new LibraryLocation(libraryPath, sourcePath, sourceRootPath);
+		locations = new LibraryLocation[sourcePaths.length];
+		for (int i = 0; i < sourcePaths.length; i++) {
+			locations[i] = new LibraryLocation(libraryPaths[i], sourcePaths[i], sourceRootPaths[i]);
+		}
+		return locations;
 	}
 	
 	/**

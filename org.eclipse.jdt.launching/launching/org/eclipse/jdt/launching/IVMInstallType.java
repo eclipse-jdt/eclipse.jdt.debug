@@ -88,23 +88,7 @@ public interface IVMInstallType {
 	 * 			with this IVMInstallType.
 	 */
 	File detectInstallLocation();
-	
-	/**
-	 * Must return a <code>LibraryLocation</code> that represents the
-	 * default configuration of this IVMInstallType if the VM was installed
-	 * at <code>installLocation</code>.
-	 * The returned <code>LibraryLocation</code> doesn't have to contain
-	 * existing files, if the <code>installLocation</code> is not a valid install 
-	 * location.
-	 * 
-	 * @see	LibraryLocation
-	 * @see IVMInstallType#validateInstallLocation(File)
-	 * 
-	 * @return A default library location based on the given <code>installLocation</code>.
-	 * @deprecated use #getDefaultLibraryLocations
-	 */
-	LibraryLocation getDefaultLibraryLocation(File installLocation);
-	
+		
 	/**
 	 * Returns a collection of <code>LibraryLocation</code>s that represent the
 	 * default system libraries of this IVMInstallType if the VM was installed
