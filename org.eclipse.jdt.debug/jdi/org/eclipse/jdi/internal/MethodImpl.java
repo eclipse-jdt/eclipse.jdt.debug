@@ -740,6 +740,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			allLineLocations= (List)sourceNameAllLineLocations.get(sourceName);
 		}
 		if (allLineLocations == null) { // the line locations are not know, compute and store them
+			getLineTable();
 			allLineLocations= referenceTypeImpl().allLineLocations(stratum, sourceName, this, fCodeIndexTable, fJavaStratumLineNumberTable);
 			sourceNameAllLineLocations.put(sourceName, allLineLocations);
 		}
