@@ -50,7 +50,7 @@ public class LaunchConfigurationIPackageFragmentMoveParticipant extends MovePart
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
 	 */
 	public String getName() {
-		return "Launch configuration participant";
+		return RefactoringMessages.getString("LaunchConfigurationIPackageFragmentMoveParticipant.0"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
