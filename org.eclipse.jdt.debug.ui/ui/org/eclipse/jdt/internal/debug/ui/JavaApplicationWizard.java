@@ -6,11 +6,13 @@ package org.eclipse.jdt.internal.debug.ui;
  */
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.ILaunchWizard;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLauncherDelegate;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -23,7 +25,6 @@ public class JavaApplicationWizard extends Wizard implements ILaunchWizard {
 	protected String fMode;
 	protected ILauncher fLauncher;
 	protected Object[] fLauncheables;
-	protected boolean fLastLaunchSuccessful;
 
 	public JavaApplicationWizard() {
 	}
@@ -43,11 +44,12 @@ public class JavaApplicationWizard extends Wizard implements ILaunchWizard {
 	 * Sets the chosen launcher and elements and performs the launch.
 	 */
 	public boolean performFinish() {
+		final boolean[] lastLaunchSuccessful= new boolean[1];
 		try {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor pm) {
 					JavaApplicationWizardPage page= (JavaApplicationWizardPage) getContainer().getCurrentPage();
-					fLastLaunchSuccessful= fLauncher.launch(page.getElements(), fMode);
+					lastLaunchSuccessful[0]= fLauncher.launch(page.getElements(), fMode);
 				}
 			});
 		} catch (InvocationTargetException ite) {
@@ -56,7 +58,12 @@ public class JavaApplicationWizard extends Wizard implements ILaunchWizard {
 			return false;
 		}
 
-		return fLastLaunchSuccessful;
+		if (!lastLaunchSuccessful[0]) {
+			String string= "Launch attempt failed: {0}";
+			String message= MessageFormat.format(string, new String[] {fLauncher.getLabel()});
+			MessageDialog.openError(getShell(), "Launch failed", message);
+		}
+		return lastLaunchSuccessful[0];
 	}
 
 	/**
