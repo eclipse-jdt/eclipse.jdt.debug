@@ -16,19 +16,22 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
-import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.test.performance.PerformanceTestCase;
 
-public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
+public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformanceTest {
+
+    public OpenLaunchConfigurationDialogTests(String name) {
+        super(name);
+    }
 
     public static String fgIdentifier= "org.eclipse.jdt.launching.localJavaApplication";
     
     public void testOpenJavaProgramLaunchConfigurationDialog1() {
         // cold run
-        ILaunchConfiguration config = AbstractDebugTest.getLaunchConfiguration("Breakpoints");
+        ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		IStructuredSelection selection= new StructuredSelection(config);
 		
 		openLCD(selection, fgIdentifier);
@@ -36,7 +39,7 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
     
     public void testOpenJavaProgramLaunchConfigurationDialog2() {
         // warm run..depends on testOpenJavaProgramLaunchConfigurationDialog1 for cold start
-        ILaunchConfiguration config = AbstractDebugTest.getLaunchConfiguration("Breakpoints");
+        ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		IStructuredSelection selection = new StructuredSelection(config);
 		openLCD(selection, fgIdentifier);
     }
