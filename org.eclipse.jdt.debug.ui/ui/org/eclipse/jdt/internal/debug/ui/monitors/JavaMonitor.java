@@ -126,7 +126,7 @@ public class JavaMonitor {
 						fOwningThread= null;
 					} else {
 						changed= fOwningThread == null || !owningThread.equals(fOwningThread.getThread());
-						fOwningThread= ThreadMonitorManager.getDefault().getJavaMonitorThread(owningThread);
+						fOwningThread= ThreadMonitorManager.getDefault().getJavaMonitorThread(owningThread, null);
 					}
 					// update the waiting threads
 					IJavaThread[] waitingThreads= fMonitor.getWaitingThreads();
@@ -140,7 +140,7 @@ public class JavaMonitor {
 						if (changed || fWaitingThreads.length != waitingThreads.length) {
 							// if we know it changed, we can just create the new list
 							for (int i= 0; i < waitingThreads.length; i++) {
-								tmp[i]= threadMonitorManager.getJavaMonitorThread(waitingThreads[i]);
+								tmp[i]= threadMonitorManager.getJavaMonitorThread(waitingThreads[i], null);
 							}
 							changed= true;
 						} else {
@@ -154,7 +154,7 @@ public class JavaMonitor {
 										break;
 									}
 								}
-								tmp[i]= threadMonitorManager.getJavaMonitorThread(waitingThreads[i]);
+								tmp[i]= threadMonitorManager.getJavaMonitorThread(waitingThreads[i], null);
 							}
 							changed= sameThread != waitingThreads.length;
 						}

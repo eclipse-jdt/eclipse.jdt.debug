@@ -46,7 +46,10 @@ public class JavaOwnedMonitor extends PlatformObject implements IDebugElement {
 		return fMonitor;
 	}
 	
-	public JavaWaitingThread getParent() {
+	public Object getParent() {
+		if (fParent.getParent() == null) {
+			return fParent.getThread().getOriginalThread();
+		}
 		return fParent;
 	}
 	

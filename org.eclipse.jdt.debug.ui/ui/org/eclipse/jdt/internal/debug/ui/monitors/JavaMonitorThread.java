@@ -20,6 +20,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
@@ -35,6 +36,8 @@ public class JavaMonitorThread extends PlatformObject {
 	 */
 	private IJavaThread fThread;
 
+	private IThread fOriginalThread;
+	
 	/**
 	 * The monitor this thread is waiting for.
 	 */
@@ -68,13 +71,22 @@ public class JavaMonitorThread extends PlatformObject {
 	 * thread.
 	 */
 	private JavaOwningThread fBaseOwningThread;
-	
-	public JavaMonitorThread(IJavaThread underlyingThread) {
+
+	public JavaMonitorThread(IJavaThread underlyingThread, IThread originalThread) {
 		fThread= underlyingThread;
+		fOriginalThread= originalThread;
 	}
 	
 	public IJavaThread getThread() {
 		return fThread;
+	}
+	
+	public IThread getOriginalThread() {
+		return fOriginalThread;
+	}
+	
+	protected void setOriginalThread(IThread originalThread) {
+		fOriginalThread= originalThread;
 	}
 
 	/**
@@ -227,6 +239,9 @@ public class JavaMonitorThread extends PlatformObject {
 	private void fireChangeEvent(int detail) {
 		Object[] elements= fElements.toArray();
 		List changedElement= new ArrayList();
+		if (fOriginalThread != null) {
+			changedElement.add(fOriginalThread);
+		}
 		for (int i= 0; i < elements.length; i++) {
 			Object element= elements[i];
 			// the two 'base' elements are not part of the hierarchy, they are 
@@ -235,9 +250,8 @@ public class JavaMonitorThread extends PlatformObject {
 			    changedElement.add(element);
 			}
 		}
-		DebugEvent[] changeEvents= new DebugEvent[changedElement.size() + 1];
-		changeEvents[0]= new DebugEvent(fThread, DebugEvent.CHANGE, detail);
-		int i= 1;
+		DebugEvent[] changeEvents= new DebugEvent[changedElement.size()];
+		int i= 0;
 		for (Iterator iter= changedElement.iterator(); iter.hasNext();) {
 		    changeEvents[i++]= new DebugEvent(iter.next(), DebugEvent.CHANGE, detail);
         }

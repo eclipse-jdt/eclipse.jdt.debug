@@ -27,11 +27,7 @@ public class DeferredJavaOwnedMonitor extends DeferredMonitorElement {
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
      */
     public Object getParent(Object element) {
-		JavaWaitingThread parent= ((JavaOwnedMonitor)element).getParent();
-		if (parent.getParent() == null) {
-			return parent.getThread();
-		}
-		return parent;
+		return ((JavaOwnedMonitor)element).getParent();
     }
 
 }

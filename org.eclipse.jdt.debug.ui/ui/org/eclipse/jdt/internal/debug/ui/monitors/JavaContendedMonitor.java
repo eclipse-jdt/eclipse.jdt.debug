@@ -45,7 +45,10 @@ public class JavaContendedMonitor extends PlatformObject implements IDebugElemen
 		return fMonitor;
 	}
 	
-	public JavaOwningThread getParent() {
+	public Object getParent() {
+		if (fParent.getParent() == null) {
+			return fParent.getThread().getOriginalThread();
+		}
 		return fParent;
 	}
 	

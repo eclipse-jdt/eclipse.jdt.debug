@@ -148,20 +148,22 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	/**
 	 * Returns the unique JavaMonitorThread object for the given thread.
 	 */
-	protected JavaMonitorThread getJavaMonitorThread(IJavaThread thread) {
+	protected JavaMonitorThread getJavaMonitorThread(IJavaThread thread, IThread originalThread) {
 		synchronized (fJavaMonitorThreads) {
 			JavaMonitorThread javaMonitorThread= (JavaMonitorThread) fJavaMonitorThreads.get(thread);
 			if (javaMonitorThread == null) {
-				javaMonitorThread= new JavaMonitorThread(thread);
+				javaMonitorThread= new JavaMonitorThread(thread, originalThread);
 				fJavaMonitorThreads.put(thread, javaMonitorThread);
 				DebugPlugin.getDefault().asyncExec(new DetectDeadlock());			
+			} else if (originalThread != null) {
+				javaMonitorThread.setOriginalThread(originalThread);
 			}
 			return javaMonitorThread;
 		}
 	}
 	
 	/**
-	 * Returns the unique JavaMonitor object for the give monitor.
+	 * Returns the unique JavaMonitor object for the given monitor.
 	 */
 	protected JavaMonitor getJavaMonitor(IJavaObject monitor) {
 		synchronized (fJavaMonitors) {
@@ -191,7 +193,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		if (javaThread == null || !fIsEnabled || !((IJavaDebugTarget)javaThread.getDebugTarget()).supportsMonitorInformation()) {
 			return null;
 		}
-		return getJavaMonitorThread(javaThread).getContendedMonitor();
+		return getJavaMonitorThread(javaThread, thread).getContendedMonitor();
 	}
 	
 	/**
@@ -202,7 +204,7 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
     	if (javaThread == null || !fIsEnabled || !((IJavaDebugTarget)javaThread.getDebugTarget()).supportsMonitorInformation()) {
     		return new JavaOwnedMonitor[0];
     	}
-    	return getJavaMonitorThread(javaThread).getOwnedMonitors();
+    	return getJavaMonitorThread(javaThread, thread).getOwnedMonitors();
 	}
 
 	/**
@@ -285,11 +287,12 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 * Returns <code>true</code> if SHOW_MONITOR_THREAD_INFO is on and the given thread is
 	 * in a deadlock, <code>false</code> otherwise.
 	 */
-	public boolean isInDeadlock(IJavaThread thread) {
-		if (!fIsEnabled || !((IJavaDebugTarget)thread.getDebugTarget()).supportsMonitorInformation()) {
+	public boolean isInDeadlock(IThread thread) {
+        IJavaThread javaThread = (IJavaThread) thread.getAdapter(IJavaThread.class);
+		if (!fIsEnabled || !((IJavaDebugTarget)javaThread.getDebugTarget()).supportsMonitorInformation()) {
 			return false;
 		}
-		return getJavaMonitorThread(thread).isInDeadlock();
+		return getJavaMonitorThread(javaThread, thread).isInDeadlock();
 	}
 
 	private JavaMonitor[] getJavaMonitors() {
