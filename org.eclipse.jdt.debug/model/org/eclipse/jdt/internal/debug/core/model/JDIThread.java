@@ -2293,7 +2293,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see org.eclipse.debug.core.model.IFilteredStep#canStepWithFilters()
 	 */
 	public boolean canStepWithFilters() {
-		return canStepInto() && getJavaDebugTarget().getStepFilters().length > 0;
+		if (canStepInto()) {
+			String[] filters = getJavaDebugTarget().getStepFilters();
+			return filters != null && filters.length > 0;
+		}
+		return false;
 	}
 
 	/**
