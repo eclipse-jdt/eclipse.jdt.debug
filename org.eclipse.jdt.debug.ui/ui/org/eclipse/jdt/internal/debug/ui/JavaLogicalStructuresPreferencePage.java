@@ -28,7 +28,9 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -359,6 +361,14 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         fLogicalStructuresViewer.setLabelProvider(new LogicalStructuresListViewerLabelProvider());
         fLogicalStructuresViewer.addSelectionChangedListener(this);
         fLogicalStructuresViewer.setInput(this);
+        fLogicalStructuresViewer.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                IStructuredSelection selection= ((IStructuredSelection) fLogicalStructuresViewer.getSelection());
+                if (selection.size() == 1 && !((JavaLogicalStructure) selection.getFirstElement()).isContributed()) {
+                    editLogicalStructure();
+                }
+            }
+        });
         fLogicalStructuresViewer.setSorter(new ViewerSorter() {
             public int compare(Viewer iViewer, Object e1, Object e2) {
                 if (e1 == null) {
