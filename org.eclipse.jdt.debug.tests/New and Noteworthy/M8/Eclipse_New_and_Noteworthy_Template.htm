@@ -39,8 +39,9 @@
   <TR>
       <TD valign=top align=left width="30%">
         <P align=right><B>Use of detail pane in variables view to set the value of a variable </B> </P></TD>
-      <TD width="70%">Description needed.
-
+      <TD width="70%">The value of the selected variable in the Variables View can now be changed in the details area of that view by typing the new
+      value and using the context menu's "Assign Value" command (Ctrl-S by default).
+      <p><IMG src="assignValue.GIF"></P></p>
     </TD></TR>
  <TR>
       <TD colSpan=2>
@@ -82,7 +83,8 @@
 		    <TR>
 			      <TD valign=top align=left width="30%">
 			        <P align=right><B> Default VM arguments can be associated with a JRE</B> </P></TD>
-			      <TD width="70%">DESCRIPTION NEEDED
+			      <TD width="70%">Any JRE Install can now have a set of default VM arguments associated with it. 
+			      These arguments will be passed to the VM whenever it is used.
 
 						<P><img src="guessing_variables_name.gif" width="366" height="131"></P>
     </TD></TR>
@@ -106,8 +108,9 @@
 		      <TD valign=top align=left width="30%">
 		        <P align=right><B>Restart option when hotswap fails </B> </P></TD>
 
-    <TD width="70%">DESCRIPTION NEEDED
-			<P><img src="specific_error_indications.gif" width="445" height="74"></P>
+    <TD width="70%">When changes are made in the host VM that hotswap cannot handle, the user is now
+    given the option to restart the VM instead of only being able choose Terminate or Continue.
+			<P><img src="hotcodereplace.GIF"></P>
     </TD></TR>
 		  <TR>
 		    <TD colSpan=2>
@@ -144,4 +147,54 @@
 
 			    <TD width="70%">A first release of template supprt for Ant buildfiles is included.
     </TD></TR>
+    
+    
+    <TR>
+		<TD colSpan=2>
+			<HR>
+	    </TD>
+	</TR>
+	<TR>
+		<TD valign=top align=left width="30%">
+			<P align=right><B>Workspace is checked for breakpoints before launching in run mode</B> </P>
+		</TD>
+	    <TD width="70%">
+	    	When an application is launched in run mode (ie run, not debugged) and breakpoints are set in the
+	    	workspace, the user will be prompted to find out if he would rather debug the application. A launching 
+	    	preference has been provided to turn this feature on and off.
+	    	<p><img src="breakpointsinworkspace.GIF"></p>
+		</TD>
+	</TR>
+    <TR>
+		<TD colSpan=2>
+			<HR>
+	    </TD>
+	</TR>
+	<TR>
+		<TD valign=top align=left width="30%">
+			<P align=right><B>Prelaunch builds are restricted to the project being launched and its prerequite projects</B></P>
+		</TD>
+	    <TD width="70%">
+	    	When a user is running eclipse without auto-build on, and a build is required before launching, the build will be restricted to 
+	    	the project containing the class file being launched and any prerequite project. Eclipse will no longer build the entire workspace
+	    	in this scenario.
+		</TD>
+	</TR>
+    <TR>
+		<TD colSpan=2>
+			<HR>
+	    </TD>
+	</TR>	
+	<TR>
+		<TD valign=top align=left width="30%">
+			<P align=right><B>User is prompted when trying to launch an application from a project that contains compile errors</B></P>
+		</TD>
+	    <TD width="70%">
+	    	When a launch is initiated from a project that contains compile errors, or a project that it depends on contains compile errors
+	    	the user is prompted and given the chance to cancel the launch. A launching preference has been provided to turn this feature 
+	    	on and off.
+	    	<p><img src="compileerrors.GIF"></p>
+		</TD>
+	</TR>	
+
     </TBODY></TABLE></BODY></HTML>
