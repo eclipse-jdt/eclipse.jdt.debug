@@ -173,7 +173,7 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 	 */
 	protected void configureRequest(EventRequest request) throws CoreException {
 		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		request.putProperty(JDIDebugPlugin.JAVA_BREAKPOINT_PROPERTY, this);								
+		request.putProperty(JAVA_BREAKPOINT_PROPERTY, this);								
 		int hitCount= getHitCount();
 		if (hitCount > 0) {
 			request.addCountFilter(hitCount);

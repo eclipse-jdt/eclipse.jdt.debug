@@ -16,15 +16,10 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 /**
- * The plugin class for the JDI Debug Model plugin.
+ * The plugin class for the JDI Debug Model plug-in.
  */
 
 public class JDIDebugPlugin extends Plugin {
-	
-	/**
-	 * Propery identifier for a breakpoint object on an event request
-	 */
-	public static final String JAVA_BREAKPOINT_PROPERTY = "org.eclipse.jdt.debug.breakpoint"; //$NON-NLS-1$
 	
 	protected static JDIDebugPlugin fgPlugin;
 	
@@ -52,7 +47,8 @@ public class JDIDebugPlugin extends Plugin {
 	
 
 	/**
-	 * Shutdown the HCR mgr and the debug targets.
+	 * Shutdown the HCR mgr and the Java debug targets.
+	 * Save the current in-memory step filter state.
 	 */
 	public void shutdown() throws CoreException {
 		fJavaHCRMgr.shutdown();

@@ -19,6 +19,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected HashMap fRequestsByTarget;
 	
 	/**
+	 * Propery identifier for a breakpoint object on an event request
+	 */
+	public static final String JAVA_BREAKPOINT_PROPERTY = "org.eclipse.jdt.debug.breakpoint"; //$NON-NLS-1$
+	
+	/**
 	 * JavaBreakpoint attributes
 	 */	
 	protected static final String[] fgExpiredEnabledAttributes= new String[]{IJavaDebugConstants.EXPIRED, IDebugConstants.ENABLED};

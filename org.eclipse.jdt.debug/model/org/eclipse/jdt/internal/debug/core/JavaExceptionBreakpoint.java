@@ -129,7 +129,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			try {
 				request= target.getEventRequestManager().createExceptionRequest(type, isCaught(), isUncaught());
 				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-				request.putProperty(JDIDebugPlugin.JAVA_BREAKPOINT_PROPERTY, this);
+				request.putProperty(JAVA_BREAKPOINT_PROPERTY, this);
 				int hitCount= getHitCount();
 				if (hitCount > 0) {
 					request.addCountFilter(hitCount);
