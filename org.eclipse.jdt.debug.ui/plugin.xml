@@ -15,6 +15,7 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.variables"/>
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.debug.core"/>

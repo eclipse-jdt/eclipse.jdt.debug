@@ -20,6 +20,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
@@ -72,6 +74,31 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	protected ILaunchConfiguration fLaunchConfiguration;
 	
 	/**
+	 * A listener to update for text changes and widget selection
+	 */
+	private class WidgetListener extends SelectionAdapter implements ModifyListener {
+		public void modifyText(ModifyEvent e) {
+			updateLaunchConfigurationDialog();
+		}
+		public void widgetSelected(SelectionEvent e) {
+			Object source= e.getSource();
+			if (source == fLocalDirButton) {
+				handleLocationButtonSelected();
+			} else if (source == fWorkingDirBrowseButton) {
+				handleWorkingDirBrowseButtonSelected();
+			} else if (source == fWorkspaceDirButton) {
+				handleLocationButtonSelected();
+			} else if (source == fWorkspaceDirBrowseButton) {
+				handleWorkspaceDirBrowseButtonSelected();
+			} else if (source == fUseDefaultWorkingDirButton) {
+				handleUseDefaultWorkingDirButtonSelected();
+			}
+		}
+	}
+	
+	private WidgetListener fListener= new WidgetListener();
+	
+	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -97,52 +124,28 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		fWorkingDirLabel.setFont(font);
 		
 		fLocalDirButton = createRadioButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.&Local_directory__1")); //$NON-NLS-1$
-		fLocalDirButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleLocationButtonSelected();
-			}
-		});
+		fLocalDirButton.addSelectionListener(fListener);
 		
 		fWorkingDirText = new Text(workingDirComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWorkingDirText.setLayoutData(gd);
 		fWorkingDirText.setFont(font);
-		fWorkingDirText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fWorkingDirText.addModifyListener(fListener);
 		
 		fWorkingDirBrowseButton = createPushButton(workingDirComp, LauncherMessages.getString("JavaArgumentsTab.&Browse_3"), null); //$NON-NLS-1$
-		fWorkingDirBrowseButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleWorkingDirBrowseButtonSelected();
-			}
-		});
+		fWorkingDirBrowseButton.addSelectionListener(fListener);
 		
 		fWorkspaceDirButton = createRadioButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.Works&pace__2")); //$NON-NLS-1$
-		fWorkspaceDirButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleLocationButtonSelected();
-			}
-		});		
+		fWorkspaceDirButton.addSelectionListener(fListener);		
 		
 		fWorkspaceDirText = new Text(workingDirComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWorkspaceDirText.setLayoutData(gd);
 		fWorkspaceDirText.setFont(font);
-		fWorkspaceDirText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fWorkspaceDirText.addModifyListener(fListener);
 		
 		fWorkspaceDirBrowseButton = createPushButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.B&rowse..._3"), null); //$NON-NLS-1$
-		fWorkspaceDirBrowseButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleWorkspaceDirBrowseButtonSelected();
-			}
-		});		
+		fWorkspaceDirBrowseButton.addSelectionListener(fListener);		
 				
 		fUseDefaultWorkingDirButton = new Button(workingDirComp,SWT.CHECK);
 		fUseDefaultWorkingDirButton.setText(LauncherMessages.getString("JavaArgumentsTab.Use_de&fault_working_directory_4")); //$NON-NLS-1$
@@ -150,11 +153,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		gd.horizontalSpan = 3;
 		fUseDefaultWorkingDirButton.setLayoutData(gd);
 		fUseDefaultWorkingDirButton.setFont(font);
-		fUseDefaultWorkingDirButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleUseDefaultWorkingDirButtonSelected();
-			}
-		});
+		fUseDefaultWorkingDirButton.addSelectionListener(fListener);
 				
 	}
 					
@@ -194,7 +193,12 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 					ResourcesPlugin.getWorkspace().getRoot(), false,
 					LauncherMessages.getString("WorkingDirectoryBlock.4")); //$NON-NLS-1$
 		
-		IContainer currentContainer = getContainer();
+		IContainer currentContainer= null;
+		try {
+			currentContainer = getContainer();
+		} catch (CoreException e) {
+			// Invalid container specified
+		}
 		if (currentContainer != null) {
 			IPath path = currentContainer.getFullPath();
 			dialog.setInitialSelections(new Object[] {path});
@@ -213,7 +217,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	/**
 	 * Returns the selected workspace container,or <code>null</code>
 	 */
-	protected IContainer getContainer() {
+	protected IContainer getContainer() throws CoreException {
 		IResource res = getResource();
 		if (res instanceof IContainer) {
 			return (IContainer)res;
@@ -224,8 +228,10 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	/**
 	 * Returns the selected workspace resource, or <code>null</code>
 	 */
-	protected IResource getResource() {
-		IPath path = new Path(fWorkspaceDirText.getText());
+	protected IResource getResource() throws CoreException {
+		String text= fWorkspaceDirText.getText();
+		text= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(text);
+		IPath path = new Path(text);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		return root.findMember(path);
 	}	
@@ -296,6 +302,13 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		
 		if (isLocalWorkingDirectory()) {
 			String workingDirPath = fWorkingDirText.getText().trim();
+			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+			try {
+				workingDirPath= manager.performStringSubstitution(workingDirPath);
+			} catch (CoreException e) {
+				setErrorMessage(e.getMessage());
+				return false;
+			}
 			if (workingDirPath.length() > 0) {
 				File dir = new File(workingDirPath);
 				if (!dir.exists()) {
@@ -308,7 +321,14 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 				}
 			}
 		} else {
-			if (getContainer() == null) {
+			IContainer container= null;
+			try {
+				container = getContainer();
+			} catch (CoreException e) {
+				setErrorMessage(e.getMessage());
+				return false;
+			}
+			if (container == null) {
 				setErrorMessage(LauncherMessages.getString("WorkingDirectoryBlock.5")); //$NON-NLS-1$
 				return false;
 			}
