@@ -31,5 +31,25 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
-
+	public void testMultiThreadFilterBreakpoint() throws Exception {
+		String typeName = "MultiThreadedLoop";
+		IJavaLineBreakpoint bp1 = createLineBreakpoint(6, typeName);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp1);
+			
+			IJavaLineBreakpoint bp2 = createLineBreakpoint(29, typeName);
+			bp2.setThreadFilter(thread);
+			
+			thread = resumeToLineBreakpoint(thread, bp2);
+			assertTrue("Suspended thread should have been '1stThread'", thread.getName().equals("1stThread"));
+						
+			bp1.delete();
+			bp2.delete();
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
 }
