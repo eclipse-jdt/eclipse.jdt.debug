@@ -1209,10 +1209,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			setRunning(true);
 			setSuspendedQuiet(false);
-			preserveStackFrames();
 			if (fireNotification) {
 				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			}
+			preserveStackFrames();
 			getUnderlyingThread().resume();
 		} catch (VMDisconnectedException e) {
 			disconnected();
