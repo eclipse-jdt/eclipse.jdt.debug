@@ -81,43 +81,43 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	private Text fAppletViewerClassText;
 	private Button fAppletViewerClassDefaultButton;
 	
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		Font font = parent.getFont();
+		Font font= parent.getFont();
 		
-		Composite comp = new Composite(parent, SWT.NONE);
+		Composite comp= new Composite(parent, SWT.NONE);
 		setControl(comp);
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_APPLET_MAIN_TAB);
-		GridLayout topLayout = new GridLayout();
+		GridLayout topLayout= new GridLayout();
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
 		createVerticalSpacer(comp);
 		
-		Composite projComp = new Composite(comp, SWT.NONE);
-		GridLayout projLayout = new GridLayout();
-		projLayout.numColumns = 3;
-		projLayout.marginHeight = 0;
-		projLayout.marginWidth = 0;
+		Composite projComp= new Composite(comp, SWT.NONE);
+		GridLayout projLayout= new GridLayout();
+		projLayout.numColumns= 3;
+		projLayout.marginHeight= 0;
+		projLayout.marginWidth= 0;
 		projComp.setLayout(projLayout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
 		projComp.setLayoutData(gd);
 		projComp.setFont(font);
 		
-		fProjLabel = new Label(projComp, SWT.NONE);
+		fProjLabel= new Label(projComp, SWT.NONE);
 		fProjLabel.setText(LauncherMessages.getString("appletlauncher.maintab.projectlabel.name")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 3;
+		gd= new GridData();
+		gd.horizontalSpan= 3;
 		fProjLabel.setLayoutData(gd);
 		fProjLabel.setFont(font);
 		
-		fProjText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		fProjText= new Text(projComp, SWT.SINGLE | SWT.BORDER);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan= 2;
 		fProjText.setLayoutData(gd);
 		fProjText.setFont(font);
 		this.fProjText.addModifyListener(new ModifyListener() {
@@ -126,28 +126,28 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fProjButton = createPushButton(projComp, LauncherMessages.getString("appletlauncher.maintab.browselabel.name"), null); //$NON-NLS-1$
+		fProjButton= createPushButton(projComp, LauncherMessages.getString("appletlauncher.maintab.browselabel.name"), null); //$NON-NLS-1$
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
 			}
 		});
 		
-		Label spacer = createVerticalSpacer(projComp);
-		gd = new GridData();
-		gd.horizontalSpan = 3;
+		Label spacer= createVerticalSpacer(projComp);
+		gd= new GridData();
+		gd.horizontalSpan= 3;
 		spacer.setLayoutData(gd);
 		
-		fMainLabel = new Label(projComp, SWT.NONE);
+		fMainLabel= new Label(projComp, SWT.NONE);
 		fMainLabel.setText(LauncherMessages.getString("appletlauncher.maintab.mainclasslabel.name")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 3;
+		gd= new GridData();
+		gd.horizontalSpan= 3;
 		fMainLabel.setLayoutData(gd);
 		fMainLabel.setFont(font);
 
-		fMainText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
+		fMainText= new Text(projComp, SWT.SINGLE | SWT.BORDER);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan= 2;
 		fMainText.setLayoutData(gd);
 		fMainText.setFont(font);
 		this.fMainText.addModifyListener(new ModifyListener() {
@@ -156,7 +156,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 				
-		fSearchButton = createPushButton(projComp,LauncherMessages.getString("appletlauncher.maintab.searchlabel.name"), null); //$NON-NLS-1$
+		fSearchButton= createPushButton(projComp,LauncherMessages.getString("appletlauncher.maintab.searchlabel.name"), null); //$NON-NLS-1$
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSearchButtonSelected();
@@ -165,12 +165,12 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		
 		createVerticalSpacer(projComp);
 		
-		fAppletViewerClassLabel = new Label(comp, SWT.NONE);
+		fAppletViewerClassLabel= new Label(comp, SWT.NONE);
 		fAppletViewerClassLabel.setText(LauncherMessages.getString("AppletMainTab.Name_of_appletviewer_class__1")); //$NON-NLS-1$
 		fAppletViewerClassLabel.setFont(font);
 		
-		fAppletViewerClassText = new Text(comp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fAppletViewerClassText= new Text(comp, SWT.SINGLE | SWT.BORDER);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fAppletViewerClassText.setLayoutData(gd);
 		fAppletViewerClassText.setFont(font);
 		fAppletViewerClassText.addModifyListener(new ModifyListener() {
@@ -179,7 +179,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fAppletViewerClassDefaultButton = new Button(comp, SWT.CHECK);
+		fAppletViewerClassDefaultButton= new Button(comp, SWT.CHECK);
 		fAppletViewerClassDefaultButton.setFont(font);
 		fAppletViewerClassDefaultButton.setText(LauncherMessages.getString("AppletMainTab.Use_default_appletviewer_class_2")); //$NON-NLS-1$
 		fAppletViewerClassDefaultButton.addSelectionListener(new SelectionAdapter() {
@@ -222,9 +222,9 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	}
 	
 	private void updateProjectFromConfig(ILaunchConfiguration config) {
-		String projectName = EMPTY_STRING;
+		String projectName= EMPTY_STRING;
 		try {
-			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
+			projectName= config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}
@@ -232,9 +232,9 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	}
 	
 	private void updateMainTypeFromConfig(ILaunchConfiguration config) {
-		String mainTypeName = EMPTY_STRING;
+		String mainTypeName= EMPTY_STRING;
 		try {
-			mainTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
+			mainTypeName= config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);	
 		}	
@@ -242,9 +242,9 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	}
 	
 	private void updateAppletViewerClassNameFromConfig(ILaunchConfiguration config) {
-		String appletViewerClassName = null;
+		String appletViewerClassName= null;
 		try {
-			appletViewerClassName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, (String)null);
+			appletViewerClassName= config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, (String)null);
 			if (appletViewerClassName == null) {
 				fAppletViewerClassText.setText(IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
 				fAppletViewerClassDefaultButton.setSelection(true);
@@ -271,11 +271,11 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	 * Set the current appletviewer class name on the specified working copy.
 	 */
 	private void performApplyAppletViewerClassName(ILaunchConfigurationWorkingCopy config) {
-		String appletViewerClassName = null;
+		String appletViewerClassName= null;
 		if (!isDefaultAppletViewerClassName()) {
-			appletViewerClassName = fAppletViewerClassText.getText().trim();
+			appletViewerClassName= fAppletViewerClassText.getText().trim();
 			if (appletViewerClassName.length() <= 0) {
-				appletViewerClassName = null;
+				appletViewerClassName= null;
 			}
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, appletViewerClassName);
@@ -299,8 +299,8 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	 */
 	private void handleSearchButtonSelected() {
 		
-		IJavaProject javaProject = getJavaProject();		
-		Shell shell = getShell();
+		IJavaProject javaProject= getJavaProject();		
+		Shell shell= getShell();
 		AppletSelectionDialog dialog =
 			new AppletSelectionDialog(
 				shell,
@@ -312,14 +312,14 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 			return;
 		}
 		
-		Object[] results = dialog.getResult();
+		Object[] results= dialog.getResult();
 		if ((results == null) || (results.length < 1)) {
 			return;
 		}		
-		IType type = (IType)results[0];
+		IType type= (IType)results[0];
 		if (type != null) {
 			fMainText.setText(type.getFullyQualifiedName());
-			javaProject = type.getJavaProject();
+			javaProject= type.getJavaProject();
 			fProjText.setText(javaProject.getElementName());
 		}
 	}
@@ -330,12 +330,12 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	 * constraining the search for main types to the specified project.
 	 */
 	private void handleProjectButtonSelected() {
-		IJavaProject project = chooseJavaProject();
+		IJavaProject project= chooseJavaProject();
 		if (project == null) {
 			return;
 		}
 		
-		String projectName = project.getElementName();
+		String projectName= project.getElementName();
 		fProjText.setText(projectName);	
 	}
 	
@@ -358,7 +358,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		dialog.setMessage(LauncherMessages.getString("appletlauncher.maintab.selection.project.dialog.message")); //$NON-NLS-1$
 		dialog.setElements(projects);
 		
-		IJavaProject javaProject = getJavaProject();
+		IJavaProject javaProject= getJavaProject();
 		if (javaProject != null) {
 			dialog.setInitialSelections(new Object[] { javaProject });
 		}
@@ -373,7 +373,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	 * text field, or null if the text does not match a project name.
 	 */
 	private IJavaProject getJavaProject() {
-		String projectName = fProjText.getText().trim();
+		String projectName= fProjText.getText().trim();
 		if (projectName.length() < 1) {
 			return null;
 		}
@@ -404,7 +404,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		setMessage(null);
 		
 		// Verify project
-		String name = fProjText.getText().trim();
+		String name= fProjText.getText().trim();
 		if (name.length() > 0) {
 			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
 				setErrorMessage(LauncherMessages.getString("appletlauncher.maintab.project.error.doesnotexist")); //$NON-NLS-1$
@@ -413,14 +413,14 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		}
 		
 		// Verify applet class
-		name = fMainText.getText().trim();
+		name= fMainText.getText().trim();
 		if (name.length() == 0) {
 			setErrorMessage(LauncherMessages.getString("appletlauncher.maintab.type.error.doesnotexist")); //$NON-NLS-1$
 			return false;
 		}
 		
 		// Verify appletviewer class
-		name = fAppletViewerClassText.getText().trim();
+		name= fAppletViewerClassText.getText().trim();
 		if (name.length() == 0) {
 			setErrorMessage(LauncherMessages.getString("AppletMainTab.Appletviewer_class_must_be_specified_3"));  //$NON-NLS-1$
 			return false;			
@@ -444,7 +444,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-		IJavaElement je = getContext();
+		IJavaElement je= getContext();
 		if (je == null) {
 			initializeHardCodedDefaults(config);
 		} else {
@@ -456,13 +456,13 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	 * Set the main type & name attributes on the working copy based on the IJavaElement
 	 */
 	private void initializeMainTypeAndName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
-		String name = null;
+		String name= null;
 		if (javaElement instanceof IMember) {
-			IMember member = (IMember)javaElement;
+			IMember member= (IMember)javaElement;
 			if (member.isBinary()) {
-				javaElement = member.getClassFile();
+				javaElement= member.getClassFile();
 			} else {
-				javaElement = member.getCompilationUnit();
+				javaElement= member.getCompilationUnit();
 			}
 		}
 		if (javaElement instanceof ICompilationUnit || javaElement instanceof IClassFile) {
@@ -470,12 +470,12 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 				ICompilationUnit cu= (ICompilationUnit) javaElement;
 				IType mainType= cu.getType(Signature.getQualifier(cu.getElementName()));
 				if (mainType.exists()) {
-					name = mainType.getFullyQualifiedName();
+					name= mainType.getFullyQualifiedName();
 				}
 			} else if (javaElement.getElementType() == IJavaElement.CLASS_FILE) {
 				try {
 					IType mainType= ((IClassFile)javaElement).getType();
-					name = mainType.getFullyQualifiedName();
+					name= mainType.getFullyQualifiedName();
 				} catch(JavaModelException e) {
 				}
 			}
@@ -483,11 +483,11 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		if (name != null) {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, name);
 			if (name.length() > 0) {
-				int index = name.lastIndexOf('.');
+				int index= name.lastIndexOf('.');
 				if (index > 0) {
-					name = name.substring(index + 1);
+					name= name.substring(index + 1);
 				}		
-				name = getLaunchConfigurationDialog().generateName(name);
+				name= getLaunchConfigurationDialog().generateName(name);
 				config.rename(name);
 			}
 		}
@@ -497,7 +497,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	 * Set the VM attributes on the working copy based on the workbench default VM.
 	 */
 	private void initializeDefaultVM(ILaunchConfigurationWorkingCopy config) {
-		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
+		IVMInstall vmInstall= JavaRuntime.getDefaultVMInstall();
 		if (vmInstall == null) {
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
