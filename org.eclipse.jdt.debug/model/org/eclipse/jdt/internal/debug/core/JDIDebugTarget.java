@@ -727,7 +727,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @param breakpoint the breakpoint has been removed from
 	 *  the breakpoint manager.
 	 */
-	public void breakpointRemoved(final IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (isTerminated() || isDisconnected()) {
 			return;
 		}		
