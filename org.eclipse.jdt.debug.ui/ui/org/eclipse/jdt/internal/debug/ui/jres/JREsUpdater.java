@@ -11,19 +11,24 @@
 package org.eclipse.jdt.internal.debug.ui.jres;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -33,8 +38,6 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * Processes add/removed/changed VMs.
@@ -101,11 +104,21 @@ public class JREsUpdater {
 		boolean build = false;
 		if (buildRequired) {
 			// prompt the user to do a full build
+			boolean autobuild = ResourcesPlugin.getWorkspace().isAutoBuilding();
+			String[] buttons = null; 
+			if (autobuild) {
+				// prompt OK/cancel if autobuild is on
+				buttons = new String[] {JREMessages.getString("JREsUpdater.0"), JREMessages.getString("JREsPreferencePage.8")};  //$NON-NLS-1$//$NON-NLS-2$
+			} else {
+				// prompt yes/no/cancel if autobuild if off
+				buttons = new String[] {JREMessages.getString("JREsPreferencePage.6"), JREMessages.getString("JREsPreferencePage.7"), JREMessages.getString("JREsPreferencePage.8")};  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
 			MessageDialog messageDialog = new MessageDialog(getShell(), JREMessages.getString("JREsPreferencePage.4"), null,  //$NON-NLS-1$
 			JREMessages.getString("JREsPreferencePage.5"), //$NON-NLS-1$
-			MessageDialog.QUESTION, new String[] {JREMessages.getString("JREsPreferencePage.6"), JREMessages.getString("JREsPreferencePage.7"), JREMessages.getString("JREsPreferencePage.8")}, 0); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			MessageDialog.QUESTION, buttons, 0);
 			int button = messageDialog.open();
-			if (button == 2) {
+			if (button == buttons.length - 1) {
+				// cancel
 				return false;
 			}
 			build = button == 0;			
@@ -116,7 +129,7 @@ public class JREsUpdater {
 		
 		// do a build if required
 		if (build) {
-			buildWorkspace();
+			doFullBuild();
 		}
 		
 		return true;
@@ -243,22 +256,34 @@ public class JREsUpdater {
 		}
 	} 
 	
-	private void buildWorkspace() {
-		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new WorkspaceModifyOperation() {
-				public void execute(IProgressMonitor monitor) throws InvocationTargetException{
-					try {
-						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
+	private boolean doFullBuild() {
+		
+		Job buildJob = new Job(JREMessages.getString("JREsUpdater.1")) { //$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					monitor.setTaskName(JREMessages.getString("JREsUpdater.2")); //$NON-NLS-1$
+					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new SubProgressMonitor(monitor, 2));
+				} catch (CoreException e) {
+					return e.getStatus();
+				} catch (OperationCanceledException e) {
+					return Status.CANCEL_STATUS;
 				}
-			});
-		} catch (InterruptedException e) {
-			// opearation canceled by user
-		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), JREMessages.getString("JREsPreferencePage.1"), JREMessages.getString("JREsPreferencePage.9")); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}			
-	
+				finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+			public boolean belongsTo(Object family) {
+				return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
+			}
+		};
+		
+		buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+		buildJob.setUser(true); 
+		buildJob.schedule();
+		return true;
+	}		
 }
