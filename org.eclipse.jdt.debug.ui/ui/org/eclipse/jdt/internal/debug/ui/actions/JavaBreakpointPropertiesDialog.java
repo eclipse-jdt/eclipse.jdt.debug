@@ -455,7 +455,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	protected void setBreakpointProperties(final List changedProperties) {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-
+		boolean newEnabled= false;
 		IJavaBreakpoint breakpoint= getBreakpoint();
 		Iterator changed= changedProperties.iterator();
 		while (changed.hasNext()) {
@@ -470,7 +470,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 					jeBreakpoint.setCaught(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.CAUGHT));
 					break;
 				case 'E'://enabled
-					breakpoint.setEnabled(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.ENABLED));
+					newEnabled= true;
 					break;
 				case 'H':
 					if (property.charAt(property.length() - 1) == 'T') {
@@ -520,7 +520,13 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 					break;
 			}
 			
-		}}};
+		}
+		if (newEnabled) {
+			//some of the other attributes auto enable the breakpoint
+			//ensure that the breakpoint is set as the user specified
+			breakpoint.setEnabled(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.ENABLED));
+		}
+		}};
 		
 		try {
 			ResourcesPlugin.getWorkspace().run(wr, null);
