@@ -10,11 +10,11 @@ import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
  * A method breakpoint suspends execution when a
- * method is entered or exited, and that method matches
- * the criteria of this breakpoint.
+ * method is entered or exited.
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
+ * @since 2.0
  */
 public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 
@@ -26,8 +26,8 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * @return the name of the method(s) this breakpoint suspends
 	 * execution in, or <code>null</code> if this breakpoint does
 	 * not suspend execution based on method name
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property from
+	 * 	this breakpoint's underlying marker
 	 */
 	public String getMethodName() throws CoreException;
 	
@@ -39,8 +39,8 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * @return the signature of the method(s) this breakpoint suspends
 	 * execution in, or <code>null</code> if this breakpoint does not
 	 * suspend exectution based on method signature
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property from
+	 * 	this breakpoint's underlying marker
 	 */
 	public String getMethodSignature() throws CoreException;	
 	
@@ -51,8 +51,8 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * 
 	 * @return the pattern specifying the fully qualified name of type(s)
 	 * this breakpoint suspends execution in
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property from
+	 * 	this breakpoint's underlying marker
 	 * @see IJavaBreakpoint#getTypeName()
 	 */
 	public String getTypeName() throws CoreException;	
@@ -63,8 +63,8 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * 
 	 * @return whether this breakpoint causes execution to suspend
 	 * on entry to methods
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property from
+	 * 	this breakpoint's underlying marker
 	 */
 	public boolean isEntry() throws CoreException;
 	
@@ -74,8 +74,8 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * 
 	 * @return whether this breakpoint causes execution to suspend
 	 * on exit of methods
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property from
+	 * 	this breakpoint's underlying marker
 	 */
 	public boolean isExit() throws CoreException;	
 	
@@ -85,8 +85,8 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * 
 	 * @param entry whether this breakpoint causes execution to suspend
 	 * on entry to methods
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to set the property on
+	 * 	this breakpoint's underlying marker
 	 */
 	public void setEntry(boolean entry) throws CoreException;	
 	
@@ -96,8 +96,8 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * 
 	 * @param exit whether this breakpoint causes execution to suspend
 	 * on exit of methods
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to set the property on
+	 * 	this breakpoint's underlying marker
 	 */
 	public void setExit(boolean exit) throws CoreException;	
 	
@@ -107,8 +107,8 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * 
 	 * @param nativeOnly whether this breakpoint causes execution to suspend
 	 * only on entry/exit of native methods
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to set the property on
+	 * 	this breakpoint's underlying marker
 	 */
 	public void setNativeOnly(boolean nativeOnly) throws CoreException;	
 	
@@ -118,8 +118,8 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 * 
 	 * @return whether this breakpoint causes execution to suspend
 	 * only on entry/exit of native methods
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
+	 * @exception CoreException if unable to access the property
+	 * 	on this breakpoint's underlying marker
 	 */
 	public boolean isNativeOnly() throws CoreException;	
 	

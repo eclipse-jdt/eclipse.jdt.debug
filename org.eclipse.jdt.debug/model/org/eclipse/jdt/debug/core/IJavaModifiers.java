@@ -8,17 +8,11 @@ package org.eclipse.jdt.debug.core;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * This interface defines accessors common to Java debug
- * elements that have  underlying Java member declarations.
- * For example, the method associated with a stack frame,
+ * Modifiers common to Java debug elements that have  associated Java
+ * member declarations. For example, the method associated with a stack frame,
  * or the field associated with a variable.
  * <p>
  * Clients are not intended to implement this interface.
- * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
  * </p>
  */
 public interface IJavaModifiers {		
