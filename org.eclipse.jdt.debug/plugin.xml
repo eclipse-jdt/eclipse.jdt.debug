@@ -28,8 +28,8 @@
 
 
 <!-- Not to be extended com.sun.tools.jdi.VirtualMachineManagerImpl or org.eclipse.jdi.internal.VirtualMachineManagerImpl -->
-   <extension-point id="jdiclient" name="org.eclipse.jdi.internal.VirtualMachineManagerImpl"  schema="schema/jdiclient.exsd"/>
-   <extension-point id="javaLogicalStructures" name="Java Logical Structures" schema="schema/javaLogicalStructures.exsd"/>
+   <extension-point id="jdiclient" name="%virtualMachineManagerImpl"  schema="schema/jdiclient.exsd"/>
+   <extension-point id="javaLogicalStructures" name="%javaLogicalStructures" schema="schema/javaLogicalStructures.exsd"/>
 
 <!-- Extensions -->
    <extension
