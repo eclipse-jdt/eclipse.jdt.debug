@@ -132,7 +132,6 @@ public class ASTAPIEvaluationEngine implements IEvaluationEngine {
 		Message[] messages= unit.getMessages();
 		if (messages.length != 0) {
 			boolean error= false;
-			StringBuffer buffer= new StringBuffer();
 			InstructionSequence errorSequence= new InstructionSequence(snippet);
 			for (int i = 0; i < messages.length; i++) {
 				Message message= messages[i];
