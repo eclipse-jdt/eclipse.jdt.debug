@@ -622,7 +622,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 
 		if (!canDisconnect()) {
-			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_disconnect")); //$NON-NLS-1$
+			notSupported(JDIDebugModelMessages.JDIDebugTarget_does_not_support_disconnect); //$NON-NLS-1$
 		}
 
 		try {
@@ -636,7 +636,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			// normal disconnect handling
 			disconnected();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_disconnecting"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIDebugTarget_exception_disconnecting, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 
 	}
@@ -807,12 +807,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		if (fName == null) {
 			VirtualMachine vm = getVM();
 			if (vm == null) {
-				requestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.Unable_to_retrieve_name_-_VM_disconnected._1"), null); //$NON-NLS-1$
+				requestFailed(JDIDebugModelMessages.JDIDebugTarget_Unable_to_retrieve_name___VM_disconnected__1, null); //$NON-NLS-1$
 			}
 			try {
 				setName(vm.name());
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_retrieving_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIDebugTarget_exception_retrieving_name, new String[] {e.toString()}), e); //$NON-NLS-1$
 				// execution will not reach this line, as 
 				// #targetRequestFailed will throw an exception				
 				return null;
@@ -991,7 +991,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public ClassPrepareRequest createClassPrepareRequest(String classPattern, String classExclusionPattern, boolean enabled) throws CoreException {
 		EventRequestManager manager= getEventRequestManager();
 		if (!isAvailable() || manager == null) {
-			requestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.Unable_to_create_class_prepare_request_-_VM_disconnected._2"), null); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIDebugTarget_Unable_to_create_class_prepare_request___VM_disconnected__2, null); //$NON-NLS-1$
 		}
 		ClassPrepareRequest req= null;
 		try {
@@ -1005,7 +1005,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				req.enable();
 			}
 		} catch (RuntimeException e) {
-			targetRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.Unable_to_create_class_prepare_request._3"), e); //$NON-NLS-1$
+			targetRequestFailed(JDIDebugModelMessages.JDIDebugTarget_Unable_to_create_class_prepare_request__3, e); //$NON-NLS-1$
 			// execution will not reach here
 			return null;
 		}
@@ -1060,7 +1060,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		} catch (RuntimeException e) {
 			setSuspended(true);
 			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_resume"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIDebugTarget_exception_resume, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}	
 	}
 	
@@ -1158,7 +1158,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		} catch (RuntimeException e) {
 			setSuspended(false);
 			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_suspend"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIDebugTarget_exception_suspend, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		
 	}
@@ -1229,7 +1229,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			return;
 		}
 		if (!supportsTerminate()) {
-			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_termination")); //$NON-NLS-1$
+			notSupported(JDIDebugModelMessages.JDIDebugTarget_does_not_support_termination); //$NON-NLS-1$
 		}
 		try {
 			setTerminating(true);
@@ -1256,7 +1256,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				disconnected();
 			}
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_terminating"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIDebugTarget_exception_terminating, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 	}
 
@@ -1467,7 +1467,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 							return new Integer(rt.getClassFileVersion());
 						}
 					} catch (RuntimeException e) {
-						targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_retrieving_version_information"), new String[] {e.toString(), type.name()}), e); //$NON-NLS-1$
+						targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIDebugTarget_exception_retrieving_version_information, new String[] {e.toString(), type.name()}), e); //$NON-NLS-1$
 						// execution will never reach this line, as
 						// #targetRequestFailed will throw an exception						
 						return null;
@@ -1486,7 +1486,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			// get java.lang.Class
 			VirtualMachine vm = getVM();
 			if (vm == null) {
-				requestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.Unable_to_retrieve_types_-_VM_disconnected._4"), null); //$NON-NLS-1$
+				requestFailed(JDIDebugModelMessages.JDIDebugTarget_Unable_to_retrieve_types___VM_disconnected__4, null); //$NON-NLS-1$
 			}
 			List classes = vm.classesByName(name);
 			if (classes.size() == 0) {
@@ -1836,7 +1836,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public IMemoryBlock getMemoryBlock(long startAddress, long length)
 		throws DebugException {
-			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_storage_retrieval")); //$NON-NLS-1$
+			notSupported(JDIDebugModelMessages.JDIDebugTarget_does_not_support_storage_retrieval); //$NON-NLS-1$
 			// this line will not be excecuted as #notSupported(String)
 			// will throw an exception
 			return null;
@@ -2151,7 +2151,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
             if (event.getSource() == this && event.getKind() == DebugEvent.CREATE) {
                 EventDispatcher dispatcher = ((JDIDebugTarget)getDebugTarget()).getEventDispatcher();
                 if (dispatcher != null) {
-                    new Thread(dispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
+                    new Thread(dispatcher, JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.JDIDebugTarget_JDI_Event_Dispatcher).start(); //$NON-NLS-1$
                 }
                 DebugPlugin.getDefault().removeDebugEventListener(this);
             }

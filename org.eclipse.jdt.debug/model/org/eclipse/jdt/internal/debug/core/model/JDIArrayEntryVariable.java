@@ -76,17 +76,17 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	protected void setJDIValue(Value value) throws DebugException {
 		ArrayReference ar= getArrayReference();
 		if (ar == null) {
-			requestFailed(JDIDebugModelMessages.getString("JDIArrayEntryVariable.value_modification_failed"), null); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIArrayEntryVariable_value_modification_failed, null); //$NON-NLS-1$
 		}
 		try {
 			ar.setValue(getIndex(), value);
 			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_modifying_variable_value, new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_modifying_variable_value_2, new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value_3"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_modifying_variable_value_3, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 
 	}
@@ -108,7 +108,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 				fReferenceTypeName= stripBrackets(JDIReferenceType.getGenericName(getArrayReference().referenceType()));
 			}
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_reference_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_retrieving_reference_type, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception
 			return null;
@@ -137,7 +137,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 		try {
 			return ((ArrayType) getArrayReference().type()).componentSignature();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_retrieving_type_signature, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception			
 			return null;
@@ -156,7 +156,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 			}
 			return referenceType.signature();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_retrieving_type_signature, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception			
 			return null;
@@ -173,11 +173,11 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 				getArrayReference().setValue(getIndex(), value.getUnderlyingValue());
 				fireChangeEvent(DebugEvent.CONTENT);
 			} catch (InvalidTypeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_attempting_to_set_value_of_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_attempting_to_set_value_of_field, new String[]{e.toString()}), e); //$NON-NLS-1$
 			} catch (ClassNotLoadedException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_attempting_to_set_value_of_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_attempting_to_set_value_of_field, new String[]{e.toString()}), e); //$NON-NLS-1$
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_attempting_to_set_value_of_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_attempting_to_set_value_of_field, new String[]{e.toString()}), e); //$NON-NLS-1$
 			}
 		}
 	}	
@@ -189,9 +189,9 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 		try {
 			return ((ArrayType)getArrayReference().type()).componentType();
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_while_retrieving_type_of_array_entry"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_while_retrieving_type_of_array_entry, new String[]{e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_while_retrieving_type_of_array_entry"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayEntryVariable_exception_while_retrieving_type_of_array_entry, new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// this line will not be exceucted as an exception
 		// will be throw in type retrieval fails

@@ -60,7 +60,7 @@ public class JDIThisVariable extends JDIVariable {
 		try {
 			return retrieveValue().type().signature();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariableexception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThisVariableexception_retrieving_type_signature, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception
 			return null;			
@@ -81,7 +81,7 @@ public class JDIThisVariable extends JDIVariable {
 		try {
 			return getValue().getReferenceTypeName();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariableexception_retrieving_reference_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThisVariableexception_retrieving_reference_type_name, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception
 			return null;			
@@ -95,7 +95,7 @@ public class JDIThisVariable extends JDIVariable {
 		try {
 			return retrieveValue().type();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariable.exception_while_retrieving_type_this"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIThisVariable_exception_while_retrieving_type_this, new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// this line will not be exceucted as an exception
 		// will be throw in type retrieval fails
@@ -109,7 +109,7 @@ public class JDIThisVariable extends JDIVariable {
 		try {
 			return ((ReferenceType)getUnderlyingType()).isPrivate(); 
 		} catch (RuntimeException e) {
-			targetRequestFailed(JDIDebugModelMessages.getString("JDIThisVariable.Exception_occurred_while_retrieving_modifiers._1"), e); //$NON-NLS-1$
+			targetRequestFailed(JDIDebugModelMessages.JDIThisVariable_Exception_occurred_while_retrieving_modifiers__1, e); //$NON-NLS-1$
 		}
 		// this line will not be exceucted as an exception
 		// will be throw		
@@ -123,7 +123,7 @@ public class JDIThisVariable extends JDIVariable {
 		try {
 			return ((ReferenceType)getUnderlyingType()).isProtected();
 		} catch (RuntimeException e) {
-			targetRequestFailed(JDIDebugModelMessages.getString("JDIThisVariable.Exception_occurred_while_retrieving_modifiers._1"), e); //$NON-NLS-1$
+			targetRequestFailed(JDIDebugModelMessages.JDIThisVariable_Exception_occurred_while_retrieving_modifiers__1, e); //$NON-NLS-1$
 		}			
 		// this line will not be exceucted as an exception
 		// will be throw
@@ -137,7 +137,7 @@ public class JDIThisVariable extends JDIVariable {
 		try {
 			return ((ReferenceType)getUnderlyingType()).isPublic();
 		} catch (RuntimeException e) {
-			targetRequestFailed(JDIDebugModelMessages.getString("JDIThisVariable.Exception_occurred_while_retrieving_modifiers._1"), e); //$NON-NLS-1$
+			targetRequestFailed(JDIDebugModelMessages.JDIThisVariable_Exception_occurred_while_retrieving_modifiers__1, e); //$NON-NLS-1$
 		}			
 		// this line will not be exceucted as an exception
 		// will be throw		

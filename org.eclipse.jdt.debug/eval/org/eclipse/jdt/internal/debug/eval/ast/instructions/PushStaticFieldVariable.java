@@ -49,14 +49,14 @@ public class PushStaticFieldVariable extends CompoundInstruction {
 			field= ((IJavaClassType)receiver).getField(fFieldName);
 		}
 		if (field == null) {
-			String message= MessageFormat.format(InstructionsEvaluationMessages.getString("PushStaticFieldVariable.Cannot_find_the_field_{0}_in_{1}_1"), new String[]{fFieldName, fQualifiedTypeName}); //$NON-NLS-1$
+			String message= MessageFormat.format(InstructionsEvaluationMessages.PushStaticFieldVariable_Cannot_find_the_field__0__in__1__1, new String[]{fFieldName, fQualifiedTypeName}); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, message, null)); // couldn't find the field
 		}
 		push(field);
 	}
 	
 	public String toString() {
-		return MessageFormat.format(InstructionsEvaluationMessages.getString("PushStaticFieldVariable.push_static_field_{0}_2"), new String[]{fFieldName}); //$NON-NLS-1$
+		return MessageFormat.format(InstructionsEvaluationMessages.PushStaticFieldVariable_push_static_field__0__2, new String[]{fFieldName}); //$NON-NLS-1$
 	}
 
 }

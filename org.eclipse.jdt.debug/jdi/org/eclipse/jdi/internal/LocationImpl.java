@@ -83,7 +83,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	 */
 	public int compareTo(Object object) {
 		if (object == null || !object.getClass().equals(this.getClass()))
-			throw new ClassCastException(JDIMessages.getString("LocationImpl.Can__t_compare_location_to_given_object_1")); //$NON-NLS-1$
+			throw new ClassCastException(JDIMessages.LocationImpl_Can__t_compare_location_to_given_object_1); //$NON-NLS-1$
 			
 		// See if methods are the same, if not return comparison between methods.
 		LocationImpl location2 = (LocationImpl)object;
@@ -93,7 +93,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 		// Return comparison between code-indexes.		
 		// Code indexes must be treated as unsigned. This matters if you have to compare them.
 		if (codeIndex() < 0 || location2.codeIndex() < 0)
-			throw new InternalError(JDIMessages.getString("LocationImpl.Code_indexes_are_assumed_to_be_always_positive_2")); //$NON-NLS-1$
+			throw new InternalError(JDIMessages.LocationImpl_Code_indexes_are_assumed_to_be_always_positive_2); //$NON-NLS-1$
 
 		if (codeIndex() < location2.codeIndex())
 			return -1;
@@ -128,7 +128,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	 */
 	public String toString() {
 		try {
-			return MessageFormat.format(JDIMessages.getString("LocationImpl.sourcename__{0},_line__{1}_3"), new String[]{sourceName(), Integer.toString(lineNumber())}); //$NON-NLS-1$
+			return MessageFormat.format(JDIMessages.LocationImpl_sourcename___0___line___1__3, new String[]{sourceName(), Integer.toString(lineNumber())}); //$NON-NLS-1$
 		} catch (Exception e) {
 			return fDescription;
 		}

@@ -32,7 +32,7 @@ public class VoidTypeImpl extends TypeImpl implements VoidType {
 	 * @return Returns modifier bits.
 	 */
 	public int modifiers() {
-		throw new InternalError(JDIMessages.getString("VoidTypeImpl.A_VoidType_does_not_have_modifiers_1")); //$NON-NLS-1$
+		throw new InternalError(JDIMessages.VoidTypeImpl_A_VoidType_does_not_have_modifiers_1); //$NON-NLS-1$
 	}
 	
 	/**

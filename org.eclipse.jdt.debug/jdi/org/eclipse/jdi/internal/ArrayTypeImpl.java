@@ -176,7 +176,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 			return new HashMap();
 		}
 			
-		throw new IllegalArgumentException(JDIMessages.getString("ArrayTypeImpl.getValues_not_allowed_on_array_1")); //$NON-NLS-1$
+		throw new IllegalArgumentException(JDIMessages.ArrayTypeImpl_getValues_not_allowed_on_array_1); //$NON-NLS-1$
 	}
 
 	/** 
@@ -245,7 +245,7 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * @return Returns an identifying name for the source corresponding to the declaration of this type.
 	 */
 	public String sourceName() throws AbsentInformationException {
-		throw new AbsentInformationException(JDIMessages.getString("ArrayTypeImpl.No_source_name_for_Arrays_1")); //$NON-NLS-1$
+		throw new AbsentInformationException(JDIMessages.ArrayTypeImpl_No_source_name_for_Arrays_1); //$NON-NLS-1$
 	}
 	/**
 	 * @see com.sun.jdi.ReferenceType#visibleFields()

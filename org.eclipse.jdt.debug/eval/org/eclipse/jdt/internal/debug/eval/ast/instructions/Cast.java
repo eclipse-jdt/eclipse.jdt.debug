@@ -92,11 +92,11 @@ public class Cast extends CompoundInstruction {
 				classObject= getClassObject(getArrayType(Signature.createTypeSignature(fBaseTypeName, true), fDimension));
 			}
 			if (classObject == null) {
-				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Cast.No_class_object"), new String[]{typeName()}), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Cast_No_class_object, new String[]{typeName()}), null)); //$NON-NLS-1$
 			}
 			IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {value}, getContext().getThread(), false);
 			if (!resultValue.getBooleanValue()) {
-				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Cast.ClassCastException__Cannot_cast_{0}_as_{1}__1"), new String[]{value.toString(), typeName()}), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, MessageFormat.format(InstructionsEvaluationMessages.Cast_ClassCastException__Cannot_cast__0__as__1___1, new String[]{value.toString(), typeName()}), null)); //$NON-NLS-1$
 			}
 			
 			push(value);
@@ -115,7 +115,7 @@ public class Cast extends CompoundInstruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("Cast.cast_3"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.Cast_cast_3; //$NON-NLS-1$
 	}
 
 }

@@ -92,7 +92,7 @@ public class UnsignedRightShiftOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("UnsignedRightShiftOperator._>>>___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.UnsignedRightShiftOperator________operator_1; //$NON-NLS-1$
 	}
 
 }

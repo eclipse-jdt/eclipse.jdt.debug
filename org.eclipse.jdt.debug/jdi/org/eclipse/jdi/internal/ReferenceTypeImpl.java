@@ -217,7 +217,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			}
 			FileInfo fileInfo= new FileInfo(fileId, fileName, absoluteFileName);
 			if (fFileInfos.contains(fileInfo)) {
-				throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("ReferenceTypeImpl.28"), new String[] {Integer.toString(fileId), fId})); //$NON-NLS-1$
+				throw new AbsentInformationException(MessageFormat.format(JDIMessages.ReferenceTypeImpl_28, new String[] {Integer.toString(fileId), fId})); //$NON-NLS-1$
 			}
 			fFileInfos.add(fileInfo);
 		}
@@ -242,7 +242,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				}
 			}
 			if (fileInfo == null) {
-				throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("ReferenceTypeImpl.29"), new String[] {Integer.toString(lineFileId)})); //$NON-NLS-1$
+				throw new AbsentInformationException(MessageFormat.format(JDIMessages.ReferenceTypeImpl_29, new String[] {Integer.toString(lineFileId)})); //$NON-NLS-1$
 			}
 			// add the data to the different hash maps.
 			for (int i= 0; i < repeatCount; i++, inputStartLine++) {
@@ -869,7 +869,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	public MethodImpl findMethod(JdwpMethodID methodID) {
 		if (methodID.value() == 0) {
-			return new MethodImpl(virtualMachineImpl(), this, methodID, JDIMessages.getString("ReferenceTypeImpl.Obsolete_method_1"), "", null, -1); //$NON-NLS-1$ //$NON-NLS-2$
+			return new MethodImpl(virtualMachineImpl(), this, methodID, JDIMessages.ReferenceTypeImpl_Obsolete_method_1, "", null, -1); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fMethodTable == null) {
 			fMethodTable= new Hashtable();
@@ -920,7 +920,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			HashMap map = new HashMap();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			if (nrOfElements != fieldsSize) 
-				throw new InternalError(JDIMessages.getString("ReferenceTypeImpl.Retrieved_a_different_number_of_values_from_the_VM_than_requested_3")); //$NON-NLS-1$
+				throw new InternalError(JDIMessages.ReferenceTypeImpl_Retrieved_a_different_number_of_values_from_the_VM_than_requested_3); //$NON-NLS-1$
 				
 			for (int i = 0; i < nrOfElements; i++) {
 				map.put(fields.get(i), ValueImpl.readWithTag(this, replyData));
@@ -957,7 +957,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	public int compareTo(Object object) {
 		if (object == null || !object.getClass().equals(this.getClass()))
-			throw new ClassCastException(JDIMessages.getString("ReferenceTypeImpl.Can__t_compare_reference_type_to_given_object_4")); //$NON-NLS-1$
+			throw new ClassCastException(JDIMessages.ReferenceTypeImpl_Can__t_compare_reference_type_to_given_object_4); //$NON-NLS-1$
 		return name().compareTo(((ReferenceType)object).name());
 	}
 	
@@ -1204,7 +1204,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			case InterfaceTypeImpl.typeTag:
 				return InterfaceTypeImpl.read(target, in);
 		}
-		throw new InternalException(JDIMessages.getString("ReferenceTypeImpl.Invalid_ReferenceTypeID_tag_encountered___8") + typeTag); //$NON-NLS-1$
+		throw new InternalException(JDIMessages.ReferenceTypeImpl_Invalid_ReferenceTypeID_tag_encountered___8 + typeTag); //$NON-NLS-1$
 	}
 	
 	/**
@@ -1229,7 +1229,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			case InterfaceTypeImpl.typeTag:
 				return InterfaceTypeImpl.readWithSignature(target, withGenericSignature, in);
 		}
-		throw new InternalException(JDIMessages.getString("ReferenceTypeImpl.Invalid_ReferenceTypeID_tag_encountered___8") + typeTag); //$NON-NLS-1$
+		throw new InternalException(JDIMessages.ReferenceTypeImpl_Invalid_ReferenceTypeID_tag_encountered___8 + typeTag); //$NON-NLS-1$
 	}
 		
 	/**
@@ -1275,7 +1275,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			}
 		}
 
-		throw new ClassNotLoadedException(classSignatureToName(signature), JDIMessages.getString("ReferenceTypeImpl.Type_has_not_been_loaded_10")); //$NON-NLS-1$
+		throw new ClassNotLoadedException(classSignatureToName(signature), JDIMessages.ReferenceTypeImpl_Type_has_not_been_loaded_10); //$NON-NLS-1$
 	}
 	
 	/**
@@ -1346,7 +1346,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			// return the source names defined for this stratum in the Smap.
 			List fileInfos= stratum.fFileInfos;
 			if (fileInfos.isEmpty()) {
-				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.30")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.ReferenceTypeImpl_30); //$NON-NLS-1$
 			}
 			for (Iterator iter = stratum.fFileInfos.iterator(); iter.hasNext();) {
 				list.add(((FileInfo) iter.next()).fFileName);
@@ -1535,11 +1535,11 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SOURCE_DEBUG_EXTENSION, this);
 			if (replyPacket.errorCode() == JdwpReplyPacket.ABSENT_INFORMATION) {
-				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.31")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.ReferenceTypeImpl_31); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			fSmap= readString(JDIMessages.getString("ReferenceTypeImpl.32"), replyData); //$NON-NLS-1$
+			fSmap= readString(JDIMessages.ReferenceTypeImpl_32, replyData); //$NON-NLS-1$
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 		} finally {
@@ -1549,7 +1549,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		// Workaround to a J9SC bug. It returns an empty string instead of a ABSENT_INFORMATION
 		// error if the source debug extension is not available.
 		if ("".equals(fSmap)) { //$NON-NLS-1$
-			throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.31")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.ReferenceTypeImpl_31); //$NON-NLS-1$
 		}
 		// parse the source map.
 		fStrata= new HashMap();
@@ -1568,7 +1568,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SOURCE_FILE, this);
 			if (replyPacket.errorCode() == JdwpReplyPacket.ABSENT_INFORMATION) {
-				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.Source_name_is_not_known_7")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.ReferenceTypeImpl_Source_name_is_not_known_7); //$NON-NLS-1$
 			}
 			
 			defaultReplyErrorHandler(replyPacket.errorCode());
@@ -1795,7 +1795,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				}
 			}
 			if (sourceName != null && !found) {
-				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.34")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.ReferenceTypeImpl_34); //$NON-NLS-1$
 			}
 		} else {   // Java stratum
 			javaLines.add(new Integer(lineNumber));
@@ -1836,7 +1836,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			} else { // sourceName != null
 				FileInfo fileInfo= stratum.getFileInfo(sourceName);
 				if (fileInfo == null) {
-					throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.34")); //$NON-NLS-1$
+					throw new AbsentInformationException(JDIMessages.ReferenceTypeImpl_34); //$NON-NLS-1$
 				}
 				int fileId= fileInfo.fFileId;
 				int lastIndex= 0;

@@ -84,7 +84,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 				return new JDIFieldVariable(getDebugTarget(), field, type);
 			}			
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_field"), new String[] {e.toString(), name}), e); //$NON-NLS-1$
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_field, new String[] {e.toString(), name}), e); //$NON-NLS-1$
 		}
 		// it is possible to return null		
 		return null;
@@ -98,7 +98,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 			ReferenceType type= (ReferenceType)getUnderlyingType();
 			return (IJavaClassObject)JDIValue.createValue(getDebugTarget(), type.classObject());
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_class_object"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_class_object, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not fall through to here,
 		// as #requestFailed will throw an exception
@@ -121,7 +121,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 					i++;
 				}
 			} catch (RuntimeException e) {
-				getDebugTarget().targetRequestFailed(JDIDebugModelMessages.getString("JDIReferenceType.2"), e); //$NON-NLS-1$
+				getDebugTarget().targetRequestFailed(JDIDebugModelMessages.JDIReferenceType_2, e); //$NON-NLS-1$
 			}			
 		}			
 		return fAllFields;
@@ -143,7 +143,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 					i++;
 				}
 			} catch (RuntimeException e) {
-				getDebugTarget().targetRequestFailed(JDIDebugModelMessages.getString("JDIReferenceType.3"), e); //$NON-NLS-1$
+				getDebugTarget().targetRequestFailed(JDIDebugModelMessages.JDIReferenceType_3, e); //$NON-NLS-1$
 			}			
 		}
 		return fDeclaredFields;
@@ -169,7 +169,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
             ReferenceType type= (ReferenceType)getUnderlyingType();
             return (IJavaObject)JDIValue.createValue(getDebugTarget(), type.classLoader());
         } catch (RuntimeException e) {
-            getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIReferenceType.0"), new String[] {e.toString()}), e); //$NON-NLS-1$
+            getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIReferenceType_0, new String[] {e.toString()}), e); //$NON-NLS-1$
         }
         // execution will not fall through to here,
         // as #requestFailed will throw an exception

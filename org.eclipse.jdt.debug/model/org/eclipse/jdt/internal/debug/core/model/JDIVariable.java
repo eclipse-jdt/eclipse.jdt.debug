@@ -66,7 +66,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 		try {
 			return retrieveValue();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIVariable.exception_retrieving"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIVariable_exception_retrieving, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will throw an exception			
 			return null;
@@ -116,14 +116,14 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	 * @see IValueModification#setValue(String)
 	 */
 	public void setValue(String expression) throws DebugException {
-		notSupported(JDIDebugModelMessages.getString("JDIVariable.does_not_support_value_modification")); //$NON-NLS-1$
+		notSupported(JDIDebugModelMessages.JDIVariable_does_not_support_value_modification); //$NON-NLS-1$
 	}
 	
 	/**
 	 * @see IValueModification#setValue(IValue)
 	 */
 	public void setValue(IValue value) throws DebugException {
-		notSupported(JDIDebugModelMessages.getString("JDIVariable.does_not_support_value_modification")); //$NON-NLS-1$
+		notSupported(JDIDebugModelMessages.JDIVariable_does_not_support_value_modification); //$NON-NLS-1$
 	}	
 
 	/**

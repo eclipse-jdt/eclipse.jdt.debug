@@ -71,10 +71,10 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 			method = concreteMethodByName(refType, selector, signature);
 			if (method == null) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.11"), new String[] {selector, signature}), null); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_11, new String[] {selector, signature}), null); //$NON-NLS-1$
 			}
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_while_performing_method_lookup_for_selector, new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 		}
 		Value result = javaThread.invokeMethod(null, object, method, arguments, superSend);
 		return JDIValue.createValue((JDIDebugTarget)getDebugTarget(), result);
@@ -102,15 +102,15 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				// lookup correct type through the hierarchy
 				refType = ((ClassType)refType).superclass();
 				if (refType == null) {
-					targetRequestFailed(JDIDebugModelMessages.getString("JDIObjectValueMethod_declaring_type_not_found_1"), null); //$NON-NLS-1$
+					targetRequestFailed(JDIDebugModelMessages.JDIObjectValueMethod_declaring_type_not_found_1, null); //$NON-NLS-1$
 				}
 			}
 			method= concreteMethodByName(refType, selector, signature);
 			if (method == null) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.11"), new String[] {selector, signature}), null); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_11, new String[] {selector, signature}), null); //$NON-NLS-1$
 			}
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_while_performing_method_lookup_for_selector, new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 		}
 		Value result = javaThread.invokeMethod(null, object, method, arguments, true);
 		return JDIValue.createValue((JDIDebugTarget)getDebugTarget(), result);
@@ -125,7 +125,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			// use a trick to get the right method from java.lang.Object
 			return ((ClassType)refType.classObject().referenceType()).superclass().concreteMethodByName(selector, signature);
 		}
-		targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.method_lookup_failed_for_selector___{0}___with_signature___{1}__1"), new String[] {selector, signature}), null); //$NON-NLS-1$
+		targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_method_lookup_failed_for_selector____0____with_signature____1___1, new String[] {selector, signature}), null); //$NON-NLS-1$
 		// it is not possible to return null
 		return null;
 	}
@@ -164,7 +164,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 			return ((JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, getUnderlyingObject())).getValue()).getField(name, false);
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_retrieving_field, new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// it is possible to return null
 		return null;
@@ -190,7 +190,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
 			}
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_retrieving_field, new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// it is possible to return null
 		return null;
@@ -222,7 +222,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
 			}
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_retrieving_field, new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// it is possible to return null
 		return null;
@@ -240,7 +240,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		try {
 			return getUnderlyingObject().referenceType();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_reference_type"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_retrieving_reference_type, new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach this line, as an exception will
 		// be thrown.
@@ -272,7 +272,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 					return null;
 				}
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIObjectValue_exception_retrieving_field, new String[]{e.toString()}), e); //$NON-NLS-1$
 			}
 		}
 		return res;
@@ -293,7 +293,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				}
 			}
 		} catch (IncompatibleThreadStateException e) {
-			targetRequestFailed(JDIDebugModelMessages.getString("JDIObjectValue.0"), e); //$NON-NLS-1$
+			targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_0, e); //$NON-NLS-1$
 		}
 		return (IJavaThread[]) waiting.toArray(new IJavaThread[waiting.size()]);
 	}
@@ -310,7 +310,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				owningThread= debugTarget.findThread(thread);
 			}
 		} catch (IncompatibleThreadStateException e) {
-			targetRequestFailed(JDIDebugModelMessages.getString("JDIObjectValue.1"), e); //$NON-NLS-1$
+			targetRequestFailed(JDIDebugModelMessages.JDIObjectValue_1, e); //$NON-NLS-1$
 		}
 		return owningThread;
 	}
@@ -322,7 +322,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		try {
 			return JDIReferenceType.getGenericName(getUnderlyingReferenceType());
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_reference_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIValue_exception_retrieving_reference_type_name, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception			
 			return null;			

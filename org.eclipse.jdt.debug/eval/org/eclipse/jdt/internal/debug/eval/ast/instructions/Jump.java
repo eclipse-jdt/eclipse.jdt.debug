@@ -30,7 +30,7 @@ public class Jump extends SimpleInstruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("Jump.jump_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.Jump_jump_1; //$NON-NLS-1$
 	}
 
 }

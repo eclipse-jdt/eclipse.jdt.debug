@@ -191,13 +191,13 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaC
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#addInstanceFilter(org.eclipse.jdt.debug.core.IJavaObject)
 	 */
 	public void addInstanceFilter(IJavaObject object) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, JDIDebugBreakpointMessages.getString("JavaClassPrepareBreakpoint.2"), null)); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, JDIDebugBreakpointMessages.JavaClassPrepareBreakpoint_2, null)); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#setThreadFilter(org.eclipse.jdt.debug.core.IJavaThread)
 	 */
 	public void setThreadFilter(IJavaThread thread) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, JDIDebugBreakpointMessages.getString("JavaClassPrepareBreakpoint.3"), null)); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, JDIDebugBreakpointMessages.JavaClassPrepareBreakpoint_3, null)); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#supportsThreadFilters()

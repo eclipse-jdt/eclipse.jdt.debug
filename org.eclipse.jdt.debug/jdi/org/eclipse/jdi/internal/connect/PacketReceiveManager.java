@@ -106,13 +106,13 @@ public class PacketReceiveManager extends PacketManager {
         if (VMIsDisconnected()) {
             String message;
             if (getDisconnectException() == null) {
-                message = ConnectMessages.getString("PacketReceiveManager.Got_IOException_from_Virtual_Machine_1"); //$NON-NLS-1$
+                message = ConnectMessages.PacketReceiveManager_Got_IOException_from_Virtual_Machine_1; //$NON-NLS-1$
             } else {
                 String exMessage = getDisconnectException().getMessage();
                 if (exMessage == null) {
-                    message = MessageFormat.format(ConnectMessages.getString("PacketReceiveManager.Got_{0}_from_Virtual_Machine_1"), new String[] { getDisconnectException().getClass().getName() }); //$NON-NLS-1$
+                    message = MessageFormat.format(ConnectMessages.PacketReceiveManager_Got__0__from_Virtual_Machine_1, new String[] { getDisconnectException().getClass().getName() }); //$NON-NLS-1$
                 } else {
-                    message = MessageFormat.format(ConnectMessages.getString("PacketReceiveManager.Got_{0}_from_Virtual_Machine__{1}_1"), new String[] { getDisconnectException().getClass().getName(), exMessage }); //$NON-NLS-1$
+                    message = MessageFormat.format(ConnectMessages.PacketReceiveManager_Got__0__from_Virtual_Machine___1__1, new String[] { getDisconnectException().getClass().getName(), exMessage }); //$NON-NLS-1$
                 }
             }
             throw new VMDisconnectedException(message);
@@ -159,7 +159,7 @@ public class PacketReceiveManager extends PacketManager {
 
         // Check for an IO Exception.
         if (VMIsDisconnected())
-            throw new VMDisconnectedException(ConnectMessages.getString("PacketReceiveManager.Got_IOException_from_Virtual_Machine_2")); //$NON-NLS-1$
+            throw new VMDisconnectedException(ConnectMessages.PacketReceiveManager_Got_IOException_from_Virtual_Machine_2); //$NON-NLS-1$
 
         // Check for a timeout.
         if (packet == null) {
@@ -172,7 +172,7 @@ public class PacketReceiveManager extends PacketManager {
                     buffer.append(replyPacket.getId() + " "); //$NON-NLS-1$
                 }
             }
-            throw new TimeoutException(MessageFormat.format(ConnectMessages.getString("PacketReceiveManager.0"), new String[] { id + "", remainingTime+"", numberOfPackets + "", buffer.toString() })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            throw new TimeoutException(MessageFormat.format(ConnectMessages.PacketReceiveManager_0, new String[] { id + "", remainingTime+"", numberOfPackets + "", buffer.toString() })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
 
         return packet;

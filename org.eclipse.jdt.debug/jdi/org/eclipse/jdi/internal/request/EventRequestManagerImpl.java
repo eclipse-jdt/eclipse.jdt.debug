@@ -351,7 +351,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 			deleteEventRequest(THREAD_START_INDEX, req);
 		else
 		
-		throw new InternalError(MessageFormat.format(RequestMessages.getString("EventRequestManagerImpl.EventRequest_type_of_{0}_is_unknown_1"), new String[]{req.toString()})); //$NON-NLS-1$
+		throw new InternalError(MessageFormat.format(RequestMessages.EventRequestManagerImpl_EventRequest_type_of__0__is_unknown_1, new String[]{req.toString()})); //$NON-NLS-1$
 	}
 
 	/**
@@ -518,7 +518,7 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 		else if (event instanceof VMDeathEventImpl)
 			return (EventRequestImpl)fEnabledRequests[VM_DEATH_INDEX].get(event.requestID());
 		else
-			throw new InternalError(RequestMessages.getString("EventRequestManagerImpl.Got_event_of_unknown_type_2")); //$NON-NLS-1$
+			throw new InternalError(RequestMessages.EventRequestManagerImpl_Got_event_of_unknown_type_2); //$NON-NLS-1$
 	}
 
 }

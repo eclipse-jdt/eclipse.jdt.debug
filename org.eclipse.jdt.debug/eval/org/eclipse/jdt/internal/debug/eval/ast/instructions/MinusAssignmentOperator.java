@@ -17,7 +17,7 @@ public class MinusAssignmentOperator extends MinusOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("MinusAssignmentOperator.operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.MinusAssignmentOperator_operator_1; //$NON-NLS-1$
 	}
 
 }

@@ -43,7 +43,7 @@ public class Constructor extends CompoundInstruction {
 	}
 	
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("Constructor.constructor__1") + fSignature; //$NON-NLS-1$
+		return InstructionsEvaluationMessages.Constructor_constructor__1 + fSignature; //$NON-NLS-1$
 	}
 
 }

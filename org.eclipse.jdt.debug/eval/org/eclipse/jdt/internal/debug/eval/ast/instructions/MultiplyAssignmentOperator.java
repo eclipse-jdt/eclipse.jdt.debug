@@ -17,7 +17,7 @@ public class MultiplyAssignmentOperator extends MultiplyOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("MultiplyAssignmentOperator.operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.MultiplyAssignmentOperator_operator_1; //$NON-NLS-1$
 	}
 
 }

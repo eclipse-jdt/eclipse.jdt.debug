@@ -140,7 +140,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			accessRequest= createAccessWatchpoint(target, field);
 			registerRequest(accessRequest, target);
 		} else {
-			notSupported(JDIDebugBreakpointMessages.getString("JavaWatchpoint.no_access_watchpoints"));				 //$NON-NLS-1$
+			notSupported(JDIDebugBreakpointMessages.JavaWatchpoint_no_access_watchpoints);				 //$NON-NLS-1$
 		}
 		if (target.supportsModificationWatchpoints()) {
 			modificationRequest= createModificationWatchpoint(target, field);
@@ -150,7 +150,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			registerRequest(modificationRequest, target);
 			return true;
 		}
-		notSupported(JDIDebugBreakpointMessages.getString("JavaWatchpoint.no_modification_watchpoints")); //$NON-NLS-1$
+		notSupported(JDIDebugBreakpointMessages.JavaWatchpoint_no_modification_watchpoints); //$NON-NLS-1$
 		return false;
 	}
 	
@@ -202,7 +202,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		WatchpointRequest request= null;
 		EventRequestManager manager = target.getEventRequestManager();
 		if (manager == null) {
-			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaWatchpoint.Unable_to_create_breakpoint_request_-_VM_disconnected._1"), null);  //$NON-NLS-1$
+			target.requestFailed(JDIDebugBreakpointMessages.JavaWatchpoint_Unable_to_create_breakpoint_request___VM_disconnected__1, null);  //$NON-NLS-1$
 		}		
 		try {
 			if (access) {

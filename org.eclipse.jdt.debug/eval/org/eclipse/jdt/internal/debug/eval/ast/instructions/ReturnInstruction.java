@@ -30,7 +30,7 @@ public class ReturnInstruction extends CompoundInstruction {
 	}
 	
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("ReturnInstruction.return"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.ReturnInstruction_return; //$NON-NLS-1$
 	}
 
 }

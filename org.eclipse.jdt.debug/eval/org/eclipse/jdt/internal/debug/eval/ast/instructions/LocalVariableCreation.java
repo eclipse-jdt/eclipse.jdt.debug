@@ -78,7 +78,7 @@ public class LocalVariableCreation extends CompoundInstruction {
 			JDIDebugTarget debugTarget= (JDIDebugTarget)getVM();
 			VirtualMachine vm = debugTarget.getVM();
 			if (vm == null) {
-				debugTarget.requestFailed(InstructionsEvaluationMessages.getString("LocalVariableCreation.Execution_failed_-_VM_disconnected._1"), null); //$NON-NLS-1$
+				debugTarget.requestFailed(InstructionsEvaluationMessages.LocalVariableCreation_Execution_failed___VM_disconnected__1, null); //$NON-NLS-1$
 			}			
 			type= JDIType.createType(debugTarget, PrimitiveTypeImpl.create((VirtualMachineImpl)vm, fTypeSignature));
 		} else if (fDimension == 0) {
@@ -93,6 +93,6 @@ public class LocalVariableCreation extends CompoundInstruction {
 	}
 
 	public String toString() {
-		return MessageFormat.format(InstructionsEvaluationMessages.getString("LocalVariableCreation.create_local_variable_{0}_{1}__1"), new String[]{fName, fTypeSignature}); //$NON-NLS-1$
+		return MessageFormat.format(InstructionsEvaluationMessages.LocalVariableCreation_create_local_variable__0___1___1, new String[]{fName, fTypeSignature}); //$NON-NLS-1$
 	}
 }

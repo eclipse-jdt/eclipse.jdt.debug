@@ -54,7 +54,7 @@ public class JDIInterfaceType extends JDIReferenceType implements IJavaInterface
 			javaClassTypeArray = (IJavaClassType[]) javaClassTypeList.toArray(javaClassTypeArray);
 			return javaClassTypeArray;
 		} catch (RuntimeException re) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_superclass"), new String[] {re.toString()}), re); //$NON-NLS-1$
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); //$NON-NLS-1$
 		}
 		return new IJavaClassType[0];
 	}
@@ -77,7 +77,7 @@ public class JDIInterfaceType extends JDIReferenceType implements IJavaInterface
 			javaInterfaceTypeArray = (IJavaInterfaceType[]) javaInterfaceTypeList.toArray(javaInterfaceTypeArray);
 			return javaInterfaceTypeArray;
 		} catch (RuntimeException re) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_superclass"), new String[] {re.toString()}), re); //$NON-NLS-1$
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); //$NON-NLS-1$
 		}
 		return new IJavaInterfaceType[0];
 	}
@@ -100,7 +100,7 @@ public class JDIInterfaceType extends JDIReferenceType implements IJavaInterface
 			javaInterfaceTypeArray = (IJavaInterfaceType[]) javaInterfaceTypeList.toArray(javaInterfaceTypeArray);
 			return javaInterfaceTypeArray;
 		} catch (RuntimeException re) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_superclass"), new String[] {re.toString()}), re); //$NON-NLS-1$
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIClassType_exception_while_retrieving_superclass, new String[] {re.toString()}), re); //$NON-NLS-1$
 		}
 		return new IJavaInterfaceType[0];
 	}

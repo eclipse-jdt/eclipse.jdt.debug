@@ -31,7 +31,7 @@ public class PushArrayLength extends CompoundInstruction {
 	}
 	
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("PushArrayLength.push_array_length__1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.PushArrayLength_push_array_length__1; //$NON-NLS-1$
 	}
 }
 

@@ -50,16 +50,16 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		HashMap arguments = new HashMap(2);
 		
 		// Hostname
-		StringArgumentImpl strArg = new StringArgumentImpl("hostname", ConnectMessages.getString("SocketAttachingConnectorImpl.Machine_name_to_which_to_attach_for_VM_connections_1"), ConnectMessages.getString("SocketAttachingConnectorImpl.Host_2"), false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		StringArgumentImpl strArg = new StringArgumentImpl("hostname", ConnectMessages.SocketAttachingConnectorImpl_Machine_name_to_which_to_attach_for_VM_connections_1, ConnectMessages.SocketAttachingConnectorImpl_Host_2, false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		strArg.setValue("localhost"); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 		
 		// Port
-		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", ConnectMessages.getString("SocketAttachingConnectorImpl.Port_number_to_which_to_attach_for_VM_connections_3"), ConnectMessages.getString("SocketAttachingConnectorImpl.Port_4"), true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", ConnectMessages.SocketAttachingConnectorImpl_Port_number_to_which_to_attach_for_VM_connections_3, ConnectMessages.SocketAttachingConnectorImpl_Port_4, true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(intArg.name(), intArg);
 		
         // Timeout
-        IntegerArgumentImpl timeoutArg = new IntegerArgumentImpl("timeout", ConnectMessages.getString("SocketAttachingConnectorImpl.1"), ConnectMessages.getString("SocketAttachingConnectorImpl.2"), false, 0, Integer.MAX_VALUE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        IntegerArgumentImpl timeoutArg = new IntegerArgumentImpl("timeout", ConnectMessages.SocketAttachingConnectorImpl_1, ConnectMessages.SocketAttachingConnectorImpl_2, false, 0, Integer.MAX_VALUE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         timeoutArg.setValue(0); // by default wait forever
         arguments.put(timeoutArg.name(), timeoutArg);
         
@@ -77,7 +77,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 	 * @return Returns a human-readable description of this connector and its purpose.
 	 */	
 	public String description() {
-		return ConnectMessages.getString("SocketAttachingConnectorImpl.Attaches_by_socket_to_other_VMs_5"); //$NON-NLS-1$
+		return ConnectMessages.SocketAttachingConnectorImpl_Attaches_by_socket_to_other_VMs_5; //$NON-NLS-1$
 	}
 	
  	/**
@@ -99,11 +99,11 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
                }
 		 	} 
 		} catch (ClassCastException e) {
-			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketAttachingConnectorImpl.Connection_argument_is_not_of_the_right_type_6"), attribute); //$NON-NLS-1$
+			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketAttachingConnectorImpl_Connection_argument_is_not_of_the_right_type_6, attribute); //$NON-NLS-1$
 		} catch (NullPointerException e) {
-			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketAttachingConnectorImpl.Necessary_connection_argument_is_null_7"), attribute); //$NON-NLS-1$
+			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketAttachingConnectorImpl_Necessary_connection_argument_is_null_7, attribute); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
-			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketAttachingConnectorImpl.Connection_argument_is_not_a_number_8"), attribute); //$NON-NLS-1$
+			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketAttachingConnectorImpl_Connection_argument_is_not_a_number_8, attribute); //$NON-NLS-1$
 		}
 	}
 	

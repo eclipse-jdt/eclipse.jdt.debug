@@ -405,7 +405,7 @@ public class VerboseWriter {
 
 		String result = (String)valueToString.get(val);
 		if (result == null) {
-			print(val.toString() + JDIMessages.getString("VerboseWriter._<unknown_value>_1")); //$NON-NLS-1$
+			print(val.toString() + JDIMessages.VerboseWriter___unknown_value__1); //$NON-NLS-1$
 		} else {
 			print(result);
 		}
@@ -445,7 +445,7 @@ public class VerboseWriter {
 			// See if we have a desciption for the bit.
 			String bitString = bitNames[i];
 			if (bitString == null) {
-				bitString = JDIMessages.getString("VerboseWriter.<unknown_bit>_2"); //$NON-NLS-1$
+				bitString = JDIMessages.VerboseWriter__unknown_bit__2; //$NON-NLS-1$
 			}
 
 			if (!bitsSet) {
@@ -458,7 +458,7 @@ public class VerboseWriter {
 		}
 
 		if (!bitsSet) {
-			print(JDIMessages.getString("VerboseWriter.<none>_4")); //$NON-NLS-1$
+			print(JDIMessages.VerboseWriter__none__4); //$NON-NLS-1$
 		}
 	}
 	

@@ -17,7 +17,7 @@ public class PlusAssignmentOperator extends PlusOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("PlusAssignmentOperator.operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.PlusAssignmentOperator_operator_1; //$NON-NLS-1$
 	}
 
 }

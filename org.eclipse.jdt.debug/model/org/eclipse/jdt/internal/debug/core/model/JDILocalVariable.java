@@ -68,7 +68,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 		try {
 			return getLocal().name();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_retrieving_local_variable_name, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception
 			return null;			
@@ -85,11 +85,11 @@ public class JDILocalVariable extends JDIModificationVariable {
 			}
 			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_modifying_local_variable_value_1"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_modifying_local_variable_value_1, new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_modifying_local_variable_value_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_modifying_local_variable_value_2, new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_modifying_local_variable_value_3"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_modifying_local_variable_value_3, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -108,7 +108,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 			}
 			return getLocal().typeName();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_retrieving_local_variable_type_name, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception			
 			return null;
@@ -122,7 +122,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 		try {
 			return getLocal().signature();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_retrieving_local_variable_type_signature, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception
 			return null;			
@@ -140,7 +140,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 			}
 			return fLocal.signature();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_retrieving_local_variable_type_signature, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception
 			return null;			
@@ -180,11 +180,11 @@ public class JDILocalVariable extends JDIModificationVariable {
 				getStackFrame().getUnderlyingStackFrame().setValue(getLocal(), value.getUnderlyingValue());
 				fireChangeEvent(DebugEvent.CONTENT);
 			} catch (InvalidTypeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_while_attempting_to_set_value_of_local_variable"), new String[]{e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_while_attempting_to_set_value_of_local_variable, new String[]{e.toString()}), e); //$NON-NLS-1$
 			} catch (ClassNotLoadedException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_while_attempting_to_set_value_of_local_variable"), new String[]{e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_while_attempting_to_set_value_of_local_variable, new String[]{e.toString()}), e); //$NON-NLS-1$
 			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_while_attempting_to_set_value_of_local_variable"), new String[]{e.toString()}), e); //$NON-NLS-1$
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_while_attempting_to_set_value_of_local_variable, new String[]{e.toString()}), e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -196,9 +196,9 @@ public class JDILocalVariable extends JDIModificationVariable {
 		try {
 			return getLocal().type();
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_while_retrieving_type_of_local_variable"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_while_retrieving_type_of_local_variable, new String[]{e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_while_retrieving_type_of_local_variable"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDILocalVariable_exception_while_retrieving_type_of_local_variable, new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// this line will not be exceucted as an exception
 		// will be throw in type retrieval fails

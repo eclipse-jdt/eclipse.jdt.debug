@@ -88,7 +88,7 @@ public class Timer {
 	 */
 	public void start(ITimeoutListener listener, int ms) {
 		if (isStarted()) {
-			throw new IllegalStateException(JDIDebugModelMessages.getString("Timer.Timer_cannot_be_started_more_than_once_1")); //$NON-NLS-1$
+			throw new IllegalStateException(JDIDebugModelMessages.Timer_Timer_cannot_be_started_more_than_once_1); //$NON-NLS-1$
 		}
 		setListener(listener);
 		setTimeout(ms);

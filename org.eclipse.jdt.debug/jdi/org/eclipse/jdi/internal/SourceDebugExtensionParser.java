@@ -65,7 +65,7 @@ public class SourceDebugExtensionParser {
 		 */
 		public int nextLexem() throws AbsentInformationException {
 			if (fEOF) {
-				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.0")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_0); //$NON-NLS-1$
 			} 
 			startWith();
 			return fLexemType;
@@ -166,7 +166,7 @@ public class SourceDebugExtensionParser {
 		private void startWithAsterisk() throws AbsentInformationException {
 			nextChar();
 			if (fEOF) {
-				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.0")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_0); //$NON-NLS-1$
 			}
 			switch (fChar) {
 				case 'C':
@@ -276,7 +276,7 @@ public class SourceDebugExtensionParser {
 		parseHeader(lexer);
 		parseSections(lexer);
 		if (!fDefinedStrata.contains(fReferenceType.defaultStratum())) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.2")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_2); //$NON-NLS-1$
 		}
 	}
 
@@ -286,17 +286,17 @@ public class SourceDebugExtensionParser {
 	private void parseHeader(Lexer lexer) throws AbsentInformationException {
 		int lexemType= lexer.nextLexem();
 		if (lexemType != Lexer.SMAP) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.3")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_3); //$NON-NLS-1$
 		}
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.4")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_4); //$NON-NLS-1$
 		}
 		if (isAsteriskLexem(lexer.nextLexem())) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.5")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_5); //$NON-NLS-1$
 		}
 		fReferenceType.setOutputFileName(getNonAsteriskString(lexer));
 		if (isAsteriskLexem(lexer.lexemType())) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.6")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_6); //$NON-NLS-1$
 		}
 		fReferenceType.setDefaultStratumId(getNonAsteriskString(lexer));
 	}
@@ -315,14 +315,14 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseStratumSection(Lexer lexer) throws AbsentInformationException {
 		if (lexer.lexemType() != Lexer.ASTERISK_S) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.7")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_7); //$NON-NLS-1$
 		}
 		if (isAsteriskLexem(lexer.nextLexem())) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.8")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_8); //$NON-NLS-1$
 		}
 		String stratumId= getNonAsteriskString(lexer);
 		if (fDefinedStrata.contains(stratumId)) {
-			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.9"), new String[] {stratumId})); //$NON-NLS-1$
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_9, new String[] {stratumId})); //$NON-NLS-1$
 		}
 		fCurrentStratum= new ReferenceTypeImpl.Stratum(stratumId);
 		fFileSectionDefinedForCurrentStratum= false;
@@ -332,14 +332,14 @@ public class SourceDebugExtensionParser {
 			switch (lexemType) {
 				case Lexer.ASTERISK_F:
 					if (fFileSectionDefinedForCurrentStratum) {
-						throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.10"), new String[] {stratumId})); //$NON-NLS-1$
+						throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_10, new String[] {stratumId})); //$NON-NLS-1$
 					}
 					parseFileSection(lexer);
 					fFileSectionDefinedForCurrentStratum= true;
 					break;
 				case Lexer.ASTERISK_L:
 					if (fLineSectionDefinedForCurrentStratum) {
-						throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.11"), new String[] {stratumId})); //$NON-NLS-1$
+						throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_11, new String[] {stratumId})); //$NON-NLS-1$
 					}
 					parseLineSection(lexer);
 					fLineSectionDefinedForCurrentStratum= true;
@@ -351,15 +351,15 @@ public class SourceDebugExtensionParser {
 					parseFutureSection(lexer);
 					break;
 				default:
-					throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.12"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
+					throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_12, new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 			}
 			lexemType= lexer.lexemType();
 		}
 		if (!fFileSectionDefinedForCurrentStratum) {
-			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.13"), new String[] {stratumId})); //$NON-NLS-1$
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_13, new String[] {stratumId})); //$NON-NLS-1$
 		}
 		if (!fLineSectionDefinedForCurrentStratum) {
-			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.14"), new String[] {stratumId})); //$NON-NLS-1$
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_14, new String[] {stratumId})); //$NON-NLS-1$
 		}
 		fDefinedStrata.add(stratumId);
 		fReferenceType.addStratum(fCurrentStratum);
@@ -370,7 +370,7 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseFileSection(Lexer lexer) throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.12"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_12, new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {
@@ -386,24 +386,24 @@ public class SourceDebugExtensionParser {
 		if (lexemType == Lexer.NUMBER) {
 			int fileId= integerValue(lexer.lexem());
 			if (isAsteriskLexem(lexer.nextLexem())) {
-				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.16")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_16); //$NON-NLS-1$
 			}
 			fCurrentStratum.addFileInfo(fileId, getNonAsteriskString(lexer));
 		} else if (lexemType == Lexer.PLUS) {
 			if (lexer.nextLexem() != Lexer.NUMBER) {
-				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.17")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_17); //$NON-NLS-1$
 			}
 			int fileId= integerValue(lexer.lexem());
 			if (isAsteriskLexem(lexer.nextLexem())) {
-				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.16")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_16); //$NON-NLS-1$
 			}
 			String fileName= getNonAsteriskString(lexer);
 			if (isAsteriskLexem(lexer.lexemType())) {
-				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.19")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_19); //$NON-NLS-1$
 			}
 			fCurrentStratum.addFileInfo(fileId, fileName, getNonAsteriskString(lexer));
 		} else {
-			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.12"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_12, new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 		}
 	}
 
@@ -413,7 +413,7 @@ public class SourceDebugExtensionParser {
 	private void parseLineSection(Lexer lexer) throws AbsentInformationException {
 		fCurrentLineFileId= 0;
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.12"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_12, new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {
@@ -426,13 +426,13 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseLineInfo(Lexer lexer) throws AbsentInformationException {
 		if (lexer.lexemType() != Lexer.NUMBER) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.22")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_22); //$NON-NLS-1$
 		}
 		int inputStartLine= integerValue(lexer.lexem());
 		int lexemType= lexer.nextLexem();
 		if (lexemType == Lexer.SHARP) {
 			if (lexer.nextLexem() != Lexer.NUMBER) {
-				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.23")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_23); //$NON-NLS-1$
 			}
 			fCurrentLineFileId= integerValue(lexer.lexem());
 			lexemType= lexer.nextLexem();
@@ -440,7 +440,7 @@ public class SourceDebugExtensionParser {
 		int repeatCount;
 		if (lexemType == Lexer.COMMA) {
 			if (lexer.nextLexem() != Lexer.NUMBER) {
-				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.24")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_24); //$NON-NLS-1$
 			}
 			repeatCount= integerValue(lexer.lexem());
 			lexemType= lexer.nextLexem();
@@ -448,17 +448,17 @@ public class SourceDebugExtensionParser {
 			repeatCount= 1;
 		}
 		if (lexemType != Lexer.COLON) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.25")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_25); //$NON-NLS-1$
 		}
 		if (lexer.nextLexem() != Lexer.NUMBER) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.26")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_26); //$NON-NLS-1$
 		}
 		int outputStartLine= integerValue(lexer.lexem());
 		lexemType= lexer.nextLexem();
 		int outputLineIncrement;
 		if (lexemType == Lexer.COMMA) {
 			if (lexer.nextLexem() != Lexer.NUMBER) {
-				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.27")); //$NON-NLS-1$
+				throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_27); //$NON-NLS-1$
 			}
 			outputLineIncrement= integerValue(lexer.lexem());
 			lexemType= lexer.nextLexem();
@@ -466,7 +466,7 @@ public class SourceDebugExtensionParser {
 			outputLineIncrement= 1;
 		}
 		if (lexemType != Lexer.CR) {
-			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.28")); //$NON-NLS-1$
+			throw new AbsentInformationException(JDIMessages.SourceDebugExtensionParser_28); //$NON-NLS-1$
 		}
 		lexer.nextLexem();
 		fCurrentStratum.addLineInfo(inputStartLine, fCurrentLineFileId, repeatCount, outputStartLine, outputLineIncrement);
@@ -477,7 +477,7 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseVendorSection(Lexer lexer) throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.12"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_12, new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {
@@ -491,7 +491,7 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseFutureSection(Lexer lexer) throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.12"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.SourceDebugExtensionParser_12, new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {

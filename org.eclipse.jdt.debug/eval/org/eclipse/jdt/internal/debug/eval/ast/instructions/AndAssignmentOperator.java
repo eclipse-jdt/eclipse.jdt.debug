@@ -17,6 +17,6 @@ public class AndAssignmentOperator extends AndOperator {
 	}
 	
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("AndAssignmentOperator.operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.AndAssignmentOperator_operator_1; //$NON-NLS-1$
 	}
 }

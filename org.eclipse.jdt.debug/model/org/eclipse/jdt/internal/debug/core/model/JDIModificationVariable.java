@@ -54,7 +54,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 		Value cValue= getCurrentValue();
 		VirtualMachine vm= getVM();
 		if (vm == null) {
-			requestFailed(JDIDebugModelMessages.getString("JDIModificationVariable.Unable_to_generate_value_-_VM_disconnected._1"), null); //$NON-NLS-1$
+			requestFailed(JDIDebugModelMessages.JDIModificationVariable_Unable_to_generate_value___VM_disconnected__1, null); //$NON-NLS-1$
 		}
 		if (cValue == null) {
 			//String with null value

@@ -24,14 +24,14 @@ public class JdwpConversation {
 
 	void setCommand(JdwpCommandPacket command) {
 		if (fCommand != null) {
-			throw new IllegalArgumentException(MessageFormat.format(TcpIpSpyMessages.getString("JdwpConversation.Attempt_to_overwrite_command_with_{0}_1"), new String[] {command.toString()})); //$NON-NLS-1$
+			throw new IllegalArgumentException(MessageFormat.format(TcpIpSpyMessages.JdwpConversation_Attempt_to_overwrite_command_with__0__1, new String[] {command.toString()})); //$NON-NLS-1$
 		}
 		fCommand = command;
 	}
 
 	void setReply(JdwpReplyPacket reply) {
 		if (fReply != null) {
-			throw new IllegalArgumentException(MessageFormat.format(TcpIpSpyMessages.getString("JdwpConversation.Attempt_to_overwrite_reply_with_{0}_2"), new String[] {reply.toString()})); //$NON-NLS-1$
+			throw new IllegalArgumentException(MessageFormat.format(TcpIpSpyMessages.JdwpConversation_Attempt_to_overwrite_reply_with__0__2, new String[] {reply.toString()})); //$NON-NLS-1$
 		}
 		fReply = reply;
 	}

@@ -233,7 +233,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 			locations= type.locationsOfLine(getStratum(), getSourceName(), lineNumber);
 			sourcePath= getSourcePath();
 		} catch (AbsentInformationException aie) {
-			IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), NO_LINE_NUMBERS, JDIDebugBreakpointMessages.getString("JavaLineBreakpoint.Absent_Line_Number_Information_1"), null);  //$NON-NLS-1$
+			IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), NO_LINE_NUMBERS, JDIDebugBreakpointMessages.JavaLineBreakpoint_Absent_Line_Number_Information_1, null);  //$NON-NLS-1$
 			IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
 			if (handler != null) {
 				try {
@@ -333,13 +333,13 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		// create breakpoint requests for each class currently loaded
 		VirtualMachine vm = target.getVM();
 		if (vm == null) {
-			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.Unable_to_add_breakpoint_-_VM_disconnected._1"), null); //$NON-NLS-1$
+			target.requestFailed(JDIDebugBreakpointMessages.JavaPatternBreakpoint_Unable_to_add_breakpoint___VM_disconnected__1, null); //$NON-NLS-1$
 		}
 		List classes = null;
 		try {
 			classes= vm.allClasses();
 		} catch (RuntimeException e) {
-			target.targetRequestFailed(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.0"), e); //$NON-NLS-1$
+			target.targetRequestFailed(JDIDebugBreakpointMessages.JavaPatternBreakpoint_0, e); //$NON-NLS-1$
 		}
 		if (classes != null) {
 			Iterator iter = classes.iterator();

@@ -72,7 +72,7 @@ public class JDIType implements IJavaType {
 		try {
 			return getUnderlyingType().signature();
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIType.exception_while_retrieving_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIType_exception_while_retrieving_signature, new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line as
 			// #targetRequestFailed will throw an exception
 			return null;
@@ -131,7 +131,7 @@ public class JDIType implements IJavaType {
 		try {
 			return getUnderlyingType().name();
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIType.exception_while_retrieving_type_name"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIType_exception_while_retrieving_type_name, new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not fall through as an exception
 		// will be thrown by the catch block

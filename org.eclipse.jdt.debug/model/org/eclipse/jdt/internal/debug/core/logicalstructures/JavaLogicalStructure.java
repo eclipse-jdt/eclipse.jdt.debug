@@ -129,7 +129,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 				}
 			}
 			if (fResult == null) {
-				return new JavaStructureErrorValue(LogicalStructuresMessages.getString("JavaLogicalStructure.1"), fEvaluationValue); //$NON-NLS-1$
+				return new JavaStructureErrorValue(LogicalStructuresMessages.JavaLogicalStructure_1, fEvaluationValue); //$NON-NLS-1$
 			}
 			if (fResult.hasErrors()) {
 				DebugException exception = fResult.getException();
@@ -138,10 +138,10 @@ public class JavaLogicalStructure implements ILogicalStructureType {
                     if (isContributed()) {
                         JDIDebugPlugin.log(exception);
                     }
-					message= MessageFormat.format(LogicalStructuresMessages.getString("JavaLogicalStructure.2"), new String[] { exception.getMessage() }); //$NON-NLS-1$
+					message= MessageFormat.format(LogicalStructuresMessages.JavaLogicalStructure_2, new String[] { exception.getMessage() }); //$NON-NLS-1$
 				} else {
                     log(fResult.getErrorMessages());
-					message= LogicalStructuresMessages.getString("JavaLogicalStructure.3"); //$NON-NLS-1$
+					message= LogicalStructuresMessages.JavaLogicalStructure_3; //$NON-NLS-1$
 				}
 				return new JavaStructureErrorValue(message, fEvaluationValue);
 			}
@@ -180,28 +180,28 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 	public JavaLogicalStructure(IConfigurationElement configurationElement) throws CoreException {
 		fType= configurationElement.getAttribute("type"); //$NON-NLS-1$
 		if (fType == null) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.0"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.JavaLogicalStructures_0, null)); //$NON-NLS-1$
 		}
 		fSubtypes= Boolean.valueOf(configurationElement.getAttribute("subtypes")).booleanValue(); //$NON-NLS-1$
 		fValue= configurationElement.getAttribute("value"); //$NON-NLS-1$
 		fDescription= configurationElement.getAttribute("description"); //$NON-NLS-1$
 		if (fDescription == null) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.4"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.JavaLogicalStructures_4, null)); //$NON-NLS-1$
 		}
 		IConfigurationElement[] variableElements= configurationElement.getChildren("variable"); //$NON-NLS-1$
 		if (fValue== null && variableElements.length == 0) {
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.1"), null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.JavaLogicalStructures_1, null)); //$NON-NLS-1$
 		}
 		fVariables= new String[variableElements.length][2];
 		for (int j= 0; j < fVariables.length; j++) {
 			String variableName= variableElements[j].getAttribute("name"); //$NON-NLS-1$
 			if (variableName == null) {
-				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.2"), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.JavaLogicalStructures_2, null)); //$NON-NLS-1$
 			}
 			fVariables[j][0]= variableName;
 			String variableValue= variableElements[j].getAttribute("value"); //$NON-NLS-1$
 			if (variableValue == null) {
-				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.3"), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.JavaLogicalStructures_3, null)); //$NON-NLS-1$
 			}
 			fVariables[j][1]= variableValue;
 		}

@@ -81,17 +81,17 @@ public class TcpipSpy extends Thread {
 				outputFile= args[3];
 			}
 		} catch (Exception e) {
-			out.println(TcpIpSpyMessages.getString("TcpipSpy.usage__TcpipSpy_<client_port>_<server_host>_<server_port>_[<output_file>]_1")); //$NON-NLS-1$
+			out.println(TcpIpSpyMessages.TcpipSpy_usage__TcpipSpy__client_port___server_host___server_port____output_file___1); //$NON-NLS-1$
 			System.exit(-1);
 		}
 
 		if (outputFile != null) {
 			File file= new File(outputFile);
-			out.println(MessageFormat.format(TcpIpSpyMessages.getString("TcpipSpy.Writing_output_to_{0}_2"), new String[] {file.getAbsolutePath()})); //$NON-NLS-1$
+			out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Writing_output_to__0__2, new String[] {file.getAbsolutePath()})); //$NON-NLS-1$
 			try {
 				out= new VerbosePacketStream(new BufferedOutputStream(new FileOutputStream(file)));
 			} catch (FileNotFoundException e) {
-				out.println(MessageFormat.format(TcpIpSpyMessages.getString("TcpipSpy.Could_not_open_{0}.__Using_stdout_instead_3"), new String[] {file.getAbsolutePath()})); //$NON-NLS-1$
+				out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Could_not_open__0____Using_stdout_instead_3, new String[] {file.getAbsolutePath()})); //$NON-NLS-1$
 			}
 		}
 		out.println();
@@ -134,7 +134,7 @@ public class TcpipSpy extends Thread {
 		} catch (EOFException e) {
 		} catch (SocketException e) {
 		} catch (IOException e) {
-			out.println(MessageFormat.format(TcpIpSpyMessages.getString("TcpipSpy.Caught_exception__{0}_5"), new String[] {e.toString()})); //$NON-NLS-1$
+			out.println(MessageFormat.format(TcpIpSpyMessages.TcpipSpy_Caught_exception___0__5, new String[] {e.toString()})); //$NON-NLS-1$
 			e.printStackTrace(out);
 		} finally {
 			try {
@@ -175,7 +175,7 @@ public class TcpipSpy extends Thread {
 		} else {
 			command= getCommand(packet.getId());
 			if (command == null) {
-				throw new UnableToParseDataException(TcpIpSpyMessages.getString("TcpIpSpy.This_packet_is_marked_as_reply,_but_there_is_no_command_with_the_same_id._1"), null); //$NON-NLS-1$
+				throw new UnableToParseDataException(TcpIpSpyMessages.TcpIpSpy_This_packet_is_marked_as_reply__but_there_is_no_command_with_the_same_id__1, null); //$NON-NLS-1$
 			}
 		}
 		return command.getCommand();

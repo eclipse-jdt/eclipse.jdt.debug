@@ -17,7 +17,7 @@ public class UnsignedRightShiftAssignmentOperator extends UnsignedRightShiftOper
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("UnsignedRightShiftAssignmentOperator.operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.UnsignedRightShiftAssignmentOperator_operator_1; //$NON-NLS-1$
 	}
 
 }

@@ -95,9 +95,9 @@ public class JavaStructureErrorValue implements IJavaValue {
         for (int i = 0; i < variables.length; i++) {
             StringBuffer varName= new StringBuffer();
             if (variables.length > 1) {
-                varName.append(LogicalStructuresMessages.getString("JavaStructureErrorValue.0")).append('[').append(i).append(']'); //$NON-NLS-1$
+                varName.append(LogicalStructuresMessages.JavaStructureErrorValue_0).append('[').append(i).append(']'); //$NON-NLS-1$
             } else {
-                varName.append(LogicalStructuresMessages.getString("JavaStructureErrorValue.1")); //$NON-NLS-1$
+                varName.append(LogicalStructuresMessages.JavaStructureErrorValue_1); //$NON-NLS-1$
             }
             variables[i]= new JDIPlaceholderVariable(varName.toString(), new JavaStructureErrorValue(fMessages[i], fValue));
         }

@@ -54,15 +54,15 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 		HashMap arguments = new HashMap(3);
 		
 		// Command
-		StringArgumentImpl strArg = new StringArgumentImpl("command", ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Raw_command_to_start_the_debugged_application_VM_1"), ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Command_2"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		StringArgumentImpl strArg = new StringArgumentImpl("command", ConnectMessages.SocketRawLaunchingConnectorImpl_Raw_command_to_start_the_debugged_application_VM_1, ConnectMessages.SocketRawLaunchingConnectorImpl_Command_2, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(strArg.name(), strArg);
 		
 		// Address
-		strArg = new StringArgumentImpl("address", ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Address_from_which_to_listen_for_a_connection_after_the_raw_command_is_run_3"), ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Address_4"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		strArg = new StringArgumentImpl("address", ConnectMessages.SocketRawLaunchingConnectorImpl_Address_from_which_to_listen_for_a_connection_after_the_raw_command_is_run_3, ConnectMessages.SocketRawLaunchingConnectorImpl_Address_4, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(strArg.name(), strArg);
 		
 		// Quote
-		strArg = new StringArgumentImpl("quote", ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Character_used_to_combine_space-delimited_text_into_a_single_command_line_argument_5"), ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Quote_6"), true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		strArg = new StringArgumentImpl("quote", ConnectMessages.SocketRawLaunchingConnectorImpl_Character_used_to_combine_space_delimited_text_into_a_single_command_line_argument_5, ConnectMessages.SocketRawLaunchingConnectorImpl_Quote_6, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		strArg.setValue("\""); //$NON-NLS-1$
 		arguments.put(strArg.name(), strArg);
 
@@ -80,7 +80,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 	 * @return Returns a human-readable description of this connector and its purpose.
 	 */	
 	public String description() {
-		return ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Launches_target_using_user-specified_command_line_and_attaches_to_it_7"); //$NON-NLS-1$
+		return ConnectMessages.SocketRawLaunchingConnectorImpl_Launches_target_using_user_specified_command_line_and_attaches_to_it_7; //$NON-NLS-1$
 	}
 	
  	/**
@@ -96,11 +96,11 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 		 	attribute = "quote"; //$NON-NLS-1$
 		 	((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		} catch (ClassCastException e) {
-			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Connection_argument_is_not_of_the_right_type_8"), attribute); //$NON-NLS-1$
+			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketRawLaunchingConnectorImpl_Connection_argument_is_not_of_the_right_type_8, attribute); //$NON-NLS-1$
 		} catch (NullPointerException e) {
-			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Necessary_connection_argument_is_null_9"), attribute); //$NON-NLS-1$
+			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketRawLaunchingConnectorImpl_Necessary_connection_argument_is_null_9, attribute); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
-			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketRawLaunchingConnectorImpl.Connection_argument_is_not_a_number_10"), attribute); //$NON-NLS-1$
+			throw new IllegalConnectorArgumentsException(ConnectMessages.SocketRawLaunchingConnectorImpl_Connection_argument_is_not_a_number_10, attribute); //$NON-NLS-1$
 		}
 	}
 
@@ -128,7 +128,7 @@ public class SocketRawLaunchingConnectorImpl extends ConnectorImpl implements La
 			virtualMachine = (VirtualMachineImpl)listenConnector.accept(args);
 		} catch (InterruptedIOException e) {
 			proc.destroy();
-			String message= MessageFormat.format(ConnectMessages.getString("SocketLaunchingConnectorImpl.VM_did_not_connect_within_given_time__{0}_ms_1"), new String[]{((Connector.IntegerArgument)args.get("timeout")).value()}); //$NON-NLS-1$ //$NON-NLS-2$
+			String message= MessageFormat.format(ConnectMessages.SocketLaunchingConnectorImpl_VM_did_not_connect_within_given_time___0__ms_1, new String[]{((Connector.IntegerArgument)args.get("timeout")).value()}); //$NON-NLS-1$ //$NON-NLS-2$
 			throw new VMStartException(message, proc);
 		}
 		

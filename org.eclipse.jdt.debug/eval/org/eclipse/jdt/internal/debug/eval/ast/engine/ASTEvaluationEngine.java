@@ -111,13 +111,13 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			// don't queue explicite evaluation if the thread is allready performing an evaluation.
 			if (thread.isSuspended() && ((JDIThread)thread).isInvokingMethod() || thread.isPerformingEvaluation() && evaluationDetail == DebugEvent.EVALUATION) {
 				EvaluationResult result= new EvaluationResult(this, expression.getSnippet(), thread);
-				result.addError(EvaluationEngineMessages.getString("ASTEvaluationEngine.Cannot_perform_nested_evaluations")); //$NON-NLS-1$
+				result.addError(EvaluationEngineMessages.ASTEvaluationEngine_Cannot_perform_nested_evaluations); //$NON-NLS-1$
 				listener.evaluationComplete(result);
 				return;
 			}
 			thread.queueRunnable(new EvalRunnable((InstructionSequence)expression, thread, context, listener, evaluationDetail, hitBreakpoints));
 		} else {
-			throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, EvaluationEngineMessages.getString("ASTEvaluationEngine.AST_evaluation_engine_cannot_evaluate_expression"), null)); //$NON-NLS-1$
+			throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.OK, EvaluationEngineMessages.ASTEvaluationEngine_AST_evaluation_engine_cannot_evaluate_expression, null)); //$NON-NLS-1$
 		}
 	}
 
@@ -217,7 +217,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaReferenceType type) {
 		if (type instanceof IJavaArrayType) {
 			InstructionSequence errorExpression= new InstructionSequence(snippet);
-			errorExpression.addError(EvaluationEngineMessages.getString("ASTEvaluationEngine.Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1")); //$NON-NLS-1$
+			errorExpression.addError(EvaluationEngineMessages.ASTEvaluationEngine_Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1); //$NON-NLS-1$
 		}
 		IJavaProject javaProject = getJavaProject();
 
@@ -279,7 +279,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			}
 			if (snippetError || runMethodError) {
 				if (runMethodError) {
-					errorSequence.addError(EvaluationEngineMessages.getString("ASTEvaluationEngine.Evaluations_must_contain_either_an_expression_or_a_block_of_well-formed_statements_1")); //$NON-NLS-1$
+					errorSequence.addError(EvaluationEngineMessages.ASTEvaluationEngine_Evaluations_must_contain_either_an_expression_or_a_block_of_well_formed_statements_1); //$NON-NLS-1$
 				}
 				return errorSequence;
 			}
@@ -399,7 +399,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			if (value != null) {
 				result.setValue(value);
 			} else {
-				result.addError(EvaluationEngineMessages.getString("ASTEvaluationEngine.An_unknown_error_occurred_during_evaluation")); //$NON-NLS-1$
+				result.addError(EvaluationEngineMessages.ASTEvaluationEngine_An_unknown_error_occurred_during_evaluation); //$NON-NLS-1$
 			}
 			if (exception != null) {
 				if (exception instanceof DebugException) {

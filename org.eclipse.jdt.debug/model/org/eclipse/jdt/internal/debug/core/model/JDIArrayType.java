@@ -43,7 +43,7 @@ public class JDIArrayType extends JDIReferenceType implements IJavaArrayType {
 			ArrayReference ar = ((ArrayType)getUnderlyingType()).newInstance(size);
 			return (IJavaArray)JDIValue.createValue(getDebugTarget(), ar);
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayType.exception_while_creating_new_instance_of_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayType_exception_while_creating_new_instance_of_array, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach this line as
 		// an exception will be thrown
@@ -58,9 +58,9 @@ public class JDIArrayType extends JDIReferenceType implements IJavaArrayType {
 			Type type = ((ArrayType)getUnderlyingType()).componentType();
 			return JDIType.createType(getDebugTarget(), type);
 		} catch (ClassNotLoadedException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayType.exception_while_retrieving_component_type_of_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayType_exception_while_retrieving_component_type_of_array, new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayType.exception_while_retrieving_component_type_of_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.JDIArrayType_exception_while_retrieving_component_type_of_array, new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach this line as
 		// an exception will be thrown

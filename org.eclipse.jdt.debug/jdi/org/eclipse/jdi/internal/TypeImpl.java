@@ -85,7 +85,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 		try {
 			return name();
 		} catch (ClassNotPreparedException e) {
-			return JDIMessages.getString("TypeImpl.(Unloaded_Type)_1"); //$NON-NLS-1$
+			return JDIMessages.TypeImpl__Unloaded_Type__1; //$NON-NLS-1$
 		} catch (Exception e) {
 			return fDescription;
 		}
@@ -246,9 +246,9 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 			case '[':
 				return arraySignatureToName(signature);
 			case '(':
-				throw new InternalError(JDIMessages.getString("TypeImpl.Can__t_convert_method_signature_to_name_2")); //$NON-NLS-1$
+				throw new InternalError(JDIMessages.TypeImpl_Can__t_convert_method_signature_to_name_2); //$NON-NLS-1$
 		}
-		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____10") + signature + JDIMessages.getString("TypeImpl.__11")); //$NON-NLS-1$ //$NON-NLS-2$
+		throw new InternalError(JDIMessages.TypeImpl_Invalid_signature____10 + signature + JDIMessages.TypeImpl___11); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private static String getPrimitiveSignatureToName(char signature) {
@@ -302,9 +302,9 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 			case '[':
 				return ArrayReferenceImpl.tag;
 			case '(':
-				throw new InternalError(JDIMessages.getString("TypeImpl.Can__t_covert_method_signature_to_tag___9") + signature); //$NON-NLS-1$
+				throw new InternalError(JDIMessages.TypeImpl_Can__t_covert_method_signature_to_tag___9 + signature); //$NON-NLS-1$
 		}
-		throw new InternalError(JDIMessages.getString("TypeImpl.Invalid_signature____10") + signature + JDIMessages.getString("TypeImpl.__11")); //$NON-NLS-1$ //$NON-NLS-2$
+		throw new InternalError(JDIMessages.TypeImpl_Invalid_signature____10 + signature + JDIMessages.TypeImpl___11); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**

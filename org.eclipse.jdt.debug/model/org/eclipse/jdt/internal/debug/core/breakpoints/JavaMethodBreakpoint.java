@@ -250,7 +250,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		EventRequest request = null;
 		EventRequestManager manager = target.getEventRequestManager();
 		if (manager == null) {
-			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaMethodBreakpoint.Unable_to_create_breakpoint_request_-_VM_disconnected._1"), null);  //$NON-NLS-1$
+			target.requestFailed(JDIDebugBreakpointMessages.JavaMethodBreakpoint_Unable_to_create_breakpoint_request___VM_disconnected__1, null);  //$NON-NLS-1$
 		}		
 		try {
 			if (entry) {

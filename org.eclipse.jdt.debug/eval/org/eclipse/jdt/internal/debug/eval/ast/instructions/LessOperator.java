@@ -72,7 +72,7 @@ public class LessOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("LessOperator._<___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.LessOperator______operator_1; //$NON-NLS-1$
 	}
 
 }

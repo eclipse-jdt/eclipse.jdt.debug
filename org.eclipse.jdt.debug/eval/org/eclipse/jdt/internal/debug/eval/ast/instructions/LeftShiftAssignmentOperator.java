@@ -17,7 +17,7 @@ public class LeftShiftAssignmentOperator extends LeftShiftOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("LeftShiftAssignmentOperator.operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.LeftShiftAssignmentOperator_operator_1; //$NON-NLS-1$
 	}
 
 }

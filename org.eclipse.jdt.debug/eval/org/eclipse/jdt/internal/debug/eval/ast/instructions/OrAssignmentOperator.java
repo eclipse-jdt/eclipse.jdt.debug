@@ -17,7 +17,7 @@ public class OrAssignmentOperator extends OrOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("OrAssignmentOperator.operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.OrAssignmentOperator_operator_1; //$NON-NLS-1$
 	}
 
 }

@@ -71,7 +71,7 @@ public class LessEqualOperator extends BinaryOperator {
 		return null;
 	}
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("LessEqualOperator.operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.LessEqualOperator_operator_1; //$NON-NLS-1$
 	}
 
 }

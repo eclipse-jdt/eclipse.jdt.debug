@@ -66,7 +66,7 @@ public class AndOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return InstructionsEvaluationMessages.getString("AndOperator_&___operator_1"); //$NON-NLS-1$
+		return InstructionsEvaluationMessages.AndOperator_____operator_1; //$NON-NLS-1$
 	}
 
 }
