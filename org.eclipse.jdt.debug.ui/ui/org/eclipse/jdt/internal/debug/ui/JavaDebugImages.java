@@ -74,6 +74,8 @@ public class JavaDebugImages {
 	public static final String IMG_VIEW_ARGUMENTS_TAB= NAME_PREFIX + "variable_tab.gif";  //$NON-NLS-1$
 	
 	public static final String IMG_OBJS_MONITOR = NAME_PREFIX + "monitor_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_CONTENDED_MONITOR = NAME_PREFIX + "contended_monitor_obj.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_OWNED_MONITOR = NAME_PREFIX + "owned_monitor_obj.gif";  //$NON-NLS-1$
 	
 	public static final String IMG_OBJS_EXCEPTION_BRKPT_TYPE = NAME_PREFIX + "jexcept_obj.gif";  //$NON-NLS-1$
 	public static final String IMG_OBJS_LINE_BRKPT_TYPE = NAME_PREFIX + "jline_obj.gif";  //$NON-NLS-1$
@@ -136,7 +138,9 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OVR_OWNS_MONITOR= create(T_OVR, "ownsmonitor_ovr.gif");		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_IN_CONTENTION= create(T_OVR, "contention_ovr.gif");			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_IN_CONTENTION_FOR_MONITOR= create(T_OVR, "contentionformonitor_ovr.gif");		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_OVR_IN_DEADLOCK= create(T_OVR, "padlock_ovr.gif");		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_IN_DEADLOCK= create(T_OVR, "deadlock_ovr.gif");		//$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_CONTENDED_MONITOR = createManaged(T_OBJ, IMG_OBJS_CONTENDED_MONITOR);
+	public static final ImageDescriptor DESC_OBJS_OWNED_MONITOR = createManaged(T_OBJ, IMG_OBJS_OWNED_MONITOR);
 			
 	public static final ImageDescriptor DESC_WIZBAN_NEWSCRAPPAGE= create(T_WIZBAN, "newsbook_wiz.gif");		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_JAVA_LAUNCH= create(T_WIZBAN, "java_app_wiz.gif"); 		//$NON-NLS-1$

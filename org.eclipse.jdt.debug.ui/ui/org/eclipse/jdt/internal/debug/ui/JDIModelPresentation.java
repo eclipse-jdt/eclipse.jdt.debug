@@ -717,8 +717,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @return
 	 */
 	private Image getJavaContendedMonitorImage(JavaContendedMonitor monitor) {
-		int flag= JDIImageDescriptor.CONTENTED_MONITOR | (monitor.getMonitor().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0);
-		JDIImageDescriptor descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJ_MONITOR, flag);
+		int flag= monitor.getMonitor().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0;
+		JDIImageDescriptor descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_CONTENDED_MONITOR, flag);
 		return getDebugImageRegistry().get(descriptor);
 	}
 
@@ -727,8 +727,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @return
 	 */
 	private Image getJavaOwnedMonitorImage(JavaOwnedMonitor monitor) {
-		int flag= JDIImageDescriptor.OWNED_MONITOR | (monitor.getMonitor().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0);
-		JDIImageDescriptor descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJ_MONITOR, flag);
+		int flag= monitor.getMonitor().isInDeadlock() ? JDIImageDescriptor.IN_DEADLOCK : 0;
+		JDIImageDescriptor descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_OWNED_MONITOR, flag);
 		return getDebugImageRegistry().get(descriptor);
 	}
 
