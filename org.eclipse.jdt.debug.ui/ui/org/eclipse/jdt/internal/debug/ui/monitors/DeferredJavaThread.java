@@ -71,14 +71,18 @@ public class DeferredJavaThread extends DeferredMonitorElement {
     public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
         IJavaThread thread = (IJavaThread) object;
         if (isDisplayMonitors()) {
-			IDebugElement[] ownedMonitors= JavaDebugUtils.getOwnedMonitors(thread);
-			if (ownedMonitors.length > 0) {
-			    collector.add(ownedMonitors, monitor);
-			}
-			IDebugElement contendedMonitor= JavaDebugUtils.getContendedMonitor(thread);
-			if (contendedMonitor != null) {
-			    collector.add(contendedMonitor, monitor);
-			}
+        	if (((IJavaDebugTarget) thread.getDebugTarget()).supportsMonitorInformation()) {
+				IDebugElement[] ownedMonitors= JavaDebugUtils.getOwnedMonitors(thread);
+				if (ownedMonitors.length > 0) {
+				    collector.add(ownedMonitors, monitor);
+				}
+				IDebugElement contendedMonitor= JavaDebugUtils.getContendedMonitor(thread);
+				if (contendedMonitor != null) {
+				    collector.add(contendedMonitor, monitor);
+				}
+        	} else {
+        		collector.add(new NoMonitorInformationElement(thread.getDebugTarget()), monitor);
+        	}
         }
 		try {
             collector.add(thread.getStackFrames(), monitor);
