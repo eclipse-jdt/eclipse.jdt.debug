@@ -8,20 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.ui.actions;
+package org.eclipse.jdt.internal.debug.ui.breakpoints;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
-import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
@@ -33,19 +31,23 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 
 	public void run(IAction action) {		
 		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-		AddExceptionDialog dialog= new AddExceptionDialog(shell);
+		final AddExceptionDialog dialog= new AddExceptionDialog(shell, new ProgressMonitorDialog(shell));
+		dialog.setTitle(BreakpointMessages.getString("AddExceptionAction.0")); //$NON-NLS-1$
+		dialog.setMessage(BreakpointMessages.getString("AddExceptionAction.1"));		 //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
-			IType type= dialog.getType();
-			boolean checked= dialog.getExceptionType() == AddExceptionDialog.CHECKED_EXCEPTION;
-			boolean caught= dialog.isCaughtSelected();
-			boolean uncaught= dialog.isUncaughtSelected();
-			try {
-				Map attributes = new HashMap(10);
-				BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
-				JDIDebugModel.createExceptionBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), caught, uncaught, checked, true, attributes);
-			} catch (CoreException exc) {
-				ExceptionHandler.handle(exc, ActionMessages.getString("AddExceptionAction.error.title"), ActionMessages.getString("AddExceptionAction.error.message")); //$NON-NLS-2$ //$NON-NLS-1$
-			}
+			Runnable r = new Runnable() {
+				public void run() {
+					IViewPart part = JDIDebugUIPlugin.getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+					if (part instanceof IDebugView) {
+						Viewer viewer = ((IDebugView)part).getViewer();
+						if (viewer instanceof StructuredViewer) {
+							StructuredViewer sv = (StructuredViewer)viewer;
+							sv.setSelection(new StructuredSelection(dialog.getResult()), true);
+						}
+					}
+				}
+			};
+			JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
 		}
 	}
 	

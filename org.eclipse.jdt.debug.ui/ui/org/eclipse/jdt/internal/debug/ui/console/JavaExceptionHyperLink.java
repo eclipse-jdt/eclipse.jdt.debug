@@ -23,8 +23,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.actions.AddExceptionDialog;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
+import org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionDialog;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jface.viewers.StructuredSelection;
 

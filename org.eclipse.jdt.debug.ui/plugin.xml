@@ -152,7 +152,7 @@
                label="%exceptionAction.accel.label"
                icon="icons/full/clcl16/exc_catch.gif"
                helpContextId="add_exception_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction"
+               class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
                id="org.eclipse.jdt.debug.ui.actionSet.AddException">
          </action>
@@ -858,7 +858,7 @@
                id="org.eclipse.jdt.debug.ui.actions.AddException"
                toolbarPath="javaExceptions"
                hoverIcon="icons/full/clcl16/exc_catch.gif"
-               class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction"
+               class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionAction"
                disabledIcon="icons/full/dlcl16/exc_catch.gif"
                icon="icons/full/elcl16/exc_catch.gif"
                helpContextId="add_exception_action_context"
