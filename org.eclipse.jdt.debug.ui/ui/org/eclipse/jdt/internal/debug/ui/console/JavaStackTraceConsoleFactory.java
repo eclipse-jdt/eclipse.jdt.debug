@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.console;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleFactory;
+import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
 
 /**
@@ -22,29 +23,35 @@ import org.eclipse.ui.console.IConsoleManager;
  * @since 3.1
  */
 public class JavaStackTraceConsoleFactory implements IConsoleFactory {
-    
+    private IConsoleManager fConsoleManager = null;
+    private JavaStackTraceConsole fConsole = null;
 
+    public JavaStackTraceConsoleFactory() {
+        fConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
+        fConsoleManager.addConsoleListener(new IConsoleListener() {
+            public void consolesAdded(IConsole[] consoles) {
+            }
+
+            public void consolesRemoved(IConsole[] consoles) {
+                for (int i = 0; i < consoles.length; i++) {
+                    if(consoles[i] == fConsole) {
+                        fConsole.saveDocument();
+                        fConsole = null;
+                    }
+                }
+            }
+        
+        });
+    }
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleFactory#openConsole()
      */
     public void openConsole() {
-        IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
-        IConsole[] consoles = consoleManager.getConsoles();
-        IConsole theConsole = null;
-        for (int i = 0; i < consoles.length; i++) {
-            IConsole console = consoles[i];
-            if (console.getType().equals(JavaStackTraceConsole.CONSOLE_TYPE)) {
-                theConsole = console;
-                break;
-            }
-            
+        if (fConsole == null) {
+            fConsole = new JavaStackTraceConsole(); //$NON-NLS-1$
+	        fConsoleManager.addConsoles(new IConsole[]{fConsole});
         }
-        
-        if (theConsole == null) {
-            theConsole = new JavaStackTraceConsole(); //$NON-NLS-1$
-	        consoleManager.addConsoles(new IConsole[]{theConsole});
-        }
-        
-        consoleManager.showConsoleView(theConsole);
+        fConsole.initializeDocument();
+        fConsoleManager.showConsoleView(fConsole);
     }
 }
