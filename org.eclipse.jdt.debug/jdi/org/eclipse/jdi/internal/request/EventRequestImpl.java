@@ -475,13 +475,6 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	 * @return Returns JDWP EventKind.
 	 */
 	protected abstract byte eventKind();
-	
-	/**
-	 * @return Returns true if modifier count is set.
-	 */
-	private boolean modifierCountIsSet() {
-		return (fCountFilters != null);
-	}
 
 	/**
 	 * @return Returns number of modifiers.
