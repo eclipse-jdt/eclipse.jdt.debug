@@ -140,13 +140,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		
 		//createVerticalSpacer(comp);
 		
-		Group firstGroup = new Group(comp, SWT.NONE);
-		GridLayout firstGroupLayout = new GridLayout();
-		firstGroup.setLayout(firstGroupLayout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		firstGroup.setLayoutData(gd);
-			
-		Composite projComp = new Composite(firstGroup, SWT.NONE);
+		Composite projComp = new Composite(comp, SWT.NONE);
 		GridLayout projLayout = new GridLayout();
 		projLayout.numColumns = 2;
 		projLayout.marginHeight = 0;
@@ -178,7 +172,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 			}
 		});
 		
-		Composite mainComp = new Composite(firstGroup, SWT.NONE);
+		Composite mainComp = new Composite(comp, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
 		mainLayout.numColumns = 3;
 		mainLayout.marginHeight = 0;
@@ -216,16 +210,10 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 				
 		//createVerticalSpacer(comp);
 		
-		Group secondGroup = new Group(comp, SWT.NONE);
-		GridLayout secondGroupLayout = new GridLayout();
-		secondGroup.setLayout(secondGroupLayout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		secondGroup.setLayoutData(gd);
-		
-		fPrgmArgumentsLabel = new Label(secondGroup, SWT.NONE);
+		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
 		fPrgmArgumentsLabel.setText("Program arguments");
 						
-		fPrgmArgumentsText = new Text(secondGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 30;
 		fPrgmArgumentsText.setLayoutData(gd);
@@ -235,7 +223,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 			}
 		});
 		
-		Composite workingDirComp = new Composite(secondGroup, SWT.NONE);
+		Composite workingDirComp = new Composite(comp, SWT.NONE);
 		GridLayout workingDirLayout = new GridLayout();
 		workingDirLayout.numColumns = 2;
 		workingDirLayout.marginHeight = 0;
@@ -269,13 +257,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 						
 		//createVerticalSpacer(comp);
 				
-		Group thirdGroup = new Group(comp, SWT.NONE);
-		GridLayout thirdGroupLayout = new GridLayout();
-		thirdGroup.setLayout(thirdGroupLayout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		thirdGroup.setLayoutData(gd);
-		
-		Composite jreComp = new Composite(thirdGroup, SWT.NONE);
+		Composite jreComp = new Composite(comp, SWT.NONE);
 		GridLayout jreLayout = new GridLayout();
 		jreLayout.numColumns = 2;
 		jreLayout.marginHeight = 0;
@@ -308,10 +290,10 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 			}
 		});
 		
-		fVMArgumentsLabel = new Label(thirdGroup, SWT.NONE);
+		fVMArgumentsLabel = new Label(comp, SWT.NONE);
 		fVMArgumentsLabel.setText("VM arguments");
 		
-		fVMArgumentsText = new Text(thirdGroup, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
+		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 30;
 		fVMArgumentsText.setLayoutData(gd);	
