@@ -1392,7 +1392,7 @@
          <action
                label="%runToLineAction.label"
                helpContextId="run_to_line_action_context"
-               definitionId="org.eclipse.jdt.debug.ui.commands.RunToLine"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
                class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
                menubarPath="additions"
                id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine">
@@ -1515,7 +1515,7 @@
          <action
                label="%runToLineAction.label"
                helpContextId="run_to_line_action_context"
-               definitionId="org.eclipse.jdt.debug.ui.commands.RunToLine"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
                class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
                menubarPath="additions"
                id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine">
