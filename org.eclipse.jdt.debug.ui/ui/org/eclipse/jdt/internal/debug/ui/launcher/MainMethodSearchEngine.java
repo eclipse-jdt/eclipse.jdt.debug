@@ -16,9 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
@@ -28,9 +26,12 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeHierarchy;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -39,61 +40,53 @@ import org.eclipse.jface.util.Assert;
 
 public class MainMethodSearchEngine{
 	
-	private static class MethodCollector implements IJavaSearchResultCollector {
-			private List fResult;
-			private int fStyle;
-			private IProgressMonitor fProgressMonitor;
+	private class MethodCollector extends SearchRequestor {
+		private List fResult;
+		private int fStyle;
 
-			public MethodCollector(int style, IProgressMonitor progressMonitor) {
-				fResult = new ArrayList(200);
-				fStyle= style;
-				fProgressMonitor= progressMonitor;
-			}
-			
-			public List getResult() {
-				return fResult;
-			}
+		public MethodCollector(int style) {
+			fResult = new ArrayList(200);
+			fStyle= style;
+		}
 
-			private boolean considerExternalJars() {
-				return (fStyle & IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS) != 0;
-			}
-					
-			private boolean considerBinaries() {
-				return (fStyle & IJavaElementSearchConstants.CONSIDER_BINARIES) != 0;
-			}		
-			
-			public void accept(IResource resource, int start, int end, IJavaElement enclosingElement, int accuracy) {
-				if (enclosingElement instanceof IMethod) { // defensive code
-					try {
-						IMethod curr= (IMethod) enclosingElement;
-						if (curr.isMainMethod()) {
-							if (!considerExternalJars()) {
-								IPackageFragmentRoot root= getPackageFragmentRoot(curr);
-								if (root == null || root.isArchive()) {
-									return;
-								}
-							}
-							if (!considerBinaries() && curr.isBinary()) {
+		public List getResult() {
+			return fResult;
+		}
+
+		private boolean considerExternalJars() {
+			return (fStyle & IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS) != 0;
+		}
+				
+		private boolean considerBinaries() {
+			return (fStyle & IJavaElementSearchConstants.CONSIDER_BINARIES) != 0;
+		}		
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.core.search.SearchRequestor#acceptSearchMatch(org.eclipse.jdt.core.search.SearchMatch)
+		 */
+		public void acceptSearchMatch(SearchMatch match) throws CoreException {
+			Object enclosingElement = match.getElement();
+			if (enclosingElement instanceof IMethod) { // defensive code
+				try {
+					IMethod curr= (IMethod) enclosingElement;
+					if (curr.isMainMethod()) {
+						if (!considerExternalJars()) {
+							IPackageFragmentRoot root= getPackageFragmentRoot(curr);
+							if (root == null || root.isArchive()) {
 								return;
 							}
-							IType declaringType = curr.getDeclaringType();
-							fResult.add(declaringType);
 						}
-					} catch (JavaModelException e) {
-						JDIDebugUIPlugin.log(e.getStatus());
+						if (!considerBinaries() && curr.isBinary()) {
+							return;
+						}
+						IType declaringType = curr.getDeclaringType();
+						fResult.add(declaringType);
 					}
+				} catch (JavaModelException e) {
+					JDIDebugUIPlugin.log(e.getStatus());
 				}
 			}
-							
-			public IProgressMonitor getProgressMonitor() {
-				return fProgressMonitor;
-			}
-			
-			public void aboutToStart() {
-			}
-			
-			public void done() {
-			}
+		}
 	}
 
 	/**
@@ -112,11 +105,17 @@ public class MainMethodSearchEngine{
 		if (includeSubtypes) {
 			searchTicks = 25;
 		}
+		
+		SearchPattern pattern = SearchPattern.createPattern("main(String[]) void", IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH, true); //$NON-NLS-1$
+		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
+		MethodCollector collector = new MethodCollector(style);
 		IProgressMonitor searchMonitor = new SubProgressMonitor(pm, searchTicks);
-		MethodCollector collector= new MethodCollector(style, searchMonitor);				
-		new SearchEngine().search(ResourcesPlugin.getWorkspace(), "main(String[]) void", IJavaSearchConstants.METHOD,  //$NON-NLS-1$
-			IJavaSearchConstants.DECLARATIONS, scope, collector); //$NON-NLS-1$
-			
+		try {
+			new SearchEngine().search(pattern, participants, scope, collector, searchMonitor);
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce);
+		}
+
 		List result = collector.getResult();
 		if (includeSubtypes) {
 			IProgressMonitor subtypesMonitor = new SubProgressMonitor(pm, 75);

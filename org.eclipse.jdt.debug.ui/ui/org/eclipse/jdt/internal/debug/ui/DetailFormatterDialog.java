@@ -15,16 +15,17 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
@@ -339,13 +340,16 @@ public class DetailFormatterDialog extends StatusDialog {
 		if (pattern == null || "".equals(pattern)) { //$NON-NLS-1$
 			return;
 		}
-		final IJavaSearchResultCollector collector= new IJavaSearchResultCollector() {
+		
+		final SearchRequestor collector = new SearchRequestor() {
 			private boolean fFirst= true;
 			
-			public void aboutToStart() {
+			public void endReporting() {
+				checkValues();
 			}
 
-			public void accept(IResource resource, int start, int end, IJavaElement enclosingElement, int accuracy) {
+			public void acceptSearchMatch(SearchMatch match) throws CoreException {
+				Object enclosingElement = match.getElement();
 				if (!fFirst) {
 					return;
 				}
@@ -354,21 +358,16 @@ public class DetailFormatterDialog extends StatusDialog {
 					fType= (IType) enclosingElement;
 				}
 			}
-
-			public void done() {
-				checkValues();
-			}
-
-			public IProgressMonitor getProgressMonitor() {
-				return null;
-			}
 		};
 		
 		SearchEngine engine= new SearchEngine(JavaCore.getWorkingCopies(null));
+		SearchPattern searchPattern = SearchPattern.createPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.ALL_OCCURRENCES, SearchPattern.R_PATTERN_MATCH, false);
 		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
+		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
 		try {
-			engine.search(JavaPlugin.getWorkspace(), SearchEngine.createSearchPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, true), scope, collector);
-		} catch (JavaModelException e) {
+			engine.search(searchPattern, participants, scope, collector, null);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
 		}
 	}
 	
