@@ -393,7 +393,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 */	
 	protected File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
 		IPath path = getWorkingDirectoryPath(configuration);
-		if (path != null) {
+		if (path == null) {
+			// default working dir is the project if this config has a project
+			IJavaProject jp = getJavaProject(configuration);
+			if (jp != null) {
+				IProject p = jp.getProject();
+				return p.getLocation().toFile();
+			}
+		} else {
 			if (path.isAbsolute()) {
 				File dir = new File(path.toOSString());
 				if (dir.isDirectory()) {
