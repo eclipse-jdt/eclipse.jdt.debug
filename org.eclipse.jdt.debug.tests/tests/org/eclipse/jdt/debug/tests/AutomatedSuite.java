@@ -55,6 +55,7 @@ import org.eclipse.jdt.debug.tests.core.PreLaunchBreakpointTest;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.ProjectSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.RefreshTabTests;
+import org.eclipse.jdt.debug.tests.core.RunToLineTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
 import org.eclipse.jdt.debug.tests.core.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.core.SourceLookupTests;
@@ -151,6 +152,7 @@ public class AutomatedSuite extends DebugSuite {
 		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
 		addTest(new TestSuite(ArrayTests.class));
 		addTest(new TestSuite(IOConsoleTests.class));
+		addTest(new TestSuite(RunToLineTests.class));
 		// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
 		
