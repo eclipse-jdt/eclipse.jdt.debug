@@ -146,16 +146,20 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			private void handleSuspendEvent(DebugEvent event) {
 				Object source = event.getSource();
 				if (source instanceof IJavaThread) {
-					IJavaStackFrame frame= null;
 					try {
-						frame= (IJavaStackFrame) ((IJavaThread) source).getTopStackFrame();
+						final IJavaStackFrame frame= (IJavaStackFrame) ((IJavaThread) source).getTopStackFrame();
 						if (isExpectedFrame(frame)) {
-							DebugPlugin.getDefault().removeDebugEventListener(listener);
-							try {
-								doStepIn(frame, method);
-							} catch (DebugException e) {
-								showErrorMessage(e.getStatus().getMessage());
-							}
+							DebugPlugin plugin = DebugPlugin.getDefault();
+							plugin.removeDebugEventListener(listener);
+							plugin.asyncExec(new Runnable() {
+								public void run() {
+									try {
+										doStepIn(frame, method);
+									} catch (DebugException e) {
+										showErrorMessage(e.getStatus().getMessage());
+									}
+								}
+							});
 						}
 					} catch (DebugException e) {
 						return;
