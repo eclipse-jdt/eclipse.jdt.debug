@@ -6,7 +6,11 @@ package org.eclipse.jdt.internal.debug.core;
  */
  
 import com.sun.jdi.*;
-import java.util.*;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.model.*;import org.eclipse.jdt.debug.core.*;
+import java.util.*;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.*;
+import org.eclipse.jdt.debug.core.*;
+
 /**
  * The value of a variable
  */
@@ -56,10 +60,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 
 	public int getElementType() {
 		return VALUE;
-	}
-
-	public String getName() {
-		return null;
 	}
 	
 	/**
@@ -374,5 +374,5 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		}
 		
 		return toString;		
-	} 
+	} 
 }

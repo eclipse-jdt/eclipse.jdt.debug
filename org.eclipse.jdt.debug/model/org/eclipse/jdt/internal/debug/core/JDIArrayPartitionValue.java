@@ -31,10 +31,6 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	public int getElementType() {
 		return VALUE;
 	}
-
-	public String getName() {
-		return null;
-	}
 	
 	public String getReferenceTypeName() {
 		return "";
@@ -105,5 +101,4 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	public String getSignature() {
 		return null;
 	}
-
 }
