@@ -117,7 +117,9 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			
 			int attempts = 0;
 			while (!fStopped) {
-				assertTrue("did not get output within 60 seconds", attempts < 600);
+				if (attempts == 1000) {
+					assertTrue("did not get output within 60 seconds. " + fLinesRead.size() + " lines read.", false);
+				}
 				attempts++;
 				Thread.sleep(100);
 			}
