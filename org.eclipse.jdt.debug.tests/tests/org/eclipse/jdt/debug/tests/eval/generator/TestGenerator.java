@@ -187,7 +187,7 @@ public class TestGenerator {
 			genTestUnaryOpNumericType(type, Op_twiddle, code);
 		}
 		
-		createJavaFile(className, "EvalSimpleTests", 15, 1, code);
+		createJavaFile(className, "EvalSimpleTests", 15, 1, true, code);
 
 	}
 	
@@ -201,7 +201,7 @@ public class TestGenerator {
 		genTestBooleanBinaryOpBoolean(Op_xor, code);
 		genTestUnaryOpBoolean(Op_not, code);
 		
-		createJavaFile(className, "EvalSimpleTests", 15, 1, code);
+		createJavaFile(className, "EvalSimpleTests", 15, 1, false, code);
 	}
 	
 	public static void genTestsStringPlusOpAllTypes() throws Exception {
@@ -223,7 +223,7 @@ public class TestGenerator {
 		genTestTypeBinaryOpTypeBinaryPromotion(T_String, Op_plus, T_String, code);
 		genTestTypeBinaryOpTypeBinaryPromotion(T_String, Op_plus, T_null, code);
 		
-		createJavaFile(className, "EvalSimpleTests", 15, 1, code);
+		createJavaFile(className, "EvalSimpleTests", 15, 1, true, false, code);
 	}
 	
 	public static void genTestsLocalVarValue() throws Exception {
@@ -245,7 +245,7 @@ public class TestGenerator {
 		genTestLocalVarValue(T_boolean, code);
 //		genTestLocalVarValue(T_null, code);
 
-		createJavaFile(className, "EvalSimpleTests", 37, 1, code);
+		createJavaFile(className, "EvalSimpleTests", 37, 1, true, code);
 	}
 	
 	public static void genTestsLocalVarAssignment() throws Exception {
@@ -266,7 +266,7 @@ public class TestGenerator {
 		genTestLocalVarAssignment(T_String, code);
 		genTestLocalVarAssignment(T_boolean, code);
 					
-		createJavaFile(className, "EvalSimpleTests", 37, 1, code);
+		createJavaFile(className, "EvalSimpleTests", 37, 1, true, code);
 	}
 	
 	public static void genTestsNumericTypeAllAssignmentOpsAllTypes(int type) throws Exception {
@@ -290,7 +290,7 @@ public class TestGenerator {
 		}
 		
 		
-		createJavaFile(className, "EvalSimpleTests", 37, 1, code);
+		createJavaFile(className, "EvalSimpleTests", 37, 1, false, code);
 
 	}
 
@@ -311,7 +311,7 @@ public class TestGenerator {
 					"\n");
 		genTestTypeAssignmentOpType(T_boolean, Op_xorAss, T_boolean, code);
 		
-		createJavaFile(className, "EvalSimpleTests", 37, 1, code);
+		createJavaFile(className, "EvalSimpleTests", 37, 1, false, code);
 	}
 	
 	public static void genTestsStringPlusAssignmentOpAllTypes() throws Exception {
@@ -333,7 +333,7 @@ public class TestGenerator {
 		genTestTypeAssignmentOpType(T_String, Op_plusAss, T_String, code);
 		genTestTypeAssignmentOpType(T_String, Op_plusAss, T_null, code);
 		
-		createJavaFile(className, "EvalSimpleTests", 37, 1, code);
+		createJavaFile(className, "EvalSimpleTests", 37, 1, true, false, code);
 	}
 	
 	public static void genTestsNumericTypeCast() throws Exception {
@@ -349,7 +349,7 @@ public class TestGenerator {
 		genTestsNumericTypeCast(T_float, code);
 		genTestsNumericTypeCast(T_double, code);
 					
-		createJavaFile(className, "EvalSimpleTests", 15, 1, code);
+		createJavaFile(className, "EvalSimpleTests", 15, 1, false, code);
 	}
 	
 	public static void genTestsAllIntegerTypesAllXfixOps() throws Exception {
@@ -365,7 +365,7 @@ public class TestGenerator {
 		genTestsNumericTypeAllXfixOps(T_float, code);
 		genTestsNumericTypeAllXfixOps(T_double, code);
 		
-		createJavaFile(className, "EvalSimpleTests", 37, 1, code);
+		createJavaFile(className, "EvalSimpleTests", 37, 1, false, code);
 	}
 	
 	public static void genTestsQualifiedFieldValue() throws Exception {
@@ -383,7 +383,7 @@ public class TestGenerator {
 		genTestFieldValue(T_String, 0, code);
 		genTestFieldValue(T_boolean, 0, code);
 
-		createJavaFile(className, "EvalTypeTests", 73, 1, code);
+		createJavaFile(className, "EvalTypeTests", 73, 1, true, code);
 	}
 		
 	public static void genTestsQualifiedStaticFieldValue() throws Exception {
@@ -401,7 +401,7 @@ public class TestGenerator {
 		genTestStaticFieldValue(T_String, 0, code);
 		genTestStaticFieldValue(T_boolean, 0, code);
 
-		createJavaFile(className, "EvalTypeTests", 73, 1, code);
+		createJavaFile(className, "EvalTypeTests", 73, 1, true, code);
 
 		code = new StringBuffer();
 		
@@ -417,7 +417,7 @@ public class TestGenerator {
 		genTestStaticFieldValue(T_String, 1, code);
 		genTestStaticFieldValue(T_boolean, 1, code);
 
-		createJavaFile(className, "EvalTypeTests", 73, 1, code);
+		createJavaFile(className, "EvalTypeTests", 73, 1, true, code);
 	}
 		
 	public static void genTestsFieldValue() throws Exception {
@@ -435,7 +435,7 @@ public class TestGenerator {
 		genTestFieldValue(T_String, 2, code);
 		genTestFieldValue(T_boolean, 2, code);
 
-		createJavaFile(className, "EvalTypeTests", 63, 2, code);
+		createJavaFile(className, "EvalTypeTests", 63, 2, true, code);
 	}
 		
 	public static void genTestsStaticFieldValue() throws Exception {
@@ -453,11 +453,11 @@ public class TestGenerator {
 		genTestStaticFieldValue(T_String, 2, code);
 		genTestStaticFieldValue(T_boolean, 2, code);
 
-		createJavaFile(className, "EvalTypeTests", 63, 2, code);
+		createJavaFile(className, "EvalTypeTests", 63, 2, true, code);
 
 		className = "StaticFieldValueTests2";
 		
-		createJavaFile(className, "EvalTypeTests", 67, 2, code);
+		createJavaFile(className, "EvalTypeTests", 67, 2, true, code);
 	}
 		
 	public static void genTestsArrayValue() throws Exception {
@@ -485,7 +485,7 @@ public class TestGenerator {
 		genTestArrayValue(T_String, code);
 		genTestArrayValue(T_boolean, code);
 
-		createJavaFile(className, "EvalArrayTests", 37, 1, code);
+		createJavaFile(className, "EvalArrayTests", 37, 1, true, code);
 	}
 		
 	public static void genTestsArrayAssignment() throws Exception {
@@ -503,7 +503,7 @@ public class TestGenerator {
 		genTestArrayAssignment(T_String, code);
 		genTestArrayAssignment(T_boolean, code);
 
-		createJavaFile(className, "EvalArrayTests", 37, 1, code);
+		createJavaFile(className, "EvalArrayTests", 37, 1, true, code);
 	}
 		
 	public static void genTestsArrayAllocation() throws Exception {
@@ -521,7 +521,7 @@ public class TestGenerator {
 		genTestArrayAllocation(T_String, code);
 		genTestArrayAllocation(T_boolean, code);
 
-		createJavaFile(className, "EvalArrayTests", 37, 1, code);
+		createJavaFile(className, "EvalArrayTests", 37, 1, false, code);
 	}
 		
 	public static void genTestsArrayInitialization() throws Exception {
@@ -539,7 +539,7 @@ public class TestGenerator {
 		genTestArrayInitialization(T_String, code);
 		genTestArrayInitialization(T_boolean, code);
 
-		createJavaFile(className, "EvalArrayTests", 37, 1, code);
+		createJavaFile(className, "EvalArrayTests", 37, 1, true, code);
 	}
 	//----------------------------
 	
@@ -1352,7 +1352,11 @@ public class TestGenerator {
 
 	//------------------------------
 
-	public static void createJavaFile(String className, String testClass, int breakPointLine, int frameNumber, StringBuffer tests) throws Exception {
+	public static void createJavaFile(String className, String testClass, int breakPointLine, int frameNumber, boolean importJDIObjectValue, StringBuffer tests) throws Exception {
+		createJavaFile(className, testClass, breakPointLine, frameNumber, importJDIObjectValue, true, tests);
+	}
+	
+	public static void createJavaFile(String className, String testClass, int breakPointLine, int frameNumber, boolean importJDIObjectValue, boolean importIJavaPrimitiveValue, StringBuffer tests) throws Exception {
 		
 		StringBuffer code = new StringBuffer();
 		
@@ -1367,15 +1371,15 @@ public class TestGenerator {
 		code.append(" *     IBM Corporation - initial API and implementation\n");
 		code.append(" *******************************************************************************/\n");
 		code.append("package org.eclipse.jdt.debug.tests.eval;\n\n" +
-					"import junit.framework.Test;\n" +
-					"import junit.framework.TestSuite;\n" +
-					"import org.eclipse.core.resources.ResourcesPlugin;\n" +
-					"import org.eclipse.debug.core.model.IValue;\n" +
-					"import org.eclipse.jdt.core.JavaCore;\n" +
-					"import org.eclipse.jdt.debug.core.IJavaDebugTarget;\n" +
-					"import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;\n" +
-					"import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;\n" +
-					"\n" +
+					"import org.eclipse.debug.core.model.IValue;\n");
+					
+		if (importIJavaPrimitiveValue) {
+			code.append("import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;\n");
+		}
+		if (importJDIObjectValue) {
+			code.append("import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;\n");
+		}
+		code.append("\n" +
 					"public class " + className + " extends Tests {\n" +
 					"\n" +
 					"\tpublic " + className + "(String arg) {\n" +

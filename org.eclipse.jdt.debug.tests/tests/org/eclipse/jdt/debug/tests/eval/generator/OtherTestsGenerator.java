@@ -155,7 +155,7 @@ public class OtherTestsGenerator extends TestGenerator {
 		TypeHierarchyTestsGenerator.createTestQualifier(TypeHierarchyTestsGenerator.N_C, TypeHierarchyTestsGenerator.M4, code);
 		TypeHierarchyTestsGenerator.createTestQualifier(TypeHierarchyTestsGenerator.N_C, TypeHierarchyTestsGenerator.S6, code);
 
-		createJavaFile(code, "TestsTypeHierarchy1", "EvalTypeHierarchyTests",   146, 1, 1);
+		createJavaFile(code, "TestsTypeHierarchy1", "EvalTypeHierarchyTests",   146, 1, 1, false);
 	}
 
 	public static void genTestsTypeHierarchy2() throws Exception {
@@ -163,7 +163,7 @@ public class OtherTestsGenerator extends TestGenerator {
 
 		TypeHierarchyTestsGenerator.createTest_TestC(code, TypeHierarchyTestsGenerator.CC);
 		
-		createJavaFile(code, "TestsTypeHierarchy2", "EvalTypeHierarchyTests",   119, 2, 1);
+		createJavaFile(code, "TestsTypeHierarchy2", "EvalTypeHierarchyTests",   119, 2, 1, false);
 	}
 
 	/**
@@ -228,7 +228,7 @@ public class OtherTestsGenerator extends TestGenerator {
 		createTestNumberLiteral2("1e-9d", T_double, code);
 		createTestNumberLiteral2("1e137", T_double, code);
 
-		createJavaFile(code, "TestsNumberLiteral", "EvalSimpleTests", 37, 1, 1);
+		createJavaFile(code, "TestsNumberLiteral", "EvalSimpleTests", 37, 1, 1, false);
 	}
 
 	/**
@@ -266,6 +266,10 @@ public class OtherTestsGenerator extends TestGenerator {
 
 
 	public static void createJavaFile(StringBuffer tests, String className, String testClass, int lineNumber, int numberFrames, int hitCount) throws Exception {
+		createJavaFile(tests, className, testClass, lineNumber, numberFrames, hitCount, true);
+	}
+		
+	public static void createJavaFile(StringBuffer tests, String className, String testClass, int lineNumber, int numberFrames, int hitCount, boolean importJDIObjectValue) throws Exception {
 		
 		StringBuffer code= new StringBuffer();
 		
@@ -282,7 +286,9 @@ public class OtherTestsGenerator extends TestGenerator {
 		code.append("package org.eclipse.jdt.debug.tests.eval;\n\n");
 		code.append("import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;\n\n");
 		code.append("import org.eclipse.debug.core.model.IValue;\n");
-		code.append("import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;\n\n");
+		if (importJDIObjectValue) {
+			code.append("import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;\n\n");
+		}
 		code.append("public class " + className + " extends Tests {\n");
 		code.append("\t/**\n");
 		code.append("\t * Constructor for TypeHierarchy.\n");

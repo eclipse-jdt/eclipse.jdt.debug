@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.eval;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
-import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
 public class NumericTypesCastTests extends Tests {
 

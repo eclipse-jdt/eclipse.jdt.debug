@@ -13,8 +13,6 @@ package org.eclipse.jdt.debug.tests.eval;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
-
 public class TestsNumberLiteral extends Tests {
 	/**
 	 * Constructor for TypeHierarchy.
