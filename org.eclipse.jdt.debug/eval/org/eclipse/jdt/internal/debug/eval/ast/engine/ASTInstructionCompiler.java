@@ -2432,9 +2432,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		List arguments = node.arguments();
-		ITypeBinding varargsParameterType= parameterTypes[paramCount - 1];
 		int argCount = arguments.size();
-		if (methodBinding.isVarargs() && !(paramCount == argCount && varargsParameterType.getDimensions() == ((Expression)arguments.get(argCount - 1)).resolveTypeBinding().getDimensions())) {
+		if (methodBinding.isVarargs() && !(paramCount == argCount && parameterTypes[paramCount - 1].getDimensions() == ((Expression)arguments.get(argCount - 1)).resolveTypeBinding().getDimensions())) {
 			// if this method is a varargs, and if the method is invoked using the varargs syntax
 			// (multiple arguments) and not an array
 			Iterator iterator= arguments.iterator();
@@ -2443,6 +2442,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				((Expression) iterator.next()).accept(this);
 			}
 			// create a array of the remainder arguments
+			ITypeBinding varargsParameterType= parameterTypes[paramCount - 1];
 			push(new ArrayInitializerInstruction(getTypeSignature(varargsParameterType.getElementType()), argCount - paramCount + 1, varargsParameterType.getDimensions(), fCounter));
 			while (iterator.hasNext()) {
 				((Expression) iterator.next()).accept(this);
