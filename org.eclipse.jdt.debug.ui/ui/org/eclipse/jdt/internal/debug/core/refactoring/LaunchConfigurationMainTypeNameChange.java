@@ -218,10 +218,10 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 			if (fOldTypeName.equals(typeName)) {
 				return new RefactoringStatus();
 			} else {
-				return RefactoringStatus.createWarningStatus(MessageFormat.format("The main type for the launch configuration \"{0}\" is no more \"{1}\".", new String[] {fLaunchConfiguration.getName(), fOldTypeName}));
+				return RefactoringStatus.createWarningStatus(MessageFormat.format(RefactoringMessages.getString("LaunchConfigurationMainTypeNameChange.5"), new String[] {fLaunchConfiguration.getName(), fOldTypeName})); //$NON-NLS-1$
 			}
 		} else {
-			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format("The launch configuration \"{0}\" no more exists", new String[] {fLaunchConfiguration.getName()}));
+			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(RefactoringMessages.getString("LaunchConfigurationMainTypeNameChange.6"), new String[] {fLaunchConfiguration.getName()})); //$NON-NLS-1$
 		}
 	}
 }
