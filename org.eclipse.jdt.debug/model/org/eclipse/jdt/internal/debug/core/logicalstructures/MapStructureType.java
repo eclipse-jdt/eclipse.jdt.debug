@@ -15,6 +15,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaValue;
 
 /**
  * Logical strucuture type for maps.
@@ -30,8 +31,13 @@ public class MapStructureType extends LogicalObjectStructureInterfaceType {
 			 * @see org.eclipse.jdt.debug.core.IEvaluationRunnable#run(org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public void run(IJavaThread thread, IProgressMonitor monitor) throws DebugException {
-				IJavaObject entrySet = (IJavaObject) getObject().sendMessage("entrySet", "()Ljava/util/Set;", null, thread, false);  //$NON-NLS-1$//$NON-NLS-2$
-				setLogicalStructure(entrySet.sendMessage("toArray", "()[Ljava/lang/Object;", null, thread, false)); //$NON-NLS-1$ //$NON-NLS-2$
+				IJavaValue value = getObject().sendMessage("entrySet", "()Ljava/util/Set;", null, thread, false);  //$NON-NLS-1$//$NON-NLS-2$
+				if (value instanceof IJavaObject) {
+					setLogicalStructure(((IJavaObject)value).sendMessage("toArray", "()[Ljava/lang/Object;", null, thread, false)); //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					// could be null - see bug 63828
+					setLogicalStructure(value);
+				}
 			}
 			
 		};
