@@ -85,12 +85,17 @@ public class UnresolvedJREStatusHandler implements IStatusHandler {
 	 * 
 	 * @see IStatusHandler#handleStatus(IStatus, Object)
 	 */
-	public Object handleStatus(IStatus status, Object source) throws CoreException {
+	public Object handleStatus(final IStatus status, Object source) throws CoreException {
 		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		fConfig = type.newInstance(null, "TEMP_CONFIG"); //$NON-NLS-1$
 
-		JREDialog dialog = new JREDialog(status);
-		dialog.open();
+		Runnable r = new Runnable() {
+			public void run() {
+				JREDialog dialog = new JREDialog(status);
+				dialog.open();				
+			}
+		};
+		JDIDebugUIPlugin.getStandardDisplay().syncExec(r);
 		
 		IVMInstall vm = null;
 		String typeId = fConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
