@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
@@ -48,6 +47,7 @@ import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
+import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 
 /**
  * The central access point for launching support. This class manages
@@ -161,7 +161,7 @@ public final class JavaRuntime {
 	 * 
 	 * @deprecated - use <code>IProcess.ATTR_CMDLINE</code>
 	 */
-	public final static String ATTR_CMDLINE= IProcess.ATTR_CMDLINE;
+	public final static String ATTR_CMDLINE= LaunchingPlugin.getUniqueIdentifier() + ".launcher.cmdLine"; //$NON-NLS-1$
 
 	private static IVMInstallType[] fgVMTypes= null;
 	private static String fgDefaultVMId= null;
@@ -190,7 +190,8 @@ public final class JavaRuntime {
 	private static ListenerList fgVMListeners = new ListenerList(5);
 	
 	/**
-	 * Not intended to be instantiated.
+	 * This class contains only static methods, and is not intended
+	 * to be instantiated.
 	 */
 	private JavaRuntime() {
 	}
@@ -1092,7 +1093,9 @@ public final class JavaRuntime {
 	}
 
 	private static String getVMsAsXML() throws IOException {
-		VMDefinitionsContainer container = new VMDefinitionsContainer();		
+		VMDefinitionsContainer container = new VMDefinitionsContainer(true);	
+		container.setDefaultVMInstallCompositeID(getDefaultVMId());
+		container.setDefaultVMInstallConnectorTypeID(getDefaultVMConnectorId());	
 		IVMInstallType[] vmTypes= getVMInstallTypes();
 		for (int i = 0; i < vmTypes.length; ++i) {
 			IVMInstall[] vms = vmTypes[i].getVMInstalls();
@@ -1155,14 +1158,18 @@ public final class JavaRuntime {
 		fgDefaultVMId = vmContainer.getDefaultVMInstallCompositeID();
 		fgDefaultVMConnectorId = vmContainer.getDefaultVMInstallConnectorTypeID();
 		
+		// Create the underlying VMs for each VMStandin
 		List vmList = vmContainer.getValidVMList();
 		Iterator vmListIterator = vmList.iterator();
 		while (vmListIterator.hasNext()) {
 			VMStandin vmStandin = (VMStandin) vmListIterator.next();
 			vmStandin.convertToRealVM();
 		}
+		
+		// Cache the Java version information for each VM
+		LaunchingPlugin.setJavaVersionInfoMap(vmContainer.getJavaVersionInfoMap());
 	}
-			
+	
 	/**
 	 * Evaluates library locations for a IVMInstall. If no library locations are set on the install, a default
 	 * location is evaluated and checked if it exists.
@@ -1214,7 +1221,7 @@ public final class JavaRuntime {
 	 * Look out on the file system for VMs.  Try to find one VM for each VM type.
 	 * Put the results in a result collector and return it.	 */
 	private static VMDefinitionsContainer detectVMConfiguration() {
-		VMDefinitionsContainer resultCollector = new VMDefinitionsContainer();
+		VMDefinitionsContainer resultCollector = new VMDefinitionsContainer(false);
 		
 		// Try to detect a VM for each declared VM type
 		IVMInstallType[] vmTypes= getVMInstallTypes();

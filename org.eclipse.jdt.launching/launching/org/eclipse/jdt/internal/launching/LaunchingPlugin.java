@@ -51,7 +51,6 @@ import org.eclipse.jdt.launching.IVMConnector;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 
@@ -77,11 +76,47 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		
 	private static final String EMPTY_STRING = "";    //$NON-NLS-1$
 	
+	/**
+	 * Mapping of top-level VM installation directories to results from 'java -
+	 * version' for that VM.
+	 */
+	private static Map fgJavaVersionInfoMap = new HashMap(10);
+	
 	public LaunchingPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		fgLaunchingPlugin= this;
 	}
 	
+	/**
+	 * Get the JavaVersionInfo object that corresponds to the specified
+	 * JRE install path.
+	 */
+	public static JavaVersionInfo getJavaVersionInfo(String javaInstallPath) {
+		return (JavaVersionInfo) fgJavaVersionInfoMap.get(javaInstallPath);
+	}
+	
+	/**
+	 * Add the specified JRE install path -- java version info pair to the
+	 * mapping.
+	 */
+	public static void setJavaVersionInfo(String javaInstallPath, JavaVersionInfo versionInfo) {
+		fgJavaVersionInfoMap.put(javaInstallPath, versionInfo);
+	}
+	
+	/**
+	 * Set the mapping of JRE install paths to JavaVersionInfo objects.
+	 */		
+	public static void setJavaVersionInfoMap(Map javaVersionInfoMap) {
+		fgJavaVersionInfoMap = javaVersionInfoMap;
+	}
+	
+	/**
+	 * Return the mapping of JRE install paths to JavaVersionInfo objects.
+	 */
+	public static Map getJavaVersionInfoMap() {
+		return fgJavaVersionInfoMap;
+	}
+		
 	/**
 	 * Return a <code>java.io.File</code> object that corresponds to the specified
 	 * <code>IPath</code> in the plugin directory.	 */
@@ -136,6 +171,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		ArchiveSourceLocation.closeArchives();
 		getPluginPreferences().removePropertyChangeListener(this);
 		JavaRuntime.removeVMInstallChangedListener(this);
+		JavaRuntime.saveVMConfiguration();
 		savePluginPreferences();
 		super.shutdown();
 	}

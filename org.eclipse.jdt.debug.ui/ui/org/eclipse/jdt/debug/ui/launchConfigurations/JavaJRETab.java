@@ -189,23 +189,26 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		if (fUnknownVMName == null) {
 			int selectedIndex = fJRECombo.getSelectionIndex();
 			if (selectedIndex > -1) {
+				
+				// Find the VM standin corresponding to the selected VM name
+				String selectedVMName = fJRECombo.getItem(selectedIndex);
+				VMStandin vmStandin = getVMStandin(selectedVMName);
+				
+				// A null vmStandin means the default VM was selected, in which case we want
+				// to set null attribute values.  Otherwise, retrieve the name & type ID.
 				String vmName = null;
 				String vmTypeID = null;
-				
-				// there may not be a default VM
-				int offset = 0;
-				if (fDefaultVMName != null) {
-					offset++;
-				}
-				
-				if (fDefaultVMName == null || selectedIndex > 0) {
-					VMStandin vmStandin = (VMStandin)fVMStandins.get(selectedIndex - offset);
+				if (vmStandin != null) {
 					vmName = vmStandin.getName();
 					vmTypeID = vmStandin.getVMInstallType().getId();
-				} 
+				}
+				
+				// Set the name & type ID attribute values
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
 			}	
+			
+			// Handle any attributes in the VM-specific area
 			ILaunchConfigurationTab dynamicTab = getDynamicTab();
 			if (dynamicTab == null) {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
@@ -213,6 +216,24 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 				dynamicTab.performApply(configuration);
 			}
 		}
+	}
+
+	/**
+	 * Find and return the VMStandin with the specified name.  If the specified
+	 * name is of the default VM, return <code>null</code>.
+	 */
+	private VMStandin getVMStandin(String vmName) {
+		if (vmName.equals(fDefaultVMName)) {
+			return null;
+		}
+		Iterator iterator = fVMStandins.iterator();
+		while (iterator.hasNext()) {
+			VMStandin vmStandin = (VMStandin) iterator.next();
+			if (vmStandin.getName().equals(vmName)) {
+				return vmStandin;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -388,9 +409,9 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		}
 		List vmNames = new ArrayList(numVMs);
 		
+		// Set up the default VM name
 		if (defaultVM != null) {
-			String defaultVMName = defaultVM.getName();
-			fDefaultVMName= DEFAULT_JRE_NAME_PREFIX + " (" + defaultVMName + ')'; //$NON-NLS-1$
+			fDefaultVMName = constructDefaultJREName(defaultVM);
 			vmNames.add(fDefaultVMName);
 		}
 
@@ -405,15 +426,20 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		fJRECombo.setItems((String[])vmNames.toArray(new String[vmNames.size()]));
 	}	
 	
+	protected String constructDefaultJREName(IVMInstall defaultVM) {
+		String defaultVMName = defaultVM.getName();
+		return DEFAULT_JRE_NAME_PREFIX + " (" + defaultVMName + ')'; //$NON-NLS-1$		
+	}
+	
 	/**
-	 * Cause the specified VM to be selected in the JRE combo box.
-	 * This relies on the fact that the JRE names in the combo box are in the
-	 * same order as they are in the <code>fVMStandins</code> list.
+	 * Cause the specified VM name to be selected in the JRE combo box. This
+	 * relies on the fact that the JRE names in the combo box are in the same
+	 * order as they are in the <code>fVMStandins</code> list.
 	 * 
 	 * @param typeID the VM install type identifier, or <code>null</code> to select "default"
 	 * @param vmName vm name, or <code>null</code> to select "default"
 	 */
-	protected void selectJREComboBoxEntry(String typeID, String vmName) {
+	protected void selectJREComboBoxEntry_OLD(String typeID, String vmName) {
 		int index = 0;
 		int offset = 0;
 		if (fDefaultVMName != null) {
@@ -437,6 +463,53 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 
 		fJRECombo.select(index);
 	}	
+	
+	protected void selectJREComboBoxEntry(String typeID, String vmName) {
+		
+		// Handle the default VM
+		boolean alreadyTriedDefault = false;
+		String searchName = vmName;
+		if (searchName == null || typeID == null) {
+			searchName = fDefaultVMName;
+			alreadyTriedDefault = true;
+		}
+		
+		// Find the index of the vm name in the combo box's content
+		int index = getVMNameIndex(searchName);
+		
+		// If the name wasn't found, set the 'unknown' fields
+		if (index == -1) {
+			fUnknownVMName = vmName;
+			fUnknownVMType = typeID;	
+			if (!alreadyTriedDefault) {
+				index = getVMNameIndex(fDefaultVMName);
+				if (index == -1) {
+					index = 0;
+				}
+			} else {
+				index = 0;
+			}
+		}
+		
+		// Select the VM name in the combo box
+		fJRECombo.select(index);
+	}
+	
+	/**
+	 * Return the index of the specified VM name in the array of VM names
+	 * contained in the JRE combo box widget.  Return -1 if the specified name
+	 * is not found.
+	 */
+	protected int getVMNameIndex(String searchVMName) {
+		String[] vmNames = fJRECombo.getItems();
+		for (int i = 0; i < vmNames.length; i++) {
+			if (vmNames[i].equals(searchVMName)) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
 	
 	/**
 	 * Convenience method to remove any selection in the JRE combo box
