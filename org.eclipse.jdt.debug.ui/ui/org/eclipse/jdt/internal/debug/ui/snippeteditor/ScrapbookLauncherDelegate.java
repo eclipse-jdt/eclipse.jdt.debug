@@ -39,9 +39,10 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLauncherDelegate;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.ProjectSourceLocator;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jdt.launching.VMRunnerResult;
+import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
+import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -124,8 +125,9 @@ public class ScrapbookLauncherDelegate extends JavaApplicationLauncherDelegate i
 			if (runner == null) {
 				return false;
 			}
-						
-			ISourceLocator sl= new ProjectSourceLocator(p);
+			
+			IJavaSourceLocation[] locations = JavaSourceLocator.getDefaultSourceLocations(p);
+			ISourceLocator sl= new JavaSourceLocator(locations);
 			IPath outputLocation =	p.getProject().getPluginWorkingLocation(JDIDebugUIPlugin.getDefault().getDescriptor());
 			File f = outputLocation.toFile();
 			URL u = null;
@@ -161,7 +163,7 @@ public class ScrapbookLauncherDelegate extends JavaApplicationLauncherDelegate i
 				IDebugUIEventFilter filter = new ScrapbookEventFilter(newLaunch);
 				fVMsToFilters.put(dt, filter);
 				DebugUITools.addEventFilter(filter);
-				DebugPlugin.getDefault().getLaunchManager().registerLaunch(newLaunch);
+				DebugPlugin.getDefault().getLaunchManager().addLaunch(newLaunch);
 				return true;
 			}
 		} catch (CoreException e) {

@@ -92,7 +92,7 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 				IJavaProject javaProject= JavaCore.create((IProject)element);
 				ISourceLocator sl= new ProjectSourceLocator(javaProject);
 				ILaunch launch= new Launch(launcher, ILaunchManager.DEBUG_MODE, element, sl, null, target);
-				DebugPlugin.getDefault().getLaunchManager().registerLaunch(launch);
+				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 				return true;
 			} catch (IOException e) {
 				errorDialog(DebugUIMessages.getString("JDIAttachLauncher.Unable_to_connect_to_specified_address_1"), //$NON-NLS-1$

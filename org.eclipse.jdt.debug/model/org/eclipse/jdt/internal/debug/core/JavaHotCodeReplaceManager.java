@@ -388,29 +388,42 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		new Thread(runnable).start();
 	}
 	/**
-	 * @see ILaunchListener#launchDeregistered(ILaunch)
+	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
-	public void launchDeregistered(ILaunch launch) {
+	public void launchRemoved(ILaunch launch) {
 	}
 	/**
-	 * @see ILaunchListener#launchRegistered(ILaunch)
-	 * 
 	 * Begin listening for resource changes when a launch is
-	 * registered.
+	 * registered with a hot swapable target.
+	 * 
+	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
-	public void launchRegistered(ILaunch launch) {
-		IDebugTarget debugTarget= launch.getDebugTarget();
-		if (!(debugTarget instanceof JDIDebugTarget)) {
-			return;
+	public void launchAdded(ILaunch launch) {
+		IDebugTarget[] debugTargets= launch.getDebugTargets();
+		for (int i = 0; i < debugTargets.length; i++) {
+			if (debugTargets[i] instanceof JDIDebugTarget) {
+				JDIDebugTarget target = (JDIDebugTarget)debugTargets[i];
+				if (target.supportsHotCodeReplace()) {
+					addHotSwapTarget(target);
+				} else {
+					addNonHotSwapTarget(target);
+				}				
+			}
 		}
-		JDIDebugTarget target= (JDIDebugTarget) debugTarget;
-		if (target.supportsHotCodeReplace()) {
-			fHotSwapTargets.add(target);
-		} else {
-			fNoHotSwapTargets.add(target);
+		if (!fHotSwapTargets.isEmpty()) {
+			getWorkspace().addResourceChangeListener(this);
 		}
-		getWorkspace().addResourceChangeListener(this);
 	}
+	
+	/**
+	 * Begin listening for resource changes when a launch is
+	 * registered with a hot swapable target.
+	 * 
+	 * @see ILaunchListener#launchChanged(ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {
+		launchAdded(launch);
+	}	
 	
 	public void handleDebugEvent(DebugEvent event) {
 		if (event.getSource() instanceof JDIDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
@@ -437,5 +450,29 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		// To get here, there must be no JDIDebugTargets
 		getWorkspace().removeResourceChangeListener(this);
 	}
+	
+	/**
+	 * Adds the given target to the list of hot-swappable targets.
+	 * Has no effect if the target is alread registered.
+	 * 
+	 * @param target a target that supports hot swap
+	 */
+	protected void addHotSwapTarget(JDIDebugTarget target) {
+		if (!fHotSwapTargets.contains(target)) {
+			fHotSwapTargets.add(target);
+		}
+	}
+	
+	/**
+	 * Adds the given target to the list of non hot-swappable targets.
+	 * Has no effect if the target is alread registered.
+	 * 
+	 * @param target a target that does not support hot swap
+	 */
+	protected void addNonHotSwapTarget(JDIDebugTarget target) {
+		if (!fNoHotSwapTargets.contains(target)) {
+			fNoHotSwapTargets.add(target);
+		}
+	}	
 }
 

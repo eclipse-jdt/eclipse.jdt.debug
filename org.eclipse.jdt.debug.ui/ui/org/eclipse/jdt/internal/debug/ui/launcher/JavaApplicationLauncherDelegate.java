@@ -199,7 +199,7 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 	private void registerLaunch(final ILaunch launch) {
 		SWTUtil.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
-				DebugPlugin.getDefault().getLaunchManager().registerLaunch(launch);
+				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 			}
 		});
 	}

@@ -1842,22 +1842,30 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		fSuspendOnUncaughtExceptionBreakpoint = suspendOnUncaughtExceptionBreakpoint;
 	}
 	/**
-	 * @see ILaunchListener#launchDeregistered(ILaunch)
+	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
-	public void launchDeregistered(ILaunch launch) {
-		if (isTerminated() || isDisconnected() || !this.equals(launch.getDebugTarget())) {
+	public void launchRemoved(ILaunch launch) {
+		if (isTerminated() || isDisconnected()) {
 			return;
 		}
-		// This target has been deregistered, but it hasn't successfully terminated.
-		// Update internal state to reflect that it is disconnected
-		disconnected();
+		if (launch.equals(getLaunch())) {
+			// This target has been deregistered, but it hasn't successfully terminated.
+			// Update internal state to reflect that it is disconnected
+			disconnected();
+		}
 	}
 
 	/**
-	 * @see ILaunchListener#launchRegistered(ILaunch)
+	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
-	public void launchRegistered(ILaunch launch) {
+	public void launchAdded(ILaunch launch) {
 	}
+	
+	/**
+	 * @see ILaunchListener#launchChanged(ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {
+	}	
 
 }
 

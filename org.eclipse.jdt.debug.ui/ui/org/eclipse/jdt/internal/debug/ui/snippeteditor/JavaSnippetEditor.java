@@ -338,7 +338,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * The VM has terminated, update state
 	 */
 	protected void vmTerminated() {
-		DebugPlugin.getDefault().getLaunchManager().deregisterLaunch(fVM.getLaunch());
+		DebugPlugin.getDefault().getLaunchManager().removeLaunch(fVM.getLaunch());
 		fVM= null;
 		fThread= null;
 		fEvaluationContext= null;
