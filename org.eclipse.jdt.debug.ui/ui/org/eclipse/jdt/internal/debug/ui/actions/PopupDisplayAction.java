@@ -44,6 +44,10 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 	private String snippet;
 	private String resultString;
 
+	public PopupDisplayAction() {
+		super();
+	}
+	
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		return resultString;
 	}
@@ -71,6 +75,7 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 			return;
 		} finally {
 			viewer = null;
+			evaluationCleanup();
 		}
 		
 	}
@@ -112,7 +117,6 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 					dataDisplay.displayExpressionValue(resultString);
 				}
 			}
-			evaluationCleanup();
 		}
 
 		/* (non-Javadoc)
