@@ -80,7 +80,9 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut {
 		IJavaElement javaElement = (IJavaElement) input.getAdapter(IJavaElement.class);
 		if (javaElement != null) {
 			searchAndLaunch(new Object[] {javaElement}, mode);
-		} 
+		} else {
+			MessageDialog.openInformation(getShell(), LauncherMessages.getString("appletlauncher.search.dialog.title"), LauncherMessages.getString("appletlauncher.search.dialog.error.noapplets"));   //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	/**

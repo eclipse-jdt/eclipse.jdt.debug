@@ -189,7 +189,11 @@ public class AppletLaunchConfigurationUtils {
 			element= ((IFileEditorInput)element).getFile();
 		}
 		if (element instanceof IResource) {
-			element= JavaCore.create((IResource)element);
+			IJavaElement javaElement = JavaCore.create((IResource)element);
+			if (javaElement != null && !javaElement.exists()) {
+				// do not consider the resouce - corresponding java element does not exist
+				element = null;
+			}
 		}
 		return element;
 	}
