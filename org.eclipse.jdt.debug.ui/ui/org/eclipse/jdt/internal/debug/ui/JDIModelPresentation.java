@@ -897,7 +897,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
 		}
 		return flags;
 	}
