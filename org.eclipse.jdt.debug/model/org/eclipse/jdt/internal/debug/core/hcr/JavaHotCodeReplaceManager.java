@@ -921,7 +921,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				}
 			}
 		}
-		// To get here, there must be no JDIDebugTargets
+		// To get here, there must be no running JDIDebugTargets
 		getWorkspace().removeResourceChangeListener(this);
 	}
 	
