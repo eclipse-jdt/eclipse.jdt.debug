@@ -195,8 +195,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @throws DebugException The exception with a status code of <code>REQUEST_FAILED</code>
 	 */
 	public void requestFailed(String message,  Exception e) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			DebugException.REQUEST_FAILED, message, e));	
+		requestFailed(message, e, DebugException.REQUEST_FAILED);
 	}
 	
 	/**
@@ -210,13 +209,25 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	public void targetRequestFailed(String message, RuntimeException e) throws DebugException {
 		if (e == null || fgJDIExceptions.contains(e.getClass())) {
-			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				DebugException.TARGET_REQUEST_FAILED, message, e));
+			requestFailed(message, e, DebugException.TARGET_REQUEST_FAILED);
 		} else {
 			throw e;
 		}
 	}
-	
+
+	/**
+	 * Throws a new debug exception with the given status code.
+	 * 
+	 * @param message Failure message
+	 * @param e Exception that has occurred (<code>can be null</code>)
+	 * @param code status code
+	 * @throws DebugException a new exception with given status code
+	 */
+	public void requestFailed(String message,  Exception e, int code) throws DebugException {
+		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
+			code, message, e));	
+	}
+		
 	/**
 	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>.
 	 * 

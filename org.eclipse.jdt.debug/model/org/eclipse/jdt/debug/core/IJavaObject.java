@@ -40,6 +40,10 @@ public interface IJavaObject extends IJavaValue {
 	 * the failure.</li>
 	 * <li>This object does not implement the specified method</li>
 	 * <li>An exception occurs while invoking the specified method</li>
+	 * <li>The given thread is already performing a message send,
+	 * 	(status code <code>IJavaThread.ERR_NESTED_METHOD_INVOCATION</code>)</li>
+	 * <li>The given thread is not currently suspended
+	 *  (status code <code>IJavaThread.ERR_THREAD_NOT_SUSPENDED</code>)</li>
 	 * </ul>
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, boolean superSend) throws DebugException;	

@@ -22,6 +22,22 @@ import org.eclipse.jdt.core.IJavaProject;
 public interface IJavaThread extends IThread {
 	
 	/**
+	 * Status code indicating a request failed because a thread
+	 * was not suspended.
+	 */
+	public static final int ERR_THREAD_NOT_SUSPENDED = 100;
+	
+	/**
+	 * Status code indicating a request to perform a message send
+	 * failed because a thread was already performing a message send.
+	 * 
+	 * @see IJavaObject#sendMessage(String, String, IJavaValue[], IJavaThread, boolean)
+	 * @see IJavaClassType#sendMessage(String, String, IJavaValue[], IJavaThread)
+	 * @see IJavaClassType#newInstance(String, IJavaValue[], IJavaThread)
+	 */
+	public static final int ERR_NESTED_METHOD_INVOCATION = 101;	
+	
+	/**
 	 * Returns whether this thread is a system thread.
 	 *
 	 * @return whether this thread is a system thread

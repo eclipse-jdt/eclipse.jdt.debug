@@ -596,24 +596,25 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		if (receiverClass != null && receiverObject != null) {
 			throw new IllegalArgumentException(JDIDebugModelMessages.getString("JDIThread.can_only_specify_one_receiver_for_a_method_invocation")); //$NON-NLS-1$
 		}
-		// this is synchronized such that any other operation that
-		// might be resuming this thread has a chance to complete before
-		// we test if this thread is already runnnig. See bug 6518.
-		synchronized (this) {
-			if (!isSuspended()) {
-				requestFailed(JDIDebugModelMessages.getString("JDIThread.Evaluation_failed_-_thread_not_suspended"), null); //$NON-NLS-1$
-			}
-		}
-		if (isInvokingMethod()) {
-			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null); //$NON-NLS-1$
-		}
 		Value result= null;
 		int timeout= getRequestTimeout();
 		try {
-			// set the request timeout to be infinite
-			setRequestTimeout(Integer.MAX_VALUE);
-			setRunning(true);
-			setInvokingMethod(true);
+			// this is synchronized such that any other operation that
+			// might be resuming this thread has a chance to complete before
+			// we determine if it is safe to continue with a method invocation.
+			// See bugs 6518, 14069
+			synchronized (this) {
+				if (!isSuspended()) {
+					requestFailed(JDIDebugModelMessages.getString("JDIThread.Evaluation_failed_-_thread_not_suspended"), null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
+				}
+				if (isInvokingMethod()) {
+					requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); //$NON-NLS-1$
+				}				
+				// set the request timeout to be infinite
+				setRequestTimeout(Integer.MAX_VALUE);
+				setRunning(true);
+				setInvokingMethod(true);				
+			}
 			preserveStackFrames();
 			if (receiverClass == null) {
 				result= receiverObject.invokeMethod(getUnderlyingThread(), method, args, ClassType.INVOKE_SINGLE_THREADED);
