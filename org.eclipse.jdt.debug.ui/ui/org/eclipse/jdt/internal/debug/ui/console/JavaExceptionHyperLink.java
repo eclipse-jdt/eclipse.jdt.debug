@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.console;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -25,6 +28,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionDialog;
+import org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
@@ -86,7 +90,9 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 				if (type != null) {
 					checked = AddExceptionDialog.getExceptionType(type) == AddExceptionDialog.CHECKED_EXCEPTION;
 				}
-				IJavaExceptionBreakpoint breakpoint = JDIDebugModel.createExceptionBreakpoint(res, fExceptionName, true, true, checked, true, null);
+				Map map = new HashMap();
+				map.put(JavaBreakpointPage.ATTR_DELETE_ON_CANCEL, JavaBreakpointPage.ATTR_DELETE_ON_CANCEL);
+				IJavaExceptionBreakpoint breakpoint = JDIDebugModel.createExceptionBreakpoint(res, fExceptionName, true, true, checked, true, map);
 				showProperties(breakpoint);
 			}
 		} catch (CoreException e) {

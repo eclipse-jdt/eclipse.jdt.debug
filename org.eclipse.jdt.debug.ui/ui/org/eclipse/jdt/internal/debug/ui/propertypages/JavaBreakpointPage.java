@@ -51,6 +51,12 @@ public class JavaBreakpointPage extends PropertyPage {
 	
 	protected List fErrorMessages= new ArrayList();
 	
+	/**
+	 * Attribute used to indicate that a breakpoint should be deleted
+	 * when cancel is pressed.
+	 */
+	public static final String ATTR_DELETE_ON_CANCEL = JDIDebugUIPlugin.getUniqueIdentifier() + ".ATTR_DELETE_ON_CANCEL";  //$NON-NLS-1$
+	
 	private static final String fgHitCountErrorMessage= PropertyPageMessages.getString("JavaBreakpointPage.0"); //$NON-NLS-1$
 	
 	/**
@@ -60,6 +66,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	public boolean performOk() {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
+				getBreakpoint().getMarker().setAttribute(ATTR_DELETE_ON_CANCEL, (String)null);
 				doStore();
 			}
 		};
@@ -402,5 +409,17 @@ public class JavaBreakpointPage extends PropertyPage {
 		return button;
 	}
 	
-	
+	/**
+	 * Check to see if the breakpoint should be deleted.
+	 */
+	public boolean performCancel() {
+		try {
+			if (getBreakpoint().getMarker().getAttribute(ATTR_DELETE_ON_CANCEL) != null) {
+				getBreakpoint().delete();
+			}
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.errorDialog(PropertyPageMessages.getString("JavaBreakpointPage.9"), e.getStatus()); //$NON-NLS-1$
+		}
+		return super.performCancel();
+	}
 }
