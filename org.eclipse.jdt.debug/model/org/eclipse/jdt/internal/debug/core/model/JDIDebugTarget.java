@@ -1791,6 +1791,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				if (jdiThread == null) {
 					return false;
 				}
+			} else {
+				jdiThread.disposeStackFrames();
+				jdiThread.fireChangeEvent(DebugEvent.CONTENT);
 			}
 			return !jdiThread.isSuspended();
 		}
