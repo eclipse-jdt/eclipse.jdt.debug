@@ -163,20 +163,34 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 			sourceNames= type.sourceNames(getStratum());
 		} catch (AbsentInformationException e1) {
 			return false;
-		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return false;
 		}
-		// TODO: check the source path
+		boolean sourceNameFound= false;
 		for (Iterator iter = sourceNames.iterator(); iter.hasNext();) {
 			if (((String) iter.next()).equals(bpSourceName)) {
+				sourceNameFound= true;
+				break;
+			}
+		}
+		if (!sourceNameFound) {
+			return false;
+		}
+		
+		String bpSourcePath= getSourcePath();
+		List sourcePaths;
+		try {
+			sourcePaths= type.sourcePaths(getStratum());
+		} catch (AbsentInformationException e1) {
+			return false;
+		}
+		for (Iterator iter = sourcePaths.iterator(); iter.hasNext();) {
+			if (((String) iter.next()).equals(bpSourcePath)) {
 				// query registered listeners to see if this pattern breakpoint should
 				// be installed in the given target
 				return queryInstallListeners(target, type);
 			}
 		}
 		
+
 		// not found.
 		return false;
 	}
@@ -207,9 +221,11 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	 * Returns <code>null</code> if a location cannot be determined.
 	 */
 	protected Location determineLocation(int lineNumber, ReferenceType type) {
-		List locations= null;
+		List locations;
+		String sourcePath;
 		try {
 			locations= type.locationsOfLine(getStratum(), getSourceName(), lineNumber);
+			sourcePath= getSourcePath();
 		} catch (AbsentInformationException aie) {
 			IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), NO_LINE_NUMBERS, JDIDebugBreakpointMessages.getString("JavaLineBreakpoint.Absent_Line_Number_Information_1"), null);  //$NON-NLS-1$
 			IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
@@ -235,13 +251,27 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 			JDIDebugPlugin.log(e);
 			return null;
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// not able to retrieve line info
+			JDIDebugPlugin.log(e);
+			return null;
 		}
 		
-		if (locations != null && locations.size() > 0) {
-			return (Location) locations.get(0);
-		} 
+		if (sourcePath == null) {
+			if (locations.size() > 0) {
+				return (Location)locations.get(0);
+			}
+		} else {
+			for (Iterator iter = locations.iterator(); iter.hasNext();) {
+				Location location = (Location) iter.next();
+				try {
+					if (sourcePath.equals(location.sourcePath())) {
+						return location;
+					}
+				} catch (AbsentInformationException e1) {
+					// nothing to do;
+				}
+			}
+		}
 		
 		return null;
 	}
