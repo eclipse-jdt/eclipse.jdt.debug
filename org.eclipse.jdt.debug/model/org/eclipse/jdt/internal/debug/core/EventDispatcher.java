@@ -30,6 +30,8 @@ class EventDispatcher implements Runnable {
 	
 	protected EventSet fEventSet;
 	
+	protected EventIterator fIterator;
+	
 	/**
 	 * Creates a new event dispatcher listening for events
 	 * originating from the underlying VM.
@@ -45,12 +47,12 @@ class EventDispatcher implements Runnable {
 		if (!fKeepReading) {
 			return;
 		}
-		EventIterator iterator= eventSet.eventIterator();
-		while (iterator.hasNext()) {
+		fIterator= eventSet.eventIterator();
+		while (fIterator.hasNext()) {
 			if (!fKeepReading) {
 				return;
 			}
-			Event event= iterator.nextEvent();
+			Event event= fIterator.nextEvent();
 			if (event == null) {
 				continue;
 			}
@@ -184,6 +186,10 @@ class EventDispatcher implements Runnable {
 	 */
 	protected void shutdown() {
 		fKeepReading= false;
+	}
+	
+	protected boolean hasPendingEvents() {
+		return fIterator.hasNext();
 	}
 }
 

@@ -328,4 +328,8 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	public String getUnknownMessage() {
 		return DebugJavaUtils.getResourceString(UNKNOWN);
 	}
+	
+	protected boolean hasPendingEvents() {
+		return ((JDIDebugTarget)getDebugTarget()).fEventDispatcher.hasPendingEvents();
+	}
 }

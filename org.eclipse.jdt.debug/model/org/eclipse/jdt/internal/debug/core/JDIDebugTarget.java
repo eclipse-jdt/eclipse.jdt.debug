@@ -591,7 +591,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			index++;	
 		}
 		if (breakpoint == null) {
-			resume(event.thread());
+			handleMethodEntryResume(event.thread());
 			return;
 		}	
 		
@@ -602,6 +602,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		} else {
 			// no hit count - suspend
 			handleMethodEntryBreakpoint(event.thread(), breakpoint);
+		}
+	}
+	
+	protected void handleMethodEntryResume(ThreadReference thread) {
+		if (!hasPendingEvents()) {
+			resume(thread);
 		}
 	}
 	
@@ -625,11 +631,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				}
 			}  else {
 				// count still > 0, keep running
-				resume(event.thread());		
+				handleMethodEntryResume(event.thread());		
 			}
 		} else {
 			// hit count expired, keep running
-			resume(event.thread());
+			handleMethodEntryResume(event.thread());
 		}
 	}
 	protected String[] getMethodEntryBreakpointInfo(MethodEntryRequest request, IMarker breakpoint, int index) {
