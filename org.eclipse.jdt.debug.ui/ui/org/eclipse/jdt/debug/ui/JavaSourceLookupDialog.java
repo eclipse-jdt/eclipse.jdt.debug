@@ -16,8 +16,6 @@ import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -72,16 +70,18 @@ public class JavaSourceLookupDialog extends Dialog {
 	/**	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)	 */
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
+		initializeDialogUnits(parent);
 		getShell().setText(LauncherMessages.getString("JavaUISourceLocator.selectprojects.title")); //$NON-NLS-1$
 		
 		Composite composite= (Composite) super.createDialogArea(parent);
 		composite.setLayout(new GridLayout());
 		composite.setFont(font);
 		
+		int pixelWidth= convertWidthInCharsToPixels(70);
 		Label message= new Label(composite, SWT.LEFT + SWT.WRAP);
 		message.setText(fMessage);
 		GridData data= new GridData();
-		data.widthHint= convertWidthInCharsToPixels(message, 70);
+		data.widthHint= pixelWidth;
 		message.setLayoutData(data);
 		message.setFont(font);
 		
@@ -91,25 +91,13 @@ public class JavaSourceLookupDialog extends Dialog {
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fAskAgainCheckBox= new Button(composite, SWT.CHECK + SWT.WRAP);
 		data= new GridData();
-		data.widthHint= convertWidthInCharsToPixels(fAskAgainCheckBox, 70);
+		data.widthHint= pixelWidth;
 		fAskAgainCheckBox.setLayoutData(data);
 		fAskAgainCheckBox.setFont(font);
 		fAskAgainCheckBox.setText(LauncherMessages.getString("JavaUISourceLocator.askagain.message")); //$NON-NLS-1$
 		
-		applyDialogFont(composite);
 		return composite;
 	}
-	
-	/**
-	 * @see Dialog#convertWidthInCharsToPixels(FontMetrics, int)
-	 */
-	protected int convertWidthInCharsToPixels(Control control, int chars) {
-		GC gc = new GC(control);
-		gc.setFont(control.getFont());
-		FontMetrics fontMetrics= gc.getFontMetrics();
-		gc.dispose();
-		return Dialog.convertWidthInCharsToPixels(fontMetrics, chars);
-	}	
 
 	/**	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()	 */
 	protected void okPressed() {
