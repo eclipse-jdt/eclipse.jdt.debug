@@ -412,12 +412,16 @@ public class StandardVMType extends AbstractVMInstallType {
 			try {
 				p = Runtime.getRuntime().exec(cmdLine);
 				IProcess process = DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), p, "Library Detection"); //$NON-NLS-1$
-				while (!process.isTerminated()) {
+				for (int i= 0; i < 200; i++) {
+					// Wait no more than 10 seconds (200 * 50 mils)
+					if (process.isTerminated()) {
+						break;
+					}
 					try {
 						Thread.sleep(50);
 					} catch (InterruptedException e) {
 					}
-				}		
+				}
 				info = parseLibraryInfo(process);
 			} catch (IOException ioe) {
 				LaunchingPlugin.log(ioe);
