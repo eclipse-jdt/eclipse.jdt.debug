@@ -210,7 +210,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			resetCallbacks();
 			cu.rename("BreakpointsCopyTwoA.java", false, null);
 			assertEquals("Should have received one remove notification", 1, fRemoveCallbacks);
-			assertEquals("Should of breakpoints removed incorrect", bps.size(), fTotalRemoved);
+			assertEquals("Number of breakpoints removed incorrect", bps.size(), fTotalRemoved);
 			assertEquals("Should be no changes", 0, fChangeCallabcks);
 			assertEquals("Should be no additions", 0, fAddCallbacks);
 			
