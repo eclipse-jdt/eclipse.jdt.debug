@@ -187,7 +187,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	 *  unspecified or does not exist
 	 */	
 	protected IVMInstall verifyVMInstall(ILaunchConfiguration configuration) throws CoreException {
-		IVMInstallType type = verifyVMInstallType(configuration);
+		verifyVMInstallType(configuration);
 		String id = getVMInstallId(configuration);
 		if (id == null) {
 			abort("JRE not specified.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL); 
