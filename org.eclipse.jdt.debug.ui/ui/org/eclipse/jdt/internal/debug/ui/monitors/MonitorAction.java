@@ -45,7 +45,7 @@ public abstract class MonitorAction implements IViewActionDelegate, IUpdate {
 	
 	protected IJavaDebugTarget getDebugTarget() {
 		IStructuredSelection ss= getDebugViewSelection();
-		if (ss.isEmpty() || ss.size() > 1) {
+		if (ss == null || ss.isEmpty() || ss.size() > 1) {
 			return null;
 		}
 		Object element= ss.getFirstElement();
