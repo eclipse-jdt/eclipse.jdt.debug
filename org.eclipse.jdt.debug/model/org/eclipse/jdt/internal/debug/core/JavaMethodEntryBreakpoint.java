@@ -178,8 +178,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 						return handleHitCountMethodEntryBreakpoint(event, count, target);
 					} else {
 						// no hit count - suspend
-						doSuspend(event.thread(), target);
-						return false;
+						return doSuspend(event.thread(), target);
 					}
 			} else {
 				return true;
@@ -192,24 +191,16 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	}
 	
 	/**
-	 * Resume the given thread in the given target
+	 * Suspend the given thread in the given target, and returns
+	 * whether the thread should be suspended.
 	 */
-	protected void doResume(ThreadReference thread, JDIDebugTarget target) {
-		if (!target.hasPendingEvents()) {
-			target.resume(thread);
-		}
-	}
-	
-	/**
-	 * Suspend the given thread in the given target
-	 */
-	protected void doSuspend(ThreadReference threadRef, JDIDebugTarget target) {
+	protected boolean doSuspend(ThreadReference threadRef, JDIDebugTarget target) {
 		JDIThread thread= target.findThread(threadRef);	
 		if (thread == null) {
-			target.resume(threadRef);
-			return;
+			return true;
 		} else {						
 			thread.handleSuspendForBreakpoint(this);
+			return false;
 		}		
 	}
 	
@@ -222,7 +213,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 			event.request().putProperty(IJavaDebugConstants.HIT_COUNT, count);
 			if (hitCount == 0) {
 				// the count has reached 0, breakpoint hit
-				doSuspend(event.thread(), target);
+				boolean resume = doSuspend(event.thread(), target);
 				try {
 					// make a note that we auto-disabled the breakpoint
 					// order is important here...see methodEntryChanged
@@ -231,7 +222,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				} catch (CoreException e) {
 					JDIDebugPlugin.logError(e);
 				}
-				return false;
+				return resume;
 			}  else {
 				// count still > 0, keep running
 				return true;		

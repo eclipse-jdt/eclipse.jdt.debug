@@ -250,10 +250,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 	}
 	
-	protected EventRequestManager getEventRequestManager() {
-		return fVirtualMachine.eventRequestManager();
-	}
-	
 	/**
 	 * Creates, adds and returns a thread for the given underlying thread reference.
 	 */
@@ -316,6 +312,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			try {
 				return ((org.eclipse.jdi.hcr.VirtualMachine) fVirtualMachine).canReloadClasses();
 			} catch (UnsupportedOperationException e) {
+				// This is not an error condition - UnsupportedOperationException is thrown when a VM does
+				// not support HCR
 			}
 		}
 		return false;
@@ -353,13 +351,23 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	protected VirtualMachine getVM() {
 		return fVirtualMachine;
 	}
+	
+	/**
+	 * Returns the underlying VMs event request manager.
+	 * 
+	 * @return event request manager
+	 */
+	protected EventRequestManager getEventRequestManager() {
+		return getVM().eventRequestManager();
+	}
 
 	/**
 	 * Notifies this target that the specified types have been changed and
 	 * should be replaced. A fully qualified name of each type must
 	 * be supplied.
 	 *
-	 * Breakpoints and caught exceptions which are reinstalled.
+	 * Breakpoints are reinstalled automatically when the new
+	 * types are loaded.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
