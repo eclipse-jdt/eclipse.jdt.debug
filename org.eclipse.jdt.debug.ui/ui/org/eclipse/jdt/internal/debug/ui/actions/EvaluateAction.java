@@ -438,8 +438,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		
 		String message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.direct_exception"), new Object[] { exception.getClass() }); //$NON-NLS-1$
-		if (exception.getMessage() != null)
+		if (exception.getMessage() != null) {
 			message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.exception.pattern"), new Object[] { message, exception.getMessage() }); //$NON-NLS-1$
+		}
 		reportError(message);
 	}
 	
