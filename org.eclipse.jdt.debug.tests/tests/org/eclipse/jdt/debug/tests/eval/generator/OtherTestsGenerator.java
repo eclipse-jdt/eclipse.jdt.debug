@@ -235,7 +235,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	 * Method createTestNumberLiteral.
 	 */
 	private static void createTestNumberLiteral1(String literal, int type, StringBuffer code) {
-		String tName= typeName[type];
+		String tName= fTypeName[type];
 		
 		code.append("\tpublic void test" + literal.replace('-', 'N').replace('.', '_').replace('+', 'P') + "() throws Throwable {\n");
 		tryBlockBegin(code);
@@ -250,7 +250,7 @@ public class OtherTestsGenerator extends TestGenerator {
 	 * Method createTestNumberLiteral.
 	 */
 	private static void createTestNumberLiteral2(String literal, int type, StringBuffer code) {
-		String tName= typeName[type];
+		String tName= fTypeName[type];
 		
 		code.append("\tpublic void test" + literal.replace('-', 'N').replace('.', '_').replace('+', 'P') + "() throws Throwable {\n");
 		tryBlockBegin(code);

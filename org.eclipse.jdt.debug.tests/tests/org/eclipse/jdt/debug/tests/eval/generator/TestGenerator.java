@@ -54,7 +54,7 @@ public class TestGenerator {
 /* null */		{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_String, T_undefined},
 	};
 	
-	static final String[] typeName = new String[] {"undefined", "java.lang.Object", "char", "byte", "short", "boolean", "void", "long", "double", "float", "int", "java.lang.String", "null"};
+	static final String[] fTypeName = new String[] {"undefined", "java.lang.Object", "char", "byte", "short", "boolean", "void", "long", "double", "float", "int", "java.lang.String", "null"};
 
 	static final String[] typeUpperName = new String[] {"Undefined", "Object", "Char", "Byte", "Short", "Boolean", "Void", "Long", "Double", "Float", "Int", "String", "Null"};
 	
@@ -102,7 +102,7 @@ public class TestGenerator {
 	
 	static final String[] immediate = new String[] {"x", "y"};
 	
-	static final String[] variable = new String[] {"xVar", "yVar", "xArray", "yArray"};
+	static final String[] fVariable = new String[] {"xVar", "yVar", "xArray", "yArray"};
 	
 	static final String[] field = new String[] {"xField", "yField", "xStaticField", "yStaticField"};
 
@@ -214,7 +214,7 @@ public class TestGenerator {
 		
 		String className = "StringPlusOpTests";
 		
-		code.append("\t// " + typeName[T_String] + " " + opSymbol[Op_plus] + " {" + typeName[T_byte] + ", " + typeName[T_char] + ", " + typeName[T_short] + ", " + typeName[T_int] + ", " + typeName[T_long] + ", " + typeName[T_String] + ", " + typeName[T_null] + "}\n" +
+		code.append("\t// " + fTypeName[T_String] + " " + opSymbol[Op_plus] + " {" + fTypeName[T_byte] + ", " + fTypeName[T_char] + ", " + fTypeName[T_short] + ", " + fTypeName[T_int] + ", " + fTypeName[T_long] + ", " + fTypeName[T_String] + ", " + fTypeName[T_null] + "}\n" +
 					"\n");
 
 		genTestTypeBinaryOpTypeBinaryPromotion(T_String, Op_plus, T_byte, code);
@@ -303,15 +303,15 @@ public class TestGenerator {
 		
 		String className = "BooleanAssignmentOperatorsTests";
 		
-		code.append("\t// " + typeName[T_boolean] + " " + opSymbol[Op_orAss] + " " + typeName[T_boolean] + "\n" +
+		code.append("\t// " + fTypeName[T_boolean] + " " + opSymbol[Op_orAss] + " " + fTypeName[T_boolean] + "\n" +
 					"\n");
 		genTestTypeAssignmentOpType(T_boolean, Op_orAss, T_boolean, code);
 		
-		code.append("\t// " + typeName[T_boolean] + " " + opSymbol[Op_andAss] + " " + typeName[T_boolean] + "\n" +
+		code.append("\t// " + fTypeName[T_boolean] + " " + opSymbol[Op_andAss] + " " + fTypeName[T_boolean] + "\n" +
 					"\n");
 		genTestTypeAssignmentOpType(T_boolean, Op_andAss, T_boolean, code);
 		
-		code.append("\t// " + typeName[T_boolean] + " " + opSymbol[Op_xorAss] + " " + typeName[T_boolean] + "\n" +
+		code.append("\t// " + fTypeName[T_boolean] + " " + opSymbol[Op_xorAss] + " " + fTypeName[T_boolean] + "\n" +
 					"\n");
 		genTestTypeAssignmentOpType(T_boolean, Op_xorAss, T_boolean, code);
 		
@@ -324,7 +324,7 @@ public class TestGenerator {
 		
 		String className = "StringPlusAssignmentOpTests";
 		
-		code.append("\t// " + typeName[T_String] + " " + opSymbol[Op_plusAss] + " {" + typeName[T_byte] + ", " + typeName[T_char] + ", " + typeName[T_short] + ", " + typeName[T_int] + ", " + typeName[T_long] + ", " + typeName[T_String] + ", " + typeName[T_null] + "}\n" +
+		code.append("\t// " + fTypeName[T_String] + " " + opSymbol[Op_plusAss] + " {" + fTypeName[T_byte] + ", " + fTypeName[T_char] + ", " + fTypeName[T_short] + ", " + fTypeName[T_int] + ", " + fTypeName[T_long] + ", " + fTypeName[T_String] + ", " + fTypeName[T_null] + "}\n" +
 					"\n");
 
 		genTestTypeAssignmentOpType(T_String, Op_plusAss, T_byte, code);
@@ -549,7 +549,7 @@ public class TestGenerator {
 	
 	public static void genTestsNumericTypeArithmeticOpNumericTypes(int type, int op, StringBuffer code) {
 		
-		code.append("\t// " + typeName[type] + " " + opSymbol[op] + " {" + typeName[T_byte] + ", " + typeName[T_char] + ", " + typeName[T_short] + ", " + typeName[T_int] + ", " + typeName[T_long] + ", " + typeName[T_float] + ", " + typeName[T_double] + "}\n" +
+		code.append("\t// " + fTypeName[type] + " " + opSymbol[op] + " {" + fTypeName[T_byte] + ", " + fTypeName[T_char] + ", " + fTypeName[T_short] + ", " + fTypeName[T_int] + ", " + fTypeName[T_long] + ", " + fTypeName[T_float] + ", " + fTypeName[T_double] + "}\n" +
 					"\n");
 		
 		genTestTypeBinaryOpTypeBinaryPromotion(type, op, T_byte, code);
@@ -564,7 +564,7 @@ public class TestGenerator {
 	
 	public static void genTestsNumericTypeComparisonOpNumericTypes(int type, int op, StringBuffer code) {
 		
-		code.append("\t// " + typeName[type] + " " + opSymbol[op] + " {" + typeName[T_byte] + ", " + typeName[T_char] + ", " + typeName[T_short] + ", " + typeName[T_int] + ", " + typeName[T_long] + ", " + typeName[T_float] + ", " + typeName[T_double] + "}\n" +
+		code.append("\t// " + fTypeName[type] + " " + opSymbol[op] + " {" + fTypeName[T_byte] + ", " + fTypeName[T_char] + ", " + fTypeName[T_short] + ", " + fTypeName[T_int] + ", " + fTypeName[T_long] + ", " + fTypeName[T_float] + ", " + fTypeName[T_double] + "}\n" +
 					"\n");
 		
 		genTestTypeBinaryOpTypeBooleanResult(type, op, T_byte, code);
@@ -579,7 +579,7 @@ public class TestGenerator {
 	
 	public static void genTestsIntegerTypeShiftOpIntegerTypes(int type, int op, StringBuffer code) {
 		
-		code.append("\t// " + typeName[type] + " " + opSymbol[op] + " {" + typeName[T_byte] + ", " + typeName[T_char] + ", " + typeName[T_short] + ", " + typeName[T_int] + ", " + typeName[T_long] + "}\n" +
+		code.append("\t// " + fTypeName[type] + " " + opSymbol[op] + " {" + fTypeName[T_byte] + ", " + fTypeName[T_char] + ", " + fTypeName[T_short] + ", " + fTypeName[T_int] + ", " + fTypeName[T_long] + "}\n" +
 					"\n");
 		
 		genTestTypeBinaryOpTypeUnaryPromotion(type, op, T_byte, code);
@@ -592,7 +592,7 @@ public class TestGenerator {
 	
 	public static void genTestsIntegerTypeBooleanOpIntegerTypes(int type, int op, StringBuffer code) {
 		
-		code.append("\t// " + typeName[type] + " " + opSymbol[op] + " {" + typeName[T_byte] + ", " + typeName[T_char] + ", " + typeName[T_short] + ", " + typeName[T_int] + ", " + typeName[T_long] + "}\n" +
+		code.append("\t// " + fTypeName[type] + " " + opSymbol[op] + " {" + fTypeName[T_byte] + ", " + fTypeName[T_char] + ", " + fTypeName[T_short] + ", " + fTypeName[T_int] + ", " + fTypeName[T_long] + "}\n" +
 					"\n");
 		
 		genTestTypeBinaryOpTypeBinaryPromotion(type, op, T_byte, code);
@@ -605,7 +605,7 @@ public class TestGenerator {
 	
 	public static void genTestsNumericTypeArithmeticAssignmentOpNumericTypes(int type, int op, StringBuffer code) {
 
-		code.append("\t// " + typeName[type] + " " + opSymbol[op] + " {" + typeName[T_byte] + ", " + typeName[T_char] + ", " + typeName[T_short] + ", " + typeName[T_int] + ", " + typeName[T_long] + ", " + typeName[T_float] + ", " + typeName[T_double] + "}\n" +
+		code.append("\t// " + fTypeName[type] + " " + opSymbol[op] + " {" + fTypeName[T_byte] + ", " + fTypeName[T_char] + ", " + fTypeName[T_short] + ", " + fTypeName[T_int] + ", " + fTypeName[T_long] + ", " + fTypeName[T_float] + ", " + fTypeName[T_double] + "}\n" +
 					"\n");
 
 		genTestTypeAssignmentOpType(type, op, T_byte, code);
@@ -620,7 +620,7 @@ public class TestGenerator {
 	
 	public static void genTestsIntegerTypeArithmeticAssignmentOpIntegerTypes(int type, int op, StringBuffer code) {
 
-		code.append("\t// " + typeName[type] + " " + opSymbol[op] + " {" + typeName[T_byte] + ", " + typeName[T_char] + ", " + typeName[T_short] + ", " + typeName[T_int] + ", " + typeName[T_long] + ", " + typeName[T_float] + ", " + typeName[T_double] + "}\n" +
+		code.append("\t// " + fTypeName[type] + " " + opSymbol[op] + " {" + fTypeName[T_byte] + ", " + fTypeName[T_char] + ", " + fTypeName[T_short] + ", " + fTypeName[T_int] + ", " + fTypeName[T_long] + ", " + fTypeName[T_float] + ", " + fTypeName[T_double] + "}\n" +
 					"\n");
 
 		genTestTypeAssignmentOpType(type, op, T_byte, code);
@@ -633,7 +633,7 @@ public class TestGenerator {
 	
 	public static void genTestsNumericTypeCast(int type, StringBuffer code) {
 		
-		code.append("\t// (" + typeName[type] + ") {" + typeName[T_byte] + ", " + typeName[T_char] + ", " + typeName[T_short] + ", " + typeName[T_int] + ", " + typeName[T_long] + ", " + typeName[T_float] + ", " + typeName[T_double] + "}\n" +
+		code.append("\t// (" + fTypeName[type] + ") {" + fTypeName[T_byte] + ", " + fTypeName[T_char] + ", " + fTypeName[T_short] + ", " + fTypeName[T_int] + ", " + fTypeName[T_long] + ", " + fTypeName[T_float] + ", " + fTypeName[T_double] + "}\n" +
 					"\n");
 		
 		genTestNumericTypeCast(type, T_byte, code);
@@ -648,8 +648,8 @@ public class TestGenerator {
 
 	public static void genTestsNumericTypeAllXfixOps(int type, StringBuffer code) {
 		
-		code.append("\t// {" + opSymbol[Op_prefixPlusPlus] + ", " + opSymbol[Op_prefixMinusMinus] + "} " + typeName[type] + "\n" +
-					"\t// " + typeName[type] + " {" + opSymbol[Op_postfixPlusPlus] + ", " + opSymbol[Op_postfixMinusMinus] + "}\n" +
+		code.append("\t// {" + opSymbol[Op_prefixPlusPlus] + ", " + opSymbol[Op_prefixMinusMinus] + "} " + fTypeName[type] + "\n" +
+					"\t// " + fTypeName[type] + " {" + opSymbol[Op_postfixPlusPlus] + ", " + opSymbol[Op_postfixMinusMinus] + "}\n" +
 					"\n");
 					
 		genTestNumericTypePrefixOp(type, Op_prefixPlusPlus, code);
@@ -721,7 +721,7 @@ public class TestGenerator {
 		String uName = typeUpperName[type];
 		String oUName = opUpperName[op];
 		
-		code.append("\t// " + typeName[type] + " " + opSymbol[op] + " " + typeName[type] + "\n" +
+		code.append("\t// " + fTypeName[type] + " " + opSymbol[op] + " " + fTypeName[type] + "\n" +
 					"\n");
 		
 		code.append("\tpublic void test" + uName + oUName + uName + "() throws Throwable {\n");
@@ -742,7 +742,7 @@ public class TestGenerator {
 		
 		int promotedType = getUnaryPromotionType(type);
 		
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
 		String oSymbol = opSymbol[op];
 		String oUName = opUpperName[op];
@@ -766,7 +766,7 @@ public class TestGenerator {
 		String uName = typeUpperName[type];
 		String oUName = opUpperName[op];
 		
-		code.append("\t// " + opSymbol[op] + " " + typeName[type] + "\n" +
+		code.append("\t// " + opSymbol[op] + " " + fTypeName[type] + "\n" +
 					"\n");
 		
 		code.append("\tpublic void test" + oUName + uName + "() throws Throwable {\n");
@@ -815,18 +815,18 @@ public class TestGenerator {
 		
 		code.append("\tpublic void test" + t1UName + oUName + t2UName + "() throws Throwable {\n");
 		tryBlockBegin(code);
-		genCodeSetTmp("tmp" + variable[0], type1, Op_equal, variable[0] + t1UName + "Value", true, code);
-		genCodeSetTmp("tmp" + variable[0], type1, op, immediate[0] + t2UName + "Value", false, code);
+		genCodeSetTmp("tmp" + fVariable[0], type1, Op_equal, fVariable[0] + t1UName + "Value", true, code);
+		genCodeSetTmp("tmp" + fVariable[0], type1, op, immediate[0] + t2UName + "Value", false, code);
 		genCodeAssignmentOp(type1, op, type2, 0, 0, true, code);
 		code.append("\n");
-		genCodeSetTmp("tmp" + variable[0], type1, op, immediate[1] + t2UName + "Value", false, code);
+		genCodeSetTmp("tmp" + fVariable[0], type1, op, immediate[1] + t2UName + "Value", false, code);
 		genCodeAssignmentOp(type1, op, type2, 0, 1, false, code);
 		code.append("\n");
-		genCodeSetTmp("tmp" + variable[1], type1, Op_equal, variable[1] + t1UName + "Value", true, code);
-		genCodeSetTmp("tmp" + variable[1], type1, op, immediate[0] + t2UName + "Value", false, code);
+		genCodeSetTmp("tmp" + fVariable[1], type1, Op_equal, fVariable[1] + t1UName + "Value", true, code);
+		genCodeSetTmp("tmp" + fVariable[1], type1, op, immediate[0] + t2UName + "Value", false, code);
 		genCodeAssignmentOp(type1, op, type2, 1, 0, false, code);
 		code.append("\n");
-		genCodeSetTmp("tmp" + variable[1], type1, op, immediate[1] + t2UName + "Value", false, code);
+		genCodeSetTmp("tmp" + fVariable[1], type1, op, immediate[1] + t2UName + "Value", false, code);
 		genCodeAssignmentOp(type1, op, type2, 1, 1, false, code);
 		tryBlockEnd(code);
 		code.append("\t}\n\n");
@@ -979,11 +979,11 @@ public class TestGenerator {
 
 	public static void genCodeBinaryOp(int type1, int op, int type2, int resultType, int var1, int var2, boolean first, StringBuffer code) {
 		
-		String t1Name = typeName[type1];
+		String t1Name = fTypeName[type1];
 		String t1UName = typeUpperName[type1];
-		String t2Name = typeName[type2];
+		String t2Name = fTypeName[type2];
 		String t2UName = typeUpperName[type2];
-		String resName = typeName[resultType];
+		String resName = fTypeName[resultType];
 		String resUName = typeUpperName[resultType];
 		String oName = opName[op];
 		String oSymbol = opSymbol[op];
@@ -1008,9 +1008,9 @@ public class TestGenerator {
 
 	public static void genCodeUnaryOp(int type, int op, int resultType, int var, boolean first, StringBuffer code) {
 		
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
-		String resName = typeName[resultType];
+		String resName = fTypeName[resultType];
 		String resUName = typeUpperName[resultType];
 		String oName = opName[op];
 		String oSymbol = opSymbol[op];
@@ -1027,16 +1027,16 @@ public class TestGenerator {
 	
 	public static void genCodeLocalVarValue(int type, int var, boolean first, StringBuffer code) {
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 
 		genCodeLocalVarValue(type,var, vName + tUName + "Value", first, code);
 	}
 
 	public static void genCodeLocalVarValue(int type, int var, String referenceExpression, boolean first, StringBuffer code) {
 		
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 
 		genCodeEval(vName + tUName, first, code);
 		genCodeReturnTypeCheck(tName + " local variable value", tName, first,code);
@@ -1056,9 +1056,9 @@ public class TestGenerator {
 	
 	public static void genCodeLocalVarAssignment(int type, int var, int imm, boolean first, StringBuffer code) {
 		
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 		String iName = immediate[imm];
 		String oName = opName[Op_equal];
 
@@ -1080,12 +1080,12 @@ public class TestGenerator {
 	}
 	
 	public static void genCodeAssignmentOp(int type1, int op, int type2, int var, int imm, boolean first, StringBuffer code) {
-		String t1Name = typeName[type1];
+		String t1Name = fTypeName[type1];
 		String t1UName = typeUpperName[type1];
-		String t2Name = typeName[type2];
+		String t2Name = fTypeName[type2];
 		String t2UName = typeUpperName[type2];
 		String oName = opName[op];
-		String vName = variable[var];
+		String vName = fVariable[var];
 		String iName = immediate[imm];
 		
 		genCodeEval(vName + t1UName + " + " + oName + "Op + " + iName + t2UName, first, code);
@@ -1106,9 +1106,9 @@ public class TestGenerator {
 	}
 	
 	public static void genCodeCast(int type1, int type2, int imm, boolean first, StringBuffer code) {
-		String t1Name = typeName[type1];
+		String t1Name = fTypeName[type1];
 		String t1UName = typeUpperName[type1];
-		String t2Name = typeName[type2];
+		String t2Name = fTypeName[type2];
 		String t2UName = typeUpperName[type2];
 		String iName = immediate[imm];
 
@@ -1122,9 +1122,9 @@ public class TestGenerator {
 	}
 	
 	public static void genCodePrefixOp(int type, int op, int var, boolean first, StringBuffer code) {
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 		String oName = opName[op];
 		String oSymbol = opSymbol[op];
 		
@@ -1140,9 +1140,9 @@ public class TestGenerator {
 	}
 	
 	public static void genCodePostfixOp(int type, int op, int var, boolean first, StringBuffer code) {
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 		String oName = opName[op];
 		String oSymbol = opSymbol[op];
 		
@@ -1166,7 +1166,7 @@ public class TestGenerator {
 
 	public static void genCodeFieldValue(int type, int var, int prefix, String referenceExpression, boolean first, StringBuffer code) {
 		
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
 		String fName = field[var];
 		String prefixVal = prefixList[prefix];
@@ -1190,7 +1190,7 @@ public class TestGenerator {
 	public static void genCodeArrayLength(int type, int var, boolean first, StringBuffer code) {
 		
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 		
 		genCodeArrayLength(type, var, vName + tUName + "Value.length", first, code);
 		
@@ -1198,28 +1198,28 @@ public class TestGenerator {
 
 	public static void genCodeArrayLength(int type, int var, String referenceExpression, boolean first, StringBuffer code) {
 		
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 
 		genCodeEval(vName + tUName + " + \".length\"", first, code);
-		genCodeReturnTypeCheck(tName + " array length", typeName[T_int], first,code);
-		genCodeReturnValueCheckPrimitiveType(tName + " array length", typeName[T_int], typeUpperName[T_int], referenceExpression, first, code);
+		genCodeReturnTypeCheck(tName + " array length", fTypeName[T_int], first,code);
+		genCodeReturnValueCheckPrimitiveType(tName + " array length", fTypeName[T_int], typeUpperName[T_int], referenceExpression, first, code);
 	}
 	
 	public static void genCodeArrayValue(int type, int var, int index, boolean first, StringBuffer code) {
 		
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 
 		genCodeArrayValue(type, var, index, vName + tUName + "Value[" + index + "]", first, code);
 	}
 
 	public static void genCodeArrayValue(int type, int var, int index, String referenceExpression, boolean first, StringBuffer code) {
 		
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 
 		genCodeEval(vName + tUName + " + \"[" + index + "]\"", first, code);
 		genCodeReturnTypeCheck(tName + " array value", tName, first,code);
@@ -1239,9 +1239,9 @@ public class TestGenerator {
 	
 	public static void genCodeArrayAssignment(int type, int var, int index, int imm, boolean first, StringBuffer code) {
 		
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 		String iName = immediate[imm];
 		String oName = opName[Op_equal];
 
@@ -1263,10 +1263,10 @@ public class TestGenerator {
 	}
 	
 	public static void genCodeArrayAllocation(int type, int var, int dim, boolean first, StringBuffer code) {
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
 		String charUName = typeUpperName[T_char];
-		String vName = variable[var];
+		String vName = fVariable[var];
 		String iName = immediate[dim];
 		String oName = opName[Op_equal];
 
@@ -1279,9 +1279,9 @@ public class TestGenerator {
 	}
 
 	public static void genCodeArrayInitialization(int type, int var, boolean first, StringBuffer code) {
-		String tName = typeName[type];
+		String tName = fTypeName[type];
 		String tUName = typeUpperName[type];
-		String vName = variable[var];
+		String vName = fVariable[var];
 		String oName = opName[Op_equal];
 		String i1Name = immediate[(var + 1) % 2];
 		
@@ -1342,7 +1342,7 @@ public class TestGenerator {
 	}*/
 
 	public static void genCodeSetTmp(String varName, int type, int op, String value, boolean init , StringBuffer code) {
-		code.append("\t\t" + ((init)? typeName[type] + " " : "") + varName + " " + opSymbol[op] + " " + value + ";\n");
+		code.append("\t\t" + ((init)? fTypeName[type] + " " : "") + varName + " " + opSymbol[op] + " " + value + ";\n");
 	}
 	
 	
