@@ -48,5 +48,6 @@ public class JDIDebugUIPreferenceInitializer extends AbstractPreferenceInitializ
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_DETAILS, IJDIPreferencesConstants.DETAIL_PANE);
 		
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_SYSTEM_THREADS, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO, false);
 	}
 }

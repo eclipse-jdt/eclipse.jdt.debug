@@ -866,7 +866,16 @@
                label="%dropFrameAction.label"
                toolbarPath="emptyStepGroup"
                tooltip="%dropFrameAction.tooltip">
-         </action>         
+         </action>
+  <action
+        helpContextId="show_monitor_thread_info_context"
+        label="%showMonitorThreadInfo.label"
+        icon="icons/full/obj16/thread_and_monitor_obj.gif"
+        tooltip="%showMonitorThreadInfo.tooltip"
+        class="org.eclipse.jdt.internal.debug.ui.actions.ShowMonitorThreadInformation"
+        style="toggle"
+        menubarPath="javaAction"
+        id="org.eclipse.jdt.debug.ui.launchViewActions.ShowMonitorThreadInfo"/>         
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.jdt.debug.ui.DisplayView"

@@ -151,5 +151,21 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	public Object getAdapter(Class adapter) {
 		return fObject.getAdapter(adapter);
 	}
+	
+	
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getWaitingThreads()
+	 */
+	public IJavaThread[] getWaitingThreads() throws DebugException {
+		return null;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getOwningThread()
+	 */
+	public IJavaThread getOwningThread() throws DebugException {
+		return null;
+	}
 }

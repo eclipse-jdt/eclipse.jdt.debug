@@ -120,6 +120,34 @@ public interface IJavaObject extends IJavaValue {
 	 * the failure.</li>
 	 */
 	public IJavaFieldVariable getField(String name, String typeSignature) throws DebugException;
+	
+	/**
+	 * Returns the threads waiting for the monitor associated to this object, or
+	 * <code>null</code> if no thread is waiting for the monitor.
+	 * 
+	 * @return the thread waiting for the monitor, or <code>null</code>.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>The VM is not able to retrieve the monitor information</li>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li></ul>
+	 * @since 3.1
+	 */
+	public IJavaThread[] getWaitingThreads() throws DebugException;
+	
+	/**
+	 * Returns the threads which owns for the monitor associated to this object, or
+	 * <code>null</code> if no thread owns the monitor.
+	 * 
+	 * @return the thread which owns the monitor, or <code>null</code>.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>The VM is not able to retrieve the monitor information</li>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li></ul>
+	 * @since 3.1
+	 */
+	public IJavaThread getOwningThread() throws DebugException;
 }
 
 

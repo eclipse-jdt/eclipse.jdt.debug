@@ -226,6 +226,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getWatchExpressionText((IWatchExpression)item);
 			} else if (item instanceof IExpression) {
 				return getExpressionText((IExpression)item);
+			} else if (item instanceof JavaOwnedMonitor) {
+				return getJavaOwnedMonitorText((JavaOwnedMonitor)item);
+			} else if (item instanceof JavaContendedMonitor) {
+				return getJavaContendedMonitorText((JavaContendedMonitor)item);
+			} else if (item instanceof JavaOwningThread) {
+				return getJavaOwningTreadText((JavaOwningThread)item);
+			} else if (item instanceof JavaWaitingThread) {
+				return getJavaWaitingTreadText((JavaWaitingThread)item);
 			} else {
 				StringBuffer label= new StringBuffer();
 				if (item instanceof IJavaThread) {
@@ -265,6 +273,22 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return DebugUIMessages.getString("JDIModelPresentation.<not_responding>_6"); //$NON-NLS-1$
 		}
 		return null;
+	}
+
+	private String getJavaOwningTreadText(JavaOwningThread thread) throws CoreException {
+		return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.0"), getThreadText(thread.getThread().getThread(), isShowQualifiedNames())); //$NON-NLS-1$
+	}
+
+	private String getJavaWaitingTreadText(JavaWaitingThread thread) throws CoreException {
+		return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.1"), getThreadText(thread.getThread().getThread(), isShowQualifiedNames())); //$NON-NLS-1$
+	}
+
+	private String getJavaContendedMonitorText(JavaContendedMonitor monitor) throws DebugException {
+		return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.2"), getValueText(monitor.getMonitor().getMonitor())); //$NON-NLS-1$
+	}
+
+	private String getJavaOwnedMonitorText(JavaOwnedMonitor monitor) throws DebugException {
+		return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.3"), getValueText(monitor.getMonitor().getMonitor())); //$NON-NLS-1$
 	}
 
 	protected IBreakpoint getBreakpoint(IMarker marker) {
@@ -632,10 +656,68 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IExpression) {
 				return getExpressionImage(item);
 			}
+			if (item instanceof JavaOwnedMonitor) {
+				return getJavaOwnedMonitorImage((JavaOwnedMonitor)item);
+			}
+			if (item instanceof JavaContendedMonitor) {
+				return getJavaContendedMonitorImage((JavaContendedMonitor)item);
+			}
+			if (item instanceof JavaOwningThread) {
+				return getJavaOwningThreadImage((JavaOwningThread)item);
+			}
+			if (item instanceof JavaWaitingThread) {
+				return getJavaWaitingThreadImage((JavaWaitingThread)item);
+			}
 		} catch (CoreException e) {
 		    // no need to log errors - elements may no longer exist by the time we render them
 		}
 		return null;
+	}
+
+	/**
+	 * @param thread
+	 * @return
+	 */
+	private Image getJavaWaitingThreadImage(JavaWaitingThread thread) {
+		JDIImageDescriptor descriptor;
+		if (thread.isSuspended()) {
+			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED), JDIImageDescriptor.IN_CONTENTION_FOR_MONITOR);
+		} else {
+			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING), JDIImageDescriptor.IN_CONTENTION_FOR_MONITOR);
+		}
+		return fDebugImageRegistry.get(descriptor);
+	}
+
+	/**
+	 * @param thread
+	 * @return
+	 */
+	private Image getJavaOwningThreadImage(JavaOwningThread thread) {
+		JDIImageDescriptor descriptor;
+		if (thread.isSuspended()) {
+			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED), JDIImageDescriptor.OWNS_MONITOR);
+		} else {
+			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING), JDIImageDescriptor.OWNS_MONITOR);
+		}
+		return fDebugImageRegistry.get(descriptor);
+	}
+
+	/**
+	 * @param monitor
+	 * @return
+	 */
+	private Image getJavaContendedMonitorImage(JavaContendedMonitor monitor) {
+		JDIImageDescriptor descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJ_MONITOR, JDIImageDescriptor.CONTENTED_MONITOR);
+		return fDebugImageRegistry.get(descriptor);
+	}
+
+	/**
+	 * @param monitor
+	 * @return
+	 */
+	private Image getJavaOwnedMonitorImage(JavaOwnedMonitor monitor) {
+		JDIImageDescriptor descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJ_MONITOR, JDIImageDescriptor.OWNED_MONITOR);
+		return fDebugImageRegistry.get(descriptor);
 	}
 
 	protected Image getBreakpointImage(IJavaBreakpoint breakpoint) throws CoreException {

@@ -163,6 +163,13 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_SHOW_SYSTEM_THREADS = IJavaDebugUIConstants.PLUGIN_ID + ".show_system_threads"; //$NON-NLS-1$
 	
 	/**
+	 * Boolean preference indicating whether the monitor and thread info should be displayed in the debug launch view.
+	 * 
+	 * @since 3.1
+	 */	
+	public static final String PREF_SHOW_MONITOR_THREAD_INFO = IJavaDebugUIConstants.PLUGIN_ID + ".show_monitor_thread_info"; //$NON-NLS-1$
+	
+	/**
 	 * String preference indication when and where variable details should appear.
 	 * Valid values include: 
 	 * <ul>

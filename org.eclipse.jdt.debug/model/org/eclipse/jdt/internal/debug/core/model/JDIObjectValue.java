@@ -26,9 +26,11 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
+import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
 /**
@@ -274,6 +276,44 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 		}
 		return res;
+	}
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getWaitingThreads()
+	 */
+	public IJavaThread[] getWaitingThreads() throws DebugException {
+		IJavaThread[] waitingThreads= null;
+		try {
+			List threads= getUnderlyingObject().waitingThreads();
+			JDIDebugTarget debugTarget= (JDIDebugTarget)getDebugTarget();
+			waitingThreads= new IJavaThread[threads.size()];
+			int i= 0;
+			for (Iterator iter= threads.iterator(); iter.hasNext();) {
+				waitingThreads[i++]= debugTarget.getJDIThread((ThreadReference) iter.next());
+			}
+		} catch (IncompatibleThreadStateException e) {
+			targetRequestFailed(JDIDebugModelMessages.getString("JDIObjectValue.0"), e); //$NON-NLS-1$
+		}
+		return waitingThreads;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaObject#getOwningThread()
+	 */
+	public IJavaThread getOwningThread() throws DebugException {
+		IJavaThread owningThread= null;
+		try {
+			ThreadReference thread= getUnderlyingObject().owningThread();
+			JDIDebugTarget debugTarget= (JDIDebugTarget)getDebugTarget();
+			if (thread != null) {
+				owningThread= debugTarget.getJDIThread(thread);
+			}
+		} catch (IncompatibleThreadStateException e) {
+			targetRequestFailed(JDIDebugModelMessages.getString("JDIObjectValue.1"), e); //$NON-NLS-1$
+		}
+		return owningThread;
 	}
 }
 
