@@ -308,6 +308,15 @@ public class JavaLocalApplicationLaunchConfigurationHelper implements IResourceC
 	 */
 	public static IType getMainType(ILaunchConfiguration configuration, IJavaProject javaProject) throws CoreException {
 		String mainTypeName = configuration.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)null);
+		return getMainType(mainTypeName, javaProject);
+	}
+	
+	/**
+	 * Return the <code>IType</code> referenced by the specified name and contained in 
+	 * the specified project or throw a <code>CoreException</code> whose message explains why 
+	 * this couldn't be done.
+	 */
+	public static IType getMainType(String mainTypeName, IJavaProject javaProject) throws CoreException {
 		if ((mainTypeName == null) || (mainTypeName.trim().length() < 1)) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_not_specified._1"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
@@ -321,7 +330,7 @@ public class JavaLocalApplicationLaunchConfigurationHelper implements IResourceC
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_does_not_exist"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
 		return mainType;
-	}
+	}	
 	
 	/**
 	 * Find the specified (fully-qualified) type name in the specified java project.

@@ -5,16 +5,19 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
  
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
@@ -25,9 +28,10 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JavaLocalApplicationLaunchConfigurationHelper;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.jdt.internal.ui.util.BusyIndicatorRunnableContext;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -45,27 +49,18 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
  * This tab appears in the LaunchConfigurationDialog for launch configurations that
  * require Java-specific launching information such as a main type and JRE.
  */
-public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
-
-	// The launch configuration dialog that owns this tab
-	private ILaunchConfigurationDialog fLaunchConfigurationDialog;
-	
-	// Flag that when true, prevents the owning dialog's status area from getting updated.
-	// Used when multiple config attributes are getting updated at once.
-	private boolean fBatchUpdate = false;
-	
+public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDialogRequestor {
+		
 	// Project UI widgets
 	private Label fProjLabel;
 	private Text fProjText;
@@ -81,42 +76,20 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 	private Label fJRELabel;
 	private Combo fJRECombo;
 	private Button fJREAddButton;
-
-	// Build before launch UI widgets
-	private Button fBuildCheckButton;
 	
 	// Collections used to populating the JRE Combo box
 	private IVMInstallType[] fVMTypes;
 	private List fVMStandins;
 	
-	// The launch config working copy providing the values shown on this tab
-	private ILaunchConfigurationWorkingCopy fWorkingCopy;
-
 	private static final String EMPTY_STRING = "";
 	
-	protected void setLaunchDialog(ILaunchConfigurationDialog dialog) {
-		fLaunchConfigurationDialog = dialog;
-	}
-	
-	protected ILaunchConfigurationDialog getLaunchDialog() {
-		return fLaunchConfigurationDialog;
-	}
-	
-	protected void setWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
-		fWorkingCopy = workingCopy;
-	}
-	
-	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
-		return fWorkingCopy;
-	}
-	
 	/**
-	 * @see ILaunchConfigurationTab#createTabControl(TabItem)
+	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
-	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tabItem) {
-		setLaunchDialog(dialog);
+	public void createControl(Composite parent) {
 		
-		Composite comp = new Composite(tabItem.getParent(), SWT.NONE);
+		Composite comp = new Composite(parent, SWT.NONE);
+		setControl(comp);
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);		
 		GridData gd;
@@ -143,7 +116,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		fProjText.setLayoutData(gd);
 		fProjText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateConfigFromProject();
+				refreshStatus();
 			}
 		});
 		
@@ -175,7 +148,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		fMainText.setLayoutData(gd);
 		fMainText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateConfigFromMain();
+				refreshStatus();
 			}
 		});
 		
@@ -214,7 +187,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		initializeJREComboBox();
 		fJRECombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateConfigFromJRE();
+				refreshStatus();
 			}
 		});
 		
@@ -225,138 +198,71 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 				handleJREAddButtonSelected();
 			}
 		});
-		
-		createVerticalSpacer(comp);
 				
-		fBuildCheckButton = new Button(comp, SWT.CHECK);
-		fBuildCheckButton.setText("B&uild before launch");
-		fBuildCheckButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				updateConfigFromBuild();
-			}
-		});
-
-		return comp;
 	}
-	
-	/**
-	 * @see ILaunchConfigurationTab#setLaunchConfiguration(ILaunchConfigurationWorkingCopy)
-	 */
-	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy launchConfiguration) {
-		if (launchConfiguration.equals(getWorkingCopy())) {
-			return;
-		}
 		
-		setBatchUpdate(true);
-		updateWidgetsFromConfig(launchConfiguration);
-		setBatchUpdate(false);
-
-		setWorkingCopy(launchConfiguration);
-	}
-	
 	/**
-	 * Set values for all UI widgets in this tab using values kept in the specified
-	 * launch configuration.
+	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
-	protected void updateWidgetsFromConfig(ILaunchConfiguration config) {
+	public void initializeFrom(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
 		updateMainTypeFromConfig(config);
 		updateJREFromConfig(config);
-		updateBuildFromConfig(config);
 	}
 	
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
+		String projectName = "";
 		try {
-			String projectName = config.getAttribute(JavaDebugUI.PROJECT_ATTR, EMPTY_STRING);
-			fProjText.setText(projectName);
+			projectName = config.getAttribute(JavaDebugUI.PROJECT_ATTR, EMPTY_STRING);	
 		} catch (CoreException ce) {
 		}
+		fProjText.setText(projectName);
 	}
 	
 	protected void updateMainTypeFromConfig(ILaunchConfiguration config) {
+		String mainTypeName = "";
 		try {
-			String mainTypeName = config.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, EMPTY_STRING);
-			fMainText.setText(mainTypeName);
+			mainTypeName = config.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, EMPTY_STRING);
 		} catch (CoreException ce) {			
-		}		
+		}	
+		fMainText.setText(mainTypeName);	
 	}
 
 	protected void updateJREFromConfig(ILaunchConfiguration config) {
+		String vmID = null;
 		try {
-			String vmID = config.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, EMPTY_STRING);
-			if (vmID.length() > 0) {
-				selectJREComboBoxEntry(vmID);
-			} else {
-				clearJREComboBoxEntry();
-			}
+			vmID = config.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, EMPTY_STRING);
 		} catch (CoreException ce) {			
+		}
+		if (vmID == null) {
+			clearJREComboBoxEntry();
+		} else {
+			selectJREComboBoxEntry(vmID);
 		}
 	}
 		
-	protected void updateBuildFromConfig(ILaunchConfiguration config) {
-		try {
-			boolean build = config.getAttribute(JavaDebugUI.BUILD_BEFORE_LAUNCH_ATTR, false);
-			fBuildCheckButton.setSelection(build);
-		} catch (CoreException ce) {			
-		}				
-	}
-
-	protected void updateConfigFromProject() {
-		if (getWorkingCopy() != null) {
-			getWorkingCopy().setAttribute(JavaDebugUI.PROJECT_ATTR, (String)fProjText.getText());
-			refreshStatus();			
-		}
-	}
-
-	protected void updateConfigFromMain() {
-		if (getWorkingCopy() != null) {
-			getWorkingCopy().setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)fMainText.getText());
-			refreshStatus();
-		}
-	}
-	
-	protected void updateConfigFromJRE() {
-		if (getWorkingCopy() != null) {
-			int vmIndex = fJRECombo.getSelectionIndex();
-			if (vmIndex > -1) {
-				VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
-				String vmID = vmStandin.getId();
-				getWorkingCopy().setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmID);
-				String vmTypeID = vmStandin.getVMInstallType().getId();
-				getWorkingCopy().setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, vmTypeID);
-				refreshStatus();
-			}
-		}
-	}
-	
-	protected void updateConfigFromBuild() {
-		if (getWorkingCopy() != null) {
-			boolean build = fBuildCheckButton.getSelection();
-			getWorkingCopy().setAttribute(JavaDebugUI.BUILD_BEFORE_LAUNCH_ATTR, build);
-			refreshStatus();
+	/**
+	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(JavaDebugUI.PROJECT_ATTR, (String)fProjText.getText());
+		config.setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)fMainText.getText());
+		int vmIndex = fJRECombo.getSelectionIndex();
+		if (vmIndex > -1) {
+			VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
+			String vmID = vmStandin.getId();
+			config.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmID);
+			String vmTypeID = vmStandin.getVMInstallType().getId();
+			config.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, vmTypeID);
 		}		
 	}
-	
-	protected void refreshStatus() {
-		if (!isBatchUpdate()) {
-			getLaunchDialog().refreshStatus();
-		}
-	}
-	
+			
 	/**
 	 * @see ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
 	}
 	
-	protected void setBatchUpdate(boolean update) {
-		fBatchUpdate = update;
-	}
-	
-	protected boolean isBatchUpdate() {
-		return fBatchUpdate;
-	}
-
 	/**
 	 * Create some empty space 
 	 */
@@ -586,6 +492,107 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		fVMStandins.add(vm);
 		populateJREComboBox();
 		selectJREComboBoxEntry(vm.getId());
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#isPageComplete()
+	 */
+	public boolean isValid() {
+		
+		setErrorMessage(null);
+		setMessage(null);
+		
+		String name = fProjText.getText().trim();
+		if (name.length() > 0) {
+			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
+				setErrorMessage("Project does not exist.");
+				return false;
+			}
+		}
+
+		name = fMainText.getText().trim();
+		if (name.length() == 0) {
+			setErrorMessage("Main type not specified.");
+			return false;
+		}
+		IJavaProject jp = getJavaProject();
+		if (jp != null) {
+			// only verify type exists if java project is specified
+			try {
+				IType type = JavaLocalApplicationLaunchConfigurationHelper.getMainType(name, jp);
+			} catch (CoreException e) {
+				setErrorMessage(e.getMessage());
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Initialize default attribute values based on the
+	 * given Java element.
+	 */
+	protected void initializeDefaults(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
+		initializeJavaProject(javaElement, config);
+		initializeMainTypeAndName(javaElement, config);
+		initializeHardCodedDefaults(config);
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		IJavaElement je = getContext();
+		if (je == null) {
+			initializeHardCodedDefaults(config);
+		} else {
+			initializeDefaults(je, config);
+		}
+	}
+
+	/**
+	 * Set the main type & name attributes on the working copy based on the IJavaElement
+	 */
+	protected void initializeMainTypeAndName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
+		String name = "";
+		try {
+			IType[] types = MainMethodFinder.findTargets(new BusyIndicatorRunnableContext(), new Object[] {javaElement});
+			if (types != null && (types.length > 0)) {
+				// Simply grab the first main type found in the searched element
+				name = types[0].getFullyQualifiedName();
+			}
+		} catch (InterruptedException ie) {
+		} catch (InvocationTargetException ite) {
+		}
+		config.setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, name);
+		int index = name.lastIndexOf('.');
+		if (index > 0) {
+			name = name.substring(index + 1);
+		}
+		name = getLaunchDialog().generateName(name);
+		config.rename(name);
+	}
+
+	/**
+	 * Set the VM attributes on the working copy based on the workbench default VM.
+	 */
+	protected void initializeDefaultVM(ILaunchConfigurationWorkingCopy config) {
+		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
+		if (vmInstall == null) {
+			config.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, (String)null);
+			config.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, (String)null);
+		} else {
+			config.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmInstall.getId());
+			config.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, vmInstall.getVMInstallType().getId());
+		}
+	}
+
+	/**
+	 * Initialize those attributes whose default values are independent of any context.
+	 */
+	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {
+		initializeDefaultVM(config);
 	}
 
 }

@@ -5,13 +5,14 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -30,19 +31,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
-public class JavaConnectTab implements ILaunchConfigurationTab {
-
-	// The launch configuration dialog that owns this tab
-	private ILaunchConfigurationDialog fLaunchConfigurationDialog;
-	
-	// The launch config working copy providing the values shown on this tab
-	private ILaunchConfigurationWorkingCopy fWorkingCopy;
+public class JavaConnectTab extends JavaLaunchConfigurationTab {
 
 	// Project UI widgets
 	private Label fProjLabel;
@@ -59,20 +52,16 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 
 	// Allow terminate UI widgets
 	private Button fAllowTerminateButton;
-
-	// Flag that when true, prevents the owning dialog's status area from getting updated.
-	// Used when multiple config attributes are getting updated at once.
-	private boolean fBatchUpdate = false;
 	
 	private static final String EMPTY_STRING = "";
 	
 	/**
-	 * @see ILaunchConfigurationTab#createTabControl(ILaunchConfigurationDialog, TabItem)
+	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
-	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tabItem) {
-		setLaunchDialog(dialog);
+	public void createControl(Composite parent) {
 		
-		Composite comp = new Composite(tabItem.getParent(), SWT.NONE);
+		Composite comp = new Composite(parent, SWT.NONE);
+		setControl(comp);
 		GridLayout topLayout = new GridLayout();
 		topLayout.marginHeight = 0;
 		comp.setLayout(topLayout);		
@@ -100,7 +89,7 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 		fProjText.setLayoutData(gd);
 		fProjText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateConfigFromProject();
+				refreshStatus();
 			}
 		});
 		
@@ -122,7 +111,7 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 		fHostText.setLayoutData(gd);
 		fHostText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateConfigFromHostName();
+				refreshStatus();
 			}
 		});
 		
@@ -134,7 +123,7 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 		fPortText.setLayoutData(gd);
 		fPortText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateConfigFromPortNumber();
+				refreshStatus();
 			}
 		});
 
@@ -142,11 +131,9 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 		fAllowTerminateButton.setText("&Allow termination of remote VM");
 		fAllowTerminateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				updateConfigFromAllowTerminate();
+				refreshStatus();
 			}
 		});
-				
-		return comp;
 	}
 
 	/**
@@ -155,27 +142,11 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 	protected void createVerticalSpacer(Composite comp) {
 		new Label(comp, SWT.NONE);
 	}
-	
-	/**
-	 * @see ILaunchConfigurationTab#setLaunchConfiguration(ILaunchConfigurationWorkingCopy)
-	 */
-	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy launchConfiguration) {
-		if (launchConfiguration.equals(getWorkingCopy())) {
-			return;
-		}
-		
-		setBatchUpdate(true);
-		updateWidgetsFromConfig(launchConfiguration);
-		setBatchUpdate(false);
-
-		setWorkingCopy(launchConfiguration);
-	}
 
 	/**
-	 * Set values for all UI widgets in this tab using values kept in the specified
-	 * launch configuration.
+	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
-	protected void updateWidgetsFromConfig(ILaunchConfiguration config) {
+	public void initializeFrom(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
 		updateHostNameFromConfig(config);
 		updatePortNumberFromConfig(config);
@@ -183,35 +154,39 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 	}
 	
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
+		String projectName = "";
 		try {
-			String projectName = config.getAttribute(JavaDebugUI.PROJECT_ATTR, EMPTY_STRING);
-			fProjText.setText(projectName);
+			projectName = config.getAttribute(JavaDebugUI.PROJECT_ATTR, EMPTY_STRING);	
 		} catch (CoreException ce) {
 		}
+		fProjText.setText(projectName);
 	}
 	
 	protected void updateHostNameFromConfig(ILaunchConfiguration config) {
+		String hostName = "";
 		try {
-			String hostName = config.getAttribute(JavaDebugUI.HOSTNAME_ATTR, EMPTY_STRING);
-			fHostText.setText(hostName);
+			hostName = config.getAttribute(JavaDebugUI.HOSTNAME_ATTR, EMPTY_STRING);
 		} catch (CoreException ce) {			
 		}		
+		fHostText.setText(hostName);
 	}
 
 	protected void updatePortNumberFromConfig(ILaunchConfiguration config) {
+		int portNumber = 8000;
 		try {
-			int portNumber = config.getAttribute(JavaDebugUI.PORT_ATTR, 8000);
-			fPortText.setText(String.valueOf(portNumber));
+			portNumber = config.getAttribute(JavaDebugUI.PORT_ATTR, 8000);
 		} catch (CoreException ce) {			
-		}		
+		}	
+		fPortText.setText(String.valueOf(portNumber));	
 	}
 
 	protected void updateAllowTerminateFromConfig(ILaunchConfiguration config) {
+		boolean allowTerminate = false;
 		try {
-			boolean allowTerminate = config.getAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, false);
-			fAllowTerminateButton.setSelection(allowTerminate);
+			allowTerminate = config.getAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, false);	
 		} catch (CoreException ce) {			
-		}		
+		}
+		fAllowTerminateButton.setSelection(allowTerminate);	
 	}
 
 	/**
@@ -219,72 +194,24 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 	 */
 	public void dispose() {
 	}
-
-	protected void setBatchUpdate(boolean update) {
-		fBatchUpdate = update;
-	}
 	
-	protected boolean isBatchUpdate() {
-		return fBatchUpdate;
-	}
-
-	protected void setLaunchDialog(ILaunchConfigurationDialog dialog) {
-		fLaunchConfigurationDialog = dialog;
-	}
 	
-	protected ILaunchConfigurationDialog getLaunchDialog() {
-		return fLaunchConfigurationDialog;
-	}
-	
-	protected void setWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
-		fWorkingCopy = workingCopy;
-	}
-	
-	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
-		return fWorkingCopy;
-	}
-	
-	protected void refreshStatus() {
-		if (!isBatchUpdate()) {
-			getLaunchDialog().refreshStatus();
+	/**
+	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(JavaDebugUI.PROJECT_ATTR, fProjText.getText().trim());
+		config.setAttribute(JavaDebugUI.HOSTNAME_ATTR, fHostText.getText().trim());
+		String portString = fPortText.getText();
+		int port = -1;
+		try {
+			port = Integer.parseInt(portString);
+		} catch (NumberFormatException nfe) {				
 		}
+		config.setAttribute(JavaDebugUI.PORT_ATTR, port);		
+		config.setAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, fAllowTerminateButton.getSelection());
 	}
-	
-	protected void updateConfigFromProject() {
-		if (getWorkingCopy() != null) {
-			getWorkingCopy().setAttribute(JavaDebugUI.PROJECT_ATTR, (String)fProjText.getText());
-			refreshStatus();			
-		}
-	}
-	
-	protected void updateConfigFromHostName() {
-		if (getWorkingCopy() != null) {
-			getWorkingCopy().setAttribute(JavaDebugUI.HOSTNAME_ATTR, (String)fHostText.getText());
-			refreshStatus();			
-		}		
-	}
-
-	protected void updateConfigFromPortNumber() {
-		if (getWorkingCopy() != null) {
-			String portString = fPortText.getText();
-			int port = -1;
-			try {
-				port = Integer.parseInt(portString);
-			} catch (NumberFormatException nfe) {				
-			}
-			getWorkingCopy().setAttribute(JavaDebugUI.PORT_ATTR, port);
-			refreshStatus();			
-		}		
-	}
-
-	protected void updateConfigFromAllowTerminate() {
-		if (getWorkingCopy() != null) {
-			boolean allowTerminate = fAllowTerminateButton.getSelection();
-			getWorkingCopy().setAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, allowTerminate);
-			refreshStatus();			
-		}				
-	}
-	
+		
 	/**
 	 * Show a dialog that lets the user select a project.  This in turn provides
 	 * context for the main type, allowing the user to key a main type name, or
@@ -364,4 +291,101 @@ public class JavaConnectTab implements ILaunchConfigurationTab {
 		return JavaCore.create(getWorkspaceRoot());
 	}
 
+	/**
+	 * Initialize default settings for the given Java element
+	 */
+	protected void initializeDefaults(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
+		initializeJavaProject(javaElement, config);
+		initializeName(javaElement, config);
+		initializeHardCodedDefaults(config);
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		IJavaElement javaElement = getContext();
+		if (javaElement == null) {
+			initializeHardCodedDefaults(config);
+		} else {
+			initializeDefaults(javaElement, config);
+		}
+	}
+
+	/**
+	 * Find the first instance of a type, compilation unit, class file or project in the
+	 * specified element's parental hierarchy, and use this as the default name.
+	 */
+	protected void initializeName(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
+		String name = "";
+		try {
+			IResource resource = javaElement.getUnderlyingResource();
+			name = resource.getName();
+			int index = name.lastIndexOf('.');
+			if (index > 0) {
+				name = name.substring(0, index);
+			}
+			name = getLaunchDialog().generateName(name);				
+		} catch (JavaModelException jme) {
+		}
+		config.rename(name);
+	}
+
+	/**
+	 * Initialize those attributes whose default values are independent of any context.
+	 */
+	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(JavaDebugUI.HOSTNAME_ATTR, "localhost");
+		config.setAttribute(JavaDebugUI.PORT_ATTR, 8000);
+		config.setAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, false);
+	}
+	
+	/**
+	 * @see ILaunchConfigurationTab#isPageComplete()
+	 */
+	public boolean isValid() {
+		
+		setErrorMessage(null);
+		setMessage(null);
+
+		// project		
+		String name = fProjText.getText().trim();
+		if (name.length() > 0) {
+			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
+				setErrorMessage("Project does not exist.");
+				return false;
+			}
+		}
+				
+		// Host
+		String hostName = fHostText.getText().trim();
+		if (hostName.length() < 1) {
+			setErrorMessage("Host name not specified.");
+			return false;
+		}
+		if (hostName.indexOf(' ') > -1) {
+			setErrorMessage("Invalid host name.");
+			return false;
+		}
+		
+		// Port
+		String portString = fPortText.getText().trim();
+		int portNumber = -1;
+		try {
+			portNumber = Integer.parseInt(portString);
+		} catch (NumberFormatException e) {
+			setErrorMessage("Invalid port number specified");
+			return false;
+		}
+		if (portNumber == Integer.MIN_VALUE) {
+			setErrorMessage("Port number not specified.");
+			return false;
+		}
+		if (portNumber < 1) {
+			setErrorMessage("Invalid port number specified");
+			return false;
+		}
+				
+		return true;
+	}	
 }

@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,24 +19,18 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdi.Bootstrap;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.debug.ui.*;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
-import org.eclipse.ui.IEditorInput;
 
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.AttachingConnector;
@@ -55,140 +48,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 	public ILaunch launch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return verifyAndLaunch(configuration, mode, true);
 	}
-
-	/**
-	 * @see ILaunchConfigurationDelegate#verify(ILaunchConfiguration, String)
-	 */
-	public void verify(ILaunchConfiguration configuration, String mode) throws CoreException {
-		verifyAndLaunch(configuration, mode, false);
-	}
-
-	/**
-	 * This delegate can initialize defaults for context objects that are IJavaElements
-	 * (ICompilationUnits or IClassFiles), IFiles, and IEditorInputs.  The job of this method
-	 * is to get an IJavaElement for the context then call the method that does the real work.
-	 * 
-	 * @see ILaunchConfigurationDelegate#initializeDefaults(ILaunchConfigurationWorkingCopy, Object)
-	 */
-	public void initializeDefaults(ILaunchConfigurationWorkingCopy configuration, Object object) {
-		if (object instanceof IJavaElement) {
-			initializeDefaults(configuration, (IJavaElement)object);
-		} else if (object instanceof IFile) {
-			IJavaElement javaElement = JavaCore.create((IFile)object);
-			initializeDefaults(configuration, javaElement);			
-		} else if (object instanceof IEditorInput) {
-			IJavaElement javaElement = (IJavaElement) ((IEditorInput)object).getAdapter(IJavaElement.class);
-			initializeDefaults(configuration, javaElement);
-		} else {
-			initializeHardCodedDefaults(configuration);
-		}
-	}
-
-	/**
-	 * Attempt to initialize default attribute values on the specified working copy by
-	 * retrieving the values from persistent storage on the resource associated with the
-	 * specified IJavaElement.  If any of the required attributes cannot be found in
-	 * persistent storage, this is taken to mean that there are no persisted defaults for 
-	 * the IResource, and the working copy is initialized entirely from the IJavaElement.
-	 */
-	protected void initializeDefaults(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
 		
-
-		// First look for a default config for this config type and the specified resource
-		if (javaElement != null) {
-			try {
-				IResource resource = javaElement.getUnderlyingResource();
-				if (resource != null) {
-					String configTypeID = workingCopy.getType().getIdentifier();
-					boolean foundDefault = getLaunchManager().initializeFromDefaultLaunchConfiguration(resource, workingCopy, configTypeID);
-					if (foundDefault) {
-						initializeFromContextJavaProject(workingCopy, javaElement);
-						initializeFromContextName(workingCopy, javaElement);
-						return;
-					}
-				}
-			} catch (JavaModelException jme) {			
-			} catch (CoreException ce) {			
-			}
-		}
-				
-		// If no default config was found, initialize all attributes we can from the specified 
-		// context object and from 'hard-coded' defaults known to this delegate
-		if (javaElement != null) {
-			initializeFromContextJavaProject(workingCopy, javaElement);
-			initializeFromContextName(workingCopy, javaElement);
-		}
-		initializeHardCodedDefaults(workingCopy);
-	}
-	
-	/**
-	 * Initialize those attributes whose default values are independent of any context.
-	 */
-	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy workingCopy) {
-		initializeFromDefaultHostName(workingCopy);
-		initializeFromDefaultPortNumber(workingCopy);
-		initializeFromDefaultAllowTerminate(workingCopy);
-		initializeFromDefaultContainer(workingCopy);
-		initializeFromDefaultPerspectives(workingCopy);					
-	}
-	
-	/**
-	 * Set the java project attribute on the working copy based on the IJavaElement.
-	 */
-	protected void initializeFromContextJavaProject(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
-		IJavaProject javaProject = javaElement.getJavaProject();
-		if ((javaProject == null) || !javaProject.exists()) {
-			return;
-		}
-		workingCopy.setAttribute(JavaDebugUI.PROJECT_ATTR, javaProject.getElementName());		
-	}
-	
-	/**
-	 * Find the first instance of a type, compilation unit, class file or project in the
-	 * specified element's parental hierarchy, and use this as the default name.
-	 */
-	protected void initializeFromContextName(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
-		String name = "";
-		try {
-			IResource resource = javaElement.getUnderlyingResource();
-			name = resource.getName();
-			int index = name.lastIndexOf('.');
-			if (index > 0) {
-				name = name.substring(0, index);
-			}
-			workingCopy.rename(generateUniqueNameFrom(name));				
-		} catch (JavaModelException jme) {
-		}
-	}
-
-	protected void initializeFromDefaultHostName(ILaunchConfigurationWorkingCopy workingCopy) {
-		workingCopy.setAttribute(JavaDebugUI.HOSTNAME_ATTR, "localhost"); //$NON-NLS-1$
-	}
-	
-	protected void initializeFromDefaultPortNumber(ILaunchConfigurationWorkingCopy workingCopy) {
-		workingCopy.setAttribute(JavaDebugUI.PORT_ATTR, 8000);	
-	}
-	
-	protected void initializeFromDefaultAllowTerminate(ILaunchConfigurationWorkingCopy workingCopy) {
-		workingCopy.setAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, false);			
-	}
-	
-	/**
-	 * Set the default storage location of the working copy to local.
-	 */
-	protected void initializeFromDefaultContainer(ILaunchConfigurationWorkingCopy workingCopy) {
-		workingCopy.setContainer(null);		
-	}
-	
-	/**
-	 * Set the default perspectives for Run & Debug to the DebugPerspective.
-	 */
-	protected void initializeFromDefaultPerspectives(ILaunchConfigurationWorkingCopy workingCopy) {
-		String debugPerspID = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
-		workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, debugPerspID);
-		workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, debugPerspID);				
-	}
-	
 	/**
 	 * Verifies the given configuration can be launched, and attempts the
 	 * launch as specified by the <code>launch</code> parameter.
@@ -269,9 +129,6 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 			projectResource = javaProject.getUnderlyingResource();
 		} catch (CoreException ce) {			
 		}		
-		if (projectResource != null) {
-			getLaunchManager().setDefaultLaunchConfiguration(projectResource, configuration);
-		}
 			
 		ISourceLocator sourceLocator = new JavaUISourceLocator(javaProject);
 		Launch launch = new Launch(configuration, mode, sourceLocator, null, debugTarget);

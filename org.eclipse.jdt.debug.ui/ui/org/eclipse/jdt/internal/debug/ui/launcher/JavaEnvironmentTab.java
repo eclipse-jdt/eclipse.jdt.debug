@@ -15,13 +15,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.jdt.internal.debug.ui.JavaLocalApplicationLaunchConfigurationHelper;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
@@ -33,7 +31,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
@@ -49,14 +46,7 @@ import org.eclipse.swt.widgets.TableItem;
  * Launch configuration tab for local java launches that presents the various paths (bootpath,
  * classpath and extension dirs path) and the environment variables to the user.
  */
-public class JavaEnvironmentTab implements ILaunchConfigurationTab {
-
-	// The launch configuration dialog that owns this tab
-	private ILaunchConfigurationDialog fLaunchConfigurationDialog;
-	
-	// Flag that when true, prevents the owning dialog's status area from getting updated.
-	// Used when multiple config attributes are getting updated at once.
-	private boolean fBatchUpdate = false;
+public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 	
 	// Paths UI widgets
 	private TabFolder fPathTabFolder;
@@ -86,9 +76,6 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 	// Listener for list selection events
 	private SelectionAdapter fListSelectionAdapter;
 	
-	// The launch config working copy providing the values shown on this tab
-	private ILaunchConfigurationWorkingCopy fWorkingCopy;
-
 	private static final String EMPTY_STRING = "";
 
 	// Constants used in reading & persisting XML documents containing path entries
@@ -101,30 +88,14 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 	private static final String ENV_XML_ENTRY = "envVarEntry";
 	private static final String ENV_XML_NAME = "envVarName";
 	private static final String ENV_XML_VALUE = "envVarValue";
-	
-	protected void setLaunchDialog(ILaunchConfigurationDialog dialog) {
-		fLaunchConfigurationDialog = dialog;
-	}
-	
-	protected ILaunchConfigurationDialog getLaunchDialog() {
-		return fLaunchConfigurationDialog;
-	}
-	
-	protected void setWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
-		fWorkingCopy = workingCopy;
-	}
-	
-	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
-		return fWorkingCopy;
-	}
-	
+		
 	/**
 	 * @see ILaunchConfigurationTab#createTabControl(ILaunchConfigurationDialog, TabItem)
 	 */
-	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tabItem) {
-		setLaunchDialog(dialog);
+	public void createControl(Composite parent) {
 		
-		Composite comp = new Composite(tabItem.getParent(), SWT.NONE);
+		Composite comp = new Composite(parent, SWT.NONE);
+		setControl(comp);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
 		comp.setLayout(topLayout);		
@@ -319,13 +290,6 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		
 		setEnvButtonsEnableState();
 		
-		return comp;
-	}
-
-	protected void refreshStatus() {
-		if (!isBatchUpdate()) {
-			getLaunchDialog().refreshStatus();
-		}
 	}
 	
 	/**
@@ -334,14 +298,11 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 	public void dispose() {
 	}
 	
-	protected void updateConfigFromPathList(List listWidget) {
-		if (getWorkingCopy() != null) {
-			String[] items = listWidget.getItems();
-			java.util.List listDataStructure = createListFromArray(items);
-			String attributeID = (String) listWidget.getData();
-			getWorkingCopy().setAttribute(attributeID, listDataStructure);			
-			refreshStatus();
-		}
+	protected void updateConfigFromPathList(List listWidget, ILaunchConfigurationWorkingCopy config) {
+		String[] items = listWidget.getItems();
+		java.util.List listDataStructure = createListFromArray(items);
+		String attributeID = (String) listWidget.getData();
+		config.setAttribute(attributeID, listDataStructure);			
 	}
 	
 	protected java.util.List createListFromArray(Object[] array) {
@@ -352,14 +313,11 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		return list;
 	}
 	
-	protected void updateConfigFromEnvTable(Table tableWidget) {
-		if (getWorkingCopy() != null) {
-			TableItem[] items = tableWidget.getItems();
-			Map map = createMapFromTableItems(items);
-			String attributeID = (String) tableWidget.getData();
-			getWorkingCopy().setAttribute(attributeID, map);			
-			refreshStatus();
-		}
+	protected void updateConfigFromEnvTable(Table tableWidget, ILaunchConfigurationWorkingCopy config) {
+		TableItem[] items = tableWidget.getItems();
+		Map map = createMapFromTableItems(items);
+		String attributeID = (String) tableWidget.getData();
+		config.setAttribute(attributeID, map);			
 	}
 	
 	protected Map createMapFromTableItems(TableItem[] items) {
@@ -374,23 +332,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#setLaunchConfiguration(ILaunchConfigurationWorkingCopy)
-	 */
-	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy launchConfiguration) {
-		if (launchConfiguration.equals(getWorkingCopy())) {
-			return;
-		}
-		
-		setBatchUpdate(true);
-		updateWidgetsFromConfig(launchConfiguration);
-		setBatchUpdate(false);
-
-		setWorkingCopy(launchConfiguration);
-	}
-
-	/**
-	 * Set values for all UI widgets in this tab using values kept in the specified
-	 * launch configuration.
+	 * @see JavaLaunchConfigurationTab#updateWidgetsFromConfig(ILaunchConfiguration)
 	 */
 	protected void updateWidgetsFromConfig(ILaunchConfiguration config) {
 		updateBootPathFromConfig(config);
@@ -400,27 +342,38 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 	}
 	
 	protected void updateBootPathFromConfig(ILaunchConfiguration config) {
-		java.util.List bootpath = null;
 		try {
-			bootpath = config.getAttribute(JavaDebugUI.BOOTPATH_ATTR, (java.util.List)null);
+			java.util.List bootpath = null;
+			if (config != null) {
+				bootpath = config.getAttribute(JavaDebugUI.BOOTPATH_ATTR, (java.util.List)null);
+			}
 			updatePathList(bootpath, fBootPathList);
 		} catch (CoreException ce) {			
 		}
 	}
 	
-	protected void updateClassPathFromConfig(ILaunchConfiguration config) {
-		java.util.List classpath = null;
+	protected void updateClassPathFromConfig(ILaunchConfiguration config) {		
 		try {
-			classpath = config.getAttribute(JavaDebugUI.CLASSPATH_ATTR, (java.util.List)null);
-			updatePathList(classpath, fClassPathList);
+			java.util.List classpath = null;
+			if (config != null) {
+				classpath = config.getAttribute(JavaDebugUI.CLASSPATH_ATTR, (java.util.List)null);
+			}
+			if (classpath == null) {
+				fClassPathDefaultButton.setSelection(true);
+				handleClassPathDefaultButtonSelected();
+			} else {
+				updatePathList(classpath, fClassPathList);
+			}
 		} catch (CoreException ce) {			
 		}
 	}
 	
-	protected void updateExtensionPathFromConfig(ILaunchConfiguration config) {
-		java.util.List extpath = null;
+	protected void updateExtensionPathFromConfig(ILaunchConfiguration config) {		
 		try {
-			extpath = config.getAttribute(JavaDebugUI.EXTPATH_ATTR, (java.util.List)null);
+			java.util.List extpath = null;
+			if (config != null) {
+				extpath = config.getAttribute(JavaDebugUI.EXTPATH_ATTR, (java.util.List)null);
+			}
 			updatePathList(extpath, fExtensionPathList);
 		} catch (CoreException ce) {			
 		}
@@ -429,7 +382,9 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 	protected void updateEnvVarsFromConfig(ILaunchConfiguration config) {
 		Map envVars = null;
 		try {
-			envVars = config.getAttribute(JavaDebugUI.ENVIRONMENT_VARIABLES_ATTR, (Map)null);
+			if (config != null) {
+				envVars = config.getAttribute(JavaDebugUI.ENVIRONMENT_VARIABLES_ATTR, (Map)null);
+			}
 			updateTable(envVars, fEnvTable);
 		} catch (CoreException ce) {
 		}
@@ -457,14 +412,6 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		}
 	}
 	
-	protected void setBatchUpdate(boolean update) {
-		fBatchUpdate = update;
-	}
-	
-	protected boolean isBatchUpdate() {
-		return fBatchUpdate;
-	}
-
 	/**
 	 * Create some empty space 
 	 */
@@ -526,9 +473,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 			listWidget.setSelection(insertAtIndex, nextInsertionPoint - 1);
 			setPathButtonsEnableState();
 		}
-		
-		// Update the config
-		updateConfigFromPathList(listWidget);
+		refreshStatus();
 	}
 	
 	/**
@@ -562,8 +507,6 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 			fLastBrowsedDirectory = result;
 		}
 		
-		// Update the config
-		updateConfigFromPathList(listWidget);
 	}
 
 	/**
@@ -574,7 +517,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		int[] selectedIndices = listWidget.getSelectionIndices();
 		listWidget.remove(selectedIndices);
 		setPathButtonsEnableState();
-		updateConfigFromPathList(listWidget);
+		refreshStatus();
 	}
 	
 	/**
@@ -591,9 +534,9 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		String selectedText = listWidget.getItem(selectedIndex);
 		listWidget.setItem(targetIndex, selectedText);
 		listWidget.setItem(selectedIndex, targetText);
-		updateConfigFromPathList(listWidget);
 		listWidget.setSelection(targetIndex);
 		setPathButtonsEnableState();
+		refreshStatus();
 	}
 	
 	/**
@@ -602,21 +545,37 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 	protected void handleClassPathDefaultButtonSelected() {
 		boolean selected = fClassPathDefaultButton.getSelection();
 		if (selected) {
-			fClassPathList.setEnabled(true);
+			fClassPathList.setEnabled(false);
 		} else {
-			fClassPathList.setEnabled(false);	
+			fClassPathList.setEnabled(true);	
 		}
-		
-		getWorkingCopy().setAttribute(JavaDebugUI.DEFAULT_CLASSPATH_ATTR, selected);
+
 		if (selected) {
 			try {
-				IJavaProject javaProject = JavaLocalApplicationLaunchConfigurationHelper.getJavaProject(getWorkingCopy());
-				String[] defaultClassPath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
+				IJavaProject javaProject = getJavaProject();
+				String[] defaultClassPath = new String[0];
+				if (javaProject != null) {
+					defaultClassPath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
+				}
 				fClassPathList.setItems(defaultClassPath);
-				updateConfigFromPathList(fClassPathList);
 			} catch (CoreException ce) {			
 			}
 		}
+		refreshStatus();
+	}
+	
+	/**
+	 * Returns the Java project for this tab - retrieves
+	 * it from the main tab.
+	 */
+	protected IJavaProject getJavaProject() {
+		ILaunchConfigurationTab[] tabs = getLaunchDialog().getTabs();
+		for (int i = 0; i < tabs.length; i++) {
+			if (tabs[i] instanceof JavaMainTab) {
+				return ((JavaMainTab)tabs[i]).getJavaProject();
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -688,13 +647,12 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 			tableItem.setText(nameValuePair);
 		}
 		fEnvTable.setSelection(new TableItem[] {tableItem});
-		updateConfigFromEnvTable(fEnvTable);		
+		refreshStatus();	
 	}
 
 	protected void handleEnvRemoveButtonSelected() {
 		int[] selectedIndices = fEnvTable.getSelectionIndices();
 		fEnvTable.remove(selectedIndices);
-		updateConfigFromEnvTable(fEnvTable);
 	}
 	
 	/**
@@ -768,4 +726,71 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		return fEnvLabel.getShell();
 	}
 	
+	/**
+	 * Initialize defaults based on the given java element.
+	 */
+	protected void initializeDefaults(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {		
+		initializeHardCodedDefaults(config);
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		IJavaElement javaElement = getContext();
+		if (javaElement != null) {
+			initializeDefaults(javaElement, config);
+		} else {
+			initializeHardCodedDefaults(config);	
+		}
+	}
+	
+	/**
+	 * Initialize those attributes whose default values are independent of any context.
+	 */
+	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {					
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#isPageComplete()
+	 */
+	public boolean isValid() {
+		
+		setErrorMessage(null);
+		setMessage(null);
+		
+		return true;
+	}
+	
+	/**
+	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	 */
+	public void initializeFrom(ILaunchConfiguration configuration) {
+		updateBootPathFromConfig(configuration);
+		updateClassPathFromConfig(configuration);
+		updateEnvVarsFromConfig(configuration);
+		updateExtensionPathFromConfig(configuration);
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		updateConfigFromEnvTable(fEnvTable, configuration);
+		if (isUseDefaultClasspath()) {
+			configuration.setAttribute(JavaDebugUI.CLASSPATH_ATTR, (String)null);
+		} else {
+			updateConfigFromPathList(fClassPathList, configuration);
+		}
+		updateConfigFromPathList(fBootPathList, configuration);
+		updateConfigFromPathList(fExtensionPathList, configuration);
+	}
+	
+	/**
+	 * Returns whether the 'use default classpath' button is checked
+	 */
+	protected boolean isUseDefaultClasspath() {
+		return fClassPathDefaultButton.getSelection();
+	}
+
 }

@@ -19,6 +19,12 @@ public class JavaDebugUI {
 	 * (value <code>org.eclipse.jdt.debug.ui.localJavaApplication"</code>).
 	 */
 	public static final String JAVA_APPLICATION_LAUNCH_CONFIGURATION_ID = "org.eclipse.jdt.debug.ui.localJavaApplication"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a Remote Java Application launch configuration
+	 * (value <code>org.eclipse.jdt.debug.ui.remoteJavaApplication"</code>).
+	 */
+	public static final String REMOTE_JAVA_APPLICATION_LAUNCH_CONFIGURATION_ID = "org.eclipse.jdt.debug.ui.remoteJavaApplication"; //$NON-NLS-1$	
 		
 	/**
 	 * Name of project containing the main type.
@@ -123,13 +129,6 @@ public class JavaDebugUI {
 	 * This attribute is used for attach launching.
 	 */
 	public static final String PORT_ATTR = PLUGIN_ID + ".PORT";	 //$NON-NLS-1$
-
-	/**
-	 * 
-	 * Build the workspace launch configuration attribute name.
-	 * If true, the workspace is incrementally built before the launch happens.
-	 */
-	public static final String BUILD_BEFORE_LAUNCH_ATTR = PLUGIN_ID + ".BUILD_BEFORE_LAUNCH";	 //$NON-NLS-1$
 
 	/**
 	 * Status code indicating a launch configuration does not

@@ -10,6 +10,7 @@ import java.io.File;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -37,15 +38,8 @@ import org.eclipse.swt.widgets.Text;
  * This tab appears for local java launch configurations and allows the user to edit
  * program arguments, VM arguments, and the working directory attributes.
  */
-public class JavaArgumentsTab implements ILaunchConfigurationTab {
-
-	// The launch configuration dialog that owns this tab
-	private ILaunchConfigurationDialog fLaunchConfigurationDialog;
-	
-	// Flag that when true, prevents the owning dialog's status area from getting updated.
-	// Used when multiple config attributes are getting updated at once.
-	private boolean fBatchUpdate = false;
-	
+public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
+		
 	// Program arguments UI widgets
 	private Label fPrgmArgumentsLabel;
 	private Text fPrgmArgumentsText;
@@ -59,34 +53,15 @@ public class JavaArgumentsTab implements ILaunchConfigurationTab {
 	private Text fWorkingDirText;
 	private Button fWorkingDirBrowseButton;
 	
-	// The launch config working copy providing the values shown on this tab
-	private ILaunchConfigurationWorkingCopy fWorkingCopy;
-
 	private static final String EMPTY_STRING = "";
-	
-	protected void setLaunchDialog(ILaunchConfigurationDialog dialog) {
-		fLaunchConfigurationDialog = dialog;
-	}
-	
-	protected ILaunchConfigurationDialog getLaunchDialog() {
-		return fLaunchConfigurationDialog;
-	}
-	
-	protected void setWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
-		fWorkingCopy = workingCopy;
-	}
-	
-	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
-		return fWorkingCopy;
-	}
-	
-	/**
-	 * @see ILaunchConfigurationTab#createTabControl(TabItem)
-	 */
-	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tabItem) {
-		setLaunchDialog(dialog);
 		
-		Composite comp = new Composite(tabItem.getParent(), SWT.NONE);
+	/**
+	 * @see ILaunchConfigurationTab#createControl(Composite)
+	 */
+	public void createControl(Composite parent) {
+		
+		Composite comp = new Composite(parent, SWT.NONE);
+		setControl(comp);
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);		
 		GridData gd;
@@ -113,7 +88,7 @@ public class JavaArgumentsTab implements ILaunchConfigurationTab {
 		fWorkingDirText.setLayoutData(gd);
 		fWorkingDirText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateConfigFromWorkingDirectory();
+				refreshStatus();
 			}
 		});
 		
@@ -136,7 +111,7 @@ public class JavaArgumentsTab implements ILaunchConfigurationTab {
 		fPrgmArgumentsText.setLayoutData(gd);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateConfigFromPgmArgs();
+				refreshStatus();
 			}
 		});
 		
@@ -149,31 +124,14 @@ public class JavaArgumentsTab implements ILaunchConfigurationTab {
 		fVMArgumentsText.setLayoutData(gd);	
 		fVMArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateConfigFromVMArgs();
+				refreshStatus();
 			}
 		});	
-				
-		return comp;
-	}
-	
-	/**
-	 * @see ILaunchConfigurationTab#setLaunchConfiguration(ILaunchConfigurationWorkingCopy)
-	 */
-	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy launchConfiguration) {
-		if (launchConfiguration.equals(getWorkingCopy())) {
-			return;
-		}
 		
-		setBatchUpdate(true);
-		updateWidgetsFromConfig(launchConfiguration);
-		setBatchUpdate(false);
-
-		setWorkingCopy(launchConfiguration);
 	}
-	
+		
 	/**
-	 * Set values for all UI widgets in this tab using values kept in the specified
-	 * launch configuration.
+	 * @see JavaLaunchConfigurationTab#updateWidgetsFromConfig(ILaunchConfiguration)
 	 */
 	protected void updateWidgetsFromConfig(ILaunchConfiguration config) {
 		updatePgmArgsFromConfig(config);
@@ -183,7 +141,10 @@ public class JavaArgumentsTab implements ILaunchConfigurationTab {
 	
 	protected void updatePgmArgsFromConfig(ILaunchConfiguration config) {
 		try {
-			String pgmArgs = config.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, EMPTY_STRING);
+			String pgmArgs = EMPTY_STRING;
+			if (config != null) {
+				pgmArgs = config.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, EMPTY_STRING);
+			}
 			fPrgmArgumentsText.setText(pgmArgs);
 		} catch (CoreException ce) {			
 		}
@@ -191,7 +152,10 @@ public class JavaArgumentsTab implements ILaunchConfigurationTab {
 	
 	protected void updateVMArgsFromConfig(ILaunchConfiguration config) {
 		try {
-			String vmArgs = config.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, EMPTY_STRING);
+			String vmArgs = EMPTY_STRING;
+			if (config != null) {
+				vmArgs = config.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, EMPTY_STRING);
+			}
 			fVMArgumentsText.setText(vmArgs);
 		} catch (CoreException ce) {			
 		}
@@ -199,40 +163,13 @@ public class JavaArgumentsTab implements ILaunchConfigurationTab {
 	
 	protected void updateWorkingDirectoryFromConfig(ILaunchConfiguration config) {
 		try {
-			String workingDir = config.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, EMPTY_STRING);
+			String workingDir = EMPTY_STRING;
+			if (config != null) {
+				workingDir = config.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, EMPTY_STRING);
+			}
 			fWorkingDirText.setText(workingDir);
 		} catch (CoreException ce) {			
 		}		
-	}
-	
-	protected void updateConfigFromPgmArgs() {
-		if (getWorkingCopy() != null) {
-			String pgmArgs = fPrgmArgumentsText.getText();
-			getWorkingCopy().setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, pgmArgs);
-			refreshStatus();
-		}
-	}
-	
-	protected void updateConfigFromVMArgs() {
-		if (getWorkingCopy() != null) {
-			String vmArgs = fVMArgumentsText.getText();
-			getWorkingCopy().setAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, vmArgs);
-			refreshStatus();
-		}
-	}
-	
-	protected void updateConfigFromWorkingDirectory() {
-		if (getWorkingCopy() != null) {
-			String workingDir = fWorkingDirText.getText();
-			getWorkingCopy().setAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, workingDir);
-			refreshStatus();
-		}
-	}
-	
-	protected void refreshStatus() {
-		if (!isBatchUpdate()) {
-			getLaunchDialog().refreshStatus();
-		}
 	}
 	
 	/**
@@ -241,14 +178,6 @@ public class JavaArgumentsTab implements ILaunchConfigurationTab {
 	public void dispose() {
 	}
 	
-	protected void setBatchUpdate(boolean update) {
-		fBatchUpdate = update;
-	}
-	
-	protected boolean isBatchUpdate() {
-		return fBatchUpdate;
-	}
-
 	/**
 	 * Create some empty space 
 	 */
@@ -284,6 +213,75 @@ public class JavaArgumentsTab implements ILaunchConfigurationTab {
 	private Shell getShell() {
 		return fWorkingDirLabel.getShell();
 	}
-	
+
+	/**
+	 * @see ILaunchConfigurationTab#isPageComplete()
+	 */
+	public boolean isValid() {
+		
+		setErrorMessage(null);
+		setMessage(null);
+		
+		String workingDirPath = fWorkingDirText.getText().trim();
+		if (workingDirPath.length() > 0) {
+			File dir = new File(workingDirPath);
+			if (!dir.exists()) {
+				setErrorMessage("Working directory does not exist.");
+				return false;
+			}
+			if (!dir.isDirectory()) {
+				setErrorMessage("Working directory is not a directory.");
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Defaults are empty.
+	 * 
+	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, (String)null);
+		config.setAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, (String)null);
+		config.setAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, (String)null);
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	 */
+	public void initializeFrom(ILaunchConfiguration configuration) {
+		try {
+			fPrgmArgumentsText.setText(configuration.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, ""));
+			fWorkingDirText.setText(configuration.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, ""));
+			fVMArgumentsText.setText(configuration.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, ""));
+		} catch (CoreException e) {
+			setErrorMessage("Exception occurred reading configuration: " + e.getStatus().getMessage());
+		}
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, getAttributeValueFrom(fPrgmArgumentsText));
+		configuration.setAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, getAttributeValueFrom(fVMArgumentsText));
+		configuration.setAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, getAttributeValueFrom(fWorkingDirText));
+	}
+
+	/**
+	 * Retuns the string in the text widget, or <code>null</code> if empty.
+	 * 
+	 * @return text or <code>null</code>
+	 */
+	protected String getAttributeValueFrom(Text text) {
+		String content = text.getText().trim();
+		if (content.length() > 0) {
+			return content;
+		}
+		return null;
+	}
 }
 
