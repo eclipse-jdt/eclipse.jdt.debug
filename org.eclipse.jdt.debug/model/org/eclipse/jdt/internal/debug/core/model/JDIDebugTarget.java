@@ -565,7 +565,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return whether this debug target supports popping stack frames.
 	 */
 	public boolean canPopFrames() {
-		if (isAvailable() && JDIDebugPlugin.getJDIVersion() >= 1.4) {
+		if (isAvailable() && JDIDebugPlugin.getJDIVersion() >= (float)1.4) {
 			return getVM().canPopFrames();
 		}
 		return false;
