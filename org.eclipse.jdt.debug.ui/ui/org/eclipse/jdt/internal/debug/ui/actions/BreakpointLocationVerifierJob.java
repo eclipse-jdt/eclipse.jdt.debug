@@ -101,6 +101,8 @@ public class BreakpointLocationVerifierJob extends Job {
 		ASTParser parser = ASTParser.newParser(apiLevel);
 		parser.setSource(fDocument.get().toCharArray());
 		parser.setProject(project);
+		parser.setUnitName(fResource.getName());
+		parser.setResolveBindings(true);
 		CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, fLineNumber);
 		compilationUnit.accept(locator);

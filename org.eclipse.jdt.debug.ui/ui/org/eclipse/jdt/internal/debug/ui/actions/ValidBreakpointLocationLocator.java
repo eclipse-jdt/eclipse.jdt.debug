@@ -41,6 +41,8 @@ import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.InfixExpression;
@@ -191,6 +193,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			case ASTNode.NUMBER_LITERAL:
 			case ASTNode.STRING_LITERAL:
 				return true;
+			case ASTNode.SIMPLE_NAME:
+			case ASTNode.QUALIFIED_NAME:
+				return isReplacedByConstantValue((Name)node);
+			case ASTNode.FIELD_ACCESS:
+				return isReplacedByConstantValue((FieldAccess)node);
+			case ASTNode.SUPER_FIELD_ACCESS:
+				return isReplacedByConstantValue((SuperFieldAccess)node);
 			case ASTNode.INFIX_EXPRESSION:
 				return isReplacedByConstantValue((InfixExpression)node);
 			case ASTNode.PREFIX_EXPRESSION:
@@ -223,6 +232,29 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 			return isReplacedByConstantValue(node.getOperand());
 		}
 		return false;
+	}
+	
+	private boolean isReplacedByConstantValue(Name node) {
+		// if node is a variable with a constant value (static final field)
+		IBinding binding= node.resolveBinding();
+		if (binding.getKind() == IBinding.VARIABLE) {
+			return ((IVariableBinding)binding).getConstantValue() != null;
+		}
+		return false;
+	}
+	
+	private boolean isReplacedByConstantValue(FieldAccess node) {
+		// if the node is 'this.<field>', and the field is static final
+		Expression expression= node.getExpression();
+		if (expression.getNodeType() == ASTNode.THIS_EXPRESSION) {
+			return node.resolveFieldBinding().getConstantValue() != null;
+		}
+		return false;
+	}
+	
+	private boolean isReplacedByConstantValue(SuperFieldAccess node) {
+		// if the field is static final
+		return node.resolveFieldBinding().getConstantValue() != null;
 	}
 
 	/**
@@ -429,14 +461,59 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.InfixExpression)
 	 */
 	public boolean visit(InfixExpression node) {
+		// if the breakpoint is to be set on a constant operand, the breakpoint needs to be
+		// set on the first constant operand after the previous non-constant operand
+		// (or the beginning of the expression, if there is no non-constant operand before).
+		// ex:   foo() +    // previous non-constant operand
+		//       1 +        // breakpoint set here
+		//       2          // breakpoint asked to be set here
 		if (visit(node, false)) {
-			if (isReplacedByConstantValue(node)) {
-				fLocation= fCompilationUnit.lineNumber(node.getStartPosition());
-				fLocationFound= true;
-				fTypeName= computeTypeName(node);
+			Expression leftOperand= node.getLeftOperand();
+			Expression firstConstant= null;
+			if (visit(leftOperand, false)) {
+				leftOperand.accept(this);
 				return false;
+			} 
+			if (isReplacedByConstantValue(leftOperand)) {
+				firstConstant= leftOperand;
 			}
-			return true;
+			Expression rightOperand= node.getRightOperand();
+			if (visit(rightOperand, false)) {
+				if (firstConstant == null || !isReplacedByConstantValue(rightOperand)) {
+					rightOperand.accept(this);
+					return false;
+				}
+			} else {
+				if (isReplacedByConstantValue(rightOperand)) {
+					if (firstConstant == null) {
+						firstConstant= rightOperand;
+					}
+				} else {
+					firstConstant= null;
+				}
+				List extendedOperands= node.extendedOperands();
+				for (Iterator iter= extendedOperands.iterator(); iter.hasNext();) {
+					Expression operand= (Expression) iter.next();
+					if (visit(operand, false)) {
+						if (firstConstant == null || !isReplacedByConstantValue(operand)) {
+							operand.accept(this);
+							return false;
+						}
+						break;
+					} 
+					if (isReplacedByConstantValue(operand)) {
+						if (firstConstant == null) {
+							firstConstant= operand;
+						}
+					} else {
+						firstConstant= null;
+					}
+					
+				}
+			}
+			fLocation= fCompilationUnit.lineNumber(firstConstant.getStartPosition());
+			fLocationFound= true;
+			fTypeName= computeTypeName(firstConstant);
 		}
 		return false;
 	}
