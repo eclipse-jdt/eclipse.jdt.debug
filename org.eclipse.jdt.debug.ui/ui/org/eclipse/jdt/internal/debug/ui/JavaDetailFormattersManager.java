@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
@@ -24,11 +23,11 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IValueDetailListener;
@@ -54,9 +53,10 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IWorkbenchWindow;
 
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvocationException;
@@ -153,22 +153,22 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		EvaluationListener evaluationListener= new EvaluationListener(value, thread, listener);
 		if (value instanceof IJavaObject && !(value instanceof IJavaArray)) {
 			IJavaObject objectValue= (IJavaObject) value;
-			IJavaProject project= getJavaProject(thread);
-			if (project != null) {
-				// get the evaluation engine
-				JDIDebugTarget debugTarget= (JDIDebugTarget) thread.getDebugTarget();
-				IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, debugTarget);
-				// get the compiled expression to use
-				try {
+			try {
+				IJavaProject project= getJavaProject(objectValue, thread);
+				if (project != null) {
+					// get the evaluation engine
+					JDIDebugTarget debugTarget= (JDIDebugTarget) thread.getDebugTarget();
+					IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, debugTarget);
+					// get the compiled expression to use
 					compiledExpression= getCompiledExpression(objectValue, debugTarget, evaluationEngine);
 					if (compiledExpression != null) {
 						evaluationEngine.evaluateExpression(compiledExpression, objectValue, thread, evaluationListener, DebugEvent.EVALUATION_IMPLICIT, false);
 						return;
 					}
-				} catch (DebugException e) {
-					DebugUIPlugin.log(e);
-					return;
 				}
+			} catch (DebugException e) {
+				DebugUIPlugin.log(e);
+				return;
 			}
 		}
 		try {
@@ -178,47 +178,54 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 	}
 	
-	private IJavaProject getJavaProject(IJavaThread thread) {
-		ILaunch launch= thread.getLaunch();
-		if (launch == null) {
-			return null;
-		}
-		ISourceLocator locator= launch.getSourceLocator();
-		if (locator == null)
-			return null;
+	private IJavaProject getJavaProject(IJavaObject javaValue, IJavaThread thread) throws DebugException {
+
 		
-		Object sourceElement;
-		try {
-			IStackFrame frame = thread.getTopStackFrame();
-			if (frame == null)
+		ISourceLocator locator= javaValue.getLaunch().getSourceLocator();
+		Object sourceElement= null;
+		if (locator instanceof ISourceLookupDirector) {
+			IJavaReferenceType type= (IJavaReferenceType)javaValue.getJavaType();
+			if (type instanceof JDIReferenceType) {
+				String[] sourcePaths= ((JDIReferenceType) type).getSourcePaths(null);
+				if (sourcePaths.length > 0) {
+					sourceElement= ((ISourceLookupDirector) locator).getSourceElement(sourcePaths[0]);
+				}
+			}
+			if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
+				sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
+			}
+		}
+		if (sourceElement == null) {
+			IStackFrame stackFrame= null;
+			IJavaDebugTarget target = (IJavaDebugTarget)javaValue.getDebugTarget().getAdapter(IJavaDebugTarget.class);
+			if (target != null) {
+				stackFrame = EvaluationContextManager.getEvaluationContext((IWorkbenchWindow)null);
+				if (stackFrame == null || !stackFrame.getDebugTarget().equals(target)) {
+					stackFrame= thread.getTopStackFrame();
+					if (stackFrame != null && !stackFrame.getDebugTarget().equals(target)) {
+						stackFrame= null;
+					}
+				}
+			}
+			if (stackFrame == null) {
 				return null;
-			sourceElement= locator.getSourceElement(frame);
-		} catch (DebugException e) {
-			DebugUIPlugin.log(e);
-			return null;
+			}
+			sourceElement = locator.getSourceElement(stackFrame);
+			if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
+				sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
+			}
 		}
+		IJavaProject project= null;
 		if (sourceElement instanceof IJavaElement) {
-			return ((IJavaElement) sourceElement).getJavaProject();
-		}
-		if (sourceElement instanceof IResource) {
-			IJavaProject project = JavaCore.create(((IResource)sourceElement).getProject());
-			if (project.exists()) {
-				return project;
+			project= ((IJavaElement) sourceElement).getJavaProject();
+		} else if (sourceElement instanceof IResource) {
+			IJavaProject resourceProject = JavaCore.create(((IResource)sourceElement).getProject());
+			if (resourceProject.exists()) {
+				project= resourceProject;
 			}
 		}
-		// if no source element, try the project associated with the launch - bug 27837
-		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
-		if (configuration != null) {
-			try {
-				return JavaRuntime.getJavaProject(configuration);
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e);
-			}
-		}
-		return null;
+		return project;
 	}
-	
-	
 	
 	public boolean hasAssociatedDetailFormatter(IJavaType type) {
 		return getAssociatedDetailFormatter(type) != null;
