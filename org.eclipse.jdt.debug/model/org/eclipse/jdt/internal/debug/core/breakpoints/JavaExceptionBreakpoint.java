@@ -309,7 +309,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	
 	protected boolean classFiltersIncludeDefaultPackage() {
 		for (int i = 0; i < fClassFilters.length; i++) {
-			if (fClassFilters[i].length() == 0) {
+			if (fClassFilters[i].length() == 0 || (fClassFilters[i].indexOf('.') == -1)) {
 				return true;
 			}
 		}
@@ -330,7 +330,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			boolean inclusive= isInclusiveFiltered();
 			if (defaultPackage) {
 				for (int i= 0; i < filters.length; i++) {
-					if (filters[i].length() == 0){
+					if (filters[i].length() == 0 || filters[i].equals(fullyQualifiedName)){
 						return !inclusive;
 					}	
 				}
@@ -521,8 +521,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		return fCommonPattern;
 	}
 	/**
-	 * Serializes the array of strings into one comma
-	 * separated string.
+	 * Serializes the array of Strings into one comma
+	 * separated String.
 	 */
 	protected String serializeList(String[] list) {
 		if (list == null) {
@@ -533,7 +533,12 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			if (i > 0) {
 				buffer.append(',');
 			}
-			buffer.append(list[i]);
+			String pattern= list[i];
+			if (pattern.length() == 0) {
+				//serialize the default package
+				pattern= "."; //$NON-NLS-1$
+			}
+			buffer.append(pattern);
 		}
 		return buffer.toString();
 	}	
@@ -546,6 +551,11 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
+			if (token.equals(".")) { //$NON-NLS-1$
+				//serialized form for the default package
+				//@see serializeList(String[])
+				token= ""; //$NON-NLS-1$
+			}
 			list.add(token);
 		}
 		return (String[])list.toArray(new String[list.size()]);
