@@ -81,10 +81,23 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 					// only return bootstrap classpath entries if we have the info
 					String[] bootpath= libraryInfo.getBootpath();
 					int length= bootpath.length;
+					// use libs to set source attachment properly
+					LibraryLocation[] libs = JavaRuntime.getLibraryLocations(vm);
 					resolved= new IRuntimeClasspathEntry[length];
 					for (int i= 0; i < length; i++) {
 						resolved[i]= JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(bootpath[i]));
 						resolved[i].setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+						for (int j = 0; j < libs.length; j++) {
+							String resolvedPath = resolved[i].getPath().toString();
+							if (libs[j].getSystemLibraryPath().toString().equalsIgnoreCase(resolvedPath)) {
+								IPath path = libs[j].getSystemLibrarySourcePath();
+								if (path != null && !path.isEmpty()) {
+									resolved[i].setSourceAttachmentPath(path);
+									resolved[i].setSourceAttachmentRootPath(libs[j].getPackageRootPath());
+								}
+								break;
+							}
+						}
 					}
 					return resolved;
 				}
