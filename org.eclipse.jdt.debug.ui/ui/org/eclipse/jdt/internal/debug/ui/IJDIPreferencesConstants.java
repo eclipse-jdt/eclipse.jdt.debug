@@ -90,6 +90,12 @@ public interface IJDIPreferencesConstants {
 	
 	/**
 	 * Boolean preference controlling whether to alert
+	 * with a dialog when hot code replace is not supported.
+	 */	
+	public static final String PREF_ALERT_HCR_NOT_SUPPORTED = IJavaDebugUIConstants.PLUGIN_ID + ".javaDebug.alertHCRNotSupported"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference controlling whether to alert
 	 * with a dialog when hot code replace results in 
 	 * obsolete methods.
 	 */	
