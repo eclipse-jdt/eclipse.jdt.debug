@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import java.util.zip.ZipFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
@@ -178,7 +179,7 @@ public class SourceLookupBlock {
 					allLocations.add(curr);
 				}
 			}
-		} catch (JavaModelException e) {
+		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
 		
@@ -187,6 +188,18 @@ public class SourceLookupBlock {
 		fProjectList.setElements(allLocations);
 		fProjectList.setCheckedElements(checked);
 		fZipSourceRootField.setEnabled(false);
+	}
+	
+	/**
+	 * Returns all java project source locations
+	 */
+	protected List getAllJavaProjectSourceLocations() throws JavaModelException {
+		IJavaProject[] allProjects= fJavaProject.getJavaModel().getJavaProjects();
+		ArrayList allLocations = new ArrayList(allProjects.length);
+		for (int i= 0; i < allProjects.length; i++) {
+			allLocations.add(new JavaProjectSourceLocation(allProjects[i]));
+		}		
+		return allLocations;
 	}
 
 	/*
@@ -232,7 +245,22 @@ public class SourceLookupBlock {
 		
 	
 	private void buttonPressed() {
+		if (fUseDefaultRadioButton.isSelected()) {
+			try {
+				IJavaSourceLocation[] defaultLocations = JavaSourceLocator.getDefaultSourceLocations(fJavaProject);
+				List list = new ArrayList(defaultLocations.length);
+				for (int i = 0; i < defaultLocations.length; i++) {
+					list.add(defaultLocations[i]);
+				}
+				fProjectList.setElements(list);
+				fProjectList.setCheckedElements(list);
+				fProjectList.addElements(getAllJavaProjectSourceLocations());
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
+		}
 		fProjectList.setEnabled(!fUseDefaultRadioButton.isSelected());
+
 	}
 	
 	private void getProjectsFromClaspath(IJavaProject project, ArrayList res) throws JavaModelException {
@@ -258,6 +286,7 @@ public class SourceLookupBlock {
 	public void applyChanges() throws JavaModelException {
 		if (fUseDefaultRadioButton.isSelected()) {
 			ProjectSourceLocator.setSourceLookupPath(fJavaProject, null);
+			ProjectSourceLocator.setPersistedSourceLocations(fJavaProject, null);
 		} else {
 			Iterator allLocations = fProjectList.getElements().iterator();
 			List orderedLocations = new ArrayList();

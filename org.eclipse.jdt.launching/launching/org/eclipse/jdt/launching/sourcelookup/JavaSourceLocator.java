@@ -5,17 +5,23 @@ package org.eclipse.jdt.launching.sourcelookup;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.LibraryLocation;
 
 
 /**
@@ -144,21 +150,50 @@ public class JavaSourceLocator implements ISourceLocator {
 	
 	/**
 	 * Returns a default collection of source locations for
-	 * the given Java project. Default sourcelocations consist
-	 * to the given project and all of its required projects .
+	 * the given Java project. Default source locations consist
+	 * of the given project and all of its required projects .
+	 * If the project uses an alternate runtime JRE than it has
+	 * been built with, the alternate JRE source zip is added
+	 * as the first source location.
 	 * 
 	 * @param project Java project
 	 * @return a collection of source locations for all required
 	 *  projects
-	 * @exception JavaModelException if an exception occurrs reading
+	 * @exception CoreException if an exception occurrs reading
 	 *  the classpath of the given or any required project
 	 */
-	public static IJavaSourceLocation[] getDefaultSourceLocations(IJavaProject project) throws JavaModelException {
+	public static IJavaSourceLocation[] getDefaultSourceLocations(IJavaProject project) throws CoreException {
+		IVMInstall runtimeJRE = JavaRuntime.getVMInstall(project);
 		ArrayList list = new ArrayList();
 		collectRequiredProjects(project,list);
-		IJavaSourceLocation[] locations = new IJavaSourceLocation[list.size()];
+		int size = list.size();
+		int offset = 0;
+		ArchiveSourceLocation jreSource = null;
+		if (runtimeJRE != null) {
+			LibraryLocation library = runtimeJRE.getLibraryLocation();
+			if (library == null) {
+				library = runtimeJRE.getVMInstallType().getDefaultLibraryLocation(runtimeJRE.getInstallLocation());
+			}
+			if (library != null) {
+				IPath path = library.getSystemLibrarySourcePath();
+				if (!path.isEmpty()) {
+					try {
+						jreSource = new ArchiveSourceLocation(path.toOSString(), library.getPackageRootPath().toString());
+					} catch (IOException e) {
+						throw new JavaModelException(e, IJavaModelStatusConstants.IO_EXCEPTION);
+					}
+					size++;
+					offset++;
+				}
+			}
+		}
+		IJavaSourceLocation[] locations = new IJavaSourceLocation[size];
+		if (jreSource != null) {
+			locations[0] = jreSource;
+		}		
 		for (int i = 0; i < list.size(); i++) {
-			locations[i] = new JavaProjectSourceLocation((IJavaProject)list.get(i));
+			locations[offset] = new JavaProjectSourceLocation((IJavaProject)list.get(i));
+			offset++;
 		}
 		return locations;
 	}

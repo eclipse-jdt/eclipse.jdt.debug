@@ -87,12 +87,12 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 		fgCustomSearchPathChanged= true;
 		try {
 			updateCustomSearchPath(project);
-		} catch (JavaModelException e) {
+		} catch (CoreException e) {
 			LaunchingPlugin.log(e);
 		}
 	}
 	
-	private void updateCustomSearchPath(IJavaProject jproject) throws JavaModelException {
+	private void updateCustomSearchPath(IJavaProject jproject) throws CoreException {
 		if (fgCustomSearchPathChanged) {
 			IJavaProject[] projects= getSourceLookupPath(jproject);
 			IJavaSourceLocation[] locations = getPersistedSourceLocations(jproject);
@@ -325,7 +325,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 		if (fCustomSearchPathProject != null) {
 			try {
 				updateCustomSearchPath(fCustomSearchPathProject);
-			} catch (JavaModelException e) {
+			} catch (CoreException e) {
 				LaunchingPlugin.log(e);
 			}
 		}
