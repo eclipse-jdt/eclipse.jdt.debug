@@ -43,7 +43,7 @@ public class OpenOnVariableAction extends OpenTypeAction {
 		return typeName;
 	}
 	
-	public boolean isEnabledFor(Object o){
+	protected boolean isEnabledFor(Object o){
 		if (!(o instanceof IAdaptable)) {
 			return false;
 		}

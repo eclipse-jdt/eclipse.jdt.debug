@@ -11,7 +11,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 
 public abstract class StackFrameAction extends OpenTypeAction {
 	
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		return element instanceof IAdaptable && ((IAdaptable) element).getAdapter(IJavaStackFrame.class) != null;
 	}
 		

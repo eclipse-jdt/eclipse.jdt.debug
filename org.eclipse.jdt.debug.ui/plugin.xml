@@ -316,6 +316,7 @@
 	<objectContribution
 		id="org.eclipse.jdt.debug.DropToFrameActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
+		<filter name="DropToFrameActionFilter" value="supportsDropToFrame"/>
 		<action
 			id="org.eclipse.jdt.ui.actions.DropToFrame"
 			label="%dropFrameAction.label"

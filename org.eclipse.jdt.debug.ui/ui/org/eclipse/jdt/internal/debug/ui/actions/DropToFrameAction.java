@@ -11,11 +11,11 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class DropToFrameAction extends ObjectActionDelegate {
 
-
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		IJavaStackFrame frame= (IJavaStackFrame)element;
 		return frame != null && frame.isSuspended() && frame.supportsDropToFrame();
 	}
@@ -24,9 +24,12 @@ public class DropToFrameAction extends ObjectActionDelegate {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		Iterator enum= getStructuredSelection().iterator();
-		// selectionChanged has already checked for correct selection
-
+		IStructuredSelection selection= getCurrentSelection();
+		if (selection == null) {
+			return;
+		}
+		Iterator enum= selection.iterator();
+		
 		while (enum.hasNext()) {
 			IJavaStackFrame frame= (IJavaStackFrame)enum.next();
 			try {
@@ -37,6 +40,5 @@ public class DropToFrameAction extends ObjectActionDelegate {
 				ExceptionHandler.handle(de, title, message);
 			}
 		}
-		update(action);
 	}
 }

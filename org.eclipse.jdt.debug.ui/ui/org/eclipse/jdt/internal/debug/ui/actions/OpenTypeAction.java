@@ -25,18 +25,20 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 
 public abstract class OpenTypeAction extends ObjectActionDelegate {
-	private StructuredViewer fViewer;
-
+	
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		Iterator enum= getStructuredSelection().iterator();
-		//selectionChanged has already checked for correct selection
+		IStructuredSelection selection= getCurrentSelection();
+		if (selection == null) {
+			return;
+		}
+		Iterator enum= selection.iterator();
 		try {
 			while (enum.hasNext()) {
 				Object element= enum.next();

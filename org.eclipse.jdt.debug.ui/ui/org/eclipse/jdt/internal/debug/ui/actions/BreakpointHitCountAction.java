@@ -8,8 +8,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
@@ -101,21 +99,17 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 		protected void setHitCountEnabled(boolean hitCountEnabled) {
 			fHitCountEnabled = hitCountEnabled;
 		}
-
-}
-
-	/**
-	 * Returns the plugin's breakpoint manager
-	 */
-	protected IBreakpointManager getBreakpointManager() {
-		return DebugPlugin.getDefault().getBreakpointManager();
 	}
+
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		IStructuredSelection selection= getStructuredSelection();
+		IStructuredSelection selection= getCurrentSelection();
+		if (selection == null) {
+			return;
+		}
 		Iterator enum= selection.iterator();
 		if (!enum.hasNext()) {
 			return;
