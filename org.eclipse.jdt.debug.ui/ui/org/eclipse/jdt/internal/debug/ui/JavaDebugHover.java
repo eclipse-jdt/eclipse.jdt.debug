@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -31,86 +31,17 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 
 
-public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension, ISelectionListener, IPartListener {
+public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension {
 		
-	protected IEditorPart fEditor;
-	protected ISelection fSelection = null;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart part) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partBroughtToTop(IWorkbenchPart part) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart part) {
-		if (part.equals(fEditor)) {
-			IWorkbenchPage page = fEditor.getSite().getPage();
-			page.removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-			page.removePartListener(this);
-			fSelection = null;
-			fEditor = null;
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partDeactivated(IWorkbenchPart part) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart part) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		fSelection = selection;
-	}
-
-	public JavaDebugHover() {
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
 	 */
 	public void setEditor(IEditorPart editor) {
-		if (editor != null) {
-			fEditor= editor;
-			final IWorkbenchPage page = editor.getSite().getPage();
-			page.addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-			page.addPartListener(this);
-			// initialize selection
-			Runnable r = new Runnable() {
-				public void run() {
-					fSelection = page.getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-				}
-			};
-			JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
-		}
 	}
 		
 	/* (non-Javadoc)
@@ -128,14 +59,9 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * if none
 	 */
 	protected IJavaStackFrame getFrame() {
-		if (fSelection instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection)fSelection;
-			if (selection.size() == 1) {
-				Object el = selection.getFirstElement();
-				if (el instanceof IAdaptable) {
-					return (IJavaStackFrame)((IAdaptable)el).getAdapter(IJavaStackFrame.class); 
-				}
-			}
+	    IAdaptable adaptable = DebugUITools.getDebugContext();
+		if (adaptable != null) {
+			return (IJavaStackFrame)adaptable.getAdapter(IJavaStackFrame.class); 
 		}
 		return null;
 	}
