@@ -307,7 +307,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Called when a breakpoint event is encountered
 	 */
-	public void expireHitCount(Event event) {
+	protected void expireHitCount(Event event) {
 		EventRequest request= event.request();
 		Integer requestCount= (Integer) request.getProperty(HIT_COUNT);
 		if (requestCount != null) {
@@ -877,7 +877,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 * 
-	 * Remove thread filters for terminated threads
+	 * Cleanup on thread termination
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
@@ -887,21 +887,34 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				if (!(source instanceof JDIThread)) {
 					return;
 				}
-				JDIThread thread= (JDIThread)source;
-				JDIDebugTarget target= (JDIDebugTarget)thread.getDebugTarget();
 				try {
-					if (thread == getThreadFilter(target)) {
-						removeThreadFilter(target);
-					}
+					cleanupForThreadTermination((JDIThread)source);
 				} catch (VMDisconnectedException exception) {
 					// Thread death often occurs at shutdown.
 					// A VMDisconnectedException trying to 
 					// update the breakpoint request is
 					// acceptable.
-				} catch (CoreException exception) {
-					JDIDebugPlugin.log(exception);
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Removes cached information relevant to this thread which has
+	 * terminated.
+	 * 
+	 * Remove thread filters for terminated threads
+	 * 
+	 * Subclasses may override but need to call super.
+	 */
+	protected void cleanupForThreadTermination(JDIThread thread) {
+		JDIDebugTarget target= (JDIDebugTarget)thread.getDebugTarget();
+		try {
+			if (thread == getThreadFilter(target)) {
+				removeThreadFilter(target);
+			}
+		} catch (CoreException exception) {
+			JDIDebugPlugin.log(exception);
 		}
 	}
 	
