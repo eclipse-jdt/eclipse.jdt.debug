@@ -619,6 +619,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 */
 	public boolean performOk() {
 		fStepFilterContentProvider.saveFilters();
+		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 	

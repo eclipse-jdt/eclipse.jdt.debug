@@ -148,6 +148,7 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 		if (getPropertyChangeListener().hasStateChanged()) {
 			refreshViews();
 		}
+		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 	
