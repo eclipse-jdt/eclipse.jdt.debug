@@ -186,19 +186,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			if (display.isDisposed()) {
 				return;
 			}
-			if (result.hasErrors()) {
-				display.asyncExec(new Runnable() {
-					public void run() {
-						if (display.isDisposed()) {
-							return;
-						}
-						reportErrors(result);
-						evaluationCleanup();
-					}
-				});
-			} else if (value != null) {
-				displayResult(result);
-			}
+			displayResult(result);
 		}
 	}
 	

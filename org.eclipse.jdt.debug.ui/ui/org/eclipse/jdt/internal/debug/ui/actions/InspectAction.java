@@ -39,13 +39,12 @@ public class InspectAction extends EvaluateAction {
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
 	protected void displayResult(final IEvaluationResult result) {
-		final IJavaValue value= result.getValue();
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
 				if (!display.isDisposed()) {				
 					showExpressionView();
-					JavaInspectExpression exp = new JavaInspectExpression(result.getSnippet().trim(), value);
+					JavaInspectExpression exp = new JavaInspectExpression(result);
 					DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
 				}
 				evaluationCleanup();

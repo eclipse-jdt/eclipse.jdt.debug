@@ -17,9 +17,10 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.eval.IEvaluationResult;
 
 /**
  * An implementation of an expression produced from the
@@ -27,7 +28,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
  * itself from the expression manager when its debug
  * target terminates.
  */
-public class JavaInspectExpression extends PlatformObject implements IExpression, IDebugEventSetListener {
+public class JavaInspectExpression extends PlatformObject implements IErrorReportingExpression, IDebugEventSetListener {
 	
 	/**
 	 * The value of this expression
@@ -38,6 +39,8 @@ public class JavaInspectExpression extends PlatformObject implements IExpression
 	 * The code snippet for this expression.
 	 */
 	private String fExpression;
+	
+	private IEvaluationResult fResult;
 
 	/**
 	 * Constucts a new inspect result for the given
@@ -53,6 +56,18 @@ public class JavaInspectExpression extends PlatformObject implements IExpression
 		fValue = value;
 		fExpression = expression;
 		DebugPlugin.getDefault().addDebugEventListener(this);
+	}
+	
+	/**
+	 * Constucts a new inspect result for the given
+	 * evaluation result, which provides a snippet, value,
+	 * and error messages, if any.
+	 * 
+	 * @param result the evaluation result
+	 */
+	public JavaInspectExpression(IEvaluationResult result) {
+		this(result.getSnippet(), result.getValue());
+		fResult= result;
 	}
 	
 	/**
@@ -73,21 +88,30 @@ public class JavaInspectExpression extends PlatformObject implements IExpression
 	 * @see IDebugElement#getDebugTarget()
 	 */
 	public IDebugTarget getDebugTarget() {
-		return getValue().getDebugTarget();
+		IValue value= getValue();
+		if (value != null) {
+			return getValue().getDebugTarget();
+		}
+		if (fResult != null) {
+			return fResult.getThread().getDebugTarget();
+		}
+		// An expression should never be created with a null value *and*
+		// a null result.
+		return null;
 	}
 
 	/**
 	 * @see IDebugElement#getModelIdentifier()
 	 */
 	public String getModelIdentifier() {
-		return getValue().getModelIdentifier();
+		return getDebugTarget().getModelIdentifier();
 	}
 
 	/**
 	 * @see IDebugElement#getLaunch()
 	 */
 	public ILaunch getLaunch() {
-		return getValue().getLaunch();
+		return getDebugTarget().getLaunch();
 	}
 
 	/**
@@ -107,5 +131,19 @@ public class JavaInspectExpression extends PlatformObject implements IExpression
 	 */
 	public void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);		
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#hasErrors()
+	 */
+	public boolean hasErrors() {
+		return fResult.hasErrors();
+	}
+
+	/**
+	 * @sSee org.eclipse.debug.core.model.IErrorReportingExpression#getErrorMessages()
+	 */	
+	public String[] getErrorMessages() {	
+		return fResult.getErrorMessages();
 	}
 }
