@@ -713,39 +713,38 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			if (containsChangedType(frame, replacedClassNames)) {
 				// smart drop to frame support
 				compilationUnit= getCompilationUnit(frame);
-				if (compilationUnit == null) {
-					continue;
-				}
-				try {
-					project= compilationUnit.getCorrespondingResource().getProject();
-					method= getMethod(frame, compilationUnit);
-					if (method != null) {
-						delta= new CompilationUnitDelta(compilationUnit, getLastProjectBuildTime(project));
-						if (!delta.hasChanged(method)) {
-							continue;
+				// if we can't find the source, then do type-based drop
+				if (compilationUnit != null) {
+					try {
+						project= compilationUnit.getCorrespondingResource().getProject();
+						method= getMethod(frame, compilationUnit);
+						if (method != null) {
+							delta= new CompilationUnitDelta(compilationUnit, getLastProjectBuildTime(project));
+							if (!delta.hasChanged(method)) {
+								continue;
+							}
 						}
+					} catch (CoreException exception) {
+						// If smart drop to frame fails, just do type-based drop	
 					}
-				} catch (CoreException exception) {
-					// If smart drop to frame fails, just do type-based drop	
 				}
 
 				if (frame.supportsDropToFrame()) {
 					affectedFrame= frame;
 					break;
-				} else {
-					// The frame we wanted to drop to cannot be popped.
-					// Set the affected frame to the next lowest poppable
-					// frame on the stack.
-					while (j > 0) {
-						j--;
-						frame= (JDIStackFrame) frames.get(j);
-						if (frame.supportsDropToFrame()) {
-							affectedFrame= frame;
-							break;
-						}
-					}
-					break;
 				}
+				// The frame we wanted to drop to cannot be popped.
+				// Set the affected frame to the next lowest poppable
+				// frame on the stack.
+				while (j > 0) {
+					j--;
+					frame= (JDIStackFrame) frames.get(j);
+					if (frame.supportsDropToFrame()) {
+						affectedFrame= frame;
+						break;
+					}
+				}
+				break;
 			}
 		}
 		return affectedFrame;
@@ -799,7 +798,11 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (locator == null) {
 			return null;
 		}
+		IJavaDebugTarget target = (IJavaDebugTarget) frame.getDebugTarget();
+		String def = target.getDefaultStratum();
+		target.setDefaultStratum("Java"); //$NON-NLS-1$
 		Object sourceElement= locator.getSourceElement(frame);
+		target.setDefaultStratum(def);
 		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
 			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
 		}
