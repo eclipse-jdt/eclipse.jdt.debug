@@ -89,6 +89,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
+		gd.widthHint = 100;
 		fPrgmArgumentsText.setLayoutData(gd);
 		fPrgmArgumentsText.setFont(font);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {

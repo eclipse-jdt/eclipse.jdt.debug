@@ -53,6 +53,7 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
+		gd.widthHint = 100;
 		fVMArgumentsText.setLayoutData(gd);
 		fVMArgumentsText.setFont(font);
 		fVMArgumentsText.addModifyListener(new ModifyListener() {
