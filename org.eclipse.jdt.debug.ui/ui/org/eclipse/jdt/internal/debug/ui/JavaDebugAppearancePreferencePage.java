@@ -41,8 +41,6 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 	private Button fUnsignedButton;
 	//view settings
 	private Button fPackagesButton;
-	private Button fFinalButton;
-	private Button fStaticButton;
 	
 	private PropertyChangeListener fPropertyChangeListener;
 	
@@ -86,8 +84,6 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);
 		
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, true);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS, false);
 	}
 	/**
 	 * @see PreferencePage#createContents(Composite)
@@ -114,8 +110,6 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 		
 		Composite comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Opened_View_Default_Settings_1")); //$NON-NLS-1$
 		fPackagesButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Show_&qualified_names_2")); //$NON-NLS-1$
-		fFinalButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Show_&final_fields_3")); //$NON-NLS-1$
-		fStaticButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.&Show_static_fields_4")); //$NON-NLS-1$
 		
 		setValues();
 		
@@ -253,8 +247,6 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 		fCharButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES));
 		fUnsignedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES));		
 		
-		fStaticButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS));
-		fFinalButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS));
 		fPackagesButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
 	}
 	
@@ -267,8 +259,6 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 		store.setValue(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES, fHexButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES, fCharButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES, fUnsignedButton.getSelection());
-		store.setValue(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS, fFinalButton.getSelection());
-		store.setValue(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS, fStaticButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, fPackagesButton.getSelection());
 	}
 	

@@ -111,24 +111,6 @@ public interface IJDIPreferencesConstants {
 	public static final String PREF_SHOW_QUALIFIED_NAMES= IJavaDebugUIConstants.PLUGIN_ID + ".show_qualified_names"; //$NON-NLS-1$
 	
 	/**
-	 * Boolean preference controlling whether the debugger shows 
-	 * static fields. When <code>true</code> the debugger
-	 * will show static fields in newly opened views.
-	 * 
-	 * @since 2.0
-	 */
-	public static final String PREF_SHOW_STATIC_FIELDS= IJavaDebugUIConstants.PLUGIN_ID + ".show_static_fields"; //$NON-NLS-1$
-
-	/**
-	 * Boolean preference controlling whether the debugger shows 
-	 * final fields. When <code>true</code> the debugger
-	 * will show final fields in newly opened views.
-	 * 
-	 * @since 2.0
-	 */
-	public static final String PREF_SHOW_FINAL_FIELDS= IJavaDebugUIConstants.PLUGIN_ID + ".show_final_fields"; //$NON-NLS-1$
-	
-	/**
 	 * List of defined detail formatters.A String containing a comma
 	 * separated list of fully qualified type names, the associated
 	 * code snippet and an 'enabled' flag.

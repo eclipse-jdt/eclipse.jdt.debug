@@ -97,8 +97,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);
 		
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, true);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS, false);
-		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS, false);
 		store.setDefault(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true);
 		
 		store.setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
