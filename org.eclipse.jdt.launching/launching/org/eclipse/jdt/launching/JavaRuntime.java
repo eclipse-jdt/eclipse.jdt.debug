@@ -312,21 +312,6 @@ public final class JavaRuntime {
 		}
 		return null;
 	}
-	/**
-	 * Sets the VM to be used for building the given Java project.
-	 * Note that this setting will be persisted between workbench sessions.
-	 * The project needs to exist.
-	 * 
-	 * @param project the Java project
-	 * @param javaRuntime the VM instance. May be <code>null</code> to clear the
-	 * 					  property.
-	 * @throws	CoreException	If the property could not be set to
-	 * 							the underlying project.
-	 * @deprecated this method has no effect. Setting the JRE associated with a project
-	 *  should be done by setting it's classpath.
-	 */
-	public static void setVM(IJavaProject project, IVMInstall javaRuntime) throws CoreException {
-	}
 	
 	/**
 	 * Sets a VM as the system-wide default VM, and notifies registered VM install
