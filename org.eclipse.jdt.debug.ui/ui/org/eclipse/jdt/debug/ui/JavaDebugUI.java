@@ -105,7 +105,7 @@ public class JavaDebugUI {
 	
 	/**
 	 * Status code indicating a VM runner could not be located
-	 * for the VM install specified by a lanuch configuration.
+	 * for the VM install specified by a launch configuration.
 	 */
 	public static final int VM_RUNNER_DOES_NOT_EXIST = 105;	
 	

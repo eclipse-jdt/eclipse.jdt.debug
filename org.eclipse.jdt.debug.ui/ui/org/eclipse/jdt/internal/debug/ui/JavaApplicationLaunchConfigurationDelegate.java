@@ -65,7 +65,7 @@ public class JavaApplicationLaunchConfigurationDelegate
 	 * 
 	 * @param configuration the configuration to validate and launch
 	 * @param mode the mode in which to launch
-	 * @param lanuch whether to launch the configuration after validation
+	 * @param doLaunch whether to launch the configuration after validation
 	 *  is complete
 	 * @return the result launch or <code>null</code> if the launch
 	 *  is not performed.
