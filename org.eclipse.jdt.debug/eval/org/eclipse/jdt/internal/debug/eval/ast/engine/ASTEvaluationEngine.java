@@ -236,7 +236,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaStackFrame)
 	 */
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaStackFrame frame) {
-		snippet= getCompleteSnippet(snippet);
 		IJavaProject javaProject = getJavaProject();
 		RuntimeContext context = new RuntimeContext(javaProject, frame);
 
@@ -295,7 +294,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaObject, IJavaThread)
 	 */
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext) {
-		snippet= getCompleteSnippet(snippet);
 		IJavaProject javaProject = getJavaProject();
 
 		EvaluationSourceGenerator mapper = null;
@@ -345,15 +343,6 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		unit.accept(visitor);
 
 		return visitor.getInstructions();
-	}
-	
-	protected String getCompleteSnippet(String codeSnippet) {
-		boolean isAnExpression= codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1; //$NON-NLS-1$
-
-		if (isAnExpression) {
-			codeSnippet = "return " + codeSnippet + ';'; //$NON-NLS-1$
-		}
-		return codeSnippet;
 	}
 
 	/*

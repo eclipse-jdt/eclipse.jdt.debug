@@ -67,7 +67,16 @@ public class EvaluationSourceGenerator {
 		fLocalModifiers = localModifiers;
 		fLocalTypesNames = localTypesNames;
 		fLocalVariables = localVariables;
-	 	fCodeSnippet= codeSnippet;
+	 	fCodeSnippet= getCompleteSnippet(codeSnippet);
+	}
+
+	protected String getCompleteSnippet(String codeSnippet) {
+		boolean isAnExpression= codeSnippet.indexOf(';') == -1 && codeSnippet.indexOf('{') == -1 && codeSnippet.indexOf('}') == -1 && codeSnippet.indexOf("return") == -1; //$NON-NLS-1$
+
+		if (isAnExpression) {
+			codeSnippet = "return " + codeSnippet + ';'; //$NON-NLS-1$
+		}
+		return codeSnippet;
 	}
 	
 	public String getCompilationUnitName() {
