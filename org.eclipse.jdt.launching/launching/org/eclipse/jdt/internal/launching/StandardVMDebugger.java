@@ -39,6 +39,53 @@ import com.sun.jdi.connect.ListeningConnector;
  * mode.
  */
 public class StandardVMDebugger extends StandardVMRunner {
+	
+	
+	/**
+	 * Used to attach to a VM in a seperate thread, to allow for cancellation
+	 * and detect that the associated System process died before the connect
+	 * occurred.	 */
+	class ConnectRunnable implements Runnable {
+		
+		private VirtualMachine fVirtualMachine = null;
+		private ListeningConnector fConnector = null;
+		private Map fConnectionMap = null;
+		private Exception fException = null;
+		
+		/**
+		 * Constructs a runnable to connect to a VM via the given connector
+		 * with the given connection arguments.
+		 * 		 * @param connector		 * @param map		 */
+		public ConnectRunnable(ListeningConnector connector, Map map) {
+			fConnector = connector;
+			fConnectionMap = map;
+		}
+		
+		public void run() {
+			try {
+				fVirtualMachine = fConnector.accept(fConnectionMap);
+			} catch (IOException e) {
+				fException = e;
+			} catch (IllegalConnectorArgumentsException e) {
+				fException = e;
+			}
+		}
+		
+		/**
+		 * Returns the VM that was attached to, or <code>null</code> if none.
+		 * 
+		 * @return the VM that was attached to, or <code>null</code> if none		 */
+		public VirtualMachine getVirtualMachine() {
+			return fVirtualMachine;
+		}
+		
+		/**
+		 * Returns any exception that occurred while attaching, or <code>null</code>.
+		 * 		 * @return IOException or IllegalConnectorArgumentsException		 */
+		public Exception getException() {
+			return fException;
+		}
+	}
 
 	/**
 	 * Creates a new launcher
@@ -141,32 +188,65 @@ public class StandardVMDebugger extends StandardVMRunner {
 				boolean retry= false;
 				do  {
 					try {
-						VirtualMachine vm= connector.accept(map);
+						
+						ConnectRunnable runnable = new ConnectRunnable(connector, map);
+						Thread connectThread = new Thread(runnable, "Listening Connector"); //$NON-NLS-1$
+						connectThread.start();
+						while (connectThread.isAlive()) {
+							if (monitor.isCanceled()) {
+								connector.stopListening(map);
+								p.destroy();
+								return;
+							}
+							try {
+								p.exitValue();
+								// process has terminated - stop waiting for a connection
+								try {
+									connector.stopListening(map); 
+								} catch (IOException e) {
+									// expected
+								}
+								checkErrorMessage(process);
+							} catch (IllegalThreadStateException e) {
+								// expected while process is alive
+							}
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e) {
+							}
+						}
+
+						Exception ex = runnable.getException();
+						if (ex instanceof IllegalConnectorArgumentsException)						 {
+							throw (IllegalConnectorArgumentsException)ex;
+						}
+						if (ex instanceof InterruptedIOException) {
+							throw (InterruptedIOException)ex;
+						}
+						if (ex instanceof IOException) {
+							throw (IOException)ex;
+						}
+						
+						VirtualMachine vm= runnable.getVirtualMachine();
 						JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
 						return;
 					} catch (InterruptedIOException e) {
-						String errorMessage= process.getStreamsProxy().getErrorStreamMonitor().getContents();
-						if (errorMessage.length() == 0) {
-							errorMessage= process.getStreamsProxy().getOutputStreamMonitor().getContents();
-						}
-						if (errorMessage.length() != 0) {
-							abort(errorMessage, e, IJavaLaunchConfigurationConstants.ERR_VM_LAUNCH_ERROR);
+						checkErrorMessage(process);
+						
+						// timeout, consult status handler if there is one
+						IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_VM_CONNECT_TIMEOUT, "", e); //$NON-NLS-1$
+						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+						
+						retry= false;
+						if (handler == null) {
+							// if there is no handler, throw the exception
+							throw new CoreException(status);
 						} else {
-							// timeout, consult status handler if there is one
-							IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_VM_CONNECT_TIMEOUT, "", e); //$NON-NLS-1$
-							IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
-							
-							retry= false;
-							if (handler == null) {
-								// if there is no handler, throw the exception
-								throw new CoreException(status);
-							} else {
-								Object result = handler.handleStatus(status, this);
-								if (result instanceof Boolean) {
-									retry = ((Boolean)result).booleanValue();
-								}
-							} 
-						}
+							Object result = handler.handleStatus(status, this);
+							if (result instanceof Boolean) {
+								retry = ((Boolean)result).booleanValue();
+							}
+						} 
 					}
 				} while (retry);
 			} finally {
@@ -180,6 +260,16 @@ public class StandardVMDebugger extends StandardVMRunner {
 		if (p != null) {
 			p.destroy();
 		}
+	}
+	
+	protected void checkErrorMessage(IProcess process) throws CoreException {
+		String errorMessage= process.getStreamsProxy().getErrorStreamMonitor().getContents();
+		if (errorMessage.length() == 0) {
+			errorMessage= process.getStreamsProxy().getOutputStreamMonitor().getContents();
+		}
+		if (errorMessage.length() != 0) {
+			abort(errorMessage, null, IJavaLaunchConfigurationConstants.ERR_VM_LAUNCH_ERROR);
+		}										
 	}
 		
 	protected void specifyArguments(Map map, int portNumber) {
