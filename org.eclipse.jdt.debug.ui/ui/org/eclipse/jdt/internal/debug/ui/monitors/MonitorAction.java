@@ -48,7 +48,7 @@ public abstract class MonitorAction implements IViewActionDelegate {
 		}
 		Object element= ss.getFirstElement();
 		if (element instanceof IDebugElement) {
-			return (IJavaDebugTarget)((IDebugElement)element).getDebugTarget();
+			return (IJavaDebugTarget)((IDebugElement)element).getDebugTarget().getAdapter(IJavaDebugTarget.class);
 		}
 		
 		return null;
