@@ -314,7 +314,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		
 		fVMList.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent e) {
-				editVM();
+				if (!fVMList.getSelection().isEmpty()) {
+					editVM();
+				}
 			}
 		});
 		table.addKeyListener(new KeyAdapter() {
