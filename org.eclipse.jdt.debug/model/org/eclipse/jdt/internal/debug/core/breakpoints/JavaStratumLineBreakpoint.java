@@ -176,17 +176,23 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		}
 		
 		String bpSourcePath= getSourcePath();
-		List sourcePaths;
-		try {
-			sourcePaths= type.sourcePaths(getStratum());
-		} catch (AbsentInformationException e1) {
-			return false;
-		}
-		for (Iterator iter = sourcePaths.iterator(); iter.hasNext();) {
-			if (((String) iter.next()).equals(bpSourcePath)) {
-				// query registered listeners to see if this pattern breakpoint should
-				// be installed in the given target
-				return queryInstallListeners(target, type);
+		if (bpSourcePath == null) {
+			// source path not specified
+			return queryInstallListeners(target, type);
+		} else {
+			// check that source paths match
+			List sourcePaths;
+			try {
+				sourcePaths= type.sourcePaths(getStratum());
+			} catch (AbsentInformationException e1) {
+				return false;
+			}
+			for (Iterator iter = sourcePaths.iterator(); iter.hasNext();) {
+				if (((String) iter.next()).equals(bpSourcePath)) {
+					// query registered listeners to see if this pattern breakpoint should
+					// be installed in the given target
+					return queryInstallListeners(target, type);
+				}
 			}
 		}
 		
