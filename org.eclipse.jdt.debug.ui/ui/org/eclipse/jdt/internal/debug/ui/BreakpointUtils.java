@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -75,7 +76,7 @@ public class BreakpointUtils {
 		}
 		IResource res = member.getResource();
 		if (res == null) {
-			res = member.getJavaProject().getProject();
+			res = ResourcesPlugin.getWorkspace().getRoot();
 		}
 		return res;
 	}
