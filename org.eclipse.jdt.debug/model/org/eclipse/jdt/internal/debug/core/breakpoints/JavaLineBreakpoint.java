@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -143,19 +144,9 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	private void removeCachedThreads(Map map, JDIDebugTarget target) {
-		Set threads= map.keySet();
-		List threadsToRemove= new ArrayList();
-		Iterator iter= threads.iterator();
-		JDIThread thread;
-		while (iter.hasNext()) {
-			thread= (JDIThread)iter.next();
-			if (thread.getDebugTarget() == target) {
-				threadsToRemove.add(thread);
-			}
-		}
-		iter= threadsToRemove.iterator();
-		while (iter.hasNext()) {
-			map.remove((JDIThread)iter.next());
+		IThread[] threads= target.getThreads();
+		for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
+			map.remove(threads[i]);
 		}
 	}
 	
