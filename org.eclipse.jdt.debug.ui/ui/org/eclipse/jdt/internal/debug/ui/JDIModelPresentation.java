@@ -74,7 +74,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * @see IDebugModelPresentation
  */
-public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation, IPropertyChangeListener, IDebugEventListener {
+public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation, IDebugEventListener {
 
 	/**
 	 * Qualified names presentation property (value <code>"org.eclipse.debug.ui.displayQualifiedNames"</code>).
@@ -128,8 +128,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	public JDIModelPresentation() {
 		super();
-		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		store.addPropertyChangeListener(this);
 	}
 	
 	/**
@@ -137,8 +135,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	public void dispose() {
 		super.dispose();
-		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
-		store.removePropertyChangeListener(this);
 		disposeThreadPool();
 	}
 	
@@ -578,25 +574,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			buffer.append("]"); //$NON-NLS-1$
 		}		
 		return buffer;
-	}
-	
-	/**
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty() != IJDIPreferencesConstants.VARIABLE_RENDERING) {
-			return;
-		}
-		IDebugTarget[] targets= DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
-		if (targets == null || targets.length == 0) {
-			return;
-		}
-		for (int i=0; i<targets.length; i++) {
-			if (targets[i] instanceof IJavaDebugTarget && !targets[i].isTerminated()) {
-				 fireEvent(new DebugEvent(targets[i], DebugEvent.CHANGE));
-				 break;
-			}
-		}
 	}
 	
 	/**

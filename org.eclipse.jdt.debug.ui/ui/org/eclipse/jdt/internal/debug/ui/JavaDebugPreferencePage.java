@@ -13,6 +13,8 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -49,9 +51,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -73,8 +77,11 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -150,8 +157,39 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 				fHasStateChanged= true;
 			} else if (event.getProperty().equals(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES)) {
 				fHasStateChanged= true;
+			} else if (!event.getProperty().equals(IJDIPreferencesConstants.VARIABLE_RENDERING)) {
+				return;
+			}
+			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+				public void run() {
+					// Refresh interested views
+					IWorkbenchWindow[] windows= JDIDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
+					IWorkbenchPage page= null;
+					for (int i= 0; i < windows.length; i++) {
+						page= windows[i].getActivePage();
+						refreshViews(page, IDebugUIConstants.ID_EXPRESSION_VIEW);
+						refreshViews(page, IDebugUIConstants.ID_VARIABLE_VIEW);
+					}
+				}
+			});
+		}
+		
+		/**
+		 * Refresh all views in the given workbench page with the given view id
+		 */
+		private void refreshViews(IWorkbenchPage page, String viewID) {
+			IViewPart part= page.findView(viewID);
+			if (part != null) {
+				IDebugViewAdapter adapter= (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
+				if (adapter != null) {
+					Viewer viewer= adapter.getViewer();
+					if (viewer instanceof StructuredViewer) {
+						((StructuredViewer)viewer).refresh();
+					}
+				}
 			}
 		}
+		
 		public boolean hasStateChanged() {
  			return fHasStateChanged;
  		}
