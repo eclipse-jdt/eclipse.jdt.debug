@@ -51,8 +51,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -90,6 +90,30 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	protected Button fStopInMainCheckButton;
 			
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	
+	/**
+	 * A listener which handles widget change events for the controls
+	 * in this tab.
+	 */
+	private class WidgetListener implements ModifyListener, SelectionListener {
+		public void modifyText(ModifyEvent e) {
+			updateLaunchConfigurationDialog();
+		}
+		public void widgetSelected(SelectionEvent e) {
+			Object source = e.getSource();
+			if (source == fProjButton) {
+				handleProjectButtonSelected();
+			} else if (source == fSearchButton) {
+				handleSearchButtonSelected();
+			} else {
+				updateLaunchConfigurationDialog();
+			}
+		}
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
+	}
+
+	private WidgetListener fListener = new WidgetListener();
 	
 	/**
 	 * Boolean launch configuration attribute indicating that external jars (on
@@ -137,18 +161,10 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProjText.setLayoutData(gd);
 		fProjText.setFont(font);
-		fProjText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fProjText.addModifyListener(fListener);
 		
 		fProjButton = createPushButton(comp, LauncherMessages.getString("JavaMainTab.&Browse_3"), null); //$NON-NLS-1$
-		fProjButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleProjectButtonSelected();
-			}
-		});
+		fProjButton.addSelectionListener(fListener);
 		
 		createVerticalSpacer(comp, 2);
 		
@@ -160,11 +176,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fStopInMainCheckButton.setLayoutData(gd);
-		fStopInMainCheckButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});		
+		fStopInMainCheckButton.addSelectionListener(fListener);		
 		
 	}
 		
@@ -189,38 +201,22 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fMainText.setLayoutData(gd);
 		fMainText.setFont(font);
-		fMainText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fMainText.addModifyListener(fListener);
 		
 		fSearchButton = createPushButton(mainGroup,LauncherMessages.getString("JavaMainTab.Searc&h_5"), null); //$NON-NLS-1$
-		fSearchButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleSearchButtonSelected();
-			}
-		});
+		fSearchButton.addSelectionListener(fListener);
 		
 		fSearchExternalJarsCheckButton = createCheckButton(mainGroup, LauncherMessages.getString("JavaMainTab.E&xt._jars_6")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fSearchExternalJarsCheckButton.setLayoutData(gd);
-		fSearchExternalJarsCheckButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fSearchExternalJarsCheckButton.addSelectionListener(fListener);
 
 		fConsiderInheritedMainButton = createCheckButton(mainGroup, LauncherMessages.getString("JavaMainTab.22")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fConsiderInheritedMainButton.setLayoutData(gd);
-		fConsiderInheritedMainButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fConsiderInheritedMainButton.addSelectionListener(fListener);
 	}
 
 	/**
