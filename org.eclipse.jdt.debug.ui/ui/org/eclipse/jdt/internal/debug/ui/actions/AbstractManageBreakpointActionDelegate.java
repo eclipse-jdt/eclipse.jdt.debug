@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jface.action.IAction;
