@@ -14,7 +14,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -25,16 +24,25 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 public class JavaStructureErrorValue implements IJavaValue {
 	
 	private String[] fMessages;
-    private IJavaDebugTarget fDebugTarget;
+    private IJavaValue fValue;
 
-	public JavaStructureErrorValue(String errorMessage, IJavaDebugTarget target) {
+	public JavaStructureErrorValue(String errorMessage, IJavaValue value) {
 		fMessages= new String[] { errorMessage };
-        fDebugTarget= target;
+        fValue= value;
 	}
     
-    public JavaStructureErrorValue(String[] errorMessages, IJavaDebugTarget target) {
+    public JavaStructureErrorValue(String[] errorMessages, IJavaValue value) {
         fMessages= errorMessages;
-        fDebugTarget= target;
+        fValue= value;
+    }
+    
+    /**
+     * Returns this error node's parent value. This is the value for which a
+     * logical structure could not be calculated.
+     * @return the parent value of this error node
+     */
+    public IJavaValue getParentValue() {
+        return fValue;
     }
 
 	/* (non-Javadoc)
@@ -91,7 +99,7 @@ public class JavaStructureErrorValue implements IJavaValue {
             } else {
                 varName.append(LogicalStructuresMessages.getString("JavaStructureErrorValue.1")); //$NON-NLS-1$
             }
-            variables[i]= new JDIPlaceholderVariable(varName.toString(), new JavaStructureErrorValue(fMessages[i], (IJavaDebugTarget) getDebugTarget()));
+            variables[i]= new JDIPlaceholderVariable(varName.toString(), new JavaStructureErrorValue(fMessages[i], fValue));
         }
 		return variables;
 	}
@@ -114,14 +122,14 @@ public class JavaStructureErrorValue implements IJavaValue {
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	public IDebugTarget getDebugTarget() {
-		return fDebugTarget;
+		return fValue.getDebugTarget();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
 	public ILaunch getLaunch() {
-		return fDebugTarget.getLaunch();
+		return getDebugTarget().getLaunch();
 	}
 
 	/* (non-Javadoc)

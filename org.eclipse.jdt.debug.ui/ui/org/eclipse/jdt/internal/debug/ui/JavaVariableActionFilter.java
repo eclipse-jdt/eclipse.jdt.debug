@@ -20,6 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaStructureErrorValue;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.ui.actions.EditVariableLogicalStructureAction;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenVariableTypeAction;
@@ -65,7 +66,7 @@ public class JavaVariableActionFilter implements IActionFilter {
 				} else if (name.equals("DetailFormatterFilter") && value.equals("isDefined")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return (varValue instanceof IJavaObject) && (JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(((IJavaObject)varValue).getJavaType()));
 				} else if (name.equals("JavaLogicalStructureFilter") && value.equals("canEditLogicalStructure")) {  //$NON-NLS-1$ //$NON-NLS-2$
-                    return EditVariableLogicalStructureAction.getLogicalStructure(varValue) != null;
+                    return varValue instanceof JavaStructureErrorValue || EditVariableLogicalStructureAction.getLogicalStructure(varValue) != null;
                 }
 			} catch (DebugException e) {
 				JDIDebugUIPlugin.log(e);

@@ -116,7 +116,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 			if (compiledExpression.hasErrors()) {
 				String[] errorMessages = compiledExpression.getErrorMessages();
                 log(errorMessages);
-				return new JavaStructureErrorValue(errorMessages, (IJavaDebugTarget) fThread.getDebugTarget());
+				return new JavaStructureErrorValue(errorMessages, fEvaluationValue);
 			}
 			fResult= null;
 			fEvaluationEngine.evaluateExpression(compiledExpression, fEvaluationValue, fThread, this, DebugEvent.EVALUATION_IMPLICIT, false);
@@ -129,7 +129,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 				}
 			}
 			if (fResult == null) {
-				return new JavaStructureErrorValue(LogicalStructuresMessages.getString("JavaLogicalStructure.1"), (IJavaDebugTarget) fThread.getDebugTarget()); //$NON-NLS-1$
+				return new JavaStructureErrorValue(LogicalStructuresMessages.getString("JavaLogicalStructure.1"), fEvaluationValue); //$NON-NLS-1$
 			}
 			if (fResult.hasErrors()) {
 				DebugException exception = fResult.getException();
@@ -143,7 +143,7 @@ public class JavaLogicalStructure implements ILogicalStructureType {
                     log(fResult.getErrorMessages());
 					message= LogicalStructuresMessages.getString("JavaLogicalStructure.3"); //$NON-NLS-1$
 				}
-				return new JavaStructureErrorValue(message, (IJavaDebugTarget) fThread.getDebugTarget());
+				return new JavaStructureErrorValue(message, fEvaluationValue);
 			}
 			return fResult.getValue();
 		}
