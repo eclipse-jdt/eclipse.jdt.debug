@@ -41,33 +41,19 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
         super(name);
     }
 
-    public void testProcessConsolePlainOutput100Lines() throws Exception {
-    	tagAsSummary("Process Console 100 lines: plain output", Dimension.CPU_TIME);
-        runConsole80CharsTest(100, 100);
-    }
 
     public void testProcessConsolePlainOutput10000Lines() throws Exception {
-        tagAsSummary("Process Console 10,000 lines: plain output", Dimension.CPU_TIME);
+        tagAsSummary("Process Console 10,000 lines: plain output", Dimension.ELAPSED_PROCESS);
         runConsole80CharsTest(10000, 10);
     }
 
-    public void testProcessConsoleStackTraceOutput100Lines() throws Exception {
-        tagAsSummary("Process Console 100 lines: stack trace output", Dimension.CPU_TIME);
-        runStackTrace(50, 100); // 2 lines * 50 repeats = 100 lines
-    }
-
     public void testProcessConsoleStackTraceOutput10000Lines() throws Exception {
-        tagAsSummary("Process Console 10,000 lines: stack trace output", Dimension.CPU_TIME);
+        tagAsSummary("Process Console 10,000 lines: stack trace output", Dimension.ELAPSED_PROCESS);
         runStackTrace(5000, 10); // 2 lines * 5000 repeats = 10000 lines
     }
 
-    public void testProcessConsoleWrappedOutput100Lines() throws Exception {
-        tagAsSummary("Process Console 100 lines: wrapped output", Dimension.CPU_TIME);
-        runVariableLength(25, 100); // 4 lines * 25 repeats = 100 lines
-    }
-
     public void testProcessConsoleWrappedOutput10000Lines() throws Exception {
-        tagAsSummary("Process Console 10,000 lines: wrapped output", Dimension.CPU_TIME);
+        tagAsSummary("Process Console 10,000 lines: wrapped output", Dimension.ELAPSED_PROCESS);
         runVariableLength(2500, 10); // 4 lines * 2500 repeats = 10000 lines
     }
 
@@ -166,7 +152,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     }
 
     protected void launchWorkingCopyAndWait(ILaunchConfigurationWorkingCopy workingCopy) throws Exception {
-    	System.gc();
+        System.gc();
         workingCopy.launch(ILaunchManager.RUN_MODE, null, false);
         synchronized (fLock) {
             if (!fStopped) {

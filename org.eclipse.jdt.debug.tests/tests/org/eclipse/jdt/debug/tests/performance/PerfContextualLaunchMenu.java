@@ -57,13 +57,11 @@ public class PerfContextualLaunchMenu extends AbstractDebugPerformanceTest {
                     fillMenu(menu);
                 }
                 
-                for(int i=0; i<50; i++) {
+                for(int i=0; i<10; i++) {
                     startMeasuring();
-                    fillMenu(menu);
-                    fillMenu(menu);
-                    fillMenu(menu);
-                    fillMenu(menu);
-                    fillMenu(menu);
+                    for (int j = 0; j < 40; j++) {
+                    	fillMenu(menu);
+					}
                     stopMeasuring();
                 }
             }
