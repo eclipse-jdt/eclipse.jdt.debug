@@ -192,8 +192,8 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements I
 		String oldPattern = getPattern(target);
 		fPatterns.put(target, pattern);
 		if (oldPattern != null && !oldPattern.equals(pattern)) {
-			removeFromTarget((JDIDebugTarget)target);
-			addToTarget((JDIDebugTarget)target);
+			recreate((JDIDebugTarget)target);
+			fireChanged();
 		}
 	}		
 	

@@ -13,18 +13,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -231,20 +232,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 
 	/**
-	 * Removes the <code>oldRequest</code> from the given target if present
-	 * and replaces it with <code>newRequest</code>
-	 */
-	protected void replaceRequest(JDIDebugTarget target, EventRequest oldRequest, EventRequest newRequest) {
-		target.removeJDIEventListener(this, oldRequest);
-		target.addJDIEventListener(this, newRequest);
-		// delete old request
-		//on JDK you cannot delete (disable) an event request that has hit its count filter
-		if (!isExpired(oldRequest)) {
-			target.getEventRequestManager().deleteEventRequest(oldRequest); // disable & remove
-		}			
-	}
-
-	/**
 	 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
 	 */
 	public boolean handleEvent(Event event, JDIDebugTarget target) {
@@ -337,9 +324,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (requestCount != null) {
 			try {
 				request.putProperty(EXPIRED, Boolean.TRUE);
-				setEnabled(false);
+				setAttributes(fgExpiredEnabledAttributes, new Object[]{Boolean.TRUE, Boolean.FALSE});
 				// make a note that we auto-disabled this breakpoint.
-				setExpired(true);
 			} catch (CoreException ce) {
 				JDIDebugPlugin.log(ce);
 			}
@@ -377,21 +363,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		request.putProperty(JAVA_BREAKPOINT_PROPERTY, this);
 		configureRequestThreadFilter(request, target);
 		configureRequestHitCount(request);
-		updateInstanceFilters(request, target);
+		configureInstanceFilters(request, target);
 		// Important: only enable a request after it has been configured
 		updateEnabledState(request, target);
-	}
-	
-	protected void updateInstanceFilters(EventRequest request, JDIDebugTarget target) throws CoreException {
-		if (fInstanceFilters != null && !fInstanceFilters.isEmpty()) {
-			Iterator iter = fInstanceFilters.iterator();
-			while (iter.hasNext()) {
-				IJavaObject object = (IJavaObject)iter.next();
-				if (object.getDebugTarget().equals(target)) {
-					addInstanceFilter(request, ((JDIObjectValue)object).getUnderlyingObject());
-				}
-			}
-		}		
 	}
 	
 	/**
@@ -419,9 +393,21 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (hitCount > 0) {
 			request.addCountFilter(hitCount);
 			request.putProperty(HIT_COUNT, new Integer(hitCount));
-			request.putProperty(EXPIRED, Boolean.FALSE);
+			//request.putProperty(EXPIRED, Boolean.FALSE);
 		}
 	}
+	
+	protected void configureInstanceFilters(EventRequest request, JDIDebugTarget target) throws CoreException {
+		if (fInstanceFilters != null && !fInstanceFilters.isEmpty()) {
+			Iterator iter = fInstanceFilters.iterator();
+			while (iter.hasNext()) {
+				IJavaObject object = (IJavaObject)iter.next();
+				if (object.getDebugTarget().equals(target)) {
+					addInstanceFilter(request, ((JDIObjectValue)object).getUnderlyingObject());
+				}
+			}
+		}
+	}	
 	
 	/**
 	 * Creates and returns a breakpoint request for this breakpoint which
@@ -443,12 +429,21 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		// pre-notification
 		fireAdding(target);
 		
+		// create event requests
+		createRequests(target);
+
+	}
+	
+	/**
+	 * Creates event requests for the given target
+	 */
+	protected void createRequests(JDIDebugTarget target) throws CoreException {
 		String referenceTypeName= getTypeName();
 		String enclosingTypeName= getEnclosingReferenceTypeName();
 		if (referenceTypeName == null || enclosingTypeName == null) {
 			return;
 		}
-		
+
 		// create request to listen to class loads
 		if (referenceTypeName.indexOf('$') == -1) {
 			registerRequest(target.createClassPrepareRequest(enclosingTypeName), target);
@@ -459,13 +454,13 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			//register to ensure we hear about local and anonymous inner classes
 			registerRequest(target.createClassPrepareRequest(enclosingTypeName + "$*", referenceTypeName), target);  //$NON-NLS-1$
 		}
-		
+
 		// create breakpoint requests for each class currently loaded
 		List classes= target.jdiClassesByName(referenceTypeName);
 		if (classes.isEmpty() && enclosingTypeName.equals(referenceTypeName)) {
 			return;
-		} 
-		
+		}
+
 		boolean success= false;
 		Iterator iter = classes.iterator();
 		while (iter.hasNext()) {
@@ -474,10 +469,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				success= true;
 			}
 		}
-		
+
 		if (!success) {
 			addToTargetForLocalType(target, enclosingTypeName);
-		}
+		}		
 	}
 	
 	/**
@@ -511,90 +506,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Update all requests that this breakpoint has installed in the
-	 * given target to reflect the current state of this breakpoint.
+	 * Do nothing - we update the request when an API call changes an attribute
 	 */
-	public void changeForTarget(JDIDebugTarget target) throws CoreException {		
-		List requests = getRequests(target);
-		if (!requests.isEmpty()) {
-			ListIterator iter = requests.listIterator();
-			EventRequest req;
-			while (iter.hasNext()) {
-				req = (EventRequest)iter.next();
-				if (!(req instanceof ClassPrepareRequest)) {
-					EventRequest newRequest= updateRequest(req, target);
-					if (newRequest != req) {
-						iter.set(newRequest);
-					}
-				}
-			}
-		}
+	public void changeForTarget(JDIDebugTarget target) throws CoreException {
 	}
-
-	/**
-	 * Update the given request in the given target to reflect
-	 * the current state of this breakpoint.  Returns the updated
-	 * request
-	 */
-	protected EventRequest updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
-		updateEnabledState(request, target);
-		updateSuspendPolicy(request, target);
-		updateInstanceFilters(request, target);
-		EventRequest newRequest = updateHitCount(request, target);
-		if (newRequest != request) {
-			replaceRequest(target, request, newRequest);
-			return newRequest;
-		}
-		return request;
-	}
-	
-	/**
-	 * Update the given request in the given debug target to
-	 * reflect the current hit count of this breakpoint.
-	 */
-	protected EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException {
-		// if the hit count has changed, or the request has expired and is being re-enabled,
-		// create a new request
-		if (hasHitCountChanged(request) || (isExpired(request) && this.isEnabled())) {
-			request= recreateRequest(request, target);
-		}
-		return request;
-	}
-	
-	/**
-	 * Create a request that reflects the current state of this breakpoint.
-	 * The returned request will be installed in the same type as the given
-	 * request.
-	 */
-	protected abstract EventRequest recreateRequest(EventRequest request, JDIDebugTarget target) throws CoreException;
-	
-	/**
-	 * Update the given request in the given debug target to
-	 * reflect the current suspend policy of this breakpoint.
-	 */
-	protected void updateSuspendPolicy(EventRequest request, JDIDebugTarget target) throws CoreException {
-		int breakpointPolicy = getSuspendPolicy();
-		int requestPolicy = request.suspendPolicy();
-		if (requestPolicy == EventRequest.SUSPEND_EVENT_THREAD && breakpointPolicy == IJavaBreakpoint.SUSPEND_THREAD) {
-			return;
-		}
-		if (requestPolicy == EventRequest.SUSPEND_ALL && breakpointPolicy == IJavaBreakpoint.SUSPEND_VM) {
-			return;
-		}
-		try {
-			switch (breakpointPolicy) {
-				case IJavaBreakpoint.SUSPEND_THREAD :
-					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-					break;
-				case IJavaBreakpoint.SUSPEND_VM :
-					request.setSuspendPolicy(EventRequest.SUSPEND_ALL);
-					break;					
-			} 
-		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
-		}
-	}
-	
+			
 	/**
 	 * Returns the JDI suspend policy that corresponds to this
 	 * breakpoint's suspend policy
@@ -628,43 +544,17 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Remove all requests that this breakpoint has installed in the given
-	 * debug target.
+	 * Removes this breakpoint from the given tagret.
 	 */
 	public void removeFromTarget(final JDIDebugTarget target) throws CoreException {
-		// removing was previously done is a workspace runnable, but that is
-		// not possible since it can be a resouce callback (marker deletion) that
-		// causes a breakpoint to be removed
-		ArrayList requests= (ArrayList)getRequests(target).clone();
-		// Iterate over a copy of the requests since this list of requests
-		// can be changed in other threads which would cause an ConcurrentModificationException
-		Iterator iter = requests.iterator();
-		EventRequest req;
-		while (iter.hasNext()) {
-			req = (EventRequest)iter.next();
-			try {				
-				if (target.isAvailable() && !isExpired(req)) { // cannot delete an expired request
-					target.getEventRequestManager().deleteEventRequest(req); // disable & remove
-				}
-			} catch (VMDisconnectedException e) {
-				if (target.isAvailable()) {
-					JDIDebugPlugin.log(e);
-				}
-			} catch (RuntimeException e) {
-				JDIDebugPlugin.log(e);
-			} finally {
-				deregisterRequest(req, target);
-			}
-		}
-		
-		fRequestsByTarget.remove(target);
+		removeRequests(target);
 		fFilteredThreadsByTarget.remove(target);
 		boolean markerExists = markerExists();
 		if (!markerExists || (markerExists && getInstallCount() == 0)) {
 			fInstalledTypeName = null;
 		}
 		
-		// instance filters
+		// remove instance filters 
 		if (fInstanceFilters != null && !fInstanceFilters.isEmpty()) {
 			boolean changed = false;
 			for (int i = 0; i < fInstanceFilters.size(); i++) {
@@ -685,6 +575,38 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		fireRemoved(target);
 	}		
 	
+	/**
+	 * Remove all requests that this breakpoint has installed in the given
+	 * debug target.
+	 */
+	protected void removeRequests(final JDIDebugTarget target) throws CoreException {
+		// removing was previously done is a workspace runnable, but that is
+		// not possible since it can be a resouce callback (marker deletion) that
+		// causes a breakpoint to be removed
+		ArrayList requests= (ArrayList)getRequests(target).clone();
+		// Iterate over a copy of the requests since this list of requests
+		// can be changed in other threads which would cause an ConcurrentModificationException
+		Iterator iter = requests.iterator();
+		EventRequest req;
+		while (iter.hasNext()) {
+			req = (EventRequest)iter.next();
+			try {
+				if (target.isAvailable() && !isExpired(req)) { // cannot delete an expired request
+					target.getEventRequestManager().deleteEventRequest(req); // disable & remove
+				}
+			} catch (VMDisconnectedException e) {
+				if (target.isAvailable()) {
+					JDIDebugPlugin.log(e);
+				}
+			} catch (RuntimeException e) {
+				JDIDebugPlugin.log(e);
+			} finally {
+				deregisterRequest(req, target);
+			}
+		}
+		fRequestsByTarget.remove(target);
+	}
+		
 	/**
 	 * Update the enabled state of the given request in the given target, which is associated
 	 * with this breakpoint. Set the enabled state of the request
@@ -858,13 +780,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @see IJavaBreakpoint#setHitCount(int)
 	 */
 	public void setHitCount(int count) throws CoreException {	
-		if (!isEnabled() && count > -1) {
-			setAttributes(new String []{HIT_COUNT, EXPIRED, IMarker.MESSAGE},
-				new Object[]{new Integer(count), Boolean.FALSE, getMarkerMessage(count, getSuspendPolicy())});
-			setEnabled(true);
-		} else {
-			setAttributes(new String[]{HIT_COUNT, EXPIRED, IMarker.MESSAGE},
-				new Object[]{new Integer(count), Boolean.FALSE, getMarkerMessage(count, getSuspendPolicy())});
+		if (getHitCount() != count) {
+			if (!isEnabled() && count > -1) {
+				setAttributes(new String []{ENABLED, HIT_COUNT, EXPIRED, IMarker.MESSAGE},
+					new Object[]{Boolean.TRUE, new Integer(count), Boolean.FALSE, getMarkerMessage(count, getSuspendPolicy())});
+			} else {
+				setAttributes(new String[]{HIT_COUNT, EXPIRED, IMarker.MESSAGE},
+					new Object[]{new Integer(count), Boolean.FALSE, getMarkerMessage(count, getSuspendPolicy())});
+			}
+			recreate();
 		}
 	}
 	
@@ -906,6 +830,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (getSuspendPolicy() != suspendPolicy) {
 			setAttributes(new String[]{SUSPEND_POLICY, IMarker.MESSAGE}, new Object[]{new Integer(suspendPolicy), getMarkerMessage(getHitCount(), suspendPolicy)});
 		}
+		recreate();
 	}
 	
 	/**
@@ -954,24 +879,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		// are transient properties, they are not set on
 		// the marker. Thus we must update the request
 		// here.
-		List requests= getRequests(target);
-		ListIterator iter= requests.listIterator();
-		EventRequest request= null;
-		while (iter.hasNext()) {
-			request= (EventRequest)iter.next();
-			if (request instanceof ClassPrepareRequest) {
-				continue;
-			}
-			EventRequest newRequest = recreateRequest(request, target);
-			if (newRequest != request) {
-				replaceRequest(target, request, newRequest);
-				iter.set(newRequest);
-				DebugPlugin.getDefault().addDebugEventListener(this);
-				// Since thread filters don't affect the underlying marker, fire
-				// a changed notification manually
-				fireChanged();
-			}
-		}
+		recreate(target);
+		fireChanged();
 	}
 	
 	/**
@@ -1053,28 +962,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			return;
 		}
 		JDIDebugTarget target= (JDIDebugTarget)javaTarget;
-		fFilteredThreadsByTarget.remove(target);
-		List requests = getRequests(target);
-		ListIterator iter= requests.listIterator();
-		EventRequest request= null;
-		while (iter.hasNext()) {
-			request= (EventRequest)iter.next();
-			if (request instanceof ClassPrepareRequest) {
-				continue;
-			}
-			// Since there is no API for removing thread filters from requests,
-			// we create a new request with the current thread filters
-			// and replace the old.
-			EventRequest newRequest = recreateRequest(request, target);
-			if (newRequest != request) {
-				iter.set(newRequest);
-				replaceRequest(target, request, newRequest);
-				DebugPlugin.getDefault().removeDebugEventListener(this);
-				// Since thread filters don't affect the underlying marker, fire
-				// a changed notification manually
-				DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);
-			}
-		}
+		recreate(target);
+		fireChanged();
 	}
 	
 	/**
@@ -1102,7 +991,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		if (!fInstanceFilters.contains(object)) {
 			fInstanceFilters.add(object);
-			updateInstanceFilters((JDIDebugTarget)object.getDebugTarget());
+			recreate((JDIDebugTarget)object.getDebugTarget());
 			fireChanged();
 		}
 	}
@@ -1135,28 +1024,47 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			return;
 		}
 		if (fInstanceFilters.remove(object)) {
-			updateInstanceFilters((JDIDebugTarget)object.getDebugTarget());
+			recreate((JDIDebugTarget)object.getDebugTarget());
 			fireChanged();
 		}
 	}
-
+	
 	/**
-	 * Update (re-create) event requests for the given target, as instance
-	 * filters have changed.
-	 * 	 * @param object	 * @throws CoreException	 */
-	protected void updateInstanceFilters(JDIDebugTarget target) throws CoreException {
-		List list = getRequests(target);
-		ListIterator iter = list.listIterator();
-		while (iter.hasNext()) {
-			EventRequest request = (EventRequest)iter.next();
-			if (!(request instanceof ClassPrepareRequest)) {
-				EventRequest newRequest = recreateRequest(request, target);
-				if (newRequest != request) {
-					iter.set(newRequest);
-					replaceRequest(target, request, newRequest);
+	 * An attribute of this breakpoint has changed - recreate event requests in
+	 * all targets.
+	 */
+	protected void recreate() throws CoreException {
+		IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
+		for (int i = 0; i < targets.length; i++) {
+			IDebugTarget target = targets[i];
+			MultiStatus multiStatus = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "Exception occurred while updating breakpoint.", null);
+			if (!target.isTerminated() && target instanceof JDIDebugTarget) {
+				try {
+					recreate((JDIDebugTarget)target);
+				} catch (CoreException e) {
+					multiStatus.add(e.getStatus());
 				}
 			}
+			if (!multiStatus.isOK()) {
+				throw new CoreException(multiStatus);
+			} 
 		}
+	}
+	
+	/**
+	 * Recreate this breakpoint in the given target
+	 */
+	protected void recreate(JDIDebugTarget target) throws CoreException {
+		removeRequests(target);
+		createRequests(target);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.model.IBreakpoint#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean enabled) throws CoreException {
+		super.setEnabled(enabled);
+		recreate();
 	}
 
 }

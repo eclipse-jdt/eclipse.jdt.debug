@@ -296,38 +296,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	/**
-	 * Update the hit count of an <code>EventRequest</code>. Return a new request with
-	 * the appropriate settings.
-	 */
-	protected EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException {		
-		
-		// if the hit count has changed, or the request has expired and is being re-enabled,
-		// create a new request
-		if (hasHitCountChanged(request) || (isExpired(request) && isEnabled())) {
-			request= recreateRequest(request, target);
-		}
-		return request;
-	}
-	
-	/**
-	 * @see JavaBreakpoint#recreateRequest(EventRequest, JDIDebugTarget)
-	 */
-	protected EventRequest recreateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
-		try {
-			Location location = ((BreakpointRequest) request).location();			
-			request = createLineBreakpointRequest(location, target);
-		} catch (VMDisconnectedException e) {
-			if (!target.isAvailable()) {
-				return request;
-			}
-			JDIDebugPlugin.log(e);
-		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
-		}
-		return request;
-	}
-	
-	/**
 	 * Adds the standard attributes of a line breakpoint to
 	 * the given attribute map.
 	 * The standard attributes are:
@@ -603,6 +571,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 		setAttributes(new String []{CONDITION, IMarker.MESSAGE},
 			new Object[]{condition, getMarkerMessage(isConditionEnabled(), condition, getHitCount(), getSuspendPolicy(), getLineNumber())});
+		recreate();
 	}
 
 	protected String getMarkerMessage(boolean conditionEnabled, String condition, int hitCount, int suspendPolicy, int lineNumber) throws CoreException {
@@ -637,6 +606,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	public void setConditionEnabled(boolean conditionEnabled) throws CoreException {	
 		setAttributes(new String[]{CONDITION_ENABLED, IMarker.MESSAGE}, new Object[]{new Boolean(conditionEnabled), getMarkerMessage(conditionEnabled, getCondition(), getHitCount(), getSuspendPolicy(), getLineNumber())});
+		recreate();
 	}
 	/**
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#cleanupForThreadTermination(JDIThread)

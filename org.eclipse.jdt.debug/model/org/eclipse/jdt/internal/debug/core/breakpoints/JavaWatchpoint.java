@@ -264,12 +264,12 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * is ambiguous.
 	 */
 	public void setEnabled(boolean enabled) throws CoreException {
-		super.setEnabled(enabled);
 		if (isEnabled()) {
 			if (!(isAccess() || isModification())) {
 				setDefaultAccessAndModification();
 			}
 		}
+		super.setEnabled(enabled);
 	}
 	
 	/**
@@ -292,6 +292,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		} else if (!(access || isModification())) {
 			setEnabled(false);
 		}
+		recreate();
 	}
 	
 	/**
@@ -314,6 +315,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		} else if (!(modification || isAccess())) {
 			setEnabled(false);
 		}
+		recreate();
 	}
 		
 	/**

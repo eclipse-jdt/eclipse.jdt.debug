@@ -173,30 +173,6 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	}
 	
 	/**
-	 * @see JavaBreakpoint#recreateRequest(EventRequest, JDIDebugTarget)
-	 */
-	protected EventRequest recreateRequest(EventRequest request, JDIDebugTarget target)	throws CoreException {
-		String typePattern= getTypeName();
-		EventRequest newRequest= null;
-		try {
-			if (request instanceof MethodEntryRequest) {
-				newRequest= createMethodEntryRequest(target, typePattern);
-			} else {
-				newRequest= createMethodExitRequest(target, typePattern);
-			}
-		} catch (VMDisconnectedException e) {
-			if (!target.isAvailable()) {
-				return request;
-			}
-			JDIDebugPlugin.log(e);
-		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
-		}
-		return newRequest;
-	}
-	
-	
-	/**
 	 * Returns a new method entry request for this breakpoint's
 	 * criteria
 	 * 
@@ -337,36 +313,6 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				request.putProperty(HIT_COUNT, new Integer(hitCount));
 			}	
 		}
-	}
-
-	/**
-	 * Update the hit count associated with this method entry breakpoint
-	 * in the given request
-	 */	
-	protected EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException {
-		if (request instanceof BreakpointRequest) {
-			return super.updateHitCount(request, target);
-		} else {
-			if (hasHitCountChanged(request) || (isExpired(request) && isEnabled())) {
-				try {
-					int hitCount = getHitCount();
-					Integer hc = null;
-					if (hitCount > 0) {
-						hc = new Integer(hitCount);
-					}
-					request.putProperty(HIT_COUNT, hc);
-				} catch (VMDisconnectedException e) {
-					if (!target.isAvailable()) {
-						return request;
-					}
-					JDIDebugPlugin.log(e);
-					return request;
-				} catch (RuntimeException e) {
-					JDIDebugPlugin.log(e);
-				}
-			}
-		}
-		return request;
 	}
 	
 	/**
@@ -558,7 +504,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				setEnabled(true);
 			} else if (!(entry || isExit())) {
 				setEnabled(false);
-			}			
+			}
+			recreate();			
 		}
 	}
 
@@ -572,7 +519,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				setEnabled(true);
 			} else if (!(exit || isEntry())) {
 				setEnabled(false);
-			}			
+			}	
+			recreate();		
 		}		
 	}
 
@@ -582,6 +530,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	public void setNativeOnly(boolean nativeOnly) throws CoreException {
 		if (isNativeOnly() != nativeOnly) {
 			setAttribute(NATIVE, nativeOnly);
+			recreate();
 		}
 	}
 		
@@ -607,13 +556,13 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * If this breakpoint is not entry or exit enabled,
 	 * set the default (entry)
 	 */
-	public void setEnabled(boolean enabled) throws CoreException {
-		super.setEnabled(enabled);
-		if (isEnabled()) {
-			if (!(isEntry() || isExit())) {
+	public void setEnabled(boolean enabled) throws CoreException {		
+		if (enabled) {
+			if (!(isEntry()|| isExit())) {
 				setDefaultEntryAndExit();
 			}
 		}
+		super.setEnabled(enabled);
 	}
 	
 	/**

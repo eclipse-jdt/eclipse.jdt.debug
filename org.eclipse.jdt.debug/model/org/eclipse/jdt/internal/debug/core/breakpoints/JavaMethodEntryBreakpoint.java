@@ -22,7 +22,6 @@ import com.sun.jdi.ClassType;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.ReferenceType;
-import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequest;
 
@@ -85,25 +84,6 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 		run(wr);
 	}
 		
-	/**
-	 * @see JavaBreakpoint#recreateRequest(EventRequest, JDIDebugTarget)
-	 */
-	protected EventRequest recreateRequest(EventRequest request, JDIDebugTarget target)	throws CoreException {
-		try {
-			Location location = ((BreakpointRequest) request).location();			
-			request = request.virtualMachine().eventRequestManager().createBreakpointRequest(location);
-			configureRequest(request, target);
-		} catch (VMDisconnectedException e) {
-			if (!target.isAvailable()) {
-				return request;
-			}
-			JDIDebugPlugin.log(e);
-		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
-		}
-		return request;		
-	}
-	
 	/**
 	 * Adds the method name and signature attributes to the
 	 * given attribute map, and intializes the local cache

@@ -10,7 +10,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -20,9 +19,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.StringMatcher;
@@ -36,7 +33,6 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.ExceptionEvent;
-import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.ExceptionRequest;
 
@@ -173,13 +169,13 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * state (enabled with caught and uncaught both disabled)
 	 * is ambiguous.
 	 */
-	public void setEnabled(boolean enabled) throws CoreException {
-		super.setEnabled(enabled);
-		if (isEnabled()) {
+	public void setEnabled(boolean enabled) throws CoreException {	
+		if (enabled) {
 			if (!(isCaught() || isUncaught())) {
-				setCaughtAndUncaught(true, true);
+				setAttributes(new String[] {CAUGHT, UNCAUGHT}, new Object[] {Boolean.TRUE, Boolean.TRUE});
 			}
 		}
+		super.setEnabled(enabled);
 	}
 	
 	/**
@@ -213,6 +209,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		} else if (!(caught || isUncaught())) {
 			setEnabled(false);
 		}
+		recreate();
 	}
 	
 	/**
@@ -235,6 +232,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		} else if (!(uncaught || isCaught())) {
 			setEnabled(false);
 		}
+		recreate();
 	}
 	
 	/**
@@ -243,55 +241,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	public boolean isChecked() throws CoreException {
 		return ensureMarker().getAttribute(CHECKED, false);
 	}
-	
-	/**
-	 * @see JavaBreakpoint#updateRequest(EventRequest, JDIDebugTarget)
-	 */
-	protected EventRequest updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
-		updateEnabledState(request, target);
-		EventRequest newRequest = updateHitCount(request, target);
-		if (newRequest == request) {
-			newRequest= updateCaughtState(newRequest, target);
-		} else {
-			replaceRequest(target, request, newRequest);
-			return newRequest;
-		}
-		return request;
-	}
 		
-	/**
-	 * Return a request that will suspend execution when a caught and/or uncaught
-	 * exception is thrown as is appropriate for the current state of this breakpoint.
-	 */
-	protected EventRequest updateCaughtState(EventRequest req, JDIDebugTarget target) throws CoreException  {
-		if(!(req instanceof ExceptionRequest)) {
-			return req;
-		}
-		ExceptionRequest request= (ExceptionRequest) req;
-		if (request.notifyCaught() != isCaught() || request.notifyUncaught() != isUncaught()) {
-			request= (ExceptionRequest)recreateRequest(request, target);
-		}
-		return request;
-	}
-	
-	/**
-	 * @see JavaBreakpoint#recreateRequest(EventRequest, JDIDebugTarget)
-	 */
-	protected EventRequest recreateRequest(EventRequest request, JDIDebugTarget target) throws CoreException{
-		try {
-			ReferenceType exClass = ((ExceptionRequest)request).exception();				
-			request = newRequest(target, exClass);
-		} catch (VMDisconnectedException e) {
-			if (!target.isAvailable()) {
-				return request;
-			}
-			JDIDebugPlugin.log(e);
-		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
-		}
-		return request;
-	}
-	
 	/**
 	 * @see JavaBreakpoint#setRequestThreadFilter(EventRequest)
 	 */
@@ -402,6 +352,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		} else {
 			setExclusionFilters(filters);
 		}
+		recreate();
 	}
 	
 	/**
@@ -552,34 +503,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 
 		setExclusionClassFilters(filters);
 		
-		setAttribute(EXCLUSION_FILTERS, serializedFilters);
-		
-		updateRequestForFilters();
-	}
-
-	protected void updateRequestForFilters() throws CoreException {
-		IDebugTarget[] targets= DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			IDebugTarget t = targets[i];
-			if (!(t instanceof JDIDebugTarget)) {
-				continue;
-			}
-			JDIDebugTarget target= (JDIDebugTarget)t;
-			List requests= getRequests(target);
-			ListIterator iter= requests.listIterator();
-			EventRequest request= null;
-			while (iter.hasNext()) {
-				request= (EventRequest)iter.next();
-				if (request instanceof ClassPrepareRequest) {
-					continue;
-				}
-				EventRequest newRequest = recreateRequest(request, target);
-				if (newRequest != request) {
-					replaceRequest(target, request, newRequest);
-					iter.set(newRequest);
-				}
-			}
-		}
+		setAttribute(EXCLUSION_FILTERS, serializedFilters);	
+		recreate();
 	}
 
 	/**
@@ -596,8 +521,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		setInclusionClassFilters(filters);
 		
 		setAttribute(INCLUSION_FILTERS, serializedFilters);
-		
-		updateRequestForFilters();
+		recreate();
 	}
 	
 	/**
