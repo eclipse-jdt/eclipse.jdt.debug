@@ -489,7 +489,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		Object[] listeners= fHotCodeReplaceListeners.getListeners();
 		for (int i=0; i<listeners.length; i++) {
 			((IJavaHotCodeReplaceListener)listeners[i]).obsoleteMethods(target);
-		}		
+		}
 	}
 	
 	/**
@@ -553,7 +553,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		List frames= null;
 		Iterator iter= null;
 		for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
-			frames= ((JDIThread)threads[i]).computeStackFrames();
+			frames= ((JDIThread)threads[i]).computeNewStackFrames();
 			iter= frames.iterator();
 			while (iter.hasNext()) {
 				if (((JDIStackFrame)iter.next()).isObsolete()) {

@@ -332,38 +332,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	/**
-	 * Returns this thread's current stack frames as a list, computing
-	 * them if required. Returns an empty collection if this thread is
-	 * not currently suspended, or this thread is terminated. This
-	 * method should be used internally to get the current stack frames,
-	 * instead of calling <code>#getStackFrames()</code>, which makes a
-	 * copy of the current list.
-	 * <p>
-	 * Before a thread is resumed a call must be made to one of:<ul>
-	 * <li><code>preserveStackFrames()</code></li>
-	 * <li><code>disposeStackFrames()</code></li>
-	 * </ul>
-	 * If stack frames are disposed before a thread is resumed, stack frames
-	 * are completely re-computed on the next call to this method. If stack
-	 * frames are to be preserved, this method will attempt to re-use any stack
-	 * frame objects which represent the same stack frame as on the previous
-	 * suspend. Stack frames are cached until a subsequent call to preserve
-	 * or dispose stack frames.
-	 * </p>
+	 * @see computeStackFrames()
 	 * 
-	 * @return list of <code>IJavaStackFrame</code>
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul>
-	 * <li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
-	 * </ul>
+	 * @param refreshChildren whether or not this method should request new stack
+	 *        frames from the VM
 	 */	
-	public synchronized List computeStackFrames() throws DebugException {
+	protected synchronized List computeStackFrames(boolean refreshChildren) throws DebugException {
 		if (isSuspended()) {
 			if (isTerminated()) {
 				fStackFrames = Collections.EMPTY_LIST;
-			} else if (fRefreshChildren) {
+			} else if (refreshChildren) {
 				if (fStackFrames.isEmpty()) {
 					fStackFrames = createAllStackFrames();
 					if (fStackFrames.isEmpty()) {	
@@ -385,16 +363,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				} else {
 					underlyingFramesIndex = numUnderlyingFrames - numModelFrames;
 				}
-					
+				
+				boolean framesChanged= false;
 				StackFrame underlyingFrame= null;
 				JDIStackFrame modelFrame= null;
 				for ( ; modelFramesIndex < numModelFrames; modelFramesIndex++, underlyingFramesIndex++) {
 					underlyingFrame= (StackFrame) frames.get(underlyingFramesIndex);
 					modelFrame= (JDIStackFrame) fStackFrames.get(modelFramesIndex);
-					if (!underlyingFrame.equals(modelFrame.getLastUnderlyingStackFrame())) {
+					if (!equalFrame(underlyingFrame, modelFrame.getLastUnderlyingStackFrame())) {
 						modelFrame.clearCachedData();
 						modelFrame.setUnderlyingStackFrame(underlyingFrame);
+						framesChanged= true;
 					}
+				}
+				if (framesChanged) {
+					fireChangeEvent();
 				}
 				// compute new or removed stack frames
 				int offset= 0, length= frames.size();
@@ -430,6 +413,62 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return fStackFrames;
 	}
 	
+	/**
+	 * Returns this thread's current stack frames as a list, computing
+	 * them if required. Returns an empty collection if this thread is
+	 * not currently suspended, or this thread is terminated. This
+	 * method should be used internally to get the current stack frames,
+	 * instead of calling <code>#getStackFrames()</code>, which makes a
+	 * copy of the current list.
+	 * <p>
+	 * Before a thread is resumed a call must be made to one of:<ul>
+	 * <li><code>preserveStackFrames()</code></li>
+	 * <li><code>disposeStackFrames()</code></li>
+	 * </ul>
+	 * If stack frames are disposed before a thread is resumed, stack frames
+	 * are completely re-computed on the next call to this method. If stack
+	 * frames are to be preserved, this method will attempt to re-use any stack
+	 * frame objects which represent the same stack frame as on the previous
+	 * suspend. Stack frames are cached until a subsequent call to preserve
+	 * or dispose stack frames.
+	 * </p>
+	 * 
+	 * @return list of <code>IJavaStackFrame</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 */	
+	public List computeStackFrames() throws DebugException {
+		return computeStackFrames(fRefreshChildren);
+	}
+	
+	/**
+	 * @see JDIThread#computeStackFrames()
+	 * 
+	 * This method differs from computeStackFrames() in that it
+	 * always requests new stack frames from the VM. As this is
+	 * an expensive operation, this method should only be used
+	 * by clients who know for certain that the stack frames
+	 * on the VM have changed.
+	 */
+	public List computeNewStackFrames() throws DebugException {
+		return computeStackFrames(true);
+	}
+	
+	/**
+	 * Helper method for computeStackFrames(). For the purposes of detecting if
+	 * an underlying stack frame needs to be disposed, stack frames are equal if
+	 * the frames are equal and the locations are equal.
+	 */
+	private boolean equalFrame(StackFrame frameOne, StackFrame frameTwo) {
+		if (frameOne.equals(frameTwo) && frameOne.location().equals(frameTwo.location())) {
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Helper method for <code>#computeStackFrames()</code> to create all
