@@ -11,6 +11,24 @@
 <h1>
 Eclipse Platform Build Notes&nbsp;<br>
 Java Debug</h1>
+June 1, 2002
+<h3>
+What's new in this drop</h3>
+<li>API Change - return values can now be null for the following:
+	<ul>
+	<li>AbstractJavaLaunchConfigurationDelegate#getBootpath(..) - can now return null to 
+	   indicate a default bootpath, or an empty array to indicate an empty bootpath.</li>
+	<li>VMRunnerConfiguration#get/setBootClassPath(..) - can now accept/return null to
+		indicate a default bootpath, or an empty array to indicate an empty bootpath.</li>
+	</ul>
+</li>
+
+<h3>
+Problem Reports Fixed</h3>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Java Debug</h1>
 May 31, 2002
 <h3>
 What's new in this drop</h3>
