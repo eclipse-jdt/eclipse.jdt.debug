@@ -25,6 +25,7 @@ import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncherDelegate;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -153,6 +154,15 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
 			log(new Status(IStatus.ERROR, getPluginId(), JavaDebugUI.INTERNAL_ERROR, "Internal error logged from JDT Debug UI: ", e));  //$NON-NLS-1$		
+		}
+	}
+	
+	public static void errorDialog(String message, IStatus status) {
+		Shell shell = getActiveWorkbenchShell();
+		if (shell == null) {
+			log(status);
+		} else {
+			ErrorDialog.openError(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Error_1"), message, status); //$NON-NLS-1$
 		}
 	}
 	

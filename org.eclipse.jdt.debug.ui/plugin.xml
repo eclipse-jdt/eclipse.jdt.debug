@@ -394,7 +394,7 @@
 		</action>
 	</objectContribution>
 	<objectContribution
-		id="org.eclipse.jdt.debug.ui.OpenOnVariableActions"
+		id="org.eclipse.jdt.debug.ui.JavaVariableActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
 		<action
 			id="org.eclipse.jdt.debug.ui.actions.OpenOnVariableType"
@@ -403,6 +403,14 @@
 			menubarPath="openOnGroup"
 			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnVariableAction">
 		</action>
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.InspectVariableAction"
+			label="%Inspect.label"
+			menubarPath="openOnGroup"
+			icon="icons/full/etool16/insp_sbook.gif"
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectVariableAction"
+			enablesFor="+">
+		</action>		
 	</objectContribution>
 	<objectContribution
 		id="org.eclipse.jdt.debug.ui.OpenOnDeclaringTypeActions"
