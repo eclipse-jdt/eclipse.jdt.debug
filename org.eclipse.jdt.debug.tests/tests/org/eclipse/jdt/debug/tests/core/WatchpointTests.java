@@ -43,8 +43,8 @@ public class WatchpointTests extends AbstractDebugTest {
 			
 			// should be modification
 			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
-			// line 23
-			assertEquals("Should be on line 23", frame.getLineNumber(), 23);
+			// line 27
+			assertEquals("Should be on line 27", 27, frame.getLineNumber());
 			
 			// should hit access 10 times
 			int count = 10;
@@ -54,7 +54,7 @@ public class WatchpointTests extends AbstractDebugTest {
 				frame = thread.getTopStackFrame();
 				assertNotNull("No breakpoint", hit);
 				assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-				assertEquals("Should be line 26", frame.getLineNumber(), 26);
+				assertEquals("Should be line 30", 30, frame.getLineNumber());
 				count--;
 			}
 			
@@ -82,8 +82,8 @@ public class WatchpointTests extends AbstractDebugTest {
 			
 			// should be modification
 			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
-			// line 23
-			assertEquals("Should be on line 23", frame.getLineNumber(), 23);
+			// line 27
+			assertEquals("Should be on line 27", 27, frame.getLineNumber());
 			
 			resumeAndExit(thread);
 
@@ -122,7 +122,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			IStackFrame frame = thread.getTopStackFrame();
 			assertNotNull("No breakpoint", hit);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 26", frame.getLineNumber(), 26);			
+			assertEquals("Should be line 30", 30, frame.getLineNumber());			
 			
 			// should hit access 9 more times
 			int count = 9;
@@ -132,7 +132,7 @@ public class WatchpointTests extends AbstractDebugTest {
 				frame = thread.getTopStackFrame();
 				assertNotNull("No breakpoint", hit);
 				assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-				assertEquals("Should be line 26", frame.getLineNumber(), 26);
+				assertEquals("Should be line 30", 30, frame.getLineNumber());
 				count--;
 			}
 			
@@ -158,7 +158,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			IStackFrame frame = thread.getTopStackFrame();
 			assertNotNull("No breakpoint", hit);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 26", frame.getLineNumber(), 26);			
+			assertEquals("Should be line 30", 30, frame.getLineNumber());			
 			
 			wp.setEnabled(false);
 						
@@ -185,7 +185,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertNotNull("No breakpoint", hit);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 26", frame.getLineNumber(), 26);			
+			assertEquals("Should be line 30", 30, frame.getLineNumber());			
 			IVariable var = frame.findVariable("value");
 			assertNotNull("Could not find variable 'value'", var);
 			
@@ -205,7 +205,7 @@ public class WatchpointTests extends AbstractDebugTest {
 				frame = (IJavaStackFrame) thread.getTopStackFrame();
 				assertNotNull("No breakpoint", hit);
 				assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-				assertEquals("Should be line 26", frame.getLineNumber(), 26);
+				assertEquals("Should be line 30", 30, frame.getLineNumber());
 				count--;
 			}
 			

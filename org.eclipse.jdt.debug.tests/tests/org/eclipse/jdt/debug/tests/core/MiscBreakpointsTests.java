@@ -49,7 +49,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 			assertTrue("suspendee was not an IJavaThread", thread instanceof IJavaThread);
 			IJavaThread javaThread = (IJavaThread) thread;
 			int stackLine = javaThread.getTopStackFrame().getLineNumber();
-			assertTrue("line number should be '15', but was " + stackLine, stackLine == 15);
+			assertTrue("line number should be '26', but was " + stackLine, stackLine == 26);
 		
 		} finally {
 			terminateAndRemove(thread);
@@ -121,6 +121,4 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	protected IPreferenceStore getPrefStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();		
 	}
-	
-
 }

@@ -35,7 +35,7 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 
 	public void testSuspendVmLineBreakpoint() throws Exception {
 		String typeName = "MultiThreadedLoop";
-		IJavaLineBreakpoint bp = createLineBreakpoint(29, typeName);
+		IJavaLineBreakpoint bp = createLineBreakpoint(40, typeName);
 		bp.setSuspendPolicy(IJavaBreakpoint.SUSPEND_VM);
 		
 		IJavaThread thread= null;
@@ -89,7 +89,7 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 			IStackFrame frame = thread.getTopStackFrame();
 			assertNotNull("No breakpoint", hit);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
-			assertEquals("Should be line 26", frame.getLineNumber(), 26);			
+			assertEquals("Should be line 30", 30, frame.getLineNumber());			
 			
 			verifyAllThreadsSuspended(thread);
 			
@@ -117,8 +117,8 @@ public class SuspendVMBreakpointsTests extends AbstractDebugTest {
 			
 			// should be modification
 			assertTrue("First hit should be modification", !wp.isAccessSuspend(thread.getDebugTarget()));
-			// line 23
-			assertEquals("Should be on line 23", frame.getLineNumber(), 23);
+			// line 27
+			assertEquals("Should be on line 27", 27, frame.getLineNumber());
 			
 			verifyAllThreadsSuspended(thread);
 			

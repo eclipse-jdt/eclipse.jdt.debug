@@ -28,7 +28,7 @@ public class LocalVariableTests extends AbstractDebugTest {
 	public void testSimpleVisibility() throws Exception {
 		String typeName = "LocalVariablesTests";
 		
-		ILineBreakpoint bp = createLineBreakpoint(7, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(18, typeName);		
 		
 		IJavaThread thread= null;
 		try {
@@ -62,7 +62,7 @@ public class LocalVariableTests extends AbstractDebugTest {
 	public void testEvaluationAssignments() throws Exception {
 		String typeName = "LocalVariablesTests";
 		
-		ILineBreakpoint bp = createLineBreakpoint(11, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(22, typeName);		
 		
 		IJavaThread thread= null;
 		try {

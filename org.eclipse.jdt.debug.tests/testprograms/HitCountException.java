@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
@@ -9,10 +11,27 @@ Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
 
-public class CompileError {
+public class HitCountException {
 
-	// This is a place-holder file.  The tests will programmatically change the 
-	// content of this file to contain a compilation error
 	public static void main(String[] args) {
+		HitCountException mte = new HitCountException();
+		mte.go();
+	}
+	
+	private void go() {
+		try {
+			generateNPE();
+		} catch (NullPointerException npe) {
+		}
+		
+		generateNPE();
+	}
+	
+	void generateNPE() {
+		Vector vector = null;
+		if (1 > 2) {
+			vector = new Vector();
+		}
+		vector.add("item");
 	}
 }

@@ -10,9 +10,9 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
     IBM Corporation - Initial implementation
 *********************************************************************/
-import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 
 public class TestsOperators2 extends Tests {
@@ -25,7 +25,7 @@ public class TestsOperators2 extends Tests {
 	}
 
 	public void init() throws Exception {
-		initializeFrame("EvalSimpleTests", 27, 1, 1);
+		initializeFrame("EvalSimpleTests", 37, 1, 1);
 	}
 
 	protected void end() throws Exception {

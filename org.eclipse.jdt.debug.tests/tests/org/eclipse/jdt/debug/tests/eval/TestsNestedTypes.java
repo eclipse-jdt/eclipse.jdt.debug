@@ -25,7 +25,7 @@ public class TestsNestedTypes extends Tests {
 	}
 
 	public void init() throws Exception {
-		initializeFrame("EvalNestedTypeTests", 241, 4, 1);
+		initializeFrame("EvalNestedTypeTests", 252, 4, 1);
 	}
 
 	protected void end() throws Exception {

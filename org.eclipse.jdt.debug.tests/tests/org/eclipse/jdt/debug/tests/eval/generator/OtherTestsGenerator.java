@@ -41,7 +41,7 @@ public class OtherTestsGenerator extends TestGenerator {
 		genTestLocalVarValue(T_int, code);
 		genTestLocalVarValue(T_String, code);
 		
-		createJavaFile(code, "TestsOperators1", "EvalSimpleTests", 27, 1, 1);
+		createJavaFile(code, "TestsOperators1", "EvalSimpleTests", 37, 1, 1);
 	}
 
 	public static void genTestsOperators2() throws Exception {
@@ -52,7 +52,7 @@ public class OtherTestsGenerator extends TestGenerator {
 		genTestTypeAssignmentOpType(T_int, Op_plusAss, T_int, code);
 		genTestTypeAssignmentOpType(T_String, Op_plusAss, T_String, code);
 		
-		createJavaFile(code, "TestsOperators2", "EvalSimpleTests", 27, 1, 1);
+		createJavaFile(code, "TestsOperators2", "EvalSimpleTests", 37, 1, 1);
 	}
 	
 	public static void genTestsArray() throws Exception {
@@ -68,7 +68,7 @@ public class OtherTestsGenerator extends TestGenerator {
 		genTestArrayAssignment(T_String, code);
 		genTestArrayInitialization(T_String, code);
 		
-		createJavaFile(code, "TestsArrays", "EvalArrayTests", 27, 1, 1);
+		createJavaFile(code, "TestsArrays", "EvalArrayTests", 37, 1, 1);
 	}
 
 	public static void genTestsNestedTypes1() throws Exception {
@@ -100,7 +100,7 @@ public class OtherTestsGenerator extends TestGenerator {
 		NestedTypeTestGenerator.createTestQualifier(NestedTypeTestGenerator.T_T_this, 'd', code);
 		NestedTypeTestGenerator.createTestQualifier(NestedTypeTestGenerator.T_T_this, 'e', code);
 
-		createJavaFile(code, "TestsNestedTypes1", "EvalNestedTypeTests",  241, 4, 1);
+		createJavaFile(code, "TestsNestedTypes1", "EvalNestedTypeTests",  252, 4, 1);
 	}
 
 	public static void genTestsNestedTypes2() throws Exception {
@@ -126,7 +126,7 @@ public class OtherTestsGenerator extends TestGenerator {
 		NestedTypeTestGenerator.createTestQualifier(NestedTypeTestGenerator.I_AB, 'f', code);
 		NestedTypeTestGenerator.createTestQualifier(NestedTypeTestGenerator.I_AB, 'i', code);
 
-		createJavaFile(code, "TestsNestedTypes2", "EvalNestedTypeTests",  728, 2, 1);
+		createJavaFile(code, "TestsNestedTypes2", "EvalNestedTypeTests",  739, 2, 1);
 	}
 
 
@@ -156,7 +156,7 @@ public class OtherTestsGenerator extends TestGenerator {
 		TypeHierarchyTestsGenerator.createTestQualifier(TypeHierarchyTestsGenerator.N_C, TypeHierarchyTestsGenerator.M4, code);
 		TypeHierarchyTestsGenerator.createTestQualifier(TypeHierarchyTestsGenerator.N_C, TypeHierarchyTestsGenerator.S6, code);
 
-		createJavaFile(code, "TestsTypeHierarchy1", "EvalTypeHierarchyTests",   135, 1, 1);
+		createJavaFile(code, "TestsTypeHierarchy1", "EvalTypeHierarchyTests",   146, 1, 1);
 	}
 
 	public static void genTestsTypeHierarchy2() throws Exception {
@@ -164,7 +164,7 @@ public class OtherTestsGenerator extends TestGenerator {
 
 		TypeHierarchyTestsGenerator.createTest_TestC(code, TypeHierarchyTestsGenerator.CC);
 		
-		createJavaFile(code, "TestsTypeHierarchy2", "EvalTypeHierarchyTests",   108, 2, 1);
+		createJavaFile(code, "TestsTypeHierarchy2", "EvalTypeHierarchyTests",   119, 2, 1);
 	}
 
 	/**

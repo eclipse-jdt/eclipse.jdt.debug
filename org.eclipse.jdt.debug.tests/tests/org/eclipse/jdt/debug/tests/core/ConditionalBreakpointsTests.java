@@ -29,7 +29,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	public void testSimpleConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(5, typeName, "i == 3");
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "i == 3");
 		
 		IJavaThread thread= null;
 		try {
@@ -53,7 +53,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	public void testStaticMethodCallConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(5, typeName, "ArgumentsTests.fact(i) == 24");
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "ArgumentsTests.fact(i) == 24");
 		
 		IJavaThread thread= null;
 		try {

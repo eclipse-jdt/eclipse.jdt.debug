@@ -22,7 +22,7 @@ public class FieldValueTests extends Tests {
 	}
 
 	protected void init() throws Exception {
-		initializeFrame("EvalTypeTests",53,2);
+		initializeFrame("EvalTypeTests",63,2);
 	}
 
 	protected void end() throws Exception {

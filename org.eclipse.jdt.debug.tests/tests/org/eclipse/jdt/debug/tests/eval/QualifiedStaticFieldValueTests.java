@@ -22,7 +22,7 @@ public class QualifiedStaticFieldValueTests extends Tests {
 	}
 
 	protected void init() throws Exception {
-		initializeFrame("EvalTypeTests",63,1);
+		initializeFrame("EvalTypeTests",73,1);
 	}
 
 	protected void end() throws Exception {

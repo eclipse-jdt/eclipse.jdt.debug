@@ -21,7 +21,7 @@ public class LongAssignmentOperatorsTests extends Tests {
 	}
 
 	protected void init() throws Exception {
-		initializeFrame("EvalSimpleTests",27,1);
+		initializeFrame("EvalSimpleTests",37,1);
 	}
 
 	protected void end() throws Exception {

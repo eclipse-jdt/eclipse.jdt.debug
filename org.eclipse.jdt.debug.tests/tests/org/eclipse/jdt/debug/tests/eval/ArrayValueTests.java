@@ -22,7 +22,7 @@ public class ArrayValueTests extends Tests {
 	}
 
 	protected void init() throws Exception {
-		initializeFrame("EvalArrayTests",27,1);
+		initializeFrame("EvalArrayTests", 37, 1);
 	}
 
 	protected void end() throws Exception {

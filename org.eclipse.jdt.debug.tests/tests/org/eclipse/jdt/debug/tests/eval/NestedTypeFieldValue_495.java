@@ -25,7 +25,7 @@ public class NestedTypeFieldValue_495 extends Tests {
 	}
 
 	public void init() throws Exception {
-		initializeFrame("EvalNestedTypeTests", 495, 4);
+		initializeFrame("EvalNestedTypeTests", 506, 4);
 	}
 
 	protected void end() throws Exception {

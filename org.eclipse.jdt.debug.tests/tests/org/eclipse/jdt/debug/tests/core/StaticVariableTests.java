@@ -27,7 +27,7 @@ public class StaticVariableTests extends AbstractDebugTest {
 	public void testSetValue() throws Exception {
 		String typeName = "StaticVariablesTests";
 		
-		ILineBreakpoint bp = createLineBreakpoint(29, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(40, typeName);		
 		
 		IJavaThread thread= null;
 		try {

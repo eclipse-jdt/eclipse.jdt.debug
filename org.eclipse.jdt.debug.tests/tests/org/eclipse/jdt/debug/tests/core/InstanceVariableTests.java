@@ -29,7 +29,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testGetField() throws Exception {
 		String typeName = "InstanceVariablesTests";
 		
-		ILineBreakpoint bp = createLineBreakpoint(19, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(30, typeName);		
 		
 		IJavaThread thread= null;
 		try {
@@ -55,7 +55,6 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			pubStr = value.getField("pubStr", true);
 			assertNotNull(pubStr);
 			assertEquals("value should be 'public'", pubStr.getValue().getValueString(), "public");			
-
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -65,7 +64,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testEvaluationAssignments() throws Exception {
 		String typeName = "InstanceVariablesTests";
 		
-		ILineBreakpoint bp = createLineBreakpoint(17, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(28, typeName);		
 		
 		IJavaThread thread= null;
 		try {
@@ -83,7 +82,6 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			evaluate("pubStr = null;", frame);
 			// the value should have changed
 			assertEquals("'pubStr' value should be 'null'", ((IJavaDebugTarget)frame.getDebugTarget()).nullValue(), pubStr.getValue());
-			
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();

@@ -21,7 +21,7 @@ public class StringPlusOpTests extends Tests {
 	}
 
 	protected void init() throws Exception {
-		initializeFrame("EvalSimpleTests",5,1);
+		initializeFrame("EvalSimpleTests",15,1);
 	}
 
 	protected void end() throws Exception {

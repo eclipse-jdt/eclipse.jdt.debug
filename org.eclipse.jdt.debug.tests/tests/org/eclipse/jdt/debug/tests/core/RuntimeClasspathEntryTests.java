@@ -103,7 +103,7 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 //		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, entries);
 //		lc = wc.doSave();
 //		
-//		createLineBreakpoint(41, "Breakpoints");
+//		createLineBreakpoint(52, "Breakpoints");
 //		IJavaThread thread= null;
 //		try {
 //			thread = launch(lc);

@@ -29,7 +29,7 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 
 	public void testResetHitCountBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createLineBreakpoint(5, typeName);
+		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
 		bp.setHitCount(3);
 		
 		IJavaThread thread= null;
@@ -67,7 +67,7 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 
 	public void testExpiredHitCountBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createLineBreakpoint(5, typeName);
+		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
 		bp.setHitCount(3);
 		
 		IJavaThread thread= null;
@@ -91,5 +91,4 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
-
 }

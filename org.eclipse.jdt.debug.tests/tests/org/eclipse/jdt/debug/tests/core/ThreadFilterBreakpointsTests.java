@@ -28,7 +28,7 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 
 	public void testSimpleThreadFilterBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createLineBreakpoint(5, typeName);
+		IJavaLineBreakpoint bp = createLineBreakpoint(16, typeName);
 		
 		IJavaThread thread= null;
 		try {
@@ -46,13 +46,13 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 
 	public void testMultiThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedLoop";
-		IJavaLineBreakpoint bp1 = createLineBreakpoint(6, typeName);
+		IJavaLineBreakpoint bp1 = createLineBreakpoint(17, typeName);
 		
 		IJavaThread thread= null;
 		try {
 			thread= launchToLineBreakpoint(typeName, bp1);
 			
-			IJavaLineBreakpoint bp2 = createLineBreakpoint(29, typeName);
+			IJavaLineBreakpoint bp2 = createLineBreakpoint(40, typeName);
 			bp2.setThreadFilter(thread);
 			
 			thread = resumeToLineBreakpoint(thread, bp2);
@@ -68,7 +68,7 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 
 	public void testExceptionThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedException";
-		IJavaLineBreakpoint bp1 = createLineBreakpoint(11, typeName);
+		IJavaLineBreakpoint bp1 = createLineBreakpoint(17, typeName);
 		
 		IJavaThread thread= null;
 		try {
@@ -86,9 +86,9 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 			
-	public void testAcessWatchpointThreadFilterBreakpoint() throws Exception {
+	public void testAccessWatchpointThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedList";
-		IJavaLineBreakpoint bp1 = createLineBreakpoint(11, typeName);
+		IJavaLineBreakpoint bp1 = createLineBreakpoint(21, typeName);
 		
 		IJavaThread thread= null;
 		try {
@@ -109,7 +109,7 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 			
 	public void testModificationWatchpointThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedList";
-		IJavaLineBreakpoint bp1 = createLineBreakpoint(11, typeName);
+		IJavaLineBreakpoint bp1 = createLineBreakpoint(21, typeName);
 		
 		IJavaThread thread= null;
 		try {
@@ -127,5 +127,4 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
-			
 }

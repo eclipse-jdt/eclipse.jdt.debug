@@ -1,5 +1,16 @@
 package org.eclipse.jdt.debug.tests.core;
 
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+*********************************************************************/
+
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -26,7 +37,7 @@ public class StepFilterTests extends AbstractDebugTest {
 	public void testSimpleStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
 		String typeName = "StepFilterOne";
-		ILineBreakpoint bp = createLineBreakpoint(10, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
 		bp.setEnabled(true);
 		
 		IJavaThread thread = null;
@@ -38,7 +49,7 @@ public class StepFilterTests extends AbstractDebugTest {
 			String recTypeName = stackFrame.getReceivingTypeName();
 			assertTrue("Receiving type name should have been 'StepFilterOne' but was " + recTypeName, recTypeName.equals("StepFilterOne"));
 			int lineNumber = stackFrame.getLineNumber();
-			assertTrue("Line number should have been 11, but was " + lineNumber, lineNumber == 11);			
+			assertTrue("Line number should have been 22, but was " + lineNumber, lineNumber == 22);			
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -49,7 +60,7 @@ public class StepFilterTests extends AbstractDebugTest {
 	public void testInactiveStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo");
 		String typeName = "StepFilterOne";
-		ILineBreakpoint bp = createLineBreakpoint(10, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(21, typeName);
 		bp.setEnabled(true);
 		
 		IJavaThread thread = null;
@@ -61,7 +72,7 @@ public class StepFilterTests extends AbstractDebugTest {
 			String recTypeName = stackFrame.getReceivingTypeName();
 			assertTrue("Receiving type name should have been 'StepFilterTwo' but was " + recTypeName, recTypeName.equals("StepFilterTwo"));
 			int lineNumber = stackFrame.getLineNumber();
-			assertTrue("Line number should have been 14, but was " + lineNumber, lineNumber == 14);			
+			assertTrue("Line number should have been 25, but was " + lineNumber, lineNumber == 25);			
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -72,7 +83,7 @@ public class StepFilterTests extends AbstractDebugTest {
 	public void testDeepStepFilter() throws Exception {
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, fOriginalActiveFilters + ",StepFilterTwo," + fOriginalInactiveFilters);
 		String typeName = "StepFilterOne";
-		ILineBreakpoint bp = createLineBreakpoint(11, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(22, typeName);
 		bp.setEnabled(true);
 		
 		IJavaThread thread = null;
@@ -84,7 +95,7 @@ public class StepFilterTests extends AbstractDebugTest {
 			String recTypeName = stackFrame.getReceivingTypeName();
 			assertTrue("Receiving type name should have been 'StepFilterThree' but was " + recTypeName, recTypeName.equals("StepFilterThree"));
 			int lineNumber = stackFrame.getLineNumber();
-			assertTrue("Line number should have been 8, but was " + lineNumber, lineNumber == 8);			
+			assertTrue("Line number should have been 19, but was " + lineNumber, lineNumber == 19);			
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -100,6 +111,5 @@ public class StepFilterTests extends AbstractDebugTest {
 	protected IPreferenceStore getPrefStore() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore();		
 	}
-	
 }
 

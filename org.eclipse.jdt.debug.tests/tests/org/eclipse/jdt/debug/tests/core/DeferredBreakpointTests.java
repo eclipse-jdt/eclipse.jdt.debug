@@ -33,43 +33,43 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 		String typeName = "Breakpoints";
 		List bps = new ArrayList();
 		// anonymous class
-		bps.add(createLineBreakpoint(32, typeName));
+		bps.add(createLineBreakpoint(43, typeName));
 		// blocks
-		bps.add(createLineBreakpoint(91, typeName));
+		bps.add(createLineBreakpoint(102, typeName));
 		// constructor
-		bps.add(createLineBreakpoint(66, typeName));
-		// else
 		bps.add(createLineBreakpoint(77, typeName));
+		// else
+		bps.add(createLineBreakpoint(88, typeName));
 		//finally after catch
-		bps.add(createLineBreakpoint(109, typeName));
+		bps.add(createLineBreakpoint(120, typeName));
 		//finally after try
-		bps.add(createLineBreakpoint(117, typeName));
+		bps.add(createLineBreakpoint(128, typeName));
 		// for loop
-		bps.add(createLineBreakpoint(82, typeName));
+		bps.add(createLineBreakpoint(93, typeName));
 		// if
-		bps.add(createLineBreakpoint(70, typeName));
+		bps.add(createLineBreakpoint(81, typeName));
 		// initializer
-		bps.add(createLineBreakpoint(6, typeName));
+		bps.add(createLineBreakpoint(17, typeName));
 		// inner class
-		bps.add(createLineBreakpoint(11, typeName));
+		bps.add(createLineBreakpoint(22, typeName));
 		// return true
-		bps.add(createLineBreakpoint(61, typeName));
+		bps.add(createLineBreakpoint(72, typeName));
 		// instance method
-		bps.add(createLineBreakpoint(96, typeName));
-		// static method 
-		bps.add(createLineBreakpoint(42, typeName));
-		// case statement
-		bps.add(createLineBreakpoint(122, typeName));
-		// default statement
-		bps.add(createLineBreakpoint(129, typeName));
-		// synchronized blocks
-		bps.add(createLineBreakpoint(135, typeName));
-		// try
-		bps.add(createLineBreakpoint(114, typeName));
-		//catch
 		bps.add(createLineBreakpoint(107, typeName));
+		// static method 
+		bps.add(createLineBreakpoint(53, typeName));
+		// case statement
+		bps.add(createLineBreakpoint(133, typeName));
+		// default statement
+		bps.add(createLineBreakpoint(140, typeName));
+		// synchronized blocks
+		bps.add(createLineBreakpoint(146, typeName));
+		// try
+		bps.add(createLineBreakpoint(125, typeName));
+		//catch
+		bps.add(createLineBreakpoint(118, typeName));
 		// while
-		bps.add(createLineBreakpoint(86, typeName));
+		bps.add(createLineBreakpoint(97, typeName));
 		
 		
 		IJavaThread thread= null;
@@ -99,7 +99,7 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 
 	public void testDisabledBreakpoint() throws Exception {
 		String typeName = "Breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(41, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(52, typeName);
 		bp.setEnabled(false);
 		
 		IJavaDebugTarget debugTarget = null;
@@ -113,7 +113,7 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 
 	public void testEnableDisableBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		ILineBreakpoint bp = createLineBreakpoint(5, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(16, typeName);
 		bp.setEnabled(true);
 		
 		IJavaThread thread = null;

@@ -1,8 +1,19 @@
 import java.util.*;
 
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+
 public class Breakpoints implements IBreakpoints {
 	static {
-	 	Vector v= new Vector(1);
+	 	new Vector(1);
 	 	System.out.println("Initializer");
     }
 
@@ -102,7 +113,7 @@ public class InnerRunnable implements Runnable {
 
 	try {
 			Vector v= new Vector(1);
-			Object o= v.firstElement();
+			v.firstElement();
 		} catch (NoSuchElementException nsee) {
 			System.out.println("catch block");
 		} finally {
@@ -110,7 +121,7 @@ public class InnerRunnable implements Runnable {
 
 	}
 	try {
-			Vector v= new Vector(1);
+			new Vector(1);
 			System.out.println("try");
 		} catch (NoSuchElementException nsee) {
 		} finally {

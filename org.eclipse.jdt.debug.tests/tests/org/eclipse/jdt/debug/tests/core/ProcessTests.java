@@ -28,7 +28,7 @@ public class ProcessTests extends AbstractDebugTest {
 
 	public void testExitValueNormal() throws Exception {
 		String typeName = "Breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(32, typeName);
+		ILineBreakpoint bp = createLineBreakpoint(43, typeName);
 				
 		IJavaThread thread= null;
 		try {
