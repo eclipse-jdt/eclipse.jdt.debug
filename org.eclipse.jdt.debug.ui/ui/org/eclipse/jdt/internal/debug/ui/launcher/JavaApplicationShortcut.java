@@ -8,11 +8,9 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -21,65 +19,31 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
  * Performs single click launching for local java applications.
  */
-public abstract class JavaApplicationAction implements IWorkbenchWindowActionDelegate {
+public class JavaApplicationShortcut implements ILaunchShortcut {
 	
-	private IWorkbenchWindow fWindow = null;
-	private IEditorPart fEditor = null;
-	private IStructuredSelection fSelection = null;
-
-	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose() {
-	}
-
-	/**
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window) {
-		fWindow = window;
-	}
-
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
-	public void run(IAction action) {
+	public void searchAndLaunch(Object[] search, String mode) {
 		IType[] types = null;
-		Object[] search = null;
-		if (fSelection == null) {
-			if (fEditor != null) {
-				IEditorInput input = fEditor.getEditorInput();
-				IJavaElement je = (IJavaElement) input.getAdapter(IJavaElement.class);
-				if (je != null) {
-					search = new Object[] {je};
-				}
-			}			
-		} else {
-			search = fSelection.toArray();
-		}
-		
 		if (search != null) {
 			try {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
@@ -94,63 +58,27 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 			if (types.length == 0) {
 				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1"), (Throwable)null); //$NON-NLS-1$
 			} else if (types.length > 1) {
-				type = chooseType(types);
+				type = chooseType(types, mode);
 			} else {
 				type = types[0];
 			}
 			if (type != null) {
-				launch(type);
+				launch(type, mode);
 			}
 		}
 
-	}
-
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		fEditor = null;
-		fSelection = null;
-		boolean enabled = false;
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection)selection;
-			Iterator iter = ss.iterator();
-			while (iter.hasNext()) {
-				Object obj = iter.next();
-				if (obj instanceof IAdaptable) {
-					IJavaElement je = (IJavaElement)((IAdaptable)obj).getAdapter(IJavaElement.class);
-					if (je != null) {
-						enabled = true;
-						fSelection = ss;
-					}
-				}
-			}
-		} else {
-			IWorkbenchPage page = fWindow.getActivePage();
-			if (page != null) {
-				IEditorPart editor = page.getActiveEditor();
-				if (editor != null) {
-					String id = editor.getSite().getId();
-					if (JavaUI.ID_CU_EDITOR.equals(id) || JavaUI.ID_CF_EDITOR.equals(id)) {
-						enabled = true;
-						fEditor = editor;
-					}
-				}
-			}
-		}
-		action.setEnabled(enabled);
-	}
+	}	
 
 	/**
 	 * Prompts the user to select a type
 	 * 
 	 * @return the selected type or <code>null</code> if none.
 	 */
-	protected IType chooseType(IType[] types) {
+	protected IType chooseType(IType[] types, String mode) {
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new JavaElementLabelProvider());
 		dialog.setElements(types);
 		dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Type_Selection_4")); //$NON-NLS-1$
-		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			dialog.setMessage(LauncherMessages.getString("JavaApplicationAction.Choose_a_&main_type_to_debug__5")); //$NON-NLS-1$
 		} else {
 			dialog.setMessage(LauncherMessages.getString("JavaApplicationAction.Choose_a_&main_type_to_run__6")); //$NON-NLS-1$
@@ -165,12 +93,12 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 	/**
 	 * Launches a configuration for the given type
 	 */
-	protected void launch(IType type) {
+	protected void launch(IType type, String mode) {
 		try { 
-			ILaunchConfiguration config = findLaunchConfiguration(type);
+			ILaunchConfiguration config = findLaunchConfiguration(type, mode);
 			if (config != null) {
 				DebugUITools.saveAndBuildBeforeLaunch();
-				config.launch(getMode(), null);
+				config.launch(mode, null);
 			}			
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), e.getStatus()); //$NON-NLS-1$
@@ -182,7 +110,7 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 	 * 
 	 * @return a re-useable config or <code>null</code> if none
 	 */
-	protected ILaunchConfiguration findLaunchConfiguration(IType type) {
+	protected ILaunchConfiguration findLaunchConfiguration(IType type, String mode) {
 		ILaunchConfigurationType configType = getJavaLaunchConfigType();
 		List candidateConfigs = Collections.EMPTY_LIST;
 		try {
@@ -213,7 +141,7 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 			// Prompt the user to choose a config.  A null result means the user
 			// cancelled the dialog, in which case this method returns null,
 			// since cancelling the dialog should also cancel launching anything.
-			ILaunchConfiguration config = chooseConfiguration(candidateConfigs);
+			ILaunchConfiguration config = chooseConfiguration(candidateConfigs, mode);
 			if (config != null) {
 				return config;
 			}
@@ -227,12 +155,12 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 	 * launch configurations.  Return the chosen config, or <code>null</code> if the
 	 * user cancelled the dialog.
 	 */
-	protected ILaunchConfiguration chooseConfiguration(List configList) {
+	protected ILaunchConfiguration chooseConfiguration(List configList, String mode) {
 		IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(fWindow.getShell(), labelProvider);
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(configList.toArray());
 		dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Launch_Configuration_Selection_1"));  //$NON-NLS-1$
-		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			dialog.setMessage(LauncherMessages.getString("JavaApplicationAction.Choose_a_launch_configuration_to_debug_2"));  //$NON-NLS-1$
 		} else {
 			dialog.setMessage(LauncherMessages.getString("JavaApplicationAction.Choose_a_launch_configuration_to_run_3")); //$NON-NLS-1$
@@ -278,11 +206,32 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 	 * Convenience method to get the window that owns this action's Shell.
 	 */
 	protected Shell getShell() {
-		return fWindow.getShell();
+		return JDIDebugUIPlugin.getActiveWorkbenchShell();
 	}
 	
 	/**
-	 * Returns the mode this action launches in
+	 * @see ILaunchShortcut#launch(IEditorPart, String)
 	 */
-	protected abstract String getMode();
+	public void launch(IEditorPart editor, String mode) {
+		IEditorInput input = editor.getEditorInput();
+		IJavaElement je = (IJavaElement) input.getAdapter(IJavaElement.class);
+		if (je != null) {
+			searchAndLaunch(new Object[] {je}, mode);
+		} else {
+			// error
+		}
+		
+	}
+
+	/**
+	 * @see ILaunchShortcut#launch(ISelection, String)
+	 */
+	public void launch(ISelection selection, String mode) {
+		if (selection instanceof IStructuredSelection) {
+			searchAndLaunch(((IStructuredSelection)selection).toArray(), mode);
+		} else {
+			// error
+		}
+	}
+
 }

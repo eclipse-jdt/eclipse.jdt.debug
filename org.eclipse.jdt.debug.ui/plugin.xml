@@ -163,46 +163,6 @@
             </enablement>
 		</action> 
    </actionSet>
-    <actionSet
-            label="%JDTLaunchActionSet.label"
-            visible="false"
-            id="org.eclipse.jdt.debug.ui.JDTLaunchActionSet">
-         <menu
-               label="%RunMenu.label"
-               id="org.eclipse.ui.run"
-               path="additions">
-            <separator name="jdtRunLaunchGroup"/>
-            <groupMarker name="jdtDebugLaunchGroup"/>
-         </menu>
-         <action
-               id="org.eclipse.jdt.debug.ui.actions.debugJavaApp"
-               hoverIcon="icons/full/ctool16/debug_java_app.gif"
-               class="org.eclipse.jdt.internal.debug.ui.launcher.DebugJavaApplicationAction"
-               disabledIcon="icons/full/dtool16/debug_java_app.gif"
-               icon="icons/full/etool16/debug_java_app.gif"
-               helpContextId="debug_java_application_action_context"
-               label="%DebugJavaApplicationAction.label"
-               menubarPath="org.eclipse.ui.run/jdtDebugLaunchGroup"
-               tooltip="%DebugJavaApplicationAction.tooltip">
-               <enablement> 
-             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
-               </enablement> 
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.actions.runJavaApp"
-               hoverIcon="icons/full/ctool16/run_java_app.gif"
-               class="org.eclipse.jdt.internal.debug.ui.launcher.RunJavaApplicationAction"
-               disabledIcon="icons/full/dtool16/run_java_app.gif"
-               icon="icons/full/etool16/run_java_app.gif"
-               helpContextId="run_java_application_context"
-               label="%RunJavaApplicationAction.label"
-               menubarPath="org.eclipse.ui.run/jdtRunLaunchGroup"
-               tooltip="%RunJavaApplicationAction.tooltip">
-               <enablement> 
-             	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
-               </enablement> 
-         </action>
-      </actionSet>
 </extension>
 
 <extension 
@@ -1024,18 +984,13 @@
 	</debugActionGroup>
 </extension>
 
-<extension point = "org.eclipse.debug.ui.launchConfigurationShortcuts">
+<extension point = "org.eclipse.debug.ui.launchShortcuts">
 	<shortcut
 		id="org.eclipse.jdt.debug.ui.localJavaShortcut"
-		configTypeID="org.eclipse.jdt.launching.localJavaApplication">
-		<perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
-		<perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
-		<perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
-		<perspective id="org.eclipse.debug.ui.DebugPerspective"/>
-	</shortcut>
-	<shortcut
-		id="org.eclipse.jdt.debug.ui.remoteJavaShortcut"
-		configTypeID="org.eclipse.jdt.launching.remoteJavaApplication">
+		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationShortcut"
+		label="%JavaApplicationShortcut.label"
+		icon="icons/full/ctool16/java_app.gif"
+		modes="run, debug">
 		<perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
 		<perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
 		<perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
