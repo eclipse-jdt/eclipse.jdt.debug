@@ -58,7 +58,7 @@ public class BundleWizardPage2 extends BundleWizardBasePage {
 				}
 			});
 			final Button addButton2= createButton(c1, SWT.NONE, Util.getString("page2.addFolder.button.label")); //$NON-NLS-1$
-			addButton1.addSelectionListener(new SelectionAdapter() {
+			addButton2.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					DirectoryDialog fd= new DirectoryDialog(addButton2.getShell(), SWT.OPEN);
 					fd.setText(Util.getString("page2.chooseFolder.dialog.title")); //$NON-NLS-1$
