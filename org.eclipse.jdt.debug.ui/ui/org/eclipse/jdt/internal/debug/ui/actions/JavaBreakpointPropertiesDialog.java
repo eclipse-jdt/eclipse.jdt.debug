@@ -6,7 +6,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,7 +28,6 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -97,8 +95,8 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	
 	private Button fOkButton;
 	
-	public static final String PREF_DLG_TITLE_IMG = "breakpoint_preference_dialog_title_image";//$NON-NLS-1$
-	public static final String PREF_DLG_IMG_TITLE_ERROR = "breakpoint_preference_dialog_title_error_image";//$NON-NLS-1$
+	protected static final String PREF_DLG_TITLE_IMG = "breakpoint_preference_dialog_title_image";//$NON-NLS-1$
+	protected static final String PREF_DLG_IMG_TITLE_ERROR = "breakpoint_preference_dialog_title_error_image";//$NON-NLS-1$
 	static {
 		ImageRegistry reg = JDIDebugUIPlugin.getDefault().getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
@@ -118,296 +116,15 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	 */
 	private Point fMinimumPageSize = new Point(200,200);
 	
-	private IJavaBreakpoint fBreakpoint;
-	
 	/**
-	 * A preference store that presents the state of the properties
-	 * of a Java breakpoint.  Default settings are not supported.
+	 * The breakpoint that this dialog is operating on
 	 */
-	protected class JavaBreakpointPreferenceStore implements IPreferenceStore {
+	private IJavaBreakpoint fBreakpoint;
 		
-		protected final static String ENABLED= "ENABLED"; //$NON-NLS-1$
-		protected final static String HIT_COUNT= "HIT_COUNT"; //$NON-NLS-1$
-		protected final static String HIT_COUNT_ENABLED= "HIT_COUNT_ENABLED"; //$NON-NLS-1$
-		protected final static String PERSISTED= "PERSISTED"; //$NON-NLS-1$
-		protected final static String SUSPEND_POLICY= "SUSPEND_POLICY"; //$NON-NLS-1$
-		protected final static String METHOD_EXIT= "METHOD_EXIT"; //$NON-NLS-1$
-		protected final static String METHOD_ENTRY= "METHOD_ENTRY"; //$NON-NLS-1$
-		protected final static String CAUGHT= "CAUGHT"; //$NON-NLS-1$
-		protected final static String UNCAUGHT= "UNCAUGHT"; //$NON-NLS-1$
-		protected final static String ACCESS= "ACCESS"; //$NON-NLS-1$
-		protected final static String MODIFICATION= "MODIFICATION"; //$NON-NLS-1$
-		
-		protected HashMap fProperties;
-		private boolean fIsDirty= false; 
-		
-		private ListenerList fListeners;
-		
-		protected JavaBreakpointPreferenceStore() {
-			fProperties= new HashMap(10);
-			fListeners= new ListenerList();
-		}
-		/**
-		 * @see IPreferenceStore#addPropertyChangeListener(IPropertyChangeListener)
-		 */
-		public void addPropertyChangeListener(IPropertyChangeListener listener) {
-			fListeners.add(listener);
-		}
-
-		/**
-		 * @see IPreferenceStore#contains(String)
-		 */
-		public boolean contains(String name) {
-			return fProperties.containsKey(name);
-		}
-
-		/**
-		 * @see IPreferenceStore#firePropertyChangeEvent(String, Object, Object)
-		 */
-		public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
-			Object[] listeners = fListeners.getListeners();
-			// Do we need to fire an event.
-			if (listeners.length > 0 && (oldValue == null || !oldValue.equals(newValue))) {
-				PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
-				for (int i = 0; i < listeners.length; ++i) {
-					IPropertyChangeListener l = (IPropertyChangeListener) listeners[i];
-					l.propertyChange(pe);
-				}
-			}
-		}
-
-		/**
-		 * @see IPreferenceStore#getBoolean(String)
-		 */
-		public boolean getBoolean(String name) {
-			Object b= fProperties.get(name);
-			if (b instanceof Boolean) {
-				return ((Boolean)b).booleanValue();
-			}
-			return false;
-		}
-
-		/**
-		 * @see IPreferenceStore#getDefaultBoolean(String)
-		 */
-		public boolean getDefaultBoolean(String name) {
-			return false;
-		}
-
-		/**
-		 * @see IPreferenceStore#getDefaultDouble(String)
-		 */
-		public double getDefaultDouble(String name) {
-			return 0;
-		}
-
-		/**
-		 * @see IPreferenceStore#getDefaultFloat(String)
-		 */
-		public float getDefaultFloat(String name) {
-			return 0;
-		}
-
-		/**
-		 * @see IPreferenceStore#getDefaultInt(String)
-		 */
-		public int getDefaultInt(String name) {
-			return 0;
-		}
-
-		/**
-		 * @see IPreferenceStore#getDefaultLong(String)
-		 */
-		public long getDefaultLong(String name) {
-			return 0;
-		}
-
-		/**
-		 * @see IPreferenceStore#getDefaultString(String)
-		 */
-		public String getDefaultString(String name) {
-			return null;
-		}
-
-		/**
-		 * @see IPreferenceStore#getDouble(String)
-		 */
-		public double getDouble(String name) {
-			return 0;
-		}
-
-		/**
-		 * @see IPreferenceStore#getFloat(String)
-		 */
-		public float getFloat(String name) {
-			return 0;
-		}
-
-		/**
-		 * @see IPreferenceStore#getInt(String)
-		 */
-		public int getInt(String name) {
-			Object i= fProperties.get(name);
-			if (i instanceof Integer) {
-				return ((Integer)i).intValue();
-			}
-			return 1;
-		}
-
-		/**
-		 * @see IPreferenceStore#getLong(String)
-		 */
-		public long getLong(String name) {
-			return 0;
-		}
-
-		/**
-		 * @see IPreferenceStore#getString(String)
-		 */
-		public String getString(String name) {
-			Object str= fProperties.get(name);
-			if (str instanceof String) {
-				return (String)str;
-			}
-			return null;
-		}
-
-		/**
-		 * @see IPreferenceStore#isDefault(String)
-		 */
-		public boolean isDefault(String name) {
-			return false;
-		}
-
-		/**
-		 * @see IPreferenceStore#needsSaving()
-		 */
-		public boolean needsSaving() {
-			return fIsDirty;
-		}
-
-		/**
-		 * @see IPreferenceStore#putValue(String, String)
-		 */
-		public void putValue(String name, String newValue) {
-			Object oldValue= fProperties.get(name);
-			if (oldValue == null || !oldValue.equals(newValue)) {
-				fProperties.put(name, newValue);
-				setDirty(true);
-			}
-		}
-
-		/**
-		 * @see IPreferenceStore#removePropertyChangeListener(IPropertyChangeListener)
-		 */
-		public void removePropertyChangeListener(IPropertyChangeListener listener) {
-			fListeners.remove(listener);
-		}
-
-		/**
-		 * @see IPreferenceStore#setDefault(String, boolean)
-		 */
-		public void setDefault(String name, boolean value) {
-		}
-
-		/**
-		 * @see IPreferenceStore#setDefault(String, double)
-		 */
-		public void setDefault(String name, double value) {
-		}
-
-		/**
-		 * @see IPreferenceStore#setDefault(String, float)
-		 */
-		public void setDefault(String name, float value) {
-		}
-
-		/**
-		 * @see IPreferenceStore#setDefault(String, int)
-		 */
-		public void setDefault(String name, int value) {
-		}
-
-		/**
-		 * @see IPreferenceStore#setDefault(String, long)
-		 */
-		public void setDefault(String name, long value) {
-		}
-
-		/**
-		 * @see IPreferenceStore#setDefault(String, String)
-		 */
-		public void setDefault(String name, String defaultObject) {
-		}
-
-		/**
-		 * @see IPreferenceStore#setToDefault(String)
-		 */
-		public void setToDefault(String name) {
-		}
-
-		/**
-		 * @see IPreferenceStore#setValue(String, boolean)
-		 */
-		public void setValue(String name, boolean newValue) {
-			boolean oldValue= getBoolean(name);
-			if (oldValue != newValue) {
-				fProperties.put(name,new Boolean(newValue));
-				setDirty(true);
-				firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(newValue));
-			}
-		}
-
-		/**
-		 * @see IPreferenceStore#setValue(String, double)
-		 */
-		public void setValue(String name, double value) {
-			//breakpoints do not currently have any double properties
-		}
-
-		/**
-		 * @see IPreferenceStore#setValue(String, float)
-		 */
-		public void setValue(String name, float value) {
-			//breakpoints do not currently have any float properties
-		}
-
-		/**
-		 * @see IPreferenceStore#setValue(String, int)
-		 */
-		public void setValue(String name, int newValue) {
-			int oldValue= getInt(name);
-			if (oldValue != newValue) {
-				fProperties.put(name,new Integer(newValue));
-				setDirty(true);
-				firePropertyChangeEvent(name, new Integer(oldValue), new Integer(newValue));
-			}
-		}
-
-		/**
-		 * @see IPreferenceStore#setValue(String, long)
-		 */
-		public void setValue(String name, long value) {
-			//breakpoints do not currently have any long properties
-		}
-
-		/**
-		 * @see IPreferenceStore#setValue(String, String)
-		 */
-		public void setValue(String name, String newValue) {
-			Object oldValue= fProperties.get(name);
-			if (oldValue == null || !oldValue.equals(newValue)) {
-				fProperties.put(name, newValue);
-				setDirty(true);
-				firePropertyChangeEvent(name, oldValue, newValue);
-			}
-		}
-
-		protected void setDirty(boolean isDirty) {
-			fIsDirty = isDirty;
-		}
-	}
-	
+	/**
+	 * The "fake" preference store used to interface between
+	 * the breakpoint and the breakpoint preference page.
+	 */
 	private JavaBreakpointPreferenceStore fJavaBreakpointPreferenceStore;
 	
 	protected JavaBreakpointPropertiesDialog(Shell parentShell, IJavaBreakpoint breakpoint) {
@@ -440,7 +157,9 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	 */
 	protected void setBreakpointProperties(final List changedProperties) {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			
+		public void run(IProgressMonitor monitor) throws CoreException {
+				
 		boolean newEnabled= false;
 		IJavaBreakpoint breakpoint= getBreakpoint();
 		Iterator changed= changedProperties.iterator();
@@ -602,10 +321,12 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		// Add a dispose listener
 		fTitleArea.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if (fTitleAreaColor != null)
+				if (fTitleAreaColor != null) {
 					fTitleAreaColor.dispose();
-				if (fErrorMsgAreaBackground != null)
+				}
+				if (fErrorMsgAreaBackground != null) {
 					fErrorMsgAreaBackground.dispose();
+				}
 			}
 		});
 	
@@ -632,8 +353,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		});
 		
 		JFaceResources.getFontRegistry().addListener(fontListener);
-		
-		
+				
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		fMessageLabel.setLayoutData(gd);
 	

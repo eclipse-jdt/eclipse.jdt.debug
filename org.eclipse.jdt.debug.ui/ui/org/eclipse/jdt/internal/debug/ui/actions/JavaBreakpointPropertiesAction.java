@@ -26,7 +26,8 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		Dialog d= new JavaBreakpointPropertiesDialog(getActivePart().getSite().getShell(),getBreakpoint());
+		Dialog d= 
+			new JavaBreakpointPropertiesDialog(getActivePart().getSite().getShell(), getBreakpoint());
 		d.open();
 	}
 
