@@ -140,17 +140,11 @@ public interface IJavaThread extends IThread {
 	 * as specified by <code>evaluationDetail</code> (one of
 	 * <code>DebugEvent.EVALUATION</code> or
 	 * <code>DebugEvent.EVALUATION_IMPLICIT</code>).
-	 * When the specified timeout period (milliseconds) has passed and the 
-	 * evaluation has not completed, a resume event is fired with a detail
-	 * code of <code>UNSPECIFIED</code>, admitting that the given thread has been
-	 * resumed.
 	 * 
 	 * @param evaluation the evalation to perform
 	 * @param monitor progress monitor (may be <code>null</code>
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
-	 * @param timeout the number of milliseconds to wait for the evaluation to
-	 *  complete before firing a resume event on the given thread
 	 * @param hitBreakpoints whether or not breakpoints should be honored
 	 *  in this thread during the evaluation. If <code>false</code>, breakpoints
 	 *  hit in this thread during the evaluation will be ignored.
