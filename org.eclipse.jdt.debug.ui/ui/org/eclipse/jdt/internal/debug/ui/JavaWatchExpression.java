@@ -11,6 +11,7 @@ Contributors:
 	IBM Corporation - Initial implementation
 **********************************************************************/
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -268,7 +269,11 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 		setPending(true);
 		refresh();
 		fDebugTarget= (IJavaDebugTarget)javaStackFrame.getDebugTarget();
-		DebugPlugin.getDefault().asyncExec(new EvaluationRunnable(javaStackFrame));
+		try {
+			DebugPlugin.getDefault().asyncExec(new EvaluationRunnable(javaStackFrame), JDIDebugUIPlugin.getStandardDisplay().getThread());
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
 	}
 
 	/**

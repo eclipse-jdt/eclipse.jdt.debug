@@ -1576,7 +1576,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					);
 				}
 			};		
-			DebugPlugin.getDefault().asyncExec(r);
+			try {
+				DebugPlugin.getDefault().asyncExec(r, JDIDebugUIPlugin.getStandardDisplay().getThread());
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
 		}
 		
 		public void computeDetail() throws DebugException {	
