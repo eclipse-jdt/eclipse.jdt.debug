@@ -61,6 +61,8 @@ import org.eclipse.jdt.internal.launching.ListenerList;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
+import org.eclipse.jdt.internal.launching.StandardClasspathProvider;
+import org.eclipse.jdt.internal.launching.StandardSourcePathProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -162,6 +164,12 @@ public final class JavaRuntime {
 	 */
 	private static Map fgVariableResolvers = null;
 	private static Map fgContainerResolvers = null;
+	
+	/**
+	 * Default classpath and source path providers.
+	 */
+	private static IRuntimeClasspathProvider fgDefaultClasspathProvider = new StandardClasspathProvider();
+	private static IRuntimeClasspathProvider fgDefaultSourcePathProvider = new StandardSourcePathProvider();
 	
 	/**
 	 * VM change listeners
@@ -500,7 +508,7 @@ public final class JavaRuntime {
 	 * @see IRuntimeClasspathEntry
 	 * @since 2.0
 	 */
-	public static IRuntimeClasspathEntry[] computeRuntimeClasspath(IJavaProject project) throws CoreException {
+	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeClasspath(IJavaProject project) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(project.getProject().getFullPath());
 		List classpathEntries = expandProject(entry);
 		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries == null ? 0 : classpathEntries.size()];
@@ -541,23 +549,75 @@ public final class JavaRuntime {
 	 * @exception CoreException if unable to compute the source lookup path
 	 * @since 2.0
 	 */
-	public static IRuntimeClasspathEntry[] computeSourceLookupPath(ILaunchConfiguration configuration) throws CoreException {
-		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
-		IRuntimeClasspathEntry[] entries = null;
-		if (useDefault) {
-			// the default source lookup path is the same as the classpath
-			entries = computeRuntimeClasspath(configuration);
-		} else {
-			// recover persisted source path
-			entries = recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH);
-		}
-		return entries;
+	public static IRuntimeClasspathEntry[] computeUnresolvedSourceLookupPath(ILaunchConfiguration configuration) throws CoreException {
+		return getSourceLookupPathProvider(configuration).computeUnresolvedClasspath(configuration);
 	}
 	
+	/**
+	 * Resolves the given source lookup path, returning the resolved source lookup path
+	 * in the context of the given launch configuration.
+	 * 
+	 * @param entries unresolved entries
+	 * @param configuration launch configuration
+	 * @return resolved entries
+	 * @exception CoreException if unable to resolve the source lookup path
+	 * @since 2.0
+	 */
+	public static IRuntimeClasspathEntry[] resolveSourceLookupPath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
+		return getSourceLookupPathProvider(configuration).resolveClasspath(entries, configuration);
+	}	
+	
+	/**
+	 * Returns the classpath provider for the given launch configuration.
+	 * 
+	 * @param configuration launch configuration
+	 * @return classpath provider
+	 * @exception CoreException if unable to resolve the path provider
+	 * @since 2.0
+	 */
+	public static IRuntimeClasspathProvider getClasspathProvider(ILaunchConfiguration configuration) throws CoreException {
+		String providerId = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, (String)null);
+		IRuntimeClasspathProvider provider = null;
+		if (providerId == null) {
+			provider = fgDefaultClasspathProvider;
+		} else {
+			// XXX: use custom classpath provider	
+		}
+		return provider;
+	}	
+		
+	/**
+	 * Returns the source lookup path provider for the given launch configuration.
+	 * 
+	 * @param configuration launch configuration
+	 * @return source lookup path provider
+	 * @exception CoreException if unable to resolve the path provider
+	 * @since 2.0
+	 */
+	public static IRuntimeClasspathProvider getSourceLookupPathProvider(ILaunchConfiguration configuration) throws CoreException {
+		String providerId = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String)null);
+		IRuntimeClasspathProvider provider = null;
+		if (providerId == null) {
+			provider = fgDefaultSourcePathProvider;
+		} else {
+			// XXX: use custom classpath provider	
+		}
+		return provider;
+	}	
+		
 	/**
 	 * Returns resolved entries for the given entry in the context of the given
-	 * launch configuration for a runtime classpath.
-	 * 
+	 * launch configuration for a runtime classpath. If the entry is of kind
+	 * <code>VARIABLE</code> or <code>CONTAINTER</code>, variable and contanier
+	 * resolvers are consulted, otherwise, the resolved entry is the given
+	 * entry.
+	 * <p>
+	 * If the given entry is a variable entry, and a resolver is not registered,
+	 * the entry itself is returned. If the given entry is a container, and a
+	 * resolver is not registered, resolved runtime classpath entries are calculated
+	 * from the associated container classpath entries, in the context of the project
+	 * associated with the given launch configuration.
+	 * </p>
 	 * @param entry runtime classpath entry
 	 * @param configuration launch configuration
 	 * @return resolved runtime classpath entry
@@ -565,7 +625,7 @@ public final class JavaRuntime {
 	 * @see IRuntimeClasspathEntryResolver
 	 * @since 2.0
 	 */
-	public static IRuntimeClasspathEntry[] resolveForClasspath(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
+	public static IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
 		switch (entry.getType()) {
 			case IRuntimeClasspathEntry.VARIABLE:
 				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
@@ -573,55 +633,21 @@ public final class JavaRuntime {
 					// no resolution by default
 					break;
 				} else {
-					return resolver.resolveForClasspath(entry, configuration);
+					return resolver.resolveRuntimeClasspathEntry(entry, configuration);
 				}				
 			case IRuntimeClasspathEntry.CONTAINER:
 				resolver = getContainerResolver(entry.getVariableName());
 				if (resolver == null) {
 					return computeDefaultContainerEntries(entry, configuration);
 				} else {
-					return resolver.resolveForClasspath(entry, configuration);
+					return resolver.resolveRuntimeClasspathEntry(entry, configuration);
 				}
 			default:
 				break;
 		}
 		return new IRuntimeClasspathEntry[] {entry};
 	}
-	
-	/**
-	 * Returns a resolved entries for the given entry in the context of the given
-	 * launch configuration for a source lookup path.
-	 * 
-	 * @param entry runtime classpath entry
-	 * @param configuration launch configuration
-	 * @return resolved runtime classpath entry
-	 * @exception CoreException if unable to resolve
-	 * @see IRuntimeClasspathEntryResolver
-	 * @since 2.0
-	 */
-	public static IRuntimeClasspathEntry[] resolveForSourceLookupPath(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
-		switch (entry.getType()) {
-			case IRuntimeClasspathEntry.VARIABLE:
-				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
-				if (resolver == null) {
-					// no resolution by default
-					break;
-				} else {
-					return resolver.resolveForSourceLookupPath(entry, configuration);
-				}				
-			case IRuntimeClasspathEntry.CONTAINER:
-				resolver = getContainerResolver(entry.getVariableName());
-				if (resolver == null) {
-					return computeDefaultContainerEntries(entry, configuration);
-				} else {
-					return resolver.resolveForSourceLookupPath(entry, configuration);
-				}
-			default:
-				break;
-		}
-		return new IRuntimeClasspathEntry[] {entry};
-	}
-	
+		
 	/**
 	 * Performs default resolution for a container entry.
 	 * Delegates to the Java model.
@@ -664,41 +690,30 @@ public final class JavaRuntime {
 			
 	/**
 	 * Computes and returns the unresolved class path for the given launch configuration.
+	 * Variable and container entries are unresolved.
 	 * 
 	 * @param configuration launch configuration
 	 * @return unresolved runtime classpath entries
 	 * @exception CoreException if unable to compute the classpath
 	 * @since 2.0
 	 */
-	public static IRuntimeClasspathEntry[] computeRuntimeClasspath(ILaunchConfiguration configuration) throws CoreException {
-		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
-		if (useDefault) {
-			IJavaProject proj = getJavaProject(configuration);
-			if (proj == null) {
-				// no project - use JRE's libraries by default
-				IVMInstall vm = computeVMInstall(configuration);
-				LibraryLocation[] libs = getLibraryLocations(vm);
-				if (libs == null) {
-					return new IRuntimeClasspathEntry[0];
-				} else {
-					IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[libs.length];
-					for (int i = 0; i < libs.length; i++) {
-						IRuntimeClasspathEntry r = newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
-						r.setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
-						r.setSourceAttachmentRootPath(libs[i].getPackageRootPath());
-						r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
-						rtes[i] = r;
-					}
-					return rtes;
-				}				
-			} else {
-				return JavaRuntime.computeRuntimeClasspath(proj);						
-			}
-		} else {
-			// recover persisted classpath
-			return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
-		}
+	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeClasspath(ILaunchConfiguration configuration) throws CoreException {
+		return getClasspathProvider(configuration).computeUnresolvedClasspath(configuration);
 	}
+	
+	/**
+	 * Resolves the given classpath, returning the resolved classpath
+	 * in the context of the given launch configuration.
+	 *
+	 * @param entries unresolved classpath
+	 * @param configuration launch configuration
+	 * @return resolved runtime classpath entries
+	 * @exception CoreException if unable to compute the classpath
+	 * @since 2.0
+	 */
+	public static IRuntimeClasspathEntry[] resolveRuntimeClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
+		return getClasspathProvider(configuration).resolveClasspath(entries, configuration);
+	}	
 	
 	/**
 	 * Return the <code>IJavaProject</code> referenced in the specified configuration or
@@ -895,7 +910,7 @@ public final class JavaRuntime {
 							if (projectEntries != null) {
 								Iterator entries = projectEntries.iterator();
 								while (entries.hasNext()) {
-									IClasspathEntry e = (IClasspathEntry)entries.next();
+									Object e = entries.next();
 									if (!expandedPath.contains(e)) {
 										expandedPath.add(e);
 									}
@@ -951,7 +966,7 @@ public final class JavaRuntime {
 	 * @throws	CoreException if unable to compute the default classpath
 	 */
 	public static String[] computeDefaultRuntimeClassPath(IJavaProject jproject) throws CoreException {
-		IRuntimeClasspathEntry[] unresolved = computeRuntimeClasspath(jproject);
+		IRuntimeClasspathEntry[] unresolved = computeUnresolvedRuntimeClasspath(jproject);
 		// 1. remove bootpath entries
 		// 2. resolve & translate to local file system paths
 		List resolved = new ArrayList(unresolved.length);

@@ -211,7 +211,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		try {
 			boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 			fClassPathDefaultButton.setSelection(useDefault);
-			setClasspathEntries(JavaRuntime.computeRuntimeClasspath(configuration));
+			setClasspathEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(configuration));
 			fClasspathViewer.setEnabled(!useDefault);
 			fBootpathViewer.setEnabled(!useDefault);
 		} catch (CoreException e) {
@@ -228,7 +228,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			setClasspathEntries(new IRuntimeClasspathEntry[0]);
 		} else {
 			try {
-				setClasspathEntries(JavaRuntime.computeRuntimeClasspath(config));
+				setClasspathEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(config));
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
 			}

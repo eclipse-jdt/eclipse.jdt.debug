@@ -16,8 +16,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * <p>
  * A resolver is registered for a runtime classpath entry of type
  * <code>VARIABLE</code> and/or <code>CONTAINER</code>. A resolver is
- * consulted when a runtime classpath entry is needs to be resolved for
- * a runtime classpath or source lookup path.
+ * consulted when a runtime classpath entry is needs to be resolved..
  * </p>
  * A resolver extension is defined in <code>plugin.xml</code>.
  * Following is an example definition of a runtime classpath entry
@@ -54,8 +53,7 @@ public interface IRuntimeClasspathEntryResolver {
 	
 	/**
 	 * Returns resolved runtime classpath entries for the given classpath entry,
-	 * in the context of the given launch configuration, to be used in a runtime
-	 * classpath.
+	 * in the context of the given launch configuration.
 	 * 
 	 * @param entry runtime classpath entry to resolve, of type
 	 * 	<code>VARIABLE</code> or <code>CONTAINTER</code>
@@ -64,19 +62,6 @@ public interface IRuntimeClasspathEntryResolver {
 	 * @return resolved entries (zero or more)
 	 * @exception CoreException if unable to resolve the entry  
 	 */
-	public IRuntimeClasspathEntry[] resolveForClasspath(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException;
+	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException;
 	
-	/**
-	 * Returns resolved runtime classpath entries for the given classpath entry,
-	 * in the context of the given launch configuration, to be used in a source
-	 * lookup path.
-	 * 
-	 * @param entry runtime classpath entry to resolve, of type
-	 * 	<code>VARIABLE</code> or <code>CONTAINTER</code>
-	 * @param configuration the context in which the runtime classpath entry
-	 * 	needs to be resolved
-	 * @return resolved entries (zero or more)
-	 * @exception CoreException if unable to resolve the entry  
-	 */
-	public IRuntimeClasspathEntry[] resolveForSourceLookupPath(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException;	
 }

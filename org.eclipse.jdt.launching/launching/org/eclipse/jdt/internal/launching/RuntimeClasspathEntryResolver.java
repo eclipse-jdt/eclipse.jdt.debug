@@ -28,17 +28,10 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	}
 	
 	/**
-	 * @see IRuntimeClasspathEntryResolver#resolveForClasspath(IRuntimeClasspathEntry, ILaunchConfiguration)
+	 * @see IRuntimeClasspathEntryResolver#resolveRuntimeClasspathEntry(IRuntimeClasspathEntry, ILaunchConfiguration)
 	 */
-	public IRuntimeClasspathEntry[] resolveForClasspath(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
-		return getResolver().resolveForClasspath(entry, configuration);
-	}
-
-	/**
-	 * @see IRuntimeClasspathEntryResolver#resolveForSourceLookupPath(IRuntimeClasspathEntry, ILaunchConfiguration)
-	 */
-	public IRuntimeClasspathEntry[] resolveForSourceLookupPath(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
-		return getResolver().resolveForSourceLookupPath(entry, configuration);
+	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
+		return getResolver().resolveRuntimeClasspathEntry(entry, configuration);
 	}
 	
 	/**

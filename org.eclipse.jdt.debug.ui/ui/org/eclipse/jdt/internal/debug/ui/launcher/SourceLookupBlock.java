@@ -152,7 +152,7 @@ public class SourceLookupBlock {
 		boolean def = fDefaultButton.getSelection();
 		if (def) {
 			try {
-				IRuntimeClasspathEntry[] defs = JavaRuntime.computeRuntimeClasspath(getLaunchConfiguration());
+				IRuntimeClasspathEntry[] defs = JavaRuntime.computeUnresolvedRuntimeClasspath(getLaunchConfiguration());
 				fPathViewer.setEntries(defs);
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
@@ -215,7 +215,7 @@ public class SourceLookupBlock {
 			setProject(project);
 			boolean useDefault = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
 			fDefaultButton.setSelection(useDefault);
-			IRuntimeClasspathEntry[] entries = JavaRuntime.computeSourceLookupPath(config);
+			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);
 			fPathViewer.setEntries(entries);
 			fPathViewer.setEnabled(!useDefault);
 		} catch (CoreException e) {

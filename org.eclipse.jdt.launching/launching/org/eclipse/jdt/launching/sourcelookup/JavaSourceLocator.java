@@ -230,7 +230,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 *  the classpath of the given or any required project
 	 */
 	public static IJavaSourceLocation[] getDefaultSourceLocations(IJavaProject project) throws CoreException {
-		return getSourceLocations(JavaRuntime.computeRuntimeClasspath(project));
+		return getSourceLocations(JavaRuntime.computeUnresolvedRuntimeClasspath(project));
 	}
 	
 	/**
@@ -250,8 +250,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @see IPersistableSourceLocator#initializeDefaults(ILaunchConfiguration)
 	 */
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
-		IRuntimeClasspathEntry[] entries = JavaRuntime.computeSourceLookupPath(configuration);
-		IRuntimeClasspathEntry[] resolved = resolveSourceLocations(entries, configuration);
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(configuration);
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveSourceLookupPath(entries, configuration);
 		setSourceLocations(getSourceLocations(resolved));
 	}
 
@@ -326,19 +326,4 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		return (IJavaSourceLocation[])locations.toArray(new IJavaSourceLocation[locations.size()]);		
 	}
 	
-	/**
-	 * Resolves the given unresolved source lookup path in the context of the
-	 * given launch configuration.
-	 */
-	private static IRuntimeClasspathEntry[] resolveSourceLocations(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
-		List all = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveForSourceLookupPath(entries[i], configuration);
-			for (int j =0; j < resolved.length; j++) {
-				all.add(resolved[j]);
-			}
-		}	
-		return (IRuntimeClasspathEntry[])all.toArray(new IRuntimeClasspathEntry[all.size()]);
-	}
-
 }

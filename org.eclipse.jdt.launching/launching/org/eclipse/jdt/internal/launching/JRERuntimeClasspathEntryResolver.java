@@ -25,7 +25,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	/**
 	 * @see IRuntimeClasspathEntryResolver#resolveForClasspath(IRuntimeClasspathEntry, ILaunchConfiguration)
 	 */
-	public IRuntimeClasspathEntry[] resolveForClasspath(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
+	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
 		IRuntimeClasspathEntry[] resolved = null;
 		int kind = IRuntimeClasspathEntry.STANDARD_CLASSES;
 		IVMInstall configJRE = JavaRuntime.computeVMInstall(configuration);
@@ -46,25 +46,5 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 		}
 		return resolved;
 	}
-
-	/**
-	 * @see IRuntimeClasspathEntryResolver#resolveForSourceLookupPath(IRuntimeClasspathEntry, ILaunchConfiguration)
-	 */
-	public IRuntimeClasspathEntry[] resolveForSourceLookupPath(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
-		boolean include = false;
-		IJavaProject pro = JavaRuntime.getJavaProject(configuration);
-		include = pro == null;
-		// omit from source lookup path if the runtime JRE is the same as the build JRE
-		// (so we retrieve source from the workspace, and not an external jar)
-		if (!include) {
-			IVMInstall buildVM = JavaRuntime.computeVMInstall(pro);
-			IVMInstall runVM = JavaRuntime.computeVMInstall(configuration);
-			include = !buildVM.equals(runVM);
-		}
-		if (include) {
-			return resolveForClasspath(entry, configuration);
-		}
-		return new IRuntimeClasspathEntry[0];
-	}
-
+	
 }

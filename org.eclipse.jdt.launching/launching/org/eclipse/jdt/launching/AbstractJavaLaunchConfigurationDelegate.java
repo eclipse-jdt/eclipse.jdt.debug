@@ -183,25 +183,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
 	protected String[] getBootpath(ILaunchConfiguration configuration) throws CoreException {
-		IRuntimeClasspathEntry[] entries = JavaRuntime.computeRuntimeClasspath(configuration);
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
+		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
 		List bootEntries = new ArrayList(entries.length);
 		boolean allStandard = true;
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
-				switch (entries[i].getType()) {
-					case IRuntimeClasspathEntry.CONTAINER:
-					case IRuntimeClasspathEntry.VARIABLE:
-						IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveForClasspath(entries[i], configuration);
-						for (int j = 0; j < resolved.length; j++) {
-							bootEntries.add(resolved[j].getLocation());
-							allStandard = allStandard && resolved[j].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
-						}					
-						break;
-					default:
-						bootEntries.add(entries[i].getLocation());
-						allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
-						break;
-				}				
+				bootEntries.add(entries[i].getLocation());
+				allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
 			}
 		}
 		if (allStandard) {
@@ -223,22 +212,12 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
 	protected String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
-		IRuntimeClasspathEntry[] entries = JavaRuntime.computeRuntimeClasspath(configuration);
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
+		entries = JavaRuntime.resolveRuntimeClasspath(entries, configuration);
 		List userEntries = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				switch (entries[i].getType()) {
-					case IRuntimeClasspathEntry.CONTAINER:
-					case IRuntimeClasspathEntry.VARIABLE:
-						IRuntimeClasspathEntry[] containedEntries = JavaRuntime.resolveForClasspath(entries[i], configuration);
-						for (int j = 0; j < containedEntries.length; j++) {
-							userEntries.add(containedEntries[j].getLocation());
-						}					
-						break;
-					default:
-						userEntries.add(entries[i].getLocation());
-						break;
-				}
+				userEntries.add(entries[i].getLocation());
 			}
 		}
 		return (String[])userEntries.toArray(new String[userEntries.size()]);

@@ -134,6 +134,14 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_DEFAULT_CLASSPATH = LaunchingPlugin.getUniqueIdentifier() + ".DEFAULT_CLASSPATH"; //$NON-NLS-1$
 
 	/**
+	 * Classpath provider launch configuration attribute name.
+	 * If this attribute is present on a launch configuration, its value is the
+	 * identifier of a classpath provider extension used to compute the classpath
+	 * for a launch configuration.
+	 */
+	public static final String ATTR_CLASSPATH_PROVIDER = LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH_PROVIDER";	 //$NON-NLS-1$
+	
+	/**
 	 * Classpath launch configuration attribute name.
 	 * If this attribute is present on a launch configuration, its value becomes
 	 * the sole source lookup path for the launch. Its value is a list of
@@ -148,6 +156,14 @@ public interface IJavaLaunchConfigurationConstants {
 	 * of <code>ATTR_SOURCE_PATH</code> is ignored.
 	 */
 	public static final String ATTR_DEFAULT_SOURCE_PATH = LaunchingPlugin.getUniqueIdentifier() + ".DEFAULT_SOURCE_PATH"; //$NON-NLS-1$
+
+	/**
+	 * Source path provider launch configuration attribute name.
+	 * If this attribute is present on a launch configuration, its value is the
+	 * identifier of a source path provider extension used to compute the source lookup path
+	 * for a launch configuration.
+	 */
+	public static final String ATTR_SOURCE_PATH_PROVIDER = LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH_PROVIDER";	 //$NON-NLS-1$
 			
 	/**
 	 * Allow termination launch configuration attribute name.
