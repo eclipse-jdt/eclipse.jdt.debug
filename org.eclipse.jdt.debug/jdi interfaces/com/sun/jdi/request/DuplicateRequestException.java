@@ -13,5 +13,7 @@ package com.sun.jdi.request;
 
 public class DuplicateRequestException extends RuntimeException {
 	public DuplicateRequestException() { }
-	public DuplicateRequestException(String arg1) { }
+	public DuplicateRequestException(String arg1) {
+		super(arg1);
+	}
 }
