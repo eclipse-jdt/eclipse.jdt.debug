@@ -1237,10 +1237,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @return
 	 */
 	private String getJavaStratumLineBreakpointText(IJavaStratumLineBreakpoint breakpoint) throws CoreException {
-		// TODO: finish this method
-		IResource resource= breakpoint.getMarker().getResource();
 		IMember member= BreakpointUtils.getMember(breakpoint);
-		StringBuffer label= new StringBuffer(resource.getName());
+		String sourceName = breakpoint.getSourceName();
+		if (sourceName == null) {
+		    sourceName = ""; //$NON-NLS-1$
+		    IMarker marker = breakpoint.getMarker();
+		    if (marker != null) {
+		        IResource resource = marker.getResource();
+		        if (resource.getType() == IResource.FILE) {
+		            sourceName = resource.getName();
+		        }
+		    }
+		}
+		StringBuffer label= new StringBuffer(sourceName);
 		appendLineNumber(breakpoint, label);
 		appendHitCount(breakpoint, label);
 		appendSuspendPolicy(breakpoint,label);
