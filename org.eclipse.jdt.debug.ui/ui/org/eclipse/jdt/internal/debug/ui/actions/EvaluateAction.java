@@ -379,7 +379,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (getTargetPart() != null) {
 			return getTargetPart().getSite().getShell();
 		} else {
-			return JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell();
+			return JDIDebugUIPlugin.getActiveWorkbenchShell();
 		}
 	}
 	

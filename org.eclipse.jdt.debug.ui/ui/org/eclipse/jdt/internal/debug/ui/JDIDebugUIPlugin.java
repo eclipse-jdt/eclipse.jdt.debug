@@ -154,7 +154,11 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	}	
 	
 	public static IWorkbenchPage getActivePage() {
-		return getDefault().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchWindow w = getActiveWorkbenchWindow();
+		if (w != null) {
+			return w.getActivePage();
+		}
+		return null;
 	}
 	
 	
