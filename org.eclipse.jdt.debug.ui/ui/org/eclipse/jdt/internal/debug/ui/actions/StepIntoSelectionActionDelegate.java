@@ -84,9 +84,11 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		}
 		try {
 			int lineNumber = frame.getLineNumber();
+            String callingTypeName = stripInnerNames(callingType.getFullyQualifiedName());
+            String frameName = stripInnerNames(frame.getDeclaringTypeName());
 			// debug line numbers are 1 based, document line numbers are 0 based
-			if (textSelection.getStartLine() == (lineNumber - 1) && callingType.getFullyQualifiedName().equals(frame.getReceivingTypeName())) {
-				doStepIn(frame, method);
+			if (textSelection.getStartLine() == (lineNumber - 1) && callingTypeName.equals(frameName)) {
+                doStepIn(frame, method);
 			} else {
 				// not on current line
 				runToLineBeforeStepIn(textSelection, frame.getThread(), method);
@@ -97,6 +99,20 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			return;
 		}
 	}
+
+    /**
+     * Strips inner class names from the given type name.
+     * 
+     * @param fullyQualifiedName
+     */
+    private String stripInnerNames(String fullyQualifiedName) {
+        // ignore inner class qualification, as the compiler generated names and java model names can be different
+        int index = fullyQualifiedName.indexOf('$');
+        if (index > 0) {
+            return fullyQualifiedName.substring(0, index);
+        }
+        return fullyQualifiedName;
+    }
 	
 	/**
 	 * Steps into the given method in the given stack frame

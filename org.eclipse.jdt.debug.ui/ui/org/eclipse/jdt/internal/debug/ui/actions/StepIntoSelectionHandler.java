@@ -203,18 +203,34 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 					// step again
 					Runnable r = null;
 					if (stackDepth > fOriginalStackDepth) {
-						r = new Runnable() {
-							public void run() {
-								try {
-									setExpectedEvent(DebugEvent.RESUME, DebugEvent.STEP_RETURN);
-									frame.stepReturn();
-								} catch (DebugException e) {
-									JDIDebugUIPlugin.log(e);
-									cleanup();
-									DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});
-								}
-							}
-						};								
+                        if (frame.isSynthetic()) {
+                            // step thru synthetic methods
+                            r = new Runnable() {
+                                public void run() {
+                                    try {
+                                        setExpectedEvent(DebugEvent.RESUME, DebugEvent.STEP_INTO);
+                                        frame.stepInto();
+                                    } catch (DebugException e) {
+                                        JDIDebugUIPlugin.log(e);
+                                        cleanup();
+                                        DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});
+                                    }
+                                }
+                            };                            
+                        } else {
+    						r = new Runnable() {
+    							public void run() {
+    								try {
+    									setExpectedEvent(DebugEvent.RESUME, DebugEvent.STEP_RETURN);
+    									frame.stepReturn();
+    								} catch (DebugException e) {
+    									JDIDebugUIPlugin.log(e);
+    									cleanup();
+    									DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getDebugTarget(), DebugEvent.CHANGE)});
+    								}
+    							}
+    						};
+                        }
 					} else if (stackDepth == fOriginalStackDepth){
 						// we should be back in the original stack frame - if not, abort
 						if (!(frame.getSignature().equals(fOriginalSignature) && frame.getName().equals(fOriginalName) && frame.getDeclaringTypeName().equals(fOriginalTypeName))) {
