@@ -23,8 +23,10 @@ public class OpenDeclaringTypeHierarchyAction extends OpenDeclaringTypeAction {
 	
 	protected void doAction(Object e) throws DebugException {
 		Object sourceElement= getSourceElement(e);
-		if (sourceElement != null) {
+		if (sourceElement instanceof IJavaElement) {
 			OpenTypeHierarchyUtil.open((IJavaElement)sourceElement, fTargetPart.getSite().getWorkbenchWindow());
+		} else {
+			typeHierarchyError();
 		}
 	}
 	

@@ -21,7 +21,11 @@ public class OpenVariableConcreteTypeHierarchyAction extends OpenVariableConcret
 	private IWorkbenchPart fTargetPart;
 	
 	protected void openInEditor(Object sourceElement) {
-		OpenTypeHierarchyUtil.open((IJavaElement)sourceElement, fTargetPart.getSite().getWorkbenchWindow());	
+		if (sourceElement instanceof IJavaElement) {
+			OpenTypeHierarchyUtil.open((IJavaElement)sourceElement, fTargetPart.getSite().getWorkbenchWindow());
+		} else {
+			typeHierarchyError();
+		}
 	}	
 	
 	/**
