@@ -44,7 +44,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 
 	public static String renderProcessLabel(String[] commandLine) {
 		String format= LaunchingMessages.getString("StandardVMRunner.{0}_({1})_2"); //$NON-NLS-1$
-		String timestamp= DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
+		String timestamp= DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
 		return MessageFormat.format(format, new String[] { commandLine[0], timestamp });
 	}
 	
