@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -193,14 +194,18 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	public void dispose() {
 		getWorkbenchWindow().getPartService().removePartListener(this);
 	}
+	
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
 		setWorkbenchWindow(window);
-		IEditorPart part= window.getActivePage().getActiveEditor();
-		if (part instanceof ITextEditor) {
-			setTextEditor((ITextEditor)part);
+		IWorkbenchPage page= window.getActivePage();
+		if (page != null) {
+			IEditorPart part= page.getActiveEditor();
+			if (part instanceof ITextEditor) {
+				setTextEditor((ITextEditor)part);
+			}
 		}
 		window.getPartService().addPartListener(this);
 	}
