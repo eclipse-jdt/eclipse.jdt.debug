@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -342,7 +342,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			if (underlyingMethod.isVarargs()) {
 				String parameterTypeName= Signature.toString(parameterTypes[parameterTypes.length - 1]).replace('/', '.');
 				argumentTypeNames.add(parameterTypeName.substring(0, parameterTypeName.length() - 2) + "..."); //$NON-NLS-1$
-			} else {
+			} else if (parameterTypes.length > 0) {
 				argumentTypeNames.add(Signature.toString(parameterTypes[parameterTypes.length - 1]).replace('/', '.'));
 			}
 			return argumentTypeNames;
