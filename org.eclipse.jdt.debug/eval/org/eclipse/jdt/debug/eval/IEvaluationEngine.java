@@ -119,8 +119,12 @@ public interface IEvaluationEngine {
 	public IJavaDebugTarget getDebugTarget();
 	
 	/**
-	 * Disposes this evaluation engine. An engine cannot
-	 * be used after it has been disposed.
+	 * Disposes this evaluation engine. This causes the evaluation engine
+	 * to cleanup any resources (such as threads) that it maintains. Clients
+	 * should call this method when they are finished performing evaluations
+	 * with this engine.
+	 * 
+	 * This engine must not be used to perform evaluations after it has been disposed.
 	 */
 	public void dispose();
 	
