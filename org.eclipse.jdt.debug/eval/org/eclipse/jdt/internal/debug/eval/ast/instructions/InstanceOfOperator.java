@@ -8,6 +8,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
+import org.eclipse.jdt.internal.debug.core.model.JDIPrimitiveValue;
 
 public class InstanceOfOperator extends CompoundInstruction {
 	public static final String IS_INSTANCE= "isInstance"; //$NON-NLS-1$
@@ -22,6 +24,11 @@ public class InstanceOfOperator extends CompoundInstruction {
 	 */
 	public void execute() throws CoreException {
 		IJavaType type= (IJavaType)pop();
+		IJavaValue value= (IJavaValue)popValue();
+		if (value instanceof JDINullValue) {
+			pushNewValue(false);
+			return;
+		}
 		IJavaObject object= (IJavaObject)popValue();
 
 		IJavaObject classObject= getClassObject(type);
