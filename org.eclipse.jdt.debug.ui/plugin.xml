@@ -673,7 +673,7 @@
 	<page name="%javaStepFilterPrefName"
          id="org.eclipse.jdt.ui.JavaStepFilterPreferencePage"   
 	     class="org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage"
-         category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage">
+         category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
 	</page>	
 </extension>
 
