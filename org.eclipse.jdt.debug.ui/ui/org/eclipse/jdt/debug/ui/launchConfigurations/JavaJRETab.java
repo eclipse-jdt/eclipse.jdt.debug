@@ -6,6 +6,7 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
  */
  
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -77,8 +78,10 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected ILaunchConfiguration fLaunchConfiguration;
 	
 	// Constants
-	protected static final String DEFAULT_JRE_NAME = LauncherMessages.getString("JavaJRETab.Default_1"); //$NON-NLS-1$
+	protected static final String DEFAULT_JRE_NAME_PREFIX = LauncherMessages.getString("JavaJRETab.Default_1"); //$NON-NLS-1$
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	
+	protected String fDefaultVMName;
 		
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -258,7 +261,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * @see IAddVMDialogRequestor#isDuplicateName(IVMInstallType, String)
 	 */
 	public boolean isDuplicateName(IVMInstallType type, String name) {
-		if (name.equals(DEFAULT_JRE_NAME)) {
+		if (name.equals(fDefaultVMName)) {
 			return true;
 		}
 		for (int i = 0; i < fVMStandins.size(); i++) {
@@ -368,11 +371,17 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected void populateJREComboBox() {
 		String[] vmNames = new String[fVMStandins.size() + 1];
 
-		// Set the name of the 'default' VM
-		vmNames[0] = DEFAULT_JRE_NAME;
-		int index = 1;
+		// Set the name of the 'default' VM, include the path in parentheses
+		String defaultVMLocation = "";		//$NON-NLS-1$
+		try {
+			defaultVMLocation = JavaRuntime.getDefaultVMInstall().getInstallLocation().getCanonicalPath();
+		} catch (IOException ioe) {
+		}
+		vmNames[0] = DEFAULT_JRE_NAME_PREFIX + " (" + defaultVMLocation + ')'; //$NON-NLS-1$
+		fDefaultVMName = vmNames[0];
 
 		// Add all installed VMs
+		int index = 1;
 		Iterator iterator = fVMStandins.iterator();
 		while (iterator.hasNext()) {
 			VMStandin standin = (VMStandin)iterator.next();
