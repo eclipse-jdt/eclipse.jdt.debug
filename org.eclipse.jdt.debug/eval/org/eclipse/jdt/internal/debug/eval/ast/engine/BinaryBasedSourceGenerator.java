@@ -210,23 +210,25 @@ public class BinaryBasedSourceGenerator {
 
 				String genericSignature= referenceType.genericSignature();
 				if (fApiLevel == AST.JLS3 && genericSignature != null) {
-					source.append('<');
 					String[] typeParameters= Signature.getTypeParameters(genericSignature);
-					source.append(Signature.getTypeVariable(typeParameters[0]));
-					String[] typeParameterBounds= Signature.getTypeParameterBounds(typeParameters[0]);
-					source.append(" extends ").append(Signature.toString(typeParameterBounds[0]).replace('/', '.')); //$NON-NLS-1$
-					for (int i= 1; i < typeParameterBounds.length; i++) {
-						source.append(" & ").append(Signature.toString(typeParameterBounds[i]).replace('/', '.')); //$NON-NLS-1$
-					}
-					for (int j= 1; j < typeParameters.length; j++) {
-						source.append(',').append(Signature.getTypeVariable(typeParameters[j]));
-						typeParameterBounds= Signature.getTypeParameterBounds(typeParameters[j]);
+					if (typeParameters.length > 0) {
+						source.append('<');
+						source.append(Signature.getTypeVariable(typeParameters[0]));
+						String[] typeParameterBounds= Signature.getTypeParameterBounds(typeParameters[0]);
 						source.append(" extends ").append(Signature.toString(typeParameterBounds[0]).replace('/', '.')); //$NON-NLS-1$
 						for (int i= 1; i < typeParameterBounds.length; i++) {
 							source.append(" & ").append(Signature.toString(typeParameterBounds[i]).replace('/', '.')); //$NON-NLS-1$
 						}
+						for (int j= 1; j < typeParameters.length; j++) {
+							source.append(',').append(Signature.getTypeVariable(typeParameters[j]));
+							typeParameterBounds= Signature.getTypeParameterBounds(typeParameters[j]);
+							source.append(" extends ").append(Signature.toString(typeParameterBounds[0]).replace('/', '.')); //$NON-NLS-1$
+							for (int i= 1; i < typeParameterBounds.length; i++) {
+								source.append(" & ").append(Signature.toString(typeParameterBounds[i]).replace('/', '.')); //$NON-NLS-1$
+							}
+						}
+						source.append("> "); //$NON-NLS-1$
 					}
-					source.append("> "); //$NON-NLS-1$
 					String[] superClassInterfaces= SignatureExt.getTypeSuperClassInterfaces(genericSignature);
 					int length= superClassInterfaces.length;
 					if (length > 0) {
