@@ -11,13 +11,15 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaArray;
 
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
+
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.Value;
 
-public class JDIArrayValue extends JDIValue implements IJavaArray {
+public class JDIArrayValue extends JDIObjectValue implements IJavaArray {
 
 	/**
 	 * Constructs a value which is a reference to an array.
@@ -138,5 +140,6 @@ public class JDIArrayValue extends JDIValue implements IJavaArray {
 		// an exception will be thrown
 		return null;
 	}	
+
 }
 

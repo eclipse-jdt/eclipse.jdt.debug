@@ -9,9 +9,8 @@ import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 
-import org.eclipse.jdt.debug.core.IJavaVariable;
-
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
 /**
@@ -73,4 +72,18 @@ public class JDIThisVariable extends JDIVariable {
 			return null;			
 		}
 	}
+	
+	/**
+	 * @see JDIVariable#getUnderlyingType()
+	 */
+	protected Type getUnderlyingType() throws DebugException {
+		try {
+			return retrieveValue().type();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving type 'this'.", new String[]{e.toString()}), e);
+		}
+		// this line will not be exceucted as an exception
+		// will be throw in type retrieval fails
+		return null;
+	}	
 }

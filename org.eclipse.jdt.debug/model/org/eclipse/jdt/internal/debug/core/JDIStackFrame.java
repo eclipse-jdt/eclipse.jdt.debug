@@ -22,6 +22,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
+import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaEvaluate;
 import org.eclipse.jdt.debug.core.IJavaEvaluationListener;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
@@ -40,6 +41,7 @@ import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Type;
 import com.sun.jdi.VirtualMachine;
 
 /**
@@ -852,6 +854,20 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public IRegisterGroup[] getRegisterGroups() throws DebugException {
 		return new IRegisterGroup[0];
+	}
+
+	/**
+	 * @see IJavaStackFrame#getDeclaringType()
+	 */
+	public IJavaClassType getDeclaringType() throws DebugException {
+		Method method = getUnderlyingMethod();
+		try {
+			Type type = method.declaringType();
+			return (IJavaClassType)JDIType.createType((JDIDebugTarget)getDebugTarget(), type);
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred retreiving declaring type.", new String[] {e.toString()}), e);
+		}
+		return null;
 	}
 
 }

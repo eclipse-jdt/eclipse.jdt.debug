@@ -22,7 +22,7 @@ import org.eclipse.debug.core.model.IValue;
  * @see IJavaValue
  */
 
-public interface IJavaArray extends IJavaValue {
+public interface IJavaArray extends IJavaObject {
 	
 	/**
 	 * Returns the values contained in this array.

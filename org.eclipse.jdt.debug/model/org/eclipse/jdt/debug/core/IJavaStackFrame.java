@@ -292,6 +292,23 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * </ul>
 	 */
 	public IJavaObject getThis() throws DebugException;
+	
+	/**
+	 * Returns the type in which this stack frame's method is
+	 * declared.
+	 * 
+	 * @return the type in which this stack frame's method is
+	 *   declared
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
+	 */
+	public IJavaClassType getDeclaringType() throws DebugException;	
 }
 
 

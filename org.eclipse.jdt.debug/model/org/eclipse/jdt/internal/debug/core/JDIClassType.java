@@ -12,11 +12,16 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
+import org.eclipse.jdt.debug.core.IJavaVariable;
+
 import com.sun.jdi.ClassType;
+import com.sun.jdi.Field;
 import com.sun.jdi.Method;
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Value;
 
 /**
@@ -33,9 +38,9 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 	}
 
 	/*
-	 * @see IJavaType#newInstance(String, IJavaValue[], IJavaThread)
+	 * @see IJavaClassType#newInstance(String, IJavaValue[], IJavaThread)
 	 */
-	public IJavaValue newInstance(String signature, IJavaValue[] args, IJavaThread thread) throws DebugException {
+	public IJavaObject newInstance(String signature, IJavaValue[] args, IJavaThread thread) throws DebugException {
 		if (getUnderlyingType() instanceof ClassType) {
 			ClassType clazz = (ClassType)getUnderlyingType();
 			JDIThread javaThread = (JDIThread)thread;
@@ -51,8 +56,8 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 			} catch (RuntimeException e) {
 				getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while performing method lookup for constructor with signature {1}", new String[] {e.toString(), signature}), e);
 			}
-			Value result = javaThread.newInstance(clazz, method, arguments);
-			return JDIValue.createValue(getDebugTarget(), result);
+			ObjectReference result = javaThread.newInstance(clazz, method, arguments);
+			return (IJavaObject)JDIValue.createValue(getDebugTarget(), result);
 		} else {
 			getDebugTarget().requestFailed("Type is not a class type.", null);
 		}
@@ -110,5 +115,21 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 		}
 		return arguments;	
 	}
+	/*
+	 * @see IJavaClassType#getField(String)
+	 */
+	public IJavaVariable getField(String name) throws DebugException {
+		try {
+			Field field = ((ClassType)getUnderlyingType()).fieldByName(name);
+			if (field != null) {
+				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, null);
+			}			
+		} catch (RuntimeException e) {
+			getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while retrieving field {1}", new String[] {e.toString(), name}), e);
+		}
+		// it is possible to return null		
+		return null;
+	}
+
 }
 

@@ -10,12 +10,14 @@ import java.text.MessageFormat;
 import org.eclipse.debug.core.DebugException;
 
 import org.eclipse.debug.core.model.IValue;
+
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.InterfaceType;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
 /**
@@ -206,5 +208,21 @@ public class JDIFieldVariable extends JDIModificationVariable {
 			}
 		}
 	}
+	
+	/**
+	 * @see JDIVariable#getUnderlyingType()
+	 */
+	protected Type getUnderlyingType() throws DebugException {
+		try {
+			return getField().type();
+		} catch (ClassNotLoadedException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving type of field.", new String[]{e.toString()}), e);
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving type of field.", new String[]{e.toString()}), e);
+		}
+		// this line will not be exceucted as an exception
+		// will be throw in type retrieval fails
+		return null;
+	}	
 }
 

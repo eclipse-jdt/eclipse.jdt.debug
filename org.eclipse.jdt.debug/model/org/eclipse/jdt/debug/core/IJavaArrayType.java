@@ -35,6 +35,18 @@ public interface IJavaArrayType extends IJavaType {
 	 * </ul>
 	 */
 	public IJavaArray newInstance(int size) throws DebugException;
+	
+	/**
+	 * Returns the type of the elements in this array.
+	 * 
+	 * @return type
+	 * @exception DebugException if this method fails. Reasons include:<ul>
+	 * <li>Failure communicating with the VM. The exception's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 */
+	public IJavaType getComponentType() throws DebugException;		
 
 }
 

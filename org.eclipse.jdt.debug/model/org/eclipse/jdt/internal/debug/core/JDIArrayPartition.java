@@ -13,6 +13,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 
 import com.sun.jdi.ArrayReference;
+import com.sun.jdi.Type;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 
@@ -129,5 +130,19 @@ public class JDIArrayPartition extends JDIVariable {
 			return null;			
 		}
 	}
+	
+	/**
+	 * @see JDIVariable#getUnderlyingType()
+	 */
+	protected Type getUnderlyingType() throws DebugException {
+		try {
+			return getArrayReference().type();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving type of array.", new String[]{e.toString()}), e);
+		}
+		// this line will not be exceucted as an exception
+		// will be throw in type retrieval fails
+		return null;
+	}		
 }
 

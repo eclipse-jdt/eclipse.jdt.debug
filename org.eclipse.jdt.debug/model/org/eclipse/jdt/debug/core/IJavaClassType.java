@@ -42,7 +42,7 @@ public interface IJavaClassType  extends IJavaType {
 	 * <li>An exception occurrs while invoking the specified method</li>
 	 * </ul>
 	 */
-	public IJavaValue newInstance(String signature, IJavaValue[] args, IJavaThread thread) throws DebugException;	
+	public IJavaObject newInstance(String signature, IJavaValue[] args, IJavaThread thread) throws DebugException;	
 	
 	/**
 	 * Returns the result of sending the specified message to this class
@@ -67,5 +67,19 @@ public interface IJavaClassType  extends IJavaType {
 	 * </ul>
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread) throws DebugException;		
+	
+	/**
+	 * Returns a variable representing the static field in this class
+	 * with the given name, or <code>null</code> if there is no
+	 * field with the given name, or the name is ambiguous.
+	 * 
+	 * @param name field name
+	 * @return the variable representing the static field, or <code>null</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	public IJavaVariable getField(String name) throws DebugException;	
 }
 

@@ -10,8 +10,10 @@ import java.text.MessageFormat;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
+import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
 public abstract class JDIVariable extends JDIDebugElement implements IJavaVariable {
@@ -191,5 +193,25 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	public boolean isFinal() throws DebugException {
 		return false;
 	}
+	
+	/**
+	 * @see IJavaVariable#getJavaType()
+	 */
+	public IJavaType getJavaType() throws DebugException {
+		return JDIType.createType((JDIDebugTarget)getDebugTarget(), getUnderlyingType());
+	}
+	
+	/**
+	 * Returns the undlerying type of this variable
+	 * 
+	 * @return the undlerying type of this variable
+	 * 
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>The type associated with this variable is not yet loaded</li></ul>
+	 */
+	protected abstract Type getUnderlyingType() throws DebugException;
 }
 
