@@ -57,14 +57,13 @@ public class CompilationUnitDelta {
 		
 		private String fName;
 		private HashMap fChildren;
-//		private int fChangeType;
 		
 		SimpleJavaElement(SimpleJavaElement parent, int changeType, String name) {
 			fName= name;
-//			fChangeType= changeType;
 			if (parent != null) {
-				if (parent.fChildren == null)
+				if (parent.fChildren == null) {
 					parent.fChildren= new HashMap();
+				}
 				parent.fChildren.put(name, this);
 			}
 		}
@@ -84,13 +83,15 @@ public class CompilationUnitDelta {
 		}
 		
 		boolean find(String[] path, int start) {
-			if (start >= path.length)
+			if (start >= path.length) {
 				return true;
+			}
 			String key= path[start];
 			if (fChildren != null) {
 				SimpleJavaElement child= (SimpleJavaElement) fChildren.get(key);
-				if (child != null)
+				if (child != null) {
 					return child.find(path, start+1);
+				}
 			}
 			return false;
 		}
@@ -107,7 +108,7 @@ public class CompilationUnitDelta {
 	 */
 	private static class ProblemFactory implements IProblemFactory {
 		
-		public IProblem createProblem(char[] originatingFileName, int problemId, String[] arguments, int severity, int startPosition, int endPosition, int lineNumber) {
+		public IProblem createProblem(char[] originatingFileName, int problemId, String[] problemArguments, String[] messageArguments, int severity, int startPosition, int endPosition, int lineNumber) {
 			throw new ParseError();
 		}
 		
@@ -130,8 +131,9 @@ public class CompilationUnitDelta {
 	 */
 	public CompilationUnitDelta(ICompilationUnit cu, long timestamp) throws CoreException {
 		
-		if (cu.isWorkingCopy())
+		if (cu.isWorkingCopy()) {
 			cu= (ICompilationUnit) cu.getOriginalElement();
+		}
 
 		fCompilationUnit= cu;
 		
@@ -140,8 +142,9 @@ public class CompilationUnitDelta {
 
 		// get available editions
 		IFileState[] states= file.getHistory(null);
-		if (states == null || states.length <= 0)
+		if (states == null || states.length <= 0) {
 			return;
+		}
 		fHasHistory= true;
 		
 		IFileState found= null;
@@ -155,8 +158,9 @@ public class CompilationUnitDelta {
 			}
 		}
 		
-		if (found == null)
+		if (found == null) {
 			found= states[states.length-1];
+		}
 		
 		InputStream oldContents= null;
 		InputStream newContents= null;
@@ -189,8 +193,9 @@ public class CompilationUnitDelta {
 				default:
 					break;
 				}
-				if (name != null)
+				if (name != null) {
 					return new SimpleJavaElement((SimpleJavaElement) data, result, name);
+				}
 				return null;
 			}
 			protected boolean contentsEqual(Object o1, Object o2) {
@@ -199,8 +204,9 @@ public class CompilationUnitDelta {
 				return s1.equals(s2);
 			}
 			protected Object[] getChildren(Object input) {
-				if (input instanceof JavaNode)
+				if (input instanceof JavaNode) {
 					return ((JavaNode)input).getChildren();
+				}
 				return null;
 			}
 		};
@@ -209,12 +215,14 @@ public class CompilationUnitDelta {
 		fHasHistory= (fRoot != null); // if no changes pretend that we had no history
 
 		if (DEBUG) {
-			if (fRoot != null)
+			if (fRoot != null) {
 				fRoot.dump(0);
+			}
 		}
 			
-		if (memberDeleted[0])	// shape change because of deleted members
+		if (memberDeleted[0]) {	// shape change because of deleted members
 			fRoot= null;	// throw diffs away since hasChanged(..) must always return true
+		}
 	}
 	
 	/**
@@ -299,8 +307,9 @@ public class CompilationUnitDelta {
 		// revert the path
 		int n= args.size();
 		String[] path= new String[n];
-		for (int i= 0; i < n; i++)
+		for (int i= 0; i < n; i++) {
 			path[i]= (String) args.get(n-1-i);
+		}
 			
 		return path;
 	}
@@ -311,8 +320,9 @@ public class CompilationUnitDelta {
 	 */
 	private static String getJavaElementID(IJavaElement je) {
 		
-		if (je instanceof IMember && ((IMember)je).isBinary())
+		if (je instanceof IMember && ((IMember)je).isBinary()) {
 			return null;
+		}
 			
 		StringBuffer sb= new StringBuffer();
 		
@@ -382,8 +392,9 @@ public class CompilationUnitDelta {
 	 * Returns null if an error occurred.
 	 */
 	private static char[] readString(InputStream is) {
-		if (is == null)
+		if (is == null) {
 			return null;
+		}
 		BufferedReader reader= null;
 		try {
 			StringBuffer buffer= new StringBuffer();
@@ -391,8 +402,9 @@ public class CompilationUnitDelta {
 			int read= 0;
 			reader= new BufferedReader(new InputStreamReader(is, ResourcesPlugin.getEncoding()));
 
-			while ((read= reader.read(part)) != -1)
+			while ((read= reader.read(part)) != -1) {
 				buffer.append(part, 0, read);
+			}
 			
 			char[] b= new char[buffer.length()];
 			buffer.getChars(0, b.length, b, 0);
