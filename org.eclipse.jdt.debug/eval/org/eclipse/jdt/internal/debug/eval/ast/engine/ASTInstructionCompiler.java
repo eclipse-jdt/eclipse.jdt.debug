@@ -747,19 +747,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		int conditionAddress;		
 		Instruction condition;
-		int initializersAddress;
-		Instruction initializers;
 		
 		if (hasCondition) {
 			conditionAddress= bodyAddress - body.getSize();
 			condition= fInstructions.getInstruction(conditionAddress);
-			initializersAddress= conditionAddress - condition.getSize();
-			initializers= fInstructions.getInstruction(initializersAddress);
 		} else {
 			conditionAddress= 0;
 			condition= null;
-			initializersAddress= bodyAddress - body.getSize();
-			initializers= fInstructions.getInstruction(initializersAddress);
 		}
 
 		// add jump
