@@ -101,7 +101,7 @@ public class VMRunnerConfiguration {
 	 * is up to the VM runner this object is passed to.
 	 *
 	 * @param bootClassPath The boot classpath. An emptry array indicates an empty
-	 *  bootpath and <code>null</code> indicates a default bootpah.
+	 *  bootpath and <code>null</code> indicates a default bootpath.
 	 */
 	public void setBootClassPath(String[] bootClassPath) {
 		fBootClassPath= bootClassPath;
