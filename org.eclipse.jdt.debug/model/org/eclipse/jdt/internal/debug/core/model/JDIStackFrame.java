@@ -975,6 +975,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	protected void setUnderlyingStackFrame(StackFrame frame) {
 		synchronized (fThread) {
 			fStackFrame = frame;
+			if (frame == null) {
+				fDepth = -1;
+			}
 		}
 	}
 	
