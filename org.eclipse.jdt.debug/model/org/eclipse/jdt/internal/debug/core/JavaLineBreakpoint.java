@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.debug.core.IJavaDebugConstants;
+import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 
 import com.sun.jdi.*;

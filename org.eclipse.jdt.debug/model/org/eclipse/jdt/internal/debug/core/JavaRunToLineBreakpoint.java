@@ -3,7 +3,7 @@ package org.eclipse.jdt.internal.debug.core;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.debug.core.IJavaDebugConstants;
+import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
 import org.eclipse.jdt.debug.core.IJavaRunToLineBreakpoint;
 
 public class JavaRunToLineBreakpoint extends JavaLineBreakpoint implements IJavaRunToLineBreakpoint {

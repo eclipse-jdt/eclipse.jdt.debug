@@ -5,7 +5,7 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import java.text.MessageFormat;import java.util.*;import org.eclipse.core.resources.IMarker;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IStatus;import org.eclipse.debug.core.*;import org.eclipse.jdt.core.*;import org.eclipse.jdt.debug.core.IJavaDebugConstants;
+import java.text.MessageFormat;import java.util.*;import org.eclipse.core.resources.IMarker;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IStatus;import org.eclipse.debug.core.*;import org.eclipse.jdt.core.*;
 
 /**
  * This class serves as a location for utility methods for the internal debug Java.

@@ -3,7 +3,7 @@ package org.eclipse.jdt.internal.debug.core;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.debug.core.IJavaDebugConstants;
+import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
 import org.eclipse.jdt.debug.core.ISnippetSupportLineBreakpoint;
 
 public class SnippetSupportLineBreakpoint extends JavaLineBreakpoint implements ISnippetSupportLineBreakpoint {

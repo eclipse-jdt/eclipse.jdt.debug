@@ -235,6 +235,17 @@ public class JDIDebugModel {
 		return new JavaMethodEntryBreakpoint(method, hitCount);
 	}
 	
+	/**
+	 * Returns whether a line breakpoint already exists on the given line number in the
+	 * given type.
+	 * 
+	 * @param containingType the type in which to check for a line breakpoint
+	 * @param lineNumber the line number on which to check for a line breakpoint
+	 * @return whether a line breakpoint already exists on the given line number in
+	 *   the given type
+	 * @exception CoreException if unable to check for the specified line number
+	 *   due to a lower level exception
+	 */
 	public static boolean isDuplicateLineBreakpoint(IType containingType, int lineNumber) throws CoreException {
 		String modelId= getPluginIdentifier();
 		String markerType= JavaLineBreakpoint.getMarkerType();
