@@ -667,7 +667,7 @@ public final class JavaRuntime {
 			if (proj == null) {
 				// no project - use JRE's libraries by default
 				IVMInstall vm = computeVMInstall(configuration);
-				LibraryLocation[] libs = vm.getLibraryLocations();
+				LibraryLocation[] libs = getLibraryLocations(vm);
 				if (libs == null) {
 					return new IRuntimeClasspathEntry[0];
 				} else {
@@ -676,6 +676,8 @@ public final class JavaRuntime {
 						IRuntimeClasspathEntry r = newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
 						r.setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
 						r.setSourceAttachmentRootPath(libs[i].getPackageRootPath());
+						r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+						rtes[i] = r;
 					}
 					return rtes;
 				}				

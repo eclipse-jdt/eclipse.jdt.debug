@@ -61,7 +61,10 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	protected Button fClassPathDefaultButton;
 	protected List fActions = new ArrayList(10);
 
-	protected IJavaProject fJavaProject;
+	/**
+	 * The last launch config this tab was initialized from
+	 */
+	protected ILaunchConfiguration fLaunchConfiguration;
 	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -204,7 +207,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		setProjectFrom(configuration);
+		setLaunchConfiguration(configuration);
 		try {
 			boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 			fClassPathDefaultButton.setSelection(useDefault);
@@ -220,10 +223,12 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * Displays the default classpath in the UI
 	 */
 	protected void displayDefaultClasspath() {
-		IJavaProject project = getProject();
-		if (project != null) {
+		ILaunchConfiguration config = getLaunchConfiguration();
+		if (config == null) {
+			setClasspathEntries(new IRuntimeClasspathEntry[0]);
+		} else {
 			try {
-				setClasspathEntries(JavaRuntime.computeRuntimeClasspath(project));
+				setClasspathEntries(JavaRuntime.computeRuntimeClasspath(config));
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
 			}
@@ -290,19 +295,15 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * Sets the java project currently specified by the
 	 * given launch config, if any.
 	 */
-	protected void setProjectFrom(ILaunchConfiguration config) {
-		try {
-			fJavaProject = JavaRuntime.getJavaProject(config);
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		}
+	protected void setLaunchConfiguration(ILaunchConfiguration config) {
+		fLaunchConfiguration = config;
 	}	
 	
 	/**
 	 * Returns the current java project context
 	 */
-	protected IJavaProject getProject() {
-		return fJavaProject;
+	protected ILaunchConfiguration getLaunchConfiguration() {
+		return fLaunchConfiguration;
 	}
 	
 	/**
