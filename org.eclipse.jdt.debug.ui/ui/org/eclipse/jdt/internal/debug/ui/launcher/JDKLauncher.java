@@ -19,9 +19,9 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jdt.launching.VMRunnerResult;
 
-public class JDK12Launcher extends JavaLauncher {
+public class JDKLauncher extends JavaLauncher {
 	
-	public JDK12Launcher(IVMInstall vmInstance) {
+	public JDKLauncher(IVMInstall vmInstance) {
 		super(vmInstance);
 	}
 	

@@ -35,7 +35,7 @@ import com.sun.jdi.connect.ListeningConnector;
  * A launcher for running Java main classes. Uses JDI to launch a vm in debug 
  * mode.
  */
-public class JDK12DebugLauncher extends JDK12Launcher {
+public class JDKDebugLauncher extends JDKLauncher {
 
 
 	public interface IRetryQuery {
@@ -50,7 +50,7 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 	/**
 	 * Creates a new launcher
 	 */
-	public JDK12DebugLauncher(IVMInstall vmInstance, IRetryQuery query) {
+	public JDKDebugLauncher(IVMInstall vmInstance, IRetryQuery query) {
 		super(vmInstance);
 		setRetryQuery(query);
 	}
@@ -163,7 +163,7 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 		StandardVM.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 				IStatus s= new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, errorMessage, null);
-				ErrorDialog.openError(StandardVM.getStandardDisplay().getActiveShell(),LauncherMessages.getString("JDK12DebugLauncher.Launching_a_Java_VM_1"), LauncherMessages.getString("JDK12DebugLauncher.Problems_encountered_launching_the_Java_VM_in_debug_mode_2"), s); //$NON-NLS-1$ //$NON-NLS-2$
+				ErrorDialog.openError(StandardVM.getStandardDisplay().getActiveShell(),LauncherMessages.getString("JDKDebugLauncher.Launching_a_Java_VM_1"), LauncherMessages.getString("JDKDebugLauncher.Problems_encountered_launching_the_Java_VM_in_debug_mode_2"), s); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			});
 	}
