@@ -26,6 +26,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -70,7 +71,7 @@ import com.sun.jdi.request.EventRequestManager;
  * Debug target for JDI debug model.
  */
 
-public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget, ILaunchListener {
+public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget, ILaunchListener, IBreakpointManagerListener {
 		
 	/**
 	 * Threads contained in this debug target. When a thread
@@ -245,6 +246,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		setHCROccurred(false);
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
 	}
 
 	/**
@@ -1061,7 +1063,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}
 		if (supportsBreakpoint(breakpoint)) {
 			try {
-				((JavaBreakpoint)breakpoint).addToTarget(this);
+				if (DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+					// If the breakpoint manager is disabled, don't add the breakpoint
+					// request to the VM. Just add the breakpoint to the collection so
+					// we have it if the manager is later enabled.
+					((JavaBreakpoint)breakpoint).addToTarget(this);
+				}
 				if (!getBreakpoints().contains(breakpoint)) {
 					getBreakpoints().add(breakpoint);
 				}
@@ -1277,6 +1284,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		DebugPlugin plugin = DebugPlugin.getDefault();
 		plugin.getBreakpointManager().removeBreakpointListener(this);
 		plugin.getLaunchManager().removeLaunchListener(this);
+		plugin.getBreakpointManager().removeBreakpointManagerListener(this);
 		removeAllBreakpoints();
 		fOutOfSynchTypes.clear();
 		if (fEngines != null) {
@@ -1309,9 +1317,20 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	/**
 	 * Removes all breakpoints from this target, such
 	 * that each breakpoint can update its install
-	 * count.
+	 * count. This target's collection of breakpoints
+	 * is cleared.
 	 */
 	protected void removeAllBreakpoints() {
+		uninstallAllBreakpoints();
+		getBreakpoints().clear();
+	}
+	
+	/**
+	 * Removes all breakpoints from this target, such
+	 * that each breakpoint can update its install count.
+	 * This target maintains its collection of breakpoints.
+	 */
+	protected void uninstallAllBreakpoints() {
 		Iterator breakpoints= ((ArrayList)((ArrayList)getBreakpoints()).clone()).iterator();
 		while (breakpoints.hasNext()) {
 			JavaBreakpoint breakpoint= (JavaBreakpoint) breakpoints.next();
@@ -1321,7 +1340,22 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				logError(e);
 			}
 		}
-		getBreakpoints().clear();
+	}
+	
+	/**
+	 * Adds all the breakpoints in this target's collection
+	 * to this debug target.
+	 */
+	protected void reinstallAllBreakpoints() {
+		Iterator breakpoints= ((ArrayList)((ArrayList)getBreakpoints()).clone()).iterator();
+		while (breakpoints.hasNext()) {
+			JavaBreakpoint breakpoint= (JavaBreakpoint) breakpoints.next();
+			try {
+				breakpoint.addToTarget(this);
+			} catch (CoreException e) {
+				logError(e);
+			}
+		}
 	}
 
 	/**
@@ -2056,6 +2090,18 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public boolean supportsStepFilters() {
 		return isAvailable();
+	}
+
+	/**
+	 * When the breakpoint manager disables, remove all breakpoint
+	 * requests from the VM. When it enabled, reinstall them.
+	 */
+	public void breakpointManagerEnablementChanged(boolean enabled) {
+		if (enabled) {
+			reinstallAllBreakpoints();
+		} else {
+			uninstallAllBreakpoints();
+		}
 	}
 }
 
