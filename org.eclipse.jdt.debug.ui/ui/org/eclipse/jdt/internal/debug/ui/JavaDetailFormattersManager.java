@@ -40,6 +40,7 @@ import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
@@ -260,22 +261,39 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST, pref);
 		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 	}
+	
 	/**
 	 * Return the detail formatter (code snippet) associate with
-	 * the given type or one of its super type.
+	 * the given type or one of its super types, super interfaces.
 	 */
 	private String getDetailFormatter(IJavaClassType type) throws DebugException {
-		if (type == null) {
-			return null;
+		String snippet= getDetailFormatterSuperClass(type);
+		if (snippet != null) {
+			return snippet;
 		}
-		String typeName= type.getName();
-		if (fDetailFormattersMap.containsKey(typeName)) {
-			DetailFormatter detailFormatter= (DetailFormatter)fDetailFormattersMap.get(typeName);
-			if (detailFormatter.isEnabled()) {
+		IJavaInterfaceType[] allInterfaces= type.getAllInterfaces();
+		for (int i= 0; i < allInterfaces.length; i++) {
+			DetailFormatter detailFormatter= (DetailFormatter)fDetailFormattersMap.get(allInterfaces[i].getName());
+			if (detailFormatter != null && detailFormatter.isEnabled()) {
 				return detailFormatter.getSnippet();
 			}
 		}
-		return getDetailFormatter(type.getSuperclass());
+		return null;
+	}
+	
+	/**
+	 * Return the detail formatter (code snippet) associate with
+	 * the given type or one of its super types.
+	 */
+	private String getDetailFormatterSuperClass(IJavaClassType type) throws DebugException {
+		if (type == null) {
+			return null;
+		}
+		DetailFormatter detailFormatter= (DetailFormatter)fDetailFormattersMap.get(type.getName());
+		if (detailFormatter != null && detailFormatter.isEnabled()) {
+			return detailFormatter.getSnippet();
+		}
+		return getDetailFormatterSuperClass(type.getSuperclass());
 	}
 	
 	/**
