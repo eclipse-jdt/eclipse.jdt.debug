@@ -134,6 +134,11 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		
 		// Add a mapping of the launch to the html file 
 		fgLaunchToFileMap.put(launch, htmlFile);
+		
+		monitor.subTask(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
+		// Set default source locator if none specified
+		setDefaultSourceLocator(launch, configuration);
+		monitor.worked(1);		
 
 		// Launch the configuration
 		try {
@@ -143,10 +148,6 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 			throw ce;
 		}
 		
-		monitor.subTask(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
-		// Set default source locator if none specified
-		setDefaultSourceLocator(launch, configuration);
-		monitor.worked(1);
 		monitor.done();
 	}
 

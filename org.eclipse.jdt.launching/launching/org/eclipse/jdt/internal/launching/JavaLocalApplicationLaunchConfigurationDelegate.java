@@ -98,6 +98,11 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		// done the verification phase
 		monitor.worked(1);
 		
+		monitor.subTask(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
+		// set the default source locator if required
+		setDefaultSourceLocator(launch, configuration);
+		monitor.worked(1);		
+		
 		// Launch the configuration - 1 unit of work
 		runner.run(runConfig, launch, monitor);
 		
@@ -105,11 +110,6 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		if (monitor.isCanceled()) {
 			return;
 		}	
-		
-		monitor.subTask(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
-		// set the default source locator if required
-		setDefaultSourceLocator(launch, configuration);
-		monitor.worked(1);
 		
 		monitor.done();
 	}	

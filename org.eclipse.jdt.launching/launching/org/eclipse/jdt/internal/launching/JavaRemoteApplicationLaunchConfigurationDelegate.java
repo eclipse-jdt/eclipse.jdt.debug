@@ -60,6 +60,11 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		
 		monitor.worked(1);
 		
+		monitor.subTask(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
+		// set the default source locator if required
+		setDefaultSourceLocator(launch, configuration);
+		monitor.worked(1);		
+		
 		// connect to remote VM
 		connector.connect(argMap, monitor, launch);
 		
@@ -67,11 +72,6 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		if (monitor.isCanceled()) {
 			return;
 		}
-		
-		monitor.subTask(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
-		// set the default source locator if required
-		setDefaultSourceLocator(launch, configuration);
-		monitor.worked(1);
 		
 		monitor.done();
 	}
