@@ -116,6 +116,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList(5);
 		getPluginPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
+		getPluginPreferences().setDefault(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true);
 		getPluginPreferences().addPropertyChangeListener(this);
 	}
 	

@@ -55,6 +55,7 @@ public class JDIDebugModel {
 	 * Preference key for default JDI request timeout value.
 	 */
 	public static final String PREF_REQUEST_TIMEOUT = getPluginIdentifier() + ".PREF_REQUEST_TIMEOUT"; //$NON-NLS-1$
+	public static final String PREF_HCR_WITH_COMPILATION_ERRORS= getPluginIdentifier() + ".PREF_HCR_WITH_COMPILATION_ERRORS"; //$NON-NLS-1$
 	
 	/**
 	 * The default JDI request timeout when no preference is set.

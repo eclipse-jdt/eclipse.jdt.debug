@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -40,6 +41,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.core.ListenerList;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
@@ -48,6 +50,9 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.util.IClassFileReader;
+import org.eclipse.jdt.core.util.ISourceAttribute;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -732,23 +737,26 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 							return false;
 						if (CLASS_FILE_EXTENSION.equals(resource.getFullPath().getFileExtension())) {
 							IMarker[] problemMarkers= null;
-							boolean hasCompileErrors= false;
+							boolean hasBlockingErrors= false;
 							try {
-								// Get the source file associated with the class file
-								// and query it for compilation errors
-								IResource sourceFile= getSourceFile(resource);
-								if (sourceFile != null) {
-									problemMarkers= sourceFile.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-									for (int i= 0; i < problemMarkers.length; i++) {
-										if (problemMarkers[i].getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR)
-											hasCompileErrors= true;
+								if (!JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS)) {
+									// If the user doesn't want to replace classfiles containing
+									// compilation errors, get the source file associated with 
+									// the class file and query it for compilation errors
+									IResource sourceFile= getSourceFile(resource);
+									if (sourceFile != null) {
+										problemMarkers= sourceFile.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+										for (int i= 0; i < problemMarkers.length; i++) {
+											if (problemMarkers[i].getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
+												hasBlockingErrors= true;
+											}
+										}
 									}
 								}
 							} catch (CoreException e) {
 								JDIDebugPlugin.log(e);
 							}
-							if (!hasCompileErrors) {
-								// Only return class files that have no compilation errors.
+							if (!hasBlockingErrors) {
 								fFiles.add(resource);
 							}
 						}
@@ -776,10 +784,49 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		
 		/**
 		 * Returns the source file associated with the given class file
+		 * or <code>null</code> if no source file could be found.
 		 * 
-		 * XXX: Not yet implemented
+		 * Searches for a .java file which matches the name of the
+		 * given .class file. If none is found, reads the sourcefile
+		 * attribute from the classfile and tries to find that file.
 		 */
-		private IResource getSourceFile(IResource classFile) {
+		private IResource getSourceFile(IResource file) {
+			IJavaProject project= JavaCore.create(file.getProject());
+			IClassFile classFile= (IClassFile)JavaCore.create(file);
+			if (project == null || classFile == null) {
+				return null;
+			}
+			String name;
+			try {
+				name= classFile.getType().getFullyQualifiedName();
+			} catch (JavaModelException exception) {
+				return null;
+			}
+			int nestedIndex= name.lastIndexOf('$');
+			if (nestedIndex != -1) {
+				// Trim nested type suffix
+				name= name.substring(0, nestedIndex);
+			}
+			name= name + ".java"; //$NON-NLS-1$
+			ICompilationUnit unit= null;
+			try {
+				unit= (ICompilationUnit)project.findElement(new Path(name));
+				if (unit != null) {
+					try {
+						return unit.getCorrespondingResource();
+					} catch (JavaModelException e) {
+					}
+				} else {
+					// Read the source file attribute from the classfile.
+					IClassFileReader reader= ToolFactory.createDefaultClassFileReader(classFile, IClassFileReader.CLASSFILE_ATTRIBUTES);
+					ISourceAttribute source= reader.getSourceFileAttribute();
+					unit= (ICompilationUnit)project.findElement(new Path(new String(source.getSourceFileName())));
+					if (unit != null) {
+						return unit.getCorrespondingResource();
+					}
+				}
+			} catch (JavaModelException exception) {
+			}
 			return null;
 		}
 	}

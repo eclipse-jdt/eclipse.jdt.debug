@@ -45,10 +45,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	// Suspend preference widgets
 	private Button fSuspendButton;
 	private Button fSuspendOnCompilationErrors;
-	// Alert preference widgets
+	// Hot code replace preference widgets
 	private Button fAlertHCRButton;
 	private Button fAlertHCRNotSupportedButton;
 	private Button fAlertObsoleteButton;
+	private Button fPerformHCRWithCompilationErrors;
 	// Timeout preference widgets
 	private IntegerFieldEditor fTimeoutText;
 	private IntegerFieldEditor fConnectionTimeoutText;
@@ -98,6 +99,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS, false);
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS, false);
+		store.setDefault(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, true);
 		
 		store.setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);
 		store.setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
@@ -126,10 +128,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		createSpacer(composite, 1);
 		
-		comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Hot_Code_Replace_Error_Reporting_2")); //$NON-NLS-1$
+		comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Hot_Code_Replace_2")); //$NON-NLS-1$
 		fAlertHCRButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
 		fAlertHCRNotSupportedButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_is_not_supported_1")); //$NON-NLS-1$
 		fAlertObsoleteButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_obsolete_methods_remain_1")); //$NON-NLS-1$
+		fPerformHCRWithCompilationErrors= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePageReplace_classfiles_containing_compilation_errors_1")); //$NON-NLS-1$
 		
 		createSpacer(composite, 1);
 		
@@ -254,6 +257,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertHCRNotSupportedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED));
 		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
+		fPerformHCRWithCompilationErrors.setSelection(store.getDefaultBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS));
 		fTimeoutText.setStringValue(new Integer(store.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(store.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
 	}
@@ -307,6 +311,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
 		fAlertHCRNotSupportedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED));
 		fAlertObsoleteButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
+		fPerformHCRWithCompilationErrors.setSelection(JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS));
 		fTimeoutText.setStringValue(new Integer(JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
 	}
@@ -322,6 +327,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, fAlertHCRNotSupportedButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
+		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, fPerformHCRWithCompilationErrors.getSelection());
 		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 		JavaRuntime.getPreferences().setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
 	}
