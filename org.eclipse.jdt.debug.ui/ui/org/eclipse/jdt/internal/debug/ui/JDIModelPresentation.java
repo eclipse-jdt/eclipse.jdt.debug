@@ -54,6 +54,8 @@ import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.jdt.internal.ui.viewsupport.JavaElementImageDescriptor;
+import org.eclipse.jdt.launching.sourcelookup.LocalFileStorage;
+import org.eclipse.jdt.launching.sourcelookup.ZipEntryStorage;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
@@ -882,6 +884,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			if (item instanceof IJavaBreakpoint) {
 				item= ((IJavaBreakpoint)item).getType();
+			}
+			if (item instanceof LocalFileStorage) {
+				return new LocalFileStorageEditorInput((LocalFileStorage)item);
+			}
+			if (item instanceof ZipEntryStorage) {
+				return new ZipEntryStorageEditorInput((ZipEntryStorage)item);
 			}
 			return EditorUtility.getEditorInput(item);
 		} catch (CoreException e) {
