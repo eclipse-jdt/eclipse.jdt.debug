@@ -245,7 +245,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 */
 	protected void createActions() {
 		super.createActions();
-		setAction("Run", new RunSnippetAction(this)); //$NON-NLS-1$
 		Action action = new TextOperationAction(SnippetMessages.getBundle(), "SnippetEditor.ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS); //$NON-NLS-1$
 		action.setActionDefinitionId(IJavaEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", action);//$NON-NLS-1$

@@ -149,17 +149,17 @@
              	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
             </enablement> 
   	    </action>
-  	    <action id="org.eclipse.jdt.debug.ui.RunSnippet" 
-			label="%RunSnippet.label" 
+  		<action id="org.eclipse.jdt.debug.ui.Execute" 
+			label="%Execute.label" 
 			menubarPath="org.eclipse.ui.run/jdtGroup"
 			icon="icons/full/etool16/run_sbook.gif"
 			disabledIcon="icons/full/dtool16/run_sbook.gif"
   		 	hoverIcon="icons/full/ctool16/run_sbook.gif"
-			helpContextId="run_snippet_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.snippeteditor.RunSnippetAction">
+			helpContextId="execute_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction">
 			<enablement> 
              	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
-            </enablement> 
+            </enablement>
 		</action>
   		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
@@ -521,6 +521,13 @@
 	<viewerContribution
 		id="org.eclipse.jdt.debug.DetailsEvaluationActions"
 		targetID="org.eclipse.debug.ui.VariableView.detail">
+		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Execute" 
+			label="%Execute.label" 
+			menubarPath="variableGroup" 
+			icon="icons/full/ctool16/run_sbook.gif"
+			helpContextId="execute_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"> 
+		</action> 	
 		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display" 
 			label="%Display.label" 
 			menubarPath="variableGroup" 
@@ -539,6 +546,14 @@
 	<viewerContribution
 		id="org.eclipse.jdt.debug.DisplayEvaluationActions"
 		targetID="org.eclipse.jdt.debug.ui.DisplayView">
+		<action id="org.eclipse.jdt.debug.ui.displayView.Execute" 
+			label="%Execute.label" 
+			menubarPath="evaluationGroup"
+			icon="icons/full/ctool16/run_sbook.gif" 
+			helpContextId="execute_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"
+			enablesFor="+"> 
+		</action>
 		<action id="org.eclipse.jdt.debug.ui.displayView.Display" 
 			label="%Display.label" 
 			menubarPath="evaluationGroup"
@@ -666,6 +681,16 @@
 	<viewContribution
 		id="org.eclipse.jdt.debug.ui.DisplayViewActions"
 		targetID="org.eclipse.jdt.debug.ui.DisplayView">
+		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Execute" 
+			label="%Execute.label" 
+			tooltip="%Execute.tooltip"
+			toolbarPath="evaluationGroup"
+			icon="icons/full/etool16/run_sbook.gif"
+			disabledIcon="icons/full/dtool16/run_sbook.gif"
+  		 	hoverIcon="icons/full/ctool16/run_sbook.gif"
+			helpContextId="execute_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"> 
+		</action>
 		<action id="org.eclipse.jdt.debug.ui.displayViewToolbar.Display" 
 			label="%Display.label" 
 			tooltip="%Display.tooltip"
@@ -940,6 +965,13 @@
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.JavaSnippetPopupActions" 
     	targetID="#JavaSnippetEditorContext">
+    	<action id="org.eclipse.jdt.debug.ui.Execute" 
+			label="%Execute.label" 
+			menubarPath="additions" 
+			icon="icons/full/ctool16/run_sbook.gif"
+			helpContextId="execute_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"> 
+		</action> 	
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
@@ -1022,6 +1054,13 @@
     		helpContextId="run_to_line_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"> 
 		</action>
+    	<action id="org.eclipse.jdt.debug.ui.cuPopup.Execute" 
+			label="%Execute.label" 
+			menubarPath="additions" 
+			icon="icons/full/ctool16/run_sbook.gif"
+			helpContextId="execute_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"> 
+		</action> 	
     	<action id="org.eclipse.jdt.debug.ui.cuPopup.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
@@ -1053,6 +1092,13 @@
      		helpContextId="run_to_line_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"> 
 		</action> 
+    	<action id="org.eclipse.jdt.debug.ui.cfPopup.Execute" 
+			label="%Execute.label" 
+			menubarPath="additions"
+			icon="icons/full/ctool16/run_sbook.gif"
+			helpContextId="execute_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"> 
+		</action> 	
     	<action id="org.eclipse.jdt.debug.ui.cfPopup.Display" 
 			label="%Display.label" 
 			menubarPath="additions"
@@ -1120,7 +1166,17 @@
       <editorContribution 
          id="org.eclipse.jdt.debug.ui.JavaSnippetToolbarActions" 
          targetID="org.eclipse.jdt.debug.ui.SnippetEditor"> 
-         <action id="org.eclipse.jdt.debug.ui.SnippetDisplay" 
+         <action id="org.eclipse.jdt.debug.ui.SnippetExecute" 
+			label="%Execute.label"
+			tooltip="%Execute.tooltip"
+			toolbarPath="evaluationGroup" 
+			icon="icons/full/etool16/run_sbook.gif"
+			disabledIcon="icons/full/dtool16/run_sbook.gif"
+			hoverIcon="icons/full/ctool16/run_sbook.gif"
+			helpContextId="execute_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExecuteAction"> 
+		</action> 	
+        <action id="org.eclipse.jdt.debug.ui.SnippetDisplay" 
 			label="%Display.label"
 			tooltip="%Display.tooltip"
 			toolbarPath="evaluationGroup" 

@@ -20,7 +20,6 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
  	
 	protected JavaSnippetEditor fSnippetEditor;
 	
-	private RunSnippetAction fRunSnippetAction;
 	private StopAction fStopAction;
 	private SelectImportsAction fSelectImportsAction;
 	private SnippetOpenOnSelectionAction fOpenOnSelectionAction;
@@ -35,13 +34,12 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 	 */
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
 		
-		if (fRunSnippetAction == null) {
+		if (fStopAction == null) {
 			toolBarManager.add(new Separator(IJavaDebugUIConstants.EVALUATION_GROUP));
 			return;
 		}
 		super.contributeToToolBar(toolBarManager);
 		
-		toolBarManager.add(fRunSnippetAction);
 		toolBarManager.add(fStopAction);
 		toolBarManager.add(fSelectImportsAction);
 		toolBarManager.update(false);
@@ -82,7 +80,6 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 
 		if (fOpenOnSelectionAction != null) {
 			fStopAction.setEditor(fSnippetEditor);		
-			fRunSnippetAction.setEditor(fSnippetEditor);
 			fSelectImportsAction.setEditor(fSnippetEditor);
 			fOpenOnSelectionAction.setEditor(fSnippetEditor);
 			fOpenOnTypeSelectionAction.setEditor(fSnippetEditor);
@@ -95,7 +92,6 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		 
 		fOpenOnSelectionAction= new SnippetOpenOnSelectionAction(fSnippetEditor);
 		fOpenOnTypeSelectionAction= new SnippetOpenHierarchyOnSelectionAction(fSnippetEditor);
-		fRunSnippetAction= new RunSnippetAction(fSnippetEditor);
 		fStopAction= new StopAction(fSnippetEditor);
 		fSelectImportsAction= new SelectImportsAction(fSnippetEditor);
 	}	
