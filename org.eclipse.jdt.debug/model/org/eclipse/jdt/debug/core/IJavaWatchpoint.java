@@ -70,7 +70,10 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 * Returns whether this breakpoint last suspended in this target due to an access
 	 * (<code>true</code>) or modification (<code>false</code>).
 	 * 
-	 * @return true if this watchpoint last suspended in this target due to an access
+	 * @return <code>true</code> if this watchpoint last suspended the given
+	 *  target due to a field access; <code>false</code> if this watchpoint last
+	 *  suspended the given target due to a modification access or if this
+	 *  watchpoint hasn't suspended the given target.
 	 * @exception CoreException if a <code>CoreException</code> is
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */

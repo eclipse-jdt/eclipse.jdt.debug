@@ -8,7 +8,7 @@ package org.eclipse.jdt.debug.core;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A java pattern breakpoint is a java line breakpoint which will be installed in all 
+ * A java pattern breakpoint is a java line breakpoint which is installed in all 
  * classes whose fully qualified name matches a specified pattern.
  * 
  * This interface is not intended to be implemented.

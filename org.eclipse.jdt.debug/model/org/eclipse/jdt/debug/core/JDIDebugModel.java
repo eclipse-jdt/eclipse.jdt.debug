@@ -182,7 +182,7 @@ public class JDIDebugModel {
 	
 	/**
 	 * Creates and returns a pattern breakpoint for the given resource at the
-	 * given line number, which will be installed in all classes whose fully 
+	 * given line number, which is installed in all classes whose fully 
 	 * qualified name matches the given pattern.
 	 * If hitCount > 0, the breakpoint will suspend execution when it is
 	 * "hit" the specified number of times. 

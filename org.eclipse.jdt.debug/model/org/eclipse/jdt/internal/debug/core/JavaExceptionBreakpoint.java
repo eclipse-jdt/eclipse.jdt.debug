@@ -68,8 +68,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @param caught whether to suspend in caught locations
 	 * @param uncaught whether to suspend in uncaught locations
  	 * @param checked whether the exception is a checked exception
-	 * @return an exception breakpoint
-	 * @exception DebugException if unable to create the breakpoint marker due
+	 * @return a java exception breakpoint
+	 * @exception DebugException if unable to create the associated marker due
 	 *  to a lower level exception.
 	 */	
 	public JavaExceptionBreakpoint(final IType exception, final boolean caught, final boolean uncaught, final boolean checked) throws DebugException {
@@ -89,7 +89,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				setEnabled(true);
 				// configure caught, uncaught, checked, and the type attributes
 				setDefaultCaughtAndUncaught();
-				configureExceptionBreakpoint(checked, exception);
+				setTypeAndChecked(exception, checked);
 
 				// configure the marker as a Java marker
 				IMarker marker = ensureMarker();
@@ -97,7 +97,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				JavaCore.addJavaElementMarkerAttributes(attributes, exception);
 				marker.setAttributes(attributes);
 				
-				// Lastly, add the breakpoint manager
 				addToBreakpointManager();				
 			}
 
@@ -106,15 +105,20 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}
 	
 	/**
-	 * Sets the <code>CAUGHT</code>, <code>UNCAUGHT</code>, <code>CHECKED</code> and 
-	 * <code>TYPE_HANDLE</code> attributes of the given exception breakpoint.
+	 * Sets the exception type on which this breakpoint is installed and whether
+	 * or not that exception is a checked exception.
 	 */
-	public void configureExceptionBreakpoint(boolean checked, IType exception) throws CoreException {
+	protected void setTypeAndChecked(IType exception, boolean checked) throws CoreException {
 		String handle = exception.getHandleIdentifier();
 		Object[] values= new Object[]{new Boolean(checked), handle};
 		ensureMarker().setAttributes(fgExceptionBreakpointAttributes, values);
 	}
-			
+	
+	/**
+	 * Sets the default values for whether this breakpoint will
+	 * suspend execution when the associated exception is thrown
+	 * and caught or not caught..
+	 */
 	public void setDefaultCaughtAndUncaught() throws CoreException {
 		Object[] values= new Object[]{Boolean.TRUE, Boolean.TRUE};
 		String[] attributes= new String[]{CAUGHT, UNCAUGHT};
@@ -122,52 +126,45 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}
 	
 	/**
-	 * @see JavaBreakpoint#installIn(JDIDebugTarget)
+	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
 		
 		IType exceptionType = getType();
 		if (exceptionType == null) {
-//			internalError(ERROR_BREAKPOINT_NO_TYPE);
 			return;
 		}
-		String exceptionName = exceptionType.getFullyQualifiedName();
 		String referenceName = getReferenceTypeName();
-		if (referenceName == null) {
-//			internalError(ERROR_BREAKPOINT_NO_TYPE);
+		if (referenceName.equals("")) {
 			return;
 		}
 
 		// listen to class loads
 		registerRequest(target.createClassPrepareRequest(referenceName), target);
-		
-		if (isCaught() || isUncaught()) {			
-			List classes= target.jdiClassesByName(exceptionName);
-			if (!classes.isEmpty()) {
-				Iterator iter = classes.iterator();
-				while (iter.hasNext()) {
-					ReferenceType exClass = (ReferenceType)iter.next();				
-					createRequest(target, exClass);
-				}
+					
+		List classes= target.jdiClassesByName(referenceName);
+		if (!classes.isEmpty()) {
+			Iterator iter = classes.iterator();
+			while (iter.hasNext()) {
+				ReferenceType exClass = (ReferenceType)iter.next();				
+				createRequest(target, exClass);
 			}
 		}	
 	}
 	
-	protected ExceptionRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+	/**
+	 * Creates a request in the given target to suspend when the given exception
+	 * type is thrown. The request is returned installed, configured, and enabled
+	 * as appropriate for this breakpoint.
+	 */
+	protected EventRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		if (!isCaught() && !isUncaught()) {
 			return null;
 		}
 			ExceptionRequest request= null;
 			try {
 				request= target.getEventRequestManager().createExceptionRequest(type, isCaught(), isUncaught());
-				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-				request.putProperty(JAVA_BREAKPOINT_PROPERTY, this);
-				int hitCount= getHitCount();
-				if (hitCount > 0) {
-					request.addCountFilter(hitCount);
-					request.putProperty(HIT_COUNT, new Integer(hitCount));
-					request.putProperty(EXPIRED, Boolean.FALSE);
-				}
+				configureRequest(request);
 			} catch (VMDisconnectedException e) {
 				if (target.isTerminated() || target.isDisconnected()) {
 					return null;
@@ -177,14 +174,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			} catch (RuntimeException e) {
 				JDIDebugPlugin.logError(e);
 				return null;
-			}
-			request.setEnabled(isEnabled());	
+			}	
 			return request;
-	}
-	
-	protected void createRequest(JDIDebugTarget target, ReferenceType type)  throws CoreException {
-			ExceptionRequest request= newRequest(target, type);
-			registerRequest(request, target);
 	}
 
 	/**
@@ -269,37 +260,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		return request;
 	}	
 	
-	protected EventRequest updateCaughtState(EventRequest req, JDIDebugTarget target) throws CoreException  {
-		if(!(req instanceof ExceptionRequest)) {
-			return req;
-		}
-		ExceptionRequest request= (ExceptionRequest)req;
-		
-		if (request.notifyCaught() != isCaught() || request.notifyUncaught() != isUncaught()) {
-			request= createUpdatedExceptionRequest(target, (ExceptionRequest)request);
-		}
-		return request;
-	}
-	
-	protected ExceptionRequest createUpdatedExceptionRequest(JDIDebugTarget target, ExceptionRequest request) throws CoreException{
-		try {
-			// delete old request
-			//on JDK you cannot delete (disable) an event request that has hit its count filter
-			if (!isExpired(request)) {
-				target.getEventRequestManager().deleteEventRequest(request); // disable & remove
-			}
-			ReferenceType exClass = ((ExceptionRequest)request).exception();				
-			request = newRequest(target, exClass);
-		} catch (VMDisconnectedException e) {
-			if (target.isTerminated() || target.isDisconnected()) {
-				return request;
-			}
-			JDIDebugPlugin.logError(e);
-		} catch (RuntimeException e) {
-			JDIDebugPlugin.logError(e);
-		}
-		return request;
-	}
 	/**
 	 * @see JavaBreakpoint#updateRequest(EventRequest, JDIDebugTarget)
 	 */
@@ -312,5 +272,40 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			request = newRequest;
 		}
 	}
+	
+	/**
+	 * Return a request that will suspend execution when a caught and/or uncaught
+	 * exception is thrown as is appropriate for the current state of this breakpoint.
+	 */
+	protected EventRequest updateCaughtState(EventRequest req, JDIDebugTarget target) throws CoreException  {
+		if(!(req instanceof ExceptionRequest)) {
+			return req;
+		}
+		ExceptionRequest request= (ExceptionRequest) req;
+		if (request.notifyCaught() != isCaught() || request.notifyUncaught() != isUncaught()) {
+			request= createUpdatedExceptionRequest(target, (ExceptionRequest)request);
+		}
+		return request;
+	}
+	
+	/**
+	 * Create a request that reflects the current state of this breakpoint.
+	 * The new request will be installed in the same type as the given
+	 * request.
+	 */
+	protected ExceptionRequest createUpdatedExceptionRequest(JDIDebugTarget target, ExceptionRequest request) throws CoreException{
+		try {
+			ReferenceType exClass = ((ExceptionRequest)request).exception();				
+			request = (ExceptionRequest) newRequest(target, exClass);
+		} catch (VMDisconnectedException e) {
+			if (target.isTerminated() || target.isDisconnected()) {
+				return request;
+			}
+			JDIDebugPlugin.logError(e);
+		} catch (RuntimeException e) {
+			JDIDebugPlugin.logError(e);
+		}
+		return request;
+	}	
 }
 

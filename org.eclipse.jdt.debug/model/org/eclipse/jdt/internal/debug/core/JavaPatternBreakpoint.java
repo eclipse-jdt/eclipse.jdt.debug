@@ -1,19 +1,27 @@
 package org.eclipse.jdt.internal.debug.core;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.request.EventRequest;
 
-import com.sun.jdi.*;
-
-public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements IJavaPatternBreakpoint {
+public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPatternBreakpoint {
 
 	private static final String PATTERN_BREAKPOINT = "org.eclipse.jdt.debug.patternBreakpointMarker"; //$NON-NLS-1$
 	
@@ -49,35 +57,18 @@ public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements
 	}
 	
 	/**
-	 * Creates the event requests to:<ul>
-	 * <li>Listen to class loads related to the breakpoint</li>
-	 * <li>Respond to the breakpoint being hti</li>
-	 * </ul>
+	 * @see JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
 	 */
-	protected void addToTarget(JDIDebugTarget target) throws CoreException {
-		
-		String referenceTypeName= getReferenceTypeName();
-		
-		// create request to listen to class loads
-		registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
-		
-		// create breakpoint requests for each class currently loaded
-		List classes= target.getVM().allClasses();
-		if (classes != null) {
-			Iterator iter = classes.iterator();
-			String typeName= null;
-			String sourceName= null;
-			ReferenceType type= null;
-			while (iter.hasNext()) {
-				type= (ReferenceType) iter.next();
-				typeName= type.name();
-				if (typeName != null && typeName.startsWith(referenceTypeName)) {
-					createRequest(target, type);
-				}
-			}
-		}
+	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+		String typeName= type.name();
+		if (typeName != null && typeName.startsWith(getReferenceTypeName())) {
+			super.createRequest(target, type);
+		}		
 	}
 	
+	/**
+	 * @see JavaBreakpoint#getReferenceTypeName()
+	 */
 	protected String getReferenceTypeName() {
 		String name= "";
 		try {
@@ -92,34 +83,32 @@ public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements
 	 * Create a breakpoint request if the source name
 	 * debug attribute matches the resource name.
 	 */
-	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+	protected EventRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		String sourceName = null;
 		try {
 			sourceName = type.sourceName();
 		} catch (AbsentInformationException e) {
 			// do nothing - cannot install pattern breakpoint without source name debug attribtue
-			return;
+			return null;
 		} catch (RuntimeException e) {
 			target.targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JavaPatternBreakpoint.exception_source_name"),new String[] {e.toString(), type.name()}) ,e); //$NON-NLS-1$
-			return;
+			return null;
 		}
 		
 		// if the debug attribute matches the resource name, install a breakpoint
 		if (ensureMarker().getResource().getName().equalsIgnoreCase(sourceName)) {
-			super.createRequest(target, type);
+			return super.newRequest(target, type);
 		}
-		
+		return null;
 	}
 	
 	/**
-	 * Sets the <code>PATTERN</code> attribute of the given breakpoint.
-	 * If <code>hitCount > 0</code>, sets the <code>HIT_COUNT</code> attribute of the given breakpoint,
-	 * and resets the <code>EXPIRED</code> attribute to false (since, if
-	 * the hit count is changed, the breakpoint should no longer be expired).
+	 * Sets the class name pattern in which this breakpoint will install itself.
+	 * If <code>hitCount > 0</code>, sets the hit count of the given breakpoint.
 	 */
 	protected void setPatternAndHitCount(String pattern, int hitCount) throws CoreException {
 		if (hitCount == 0) {
-			setPattern(pattern);
+			ensureMarker().setAttribute(PATTERN, pattern);
 			return;
 		}
 		Object[] values= new Object[]{pattern, new Integer(hitCount), Boolean.FALSE};
@@ -127,14 +116,7 @@ public class JavaPatternBreakpoint extends AbstractJavaLineBreakpoint implements
 	}
 	
 	/**
-	 * Sets the <code>PATTERN</code> attribute of this breakpoint.
-	 */
-	public void setPattern(String pattern) throws CoreException {
-		ensureMarker().setAttribute(PATTERN, pattern);
-	}
-	
-	/**
-	 * Returns the <code>PATTERN</code> attribute of this breakpoint
+	 * @see IJavaPatternBreakpoint#getPattern()
 	 */
 	public String getPattern() throws CoreException {
 		return (String) ensureMarker().getAttribute(PATTERN);		

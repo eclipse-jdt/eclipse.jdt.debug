@@ -1,5 +1,10 @@
 package org.eclipse.jdt.internal.debug.core;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,8 +13,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.IDebugStatusConstants;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -92,10 +101,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 					resource = field.getJavaProject().getProject();
 				}
 				
-				if (fMarker == null) {
-					// Only create a marker if one is not already assigned
-					fMarker= resource.createMarker(JAVA_WATCHPOINT);
-				}
+				fMarker= resource.createMarker(JAVA_WATCHPOINT);
 				
 				// configure the standard attributes
 				setStandardAttributes(field);
@@ -122,12 +128,15 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	}
 
 	/**
-	 * A single watchpoint can create multiple requests. This method provides control over this
-	 * property for explicitly choosing which requests (access, modification, or both) to 
-	 * potentially add.
+	 * @see JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
+	 * 
+	 * Creates and installs an access and modification watchpoint request
+	 * in the given reference type, configuring the requests as appropriate
+	 * for this watchpoint. The requests are then enabled based on whether
+	 * this watchpoint is an access watchpoint, modification watchpoint, or
+	 * both. Finally, the requests are registered with the given target.
 	 */	
 	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
-				
 		IField javaField= getField();
 		Field field= null;
 		
@@ -156,30 +165,62 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	/**
 	 * Returns whether the given virtual machine supports modification watchpoints
 	 */
-	public boolean modificationSupportedBy(VirtualMachine vm) {
+	protected boolean modificationSupportedBy(VirtualMachine vm) {
 		return vm.canWatchFieldModification();
 	}
 	
 	/**
 	 * Returns whether the given virtual machine supports access watchpoints
 	 */
-	public boolean accessSupportedBy(VirtualMachine vm) {
+	protected boolean accessSupportedBy(VirtualMachine vm) {
 		return vm.canWatchFieldAccess();
 	}
 	
 	/**
-	 * This watchpoint is not supported for some reason. Alert the user.
+	 * Either access or modification watchpoints are not supported. Throw an appropriate exception.
+	 * 
+	 * @param message the message that states that access or modification watchpoints
+	 *  are not supported
 	 */
-	protected void notSupported(String message) {
+	protected void notSupported(String message) throws DebugException {
+		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
+			IDebugStatusConstants.NOT_SUPPORTED, message, null)); //$NON-NLS-1$		
 	}
 	
 	/**
 	 * Create an access watchpoint for the given breakpoint and associated field
 	 */
 	protected AccessWatchpointRequest createAccessWatchpoint(JDIDebugTarget target, Field field) throws CoreException {
-		AccessWatchpointRequest request= null;
+		return (AccessWatchpointRequest) createWatchpoint(target, field, true);
+	}
+	
+	/**
+	 * Create a modification watchpoint for the given breakpoint and associated field
+	 */
+	protected ModificationWatchpointRequest createModificationWatchpoint(JDIDebugTarget target, Field field) throws CoreException {
+		return (ModificationWatchpointRequest) createWatchpoint(target, field, false);		
+	}	
+	
+	/**
+	 * Create a watchpoint for the given breakpoint and associated field.
+	 * 
+	 * @param target the target in which the request will be installed
+	 * @param field the field on which the request will be set
+	 * @param access <code>true</code> if an access watchpoint will be 
+	 *  created. <code>false</code> if a modification watchpoint will
+	 *  be created.
+	 * 
+	 * @return an WatchpointRequest (AccessWatchpointRequest if access is
+	 *  <code>true</code>; ModificationWatchpointRequest if access is <code>false</code>).
+	 */
+	protected WatchpointRequest createWatchpoint(JDIDebugTarget target, Field field, boolean access) throws CoreException {
+		WatchpointRequest request= null;
 			try {
-				request= target.getEventRequestManager().createAccessWatchpointRequest(field);
+				if (access) {
+					request= target.getEventRequestManager().createAccessWatchpointRequest(field);
+				} else {
+					request= target.getEventRequestManager().createModificationWatchpointRequest(field);
+				}
 				configureRequest(request);
 			} catch (VMDisconnectedException e) {
 				if (target.isTerminated() || target.isDisconnected()) {
@@ -192,44 +233,17 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 				return null;
 			}
 		return request;
-	}	
-		
-	/**
-	 * Create a modification watchpoint for the given breakpoint and associated field
-	 */
-	protected ModificationWatchpointRequest createModificationWatchpoint(JDIDebugTarget target, Field field) throws CoreException {
-		ModificationWatchpointRequest request= null;
-		try {
-			request= target.getEventRequestManager().createModificationWatchpointRequest(field);
-			configureRequest(request);
-		} catch (VMDisconnectedException e) {
-			if (target.isTerminated() || target.isDisconnected()) {
-				return null;
-			}
-			target.internalError(e);
-			return null;
-		} catch (RuntimeException e) {
-			target.internalError(e);
-			return null;
-		}
-		return request;			
 	}
 
 	/**
-	 * Update the hit count of an <code>EventRequest</code>. Return a new request with
-	 * the appropriate settings.
+	 * @see JavaBreakpoint#updateHitCount(EventRequest, JDIDebugTarget)
 	 */
 	protected EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException {		
 		
 		// if the hit count has changed, or the request has expired and is being re-enabled,
 		// create a new request
 		if (hasHitCountChanged(request) || (isExpired(request) && this.isEnabled())) {
-			try {
-				// delete old request
-				//on JDK you cannot delete (disable) an event request that has hit its count filter
-				if (!isExpired(request)) {
-					target.getEventRequestManager().deleteEventRequest(request); // disable & remove
-				}		
+			try {	
 				Field field= ((WatchpointRequest) request).field();
 				if (request instanceof AccessWatchpointRequest) {
 					request= createAccessWatchpoint(target, field);
@@ -250,7 +264,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	}
 
 	/**
-	 * Enable this watchpoint.
+	 * @see IBreakpoint#setEnabled(boolean)
 	 * 
 	 * If the watchpoint is not watching access or modification,
 	 * set the default values. If this isn't done, the resulting
@@ -318,32 +332,25 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * <li>modification = <code>true</code>
 	 * <ul>
 	 */
-	private void setDefaultAccessAndModification() throws CoreException {
+	protected void setDefaultAccessAndModification() throws CoreException {
 		Object[] values= new Object[]{Boolean.FALSE, Boolean.TRUE};
 		String[] attributes= new String[]{ACCESS, MODIFICATION};
 		ensureMarker().setAttributes(attributes, values);
 	}
 
 	/**
-	 * Sets the <code>FIELD_HANDLE</code> attribute of the given breakpoint, associated
-	 * with the given IField.
+	 * Sets the field on which this watchpoint is installed
 	 */
-	public void setField(IField field) throws CoreException {
+	protected void setField(IField field) throws CoreException {
 		String handle = field.getHandleIdentifier();
-		setFieldHandleIdentifier(handle);
-	}
-	
-	/**
-	 * Sets the <code>FIELD_HANDLE</code> attribute of the given breakpoint.
-	 */
-	public void setFieldHandleIdentifier(String handle) throws CoreException {
 		ensureMarker().setAttribute(FIELD_HANDLE, handle);
 	}
 	
 	/**
-	 * Set standard attributes of a watchpoint
+	 * Set standard attributes of a watchpoint based on the
+	 * given field
 	 */
-	public void setStandardAttributes(IField field) throws CoreException {
+	protected void setStandardAttributes(IField field) throws CoreException {
 		// find the source range if available
 		int start = -1;
 		int stop = -1;
@@ -356,9 +363,10 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	}		
 
 	/**
-	 * Sets the <code>AUTO_DISABLED</code> attribute of this watchpoint.
+	 * Sets the whether this watchpoint has been automatically disabled
+	 * (because modification and access were both set <code>false</code>).
 	 */
-	private void setAutoDisabled(boolean autoDisabled) throws CoreException {
+	protected void setAutoDisabled(boolean autoDisabled) throws CoreException {
 		ensureMarker().setAttribute(AUTO_DISABLED, autoDisabled);
 	}
 
@@ -383,64 +391,12 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * @see IJavaWatchpoint#getField()
 	 */
 	public IField getField() throws CoreException {
-		String handle= getFieldHandleIdentifier();
+		String handle= (String) ensureMarker().getAttribute(FIELD_HANDLE);;
 		if (handle != null && handle != "") { //$NON-NLS-1$
 			return (IField)JavaCore.create(handle);
 		}
 		return null;
-	}		
-		
-	/**
-	 * Returns the <code>FIELD_HANDLE</code> attribute of this watchpoint.
-	 */
-	public String getFieldHandleIdentifier() throws CoreException {
-		return (String) ensureMarker().getAttribute(FIELD_HANDLE);
 	}
-	
-	/*
-	public String getFormattedThreadText(String threadName, String typeName, boolean systemThread) {
-		String fieldName= getField().getElementName();
-		if (fLastEventType == ACCESS_EVENT) {
-			if (systemThread) {
-				return getFormattedString(ACCESS_SYS, new String[] {threadName, fieldName, typeName});
-			} else {
-				return getFormattedString(ACCESS_USR, new String[] {threadName, fieldName, typeName});
-			}
-		} else if (fLastEventType == MODIFICATION_EVENT) {
-			// modification
-			if (systemThread) {
-				return getFormattedString(MODIFICATION_SYS, new String[] {threadName, fieldName, typeName});
-			} else {
-				return getFormattedString(MODIFICATION_USR, new String[] {threadName, fieldName, typeName});
-			}
-		}
-		return "";	
-	}
-	
-	public String getMarkerText(boolean qualified, String memberString) {
-		String lineInfo= super.getMarkerText(qualified, memberString);
-
-		String state= null;
-		boolean access= isAccess();
-		boolean modification= isModification();
-		if (access && modification) {
-			state= BOTH;
-		} else if (access) {
-			state= ACCESS;
-		} else if (modification) {
-			state= MODIFICATION;
-		}		
-		String label= null;
-		if (state == null) {
-			label= lineInfo;
-		} else {
-			String format= DebugJavaUtils.getResourceString(FORMAT);
-			state= DebugJavaUtils.getResourceString(state);
-			label= MessageFormat.format(format, new Object[] {state, lineInfo});
-		}
-		return label;	
-	}
-	*/
 	
 	/**
 	 * Store the type of the event, then handle it as specified in
@@ -461,9 +417,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	
 	
 	/**
-	 * Update the enabled state of the given request, which is associated
-	 * with this breakpoint. Set the enabled state of the request
-	 * to the enabled state of this breakpoint.
+	 * @see JavaBreakpoint#updateEnabledState(EventRequest)
 	 */
 	protected void updateEnabledState(EventRequest request) throws CoreException  {
 		boolean enabled = isEnabled();
@@ -490,7 +444,11 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			}
 		}
 	}
-		
+	
+	/**
+	 * Set the enabled state of the given request to the given
+	 * value
+	 */
 	protected void internalUpdateEnabeldState(EventRequest request, boolean enabled) {
 		// change the enabled state
 		try {
@@ -504,7 +462,10 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			JDIDebugPlugin.logError(e);
 		}
 	}
-		
+	
+	/**
+	 * @see IJavaWatchpoint#isAccessSuspend(IDebugTarget)
+	 */
 	public boolean isAccessSuspend(IDebugTarget target) {
 		Integer lastEventType= (Integer) fLastEventTypes.get(target);
 		if (lastEventType == null) {

@@ -1,5 +1,10 @@
 package org.eclipse.jdt.internal.debug.core;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
@@ -26,9 +31,9 @@ public class JavaRunToLineBreakpoint extends JavaLineBreakpoint implements IJava
 	 *   numbers are 1 based, associated with the compilation unit in which
 	 *   the type is defined
 	 * @param charStart the first character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unknown
  	 * @param charEnd the last character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unknown
 	 * @return a run-to-line breakpoint
 	 * @exception DebugException if unable to create the breakpoint marker due
 	 *  to a lower level exception.

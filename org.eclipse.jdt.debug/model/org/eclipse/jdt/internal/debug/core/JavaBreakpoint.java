@@ -143,7 +143,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	
 	/**
 	 * Returns a string corresponding to the reference type
-	 * name in which this breakpoint will be installed.
+	 * name in which this breakpoint is installed.
 	 */
 	protected String getReferenceTypeName() {
 		String name= "";
@@ -157,6 +157,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			}
 		} catch (CoreException ce) {
 			JDIDebugPlugin.logError(ce);
+		}
+		if (name == null) {
+			name= "";
 		}
 		return name;
 	}	
@@ -195,6 +198,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		list.add(newRequest);
 		target.removeJDIEventListener(this, oldRequest);
 		target.addJDIEventListener(this, newRequest);
+		// delete old request
+		//on JDK you cannot delete (disable) an event request that has hit its count filter
+		if (!isExpired(oldRequest)) {
+			target.getEventRequestManager().deleteEventRequest(oldRequest); // disable & remove
+		}			
 	}
 
 	/**
@@ -270,7 +278,44 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Create a breakpoint request for this breakpoint in the given
 	 * reference type in the given target.
 	 */
-	protected abstract void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException;
+	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+		EventRequest request= newRequest(target, type);
+		registerRequest(request, target);
+	}
+	
+	/**
+	 * Configure a breakpoint request with common properties:
+	 * <ul>
+	 * <li><code>IDebugConstants.BREAKPOINT_MARKER</code></li>
+	 * <li><code>IJavaDebugConstants.HIT_COUNT</code></li>
+	 * <li><code>IJavaDebugConstants.EXPIRED</code></li>
+	 * <li><code>IDebugConstants.ENABLED</code></li>
+	 * </ul>
+	 * and sets the suspend policy of the request to suspend 
+	 * the event thread.
+	 */
+	protected void configureRequest(EventRequest request) throws CoreException {
+		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		request.putProperty(JAVA_BREAKPOINT_PROPERTY, this);								
+		int hitCount= getHitCount();
+		if (hitCount > 0) {
+			request.addCountFilter(hitCount);
+			request.putProperty(HIT_COUNT, new Integer(hitCount));
+			request.putProperty(EXPIRED, Boolean.FALSE);
+		}
+		// Important: only enable a request after it has been configured
+		updateEnabledState(request);
+	}	
+	
+	/**
+	 * Creates and returns a breakpoint request for this breakpoint which
+	 * has been installed in the given reference type and registered
+	 * in the given target.
+	 * 
+	 * @return the event request which was created or <code>null</code> if
+	 *  the request creation failed
+	 */
+	protected abstract EventRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException;
 	
 	/**
 	 * Add this breakpoint to the given target. After it has been
