@@ -330,4 +330,13 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	protected void setDebugTarget(JDIDebugTarget debugTarget) {
 		fDebugTarget = debugTarget;
 	}
+
+	/**
+	 * The VM has disconnected. Notify the target.
+	 */
+	protected void disconnected() {
+		if (fDebugTarget != null) {
+			fDebugTarget.disconnected();
+		}
+	}
 }

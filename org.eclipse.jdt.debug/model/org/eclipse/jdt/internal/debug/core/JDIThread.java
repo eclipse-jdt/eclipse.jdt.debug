@@ -210,6 +210,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		try {
 			determineIfSystemThread();
 		} catch (DebugException e) {
+			Throwable underlyingException= e.getStatus().getException();
+			if (underlyingException instanceof VMDisconnectedException) {
+				// Threads may be created by the VM at shutdown
+				// as finalizers. The VM may be disconnected by
+				// the time we hear about the thread creation.
+				disconnected();
+				return;
+			}			
 			logError(e);
 		}
 
@@ -220,10 +228,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			setRunning(!getUnderlyingThread().isSuspended());
 		} catch (VMDisconnectedException e) {
 			disconnected();
-			if (getDebugTarget().isDisconnected()) {
-				return;
-			}
-			logError(e);
+			return;
 		} catch (RuntimeException e) {
 			logError(e);
 		}
@@ -1331,16 +1336,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		setRunning(false);
 		dispose();		
 		fireTerminateEvent();
-	}
-	
-	/**
-	 * Notification that the VM has disconnected - update
-	 * state and fire a change event
-	 */
-	protected void disconnected() {
-		setRunning(false);
-		dispose();
-		fireChangeEvent();
 	}
 	
 	/** 
