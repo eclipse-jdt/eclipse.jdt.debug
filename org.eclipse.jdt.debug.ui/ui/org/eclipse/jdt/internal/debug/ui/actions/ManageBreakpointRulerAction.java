@@ -87,8 +87,8 @@ public class ManageBreakpointRulerAction extends Action {
 		return provider.getDocument(fTextEditor.getEditorInput());
 	}
 	
-	/**
-	 * @see Action#run()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 		try {
@@ -100,9 +100,13 @@ public class ManageBreakpointRulerAction extends Action {
 				if (lineNumber >= document.getNumberOfLines()) {
 					return;
 				}
-				IRegion line= document.getLineInformation(lineNumber);
-				ITextSelection selection = new TextSelection(document, line.getOffset(), line.getLength());
-				fBreakpointAdapter.toggleLineBreakpoints(fTextEditor, selection);
+				try {
+					IRegion line= document.getLineInformation(lineNumber);
+					ITextSelection selection = new TextSelection(document, line.getOffset(), line.getLength());
+					fBreakpointAdapter.toggleLineBreakpoints(fTextEditor, selection);
+				} catch (BadLocationException e) {
+					//likely document is folded so you cannot get the line information of the folded line
+				}
 			} else {
 				// remove existing breakpoints of any type
 				IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
@@ -115,8 +119,6 @@ public class ManageBreakpointRulerAction extends Action {
 					}
 				}
 			}
-		} catch (BadLocationException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
 		}
