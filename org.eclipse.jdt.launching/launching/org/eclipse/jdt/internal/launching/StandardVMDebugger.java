@@ -155,7 +155,12 @@ public class StandardVMDebugger extends StandardVMRunner {
 		}
 		arguments.add("-Xdebug"); //$NON-NLS-1$
 		arguments.add("-Xnoagent"); //$NON-NLS-1$
-		arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
+		
+		double version = getJavaVersion();
+		//check if java 1.4 or greater
+		if (version < 1.4) {
+			arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
+		}
 		arguments.add("-Xrunjdwp:transport=dt_socket,suspend=y,address=localhost:" + port); //$NON-NLS-1$
 
 		arguments.add(config.getClassToLaunch());
@@ -287,6 +292,22 @@ public class StandardVMDebugger extends StandardVMRunner {
 		}
 	}
 	
+	private double getJavaVersion() {
+		LibraryInfo libInfo = LaunchingPlugin.getLibraryInfo(fVMInstance.getInstallLocation().getAbsolutePath());
+		String version = libInfo.getVersion();
+		int index = version.indexOf("."); //$NON-NLS-1$
+		int nextIndex = version.indexOf(".", index+1); //$NON-NLS-1$
+		try {
+			if (index > 0 && nextIndex>index) {
+				return Double.parseDouble(version.substring(0,nextIndex));
+			} else
+				return Double.parseDouble(version);
+		} catch (NumberFormatException e) {
+			return 0D;
+		}
+
+	}
+
 	protected void checkErrorMessage(IProcess process) throws CoreException {
 		IStreamsProxy streamsProxy = process.getStreamsProxy();
 		if (streamsProxy != null) {
