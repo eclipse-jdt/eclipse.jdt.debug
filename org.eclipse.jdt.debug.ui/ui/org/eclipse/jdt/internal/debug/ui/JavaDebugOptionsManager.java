@@ -620,9 +620,6 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 				packageName = packageName.substring(0,index);
 			}
 			String name = frame.getSourceName();
-			if (name == null) {
-				name= ""; //$NON-NLS-1$
-			}
 			int line = frame.getLineNumber();
 			Location l = new Location(packageName, name, line);
 			return  (IMarker)fLocationMap.get(l);		
