@@ -319,7 +319,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	        
 	        filter = filter.replaceAll("\\.", "\\\\.");  //$NON-NLS-1$//$NON-NLS-2$
 	        filter = filter.replaceAll("\\*", "\\.\\*");  //$NON-NLS-1$//$NON-NLS-2$
-	        Pattern pattern = Pattern.compile((String) filter);
+	        Pattern pattern = Pattern.compile(filter);
 	        if (pattern.matcher(typeName).find()) {
 	            return true;
 	        }

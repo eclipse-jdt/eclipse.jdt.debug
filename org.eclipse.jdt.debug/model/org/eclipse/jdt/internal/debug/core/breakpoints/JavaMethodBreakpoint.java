@@ -159,7 +159,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		};
 		run(null, wr);
 		String type = convertToRegularExpression(typePattern);
-		fPattern = Pattern.compile((String) type);
+		fPattern = Pattern.compile(type);
 	}
 	
 	/**
