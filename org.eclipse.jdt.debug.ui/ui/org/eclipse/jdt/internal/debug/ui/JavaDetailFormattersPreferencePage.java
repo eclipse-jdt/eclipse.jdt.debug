@@ -110,6 +110,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fFormatterListViewer= CheckboxTableViewer.newCheckList(container, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = (Table)fFormatterListViewer.getControl();
 		gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint= convertHeightInCharsToPixels(10);
+		gd.widthHint= convertWidthInCharsToPixels(10);
 		table.setLayoutData(gd);
 		fFormatViewerContentProvider= new FormatterListViewerContentProvider(fFormatterListViewer);
 		fFormatterListViewer.setContentProvider(fFormatViewerContentProvider);
