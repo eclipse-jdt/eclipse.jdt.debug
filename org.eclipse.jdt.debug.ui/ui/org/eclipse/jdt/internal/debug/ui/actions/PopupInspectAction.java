@@ -22,6 +22,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.swt.graphics.Point;
@@ -72,7 +73,7 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 				Point p = viewer.getSelectedRange();
 				IDocument doc = viewer.getDocument();
 				try {
-					String contentType = doc.getContentType(p.x);
+					String contentType = TextUtilities.getContentType(doc, infoPresenter.getDocumentPartitioning(), p.x, true);
 					infoPresenter.setInformationProvider(PopupInspectAction.this, contentType);				
 					infoPresenter.install(viewer);
 					infoPresenter.showInformation();
