@@ -43,7 +43,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 /**
  * Performs single click launching for local java applications.
  */
-public class JavaApplicationShortcut implements ILaunchShortcut {
+public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 	
 	/**
 	 * @see IActionDelegate#run(IAction)

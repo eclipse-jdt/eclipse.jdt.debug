@@ -1238,7 +1238,7 @@
 <extension point = "org.eclipse.debug.ui.launchShortcuts">
 	<shortcut
 		id="org.eclipse.jdt.debug.ui.localJavaShortcut"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationShortcut"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut"
 		label="%JavaApplicationShortcut.label"
 		icon="icons/full/ctool16/java_app.gif"
 		modes="run, debug">
