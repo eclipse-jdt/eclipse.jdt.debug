@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
