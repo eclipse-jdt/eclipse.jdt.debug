@@ -540,7 +540,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				if (jdkSupport) {
 					// JDK 1.4 VMs are currently unable to pop the bottom
 					// stack frame.
-					if (frames.get(frames.size() - 1) == this) {
+					if ((frames.size() > 0) && frames.get(frames.size() - 1) == this) {
 						return false;
 					}
 				}

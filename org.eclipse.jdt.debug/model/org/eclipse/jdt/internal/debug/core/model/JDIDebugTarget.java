@@ -784,6 +784,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				try {
 					installedType= breakpoint.getTypeName();
 					if (classNames.contains(installedType)) {
+						breakpointRemoved(breakpoint, null);
 						breakpointAdded(breakpoint);
 					}
 				} catch (CoreException ce) {
@@ -1098,13 +1099,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		if (supportsBreakpoint(breakpoint)) {
 			try {
 				JavaBreakpoint javaBreakpoint= (JavaBreakpoint) breakpoint;
-				if (!javaBreakpoint.shouldSkipBreakpoint()) {
-					// If the breakpoint should be skipped, don't add the breakpoint
-					// request to the VM. Just add the breakpoint to the collection so
-					// we have it if the manager is later enabled.
-					javaBreakpoint.addToTarget(this);
-				}
 				if (!getBreakpoints().contains(breakpoint)) {
+					if (!javaBreakpoint.shouldSkipBreakpoint()) {
+						// If the breakpoint should be skipped, don't add the breakpoint
+						// request to the VM. Just add the breakpoint to the collection so
+						// we have it if the manager is later enabled.
+						javaBreakpoint.addToTarget(this);
+					}					
 					getBreakpoints().add(breakpoint);
 				}
 			} catch (CoreException e) {

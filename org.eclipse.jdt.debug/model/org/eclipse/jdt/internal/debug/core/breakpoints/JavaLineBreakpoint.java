@@ -442,7 +442,11 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			} else {
 				thread.handleSuspendForBreakpointQuiet(this);
 			}
-			JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
+			List frames = thread.computeNewStackFrames();
+			if (frames.size() == 0) {
+				return !suspendForEvent(event, thread);
+			}
+			JDIStackFrame frame= (JDIStackFrame)frames.get(0);
 			IJavaProject project= getJavaProject(frame);
 			if (project == null) {
 				throw new CoreException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED,
