@@ -49,12 +49,6 @@ public class EventDispatcher implements Runnable {
 	 * Whether this dispatcher is shutdown.
 	 */
 	private boolean fShutdown;
-	
-	/**
-	 * The current event set being processed
-	 */
-	private EventSet fEventSet;
-	
 	/**
 	 * Table of event listeners. Table is
 	 * a mapping of <code>EventRequest</code>
@@ -132,19 +126,20 @@ public class EventDispatcher implements Runnable {
 	 */
 	public void run() {
 		EventQueue q= fTarget.getVM().eventQueue();
+		EventSet eventSet= null;
 		while (!isShutdown()) {
 			try {
 				try {
 					// Get the next event set.
-					fEventSet= q.remove();
-					if (fEventSet == null)
+					eventSet= q.remove();
+					if (eventSet == null)
 						break;
 				} catch (VMDisconnectedException e) {
 					break;
 				}
 								
 				if(!isShutdown()) {
-					dispatch(fEventSet);
+					dispatch(eventSet);
 				}
 			} catch (InterruptedException e) {
 				break;
