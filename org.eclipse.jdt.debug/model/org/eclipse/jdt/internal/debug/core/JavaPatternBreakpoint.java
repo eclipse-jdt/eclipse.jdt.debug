@@ -74,7 +74,6 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 		if (classes != null) {
 			Iterator iter = classes.iterator();
 			String typeName= null;
-			String sourceName= null;
 			ReferenceType type= null;
 			while (iter.hasNext()) {
 				type= (ReferenceType) iter.next();
