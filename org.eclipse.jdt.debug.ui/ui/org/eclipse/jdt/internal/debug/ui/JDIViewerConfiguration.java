@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewContentAssistant;
 import org.eclipse.jdt.internal.ui.text.HTMLTextPresenter;
 import org.eclipse.jdt.internal.ui.text.JavaPartitionScanner;
 import org.eclipse.jdt.internal.ui.text.java.JavaAutoIndentStrategy;
@@ -103,7 +104,7 @@ public abstract class JDIViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
-		ContentAssistant assistant = new ContentAssistant();
+		ContentAssistant assistant = new DisplayViewContentAssistant();
 		assistant.setContentAssistProcessor(
 			getContentAssistantProcessor(),
 			IDocument.DEFAULT_CONTENT_TYPE);

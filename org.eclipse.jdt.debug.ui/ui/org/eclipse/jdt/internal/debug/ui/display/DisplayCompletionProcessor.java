@@ -7,13 +7,17 @@ package org.eclipse.jdt.internal.debug.ui.display;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.IWorkingCopy;
@@ -41,7 +45,6 @@ import org.eclipse.swt.widgets.Shell;
 public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		
 	private ResultCollector fCollector;
-	private DisplayView fView;
 	private IContextInformationValidator fValidator;
 	
 	private char[] fProposalAutoActivationSet;
@@ -55,9 +58,8 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		}
 	};
 	
-	public DisplayCompletionProcessor(DisplayView view) {
+	public DisplayCompletionProcessor() {
 		fCollector= new ResultCollector();
-		fView= view;
 	}
 	
 	/**
@@ -96,12 +98,17 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int position) {
 		try {
-			IJavaStackFrame stackFrame= fView.getContext();
+			IAdaptable context = DebugUITools.getDebugContext();
+			if (context == null) {
+				return new ICompletionProposal[0];
+			}
+			
+			IJavaStackFrame stackFrame= (IJavaStackFrame)context.getAdapter(IJavaStackFrame.class);
 			if (stackFrame == null) {
 				return new ICompletionProposal[0];
 			}
 			
-			IJavaProject project= fView.getJavaProject(stackFrame);
+			IJavaProject project= getJavaProject(stackFrame);
 			if (project != null) {
 				ITextSelection selection= (ITextSelection)viewer.getSelectionProvider().getSelection();			
 				ICompilationUnit cu= getCompilationUnit(stackFrame);
@@ -113,7 +120,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				configureResultCollector(project, selection, offset);	
 				IWorkingCopy workingCopy= (IWorkingCopy) cu.getWorkingCopy();
 				IBuffer buffer= ((ICompilationUnit)workingCopy).getBuffer();
-				buffer.replace(offset, 0, fView.getContents());
+				buffer.replace(offset, 0, viewer.getDocument().get());
 				((ICompilationUnit)workingCopy).codeComplete(offset + selection.getOffset(), fCollector);
 				workingCopy.destroy();
 			
@@ -158,6 +165,28 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		return null;
 
 	}
+	
+	/**
+	 * Returns the java project associated with the given stack
+	 * frame, or <code>null</code> if none.
+	 */
+	protected IJavaProject getJavaProject(IStackFrame stackFrame) {
+		
+		// Get the corresponding element.
+		ILaunch launch = stackFrame.getLaunch();
+		if (launch == null) {
+			return null;
+		}
+		ISourceLocator locator= launch.getSourceLocator();
+		if (locator == null)
+			return null;
+		
+		Object sourceElement = locator.getSourceElement(stackFrame);
+		if (sourceElement instanceof IJavaElement) {
+			return ((IJavaElement) sourceElement).getJavaProject();
+		}			
+		return null;
+	}	
 	
 	/**
 	 * Order the given proposals.

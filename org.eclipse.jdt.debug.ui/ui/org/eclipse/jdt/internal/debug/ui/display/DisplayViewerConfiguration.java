@@ -5,7 +5,9 @@ package org.eclipse.jdt.internal.debug.ui.display;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jdt.internal.debug.ui.JDIViewerConfiguration;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 
@@ -13,19 +15,16 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
  *  The source viewer configuration for the Display view
  */
 public class DisplayViewerConfiguration extends JDIViewerConfiguration {
-	
-	private DisplayView fView;
-	
-	public DisplayViewerConfiguration(JavaTextTools tools, DisplayView view) {
-		super(tools);
-		fView= view;
+		
+	public DisplayViewerConfiguration() {
+		super(JavaPlugin.getDefault().getJavaTextTools());
 	}
 
 	/**
 	 * @see JDIViewerConfiguration#getContentAssistantProcessor()
 	 */
 	public IContentAssistProcessor getContentAssistantProcessor() {
-
-		return new DisplayCompletionProcessor(fView);
+		return new DisplayCompletionProcessor();
 	}
+
 }

@@ -21,6 +21,13 @@ public class DisplayViewAction extends Action implements IUpdate {
 	private IAdaptable fTargetProvider;
 	
 	
+	public DisplayViewAction(ITextOperationTarget target, int operationCode) {
+		super();
+		fOperationTarget= target;
+		fOperationCode= operationCode;
+		update();
+	}
+		
 	public DisplayViewAction(IAdaptable targetProvider, int operationCode) {
 		super();
 		fTargetProvider= targetProvider;

@@ -18,16 +18,21 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
@@ -41,17 +46,19 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -85,6 +92,49 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 			
 	public EvaluateAction() {
 		super();
+	}
+	
+	/**
+	 * Returns the 'object' context for this evaluation,
+	 * or <code>null</code> if none. If the evaluation is being performed
+	 * in the context of the variables view/inspector. Then
+	 * perform the evaluation in the context of the
+	 * selected value.
+	 * 
+	 * @return java object or <code>null</code>
+	 */
+	protected IJavaObject getObjectContext() {
+		IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
+		if (page != null) {
+			IWorkbenchPart activePart= page.getActivePart();
+			if (activePart != null) {
+				IDebugViewAdapter a = (IDebugViewAdapter)activePart.getAdapter(IDebugViewAdapter.class);
+				if (a != null) {
+					if (a.getViewer() != null) {
+						ISelection s = a.getViewer().getSelection();
+						if (s instanceof IStructuredSelection) {
+							IStructuredSelection ss = (IStructuredSelection)s;
+							if (ss.size() == 1) {
+								if (ss.getFirstElement() instanceof IJavaVariable) {
+									IJavaVariable var = (IJavaVariable)ss.getFirstElement();
+									// if 'this' is selected, use stack frame context
+									try {
+										if (!var.getName().equals("this")) {
+											if (var.getValue() instanceof IJavaObject) {
+												return (IJavaObject)var.getValue();
+											}
+										} 
+									} catch (DebugException e) {
+										JDIDebugUIPlugin.log(e);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;		
 	}
 	
 	/**
@@ -139,14 +189,20 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		
 		fExpression= null;
 		
+		// eval in context of object or stack frame
+		IJavaObject object = getObjectContext();		
 		IStackFrame stackFrame= getContext();
 		if (stackFrame == null) {
 			reportError(DisplayMessages.getString("Evaluate.error.message.stack_frame_context")); //$NON-NLS-1$
 			return;
 		}
 		
-		IJavaStackFrame adapter= (IJavaStackFrame) stackFrame.getAdapter(IJavaStackFrame.class);
-		if (adapter != null) {
+		IJavaStackFrame jFrame = null;
+		if (stackFrame != null) {
+			jFrame = (IJavaStackFrame) stackFrame.getAdapter(IJavaStackFrame.class);
+		}
+
+		if (jFrame != null) {
 			IJavaElement javaElement= getJavaElement(stackFrame);
 			if (javaElement != null) {
 				IJavaProject project = javaElement.getJavaProject();
@@ -157,8 +213,12 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 					if (dataDisplay != null && displayExpression())
 						dataDisplay.displayExpression(fExpression);
 					
-					IEvaluationEngine engine = getEvauationEngine((IJavaDebugTarget)adapter.getDebugTarget(), project);
-					engine.evaluate(fExpression, adapter, this);
+					IEvaluationEngine engine = getEvauationEngine((IJavaDebugTarget)jFrame.getDebugTarget(), project);
+					if (object == null) {
+						engine.evaluate(fExpression, jFrame, this);
+					} else {
+						engine.evaluate(fExpression, object, (IJavaThread)jFrame.getThread(), this);
+					}
 					
 				} catch (CoreException e) {
 					reportError(e);
@@ -319,6 +379,10 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 				if (display != null) {
 					return display;
 				}	
+				ITextViewer viewer = (ITextViewer)activePart.getAdapter(ITextViewer.class);
+				if (viewer != null) {
+					return new DataDisplay(viewer);
+				}
 			}
 			IViewPart view = page.findView(DisplayView.ID_DISPLAY_VIEW);;
 			if (view == null) {

@@ -315,7 +315,8 @@
 <extension point = "org.eclipse.debug.ui.debugModelPresentations"> 
          <debugModelPresentation
              class = "org.eclipse.jdt.internal.debug.ui.JDIModelPresentation"
-             id = "org.eclipse.jdt.debug">
+             id = "org.eclipse.jdt.debug"
+             detailsViewerConfiguration = "org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration">
           </debugModelPresentation> 
 </extension>
 
