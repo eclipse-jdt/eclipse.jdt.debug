@@ -27,7 +27,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
@@ -46,42 +45,46 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
-	public void run(IAction action) {
-		try {
-			IThread thread= getContext();
-			if (thread == null) {
-				if (getTextEditor() != null) {
-					getTextEditor().getSite().getShell().getDisplay().beep();
-				}
-				return;
-			}
-			
-			ITextSelection selection= (ITextSelection)getTextEditor().getSelectionProvider().getSelection();
-			setLineNumber(selection.getStartLine() + 1);
-			IType type= retrieveType();
-			if (type == null) {
-				return;
-			}
-	
-			IBreakpoint breakpoint= null;
-			try {
-				Map attributes = new HashMap(4);
-				BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
-				BreakpointUtils.addRunToLineAttributes(attributes);
-				breakpoint= JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), getLineNumber(), -1, -1, 1, false, attributes);
-			} catch (CoreException ce) {
-				ExceptionHandler.handle(ce, ActionMessages.getString("RunToLine.error.title1"), ActionMessages.getString("RunToLine.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			} 
-			thread.getDebugTarget().breakpointAdded(breakpoint);
-			try {
-				thread.resume();
-			} catch (DebugException de) {
-				JDIDebugUIPlugin.log(de);
-			}
-		} catch(DebugException de) {
-			ExceptionHandler.handle(de, ActionMessages.getString("RunToLine.error.title1"), ActionMessages.getString("RunToLine.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+	public void run(IAction action) {		
+		ITextSelection selection= (ITextSelection)getTextEditor().getSelectionProvider().getSelection();
+		setLineNumber(selection.getStartLine() + 1);
+		IType type= retrieveType();
+		if (type == null) {
+			return;
 		}
+		try {
+			runToLine(type, getLineNumber());
+		} catch (CoreException e) {
+			ExceptionHandler.handle(e, ActionMessages.getString("RunToLine.error.title1"), ActionMessages.getString("RunToLine.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	/**
+	 * Runs to the given line in the given type.
+	 * @param type the type
+	 * @param lineNumber the line number to run to
+	 */
+	public void runToLine(IType type, int lineNumber) throws CoreException {
+		IThread thread= null;
+		try {
+			thread = getContext();
+		} catch (DebugException e) {
+			return;
+		}
+		if (thread == null) {
+			if (getTextEditor() != null) {
+				getTextEditor().getSite().getShell().getDisplay().beep();
+			}
+			return;
+		}
+		
+		IBreakpoint breakpoint= null;
+		Map attributes = new HashMap(4);
+		BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
+		BreakpointUtils.addRunToLineAttributes(attributes);
+		breakpoint= JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, -1, -1, 1, false, attributes); 
+		thread.getDebugTarget().breakpointAdded(breakpoint);
+		thread.resume();
 	}
 	/**
 	 * Resolves the debug target context to set the run to line
