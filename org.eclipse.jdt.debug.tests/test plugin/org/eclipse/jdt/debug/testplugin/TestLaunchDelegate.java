@@ -32,7 +32,7 @@ public class TestLaunchDelegate implements ILaunchConfigurationDelegate2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
-	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
+	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) {
 		fLaunch = new Launch(configuration, mode, null);
 		return fLaunch;
 	}
