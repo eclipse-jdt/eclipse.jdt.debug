@@ -2131,7 +2131,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IThread#hasStackFrames()
 	 */
 	public boolean hasStackFrames() throws DebugException {
-		return computeStackFrames().size() > 0;
+		try {
+			return computeStackFrames().size() > 0;
+		} catch (DebugException e) {
+			// do not throw an exception if the thread resumed while determining
+			// whether stack frames are present
+			if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+				throw e;
+			}
+		}
+		return false;
 	}
 
 }
