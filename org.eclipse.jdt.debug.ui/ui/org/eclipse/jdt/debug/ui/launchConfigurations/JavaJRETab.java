@@ -535,7 +535,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected ILaunchConfigurationTab getTabForCurrentJRE() {
 		int selectedIndex = fJRECombo.getSelectionIndex();
 		if (selectedIndex > 0) {
-			VMStandin vmStandin = (VMStandin) fVMStandins.get(selectedIndex - 1);
+			VMStandin vmStandin = getVMStandin(fJRECombo.getText());
 			String vmInstallTypeID = vmStandin.getVMInstallType().getId();
 			return JDIDebugUIPlugin.getDefault().getVMInstallTypePage(vmInstallTypeID);		
 		}
