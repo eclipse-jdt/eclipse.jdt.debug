@@ -12,10 +12,14 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
 
  
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IClassFile;
@@ -400,8 +404,15 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		
 		String name = fProjText.getText().trim();
 		if (name.length() > 0) {
-			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
-				setErrorMessage(LauncherMessages.getString("JavaMainTab.Project_does_not_exist_15")); //$NON-NLS-1$
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IStatus status = workspace.validateName(name, IResource.PROJECT);
+			if (status.isOK()) {
+				if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
+					setErrorMessage(LauncherMessages.getString("JavaMainTab.Project_does_not_exist_15")); //$NON-NLS-1$
+					return false;
+				}
+			} else {
+				setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.19"), new String[]{status.getMessage()})); //$NON-NLS-1$
 				return false;
 			}
 		}
