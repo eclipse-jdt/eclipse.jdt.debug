@@ -48,11 +48,12 @@ import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate
 													implements IDebugEventSetListener {
 		
-	private static int fLaunchesCounter = 0;
-	private static HashMap fEventSources = new HashMap();
-
-	private File fTempFile;
-	private ILaunchConfiguration fCurrentLaunchConfiguration;
+	/**
+	 * Mapping of ILaunch objects to File objects that represent the .html file
+	 * used to initiate the applet launch.  This is used to delete the .html
+	 * file when the launch terminates.
+	 */
+	private static Map fgLaunchToFileMap = new HashMap();
 	
 	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, ILaunch, IProgressMonitor)
@@ -93,10 +94,6 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 			workingDirName = workingDir.getAbsolutePath();
 		}
 		
-		if (fLaunchesCounter == 0) {
-			DebugPlugin.getDefault().addDebugEventListener(this);
-		}
-	
 		// Program & VM args
 		String javaPolicy = getJavaPolicyFile(configuration);
 		ExecutionArguments execArgs = new ExecutionArguments(getVMArguments(configuration), ""); //$NON-NLS-1$
@@ -106,7 +103,15 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		// Create VM config
 		String appletViewerClassName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
 		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(appletViewerClassName, classpath);
-		runConfig.setProgramArguments(new String[] {buildHTMLFile(configuration)});
+		
+		// Construct the HTML file and set its name as a program argument
+		File htmlFile = buildHTMLFile(configuration);
+		if (htmlFile == null) {
+			abort(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Could_not_build_HTML_file_for_applet_launch_1"), null, IJavaLaunchConfigurationConstants.ERR_COULD_NOT_BUILD_HTML); //$NON-NLS-1$
+		}			
+		runConfig.setProgramArguments(new String[] {htmlFile.getName()});
+		
+		// Retrieve & set the VM arguments
 		String[] vmArgs = execArgs.getVMArgumentsArray();
 		String[] realArgs = new String[vmArgs.length+1];
 		System.arraycopy(vmArgs, 0, realArgs, 1, vmArgs.length);
@@ -121,9 +126,21 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		
 		monitor.worked(1);
 		
+		// Add a debug listener if necessary 
+		if (fgLaunchToFileMap.isEmpty()) {
+			DebugPlugin.getDefault().addDebugEventListener(this);
+		}
+		
+		// Add a mapping of the launch to the html file 
+		fgLaunchToFileMap.put(launch, htmlFile);
+
 		// Launch the configuration
-		this.fCurrentLaunchConfiguration = configuration;
-		runner.run(runConfig, launch, monitor);		
+		try {
+			runner.run(runConfig, launch, monitor);		
+		} catch (CoreException ce) {
+			htmlFile.delete();
+			throw ce;
+		}
 		
 		monitor.subTask(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
 		// Set default source locator if none specified
@@ -172,12 +189,13 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	 * Using the specified launch configuration, build an HTML file that specifies the
 	 * applet to launch.  Return the name of the HTML file.
 	 */
-	private String buildHTMLFile(ILaunchConfiguration configuration) {
+	private File buildHTMLFile(ILaunchConfiguration configuration) {
 		FileWriter writer = null;
+		File tempFile = null;
 		try {
 			String name = getMainTypeName(configuration);
-			fTempFile = new File(getWorkingDirectory(configuration).toString(), name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$ //$NON-NLS-2$
-			writer = new FileWriter(fTempFile);
+			tempFile = new File(getWorkingDirectory(configuration).toString(), name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer = new FileWriter(tempFile);
 			writer.write("<html>\n"); //$NON-NLS-1$
 			writer.write("<body>\n"); //$NON-NLS-1$
 			writer.write("<applet code="); //$NON-NLS-1$
@@ -217,10 +235,10 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 				}
 			}
 		}
-		if (fTempFile == null) {
+		if (tempFile == null) {
 			return null;
 		}
-		return fTempFile.getName();
+		return tempFile;
 	}
 	
 	/**
@@ -235,37 +253,23 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 				// Delete the HTML file used for the launch
 				case DebugEvent.TERMINATE :
 					if (eventSource != null) {
-						File temp = (File) fEventSources.get(eventSource);
-						if (temp != null) {
-							try {
-								fEventSources.remove(eventSource);
-								fLaunchesCounter--;
-								temp.delete();
-							} finally {
-								if (fLaunchesCounter == 0) {
-									DebugPlugin.getDefault().removeDebugEventListener(this);
-								}
-							}
-						}
-					}
-					break;
-					
-				// Track the HTML file used for the launch
-				case DebugEvent.CREATE :
-					if (eventSource != null) {
+						ILaunch launch = null;
 						if (eventSource instanceof IProcess) {
-							IProcess runtimeProcess = (IProcess) eventSource;
-							ILaunchConfiguration config = runtimeProcess.getLaunch().getLaunchConfiguration();
-							if (fCurrentLaunchConfiguration.equals(config)) {
-								fEventSources.put(eventSource, fTempFile);
-								fLaunchesCounter++;
-							}
+							IProcess process = (IProcess) eventSource;
+							launch = process.getLaunch();
 						} else if (eventSource instanceof IDebugTarget) {
 							IDebugTarget debugTarget = (IDebugTarget) eventSource;
-							ILaunchConfiguration config = debugTarget.getLaunch().getLaunchConfiguration();
-							if (fCurrentLaunchConfiguration.equals(config)) {
-								fEventSources.put(eventSource, fTempFile);
-								fLaunchesCounter++;
+							launch = debugTarget.getLaunch();
+						}
+						File temp = (File) fgLaunchToFileMap.get(launch);
+						if (temp != null) {
+							try {
+								fgLaunchToFileMap.remove(launch);
+								temp.delete();
+							} finally {
+								if (fgLaunchToFileMap.isEmpty()) {
+									DebugPlugin.getDefault().removeDebugEventListener(this);
+								}
 							}
 						}
 					}

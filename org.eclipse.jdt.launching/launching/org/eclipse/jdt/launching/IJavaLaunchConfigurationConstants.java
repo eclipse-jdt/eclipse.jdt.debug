@@ -401,6 +401,14 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final int ERR_UNSPECIFIED_LAUNCH_CONFIG = 122;		
 
 	/**
+	 * Status code indicating that the .html file used to initiate an applet
+	 * launch could not be built.
+	 * 
+	 * @since 2.1
+	 */
+	public static final int ERR_COULD_NOT_BUILD_HTML = 123;		
+
+	/**
 	 * Status code indicating an unexpected internal error.
 	 */
 	public static final int ERR_INTERNAL_ERROR = 150;		
