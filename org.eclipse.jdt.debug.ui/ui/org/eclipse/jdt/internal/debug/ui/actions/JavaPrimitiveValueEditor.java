@@ -122,11 +122,9 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 	                }
 	                break;
 	        	case 'Z':
-	        	    try {
-	                    Boolean.parseBoolean(newText);
-	                } catch (NumberFormatException e) {
-	        	        type="boolean"; //$NON-NLS-1$
-	                }
+                    if (!("true".equals(newText) || "false".equals(newText))) { //$NON-NLS-1$ //$NON-NLS-2$
+						type="boolean"; //$NON-NLS-1$
+                    }
 	                break;
             }
             if (type != null) {
