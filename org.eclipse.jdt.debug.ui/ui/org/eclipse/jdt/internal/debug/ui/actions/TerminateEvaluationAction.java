@@ -8,6 +8,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -35,7 +36,7 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 			public void run() {
 				fTerminated= false;
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(3000);
 				} catch (InterruptedException e) {
 					return;
 				}
@@ -44,7 +45,10 @@ public class TerminateEvaluationAction implements IObjectActionDelegate, IDebugE
 					final Display display= JDIDebugUIPlugin.getStandardDisplay();
 						display.asyncExec(new Runnable() {
 							public void run() {
-								MessageDialog.openInformation(display.getActiveShell(), ActionMessages.getString("TerminateEvaluationActionTerminate_Evaluation_1"), ActionMessages.getString("TerminateEvaluationActionAttempts_to_terminate_an_evaluation_can_only_stop_a_series_of_statements._The_currently_executing_statement_(such_as_a_method_invocation)_cannot_be_interrupted._2")); //$NON-NLS-1$ //$NON-NLS-2$
+								MessageDialog dialog = new MessageDialog(display.getActiveShell(), ActionMessages.getString("TerminateEvaluationActionTerminate_Evaluation_1"), null, //$NON-NLS-1$
+									ActionMessages.getString("TerminateEvaluationActionAttempts_to_terminate_an_evaluation_can_only_stop_a_series_of_statements._The_currently_executing_statement_(such_as_a_method_invocation)_cannot_be_interrupted._2"), MessageDialog.INFORMATION, new String[] { IDialogConstants.OK_LABEL }, 0); //$NON-NLS-1$
+								dialog.setBlockOnOpen(false);
+								dialog.open();
 							}
 					});
 				}
