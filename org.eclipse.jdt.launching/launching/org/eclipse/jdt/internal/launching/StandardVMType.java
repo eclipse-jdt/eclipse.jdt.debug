@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -99,14 +100,19 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * location. If the info does not exist, create it using the given Java
 	 * executable.
 	 */
-	protected LibraryInfo getLibraryInfo(File javaHome, File javaExecutable) {
+	protected synchronized LibraryInfo getLibraryInfo(File javaHome, File javaExecutable) {
 		
 		// See if we already know the info for the requested VM.  If not, generate it.
 		String installPath = javaHome.getAbsolutePath();
 		LibraryInfo info = LaunchingPlugin.getLibraryInfo(installPath);
 		if (info == null) {
 			info = generateLibraryInfo(javaHome, javaExecutable);
-			LaunchingPlugin.setLibraryInfo(installPath, info);
+			if (info == null) {
+				info = getDefaultLibraryInfo(javaHome);
+			} else {
+			    // only persist if we were able to generate info - see bug 70011
+			    LaunchingPlugin.setLibraryInfo(installPath, info);
+			}
 		} 
 		return info;
 	}	
@@ -426,6 +432,8 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * LibraryDetector</code>), that dumps the system properties for bootpath
 	 * and extension directories. This output is then parsed and cached for
 	 * future reference.
+	 * 
+	 * @return library info or <code>null</code> if none
 	 */	
 	protected LibraryInfo generateLibraryInfo(File javaHome, File javaExecutable) {
 		LibraryInfo info = null;
@@ -462,10 +470,10 @@ public class StandardVMType extends AbstractVMInstallType {
 					p.destroy();
 				}
 			}
-		}		
-			
+		}
 		if (info == null) {
-			info = getDefaultLibraryInfo(javaHome);
+		    // log error that we were unable to generate library info - see bug 70011
+		    LaunchingPlugin.log(MessageFormat.format("Failed to retrieve default libraries for {0}", new String[]{javaHome.getAbsolutePath()})); //$NON-NLS-1$
 		}
 		return info;
 	}
