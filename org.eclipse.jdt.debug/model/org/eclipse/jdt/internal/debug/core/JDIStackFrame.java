@@ -685,7 +685,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public String getSourceName() throws DebugException {
 		try {
-			return getUnderlyingMethod().location().sourceName();
+			Location l = getUnderlyingMethod().location();
+			if (l != null) {
+				return l.sourceName();
+			}
 		} catch (AbsentInformationException e) {
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
