@@ -81,23 +81,28 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		return newEntry;		
 	}
 	
+	/**
+	 * Returns the entries of the given type, or an empty
+	 * collection if none.
+	 * 
+	 * @param entryType
+	 * @return the entries of the given type, or an empty
+	 * collection if none
+	 */
 	public IClasspathEntry[] getEntries(int entryType) {
-		IClasspathEntry[] classpathEntries= null;
 		switch (entryType) {
 			case BOOTSTRAP :
 				if (bootstrapEntries != null) {
-					classpathEntries= bootstrapEntries.getEntries();
+					return bootstrapEntries.getEntries();
 				}
 				break;
 			case USER :
 				if (userEntries != null) {
-					classpathEntries= userEntries.getEntries();
+					return userEntries.getEntries();
 				}
 				break;
-			default :
-				return null;
 		}
-		return classpathEntries;
+		return new IClasspathEntry[0];
 	}
 	
 	public void remove(Object entry) {
