@@ -6,15 +6,36 @@ package org.eclipse.jdt.internal.debug.core;
  */
  
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
-import org.eclipse.jdt.debug.core.*;
+import org.eclipse.jdt.debug.core.IJavaEvaluate;
+import org.eclipse.jdt.debug.core.IJavaEvaluationListener;
+import org.eclipse.jdt.debug.core.IJavaModifiers;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 
-import com.sun.jdi.*;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.Field;
+import com.sun.jdi.LocalVariable;
+import com.sun.jdi.Location;
+import com.sun.jdi.Method;
+import com.sun.jdi.NativeMethodException;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VirtualMachine;
 
 /**
  * Proxy to a stack frame on the target.
@@ -23,91 +44,93 @@ import com.sun.jdi.*;
 public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
-	 * Underlying stack frame
+	 * Underlying JDI stack frame
 	 */
-	protected StackFrame fStackFrame;
+	private StackFrame fStackFrame;
 	/**
 	 * Containing thread
 	 */
-	protected JDIThread fThread;
+	private JDIThread fThread;
 	/**
 	 * Visible variables
 	 */
-	protected List fVariables;
-	
+	private List fVariables;
 	/**
 	 * The method this stack frame is associated with. Cached
 	 * lazily on first access.
 	 */
-	protected Method fMethod= null;
-	
+	private Method fMethod= null;
 	/**
 	 * Whether the variables need refreshing
 	 */
-	protected boolean fRefreshVariables= true;
+	private boolean fRefreshVariables= true;
 
 	/**
 	 * Creates a new stack frame in the given thread.
+	 * 
+	 * @param thread The parent JDI thread
+	 * @param stackFrame The underlying stack frame
 	 */
 	public JDIStackFrame(JDIThread thread, StackFrame stackFrame) {
 		super((JDIDebugTarget)thread.getDebugTarget());
-		fStackFrame= stackFrame;
-		fThread= thread;
+		setUnderlyingStackFrame(stackFrame);
+		setThread(thread);
 	}
 	
 	/**
-	 * @see IDebugElement
+	 * @see IDebugElement#getElementType()
 	 */
 	public int getElementType() {
 		return STACK_FRAME;
 	}	
 	
-	
 	/**
-	 * @see IDebugElement
+	 * @see org.eclipse.debug.core.model.IStackFrame#getThread()
 	 */
 	public IThread getThread() {
 		return fThread;
 	}
 
 	/**
-	 * @see ISuspendResume
+	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
 		return getThread().canResume();
 	}
 
 	/**
-	 * @see ISuspendResume
+	 * @see ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
 		return getThread().canSuspend();
 	}
 
 	/**
-	 * @see IStep.
+	 * @see IStep#canStepInto()
 	 */
 	public boolean canStepInto() {
 		try {
 			return exists() && isTopStackFrame() && getThread().canStepInto();
 		} catch (DebugException e) {
+			logError(e);
 			return false;
 		}
 	}
 
 	/**
-	 * @see IStep.
+	 * @see IStep#canStepOver()
 	 */
 	public boolean canStepOver() {
 		try {
 			return exists() && getThread().canStepOver();
 		} catch (DebugException e) {
+			logError(e);
 			return false;
 		}
 	}
 
 	/**
-	 * @see IStep.
+	 * @see IStep#canStepReturn()
 	 */
 	public boolean canStepReturn() {
 		try {
@@ -117,17 +140,19 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				return exists() && !this.equals(bottomFrame) && getThread().canStepReturn();
 			}
 		} catch (DebugException e) {
+			logError(e);
 		}
 		return false;
 	}
 
 	/**
-	 * Returns the underlying method associated with this stack frame.
+	 * Returns the underlying method associated with this stack frame,
+	 * retreiving the method is necessary.
 	 */
-	Method getUnderlyingMethod() throws DebugException {
+	protected Method getUnderlyingMethod() throws DebugException {
 		if (fMethod == null) {
 			try {
-				fMethod= fStackFrame.location().method();
+				fMethod= getUnderlyingStackFrame().location().method();
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
@@ -136,7 +161,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see IStackFrame
+	 * @see IStackFrame#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
 		List list = getVariables0();
@@ -153,8 +178,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				List allFields= null;
 				try {
 					allFields= method.declaringType().allFields();
-				} catch (VMDisconnectedException e) {
-					return Collections.EMPTY_LIST;
 				} catch (RuntimeException e) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_fields"),new String[] {e.toString()}), e); //$NON-NLS-1$
 				}
@@ -168,7 +191,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					}
 					Collections.sort(fVariables, new Comparator() {
 						public int compare(Object a, Object b) {
-							return sortStaticChildren(a, b);
+							JDIFieldVariable v1= (JDIFieldVariable)a;
+							JDIFieldVariable v2= (JDIFieldVariable)b;
+							try {
+								return v1.getName().compareToIgnoreCase(v2.getName());
+							} catch (DebugException de) {
+								logError(de);
+								return -1;
+							}
 						}
 					});
 				}
@@ -193,49 +223,34 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * Sorts the static variable children lexically
-	 */
-	protected int sortStaticChildren(Object a, Object b) {
-		JDIFieldVariable v1= (JDIFieldVariable)a;
-		JDIFieldVariable v2= (JDIFieldVariable)b;
-		try {
-			return v1.getName().compareToIgnoreCase(v2.getName());
-		} catch (DebugException de) {
-			logError(de);
-			return -1;
-		}
-	}
-	/**
-	 * @see IDebugElement
+	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
 	 */
 	public String getName() throws DebugException {
 		return getMethodName();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaStackFrame#getArgumentTypeNames()
 	 */
 	public List getArgumentTypeNames() throws DebugException {
 		try {
 			return getUnderlyingMethod().argumentTypeNames();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_argument_type_names"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			return Collections.EMPTY_LIST;
 		}
-		return Collections.EMPTY_LIST;
 	}
 
 	/**
-	 * @see IStackFrame
+	 * @see IStackFrame#getLineNumber()
 	 */
 	public int getLineNumber() throws DebugException {
-		if (getThread().isSuspended()) {
+		if (isSuspended()) {
 			try {
-				Location location= fStackFrame.location();
+				Location location= getUnderlyingStackFrame().location();
 				if (location != null) {
 					return location.lineNumber();
 				}
-			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_line_number"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
@@ -244,28 +259,28 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see IStep
+	 * @see IStep#isStepping()
 	 */
 	public boolean isStepping() {
 		return getThread().isStepping();
 	}
 
 	/**
-	 * @see ISuspendResume
+	 * @see ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
 		return getThread().isSuspended();
 	}
 
 	/**
-	 * @see ISuspendResume
+	 * @see ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
 		getThread().resume();
 	}
 
 	/**
-	 * @see IStep.
+	 * @see IStep#stepInto()
 	 */
 	public void stepInto() throws DebugException {
 		if (!canStepInto()) {
@@ -275,7 +290,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see IStep
+	 * @see IStep#stepOver()
 	 */
 	public void stepOver() throws DebugException {
 		if (!canStepOver()) {
@@ -289,7 +304,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see IStep
+	 * @see IStep#stepReturn()
 	 */
 	public void stepReturn() throws DebugException {
 		if (!canStepReturn()) {
@@ -308,7 +323,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see ISuspendResume
+	 * @see ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
 		getThread().suspend();
@@ -323,7 +338,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 	
 	/**
-	 * Update my variables incrementally.
+	 * Incrementally updates this stack frames variables.
+	 * 
+	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
 	protected void updateVariables() throws DebugException {
 		if (fVariables == null) {
@@ -332,12 +349,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 		Method method= getUnderlyingMethod();
 		int index= 0;
-		if (method.isStatic()) {
-			// update statics
-			while (index < fVariables.size() && fVariables.get(index) instanceof JDIFieldVariable) {
-				index++;
-			}
-		} else {
+		if (!method.isStatic()) {
 			// update "this"
 			ObjectReference thisObject= getUnderlyingThisObject();
 			JDIThisVariable oldThisObject= null;
@@ -365,13 +377,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 		List locals= null;
 		try {
-			locals= fStackFrame.visibleVariables();
+			locals= getUnderlyingStackFrame().visibleVariables();
 		} catch (AbsentInformationException e) {
 			locals= new ArrayList(0);
 		} catch (NativeMethodException e) {
 			locals= new ArrayList(0);
-		} catch (VMDisconnectedException e) {
-			return;
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables"),new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -399,9 +409,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see IDropToFrame
+	 * @see IJavaStackFrame#supportsDropToFrame()
 	 */
 	public boolean supportsDropToFrame() {
+		//FIXME 1GH3XDA: ITPDUI:ALL - Drop to frame hangs if after invoke
 		try {
 			JDIThread thread= (JDIThread) getThread();
 			boolean supported = !thread.isTerminated()
@@ -424,8 +435,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 			return false;
 		} catch (DebugException e) {
+			logError(e);
 		} catch (UnsupportedOperationException e) {
-		} catch (VMDisconnectedException e) {
+			logError(e);
 		} catch (RuntimeException e) {
 			internalError(e);
 		}
@@ -433,7 +445,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see IDropToFrame
+	 * @see IJavaStackFrame#dropToFrame()
 	 */
 	public void dropToFrame() throws DebugException {
 		if (supportsDropToFrame()) {
@@ -444,7 +456,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see IVariableLookup
+	 * @see IJavaStackFrame#findVariable(String)
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
 		IVariable[] variables = getVariables();
@@ -475,17 +487,18 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * Helper method that retrieves visible varialbes in this stack frame
+	 * Retrieves visible varialbes in this stack frame
 	 * handling any exceptions. Returns an empty list if there are no
 	 * variables.
+	 * 
+	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
-	List getUnderlyingVisibleVariables() throws DebugException {
+	protected List getUnderlyingVisibleVariables() throws DebugException {
 		List variables= Collections.EMPTY_LIST;
 		try {
-			variables= fStackFrame.visibleVariables();
+			variables= getUnderlyingStackFrame().visibleVariables();
 		} catch (AbsentInformationException e) {
 		} catch (NativeMethodException e) {
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables_2"),new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -494,37 +507,22 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * Helper method that retrievs 'this' from the stack frame
+	 * Retrieves 'this' from the underlying stack frame.
+	 * Returns <code>null</code> for static stack frames.
+	 * 
+	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
-	ObjectReference getUnderlyingThisObject() throws DebugException {
+	protected ObjectReference getUnderlyingThisObject() throws DebugException {
 		try {
-			return fStackFrame.thisObject();
-		} catch (VMDisconnectedException e) {
+			return getUnderlyingStackFrame().thisObject();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_this"),new String[] {e.toString()}), e); //$NON-NLS-1$
+			return null;
 		}
-		return null;
-	}
-	/**
-	 * Returns the underlying JDI StackFrame
-	 */
-	StackFrame getUnderlyingStackFrame() {
-		return fStackFrame;
 	}
 	
 	/**
-	 * Sets the underlying JDI StackFrame. Called by a thread
-	 * when incrementally updating after a step has completed.
-	 */
-	void setUnderlyingStackFrame(StackFrame frame) {
-		fStackFrame = frame;
-	}
-
-	
-	/**
-	 * Returns the Java stack frame adapter for this stack frame
-	 * 
-	 * @see IAdaptable
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IJavaStackFrame.class || adapter == IJavaModifiers.class) {
@@ -534,9 +532,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * Evaluates the snippet in the context of this stack frame
 	 *
-	 * @see IJavaStackFrame
+	 * @see IJavaEvaluate#evaluate(String, IJavaEvaluationListener, IJavaProject)
 	 */
 	public void evaluate(String snippet, IJavaEvaluationListener listener, IJavaProject project) throws DebugException {
 		IEvaluationContext underlyingContext = ((JDIDebugTarget)getDebugTarget()).getEvaluationContext(project);
@@ -544,7 +541,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaEvaluate#evaluate(String, IJavaEvaluationListener, IEvaluationContext)
 	 */
 	public void evaluate(String snippet, IJavaEvaluationListener listener, IEvaluationContext evaluationContext) throws DebugException {
 		((JDIThread)getThread()).verifyEvaluation(evaluationContext);
@@ -553,148 +550,137 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}	
 	
 	/**
-	 * @see IJavaEvaluate
+	 * @see IJavaEvaluate#canPerformEvaluation()
 	 */
 	public boolean canPerformEvaluation() {
 		return ((IJavaThread)getThread()).canPerformEvaluation();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaStackFrame#getSignature()
 	 */
 	public String getSignature() throws DebugException {
 		try {
 			return getUnderlyingMethod().signature();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			return null;
 		}
-		return getUnknownMessage();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaStackFrame#getDeclaringTypeName()
 	 */
 	public String getDeclaringTypeName() throws DebugException {
 		try {
 			return getUnderlyingMethod().declaringType().name();
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_declaring_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			return null;
 		}
-		return getUnknownMessage();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaStackFrame#getReceivingTypeName()
 	 */
 	public String getReceivingTypeName() throws DebugException {
 		try {
-			ObjectReference thisObject = fStackFrame.thisObject();
+			ObjectReference thisObject = getUnderlyingStackFrame().thisObject();
 			if (thisObject == null) {
 				return getDeclaringTypeName();
 			} else {
 				return thisObject.referenceType().name();
 			}
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_receiving_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			return null;
 		}
-		return getUnknownMessage();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaStackFrame#getMethodName()
 	 */
 	public String getMethodName() throws DebugException {
 		try {
 			return getUnderlyingMethod().name();	
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			return null;
 		}
-		return getUnknownMessage();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
-	 */
-	public boolean isAbstract() throws DebugException {
-		return getUnderlyingMethod().isAbstract();
-	}
-	
-	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaStackFrame#isNative()
 	 */
 	public boolean isNative() throws DebugException {
 		return getUnderlyingMethod().isNative();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaStackFrame#isStaticInitializer()
 	 */
 	public boolean isStaticInitializer() throws DebugException {
 		return getUnderlyingMethod().isStaticInitializer();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaModifiers#isFinal()
 	 */
 	public boolean isFinal() throws DebugException {
 		return getUnderlyingMethod().isFinal();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaStackFrame#isSynchronized()
 	 */
 	public boolean isSynchronized() throws DebugException {
 		return getUnderlyingMethod().isSynchronized();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaModifiers#isSynthetic()
 	 */
 	public boolean isSynthetic() throws DebugException {
 		return getUnderlyingMethod().isSynthetic();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaModifiers#isPublic()
 	 */
 	public boolean isPublic() throws DebugException {
 		return getUnderlyingMethod().isPublic();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaModifiers#isPrivate()
 	 */
 	public boolean isPrivate() throws DebugException {
 		return getUnderlyingMethod().isPrivate();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaModifiers#isProtected()
 	 */
 	public boolean isProtected() throws DebugException {
 		return getUnderlyingMethod().isProtected();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaModifiers#isPackagePrivate()
 	 */
 	public boolean isPackagePrivate() throws DebugException {
 		return getUnderlyingMethod().isPackagePrivate();
 	}
 	
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaModifiers#isStatic()
 	 */
 	public boolean isStatic() throws DebugException {
 		return getUnderlyingMethod().isStatic();
 	}
 		
 	/**
-	 * @see IJavaStackFrame
+	 * @see IJavaStackFrame#getSourceName()
 	 */
 	public String getSourceName() throws DebugException {
 		try {
@@ -703,7 +689,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				return l.sourceName();
 			}
 		} catch (AbsentInformationException e) {
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -723,7 +708,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		return getThread().canTerminate() || getDebugTarget().canTerminate();
+		boolean exists= false;
+		try {
+			exists= exists();
+		} catch (DebugException e) {
+			logError(e);
+		}
+		return exists && getThread().canTerminate() || getDebugTarget().canTerminate();
 	}
 
 	/**
@@ -742,5 +733,25 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		} else {
 			getDebugTarget().terminate();
 		}
+	}
+	
+	protected StackFrame getUnderlyingStackFrame() {
+		return fStackFrame;
+	}
+	
+	/**
+	 * Sets the underlying JDI StackFrame. Called by a thread
+	 * when incrementally updating after a step has completed.
+	 */
+	protected void setUnderlyingStackFrame(StackFrame frame) {
+		fStackFrame = frame;
+	}
+
+	protected void setThread(JDIThread thread) {
+		fThread = thread;
+	}
+
+	protected void setVariables(List variables) {
+		fVariables = variables;
 	}
 }
