@@ -30,6 +30,10 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 	public final static int ENABLED=				0x020;
 	/** Flag to render the conditional breakpoint adornment */
 	public final static int CONDITIONAL=				0x040;
+	/** Flag to render the caught breakpoint adornment */
+	public final static int CAUGHT=				0x080;
+	/** Flag to render the uncaught breakpoint adornment */
+	public final static int UNCAUGHT=				0x100;
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
@@ -85,18 +89,43 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 		if (bg == null) {
 			bg= DEFAULT_IMAGE_DATA;
 		}
-			
+		int flags= getFlags();
+		if (((flags & CAUGHT) != 0) || ((flags & UNCAUGHT) != 0)) {
+			drawUnderlays(flags);
+		} 
 		drawImage(bg, 0, 0);
-		drawOverlays();
+		drawOverlays(flags);
+	}
+
+	protected void drawUnderlays(int flags) {
+		ImageData bg= null;
+		if ((flags & CAUGHT) != 0) {
+			//underlay
+			if ((flags & ENABLED) !=0) {
+				bg= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT.getImageData();
+			} else {
+				bg= JavaDebugImages.DESC_OBJS_CAUGHT_BREAKPOINT_DISABLED.getImageData();
+			}
+		} if ((flags & UNCAUGHT) != 0) {
+			//underlay
+			if ((flags & ENABLED) !=0) {
+				bg= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT.getImageData();
+			} else {
+				bg= JavaDebugImages.DESC_OBJS_UNCAUGHT_BREAKPOINT_DISABLED.getImageData();
+			}
+		}
+		if (bg != null) {
+			drawImage(bg, 0, 0);
+		}
 	}	
+	
 	
 	/**
 	 * Add any overlays to the image as specified in the flags.
 	 */
-	private void drawOverlays() {
+	protected void drawOverlays(int flags) {
 		
 		ImageData data= null;
-		int flags= getFlags();
 		if ((flags & IS_OUT_OF_SYNCH) != 0) {
 			int x= getSize().x;
 			int y= 0;
@@ -122,6 +151,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 				y -= data.height;
 				drawImage(data, x, y);
 			}
+			
 			if ((flags & CONDITIONAL) != 0) {
 				int x= getSize().x;
 				int y= 0;
@@ -157,7 +187,7 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 					y -= data.height;
 					drawImage(data, x, y);
 				}
-			}	
+			}
 		}
 	}
 	

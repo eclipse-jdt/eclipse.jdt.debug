@@ -642,9 +642,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (!enabled) {
 			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_EXCEPTION_DISABLED, flags);
 		} else if (exception.isChecked()) {
-			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_EXCEPTION, flags);
+			if (exception.getFilters().length == 0) {
+				descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_EXCEPTION, flags);
+			} else {
+				descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_SCOPED_BREAKPOINT, flags);
+			}
 		} else {
-			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_ERROR, flags);
+			if (exception.getFilters().length == 0) {
+				descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_ERROR, flags);
+			} else {
+				//currently do not have scoped icon
+				descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_ERROR, flags);
+			}
+		
 		}
 		return fDebugImageRegistry.get(descriptor);
 	}
@@ -805,6 +815,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					if (mBreakpoint.isExit()) {
 						flags |= JDIImageDescriptor.EXIT;
 					}
+				}
+			} else if (breakpoint instanceof IJavaExceptionBreakpoint) {
+				IJavaExceptionBreakpoint eBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
+				if (eBreakpoint.isCaught()) {
+					flags |= JDIImageDescriptor.CAUGHT;
+				}
+				if (eBreakpoint.isUncaught()) {
+					flags |= JDIImageDescriptor.UNCAUGHT;
 				}
 			}
 		} catch (CoreException e) {

@@ -60,6 +60,14 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_CONDITIONAL_BREAKPOINT= NAME_PREFIX + "conditional_ovr.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED= NAME_PREFIX + "conditional_ovr_disabled.gif";	//$NON-NLS-1$
 
+	public static final String IMG_OBJS_SCOPED_BREAKPOINT= NAME_PREFIX + "scopedexceptionbp_obj.gif";	//$NON-NLS-1$
+	
+	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT= NAME_PREFIX + "uncaught_underlay.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "uncaught_underlay.gif";	//$NON-NLS-1$
+	
+	public static final String IMG_OBJS_CAUGHT_BREAKPOINT= NAME_PREFIX + "caught_underlay.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_CAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "caught_underlay.gif";	//$NON-NLS-1$
+	
 	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
 
 	/*
@@ -92,6 +100,14 @@ public class JavaDebugImages {
 	
 	public static final ImageDescriptor DESC_OBJS_CONDITIONAL_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_CONDITIONAL_BREAKPOINT);
 	public static final ImageDescriptor DESC_OBJS_CONDITIONAL_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED);
+	
+	public static final ImageDescriptor DESC_OBJS_SCOPED_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_SCOPED_BREAKPOINT);
+	
+	public static final ImageDescriptor DESC_OBJS_UNCAUGHT_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_UNCAUGHT_BREAKPOINT);
+	public static final ImageDescriptor DESC_OBJS_UNCAUGHT_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED);
+	
+	public static final ImageDescriptor DESC_OBJS_CAUGHT_BREAKPOINT= createManaged(T_OVR, IMG_OBJS_CAUGHT_BREAKPOINT);
+	public static final ImageDescriptor DESC_OBJS_CAUGHT_BREAKPOINT_DISABLED= createManaged(T_OVR, IMG_OBJS_CAUGHT_BREAKPOINT_DISABLED);
 	
 	public static final ImageDescriptor DESC_OBJS_ERROR= createManaged(T_OBJ, IMG_OBJS_ERROR);
 	

@@ -167,10 +167,10 @@
          </menu>
          <action
                id="org.eclipse.jdt.debug.ui.actions.debugJavaApp"
-               hoverIcon="icons/full/ctool16/java_app.gif"
+               hoverIcon="icons/full/ctool16/debug_java_app.gif"
                class="org.eclipse.jdt.internal.debug.ui.launcher.DebugJavaApplicationAction"
-               disabledIcon="icons/full/dtool16/java_app.gif"
-               icon="icons/full/etool16/java_app.gif"
+               disabledIcon="icons/full/dtool16/debug_java_app.gif"
+               icon="icons/full/etool16/debug_java_app.gif"
                helpContextId="debug_java_application_action_context"
                label="%DebugJavaApplicationAction.label"
                menubarPath="org.eclipse.ui.run/jdtDebugLaunchGroup"
@@ -178,10 +178,10 @@
          </action>
          <action
                id="org.eclipse.jdt.debug.ui.actions.runJavaApp"
-               hoverIcon="icons/full/ctool16/java_app.gif"
+               hoverIcon="icons/full/ctool16/run_java_app.gif"
                class="org.eclipse.jdt.internal.debug.ui.launcher.RunJavaApplicationAction"
-               disabledIcon="icons/full/dtool16/java_app.gif"
-               icon="icons/full/etool16/java_app.gif"
+               disabledIcon="icons/full/dtool16/run_java_app.gif"
+               icon="icons/full/etool16/run_java_app.gif"
                helpContextId="run_java_application_context"
                label="%RunJavaApplicationAction.label"
                menubarPath="org.eclipse.ui.run/jdtRunLaunchGroup"
