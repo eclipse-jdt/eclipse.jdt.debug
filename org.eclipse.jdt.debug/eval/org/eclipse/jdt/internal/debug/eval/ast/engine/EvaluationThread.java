@@ -178,5 +178,10 @@ class EvaluationThread {
 		fEvaluating = false;
 		fEngine.evaluationThreadFinished(this);
 		fListener.evaluationComplete(result);
+		fExpression= null;
+		fContext= null;
+		fThread= null;
+		fListener= null;
+		fException= null;
 	}
 }
