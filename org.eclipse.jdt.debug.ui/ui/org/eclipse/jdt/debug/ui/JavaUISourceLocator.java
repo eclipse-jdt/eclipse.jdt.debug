@@ -131,14 +131,19 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 * @param typeName the name of the type for which source
 	 *  could not be located
 	 */
-	private void showDebugSourcePage(IJavaStackFrame frame) {
-		try {
-			SourceLookupDialog dialog= new SourceLookupDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), frame.getDeclaringTypeName(), frame.getLaunch().getLaunchConfiguration(), this);
-			dialog.open();
-			fAllowedToAsk= !dialog.isNotAskAgain();
-		} catch (DebugException e) {
-			JDIDebugUIPlugin.log(e);
-		}
+	private void showDebugSourcePage(final IJavaStackFrame frame) {
+		Runnable prompter = new Runnable() {
+			public void run() {
+				try {
+					SourceLookupDialog dialog= new SourceLookupDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), frame.getDeclaringTypeName(), frame.getLaunch().getLaunchConfiguration(), JavaUISourceLocator.this);
+					dialog.open();
+					fAllowedToAsk= !dialog.isNotAskAgain();
+				} catch (DebugException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+			}
+		};
+		JDIDebugUIPlugin.getStandardDisplay().syncExec(prompter);
 	}
 	
 	/**
