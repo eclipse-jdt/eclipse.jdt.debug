@@ -20,9 +20,10 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.AbstractJavaVariablesContentProvider;
 
 /**
- * Customized content provider for classes extendion org.eclipse.swt.widgets.Composite.
+ * Customized content provider for classes extending org.eclipse.swt.widgets.Composite.
  * This content provider presents the layout and Control children as the only child
  * variables of such classes.
+ * 
  * @since 3.0
  */
 public class SWTCompositeVariablesContentProvider extends AbstractJavaVariablesContentProvider {
@@ -70,6 +71,8 @@ public class SWTCompositeVariablesContentProvider extends AbstractJavaVariablesC
 	 * @see org.eclipse.jdt.debug.ui.IJavaVariablesContentProvider#hasVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
 	public boolean hasVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
+		// It's safe to always return true here, since a Composite will always have a
+		// layout, even if it's null
 		return true;
 	}
 
