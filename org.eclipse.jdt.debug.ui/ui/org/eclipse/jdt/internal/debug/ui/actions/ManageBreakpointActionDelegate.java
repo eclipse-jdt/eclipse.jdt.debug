@@ -48,7 +48,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	private IType fType= null;
 	private ITextEditor fTextEditor= null;
 	private IWorkbenchWindow fWorkbenchWindow= null;
-	private final static String ADD_TEXT= ActionMessages.getString("ManageBreakpointActionDelegate.Add_Break&point@Ctrl+B_2"); //$NON-NLS-1$
 
 	public ManageBreakpointActionDelegate() {
 	}

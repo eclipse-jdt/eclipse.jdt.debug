@@ -49,11 +49,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActionDelegate {
-	
-	public ManageWatchpointActionDelegate() {
-		super();
-		fAddText= ActionMessages.getString("ManageWatchpointAction.Add_&Watchpoint_1"); //$NON-NLS-1$
-	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)

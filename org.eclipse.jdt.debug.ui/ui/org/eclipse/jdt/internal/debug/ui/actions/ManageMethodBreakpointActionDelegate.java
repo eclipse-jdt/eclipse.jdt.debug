@@ -32,12 +32,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Adds a method breakpoint on a single selected element of type IMethod 
  */
 public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpointActionDelegate {
-	
-	public ManageMethodBreakpointActionDelegate() {
-		super();
-		fAddText= ActionMessages.getString("ManageMethodBreakpointAction.&Add_Method_Breakpoint_1"); //$NON-NLS-1$
-	}
-	
+		
 	protected IJavaBreakpoint getBreakpoint(IMember method) {
 		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 		IBreakpoint[] breakpoints= breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
