@@ -59,7 +59,7 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		if (navigateMenu != null) {
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenOnSelectionAction);
 			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenOnTypeSelectionAction);
-			navigateMenu.updateAll(true);
+			navigateMenu.setVisible(true);
 		}
 	}
 	
@@ -69,7 +69,6 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 	public void setActiveEditor(IEditorPart part) {
 		
 		super.setActiveEditor(part);
-		
 		fSnippetEditor= null;
 		if (part instanceof JavaSnippetEditor) {
 			fSnippetEditor= (JavaSnippetEditor) part;

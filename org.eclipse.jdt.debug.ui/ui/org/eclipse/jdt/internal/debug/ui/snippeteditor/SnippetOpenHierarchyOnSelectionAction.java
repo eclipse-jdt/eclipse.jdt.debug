@@ -43,23 +43,6 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		setDialogTitle(SnippetMessages.getString("SnippetOpenHierarchyOnSelectionDialog.title")); //$NON-NLS-1$
 		setDialogMessage(SnippetMessages.getString("SnippetOpenHierarchyOnSelectionDialog.message")); //$NON-NLS-1$
 	}
-
-	/**
-	 * @see AbstractOpenJavaElementAction#open
-	 */
-	/*protected void open(ISourceReference element) throws JavaModelException, PartInitException {
-		if (element instanceof IMember) {
-			OpenTypeHierarchyUtil.open(new IMember[] { (IMember) element }, fEditor.getSite().getWorkbenchWindow());
-		} else {
-			getShell().getDisplay().beep();
-		}
-	}*/
-	/**
-	 * @see SelectionDispatchAction#selectionChanged(ITextSelection)
-	 */
-	protected void selectionChanged(ITextSelection selection) {
-		super.selectionChanged(selection);
-	}
 	
 	protected void setDialogTitle(String title) {
 		fDialogTitle= title;
@@ -93,7 +76,7 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		fEditor= contentEditor;
 	}
 	
-		/**
+	/**
 	 * Filters out source references from the given code resolve results.
 	 * A utility method that can be called by subclassers. 
 	 */
