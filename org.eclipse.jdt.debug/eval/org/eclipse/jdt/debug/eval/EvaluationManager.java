@@ -28,7 +28,6 @@ import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
  */
 public class EvaluationManager {
 		
-	
 	/**
 	 * Not to be instantiated
 	 */
