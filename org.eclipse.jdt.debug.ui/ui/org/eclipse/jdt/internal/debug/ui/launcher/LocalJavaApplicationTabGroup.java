@@ -20,8 +20,8 @@ public class LocalJavaApplicationTabGroup extends AbstractLaunchConfigurationTab
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new JavaMainTab(),
 			new JavaArgumentsTab(),
-			new JavaClasspathTab(),
 			new JavaJRETab(),
+			new JavaClasspathTab(),
 			new JavaSourceLookupTab(),
 			new CommonTab()
 		};
