@@ -310,8 +310,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		 * has been changed, record it.
 		 */
 		public boolean visit(IResourceDelta delta) {
-			if (0 == (delta.getKind() & IResourceDelta.CHANGED))
+			if (delta == null || 0 == (delta.getKind() & IResourceDelta.CHANGED)) {
 				return false;
+			}
 			IResource resource= delta.getResource();
 			if (resource != null) {
 				switch (resource.getType()) {
