@@ -83,12 +83,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Collection of breakpoints added to this target. Values are of type <code>IJavaBreakpoint</code>.
 	 */
 	protected List fBreakpoints;
-		
-	/**
-	 * A flag indicating that a hot code replace is being performed, and
-	 * breakpoint "installed" attributes should not be altered.
-	 */
-	protected boolean fInHCR = false;
 	 
 	/**
 	 * The thread death object used to interrupt threads on the target.
@@ -426,32 +420,27 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * </ul>
 	 */
 	public void typesHaveChanged(String[] typeNames) throws DebugException {
-		try {
-			fInHCR = true;
 			
-			if (supportsHotCodeReplace()) {
-				org.eclipse.jdi.hcr.VirtualMachine vm= (org.eclipse.jdi.hcr.VirtualMachine) fVirtualMachine;
-				int result= org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE;
-				try {
-					result= vm.classesHaveChanged(typeNames);
-				} catch (RuntimeException e) {
-					targetRequestFailed(ERROR_HCR, e);
-				}
-				switch (result) {
-					case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_SUCCESS:
-						break;
-					case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_IGNORED:
-						targetRequestFailed(ERROR_HCR_IGNORED, null);
-						break;
-					case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE:
-						targetRequestFailed(ERROR_HCR_FAILED, null);
-						break;
-				}
-			} else {
-				notSupported(ERROR_HCR_NOT_SUPPORTED);
+		if (supportsHotCodeReplace()) {
+			org.eclipse.jdi.hcr.VirtualMachine vm= (org.eclipse.jdi.hcr.VirtualMachine) fVirtualMachine;
+			int result= org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE;
+			try {
+				result= vm.classesHaveChanged(typeNames);
+			} catch (RuntimeException e) {
+				targetRequestFailed(ERROR_HCR, e);
 			}
-		} finally {
-			fInHCR = false;
+			switch (result) {
+				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_SUCCESS:
+					break;
+				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_IGNORED:
+					targetRequestFailed(ERROR_HCR_IGNORED, null);
+					break;
+				case org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE:
+					targetRequestFailed(ERROR_HCR_FAILED, null);
+					break;
+			}
+		} else {
+			notSupported(ERROR_HCR_NOT_SUPPORTED);
 		}
 		
 	}
@@ -558,13 +547,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	protected void handleVMDisconnect(VMDisconnectEvent event) {
 		terminate0();
 	}
-	
-	/**
-	 * Returns whether this target is in hot code replace
-	 */
-	public boolean inHCR() {
-		return fInHCR;
-	}	
 	
 	/**
 	 * @see ISuspendResume
