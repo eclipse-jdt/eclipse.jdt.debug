@@ -13,7 +13,13 @@ Contributors:
 
 import java.io.File;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -22,6 +28,7 @@ import org.eclipse.jdt.launching.sourcelookup.DirectorySourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaProjectSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
+import org.eclipse.jdt.launching.sourcelookup.PackageFragmentRootSourceLocation;
 
 /**
  * Tests source location creation/restoration.
@@ -76,4 +83,101 @@ public class SourceLocationTests extends AbstractDebugTest {
 		assertEquals("2nd locations not equal", location2, locations[1]);
 		assertEquals("3rd locations not equal", location3, locations[2]);
 	}
+	
+	public void testPackageFragmentRootLocationMemento() throws Exception {
+		IResource res = getJavaProject().getProject().getFolder("src");
+		IPackageFragmentRoot root = getJavaProject().getPackageFragmentRoot(res);
+		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
+		String memento = location.getMemento();
+		IJavaSourceLocation restored = new PackageFragmentRootSourceLocation();
+		restored.initializeFrom(memento);
+		assertEquals("root locations should be equal", location, restored);
+	}
+	
+	public void testEmptyPackageFragmentRootLocationMemento() throws Exception {
+		IJavaSourceLocation location = new PackageFragmentRootSourceLocation();
+		String memento = location.getMemento();
+		IJavaSourceLocation restored = new PackageFragmentRootSourceLocation();
+		restored.initializeFrom(memento);
+		assertEquals("root locations should be equal", location, restored);
+	}	
+		
+	public void testPositiveSourceFolderSourceLocation() throws Exception {
+		IResource res = getJavaProject().getProject().getFolder("src");
+		IPackageFragmentRoot root = getJavaProject().getPackageFragmentRoot(res);
+		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
+		
+		Object source = location.findSourceElement("Breakpoints");
+		assertTrue("Did not find source for 'Breakpoints'", source instanceof ICompilationUnit);
+		ICompilationUnit cu = (ICompilationUnit)source;
+		assertEquals("Did not find source for 'Breakpoints'", cu.getElementName(), "Breakpoints.java");
+		
+		source = location.findSourceElement("org.eclipse.debug.tests.targets.InfiniteLoop");
+		assertTrue("Did not find source for 'InfiniteLoop'", source instanceof ICompilationUnit);
+		cu = (ICompilationUnit)source;
+		assertEquals("Did not find source for 'Breakpoints'", cu.getElementName(), "InfiniteLoop.java");
+	}
+	
+	public void testNegativeSourceFolderSourceLocation() throws Exception {
+		IResource res = getJavaProject().getProject().getFolder("src");
+		IPackageFragmentRoot root = getJavaProject().getPackageFragmentRoot(res);
+		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(root);
+		
+		Object source = location.findSourceElement("DoesNotExist");
+		assertNull("Should not have found source", source);
+		
+		source = location.findSourceElement("org.eclipse.DoesNotExist");
+		assertNull("Should not have found source", source);
+	}	
+	
+	public void testPositiveSystemLibrarySourceLocation() throws Exception {
+		IClasspathEntry[] cpes = getJavaProject().getRawClasspath();
+		IClasspathEntry lib = null;
+		for (int i = 0; i < cpes.length; i++) {
+			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_VARIABLE) {
+				if (cpes[i].getPath().equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
+					lib = cpes[i];
+					break;
+				}
+			}
+		}
+		assertNotNull("Could not find JRE_LIB entry", lib);
+		
+		IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots(lib);
+		assertEquals("Should be one root for JRE_LIB", roots.length, 1);
+		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(roots[0]);
+		
+		Object source = location.findSourceElement("java.lang.Object");
+		assertTrue("Did not find source for 'Object'", source instanceof IClassFile);
+		IClassFile cf = (IClassFile)source;
+		assertEquals("Did not find source for 'Object'", "Object.class", cf.getElementName());
+		
+		source = location.findSourceElement("java.util.Vector$1");
+		assertTrue("Did not find source for 'Vector$1'", source instanceof IClassFile);
+		cf = (IClassFile)source;
+		assertEquals("Did not find source for 'Vector$1'", "Vector$1.class", cf.getElementName());
+	}
+	
+	public void testNegativeSystemLibrarySourceLocation() throws Exception {
+		IClasspathEntry[] cpes = getJavaProject().getRawClasspath();
+		IClasspathEntry lib = null;
+		for (int i = 0; i < cpes.length; i++) {
+			if (cpes[i].getEntryKind() == IClasspathEntry.CPE_VARIABLE) {
+				if (cpes[i].getPath().equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
+					lib = cpes[i];
+					break;
+				}
+			}
+		}
+		assertNotNull("Could not find JRE_LIB entry", lib);
+		
+		IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots(lib);
+		assertEquals("Should be one root for JRE_LIB", roots.length, 1);
+		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(roots[0]);
+		
+		Object source = location.findSourceElement("xyz.abc.Object");
+		assertNull("Should not find source", source);
+
+	}	
+		
 }
