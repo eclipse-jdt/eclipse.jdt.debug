@@ -34,6 +34,10 @@ public class BreakpointLocationVerifier {
 				lastToken= 0;
 
 				while (token != TerminalSymbols.TokenNameEOF) {
+					if (token == TerminalSymbols.TokenNameERROR) {
+						lineNumber++;
+						break;
+					}
 					if (token == TerminalSymbols.TokenNameIdentifier) {
 						if (lastToken == TerminalSymbols.TokenNameIdentifier || isPrimitiveTypeToken(lastToken)
 						|| lastToken == TerminalSymbols.TokenNameRBRACKET) {
@@ -48,6 +52,10 @@ public class BreakpointLocationVerifier {
 								break;
 							}
 							continue;
+						}
+						if (lastToken == TerminalSymbols.TokenNameMULTIPLY) {
+							//internal comment line starting with '*'
+							break;
 						}
 					} else if (isNonIdentifierValidToken(token)) {
 						found= true;
@@ -68,6 +76,7 @@ public class BreakpointLocationVerifier {
 								found= true;
 								break;
 							}
+							
 							continue;
 					}
 						
@@ -80,7 +89,7 @@ public class BreakpointLocationVerifier {
 			} catch (BadLocationException ble) {
 				return -1;
 			} catch (InvalidInputException ie) {
-				return -1;
+				lineNumber++;
 			}
 		}
 		// add 1 to the line number - Document is 0 based, JDI is 1 based
