@@ -168,7 +168,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		}
 		IVMInstall vm = getVMInstall(configuration);
 		if (vm == null) {
-			abort(MessageFormat.format("JRE {0} does not exist.", new String[]{id}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
+			abort("The specified JRE installation does not exist.", null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
 		}
 		File location = vm.getInstallLocation();
 		if (location == null) {
