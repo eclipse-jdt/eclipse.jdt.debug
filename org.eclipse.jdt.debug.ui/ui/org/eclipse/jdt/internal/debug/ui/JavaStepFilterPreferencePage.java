@@ -116,6 +116,12 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	public void init(IWorkbench workbench) {
 	}
 	
+	private void handleFilterViewerKeyPress(KeyEvent event) {
+		if (event.character == SWT.DEL && event.stateMask == 0) {
+			removeFilters();
+		}
+	}
+	
 	/**
 	 * Create a group to contain the step filter related widgetry
 	 */
@@ -179,7 +185,12 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 					fRemoveFilterButton.setEnabled(true);					
 				}
 			}
-		});		
+		});	
+		fFilterViewer.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				handleFilterViewerKeyPress(event);
+			}
+		});	
 		
 		createStepFilterButtons(container);
 		createStepFilterCheckboxes(container);
@@ -524,6 +535,10 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			}
 		}		
 	}
+	
+	/**
+	 * Removes the selected filters.
+	 */
 	private void removeFilters() {
 		IStructuredSelection selection = (IStructuredSelection)fFilterViewer.getSelection();		
 		fStepFilterContentProvider.removeFilters(selection.toArray());
