@@ -32,6 +32,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
+import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 
 /**
  * 
@@ -153,7 +154,7 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 							return result.hasErrors();
 						}
 						public String[] getErrorMessages() {
-							return result.getErrorMessages();
+							return JavaInspectExpression.getErrorMessages(result);
 						}
 						public String getExpressionText() {
 							return result.getSnippet();

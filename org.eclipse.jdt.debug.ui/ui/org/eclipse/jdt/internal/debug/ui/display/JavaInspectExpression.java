@@ -11,8 +11,11 @@
 package org.eclipse.jdt.internal.debug.ui.display;
 
  
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
@@ -21,6 +24,8 @@ import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+
+import com.sun.jdi.InvocationException;
 
 /**
  * An implementation of an expression produced from the
@@ -144,9 +149,26 @@ public class JavaInspectExpression extends PlatformObject implements IErrorRepor
 	 * @see org.eclipse.debug.core.model.IErrorReportingExpression#getErrorMessages()
 	 */	
 	public String[] getErrorMessages() {	
-		if (fResult == null) {
+		return getErrorMessages(fResult);
+	}
+	
+	public static String[] getErrorMessages(IEvaluationResult result) {
+		if (result == null) {
 			return new String[0];
 		}
-		return fResult.getErrorMessages();
+		String messages[]= result.getErrorMessages();
+		if (messages.length > 0) {
+			return messages;
+		}
+		DebugException exception= result.getException();
+		if (exception != null ) {
+			Throwable cause= exception.getStatus().getException();
+			if (cause instanceof InvocationException) {
+				String  nestedMessage= ((InvocationException) cause).exception().referenceType().name();
+				return new String[] { MessageFormat.format(DisplayMessages.getString("JavaInspectExpression.0"), new String[] {nestedMessage}) }; //$NON-NLS-1$
+			}
+			return new String[] { exception.getMessage() };
+		}
+		return new String[0];
 	}
 }
