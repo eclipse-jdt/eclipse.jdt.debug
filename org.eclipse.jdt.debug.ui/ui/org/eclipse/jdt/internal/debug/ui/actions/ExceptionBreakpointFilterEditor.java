@@ -281,8 +281,8 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		
 		// Add type button
 		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
-		fAddTypeButton.setText("Add &Type...");
-		fAddTypeButton.setToolTipText("Choose a Java type to add it to the breakpoint scope");
+		fAddTypeButton.setText("Add &Class...");
+		fAddTypeButton.setToolTipText("Choose a Java Class to Add It to the Breakpoint Scope");
 		gd = getButtonGridData(fAddTypeButton);
 		fAddTypeButton.setLayoutData(gd);
 		fAddTypeButton.addSelectionListener(new SelectionListener() {
@@ -296,7 +296,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		// Add package button
 		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
 		fAddPackageButton.setText("Add &Package...");
-		fAddPackageButton.setToolTipText("Choose a package to add to the breakpoint scope");
+		fAddPackageButton.setToolTipText("Choose a Package to Add to the Breakpoint Scope");
 		gd = getButtonGridData(fAddPackageButton);
 		fAddPackageButton.setLayoutData(gd);
 		fAddPackageButton.addSelectionListener(new SelectionListener() {
@@ -427,7 +427,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		// if it's invalid, beep and leave sitting in the editor
 		else if (!validateEditorInput(trimmedValue)) {
 			fInvalidEditorText= trimmedValue;
-			fEditorText.setText("Invalid step filter. Return to continue; escape to exit.");
+			fEditorText.setText("Invalid expression. Return to continue; escape to exit.");
 			fEditorText.getDisplay().beep();			
 			return;
 		// otherwise, commit the new value if not a duplicate
@@ -514,7 +514,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		}
 	
 		dialog.setTitle("Add Package to Scope"); 
-		dialog.setMessage("Select a package to add to the scope of the breakpoint");
+		dialog.setMessage("&Select a package to add to the scope of the breakpoint");
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
@@ -536,16 +536,16 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		SelectionDialog dialog= null;
 		try {
 			dialog= JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell),
-				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_TYPES, false);
+				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
 		} catch (JavaModelException jme) {
-			String title= "Add Type to Scope";
-			String message= "Could not open type selection dialog for scope definition";
+			String title= "Add Class to Scope";
+			String message= "Could not open class selection dialog for scope definition";
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 	
-		dialog.setTitle("Add Type to Scope");
-		dialog.setMessage("Select a type to add to the scope of the breakpoint");
+		dialog.setTitle("Add class to Scope");
+		dialog.setMessage("&Select a class to add to the scope of the breakpoint");
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}

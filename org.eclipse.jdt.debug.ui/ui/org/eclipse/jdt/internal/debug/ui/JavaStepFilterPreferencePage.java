@@ -525,7 +525,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		SelectionDialog dialog= null;
 		try {
 			dialog= JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell),
-				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_TYPES, false);
+				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
 		} catch (JavaModelException jme) {
 			String title= DebugUIMessages.getString("JavaDebugPreferencePage.Add_type_to_step_filters_20"); //$NON-NLS-1$
 			String message= DebugUIMessages.getString("JavaDebugPreferencePage.Could_not_open_type_selection_dialog_for_step_filters_21"); //$NON-NLS-1$

@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Image;
 public class FilterLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 	private static final Image IMG_CUNIT =
-		JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CUNIT);
+		JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
 	private static final Image IMG_PKG =
 		JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 
