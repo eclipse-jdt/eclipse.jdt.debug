@@ -1,9 +1,11 @@
 package org.eclipse.jdt.launching;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -15,7 +17,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -802,29 +803,6 @@ public final class JavaRuntime {
 	 */
 	private static IJavaModel getJavaModel() {
 		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-	}
-	
-	
-	/**
-	 * Returns a collection of runtime classpath entries that are defined in the
-	 * specified attribute of the given launch configuration.
-	 * 
-	 * @param configuration launch configuration
-	 * @param attribute attribute name containing the list of entries
-	 * @return collection of runtime classpath entries that are defined in the
-	 *  specified attribute of the given launch configuration
-	 * @exception CoreException if unable to retrieve the list
-	 */
-	private static IRuntimeClasspathEntry[] recoverRuntimePath(ILaunchConfiguration configuration, String attribute) throws CoreException {
-		List entries = (List)configuration.getAttribute(attribute, Collections.EMPTY_LIST);
-		IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[entries.size()];
-		Iterator iter = entries.iterator();
-		int i = 0;
-		while (iter.hasNext()) {
-			rtes[i] = newRuntimeClasspathEntry((String)iter.next());
-			i++;
-		}
-		return rtes;		
 	}
 	
 	/**
