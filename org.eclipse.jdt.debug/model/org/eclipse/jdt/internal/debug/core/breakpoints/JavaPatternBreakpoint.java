@@ -55,7 +55,6 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 				// add attributes
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
 				addPatternAndHitCount(attributes, sourceName, pattern, hitCount);
-				addMessageAttribute(attributes, lineNumber, hitCount);
 				// set attributes
 				ensureMarker().setAttributes(attributes);
 				

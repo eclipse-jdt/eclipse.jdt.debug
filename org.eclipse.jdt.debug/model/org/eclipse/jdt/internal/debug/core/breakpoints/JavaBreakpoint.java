@@ -787,11 +787,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public void setHitCount(int count) throws CoreException {	
 		if (getHitCount() != count) {
 			if (!isEnabled() && count > -1) {
-				setAttributes(new String []{ENABLED, HIT_COUNT, EXPIRED, IMarker.MESSAGE},
-					new Object[]{Boolean.TRUE, new Integer(count), Boolean.FALSE, getMarkerMessage(count, getSuspendPolicy())});
+				setAttributes(new String []{ENABLED, HIT_COUNT, EXPIRED},
+					new Object[]{Boolean.TRUE, new Integer(count), Boolean.FALSE});
 			} else {
-				setAttributes(new String[]{HIT_COUNT, EXPIRED, IMarker.MESSAGE},
-					new Object[]{new Integer(count), Boolean.FALSE, getMarkerMessage(count, getSuspendPolicy())});
+				setAttributes(new String[]{HIT_COUNT, EXPIRED},
+					new Object[]{new Integer(count), Boolean.FALSE});
 			}
 			recreate();
 		}
@@ -833,7 +833,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void setSuspendPolicy(int suspendPolicy) throws CoreException {
 		if (getSuspendPolicy() != suspendPolicy) {
-			setAttributes(new String[]{SUSPEND_POLICY, IMarker.MESSAGE}, new Object[]{new Integer(suspendPolicy), getMarkerMessage(getHitCount(), suspendPolicy)});
+			setAttributes(new String[]{SUSPEND_POLICY}, new Object[]{new Integer(suspendPolicy)});
 		}
 		recreate();
 	}

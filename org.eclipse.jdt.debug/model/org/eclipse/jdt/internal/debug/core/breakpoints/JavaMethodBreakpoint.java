@@ -141,7 +141,6 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
 				addMethodNameAndSignature(attributes, methodName, methodSignature);
 				addTypeNameAndHitCount(attributes, typePattern, hitCount);
-				addMessageAttribute(attributes, lineNumber, hitCount);
 				attributes.put(ENTRY, new Boolean(entry));
 				attributes.put(EXIT, new Boolean(exit));
 				attributes.put(NATIVE, new Boolean(nativeOnly));

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
@@ -41,9 +42,12 @@ import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
+import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesDialog;
 import org.eclipse.jface.dialogs.Dialog;
@@ -67,7 +71,7 @@ import com.sun.jdi.ObjectReference;
  * debug action visibility.
  * </ul>
  */
-public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventSetListener, IPropertyChangeListener, IJavaBreakpointListener, ILaunchListener {
+public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventSetListener, IPropertyChangeListener, IJavaBreakpointListener, ILaunchListener, IBreakpointsListener {
 	
 	/**
 	 * Singleton options manager
@@ -189,7 +193,9 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 */
 	public void startup() throws CoreException {
 		// lazy initialization will occur on the first launch
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		DebugPlugin debugPlugin = DebugPlugin.getDefault();
+		debugPlugin.getLaunchManager().addLaunchListener(this);
+		debugPlugin.getBreakpointManager().addBreakpointListener(this);
 		EvaluationContextManager.startup();
 	}
 	
@@ -198,8 +204,10 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 */
 	public void shutdown() throws CoreException {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		DebugPlugin.getDefault().removeDebugEventListener(this);
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		DebugPlugin debugPlugin = DebugPlugin.getDefault();
+		debugPlugin.removeDebugEventListener(this);
+		debugPlugin.getLaunchManager().removeLaunchListener(this);
+		debugPlugin.getBreakpointManager().removeBreakpointListener(this);
 		if (!JDIDebugUIPlugin.getDefault().isShuttingDown()) {
 			//avert restoring the preference store at shutdown
 			JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
@@ -763,4 +771,56 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	public void launchRemoved(ILaunch launch) {
 	}
 	
+	/**
+	 * Adds message attributes to java breakpoints.
+	 * 
+	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
+	 */
+	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				for (int i = 0; i < breakpoints.length; i++) {
+					IBreakpoint breakpoint = breakpoints[i];
+					if (breakpoint instanceof IJavaBreakpoint) {
+						String info = fLabelProvider.getText(breakpoint);
+						String type = DebugUIMessages.getString("JavaDebugOptionsManager.Breakpoint___1"); //$NON-NLS-1$
+						if (breakpoint instanceof IJavaMethodBreakpoint || breakpoint instanceof IJavaMethodEntryBreakpoint) {
+							type = DebugUIMessages.getString("JavaDebugOptionsManager.Method_breakpoint___2"); //$NON-NLS-1$
+						} else if (breakpoint instanceof IJavaWatchpoint) {
+							type = DebugUIMessages.getString("JavaDebugOptionsManager.Watchpoint___3");  //$NON-NLS-1$
+						} else if (breakpoint instanceof IJavaLineBreakpoint) {
+							type = DebugUIMessages.getString("JavaDebugOptionsManager.Line_breakpoint___4"); //$NON-NLS-1$
+						}
+						breakpoint.getMarker().setAttribute(IMarker.MESSAGE, type + info);
+					}
+				}
+			}
+		};
+		try {
+			ResourcesPlugin.getWorkspace().run(runnable, null);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+	}
+
+	/**
+	 * Updates message attributes on java breakpoints.
+	 * 
+	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
+	 */
+	public void breakpointsChanged(
+		IBreakpoint[] breakpoints,
+		IMarkerDelta[] deltas) {
+			breakpointsAdded(breakpoints);
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
+	 */
+	public void breakpointsRemoved(
+		IBreakpoint[] breakpoints,
+		IMarkerDelta[] deltas) {
+	}
+
 }

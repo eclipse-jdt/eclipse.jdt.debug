@@ -99,7 +99,6 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 				// add attributes
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
 				addTypeNameAndHitCount(attributes, typeName, hitCount);
-				addMessageAttribute(attributes, lineNumber, hitCount);
 				// configure the field handle
 				addFieldName(attributes, fieldName);
 				// configure the access and modification flags to defaults

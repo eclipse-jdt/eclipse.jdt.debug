@@ -131,7 +131,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				// add attributes
 				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
 				addTypeNameAndHitCount(attributes, typeName, hitCount);
-				addMessageAttribute(attributes, lineNumber, hitCount);
 				// set attributes
 				ensureMarker().setAttributes(attributes);
 				
@@ -142,12 +141,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		run(wr);
 	}
 	
-	/**
-	 * Sets the marker message for hovering over the breakpoint
-	 */
-	protected void addMessageAttribute(Map attributes, int lineNumber, int hitCount) throws CoreException {
-		attributes.put(IMarker.MESSAGE, getMarkerMessage(hitCount, IJavaLineBreakpoint.SUSPEND_THREAD, lineNumber));
-	}
 	/**
 	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
 	 */
@@ -604,8 +597,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		if (condition != null && condition.trim().length() == 0) {
 			condition = null;
 		}
-		setAttributes(new String []{CONDITION, IMarker.MESSAGE},
-			new Object[]{condition, getMarkerMessage(isConditionEnabled(), condition, getHitCount(), getSuspendPolicy(), getLineNumber())});
+		setAttributes(new String []{CONDITION}, new Object[]{condition});
 		recreate();
 	}
 
@@ -621,14 +613,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		return message.toString();
 	}
 	
-	protected String getMarkerMessage(int hitCount, int suspendPolicy) throws CoreException {
-		return getMarkerMessage(isConditionEnabled(), getCondition(), hitCount, suspendPolicy, getLineNumber());
-	}
-	
-	protected String getMarkerMessage(int hitCount, int suspendPolicy, int lineNumber) throws CoreException {
-		return getMarkerMessage(isConditionEnabled(), getCondition(), hitCount, suspendPolicy, lineNumber);
-	}
-
 	/**
 	 * @see IJavaLineBreakpoint#isConditionEnabled()
 	 */
@@ -640,7 +624,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * @see IJavaLineBreakpoint#setConditionEnabled(boolean)
 	 */
 	public void setConditionEnabled(boolean conditionEnabled) throws CoreException {	
-		setAttributes(new String[]{CONDITION_ENABLED, IMarker.MESSAGE}, new Object[]{new Boolean(conditionEnabled), getMarkerMessage(conditionEnabled, getCondition(), getHitCount(), getSuspendPolicy(), getLineNumber())});
+		setAttributes(new String[]{CONDITION_ENABLED}, new Object[]{new Boolean(conditionEnabled)});
 		recreate();
 	}
 	/**
