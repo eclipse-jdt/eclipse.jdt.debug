@@ -22,6 +22,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -30,6 +33,7 @@ import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Test to close the workbench, since debug tests do not run in the UI
@@ -79,9 +83,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		for (int i = 0; i < configs.length; i++) {
 			configs[i].delete();
 		}
-		
-		// turn of suspend on  uncaught exceptions
-		setSuspendOnUncaughtExceptionsPreference(false);
 		
 		// create launch configurations
 		createLaunchConfiguration("Breakpoints");
@@ -138,6 +139,20 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 	}
 	
 	/**
+	 * Set up preferences that need to be changed for the tests
+	 */
+	public void testSetPreferences() {
+		// Turn of suspend on  uncaught exceptions
+		setSuspendOnUncaughtExceptionsPreference(false);
+		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
+		// Don't prompt for perspective switching
+		preferenceStore.setValue(IDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.ALWAYS);
+		preferenceStore.setValue(IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, AlwaysNeverDialog.ALWAYS);
+		// Set the timeout preference to a high value, to avoid timeouts while testing
+		JDIDebugModel.getPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, 10000);
+	}
+	
+	/**
 	 * Create a project with non-default, mulitple output locations.
 	 * 
 	 * @throws Exception
@@ -158,13 +173,5 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		assertNotNull("No default JRE", vm);
 		JavaProjectHelper.addVariableEntry(project, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
 				
-	}	
-	
-	/**
-	 * Sets the timeout preference to a high value, to avoid timeouts while testing
-	 *
-	 */
-	public void testSetJDITimeout() {
-		JDIDebugModel.getPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, 10000);
 	}
 }
