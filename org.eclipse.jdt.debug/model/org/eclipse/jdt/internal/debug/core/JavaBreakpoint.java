@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
+import com.sun.jdi.InterfaceType;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
@@ -245,6 +246,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * breakpoint to be installed in.
 	 */
 	protected boolean installableReferenceType(ReferenceType type) {
+		if (type instanceof InterfaceType) {
+			return false;
+		}
 		String installableType= getReferenceTypeName();
 		String queriedType= type.name();
 		if (installableType == null || queriedType == null) {
@@ -286,6 +290,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @return Whether a request was created
 	 */
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+		if (type instanceof InterfaceType) {
+			return false;
+		} 
 		EventRequest request= newRequest(target, type);
 		if (request == null) {
 			return false;
