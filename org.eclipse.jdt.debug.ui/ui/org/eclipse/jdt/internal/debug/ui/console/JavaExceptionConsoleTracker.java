@@ -31,9 +31,9 @@ public class JavaExceptionConsoleTracker extends JavaConsoleTracker {
             int length = event.getLength();
             IOConsole console = getConsole();
             String exceptionName;
-            exceptionName = console.getDocument().get(offset, length);
+            exceptionName = console.getDocument().get(offset, length - 1);
             IHyperlink link = new JavaExceptionHyperLink(console, exceptionName);
-            getConsole().addHyperlink(link, offset, length);
+            getConsole().addHyperlink(link, offset, length - 1);
         } catch (BadLocationException e) {
         }
     }
