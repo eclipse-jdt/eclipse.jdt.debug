@@ -1060,7 +1060,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		if (!isAvailable()) {
 			return;
 		}
-		if (breakpoint instanceof JavaBreakpoint) {
+		if (supportsBreakpoint(breakpoint)) {
 			try {
 				((JavaBreakpoint)breakpoint).addToTarget(this);
 				if (!getBreakpoints().contains(breakpoint)) {
@@ -1085,7 +1085,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		if (!isAvailable()) {
 			return;
 		}		
-		if (breakpoint instanceof JavaBreakpoint) {	
+		if (supportsBreakpoint(breakpoint)) {	
 			try {
 				((JavaBreakpoint)breakpoint).changeForTarget(this);
 			} catch (CoreException e) {
@@ -1106,7 +1106,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		if (!isAvailable()) {
 			return;
 		}		
-		if (breakpoint instanceof JavaBreakpoint) {
+		if (supportsBreakpoint(breakpoint)) {
 			try {
 				((JavaBreakpoint)breakpoint).removeFromTarget(this);
 				getBreakpoints().remove(breakpoint);
