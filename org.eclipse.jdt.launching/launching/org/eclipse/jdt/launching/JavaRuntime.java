@@ -528,39 +528,42 @@ public final class JavaRuntime {
 		switch (entry.getType()) {
 			case IRuntimeClasspathEntry.VARIABLE:
 				if (entry.getVariableName().equals(JRELIB_VARIABLE)) {
+					int kind = IRuntimeClasspathEntry.STANDARD_CLASSES;
 					IVMInstall configJRE = computeVMInstall(configuration);
-					IVMInstall defJRE = getDefaultVMInstall();
-					if (!configJRE.equals(defJRE)) {
-						IPath path = new Path(JRE_CONTAINER);
-						path = path.append(new Path(configJRE.getVMInstallType().getId()));
-						path = path.append(new Path(configJRE.getName()));
-						JREContainer jre = new JREContainer(configJRE, path);
-						IClasspathEntry[] cpes = jre.getClasspathEntries();
-						resolved = new IRuntimeClasspathEntry[cpes.length];
-						for (int i = 0; i < cpes.length; i++) {
-							resolved[i] = newRuntimeClasspathEntry(cpes[i]);
-							resolved[i].setClasspathProperty(entry.getClasspathProperty());
-						}
+					LibraryLocation[] libs = configJRE.getLibraryLocations();
+					if (libs == null) {
+						libs = configJRE.getVMInstallType().getDefaultLibraryLocations(configJRE.getInstallLocation());
+					} else {
+						kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
+					}
+					resolved = new IRuntimeClasspathEntry[libs.length];
+					for (int i = 0; i < libs.length; i++) {
+						resolved[i] = newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
+						resolved[i].setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
+						resolved[i].setSourceAttachmentRootPath(libs[i].getPackageRootPath());
+						resolved[i].setClasspathProperty(kind);
 					}
 				}
 				break;
 			case IRuntimeClasspathEntry.CONTAINER:
 				if (entry.getVariableName().equals(JRE_CONTAINER)) {
+					int kind = IRuntimeClasspathEntry.STANDARD_CLASSES;
 					IVMInstall configJRE = computeVMInstall(configuration);
-					// XXX: should be project JRE once supported
-					IVMInstall defJRE = getDefaultVMInstall();
-					if (!configJRE.equals(defJRE)) {
-						IPath path = new Path(JRE_CONTAINER);
-						path = path.append(new Path(configJRE.getVMInstallType().getId()));
-						path = path.append(new Path(configJRE.getName()));
-						JREContainer jre = new JREContainer(configJRE, path);
-						IClasspathEntry[] cpes = jre.getClasspathEntries();
-						resolved = new IRuntimeClasspathEntry[cpes.length];
-						for (int i = 0; i < cpes.length; i++) {
-							resolved[i] = newRuntimeClasspathEntry(cpes[i]);
-							resolved[i].setClasspathProperty(entry.getClasspathProperty());
-						}
-					}					
+					LibraryLocation[] libs = configJRE.getLibraryLocations();
+					if (libs == null) {
+						libs = configJRE.getVMInstallType().getDefaultLibraryLocations(configJRE.getInstallLocation());
+					} else {
+						kind = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
+					}
+					resolved = new IRuntimeClasspathEntry[libs.length];
+					for (int i = 0; i < libs.length; i++) {
+						resolved[i] = newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
+						resolved[i].setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
+						resolved[i].setSourceAttachmentRootPath(libs[i].getPackageRootPath());
+						resolved[i].setClasspathProperty(kind);
+					}
+				} else {
+					// XXX: other container resolve container entries
 				}
 			default:
 				break;

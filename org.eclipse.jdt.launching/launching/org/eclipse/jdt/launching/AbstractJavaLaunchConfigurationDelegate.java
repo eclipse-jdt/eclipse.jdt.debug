@@ -215,10 +215,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		boolean allStandard = true;
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
-				allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
 				IRuntimeClasspathEntry[] resolved = JavaRuntime.resolve(entries[i], configuration);
 				for (int j = 0; j < resolved.length; j++) {
 					bootEntries.add(resolved[j].getResolvedPath());
+					allStandard = allStandard && resolved[j].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
 				}
 			}
 		}
