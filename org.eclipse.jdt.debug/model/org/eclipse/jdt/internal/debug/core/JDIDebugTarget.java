@@ -1375,6 +1375,15 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	protected void shutdown() {
 		getEventDispatcher().shutdown();
+		try {
+			if (supportsTerimate()) {
+				terminate();
+			} else if (supportsDisconnect()) {
+				disconnect();
+			}
+		} catch (DebugException e) {
+			JDIDebugPlugin.logError(e);
+		}
 		cleanup();
 	}
 	
