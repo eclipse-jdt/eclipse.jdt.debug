@@ -35,13 +35,6 @@ public class JavaMethodBreakpointIMethodRenameParticipant extends RenameParticip
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#operatesOn(java.lang.Object)
-	 */
-	public boolean operatesOn(Object element) {
-		return fMethod.equals(element);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
