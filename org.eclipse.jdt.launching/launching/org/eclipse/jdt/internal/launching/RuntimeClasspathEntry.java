@@ -189,7 +189,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				case CONTAINER :
 					var = root.getAttribute("containerPath"); //$NON-NLS-1$
 					if (isEmpty(var)) {
-						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_7"), null); //$NON-NLS-1$
+						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_6"), null); //$NON-NLS-1$
 					} else {
 						setClasspathEntry(JavaCore.newContainerEntry(new Path(var)));
 					}

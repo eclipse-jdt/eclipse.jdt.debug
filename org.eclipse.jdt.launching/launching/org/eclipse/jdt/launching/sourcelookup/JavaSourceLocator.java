@@ -343,7 +343,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 						} catch (IllegalAccessException e) {
 							abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_source_location._12"), e); //$NON-NLS-1$
 						} catch (InstantiationException e) {
-							abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_source_location._13"), e); //$NON-NLS-1$
+							abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_source_location._12"), e); //$NON-NLS-1$
 						}
 						location.initializeFrom(data);
 						sourceLocations.add(location);
