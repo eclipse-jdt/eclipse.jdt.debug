@@ -2423,6 +2423,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return javaOwnedMonitors;
 		} catch (IncompatibleThreadStateException e) {
 		} catch (VMDisconnectedException e) {
+		} catch (ObjectCollectedException e) {
 		} catch (TimeoutException e) {
 		}
 		return null;
@@ -2439,6 +2440,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 		} catch (IncompatibleThreadStateException e) {
 		} catch (VMDisconnectedException e) {
+		} catch (ObjectCollectedException e) {
 		} catch (TimeoutException e) {
 		}
 		
