@@ -242,7 +242,15 @@ public final class JavaRuntime {
 	 * 			VM was set or when the default VM has been disposed.
 	 */
 	public static IVMInstall getDefaultVMInstall() {
-		return getVMFromId(getDefaultVMId());
+		IVMInstall install= getVMFromId(getDefaultVMId());
+		if (install.getInstallLocation().exists()) {
+			return install;
+		} else {
+			// if the default JRE goes missing, re-detect
+			fgDefaultVMId = null;
+			detectVMConfiguration();
+			return getDefaultVMInstall();
+		}
 	}
 	
 	private static String getDefaultVMId() {
