@@ -229,6 +229,8 @@ public class VMDefinitionsContainer {
 	 * @throws IOException if this method fails. Reasons include:<ul>
 	 * <li>serialization of the XML document failed</li>
 	 * </ul>
+	 * @throws ParserConfigurationException if creation of the XML document failed
+	 * @throws TransformerException if serialization of the XML document failed
 	 */
 	public String getAsXML() throws ParserConfigurationException, IOException, TransformerException {
 		
