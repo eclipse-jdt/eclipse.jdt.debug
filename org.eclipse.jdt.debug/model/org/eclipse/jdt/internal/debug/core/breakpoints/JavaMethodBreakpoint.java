@@ -291,7 +291,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			}
 			JDIDebugPlugin.log(e);
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
+			target.internalError(e);
 		}			
 		return request;
 	}
@@ -327,9 +327,9 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	}
 	
 	/**
-	 * @see JavaBreakpoint#updateEnabledState(EventRequest)
+	 * @see JavaBreakpoint#updateEnabledState(EventRequest, JDIDebugTarget)
 	 */
-	protected void updateEnabledState(EventRequest request) throws CoreException  {
+	protected void updateEnabledState(EventRequest request, JDIDebugTarget target) throws CoreException  {
 		boolean enabled= isEnabled();
 		if (request instanceof MethodEntryRequest || request instanceof BreakpointRequest) {
 			enabled= enabled && isEntry();
@@ -338,7 +338,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		}
 		
 		if (enabled != request.isEnabled()) {
-			internalUpdateEnabledState(request, enabled);
+			internalUpdateEnabledState(request, enabled, target);
 		}
 	}	
 	

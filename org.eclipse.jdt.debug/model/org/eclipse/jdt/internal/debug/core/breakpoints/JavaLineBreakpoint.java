@@ -259,7 +259,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	protected EventRequest[] newRequests(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		int lineNumber = getLineNumber();			
-		List locations = determineLocations(lineNumber, type);
+		List locations = determineLocations(lineNumber, type, target);
 		if (locations == null || locations.isEmpty()) {
 			// could be an inner type not yet loaded, or line information not available
 			return null;
@@ -294,7 +294,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			} 
 			JDIDebugPlugin.log(e);
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
+			target.internalError(e);
 			return null;
 		}
 		return request;
@@ -311,7 +311,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * Returns a list of locations of the given line number in the given type.
 	 * Returns <code>null</code> if locations cannot be determined.
 	 */
-	protected List determineLocations(int lineNumber, ReferenceType type) {
+	protected List determineLocations(int lineNumber, ReferenceType type, JDIDebugTarget target) {
 		List locations= null;
 		try {
 			locations= type.locationsOfLine(lineNumber);
@@ -337,7 +337,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			return null;
 		} catch (RuntimeException e) {
 			// not able to retrieve line info
-			JDIDebugPlugin.log(e);
+			target.internalError(e);
 			return null;
 		}
 		return locations;

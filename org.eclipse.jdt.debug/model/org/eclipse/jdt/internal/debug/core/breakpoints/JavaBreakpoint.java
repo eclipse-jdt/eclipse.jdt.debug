@@ -29,6 +29,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -408,7 +409,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		configureRequestHitCount(request);
 		configureInstanceFilters(request, target);
 		// Important: only enable a request after it has been configured
-		updateEnabledState(request);
+		updateEnabledState(request, target);
 	}
 	
 	/**
@@ -643,11 +644,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 					JDIDebugPlugin.log(e);
 				}
 			} catch (RuntimeException e) {
-                if (!e.getClass().getName().startsWith("com.sun.jdi")) { //$NON-NLS-1$
-                  // Rethrow non-JDI exceptions
-                  throw e;
-                }
-				JDIDebugPlugin.log(e);
+                target.internalError(e);
 			} finally {
 				deregisterRequest(req, target);
 			}
@@ -660,15 +657,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * with this breakpoint. Set the enabled state of the request
 	 * to the enabled state of this breakpoint.
 	 */
-	protected void updateEnabledState(EventRequest request) throws CoreException  {
-		internalUpdateEnabledState(request, isEnabled());
+	protected void updateEnabledState(EventRequest request, JDIDebugTarget target) throws CoreException  {
+		internalUpdateEnabledState(request, isEnabled(), target);
 	}
 	
 	/**
 	 * Set the enabled state of the given request to the given
 	 * value, also taking into account instance filters.
 	 */
-	protected void internalUpdateEnabledState(EventRequest request, boolean enabled) {
+	protected void internalUpdateEnabledState(EventRequest request, boolean enabled, JDIDebugTarget target) {
 		if (request.isEnabled() != enabled) {
 			// change the enabled state
 			try {
@@ -679,7 +676,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				}
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
-				JDIDebugPlugin.log(e);
+				target.internalError(e);
 			}
 		}
 	}

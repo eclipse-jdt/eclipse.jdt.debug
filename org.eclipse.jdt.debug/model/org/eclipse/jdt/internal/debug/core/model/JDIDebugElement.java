@@ -23,6 +23,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IStepFilters;
+import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.EventDispatcher;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
@@ -191,7 +192,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	public void targetRequestFailed(String message, RuntimeException e) throws DebugException {
-		if (e == null || e.getClass().getName().startsWith("com.sun.jdi")) { //$NON-NLS-1$
+		if (e == null || e.getClass().getName().startsWith("com.sun.jdi") || e instanceof TimeoutException) { //$NON-NLS-1$
 			requestFailed(message, e, DebugException.TARGET_REQUEST_FAILED);
 		} else {
 			throw e;
@@ -260,7 +261,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @param e The internal runtime exception
 	 */
 	public void internalError(RuntimeException e) {
-		if (e.getClass().getName().startsWith("com.sun.jdi")) { //$NON-NLS-1$
+		if (e.getClass().getName().startsWith("com.sun.jdi") || e instanceof TimeoutException) { //$NON-NLS-1$
 			logError(e);
 		} else {
 			throw e;

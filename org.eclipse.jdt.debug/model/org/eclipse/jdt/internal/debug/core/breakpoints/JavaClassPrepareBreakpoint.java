@@ -110,7 +110,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaC
 
 		ClassPrepareRequest request = target.createClassPrepareRequest(referenceTypeName, null, false);
 		configureRequestHitCount(request);
-		updateEnabledState(request);
+		updateEnabledState(request, target);
 		registerRequest(request, target);
 		// TODO: do we show anything for types already loaded?
 		incrementInstallCount();

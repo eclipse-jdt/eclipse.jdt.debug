@@ -245,7 +245,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			target.internalError(e);
 			return request;
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
+            target.internalError(e);
 		}
 		return request;
 	}
@@ -392,29 +392,29 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	
 	
 	/**
-	 * @see JavaBreakpoint#updateEnabledState(EventRequest)
+	 * @see JavaBreakpoint#updateEnabledState(EventRequest, JDIDebugTarget)
 	 */
-	protected void updateEnabledState(EventRequest request) throws CoreException  {
+	protected void updateEnabledState(EventRequest request, JDIDebugTarget target) throws CoreException  {
 		boolean enabled = isEnabled();
 		if (request instanceof AccessWatchpointRequest) {
 			if (isAccess()) {
 				if (enabled != request.isEnabled()) {
-					internalUpdateEnabledState(request, enabled);
+					internalUpdateEnabledState(request, enabled, target);
 				}
 			} else {
 				if (request.isEnabled()) {
-					internalUpdateEnabledState(request, false);
+					internalUpdateEnabledState(request, false, target);
 				}
 			}
 		}
 		if (request instanceof ModificationWatchpointRequest) {
 			if (isModification()) {
 				if (enabled != request.isEnabled()) {
-					internalUpdateEnabledState(request, enabled);
+					internalUpdateEnabledState(request, enabled, target);
 				}
 			} else {
 				if (request.isEnabled()) {
-					internalUpdateEnabledState(request, false);
+					internalUpdateEnabledState(request, false, target);
 				}
 			}
 		}

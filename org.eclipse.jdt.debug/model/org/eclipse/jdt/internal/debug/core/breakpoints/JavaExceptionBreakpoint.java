@@ -165,7 +165,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			}
 			return null;
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
+			target.internalError(e);
 			return null;
 		}	
 		return new EventRequest[]{request};

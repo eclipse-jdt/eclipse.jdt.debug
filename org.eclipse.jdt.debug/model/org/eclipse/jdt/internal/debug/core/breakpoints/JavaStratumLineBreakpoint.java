@@ -226,7 +226,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	 * Returns a list of locations for the given line number in the given type.
 	 * Returns <code>null</code> if a location cannot be determined.
 	 */
-	protected List determineLocations(int lineNumber, ReferenceType type) {
+	protected List determineLocations(int lineNumber, ReferenceType type, JDIDebugTarget target) {
 		List locations;
 		String sourcePath;
 		try {
@@ -254,7 +254,7 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 			return null;
 		} catch (RuntimeException e) {
 			// not able to retrieve line info
-			JDIDebugPlugin.log(e);
+            target.internalError(e);
 			return null;
 		} catch (CoreException e) {
 			// not able to retrieve line info

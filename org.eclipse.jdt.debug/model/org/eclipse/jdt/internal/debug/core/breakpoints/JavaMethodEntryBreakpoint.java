@@ -156,7 +156,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 			}
 			return null;
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.log(e);
+            target.internalError(e);
 			return null;
 		}
 	}
