@@ -110,4 +110,22 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 		}		
 	}
 
+	public void testConditionalStepReturn() throws Exception {
+		String typeName = "ConditionalStepReturn";
+		IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(15, typeName);
+		createConditionalLineBreakpoint(15, typeName, "!bool", true);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, lineBreakpoint);
+			thread = stepReturn((IJavaStackFrame)thread.getTopStackFrame());
+			// should not have suspended at breakpoint
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			assertEquals("Should be in main", "main", frame.getMethodName());
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+
 }

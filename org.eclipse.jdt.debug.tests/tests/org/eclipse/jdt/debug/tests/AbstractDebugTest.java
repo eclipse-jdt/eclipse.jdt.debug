@@ -613,6 +613,23 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
+	 * Performs a step return in the given stack frame and returns when complete.
+	 * 
+	 * @param frame stack frame to step return from
+	 */
+	protected IJavaThread stepReturn(IJavaStackFrame frame) throws Exception {
+		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
+		waiter.setTimeout(DEFAULT_TIMEOUT);
+		
+		frame.stepReturn();
+		
+		Object suspendee= waiter.waitForEvent();
+		setEventSet(waiter.getEventSet());
+		assertNotNull("Program did not suspend.", suspendee);
+		return (IJavaThread) suspendee;
+	}	
+	
+	/**
 	 * Performs a step with filters in the given stack frame and returns when
 	 * complete.
 	 * 
