@@ -100,4 +100,17 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 		assertEquals("Expected 1 result", 1, objects.length);
 		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());
 	}	
+	
+	public void testCaseSensitiveQualifiedSourceLookup() throws Exception {
+		DirectorySourceContainer container = getContainer(false, false);
+		Object[] objects = container.findSourceElements("oRg/eClIpSe/dEbUg/tEsTs/tArGeTs/INfInItELOop.jaVa");
+		if (isFileSystemCaseSensitive()) {
+			// case sensitive - should not find the file
+			assertEquals("Expected 0 files", 0, objects.length);
+		} else {
+			// case insensitive - should find the file
+			assertEquals("Expected 1 result", 1, objects.length);
+			assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());
+		}
+	}		
 }

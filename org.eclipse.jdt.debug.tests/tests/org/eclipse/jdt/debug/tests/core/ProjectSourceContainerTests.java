@@ -85,4 +85,17 @@ public class ProjectSourceContainerTests extends AbstractDebugTest {
 		Object[] objects = container.findSourceElements("a/b/c/InfiniteLoop.java");
 		assertEquals("Expected 0 files", 0, objects.length);
 	}	
+	
+	public void testCaseSensitiveQualifiedSourceLookup() throws Exception {
+		ProjectSourceContainer container = getContainer(false, false);
+		Object[] objects = container.findSourceElements("oRg/eClIpSe/dEbUg/tEsTs/tArGeTs/INfInItELOop.jaVa");
+		if (isFileSystemCaseSensitive()) {
+			// case sensitive - should not find the file
+			assertEquals("Expected 0 files", 0, objects.length);
+		} else {
+			// case insensitive - should find the file
+			assertEquals("Expected 1 result", 1, objects.length);
+			assertEquals("Wrong file", container.getProject().getFile("src/org/eclipse/debug/tests/targets/InfiniteLoop.java"), objects[0]);
+		}
+	}	
 }

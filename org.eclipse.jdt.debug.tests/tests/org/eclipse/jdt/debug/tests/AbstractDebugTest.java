@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
@@ -911,5 +913,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
         }
         return variable;
     }
+	
+	protected boolean isFileSystemCaseSensitive() {
+		return !(new File("A").equals(new File("a")));
+	}
 }
 
