@@ -16,7 +16,6 @@ import java.io.IOException;
 
 import org.eclipse.jdi.internal.GenericSignature;
 import org.eclipse.jdi.internal.MirrorImpl;
-import org.eclipse.jdi.internal.TypeImpl;
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 import org.eclipse.jdi.internal.request.RequestID;
 
