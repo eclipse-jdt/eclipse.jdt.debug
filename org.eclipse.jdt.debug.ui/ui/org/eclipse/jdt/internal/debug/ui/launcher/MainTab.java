@@ -15,6 +15,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -89,11 +90,27 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 
 	private static final String EMPTY_STRING = "";
 	
+	protected void setLaunchDialog(ILaunchConfigurationDialog dialog) {
+		fLaunchConfigurationDialog = dialog;
+	}
+	
+	protected ILaunchConfigurationDialog getLaunchDialog() {
+		return fLaunchConfigurationDialog;
+	}
+	
+	protected void setWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
+		fWorkingCopy = workingCopy;
+	}
+	
+	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
+		return fWorkingCopy;
+	}
+	
 	/**
 	 * @see ILaunchConfigurationTab#createTabControl(TabItem)
 	 */
 	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tabItem) {
-		fLaunchConfigurationDialog = dialog;
+		setLaunchDialog(dialog);
 		
 		Composite comp = new Composite(tabItem.getParent(), SWT.NONE);
 		GridLayout topLayout = new GridLayout();
@@ -238,7 +255,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 	 * @see ILaunchConfigurationTab#setLaunchConfiguration(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy launchConfiguration) {
-		if (launchConfiguration.equals(fWorkingCopy)) {
+		if (launchConfiguration.equals(getWorkingCopy())) {
 			return;
 		}
 		
@@ -246,7 +263,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		updateWidgetsFromConfig(launchConfiguration);
 		setBatchUpdate(false);
 
-		fWorkingCopy = launchConfiguration;
+		setWorkingCopy(launchConfiguration);
 	}
 	
 	/**
@@ -306,53 +323,53 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 	}
 
 	protected void updateConfigFromMain() {
-		if (fWorkingCopy != null) {
-			fWorkingCopy.setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)fMainText.getData(JavaDebugUI.MAIN_TYPE_ATTR));
+		if (getWorkingCopy() != null) {
+			getWorkingCopy().setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)fMainText.getData(JavaDebugUI.MAIN_TYPE_ATTR));
 			refreshStatus();
 		}
 	}
 	
 	protected void updateConfigFromPgmArgs() {
-		if (fWorkingCopy != null) {
+		if (getWorkingCopy() != null) {
 			String pgmArgs = fPrgmArgumentsText.getText();
-			fWorkingCopy.setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, pgmArgs);
+			getWorkingCopy().setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, pgmArgs);
 			refreshStatus();
 		}
 	}
 	
 	protected void updateConfigFromJRE() {
-		if (fWorkingCopy != null) {
+		if (getWorkingCopy() != null) {
 			int vmIndex = fJRECombo.getSelectionIndex();
 			if (vmIndex > 0) {
 				VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
 				String vmID = vmStandin.getId();
-				fWorkingCopy.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmID);
+				getWorkingCopy().setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmID);
 				String vmTypeID = vmStandin.getVMInstallType().getId();
-				fWorkingCopy.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, vmTypeID);
+				getWorkingCopy().setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, vmTypeID);
 				refreshStatus();
 			}
 		}
 	}
 	
 	protected void updateConfigFromVMArgs() {
-		if (fWorkingCopy != null) {
+		if (getWorkingCopy() != null) {
 			String vmArgs = fVMArgumentsText.getText();
-			fWorkingCopy.setAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, vmArgs);
+			getWorkingCopy().setAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, vmArgs);
 			refreshStatus();
 		}
 	}
 	
 	protected void updateConfigFromWorkingDirectory() {
-		if (fWorkingCopy != null) {
+		if (getWorkingCopy() != null) {
 			String workingDir = fWorkingDirText.getText();
-			fWorkingCopy.setAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, workingDir);
+			getWorkingCopy().setAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, workingDir);
 			refreshStatus();
 		}
 	}
 	
 	protected void refreshStatus() {
 		if (!isBatchUpdate()) {
-			fLaunchConfigurationDialog.refreshStatus();
+			getLaunchDialog().refreshStatus();
 		}
 	}
 	
@@ -472,13 +489,17 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		}
 		
 		IType type = (IType)results[0];
+		StringBuffer buffer = new StringBuffer(type.getFullyQualifiedName());
+		buffer.append(" (");
+		buffer.append(type.getJavaProject().getProject().getName());
+		buffer.append(')');
 		
 		// The order of these two statements is significant.  We must save the 
 		// type's handle id first, since setting the text will trigger a modify
 		// event, which results in updating the working config with the
 		// type's handle identifier
 		fMainText.setData(JavaDebugUI.MAIN_TYPE_ATTR, type.getHandleIdentifier());
-		fMainText.setText(type.getFullyQualifiedName());
+		fMainText.setText(buffer.toString());
 	}
 	
 	/**
