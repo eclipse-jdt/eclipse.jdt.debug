@@ -54,6 +54,7 @@ import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
+import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
@@ -419,7 +420,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return model thread
 	 */
 	protected JDIThread createThread(ThreadReference thread) {
-		JDIThread jdiThread= new JDIThread(this, thread);
+		JDIThread jdiThread= null;
+		try {
+			jdiThread= new JDIThread(this, thread);
+		} catch (ObjectCollectedException exception) {
+			// ObjectCollectionException can be thrown if the thread has already
+			// completed (exited) in the VM.
+			return null;
+		}
 		if (isDisconnected()) {
 			return null;
 		}
