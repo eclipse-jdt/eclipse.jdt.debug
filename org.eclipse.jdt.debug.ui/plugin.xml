@@ -244,7 +244,6 @@
                id="org.eclipse.jdt.debug.ui.Watch"
                hoverIcon="icons/full/etool16/watch_exp.gif"
                class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
-               definitionId="org.eclipse.jdt.debug.ui.Watch"
                disabledIcon="icons/full/dtool16/watch_exp.gif"
                enablesFor="+"
                icon="icons/full/etool16/watch_exp.gif"
