@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.ui.DefaultVariablesContentProvider;
+import org.eclipse.debug.ui.DefaultObjectBrowser;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
@@ -33,56 +33,56 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-import org.eclipse.jdt.debug.ui.IJavaVariablesContentProvider;
+import org.eclipse.jdt.debug.ui.IJavaObjectBrowser;
 
-public class JavaVariablesContentProvider extends DefaultVariablesContentProvider {
+public class JavaObjectBrowser extends DefaultObjectBrowser {
 
 	/**
 	 * Mapping of fully qualified type names to <code>IConfigurationElements</code>
-	 * that describe Java variables content providers.
+	 * that describe Java object browsers.
 	 */
 	private Map fConfigElementMap;
 	
 	/**
-	 * Mapping of fully qualified type names to <code>IJavaVariablesContentProvider</code>s.
+	 * Mapping of fully qualified type names to <code>IJavaObjectBrowser</code>s.
 	 */
-	private Map fContentProviderMap;
+	private Map fObjectBrowserMap;
 	
-	public JavaVariablesContentProvider() {
+	public JavaObjectBrowser() {
 		loadConfigElementMap();
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IVariablesContentProvider#getVariableChildren(org.eclipse.debug.core.model.IVariable)
+	 * @see org.eclipse.debug.ui.IObjectBrowser#getChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.debug.core.model.IValue)
 	 */
-	public IVariable[] getVariableChildren(IDebugView view, IValue value) throws DebugException {
-		IJavaVariablesContentProvider contentProvider = getContentProvider(value);		
-		if (contentProvider == null) {
-			return super.getVariableChildren(view, value);
+	public IVariable[] getChildren(IDebugView view, IValue value) throws DebugException {
+		IJavaObjectBrowser objectBrowser = getObjectBrowser(value);		
+		if (objectBrowser == null) {
+			return super.getChildren(view, value);
 		}
-		IJavaVariable[] result = contentProvider.getVariableChildren(view, (IJavaValue)value);
+		IJavaVariable[] result = objectBrowser.getChildren(view, (IJavaValue)value);
 		// If specified content provider can't get children, defer to the default content provider
 		if (result == null) {
-			return super.getVariableChildren(view, value);
+			return super.getChildren(view, value);
 		}
 		return result;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IVariablesContentProvider#hasVariableChildren(org.eclipse.debug.core.model.IVariable)
+	 * @see org.eclipse.debug.ui.IObjectBrowser#hasChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.debug.core.model.IValue)
 	 */
-	public boolean hasVariableChildren(IDebugView view, IValue value) throws DebugException {
-		IJavaVariablesContentProvider contentProvider = getContentProvider(value);		
-		if (contentProvider == null) {
-			return super.hasVariableChildren(view, value);
+	public boolean hasChildren(IDebugView view, IValue value) throws DebugException {
+		IJavaObjectBrowser objectBrowser = getObjectBrowser(value);		
+		if (objectBrowser == null) {
+			return super.hasChildren(view, value);
 		}
-		return contentProvider.hasVariableChildren(view, (IJavaValue)value);
+		return objectBrowser.hasChildren(view, (IJavaValue)value);
 	}
 
-	protected IJavaVariablesContentProvider getContentProvider(IValue value) throws DebugException {
+	protected IJavaObjectBrowser getObjectBrowser(IValue value) throws DebugException {
 		IJavaValue javaValue = (IJavaValue) value;
-		IJavaVariablesContentProvider contentProvider = getContentProviderForValue(javaValue);
-		return contentProvider;
+		IJavaObjectBrowser objectBrowser = getObjectBrowserForValue(javaValue);
+		return objectBrowser;
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 	 * up the class and interface hierarchy at a time.  This ensures that the content provider
 	 * 'closest' to the type of the specified value is returned first.
 	 */
-	protected IJavaVariablesContentProvider getContentProviderForValue(IJavaValue javaValue) throws DebugException {
+	protected IJavaObjectBrowser getObjectBrowserForValue(IJavaValue javaValue) throws DebugException {
 		Set checkedInterfaces = new HashSet();
 		
 		// Only consider values whose types are classes.  Contributed content providers are
@@ -103,9 +103,9 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 		while (javaClassType != null) {
 			
 			// Retrieve the content provider for the current class, if one was declared
-			IJavaVariablesContentProvider contentProvider = getExecutableExtension(javaClassType);
-			if (contentProvider != null) {
-				return contentProvider;			
+			IJavaObjectBrowser objectBrowser = getExecutableExtension(javaClassType);
+			if (objectBrowser != null) {
+				return objectBrowser;			
 			}
 			
 			// Start by checking the interfaces the current class directly implements
@@ -126,9 +126,9 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 					}
 					
 					// If we get a match on this interface, we're done
-					contentProvider = getExecutableExtension(interfaceType);
-					if (contentProvider != null) {
-						return contentProvider;
+					objectBrowser = getExecutableExtension(interfaceType);
+					if (objectBrowser != null) {
+						return objectBrowser;
 					}
 					
 					// Make sure we don't consider this interface again
@@ -159,10 +159,10 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 	}
 	
 	/**
-	 * Return an instance of <code>IJavaVariablesContentProvider</code> that corresponds
+	 * Return an instance of <code>IJavaObjectBrowser</code> that corresponds
 	 * to the specified java type.
 	 */
-	private IJavaVariablesContentProvider getExecutableExtension(IJavaType javaType) throws DebugException {
+	private IJavaObjectBrowser getExecutableExtension(IJavaType javaType) throws DebugException {
 		
 		// Get the config element.  If there is none, then the specified java type
 		// has not been registered
@@ -173,8 +173,8 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 		}
 		
 		// Retrieve the content provider.  If none is found, create one.
-		IJavaVariablesContentProvider contentProvider = getContentProviderByTypeName(typeName);
-		if (contentProvider == null) {	
+		IJavaObjectBrowser objectBrowser = getObjectBrowserByTypeName(typeName);
+		if (objectBrowser == null) {	
 			Object executable = null;		
 			try {
 				executable = JDIDebugUIPlugin.createExtension(configElement, "class"); //$NON-NLS-1$
@@ -182,26 +182,26 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 				JDIDebugUIPlugin.log(ce);
 				return null;
 			}
-			if (!(executable instanceof IJavaVariablesContentProvider)) {
+			if (!(executable instanceof IJavaObjectBrowser)) {
 				String classAttribute = configElement.getAttribute("class"); //$NON-NLS-1$
-				JDIDebugUIPlugin.logErrorMessage(DebugUIMessages.getString("JavaVariablesContentProvider.4") + classAttribute + DebugUIMessages.getString("JavaVariablesContentProvider.5"));				 //$NON-NLS-1$ //$NON-NLS-2$
+				JDIDebugUIPlugin.logErrorMessage(DebugUIMessages.getString("JavaObjectBrowser.4") + classAttribute + DebugUIMessages.getString("JavaObjectBrowser.5"));				 //$NON-NLS-1$ //$NON-NLS-2$
 				return null;
 			}	
-			contentProvider = (IJavaVariablesContentProvider) executable;
-			fContentProviderMap.put(typeName, contentProvider);		
+			objectBrowser = (IJavaObjectBrowser) executable;
+			fObjectBrowserMap.put(typeName, objectBrowser);		
 		}
-		return contentProvider;
+		return objectBrowser;
 	}
 
 	private IConfigurationElement getConfigElement(String typeName) throws DebugException {
 		return (IConfigurationElement) fConfigElementMap.get(typeName);
 	}
 	
-	private IJavaVariablesContentProvider getContentProviderByTypeName(String typeName) {
-		if (fContentProviderMap == null) {
-			fContentProviderMap = new HashMap();
+	private IJavaObjectBrowser getObjectBrowserByTypeName(String typeName) {
+		if (fObjectBrowserMap == null) {
+			fObjectBrowserMap = new HashMap();
 		}
-		return (IJavaVariablesContentProvider) fContentProviderMap.get(typeName);		
+		return (IJavaObjectBrowser) fObjectBrowserMap.get(typeName);		
 	}
 
 	/**
@@ -209,7 +209,7 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 	 */
 	protected void loadConfigElementMap() {
 		IPluginDescriptor descriptor = JDIDebugUIPlugin.getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IJavaDebugUIConstants.EXTENSION_POINT_JAVA_VARIABLES_CONTENT_PROVIDERS);
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IJavaDebugUIConstants.EXTENSION_POINT_JAVA_OBJECT_BROWSERS);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		
 		fConfigElementMap = new HashMap(10);

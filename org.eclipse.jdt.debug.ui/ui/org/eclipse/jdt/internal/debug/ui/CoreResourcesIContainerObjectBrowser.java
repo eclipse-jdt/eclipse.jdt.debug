@@ -16,24 +16,24 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.debug.ui.AbstractJavaVariablesContentProvider;
+import org.eclipse.jdt.debug.ui.AbstractJavaObjectBrowser;
 
 /**
- * Customized content provider for classes implementing org.eclipse.core.resources.IContainer.
- * This content provider presents IResource children as the only child variables of such classes.
+ * Customized object browser for classes implementing org.eclipse.core.resources.IContainer.
+ * This object browser presents IResource children as the only child variables of such classes.
  * 
  * @since 3.0
  */
-public class CoreResourcesIContainerVariablesContentProvider extends AbstractJavaVariablesContentProvider {
+public class CoreResourcesIContainerObjectBrowser extends AbstractJavaObjectBrowser {
 
 	private static final String MEMBERS_METHOD_SELECTOR = "members";	//$NON-NLS-1$
 	private static final String MEMBERS_METHOD_SIGNATURE = "()[Lorg/eclipse/core/resources/IResource;"; //$NON-NLS-1$
 	private static final IJavaValue[] EMPTY_VALUE_ARRAY = new IJavaValue[0];
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.IJavaVariablesContentProvider#getVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
+	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#getChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
-	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
+	public IJavaVariable[] getChildren(IDebugView view, IJavaValue value) throws DebugException {
 		IJavaObject objectValue = getObjectValue(value);
 		if (objectValue == null) {
 			return null;
@@ -53,9 +53,9 @@ public class CoreResourcesIContainerVariablesContentProvider extends AbstractJav
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.IJavaVariablesContentProvider#hasVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
+	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#hasChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
-	public boolean hasVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
+	public boolean hasChildren(IDebugView view, IJavaValue value) throws DebugException {
 		return true;
 	}
 

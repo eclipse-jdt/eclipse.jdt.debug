@@ -16,21 +16,24 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.debug.ui.AbstractJavaVariablesContentProvider;
+import org.eclipse.jdt.debug.ui.AbstractJavaObjectBrowser;
 
 /**
- * Customized content provider for classes implementing the java.util.Collection interface.
- * This content provider invokes the 'toArray()' method on all such classes and presents the
+ * Customized object browser for classes implementing the java.util.Collection interface.
+ * This object browser invokes the 'toArray()' method on all such classes and presents the
  * non-null results as the only children.
  * @since 3.0
  */
-public class JavaUtilCollectionVariablesContentProvider extends AbstractJavaVariablesContentProvider {
+public class JavaUtilCollectionObjectBrowser extends AbstractJavaObjectBrowser {
 
 	private static final String TO_ARRAY_METHOD_SELECTOR = "toArray";	//$NON-NLS-1$
 	private static final String TO_ARRAY_METHOD_SIGNATURE = "()[Ljava/lang/Object;"; //$NON-NLS-1$
 	private static final IJavaValue[] EMPTY_VALUE_ARRAY = new IJavaValue[0];
 
-	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#getChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
+	 */
+	public IJavaVariable[] getChildren(IDebugView view, IJavaValue value) throws DebugException {
 		IJavaObject objectValue = getObjectValue(value);
 		if (objectValue == null) {
 			return null;
@@ -50,9 +53,9 @@ public class JavaUtilCollectionVariablesContentProvider extends AbstractJavaVari
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.IJavaVariablesContentProvider#hasVariableChildren(org.eclipse.jdt.debug.core.IJavaVariable)
+	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#hasChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
-	public boolean hasVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
+	public boolean hasChildren(IDebugView view, IJavaValue value) throws DebugException {
 		return true;
 	}
 	

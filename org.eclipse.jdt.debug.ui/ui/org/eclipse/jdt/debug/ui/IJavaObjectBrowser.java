@@ -15,10 +15,15 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
-public interface IJavaVariablesContentProvider {
+/**
+ * 
+ * 
+ * @since 3.0
+ */
+public interface IJavaObjectBrowser {
 
-	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaValue value) throws DebugException;
+	public IJavaVariable[] getChildren(IDebugView view, IJavaValue value) throws DebugException;
 	
-	public boolean hasVariableChildren(IDebugView view, IJavaValue value) throws DebugException;
+	public boolean hasChildren(IDebugView view, IJavaValue value) throws DebugException;
 	
 }

@@ -17,16 +17,16 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.debug.ui.AbstractJavaVariablesContentProvider;
+import org.eclipse.jdt.debug.ui.AbstractJavaObjectBrowser;
 
 /**
- * Customized content provider for classes extending org.eclipse.swt.widgets.Composite.
- * This content provider presents the layout and Control children as the only child
+ * Customized object browser for classes extending org.eclipse.swt.widgets.Composite.
+ * This object browser presents the layout and Control children as the only child
  * variables of such classes.
  * 
  * @since 3.0
  */
-public class SWTCompositeVariablesContentProvider extends AbstractJavaVariablesContentProvider {
+public class SWTCompositeObjectBrowser extends AbstractJavaObjectBrowser {
 
 	private static final String GET_CHILDREN_METHOD_SELECTOR = "getChildren";	//$NON-NLS-1$
 	private static final String GET_CHILDREN_METHOD_SIGNATURE = "()[Lorg/eclipse/swt/widgets/Control;"; //$NON-NLS-1$
@@ -35,9 +35,9 @@ public class SWTCompositeVariablesContentProvider extends AbstractJavaVariablesC
 	private static final IJavaValue[] EMPTY_VALUE_ARRAY = new IJavaValue[0];
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.IJavaVariablesContentProvider#getVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
+	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#getChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
-	public IJavaVariable[] getVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
+	public IJavaVariable[] getChildren(IDebugView view, IJavaValue value) throws DebugException {
 		IJavaObject objectValue = getObjectValue(value);
 		if (objectValue == null) {
 			return null;
@@ -68,9 +68,9 @@ public class SWTCompositeVariablesContentProvider extends AbstractJavaVariablesC
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.debug.ui.IJavaVariablesContentProvider#hasVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
+	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#hasChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
-	public boolean hasVariableChildren(IDebugView view, IJavaValue value) throws DebugException {
+	public boolean hasChildren(IDebugView view, IJavaValue value) throws DebugException {
 		// It's safe to always return true here, since a Composite will always have a
 		// layout, even if it's null
 		return true;

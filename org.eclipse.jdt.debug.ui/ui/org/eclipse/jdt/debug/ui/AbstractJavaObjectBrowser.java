@@ -24,11 +24,12 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
 
 /**
- * Base class for Java variables content providers.  This class provices several useful classes
- * that reduce the work of creating Java variables content providers.
+ * Base class for Java object browsers.  This class provices several useful classes
+ * that reduce the work of creating Java object browsers.
+ * 
  * @since 3.0
  */
-public abstract class AbstractJavaVariablesContentProvider implements IJavaVariablesContentProvider {
+public abstract class AbstractJavaObjectBrowser implements IJavaObjectBrowser {
 
 	/**
 	 * Return the instance of <code>IJavaObject</code> corresponding to the specified

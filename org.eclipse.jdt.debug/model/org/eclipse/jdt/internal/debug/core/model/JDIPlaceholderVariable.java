@@ -22,7 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 /**
  * Encapsulates a name and a value.  Used when a variable is required (such as for
  * the VariablesView), but we only have a value available (such as the result of 
- * an evaluation for a custom content provider).
+ * an evaluation for an object browser).
  * 
  * @since 3.0
  */

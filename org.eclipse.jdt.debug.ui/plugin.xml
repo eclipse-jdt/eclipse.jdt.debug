@@ -31,7 +31,7 @@
 
 <!-- Extensions Points -->
 <extension-point name="%vmInstallTypePage" id="vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
-<extension-point name="%javaVariablesContentProviders" id="javaVariablesContentProviders"/>
+<extension-point name="%javaObjectBrowsers" id="javaObjectBrowsers"/>
 
 <!-- Extensions -->
 
@@ -1814,40 +1814,40 @@
 	</actionSetPartAssociation>
 </extension>
 
-<extension point="org.eclipse.debug.ui.variablesContentProviders">
-	<variablesContentProvider
-		id="org.eclipse.jdt.debug.ui.JavaVariablesContentProvider"
+<extension point="org.eclipse.debug.ui.objectBrowsers">
+	<objectBrowser
+		id="org.eclipse.jdt.debug.ui.JavaObjectBrowser"
 		debugModelId="org.eclipse.jdt.debug"
-		class="org.eclipse.jdt.internal.debug.ui.JavaVariablesContentProvider">
-	</variablesContentProvider>	
+		class="org.eclipse.jdt.internal.debug.ui.JavaObjectBrowser">
+	</objectBrowser>	
 </extension>
 
-<extension point="org.eclipse.jdt.debug.ui.javaVariablesContentProviders">
-	<javaVariablesContentProvider
-		id="org.eclipse.jdt.debug.ui.CollectionContentProvider"
+<extension point="org.eclipse.jdt.debug.ui.javaObjectBrowsers">
+	<javaObjectBrowser
+		id="org.eclipse.jdt.debug.ui.CollectionObjectBrowser"
 		types="java.util.Collection"
-		class="org.eclipse.jdt.internal.debug.ui.JavaUtilCollectionVariablesContentProvider">
-	</javaVariablesContentProvider>
-	<javaVariablesContentProvider
-		id="org.eclipse.jdt.debug.ui.MapContentProvider"
+		class="org.eclipse.jdt.internal.debug.ui.JavaUtilCollectionObjectBrowser">
+	</javaObjectBrowser>
+	<javaObjectBrowser
+		id="org.eclipse.jdt.debug.ui.MapObjectBrowser"
 		types="java.util.Map"
-		class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapVariablesContentProvider">
-	</javaVariablesContentProvider>
-	<javaVariablesContentProvider
-		id="org.eclipse.jdt.debug.ui.MapEntryContentProvider"
+		class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapObjectBrowser">
+	</javaObjectBrowser>
+	<javaObjectBrowser
+		id="org.eclipse.jdt.debug.ui.MapEntryObjectBrowser"
 		types="java.util.Map$Entry"
-		class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapEntryVariablesContentProvider">
-	</javaVariablesContentProvider>
-	<javaVariablesContentProvider
-		id="org.eclipse.jdt.debug.ui.SWTCompositeContentProvider"
+		class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapEntryObjectBrowser">
+	</javaObjectBrowser>
+	<javaObjectBrowser
+		id="org.eclipse.jdt.debug.ui.SWTCompositeObjectBrowser"
 		types="org.eclipse.swt.widgets.Composite"
-		class="org.eclipse.jdt.internal.debug.ui.SWTCompositeVariablesContentProvider">
-	</javaVariablesContentProvider>
-	<javaVariablesContentProvider
-		id="org.eclipse.jdt.debug.ui.CoreResourcesIContainerContentProvider"
+		class="org.eclipse.jdt.internal.debug.ui.SWTCompositeObjectBrowser">
+	</javaObjectBrowser>
+	<javaObjectBrowser
+		id="org.eclipse.jdt.debug.ui.CoreResourcesIContainerObjectBrowser"
 		types="org.eclipse.core.resources.IContainer"
-		class="org.eclipse.jdt.internal.debug.ui.CoreResourcesIContainerVariablesContentProvider">
-	</javaVariablesContentProvider>
+		class="org.eclipse.jdt.internal.debug.ui.CoreResourcesIContainerObjectBrowser">
+	</javaObjectBrowser>
 </extension>
 
 </plugin>
