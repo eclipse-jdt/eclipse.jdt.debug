@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -93,7 +94,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * are currently expecting details from.
 	 */
 	private HashMap fRequestedValues= new HashMap();
-
+	
+	/**
+	 * A map of <code>IJavaThread</code>s to the detail computers active/waiting to
+	 * perform a detail evaluation. When one evaluation completes, another may
+	 * start (as evaluations must be serial).
+	 */
+	private static HashMap fgDetailQueue = new HashMap(5);
+	
 	static final Point BIG_SIZE= new Point(22, 16);
 	protected ImageDescriptorRegistry fJavaElementImageRegistry= JavaPlugin.getImageDescriptorRegistry();
 	protected org.eclipse.jdt.internal.debug.ui.ImageDescriptorRegistry fDebugImageRegistry= JDIDebugUIPlugin.getImageDescriptorRegistry();
@@ -1373,8 +1381,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		private StringBuffer fResultBuffer;
 		private Thread fDetailThread;
 		private IValue fValue;
+		private IJavaThread fJavaThread;
 		private IValueDetailListener fListener;
-		private static final int EVAL_TIMEOUT = 3000;
+		private static final int EVAL_TIMEOUT = 3000;		
 		
 		public DefaultJavaValueDetailProvider() {
 			fResultBuffer = new StringBuffer(50);
@@ -1382,56 +1391,102 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		
 		private void notifyListener() {
 			fListener.detailComputed(fValue, fResultBuffer.toString());
+			List queue = (List)fgDetailQueue.get(fJavaThread);
+			queue.remove(this);
+			if (queue.isEmpty()) {
+				fgDetailQueue.remove(fJavaThread);
+			} else {
+				DefaultJavaValueDetailProvider next = (DefaultJavaValueDetailProvider)queue.get(0);
+				try {
+					next.computeDetail();
+				} catch (DebugException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+			}								
 		}
 		
-		public void computeDetail(final IValue value, final IJavaThread thread, final IValueDetailListener listener) throws DebugException {
+		public void computeDetail(IValue value, IJavaThread thread, IValueDetailListener listener) throws DebugException {
 			
 			fValue = value;
 			fListener = listener;
-			
-			if (((IJavaValue)value).getSignature() == null) {
-				// no need to spawn a thread for a null value
+			fJavaThread = thread;
+						
+			// check the queue to avoid concurrent evaluations
+			List queue = (List)fgDetailQueue.get(fJavaThread);
+			if (queue == null) {
+				queue = new Vector(2);
+				fgDetailQueue.put(fJavaThread, queue);
+			}
+			synchronized (queue) {
+				queue.add(this);
+				if (queue.size() > 1) {
+					return;
+				}
+			}
+				
+				
+			Runnable r = new Runnable() {
+				public void run() {
+					JDIDebugUIPlugin.getStandardDisplay().asyncExec(
+						new Runnable() {
+							public void run() {
+								try {
+									computeDetail();
+								} catch (DebugException e) {
+									JDIDebugUIPlugin.log(e);
+								}
+							}
+						}
+					);
+				}
+			};		
+			DebugPlugin.getDefault().asyncExec(r);
+		}
+		
+		public void computeDetail() throws DebugException {	
+			if (((IJavaValue)fValue).getSignature() == null) {
+				// no need to spawn a thread for a null fValue
 				fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.null_78")); //$NON-NLS-1$
 				notifyListener();
 				return;
-			} else if (value instanceof IJavaPrimitiveValue) {
+			} else if (fValue instanceof IJavaPrimitiveValue) {
 				// no need to spawn a thread for a primitive value
-				appendJDIPrimitiveValueString(value);
+				appendJDIPrimitiveValueString(fValue);
 				notifyListener();
 				return;
-			} else if (thread == null || !thread.isSuspended()) {
+			} else if (fJavaThread == null || !fJavaThread.isSuspended()) {
 				// no thread available
 				fResultBuffer = new StringBuffer(DebugUIMessages.getString("JDIModelPresentation.no_suspended_threads_1")); //$NON-NLS-1$
-				appendJDIValueString(value);
+				appendJDIValueString(fValue);
 				notifyListener();
 				return;
 			}
 			
-			fRequestedValues.put(listener, value);
+			fRequestedValues.put(fListener, fValue);
 			
 			Runnable detailRunnable = new Runnable() {	
 				public void run() {	
 					IEvaluationRunnable er = new IEvaluationRunnable() {
 						public void run(IJavaThread jt, IProgressMonitor pm) {
-							if (value instanceof IJavaArray) {
-								appendArrayDetail((IJavaArray)value, jt);
+							if (fValue instanceof IJavaArray) {
+								appendArrayDetail((IJavaArray)fValue, jt);
 							} else if (fValue instanceof IJavaObject) {
 								try {
-									appendObjectDetail((IJavaObject)value, jt);
+									appendObjectDetail((IJavaObject)fValue, jt);
 								} catch (DebugException e) {
-									handleDebugException(e, (IJavaValue)value);
+									handleDebugException(e, (IJavaValue)fValue);
 								}
 							} else {
-								appendJDIValueString(value);
+								appendJDIValueString(fValue);
 							}
 						}
 					};
 					try {
-						thread.runEvaluation(er, null, DebugEvent.EVALUATION_IMPLICIT, false);
+						fJavaThread.runEvaluation(er, null, DebugEvent.EVALUATION_IMPLICIT, false);
 					} catch (DebugException e) {
-						handleDebugException(e, (IJavaValue)value);
+						handleDebugException(e, (IJavaValue)fValue);
 					}
-					if (value == fRequestedValues.remove(fListener)) {
+					if (fValue == fRequestedValues.remove(fListener)) {
 						// If another evaluation occurs before this one finished,
 						// don't display this result
 						notifyListener();
