@@ -25,7 +25,7 @@ public interface IEvaluationRunnable {
 	 * 
 	 * @param thread the thread in which to run the evaluation
 	 * @param monitor progress monitor (may be <code>null</code>)
-	 * @exception DebugException if an exception occurrs during
+	 * @exception DebugException if an exception occurs during
 	 *  the evaluation
 	 */
 	public abstract void run(IJavaThread thread, IProgressMonitor monitor) throws DebugException;

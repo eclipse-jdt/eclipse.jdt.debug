@@ -114,7 +114,7 @@ public interface IJavaThread extends IThread {
 	 * @param monitor progress monitor (may be <code>null</code>
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_READ_ONLY</code>
-	 * @exception DebugException if an exception occurrs performing
+	 * @exception DebugException if an exception occurs performing
 	 *  the evaluation
 	 */
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail) throws DebugException; 

@@ -62,7 +62,7 @@ public class JavaSourceLocator implements ISourceLocator {
 	 * default set of source locations for the given Java project.
 	 * 
 	 * @param project Java project
-	 * @exception CoreException if an exception occurrs reading
+	 * @exception CoreException if an exception occurs reading
 	 *  the classpath of the given or any required project
 	 */
 	public JavaSourceLocator(IJavaProject project) throws CoreException {
@@ -171,7 +171,7 @@ public class JavaSourceLocator implements ISourceLocator {
 	 * @param project Java project
 	 * @return a collection of source locations for all required
 	 *  projects
-	 * @exception CoreException if an exception occurrs reading
+	 * @exception CoreException if an exception occurs reading
 	 *  the classpath of the given or any required project
 	 */
 	public static IJavaSourceLocation[] getDefaultSourceLocations(IJavaProject project) throws CoreException {

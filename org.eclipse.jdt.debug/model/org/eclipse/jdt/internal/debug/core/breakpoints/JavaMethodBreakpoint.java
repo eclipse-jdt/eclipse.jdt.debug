@@ -165,7 +165,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @param the target in which to create the request
 	 * @param type the type on which to create the request
 	 * @return method entry request
-	 * @exception CoreException if an exception occurrs accessing
+	 * @exception CoreException if an exception occurs accessing
 	 *  this breakpoint's underlying marker
 	 */
 	protected MethodEntryRequest createMethodEntryRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {	
@@ -179,7 +179,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @param target the target in which to create the request
 	 * @param type the type on which to create the request
 	 * @return method exit request
-	 * @exception CoreException if an exception occurrs accessing
+	 * @exception CoreException if an exception occurs accessing
 	 *  this breakpoint's underlying marker
 	 */
 	protected MethodExitRequest createMethodExitRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {	

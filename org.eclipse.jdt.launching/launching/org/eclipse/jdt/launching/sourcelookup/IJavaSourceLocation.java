@@ -41,7 +41,7 @@ public interface IJavaSourceLocation extends IAdaptable {
 	 * @param name fully qualified name of the type for which
 	 * 		source is being searched for
 	 * @return source element
-	 * @exception CoreException if an exception occurrs while searching
+	 * @exception CoreException if an exception occurs while searching
 	 *  for the specified source element
 	 */
 	public abstract Object findSourceElement(String name) throws CoreException;

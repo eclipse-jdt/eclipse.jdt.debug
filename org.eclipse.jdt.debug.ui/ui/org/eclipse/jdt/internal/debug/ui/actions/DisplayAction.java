@@ -93,7 +93,7 @@ public class DisplayAction extends EvaluateAction {
 	 *  is required for
 	 * @param thread the thread in which to evaluate 'toString'
 	 * @return the result of evaluating toString
-	 * @exception DebugException if an exception occurrs during the
+	 * @exception DebugException if an exception occurs during the
 	 *  evaluation.
 	 */
 	protected String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {

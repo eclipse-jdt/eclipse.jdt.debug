@@ -1169,7 +1169,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * 
 	 * @return receiving type
 	 * @exception DebugException if:<ul>
-	 * <li>A failure occurrs while accessing attributes of 
+	 * <li>A failure occurs while accessing attributes of 
 	 *  the stack frame</li>
 	 * <li>the resolved type is an inner type</li>
 	 * <li>unable to resolve a type</li>
@@ -1240,7 +1240,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * 
 	 * @return type
 	 * @exception DebugException if:<ul>
-	 * <li>A failure occurrs while accessing attributes of 
+	 * <li>A failure occurs while accessing attributes of 
 	 *  the object</li>
 	 * </ul>
 	 */
@@ -1263,7 +1263,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * @exception DebugException if:<ul>
 	 * <li>the resolved type is an inner type</li>
 	 * <li>unable to resolve a type</li>
-	 * <li>a lower level java exception occurrs</li>
+	 * <li>a lower level java exception occurs</li>
 	 * </ul>
 	 */
 	private IType getType(String typeName) throws DebugException {

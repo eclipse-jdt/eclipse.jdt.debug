@@ -219,7 +219,7 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 	 * @param project The project to set the search path for
 	 * @param locations The locations that will be searched for source files.
 	 * @throws JavaModelException	When access to the underlying <code>IProject</code>
-	 *  fails, or an exception occurrs persisting the property
+	 *  fails, or an exception occurs persisting the property
 	 */
 	public static void setPersistedSourceLocations(IJavaProject project, IJavaSourceLocation[] locations) throws JavaModelException {
 		fgCustomSearchPathChanged= true;

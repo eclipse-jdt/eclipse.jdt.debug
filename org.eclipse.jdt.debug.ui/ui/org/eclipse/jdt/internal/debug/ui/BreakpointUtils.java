@@ -47,7 +47,7 @@ public class BreakpointUtils {
 	 * @param member member in which a breakpoint is being created
 	 * @return resource the resource on which a breakpoint marker
 	 *  should be created
-	 * @exception CoreException if an exception occurrs accessing the
+	 * @exception CoreException if an exception occurs accessing the
 	 *  underlying resource or Java model elements
 	 */
 	public static IResource getBreakpointResource(IMember member) throws CoreException {
@@ -67,7 +67,7 @@ public class BreakpointUtils {
 	 * 
 	 * @param breakpoint Java breakpoint
 	 * @return the type the breakpoint is associated with
-	 * @exception CoreException if an exception occurrs accessing
+	 * @exception CoreException if an exception occurs accessing
 	 *  the breakpoint or Java model
 	 */
 	public static IType getType(IJavaBreakpoint breakpoint) throws CoreException {
@@ -93,7 +93,7 @@ public class BreakpointUtils {
 	 * @param breakpoint Java line breakpoint
 	 * @return member at the given line number in the type 
 	 *  associated with the breakpoint
-	 * @exception CoreException if an exception occurrs accessing
+	 * @exception CoreException if an exception occurs accessing
 	 *  the breakpoint
 	 */
 	public static IMember getMember(IJavaLineBreakpoint breakpoint) throws CoreException {
@@ -181,7 +181,7 @@ public class BreakpointUtils {
 	 * 
 	 * @param attributes the attribute map to use
 	 * @param element the Java element associated with the breakpoint
-	 * @exception CoreException if an exception occurrs configuring
+	 * @exception CoreException if an exception occurs configuring
 	 *  the marker
 	 */
 	public static void addJavaBreakpointAttributes(Map attributes, IJavaElement element) {
@@ -199,7 +199,7 @@ public class BreakpointUtils {
 	 * 
 	 * @param attributes the attribute map to use
 	 * @param element the Java element associated with the breakpoint
-	 * @exception CoreException if an exception occurrs configuring
+	 * @exception CoreException if an exception occurs configuring
 	 *  the marker
 	 */
 	public static void addRunToLineAttributes(Map attributes) {
@@ -213,7 +213,7 @@ public class BreakpointUtils {
 	 * 
 	 * @param breakpoint Java method entry breakpoint
 	 * @return method
-	 * @exception CoreException if an exception occurrs accessing
+	 * @exception CoreException if an exception occurs accessing
 	 *  the breakpoint
 	 */
 	public static IMethod getMethod(IJavaMethodBreakpoint breakpoint) throws CoreException {	
@@ -234,7 +234,7 @@ public class BreakpointUtils {
 	 * 
 	 * @param breakpoint Java watchpoint
 	 * @return field
-	 * @exception CoreException if an exception occurrs accessing
+	 * @exception CoreException if an exception occurs accessing
 	 *  the breakpoint
 	 */
 	public static IField getField(IJavaWatchpoint breakpoint) throws CoreException {	

@@ -312,7 +312,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	/**
 	 * Adds the given listener to this target's event dispatcher's
 	 * table of listeners for the specified event request. The listener
-	 * will be notified each time the event occurrs.
+	 * will be notified each time the event occurs.
 	 * 
 	 * @param listener the listener to register
 	 * @param request the event request

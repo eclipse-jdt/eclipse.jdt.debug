@@ -44,7 +44,7 @@ public interface IJavaObject extends IJavaValue {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 * <li>This object does not implement the specified method</li>
-	 * <li>An exception occurrs while invoking the specified method</li>
+	 * <li>An exception occurs while invoking the specified method</li>
 	 * </ul>
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, boolean superSend) throws DebugException;	
