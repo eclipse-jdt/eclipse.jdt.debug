@@ -8,9 +8,11 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.io.File;
 import java.text.MessageFormat;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -18,9 +20,15 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaUISourceLocator;
 import org.eclipse.jdt.launching.ExecutionArguments;
@@ -73,25 +81,43 @@ public class JavaApplicationLaunchConfigurationDelegate
 	 *  if launching fails.
 	 */
 	protected ILaunch verifyAndLaunch(ILaunchConfiguration configuration, String mode, boolean doLaunch) throws CoreException {
-		String memento = configuration.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, null);
-		if (memento == null) {
+		
+		// Java project
+		String projectName = configuration.getAttribute(JavaDebugUI.PROJECT_ATTR, null);
+		if ((projectName == null) || (projectName.trim().length() < 1)) {
+			abort("No project specified", null, JavaDebugUI.UNSPECIFIED_PROJECT);
+		}			
+		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);
+		if ((javaProject == null) || !javaProject.exists()) {
+			abort("Invalid project specified", null, JavaDebugUI.NOT_A_JAVA_PROJECT);
+		}
+		
+		// Main type
+		String mainTypeName = configuration.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, null);
+		if ((mainTypeName == null) || (mainTypeName.trim().length() < 1)) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_not_specified._1"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
-		IType mainType = (IType)JavaCore.create(memento);
+		IType mainType = null;
+		try {
+			mainType = findType(javaProject, mainTypeName);
+		} catch (JavaModelException jme) {
+			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_does_not_exist"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
+		}
 		if (mainType == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_does_not_exist"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
-		}			
-		
+		}
+				
+		// VM install type
 		String installTypeId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, null);
 		if (installTypeId == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_Type_not_specified._2"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL_TYPE); //$NON-NLS-1$
-		}
-		
+		}		
 		IVMInstallType type = JavaRuntime.getVMInstallType(installTypeId);
 		if (type == null) {
 			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.VM_Install_type_does_not_exist"), new String[] {installTypeId}), null, JavaDebugUI.VM_INSTALL_TYPE_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		
+		// VM
 		String installId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, null);
 		if (installId == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_not_specified._3"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL); //$NON-NLS-1$
@@ -104,15 +130,15 @@ public class JavaApplicationLaunchConfigurationDelegate
 		if (runner == null) {
 			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Internal_error__JRE_{0}_does_not_specify_a_VM_Runner._5"), new String[]{installId}), null, JavaDebugUI.VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
+		
+		// Working directory
 		String path = configuration.getAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, null);
-		if (path != null) {
+		if ((path != null) && (path.trim().length() > 0)) {
 			File dir = new File(path);
 			if (!dir.isDirectory()) {
 				abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfiguration.Working_directory_does_not_exist"), new String[] {path}), null, JavaDebugUI.WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 			}
 		}
-		
-		IJavaProject javaProject = mainType.getJavaProject();
 		
 		if (!doLaunch) {
 			// just verify
@@ -154,5 +180,47 @@ public class JavaApplicationLaunchConfigurationDelegate
 		throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 		  code, message, exception));
 	}
+	
+	/**
+	 * Find the specified (fully-qualified) type name in the specified java project.
+	 */
+	private IType findType(IJavaProject javaProject, String mainTypeName) throws JavaModelException {
+		String pathStr= mainTypeName.replace('.', '/') + ".java"; //$NON-NLS-1$
+		IJavaElement javaElement= javaProject.findElement(new Path(pathStr));
+		if (javaElement == null) {
+			// try to find it as inner type
+			String qualifier= Signature.getQualifier(mainTypeName);
+			if (qualifier.length() > 0) {
+				IType type= findType(javaProject, qualifier); // recursive!
+				if (type != null) {
+					IType res= type.getType(Signature.getSimpleName(mainTypeName));
+					if (res.exists()) {
+						return res;
+					}
+				}
+			}
+		} else if (javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
+			String simpleName= Signature.getSimpleName(mainTypeName);
+			return ((ICompilationUnit) javaElement).getType(simpleName);
+		} else if (javaElement.getElementType() == IJavaElement.CLASS_FILE) {
+			return ((IClassFile) javaElement).getType();
+		}
+		return null;		
+	}
+	
+	/**
+	 * Convenience method to get access to the java model.
+	 */
+	private IJavaModel getJavaModel() {
+		return JavaCore.create(getWorkspaceRoot());
+	}
+
+	/**
+	 * Convenience method to get the workspace root.
+	 */
+	private IWorkspaceRoot getWorkspaceRoot() {
+		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+	
 }
 

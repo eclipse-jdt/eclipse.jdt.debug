@@ -10,23 +10,33 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -129,7 +139,6 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		
 		createVerticalSpacer(comp);
 		
-		/*
 		Composite projComp = new Composite(comp, SWT.NONE);
 		GridLayout projLayout = new GridLayout();
 		projLayout.numColumns = 2;
@@ -148,6 +157,11 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		fProjText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProjText.setLayoutData(gd);
+		fProjText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent evt) {
+				updateConfigFromProject();
+			}
+		});
 		
 		fProjButton = new Button(projComp, SWT.PUSH);
 		fProjButton.setText("Browse");
@@ -156,7 +170,6 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 				handleProjectButtonSelected();
 			}
 		});
-		*/
 		
 		Composite mainComp = new Composite(comp, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
@@ -176,7 +189,6 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		fMainText = new Text(mainComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fMainText.setLayoutData(gd);
-		fMainText.setEditable(false);
 		fMainText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateConfigFromMain();
@@ -195,6 +207,8 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		fSearchExternalJarsCheckButton.setText("Ext. jars");
 		fSearchExternalJarsCheckButton.setToolTipText("Include external jars when searching for a main class");
 				
+		createVerticalSpacer(comp);
+		
 		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
 		fPrgmArgumentsLabel.setText("Program arguments");
 						
@@ -309,6 +323,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 	 * launch configuration.
 	 */
 	protected void updateWidgetsFromConfig(ILaunchConfiguration config) {
+		updateProjectFromConfig(config);
 		updateMainTypeFromConfig(config);
 		updatePgmArgsFromConfig(config);
 		updateJREFromConfig(config);
@@ -316,17 +331,18 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		updateWorkingDirectoryFromConfig(config);
 	}
 	
+	protected void updateProjectFromConfig(ILaunchConfiguration config) {
+		try {
+			String projectName = config.getAttribute(JavaDebugUI.PROJECT_ATTR, EMPTY_STRING);
+			fProjText.setText(projectName);
+		} catch (CoreException ce) {
+		}
+	}
+	
 	protected void updateMainTypeFromConfig(ILaunchConfiguration config) {
 		try {
-			String mainTypeID = config.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, EMPTY_STRING);
-			if ((mainTypeID != null) && (mainTypeID.trim().length() > 0)) {
-				IType type = (IType) JavaCore.create(mainTypeID);
-				if (type != null) {
-					String mainTypeName = type.getFullyQualifiedName();
-					fMainText.setText(mainTypeName);
-					fMainText.setData(JavaDebugUI.MAIN_TYPE_ATTR, mainTypeID);
-				}
-			}
+			String mainTypeName = config.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, EMPTY_STRING);
+			fMainText.setText(mainTypeName);
 		} catch (CoreException ce) {			
 		}		
 	}
@@ -367,9 +383,16 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		}		
 	}
 
+	protected void updateConfigFromProject() {
+		if (getWorkingCopy() != null) {
+			getWorkingCopy().setAttribute(JavaDebugUI.PROJECT_ATTR, (String)fProjText.getText());
+			refreshStatus();			
+		}
+	}
+
 	protected void updateConfigFromMain() {
 		if (getWorkingCopy() != null) {
-			getWorkingCopy().setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)fMainText.getData(JavaDebugUI.MAIN_TYPE_ATTR));
+			getWorkingCopy().setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, (String)fMainText.getText());
 			refreshStatus();
 		}
 	}
@@ -480,19 +503,19 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 	 * the same order as they in the <code>fVMStandins</code> list.
 	 */
 	protected void selectJREComboBoxEntry(String vmID) {
-		VMStandin selectedVMStandin = null;
+		//VMStandin selectedVMStandin = null;
 		int index = -1;
 		for (int i = 0; i < fVMStandins.size(); i++) {
 			VMStandin vmStandin = (VMStandin)fVMStandins.get(i);
 			if (vmStandin.getId().equals(vmID)) {
 				index = i;
-				selectedVMStandin = vmStandin;
+				//selectedVMStandin = vmStandin;
 				break;
 			}
 		}
 		if (index > -1) {
 			fJRECombo.select(index);
-			fJRECombo.setData(JavaDebugUI.VM_INSTALL_TYPE_ATTR, selectedVMStandin.getVMInstallType().getId());
+			//fJRECombo.setData(JavaDebugUI.VM_INSTALL_TYPE_ATTR, selectedVMStandin.getVMInstallType().getId());
 		}
 	}
 	
@@ -510,7 +533,15 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 	protected void handleSearchButtonSelected() {
 		Shell shell = getShell();
 		IWorkbenchWindow workbenchWindow = JDIDebugUIPlugin.getActiveWorkbenchWindow();
-		IJavaSearchScope searchScope = SearchEngine.createWorkspaceScope();
+		
+		IJavaProject javaProject = getJavaProject();
+		IJavaSearchScope searchScope = null;
+		if ((javaProject == null) || !javaProject.exists()) {
+			searchScope = SearchEngine.createWorkspaceScope();
+		} else {
+			searchScope = SearchEngine.createJavaSearchScope(new IJavaElement[] {javaProject}, false);
+		}		
+		
 		int constraints = IJavaElementSearchConstants.CONSIDER_BINARIES;
 		if (fSearchExternalJarsCheckButton.getSelection()) {
 			constraints |= IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS;
@@ -522,8 +553,8 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 															 constraints, 
 															 false, 
 															 "");
-		dialog.setTitle("Choose a main type");
-		dialog.setMessage("Choose a main type");
+		dialog.setTitle("Choose main type");
+		dialog.setMessage("Choose a main type to launch");
 		if (dialog.open() == dialog.CANCEL) {
 			return;
 		}
@@ -531,20 +562,11 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		Object[] results = dialog.getResult();
 		if ((results == null) || (results.length < 1)) {
 			return;
-		}
-		
+		}		
 		IType type = (IType)results[0];
-		StringBuffer buffer = new StringBuffer(type.getFullyQualifiedName());
-		buffer.append(" (");
-		buffer.append(type.getJavaProject().getProject().getName());
-		buffer.append(')');
-		
-		// The order of these two statements is significant.  We must save the 
-		// type's handle id first, since setting the text will trigger a modify
-		// event, which results in updating the working config with the
-		// type's handle identifier
-		fMainText.setData(JavaDebugUI.MAIN_TYPE_ATTR, type.getHandleIdentifier());
-		fMainText.setText(buffer.toString());
+		fMainText.setText(type.getFullyQualifiedName());
+		javaProject = type.getJavaProject();
+		fProjText.setText(javaProject.getElementName());
 	}
 	
 	/**
@@ -578,8 +600,60 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		}		
 	}
 	
+	/**
+	 * Show a dialog that lets the user select a project.  This in turn provides
+	 * context for the main type, allowing the user to key a main type name, or
+	 * constraining the search for main types to the specified project.
+	 */
 	protected void handleProjectButtonSelected() {
+		IJavaProject project = chooseJavaProject();
+		if (project == null) {
+			return;
+		}
 		
+		String projectName = project.getElementName();
+		fProjText.setText(projectName);		
+	}
+	
+	/**
+	 * Realize a Java Project selection dialog and return the first selected project,
+	 * or null if there was none.
+	 */
+	protected IJavaProject chooseJavaProject() {
+		IJavaProject[] projects;
+		try {
+			projects= JavaCore.create(getWorkspaceRoot()).getJavaProjects();
+		} catch (JavaModelException e) {
+			JavaPlugin.log(e.getStatus());
+			projects= new IJavaProject[0];
+		}
+		
+		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
+		dialog.setTitle("Project selection");
+		dialog.setMessage("Choose a project to constrain the search for main types");
+		dialog.setElements(projects);
+		
+		IJavaProject javaProject = getJavaProject();
+		if (javaProject != null) {
+			dialog.setInitialSelections(new Object[] { javaProject });
+		}
+		if (dialog.open() == dialog.OK) {			
+			return (IJavaProject) dialog.getFirstResult();
+		}			
+		return null;		
+	}
+	
+	/**
+	 * Return the IJavaProject corresponding to the project name in the project name
+	 * text field, or null if the text does not match a project name.
+	 */
+	protected IJavaProject getJavaProject() {
+		String projectName = fProjText.getText().trim();
+		if (projectName.length() < 1) {
+			return null;
+		}
+		return getJavaModel().getJavaProject(projectName);		
 	}
 	
 	/**
@@ -589,6 +663,20 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 	 */
 	private Shell getShell() {
 		return fMainLabel.getShell();
+	}
+	
+	/**
+	 * Convenience method to get the workspace root.
+	 */
+	private IWorkspaceRoot getWorkspaceRoot() {
+		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+	
+	/**
+	 * Convenience method to get access to the java model.
+	 */
+	private IJavaModel getJavaModel() {
+		return JavaCore.create(getWorkspaceRoot());
 	}
 
 	/**

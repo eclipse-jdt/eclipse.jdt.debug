@@ -21,8 +21,13 @@ public class JavaDebugUI {
 	public static final String JAVA_APPLICATION_LAUNCH_CONFIGURATION_ID = "org.eclipse.jdt.debug.ui.localJavaApplication"; //$NON-NLS-1$
 		
 	/**
+	 * Name of project containing the main type.
+	 */
+	public static final String PROJECT_ATTR = "PROJECT_ATTR"; //$NON-NLS-1$
+	
+	/**
 	 * Main type launch configuration attribute name.
-	 * The memento of the <code>IType</code> to launch.
+	 * The fully qualified name of the <code>IType</code> to launch.
 	 */
 	public static final String MAIN_TYPE_ATTR = "MAIN_TYPE";	 //$NON-NLS-1$
 	
@@ -75,51 +80,57 @@ public class JavaDebugUI {
 	
 	/**
 	 * Status code indicating a launch configuration does not
+	 * specify a project that contains the main class to launch.
+	 */
+	public static final int UNSPECIFIED_PROJECT = 100;	
+		
+	/**
+	 * Status code indicating a launch configuration does not
 	 * specify a main class to launch.
 	 */
-	public static final int UNSPECIFIED_MAIN_TYPE = 100;	
+	public static final int UNSPECIFIED_MAIN_TYPE = 101;	
 		
 	/**
 	 * Status code indicating a launch configuration does not
 	 * specify a VM Install Type.
 	 */
-	public static final int UNSPECIFIED_VM_INSTALL_TYPE = 101;
+	public static final int UNSPECIFIED_VM_INSTALL_TYPE = 102;
 	
 	/**
 	 * Status code indicating a launch configuration does not
 	 * specify a VM Install
 	 */
-	public static final int UNSPECIFIED_VM_INSTALL = 102;
+	public static final int UNSPECIFIED_VM_INSTALL = 103;
 
 	/**
 	 * Status code indicating a launch configuration's VM install
 	 * type could not be found.
 	 */
-	public static final int VM_INSTALL_TYPE_DOES_NOT_EXIST = 103;
+	public static final int VM_INSTALL_TYPE_DOES_NOT_EXIST = 104;
 		
 	/**
 	 * Status code indicating a launch configuration's VM install
 	 * could not be found.
 	 */
-	public static final int VM_INSTALL_DOES_NOT_EXIST = 104;
+	public static final int VM_INSTALL_DOES_NOT_EXIST = 105;
 	
 	/**
 	 * Status code indicating a VM runner could not be located
 	 * for the VM install specified by a launch configuration.
 	 */
-	public static final int VM_RUNNER_DOES_NOT_EXIST = 105;	
+	public static final int VM_RUNNER_DOES_NOT_EXIST = 106;	
 	
 	/**
 	 * Status code indicating the project associated with
 	 * a launch configuration is not a Java project.
 	 */
-	public static final int NOT_A_JAVA_PROJECT = 106;	
+	public static final int NOT_A_JAVA_PROJECT = 107;	
 	
 	/**
 	 * Status code indicating the specified working directory
 	 * does not exist.
 	 */
-	public static final int WORKING_DIRECTORY_DOES_NOT_EXIST = 107;	
+	public static final int WORKING_DIRECTORY_DOES_NOT_EXIST = 108;	
 		
 	/**
 	 * Status code indicating an unexpected internal error.
