@@ -30,6 +30,7 @@ import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.console.TextConsole;
 
 public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWorkbenchWindowActionDelegate {
  
@@ -60,7 +61,7 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
                 return 0;
             }
 
-            public void connect(IConsole console) {
+            public void connect(TextConsole console) {
             }
 
             public void disconnect() {

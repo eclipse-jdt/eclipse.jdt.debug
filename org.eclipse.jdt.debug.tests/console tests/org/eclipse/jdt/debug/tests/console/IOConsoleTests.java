@@ -18,6 +18,7 @@ import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * IOConsoleTests for the Automated suite
@@ -78,9 +79,9 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
 	}
 	
     /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#connect(org.eclipse.ui.console.IConsole)
+     * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
      */
-    public void connect(IConsole console) {
+    public void connect(TextConsole console) {
     }
 
     /* (non-Javadoc)
