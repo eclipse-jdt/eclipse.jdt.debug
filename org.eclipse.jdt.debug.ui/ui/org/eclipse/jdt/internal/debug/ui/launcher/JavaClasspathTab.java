@@ -166,36 +166,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		action.setButton(button);
 		addAction(action);		
 														
-		retargetActions(fClasspathViewer);
-//		
-//		fPathAddDirectoryButton = createPushButton(pathButtonComp, LauncherMessages.getString("JavaEnvironmentTab.Add_&Folder_16"), null); //$NON-NLS-1$
-//		fPathAddDirectoryButton.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent evt) {
-//				handlePathAddDirectoryButtonSelected();
-//			}
-//		});
-//		
-//		fPathRemoveButton = createPushButton(pathButtonComp,LauncherMessages.getString("JavaEnvironmentTab.R&emove_17"), null); //$NON-NLS-1$
-//		fPathRemoveButton.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent evt) {
-//				handlePathRemoveButtonSelected();
-//			}
-//		});
-//				
-//		fPathMoveUpButton = createPushButton(pathButtonComp, LauncherMessages.getString("JavaEnvironmentTab.&Up_18"), null); //$NON-NLS-1$
-//		fPathMoveUpButton.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent evt) {
-//				handlePathMoveButtonSelected(true);
-//			}
-//		});
-//		
-//		fPathMoveDownButton = createPushButton(pathButtonComp, LauncherMessages.getString("JavaEnvironmentTab.D&own_19"), null); //$NON-NLS-1$
-//		fPathMoveDownButton.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent evt) {
-//				handlePathMoveButtonSelected(false);
-//			}
-//		});
-		
+		retargetActions(fClasspathViewer);		
 	}
 
 	/**

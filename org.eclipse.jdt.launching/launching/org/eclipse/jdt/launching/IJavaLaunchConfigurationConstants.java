@@ -109,10 +109,25 @@ public interface IJavaLaunchConfigurationConstants {
 	 * Default classpath launch configuration boolean attribute name.
 	 * If this attribute is present on a launch configuration, then the default
 	 * class path is computed at runtime.  If this attribute is set, the contents
-	 * of <code>CLASSPATH_ATTR</code> are ignored.
+	 * of <code>ATTR_CLASSPATH</code> and <code>ATTR_BOOTPATH</code> are ignored.
 	 */
 	public static final String ATTR_DEFAULT_CLASSPATH = LaunchingPlugin.getUniqueIdentifier() + ".DEFAULT_CLASSPATH"; //$NON-NLS-1$
+
+	/**
+	 * Classpath launch configuration attribute name.
+	 * If this attribute is present on a launch configuration, its value becomes
+	 * the sole source lookup path for the launch.
+	 */
+	public static final String ATTR_SOURCE_PATH = LaunchingPlugin.getUniqueIdentifier() + ".SOURCE_PATH";	 //$NON-NLS-1$
 		
+	/**
+	 * Default source lookup path launch configuration boolean attribute name.
+	 * If this attribute is present on a launch configuration, then the default
+	 * source lookup path is computed at runtime.  If this attribute is set, the contents
+	 * of <code>ATTR_SOURCE_PATH</code> is ignored.
+	 */
+	public static final String ATTR_DEFAULT_SOURCE_PATH = LaunchingPlugin.getUniqueIdentifier() + ".DEFAULT_SOURCE_PATH"; //$NON-NLS-1$
+			
 	/**
 	 * Host name launch configuration attribute name.
 	 * This attribute is used for attach launching.

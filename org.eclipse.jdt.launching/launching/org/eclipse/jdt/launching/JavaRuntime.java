@@ -417,14 +417,14 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Retursn the transitive closure of classpath entries for the
+	 * Returns the transitive closure of classpath entries for the
 	 * given project entry.
 	 * 
 	 * @param projectEntry project classpath entry
 	 * @return list of classpath entries
 	 * @exception CoreException if unable to expand the classpath
 	 */
-	public static List expandProject(IClasspathEntry projectEntry) throws CoreException {
+	protected static List expandProject(IClasspathEntry projectEntry) throws CoreException {
 		// 1. Get the raw classpath
 		// 2. Replace source folder entries with a project entry
 		IPath projectPath = projectEntry.getPath();

@@ -6,6 +6,7 @@ package org.eclipse.jdt.launching;
  */
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -88,8 +89,9 @@ public interface IRuntimeClasspathEntry {
 	 * Returns a memento for this classpath entry.
 	 * 
 	 * @return a memento for this classpath entry
+	 * @exception CoreException if an exception occurrs generating a memento
 	 */
-	public String getMemento();
+	public String getMemento() throws CoreException;
 	
 	/**
 	 * Returns the path associated with this entry. The format of the
@@ -122,28 +124,58 @@ public interface IRuntimeClasspathEntry {
 	public IResource getResource();
 	
 	/**
-	 * Returns the path(s) to the source archive(s) associated with this
+	 * Returns the path to the source archive associated with this
 	 * entry, or <code>null</code> if this classpath entry has no
-	 * source attachment(s).
+	 * source attachment.
 	 * <p>
-	 * Only archive, variable, and library entries may have source attachments.
+	 * Only archive and variable entries may have source attachments.
+	 * For archive entries, the result path (if present) locates a source
+	 * archive. For variable entries, the result path (if present) has
+	 * an analogous form and meaning as the variable path, namely the first segment 
+	 * is the name of a classpath variable.
 	 * </p>
 	 *
-	 * @return the path(s) to the source archive(s), or <code>null</code> if none
+	 * @return the path to the source archive, or <code>null</code> if none
 	 */
-	public IPath[] getSourceAttachmentPaths();
+	public IPath getSourceAttachmentPath();
 
 	/**
-	 * Returns the path(s) within the source archive(s) where package fragments
+	 * Sets the path to the source archive associated with this
+	 * entry, or <code>null</code> if this classpath entry has no
+	 * source attachment.
+	 * <p>
+	 * Only archive and variable entries may have source attachments.
+	 * For archive entries, the path refers to a source
+	 * archive. For variable entries, the path has
+	 * an analogous form and meaning as the variable path, namely the
+	 * first segment  is the name of a classpath variable.
+	 * </p>
+	 *
+	 * @param path the path to the source archive, or <code>null</code> if none
+	 */
+	public void setSourceAttachmentPath(IPath path);
+	
+	/**
+	 * Returns the path within the source archive where package fragments
 	 * are located. An empty path indicates that packages are located at
-	 * the root of the source archive(s). Returns a non-<code>null</code> value
-	 * if and only if <code>getSourceAttachmentPaths</code> returns 
+	 * the root of the source archive. Returns a non-<code>null</code> value
+	 * if and only if <code>getSourceAttachmentPath</code> returns 
 	 * a non-<code>null</code> value.
 	 *
-	 * @return the path(s) within the source archive(s), or <code>null</code> if
+	 * @return root path within the source archive, or <code>null</code> if
 	 *    not applicable
 	 */
-	public IPath[] getSourceAttachmentRootPaths();	
+	public IPath getSourceAttachmentRootPath();
+	
+	/**
+	 * Sets the path within the source archive where package fragments
+	 * are located. An empty path indicates that packages are located at
+	 * the root of the source archive. Only valid if a source attachment
+	 * path is also specified.
+	 *
+	 * @param path root path within the source archive, or <code>null</code>
+	 */	
+	public void setSourceAttachmentRootPath(IPath path);
 	
 	/**
 	 * Returns a constant indicating where this entry should appear on the 
@@ -174,10 +206,10 @@ public interface IRuntimeClasspathEntry {
 	
 	/**
 	 * Returns the name of the variable associated with this entry, or <code>null</code>
-	 * if this entry is not of type <code>VARIABLE</code>.
+	 * if this entry is not of type <code>VARIABLE</code> or <code>LIBRARY</code>.
 	 * 
 	 * @return the name of the variable associated with this entry, or <code>null</code>
-	 *  if this entry is not of type <code>VARIABLE</code>
+	 *  if this entry is not of type <code>VARIABLE</code> or <code>LIBRARY</code>
 	 */
 	public String getVariableName();
 }

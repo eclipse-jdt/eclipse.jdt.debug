@@ -5,17 +5,31 @@ package org.eclipse.jdt.internal.launching;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
+import java.io.StringWriter;
+
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * An entry on the runtime classpath that the user can manipulate
@@ -30,6 +44,16 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * The entry's type - must be set on creation.
 	 */
 	private int fType = -1;
+	
+	/**
+	 * Source attachment path
+	 */
+	private IPath fSourceAttachmentPath = null;
+	
+	/**
+	 * Root source path
+	 */
+	private IPath fRootSourcePath = null;
 
 	/**
 	 * This entry's associated build path entry.
@@ -45,6 +69,8 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	public RuntimeClasspathEntry(int type, IClasspathEntry entry) {
 		setType(type);
 		setClasspathEntry(entry);
+		setSourceAttachmentPath(entry.getSourceAttachmentPath());
+		setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
 	}
 
 	/**
@@ -86,8 +112,55 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	/**
 	 * @see IRuntimeClasspathEntry#getMemento()
 	 */
-	public String getMemento() {
-		return null;
+	public String getMemento() throws CoreException {
+		
+		Document doc = new DocumentImpl();
+		Element node = doc.createElement("runtimeClasspathEntry"); //$NON-NLS-1$
+		node.setAttribute("type", (new Integer(getType())).toString()); //$NON-NLS-1$
+		node.setAttribute("path", (new Integer(getClasspathProperty())).toString()); //$NON-NLS-1$
+		switch (getType()) {
+			case PROJECT :
+				node.setAttribute("projectName", getResource().getName()); //$NON-NLS-1$
+				break;
+			case ARCHIVE :
+				IResource res = getResource();
+				if (res == null) {
+					node.setAttribute("externalArchive", getPath().toString()); //$NON-NLS-1$
+				} else {
+					node.setAttribute("internalArchive", res.getFullPath().toString()); //$NON-NLS-1$
+				}
+				break;
+			case VARIABLE :
+				node.setAttribute("variableName", getVariableName()); //$NON-NLS-1$
+				break;
+			case LIBRARY :
+				node.setAttribute("libraryName", getVariableName()); //$NON-NLS-1$
+				break;
+		}		
+		if (getSourceAttachmentPath() != null) {
+			node.setAttribute("sourceAttachmentPath", getSourceAttachmentPath().toString()); //$NON-NLS-1$
+		}
+		if (getSourceAttachmentRootPath() != null) {
+			node.setAttribute("sourceRootPath", getSourceAttachmentRootPath().toString()); //$NON-NLS-1$
+		}
+		
+		// produce a String output
+		StringWriter writer = new StringWriter();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				writer,
+				format);
+		
+		try {
+			serializer.asDOMSerializer().serialize(node);
+		} catch (IOException e) {
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, LaunchingMessages.getString("RuntimeClasspathEntry.An_exception_occurred_generating_runtime_classpath_memento_8"), e); //$NON-NLS-1$
+			throw new CoreException(status);
+		}
+		return writer.toString();
+				
 	}
 
 	/**
@@ -106,57 +179,33 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	}
 
 	/**
-	 * @see IRuntimeClasspathEntry#getSourceAttachmentPaths()
-	 * 
-	 * [XXX: fix for libraries
+	 * @see IRuntimeClasspathEntry#getSourceAttachmentPath()
 	 */
-	public IPath[] getSourceAttachmentPaths() {
-		IPath path = null;
-		switch (getType()) {
-			case ARCHIVE:
-				path = getClasspathEntry().getSourceAttachmentPath();
-				break;
-			case VARIABLE:
-				IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(getClasspathEntry());
-				if (resolved != null) {
-					path = resolved.getSourceAttachmentPath();
-					break;
-				}
-			default:
-				return null;
-		}
-		if (path != null) {
-			return new IPath[] {path};
-		}
-		return null;
+	public IPath getSourceAttachmentPath() {
+		return fSourceAttachmentPath;
 	}
 
 	/**
-	 * @see IRuntimeClasspathEntry#getSourceAttachmentRootPaths()
-	 * 
-	 * [XXX: fix for libraries
+	 * @see IRuntimeClasspathEntry#setSourceAttachmentPath(IPath)
 	 */
-	public IPath[] getSourceAttachmentRootPaths() {
-		IPath path = null;
-		switch (getType()) {
-			case ARCHIVE:
-				path = getClasspathEntry().getSourceAttachmentRootPath();
-				break;
-			case VARIABLE:
-				IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(getClasspathEntry());
-				if (resolved != null) {
-					path = resolved.getSourceAttachmentRootPath();
-					break;
-				}
-			default:
-				return null;
-		}
-		if (path != null) {
-			return new IPath[] {path};
-		}
-		return null;		
+	public void setSourceAttachmentPath(IPath path) {
+		fSourceAttachmentPath = path;
+	}
+	
+	/**
+	 * @see IRuntimeClasspathEntry#getSourceAttachmentRootPath()
+	 */
+	public IPath getSourceAttachmentRootPath() {
+		return fRootSourcePath;
 	}
 
+	/**
+	 * @see IRuntimeClasspathEntry#setSourceAttachmentPath(IPath)
+	 */
+	public void setSourceAttachmentRootPath(IPath path) {
+		fRootSourcePath = path;
+	}
+	
 	/**
 	 * @see IRuntimeClasspathEntry#getClasspathProperty()
 	 * 
@@ -218,7 +267,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getVariableName()
 	 */
 	public String getVariableName() {
-		if (getType() == IRuntimeClasspathEntry.VARIABLE) {
+		if (getType() == IRuntimeClasspathEntry.VARIABLE || getType() == IRuntimeClasspathEntry.LIBRARY) {
 			return getPath().segment(0);
 		} else {
 			return null;

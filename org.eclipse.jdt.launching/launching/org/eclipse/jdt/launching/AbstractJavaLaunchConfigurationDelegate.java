@@ -246,6 +246,35 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	}
 	
 	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL<b>
+	 * 
+	 * Returns the runtime classpath specified by the given launch
+	 * configuration. The returned collection contains entires for
+	 * the bootstrap and user path (as specified by
+	 * <code>IRuntimeClasspathEntry.getClasspathProperty()</code>).
+	 * 
+	 * @param configuration launch configuration
+	 * @return the classpath specified by the given launch configuration
+	 * @exception CoreException if unable to retrieve the attribute
+	 * 
+	 * [XXX: need to support persisted classpaths
+	 */
+	protected IRuntimeClasspathEntry[] getRuntimeClasspath(ILaunchConfiguration configuration) throws CoreException {
+		if (configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false)) {
+			IJavaProject pro = getJavaProject(configuration);
+			if (pro == null) {			
+				// XXX: return the VMs default runtime classpath
+				return null;
+			} else {
+				return JavaRuntime.computeRuntimeClasspath(pro);
+			}
+		} else {
+			// XXX: need to support peristed classpaths
+			return null;
+		}		
+	}
+	
+	/**
 	 * Return the default classpath computed for the specified configuration.  Remove any
 	 * 'rt.jar' entry from this classpath before returning it.
 	 * 

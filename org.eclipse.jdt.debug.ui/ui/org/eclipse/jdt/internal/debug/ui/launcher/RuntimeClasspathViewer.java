@@ -58,6 +58,7 @@ public class RuntimeClasspathViewer extends TableViewer {
 		super(parent);
 		setContentProvider(new ContentProvider());
 		setLabelProvider(new RuntimeClasspathEntryLabelProvider());
+		setInput(fEntries);
 	}	
 
 	/**

@@ -37,7 +37,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				case IRuntimeClasspathEntry.ARCHIVE:
 					// XXX: illegal access to images
 					boolean external = entry.getResource() == null;
-					boolean source = entry.getSourceAttachmentPaths() != null;
+					boolean source = entry.getSourceAttachmentPath() != null;
 					String key = null;
 					if (external) {
 						if (source) {
@@ -80,15 +80,21 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					}
 				case IRuntimeClasspathEntry.VARIABLE:
 					IPath path = entry.getPath();
-					String name = entry.getVariableName();
-					IPath value = JavaCore.getClasspathVariable(name);
-					if (value == null) {
-						return name;
-					} else {
-						return name + " - " + value.toString(); //$NON-NLS-1$
+					IPath srcPath = entry.getSourceAttachmentPath();
+					StringBuffer buf = new StringBuffer(path.toString());
+					if (srcPath != null) {
+						buf.append(" ["); //$NON-NLS-1$
+						buf.append(srcPath.toString());
+						IPath rootPath = entry.getSourceAttachmentRootPath();
+						if (rootPath != null) {
+							buf.append(IPath.SEPARATOR);
+							buf.append(rootPath.toString());
+						}
+						buf.append(']'); //$NON-NLS-1$
 					}
+					return buf.toString();
 				case IRuntimeClasspathEntry.LIBRARY:
-					break;
+					return entry.getPath().toString();
 			}	
 			return ""; //$NON-NLS-1$
 		}

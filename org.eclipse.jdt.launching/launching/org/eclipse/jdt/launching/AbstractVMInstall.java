@@ -11,7 +11,7 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	private IVMInstallType fType;
 	private String fId;
 	private String fName;
-	private File fInstallLocation;	private int fDebuggerTimeout= 3000;	private LibraryLocation fSystemLibraryDescription;	
+	private File fInstallLocation;	private int fDebuggerTimeout= 3000;	private LibraryLocation[] fSystemLibraryDescriptions;	
 	/**
 	 * Constructs a new AbstractVM.
 	 * @param	type	The IVMType this vm belongs to.
@@ -94,14 +94,14 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	public int getDebuggerTimeout() {
 		return fDebuggerTimeout;
 	}
-	/**	 * @see IVMInstall#getLibraryLocation()	 */	public LibraryLocation getLibraryLocation() {
-		return fSystemLibraryDescription;
+	/**	 * @see IVMInstall#getLibraryLocation()	 * 	 * XXX: to be removed	 */	public LibraryLocation getLibraryLocation() {		LibraryLocation[] locs = getLibraryLocations();		if (locs != null && locs.length > 0) {			return locs[0];		}
+		return null;
 	}
 
 	/**
-	 * @see IVMInstall#setLibraryLocation(LibraryLocation)
+	 * @see IVMInstall#setLibraryLocation(LibraryLocation)	 * 	 * XXX: to be removed
 	 */
-	public void setLibraryLocation(LibraryLocation description) {		fSystemLibraryDescription= description;
+	public void setLibraryLocation(LibraryLocation description) {		setLibraryLocations(new LibraryLocation[] {description});
 	}
 
-}
+	/**	 * @see IVMInstall#getLibraryLocations()	 */	public LibraryLocation[] getLibraryLocations() {		return fSystemLibraryDescriptions;	}	/**	 * @see IVMInstall#setLibraryLocations(LibraryLocation[])	 */	public void setLibraryLocations(LibraryLocation[] locations) {		fSystemLibraryDescriptions = locations;	}}
