@@ -85,6 +85,7 @@ public class BreakpointLocationVerifierJob extends Job {
 		fType= type;
 		fResource= resource;
 		fStatusLine= statusLine;
+		setSystem(true);
 	}
 	
 	public IStatus run(IProgressMonitor monitor) {

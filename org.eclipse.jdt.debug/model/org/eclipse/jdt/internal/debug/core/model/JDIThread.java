@@ -2479,6 +2479,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			super(JDIDebugModelMessages.getString("JDIThread.39")); //$NON-NLS-1$
 			fJDIThread= thread;
 			fRunnables= new Vector(5);
+			setSystem(true);
 		}
 		
 		public void addRunnable(Runnable runnable) {
