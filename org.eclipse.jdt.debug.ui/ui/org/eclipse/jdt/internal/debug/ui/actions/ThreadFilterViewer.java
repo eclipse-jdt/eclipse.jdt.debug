@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -87,15 +88,13 @@ public class ThreadFilterViewer extends FieldEditor {
 	protected void setInitialCheckedState() {
 		try {
 			IDebugTarget[] targets= getDebugTargets();
-			IJavaDebugTarget target;
 			for (int i= 0, numTargets= targets.length; i < numTargets; i++) {
-				if (!(targets[i] instanceof IJavaDebugTarget)) {
-					continue;
-				}
-				target= (IJavaDebugTarget)targets[i];
-				IJavaThread filteredThread= fBreakpoint.getThreadFilter(target);
-				if (filteredThread != null) {
-					fCheckHandler.checkThread(filteredThread, true);
+				IJavaDebugTarget target = (IJavaDebugTarget)targets[i].getAdapter(IJavaDebugTarget.class);
+				if (target != null) {
+					IJavaThread filteredThread= fBreakpoint.getThreadFilter(target);
+					if (filteredThread != null) {
+						fCheckHandler.checkThread(filteredThread, true);
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -162,14 +161,12 @@ public class ThreadFilterViewer extends FieldEditor {
 	 */
 	protected void doStore() {
 		IDebugTarget[] targets= getDebugTargets();
-		IDebugTarget debugTarget;
 		IJavaDebugTarget target;
 		IThread[] threads;
 		IJavaThread thread;
 		for (int i= 0, numTargets= targets.length; i < numTargets; i++) {
-			debugTarget= targets[i];
-			if (debugTarget instanceof IJavaDebugTarget) {
-				target= (IJavaDebugTarget)debugTarget;
+			target = (IJavaDebugTarget)targets[i].getAdapter(IJavaDebugTarget.class);
+			if (target != null) {
 				try {
 					if (fThreadViewer.getChecked(target)) {
 						threads= target.getThreads();
@@ -345,11 +342,14 @@ public class ThreadFilterViewer extends FieldEditor {
 		 * @see ITreeContentProvider#getChildren(Object)
 		 */
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof IJavaDebugTarget) {
-				try {
-					return ((IJavaDebugTarget)parent).getThreads();
-				} catch (DebugException e) {
-					JDIDebugUIPlugin.log(e);
+			if (parent instanceof IDebugTarget) {
+				IJavaDebugTarget target = (IJavaDebugTarget)((IDebugTarget)parent).getAdapter(IJavaDebugTarget.class);
+				if (target != null) {
+					try {
+						return ((IJavaDebugTarget)parent).getThreads();
+					} catch (DebugException e) {
+						JDIDebugUIPlugin.log(e);
+					}
 				}
 			}		
 			if (parent instanceof ILaunchManager) {
@@ -360,11 +360,8 @@ public class ThreadFilterViewer extends FieldEditor {
 				for (int i= 0, numLaunches= launches.length; i < numLaunches; i++) {
 					targets= launches[i].getDebugTargets();
 					for (int j= 0, numTargets= targets.length; j < numTargets; j++) {
-						if (!(targets[j] instanceof IJavaDebugTarget)) {
-							continue;
-						}
-						target= (IJavaDebugTarget)targets[j];
-						if (!target.isDisconnected() && !target.isTerminated()) {
+						target= (IJavaDebugTarget)targets[j].getAdapter(IJavaDebugTarget.class);
+						if (target != null && !target.isDisconnected() && !target.isTerminated()) {
 							children.add(target);
 						}
 					}
