@@ -127,7 +127,7 @@ class JavaParseTreeBuilder extends SourceElementRequestorAdapter implements ICom
 		push(JavaNode.FIELD, new String(name), declarationStart);
 	}
 	
-	public void exitField(int declarationEnd) {
+	public void exitField(int initializationStart, int declarationEnd) {
 		pop(declarationEnd);
 	}
 
