@@ -143,14 +143,12 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
-		String className = getTypeName();
 		
 		MethodEntryRequest entryRequest= createMethodEntryRequest(target);
 		MethodExitRequest exitRequest= createMethodExitRequest(target);
 		
 		registerRequest(entryRequest, target);
 		registerRequest(exitRequest, target);
-
 	}
 	
 	/**
@@ -334,10 +332,19 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * is interested in. If it is not, do nothing.
 	 */
 	protected boolean handleEntryEvent(MethodEntryEvent event, JDIDebugTarget target) {
-		MethodEntryRequest request = (MethodEntryRequest)event.request();
+		return handleMethodEvent(event, event.method(), target);
+	}	
+	
+	
+	/**
+	 * Method entry/exit events are fired each time any method is invoked in a class
+	 * in which a method entry/exit breakpoint has been installed.
+	 * When a method entry/exit event is received by this breakpoint, ensure that
+	 * the event has been fired by a method invocation that this breakpoint
+	 * is interested in. If it is not, do nothing.
+	 */
+	protected boolean handleMethodEvent(LocatableEvent event, Method method, JDIDebugTarget target) {
 		try {
-			Method method = event.method();
-			
 			if (getMethodName() != null) {
 				if (!method.name().equals(getMethodName())) {
 					return true;
@@ -357,7 +364,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			}
 			
 			// simulate hit count
-			Integer count = (Integer)request.getProperty(HIT_COUNT);
+			Integer count = (Integer)event.request().getProperty(HIT_COUNT);
 			if (count != null) {
 				return handleHitCount(event, count, target);
 			} else {
@@ -369,9 +376,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			JDIDebugPlugin.logError(e);
 		}
 		return true;
-		
-	}	
-	
+	}
 	/**
 	 * Method exit events are fired each time any method is exited in a class
 	 * in which a method exit breakpoint has been installed.
@@ -380,42 +385,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * is interested in. If it is not, do nothing.
 	 */
 	protected boolean handleExitEvent(MethodExitEvent event, JDIDebugTarget target) {
-		MethodExitRequest request = (MethodExitRequest)event.request();
-		try {
-			Method method = event.method();
-			
-			if (getMethodName() != null) {
-				if (!method.name().equals(getMethodName())) {
-					return true;
-				}
-			}
-			
-			if (getMethodSignature() != null) {
-				if (!method.signature().equals(getMethodSignature())) {
-					return true;
-				}
-			}
-			
-			if (isNativeOnly()) {
-				if (!method.isNative()) {
-					return true;
-				}
-			}
-			
-			// simulate hit count
-			Integer count = (Integer)request.getProperty(HIT_COUNT);
-			if (count != null) {
-				return handleHitCount(event, count, target);
-			} else {
-				// no hit count - suspend
-				return doSuspend(event.thread(), target);
-			}
-			
-		} catch (CoreException e) {
-			JDIDebugPlugin.logError(e);
-		}
-		return true;
-		
+		return handleMethodEvent(event, event.method(), target);	
 	}	
 	
 	/**
