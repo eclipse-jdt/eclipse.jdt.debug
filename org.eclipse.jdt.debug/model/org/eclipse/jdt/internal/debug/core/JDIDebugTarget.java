@@ -1173,7 +1173,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	protected void cleanup() {
 		removeAllThreads();
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+		DebugPlugin plugin = DebugPlugin.getDefault();
+		plugin.getBreakpointManager().removeBreakpointListener(this);
+		plugin.getLaunchManager().removeLaunchListener(this);
 		removeAllBreakpoints();
 		cleanupTempFiles();
 		if (fEvaluationContexts != null) {
@@ -1884,7 +1886,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ILaunchListener#launchDeregistered(ILaunch)
 	 */
 	public void launchDeregistered(ILaunch launch) {
-		if (isTerminated() || isDisconnected() || (launch.getDebugTarget() != this)) {
+		if (isTerminated() || isDisconnected() || !this.equals(launch.getDebugTarget())) {
 			return;
 		}
 		// This target has been deregistered, but it hasn't successfully terminated.
