@@ -48,6 +48,21 @@ public interface IJavaObject extends IJavaValue {
 	 * </ul>
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread, boolean superSend) throws DebugException;	
+	
+	/**
+	 * Returns a variable representing the field in this object
+	 * with the given name, or <code>null</code> if there is no
+	 * field with the given name, or the name is ambiguous.
+	 * 
+	 * @param name field name
+	 * @return the variable representing the field, or <code>null</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	public IJavaVariable getField(String name) throws DebugException;
+	
 }
 
 

@@ -90,7 +90,7 @@ public class JDIType implements IJavaType {
 	 * 
 	 * @return the underlying type on the VM
 	 */
-	public Type getUnderlyingType() {
+	protected Type getUnderlyingType() {
 		return fType;
 	}
 
@@ -99,7 +99,7 @@ public class JDIType implements IJavaType {
 	 * 
 	 * @param type the underlying type on the VM
 	 */
-	public void setUnderlyingType(Type type) {
+	protected void setUnderlyingType(Type type) {
 		fType = type;
 	}
 	
@@ -109,5 +109,20 @@ public class JDIType implements IJavaType {
 	public String toString() {
 		return getUnderlyingType().toString();
 	}
+	
+	/**
+	 * @see IJavaType#getName()
+	 */
+	public String getName() throws DebugException {
+		try {
+			return getUnderlyingType().name();
+		} catch (RuntimeException e) {
+			getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while retrieving type name.", new String[]{e.toString()}), e);
+		}
+		// execution will not fall through as an exception
+		// will be thrown by the catch block
+		return null;
+	}
+
 }
 

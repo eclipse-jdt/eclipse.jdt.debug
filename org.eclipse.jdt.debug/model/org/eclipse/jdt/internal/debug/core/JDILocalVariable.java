@@ -62,7 +62,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 	/**
 	 * @see JDIModificationVariable#setValue(Value)
 	 */
-	public void setValue(Value value) throws DebugException {
+	protected void setValue(Value value) throws DebugException {
 		try {
 			getStackFrame().getUnderlyingStackFrame().setValue(getLocal(), value);
 		} catch (ClassNotLoadedException e) {

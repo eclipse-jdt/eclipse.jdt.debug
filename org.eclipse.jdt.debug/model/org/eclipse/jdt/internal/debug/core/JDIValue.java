@@ -50,9 +50,12 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	
 	/**
 	 * Creates the appropriate kind of value - i.e. a primitive
-	 * value, object, class object, or array.
+	 * value, object, class object, or array, or <code>null</code>.
 	 */
 	public static JDIValue createValue(JDIDebugTarget target, Value value) {
+		if (value == null) {
+			return new JDINullValue(target);
+		}
 		if (value instanceof ClassObjectReference) {
 			return new JDIClassObjectValue(target,(ClassObjectReference)value);
 		}

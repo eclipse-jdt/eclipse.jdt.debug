@@ -15,12 +15,12 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 
 /**
- * Represents a value of "void"
+ * Represents a value of "null"
  */
-public class JDIVoidValue extends JDIValue {
+public class JDINullValue extends JDIValue {
 	
 	
-	public JDIVoidValue(JDIDebugTarget target) {
+	public JDINullValue(JDIDebugTarget target) {
 		super(target, null);
 	}
 
@@ -32,7 +32,7 @@ public class JDIVoidValue extends JDIValue {
 	 * @see IValue#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() {
-		return "void"; //$NON-NLS-1$
+		return "null"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class JDIVoidValue extends JDIValue {
 	 * @see IJavaValue#getSignature()
 	 */
 	public String getSignature() {
-		return "V"; //$NON-NLS-1$
+		return null;
 	}
 
 	/**
@@ -67,6 +67,6 @@ public class JDIVoidValue extends JDIValue {
 	 * @see IJavaValue#getJavaType()
 	 */
 	public IJavaType getJavaType() throws DebugException {
-		return new JDIVoidType((JDIDebugTarget)getDebugTarget());
+		return null;
 	}
 }

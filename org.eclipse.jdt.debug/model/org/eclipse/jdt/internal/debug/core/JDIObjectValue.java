@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.core;
  */
  
 import com.sun.jdi.ClassType;
+import com.sun.jdi.Field;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
@@ -18,6 +19,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.core.search.matching.SuperInterfaceReferencePattern;
 
 /**
@@ -49,9 +51,9 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 		}
 		ObjectReference object = getUnderlyingObject();
-		Method method = null;			
+		Method method = null;
+		ReferenceType refType = getUnderlyingReferenceType();;		
 		try {
-			ReferenceType refType = object.referenceType();
 			if (superSend) {
 				// begin lookup in superclass
 				refType = ((ClassType)refType).superclass();
@@ -76,6 +78,43 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	 */
 	protected ObjectReference getUnderlyingObject() {
 		return (ObjectReference)getUnderlyingValue();
+	}
+
+	/**
+	 * @see IJavaObject#getField(String)
+	 */
+	public IJavaVariable getField(String name) throws DebugException {
+		ReferenceType ref = getUnderlyingReferenceType();
+		try {
+			Field field = ref.fieldByName(name);
+			if (field != null) {
+				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
+			}
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred retrieving field.", new String[]{e.toString()}), e);
+		}
+		// it is possible to return null
+		return null;
+	}
+	
+	/**
+	 * Returns the underlying reference type for this object.
+	 * 
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	protected ReferenceType getUnderlyingReferenceType() throws DebugException {
+		try {
+			return getUnderlyingObject().referenceType();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred retrieving reference type.", new String[]{e.toString()}), e);
+		}
+		// execution will not reach this line, as an exception will
+		// be thrown.
+		return null;
+			
 	}
 
 }

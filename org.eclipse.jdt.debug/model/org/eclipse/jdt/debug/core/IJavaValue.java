@@ -70,9 +70,11 @@ public interface IJavaValue extends IValue {
 	public String evaluateToString(IJavaThread thread) throws DebugException;
 	
 	/**
-	 * Returns the type of this vlaue.
+	 * Returns the type of this value, or <code>null</code>
+	 * if this value represents the <code>null</code> value
 	 * 
-	 * @return the type of this value
+	 * @return the type of this value, or <code>null</code>
+	 * if this value represents the <code>null</code> value
 	 */
 	public IJavaType getJavaType() throws DebugException;
 	

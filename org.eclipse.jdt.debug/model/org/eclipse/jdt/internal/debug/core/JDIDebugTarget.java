@@ -53,6 +53,7 @@ import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
+import com.sun.jdi.Type;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
@@ -1046,7 +1047,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			if (classes.size() == 0) {
 				return null;
 			} else {
-				ClassType type = (ClassType)classes.get(0);
+				Type type = (Type)classes.get(0);
 				return JDIType.createType(this, type);
 			}
 		} catch (RuntimeException e) {

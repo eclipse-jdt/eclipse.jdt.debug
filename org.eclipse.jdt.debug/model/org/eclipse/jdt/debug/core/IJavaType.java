@@ -31,5 +31,16 @@ public interface IJavaType {
 	 * the failure.</li></ul>
 	 */
 	public String getSignature() throws DebugException;
+	
+	/**
+	 * Returns the name of this type. For example, <code>"java.lang.String"</code>.
+	 * 
+	 * @return the name of this type
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li></ul>
+	 */
+	public String getName() throws DebugException;
 }
 

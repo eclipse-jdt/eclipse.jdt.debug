@@ -24,9 +24,11 @@ import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaEvaluate;
 import org.eclipse.jdt.debug.core.IJavaEvaluationListener;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;
 import com.sun.jdi.LocalVariable;
@@ -644,6 +646,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 	
 	/**
+	 * @see IJavaStackFrame#isConstructor()
+	 */
+	public boolean isConstructor() throws DebugException {
+		return getUnderlyingMethod().isConstructor();
+	}
+	
+	/**
 	 * @see IJavaStackFrame#isStaticInitializer()
 	 */
 	public boolean isStaticInitializer() throws DebugException {
@@ -783,4 +792,29 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	protected void setVariables(List variables) {
 		fVariables = variables;
 	}
+	
+	/**
+	 * @see IJavaStackFrame#getLocalVariables()
+	 */
+	public IJavaVariable[] getLocalVariables() throws DebugException {
+		List list = getUnderlyingVisibleVariables();
+		IJavaVariable[] locals = new IJavaVariable[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			locals[i] = new JDILocalVariable(this, (LocalVariable)list.get(i));
+		}
+		return locals;
+	}
+
+	/**
+	 * @see IJavaStackFrame#getThis()
+	 */
+	public IJavaObject getThis() throws DebugException {
+		IJavaObject receiver = null;
+		ObjectReference thisObject = getUnderlyingThisObject();
+		if (thisObject != null) {
+			receiver = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), thisObject);
+		}
+		return receiver;
+	}
+
 }

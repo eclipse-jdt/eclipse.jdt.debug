@@ -7,6 +7,7 @@ package org.eclipse.jdt.debug.core;
 
 import java.util.List;
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
@@ -36,9 +37,15 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * Execution marker is set to the beginning of this stack frame's
 	 * associated method.
 	 *
-	 * @exception DebugException If this method fails. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - The request failed in the target.
-	 * <li>NOT_SUPPORTED - The capability is not supported by the target.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 * <li>The capability is not supported by the target.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
 	void dropToFrame() throws DebugException;
@@ -50,15 +57,34 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * @return whether this stack frame currently supports drop to frame
 	 */
 	boolean supportsDropToFrame();
-	
+	/**
+	 * Returns whether the method associated with this stack frame
+	 * is a constructor.
+	 * 
+	 * @return whether this stack frame is associated with a constructor
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
+	 */
+	public boolean isConstructor() throws DebugException;
+		
 	/**
 	 * Returns whether the method associated with this stack frame
 	 * has been declared as native.
 	 * 
 	 * @return whether this stack frame has been declared as native
-	 * @exception DebugException on failure. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - unable to determine if this
-	 *   stack frame has been declared as native.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
 	public boolean isNative() throws DebugException;
@@ -78,9 +104,13 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * has been declared as synchronized.
 	 *
 	 * @return whether this stack frame has been declared as synchronized
-	 * @exception DebugException on failure. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - unable to determine if this
-	 *   stack frame has been declared as synchronized.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
 	public boolean isSynchronized() throws DebugException;
@@ -89,8 +119,14 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * associated with this stack frame.
 	 *
 	 * @return declaring type name
-	 * @exception DebugException if unable to retrieve this stack frame's
-	 *    declaring type name from the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
 	 */
 	public String getDeclaringTypeName() throws DebugException;
 	/**
@@ -98,9 +134,13 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * associated with this stack frame
 	 *
 	 * @return receiving type name
-	 * @exception DebugException on failure. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - unable to retrieve this stack frame's
-	 *    receiving type name from the target.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
 	public String getReceivingTypeName() throws DebugException;
@@ -110,9 +150,13 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * The signature is in JNI format.
 	 *
 	 * @return signature
-	 * @exception DebugException on failure. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - unable to retrieve this stack frame's
-	 *    signature from the target.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
 	public String getSignature() throws DebugException;
@@ -122,9 +166,13 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * associated with this stack frame.
 	 *
 	 * @return argument type names, or an empty list if this method has no arguments
-	 * @exception DebugException on failure. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - unable to retrieve this stack
-	 *   frame's argument names from the target.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
 	public List getArgumentTypeNames() throws DebugException;
@@ -133,9 +181,13 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * Returns the name of the method associated with this stack frame
 	 *
 	 * @return method name
-	 * @exception DebugException on failure. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - unable to retrieve this stack frame's
-	 *    method name from the target.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
 	public String getMethodName() throws DebugException;
@@ -146,9 +198,13 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 *
 	 * @param variableName the name of the variable to search for
 	 * @return a variable, or <code>null</code> if none
-	 * @exception DebugException on failure. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - while searching for the variable
-	 * on the target.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
 	IVariable findVariable(String variableName) throws DebugException;
@@ -160,12 +216,50 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	 * the associated source name would be "Example.java".
 	 * 
 	 * @return unqualified source file name, or <code>null</code>
-	 * @exception DebugException on failure. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - unable to retrieve the source
-	 *    name from the target.
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
 	public String getSourceName() throws DebugException;
+	
+	/**
+	 * Returns a collection of local variables that are visible
+	 * at the current point of execution in this stack frame. The
+	 * list includes arguments.
+	 * 
+	 * @return collection of locals and arguments
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
+	 */
+	public IJavaVariable[] getLocalVariables() throws DebugException;
+	
+	/**
+	 * Returns a reference to the receiver of the method associated
+	 * with this stack frame, or <code>null</code> if this stack frame
+	 * represents a static method.
+	 * 
+	 * @return 'this' object, or <code>null</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
+	 */
+	public IJavaObject getThis() throws DebugException;
 }
 
 

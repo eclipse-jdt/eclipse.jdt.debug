@@ -55,7 +55,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 		return "[" + getIndex() + "]"; //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
-	public void setValue(Value value) throws DebugException {
+	protected void setValue(Value value) throws DebugException {
 		ArrayReference ar= getArrayReference();
 		if (ar == null) {
 			requestFailed(JDIDebugModelMessages.getString("JDIArrayEntryVariable.value_modification_failed"), null); //$NON-NLS-1$
