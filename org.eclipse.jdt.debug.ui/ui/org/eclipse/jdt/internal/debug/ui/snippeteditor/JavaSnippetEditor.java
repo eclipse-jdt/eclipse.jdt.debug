@@ -509,7 +509,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		Runnable r= new Runnable() {
 			public void run() {
 				Shell shell= getShell();
-				if (shell != null && !shell.isDisposed()) {
+				if (fSnippetStateListeners != null && shell != null && !shell.isDisposed()) {
 					List v= new ArrayList(fSnippetStateListeners);
 					for (int i= 0; i < v.size(); i++) {
 						ISnippetStateChangedListener l= (ISnippetStateChangedListener) v.get(i);
