@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
  
 import java.io.File;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -25,7 +24,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -160,7 +158,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		fWorkspaceDirBrowseButton = createPushButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.B&rowse..._3"), null); //$NON-NLS-1$
 		fWorkspaceDirBrowseButton.addSelectionListener(fListener);		
 
-		fWorkspaceDirVariablesButton = createPushButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.18"), null); //$NON-NLS-1$
+		fWorkspaceDirVariablesButton = createPushButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.17"), null); //$NON-NLS-1$
 		fWorkspaceDirVariablesButton.addSelectionListener(fListener);
 		
 		fUseDefaultWorkingDirButton = new Button(workingDirComp,SWT.CHECK);

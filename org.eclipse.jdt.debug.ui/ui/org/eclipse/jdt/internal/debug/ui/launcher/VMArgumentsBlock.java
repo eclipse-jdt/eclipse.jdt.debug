@@ -71,6 +71,7 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 		});	
 				
 		Button pgrmArgVariableButton = createPushButton(comp, LauncherMessages.getString("VMArgumentsBlock.4"), null); //$NON-NLS-1$
+		pgrmArgVariableButton.setFont(font);
 		pgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		pgrmArgVariableButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
