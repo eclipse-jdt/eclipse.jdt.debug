@@ -81,7 +81,7 @@ class JavaParseTreeBuilder extends SourceElementRequestorAdapter implements ICom
 		pop(declarationEnd);
 	}
 	
-	public void acceptImport(int declarationStart, int declarationEnd, char[] name, boolean onDemand) {
+	public void acceptImport(int declarationStart, int declarationEnd, char[] name, boolean onDemand, int modifiers) {
 		int length= declarationEnd-declarationStart+1;
 		if (fImportContainer == null)
 			fImportContainer= new JavaNode(getCurrentContainer(), JavaNode.IMPORT_CONTAINER, null, declarationStart, length);
