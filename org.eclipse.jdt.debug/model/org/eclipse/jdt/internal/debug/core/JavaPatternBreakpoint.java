@@ -72,7 +72,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 		String classPrepareTypeName= referenceTypeName;
 		// create request to listen to class loads
 		//name may only be partially resolved
-		if (!referenceTypeName.endsWith("*")) {
+		if (!referenceTypeName.endsWith("*")) { //$NON-NLS-1$
 			classPrepareTypeName= classPrepareTypeName + '*';
 		}
 		registerRequest(target.createClassPrepareRequest(classPrepareTypeName), target);

@@ -630,7 +630,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			try {
 				Method underlyingMethod= getUnderlyingMethod();
 				if (underlyingMethod.isObsolete()) {
-					fDeclaringTypeName=  "<unknown declaring type>";
+					fDeclaringTypeName=  JDIDebugModelMessages.getString("JDIStackFrame.<unknown_declaring_type>_1"); //$NON-NLS-1$
 				} else {
 					fDeclaringTypeName= getUnderlyingMethod().declaringType().name();
 				}
@@ -651,7 +651,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (fReceivingTypeName == null) {
 			try {
 				if (getUnderlyingMethod().isObsolete()) {
-					fReceivingTypeName="<unknown receiving type>";
+					fReceivingTypeName=JDIDebugModelMessages.getString("JDIStackFrame.<unknown_receiving_type>_2"); //$NON-NLS-1$
 				} else {
 					ObjectReference thisObject = getUnderlyingThisObject();
 					if (thisObject == null) {
@@ -857,7 +857,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			// could have been set via a call to JDIThread#updateStackFrames
 			((JDIThread)getThread()).computeStackFrames();
 			if (fStackFrame == null) {
-				requestFailed("Thread not suspended, stack frame unavailable.", null);
+				requestFailed(JDIDebugModelMessages.getString("JDIStackFrame.Thread_not_suspended,_stack_frame_unavailable._3"), null); //$NON-NLS-1$
 			}
 		}
 		return fStackFrame;
