@@ -265,7 +265,7 @@ public class BinaryBasedSourceGenerator {
 				if (buffer != null) {
 					source.append("abstract class "); //$NON-NLS-1$
 					source.append(getSimpleName(typeName)).append("___ implements "); //$NON-NLS-1$
-					source.append(getSimpleName(typeName)).append(" {\n"); //$NON-NLS-1$
+					source.append(typeName.replace('$', '.')).append(" {\n"); //$NON-NLS-1$
 					fCodeSnippetPosition += source.length();
 					source.append(buffer).append("}\n"); //$NON-NLS-1$
 				}
