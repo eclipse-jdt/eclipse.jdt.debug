@@ -12,7 +12,9 @@ package org.eclipse.jdt.launching;
 
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Random;
 
 /**
@@ -23,31 +25,46 @@ public class SocketUtil {
 	
 	/**
 	 * Returns a free port number on the specified host within the given range,
-	 * or if there are no free ports in the given range, returns any free port,
 	 * or -1 if none found.
 	 * 
 	 * @param host name or IP addres of host on which to find a free port
 	 * @param searchFrom the port number from which to start searching 
 	 * @param searchTo the port number at which to stop searching
-	 * @return a free port in the specified range, or any free port, or -1 of none found
+	 * @return a free port in the specified range, or -1 of none found
 	 */
 	public static int findUnusedLocalPort(String host, int searchFrom, int searchTo) {
+
 		for (int i= 0; i < 10; i++) {
-			ServerSocket socket= null;
+			Socket s= null;
+			int port= getRandomPort(searchFrom, searchTo);
 			try {
-				int port= getRandomPort(searchFrom, searchTo);
-				socket= new ServerSocket(port);
+				s= new Socket(host, port);
+			} catch (ConnectException e) {
 				return port;
-			} catch (IOException e) { 
+			} catch (IOException e) {
 			} finally {
-				if (socket != null) {
+				if (s != null) {
 					try {
-						socket.close();
-					} catch (IOException e) {
+						s.close();
+					} catch (IOException ioe) {
 					}
 				}
 			}
 		}
+		return -1;
+	}
+	
+	private static int getRandomPort(int low, int high) {
+		return (int)(fgRandom.nextFloat() * (high-low)) + low;
+	}
+	
+	/**
+	 * Returns a free port number on localhost, or -1 if unable to find a free port.
+	 * 
+	 * @return a free port number on localhost, or -1 if unable to find a free port
+	 * @since 3.0
+	 */
+	public static int findFeePort() {
 		ServerSocket socket= null;
 		try {
 			socket= new ServerSocket(0);
@@ -61,10 +78,6 @@ public class SocketUtil {
 				}
 			}
 		}
-		return -1;
-	}
-	
-	private static int getRandomPort(int low, int high) {
-		return (int)(fgRandom.nextFloat() * (high-low)) + low;
+		return -1;		
 	}
 }

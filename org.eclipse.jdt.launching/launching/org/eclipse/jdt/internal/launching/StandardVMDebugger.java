@@ -121,7 +121,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		subMonitor.beginTask(LaunchingMessages.getString("StandardVMDebugger.Launching_VM..._1"), 4); //$NON-NLS-1$
 		subMonitor.subTask(LaunchingMessages.getString("StandardVMDebugger.Finding_free_socket..._2")); //$NON-NLS-1$
 
-		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
+		int port= SocketUtil.findFeePort();
 		if (port == -1) {
 			abort(LaunchingMessages.getString("StandardVMDebugger.Could_not_find_a_free_socket_for_the_debugger_1"), null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE); //$NON-NLS-1$
 		}
