@@ -101,7 +101,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		return ensureMarker().getAttribute(IMarker.CHAR_END, -1);
 	}	
 	/**
-	 * Returns the type of marker associated with java line breakpoints
+	 * Returns the type of marker associated with Java line breakpoints
 	 */
 	public static String getMarkerType() {
 		return JAVA_LINE_BREAKPOINT;
