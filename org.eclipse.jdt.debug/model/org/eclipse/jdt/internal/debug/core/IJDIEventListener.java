@@ -1,5 +1,10 @@
 package org.eclipse.jdt.internal.debug.core;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import com.sun.jdi.event.Event;
 
 /**
