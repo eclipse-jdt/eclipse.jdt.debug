@@ -232,6 +232,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 			fLocalDirButton.setEnabled(false);
 			fWorkingDirText.setText(getDefaultWorkingDir());
 			fWorkingDirText.setEnabled(false);
+			fWorkingDirBrowseButton.setEnabled(false);
 			fWorkspaceDirButton.setEnabled(false);
 			fWorkspaceDirText.setEnabled(false);
 			fWorkspaceDirBrowseButton.setEnabled(false);
