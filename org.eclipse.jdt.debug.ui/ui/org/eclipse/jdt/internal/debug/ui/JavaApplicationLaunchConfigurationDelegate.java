@@ -18,6 +18,7 @@ import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaUISourceLocator;
@@ -69,16 +70,17 @@ public class JavaApplicationLaunchConfigurationDelegate
 	 *  is not performed.
 	 * @exception CoreException if the configuration is invalid or
 	 *  if launching fails.
-	 * 
-	 * [Issue: it is assumed that a launch configuration resides in
-	 *  the project to be launched. It is not possible to store configurations
-	 *  to launch project A in project B.]
 	 */
 	protected ILaunch verifyAndLaunch(ILaunchConfiguration configuration, String mode, boolean doLaunch) throws CoreException {
-		String mainType = configuration.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, null);
-		if (mainType == null) {
+		String memento = configuration.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, null);
+		if (memento == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_not_specified._1"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
+		IType mainType = (IType)JavaCore.create(memento);
+		if (mainType == null) {
+			abort("Main type does not exist.", null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
+		}			
+		
 		String installTypeId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, null);
 		if (installTypeId == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_Type_not_specified._2"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL_TYPE); //$NON-NLS-1$
@@ -98,11 +100,7 @@ public class JavaApplicationLaunchConfigurationDelegate
 			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Internal_error__JRE_{0}_does_not_specify_a_VM_Runner._5"), new String[]{installId}), null, JavaDebugUI.VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		
-		IProject project = configuration.getProject();
-		IJavaProject javaProject = JavaCore.create(project);
-		if (project == null) {
-			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Project_{0}_is_not_a_Java_project._6"), new String[]{project.getName()}), null, JavaDebugUI.NOT_A_JAVA_PROJECT); //$NON-NLS-1$
-		}
+		IJavaProject javaProject = mainType.getJavaProject();
 		
 		if (!doLaunch) {
 			// just verify
@@ -116,7 +114,7 @@ public class JavaApplicationLaunchConfigurationDelegate
 		String[] classpath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
 		String bootpath = configuration.getAttribute(JavaDebugUI.BOOTPATH_ATTR, null);
 
-		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainType, classpath);
+		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainType.getFullyQualifiedName(), classpath);
 		runConfig.setProgramArguments(args.getProgramArgumentsArray());
 		runConfig.setVMArguments(args.getVMArgumentsArray());
 		if (bootpath != null) {

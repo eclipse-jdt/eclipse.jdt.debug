@@ -22,9 +22,7 @@ public class JavaDebugUI {
 		
 	/**
 	 * Main type launch configuration attribute name.
-	 * The fully qualified name of the main class to
-	 * launch is stored in a launch configuration with
-	 * this key.
+	 * The memento of the <code>IType</code> to launch.
 	 */
 	public static final String MAIN_TYPE_ATTR = "MAIN_TYPE";	 //$NON-NLS-1$
 	
