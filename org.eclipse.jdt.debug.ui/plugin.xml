@@ -969,14 +969,14 @@
 	<sourceLocator
 		id = "org.eclipse.jdt.debug.ui.javaSourceLocator"
 	   	class="org.eclipse.jdt.debug.ui.JavaUISourceLocator"
-	   	name="Prompting Java Source Locator"/>
+	   	name="%JavaSourceLocator.name"/>
 </extension>
 
 <extension point = "org.eclipse.debug.ui.debugActionGroups">
 	<debugActionGroup
 		id = "org.eclipse.jdt.debug.ui.javaDebugActionGroup"
 	   	visible="true"
-	   	name="Java Debug">
+	   	name="%JavaDebugActionGroup.name">
 	   	<action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"/>
 	   	<action id="org.eclipse.jdt.debug.ui.actions.AddException"/>
 	   	<action id="org.eclipse.jdt.ui.expressionViewActions.ShowQualified"/>
