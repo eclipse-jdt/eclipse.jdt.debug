@@ -605,17 +605,17 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 */
 	public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 		if (breakpoint == getSuspendOnCompilationErrorBreakpoint()) {
-			return getProblem(thread) != null ? SUSPEND : DONT_CARE;
+			return getProblem(thread) != null ? SUSPEND : DONT_SUSPEND;
 		}
 		if (breakpoint == getSuspendOnUncaughtExceptionBreakpoint()) {
 			// the "uncaught" exceptions breakpoint subsumes the "compilation error" breakpoint
 			// since "Throwable" is a supertype of "Error". Thus, if there is actually a compilation
 			// error here, but the option to suspend on compilation errors is off, we should
 			// resume (i.e. do not suspend)
-			if (!isSuspendOnCompilationErrors()) {
-				// only suspend if there is no compilation error
-				return getProblem(thread) == null ? SUSPEND : DONT_CARE;
+			if (!isSuspendOnCompilationErrors() && getProblem(thread) != null) {
+				return DONT_SUSPEND;
 			}
+			return SUSPEND;
 		}
 		return DONT_CARE;
 	}
