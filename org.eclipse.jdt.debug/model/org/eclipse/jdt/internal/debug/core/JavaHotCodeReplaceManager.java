@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -35,7 +37,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
  * <p>
  * Currently, replacing .jar files has no effect on running targets.
  */
-public class JavaHotCodeReplaceManager implements IResourceChangeListener {
+public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaunchListener {
 
 	/**
 	 * Singleton 
@@ -77,7 +79,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 	 * is called by the JDI debug model plugin on startup.
 	 */
 	public void startup() {
-		getWorkspace().addResourceChangeListener(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
 	/**
@@ -86,6 +88,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 	 * on shutdown.
 	 */
 	public void shutdown() {
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		getWorkspace().removeResourceChangeListener(this);
 		fHotCodeReplaceListeners.removeAll();
 	}
@@ -369,5 +372,26 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener {
 		};
 		new Thread(runnable).start();
 	}
+	/**
+	 * When a launch is deregistered, check if there are any
+	 * other launches registered. If not, stop listening
+	 * to resource changes.
+	 */
+	public void launchDeregistered(ILaunch launch) {
+		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches= manager.getLaunches();
+		if (launches.length < 1) {
+			getWorkspace().removeResourceChangeListener(this);
+		}
+	}
+
+	/**
+	 * Begin listening for resource changes when a launch is
+	 * registered.
+	 */
+	public void launchRegistered(ILaunch launch) {
+		getWorkspace().addResourceChangeListener(this);
+	}
+
 }
 
