@@ -57,15 +57,11 @@ public class StandardVMDebugger extends StandardVMRunner {
 			abort(LaunchingMessages.getString("StandardVMDebugger.Could_not_find_a_free_socket_for_the_debugger_1"), null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE); //$NON-NLS-1$
 		}
 		
-		String program= constructProgramString();
-		File javawexe= new File(program + "w.exe"); //$NON-NLS-1$
-		File javaw= new File(program + "w"); //$NON-NLS-1$
+		Map attributeMap= config.getVMSpecificAttributesMap();
+		String command= (String)attributeMap.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
 		
-		if (javawexe.isFile()) {
-			program= javawexe.getAbsolutePath();
-		} else if (javaw.isFile()) {
-			program= javaw.getAbsolutePath();
-		}
+		String program= constructProgramString(command);
+		program= adjustProgramString(command, program);
 
 		List arguments= new ArrayList(12);
 
