@@ -21,11 +21,14 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * Manager for the thread and monitor model.
  */
-public class ThreadMonitorManager implements IDebugEventSetListener {
+public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyChangeListener {
 	
 	private static ThreadMonitorManager fDefaultManager;
 	
@@ -51,7 +54,11 @@ public class ThreadMonitorManager implements IDebugEventSetListener {
 	private ThreadMonitorManager() {
 		fJavaMonitorThreads= new HashMap();
 		fJavaMonitors= new HashMap();
-		DebugPlugin.getDefault().addDebugEventListener(this);
+		IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		preferenceStore.addPropertyChangeListener(this);
+		if (preferenceStore.getBoolean(IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
+			DebugPlugin.getDefault().addDebugEventListener(this);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -163,6 +170,19 @@ public class ThreadMonitorManager implements IDebugEventSetListener {
 			Object[] threads= fJavaMonitorThreads.values().toArray();
 			for (int i = 0; i < threads.length; i++) {
 				((JavaMonitorThread) threads[i]).refresh();
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_MONITOR_THREAD_INFO)) {
+			if (((Boolean)event.getNewValue()).booleanValue()) {
+				DebugPlugin.getDefault().addDebugEventListener(this);
+			} else {
+				DebugPlugin.getDefault().removeDebugEventListener(this);
 			}
 		}
 	}
