@@ -56,8 +56,7 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED= NAME_PREFIX + "entry_ovr_disabled.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_METHOD_BREAKPOINT_EXIT= NAME_PREFIX + "exit_ovr.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED= NAME_PREFIX + "exit_ovr_disabled.gif";	//$NON-NLS-1$
-	
-	
+		
 	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_UP_NAV= NAME_PREFIX + "up_nav.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_DOWN_NAV= NAME_PREFIX + "down_nav.gif";	//$NON-NLS-1$
