@@ -135,35 +135,16 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	}
 
 	/**
-	 * Initialize defaults based on the given java element.
-	 */
-	protected void initializeDefaults(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {		
-		initializeHardCodedDefaults(config);
-	}
-
-	/**
 	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		setLaunchConfigurationWorkingCopy(config);
-		IJavaElement javaElement = getContext();
-		if (javaElement != null) {
-			initializeDefaults(javaElement, config);
-		} else {
-			initializeHardCodedDefaults(config);	
-		}
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
 			dynamicTab.setDefaults(config);
 		}
 	}
 	
-	/**
-	 * Initialize those attributes whose default values are independent of any context.
-	 */
-	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {					
-	}
-
 	/**
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
