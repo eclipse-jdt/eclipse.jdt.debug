@@ -27,6 +27,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.ILaunchFilter;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
@@ -43,7 +44,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -51,7 +51,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.editors.text.WorkspaceOperationRunner;
 
-public class JavaAppletLaunchShortcut implements ILaunchShortcut, IActionFilter {
+public class JavaAppletLaunchShortcut implements ILaunchShortcut, ILaunchFilter {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -271,7 +271,7 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut, IActionFilter 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
 	 */
-	public boolean testAttribute(Object target, String name, String value) {
+	public boolean testAttribute(IResource target, String name, String value) {
 		if ("ContextualLaunchActionFilter".equals(name)) { //$NON-NLS-1$
 			return isApplet(target);
 		} else if ("NameMatches".equals(name)) { //$NON-NLS-1$
@@ -279,23 +279,25 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut, IActionFilter 
 		}
 		return false;
 	}
-	
-	private boolean nameMatches(Object target, String value) {
-		try {
-			Object[] selections = ((IStructuredSelection) target).toArray();
-			IResource resource = (IResource) selections[0];
-			String filename = resource.getName();
-			StringMatcher sm = new StringMatcher(value, true, false);
-			return sm.match(filename);
-		} catch (ClassCastException e) {
-			return false;
-		}
+	/**
+	 * Test if the name of the target resource matches a pattern.
+	 * 
+	 * @param target selected resource from workspace
+	 * @param value regular expression pattern to test
+	 * @return true if the pattern matches the resource name, false otherwise
+	 */
+	private boolean nameMatches(IResource resource, String pattern) {
+		String filename = resource.getName();
+		StringMatcher sm = new StringMatcher(pattern, true, false);
+		return sm.match(filename);
 	}
-	
-	private boolean isApplet(Object target) {
-		if (target != null && target instanceof IStructuredSelection) {
-			Object[] selections = ((IStructuredSelection )target).toArray();
-			IResource resource = (IResource)selections[0];
+	/**
+	 * Check if the specified resource is an Applet.
+	 * @return <code>true</code> if the target resource is an Applet,
+	 * <code>false</code> otherwise.
+	 */
+	private boolean isApplet(IResource resource) {
+		if (resource != null) {
 			try {
 				Set result= new HashSet();
 				AppletLaunchConfigurationUtils.collectTypes(resource, new NullProgressMonitor(), result);

@@ -25,6 +25,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.ILaunchFilter;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -46,7 +47,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -54,7 +54,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 /**
  * Performs single click launching for local Java applications.
  */
-public class JavaApplicationLaunchShortcut implements ILaunchShortcut, IActionFilter {
+public class JavaApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilter {
 	
 	/**
 	 * @param search the java elements to search for a main type
@@ -270,7 +270,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut, IActionFi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
 	 */
-	public boolean testAttribute(Object target, String name, String value) {
+	public boolean testAttribute(IResource target, String name, String value) {
 		if ("ContextualLaunchActionFilter".equals(name)) { //$NON-NLS-1$
 			return hasMain(target);
 		} else if ("NameMatches".equals(name)) { //$NON-NLS-1$
@@ -279,23 +279,27 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut, IActionFi
 		return false;
 	}
 	
-	private boolean nameMatches(Object target, String value) {
-		try {
-			Object[] selections = ((IStructuredSelection) target).toArray();
-			IResource resource = (IResource) selections[0];
-			String filename = resource.getName();
-			StringMatcher sm = new StringMatcher(value, true, false);
-			return sm.match(filename);
-		} catch (ClassCastException e) {
-			return false;
-		}
+	/**
+	 * Test if the name of the target resource matches a pattern.
+	 * 
+	 * @param target selected resource from workspace
+	 * @param value regular expression pattern to test
+	 * @return true if the pattern matches the resource name, false otherwise
+	 */
+	private boolean nameMatches(IResource target, String regexp) {
+		String filename = target.getName();
+		StringMatcher sm = new StringMatcher(regexp, true, false);
+		return sm.match(filename);
 	}
 	
-	private boolean hasMain(Object target) {
-		if (target != null && target instanceof IStructuredSelection) {
-			Object[] selections = ((IStructuredSelection )target).toArray();
-			IResource resource = (IResource)selections[0];
-			IJavaElement element = JavaCore.create(resource);
+	/**
+	 * Look for a Java main() method in the specified resource.
+	 * @return true if the target resource has a <code>main</code> method,
+	 * <code>false</code> otherwise.
+	 */
+	private boolean hasMain(IResource target) {
+		if (target != null) {
+			IJavaElement element = JavaCore.create(target);
 			if (element instanceof ICompilationUnit) {
 				ICompilationUnit cu = (ICompilationUnit) element;
 				IType mainType= cu.getType(Signature.getQualifier(cu.getElementName()));
