@@ -391,8 +391,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					underlyingFrame= (StackFrame) frames.get(underlyingFramesIndex);
 					modelFrame= (JDIStackFrame) fStackFrames.get(modelFramesIndex);
 					if (!underlyingFrame.equals(modelFrame.getLastUnderlyingStackFrame())) {
-						// Replace the out of synch frame
-						fStackFrames.set(modelFramesIndex, new JDIStackFrame(this, underlyingFrame));
+						modelFrame.clearCachedData();
 					}
 				}
 				// compute new or removed stack frames
