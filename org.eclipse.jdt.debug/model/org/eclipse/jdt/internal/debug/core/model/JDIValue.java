@@ -185,7 +185,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		return (IVariable[])list.toArray(new IVariable[list.size()]);
 	}
 	
-	protected List getVariablesList() throws DebugException {
+	protected synchronized List getVariablesList() throws DebugException {
 		if (!isAllocated()) {
 			return Collections.EMPTY_LIST;
 		}
