@@ -23,13 +23,12 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -63,6 +62,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -569,9 +570,43 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		});		
 		
+		createStepFilterButtons(container);
+		createStepFilterCheckboxes(container);
+	}
+	
+	private void createStepFilterCheckboxes(Composite container) {
+		// filter synthetic checkbox
+		fFilterSyntheticButton = new Button(container, SWT.CHECK);
+		fFilterSyntheticButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_s&ynthetic_methods_(requires_VM_support)_17")); //$NON-NLS-1$
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalSpan = 2;
+		fFilterSyntheticButton.setLayoutData(gd);
+		
+		// filter static checkbox
+		fFilterStaticButton = new Button(container, SWT.CHECK);
+		fFilterStaticButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_static_&initializers_18")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalSpan = 2;
+		fFilterStaticButton.setLayoutData(gd);
+		
+		// filter constructor checkbox
+		fFilterConstructorButton = new Button(container, SWT.CHECK);
+		fFilterConstructorButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_co&nstructors_19")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalSpan = 2;
+		fFilterConstructorButton.setLayoutData(gd);
+		
+		fFilterSyntheticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
+		fFilterStaticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
+		fFilterConstructorButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
+		boolean enabled = getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS);
+		fUseFiltersCheckbox.setSelection(enabled);
+		toggleStepFilterWidgetsEnabled(enabled);
+	}
+	private void createStepFilterButtons(Composite container) {
 		// button container
 		Composite buttonContainer = new Composite(container, SWT.NONE);
-		gd = new GridData(GridData.FILL_VERTICAL);
+		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		buttonContainer.setLayoutData(gd);
 		GridLayout buttonLayout = new GridLayout();
 		buttonLayout.numColumns = 1;
@@ -597,7 +632,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
 		fAddTypeButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Add_&Type..._11")); //$NON-NLS-1$
 		fAddTypeButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Choose_a_Java_type_and_add_it_to_step_filters_12")); //$NON-NLS-1$
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = getButtonGridData(fAddTypeButton);
 		fAddTypeButton.setLayoutData(gd);
 		fAddTypeButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
@@ -611,7 +646,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
 		fAddPackageButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Add_&Package..._13")); //$NON-NLS-1$
 		fAddPackageButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Choose_a_package_and_add_it_to_step_filters_14")); //$NON-NLS-1$
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = getButtonGridData(fAddPackageButton);
 		fAddPackageButton.setLayoutData(gd);
 		fAddPackageButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
@@ -625,7 +660,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fRemoveFilterButton = new Button(buttonContainer, SWT.PUSH);
 		fRemoveFilterButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.&Remove_15")); //$NON-NLS-1$
 		fRemoveFilterButton.setToolTipText(DebugUIMessages.getString("JavaDebugPreferencePage.Remove_all_selected_step_filters_16")); //$NON-NLS-1$
-		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gd = getButtonGridData(fRemoveFilterButton);
 		fRemoveFilterButton.setLayoutData(gd);
 		fRemoveFilterButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
@@ -636,35 +671,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		});
 		fRemoveFilterButton.setEnabled(false);
 		
-		// filter synthetic checkbox
-		fFilterSyntheticButton = new Button(container, SWT.CHECK);
-		fFilterSyntheticButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_s&ynthetic_methods_(requires_VM_support)_17")); //$NON-NLS-1$
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 2;
-		fFilterSyntheticButton.setLayoutData(gd);
-		
-		// filter static checkbox
-		fFilterStaticButton = new Button(container, SWT.CHECK);
-		fFilterStaticButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_static_&initializers_18")); //$NON-NLS-1$
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 2;
-		fFilterStaticButton.setLayoutData(gd);
-		
-		// filter constructor checkbox
-		fFilterConstructorButton = new Button(container, SWT.CHECK);
-		fFilterConstructorButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Filter_co&nstructors_19")); //$NON-NLS-1$
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 2;
-		fFilterConstructorButton.setLayoutData(gd);
-		
-		fFilterSyntheticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
-		fFilterStaticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
-		fFilterConstructorButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
-		boolean enabled = getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS);
-		fUseFiltersCheckbox.setSelection(enabled);
-		toggleStepFilterWidgetsEnabled(enabled);
 	}
-	
 	private void toggleStepFilterWidgetsEnabled(boolean enabled) {
 		fFilterViewer.getTable().setEnabled(enabled);
 		fAddPackageButton.setEnabled(enabled);
@@ -1093,6 +1100,19 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			list.add(array[i]);
 		}
 		return list;		
+	}
+	
+	private GridData getButtonGridData(Button button) {
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		GC gc = new GC(button);
+		gc.setFont(button.getFont());
+		FontMetrics fontMetrics= gc.getFontMetrics();
+		gc.dispose();
+		int widthHint= Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
+		gd.widthHint= Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		
+		gd.heightHint= Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_HEIGHT);
+		return gd;
 	}
 }
 
