@@ -82,7 +82,12 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 		 	// Note that timeout is not used in SUN's ListeningConnector, but is used by our
 		 	// LaunchingConnector.
 		 	attribute = "timeout"; //$NON-NLS-1$
-		 	fTimeout = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
+             IntegerArgument argument = (IntegerArgument) connectionArgs.get(attribute);
+             if (argument != null) {
+                 fTimeout = argument.intValue();
+             } else {
+                 fTimeout = 0;
+             }
 		} catch (ClassCastException e) {
 			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketListeningConnectorImpl.Connection_argument_is_not_of_the_right_type_6"), attribute); //$NON-NLS-1$
 		} catch (NullPointerException e) {
