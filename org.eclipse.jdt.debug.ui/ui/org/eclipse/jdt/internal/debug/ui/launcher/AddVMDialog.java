@@ -327,20 +327,20 @@ public class AddVMDialog extends StatusDialog {
 	}
 	
 	private void updateLibraryFieldDefaults() {
-		LibraryLocation location= fSelectedVMType.getDefaultLibraryLocation(getInstallLocation());
 		String libJar= ""; //$NON-NLS-1$
 		String srcJar= ""; //$NON-NLS-1$
-		
-		IPath systemLibraryPath= location.getSystemLibraryPath();
-		if (systemLibraryPath.toFile().isFile()) {
-			libJar= systemLibraryPath.toOSString();
+		if (StatusUtil.getMostSevere(fStati).getSeverity() != IStatus.ERROR) {
+			LibraryLocation location= fSelectedVMType.getDefaultLibraryLocation(getInstallLocation());
+			IPath systemLibraryPath= location.getSystemLibraryPath();
+			if (systemLibraryPath.toFile().isFile()) {
+				libJar= systemLibraryPath.toOSString();
+			}
+	
+			IPath librarySourcePath= location.getSystemLibrarySourcePath();
+			if (librarySourcePath.toFile().isFile()) {
+				srcJar= librarySourcePath.toOSString();
+			}
 		}
-
-		IPath librarySourcePath= location.getSystemLibrarySourcePath();
-		if (librarySourcePath.toFile().isFile()) {
-			srcJar= librarySourcePath.toOSString();
-		}
-
 		fSystemLibrary.setText(libJar);
 		fSystemLibrarySource.setText(srcJar);
 	}
