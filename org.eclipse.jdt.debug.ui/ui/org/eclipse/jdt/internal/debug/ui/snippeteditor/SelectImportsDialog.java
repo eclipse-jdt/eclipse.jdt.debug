@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -26,9 +27,9 @@ import org.eclipse.jdt.internal.debug.ui.FilterLabelProvider;
 import org.eclipse.jdt.internal.debug.ui.FilterViewerSorter;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.ui.util.SWTUtil;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
@@ -45,8 +46,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -144,7 +143,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		
 		// button container
 		Composite buttonContainer = new Composite(container, SWT.NONE);
-		GridData gd = new GridData(GridData.FILL_VERTICAL);
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		buttonContainer.setLayoutData(gd);
 		GridLayout buttonLayout = new GridLayout();
 		buttonLayout.numColumns = 1;
@@ -202,14 +201,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	
 	private GridData getButtonGridData(Button button) {
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		GC gc = new GC(button);
-		gc.setFont(button.getFont());
-		FontMetrics fontMetrics= gc.getFontMetrics();
-		gc.dispose();
-		int widthHint= Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
-		gd.widthHint= Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		
-		gd.heightHint= Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_HEIGHT);
+		button.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(button);
 		return gd;
 	}
 		
@@ -292,8 +285,6 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		Composite outer = new Composite(dialogComp, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
-		topLayout.marginHeight = 5;
-		topLayout.marginWidth = 0;
 		outer.setLayout(topLayout);
 		outer.setFont(font);
 		
