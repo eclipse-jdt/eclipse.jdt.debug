@@ -48,6 +48,7 @@ public class JavaDebugImages {
 	 * Available cached Images in the Java debug plug-in image registry.
 	 */	
 	public static final String IMG_OBJS_EXCEPTION= NAME_PREFIX + "jexception_obj.gif";			//$NON-NLS-1$
+	public static final String IMG_OBJS_EXCEPTION_DISABLED= NAME_PREFIX + "exception_obj_disabled.gif";			//$NON-NLS-1$
 	public static final String IMG_OBJS_ERROR= NAME_PREFIX + "jrtexception_obj.gif";			//$NON-NLS-1$	
 	public static final String IMG_OBJS_BREAKPOINT_INSTALLED= NAME_PREFIX + "installed_ovr.gif";	//$NON-NLS-1$
 	
@@ -78,6 +79,7 @@ public class JavaDebugImages {
 	private static final String T_CTOOL= "ctool16"; 	//$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION= createManaged(T_OBJ, IMG_OBJS_EXCEPTION);
+	public static final ImageDescriptor DESC_OBJS_EXCEPTION_DISABLED= createManaged(T_OBJ, IMG_OBJS_EXCEPTION_DISABLED);
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED= createManaged(T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED);
 	
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED= createManaged(T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED);
