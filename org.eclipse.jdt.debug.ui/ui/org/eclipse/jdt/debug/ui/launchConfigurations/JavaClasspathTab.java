@@ -164,10 +164,12 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * 
 	 * @param pathButtonComp parent composite for the button
 	 * @param action the action triggered by the button
+	 * @return the button that was created
 	 */
-	protected void createButton(Composite pathButtonComp, RuntimeClasspathAction action) {
+	protected Button createButton(Composite pathButtonComp, RuntimeClasspathAction action) {
 		Button button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
+		return button;
 	}
 
 	/* (non-Javadoc)
