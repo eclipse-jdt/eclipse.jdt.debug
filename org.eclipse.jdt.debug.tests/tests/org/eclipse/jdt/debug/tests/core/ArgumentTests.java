@@ -251,7 +251,17 @@ public class ArgumentTests extends AbstractDebugTest {
 	 */
 	public void testProgramArgEmptyStringWithOthers() throws CoreException {
 		testProgramArgCount("word1 \"\" \"part1 part2\" word2", "4");
-	}		
+	}
+	
+	/**
+	 * Test a program argument with one double quote. We should pass in the
+	 * empty string to match Java console behavior.
+	 * 
+	 * Program output should be: 1
+	 */
+	public void testProgramArgOneQuote() throws CoreException {
+		testProgramArgCount("\"", "1");
+	}
 	
 	/**
 	 * Runs the FooPropertyPrinter with the given VM arguments and checks for
