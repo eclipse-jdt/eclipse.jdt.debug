@@ -1880,7 +1880,7 @@ public final class JavaRuntime {
 	 * @throws CoreException if unable to compute the Java library path
 	 * @since 3.1
 	 * @see org.eclipse.jdt.core.IClasspathAttribute
-	 * @see JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY
+	 * @see JavaRuntime#CLASSPATH_ATTR_LIBRARY_PATH_ENTRY
 	 */
 	public static String[] computeJavaLibraryPath(IJavaProject project, boolean requiredProjects) throws CoreException {
 		Set visited = new HashSet();
