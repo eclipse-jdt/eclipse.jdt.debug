@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.VMDisconnectedException;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -230,7 +231,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
+			if (!(e.getStatus().getException() instanceof VMDisconnectedException)) {
+				JDIDebugUIPlugin.log(e);
+			}
 			return DebugUIMessages.getString("JDIModelPresentation.<not_responding>_6"); //$NON-NLS-1$
 		}
 		return null;
@@ -620,7 +623,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getDebugElementImage(item);
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
+			if (!(e.getStatus().getException() instanceof VMDisconnectedException)) {
+				JDIDebugUIPlugin.log(e);
+			}
 		}
 		return null;
 	}
