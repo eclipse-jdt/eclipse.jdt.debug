@@ -107,6 +107,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private boolean fTerminated;
 	/**
+	 * whether suspended but without firing the equivalent events.
+	 */
+	private boolean fSuspendedQuiet;
+	/**
 	 * Whether this thread is a system thread.
 	 */
 	private boolean fIsSystemThread;
@@ -252,14 +256,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return isSuspended() && ( isInvokingMethod() || ! isPerformingEvaluation() ) && !getDebugTarget().isSuspended();
+		return isSuspended() && (!isSuspendedQuiet()) && !getDebugTarget().isSuspended();
 	}
 
 	/**
 	 * @see ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
-		return !isSuspended() || ( isPerformingEvaluation() && ! isInvokingMethod() );
+		return !isSuspended() || isSuspendedQuiet();
 	}
 
 	/**
@@ -299,7 +303,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected boolean canStep() {
 		try {
-			return isSuspended() && ( isInvokingMethod() || ! isPerformingEvaluation() ) && !isStepping() && getTopStackFrame() != null && !((IJavaDebugTarget)getDebugTarget()).isPerformingHotCodeReplace();
+			return isSuspended() && (!isSuspendedQuiet()) && !isStepping() && getTopStackFrame() != null && !((IJavaDebugTarget)getDebugTarget()).isPerformingHotCodeReplace();
 		} catch (DebugException e) {
 			return false;
 		}
@@ -346,6 +350,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IThread#getStackFrames()
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException {
+		if (isSuspendedQuiet()) {
+			return new IStackFrame[0];
+		}
 		List list = computeStackFrames();
 		return (IStackFrame[])list.toArray(new IStackFrame[list.size()]);
 	}
@@ -915,6 +922,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public boolean handleSuspendForBreakpoint(JavaBreakpoint breakpoint, boolean queueEvent) {
 		addCurrentBreakpoint(breakpoint);
+		setSuspendedQuiet(false);
 		try {
 			// update state to suspended but don't actually
 			// suspend unless a registered listener agrees
@@ -961,6 +969,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public boolean handleSuspendForBreakpointQuiet(JavaBreakpoint breakpoint) {
 		addCurrentBreakpoint(breakpoint);
+		setSuspendedQuiet(true);
 		setRunning(false);
 		abortStep();
 		return true;
@@ -978,6 +987,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public boolean isSuspended() {
 		return !fRunning && !fTerminated;
+	}
+
+	/**
+	 * @see ISuspendResume#isSuspended()
+	 */
+	public boolean isSuspendedQuiet() {
+		return fSuspendedQuiet;
 	}
 
 	/**
@@ -1081,6 +1097,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		try {
 			setRunning(true);
+			setSuspendedQuiet(false);
 			preserveStackFrames();
 			if (fireNotification) {
 				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
@@ -1107,6 +1124,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		if (running) {
 			fCurrentBreakpoints.clear();
 		} 
+	}
+	
+	protected void setSuspendedQuiet(boolean suspendedQuiet) {
+		fSuspendedQuiet= suspendedQuiet;
 	}
 
 	/**
@@ -1248,6 +1269,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			// Abort any pending step request
 			abortStep();
+			setSuspendedQuiet(false);
 			suspendUnderlyingThread();
 		} catch (RuntimeException e) {
 			setRunning(true);
@@ -1312,6 +1334,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */	
 	protected void suspendedByVM() {
 		setRunning(false);
+		setSuspendedQuiet(false);
 	}
 
 	/**
@@ -2310,5 +2333,5 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		fUseStepFilters = true;
 		stepInto();
 	}
-
+	
 }

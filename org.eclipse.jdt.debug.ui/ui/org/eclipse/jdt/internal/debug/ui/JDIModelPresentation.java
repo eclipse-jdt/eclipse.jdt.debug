@@ -57,6 +57,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
@@ -319,7 +320,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Evaluating)_10"), thread.getName()); //$NON-NLS-1$
 			}
 		}
-		if (!thread.isSuspended()) {
+		if (!thread.isSuspended() || (thread instanceof JDIThread && ((JDIThread)thread).isSuspendedQuiet())) {
 			if (thread.isSystemThread()) {
 				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Running)_11"), thread.getName()); //$NON-NLS-1$
 			} else {
