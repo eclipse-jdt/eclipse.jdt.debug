@@ -59,7 +59,7 @@ public class JavaLineBreakpointTypeChange extends JavaBreakpointTypeChange {
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, newType);
 		// create the new breakpoint
 		IJavaLineBreakpoint newLineBreakpoint= JDIDebugModel.createLineBreakpoint(
-				newType.getResource(),
+				BreakpointUtils.getBreakpointResource(newType),
 				newType.getFullyQualifiedName(),
 				fLineNumber,
 				fCharStart,

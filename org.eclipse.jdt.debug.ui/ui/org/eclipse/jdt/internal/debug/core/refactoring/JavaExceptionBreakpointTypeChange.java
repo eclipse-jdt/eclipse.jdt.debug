@@ -59,7 +59,7 @@ public class JavaExceptionBreakpointTypeChange extends JavaBreakpointTypeChange 
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, newType);
 		// create the new breakpoint
 		IJavaExceptionBreakpoint newExceptionBreakpoint= JDIDebugModel.createExceptionBreakpoint(
-				newType.getResource(),
+				BreakpointUtils.getBreakpointResource(newType),
 				newType.getFullyQualifiedName(),
 				fIsCaught,
 				fIsUncaught,

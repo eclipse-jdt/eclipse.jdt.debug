@@ -85,7 +85,7 @@ public class JavaMethodBreakpointTypeChange extends JavaLineBreakpointTypeChange
 		Map attributes= getAttributes();
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, method);
 		IJavaMethodBreakpoint newMethodBreakpoint= JDIDebugModel.createMethodBreakpoint(
-				newType.getResource(),
+				BreakpointUtils.getBreakpointResource(newType),
 				newType.getFullyQualifiedName(),
 				fMethodName,
 				fMethodSignature,

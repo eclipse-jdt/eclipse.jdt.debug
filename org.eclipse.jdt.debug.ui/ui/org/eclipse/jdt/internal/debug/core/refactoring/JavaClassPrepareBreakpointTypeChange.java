@@ -63,7 +63,7 @@ public class JavaClassPrepareBreakpointTypeChange extends JavaBreakpointTypeChan
 		}
 		// create the new breakpoint
 		IJavaClassPrepareBreakpoint newClassPrepareBreakpoint= JDIDebugModel.createClassPrepareBreakpoint(
-				newType.getResource(),
+				BreakpointUtils.getBreakpointResource(newType),
 				newType.getFullyQualifiedName(),
 				fMemberType,
 				charStart,

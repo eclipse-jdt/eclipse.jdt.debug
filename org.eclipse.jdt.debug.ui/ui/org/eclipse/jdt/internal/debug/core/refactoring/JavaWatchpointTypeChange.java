@@ -70,7 +70,7 @@ public class JavaWatchpointTypeChange extends JavaLineBreakpointTypeChange {
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, newField);
 		// create the new breakpoint
 		IJavaWatchpoint newWatchpoint= JDIDebugModel.createWatchpoint(
-				newType.getResource(),
+				BreakpointUtils.getBreakpointResource(newType),
 				newType.getFullyQualifiedName(),
 				fFieldName,
 				-1,
