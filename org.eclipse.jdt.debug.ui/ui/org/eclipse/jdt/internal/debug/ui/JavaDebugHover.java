@@ -5,6 +5,10 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
@@ -70,23 +74,27 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 					
 				String variableName= document.get(hoverRegion.getOffset(), hoverRegion.getLength());
 				
-				boolean first= true;
-				StringBuffer buffer= new StringBuffer();
-				for (int i= 0; i < targets.length; i++) {
+				List javaTargetList = new ArrayList(targets.length);
+				for (int i = 0; i < targets.length; i++) {
 					IJavaDebugTarget javaTarget = (IJavaDebugTarget) targets[i].getAdapter(IJavaDebugTarget.class);
 					if (javaTarget != null) {
-						try {
-							IVariable variable= javaTarget.findVariable(variableName);
-							if (variable != null) {
-								if (!first) {					
-									buffer.append('\n');
-								}
-								first= false;
-								appendVariable(buffer, variable);
-							}
-						} catch (DebugException x) {
-							JDIDebugUIPlugin.log(x);
+						javaTargetList.add(i, javaTarget);
+					}					
+				}
+												
+				StringBuffer buffer= new StringBuffer();
+				boolean showDebugTarget = javaTargetList.size() > 1;
+				Iterator iterator = javaTargetList.iterator();
+				while (iterator.hasNext()) {
+					IJavaDebugTarget javaTarget = (IJavaDebugTarget) iterator.next();	
+					try {
+						IVariable variable= javaTarget.findVariable(variableName);
+						if (variable != null) {
+							String debugTargetName = showDebugTarget ? javaTarget.getName() : null;
+							appendVariable(buffer, variable, debugTargetName);
 						}
+					} catch (DebugException x) {
+						JDIDebugUIPlugin.log(x);
 					}
 				}
 				
@@ -102,29 +110,20 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 		return null;
 	}
 
-	private static String getTypeName(IVariable variable) throws DebugException {
-		IValue value= variable.getValue();
+	/**
+	 * A variable gets one line for each debug target it appears in.
+	 */
+	private static void appendVariable(StringBuffer buffer, IVariable variable, String debugTargetName) throws DebugException {
 
-		if (value instanceof IJavaValue) {
-			IJavaType type= ((IJavaValue) value).getJavaType();
-			
-			if (type == null) {
-				return null;
-			}
-			
-			return type.getName();
+		buffer.append("<p>"); //$NON-NLS-1$
+		if (debugTargetName != null) {
+			buffer.append('[' + debugTargetName + "]&nbsp;"); //$NON-NLS-1$ 
 		}
-
-		return value.getReferenceTypeName();
-	}
-
-	private static void appendVariable(StringBuffer buffer, IVariable variable) throws DebugException {
-
-		buffer.append(variable.getName());
+		buffer.append(makeHTMLSafe(variable.getName()));
 		buffer.append(" ="); //$NON-NLS-1$
 		
 		String type= getTypeName(variable);
-		String value= variable.getValue().getValueString().trim();
+		String value= "<b>" + makeHTMLSafe(variable.getValue().getValueString().trim()) + "</b>"; //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (type == null) {
 			buffer.append(" null"); //$NON-NLS-1$
@@ -137,9 +136,63 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 			buffer.append(value);
 		} else {
 			buffer.append(" ("); //$NON-NLS-1$
-			buffer.append(type);
+			buffer.append(makeHTMLSafe(type));
 			buffer.append(") "); //$NON-NLS-1$
 			buffer.append(value);			
 		}		
+		buffer.append("</p>"); //$NON-NLS-1$
 	}
+
+	private static String getTypeName(IVariable variable) throws DebugException {
+		IValue value= variable.getValue();
+		if (value instanceof IJavaValue) {
+			IJavaType type= ((IJavaValue) value).getJavaType();
+			if (type == null) {
+				return null;
+			}			
+			return type.getName();
+		}
+		return value.getReferenceTypeName();
+	}
+	
+	/**
+	 * Replace any characters in the given String that would confuse an HTML 
+	 * parser with their escape sequences.
+	 */
+	private static String makeHTMLSafe(String string) {
+		StringBuffer buffer= new StringBuffer(string.length());
+	
+		for (int i= 0; i != string.length(); i++) {
+			char ch= string.charAt(i);
+			
+			switch (ch) {
+				case '&':
+					buffer.append("&amp;"); //$NON-NLS-1$
+					break;
+					
+				case '<':
+					buffer.append("&lt;"); //$NON-NLS-1$
+					break;
+
+				case '>':
+					buffer.append("&gt;"); //$NON-NLS-1$
+					break;
+				/*
+				case '\t':
+					buffer.append("    "); //$NON-NLS-1$
+					break;
+
+				case '\n':
+					buffer.append("<br>"); //$NON-NLS-1$
+					break;
+				*/
+				default:
+					buffer.append(ch);
+					break;
+			}
+		}
+
+		return buffer.toString();		
+	}
+
 }
