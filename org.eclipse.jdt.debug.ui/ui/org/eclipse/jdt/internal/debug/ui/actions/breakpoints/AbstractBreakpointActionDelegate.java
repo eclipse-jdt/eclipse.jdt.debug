@@ -28,6 +28,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -41,7 +42,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * support breakpoints in external source (i.e. without the knowlegde of
  * Java model elements).
  */
-public abstract class AbstractAddRemoveBreakpointActionDelegate extends PartEventAction implements IWorkbenchWindowActionDelegate {
+public abstract class AbstractBreakpointActionDelegate extends PartEventAction implements IWorkbenchWindowActionDelegate {
 	
 	/**
 	 * Window this action is active in.	 */
@@ -58,7 +59,7 @@ public abstract class AbstractAddRemoveBreakpointActionDelegate extends PartEven
 	/**
 	 * @see PartEventAction#PartEventAction(java.lang.String)
 	 */
-	public AbstractAddRemoveBreakpointActionDelegate(String text) {
+	public AbstractBreakpointActionDelegate(String text) {
 		super(text);
 	}
 
@@ -107,17 +108,36 @@ public abstract class AbstractAddRemoveBreakpointActionDelegate extends PartEven
 
 		ASTNode node = locateTargetNode(compilationUnit, offset);
 		if (node != null) {
-			IJavaElement javaElement = (IJavaElement)editor.getEditorInput().getAdapter(IJavaElement.class);
-			try {
-				createBreakpoint(node, javaElement);
-			} catch (CoreException e) {
-				errorDialog(e);
+			IJavaBreakpoint breakpoint = getExistingBreakpoint(node);
+			if (breakpoint == null) {
+				IJavaElement javaElement = (IJavaElement)editor.getEditorInput().getAdapter(IJavaElement.class);
+				try {
+					createBreakpoint(node, javaElement);
+				} catch (CoreException e) {
+					errorDialog(e);
+				}
+			} else {
+				// remove breakpoint
+				try {
+					breakpoint.delete();
+				} catch (CoreException e) {
+					errorDialog(e);
+				}
 			}
 		} else {
 			JDIDebugUIPlugin.getStandardDisplay().beep();
 		}		
 		
 	}
+	
+	/**
+	 * Returns any existing breakpoint for the given node, or <code>null</code>
+	 * if none.
+	 * 
+	 * @param node node at which a breakpoint has been requested
+	 * @return breakpoint or <code>null</code>
+	 */
+	protected abstract IJavaBreakpoint getExistingBreakpoint(ASTNode node);
 	
 	/**
 	 * Creates and returns a breakpoint for the given node in the given class
@@ -173,10 +193,11 @@ public abstract class AbstractAddRemoveBreakpointActionDelegate extends PartEven
 	 *  text editor	 */
 	protected CompilationUnit createCompilationUnit(ITextEditor editor) throws CoreException {
 		IDocumentProvider provider = editor.getDocumentProvider();
-		provider.connect(this);
+		IEditorInput input = editor.getEditorInput();
+		provider.connect(input);
 		IDocument document =  provider.getDocument(editor.getEditorInput());
 		String content = document.get();
-		provider.disconnect(this);
+		provider.disconnect(input);
 		return AST.parseCompilationUnit(content.toCharArray());
 	}
 	
@@ -300,4 +321,15 @@ public abstract class AbstractAddRemoveBreakpointActionDelegate extends PartEven
 		typeName.append(typeDeclaration.getName().getIdentifier());
 		return typeName.toString();
 	}	
+	
+	/**
+	 * Returns the line number the given node begins on.
+	 * 
+	 * @param node
+	 * @return line number
+	 */
+	protected int getStartLineNumber(ASTNode node) {
+		CompilationUnit compilationUnit = getCopmilationUnit(node);
+		return compilationUnit.lineNumber(node.getStartPosition());
+	}
 }

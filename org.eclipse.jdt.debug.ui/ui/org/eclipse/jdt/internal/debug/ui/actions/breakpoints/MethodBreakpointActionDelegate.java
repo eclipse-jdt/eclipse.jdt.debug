@@ -20,30 +20,37 @@ http://www.eclipse.org/legal/cpl-v10.html
  * support breakpoints in external source (i.e. without the knowlegde of
  * Java model elements).
  */
-public class AddRemoveWatchpointActionDelegate extends AbstractAddRemoveBreakpointActionDelegate {
+public class MethodBreakpointActionDelegate extends AbstractBreakpointActionDelegate {
 	
 	/**
-	 * Constructs a new action to add/remove a watchpoint
+	 * Constructs a new action to add/remove a method entry/exit breakpoint
 	 */
-	public AddRemoveWatchpointActionDelegate() {
+	public MethodBreakpointActionDelegate() {
 		super(null);
 	}
 	
 	/**
-	 * @see org.eclipse.jdt.internal.debug.ui.actions.breakpoints.AbstractAddRemoveBreakpointActionDelegate#getVisitor()
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.breakpoints.AbstractBreakpointActionDelegate#getVisitor()
 	 */
 	protected AbstractBreakpointVisitor getVisitor() {
-		return new WatchpointVisitor();
+		return new MethodBreakpointVisitor();
 	}
 
 	/**
-	 * @see org.eclipse.jdt.internal.debug.ui.actions.breakpoints.AbstractAddRemoveBreakpointActionDelegate#createBreakpoint(org.eclipse.jdt.core.dom.ASTNode, org.eclipse.jdt.core.IJavaElement)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.breakpoints.AbstractBreakpointActionDelegate#createBreakpoint(org.eclipse.jdt.core.dom.ASTNode, org.eclipse.jdt.core.IJavaElement)
 	 */
 	protected IJavaBreakpoint createBreakpoint(ASTNode node, IJavaElement element) throws CoreException {
 		// get the type name for the node
 		TypeDeclaration typeDeclaration = getTypeDeclaration(node);
 		String name = getQualifiedName(typeDeclaration);
 		System.out.println(name + " " + getCopmilationUnit(node).lineNumber(node.getStartPosition()));
+		return null;		
+	}
+
+	/**
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.breakpoints.AbstractBreakpointActionDelegate#getExistingBreakpoint(org.eclipse.jdt.core.dom.ASTNode)
+	 */
+	protected IJavaBreakpoint getExistingBreakpoint(ASTNode node) {
 		return null;
 	}
 
