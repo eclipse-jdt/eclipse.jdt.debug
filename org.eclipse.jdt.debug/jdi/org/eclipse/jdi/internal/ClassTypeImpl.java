@@ -236,6 +236,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			throw new IllegalArgumentException(JDIMessages.getString("ClassTypeImpl.Number_of_arguments_doesn__t_match_5")); //$NON-NLS-1$
 		if (!method.isConstructor())
 			throw new IllegalArgumentException(JDIMessages.getString("ClassTypeImpl.Method_is_not_a_constructor_6")); //$NON-NLS-1$
+			
+		List checkedArguments= ValueImpl.checkValues(arguments, method.argumentTypes(), virtualMachineImpl());
 
 		initJdwpRequest();
 		try {
@@ -245,8 +247,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 			threadImpl.write(this, outData);
 			methodImpl.write(this, outData);
 			
-			writeInt(arguments.size(), "size", outData); //$NON-NLS-1$
-			Iterator iter = arguments.iterator();
+			writeInt(checkedArguments.size(), "size", outData); //$NON-NLS-1$
+			Iterator iter = checkedArguments.iterator();
 			while(iter.hasNext()) {
 				ValueImpl elt = (ValueImpl)iter.next();
 				if (elt != null) {
