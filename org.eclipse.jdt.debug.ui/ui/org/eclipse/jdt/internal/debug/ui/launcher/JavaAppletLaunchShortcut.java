@@ -274,18 +274,12 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut, IActionFilter 
 	public boolean testAttribute(Object target, String name, String value) {
 		if ("ContextualLaunchActionFilter".equals(name)) { //$NON-NLS-1$
 			return isApplet(target);
-			// return false;
 		} else if ("NameMatches".equals(name)) { //$NON-NLS-1$
 			return nameMatches(target, value);
 		}
 		return false;
 	}
 	
-	/**
-	 * @param target
-	 * @param value
-	 * @return
-	 */
 	private boolean nameMatches(Object target, String value) {
 		try {
 			Object[] selections = ((IStructuredSelection) target).toArray();
@@ -302,17 +296,16 @@ public class JavaAppletLaunchShortcut implements ILaunchShortcut, IActionFilter 
 		if (target != null && target instanceof IStructuredSelection) {
 			Object[] selections = ((IStructuredSelection )target).toArray();
 			IResource resource = (IResource)selections[0];
-			IType[] types= null;
-				try {
-					final Set result= new HashSet();
-					AppletLaunchConfigurationUtils.collectTypes(resource, new NullProgressMonitor(), result);
-					if (result.size() > 0) {
-						return true;
-					}
-				} catch (JavaModelException e) {
-					return false;
+			try {
+				Set result= new HashSet();
+				AppletLaunchConfigurationUtils.collectTypes(resource, new NullProgressMonitor(), result);
+				if (result.size() > 0) {
+					return true;
 				}
+			} catch (JavaModelException e) {
+				return false;
 			}
-		return false;
 		}
+		return false;
+	}
 }
