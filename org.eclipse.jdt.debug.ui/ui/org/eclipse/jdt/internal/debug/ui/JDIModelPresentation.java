@@ -1140,11 +1140,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				IJavaMethodBreakpoint mbp = (IJavaMethodBreakpoint)breakpoint;
 				boolean entry = mbp.isEntry();
 				boolean exit = mbp.isExit();
-				if (mbp.isEntry() && mbp.isExit()) {
+				if (entry && exit) {
 					label.append(DebugUIMessages.getString("JDIModelPresentation.entry_and_exit")); //$NON-NLS-1$
-				} else if (mbp.isEntry()) {
+				} else if (entry) {
 					label.append(DebugUIMessages.getString("JDIModelPresentation.entry")); //$NON-NLS-1$
-				} else if (mbp.isExit()) {
+				} else if (exit) {
 					label.append(DebugUIMessages.getString("JDIModelPresentation.exit")); //$NON-NLS-1$
 				}
 			}
