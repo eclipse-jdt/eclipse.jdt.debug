@@ -680,31 +680,6 @@
 <extension
 	point="org.eclipse.ui.propertyPages">
 	<page
-		id="org.eclipse.jdt.debug.ui.propertyPages.ExecutionArgsPage" 
-		name="%execArgPageName"
-		objectClass="org.eclipse.jdt.core.api.IType"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.ExecutionArgsPropertyPage">
-    </page>
-	<page
-		id="org.eclipse.jdt.debug.ui.propertyPages.ExecutionArgsPage" 
-		name="%execArgPageName"
-		objectClass="org.eclipse.jdt.core.ICompilationUnit"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.ExecutionArgsPropertyPage">
-    </page>
-	<page
-		id="org.eclipse.jdt.debug.ui.propertyPages.ExecutionArgsPage" 
-		name="%execArgPageName"
-		objectClass="org.eclipse.jdt.core.IClassFile"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.ExecutionArgsPropertyPage">
-    </page>
-	<page
-		id="org.eclipse.jdt.debug.ui.propertyPages.ExecutionArgsPage" 
-		name="%execArgPageName"
-		objectClass="org.eclipse.core.resources.IFile"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.ExecutionArgsPropertyPage"
-        nameFilter="*.java"> 
-    </page>
-	<page
 		id="org.eclipse.jdt.debug.ui.launching.SourceLookupPage" 
 		name="%debugSourcePageName"
 		objectClass="org.eclipse.core.resources.IProject"
