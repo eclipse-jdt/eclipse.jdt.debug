@@ -49,6 +49,7 @@ import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.MethodBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.MiscBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.PatternBreakpointTests;
+import org.eclipse.jdt.debug.tests.core.PreLaunchBreakpointTest;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.ProjectSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.RefreshTabTests;
@@ -94,6 +95,7 @@ public class AutomatedSuite extends TestSuite {
 	public AutomatedSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 		
+		
 		addTest(new TestSuite(LaunchModeTests.class));
 		addTest(new TestSuite(LaunchDelegateTests.class));
 		addTest(new TestSuite(LaunchTests.class));
@@ -108,7 +110,8 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(HitCountBreakpointsTests.class));
 		addTest(new TestSuite(ThreadFilterBreakpointsTests.class));
 		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
-
+		addTest(new TestSuite(PreLaunchBreakpointTest.class));
+		
 		addTest(new TestSuite(StepFilterTests.class));
 
 		addTest(new TestSuite(InstanceVariableTests.class));
@@ -152,6 +155,8 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(ArrayTests.class));
 		// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
+		
+		
 	}
 	
 	/**
