@@ -82,8 +82,8 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 */
 	protected ILaunchConfiguration fLaunchConfiguration;
 	
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -195,14 +195,14 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		entriesChanged(fClasspathViewer);
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		boolean useDefault = true;
@@ -235,8 +235,8 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	}
 	
 	private void createClasspathModel(ILaunchConfiguration configuration) throws CoreException {
-		IRuntimeClasspathEntry[] entries= JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
 		model= new ClasspathModel();
+		IRuntimeClasspathEntry[] entries= JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
 		IRuntimeClasspathEntry entry;
 		for (int i = 0; i < entries.length; i++) {
 			entry= entries[i];
@@ -251,8 +251,8 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		}	
 	}
 	
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (isDirty()) {
@@ -332,7 +332,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		return false;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
