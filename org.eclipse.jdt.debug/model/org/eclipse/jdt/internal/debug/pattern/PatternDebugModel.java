@@ -1,8 +1,7 @@
 package org.eclipse.jdt.internal.debug.pattern;
 
 import com.sun.jdi.VirtualMachine;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -72,4 +71,12 @@ public class PatternDebugModel {
 			return fTarget;
 		}
 	}
+	
+	public static boolean isPatternBreakpoint(IMarker marker) {
+		try {
+			return marker.getType().equals(PatternDebugModel.PATTERN_BREAKPOINT);
+		} catch (CoreException e) {
+			return false;
+		}
+	}		
 }
