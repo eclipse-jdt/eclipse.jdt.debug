@@ -16,11 +16,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -185,8 +188,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private boolean fIsSuspending= false;
 
-	private AsyncThread fAsyncThread;
-		
+	private ThreadJob fAsyncJob;
+	
+	private ThreadJob fRunningAsyncJob;
+	
 	/**
 	 * Creates a new thread on the underlying thread reference
 	 * in the given debug target.
@@ -608,7 +613,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	/**
-	 * @see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)
+	 * @see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int, boolean)
 	 */ 
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		if (isPerformingEvaluation()) {
@@ -639,7 +644,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				} 
 			}
 			fireSuspendEvent(evaluationDetail);
-			if (fEvaluationInterrupted && (fAsyncThread == null || fAsyncThread.isEmpty())) {
+			if (fEvaluationInterrupted && (fAsyncJob == null || fAsyncJob.isEmpty()) && (fRunningAsyncJob == null || fRunningAsyncJob.isEmpty())) {
 				// @see bug 31585:
 				// When an evaluation was interrupted & resumed, the launch view does
 				// not update properly. It cannot know when it is safe to display frames
@@ -675,10 +680,24 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#queueRunnable(Runnable)
 	 */
 	public void queueRunnable(Runnable evaluation) {
-		if (fAsyncThread == null) {
-			fAsyncThread= new AsyncThread();
+		String threadName;
+		try {
+			threadName= getName();
+		} catch (DebugException e) {
+			JDIDebugPlugin.log(e);
+			return;
 		}
-		fAsyncThread.addRunnable(evaluation);
+		if (fAsyncJob == null) {
+			fAsyncJob= new ThreadJob(this, threadName);
+			fAsyncJob.addRunnable(evaluation);
+		} else {
+			synchronized (fAsyncJob) {
+				if (fAsyncJob == null) {
+					fAsyncJob= new ThreadJob(this, threadName);
+				}
+				fAsyncJob.addRunnable(evaluation);
+			}
+		}
 	}
 	
 	/**
@@ -2431,73 +2450,72 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Class which managed the queue of runnable associated with this thread.
 	 */
-	private class AsyncThread implements Runnable {
+	static class ThreadJob extends Job implements ISchedulingRule {
 		
-		private ArrayList fRunnables;
+		private Vector fRunnables;
 		
-		private Thread fThread;
+		private JDIThread fThread;
 		
-		public AsyncThread() {
-			fRunnables= new ArrayList();
+		public ThreadJob(JDIThread thread, String threadName) {
+			super(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.39"), new Object[] {threadName})); //$NON-NLS-1$
+			fThread= thread;
+			fRunnables= new Vector(5);
+			setRule(this);
 		}
 		
 		public void addRunnable(Runnable runnable) {
-			synchronized (this) {
-				fRunnables.add(runnable);
-				if (fThread == null) {
-					try {
-						fThread= new Thread(this, "JDI async thread - " + getName()); //$NON-NLS-1$
-					} catch (DebugException e) {
-						JDIDebugPlugin.log(e);
-						return;
-					}
-					fThread.start();
-				} else {
-					notify();
-				}
-			}
+			fRunnables.add(runnable);
+			schedule();
 		}
 		
-		/**
-		 * Returns whether the queue is empty
-		 * 
-		 * @return boolean
-		 */
 		public boolean isEmpty() {
 			return fRunnables.isEmpty();
 		}
-		
-		public void clearQueue() {
+
+		/*
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public IStatus run(IProgressMonitor monitor) {
+			fThread.fRunningAsyncJob= this;
 			synchronized (this) {
-				fRunnables.clear();
+				fThread.fAsyncJob= null;
 			}
-		}
-		
-		public void run() {
-			while (true) {
-				Runnable nextRunnable= null;
-				synchronized (this) {
-					if (fRunnables.isEmpty()) {
-						try {
-							wait(5000);
-						} catch (InterruptedException e1) {
-						}
-					}
-					if (fRunnables.isEmpty()) {
-						fThread= null;
-						return;
-					} else {
-						nextRunnable= (Runnable)fRunnables.remove(0);
-					}
-				}
+
+			monitor.beginTask(this.getName(), fRunnables.size()); //$NON-NLS-1$
+			for (Iterator iter= fRunnables.iterator(); iter.hasNext() && !fThread.isTerminated() || monitor.isCanceled();) {
 				try {
-					nextRunnable.run();
-				} catch (Throwable e) {
-					JDIDebugPlugin.log(e);
+					((Runnable)iter.next()).run();
+				} catch (Throwable t) {
+					JDIDebugPlugin.log(t);
 				}
+				monitor.worked(1);
 			}
+			fThread.fRunningAsyncJob= null;
+			return Status.OK_STATUS;
+			
 		}
-		
+
+		/*
+		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+		 */
+		public boolean shouldRun() {
+			return !fThread.isTerminated();
+		}
+
+		/*
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean contains(ISchedulingRule rule) {
+			return (rule instanceof ThreadJob) && fThread == ((ThreadJob)rule).fThread;
+		}
+
+		/*
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean isConflicting(ISchedulingRule rule) {
+			return (rule instanceof ThreadJob) && fThread == ((ThreadJob)rule).fThread;
+		}
+
 	}
 
 
