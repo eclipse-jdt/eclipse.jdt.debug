@@ -243,7 +243,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 			IJavaElement cu = JavaCore.create(res);
 			if (cu != null && cu instanceof ICompilationUnit) {
 				// auto-enable the exception breakpoint if this is the first problem added
-				// and the preference is turnd on.
+				// and the preference is turned on.
 				boolean autoEnable = fProblemMap.isEmpty();
 				int line = problem.getAttribute(IMarker.LINE_NUMBER, -1);
 				String name = cu.getElementName();
@@ -419,10 +419,10 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	}
 	
 	/**
-	 * Returns whether suspend on comiplation errors is
+	 * Returns whether suspend on compilation errors is
 	 * enabled.
 	 * 
-	 * @return whether suspend on comiplation errors is
+	 * @return whether suspend on compilation errors is
 	 * enabled
 	 */
 	protected boolean isSuspendOnCompilationErrors() {
@@ -620,6 +620,9 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 				packageName = packageName.substring(0,index);
 			}
 			String name = frame.getSourceName();
+			if (name == null) {
+				name= ""; //$NON-NLS-1$
+			}
 			int line = frame.getLineNumber();
 			Location l = new Location(packageName, name, line);
 			return  (IMarker)fLocationMap.get(l);		
