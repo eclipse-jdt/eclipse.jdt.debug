@@ -8,7 +8,7 @@ package org.eclipse.jdt.debug.core;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Java exception breakpoints are java breakpoints that suspend
+ * Java exception breakpoints are Java breakpoints that suspend
  * execution when an exception is thrown. If the breakpoint is
  * a caught exception breakpoint, it will suspend execution when
  * the associated exception is thrown and caught.If the breakpoint
