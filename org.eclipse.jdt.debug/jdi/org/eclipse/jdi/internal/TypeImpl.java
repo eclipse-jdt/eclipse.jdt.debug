@@ -215,6 +215,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 				}
 		}
 		// Class type array
+		signature.append('L');
 		signature.append(name.replace('.','/'));
 		signature.append(';');
 		return signature.toString();
