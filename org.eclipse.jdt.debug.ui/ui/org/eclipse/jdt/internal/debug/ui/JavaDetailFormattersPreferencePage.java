@@ -27,7 +27,9 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -136,6 +138,11 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 				updatePage((IStructuredSelection)event.getSelection());
 			}
 		});
+		fFormatterListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				editType();
+			}
+		}); 
 		fFormatterListViewer.setInput(this);
 
 		createDetailFormatsButtons(container);
