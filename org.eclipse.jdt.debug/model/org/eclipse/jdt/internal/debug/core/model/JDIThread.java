@@ -433,7 +433,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				if (currIndex >= 0 && oldIndex >= 0) {
 					Method lastMethod = ((JDIStackFrame)fStackFrames.get(oldIndex)).getLastMethod();
 					Method currMethod = getUnderlyingFrame(currIndex).location().method();
-					if (currMethod.equals(lastMethod)) {
+					if (lastMethod == null || currMethod.equals(lastMethod)) {
 						// method still in same position
 						preserve = true;					
 					}

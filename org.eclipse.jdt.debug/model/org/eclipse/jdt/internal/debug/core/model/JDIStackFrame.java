@@ -219,7 +219,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * Returns the underlying method associated with this stack frame,
 	 * retreiving the method is necessary.
 	 */
-	public Method getUnderlyingMethod() throws DebugException {
+	public synchronized Method getUnderlyingMethod() throws DebugException {
 		if (fStackFrame == null || fMethod == null) {
 			try {
 				fMethod= getUnderlyingStackFrame().location().method();
