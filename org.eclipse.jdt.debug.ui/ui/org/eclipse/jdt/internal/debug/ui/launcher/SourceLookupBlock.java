@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -234,20 +233,9 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		gd.heightHint= Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_HEIGHT);
 		return gd;
 	}
-	
-	/**
-	 * Create some empty space 
-	 */
-	protected void createVerticalSpacer(Composite comp, int colSpan) {
-		Label label = new Label(comp, SWT.NONE);
-		GridData gd = new GridData();
-		gd.horizontalSpan = colSpan;
-		label.setLayoutData(gd);
-	}	
 
-	/**
-	 * Initializes this control based on the settings in the given
-	 * launch configuration.
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		boolean useDefault = true;
@@ -284,8 +272,8 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		setDirty(false);
 	}
 	
-	/**
-	 * Saves settings in the given working copy
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (isDirty()) {
@@ -342,15 +330,15 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		return fConfig;
 	}	
 
-	/**
-	 * @see ILaunchConfigurationTab#getName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return LauncherMessages.getString("SourceLookupBlock.Source_1"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
@@ -358,8 +346,8 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		configuration.setAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, (String)null);
 	}
 
-	/**
-	 * @see AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
 	protected void updateLaunchConfigurationDialog() {
 		if (getLaunchConfigurationDialog() != null) {
@@ -367,8 +355,8 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		}
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
 		fPathViewer.removeEntriesChangedListener(this);
