@@ -38,16 +38,16 @@ public class JavaProjectSourceContainerTypeDelegate extends AbstractSourceContai
 			if ("javaProject".equals(element.getNodeName())) { //$NON-NLS-1$
 				String string = element.getAttribute("name"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(LaunchingMessages.getString("JavaProjectSourceContainerTypeDelegate.5"), null); //$NON-NLS-1$
+					abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_5, null); //$NON-NLS-1$
 				}
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IProject project = workspace.getRoot().getProject(string);
 				IJavaProject javaProject = JavaCore.create(project);
 				return new JavaProjectSourceContainer(javaProject);
 			}
-			abort(LaunchingMessages.getString("JavaProjectSourceContainerTypeDelegate.6"), null); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_6, null); //$NON-NLS-1$
 		}
-		abort(LaunchingMessages.getString("JavaProjectSourceContainerTypeDelegate.7"), null); //$NON-NLS-1$
+		abort(LaunchingMessages.JavaProjectSourceContainerTypeDelegate_7, null); //$NON-NLS-1$
 		return null;
 	}
 	/* (non-Javadoc)

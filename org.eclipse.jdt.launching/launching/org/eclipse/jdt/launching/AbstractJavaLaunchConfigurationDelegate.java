@@ -181,8 +181,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		IVMInstall vm = getVMInstall(configuration);
 		if (vm == null) {
 			abort(
-					LaunchingMessages
-							.getString("AbstractJavaLaunchConfigurationDelegate.The_specified_JRE_installation_does_not_exist_4"), //$NON-NLS-1$
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_The_specified_JRE_installation_does_not_exist_4, //$NON-NLS-1$
 					null,
 					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
@@ -191,8 +190,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			abort(
 					MessageFormat
 							.format(
-									LaunchingMessages
-											.getString("AbstractJavaLaunchConfigurationDelegate.JRE_home_directory_not_specified_for_{0}_5"), //$NON-NLS-1$
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_not_specified_for__0__5, //$NON-NLS-1$
 									new String[]{vm.getName()}),
 					null,
 					IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
@@ -201,8 +199,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			abort(
 					MessageFormat
 							.format(
-									LaunchingMessages
-											.getString("AbstractJavaLaunchConfigurationDelegate.JRE_home_directory_for_{0}_does_not_exist__{1}_6"), //$NON-NLS-1$
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_JRE_home_directory_for__0__does_not_exist___1__6, //$NON-NLS-1$
 									new String[]{vm.getName(),
 											location.getAbsolutePath()}),
 					null,
@@ -624,16 +621,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		String name = getJavaProjectName(configuration);
 		if (name == null) {
 			abort(
-					LaunchingMessages
-							.getString("AbstractJavaLaunchConfigurationDelegate.Java_project_not_specified_9"), //$NON-NLS-1$
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Java_project_not_specified_9, //$NON-NLS-1$
 					null,
 					IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT); //$NON-NLS-1$
 		}
 		IJavaProject project = getJavaProject(configuration);
 		if (project == null) {
 			abort(
-					LaunchingMessages
-							.getString("AbstractJavaLaunchConfigurationDelegate.Project_does_not_exist_or_is_not_a_Java_project_10"), //$NON-NLS-1$
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Project_does_not_exist_or_is_not_a_Java_project_10, //$NON-NLS-1$
 					null,
 					IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT); //$NON-NLS-1$
 		}
@@ -655,8 +650,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		String name = getMainTypeName(configuration);
 		if (name == null) {
 			abort(
-					LaunchingMessages
-							.getString("AbstractJavaLaunchConfigurationDelegate.Main_type_not_specified_11"), //$NON-NLS-1$
+					LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Main_type_not_specified_11, //$NON-NLS-1$
 					null,
 					IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
@@ -700,8 +694,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				abort(
 					MessageFormat
 							.format(
-									LaunchingMessages
-											.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), //$NON-NLS-1$
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, //$NON-NLS-1$
 									new String[]{path.toString()}),
 					null,
 					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
@@ -714,8 +707,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 				abort(
 					MessageFormat
 							.format(
-									LaunchingMessages
-											.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), //$NON-NLS-1$
+									LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, //$NON-NLS-1$
 									new String[]{path.toString()}),
 					null,
 					IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
@@ -889,8 +881,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			String mode, IProgressMonitor monitor) throws CoreException {
 		// build project list
 		if (monitor != null) {
-			monitor.subTask(LaunchingMessages
-					.getString("AbstractJavaLaunchConfigurationDelegate.20")); //$NON-NLS-1$
+			monitor.subTask(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_20); //$NON-NLS-1$
 		}
 		fOrderedProjects = null;
 		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
@@ -928,7 +919,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 		IVMInstall vm = verifyVMInstall(configuration);
 		IVMRunner runner = vm.getVMRunner(mode);
 		if (runner == null) {
-			abort(MessageFormat.format(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.0"), new String[]{vm.getName(), mode}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.JavaLocalApplicationLaunchConfigurationDelegate_0, new String[]{vm.getName(), mode}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		return runner;
 	}

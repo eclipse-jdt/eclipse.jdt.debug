@@ -110,7 +110,7 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		IProcess process= DebugPlugin.newProcess(launch, p, label, attributes);
 		if (process == null) {
 			p.destroy();
-			abort(LaunchingMessages.getString("AbstractVMRunner.0"), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
+			abort(LaunchingMessages.AbstractVMRunner_0, null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		}
 		return process;
 	}

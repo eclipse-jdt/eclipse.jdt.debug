@@ -252,7 +252,7 @@ public final class JavaRuntime {
 	private static synchronized void initializeVMTypes() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(LaunchingPlugin.ID_PLUGIN, "vmInstallTypes"); //$NON-NLS-1$
 		IConfigurationElement[] configs= extensionPoint.getConfigurationElements(); 
-		MultiStatus status= new MultiStatus(LaunchingPlugin.getUniqueIdentifier(), IStatus.OK, LaunchingMessages.getString("JavaRuntime.exceptionOccurred"), null); //$NON-NLS-1$
+		MultiStatus status= new MultiStatus(LaunchingPlugin.getUniqueIdentifier(), IStatus.OK, LaunchingMessages.JavaRuntime_exceptionOccurred, null); //$NON-NLS-1$
 		fgVMTypes= new IVMInstallType[configs.length];
 
 		for (int i= 0; i < configs.length; i++) {
@@ -655,9 +655,9 @@ public final class JavaRuntime {
 			}
 			return entry;
 		} catch (SAXException e) {
-			abort(LaunchingMessages.getString("JavaRuntime.31"), e); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaRuntime_31, e); //$NON-NLS-1$
 		} catch (IOException e) {
-			abort(LaunchingMessages.getString("JavaRuntime.32"), e); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaRuntime_32, e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -766,7 +766,7 @@ public final class JavaRuntime {
 		} else {
 			provider = (IRuntimeClasspathProvider)getClasspathProviders().get(providerId);
 			if (provider == null) {
-				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.26"), new String[]{providerId}), null); //$NON-NLS-1$
+				abort(MessageFormat.format(LaunchingMessages.JavaRuntime_26, new String[]{providerId}), null); //$NON-NLS-1$
 			}
 		}
 		return provider;
@@ -788,7 +788,7 @@ public final class JavaRuntime {
 		} else {
 			provider = (IRuntimeClasspathProvider)getClasspathProviders().get(providerId);
 			if (provider == null) {
-				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.27"), new String[]{providerId}), null); //$NON-NLS-1$
+				abort(MessageFormat.format(LaunchingMessages.JavaRuntime_27, new String[]{providerId}), null); //$NON-NLS-1$
 			}
 		}
 		return provider;
@@ -833,7 +833,7 @@ public final class JavaRuntime {
 					}
 				} else {
 					// could not resolve project
-					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_project__{0}_3"), new String[]{entry.getPath().lastSegment()}), null); //$NON-NLS-1$
+					abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_project___0__3, new String[]{entry.getPath().lastSegment()}), null); //$NON-NLS-1$
 				}
 				break;
 			case IRuntimeClasspathEntry.VARIABLE:
@@ -856,11 +856,11 @@ public final class JavaRuntime {
 				// verify the archive exists
 				String location = entry.getLocation();
 				if (location == null) {
-					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_archive__{0}_4"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
+					abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
 				}
 				File file = new File(location);
 				if (!file.exists()) {
-					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_archive__{0}_4"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
+					abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Classpath_references_non_existant_archive___0__4, new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
 				}
 				break;
 			case IRuntimeClasspathEntry.OTHER:
@@ -1052,7 +1052,7 @@ public final class JavaRuntime {
 		} 
 		IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
 		if (container == null) {
-			abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Could_not_resolve_classpath_container__{0}_1"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Could_not_resolve_classpath_container___0__1, new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
 			// execution will not reach here - exception will be thrown
 			return null;
 		} 
@@ -1140,10 +1140,10 @@ public final class JavaRuntime {
 		}			
 		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);
 		if (javaProject != null && javaProject.getProject().exists() && !javaProject.getProject().isOpen()) {
-			abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.28"), new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_PROJECT_CLOSED, null); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_28, new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_PROJECT_CLOSED, null); //$NON-NLS-1$
 		}
 		if ((javaProject == null) || !javaProject.exists()) {
-			abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Launch_configuration_{0}_references_non-existing_project_{1}._1"), new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT, null); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Launch_configuration__0__references_non_existing_project__1___1, new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT, null); //$NON-NLS-1$
 		}
 		return javaProject;
 	}
@@ -1187,7 +1187,7 @@ public final class JavaRuntime {
 			IVMInstallType vt = getVMInstallType(type);
 			if (vt == null) {
 				// error type does not exist
-				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_type_does_not_exist__{0}_2"), new String[] {type}), null); //$NON-NLS-1$
+				abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Specified_VM_install_type_does_not_exist___0__2, new String[] {type}), null); //$NON-NLS-1$
 			}
 			IVMInstall vm = null;
 			// look for a name
@@ -1195,14 +1195,14 @@ public final class JavaRuntime {
 			if (name == null) {
 				// error - type specified without a specific install (could be an old config that specified a VM ID)
 				// log the error, but choose the default VM.
-				IStatus status = new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL, MessageFormat.format(LaunchingMessages.getString("JavaRuntime.VM_not_fully_specified_in_launch_configuration_{0}_-_missing_VM_name._Reverting_to_default_VM._1"), new String[] {configuration.getName()}), null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL, MessageFormat.format(LaunchingMessages.JavaRuntime_VM_not_fully_specified_in_launch_configuration__0____missing_VM_name__Reverting_to_default_VM__1, new String[] {configuration.getName()}), null); //$NON-NLS-1$
 				LaunchingPlugin.log(status);
 				return getDefaultVMInstall();
 			} 
 			vm = vt.findVMInstallByName(name);
 			if (vm == null) {
 				// error - install not found
-				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_not_found__type_{0},_name_{1}_2"), new String[] {vt.getName(), name}), null);					 //$NON-NLS-1$
+				abort(MessageFormat.format(LaunchingMessages.JavaRuntime_Specified_VM_install_not_found__type__0___name__1__2, new String[] {vt.getName(), name}), null);					 //$NON-NLS-1$
 			} else {
 				return vm;
 			}
@@ -1284,11 +1284,11 @@ public final class JavaRuntime {
 			getPreferences().setValue(PREF_VM_XML, xml);
 			savePreferences();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.exceptionsOccurred"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.JavaRuntime_exceptionsOccurred, e)); //$NON-NLS-1$
 		} catch (ParserConfigurationException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.exceptionsOccurred"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.JavaRuntime_exceptionsOccurred, e)); //$NON-NLS-1$
 		} catch (TransformerException e) {
-			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.getString("JavaRuntime.exceptionsOccurred"), e)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IStatus.ERROR, LaunchingMessages.JavaRuntime_exceptionsOccurred, e)); //$NON-NLS-1$
 		}
 	}
 	
@@ -1297,7 +1297,7 @@ public final class JavaRuntime {
 	 * and save all preferences.
 	 */
 	private static void saveVMDefinitions(final String vmDefXML) {
-		Job prefJob = new Job(LaunchingMessages.getString("JavaRuntime.0")) { //$NON-NLS-1$
+		Job prefJob = new Job(LaunchingMessages.JavaRuntime_0) { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				LaunchingPlugin.getDefault().getPluginPreferences().setValue(PREF_VM_XML, vmDefXML);
 				LaunchingPlugin.getDefault().savePluginPreferences();

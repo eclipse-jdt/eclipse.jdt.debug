@@ -39,13 +39,13 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			monitor = new NullProgressMonitor();
 		}
 
-		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Attaching_to_{0}..._1"), new String[]{configuration.getName()}), 3); //$NON-NLS-1$
+		monitor.beginTask(MessageFormat.format(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Attaching_to__0_____1, new String[]{configuration.getName()}), 3); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
 		}						
 					
-		monitor.subTask(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Verifying_launch_attributes..._1")); //$NON-NLS-1$
+		monitor.subTask(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Verifying_launch_attributes____1); //$NON-NLS-1$
 						
 		String connectorId = getVMConnectorId(configuration);
 		IVMConnector connector = null;
@@ -55,7 +55,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			connector = JavaRuntime.getVMConnector(connectorId);
 		}
 		if (connector == null) {
-			abort(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Connector_not_specified_2"), null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Connector_not_specified_2, null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE); //$NON-NLS-1$
 		}
 		
 		Map argMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map)null);
@@ -70,7 +70,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		
 		monitor.worked(1);
 		
-		monitor.subTask(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
+		monitor.subTask(LaunchingMessages.JavaRemoteApplicationLaunchConfigurationDelegate_Creating_source_locator____2); //$NON-NLS-1$
 		// set the default source locator if required
 		setDefaultSourceLocator(launch, configuration);
 		monitor.worked(1);		

@@ -145,7 +145,7 @@ public class JREContainer implements IClasspathContainer {
 	 * @see IClasspathContainer#getDescription()
 	 */
 	public String getDescription() {
-		StringBuffer desc = new StringBuffer(LaunchingMessages.getString("JREContainer.JRE_System_Library_1")); //$NON-NLS-1$
+		StringBuffer desc = new StringBuffer(LaunchingMessages.JREContainer_JRE_System_Library_1); //$NON-NLS-1$
 		desc.append(" ["); //$NON-NLS-1$
 		desc.append(fVMInstall.getName());
 		desc.append("]"); //$NON-NLS-1$

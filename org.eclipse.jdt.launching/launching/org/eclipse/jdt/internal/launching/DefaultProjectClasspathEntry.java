@@ -67,7 +67,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public void initializeFrom(Element memento) throws CoreException {
 		String name = memento.getAttribute("project"); //$NON-NLS-1$
 		if (name == null) {
-			abort(LaunchingMessages.getString("DefaultProjectClasspathEntry.3"), null); //$NON-NLS-1$
+			abort(LaunchingMessages.DefaultProjectClasspathEntry_3, null); //$NON-NLS-1$
 		}		
 		IJavaProject project = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(name));
 		setJavaProject(project);
@@ -283,7 +283,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
 	 */
 	public String getName() {
-		return MessageFormat.format(LaunchingMessages.getString("DefaultProjectClasspathEntry.4"), new String[] {getJavaProject().getElementName()}); //$NON-NLS-1$
+		return MessageFormat.format(LaunchingMessages.DefaultProjectClasspathEntry_4, new String[] {getJavaProject().getElementName()}); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

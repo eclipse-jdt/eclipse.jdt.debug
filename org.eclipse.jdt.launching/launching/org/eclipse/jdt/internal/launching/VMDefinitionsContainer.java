@@ -381,17 +381,17 @@ public class VMDefinitionsContainer {
 			parser.setErrorHandler(new DefaultHandler());
 			config = parser.parse(new InputSource(reader)).getDocumentElement();
 		} catch (SAXException e) {
-			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
+			throw new IOException(LaunchingMessages.JavaRuntime_badFormat); //$NON-NLS-1$
 		} catch (ParserConfigurationException e) {
 			reader.close();
-			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
+			throw new IOException(LaunchingMessages.JavaRuntime_badFormat); //$NON-NLS-1$
 		} finally {
 			reader.close();
 		}
 		
 		// If the top-level node wasn't what we expected, bail out
 		if (!config.getNodeName().equalsIgnoreCase("vmSettings")) { //$NON-NLS-1$
-			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
+			throw new IOException(LaunchingMessages.JavaRuntime_badFormat); //$NON-NLS-1$
 		}
 		
 		// Populate the default VM-related fields
@@ -439,7 +439,7 @@ public class VMDefinitionsContainer {
 				}
 			}
 		} else {
-			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.VM_type_element_with_unknown_id_1")); //$NON-NLS-1$
+			LaunchingPlugin.log(LaunchingMessages.JavaRuntime_VM_type_element_with_unknown_id_1); //$NON-NLS-1$
 		}
 	}
 
@@ -501,7 +501,7 @@ public class VMDefinitionsContainer {
 				vmStandin.setVMArgs(vmArgs);
 			}
 		} else {
-			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.VM_element_specified_with_no_id_attribute_2")); //$NON-NLS-1$
+			LaunchingPlugin.log(LaunchingMessages.JavaRuntime_VM_element_specified_with_no_id_attribute_2); //$NON-NLS-1$
 		}
 	}	
 	
@@ -521,13 +521,13 @@ public class VMDefinitionsContainer {
 			try {
 				javadocURL= new URL(jreJavadoc);
 			} catch (MalformedURLException e) {
-				LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.Library_location_element_incorrectly_specified_3")); //$NON-NLS-1$
+				LaunchingPlugin.log(LaunchingMessages.JavaRuntime_Library_location_element_incorrectly_specified_3); //$NON-NLS-1$
 			}
 		}
 		if (jreJar != null && jreSrc != null && pkgRoot != null) {
 			return new LibraryLocation(new Path(jreJar), new Path(jreSrc), new Path(pkgRoot), javadocURL);
 		}
-		LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.Library_location_element_incorrectly_specified_3")); //$NON-NLS-1$
+		LaunchingPlugin.log(LaunchingMessages.JavaRuntime_Library_location_element_incorrectly_specified_3); //$NON-NLS-1$
 		return null;
 	}
 	

@@ -393,11 +393,11 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
-			abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_create_memento_for_Java_source_locator._4"), e); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaSourceLocator_Unable_to_create_memento_for_Java_source_locator__4, e); //$NON-NLS-1$
 		} catch (ParserConfigurationException e) {
-			abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_create_memento_for_Java_source_locator._4"), e); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaSourceLocator_Unable_to_create_memento_for_Java_source_locator__4, e); //$NON-NLS-1$
 		} catch (TransformerException e) {
-			abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_create_memento_for_Java_source_locator._4"), e); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaSourceLocator_Unable_to_create_memento_for_Java_source_locator__4, e); //$NON-NLS-1$
 		} 
 		// execution will not reach here
 		return null;
@@ -427,7 +427,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			root = parser.parse(source).getDocumentElement();
 												
 			if (!root.getNodeName().equalsIgnoreCase("javaSourceLocator")) {  //$NON-NLS-1$
-				abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_Java_source_locator_-_invalid_format._6"), null); //$NON-NLS-1$
+				abort(LaunchingMessages.JavaSourceLocator_Unable_to_restore_Java_source_locator___invalid_format__6, null); //$NON-NLS-1$
 			}
 	
 			List sourceLocations = new ArrayList();
@@ -444,27 +444,27 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 						String className = entry.getAttribute("class"); //$NON-NLS-1$
 						String data = entry.getAttribute("memento"); //$NON-NLS-1$
 						if (isEmpty(className)) {
-							abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_Java_source_locator_-_invalid_format._10"), null); //$NON-NLS-1$
+							abort(LaunchingMessages.JavaSourceLocator_Unable_to_restore_Java_source_locator___invalid_format__10, null); //$NON-NLS-1$
 						}
 						Class clazz  = null;
 						try {
 							clazz = classLoader.loadClass(className);
 						} catch (ClassNotFoundException e) {
-							abort(MessageFormat.format(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_source_location_-_class_not_found__{0}_11"), new String[] {className}), e); //$NON-NLS-1$
+							abort(MessageFormat.format(LaunchingMessages.JavaSourceLocator_Unable_to_restore_source_location___class_not_found___0__11, new String[] {className}), e); //$NON-NLS-1$
 						}
 						
 						IJavaSourceLocation location = null;
 						try {
 							location = (IJavaSourceLocation)clazz.newInstance();
 						} catch (IllegalAccessException e) {
-							abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_source_location._12"), e); //$NON-NLS-1$
+							abort(LaunchingMessages.JavaSourceLocator_Unable_to_restore_source_location__12, e); //$NON-NLS-1$
 						} catch (InstantiationException e) {
-							abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_source_location._12"), e); //$NON-NLS-1$
+							abort(LaunchingMessages.JavaSourceLocator_Unable_to_restore_source_location__12, e); //$NON-NLS-1$
 						}
 						location.initializeFrom(data);
 						sourceLocations.add(location);
 					} else {
-						abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_Java_source_locator_-_invalid_format._14"), null); //$NON-NLS-1$
+						abort(LaunchingMessages.JavaSourceLocator_Unable_to_restore_Java_source_locator___invalid_format__14, null); //$NON-NLS-1$
 					}
 				}
 			}
@@ -477,7 +477,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort(LaunchingMessages.getString("JavaSourceLocator.Exception_occurred_initializing_source_locator._15"), ex); //$NON-NLS-1$
+		abort(LaunchingMessages.JavaSourceLocator_Exception_occurred_initializing_source_locator__15, ex); //$NON-NLS-1$
 	}
 	
 	/**
@@ -524,7 +524,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					}
 					break;
 				case IRuntimeClasspathEntry.CONTAINER:
-					throw new IllegalArgumentException(LaunchingMessages.getString("JavaSourceLocator.Illegal_to_have_a_container_resolved_to_a_container_1")); //$NON-NLS-1$
+					throw new IllegalArgumentException(LaunchingMessages.JavaSourceLocator_Illegal_to_have_a_container_resolved_to_a_container_1); //$NON-NLS-1$
 			}
 			if (location != null) {
 				locations.add(location);

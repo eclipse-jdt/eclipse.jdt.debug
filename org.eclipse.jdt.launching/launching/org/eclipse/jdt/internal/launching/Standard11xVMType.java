@@ -50,7 +50,7 @@ public class Standard11xVMType extends StandardVMType {
 	 * @see org.eclipse.jdt.launching.IVMInstallType#getName()
 	 */
 	public String getName() {
-		return LaunchingMessages.getString("Standard11xVMType.Standard_1.1.x_VM_1"); //$NON-NLS-1$
+		return LaunchingMessages.Standard11xVMType_Standard_1_1_x_VM_1; //$NON-NLS-1$
 	}	
 	
 	/**

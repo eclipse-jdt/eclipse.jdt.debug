@@ -45,9 +45,9 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	 */
 	public AbstractVMInstall(IVMInstallType type, String id) {
 		if (type == null)
-			throw new IllegalArgumentException(LaunchingMessages.getString("vmInstall.assert.typeNotNull")); //$NON-NLS-1$
+			throw new IllegalArgumentException(LaunchingMessages.vmInstall_assert_typeNotNull); //$NON-NLS-1$
 		if (id == null)
-			throw new IllegalArgumentException(LaunchingMessages.getString("vmInstall.assert.idNotNull")); //$NON-NLS-1$
+			throw new IllegalArgumentException(LaunchingMessages.vmInstall_assert_idNotNull); //$NON-NLS-1$
 		fType= type;
 		fId= id;
 	}

@@ -314,13 +314,13 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 			if (dir.isDirectory()) {
 				return dir;
 			} 
-			abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 		} else {
 			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (res instanceof IContainer && res.exists()) {
 				return res.getLocation().toFile();
 			} 
-			abort(MessageFormat.format(LaunchingMessages.getString("AbstractJavaLaunchConfigurationDelegate.Working_directory_does_not_exist__{0}_12"), new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.AbstractJavaLaunchConfigurationDelegate_Working_directory_does_not_exist___0__12, new String[] {path.toString()}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		// cannot return null - an exception will be thrown
 		return null;		
@@ -334,7 +334,7 @@ public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate im
 		// Construct the HTML file and set its name as a program argument
 		File htmlFile = buildHTMLFile(configuration, workingDir);
 		if (htmlFile == null) {
-			abort(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Could_not_build_HTML_file_for_applet_launch_1"), null, IJavaLaunchConfigurationConstants.ERR_COULD_NOT_BUILD_HTML); //$NON-NLS-1$
+			abort(LaunchingMessages.JavaAppletLaunchConfigurationDelegate_Could_not_build_HTML_file_for_applet_launch_1, null, IJavaLaunchConfigurationConstants.ERR_COULD_NOT_BUILD_HTML); //$NON-NLS-1$
 		}			
 		// Add a debug listener if necessary 
 		if (fgLaunchToFileMap.isEmpty()) {
