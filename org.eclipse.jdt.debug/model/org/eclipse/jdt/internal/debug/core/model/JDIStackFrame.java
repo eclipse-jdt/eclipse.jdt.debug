@@ -819,7 +819,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (fIsOutOfSynch) {
 			return true;
 		}
-		if (((JDIDebugTarget)getDebugTarget()).isOutOfSynch(getUnderlyingMethod().declaringType().name())) {
+		JDIDebugTarget target= (JDIDebugTarget)getDebugTarget();
+		if (target.hasHCROccurred() && target.isOutOfSynch(getUnderlyingMethod().declaringType().name())) {
 			return true;
 		}
 		return false;
