@@ -48,8 +48,6 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, IProgressMonitor)
 	 */
 	public ILaunch launch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		
-		IJavaProject javaProject = JavaLaunchConfigurationHelper.getJavaProject(configuration);
 								
 		IVMInstall vm  = verifyVMInstall(configuration);
 		
@@ -70,6 +68,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		ISourceLocator sourceLocator = null;
 		String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 		if (id == null) {
+			IJavaProject javaProject = JavaLaunchConfigurationHelper.getJavaProject(configuration);
 			sourceLocator = new JavaSourceLocator(javaProject);
 		}
 		Launch launch = new Launch(configuration, mode, sourceLocator, result.getProcesses(), result.getDebugTarget());
