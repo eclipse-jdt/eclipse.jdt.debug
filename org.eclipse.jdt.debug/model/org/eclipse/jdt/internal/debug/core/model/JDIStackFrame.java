@@ -40,39 +40,39 @@ import com.sun.jdi.Type;
 public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
-	 * Underlying JDI stack frame
+	 * Underlying JDI stack frame.
 	 */
 	private StackFrame fStackFrame;
 	/**
-	 * The last (previous) underlying stack frame
+	 * The last (previous) underlying stack frame.
 	 */
 	private StackFrame fLastStackFrame;
 	/**
-	 * Containing thread
+	 * Containing thread.
 	 */
 	private JDIThread fThread;
 	/**
-	 * Visible variables
+	 * Visible variables.
 	 */
 	private List fVariables;
 	/**
-	 * The method this stack frame is associated with. Cached
-	 * lazily on first access.
+	 * The method this stack frame is associated with.
+	 * Cached lazily on first access.
 	 */
 	private Method fMethod= null;
 	/**
-	 * The underlying Object associated with this stack frame.  Cached lazily on
-	 * first access.
+	 * The underlying Object associated with this stack frame.  
+	 * Cached lazily on first access.
 	 */
 	private ObjectReference fThisObject;
 	/**
 	 * The name of the type in which the method for this stack frame was
-	 * declared (implemented).  Cached on lazily first access.
+	 * declared (implemented).  Cached lazily on first access.
 	 */
 	private String fDeclaringTypeName;
 	/**
 	 * The name of the type of the object that received the method call associated
-	 * with this stack frame.  Cached on lazily first access.
+	 * with this stack frame.  Cached lazily on first access.
 	 */
 	private String fReceivingTypeName;
 	/**
@@ -85,7 +85,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	private boolean fIsOutOfSynch= false;
 	
 	/**
-	 * Local cache for source name debug attribute
+	 * The source name debug attribute. Cached lazily on first access.
 	 */
 	private String fSourceName;
 
@@ -560,7 +560,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
 	protected ObjectReference getUnderlyingThisObject() throws DebugException {
-		if (fThisObject == null) {
+		if (fThisObject == null && !isStatic()) {
 			try {
 				fThisObject = getUnderlyingStackFrame().thisObject();
 			} catch (RuntimeException e) {
@@ -574,7 +574,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 	
 	/**
-	 * @see IAdaptable#getAdapter(java.lang.Class)
+	 * @see IAdaptable#getAdapter(Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IJavaStackFrame.class || adapter == IJavaModifiers.class) {
@@ -897,9 +897,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public IJavaObject getThis() throws DebugException {
 		IJavaObject receiver = null;
-		ObjectReference thisObject = getUnderlyingThisObject();
-		if (thisObject != null) {
-			receiver = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), thisObject);
+		if (!isStatic()) {
+			ObjectReference thisObject = getUnderlyingThisObject();
+			if (thisObject != null) {
+				receiver = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), thisObject);
+			}
 		}
 		return receiver;
 	}
@@ -945,4 +947,16 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		return -1;
 	}
 
+	/**
+	 * Clears the cached data of this stack frame.
+	 * The underlying stack frame has changed in such a way
+	 * that the cached data may not be valid.
+	 */
+	protected void clearCachedData() {
+		fMethod= null;
+		fThisObject= null;
+		fDeclaringTypeName= null;
+		fReceivingTypeName= null;	
+		fSourceName= null;
+	}
 }
