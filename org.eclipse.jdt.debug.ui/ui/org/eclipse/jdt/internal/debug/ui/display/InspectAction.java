@@ -8,30 +8,22 @@ package org.eclipse.jdt.internal.debug.ui.display;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Places the result of an evaluation in the debug inspector
  */
 public class InspectAction extends EvaluateAction {
 
-	public InspectAction(IWorkbenchPart workbenchPart, boolean usedInEditor) {
-		super(workbenchPart, usedInEditor);
-		
+	public InspectAction() {
 		setText(DisplayMessages.getString("Inspect.label")); //$NON-NLS-1$
 		setToolTipText(DisplayMessages.getString("Inspect.tooltip")); //$NON-NLS-1$
 		setDescription(DisplayMessages.getString("Inspect.description")); //$NON-NLS-1$
 		JavaDebugImages.setToolImageDescriptors(this, "insp_sbook.gif"); //$NON-NLS-1$
-	}
-	
-	public InspectAction() {
-		this(null, true);
+		WorkbenchHelp.setHelp(this, new Object[] { IHelpContextIds.INSPECT_ACTION });	
 	}
 	
 	public void evaluationComplete(final IEvaluationResult res) {
@@ -61,5 +53,12 @@ public class InspectAction extends EvaluateAction {
 	protected boolean displayExpression() {
 		return false;
 	}
+	
+	/**
+	 * Hook to let snippet editor use it's action
+	 */
+	protected Class getAdapterClass() {
+		return IInspectAction.class;
+	}	
 
 }

@@ -60,30 +60,30 @@
            name="jdtGroup">
          </separator>
       </menu>
-  	<action
+  	  <action
   		 label="%runToLineAction.label"
   		 icon="icons/full/clcl16/runtoline_co.gif"
   		 helpContextId="run_to_line_action_context"
   		 class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineAction"
   		 menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
   		 id="org.eclipse.jdt.debug.ui.RunToLineAction"> 
-  		</action>
+  	    </action>
   		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
 			icon="icons/full/etool16/disp_sbook.gif" 
-			helpContextId="run_to_line_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
+			helpContextId="display_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.display.DisplayAction"> 
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
 			icon="icons/full/etool16/insp_sbook.gif"
-			helpContextId="run_to_line_action_context"
+			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
 		</action> 
   </actionSet>
-  </extension>
+</extension>
 
 <extension 
 	point="org.eclipse.ui.views">
@@ -371,7 +371,7 @@
 			label="%Display.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/disp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.display.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
@@ -397,7 +397,7 @@
 			label="%Display.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/disp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.display.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 

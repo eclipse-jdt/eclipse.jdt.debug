@@ -34,20 +34,28 @@ import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetAction;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.IUpdate;
 
 import com.sun.jdi.InvocationException;
@@ -58,32 +66,24 @@ import com.sun.jdi.ObjectReference;
  * Action to do simple code evaluation. The evaluation
  * is done in the UI thread and the expression and result are
  * displayed using the IDataDisplay.
+ * 
+ * [Issue: this class is a part listener because the workbench
+ * does not fire selection change events to action delegates when
+ * the selection is a text selection. Thus we have to listen to parts
+ * and do manual updating].
  */
-public abstract class EvaluateAction extends Action implements IUpdate, IEvaluationListener, IEditorActionDelegate, IWorkbenchWindowActionDelegate, IPartListener {
+public abstract class EvaluateAction extends Action implements IUpdate, IEvaluationListener, IWorkbenchWindowActionDelegate, IEditorActionDelegate, IPartListener, ISelectionChangedListener {
 		
-	private IWorkbenchPart fWorkbenchPart;
 	private String fExpression;
-	private IWorkbenchWindow fWorkbenchWindow;
 	private IAction fAction;
 	
 	/**
 	 * Used to resolve editor input for selected stack frame
 	 */
 	private IDebugModelPresentation fPresentation;
-	
-	/**
-	 * Indicates whether this action is used from within an editor.  If so,
-	 * then this action is enabled only when the editor's input matches the
-	 * editor input corresponding to the currently selected stack frame.
-	 * If this flag is false, then this action is enabled whenever there is
-	 * a stack frame selected in the UI.
-	 */
-	private boolean fUsedInEditor;
-		
-	public EvaluateAction(IWorkbenchPart workbenchPart, boolean usedInEditor) {
+			
+	public EvaluateAction() {
 		super();
-		setWorkbenchPart(workbenchPart);
-		setUsedInEditor(usedInEditor);
 	}
 	
 	/**
@@ -107,9 +107,34 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	}
 	
 	/**
+	 * Hook to allow snippet editor to use same global
+	 * actions
+	 */
+	protected Class getAdapterClass() {
+		return null;
+	}
+	
+	protected IAction getSnippetDelegate() {
+		Class delegate = getAdapterClass();
+		if (delegate != null) {
+			IWorkbenchPart part = getWorkbenchPart();
+			if (part != null) {
+				return (IAction)part.getAdapter(delegate);
+			}
+		}	
+		return null;	
+	}
+	
+	/**
 	 * @see Action#run()
 	 */
 	public void run() {
+		
+		IAction delegate = getSnippetDelegate();
+		if (delegate != null) {
+			delegate.run();
+			return;
+		}
 		
 		fExpression= null;
 		
@@ -125,9 +150,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 			if (javaElement != null) {
 				IJavaProject project = javaElement.getJavaProject();
 				try {
-					
-					ITextSelection selection = (ITextSelection) fWorkbenchPart.getSite().getSelectionProvider().getSelection();
-					fExpression= selection.getText();
+					fExpression= getExpressionText();
 					
 					IDataDisplay dataDisplay= getDataDisplay();
 					if (dataDisplay != null && displayExpression())
@@ -194,17 +217,41 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 * delegate for.
 	 */
 	public void update() {
+		
+		IAction delegate = getSnippetDelegate();
 		boolean enabled = false;
-		if (getWorkbenchPart() != null && isValidStackFrame()) {
-			ISelectionProvider provider = getWorkbenchPart().getSite().getSelectionProvider();
-			if (provider != null)  {
-				if (textHasContent(((ITextSelection)provider.getSelection()).getText())) {
-					enabled = true;
-				}
+		if (delegate != null) {
+			((SnippetAction)delegate).update();
+			enabled = delegate.isEnabled();
+		} else {			
+			String expression = getExpressionText();
+			if (expression != null && textHasContent(expression)) {
+				enabled = getContext() != null;
 			}
 		}
 		setEnabled(enabled);
 		updateAction();
+	}
+	
+	/**
+	 * Returns the selected text in the active view, or <code>null</code>
+	 * if there is no text selection.
+	 * 
+	 * @return the selected text in the active view, or <code>null</code>
+	 *  if there is no text selection
+	 */
+	protected String getExpressionText() {
+		IWorkbenchPart part = getWorkbenchPart();
+		if (part != null) {
+			ISelectionProvider provider = part.getSite().getSelectionProvider();
+			if (provider != null) {
+				ISelection sel = provider.getSelection();
+				if (sel instanceof ITextSelection) {
+					return ((ITextSelection)sel).getText();
+				}
+			}
+		}
+		return null;
 	}
 	
 	protected void updateAction() {
@@ -263,11 +310,32 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	
 	protected IDataDisplay getDataDisplay() {
 		
-		Object value= getWorkbenchPart().getAdapter(IDataDisplay.class);
-		if (value instanceof IDataDisplay)
-			return (IDataDisplay) value;
+		IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
+		if (page != null) {
+			IWorkbenchPart activePart= page.getActivePart();
+			if (activePart != null) {
+				IDataDisplay display= (IDataDisplay)activePart.getAdapter(IDataDisplay.class);
+				if (display != null) {
+					return display;
+				}	
+			}
+			IViewPart view = page.findView(DisplayView.ID_DISPLAY_VIEW);;
+			if (view == null) {
+				try {
+					view= page.showView(DisplayView.ID_DISPLAY_VIEW);
+				} catch (PartInitException e) {
+					MessageDialog.openError(getShell(), DisplayMessages.getString("EditorDisplayAction.Cannot_open_Display_viewer_1"), e.getMessage()); //$NON-NLS-1$
+				} finally {
+					page.activate(activePart);
+				}
+			}
+			if (view != null) {
+				page.bringToTop(view);
+				return (IDataDisplay)view.getAdapter(IDataDisplay.class);
+			}			
+		}
 		
-		return null;
+		return null;		
 	}	
 	
 	protected boolean textHasContent(String text) {
@@ -369,26 +437,14 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	}
 	
 	protected boolean isUsedInEditor() {
-		return fUsedInEditor;
+		return getWorkbenchPart() instanceof IEditorPart;
 	}
-	
-	protected void setUsedInEditor(boolean used) {
-		fUsedInEditor= used;
-	}
-	
-	/**
-	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
-	 */
-	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		setWorkbenchPart(targetEditor);
-		setAction(action);
-		update();
-	}
-
+		
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
+		setAction(action);
 		run();
 	}
 
@@ -405,62 +461,22 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 */
 	public void dispose() {
 		disposeDebugModelPresentation();
+		IWorkbenchWindow win = getWorkbenchWindow();
+		if (win != null) {
+			win.getPartService().removePartListener(this);
+		}
 	}
 
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
-		setWorkbenchWindow(window);
-		setWorkbenchPart(window.getActivePage().getActiveEditor());
 		window.getPartService().addPartListener(this);
-	}
-	
-	/**
-	 * @see IPartListener#partActivated(IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart part) {
-		if (part instanceof IEditorPart) {
-			setWorkbenchPart(part);
-			update();
-		}
-
-	}
-
-	/**
-	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-	 */
-	public void partBroughtToTop(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partClosed(IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart part) {
-		if (part == getWorkbenchPart()) {
-			setWorkbenchPart(part);
-			update();
-		}
-	}
-
-	/**
-	 * @see IPartListener#partDeactivated(IWorkbenchPart)
-	 */
-	public void partDeactivated(IWorkbenchPart part) {
-	}
-
-	/**
-	 * @see IPartListener#partOpened(IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart part) {
+		update();
 	}
 	
 	protected IWorkbenchWindow getWorkbenchWindow() {
-		return fWorkbenchWindow;
-	}
-
-	protected void setWorkbenchWindow(IWorkbenchWindow workbenchWindow) {
-		fWorkbenchWindow = workbenchWindow;
+		return JDIDebugUIPlugin.getActiveWorkbenchWindow();
 	}
 	
 	protected IAction getAction() {
@@ -471,12 +487,24 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		fAction = action;
 	}
 	
+	/**
+	 * Returns the workbench part that the evaluation is
+	 * being performed from (i.e. the source of the expression),
+	 * or <code>null</code> if none.
+	 * 
+	 * @return the workbench part that the evaluation is
+	 * being performed from (i.e. the source of the expression),
+	 * or <code>null</code> if none
+	 */
 	protected IWorkbenchPart getWorkbenchPart() {
-		return fWorkbenchPart;
-	}
-
-	protected void setWorkbenchPart(IWorkbenchPart workbenchPart) {
-		fWorkbenchPart = workbenchPart;
+		IWorkbenchWindow window = getWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				return page.getActivePart();
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -501,4 +529,58 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 			fPresentation.dispose();
 		}
 	}
+
+	/**
+	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
+	 */
+	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+		setAction(action);
+		update();
+	}
+
+	/**
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+		ISelectionProvider provider = part.getSite().getSelectionProvider();
+		if (provider != null) {
+			provider.addSelectionChangedListener(this);
+		}
+	}
+
+	/*
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart part) {
+	}
+
+	/*
+	 * @see IPartListener#partClosed(IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+	}
+
+	/*
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+		ISelectionProvider provider = part.getSite().getSelectionProvider();
+		if (provider != null) {
+			provider.removeSelectionChangedListener(this);
+		}		
+	}
+
+	/*
+	 * @see IPartListener#partOpened(IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		selectionChanged(getAction(), event.getSelection());
+	}
+
 }

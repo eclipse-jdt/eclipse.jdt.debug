@@ -12,22 +12,22 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Displays the result of an evaluation in the display view
  */
 public class DisplayAction extends EvaluateAction {
 	
-	public DisplayAction(IWorkbenchPart workbenchPart, boolean usedInEditor) {
-		super(workbenchPart, usedInEditor);
-		
+	public DisplayAction() {
 		setText(DisplayMessages.getString("Display.label")); //$NON-NLS-1$
 		setToolTipText(DisplayMessages.getString("Display.tooltip")); //$NON-NLS-1$
 		setDescription(DisplayMessages.getString("Display.description")); //$NON-NLS-1$
 		JavaDebugImages.setToolImageDescriptors(this, "disp_sbook.gif"); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(this, new Object[] { IHelpContextIds.DISPLAY_ACTION });	
 	}
 	
 	public void evaluationComplete(final IEvaluationResult result) {
@@ -83,5 +83,12 @@ public class DisplayAction extends EvaluateAction {
 		if (dataDisplay != null) {
 			dataDisplay.displayExpressionValue(resultString);
 		}
+	}
+	
+	/**
+	 * Hook to let snippet editor use it's action
+	 */
+	protected Class getAdapterClass() {
+		return IDisplayAction.class;
 	}
 }

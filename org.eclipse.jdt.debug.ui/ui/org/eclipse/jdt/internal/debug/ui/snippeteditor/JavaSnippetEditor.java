@@ -53,6 +53,8 @@ import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.internal.debug.ui.display.IDisplayAction;
+import org.eclipse.jdt.internal.debug.ui.display.IInspectAction;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.JavaStatusConstants;
 import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
@@ -157,6 +159,16 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		setAction("Stop", new StopAction(this));  //$NON-NLS-1$
 		setAction("RunIn", new RunInPackageAction(this));  //$NON-NLS-1$
 	} 
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter == IDisplayAction.class) {
+			return getAction("Display");
+		}
+		if (adapter == IInspectAction.class) {
+			return getAction("Inspect");
+		}		
+		return super.getAdapter(adapter);
+	}
 	
 	/**
 	 * @see AbstractTextEditor#editorContextMenuAboutToShow(MenuManager)
