@@ -18,6 +18,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIType;
+import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ReferenceType;
@@ -75,7 +77,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
 		
 		// pre-notification
-		fireAdded(target);
+		fireAdding(target);
 				
 		String referenceTypeName= getReferenceTypeName();
 		if (referenceTypeName == null) {
@@ -137,14 +139,16 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	/**
 	 * @see JavaBreakpoint#installableReferenceType(ReferenceType)
 	 */
-	protected boolean installableReferenceType(ReferenceType type) {
+	protected boolean installableReferenceType(ReferenceType type, JDIDebugTarget target) {
 		String pattern= getReferenceTypeName();
 		String queriedType= type.name();
 		if (pattern == null || queriedType == null) {
 			return false;
 		}
 		if (queriedType.startsWith(pattern)) {
-			return true;
+			// query registered listeners to see if this pattern breakpoint should
+			// be installed in the given target
+			return JDIDebugPlugin.getDefault().fireInstalling(target, this, JDIType.createType(target,type));
 		}
 		return false;
 	}	

@@ -46,7 +46,7 @@ public class JDIType implements IJavaType {
 	 * Creates the appropriate kind of type, based on the specialized
 	 * type.
 	 */
-	protected static JDIType createType(JDIDebugTarget target, Type type) {
+	public static JDIType createType(JDIDebugTarget target, Type type) {
 		if (type instanceof ArrayType) {
 			return new JDIArrayType(target, (ArrayType)type);
 		}

@@ -38,8 +38,10 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
@@ -581,11 +583,18 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	}
 
 	/**
-	 * @see IJavaBreakpointListener#breakpointAdded(IJavaDebugTarget, IJavaBreakpoint)
+	 * @see IJavaBreakpointListener#addingBreakpoint(IJavaDebugTarget, IJavaBreakpoint)
 	 */
-	public void breakpointAdded(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+	public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
 	}
 
+	/**
+	 * @see IJavaBreakpointListener#installingBreakpoint(IJavaDebugTarget, IJavaPatternBreakpoint, IJavaType)
+	 */
+	public boolean installingBreakpoint(IJavaDebugTarget target, IJavaPatternBreakpoint breakpoint, IJavaType type) {
+		return true;
+	}
+	
 	/**
 	 * @see IJavaBreakpointListener#breakpointHit(IJavaThread, IJavaBreakpoint)
 	 */

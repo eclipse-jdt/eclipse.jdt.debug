@@ -21,7 +21,9 @@ import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
@@ -49,7 +51,7 @@ public class JDIDebugPlugin extends Plugin {
 	/**
 	 * Breakpoint notification types
 	 */
-	private static final int ADDED = 1;
+	private static final int ADDING = 1;
 	private static final int INSTALLED = 2;
 	private static final int REMOVED = 3;
 	
@@ -241,13 +243,14 @@ public class JDIDebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Notifies listeners that the given breakpoint has been added.
+	 * Notifies listeners that the given breakpoint is about to be
+	 * added.
 	 * 
 	 * @param target Java debug target
 	 * @param breakpoint Java breakpoint
 	 */
-	public void fireBreakpointAdded(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
-		notify(target, breakpoint, ADDED);
+	public void fireBreakpointAdding(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+		notify(target, breakpoint, ADDING);
 	}
 	
 	/**
@@ -283,8 +286,8 @@ public class JDIDebugPlugin extends Plugin {
 		for (int i = 0; i < listeners.length; i++) {
 			IJavaBreakpointListener jbpl = (IJavaBreakpointListener)listeners[i];
 			switch (kind) {
-				case ADDED:
-					jbpl.breakpointAdded(target, breakpoint);
+				case ADDING:
+					jbpl.addingBreakpoint(target, breakpoint);
 					break;
 				case INSTALLED:
 					jbpl.breakpointInstalled(target, breakpoint);
@@ -312,5 +315,26 @@ public class JDIDebugPlugin extends Plugin {
 		}	
 		return suspend;
 	}
+	
+	/**
+	 * Notifies listeners that the given breakpoint is about to be installed
+	 * in the given type. Returns whether the breakpoint should be
+	 * installed.
+	 * 
+	 * @param target Java debug target
+	 * @param breakpoint Java breakpoint
+	 * @param type the type the breakpoint is about to be installed in
+	 * @return whether the breakpoint should be installed
+	 */
+	public boolean fireInstalling(IJavaDebugTarget target, IJavaPatternBreakpoint breakpoint, IJavaType type) {
+		Object[] listeners = fBreakpointListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IJavaBreakpointListener jbpl = (IJavaBreakpointListener)listeners[i];
+			if (!jbpl.installingBreakpoint(target, breakpoint, type)) {
+				return false;
+			}
+		}	
+		return true;
+	}	
 	
 }

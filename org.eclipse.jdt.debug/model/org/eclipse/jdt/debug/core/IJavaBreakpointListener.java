@@ -16,6 +16,7 @@ package org.eclipse.jdt.debug.core;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
+ * @since 2.0
  */
 public interface IJavaBreakpointListener {
 	
@@ -26,8 +27,24 @@ public interface IJavaBreakpointListener {
 	 * @param target Java debug target
 	 * @param breakpoint Java breakpoint
 	 */
-	public void breakpointAdded(IJavaDebugTarget target, IJavaBreakpoint breakpoint);
+	public void addingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint);
 	
+	/**
+	 * Notification that the given pattern breakpoint is about to be installed in
+	 * the specified target, in the specified type. Returns whether the
+	 * installation should proceed. If any registered listener returns
+	 * <code>false</code> the breakpoint is not installed in the given
+	 * target for the given type.
+	 * 
+	 * @param target Java debug target
+	 * @param breakpoint Java breakpoint
+	 * @param type the type (class or interface) the breakpoint is about to be installed in 
+	 *  (one of <code>IJavaClassType</code>, <code>IJavaInterfaceType</code>, or 
+	 *  <code>IJavaArrayType</code>)
+	 * @return whether the the breakpoint should be installed in the given type and target
+	 */
+	public boolean installingBreakpoint(IJavaDebugTarget target, IJavaPatternBreakpoint breakpoint, IJavaType type);
+		
 	/**
 	 * Notification that the given breakpoint has been installed in
 	 * the specified target.

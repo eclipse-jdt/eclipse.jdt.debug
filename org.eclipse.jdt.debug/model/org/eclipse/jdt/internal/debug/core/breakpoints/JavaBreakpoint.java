@@ -238,7 +238,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */	
 	public boolean handleClassPrepareEvent(ClassPrepareEvent event, JDIDebugTarget target) {
 		try {
-			if (!installableReferenceType(event.referenceType())) {
+			if (!installableReferenceType(event.referenceType(), target)) {
 				// Don't install this breakpoint in an
 				// inappropriate type
 				return true;
@@ -281,9 +281,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	
 	/**
 	 * Returns whether the given reference type is appropriate for this
-	 * breakpoint to be installed in.
+	 * breakpoint to be installed in the given target
 	 */
-	protected boolean installableReferenceType(ReferenceType type) throws CoreException {
+	protected boolean installableReferenceType(ReferenceType type, JDIDebugTarget target) throws CoreException {
 		String installableType= getTypeName();
 		String queriedType= type.name();
 		if (installableType == null || queriedType == null) {
@@ -393,7 +393,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
 		
 		// pre-notification
-		fireAdded(target);
+		fireAdding(target);
 		
 		String referenceTypeName= getTypeName();
 		String enclosingTypeName= getEnclosingReferenceTypeName();
@@ -804,8 +804,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * 
 	 * @param target debug target
 	 */
-	protected void fireAdded(IJavaDebugTarget target) {
-		JDIDebugPlugin.getDefault().fireBreakpointAdded(target, this);
+	protected void fireAdding(IJavaDebugTarget target) {
+		JDIDebugPlugin.getDefault().fireBreakpointAdding(target, this);
 	}
 	
 	/**
