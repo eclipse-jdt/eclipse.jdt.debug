@@ -59,7 +59,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 		String scope = "${resource}";
 		IResource resource = getJavaProject().getProject().getFolder("src");
 		setSelection(resource);
-		IResource[] result = RefreshTab.getRefreshResources(scope, null);
+		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
 		assertEquals(resource, result[0]);		
@@ -72,7 +72,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 		String scope = "${container}";
 		IResource resource = getJavaProject().getProject().getFolder("src");
 		setSelection(resource);
-		IResource[] result = RefreshTab.getRefreshResources(scope, null);
+		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
 		assertEquals(resource.getParent(), result[0]);		
@@ -85,7 +85,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 		String scope = "${project}";
 		IResource resource = getJavaProject().getProject().getFolder("src");
 		setSelection(resource);
-		IResource[] result = RefreshTab.getRefreshResources(scope, null);
+		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
 		assertEquals(resource.getProject(), result[0]);		
@@ -96,7 +96,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 	 */
 	public void testWorkspaceScope() throws CoreException {
 		String scope = "${workspace}";
-		IResource[] result = RefreshTab.getRefreshResources(scope, null);
+		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
 		assertEquals(ResourcesPlugin.getWorkspace().getRoot(), result[0]);		
@@ -109,7 +109,7 @@ public class RefreshTabTests extends AbstractDebugTest {
 	public void testSpecificResource() throws CoreException {
 		String scope = "${resource:/DebugTests/.classpath}";
 		IResource resource = getJavaProject().getProject().getFile(".classpath");
-		IResource[] result = RefreshTab.getRefreshResources(scope, null);
+		IResource[] result = RefreshTab.getRefreshResources(scope);
 		assertNotNull(result);
 		assertEquals(1, result.length);
 		assertEquals(resource, result[0]);				
