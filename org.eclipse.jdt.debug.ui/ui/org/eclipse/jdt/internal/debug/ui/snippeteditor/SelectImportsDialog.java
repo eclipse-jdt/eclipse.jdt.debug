@@ -43,7 +43,6 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -57,8 +56,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 public class SelectImportsDialog extends TitleAreaDialog {
@@ -108,44 +105,45 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	protected class ImportsContentProvider implements IStructuredContentProvider {
 		
 		private TableViewer fViewer;
-		private List fFilters;
+		private List fImportNames;
 		
 		public ImportsContentProvider(TableViewer viewer) {
 			fViewer = viewer;
-			populateFilters();
+			populateImports();
 		}
 		
-		protected void populateFilters() {
-			fFilters= new ArrayList(1);
-			for (int i = 0; i < fImports.length; i++) {
-				String name = fImports[i];
-				addFilter(name);
+		protected void populateImports() {
+			fImportNames= new ArrayList(1);
+			if (fImports != null) {
+				for (int i = 0; i < fImports.length; i++) {
+					String name = fImports[i];
+					addImport(name);
+				}
 			}
 		}
 		
-		public Filter addFilter(String name) {
-			Filter filter = new Filter(name, false);
-			if (!fFilters.contains(filter)) {
-				fFilters.add(filter);
-				fViewer.add(filter);
+		protected void addImport(String name) {
+			Filter imprt = new Filter(name, false);
+			if (!fImportNames.contains(imprt)) {
+				fImportNames.add(imprt);
+				fViewer.add(imprt);
 			}
-			return filter;
 		}
 		
 		
-		public void removeFilters(Object[] filters) {
-			for (int i = 0; i < filters.length; i++) {
-				Filter filter = (Filter)filters[i];
-				fFilters.remove(filter);
+		protected void removeImports(Object[] imports) {
+			for (int i = 0; i < imports.length; i++) {
+				Filter imprt = (Filter)imports[i];
+				fImportNames.remove(imprt);
 			}
-			fViewer.remove(filters);
+			fViewer.remove(imports);
 		}
 		
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return fFilters.toArray();
+			return fImportNames.toArray();
 		}
 		
 		/**
@@ -238,7 +236,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		
 	private void removeImports() {
 		IStructuredSelection selection = (IStructuredSelection)fImportsViewer.getSelection();		
-		fImportContentProvider.removeFilters(selection.toArray());
+		fImportContentProvider.removeImports(selection.toArray());
 	}
 	
 	private void addPackage() {
@@ -267,7 +265,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			} else {
 				filter += ".*"; //$NON-NLS-1$
 			}
-			fImportContentProvider.addFilter(filter);
+			fImportContentProvider.addImport(filter);
 		}		
 	}
 				
@@ -293,7 +291,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		Object[] types= dialog.getResult();
 		if (types != null && types.length > 0) {
 			IType type = (IType)types[0];
-			fImportContentProvider.addFilter(type.getFullyQualifiedName());
+			fImportContentProvider.addImport(type.getFullyQualifiedName());
 		}		
 	}
 	
@@ -341,7 +339,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		topLayout.marginWidth = 0;
 		outer.setLayout(topLayout);
 		
-		setTitle("Manage the Java Snippet Editor Imports");
+		setTitle("Manage the Java Snippet Editor Imports for \"" + fEditor.getPage().getName() + "\"");
 		
 		GridData gd = new GridData();
 		gd.verticalAlignment = GridData.FILL;
@@ -408,6 +406,6 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("Snippet Imports");
+		shell.setText("Java Snippet Imports");
 	}
 }
