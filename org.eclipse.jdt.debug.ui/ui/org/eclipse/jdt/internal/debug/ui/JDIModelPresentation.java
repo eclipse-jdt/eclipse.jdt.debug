@@ -26,18 +26,14 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -65,10 +61,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
@@ -886,9 +880,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IJavaBreakpoint) {
 				item= ((IJavaBreakpoint)item).getType();
 			}
-			if (item instanceof IClassFile) {
-				promptForSource((IClassFile)item);
-			}
 			return EditorUtility.getEditorInput(item);
 		} catch (CoreException e) {
 			return null;
@@ -1232,25 +1223,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	public static String getFormattedString(String string, String[] args) {
 		return MessageFormat.format(string, args);
-	}
-	
-	/**
-	 * Prompts for source if required.
-	 */
-	protected void promptForSource(IClassFile classFile) {
-		try {
-			IType type= classFile.getType();
-			IPackageFragmentRoot root = (IPackageFragmentRoot)type.getClassFile().getParent().getParent();
-			if (root.isArchive()) {				
-				if (root.getSourceAttachmentPath() == null && SourceAttachmentWizard.isOkToPrompt(root)) {
-					Shell shell = JDIDebugUIPlugin.getActiveWorkbenchShell();
-					SourceAttachmentWizard wizard= new SourceAttachmentWizard(root);
-					WizardDialog wd = new WizardDialog(shell, wizard);
-					wd.open();
-				}
-			}
-		} catch (JavaModelException e) {
-		}
 	}
 	
 	/**
