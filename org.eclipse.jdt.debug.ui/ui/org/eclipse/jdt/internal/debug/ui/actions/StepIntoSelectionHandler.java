@@ -131,10 +131,26 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 						}
 					}
 				} else if (event.getKind() == DebugEvent.SUSPEND) {
-					// if not a step-end then abort
+					// if not a step-end then abort (i.e. hit a breakpoint, etc)
 					if (event.getDetail() != DebugEvent.STEP_END) {
 						cleanup();
 						return events;
+					}
+					// if there is more than one suspend event, then abort:
+					//  -> this means that we have hit a suspend event at the same location
+					// that our step ended.
+					if (events.length > 1) {
+						for (int j = 1; j < events.length; j++) {
+							DebugEvent debugEvent = events[j];
+							if (debugEvent.getKind() == DebugEvent.SUSPEND) {
+								cleanup();
+								DebugEvent[] filtered = new DebugEvent[events.length - 1];
+								for (int k = 1; k < events.length; k++) {
+									filtered[k-1]= events[k];
+									return filtered;
+								}
+							}
+						}
 					}
 					// compare location to desired location
 					try {
