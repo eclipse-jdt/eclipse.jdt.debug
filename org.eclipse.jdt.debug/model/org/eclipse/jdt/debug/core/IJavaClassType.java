@@ -18,6 +18,7 @@ import org.eclipse.debug.core.DebugException;
  * (repeatedly) as the API evolves.
  * </p>
  * @see IJavaValue
+ * @since 2.0
  */
 public interface IJavaClassType  extends IJavaType {
 	
@@ -79,7 +80,21 @@ public interface IJavaClassType  extends IJavaType {
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * </ul>
 	 */
 	public IJavaVariable getField(String name) throws DebugException;	
+	
+	/**
+	 * Returns the superclass of this class type, or <code>null</code>
+	 * if no such class exists.
+	 * 
+	 * @return the superclass of this class type, or <code>null</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 */
+	public IJavaClassType getSuperclass() throws DebugException;
 }
 
