@@ -136,12 +136,14 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		 * @return container id or <code>null</code>
 		 */
 		private IPath getContainerId(IVMInstall vm) {
-			String name = vm.getName();
-			if (name != null) {
-				IPath path = new Path(JavaRuntime.JRE_CONTAINER);
-				path = path.append(new Path(vm.getVMInstallType().getId()));				
-				path = path.append(new Path(name));
-				return path;
+			if (vm != null) {
+				String name = vm.getName();
+				if (name != null) {
+					IPath path = new Path(JavaRuntime.JRE_CONTAINER);
+					path = path.append(new Path(vm.getVMInstallType().getId()));				
+					path = path.append(new Path(name));
+					return path;
+				}
 			}
 			return null;
 		}
