@@ -43,7 +43,7 @@ public class AddWatchExpressionAction extends WatchExpressionAction implements I
 		if (new WatchExpressionDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), watchExpression, false).open() == StatusDialog.OK) {
 			// if OK is selected, add the expression to the expression view and try to evaluate the expression.
 			DebugPlugin.getDefault().getExpressionManager().addExpression(watchExpression);
-			watchExpression.evaluateExpression(getStackFrameContext(), true);
+			watchExpression.evaluateExpression(getThreadContext(), true);
 		}
 	}
 

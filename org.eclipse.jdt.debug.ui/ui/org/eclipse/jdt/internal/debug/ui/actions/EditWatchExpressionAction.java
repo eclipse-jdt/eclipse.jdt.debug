@@ -31,7 +31,7 @@ public class EditWatchExpressionAction extends WatchExpressionAction {
 		// display the watch expression dialog for the currently selected watch expression
 		if (new WatchExpressionDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), watchExpression, true).open() == StatusDialog.OK) {
 			// re-evaluate and refresh if necessary
-			watchExpression.evaluateExpression(getStackFrameContext(), true);
+			watchExpression.evaluateExpression(getThreadContext(), true);
 		}
 	}
 

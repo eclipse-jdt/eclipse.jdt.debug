@@ -13,7 +13,7 @@ Contributors:
 
 import java.util.Iterator;
 
-import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.JavaWatchExpression;
 import org.eclipse.jface.action.IAction;
 
@@ -27,9 +27,9 @@ public class ReevaluateWatchExpressionAction extends WatchExpressionAction {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IJavaStackFrame stackFrame= getStackFrameContext();
+		IJavaThread thread= getThreadContext();
 		for (Iterator iter= getCurrentSelection().iterator(); iter.hasNext();) {
-			((JavaWatchExpression) iter.next()).evaluateExpression(stackFrame);
+			((JavaWatchExpression) iter.next()).evaluateExpression(thread);
 		}
 	}
 

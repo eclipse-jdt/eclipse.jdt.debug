@@ -12,11 +12,9 @@ Contributors:
 **********************************************************************/
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 
 /**
@@ -29,20 +27,16 @@ public abstract class WatchExpressionAction extends ObjectActionDelegate {
 	 * Finds the currently selected stack frame in the UI.
 	 * Stack frames from a scrapbook launch are ignored.
 	 */
-	protected IJavaStackFrame getStackFrameContext() {
+	protected IJavaThread getThreadContext() {
 		IAdaptable context = DebugUITools.getDebugContext();
-		if (context instanceof IThread) {
-			try {
-				context = ((IThread)context).getTopStackFrame();
-			} catch (DebugException e) {
-				JDIDebugUIPlugin.log(e);
-			}
+		if (context instanceof IJavaThread) {
+			return (IJavaThread)context;
 		}
 		if (context != null) {
 			IJavaStackFrame frame = (IJavaStackFrame) context.getAdapter(IJavaStackFrame.class);
 			if (frame != null) {
 				if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
-					return frame;
+					return (IJavaThread)frame.getThread();
 				}
 			}
 		}
