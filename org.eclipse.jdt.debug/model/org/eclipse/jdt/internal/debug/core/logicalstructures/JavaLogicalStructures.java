@@ -21,11 +21,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate;
+import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
-public class JavaLogicalStructures implements ILogicalStructureTypeDelegate {
+public class JavaLogicalStructures implements ILogicalStructureTypeDelegate, ILogicalStructureTypeDelegate2 {
 	
 	/**
 	 * The list of java logical structures in this Eclipse install.
@@ -49,8 +50,13 @@ public class JavaLogicalStructures implements ILogicalStructureTypeDelegate {
 			}
 			boolean subtypes= Boolean.valueOf(element.getAttribute("subtypes")).booleanValue(); //$NON-NLS-1$
 			String value= element.getAttribute("value"); //$NON-NLS-1$
-			IConfigurationElement[] variableElements= element.getChildren("variable"); //$NON-NLS-1$
+			String description= element.getAttribute("description"); //$NON-NLS-1$
 			if (type == null) {
+				JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.4"), null)); //$NON-NLS-1$
+				break;
+			}
+			IConfigurationElement[] variableElements= element.getChildren("variable"); //$NON-NLS-1$
+			if (value == null && variableElements.length == 0) {
 				JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.1"), null)); //$NON-NLS-1$
 				break;
 			}
@@ -69,7 +75,7 @@ public class JavaLogicalStructures implements ILogicalStructureTypeDelegate {
 				}
 				variables[j][1]= variableValue;
 			}
-			javaLogicalStructures.add(new JavaLogicalStructure(type, subtypes, value, variables));
+			javaLogicalStructures.add(new JavaLogicalStructure(type, subtypes, value, description, variables));
 		}
 		return javaLogicalStructures;
 	}
@@ -106,6 +112,25 @@ public class JavaLogicalStructures implements ILogicalStructureTypeDelegate {
 			IValue result= ((JavaLogicalStructure) iter.next()).getLogicalStructure(javaValue);
 			if (result != null) {
 				return result;
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2#getDescription(org.eclipse.debug.core.model.IValue)
+	 */
+	public String getDescription(IValue value) {
+		if (!(value instanceof IJavaObject)) {
+			return null;
+		}
+		IJavaObject javaValue= (IJavaObject) value;
+		// go through all the java logical structures and return true if one
+		// of them provide a logical structure for the given value.
+		for (Iterator iter= fJavaLogicalStructures.iterator(); iter.hasNext();) {
+			JavaLogicalStructure javaLogicalStructure = (JavaLogicalStructure) iter.next();
+			if (javaLogicalStructure.providesLogicalStructure(javaValue)) {
+				return javaLogicalStructure.getDescription();
 			}
 		}
 		return null;

@@ -68,6 +68,10 @@ public class JavaLogicalStructure {
 	 */
 	private final String fValue;
 	/**
+	 * Description of the logical structure.
+	 */
+	private final String fDescription;
+	/**
 	 * Name and associated code snippet of the variables of the logical value.
 	 */
 	private final String[][] fVariables;
@@ -133,10 +137,11 @@ public class JavaLogicalStructure {
 		}
 	}
 
-	public JavaLogicalStructure(String type, boolean subtypes, String value, String[][] variables) {
+	public JavaLogicalStructure(String type, boolean subtypes, String value, String description, String[][] variables) {
 		fType= type;
 		fSubtypes= subtypes;
 		fValue= value;
+		fDescription= description;
 		fVariables= variables;
 	}
 	
@@ -278,6 +283,10 @@ public class JavaLogicalStructure {
 			fgStackFrameProvider = DebugPlugin.getDefault().getStatusHandler(fgNeedStackFrame);
 		}
 		return fgStackFrameProvider;
+	}
+	
+	public String getDescription() {
+		return fDescription;
 	}
 
 }

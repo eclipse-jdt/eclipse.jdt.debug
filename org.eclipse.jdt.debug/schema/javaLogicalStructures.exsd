@@ -65,6 +65,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="description" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a description of this logical structure.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
