@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
@@ -23,6 +24,8 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.ui.IWorkingCopyManager;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -115,18 +118,13 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 				type = classFile.getType();
 			
 			} else {
-				IFile file= (IFile)editorInput.getAdapter(IFile.class);
-				if (file != null) {
-					IJavaElement element= JavaCore.create(file);
-					if (element instanceof ICompilationUnit) {
-						ICompilationUnit cu = (ICompilationUnit) element;
-						IJavaElement e = cu.getElementAt(selection.getOffset());
-						if (e instanceof IType)
-							type = (IType)e;
-						else if (e != null && e instanceof IMember) {
-							type = ((IMember) e).getDeclaringType();
-						}
-					}
+				IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
+				ICompilationUnit unit= manager.getWorkingCopy(editorInput);
+				IJavaElement e = unit.getElementAt(selection.getOffset());
+				if (e instanceof IType)
+						type = (IType)e;
+				else if (e != null && e instanceof IMember) {
+					type = ((IMember) e).getDeclaringType();
 				}
 			}
 		} catch (JavaModelException jme) {
