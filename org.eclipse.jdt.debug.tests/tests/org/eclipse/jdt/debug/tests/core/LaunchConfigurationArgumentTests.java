@@ -18,37 +18,80 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.IStreamListener;
-import org.eclipse.debug.core.model.IStreamMonitor;
+import org.eclipse.debug.ui.console.IConsole;
+import org.eclipse.debug.ui.console.IConsoleLineTrackerExtension;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.testplugin.ConsoleLineTracker;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 
 /**
  * Tests for command arguments
  */
 public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
 
-	/**
-	 * Argument retriever which stores the output from a process
-	 */
-	private ConsoleArgumentOutputRetriever fOutputListener = new ConsoleArgumentOutputRetriever();
+	private class ConsoleArgumentOutputRetriever implements IConsoleLineTrackerExtension {
 
-	private class ConsoleArgumentOutputRetriever implements IStreamListener {
-		private StringBuffer fOutput = new StringBuffer();
-		public void streamAppended(String text, IStreamMonitor monitor) {
-			fOutput.append(text);
+		StringBuffer buffer;
+		IDocument document;
+		boolean closed = false;
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
+		 */
+		public void dispose() {
+			document = null;
+			buffer = null;
+
 		}
-		public void streamClosed(IStreamMonitor monitor) {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
+		 */
+		public void init(IConsole console) {
+			buffer = new StringBuffer();
+			document = console.getDocument();
 		}
-		public void clear() {
-			fOutput.setLength(0);
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
+		 */
+		public void lineAppended(IRegion line) {
+			try {
+				buffer.append(document.get(line.getOffset(), line.getLength()));
+			} catch (BadLocationException e) {
+				e.printStackTrace();
+			}
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
+		 */
+		public void consoleClosed() {
+			closed = true;
+		}
+		
 		public String getOutput() {
-			return fOutput.toString();
+			// wait to be closed
+			int attempts = 0;
+			while (!closed && attempts < 60) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
+				attempts++;
+			}
+			if (closed) {
+				return buffer.toString(); 
+			}
+			return null;
 		}
-	}
+
+}
 
 	public LaunchConfigurationArgumentTests(String name) {
 		super(name);
@@ -223,16 +266,16 @@ public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
 		workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, map);
 		
 		ILaunchConfiguration config = workingCopy.doSave();
-		fOutputListener.clear();
+		ConsoleArgumentOutputRetriever retriever = new ConsoleArgumentOutputRetriever();
+		ConsoleLineTracker.setDelegate(retriever);
 		IJavaDebugTarget target= null;
 		try {
 			IJavaThread thread = launchAndSuspend(config);
-			thread.getDebugTarget().getProcess().getStreamsProxy().getOutputStreamMonitor().addListener(fOutputListener);
 			target= resumeAndExit(thread);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		assertEquals(outputValue, fOutputListener.getOutput());
+		assertEquals(outputValue, retriever.getOutput());
 		terminateAndRemove(target);
 		config.delete();
 	}
