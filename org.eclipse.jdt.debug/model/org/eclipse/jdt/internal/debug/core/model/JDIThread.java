@@ -2492,7 +2492,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			}
 
 			monitor.beginTask(this.getName(), runnables.size()); //$NON-NLS-1$
-			for (Iterator iter= runnables.iterator(); iter.hasNext() && !fJDIThread.isTerminated() || monitor.isCanceled();) {
+			for (Iterator iter= runnables.iterator(); iter.hasNext() && !fJDIThread.isTerminated() && !monitor.isCanceled();) {
 				try {
 					((Runnable)iter.next()).run();
 				} catch (Throwable t) {
