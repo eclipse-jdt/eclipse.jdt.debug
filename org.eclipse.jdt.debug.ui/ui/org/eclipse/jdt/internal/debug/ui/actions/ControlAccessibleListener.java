@@ -16,6 +16,12 @@ public class ControlAccessibleListener extends AccessibleAdapter {
 	}
 
 	public static void addListener(Control comp, String name) {
-		comp.getAccessible().addAccessibleListener(new ControlAccessibleListener(name));
+		//strip mnemonic
+		String[] strs = name.split("&"); //$NON-NLS-1$
+		StringBuffer stripped = new StringBuffer();
+		for (int i = 0; i < strs.length; i++) {
+			stripped.append(strs[i]);
+		}
+		comp.getAccessible().addAccessibleListener(new ControlAccessibleListener(stripped.toString()));
 	}
 }
