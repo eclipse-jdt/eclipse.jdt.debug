@@ -74,6 +74,7 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 	public void dispose() {
 		fConsole = null;
 		fJavaMatcher = null;
+		fNativeMatcher = null;
 	}
 
 }
