@@ -10,9 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.sun.jdi.ObjectCollectedException;
-import com.sun.jdi.VMDisconnectedException;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -70,6 +67,9 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
+
+import com.sun.jdi.ObjectCollectedException;
+import com.sun.jdi.VMDisconnectedException;
 
 /**
  * @see IDebugModelPresentation
@@ -951,34 +951,41 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return show.booleanValue();
 	}
 
-	protected String getVariableText(IJavaVariable var) throws DebugException {
-		String varLabel= var.getName();
-		if (varLabel != null) {
-			boolean showTypes= isShowVariableTypeNames();
-			int spaceIndex= varLabel.lastIndexOf(' ');
-			StringBuffer buff= new StringBuffer();
-			String typeName= var.getReferenceTypeName();
+	protected String getVariableText(IJavaVariable var) {
+		String varLabel= DebugUIMessages.getString("JDIModelPresentation<unknown_name>_1"); //$NON-NLS-1$
+		try {
+			varLabel= var.getName();
+		} catch (DebugException exception) {
+		}
+		boolean showTypes= isShowVariableTypeNames();
+		int spaceIndex= varLabel.lastIndexOf(' ');
+		StringBuffer buff= new StringBuffer();
+		String typeName= DebugUIMessages.getString("JDIModelPresentation<unknown_type>_2"); //$NON-NLS-1$
+		try {
+			typeName= var.getReferenceTypeName();
 			if (showTypes && spaceIndex == -1) {
 				typeName= getQualifiedName(typeName);
-				if (typeName.length() > 0) {
-					buff.append(typeName);
-					buff.append(' ');
-				}
 			}
-			if (spaceIndex != -1 && !showTypes) {
-				varLabel= varLabel.substring(spaceIndex + 1);
-			}
-			buff.append(varLabel);
-
-			IJavaValue javaValue= (IJavaValue) var.getValue();
-			String valueString= getValueText(javaValue);
-			if (valueString.length() > 0) {
-				buff.append("= "); //$NON-NLS-1$
-				buff.append(valueString);
-			}
-			return buff.toString();
+		} catch (DebugException exception) {
 		}
-		return ""; //$NON-NLS-1$
+		if (typeName.length() > 0) {
+			buff.append(typeName);
+			buff.append(' ');
+		}
+		if (spaceIndex != -1 && !showTypes) {
+			varLabel= varLabel.substring(spaceIndex + 1);
+		}
+		buff.append(varLabel);
+
+		String valueString= DebugUIMessages.getString("JDIModelPresentation<unknown_value>_3"); //$NON-NLS-1$
+		try {
+			IJavaValue javaValue= (IJavaValue) var.getValue();
+			valueString= getValueText(javaValue);
+		} catch (DebugException exception) {
+		}
+		buff.append("= "); //$NON-NLS-1$
+		buff.append(valueString);
+		return buff.toString();
 	}
 	
 	protected String getExpressionText(IExpression expression) throws DebugException {
@@ -1261,8 +1268,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		IJavaStackFrame frame= (IJavaStackFrame) stackFrame.getAdapter(IJavaStackFrame.class);
 		if (frame != null) {
 			StringBuffer label= new StringBuffer();
-
-			String dec= frame.getDeclaringTypeName();			
+			
+			String dec= DebugUIMessages.getString("JDIModelPresentation<unknown_declaring_type>_4"); //$NON-NLS-1$
+			try {
+				dec= frame.getDeclaringTypeName();
+			} catch (DebugException exception) {
+			}
 			if (frame.isObsolete()) {
 				label.append(DebugUIMessages.getString("JDIModelPresentation.<obsolete_method_in__1")); //$NON-NLS-1$
 				label.append(dec);
@@ -1271,7 +1282,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 
 			// receiver name
-			String rec= frame.getReceivingTypeName();
+			String rec= DebugUIMessages.getString("JDIModelPresentation<unknown_receiving_type>_5"); //$NON-NLS-1$
+			try {
+				rec= frame.getReceivingTypeName();
+			} catch (DebugException exception) {
+			}
 			label.append(getQualifiedName(rec));
 
 			// append declaring type name if different
@@ -1283,35 +1298,47 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 			// append a dot separator and method name
 			label.append('.');
-			label.append(frame.getMethodName());
-
-			List args= frame.getArgumentTypeNames();
-			if (args.isEmpty()) {
-				label.append("()"); //$NON-NLS-1$
-			} else {
-				label.append('(');
-				Iterator iter= args.iterator();
-				while (iter.hasNext()) {
-					label.append(getQualifiedName((String) iter.next()));
-					if (iter.hasNext()) {
-						label.append(", "); //$NON-NLS-1$
-					}
-				}
-				label.append(')');
+			try {
+				label.append(frame.getMethodName());
+			} catch (DebugException exception) {
+				label.append(DebugUIMessages.getString("JDIModelPresentation<unknown_method_name>_6")); //$NON-NLS-1$
 			}
 
-			int lineNumber= frame.getLineNumber();
-			label.append(' ');
-			label.append(DebugUIMessages.getString("JDIModelPresentation.line__76")); //$NON-NLS-1$
-			label.append(' ');
-			if (lineNumber >= 0) {
-				label.append(lineNumber);
-			} else {
-				label.append(DebugUIMessages.getString("JDIModelPresentation.not_available")); //$NON-NLS-1$
-				if (frame.isNative()) {
-					label.append(' ');
-					label.append(DebugUIMessages.getString("JDIModelPresentation.native_method")); //$NON-NLS-1$
+			try {
+				List args= frame.getArgumentTypeNames();
+				if (args.isEmpty()) {
+					label.append("()"); //$NON-NLS-1$
+				} else {
+					label.append('(');
+					Iterator iter= args.iterator();
+					while (iter.hasNext()) {
+						label.append(getQualifiedName((String) iter.next()));
+						if (iter.hasNext()) {
+							label.append(", "); //$NON-NLS-1$
+						}
+					}
+					label.append(')');
 				}
+			} catch (DebugException exception) {
+				label.append(DebugUIMessages.getString("JDIModelPresentation(<unknown_arguements>)_7")); //$NON-NLS-1$
+			}
+
+			try {
+				int lineNumber= frame.getLineNumber();
+				label.append(' ');
+				label.append(DebugUIMessages.getString("JDIModelPresentation.line__76")); //$NON-NLS-1$
+				label.append(' ');
+				if (lineNumber >= 0) {
+					label.append(lineNumber);
+				} else {
+					label.append(DebugUIMessages.getString("JDIModelPresentation.not_available")); //$NON-NLS-1$
+					if (frame.isNative()) {
+						label.append(' ');
+						label.append(DebugUIMessages.getString("JDIModelPresentation.native_method")); //$NON-NLS-1$
+					}
+				}
+			} catch (DebugException exception) {
+				label.append(DebugUIMessages.getString("JDIModelPresentation_<unknown_line_number>_8")); //$NON-NLS-1$
 			}
 			
 			if (!frame.wereLocalsAvailable()) {
