@@ -566,7 +566,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected void terminateAndRemove(IJavaDebugTarget debugTarget) {
 	    ILaunch launch = debugTarget.getLaunch();
-		if (debugTarget != null && !debugTarget.isTerminated()) {
+		if (debugTarget != null && !(debugTarget.isTerminated() || debugTarget.isDisconnected())) {
 			IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 			boolean suspendOnException = jdiUIPreferences.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
 			jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
