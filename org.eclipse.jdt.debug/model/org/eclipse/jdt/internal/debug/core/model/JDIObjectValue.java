@@ -62,12 +62,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				// begin lookup in superclass
 				refType = ((ClassType)refType).superclass();
 			}
-			List methods = refType.methodsByName(selector, signature);
-			if (methods.isEmpty()) {
-				requestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.Receiver_does_not_implement_selector"), new String[] {selector, signature}), null); //$NON-NLS-1$
-			} else {
-				method = (Method)methods.get(0);
-			}
+			method = ((ClassType)refType).concreteMethodByName(selector, signature);
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 		}

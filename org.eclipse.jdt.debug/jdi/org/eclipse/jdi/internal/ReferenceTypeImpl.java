@@ -174,15 +174,13 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	/** 
 	 * Add methods to a set of methods if they are not overriden, add new names+signature combinations to set of names+signature combinations.
 	 */
-	private void addVisibleMethods(List newMethods, HashSet nameAndSignatures, Vector resultMethods) {
-		Iterator iter = newMethods.iterator();
-		MethodImpl method;
+	private void addVisibleMethods(List inheritedMethods, HashSet nameAndSignatures, Vector resultMethods) {
+		Iterator iter = inheritedMethods.iterator();
+		MethodImpl inheritedMethod;
 		while (iter.hasNext()) {
-			method = (MethodImpl)iter.next();
-			String nameAndSignature = method.name() + method.signature();
-			if (!nameAndSignatures.contains(nameAndSignature)) {
-				resultMethods.add(method);
-				nameAndSignatures.add(nameAndSignature);
+			inheritedMethod = (MethodImpl)iter.next();
+			if (!nameAndSignatures.contains(inheritedMethod.name() + inheritedMethod.signature())) {
+				resultMethods.add(inheritedMethod);
 			}
 		}
 	}
@@ -201,11 +199,15 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		 */
 		// The name+signature combinations of methods are maintained in a set, to avoid including methods that have been overriden.
 		HashSet namesAndSignatures = new HashSet();
+		Vector visibleMethods= new Vector();
 		
 		// The methods of its own (own methods() command).
-	 	Vector visibleMethods = new Vector();
-	 	addVisibleMethods(methods(), namesAndSignatures, visibleMethods);
-		
+		for (Iterator iter= methods().iterator(); iter.hasNext();) {
+			MethodImpl method= (MethodImpl) iter.next();
+			namesAndSignatures.add(method.name() + method.signature());
+			visibleMethods.add(method);
+		}
+
 		// All methods of the interfaces it implements.
 		Iterator interfaces = interfaces().iterator();
 		InterfaceTypeImpl inter;
@@ -221,7 +223,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				addVisibleMethods(superclass.visibleMethods(), namesAndSignatures, visibleMethods);
 		}
 		
-		fVisibleMethods  = visibleMethods;
+		fVisibleMethods= visibleMethods;
 		return fVisibleMethods;
 	}
 
