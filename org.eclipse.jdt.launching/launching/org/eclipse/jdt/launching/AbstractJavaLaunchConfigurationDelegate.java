@@ -447,19 +447,6 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 			}
 		}
 	}
-	
-	/**
-	 * Returns whether the progress monitor indicates it has been cancelled.
-	 * 
-	 * @param monitor progress monitor or <code>null</code>
-	 * @return whether the progress monitor indicates it has been cancelled,
-	 * 	or <code>false</code> if the monitor is <code>null</code>
-	 */
-	protected boolean isCancelled(IProgressMonitor monitor) {
-		if (monitor != null) {
-			return monitor.isCanceled();
-		}
-		return false;
-	}
+
 }
 

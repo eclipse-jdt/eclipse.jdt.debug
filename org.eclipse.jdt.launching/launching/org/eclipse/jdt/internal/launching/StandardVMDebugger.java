@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -52,13 +53,17 @@ public class StandardVMDebugger extends StandardVMRunner {
 	 */
 	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+
 		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
 		if (port == -1) {
 			abort(LaunchingMessages.getString("StandardVMDebugger.Could_not_find_a_free_socket_for_the_debugger_1"), null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE); //$NON-NLS-1$
 		}
 		
 		// check for cancellation
-		if (isCancelled(monitor)) {
+		if (monitor.isCanceled()) {
 			return;
 		}		
 		
@@ -93,7 +98,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		arguments.toArray(cmdLine);
 		
 		// check for cancellation
-		if (isCancelled(monitor)) {
+		if (monitor.isCanceled()) {
 			return;
 		}		
 
@@ -108,7 +113,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 		try {
 			try {
 				// check for cancellation
-				if (isCancelled(monitor)) {
+				if (monitor.isCanceled()) {
 					return;
 				}				
 				
@@ -121,7 +126,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 				}
 				
 				// check for cancellation
-				if (isCancelled(monitor)) {
+				if (monitor.isCanceled()) {
 					p.destroy();
 					return;
 				}				

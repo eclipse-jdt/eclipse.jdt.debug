@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
@@ -151,6 +152,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * @see IVMRunner#run(VMRunnerConfiguration, ILaunch, IProgressMonitor)
 	 */
 	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 		
 		String program= constructProgramString(config);
 		
@@ -181,7 +186,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		arguments.toArray(cmdLine);
 
 		// check for cancellation
-		if (isCancelled(monitor)) {
+		if (monitor.isCanceled()) {
 			return;
 		}
 		
@@ -193,7 +198,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		}
 		
 		// check for cancellation
-		if (isCancelled(monitor)) {
+		if (monitor.isCanceled()) {
 			p.destroy();
 			return;
 		}		

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -34,8 +35,13 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		
+		monitor.beginTask(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.Launching..._1"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		// check for cancellation
-		if (isCancelled(monitor)) {
+		if (monitor.isCanceled()) {
 			return;
 		}
 								
@@ -77,7 +83,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		runConfig.setBootClassPath(bootpath);
 		
 		// check for cancellation
-		if (isCancelled(monitor)) {
+		if (monitor.isCanceled()) {
 			return;
 		}		
 		
@@ -85,12 +91,14 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		runner.run(runConfig, launch, monitor);
 		
 		// check for cancellation
-		if (isCancelled(monitor)) {
+		if (monitor.isCanceled()) {
 			return;
-		}		
+		}	
 		
 		// set the default source locator if required
 		setDefaultSourceLocator(launch, configuration);
+		
+		monitor.done();
 	}	
 }
 

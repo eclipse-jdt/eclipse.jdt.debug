@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -33,8 +34,13 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+
+		monitor.beginTask(LaunchingMessages.getString("JavaRemoteApplicationLaunchConfigurationDelegate.Connecting..._1"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		// check for cancellation
-		if (isCancelled(monitor)) {
+		if (monitor.isCanceled()) {
 			return;
 		}						
 						
@@ -56,14 +62,14 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		Map argMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map)null);
 
 		// check for cancellation
-		if (isCancelled(monitor)) {
+		if (monitor.isCanceled()) {
 			return;
 		}
 		
 		VirtualMachine vm= connector.connect(argMap, monitor);
 		
 		// check for cancellation
-		if (isCancelled(monitor)) {
+		if (monitor.isCanceled()) {
 			return;
 		}
 				
@@ -75,6 +81,8 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		
 		// set the default source locator if required
 		setDefaultSourceLocator(launch, configuration);
+		
+		monitor.done();
 	}
 	
 	/**
