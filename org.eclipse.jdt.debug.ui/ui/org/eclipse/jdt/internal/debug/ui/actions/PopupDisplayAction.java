@@ -27,6 +27,8 @@ import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -44,6 +46,8 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 	private String snippet;
 	private String resultString;
 
+    private InformationPresenter fInformationPresenter;
+
 	public PopupDisplayAction() {
 		super();
 	}
@@ -56,12 +60,27 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 		return getRegion();
 	}
 	
+	private InformationPresenter getInformationPresenter() {
+	    return fInformationPresenter;
+    }
+	private void setInformationPresenter(InformationPresenter informationPresenter) {
+	    fInformationPresenter = informationPresenter;
+    }
+	
 	private void showPopup() {		
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new DisplayInformationControl(parent, ActionMessages.getString("PopupDisplayAction.2"), ACTION_DEFINITION_ID); //$NON-NLS-1$
+				DisplayInformationControl control = new DisplayInformationControl(parent, ActionMessages.getString("PopupDisplayAction.2"), ACTION_DEFINITION_ID);
+				control.addDisposeListener(new DisposeListener() {
+                    public void widgetDisposed(DisposeEvent e) {
+                        getInformationPresenter().uninstall();
+                    }
+				});
+                return control; //$NON-NLS-1$
 			}
 		});
+		
+		setInformationPresenter(infoPresenter);
 		
 		Point p = viewer.getSelectedRange();
 		IDocument doc = viewer.getDocument();
@@ -80,7 +99,7 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 		
 	}
 
-	private class DisplayInformationControl extends PopupInformationControl {
+    private class DisplayInformationControl extends PopupInformationControl {
 		private StyledText text;
 		
 		DisplayInformationControl(Shell shell, String label, String actionDefinitionId) {

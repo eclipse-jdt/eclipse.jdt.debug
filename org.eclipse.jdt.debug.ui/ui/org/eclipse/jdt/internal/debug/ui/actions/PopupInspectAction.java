@@ -25,6 +25,8 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -37,6 +39,8 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 	
 	private ITextViewer viewer;
 	private JavaInspectExpression expression;
+
+    private InformationPresenter fInformationPresenter;
 	
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
@@ -58,15 +62,30 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 		evaluationCleanup();
 	}
 	
+	private InformationPresenter getInformationPresenter() {
+	    return fInformationPresenter;
+    }
+	
+	private void setInformationPresenter(InformationPresenter informationPresenter) {
+	    fInformationPresenter = informationPresenter;
+	}
+	
 	protected void showPopup(final IEvaluationResult result) {
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
 				IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
 				expression = new JavaInspectExpression(result);
-				return new ExpressionInformationControl(page, expression, ACTION_DEFININIITION_ID);
+				ExpressionInformationControl control = new ExpressionInformationControl(page, expression, ACTION_DEFININIITION_ID);
+				control.addDisposeListener(new DisposeListener() {
+                    public void widgetDisposed(DisposeEvent e) {
+                        getInformationPresenter().uninstall();
+                    }
+				});
+				return control;
 			}
 		});
 		
+		setInformationPresenter(infoPresenter);
 
 		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() { 
