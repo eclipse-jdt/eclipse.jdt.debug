@@ -11,7 +11,11 @@
 package org.eclipse.jdt.internal.ui.macbundler;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
+import org.eclipse.jdt.internal.launching.macosx.MacOSXLaunchingPlugin;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.*;
@@ -23,11 +27,10 @@ public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttr
 	IWorkbench fWorkbench;
 	IStructuredSelection fSelection;
 	BundleDescription fBundleDescription= new BundleDescription();
-	
 
 	public MacBundleWizard() {
-		//setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.gif"));	//$NON-NLS-1$
-		setWindowTitle(Util.getString("MacBundleWizard.title")); //$NON-NLS-1$	
+		setDefaultPageImageDescriptor(createWizardImageDescriptor("exportapp_wiz.gif")); //$NON-NLS-1$
+ 		setWindowTitle(Util.getString("MacBundleWizard.title")); //$NON-NLS-1$	
 	}
 
 	/* (non-Javadoc)
@@ -65,5 +68,16 @@ public class MacBundleWizard extends Wizard implements IExportWizard, BundleAttr
 			e.printStackTrace();
 		}
 		return true;
+	}
+
+	private static ImageDescriptor createWizardImageDescriptor(String name) {
+		try {
+			URL baseUrl= MacOSXLaunchingPlugin.getDefault().getBundle().getEntry("/icons/full/wizban/"); //$NON-NLS-1$	
+			if (baseUrl != null)
+				return ImageDescriptor.createFromURL(new URL(baseUrl, name));
+		} catch (MalformedURLException e) {
+			// fall through
+		}
+		return ImageDescriptor.getMissingImageDescriptor();
 	}
 }

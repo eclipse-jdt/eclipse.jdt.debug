@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.ui.macbundler;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -68,6 +69,15 @@ public abstract class BundleWizardBasePage extends DialogPage implements IWizard
 	void leavePage() {
 		//System.out.println("leavePage: " + getName());
 	}
+
+    public Image getImage() {
+        Image result = super.getImage();
+
+        if (result == null && fWizard != null)
+            return fWizard.getDefaultPageImage();
+
+        return result;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)

@@ -40,7 +40,7 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		}
 	}
 
-	/**
+	/*
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	static String getUniqueIdentifier() {
@@ -50,7 +50,8 @@ public class MacOSXLaunchingPlugin extends Plugin {
 			// match the plugin id defined in plugin.xml
 			return "org.eclipse.jdt.launching.macosx"; //$NON-NLS-1$
 		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+//		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
 
 	static String[] wrap(Class clazz, String[] cmdLine) {
@@ -72,7 +73,7 @@ public class MacOSXLaunchingPlugin extends Plugin {
 			   "-ws".equals(arg);	//$NON-NLS-1$
 	}
 	
-	/**
+	/*
 	 * Returns path to executable.
 	 */
 	static String[] createSWTlauncher(Class clazz, String[] cmdLine, String vmVersion) {

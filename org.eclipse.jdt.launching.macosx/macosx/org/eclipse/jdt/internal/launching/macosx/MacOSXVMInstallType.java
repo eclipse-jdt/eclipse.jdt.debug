@@ -75,7 +75,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 		return new MacOSXVMInstall(this, id);
 	}
 			
-	/**
+	/*
 	 * @see IVMInstallType#detectInstallLocation()
 	 */
 	public File detectInstallLocation() {
