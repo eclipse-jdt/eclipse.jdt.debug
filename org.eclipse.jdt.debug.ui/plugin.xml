@@ -275,6 +275,26 @@
 		</action>
 	</viewContribution>
 	<viewContribution
+		id="org.eclipse.jdt.ui.debug.ExpressionViewActions"
+		targetID="org.eclipse.debug.ui.ExpressionView">
+		<action id="org.eclipse.jdt.ui.actions.ShowFinalFields"
+			label="%showFinalAction.label"
+			toolbarPath="javaVariableFilters"
+			icon="icons/full/elcl16/final_co.gif"
+			tooltip="%showFinalAction.tooltip"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
+		</action>
+		<action id="org.eclipse.jdt.ui.actions.ShowStaticFields"
+			label="%showStaticAction.label"
+			toolbarPath="javaVariableFilters"
+			icon="icons/full/elcl16/static_co.gif"
+			tooltip="%showStaticAction.tooltip"
+			state="true"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
+		</action>
+	</viewContribution>	
+	<viewContribution
 		id="org.eclipse.jdt.debug.ui.BreakpointViewActions"
 		targetID="org.eclipse.debug.ui.BreakpointView">
 		<action id="org.eclipse.jdt.debug.ui.actions.AddException"

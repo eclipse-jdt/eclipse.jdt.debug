@@ -5,12 +5,17 @@ package org.eclipse.jdt.internal.debug.ui.display;
  * All Rights Reserved.
  */
  
-import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -27,7 +32,7 @@ public class InspectAction extends EvaluateAction {
 	}
 	
 	public void evaluationComplete(final IEvaluationResult res) {
-		final IValue value= res.getValue();
+		final IJavaValue value= res.getValue();
 		if (res.hasProblems() || value != null) {
 			Display display= Display.getDefault();
 			if (display.isDisposed()) {
@@ -39,7 +44,10 @@ public class InspectAction extends EvaluateAction {
 						reportProblems(res);
 					} 
 					if (value != null) {
-						DebugUITools.inspect(res.getSnippet().trim(), value);
+						// make expression view visible
+						showExpressionView();
+						JavaInspectExpression exp = new JavaInspectExpression(res.getSnippet().trim(), value);
+						DebugPlugin.getDefault().getExpressionManager().addExpression(exp, null);
 					}
 				}
 			});
@@ -60,5 +68,25 @@ public class InspectAction extends EvaluateAction {
 	protected Class getAdapterClass() {
 		return IInspectAction.class;
 	}	
+	
+	/**
+	 * Make the expression view visible or open one
+	 * if required.
+	 */
+	protected void showExpressionView() {
+		IWorkbenchPage page = JDIDebugUIPlugin.getDefault().getActivePage();
+		if (page != null) {
+			IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+			if (part == null) {
+				try {
+					page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+				} catch (PartInitException e) {
+					reportError(e.getStatus());
+				}
+			} else {
+				page.bringToTop(part);
+			}
+		}
+	}
 
 }

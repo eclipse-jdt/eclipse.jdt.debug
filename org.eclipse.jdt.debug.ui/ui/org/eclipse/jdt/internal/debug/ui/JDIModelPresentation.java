@@ -322,7 +322,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			} else if (item instanceof IBreakpoint) {
 				return getBreakpointText((IBreakpoint)item);
 			} else {
-				StringBuffer label= new StringBuffer();;
+				StringBuffer label= new StringBuffer();
 				if (item instanceof IJavaThread) {
 					label.append(getThreadText((IJavaThread) item, showQualified));
 					if (((IJavaThread)item).isOutOfSynch()) {
@@ -354,11 +354,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 						return label.toString();
 					}
 				}
-				return label.toString();
+				if (label.length() > 0) {
+					return label.toString();
+				}
 			}
 		} catch (CoreException e) {
 			return DebugUIMessages.getString("JDIModelPresentation.<not_responding>_6"); //$NON-NLS-1$
 		}
+		return null;
 	}
 
 	protected IBreakpoint getBreakpoint(IMarker marker) {

@@ -34,7 +34,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -55,6 +55,7 @@ import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.display.IDisplayAction;
 import org.eclipse.jdt.internal.debug.ui.display.IInspectAction;
+import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.JavaStatusConstants;
 import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
@@ -73,7 +74,6 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -83,6 +83,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.EditorActionBarContributor;
@@ -433,7 +436,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 							snippet= snippet.replace('\n', ' ');
 							snippet= snippet.replace('\r', ' ');
 							snippet= snippet.replace('\t', ' ');
-							DebugUITools.inspect(snippet, value);
+							showExpressionView();
+							JavaInspectExpression exp = new JavaInspectExpression(snippet, value);
+							DebugPlugin.getDefault().getExpressionManager().addExpression(exp, null);
 							break;
 						case RESULT_RUN:
 							// no action
@@ -447,9 +452,29 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		Control control= getVerticalRuler().getControl();
 		if (!control.isDisposed()) {
 			control.getDisplay().asyncExec(r);
-		}
+		}		
 	}
 	
+	/**
+	 * Make the expression view visible or open one
+	 * if required.
+	 */
+	protected void showExpressionView() {
+		IWorkbenchPage page = JDIDebugUIPlugin.getDefault().getActivePage();
+		if (page != null) {
+			IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+			if (part == null) {
+				try {
+					page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+				} catch (PartInitException e) {
+					showError(e.getStatus());
+				}
+			} else {
+				page.bringToTop(part);
+			}
+		}
+	}
+		
 	public void codeComplete(ResultCollector collector) throws JavaModelException {
 		IDocument d= getSourceViewer().getDocument();
 		ITextSelection selection= (ITextSelection)getSelectionProvider().getSelection();
