@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
+import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @since 3.0
  */
-public class JavaProjectSourceContainerBrowser implements ISourceContainerBrowser {
+public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBrowser {
 	
 	class ContentProvider implements IStructuredContentProvider {
 		
@@ -80,7 +80,7 @@ public class JavaProjectSourceContainerBrowser implements ISourceContainerBrowse
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director) {
+	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		List projects = getPossibleAdditions(director);
 		
 		ILabelProvider labelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
