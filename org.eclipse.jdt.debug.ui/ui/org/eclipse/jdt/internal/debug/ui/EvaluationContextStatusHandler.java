@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -30,7 +29,7 @@ public class EvaluationContextStatusHandler implements IStatusHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
-	public Object handleStatus(IStatus status, Object source) throws CoreException {
+	public Object handleStatus(IStatus status, Object source) {
 		if (source instanceof IDebugElement) {
 			IDebugElement element = (IDebugElement) source;
 			IJavaDebugTarget target = (IJavaDebugTarget) element.getDebugTarget().getAdapter(IJavaDebugTarget.class);
