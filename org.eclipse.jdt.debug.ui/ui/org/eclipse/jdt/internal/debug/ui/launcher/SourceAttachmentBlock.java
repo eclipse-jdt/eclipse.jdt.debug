@@ -118,8 +118,8 @@ public class SourceAttachmentBlock {
 			fPrefixField= new VariablePathDialogField(adapter);
 			fPrefixField.setDialogFieldListener(adapter);
 			fPrefixField.setLabelText(LauncherMessages.getString("SourceAttachmentBlock.R&oot_variable_path__4")); //$NON-NLS-1$
-			fPrefixField.setButtonLabel(LauncherMessages.getString("SourceAttachmentBlock.E&xtension..._5")); //$NON-NLS-1$
-			((VariablePathDialogField)fPrefixField).setVariableButtonLabel(LauncherMessages.getString("SourceAttachmentBlock.&Variable..._6")); //$NON-NLS-1$
+			fPrefixField.setButtonLabel(LauncherMessages.getString("SourceAttachmentBlock.E&xtension..._2")); //$NON-NLS-1$
+			((VariablePathDialogField)fPrefixField).setVariableButtonLabel(LauncherMessages.getString("SourceAttachmentBlock.&Variable..._3")); //$NON-NLS-1$
 			
 		} else {
 			fFileNameField= new StringButtonDialogField(adapter);
@@ -397,7 +397,7 @@ public class SourceAttachmentBlock {
 			if (fIsVariableEntry) {
 				IPath resolvedPath= getResolvedPath(path);
 				if (resolvedPath == null) {
-					status.setError(LauncherMessages.getString("SourceAttachmentBlock.Root_path_is_not_a_valid_path._16")); //$NON-NLS-1$
+					status.setError(LauncherMessages.getString("SourceAttachmentBlock.Root_path_is_not_a_valid_path._15")); //$NON-NLS-1$
 					return status;
 				}
 				if (resolvedPath.getDevice() != null) {
@@ -425,19 +425,19 @@ public class SourceAttachmentBlock {
 			return status;
 		} else {
 			if (!Path.EMPTY.isValidPath(fileName)) {
-				status.setError(LauncherMessages.getString("SourceAttachmentBlock.Root_path_is_not_a_valid_path._19")); //$NON-NLS-1$
+				status.setError(LauncherMessages.getString("SourceAttachmentBlock.Root_path_is_not_a_valid_path._15")); //$NON-NLS-1$
 				return status;
 			}
 			IPath filePath= new Path(fileName);
 			IPath resolvedPath;
 			if (fIsVariableEntry) {
 				if (filePath.getDevice() != null) {
-					status.setError(LauncherMessages.getString("SourceAttachmentBlock.Root_path_is_not_a_valid_path._20")); //$NON-NLS-1$
+					status.setError(LauncherMessages.getString("SourceAttachmentBlock.Root_path_is_not_a_valid_path._15")); //$NON-NLS-1$
 					return status;
 				}
 				String varName= filePath.segment(0);
 				if (varName == null) {
-					status.setError(LauncherMessages.getString("SourceAttachmentBlock.Root_path_is_not_a_valid_path._21")); //$NON-NLS-1$
+					status.setError(LauncherMessages.getString("SourceAttachmentBlock.Root_path_is_not_a_valid_path._15")); //$NON-NLS-1$
 					return status;
 				}
 				fFileVariablePath= JavaCore.getClasspathVariable(varName);
@@ -448,7 +448,7 @@ public class SourceAttachmentBlock {
 				resolvedPath= fFileVariablePath.append(filePath.removeFirstSegments(1));
 				
 				if (resolvedPath.isEmpty()) {
-					status.setWarning(LauncherMessages.getString("SourceAttachmentBlock.Variable_in_the_archive_path_does_not_exist._23")); //$NON-NLS-1$
+					status.setWarning(LauncherMessages.getString("SourceAttachmentBlock.Variable_in_the_archive_path_does_not_exist._22")); //$NON-NLS-1$
 					return status;
 				}
 				File file= resolvedPath.toFile();
@@ -466,7 +466,7 @@ public class SourceAttachmentBlock {
 					file= res.getLocation().toFile();
 				}
 				if (!file.isFile()) {
-					String message=  MessageFormat.format(LauncherMessages.getString("SourceAttachmentBlock.The_archive_path_____{0}_____does_not_exist._25"), new String[] {filePath.toString()}); //$NON-NLS-1$
+					String message=  MessageFormat.format(LauncherMessages.getString("SourceAttachmentBlock.The_archive_path_____{0}_____does_not_exist._24"), new String[] {filePath.toString()}); //$NON-NLS-1$
 					status.setError(message);
 					return status;
 				}
@@ -533,7 +533,7 @@ public class SourceAttachmentBlock {
 		dialog.setAllowMultiple(false);
 		dialog.setValidator(validator);
 		dialog.addFilter(filter);
-		dialog.setTitle(LauncherMessages.getString("SourceAttachmentBlock.JAR/ZIP_File_Selection_27")); //$NON-NLS-1$
+		dialog.setTitle(LauncherMessages.getString("SourceAttachmentBlock.JAR/ZIP_File_Selection_26")); //$NON-NLS-1$
 		dialog.setMessage(LauncherMessages.getString("SourceAttachmentBlock.&Select_JAR/ZIP_file_containing_the_source__28")); //$NON-NLS-1$
 		dialog.setInput(fRoot);
 		dialog.setInitialSelection(initSel);
@@ -566,7 +566,7 @@ public class SourceAttachmentBlock {
 				ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(getShell(), new ZipLabelProvider(), contentProvider); 
 				dialog.setAllowMultiple(false);
 				dialog.setTitle(LauncherMessages.getString("SourceAttachmentBlock.Package_Structure_Root_Selection_29")); //$NON-NLS-1$
-				dialog.setMessage(LauncherMessages.getString("SourceAttachmentBlock.Package_Structure_Root_Selection_30")); //$NON-NLS-1$
+				dialog.setMessage(LauncherMessages.getString("SourceAttachmentBlock.Package_Structure_Root_Selection_29")); //$NON-NLS-1$
 				dialog.setInput(zipFile);
 				dialog.setInitialSelection(contentProvider.getSelectedNode(initSelection));
 				if (dialog.open() == dialog.OK) {
@@ -579,7 +579,7 @@ public class SourceAttachmentBlock {
 				}
 			} catch (IOException e) {
 				String title= LauncherMessages.getString("SourceAttachmentBlock.Problem_While_Opening_31"); //$NON-NLS-1$
-				String message= MessageFormat.format(LauncherMessages.getString("SourceAttachmentBlock.Problem_While_Opening_32"), new String[] {fResolvedFile.getPath()}); //$NON-NLS-1$
+				String message= MessageFormat.format(LauncherMessages.getString("SourceAttachmentBlock.Problem_While_Opening_31"), new String[] {fResolvedFile.getPath()}); //$NON-NLS-1$
 				MessageDialog.openError(getShell(), title, message);
 				JDIDebugUIPlugin.log(e);
 			}				

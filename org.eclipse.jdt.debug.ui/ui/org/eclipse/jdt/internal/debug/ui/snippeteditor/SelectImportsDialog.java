@@ -224,7 +224,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			return;			
 		}
 	
-		dialog.setTitle(SnippetMessages.getString("SelectImportsDialog.Add_Package_as_Import_9"));  //$NON-NLS-1$
+		dialog.setTitle(SnippetMessages.getString("SelectImportsDialog.Add_Package_as_Import_7"));  //$NON-NLS-1$
 		dialog.setMessage(SnippetMessages.getString("SelectImportsDialog.&Select_a_package_to_add_as_an_Import_10")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
@@ -255,7 +255,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			return;
 		}
 	
-		dialog.setTitle(SnippetMessages.getString("SelectImportsDialog.Add_Type_as_Import_14")); //$NON-NLS-1$
+		dialog.setTitle(SnippetMessages.getString("SelectImportsDialog.Add_Type_as_Import_12")); //$NON-NLS-1$
 		dialog.setMessage(SnippetMessages.getString("SelectImportsDialog.&Select_a_type_to_add_to_add_as_an_import_15")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;

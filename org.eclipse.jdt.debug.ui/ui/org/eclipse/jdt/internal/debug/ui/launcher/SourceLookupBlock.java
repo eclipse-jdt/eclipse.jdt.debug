@@ -301,7 +301,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Source";
+		return LauncherMessages.getString("SourceLookupBlock.Source_1"); //$NON-NLS-1$
 	}
 
 	/**
