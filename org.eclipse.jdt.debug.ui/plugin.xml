@@ -2749,6 +2749,12 @@ M4 = Platform-specific fourth key
           label="%InDeadlockColorDefinition.label"
           categoryId="org.eclipse.debug.ui.presentation"
           id="org.eclipse.jdt.debug.ui.InDeadlockColor"/>
+ </extension>
+ <extension
+       point="org.eclipse.debug.ui.variableValueEditors">
+    <variableValueEditor
+          modelId="org.eclipse.jdt.debug"
+          class="org.eclipse.jdt.internal.debug.ui.actions.JavaVariableValueEditor"/>
  </extension>	
     
 </plugin>

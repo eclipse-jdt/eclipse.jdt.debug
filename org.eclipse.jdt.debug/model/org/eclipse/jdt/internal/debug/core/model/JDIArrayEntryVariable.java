@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.core.model;
 
 import java.text.MessageFormat;
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 
@@ -72,13 +73,14 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 		return "[" + getIndex() + "]"; //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
-	protected void setValue(Value value) throws DebugException {
+	protected void setJDIValue(Value value) throws DebugException {
 		ArrayReference ar= getArrayReference();
 		if (ar == null) {
 			requestFailed(JDIDebugModelMessages.getString("JDIArrayEntryVariable.value_modification_failed"), null); //$NON-NLS-1$
 		}
 		try {
 			ar.setValue(getIndex(), value);
+			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
@@ -169,6 +171,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 			JDIValue value = (JDIValue)v;
 			try {
 				getArrayReference().setValue(getIndex(), value.getUnderlyingValue());
+				fireChangeEvent(DebugEvent.CONTENT);
 			} catch (InvalidTypeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_attempting_to_set_value_of_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
 			} catch (ClassNotLoadedException e) {

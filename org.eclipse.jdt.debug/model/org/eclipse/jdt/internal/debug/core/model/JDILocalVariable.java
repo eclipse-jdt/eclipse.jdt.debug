@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.core.model;
 
 import java.text.MessageFormat;
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 
@@ -76,9 +77,10 @@ public class JDILocalVariable extends JDIModificationVariable {
 	/**
 	 * @see JDIModificationVariable#setValue(Value)
 	 */
-	protected void setValue(Value value) throws DebugException {
+	protected void setJDIValue(Value value) throws DebugException {
 		try {
 			getStackFrame().getUnderlyingStackFrame().setValue(getLocal(), value);
+			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_modifying_local_variable_value_1"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
@@ -165,6 +167,7 @@ public class JDILocalVariable extends JDIModificationVariable {
 			JDIValue value = (JDIValue)v;
 			try {
 				getStackFrame().getUnderlyingStackFrame().setValue(getLocal(), value.getUnderlyingValue());
+				fireChangeEvent(DebugEvent.CONTENT);
 			} catch (InvalidTypeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_while_attempting_to_set_value_of_local_variable"), new String[]{e.toString()}), e); //$NON-NLS-1$
 			} catch (ClassNotLoadedException e) {

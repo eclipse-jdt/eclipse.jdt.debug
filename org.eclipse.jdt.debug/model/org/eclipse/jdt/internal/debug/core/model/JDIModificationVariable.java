@@ -12,12 +12,10 @@ package org.eclipse.jdt.internal.debug.core.model;
 
 import java.util.ArrayList;
 
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
-import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
  
@@ -47,28 +45,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
 	public boolean supportsValueModification() {
-		try {
-			if (!isFinal()) {
-				Value currentValue= getCurrentValue();
-				if (currentValue != null) {
-					String signature = currentValue.type().signature();
-					return fgValidSignatures.contains(signature);
-				} 
-				String signature = getSignature();
-				return fgValidSignatures.contains(signature);
-			}
-		} catch (DebugException e) {
-			logError(e);
-		} catch (VMDisconnectedException e) {
-			JDIDebugTarget target = (JDIDebugTarget)getDebugTarget();
-			if (!target.isAvailable()) {
-				return false;
-			}
-			logError(e);
-		} catch (RuntimeException e) {
-			logError(e);
-		}
-		return false;
+		return !isFinal();
 	}
 	
 	protected Value generateVMValue(String expression) throws DebugException {
@@ -205,13 +182,12 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	 */
 	public final void setValue(String expression) throws DebugException {
 	 	Value value= generateVMValue(expression);
-		setValue(value);
-		fireChangeEvent(DebugEvent.CONTENT);
+		setJDIValue(value);
 	}
 
 	/**
 	 * Set this variable's value to the given value
 	 */
-	protected abstract void setValue(Value value) throws DebugException;
+	protected abstract void setJDIValue(Value value) throws DebugException;
 	
 }

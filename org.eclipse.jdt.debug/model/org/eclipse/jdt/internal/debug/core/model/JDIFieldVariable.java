@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.core.model;
 
 import java.text.MessageFormat;
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
@@ -98,13 +99,14 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 		}
 	}
 
-	protected void setValue(Value value) throws DebugException {
+	protected void setJDIValue(Value value) throws DebugException {
 		try {
 			if (isStatic()) { 
 				((ClassType)getField().declaringType()).setValue(getField(), value);
 			} else {
 				getObjectReference().setValue(getField(), value);
 			}
+			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_modifying_value_1"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
@@ -248,7 +250,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	 */
 	public	void setValue(IValue v) throws DebugException {
 		if (verifyValue(v)) {
-			setValue(((JDIValue)v).getUnderlyingValue());
+			setJDIValue(((JDIValue)v).getUnderlyingValue());
 		}
 	}
 	

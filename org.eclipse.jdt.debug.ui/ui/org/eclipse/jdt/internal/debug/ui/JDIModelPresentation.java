@@ -527,7 +527,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * Given a JNI-style signature String for a IJavaValue, return true
 	 * if the signature represents an Object or an array of Objects.
 	 */
-	protected boolean isObjectValue(String signature) {
+	public static boolean isObjectValue(String signature) {
 		if (signature == null) {
 			return false;
 		}
