@@ -73,6 +73,7 @@ import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.TypeLiteral;
@@ -235,7 +236,17 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Block)
 	 */
 	public boolean visit(Block node) {
-		return visit(node, false);
+		if (visit(node, false)) {
+			if (node.statements().isEmpty() && node.getParent().getNodeType() == ASTNode.METHOD_DECLARATION) {
+				// in case of an empty method, set the breakpoint on the last line of the empty block.
+				fLocation= fCompilationUnit.lineNumber(node.getStartPosition() + node.getLength() - 1);
+				fLocationFound= true;
+				fTypeName= computeTypeName(node);
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
