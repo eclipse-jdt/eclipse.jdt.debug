@@ -2263,7 +2263,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					hcrThread.doReturn(null, true);
 				} catch (RuntimeException e) {
 					stepEnd();
-					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString(JDIDebugModelMessages.getString("JDIThread.exception_while_popping_stack_frame")), new String[] {e.toString()}), e); //$NON-NLS-1$
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_while_popping_stack_frame"), new String[] {e.toString()}), e); //$NON-NLS-1$
 				}
 			}
 		}
