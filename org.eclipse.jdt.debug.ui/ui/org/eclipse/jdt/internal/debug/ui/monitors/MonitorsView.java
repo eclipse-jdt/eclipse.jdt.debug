@@ -45,6 +45,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.Page;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * Handles the different viewers: Thread, Monitor and Deadlock
@@ -385,8 +386,13 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 							return Status.OK_STATUS;
 						}
 					};
-					
-					job.schedule();
+					IWorkbenchSiteProgressService progressService = (IWorkbenchSiteProgressService) getSite().getAdapter(IWorkbenchSiteProgressService.class);
+					job.setSystem(true);
+					if (progressService == null) {
+						job.schedule();
+					} else {
+						progressService.schedule(job);
+					}
 				}
 				return;
 			}
