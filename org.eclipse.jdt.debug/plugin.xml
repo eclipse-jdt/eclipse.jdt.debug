@@ -272,12 +272,6 @@
       </attribute>
    </extension>
 
-   <extension point="org.eclipse.debug.core.logicalStructureTypes">
-      <logicalStructureType
-            class="org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures"
-            modelIdentifier="org.eclipse.jdt.debug"
-            id="org.eclipse.jdt.debug.javaLogicalStructures"/>           
-   </extension>
    
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
@@ -320,6 +314,12 @@
             value="return getChildren();"
             type="org.eclipse.swt.widgets.Composite"
             description="%descriptionSWTComposite"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.logicalStructureProviders">
+      <logicalStructureProvider
+            class="org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructures"
+            modelIdentifier="org.eclipse.jdt.debug"/>
    </extension>
    
 </plugin>

@@ -15,11 +15,13 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -46,7 +48,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 
-public class JavaLogicalStructure {
+public class JavaLogicalStructure implements ILogicalStructureType {
 
 
 	// stack frame context provider
@@ -153,6 +155,9 @@ public class JavaLogicalStructure {
 		}
 	}
 
+	/**
+	 * Constructor from parameters.
+	 */
 	public JavaLogicalStructure(String type, boolean subtypes, String value, String description, String[][] variables, boolean isContributed) {
 		fType= type;
 		fSubtypes= subtypes;
@@ -161,30 +166,71 @@ public class JavaLogicalStructure {
 		fVariables= variables;
 		fIsContributed= isContributed;
 	}
+
+	/**
+	 * Constructor from configuration element.
+	 */
+	public JavaLogicalStructure(IConfigurationElement configurationElement) throws CoreException {
+		fIsContributed= true;
+		fType= configurationElement.getAttribute("type"); //$NON-NLS-1$
+		if (fType == null) {
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.0"), null)); //$NON-NLS-1$
+		}
+		fSubtypes= Boolean.valueOf(configurationElement.getAttribute("subtypes")).booleanValue(); //$NON-NLS-1$
+		fValue= configurationElement.getAttribute("value"); //$NON-NLS-1$
+		fDescription= configurationElement.getAttribute("description"); //$NON-NLS-1$
+		if (fDescription == null) {
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.4"), null)); //$NON-NLS-1$
+		}
+		IConfigurationElement[] variableElements= configurationElement.getChildren("variable"); //$NON-NLS-1$
+		if (fValue== null && variableElements.length == 0) {
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.1"), null)); //$NON-NLS-1$
+		}
+		fVariables= new String[variableElements.length][2];
+		for (int j= 0; j < fVariables.length; j++) {
+			String variableName= variableElements[j].getAttribute("name"); //$NON-NLS-1$
+			if (variableName == null) {
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.2"), null)); //$NON-NLS-1$
+			}
+			fVariables[j][0]= variableName;
+			String variableValue= variableElements[j].getAttribute("value"); //$NON-NLS-1$
+			if (variableValue == null) {
+				throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.3"), null)); //$NON-NLS-1$
+			}
+			fVariables[j][1]= variableValue;
+		}
+	}
 	
 	/**
 	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate#providesLogicalStructure(IValue)
 	 */
-	public boolean providesLogicalStructure(IJavaObject value) {
-		return getType(value) != null;
+	public boolean providesLogicalStructure(IValue value) {
+		if (!(value instanceof IJavaObject)) {
+			return false;
+		}
+		return getType((IJavaObject) value) != null;
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate#getLogicalStructure(IValue)
 	 */
-	public IJavaValue getLogicalStructure(IJavaObject value) {
+	public IValue getLogicalStructure(IValue value) {
+		if (!(value instanceof IJavaObject)) {
+			return null;
+		}
+		IJavaObject javaValue= (IJavaObject) value;
 		try {
-			IJavaReferenceType type = getType(value);
+			IJavaReferenceType type = getType(javaValue);
 			if (type == null) {
 				return null;
 			}
-			IJavaStackFrame stackFrame= getStackFrame(value);
+			IJavaStackFrame stackFrame= getStackFrame(javaValue);
 			if (stackFrame == null) {
 				return null;
 			}
 			
 			// find the project the snippets will be compiled in.
-			ISourceLocator locator= value.getLaunch().getSourceLocator();
+			ISourceLocator locator= javaValue.getLaunch().getSourceLocator();
 			Object sourceElement= null;
 			if (locator instanceof ISourceLookupDirector) {
 				if (type instanceof JDIReferenceType) {
@@ -215,14 +261,14 @@ public class JavaLogicalStructure {
 			
 			IAstEvaluationEngine evaluationEngine= JDIDebugPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)stackFrame.getDebugTarget());
 			
-			EvaluationBlock evaluationBlock= new EvaluationBlock(value, type, (IJavaThread)stackFrame.getThread(), evaluationEngine);
+			EvaluationBlock evaluationBlock= new EvaluationBlock(javaValue, type, (IJavaThread)stackFrame.getThread(), evaluationEngine);
 			if (fValue == null) {
 				// evaluate each variable
 				IJavaVariable[] variables= new IJavaVariable[fVariables.length];
 				for (int i= 0; i < fVariables.length; i++) {
 					variables[i]= new JDIPlaceholderVariable(fVariables[i][0], evaluationBlock.evaluate(fVariables[i][1]));
 				}
-				return new LogicalObjectStructureValue(value, variables);
+				return new LogicalObjectStructureValue(javaValue, variables);
 			}
 			// evaluate the logical value
 			return evaluationBlock.evaluate(fValue);
@@ -359,10 +405,17 @@ public class JavaLogicalStructure {
 		fDescription = description;
 	}
 
-	/**
-	 * Returns the description of this logical structure.
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2#getDescription(org.eclipse.debug.core.model.IValue)
 	 */
-	public String getDescription() {
+	public String getDescription(IValue value) {
+		return getDescription();
+	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.ILogicalStructureType#getDescription()
+     */
+    public String getDescription() {
 		return fDescription;
 	}
 	
@@ -373,5 +426,12 @@ public class JavaLogicalStructure {
 	public boolean isContributed() {
 	    return fIsContributed;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILogicalStructureType#getId()
+	 */
+	public String getId() {
+		return JDIDebugPlugin.getUniqueIdentifier() + fType + fDescription;
+	}
+
 }

@@ -12,24 +12,28 @@ package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate;
-import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILogicalStructureProvider;
+import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
-public class JavaLogicalStructures implements ILogicalStructureTypeDelegate, ILogicalStructureTypeDelegate2 {
+public class JavaLogicalStructures implements ILogicalStructureProvider {
 	
 	// preference values
 	static final char IS_SUBTYPE_TRUE= 'T';
@@ -38,7 +42,7 @@ public class JavaLogicalStructures implements ILogicalStructureTypeDelegate, ILo
 	/**
 	 * The list of java logical structures.
 	 */
-	private static List fJavaLogicalStructures= initJavaLogicalStructures();
+	private static Map fJavaLogicalStructureMap;
 
 	/**
 	 * The list of java logical structures in this Eclipse install.
@@ -51,67 +55,64 @@ public class JavaLogicalStructures implements ILogicalStructureTypeDelegate, ILo
 	private static List fUserDefinedJavaLogicalStructures;
 	
 	/**
-	 * Get the logical structure from the extension point and the preference store.
+	 * Get the logical structure from the extension point and the preference store,
+	 * and initialize the map.
 	 */
-	private static List initJavaLogicalStructures() {
-		fPluginContributedJavaLogicalStructures= initPluginContributedJavaLogicalStructure();
-		fUserDefinedJavaLogicalStructures= initUserDefinedJavaLogicalStructures();
-		List logicalStructures= new ArrayList(fPluginContributedJavaLogicalStructures);
-		logicalStructures.addAll(fUserDefinedJavaLogicalStructures);
-		return logicalStructures;
+    {
+		initPluginContributedJavaLogicalStructure();
+		initUserDefinedJavaLogicalStructures();
+		initJavaLogicalStructureMap();
 	}
+    
+    private static void initJavaLogicalStructureMap() {
+    	fJavaLogicalStructureMap= new HashMap();
+    	addAllLogicalStructures(fPluginContributedJavaLogicalStructures);
+		addAllLogicalStructures(fUserDefinedJavaLogicalStructures);
+    }
 	
+	/**
+	 * @param pluginContributedJavaLogicalStructures
+	 */
+	private static void addAllLogicalStructures(List pluginContributedJavaLogicalStructures) {
+		for (Iterator iter= pluginContributedJavaLogicalStructures.iterator(); iter.hasNext();) {
+			addLogicalStructure((JavaLogicalStructure) iter.next());
+		}
+	}
+
+	/**
+	 * @param structure
+	 */
+	private static void addLogicalStructure(JavaLogicalStructure structure) {
+		String typeName= structure.getQualifiedTypeName();
+		List logicalStructure= (List)fJavaLogicalStructureMap.get(typeName);
+		if (logicalStructure == null) {
+			logicalStructure= new ArrayList();
+			fJavaLogicalStructureMap.put(typeName, logicalStructure);
+		}
+		logicalStructure.add(structure);
+	}
+
 	/**
 	 * Get the configuration elements for the extension point.
 	 */
-	private static List initPluginContributedJavaLogicalStructure() {
-		List javaLogicalStructures= new ArrayList();
+	private static void initPluginContributedJavaLogicalStructure() {
+		fPluginContributedJavaLogicalStructures= new ArrayList();
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.EXTENSION_POINT_JAVA_LOGICAL_STRUCTURES);
 		IConfigurationElement[] javaLogicalStructureElements= extensionPoint.getConfigurationElements();
-	outer:for (int i= 0; i < javaLogicalStructureElements.length; i++) {
-			IConfigurationElement element= javaLogicalStructureElements[i];
-			String type= element.getAttribute("type"); //$NON-NLS-1$
-			if (type == null) {
-				JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.0"), null)); //$NON-NLS-1$
-				break;
+		for (int i= 0; i < javaLogicalStructureElements.length; i++) {
+			try {
+				fPluginContributedJavaLogicalStructures.add(new JavaLogicalStructure(javaLogicalStructureElements[i]));
+			} catch (CoreException e) {
+				JDIDebugPlugin.log(e);
 			}
-			boolean subtypes= Boolean.valueOf(element.getAttribute("subtypes")).booleanValue(); //$NON-NLS-1$
-			String value= element.getAttribute("value"); //$NON-NLS-1$
-			String description= element.getAttribute("description"); //$NON-NLS-1$
-			if (type == null) {
-				JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.4"), null)); //$NON-NLS-1$
-				break;
-			}
-			IConfigurationElement[] variableElements= element.getChildren("variable"); //$NON-NLS-1$
-			if (value == null && variableElements.length == 0) {
-				JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.1"), null)); //$NON-NLS-1$
-				break;
-			}
-			String[][] variables= new String[variableElements.length][2];
-			for (int j= 0; j < variables.length; j++) {
-				String variableName= variableElements[j].getAttribute("name"); //$NON-NLS-1$
-				if (variableName == null) {
-					JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.2"), null)); //$NON-NLS-1$
-					break outer;
-				}
-				variables[j][0]= variableName;
-				String variableValue= variableElements[j].getAttribute("value"); //$NON-NLS-1$
-				if (variableValue == null) {
-					JDIDebugPlugin.log(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("JavaLogicalStructures.3"), null)); //$NON-NLS-1$
-					break outer;
-				}
-				variables[j][1]= variableValue;
-			}
-			javaLogicalStructures.add(new JavaLogicalStructure(type, subtypes, value, description, variables, true));
 		}
-		return javaLogicalStructures;
 	}
 	
 	/**
 	 * Get the user defined logical structures (from the preference store).
 	 */
-	static private List initUserDefinedJavaLogicalStructures() {
-		List logicalStructures= new ArrayList();
+	static private void initUserDefinedJavaLogicalStructures() {
+		fUserDefinedJavaLogicalStructures= new ArrayList();
 		String logicalStructuresString= JDIDebugModel.getPreferences().getString(JDIDebugModel.PREF_JAVA_LOGICAL_STRUCTURES);
 		StringTokenizer tokenizer= new StringTokenizer(logicalStructuresString, "\0", true); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
@@ -138,9 +139,8 @@ public class JavaLogicalStructures implements ILogicalStructureTypeDelegate, ILo
 				variables[i][1]= tokenizer.nextToken();
 				tokenizer.nextToken();
 			}
-			logicalStructures.add(new JavaLogicalStructure(type, isSubtype, value, description, variables, false));
+			fUserDefinedJavaLogicalStructures.add(new JavaLogicalStructure(type, isSubtype, value, description, variables, false));
 		}
-		return logicalStructures;
 	}
 	
 	/**
@@ -169,77 +169,72 @@ public class JavaLogicalStructures implements ILogicalStructureTypeDelegate, ILo
 		JDIDebugModel.getPreferences().setValue(JDIDebugModel.PREF_JAVA_LOGICAL_STRUCTURES, logicalStructuresString.toString());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate#providesLogicalStructure(org.eclipse.debug.core.model.IValue)
-	 */
-	public boolean providesLogicalStructure(IValue value) {
-		if (!(value instanceof IJavaObject)) {
-			return false;
-		}
-		IJavaObject javaValue= (IJavaObject) value;
-		// go through all the java logical structures and return true if one
-		// of them provide a logical structure for the given value.
-		for (Iterator iter= fJavaLogicalStructures.iterator(); iter.hasNext();) {
-			if (((JavaLogicalStructure) iter.next()).providesLogicalStructure(javaValue)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate#getLogicalStructure(org.eclipse.debug.core.model.IValue)
-	 */
-	public IValue getLogicalStructure(IValue value) throws CoreException {
-		if (!(value instanceof IJavaObject)) {
-			return null;
-		}
-		IJavaObject javaValue= (IJavaObject) value;
-		// go through all the java logical structures and return the first
-		// value returned.
-		for (Iterator iter= fJavaLogicalStructures.iterator(); iter.hasNext();) {
-			IValue result= ((JavaLogicalStructure) iter.next()).getLogicalStructure(javaValue);
-			if (result != null) {
-				return result;
-			}
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2#getDescription(org.eclipse.debug.core.model.IValue)
-	 */
-	public String getDescription(IValue value) {
-		if (!(value instanceof IJavaObject)) {
-			return null;
-		}
-		IJavaObject javaValue= (IJavaObject) value;
-		// go through all the java logical structures and return true if one
-		// of them provide a logical structure for the given value.
-		for (Iterator iter= fJavaLogicalStructures.iterator(); iter.hasNext();) {
-			JavaLogicalStructure javaLogicalStructure = (JavaLogicalStructure) iter.next();
-			if (javaLogicalStructure.providesLogicalStructure(javaValue)) {
-				return javaLogicalStructure.getDescription();
-			}
-		}
-		return null;
-	}
-	
 	/**
-	 * Return the logical structure.
+	 * Return all the defined logical structures.
 	 */
 	static public JavaLogicalStructure[] getJavaLogicalStructures() {
-	    return (JavaLogicalStructure[])fJavaLogicalStructures.toArray(new JavaLogicalStructure[fJavaLogicalStructures.size()]);
+		JavaLogicalStructure[] logicalStructures= new JavaLogicalStructure[fPluginContributedJavaLogicalStructures.size() + fUserDefinedJavaLogicalStructures.size()];
+		int i= 0;
+		for (Iterator iter= fPluginContributedJavaLogicalStructures.iterator(); iter.hasNext();) {
+			logicalStructures[i++]= (JavaLogicalStructure) iter.next();
+		}
+		for (Iterator iter= fUserDefinedJavaLogicalStructures.iterator(); iter.hasNext();) {
+			logicalStructures[i++]= (JavaLogicalStructure) iter.next();
+		}
+	    return logicalStructures;
 	}
 
 	/**
-	 * Set the user defined logical structure.
+	 * Set the user defined logical structures.
 	 */
 	static public void setUserDefinedJavaLogicalStructures(JavaLogicalStructure[] logicalStructures) {
 		fUserDefinedJavaLogicalStructures= Arrays.asList(logicalStructures);
-		fJavaLogicalStructures= new ArrayList(fPluginContributedJavaLogicalStructures);
-		fJavaLogicalStructures.addAll(fUserDefinedJavaLogicalStructures);
 		saveUserDefinedJavaLogicalStructures();
+		initJavaLogicalStructureMap();
+	}
+
+	public ILogicalStructureType[] getLogicalStructureTypes(IValue value) {
+		if (!(value instanceof IJavaObject)) {
+			return new ILogicalStructureType[0];
+		}
+		IJavaObject javaValue= (IJavaObject) value;
+		List logicalStructures= new ArrayList();
+		try {
+			IJavaType type= javaValue.getJavaType();
+			if (!(type instanceof IJavaClassType)) {
+				return new ILogicalStructureType[0];
+			}
+			IJavaClassType classType= (IJavaClassType) type;
+			List list= (List)fJavaLogicalStructureMap.get(classType.getName());
+			if (list != null) {
+				logicalStructures.addAll(list);
+			}
+			IJavaClassType superClass= classType.getSuperclass();
+			while (superClass != null) {
+				addIfIsSubtype(logicalStructures, (List)fJavaLogicalStructureMap.get(superClass.getName()));
+				superClass= superClass.getSuperclass();
+			}
+			IJavaInterfaceType[] superInterfaces= classType.getAllInterfaces();
+			for (int i= 0; i < superInterfaces.length; i++) {
+				addIfIsSubtype(logicalStructures, (List)fJavaLogicalStructureMap.get(superInterfaces[i].getName()));
+			}
+		} catch (DebugException e) {
+			JDIDebugPlugin.log(e);
+			return new ILogicalStructureType[0];
+		}
+		return (ILogicalStructureType[]) logicalStructures.toArray(new ILogicalStructureType[logicalStructures.size()]);
+	}
+
+	private void addIfIsSubtype(List logicalStructures, List list) {
+		if (list == null) {
+			return;
+		}
+		for (Iterator iter= list.iterator(); iter.hasNext();) {
+			JavaLogicalStructure logicalStructure= (JavaLogicalStructure) iter.next();
+			if (logicalStructure.isSubtypes()) {
+				logicalStructures.add(logicalStructure);
+			}
+		}
 	}
 
 }
