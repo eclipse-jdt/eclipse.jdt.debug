@@ -10,8 +10,10 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -25,6 +27,9 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -32,15 +37,15 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Action to support run to line (i.e. where the cursor is in the active editor)
  */
-public class RunToLineActionDelegate extends ManageBreakpointActionDelegate implements IEditorActionDelegate {
+public class RunToLineActionDelegate extends ManageBreakpointActionDelegate implements IEditorActionDelegate, IActionDelegate2, IDebugEventSetListener {
 	
 	public RunToLineActionDelegate() {
 	}
 	
 	/**
-	 * @see IActionDelegate#run(IAction)
+	 * @see IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)(IAction)
 	 */
-	public void run(IAction action) {
+	public void runWithEvent(IAction action, Event event) {
 		try {
 			IDebugTarget target= getContext();
 			if (target == null) {
@@ -203,6 +208,60 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 		if (targetEditor instanceof ITextEditor) {
 			setTextEditor((ITextEditor)targetEditor);
 		}
-		update();
+		setEnabledState(getTextEditor());
+	}
+	/**
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 */
+	public void init(IAction action) {
+		DebugPlugin.getDefault().addDebugEventListener(this);
+	}
+	
+	/**
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
+	 */
+	public void handleDebugEvents(final DebugEvent[] events) {
+		if (getTextEditor() == null || getAction() == null) {
+			return;
+		}
+		final Shell shell= getTextEditor().getSite().getShell();
+		if (shell == null || shell.isDisposed()) {
+			return;
+		}
+		Runnable r= new Runnable() {
+			public void run() {
+				if (shell.isDisposed()) {
+					return;
+				}
+				for (int i = 0; i < events.length; i++) {
+					if (events[i].getSource() != null) {
+						doHandleDebugEvent(events[i]);
+					}
+				}
+			}
+		};
+	
+		shell.getDisplay().asyncExec(r);
+	}
+	
+	/**
+	 * Update on specific debug events.
+	 */
+	protected void doHandleDebugEvent(DebugEvent event) {
+		switch (event.getKind()) {
+			case DebugEvent.TERMINATE :
+				if (event.getSource() instanceof IDebugTarget) {
+					update();
+				}
+				break;
+		}
+	}		
+	
+	/**
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 }

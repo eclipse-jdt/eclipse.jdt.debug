@@ -149,7 +149,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	 * Return the associated IField (Java model) for the given
 	 * IJavaFieldVariable (JDI model)
 	 */
-	protected IField getField(IJavaFieldVariable variable) {
+	private IField getField(IJavaFieldVariable variable) {
 		String varName= null;
 		try {
 			varName= variable.getName();

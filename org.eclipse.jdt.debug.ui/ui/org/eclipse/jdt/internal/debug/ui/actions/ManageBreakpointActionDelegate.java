@@ -170,10 +170,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 					if (part instanceof ITextEditor) {
 						if (!(part instanceof JavaSnippetEditor)) {
 							setTextEditor((ITextEditor)part);
-							ISelectionProvider sp= getTextEditor().getSelectionProvider();
-							if (sp != null) {
-								update(sp.getSelection());
-							}
 						}
 					}
 				}
@@ -181,10 +177,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 			fInitialized= true;
 		} 
 		
-		update(selection);
-	}
-		
-	protected void update(ISelection selection) {
 		setEnabledState(getTextEditor());
 	}
 	
@@ -318,5 +310,4 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 			JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
 		}
 	}
-
 }

@@ -91,29 +91,31 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	public void selectionChanged(IAction action, ISelection selection) {
 		setCodeAssist(null);
 		setTextSelection(null);
-		IJavaStackFrame frame = getStackFrame();
 		boolean enabled = false;
-		if (getActiveEditor() != null && frame != null && frame.isSuspended() && selection instanceof ITextSelection && !selection.isEmpty()) {
-			ITextSelection textSelection = (ITextSelection)selection;
-			try {
-				int lineNumber = frame.getLineNumber();
-				// debug line numbers are 1 based, document line numbers are 0 based
-				if (textSelection.getStartLine() == (lineNumber - 1)) {
-					IEditorInput input = getActiveEditor().getEditorInput();
-					Object element = JavaUI.getWorkingCopyManager().getWorkingCopy(input);
-					if (element == null) {
-						element = input.getAdapter(IClassFile.class);
+		if (getActiveEditor() != null && selection instanceof ITextSelection && !selection.isEmpty()) {
+			IJavaStackFrame frame = getStackFrame();
+			if (frame != null && frame.isSuspended()) {
+				ITextSelection textSelection = (ITextSelection)selection;
+				try {
+					int lineNumber = frame.getLineNumber();
+					// debug line numbers are 1 based, document line numbers are 0 based
+					if (textSelection.getStartLine() == (lineNumber - 1)) {
+						IEditorInput input = getActiveEditor().getEditorInput();
+						Object element = JavaUI.getWorkingCopyManager().getWorkingCopy(input);
+						if (element == null) {
+							element = input.getAdapter(IClassFile.class);
+						}
+						if (element instanceof ICodeAssist) {
+							setCodeAssist((ICodeAssist)element);
+							setTextSelection(textSelection);
+							enabled = true;
+						}
 					}
-					if (element instanceof ICodeAssist) {
-						setCodeAssist((ICodeAssist)element);
-						setTextSelection(textSelection);
-						enabled = true;
+				} catch (CoreException e) {
+					if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+						// do not log "thread not suspended" errors
+						JDIDebugUIPlugin.log(e);
 					}
-				}
-			} catch (CoreException e) {
-				if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
-					// do not log "thread not suspended" errors
-					JDIDebugUIPlugin.log(e);
 				}
 			}
 		}
