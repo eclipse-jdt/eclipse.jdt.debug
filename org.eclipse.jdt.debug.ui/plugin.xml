@@ -647,7 +647,7 @@
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowConstants"
 			label="%showConstantsAction.label"
 			menubarPath="javaActions"
-			icon="icons/full/clcl16/final_co.gif"
+			icon="icons/full/clcl16/constant_co.gif"
 			tooltip="%showConstantsAction.tooltip"
 			helpContextId="show_constants_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
@@ -673,6 +673,24 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
 			state="false">
 		</action>
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStatic"
+			label="%showStaticAction.label"
+			menubarPath="javaActions"
+			icon="icons/full/clcl16/static_co.gif"
+			tooltip="%showStaticAction.tooltip"
+			helpContextId="show_static_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
+			state="false">
+		</action>		
+		<action id="org.eclipse.jdt.ui.variableViewActions.ShowConstants"
+			label="%showConstantsAction.label"
+			menubarPath="javaActions"
+			icon="icons/full/clcl16/constant_co.gif"
+			tooltip="%showConstantsAction.tooltip"
+			helpContextId="show_constants_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
+			state="false">
+		</action>		
 	</viewContribution>	
 	<viewContribution
 		id="org.eclipse.jdt.debug.ui.BreakpointViewActions"
