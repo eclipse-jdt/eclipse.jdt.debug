@@ -1615,7 +1615,7 @@
          <action
                label="%manageWatchpointAction.label"
                helpContextId="manage_watchpoint_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
+               class="org.eclipse.debug.internal.ui.actions.ToggleWatchpointObjectActionDelegate"
                menubarPath="additions"
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.VariableWatchpoint">
@@ -2306,6 +2306,11 @@
             adaptableType="org.eclipse.jdt.core.IField">
             <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
          </factory>         
+         <factory 
+            class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
+            adaptableType="org.eclipse.jdt.debug.core.IJavaFieldVariable">
+            <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
+         </factory>                  
       </extension>     	
       
 </plugin>

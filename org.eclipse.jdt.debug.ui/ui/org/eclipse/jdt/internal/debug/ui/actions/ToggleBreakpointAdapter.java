@@ -17,13 +17,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.jdt.core.Flags;
@@ -31,23 +36,33 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.ITypeNameRequestor;
+import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.corext.util.TypeInfo;
+import org.eclipse.jdt.internal.corext.util.TypeInfoRequestor;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -229,6 +244,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			}
 		} else if (selection instanceof IStructuredSelection) {
 			IMethod[] members= getMethods((IStructuredSelection)selection);
+			if (members.length == 0) {
+				report(ActionMessages.getString("ToggleBreakpointAdapter.9"), part); //$NON-NLS-1$
+				return;
+			}
 			// add or remove the breakpoint
 			IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 			for (int i= 0, length= members.length; i < length; i++) {
@@ -309,6 +328,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 				Object thing = iterator.next();
 				if (thing instanceof IField) {	
 					fields.add(thing);
+				} else if (thing instanceof IJavaFieldVariable) {
+					IField field= getField((IJavaFieldVariable) thing);
+					if (field != null) {
+						fields.add(field);
+					}
 				}
 			}
 			return (IField[]) fields.toArray(new IField[fields.size()]);
@@ -351,6 +375,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			}
 		} else if (selection instanceof IStructuredSelection) {
 			IField[] members = getFields((IStructuredSelection)selection);
+			if (members.length == 0) {
+				report(ActionMessages.getString("ToggleBreakpointAdapter.10"), part); //$NON-NLS-1$
+				return;
+			}
 			// add or remove watchpoint
 			IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 			for (int i= 0, length= members.length; i < length; i++) {
@@ -579,4 +607,136 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		return selection;
 	}
 
+	/**
+	 * Returns a list of matching types (IType - Java model) that correspond to the 
+	 * declaring type (ReferenceType - JDI model) of the given variable.
+	 */
+	protected static List searchForDeclaringType(IJavaFieldVariable variable) {
+		List types= new ArrayList();
+		ILaunch launch = variable.getDebugTarget().getLaunch();
+		if (launch == null) {
+			return types;
+		}
+		
+		ILaunchConfiguration configuration= launch.getLaunchConfiguration();
+		IJavaProject[] javaProjects = null;
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		if (configuration != null) {
+			// Launch configuration support
+			try {
+				String projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+				if (projectName.length() != 0) {
+					javaProjects= new IJavaProject[] {JavaCore.create(workspace.getRoot().getProject(projectName))};
+				} else {
+					IProject[] projects= ResourcesPlugin.getWorkspace().getRoot().getProjects();
+					IProject project;
+					List projectList= new ArrayList();
+					for (int i= 0, numProjects= projects.length; i < numProjects; i++) {
+						project= projects[i];
+						if (project.isAccessible() && project.hasNature(JavaCore.NATURE_ID)) {
+							projectList.add(JavaCore.create(project));
+						}
+					}
+					javaProjects= new IJavaProject[projectList.size()];
+					projectList.toArray(javaProjects);
+				}
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
+		}
+		if (javaProjects == null) {
+			return types;
+		}
+
+		SearchEngine engine= new SearchEngine();
+		IJavaSearchScope scope= SearchEngine.createJavaSearchScope(javaProjects, true);
+		String declaringType= null;
+		try {
+			declaringType= variable.getDeclaringType().getName();
+		} catch (DebugException x) {
+			JDIDebugUIPlugin.log(x);
+			return types;
+		}
+		ArrayList typeRefsFound= new ArrayList(3);
+		ITypeNameRequestor requestor= new TypeInfoRequestor(typeRefsFound);
+		try {
+			engine.searchAllTypeNames(workspace, 
+				getPackage(declaringType), 
+				getTypeName(declaringType), 
+				IJavaSearchConstants.EXACT_MATCH, 
+				true, 
+				IJavaSearchConstants.CLASS, 
+				scope, 
+				requestor, 
+				IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+				null);
+		} catch (JavaModelException x) {
+			JDIDebugUIPlugin.log(x);
+			return types;
+		}
+		Iterator iter= typeRefsFound.iterator();
+		TypeInfo typeInfo= null;
+		while (iter.hasNext()) {
+			typeInfo= (TypeInfo)iter.next();
+			try {
+				types.add(typeInfo.resolveType(scope));
+			} catch (JavaModelException jme) {
+				JDIDebugUIPlugin.log(jme);
+			}
+		}
+		return types;
+	}
+	
+	/**
+	 * Returns the package name of the given fully qualified type name.
+	 * The package name is assumed to be the dot-separated prefix of the 
+	 * type name.
+	 */
+	protected static char[] getPackage(String fullyQualifiedName) {
+		int index= fullyQualifiedName.lastIndexOf('.');
+		if (index == -1) {
+			return new char[0];
+		}
+		return fullyQualifiedName.substring(0, index).toCharArray();
+	}
+	
+	/**
+	 * Returns a simple type name from the given fully qualified type name.
+	 * The type name is assumed to be the last contiguous segment of the 
+	 * fullyQualifiedName not containing a '.' or '$'
+	 */
+	protected static char[] getTypeName(String fullyQualifiedName) {
+		int index= fullyQualifiedName.lastIndexOf('.');
+		String typeName= fullyQualifiedName.substring(index + 1);
+		int lastInnerClass= typeName.lastIndexOf('$');
+		if (lastInnerClass != -1) {
+			typeName= typeName.substring(lastInnerClass + 1);
+		}
+		return typeName.toCharArray();
+	}
+	
+	/**
+	 * Return the associated IField (Java model) for the given
+	 * IJavaFieldVariable (JDI model)
+	 */
+	private IField getField(IJavaFieldVariable variable) {
+		String varName= null;
+		try {
+			varName= variable.getName();
+		} catch (DebugException x) {
+			JDIDebugUIPlugin.log(x);
+			return null;
+		}
+		IField field;
+		List types= searchForDeclaringType(variable);
+		Iterator iter= types.iterator();
+		while (iter.hasNext()) {
+			IType type= (IType)iter.next();
+			field= type.getField(varName);
+			if (field.exists()) {
+				return field;
+			}
+		}
+		return null;
+	}	
 }
