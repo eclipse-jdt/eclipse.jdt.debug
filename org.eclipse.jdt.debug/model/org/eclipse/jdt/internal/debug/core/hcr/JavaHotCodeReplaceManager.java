@@ -376,7 +376,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				if (target.supportsJDKHotCodeReplace()) {
 					redefineTypesJDK(target, resources, qualifiedNames);
 				} else if (target.supportsJ9HotCodeReplace()) {
-					redefineTypesJ9(target, resources, qualifiedNames);
+					redefineTypesJ9(target, qualifiedNames);
 				}
 				if (containsObsoleteMethods(target)) {
 					fireObsoleteMethods(target);
@@ -428,7 +428,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * change</li>
 	 * </ul>
 	 */
-	private void redefineTypesJ9(JDIDebugTarget target, List resources, List qualifiedNames) throws DebugException {
+	private void redefineTypesJ9(JDIDebugTarget target, List qualifiedNames) throws DebugException {
 		String[] typeNames = (String[]) qualifiedNames.toArray(new String[qualifiedNames.size()]);					
 		if (target.supportsJ9HotCodeReplace()) {
 			target.setHCROccurred(true);

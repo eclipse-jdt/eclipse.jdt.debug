@@ -153,7 +153,7 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 		titleBarSeparator.setLayoutData(gd);
 
 		// Build the Page container
-		fPageContainer = createPageContainer(composite, 2);
+		fPageContainer = createPageContainer(composite);
 		fPageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fPageContainer.setFont(parent.getFont());
 
@@ -243,7 +243,7 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 	/**
 	 * Creates the inner page container.
 	 */
-	private Composite createPageContainer(Composite parent, int numColumns) {
+	private Composite createPageContainer(Composite parent) {
 		Composite result = new Composite(parent, SWT.NULL);
 		result.setLayout(new PageLayout());
 		return result;

@@ -462,7 +462,7 @@ public class VMDefinitionsContainer {
 					Element subElement = (Element)node;
 					String subElementName = subElement.getNodeName();
 					if (subElementName.equals("libraryLocation")) { //$NON-NLS-1$
-						LibraryLocation loc = getLibraryLocation(vmStandin, subElement);
+						LibraryLocation loc = getLibraryLocation(subElement);
 						vmStandin.setLibraryLocations(new LibraryLocation[]{loc});
 						break;
 					} else if (subElementName.equals("libraryLocations")) { //$NON-NLS-1$
@@ -489,7 +489,7 @@ public class VMDefinitionsContainer {
 	/**
 	 * Create & return a LibraryLocation object populated from the attribute values
 	 * in the specified node.	 */
-	private static LibraryLocation getLibraryLocation(IVMInstall vm, Element libLocationElement) {
+	private static LibraryLocation getLibraryLocation(Element libLocationElement) {
 		String jreJar= libLocationElement.getAttribute("jreJar"); //$NON-NLS-1$
 		String jreSrc= libLocationElement.getAttribute("jreSrc"); //$NON-NLS-1$
 		String pkgRoot= libLocationElement.getAttribute("pkgRoot"); //$NON-NLS-1$
@@ -515,7 +515,7 @@ public class VMDefinitionsContainer {
 			if (type == Node.ELEMENT_NODE) {
 				Element libraryLocationElement= (Element)node;
 				if (libraryLocationElement.getNodeName().equals("libraryLocation")) { //$NON-NLS-1$
-					locations.add(getLibraryLocation(vm, libraryLocationElement));
+					locations.add(getLibraryLocation(libraryLocationElement));
 				}
 			}
 		}	
