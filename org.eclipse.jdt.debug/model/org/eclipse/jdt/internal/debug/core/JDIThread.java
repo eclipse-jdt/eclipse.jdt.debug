@@ -141,7 +141,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		try {
 			determineIfSystemThread();
 		} catch (DebugException e) {
-			internalError(e);
+			logError(e);
 		}
 
 		// state
@@ -153,7 +153,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			fTerminated = true;
 			fRunning = false;
 		} catch (RuntimeException e) {
-			internalError(e);
+			logError(e);
 			fRunning= false;
 		}
 
@@ -254,7 +254,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 
 	protected void enableStepRequest(int type) throws DebugException {
-		EventRequestManager erm= getEventRequestManager();
+		EventRequestManager erm= getVM().eventRequestManager();
 		try {
 			if (fStepRequest != null)
 				erm.deleteEventRequest(fStepRequest);
@@ -622,7 +622,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				}
 			} catch (DebugException e) {
 				abortDropAndStep();
-				internalError(e);
+				logError(e);
 			}
 		} else if (fDropping) {
 			fFramesToDrop--;
@@ -632,14 +632,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					dropTopFrame();
 				} catch (DebugException e) {
 					abortDropAndStep();
-					internalError(e);
+					logError(e);
 				}
 			} else {
 				try {
 					reenterTopFrame();
 				} catch (DebugException e) {
 					abortDropAndStep();
-					internalError(e);
+					logError(e);
 				}
 			}
 		} else if (fReentering) {
@@ -648,7 +648,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				stepInto0();
 			} catch (DebugException e) {
 				abortDropAndStep();
-				internalError(e);
+				logError(e);
 			}
 		} 
 		fRunning = true;
@@ -750,7 +750,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					try {
 						getStackFrames0();
 					} catch (DebugException e) {
-						internalError(e);
+						logError(e);
 					}
 					fStepping= false;
 					fireSuspendEvent(detail);
@@ -839,7 +839,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			// remove any pending step request
 			if (fStepRequest != null) {
 				try {
-					getEventRequestManager().deleteEventRequest(fStepRequest);
+					getVM().eventRequestManager().deleteEventRequest(fStepRequest);
 				} catch (VMDisconnectedException e) {
 				} catch (RuntimeException e) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_deleting_step_request"), new String[] {e.toString()}), e); //$NON-NLS-1$
@@ -941,7 +941,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	private void reenterTopFrame() throws DebugException {
 		try {
 			fReentering= true;
-			EventRequestManager erm= getEventRequestManager();
+			EventRequestManager erm= getVM().eventRequestManager();
 			if (fStepRequest != null) {
 				erm.deleteEventRequest(fStepRequest);
 			}
@@ -990,10 +990,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	protected void abortStep() {
 		fDestinationFrame = null;
-		EventRequestManager erm= getEventRequestManager();
+		EventRequestManager erm= getVM().eventRequestManager();
 		try {
-			if (fStepRequest != null)
+			if (fStepRequest != null) {
 				erm.deleteEventRequest(fStepRequest);
+			}
 			fStepRequest = null;
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {

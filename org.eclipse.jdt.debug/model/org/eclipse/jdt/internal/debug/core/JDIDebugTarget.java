@@ -7,20 +7,63 @@ package org.eclipse.jdt.internal.debug.core;
 
 import java.io.ByteArrayInputStream;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
-import org.eclipse.jdt.debug.core.*;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
+import com.sun.jdi.Method;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.event.ClassPrepareEvent;
+import com.sun.jdi.event.ThreadDeathEvent;
+import com.sun.jdi.event.ThreadStartEvent;
+import com.sun.jdi.event.VMDeathEvent;
+import com.sun.jdi.event.VMDisconnectEvent;
+import com.sun.jdi.event.VMStartEvent;
+import com.sun.jdi.request.ClassPrepareRequest;
+import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
 
 /**
  * Debug target for JDI debug model.
@@ -115,7 +158,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 
 	public JDIDebugTarget(VirtualMachine jvm, String name, boolean supportTerminate, boolean supportDisconnect, IProcess process) {
 		super(null);
-		fDebugTarget = this;
+		setDebugTarget(this);
 		fSupportsTerminate= supportTerminate;
 		fSupportsDisconnect= supportDisconnect;
 		fVirtualMachine= jvm;
@@ -215,8 +258,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Installs all breakpoints that currently exist in the breakpoint manager
 	 */
 	protected void initializeBreakpoints() {
-		getBreakpointManager().addBreakpointListener(this);
-		IBreakpoint[] bps = (IBreakpoint[]) getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
+		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
+		manager.addBreakpointListener(this);
+		IBreakpoint[] bps = (IBreakpoint[]) manager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
 		for (int i = 0; i < bps.length; i++) {
 			if (bps[i] instanceof IJavaBreakpoint) {
 				breakpointAdded((IJavaBreakpoint)bps[i]);
@@ -337,15 +381,15 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				try {
 					fThreadDeath= threadDeathClass.newInstance(threadRef, constructor, new LinkedList(), ClassType.INVOKE_SINGLE_THREADED);
 				} catch (ClassNotLoadedException e) {
-					internalError(e);
+					logError(e);
 				} catch (InvalidTypeException e) {
-					internalError(e);
+					logError(e);
 				} catch (InvocationException e) {
-					internalError(e);
+					logError(e);
 				} catch (IncompatibleThreadStateException e) {
-					internalError(e);
+					logError(e);
 				} catch (RuntimeException e) {
-					internalError(e);
+					logError(e);
 				}
 				if (fThreadDeath != null) {
 					try {
@@ -358,7 +402,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 						}
 					} catch (RuntimeException e) {
 						fThreadDeath= null;
-						internalError(e);
+						logError(e);
 					}
 				}
 			}
@@ -701,7 +745,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (!fTerminated) {
 			fTerminated= true;
 			removeAllChildren();
-			getBreakpointManager().removeBreakpointListener(this);
+			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 			uninstallAllBreakpoints();
 			cleanupTempFiles();
 			if (fEvaluationContexts != null) {
@@ -733,7 +777,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			try {
 				breakpoint.removeFromTarget(this);
 			} catch (CoreException e) {
-				internalError(e);
+				logError(e);
 			}
 		}
 		fBreakpoints.clear();
@@ -756,7 +800,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			return type.name();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			internalError(e);
+			logError(e);
 		}
 		return getUnknownMessage();
 	}
@@ -892,7 +936,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			try {
 				workspace.delete(files, false, null);
 			} catch (CoreException e) {
-				internalError(e);
+				logError(e);
 			}
 			fTempFiles.clear();
 		}

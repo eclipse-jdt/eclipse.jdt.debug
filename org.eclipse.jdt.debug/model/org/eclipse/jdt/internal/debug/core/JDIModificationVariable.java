@@ -45,10 +45,10 @@ public abstract class JDIModificationVariable extends JDIVariable {
 				return fgValidSignatures.contains(signature);
 			}
 		} catch (DebugException e) {
-			internalError(e);
+			logError(e);
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			internalError(e);
+			logError(e);
 		}
 		return false;
 	}
@@ -161,7 +161,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 			Value vmValue= generateVMValue(expression);
 			return vmValue != null;
 		} catch (DebugException e) {
-			internalError(e);
+			logError(e);
 			return false;
 		}
 	}

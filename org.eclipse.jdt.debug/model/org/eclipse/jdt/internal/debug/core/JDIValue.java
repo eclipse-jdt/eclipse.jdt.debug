@@ -208,7 +208,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			}
 			return v1.getName().compareToIgnoreCase(v2.getName());
 		} catch (DebugException de) {
-			internalError(de);
+			logError(de);
 			return -1;
 		}
 	}
