@@ -284,6 +284,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 	}
 	
 	protected void update() {
+		super.update();
 		getAction().setEnabled(getElement() != null);
 	}	
 	
