@@ -12,12 +12,11 @@ package org.eclipse.jdt.internal.launching;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainerType;
-import org.eclipse.debug.internal.core.sourcelookup.containers.WorkspaceSourceContainerType;
+import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
 
 /**
  * Java source lookup director.
@@ -30,8 +29,8 @@ public class JavaSourceLookupDirector extends AbstractSourceLookupDirector {
 	
 	static {
 		fFilteredTypes = new HashSet();
-		fFilteredTypes.add(ProjectSourceContainerType.TYPE_ID);
-		fFilteredTypes.add(WorkspaceSourceContainerType.TYPE_ID);
+		fFilteredTypes.add(ProjectSourceContainer.TYPE_ID);
+		fFilteredTypes.add(WorkspaceSourceContainer.TYPE_ID);
 		// can't reference UI constant
 		fFilteredTypes.add("org.eclipse.debug.ui.containerType.workingSet"); //$NON-NLS-1$
 	}

@@ -15,7 +15,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +24,6 @@ import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupParticipant;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainerType;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
@@ -124,7 +122,7 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 		ISourceContainer[] containers = director.getSourceContainers();
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];
-			if (container.getType().getId().equals(ArchiveSourceContainerType.TYPE_ID)) {
+			if (container.getType().getId().equals(ArchiveSourceContainer.TYPE_ID)) {
 				IFile file = ((ArchiveSourceContainer)container).getFile();
 				IProject project = file.getProject();
 				IJavaProject javaProject = JavaCore.create(project);
