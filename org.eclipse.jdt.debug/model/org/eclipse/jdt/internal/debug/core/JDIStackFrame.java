@@ -71,6 +71,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * Whether the variables need refreshing
 	 */
 	private boolean fRefreshVariables= true;
+	/**
+	 * Whether this stack frame has been declared out of synch
+	 */
+	private boolean fIsOutOfSynch= false;
 
 	/**
 	 * Creates a new stack frame in the given thread.
@@ -747,12 +751,16 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		return tos != null && tos.equals(this);
 	}
 	
+	public void setOutOfSynch(boolean outOfSynch) {
+		fIsOutOfSynch= outOfSynch;
+	}
+	
 	/**
 	 * Returns whether this stack frame's declaring type is out of synch with
 	 * the declaring type loaded in the VM.
 	 */
 	public boolean isOutOfSynch() throws DebugException {
-		return ((JDIDebugTarget)getDebugTarget()).isOutOfSynch(getUnderlyingMethod().declaringType());
+		return fIsOutOfSynch || ((JDIDebugTarget)getDebugTarget()).isOutOfSynch(getUnderlyingMethod().declaringType());
 	}
 	
 	/**

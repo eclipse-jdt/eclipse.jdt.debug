@@ -265,6 +265,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				} else {
 					// if any thread that should drop does not support the drop,
 					// do not drop in any threads.
+					notifyFailedDrop(frames, replacedClassNames);
 					throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 						DebugException.NOT_SUPPORTED, JDIDebugModelMessages.getString("JDIStackFrame.Drop_to_frame_not_supported"), null)); //$NON-NLS-1$
 				}
@@ -278,6 +279,17 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				((IJavaStackFrame)iter.next()).dropToFrame();
 			} catch (DebugException de) {
 				continue;
+			}
+		}
+	}
+	
+	private void notifyFailedDrop(IStackFrame[] frames, List replacedClassNames) throws DebugException {
+		int length= frames.length;
+		JDIStackFrame frame;
+		for (int i=0; i < length; i++) {
+			frame= (JDIStackFrame) frames[i];
+			if (replacedClassNames.contains(frame.getDeclaringTypeName())) {
+				frame.setOutOfSynch(true);
 			}
 		}
 	}
