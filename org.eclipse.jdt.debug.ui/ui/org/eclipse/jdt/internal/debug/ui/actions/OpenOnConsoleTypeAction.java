@@ -24,14 +24,12 @@ import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.internal.ui.util.TypeInfoLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -88,13 +86,6 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		run();
-	}
-	
-	/**
-	 * @see Action#run()
-	 */
-	public void run() {
 		doOpenType();
 	}
 
@@ -103,7 +94,7 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		setAction(action);
-		update();
+		update(selection);
 	}
 
 	protected void doOpenType() {		
@@ -147,8 +138,7 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 			                          null);
 			              
 		} catch (JavaModelException jme) {			
-			JDIDebugUIPlugin.log(jme);
-			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_searching_for_type_1"), null, jme.getStatus()); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("OpenOnConsoleTypeAction.Error_searching_for_type_1"), jme); //$NON-NLS-1$
 		}				
 		
 		// choose the appropriate result             
@@ -163,8 +153,7 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 			IType type = typeInfo.resolveType(scope);
 			openAndPositionEditor(type);		
 		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.log(jme);
-			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_searching_for_type_1"), null, jme.getStatus());			 //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("OpenOnConsoleTypeAction.Error_searching_for_type_1"), jme); //$NON-NLS-1$
 		}
 	}
 	
@@ -212,11 +201,9 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 				textEditor.selectAndReveal(lineOffset, lineLength);
 			}	
 		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.log(jme);
-			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_opening_editor_5"), null, jme.getStatus()); 			 //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("OpenOnConsoleTypeAction.Error_opening_editor_5"), jme); //$NON-NLS-1$
 		} catch (PartInitException pie) {
-			JDIDebugUIPlugin.log(pie);
-			ErrorDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Error_opening_editor_5"), null, pie.getStatus()); 						 //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("OpenOnConsoleTypeAction.Error_opening_editor_5"), pie); //$NON-NLS-1$
 		} catch (BadLocationException ble) {
 			JDIDebugUIPlugin.log(ble);
 			MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Open_Type_3"), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_editor_document")); //$NON-NLS-1$  //$NON-NLS-2$
@@ -325,6 +312,7 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 					try {
 						setLineNumber(Integer.parseInt(buffer.toString()));
 					} catch (NumberFormatException nfe) {
+						JDIDebugUIPlugin.log(nfe);
 					}
 				}
 			}
@@ -381,7 +369,6 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 		} else {
 			fTypeName= null;
 		}
-
 	}
 	
 	protected IViewPart getViewPart() {
@@ -400,26 +387,25 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 		fAction = action;
 	}
 	
-	protected void update() {
+	protected void update(ISelection selection) {
 		IAction action= getAction();
 		if (action == null) {
 			return;
 		}
-		boolean enabled= false;
-		ISelectionProvider selectionProvider = getViewPart().getViewSite().getSelectionProvider();
-		if (selectionProvider == null) {
+		
+		if (!(selection instanceof ITextSelection)) {
+			action.setEnabled(false);
 			return;
-		}		
-		ISelection selection = selectionProvider.getSelection();
-		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection = (ITextSelection)selection;
-			if (initiatedFromDoubleClick()) {
-				enabled= true;
-			} else {
-				enabled= textHasContent(textSelection.getText());
-			}
-			setTextSelection(textSelection);
 		}
+
+		boolean enabled= false;
+		ITextSelection textSelection = (ITextSelection)selection;
+		if (initiatedFromDoubleClick()) {
+			enabled= true;
+		} else {
+			enabled= textHasContent(textSelection.getText());
+		}
+		setTextSelection(textSelection);
 		action.setEnabled(enabled);
 	}
 	
@@ -446,7 +432,7 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 	}
 	
 	protected void beep() {
-		getViewPart().getViewSite().getPage().getWorkbenchWindow().getShell().getDisplay().beep();
+		getShell().getDisplay().beep();
 	}
 }
 
