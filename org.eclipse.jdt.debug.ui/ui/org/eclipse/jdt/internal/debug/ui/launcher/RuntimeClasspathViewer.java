@@ -95,11 +95,8 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		});	
 	}	
 
-	/**
-	 * Sets the entries in this viewer to the given runtime classpath
-	 * entries
-	 * 
-	 * @param entries runtime classpath entries
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#setEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
 	public void setEntries(IRuntimeClasspathEntry[] entries) {
 		fEntries.clear();
@@ -110,22 +107,15 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		notifyChanged();
 	}
 	
-	/**
-	 * Returns the entries in this viewer
-	 * 
-	 * @return the entries in this viewer
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getEntries()
 	 */
 	public IRuntimeClasspathEntry[] getEntries() {
 		return (IRuntimeClasspathEntry[])fEntries.toArray(new IRuntimeClasspathEntry[fEntries.size()]);
 	}
 	
-	/**
-	 * Adds the given entries to the list. If there is no selection
-	 * in the list, the entries are added at the end of the list, 
-	 * otherwise the new entries are added before the (first) selected
-	 * entry. The new entries are selected.
-	 * 
-	 * @param entries additions
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#addEntries(org.eclipse.jdt.launching.IRuntimeClasspathEntry[])
 	 */
 	public void addEntries(IRuntimeClasspathEntry[] entries) {
 		IStructuredSelection sel = (IStructuredSelection)getSelection();
@@ -156,12 +146,12 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	 */
 	public void setEnabled(boolean enabled) {
 		fEnabled = enabled;
-		// fire selection change to upate actions
+		// fire selection change to update actions
 		setSelection(getSelection());
 	}
 	
-	/**
-	 * Returns whether this viewer is enabled
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#isEnabled()
 	 */
 	public boolean isEnabled() {
 		return fEnabled;
@@ -184,6 +174,9 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		fListeners.remove(listener);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#notifyChanged()
+	 */
 	public void notifyChanged() {
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
@@ -191,10 +184,8 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 		}
 	}
 	
-	/**
-	 * Returns the index of an equivalent entry, or -1 if none.
-	 * 
-	 * @return the index of an equivalent entry, or -1 if none
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#indexOf(org.eclipse.jdt.launching.IRuntimeClasspathEntry)
 	 */
 	public int indexOf(IRuntimeClasspathEntry entry) {
 		return fEntries.indexOf(entry);
@@ -210,7 +201,7 @@ public class RuntimeClasspathViewer extends TableViewer implements IClasspathVie
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#updateSelection(int, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
-	public boolean updateSelection(int i, IStructuredSelection selection) {
-		return true;
+	public boolean updateSelection(int actionType, IStructuredSelection selection) {
+		return isEnabled();
 	}
 }
