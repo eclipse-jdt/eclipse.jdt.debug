@@ -124,6 +124,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 				String configTypeID = workingCopy.getType().getIdentifier();
 				boolean foundDefault = getLaunchManager().initializeFromDefaultLaunchConfiguration(resource, workingCopy, configTypeID);
 				if (foundDefault) {
+					initializeFromContextJavaProject(workingCopy, javaElement);
 					initializeFromContextMainTypeAndName(workingCopy, javaElement);
 					return;
 				}
@@ -207,88 +208,6 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		workingCopy.setAttribute(JavaDebugUI.BUILD_BEFORE_LAUNCH_ATTR, false);				
 	}
 		
-	/**
-	 * Attempt to retrieve the VM-related attributes that were persisted for the specified resource.
-	 * If successful, set these on the working copy and return true, otherwise return false.
-	 */
-	protected boolean initializeFromPersistedVM(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String installTypeId = resource.getPersistentProperty(fgQualNameVMTypeId);
-			if (installTypeId == null) {
-				return false;
-			}
-			workingCopy.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, installTypeId);
-			
-			String installId = resource.getPersistentProperty(fgQualNameVMId);
-			if (installId == null) {
-				return false;
-			}
-			workingCopy.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, installId);
-		} catch (CoreException ce) {
-			return false;
-		}	
-			
-		return true;
-	}
-	
-	protected void initializeFromPersistedContainer(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String containerName = resource.getPersistentProperty(fgQualNameContainer);
-			if (containerName == null) {
-				workingCopy.setContainer(null);
-			} else {
-				Path containerPath = new Path(containerName);
-				IContainer container = getWorkspaceRoot().getContainerForLocation(containerPath);
-				workingCopy.setContainer(container);
-			}
-		} catch (CoreException ce) {			
-		}		
-	}
-	
-	protected void initializeFromPersistedPerspectives(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String runPersp = resource.getPersistentProperty(fgQualNameRunPerspId);
-			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, runPersp);
-			String debugPersp = resource.getPersistentProperty(fgQualNameDebugPerspId);
-			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, debugPersp);
-		} catch (CoreException ce) {			
-		}
-		
-	}
-	
-	protected void initializeFromPersistedPgmArgs(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String pgmArgs = resource.getPersistentProperty(fgQualNamePgmArgs);
-			workingCopy.setAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, pgmArgs);
-		} catch (CoreException ce) {			
-		}
-	}
-	
-	protected void initializeFromPersistedVMArgs(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String vmArgs = resource.getPersistentProperty(fgQualNameVMArgs);
-			workingCopy.setAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, vmArgs);
-		} catch (CoreException ce) {			
-		}		
-	}
-	
-	protected void initializeFromPersistedWorkingDir(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String workingDir = resource.getPersistentProperty(fgQualNameWorkingDir);
-			workingCopy.setAttribute(JavaDebugUI.WORKING_DIRECTORY_ATTR, workingDir);
-		} catch (CoreException ce) {			
-		}				
-	}
-	
-	protected void initializeFromPersistedBuild(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String buildString = resource.getPersistentProperty(fgQualNameBuild);
-			boolean build = (buildString == null) || (buildString.equalsIgnoreCase("false")) ? false : true;
-			workingCopy.setAttribute(JavaDebugUI.BUILD_BEFORE_LAUNCH_ATTR, build);
-		} catch (CoreException ce) {			
-		}				
-	}
-	
 	/**
 	 * Verifies the given configuration can be launched, and attempts the
 	 * launch as specified by the <code>launch</code> parameter.

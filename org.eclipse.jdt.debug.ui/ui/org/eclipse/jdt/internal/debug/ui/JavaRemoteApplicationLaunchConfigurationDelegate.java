@@ -100,43 +100,32 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 	 */
 	protected void initializeDefaults(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
 		
-		// The java project & main type are ALWAYS initialized from context (it wouldn't make
-		// sense to persist these)
+
+		// First look for a default config for this config type and the specified resource
+		try {
+			IResource resource = javaElement.getUnderlyingResource();
+			if (resource != null) {
+				String configTypeID = workingCopy.getType().getIdentifier();
+				boolean foundDefault = getLaunchManager().initializeFromDefaultLaunchConfiguration(resource, workingCopy, configTypeID);
+				if (foundDefault) {
+					initializeFromContextJavaProject(workingCopy, javaElement);
+					initializeFromContextName(workingCopy, javaElement);
+					return;
+				}
+			}
+		} catch (JavaModelException jme) {			
+		} catch (CoreException ce) {			
+		}
+				
+		// If no default config was found, initialize all attributes we can from the specified 
+		// context object and from 'hard-coded' defaults known to this delegate
 		initializeFromContextJavaProject(workingCopy, javaElement);
 		initializeFromContextName(workingCopy, javaElement);
-		
-		// Retrieve the IResource for the java element
-		boolean initializeFromPersisted = true;
-		IResource resource = null;
-		try {
-			resource = javaElement.getUnderlyingResource();
-		} catch (CoreException ce) {
-		}
-		if (resource == null) {
-			initializeFromPersisted = false;
-		}
-		
-		// The VM attributes are 'required' in the sense that if any launch config attributes 
-		// were persisted for this resource, these must be also.  
-		if (initializeFromPersisted) {
-			initializeFromPersisted = initializeFromPersistedHostName(workingCopy, resource);
-			initializeFromPersisted &= initializeFromPersistedPortNumber(workingCopy, resource);			
-		}
-		
-		// If we have so far successfully initialized the working copy from persisted information,
-		// initialize the rest of the working copy attributes from persisted info, otherwise
-		// initialize the working copy from contextual and 'hard-coded' defaults
-		if (initializeFromPersisted) {
-			initializeFromPersistedContainer(workingCopy, resource);
-			initializeFromPersistedPerspectives(workingCopy, resource);
-			initializeFromPersistedAllowTerminate(workingCopy, resource);
-		} else {
-			initializeFromDefaultHostName(workingCopy);
-			initializeFromDefaultPortNumber(workingCopy);
-			initializeFromDefaultAllowTerminate(workingCopy);
-			initializeFromDefaultContainer(workingCopy);
-			initializeFromDefaultPerspectives(workingCopy);			
-		}
+		initializeFromDefaultHostName(workingCopy);
+		initializeFromDefaultPortNumber(workingCopy);
+		initializeFromDefaultAllowTerminate(workingCopy);
+		initializeFromDefaultContainer(workingCopy);
+		initializeFromDefaultPerspectives(workingCopy);			
 	}
 	
 	/**
@@ -196,71 +185,6 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 		workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, debugPerspID);				
 	}
 	
-	protected boolean initializeFromPersistedHostName(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String hostName = resource.getPersistentProperty(fgQualNameHostName);
-			if (hostName == null) {
-				return false;
-			}	
-			workingCopy.setAttribute(JavaDebugUI.HOSTNAME_ATTR, hostName);
-		} catch (CoreException ce) {
-			return false;			
-		}	
-		return true;
-	}
-	
-	protected boolean initializeFromPersistedPortNumber(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String portNumberString = resource.getPersistentProperty(fgQualNamePortNumber);
-			int portNumber = 0;
-			try {
-				portNumber = Integer.parseInt(portNumberString);
-			} catch (NumberFormatException nfe) {
-				return false;
-			}
-			workingCopy.setAttribute(JavaDebugUI.PORT_ATTR, portNumber);
-		} catch (CoreException ce) {			
-			return false;
-		}	
-		return true;	
-	}
-	
-	protected void initializeFromPersistedAllowTerminate(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String allowTerminateString = resource.getPersistentProperty(fgQualNameAllowTerminate);
-			if (allowTerminateString != null) {
-				boolean allowTerminate = Boolean.getBoolean(allowTerminateString);
-				workingCopy.setAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, allowTerminate);
-			}
-		} catch (CoreException ce) {			
-		}
-	}
-	
-	protected void initializeFromPersistedContainer(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String containerName = resource.getPersistentProperty(fgQualNameContainer);
-			if (containerName == null) {
-				workingCopy.setContainer(null);
-			} else {
-				Path containerPath = new Path(containerName);
-				IContainer container = getWorkspaceRoot().getContainerForLocation(containerPath);
-				workingCopy.setContainer(container);
-			}
-		} catch (CoreException ce) {			
-		}		
-	}
-	
-	protected void initializeFromPersistedPerspectives(ILaunchConfigurationWorkingCopy workingCopy, IResource resource) {
-		try {
-			String runPersp = resource.getPersistentProperty(fgQualNameRunPerspId);
-			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, runPersp);
-			String debugPersp = resource.getPersistentProperty(fgQualNameDebugPerspId);
-			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, debugPersp);
-		} catch (CoreException ce) {			
-		}
-		
-	}
-	
 	/**
 	 * Verifies the given configuration can be launched, and attempts the
 	 * launch as specified by the <code>launch</code> parameter.
@@ -304,11 +228,12 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 			abort("Invalid port number specified", null, JavaDebugUI.INVALID_PORT);
 		}
 				
+		// If we were just verifying, we're done
 		if (!doLaunch) {
-			// just verify
 			return null;
 		}
 		
+		// Allow termination of remote VM
 		boolean allowTerminate = configuration.getAttribute(JavaDebugUI.ALLOW_TERMINATE_ATTR, false);
 		String portNumberString = String.valueOf(portNumber);
 		
