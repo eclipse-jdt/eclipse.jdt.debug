@@ -2063,14 +2063,14 @@ M4 = Platform-specific fourth key
       </command>
       <keyBinding
             keySequence="M1+M2+D"
-            scope="org.eclipse.ui.globalScope"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             command="org.eclipse.jdt.debug.ui.commands.Display"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
       		platform="gtk"
             keySequence="M1+M2+V"
-            scope="org.eclipse.ui.globalScope"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             command="org.eclipse.jdt.debug.ui.commands.Display"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -2082,7 +2082,7 @@ M4 = Platform-specific fourth key
       </command>
       <keyBinding
             keySequence="M1+M2+I"
-            scope="org.eclipse.ui.globalScope"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             command="org.eclipse.jdt.debug.ui.commands.Inspect"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
