@@ -22,7 +22,6 @@ import org.eclipse.jdt.debug.tests.core.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathContainerTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathProviderTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathVariableTests;
-import org.eclipse.jdt.debug.tests.core.CommandArgumentTests;
 import org.eclipse.jdt.debug.tests.core.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.DebugEventTests;
 import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
