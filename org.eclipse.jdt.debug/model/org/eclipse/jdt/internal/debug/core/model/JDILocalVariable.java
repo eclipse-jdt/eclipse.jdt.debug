@@ -54,10 +54,9 @@ public class JDILocalVariable extends JDIModificationVariable {
 	protected Value retrieveValue() throws DebugException {
 		if (getStackFrame().isSuspended()) {
 			return getStackFrame().getUnderlyingStackFrame().getValue(fLocal);
-		} else {
-			// bug 6518
-			return getLastKnownValue();
 		}
+		// bug 6518
+		return getLastKnownValue();
 	}
 
 	/**
