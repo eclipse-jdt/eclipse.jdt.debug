@@ -296,7 +296,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return list of installed breakpoints - instances of 
 	 * 	<code>IJavaBreakpoint</code>
 	 */
-	protected List getBreakpoints() {
+	public List getBreakpoints() {
 		return fBreakpoints;
 	}
 	

@@ -1085,9 +1085,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		for (int i = 0; i < targets.length; i++) {
 			IDebugTarget target = targets[i];
 			MultiStatus multiStatus = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugBreakpointMessages.getString("JavaBreakpoint.Exception"), null); //$NON-NLS-1$
-			if (target instanceof JDIDebugTarget) {
+			IJavaDebugTarget jdiTarget = (IJavaDebugTarget)target.getAdapter(IJavaDebugTarget.class);
+			if (jdiTarget != null) {
 				try {
-					recreate((JDIDebugTarget)target);
+					recreate((JDIDebugTarget)jdiTarget);
 				} catch (CoreException e) {
 					multiStatus.add(e.getStatus());
 				}
@@ -1099,10 +1100,13 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Recreate this breakpoint in the given target
+	 * Recreate this breakpoint in the given target, as long as the
+	 * target already contains this breakpoint.
+	 * 
+	 * @param target the target in which to re-create the breakpoint 
 	 */
 	protected void recreate(JDIDebugTarget target) throws CoreException {
-		if (target.isAvailable()) {
+		if (target.isAvailable() && target.getBreakpoints().contains(this)) {
 			removeRequests(target);
 			createRequests(target);
 		}
