@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
@@ -30,12 +31,9 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIEventFilter;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLauncherDelegate;
 import org.eclipse.jdt.launching.IVMRunner;
@@ -155,7 +153,7 @@ public class ScrapbookLauncherDelegate extends JavaApplicationLauncherDelegate i
 			VMRunnerResult result= runner.run(config);
 			if (result != null) {
 				IDebugTarget dt = result.getDebugTarget();
-				IBreakpoint magicBreakpoint = createMagicBreakpoint(getMainType(p));
+				IBreakpoint magicBreakpoint = createMagicBreakpoint("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain");
 				fScrapbookToVMs.put(page, dt);
 				fVMsToScrapbooks.put(dt, page);
 				fVMsToBreakpoints.put(dt, magicBreakpoint);
@@ -175,25 +173,14 @@ public class ScrapbookLauncherDelegate extends JavaApplicationLauncherDelegate i
 	}
 
 	/**
-	 * Creates an "invisible" breakpoint by using a run-to-line
-	 * breakpoint without a hit count. 
+	 * Creates an "invisible" line breakpoint. 
 	 */
-	IBreakpoint createMagicBreakpoint(IType type) {
+	IBreakpoint createMagicBreakpoint(String typeName) {
 		try {
-			fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), 49, -1, -1, 0, false, null);
+			fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, 49, -1, -1, 0, false, null);
+			fMagicBreakpoint.setPersisted(false);
 			return fMagicBreakpoint;
 		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	IType getMainType(IJavaProject jp) {	
-		try {
-			return jp.getPackageFragmentRoot(jp.getUnderlyingResource()).
-				getPackageFragment("org.eclipse.jdt.internal.debug.ui.snippeteditor"). //$NON-NLS-1$
-				getClassFile("ScrapbookMain.class").getType(); //$NON-NLS-1$
-		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
 		return null;
