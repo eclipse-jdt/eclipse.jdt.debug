@@ -33,6 +33,7 @@ import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * A watch expression is an expression which is re-evaluated after every thread
@@ -281,7 +282,10 @@ public class JavaWatchExpression extends PlatformObject implements IExpression, 
 		setPending(true);
 		refresh();
 		fDebugTarget= (IJavaDebugTarget)javaStackFrame.getDebugTarget();
-		DebugPlugin.getDefault().asyncExec(new EvaluationRunnable(javaStackFrame));
+		Display display = JDIDebugUIPlugin.getStandardDisplay(); 
+		if (!display.isDisposed()) {
+			display.asyncExec(new EvaluationRunnable(javaStackFrame));
+		}
 	}
 
 	/**
