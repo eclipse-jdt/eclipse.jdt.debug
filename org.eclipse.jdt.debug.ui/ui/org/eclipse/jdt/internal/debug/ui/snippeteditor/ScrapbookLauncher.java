@@ -259,7 +259,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	protected URL getEncodedURL(File file) throws MalformedURLException {
 		//looking at File.toURL the delimiter is always '/' 
 		// NOT File.separatorChar
-		String urlDelimiter= "/";
+		String urlDelimiter= "/"; //$NON-NLS-1$
 		String unencoded= file.toURL().toExternalForm();
 		StringBuffer encoded= new StringBuffer();
 		StringTokenizer tokenizer= new StringTokenizer(unencoded, urlDelimiter);
