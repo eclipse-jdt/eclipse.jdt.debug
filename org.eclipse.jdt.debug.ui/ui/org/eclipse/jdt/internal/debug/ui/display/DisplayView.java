@@ -144,8 +144,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 * memento is supplied by the platform for persistance at
 	 * workbench shutdown.
 	 */
-	private static IMemento tempMemento;
-	private HandlerSubmission submission;
+	private static IMemento fgMemento;
+	private HandlerSubmission fSubmission;
 	
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
@@ -280,8 +280,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();	
-		submission = new HandlerSubmission(null, null, getSite(), ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$
-		commandSupport.addHandlerSubmission(submission);	
+		fSubmission = new HandlerSubmission(null, null, getSite(), ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$
+		commandSupport.addHandlerSubmission(fSubmission);	
 
 	}
 
@@ -293,7 +293,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	/**
 	 * Configures the toolBar.
 	 */
-	protected void initializeToolBar() {
+	private void initializeToolBar() {
 		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
 		tbm.add(new Separator(IJavaDebugUIConstants.EVALUATION_GROUP));
 		tbm.add(fClearDisplayAction);
@@ -363,13 +363,10 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 */
 	public void saveState(IMemento memento) {
 		if (fSourceViewer != null) {
-			IDocument doc= fSourceViewer.getDocument();
-			if (doc != null) {
-				String contents= doc.get().trim();
-				if (contents.length() > 0) {
-					memento.putTextData(contents);
-				}
-			}
+		    String contents= getContents();
+		    if (contents != null) {
+		        memento.putTextData(contents);
+		    }
 		} else if (fRestoredContents != null) {
 			memento.putTextData(fRestoredContents);
 		}
@@ -382,8 +379,8 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
-		if (tempMemento != null) {
-			memento= tempMemento;
+		if (fgMemento != null) {
+			memento= fgMemento;
 		}
 		if (memento != null) {
 			fRestoredContents= memento.getTextData();
@@ -391,10 +388,20 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 	}
 	
 	/**
-	 * Returns the entire contents of the current document.
+	 * Returns the entire trimmed contents of the current document.
+	 * If the contents are "empty" <code>null</code> is returned.
 	 */
-	protected String getContents() {
-		return fSourceViewer.getDocument().get();
+	private String getContents() {
+	    if (fSourceViewer != null) {
+			IDocument doc= fSourceViewer.getDocument();
+			if (doc != null) {
+				String contents= doc.get().trim();
+				if (contents.length() > 0) {
+				    return contents;
+				}
+			}
+	    }
+	    return null;
 	}
 	
 	protected final ISelectionChangedListener getSelectionChangedListener() {
@@ -441,7 +448,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 		
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		commandSupport.removeHandlerSubmission(submission);
+		commandSupport.removeHandlerSubmission(fSubmission);
 		
 		super.dispose();
 	}
@@ -454,8 +461,11 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPerspe
 			String id = ((IViewReference) partRef).getId();
 			if (id.equals(getViewSite().getId())) {
 				// Display view closed. Persist contents.
-				tempMemento= XMLMemento.createWriteRoot("DisplayViewMemento"); //$NON-NLS-1$
-				saveState(tempMemento);
+			    String contents= getContents();
+			    if (contents != null) {
+				    fgMemento= XMLMemento.createWriteRoot("DisplayViewMemento"); //$NON-NLS-1$
+				    fgMemento.putTextData(contents);
+			    }
 			}
 		}
 	}
