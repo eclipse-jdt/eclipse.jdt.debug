@@ -163,6 +163,9 @@ public class JavaWatchExpressionDelegate implements IWatchExpressionDelegate {
 		}
 
 		Object sourceElement = locator.getSourceElement(javaStackFrame);
+		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
+			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
+		}
 		if (sourceElement instanceof IJavaElement) {
 			return ((IJavaElement) sourceElement).getJavaProject();
 		}

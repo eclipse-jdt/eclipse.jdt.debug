@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -262,6 +263,9 @@ public class EvaluationSourceGenerator {
 		Object sourceElement= locator.getSourceElement(frame);
 		if (sourceElement == null) {
 			return null;
+		}
+		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
+			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
 		}
 		if (sourceElement instanceof IType) {
 			return ((IType)sourceElement).getCompilationUnit().getSource();

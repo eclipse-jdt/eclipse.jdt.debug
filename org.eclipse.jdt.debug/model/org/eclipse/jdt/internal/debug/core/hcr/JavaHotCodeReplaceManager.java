@@ -51,6 +51,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -801,6 +802,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			return null;
 		}
 		Object sourceElement= locator.getSourceElement(frame);
+		if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
+			sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
+		}
 		if (sourceElement instanceof IType) {
 			return ((IType)sourceElement).getCompilationUnit();
 		}
