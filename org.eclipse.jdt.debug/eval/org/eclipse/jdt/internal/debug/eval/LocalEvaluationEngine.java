@@ -155,7 +155,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * The name of the code snippet class to instantiate
 	 */
 	private String fCodeSnippetClassName = null;
-	
+		
 	/**
 	 * Constant for empty array of <code>java.lang.String</code>
 	 */

@@ -159,14 +159,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * undesired 'nudging' in recursive methods.
 	 */
 	private int fOriginalStepStackDepth;
-
-	/**
-	 * The detail for the suspend event that should be fire
-	 * when an evaluation completes. This indicates if the
-	 * evaluation had any side effects in the VM.
-	 */
-	private int fEvaluationDetail;
-	
+		
 	/**
 	 * Creates a new thread on the underlying thread reference
 	 * in the given debug target.
@@ -540,18 +533,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	
 	/**
 	 * @see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)
-	 */
+	 */ 
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail) throws DebugException {
+		fIsPerformingEvaluation = true;
 		fireResumeEvent(evaluationDetail);
 		try {
-			evaluation.run(this, monitor);
+			evaluation.run(this, monitor);			
 		} catch (DebugException e) {
 			throw e;
 		} finally {
+			fIsPerformingEvaluation = false;
 			fireSuspendEvent(evaluationDetail);
 		}
-	}
-	
+	}	
 
 	/**
 	 * Invokes a method on the target, in this thread, and returns the result. Only
@@ -605,7 +599,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// might be resuming this thread has a chance to complete before
 		// we test if this thread is already runnnig. See bug 6518.
 		synchronized (this) {
-			if (!isSuspended() && !isPerformingEvaluation()) {
+			if (!isSuspended()) {
 				requestFailed(JDIDebugModelMessages.getString("JDIThread.Evaluation_failed_-_thread_not_suspended"), null); //$NON-NLS-1$
 			}
 		}
@@ -1460,40 +1454,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected void setInvokingMethod(boolean invoking) {
 		fIsInvokingMethod= invoking;
 	}
-	
-	/**
-	 * Sets whether this thread is currently performing an
-	 * evaluation. An evaluation consists of a sequence
-	 * of method invokations
-	 */
-	public void setPerformingEvaluation(boolean evaluating) {
-		fIsPerformingEvaluation= evaluating;
-		if (evaluating) {
-			fireResumeEvent(DebugEvent.EVALUATION);
-		} else {
-			fireSuspendEvent(DebugEvent.EVALUATION);
-		}
-	}
-	
-	/**
-	 * Sets the kind of evalaution being performed.
-	 * 
-	 * @param detail one of <code>DebugEvent.EVALUATION</code>
-	 *  or <code>DebugEvent.EVALUATION_READ_ONLY</code>
-	 */
-	protected void setEvaluationDetail(int detail) {
-		fEvaluationDetail = detail;
-	}
-	
-	/**
-	 * Returns the last kind of evalaution performed.
-	 * 
-	 * @return one of <code>DebugEvent.EVALUATION</code>
-	 *  or <code>DebugEvent.EVALUATION_READ_ONLY</code>
-	 */
-	protected int getEvaluationDetail() {
-		return fEvaluationDetail;
-	}	
 	
 	/**
 	 * Sets the step handler currently handling a step

@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -33,6 +34,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -1407,19 +1409,26 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 						fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.null_78")); //$NON-NLS-1$
 					} else if (thread instanceof IJavaThread) {
 						IJavaThread javaThread = (IJavaThread) thread;
-						javaThread.setPerformingEvaluation(true);
-						if (javaThread.isSuspended()) {
-							if (value instanceof IJavaArray) {
-								appendArrayDetail((IJavaArray)value, javaThread);
-							} else if (fValue instanceof IJavaObject) {
-								appendObjectDetail((IJavaObject)value, javaThread);
-							} else {
-								appendJDIValueString(value);															
+						IEvaluationRunnable er = new IEvaluationRunnable() {
+							public void run(IJavaThread jt, IProgressMonitor pm) {
+								if (jt.isSuspended()) {
+									if (value instanceof IJavaArray) {
+										appendArrayDetail((IJavaArray)value, jt);
+									} else if (fValue instanceof IJavaObject) {
+										appendObjectDetail((IJavaObject)value, jt);
+									} else {
+										appendJDIValueString(value);															
+									}
+								} else {
+									appendJDIValueString(value);							
+								}
 							}
-						} else {
-							appendJDIValueString(value);							
+						};
+						try {
+							javaThread.runEvaluation(er, null, DebugEvent.EVALUATION_READ_ONLY);
+						} catch (DebugException e) {
+							JDIDebugUIPlugin.log(e);
 						}
-						javaThread.setPerformingEvaluation(false);
 					} else {
 						appendJDIValueString(value);
 					}

@@ -350,6 +350,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		fThread= null;
 		fEvaluationContext= null;
 		fLaunchedClassPath= null;
+		if (fEngine != null) {
+			fEngine.dispose();
+		}
 		fEngine= null;
 		fireEvalStateChanged();
 	}

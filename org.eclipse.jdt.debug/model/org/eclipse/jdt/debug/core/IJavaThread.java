@@ -76,13 +76,6 @@ public interface IJavaThread extends IThread {
 	 */
 	boolean isPerformingEvaluation();
 	/**
-	 * Informs this thread that it is about to begin
-	 * or end an evaluation. Clients should call this method
-	 * when they begin an evaluation with <code>true</code> and when
-	 * they end the evaluation with <code>false</code>
-	 */
-	void setPerformingEvaluation(boolean evaluating);
-	/**
 	 * Returns the name of the thread group this thread belongs to.
 	 *
 	 * @return thread group name
@@ -124,11 +117,17 @@ public interface IJavaThread extends IThread {
 	 * as specified by <code>evaluationDetail</code> (one of
 	 * <code>DebugEvent.EVALUATION</code> or
 	 * <code>DebugEvent.EVALUATION_READ_ONLY</code>).
+	 * When the specified timeout period (milliseconds) has passed and the 
+	 * evaluation has not completed, a resume event is fired with a detail
+	 * code of <code>UNSPECIFIED</code>, admitting that the given thread has been
+	 * resumed.
 	 * 
 	 * @param evaluation the evalation to perform
 	 * @param monitor progress monitor (may be <code>null</code>
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_READ_ONLY</code>
+	 * @param timeout the number of milliseconds to wait for the evaluation to
+	 *  complete before firing a resume event on the given thread
 	 * @exception DebugException if an exception occurs performing
 	 *  the evaluation
 	 */

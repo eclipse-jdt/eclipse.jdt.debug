@@ -5,6 +5,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -12,6 +13,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Message;
+import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -53,7 +55,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener)
 	 */
-	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) {
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException {
 		ICompiledExpression expression= getCompiledExpression(snippet, frame);
 		evaluateExpression(expression, frame, listener);
 	}
@@ -61,7 +63,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) {
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException {
 		ICompiledExpression expression= getCompiledExpression(snippet, thisContext, thread);
 		evaluateExpression(expression, thisContext, thread, listener);
 	}
@@ -69,7 +71,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaStackFrame, IEvaluationListener)
 	 */
-	public void evaluateExpression(final ICompiledExpression expression, final IJavaStackFrame frame, final IEvaluationListener listener) {
+	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException {
 		RuntimeContext context = new RuntimeContext(getJavaProject(), frame);
 		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener);
 	}
@@ -77,7 +79,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluateExpression(final ICompiledExpression expression, final IJavaObject thisContext, final IJavaThread thread, final IEvaluationListener listener) {
+	public void evaluateExpression(ICompiledExpression expression, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException {
 		IRuntimeContext context = new JavaObjectRuntimeContext(thisContext, getJavaProject(), thread);
 		doEvaluation(expression, context, thread, listener);
 	}
@@ -85,7 +87,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	/**
 	 * Evaluates the given expression in the given thread and the given runtime context.
 	 */
-	private void doEvaluation(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener) {		
+	private void doEvaluation(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener) throws DebugException {		
 		Thread evaluationThread= new Thread(new Runnable() {
 			public void run() {
 
@@ -99,12 +101,25 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 					return;
 				}
 		
-				IValue value = null;
-				InstructionSequence instructionSet = (InstructionSequence)expression;
-				((JDIThread)thread).setPerformingEvaluation(true);
-				value= instructionSet.evaluate(context);
-				((JDIThread)thread).setPerformingEvaluation(false);
-				CoreException exception= instructionSet.getException();
+				final IValue[] valuez = new IValue[1];
+				final InstructionSequence instructionSet = (InstructionSequence)expression;
+				IEvaluationRunnable er = new IEvaluationRunnable() {
+					public void run(IJavaThread jt, IProgressMonitor pm) {
+						valuez[0] = instructionSet.evaluate(context);
+					}
+				};
+				CoreException exception = null;
+				try {
+					thread.runEvaluation(er, null, DebugEvent.EVALUATION);
+				} catch (DebugException e) {
+					exception = e;
+				}
+				IValue value = valuez[0];
+				
+
+				if (exception == null) {
+					exception= instructionSet.getException();
+				}
 				
 				if (value != null) {
 					IJavaValue jv = ((EvaluationValue)value).getJavaValue();

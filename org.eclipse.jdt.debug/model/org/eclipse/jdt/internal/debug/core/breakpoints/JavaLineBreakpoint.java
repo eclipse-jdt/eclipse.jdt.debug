@@ -457,10 +457,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			suspendForEvent(event, thread);
 		}
 		
-		public boolean evaluationTimedOut(IJavaThread thread) {
-			return true; // Keep waiting
-		}
-		
 		public IEvaluationResult getResult() {
 			return fResult;
 		}
