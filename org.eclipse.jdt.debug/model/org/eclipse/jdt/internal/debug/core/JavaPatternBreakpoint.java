@@ -80,6 +80,18 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	}
 	
 	/**
+	 * @see JavaBreakpoint#installableReferenceType(ReferenceType)
+	 */
+	protected boolean installableReferenceType(ReferenceType type) {
+		String pattern= getReferenceTypeName();
+		String queriedType= type.name();
+		if (queriedType.startsWith(pattern)) {
+			return true;
+		}
+		return false;
+	}	
+	
+	/**
 	 * Create a breakpoint request if the source name
 	 * debug attribute matches the resource name.
 	 */
