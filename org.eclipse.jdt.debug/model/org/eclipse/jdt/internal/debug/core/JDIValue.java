@@ -313,10 +313,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			return getValueString();
 		}
 
-		if (thread.isSuspended()) {
+		if (!thread.isSuspended()) {
 			requestFailed(ERROR_TO_STRING_NOT_SUSPENDED, null);
 		}
-		
 		
 		final String[] toString = new String[1];
 		final DebugException[] ex = new DebugException[1];
