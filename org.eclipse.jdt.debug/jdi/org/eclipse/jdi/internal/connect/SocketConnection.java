@@ -46,7 +46,7 @@ public class SocketConnection extends Connection {
     /* (non-Javadoc)
      * @see com.sun.jdi.connect.spi.Connection#readPacket()
      */
-    public byte[] readPacket() throws IOException {  
+    public synchronized byte[] readPacket() throws IOException {  
         if (!isOpen()) {
             throw new ClosedConnectionException();
         }
@@ -77,7 +77,7 @@ public class SocketConnection extends Connection {
     /* (non-Javadoc)
      * @see com.sun.jdi.connect.spi.Connection#writePacket(byte[])
      */
-    public void writePacket(byte[] packet) throws IOException {
+    public synchronized void writePacket(byte[] packet) throws IOException {
         if (!isOpen()) {
             throw new ClosedConnectionException();
         }
