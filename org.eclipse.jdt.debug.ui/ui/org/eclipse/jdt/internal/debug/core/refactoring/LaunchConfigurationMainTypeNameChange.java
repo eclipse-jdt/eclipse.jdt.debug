@@ -36,16 +36,15 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 	public static IChange createChangesFor(IType type, String newName) throws CoreException {
 		List changes= new ArrayList();
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+		// Java application launch configurations
 		ILaunchConfigurationType configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfiguration configs[]= manager.getLaunchConfigurations(configurationType);
 		String typeName= type.getFullyQualifiedName();
-		for (int i= 0; i < configs.length; i++) {
-			ILaunchConfiguration launchConfiguration = configs[i];
-			String mainType= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
-			if (typeName.equals(mainType)) {
-				changes.add(new LaunchConfigurationMainTypeNameChange(launchConfiguration, newName));
-			}
-		}
+		createNeededChanges(configs, newName, typeName, changes);
+		// Java applet launch configurations
+		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
+		configs= manager.getLaunchConfigurations(configurationType);
+		createNeededChanges(configs, newName, typeName, changes);
 		int nbChanges= changes.size();
 		if (nbChanges == 0) {
 			return null;
@@ -56,6 +55,16 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 		}
 	}
 	
+	private static void createNeededChanges(ILaunchConfiguration[] configs, String newName, String typeName, List changes) throws CoreException {
+		for (int i= 0; i < configs.length; i++) {
+			ILaunchConfiguration launchConfiguration = configs[i];
+			String mainType= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
+			if (typeName.equals(mainType)) {
+				changes.add(new LaunchConfigurationMainTypeNameChange(launchConfiguration, newName));
+			}
+		}
+	}
+
 	private ILaunchConfiguration fLaunchConfiguration;
 	
 	private String fOldName;
