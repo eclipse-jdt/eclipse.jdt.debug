@@ -20,7 +20,7 @@ import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.launching.JavaSourcePathComputer;
+import org.eclipse.jdt.internal.launching.JavaSourceLookupUtil;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -83,7 +83,7 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(getPath(), IRuntimeClasspathEntry.USER_CLASSES);
 		IRuntimeClasspathEntry[] entries = JavaRuntime.resolveSourceLookupPath(new IRuntimeClasspathEntry[]{entry}, getDirector().getLaunchConfiguration());
-		return JavaSourcePathComputer.translate(entries, true);
+		return JavaSourceLookupUtil.translate(entries, true);
 	}
 	
 	/**

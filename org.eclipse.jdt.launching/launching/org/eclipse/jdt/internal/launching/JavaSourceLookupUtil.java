@@ -16,11 +16,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate;
 import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -28,44 +25,17 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.containers.JavaProjectSourceContainer;
 import org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer;
 
 /**
- * Computes a default source lookup path for Java applications.
- * The source path provider associated with a launch configuration is consulted
- * to compute a source lookup path. The source path provider is determined
- * by the <code>ATTR_SOURCE_PATH_PROVIDER</code> launch configration attribute,
- * which defaults to the <code>StandardSourcePathProvider</code> when unspecified.
- * The source path provider computes a collection of <code>IRuntimeClasspathEntry</code>'s
- * which are translated to source containers (<code>ISourceContainer</code>).
+ * Private source lookup utils. Translates runtime classpath entries
+ * to source containers.
  * 
  * @since 3.0
  */
-public class JavaSourcePathComputer implements ISourcePathComputerDelegate {
-	
-	/**
-	 * Unique identifier for the local Java source path computer
-	 * (value <code>org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer</code>).
-	 */
-	public static final String ID = "org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"; //$NON-NLS-1$
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer#getId()
-	 */
-	public String getId() {
-		return ID;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(configuration);
-		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveSourceLookupPath(entries, configuration);
-		return translate(resolved, true);
-	}
-	
+public class JavaSourceLookupUtil {
+
 	/**
 	 * Translates the given runtime classpath entries into associated source
 	 * containers.

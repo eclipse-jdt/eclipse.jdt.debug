@@ -175,7 +175,7 @@
    <extension point="org.eclipse.debug.core.sourcePathComputers">
    		<sourcePathComputer
    			id="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"
-   			class="org.eclipse.jdt.internal.launching.JavaSourcePathComputer">
+   			class="org.eclipse.jdt.launching.sourcelookup.containers.JavaSourcePathComputer">
    		</sourcePathComputer>
    </extension>
    <extension point="org.eclipse.debug.core.sourceLocators">
