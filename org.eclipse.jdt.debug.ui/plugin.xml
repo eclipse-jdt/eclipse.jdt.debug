@@ -1833,6 +1833,11 @@
 		types="java.util.Map"
 		class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapVariablesContentProvider">
 	</javaVariablesContentProvider>
+	<javaVariablesContentProvider
+		id="org.eclipse.jdt.debug.ui.MapEntryContentProvider"
+		types="java.util.Map$Entry"
+		class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapEntryVariablesContentProvider">
+	</javaVariablesContentProvider>
 </extension>
 
 </plugin>

@@ -21,10 +21,12 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 /**
  * Base class for Java variables content providers.  This class provices several useful classes
  * that reduce the work of creating Java variables content providers.
+ * @since 3.0
  */
 public abstract class AbstractJavaVariablesContentProvider implements IJavaVariablesContentProvider {
 
@@ -86,6 +88,14 @@ public abstract class AbstractJavaVariablesContentProvider implements IJavaVaria
 		return ((IJavaValue)var.getValue()).getJavaType() == null;
 	}
 
+	/**
+	 * Return the instance of <code>IJavaObject</code> corresponding to the specified
+	 * variable, or <code>null</code> if there is none.
+	 * 
+	 * @param variable the java variable in which to look for the <code>IJavaObject</code>
+	 * @return an instance of <code>IJavaObject</code>, or <code>null</code>
+	 * @throws DebugException
+	 */
 	protected IJavaObject getObjectValue(IJavaVariable variable) throws DebugException {
 		IJavaValue parentValue = (IJavaValue)variable.getValue();
 		if (!(parentValue instanceof IJavaObject)) {
@@ -94,11 +104,29 @@ public abstract class AbstractJavaVariablesContentProvider implements IJavaVaria
 		return (IJavaObject) parentValue;		
 	}
 	
+	/**
+	 * Return the java thread corresponding to the current stack frame input in the
+	 * variables view.
+	 * 
+	 * @param view the debug view in which to look for the java thread
+	 * @return the java thread corresponding to the current stack frame input in the
+	 * variables view
+	 */
 	protected IJavaThread getJavaThreadFor(IDebugView view) {
 		IRootVariablesContentProvider rootCP = (IRootVariablesContentProvider) view.getAdapter(IRootVariablesContentProvider.class);
 		if (rootCP == null) {
 			return null;
 		}
 		return (IJavaThread) rootCP.getThread();		
+	}
+	
+	protected IJavaVariable[] convertArrayToPlaceholders(IJavaValue arrayValue) throws DebugException {
+		IVariable[] vars =  arrayValue.getVariables();
+		IJavaVariable[] javaVars = new IJavaVariable[vars.length];
+		for (int i = 0; i < vars.length; i++) {
+			IVariable var = vars[i];
+			javaVars[i] = JDIDebugModel.createPlaceholderVariable(var.getName(), (IJavaValue)var.getValue());
+		}
+		return javaVars;															
 	}
 }

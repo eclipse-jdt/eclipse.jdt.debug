@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -23,6 +22,7 @@ import org.eclipse.jdt.debug.ui.AbstractJavaVariablesContentProvider;
  * Customized content provider for classes implementing the java.util.Map interface.
  * This content provider invokes the 'entrySet()' method on all such classes and presents the
  * non-null results as the only children.
+ * @since 3.0
  */
 public class JavaUtilMapVariablesContentProvider extends AbstractJavaVariablesContentProvider {
 
@@ -61,14 +61,8 @@ public class JavaUtilMapVariablesContentProvider extends AbstractJavaVariablesCo
 													EMPTY_VALUE_ARRAY,
 													javaThread,
 													false);
-		
-		// Extract and return the map entries as an array of variables
-		IVariable[] vars =  toArrayValue.getVariables();
-		IJavaVariable[] javaVars = new IJavaVariable[vars.length];
-		for (int i = 0; i < vars.length; i++) {
-			javaVars[i] = (IJavaVariable) vars[i];
-		}
-		return javaVars;				
+
+		return convertArrayToPlaceholders(toArrayValue);		
 	}
 
 	/* (non-Javadoc)

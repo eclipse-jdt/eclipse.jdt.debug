@@ -16,8 +16,15 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.AbstractJavaVariablesContentProvider;
 
+/**
+ * Customized content provider for classes implementing the java.util.Map$Entry interface.
+ * This content provider invokes the 'getKey()' & 'getValue()' methods on all such classes and presents the
+ * results as the only children.
+ * @since 3.0
+ */
 public class JavaUtilMapEntryVariablesContentProvider extends AbstractJavaVariablesContentProvider {
 
 	private static final String GET_KEY_METHOD_SELECTOR = "getKey"; //$NON-NLS-1$
@@ -54,8 +61,8 @@ public class JavaUtilMapEntryVariablesContentProvider extends AbstractJavaVariab
 													false);
 		
 		IJavaVariable[] javaVars = new IJavaVariable[2];
-		javaVars[0] = (IJavaVariable) keyValue.getVariables()[0];
-		javaVars[0] = (IJavaVariable) valueValue.getVariables()[0];
+		javaVars[0] = JDIDebugModel.createPlaceholderVariable("key", keyValue); //$NON-NLS-1$
+		javaVars[1] = JDIDebugModel.createPlaceholderVariable("value", valueValue); //$NON-NLS-1$
 		return javaVars;				
 	}
 

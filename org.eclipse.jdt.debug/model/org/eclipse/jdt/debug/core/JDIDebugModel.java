@@ -35,6 +35,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaTargetPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderVariable;
 
 import com.sun.jdi.VirtualMachine;
 
@@ -519,6 +520,19 @@ public class JDIDebugModel {
 		}
 		return null;
 	}	
+	
+	/**
+	 * Creates and returns a new instance of <code>IJavaVariable</code> that has the
+	 * specified name and value.  
+	 * 
+	 * @param name the name of the new variable
+	 * @param value the value the new variable will have
+	 * @return an instance of <code>IJavaVariable</code> having the specified name and value
+	 * @since 3.0
+	 */
+	public static IJavaVariable createPlaceholderVariable(String name, IJavaValue value) {
+		return new JDIPlaceholderVariable(name, value);
+	}
 	
 	/**
 	 * Returns the preference store for this plug-in or <code>null</code>
