@@ -1476,7 +1476,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		List list= new ArrayList();
 		// The strata defined in the Smap.
 		if (isSourceDebugExtensionAvailable()) {
-			list.add(fStrata.keySet());
+			list.addAll(fStrata.keySet());
 		}
 		// plus the Java stratum
 		list.add(VirtualMachineImpl.JAVA_STRATUM_NAME);
