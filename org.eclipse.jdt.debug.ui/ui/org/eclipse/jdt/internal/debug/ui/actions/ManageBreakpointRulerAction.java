@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,6 +33,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
@@ -39,12 +41,14 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
@@ -225,6 +229,21 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 				IClassFile classFile= (IClassFile) editorInput.getAdapter(IClassFile.class);
 				if (classFile != null) {
 					type= classFile.getType();
+					// bug 34856 - if this is an inner type, ensure the breakpoint is not
+					// being added to the outer type
+					if (type.getDeclaringType() != null) {
+						ISourceRange sourceRange = type.getSourceRange();
+						int offset = line.getOffset();
+						int start = sourceRange.getOffset();
+						int end = start + sourceRange.getLength();
+						if (offset < start || offset > end) {
+							// not in the inner type
+							IStatusLineManager manager  = getTextEditor().getEditorSite().getActionBars().getStatusLineManager();
+							manager.setErrorMessage(MessageFormat.format(ActionMessages.getString("ManageBreakpointRulerAction.Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor__{0}._1"), new String[]{type.getTypeQualifiedName()})); //$NON-NLS-1$
+							Display.getCurrent().beep();
+							return;
+						}
+					}
 				} else if (editorInput instanceof IFileEditorInput) {
 					IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
 					ICompilationUnit unit= manager.getWorkingCopy(editorInput);
