@@ -49,10 +49,12 @@ public abstract class JavaLauncher implements IVMRunner {
 	}
 	
 	protected void addArguments(String[] args, List v) {
-		if (args == null)
+		if (args == null) {
 			return;
-		for (int i= 0; i < args.length; i++)
+		}
+		for (int i= 0; i < args.length; i++) {
 			v.add(args[i]);
+		}
 	}
 		
 	/**
