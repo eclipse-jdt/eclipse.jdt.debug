@@ -162,21 +162,18 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 */
 	protected IStackFrame getStackFrameContext() {
 		IAdaptable context = DebugUITools.getDebugContext();
+		if (context instanceof IThread) {
+			try {
+				context = ((IThread)context).getTopStackFrame();
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.log(e);
+			}
+		}
 		if (context != null) {			
 			IJavaStackFrame frame = (IJavaStackFrame) context.getAdapter(IJavaStackFrame.class);
 			if (frame != null) {			
 				if (frame.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
 					return frame;
-				}
-			}
-			if (context instanceof IThread) {
-				try {
-					IThread thread= (IThread)context;
-					if (thread.getLaunch().getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH) == null) {
-						return thread.getTopStackFrame();
-					}
-				} catch (DebugException e) {
-					JDIDebugUIPlugin.log(e);
 				}
 			}
 		}
