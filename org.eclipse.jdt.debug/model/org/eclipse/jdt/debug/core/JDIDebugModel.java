@@ -31,10 +31,8 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import com.sun.jdi.VirtualMachine;
 
 /**
- * The JDI debug model plug-in provides an implementation of a debug
- * model based on the standard "Java Debug Interface" (JDI). This class provides utility
- * methods for creating debug targets and breakpoints specific to the JDI debug
- * model.
+ * Provides utility methods for creating debug targets and breakpoints specific
+ * to the JDI debug model.
  * <p>
  * To provide access to behavior and information specific to the JDI
  * debug model, a set of interfaces are defined which extend the base
@@ -48,15 +46,6 @@ import com.sun.jdi.VirtualMachine;
  * Clients are not intended to instantiate or subclass this class;
  * this class provides static utility methods only.
  * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
- * @see IJavaDebugTarget
- * @see IJavaThread
- * @see IJavaStackFrame
- * @see IJavaVariable
  */
 public class JDIDebugModel {
 	
@@ -90,6 +79,7 @@ public class JDIDebugModel {
 	 * @return a debug target
 	 * @see org.eclipse.debug.core.model.ITerminate
 	 * @see org.eclipse.debug.core.model.IDisconnect
+	 * @since 2.0
 	 */
 	public static IDebugTarget newDebugTarget(ILaunch launch, VirtualMachine vm, String name, IProcess process, boolean allowTerminate, boolean allowDisconnect) {
 		return newDebugTarget(launch, vm, name, process, allowTerminate, allowDisconnect, true);
@@ -140,7 +130,7 @@ public class JDIDebugModel {
 	}
 	
 	/**
-	 * Returns the identifier for the JDI debug model plugin
+	 * Returns the identifier for the JDI debug model plug-in
 	 *
 	 * @return plugin identifier
 	 */
@@ -149,34 +139,48 @@ public class JDIDebugModel {
 	}
 	
 	/**
-	 * Adds the given hot code replace listener to the JDI debug model.
-	 * Added listeners will receive hot code replace notifications.
+	 * Registers the given listener for hot code replace notifications. Has no
+	 * effect if an identical listener is already registered.
+	 * 
+	 * @param listener hot code replace listener
+	 * @see IJavaHotCodeReplaceListener
+	 * @since 2.0
 	 */
 	public static void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
 		JDIDebugPlugin.getDefault().addHotCodeReplaceListener(listener);
 	}
 		
 	/**
-	 * Removes the given hot code replace listener to the JDI debug model.
-	 * Removed listeners will not receive hot code replace notifications.
+	 * Deregisters the given listener for hot code replace notifications. Has no
+	 * effect if an identical listener is not already registered.
+	 * 
+	 * @param listener hot code replace listener
+	 * @see IJavaHotCodeReplaceListener
+	 * @since 2.0
 	 */
 	public static void removeHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
 		JDIDebugPlugin.getDefault().removeHotCodeReplaceListener(listener);
 	}
 	
 	/**
-	 * Adds the given breakpoint listener to the JDI debug model.
+	 * Registers the given listener for breakpoint notifications. Has no
+	 * effect if an identical listener is already registered.
 	 * 
 	 * @param listener breakpoint listener
+	 * @see IJavaBreakpointListener
+	 * @since 2.0
 	 */
 	public static void addJavaBreakpointListener(IJavaBreakpointListener listener) {
 		JDIDebugPlugin.getDefault().addJavaBreakpointListener(listener);
 	}	
 
 	/**
-	 * Removes the given breakpoint listener from the JDI debug model.
+	 * Deregisters the given listener for breakpoint notifications. Has no
+	 * effect if an identical listener is not already registered.
 	 * 
 	 * @param listener breakpoint listener
+	 * @see IJavaBreakpointListener
+	 * @since 2.0
 	 */
 	public static void removeJavaBreakpointListener(IJavaBreakpointListener listener) {
 		JDIDebugPlugin.getDefault().removeJavaBreakpointListener(listener);
@@ -200,13 +204,13 @@ public class JDIDebugModel {
 	 *  associated class file name (i.e. with <code>$</code>). For example,
 	 * 	<code>example.SomeClass$InnerType</code>, could be specified, but
 	 * 	<code>example.SomeClass</code> is sufficient.
-	 * @param lineNumber the lineNumber on which the breakpoint is created - line
-	 *   numbers are 1 based, associated with the compilation unit in which
-	 *   the type is defined
+	 * @param lineNumber the lineNumber on which the breakpoint is set - line
+	 *   numbers are 1 based, associated with the source file in which
+	 *   the breakpoint is set
 	 * @param charStart the first character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
  	 * @param charEnd the last character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
 	 * @param hitCount the number of times the breakpoint will be hit before
 	 *   suspending execution - 0 if it should always suspend
 	 * @param register whether to add this breakpoint to the breakpoint manager
@@ -231,7 +235,9 @@ public class JDIDebugModel {
 	 * qualified name matches the given pattern.
 	 * If hitCount > 0, the breakpoint will suspend execution when it is
 	 * "hit" the specified number of times. 
-	 * @param resource the original source file
+	 * 
+	 * @param resource the resource on which to create the associated breakpoint
+	 *  marker
 	 * @param sourceName the name of the source file in which the breakpoint is
 	 *  set, or <code>null</code>. When specified, the pattern breakpoint will
 	 *  install itself in classes that have a source file name debug attribute
@@ -239,14 +245,13 @@ public class JDIDebugModel {
 	 * @param pattern the class name pattern in which the pattern breakpoint should
 	 *   be installed. The pattern breakpoint will install itself in every class which
 	 *   matches the pattern.
-	 * @param lineNumber the line number on which this breakpoint should be placed.
-	 *   Note that the line number refers to the debug attributes in the generated
-	 * 	 class file. Generally, this refers to a line number in the original
-	 *   source, but the attribute is client defined.
+	 * @param lineNumber the lineNumber on which the breakpoint is set - line
+	 *   numbers are 1 based, associated with the source file in which
+	 *   the breakpoint is set
 	 * @param charStart the first character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
  	 * @param charEnd the last character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
 	 * @param hitCount the number of times the breakpoint will be hit before
 	 *   suspending execution - 0 if it should always suspend
 	 * @param register whether to add this breakpoint to the breakpoint manager
@@ -270,19 +275,20 @@ public class JDIDebugModel {
 	 * this type of breakpoint.
 	 * If hitCount > 0, the breakpoint will suspend execution when it is
 	 * "hit" the specified number of times. 
-	 * @param resource the original source file
+	 * 
+	 * @param resource the resource on which to create the associated breakpoint
+	 *  marker
 	 * @param sourceName the name of the source file in which the breakpoint is
 	 *  set, or <code>null</code>. When specified, the pattern breakpoint will
 	 *  install itself in classes that have a source file name debug attribute
 	 *  that matches this value, and satisfies the class name pattern.
-	 * @param lineNumber the line number on which this breakpoint should be placed.
-	 *   Note that the line number refers to the debug attributes in the generated
-	 * 	 class file. Generally, this refers to a line number in the original
-	 *   source, but the attribute is client defined.
+	 * @param lineNumber the lineNumber on which the breakpoint is set - line
+	 *   numbers are 1 based, associated with the source file in which
+	 *   the breakpoint is set
 	 * @param charStart the first character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
  	 * @param charEnd the last character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
 	 * @param hitCount the number of times the breakpoint will be hit before
 	 *   suspending execution - 0 if it should always suspend
 	 * @param register whether to add this breakpoint to the breakpoint manager
@@ -301,7 +307,7 @@ public class JDIDebugModel {
 	}	
 		
 	/**
-	 * Creates and returns an exception breakpoint in a type with the given name.
+	 * Creates and returns an exception breakpoint for an exception with the given name.
 	 * The marker associated with the breakpoint will be created on the specified resource.
 	 * Caught and uncaught specify where the exception
 	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
@@ -313,7 +319,8 @@ public class JDIDebugModel {
 	 *  which to create the breakpoint
 	 * @param caught whether to suspend in caught locations
 	 * @param uncaught whether to suspend in uncaught locations
- 	 * @param checked whether the exception is a checked exception
+ 	 * @param checked whether the exception is a checked exception (i.e. complier
+ 	 *  detected)
  	 * @param register whether to add this breakpoint to the breakpoint manager
  	 * @param attributes a map of client defined attributes that should be assigned
  	 *  to the underlying breakpoint marker on creation or <code>null</code> if none.
@@ -347,13 +354,13 @@ public class JDIDebugModel {
 	 * 	<code>example.SomeClass$InnerType</code>, could be specified, but
 	 * 	<code>example.SomeClass</code> is sufficient.
 	 * @param fieldName the name of the field on which to suspend (on access or modification)
-	 * @param lineNumber the lineNumber with which the breakpoint is asscoiated,
-	 *   or -1 is unspecfied. Line numbers are 1 based, associated with the compilation
-	 *   unit in which the type is defined
+	 * @param lineNumber the lineNumber on which the breakpoint is set - line
+	 *   numbers are 1 based, associated with the source file in which
+	 *   the breakpoint is set
 	 * @param charStart the first character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
  	 * @param charEnd the last character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
 	 * @param hitCount the number of times the breakpoint will be hit before
 	 * 	suspending execution - 0 if it should always suspend
 	 * @param register whether to add this breakpoint to the breakpoint manager
@@ -393,13 +400,13 @@ public class JDIDebugModel {
 	 *  on exit of methods
 	 * @param nativeOnly whether this breakpoint causes execution to suspend
 	 *  on entry/exit of native methods only
-	 * @param lineNumber the lineNumber on which the breakpoint is created - line
-	 *   numbers are 1 based, associated with the compilation unit in which
-	 *   the type is defined
+	 * @param lineNumber the lineNumber on which the breakpoint is set - line
+	 *   numbers are 1 based, associated with the source file in which
+	 *   the breakpoint is set
 	 * @param charStart the first character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
  	 * @param charEnd the last character index associated with the breakpoint,
-	 *   or -1 if unspecified
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
 	 * @param hitCount the number of times the breakpoint will be hit before
 	 *   suspending execution - 0 if it should always suspend
 	 * @param register whether to add this breakpoint to the breakpoint manager
@@ -419,13 +426,13 @@ public class JDIDebugModel {
 	}
 		
 	/**
-	 * Returns whether a line breakpoint already exists on the given line number in a
-	 * type with the specified fully qualified name.
+	 * Returns whether a Java line breakpoint is already registered with the breakpoint
+	 * manager for a type with the given name at the given line number.
 	 * 
-	 * @param typeName the fully qualified name of the type in which to check for a line breakpoint
-	 * @param lineNumber the line number on which to check for a line breakpoint
-	 * @return whether a line breakpoint already exists on the given line number in
-	 *   the given type.
+	 * @param typeName fully qualified type name
+	 * @param lineNumber line number
+	 * @return whether a Java line breakpoint is already registered with the breakpoint
+	 *  manager for a type with the given name at the given line number
 	 * @exception CoreException if unable to retrieve the associated marker
 	 * 	attributes (line number).
 	 */
