@@ -215,6 +215,9 @@ public class JREsComboBlock implements ISelectionProvider {
 				if (fSpecificButton.getSelection()) {
 					fCombo.setEnabled(true);
 					fManageButton.setEnabled(true);
+					if (fCombo.getText().length() == 0 && !fVMs.isEmpty()) {
+						fCombo.select(0);
+					}
 					fireSelectionChanged();
 				}
 			}
