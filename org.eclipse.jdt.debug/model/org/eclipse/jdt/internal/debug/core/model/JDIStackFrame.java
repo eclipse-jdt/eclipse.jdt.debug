@@ -1132,6 +1132,19 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 		return null;
 	}
+	
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getSourcePath()
+	 */
+	public String getSourcePath() throws DebugException {
+		try {
+			return getUnderlyingStackFrame().location().sourcePath();
+		} catch (AbsentInformationException e) {
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_path"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+		return null;
+	}	
 
 	/*
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getLineNumber(java.lang.String)
