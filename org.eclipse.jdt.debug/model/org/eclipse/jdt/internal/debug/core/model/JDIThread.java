@@ -1299,6 +1299,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected void resumedByVM() {
 		setRunning(true);
+		disposeStackFrames();
 	}
 
 	/**
