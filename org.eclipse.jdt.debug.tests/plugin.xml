@@ -73,6 +73,13 @@
             modes="TEST_MODE"
             id="org.eclipse.jdt.debug.tests.testModeLaunchDelegate">
       </launchDelegate>
+      <launchDelegate
+            sourceLocatorId="org.eclipse.jdt.debug.tests.testSourceLocator"
+            delegate="org.eclipse.jdt.debug.testplugin.TestLaunchDelegate"
+            type="org.eclipse.jdt.debug.tests.testConfigType"
+            sourcePathComputerId="org.eclipse.jdt.debug.tests.testSourcePathComputer"
+            modes="debug"
+            id="org.eclipse.jdt.debug.tests.testSourceDelegate"/>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -178,7 +185,7 @@
       <launchConfigurationType
             name="Test Config Type"
             delegate="org.eclipse.jdt.debug.testplugin.TestLaunchDelegate"
-            modes="run, debug"
+            modes="run"
             id="org.eclipse.jdt.debug.tests.testConfigType">
       </launchConfigurationType>
    </extension>
@@ -232,6 +239,19 @@
       			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockDynamic"/>
       		</enablement>
       </renderingBindings>                  
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            class="org.eclipse.jdt.debug.testplugin.TestSourceLocator"
+            name="Test Source Locator"
+            id="org.eclipse.jdt.debug.tests.testSourceLocator"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourcePathComputers">
+      <sourcePathComputer
+            class="org.eclipse.jdt.debug.tests.SourcePathComputerDelegate1"
+            id="org.eclipse.jdt.debug.tests.testSourcePathComputer"/>
    </extension>
 
 </plugin>

@@ -15,6 +15,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
@@ -39,4 +40,30 @@ public class LaunchDelegateTests extends AbstractDebugTest {
 		ILaunch launch = workingCopy.launch(ILaunchManager.DEBUG_MODE, null);
 		manager.removeLaunch(launch);
 	}
+	
+	/**
+	 * Tests that a delegate extension can provide the source path computer.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testSourcePathComputerExtension() throws CoreException {
+		ILaunchManager manager = getLaunchManager();
+		ILaunchConfigurationType configurationType = manager.getLaunchConfigurationType("org.eclipse.jdt.debug.tests.testConfigType");
+		assertNotNull("Missing test launch config type", configurationType);
+		ISourcePathComputer sourcePathComputer = configurationType.getSourcePathComputer();
+		assertEquals("Wrond source path computer", "org.eclipse.jdt.debug.tests.testSourcePathComputer", sourcePathComputer.getId());
+	}
+	
+	/**
+	 * Tests that a delegate extension can provide the source locator.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testSourceLocatorExtension() throws CoreException {
+		ILaunchManager manager = getLaunchManager();
+		ILaunchConfigurationType configurationType = manager.getLaunchConfigurationType("org.eclipse.jdt.debug.tests.testConfigType");
+		assertNotNull("Missing test launch config type", configurationType);
+		String sourceLocatorId = configurationType.getSourceLocatorId();
+		assertEquals("Wrond source locater id", "org.eclipse.jdt.debug.tests.testSourceLocator", sourceLocatorId);
+	}	
 }
