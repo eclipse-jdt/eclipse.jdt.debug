@@ -220,6 +220,6 @@ public class ThreadReferenceTest extends AbstractJDITest {
 	 * Test JDI threadGroup() and JDWP 'Thread - Get threadGroup'.
 	 */
 	public void testJDIThreadGroup() {
-		assertTrue("1", fThread.threadGroup() instanceof ThreadGroupReference);
+		assertNotNull("1", fThread.threadGroup());
 	}
 }
