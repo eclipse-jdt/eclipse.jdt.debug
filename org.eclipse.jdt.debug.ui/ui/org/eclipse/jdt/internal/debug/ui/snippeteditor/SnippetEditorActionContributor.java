@@ -44,6 +44,7 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		toolBarManager.add(fRunSnippetAction);
 		toolBarManager.add(fStopAction);
 		toolBarManager.add(fSelectImportsAction);
+		toolBarManager.update(false);
 	}
 			
 	/**
