@@ -24,8 +24,6 @@ public class JavaDebugImages {
 
 	private static URL fgIconBaseURL= null;
 	
-	// Determine display depth. If depth > 4 then we use high color images. Otherwise low color
-	// images are used
 	static {
 		String pathSuffix= "icons/full/"; //$NON-NLS-1$
 		try {
