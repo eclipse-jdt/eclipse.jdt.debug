@@ -71,11 +71,11 @@ public class AutomatedSuite extends TestSuite {
 	public AutomatedSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));
-//		addTest(new TestSuite(DeferredBreakpointTests.class));
-//		addTest(new TestSuite(ConditionalBreakpointsTests.class));
-//		addTest(new TestSuite(HitCountBreakpointsTests.class));
-//		addTest(new TestSuite(ThreadFilterBreakpointsTests.class));
-//		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
+		addTest(new TestSuite(DeferredBreakpointTests.class));
+		addTest(new TestSuite(ConditionalBreakpointsTests.class));
+		addTest(new TestSuite(HitCountBreakpointsTests.class));
+		addTest(new TestSuite(ThreadFilterBreakpointsTests.class));
+		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
 
 		// This test suite is commented out because it references preferences
 		// in a UI plugin.  This causes the UI plugin to get loaded as soon
@@ -83,30 +83,30 @@ public class AutomatedSuite extends TestSuite {
 		// failures in other tests.  
 		//addTest(new TestSuite(StepFilterTests.class));
 
-//		addTest(new TestSuite(InstanceVariableTests.class));
-//		addTest(new TestSuite(LocalVariableTests.class));
-//		addTest(new TestSuite(StaticVariableTests.class));
-//		addTest(new TestSuite(MethodBreakpointTests.class));
-//		addTest(new TestSuite(ExceptionBreakpointTests.class));
-//		addTest(new TestSuite(WatchpointTests.class));
-//		addTest(new TestSuite(PatternBreakpointTests.class));
-//		addTest(new TestSuite(TargetPatternBreakpointTests.class));
-//		addTest(new TestSuite(EventSetTests.class));
-//		addTest(new TestSuite(RuntimeClasspathEntryTests.class));
-//		addTest(new TestSuite(ClasspathProviderTests.class));
+		addTest(new TestSuite(InstanceVariableTests.class));
+		addTest(new TestSuite(LocalVariableTests.class));
+		addTest(new TestSuite(StaticVariableTests.class));
+		addTest(new TestSuite(MethodBreakpointTests.class));
+		addTest(new TestSuite(ExceptionBreakpointTests.class));
+		addTest(new TestSuite(WatchpointTests.class));
+		addTest(new TestSuite(PatternBreakpointTests.class));
+		addTest(new TestSuite(TargetPatternBreakpointTests.class));
+		addTest(new TestSuite(EventSetTests.class));
+		addTest(new TestSuite(RuntimeClasspathEntryTests.class));
+		addTest(new TestSuite(ClasspathProviderTests.class));
 		addTest(new TestSuite(SourceLocationTests.class));
-//		addTest(new TestSuite(ProcessTests.class));
-//		addTest(new TestSuite(BootpathTests.class));
+		addTest(new TestSuite(ProcessTests.class));
+		addTest(new TestSuite(BootpathTests.class));
 		
 		// Evaluation tests
-//		addTest(new TestSuite(ProjectCreationDecorator.class));		
-//		addTest(new TestSuite(TestsOperators1.class));
-//		addTest(new TestSuite(TestsOperators2.class));
-//		addTest(new TestSuite(TestsArrays.class));
-//		addTest(new TestSuite(TestsNestedTypes1.class));
-//		addTest(new TestSuite(TestsNestedTypes2.class));
-//		addTest(new TestSuite(TestsTypeHierarchy1.class));
-//		addTest(new TestSuite(TestsTypeHierarchy2.class));
+		addTest(new TestSuite(ProjectCreationDecorator.class));		
+		addTest(new TestSuite(TestsOperators1.class));
+		addTest(new TestSuite(TestsOperators2.class));
+		addTest(new TestSuite(TestsArrays.class));
+		addTest(new TestSuite(TestsNestedTypes1.class));
+		addTest(new TestSuite(TestsNestedTypes2.class));
+		addTest(new TestSuite(TestsTypeHierarchy1.class));
+		addTest(new TestSuite(TestsTypeHierarchy2.class));
 		
 		// This test suite is commented out because it references preferences
 		// in a UI plugin.  This causes the UI plugin to get loaded as soon
