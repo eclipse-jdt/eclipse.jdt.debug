@@ -43,8 +43,8 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 		super(target, type);
 	}
 
-	/**
-	 * @see IJavaClassType#newInstance(String, IJavaValue[], IJavaThread)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaClassType#newInstance(java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[], org.eclipse.jdt.debug.core.IJavaThread)
 	 */
 	public IJavaObject newInstance(String signature, IJavaValue[] args, IJavaThread thread) throws DebugException {
 		if (getUnderlyingType() instanceof ClassType) {
@@ -71,8 +71,8 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 		return null;
 	}
 
-	/**
-	 * @see IJavaType#sendMessage(String, String, IJavaValue[], IJavaThread)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaClassType#sendMessage(java.lang.String, java.lang.String, org.eclipse.jdt.debug.core.IJavaValue[], org.eclipse.jdt.debug.core.IJavaThread)
 	 */
 	public IJavaValue sendMessage(String selector, String signature, IJavaValue[] args, IJavaThread thread) throws DebugException {
 		if (getUnderlyingType() instanceof ClassType) {
@@ -120,8 +120,8 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 		return arguments;	
 	}
 
-	/**
-	 * @see IJavaClassType#getSuperclass()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getSuperclass()
 	 */
 	public IJavaClassType getSuperclass() throws DebugException {
 		try {
