@@ -43,7 +43,7 @@ public class VariableClasspathResolver implements IRuntimeClasspathEntryResolver
 	private IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry) throws CoreException{
 		String variableString = ((VariableClasspathEntry)entry).getVariableString();
 		String strpath = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(variableString);
-		IPath path = new Path(strpath);
+		IPath path = new Path(strpath).makeAbsolute();
 		IRuntimeClasspathEntry archiveEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
 		return new IRuntimeClasspathEntry[] { archiveEntry };	
 	}
