@@ -15,7 +15,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -40,7 +39,6 @@ import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -168,7 +166,6 @@ public class AddVMDialog extends StatusDialog {
 	}
 		
 	protected Control createDialogArea(Composite ancestor) {
-		Font font = ancestor.getFont();
 		createDialogFields();
 		Composite parent = (Composite)super.createDialogArea(ancestor);
 		((GridLayout)parent.getLayout()).numColumns= 3;
@@ -188,8 +185,7 @@ public class AddVMDialog extends StatusDialog {
 		l.setText(JREMessages.getString("AddVMDialog.JRE_system_libraries__1")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
-		l.setLayoutData(gd);
-		l.setFont(font);		
+		l.setLayoutData(gd);	
 		
 		fLibraryBlock = new VMLibraryBlock(this);
 		Control block = fLibraryBlock.createControl(parent);
@@ -209,7 +205,7 @@ public class AddVMDialog extends StatusDialog {
 		
 		initializeFields();
 		createFieldListeners();
-		
+		applyDialogFont(parent);
 		return parent;
 	}
 	
