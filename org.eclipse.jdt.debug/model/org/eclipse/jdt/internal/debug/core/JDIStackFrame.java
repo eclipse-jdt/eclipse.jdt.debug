@@ -728,6 +728,31 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	protected boolean exists() throws DebugException {
 		return ((JDIThread)getThread()).getChildren0().indexOf(this) != -1;
 	}
+	
+	/**
+	 * @see ITerminate#canTerminate()
+	 */
+	public boolean canTerminate() {
+		return getThread().canTerminate() || getDebugTarget().canTerminate();
+	}
+
+	/**
+	 * @see ITerminate#isTerminated()
+	 */
+	public boolean isTerminated() {
+		return getThread().isTerminated();
+	}
+
+	/**
+	 * @see ITerminate#terminate()
+	 */
+	public void terminate() throws DebugException {
+		if (getThread().canTerminate()) {
+			getThread().terminate();
+		} else {
+			getDebugTarget().terminate();
+		}
+	}
 }
 
 
