@@ -166,11 +166,11 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		Group group = new Group(comp, SWT.NONE);
 		group.setText(LauncherMessages.getString("JavaConnectTab.Connection_Properties_1")); //$NON-NLS-1$
 		y = new GridLayout();
-		y.numColumns = 2;
-		group.setLayout(y);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(gd);		
-		fArgumentComposite = group;
+		spacingComposite.setLayout(y);
+		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		spacingComposite.setLayoutData(gd);	
+		fArgumentComposite= spacingComposite;
 		
 		createVerticalSpacer(comp, 2);		
 		
@@ -181,7 +181,6 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
 	}
 
 	/**
@@ -237,14 +236,13 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 				store.setDefault(arg.name(), ((Connector.BooleanArgument)arg).booleanValue());
 				field = new BooleanFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);					
 			}
-			field.fillIntoGrid(fArgumentComposite, 2);
 			field.setPreferenceStore(store);
 			field.loadDefault();
 			field.setPropertyChangeListener(this);
 			fFieldEditorMap.put(key, field);
 		}
 		
-		fArgumentComposite.getParent().layout();
+		fArgumentComposite.getParent().getParent().layout();
 	}
 	
 	/**
@@ -256,7 +254,6 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		}
 		return label;
 	}
-	
 
 	/**
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
