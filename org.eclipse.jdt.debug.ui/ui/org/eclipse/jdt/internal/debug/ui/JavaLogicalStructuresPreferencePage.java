@@ -40,6 +40,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -358,6 +359,27 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         fLogicalStructuresViewer.setLabelProvider(new LogicalStructuresListViewerLabelProvider());
         fLogicalStructuresViewer.addSelectionChangedListener(this);
         fLogicalStructuresViewer.setInput(this);
+        fLogicalStructuresViewer.setSorter(new ViewerSorter() {
+            public int compare(Viewer iViewer, Object e1, Object e2) {
+                if (e1 == null) {
+                    return -1;
+                } else if (e2 == null) {
+                    return 1;
+                } else {
+                    String type1= ((JavaLogicalStructure)e1).getQualifiedTypeName();
+                    int index= type1.lastIndexOf('.') + 1;
+                    if (index > 0) {
+                        type1= type1.substring(index);
+                    }
+                    String type2= ((JavaLogicalStructure)e2).getQualifiedTypeName();
+                    index= type2.lastIndexOf('.') + 1;
+                    if (index > 0) {
+                        type2= type2.substring(index);
+                    }
+                    return type1.compareToIgnoreCase(type2);
+                }
+            }
+        });
     }
 
     /* (non-Javadoc)
