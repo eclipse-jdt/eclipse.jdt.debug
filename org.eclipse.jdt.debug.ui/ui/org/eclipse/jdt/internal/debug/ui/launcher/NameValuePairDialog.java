@@ -8,6 +8,8 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -55,6 +57,11 @@ public class NameValuePairDialog extends Dialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		fNameText.setLayoutData(gd);
+		fNameText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateButtons();
+			}
+		});
 		
 		fValueLabel = new Label(comp, SWT.NONE);
 		fValueLabel.setText(fFieldLabels[1]);
@@ -64,6 +71,11 @@ public class NameValuePairDialog extends Dialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		fValueText.setLayoutData(gd);
+		fValueText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateButtons();
+			}
+		});		
 		
 		return comp;
 	}
@@ -99,4 +111,22 @@ public class NameValuePairDialog extends Dialog {
 			shell.setText(fTitle);
 		}
 	}
+	
+	/**
+	 * Enable the OK button if valid input
+	 */
+	protected void updateButtons() {
+		String name = fNameText.getText().trim();
+		String value = fValueText.getText().trim();
+		getOKButton().setEnabled((name.length() > 0) &&(value.length() > 0));
+	}
+	
+	/**
+	 * Enable the buttons on creation.
+	 */
+	public void create() {
+		super.create();
+		updateButtons();
+	}
+	
 }
