@@ -27,6 +27,8 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.DebugUITools;
@@ -60,7 +62,7 @@ import com.sun.jdi.ObjectReference;
  * <li>Step filters</li>
  * </ul>
  */
-public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventSetListener, IPropertyChangeListener, IJavaBreakpointListener {
+public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventSetListener, IPropertyChangeListener, IJavaBreakpointListener, ILaunchListener {
 	
 	/**
 	 * Singleton options manager
@@ -195,6 +197,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	public void startup() throws CoreException {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JDIDebugModel.addJavaBreakpointListener(this);
 		updateActiveFilters();
@@ -206,6 +209,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	public void shutdown() throws CoreException {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JDIDebugModel.removeJavaBreakpointListener(this);
 		fProblemMap.clear();
@@ -744,6 +748,27 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 				dialog.open();
 			}
 		});
+	}
+	
+
+	/**
+	 * Startup problem handling if required.
+	 * 
+	 * @see ILaunchListener#launchAdded(ILaunch)
+	 */
+	public void launchAdded(ILaunch launch) {		
+		initializeProblemHandling();
+	}
+	/**
+	 * @see ILaunchListener#launchChanged(ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {
+	}
+
+	/**
+	 * @see ILaunchListener#launchRemoved(ILaunch)
+	 */
+	public void launchRemoved(ILaunch launch) {
 	}
 	
 }
