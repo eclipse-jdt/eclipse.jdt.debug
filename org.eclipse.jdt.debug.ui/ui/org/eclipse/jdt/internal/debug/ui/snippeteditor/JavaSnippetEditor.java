@@ -106,20 +106,20 @@ import com.sun.jdi.ObjectReference;
  * An editor for Java snippets.
  */
 public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEventListener, IEvaluationListener, IValueDetailListener {			
-	public static final String PACKAGE_CONTEXT = "SnippetEditor.package"; //$NON-NLS-1$
-	
-	private final static String TAG= "input_element"; //$NON-NLS-1$
+	public static final String IMPORTS_CONTEXT = "SnippetEditor.imports"; //$NON-NLS-1$
 	
 	public final static int RESULT_DISPLAY= 1;
 	public final static int RESULT_RUN= 2;
 	public final static int RESULT_INSPECT= 3;
+	
+	private int fResultMode; // one of the RESULT_* constants
 	
 	private IJavaProject fJavaProject;
 	private IEvaluationContext fEvaluationContext;
 	private IDebugTarget fVM;
 	private String[] fLaunchedClassPath;
 	private List fSnippetStateListeners;	
-	private int fResultMode; // one of the RESULT_* constants from above
+	
 	private boolean fEvaluating;
 	private IJavaThread fThread;
 	private int fAttempts= 0;
@@ -154,7 +154,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		String property= getPage().getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), PACKAGE_CONTEXT));
+		String property= getPage().getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), IMPORTS_CONTEXT));
 		if (property != null) {
 			fImports = JavaDebugOptionsManager.parseList(property);
 		}
@@ -162,6 +162,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		
 	public void dispose() {
 		shutDownVM();
+		fPresentation.dispose();
 		fSnippetStateListeners= Collections.EMPTY_LIST;
 		super.dispose();
 	}
@@ -196,11 +197,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "SelectImports"); //$NON-NLS-1$
 	}
 
-	public boolean isVMLaunched() {
+	protected boolean isVMLaunched() {
 		return fVM != null;
 	}
 	
-	public boolean isEvaluating() {
+	protected boolean isEvaluating() {
 		return fEvaluating;
 	}
 	
@@ -273,19 +274,19 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}
 	
-	public void setImports(String[] imports) {
+	protected void setImports(String[] imports) {
 		fImports= imports;
 		String serialized= JavaDebugOptionsManager.serializeList(imports);
 		// persist
 		try {
-			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), PACKAGE_CONTEXT), serialized);
+			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), IMPORTS_CONTEXT), serialized);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e.getStatus());
-			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.packagecontext"), null, e.getStatus()); //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.imports"), null, e.getStatus()); //$NON-NLS-1$
 		}
 	}
 	
-	public String[] getImports() {
+	protected String[] getImports() {
 		return fImports;
 	}
 			
@@ -314,7 +315,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return fJavaProject;
 	}
 	
-	public void shutDownVM() {
+	protected void shutDownVM() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 
 		// The real shut down

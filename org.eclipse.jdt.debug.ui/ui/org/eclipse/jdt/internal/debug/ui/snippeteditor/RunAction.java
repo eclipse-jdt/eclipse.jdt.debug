@@ -1,18 +1,16 @@
+package org.eclipse.jdt.internal.debug.ui.snippeteditor;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.ui.texteditor.IUpdate;
-
 
 /**
  * Runs a snippet
- *
  */
-public class RunAction extends SnippetAction implements IUpdate {
+public class RunAction extends SnippetAction {
 	
 	public RunAction(JavaSnippetEditor editor) {
 		super(editor);
@@ -23,9 +21,9 @@ public class RunAction extends SnippetAction implements IUpdate {
 	}
 	
 	/**
-	 * The user has invoked this action.
+	 * @see IAction#run()
 	 */
 	public void run() {
-		fEditor.evalSelection(JavaSnippetEditor.RESULT_RUN);
+		getEditor().evalSelection(JavaSnippetEditor.RESULT_RUN);
 	} 
 }

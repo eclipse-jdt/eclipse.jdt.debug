@@ -24,12 +24,15 @@ public class StopAction extends SnippetAction {
 	}
 	
 	/**
-	 * The user has invoked this action.
+	 * @see IAction#run()
 	 */
 	public void run() {
-		fEditor.shutDownVM();
+		getEditor().shutDownVM();
 	}
 	
+	/**
+	 * @see ISnippetStateChangedListener#snippetStateChanged(JavaSnippetEditor)
+	 */
 	public void snippetStateChanged(JavaSnippetEditor editor) {
 		setEnabled(editor != null && editor.isVMLaunched());
 	}

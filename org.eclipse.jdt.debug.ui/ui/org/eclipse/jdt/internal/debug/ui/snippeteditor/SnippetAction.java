@@ -14,7 +14,7 @@ import org.eclipse.jface.text.ITextSelection;
  */
 public abstract class SnippetAction extends Action implements ISnippetStateChangedListener {
 		
-	protected JavaSnippetEditor fEditor;
+	private JavaSnippetEditor fEditor;
 	
 	public SnippetAction(JavaSnippetEditor editor) {
 		setEditor(editor);
@@ -31,26 +31,15 @@ public abstract class SnippetAction extends Action implements ISnippetStateChang
 		}
 	} 
 	
+	/**
+	 * @see ISnippetStateChangedListener#snippetStateChanged(JavaSnippetEditor)
+	 */
 	public void snippetStateChanged(JavaSnippetEditor editor) {
 		if (editor != null && !editor.isEvaluating()) {
 			update();
 		} else {
 			setEnabled(false);
 		}
-	}
-	
-	/**
-	 * Common update method for subclasses
-	 * that implement <code>IUpdate</code>
-	 */
-	public void update() {
-		ITextSelection selection= (ITextSelection)fEditor.getSelectionProvider().getSelection();
-		String text= selection.getText();
-		boolean enabled= false;
-		if (text != null) {
-			enabled= textHasContent(text);
-		} 
-		setEnabled(enabled);
 	}
 	
 	protected boolean textHasContent(String text) {
@@ -63,5 +52,22 @@ public abstract class SnippetAction extends Action implements ISnippetStateChang
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Updates the enabled state based on the current text selection.
+	 */
+	protected void update() {
+		ITextSelection selection= (ITextSelection)fEditor.getSelectionProvider().getSelection();
+		String text= selection.getText();
+		boolean enabled= false;
+		if (text != null) {
+			enabled= textHasContent(text);
+		} 
+		setEnabled(enabled);
+	}
+	
+	protected JavaSnippetEditor getEditor() {
+		return fEditor;
 	}
 }
