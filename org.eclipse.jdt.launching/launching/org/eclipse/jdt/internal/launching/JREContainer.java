@@ -11,12 +11,15 @@
 package org.eclipse.jdt.internal.launching;
 
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
@@ -45,6 +48,8 @@ public class JREContainer implements IClasspathContainer {
 	 * Cache of classpath entries per VM install. Cleared when a VM changes.
 	 */
 	private static Map fgClasspathEntries = null;
+	
+	private static IAccessRule[] EMPTY_RULES = new IAccessRule[0];
 	
 	/**
 	 * Returns the classpath entries associated with the given VM.
@@ -102,7 +107,17 @@ public class JREContainer implements IClasspathContainer {
 				if (rootPath.isEmpty()) {
 					rootPath = null;
 				}
-				entries.add(JavaCore.newLibraryEntry(libs[i].getSystemLibraryPath(), sourcePath, rootPath));
+				URL javadocLocation = libs[i].getJavadocLocation();
+				if (javadocLocation == null) {
+					javadocLocation = vm.getJavadocLocation();
+				}
+				IClasspathAttribute[] attributes = null;
+				if (javadocLocation == null) {
+					attributes = new IClasspathAttribute[0];
+				} else {
+					attributes = new IClasspathAttribute[]{JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, javadocLocation.toExternalForm())};
+				}
+				entries.add(JavaCore.newLibraryEntry(libs[i].getSystemLibraryPath(), sourcePath, rootPath, EMPTY_RULES, attributes, false));
 			}
 		}
 		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);		

@@ -12,6 +12,8 @@ package org.eclipse.jdt.internal.launching;
 
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ClasspathContainerInitializer;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -133,7 +136,22 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 					if (rootPath == null) {
 						rootPath = Path.EMPTY;
 					}
-					libs[i] = new LibraryLocation(path, srcPath, rootPath);
+					URL javadocLocation = null;
+					IClasspathAttribute[] extraAttributes = entry.getExtraAttributes();
+					for (int j = 0; j < extraAttributes.length; j++) {
+						IClasspathAttribute attribute = extraAttributes[j];
+						if (attribute.getName().equals(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME)) {
+							String url = attribute.getValue();
+							if (url != null && url.trim().length() > 0) {
+								try {
+									javadocLocation = new URL(url);
+								} catch (MalformedURLException e) {
+									LaunchingPlugin.log(e);
+								}
+							}
+						}
+					}
+					libs[i] = new LibraryLocation(path, srcPath, rootPath, javadocLocation);
 				} else {
 					IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.Classpath_entry_{0}_does_not_refer_to_an_existing_library._2"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
 					throw new CoreException(status);

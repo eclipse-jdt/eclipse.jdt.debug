@@ -266,16 +266,18 @@ public class StandardVMType extends AbstractVMInstallType {
 				
 		String[] bootpath = libInfo.getBootpath();
 		
-		List extensions = gatherAllLibraries(libInfo.getExtensionDirs());
+		List extensions = gatherAllLibraries(libInfo.getExtensionDirs(), installLocation);
 		List allLibs = new ArrayList(bootpath.length + extensions.size());
 		
+		URL url = getDefaultJavadocLocation(installLocation);
 		for (int i = 0; i < bootpath.length; i++) {
 			IPath path = new Path(bootpath[i]);
 			File lib = path.toFile(); 
 			if (lib.exists() && lib.isFile()) {
 				allLibs.add(new LibraryLocation(path,
 								getDefaultSystemLibrarySource(lib),
-								getDefaultPackageRootPath()));
+								getDefaultPackageRootPath(),
+								url));
 			}
 			
 		}
@@ -344,8 +346,9 @@ public class StandardVMType extends AbstractVMInstallType {
 	 * @param dirPaths a list of absolute paths of directories to search
 	 * @return List of all zips and jars
 	 */
-	protected List gatherAllLibraries(String[] dirPaths) {
+	protected List gatherAllLibraries(String[] dirPaths, File installLocation) {
 		List libraries = new ArrayList();
+		URL defaultJavadocLocation = getDefaultJavadocLocation(installLocation);
 		for (int i = 0; i < dirPaths.length; i++) {
 			File extDir = new File(dirPaths[i]);
 			if (extDir != null && extDir.exists() && extDir.isDirectory()) {
@@ -360,7 +363,7 @@ public class StandardVMType extends AbstractVMInstallType {
 							if (suffix.equalsIgnoreCase(".zip") || suffix.equalsIgnoreCase(".jar")) { //$NON-NLS-1$ //$NON-NLS-2$
 								try {
 									IPath libPath = new Path(jar.getCanonicalPath());
-									LibraryLocation library = new LibraryLocation(libPath, Path.EMPTY, Path.EMPTY);
+									LibraryLocation library = new LibraryLocation(libPath, Path.EMPTY, Path.EMPTY, defaultJavadocLocation);
 									libraries.add(library);
 								} catch (IOException e) {
 									LaunchingPlugin.log(e);

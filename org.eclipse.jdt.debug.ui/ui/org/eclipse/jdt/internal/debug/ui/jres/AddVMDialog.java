@@ -12,17 +12,14 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.DialogSettingsHelper;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ComboDialogField;
@@ -35,7 +32,6 @@ import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.VMStandin;
-import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -68,7 +64,8 @@ public class AddVMDialog extends StatusDialog {
 	
 	private StringDialogField fVMArgs;
 
-	private StringButtonDialogField fJavadocURL;
+	// the VM install's javadoc location
+	private URL fJavadocLocation = null;
 	private boolean fAutoDetectJavadocLocation = false;
 	
 	private IStatus[] fStati;
@@ -115,15 +112,7 @@ public class AddVMDialog extends StatusDialog {
 		});
 		fJRERoot.setLabelText(JREMessages.getString("addVMDialog.jreHome")); //$NON-NLS-1$
 		fJRERoot.setButtonLabel(JREMessages.getString("addVMDialog.browse1")); //$NON-NLS-1$
-	
-		fJavadocURL = new StringButtonDialogField(new IStringButtonAdapter() {
-			public void changeControlPressed(DialogField field) {
-				browseForJavadocURL();
-			}
-		});
-		fJavadocURL.setLabelText(JREMessages.getString("AddVMDialog.Java&doc_URL__1")); //$NON-NLS-1$
-		fJavadocURL.setButtonLabel(JREMessages.getString("AddVMDialog.Bro&wse..._2")); //$NON-NLS-1$
-		
+			
 		fVMArgs= new StringDialogField();
 		fVMArgs.setLabelText(JREMessages.getString("AddVMDialog.23")); //$NON-NLS-1$
 	}
@@ -149,12 +138,6 @@ public class AddVMDialog extends StatusDialog {
 			}
 		});
 	
-		fJavadocURL.setDialogFieldListener(new IDialogFieldListener() {
-			public void dialogFieldChanged(DialogField field) {
-				setJavadocURLStatus(validateJavadocURL());
-				updateStatusLine();
-			}
-		});		
 	}
 	
 	protected String getVMName() {
@@ -177,8 +160,6 @@ public class AddVMDialog extends StatusDialog {
 	
 		fJRERoot.doFillIntoGrid(parent, 3);
 		
-		fJavadocURL.doFillIntoGrid(parent, 3);
-		
 		fVMArgs.doFillIntoGrid(parent, 3);
 		
 		Label l = new Label(parent, SWT.NONE);
@@ -194,11 +175,6 @@ public class AddVMDialog extends StatusDialog {
 		block.setLayoutData(gd);
 		
 		Text t= fJRERoot.getTextControl(parent);
-		gd= (GridData)t.getLayoutData();
-		gd.grabExcessHorizontalSpace=true;
-		gd.widthHint= convertWidthInCharsToPixels(50);
-		
-		t= fJavadocURL.getTextControl(parent);
 		gd= (GridData)t.getLayoutData();
 		gd.grabExcessHorizontalSpace=true;
 		gd.widthHint= convertWidthInCharsToPixels(50);
@@ -251,19 +227,12 @@ public class AddVMDialog extends StatusDialog {
 		if (fEditedVM == null) {
 			fVMName.setText(""); //$NON-NLS-1$
 			fJRERoot.setText(""); //$NON-NLS-1$
-			fJavadocURL.setText(""); //$NON-NLS-1$
 			fLibraryBlock.initializeFrom(null, fSelectedVMType);
 			fVMArgs.setText(""); //$NON-NLS-1$
 		} else {
 			fVMTypeCombo.setEnabled(false);
 			fVMName.setText(fEditedVM.getName());
 			fJRERoot.setText(fEditedVM.getInstallLocation().getAbsolutePath());
-			URL url = fEditedVM.getJavadocLocation();
-			if (url == null) {
-				fJavadocURL.setText(""); //$NON-NLS-1$
-			} else {
-				fJavadocURL.setText(url.toExternalForm());
-			}
 			fLibraryBlock.initializeFrom(fEditedVM, fSelectedVMType);
 			String vmArgs = fEditedVM.getVMArgs();
 			if (vmArgs != null) {
@@ -313,18 +282,6 @@ public class AddVMDialog extends StatusDialog {
 		return s;
 	}
 	
-	private IStatus validateJavadocURL() {
-		String text = fJavadocURL.getText();
-		if (text != null && text.length() > 0) {
-			try {
-				new URL(text);
-			} catch (MalformedURLException e) {
-				return new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, JREMessages.getString("AddVMDialog.Invalid_URL_syntax_specified_for_Javadoc_location._1"), e); //$NON-NLS-1$
-			}
-		}
-		return new StatusInfo();
-	}
-	
 	/**
 	 * Auto-detects the default javadoc location
 	 */
@@ -332,13 +289,10 @@ public class AddVMDialog extends StatusDialog {
 		if (fAutoDetectJavadocLocation) {
 			if (getVMType() instanceof AbstractVMInstallType) {
 				AbstractVMInstallType type = (AbstractVMInstallType)getVMType();
-				URL url = type.getDefaultJavadocLocation(getInstallLocation());
-				if (url == null) { 
-					fJavadocURL.setText(""); //$NON-NLS-1$
-				} else {
-					fJavadocURL.setText(url.toExternalForm());
-				}
+				fJavadocLocation = type.getDefaultJavadocLocation(getInstallLocation());
 			}
+		} else {
+			fJavadocLocation = fEditedVM.getJavadocLocation();
 		}
 	}
 
@@ -385,28 +339,8 @@ public class AddVMDialog extends StatusDialog {
 		}
 	}
 	
-	private void browseForJavadocURL() {
-		String name = getVMName();
-		if (name.trim().length() == 0) {
-			name = JREMessages.getString("AddVMDialog.0");  //$NON-NLS-1$
-		}
-		URL[] urls= BuildPathDialogAccess.configureJavadocLocation(getShell(), name, getURL());
-
-		if (urls != null) {
-			if (urls[0] == null) {
-				fJavadocURL.setText(""); //$NON-NLS-1$
-			} else {
-				fJavadocURL.setText(urls[0].toExternalForm());
-			}
-		}
-	}	
-	
 	protected URL getURL() {
-		try {
-			return new URL(fJavadocURL.getText());
-		} catch (MalformedURLException e) {
-			return null;
-		}
+		return fJavadocLocation;
 	}
 	
 	protected void okPressed() {
@@ -460,10 +394,6 @@ public class AddVMDialog extends StatusDialog {
 	
 	private void setJRELocationStatus(IStatus status) {
 		fStati[1]= status;
-	}
-	
-	private void setJavadocURLStatus(IStatus status) {
-		fStati[2] = status;
 	}
 	
 	protected IStatus getSystemLibraryStatus() {
