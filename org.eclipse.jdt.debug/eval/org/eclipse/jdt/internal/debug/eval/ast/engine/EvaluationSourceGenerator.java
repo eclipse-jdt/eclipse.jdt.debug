@@ -8,7 +8,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
