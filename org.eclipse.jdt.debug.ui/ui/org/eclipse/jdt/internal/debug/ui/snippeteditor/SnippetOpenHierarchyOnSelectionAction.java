@@ -14,7 +14,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.actions.OpenTypeHierarchyAction;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
