@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,16 +35,13 @@ public class PrimitiveOptionsDialog extends Dialog {
 	// preference prefix	
 	private String fPrefix;
 	
-	/**
-	 * @param parentShell
-	 */
 	public PrimitiveOptionsDialog(Shell parentShell, String prefix) {
 		super(parentShell);
 		fPrefix = prefix;
 	}
 	
-	/**
-	 * @see Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		WorkbenchHelp.setHelp(
@@ -64,11 +61,12 @@ public class PrimitiveOptionsDialog extends Dialog {
 		fUnsignedButton = new Button(composite, SWT.CHECK);
 		fUnsignedButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_&unsigned_values_(byte)_5")); //$NON-NLS-1$
 		fUnsignedButton.setSelection(PrimitiveOptionsAction.getPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_UNSIGNED));
+		applyDialogFont(composite);
 		return composite;
 	}
 	
-	/**
-	 * @see Dialog#okPressed()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
