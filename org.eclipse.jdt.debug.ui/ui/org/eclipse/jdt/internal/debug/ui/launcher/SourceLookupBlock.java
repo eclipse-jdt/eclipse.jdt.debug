@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.AddAdvancedAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
@@ -53,6 +54,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	
 	protected RuntimeClasspathViewer fPathViewer;
 	protected Button fDefaultButton;
+	protected Button fDuplicatesButton;
 	protected List fActions = new ArrayList(10);
 	
 	protected static final String DIALOG_SETTINGS_PREFIX = "SourceLookupBlock"; //$NON-NLS-1$
@@ -107,6 +109,18 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 				handleDefaultButtonSelected();
 			}
 		});
+		
+		fDuplicatesButton = new Button(comp, SWT.CHECK);
+		fDuplicatesButton.setText(LauncherMessages.getString("SourceLookupBlock.&Search_for_duplicate_source_files_on_path_1")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalSpan = 2;
+		fDuplicatesButton.setLayoutData(gd);
+		fDuplicatesButton.setFont(font);
+		fDuplicatesButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});		
 		
 		List advancedActions = new ArrayList(5);
 		
@@ -192,7 +206,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		fPathViewer.setEnabled(!def);
 		updateLaunchConfigurationDialog();
 	}
-
+	
 	/**
 	 * Creates and returns a button 
 	 * 
@@ -271,7 +285,11 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		}
 		fPathViewer.setEnabled(!useDefault);
 		fPathViewer.setLaunchConfiguration(config);
-
+		try {
+			fDuplicatesButton.setSelection(config.getAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, false));
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
 	}
 	
 	/**
@@ -294,7 +312,13 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("SourceLookupBlock.Unable_to_save_source_lookup_path_1"), e); //$NON-NLS-1$
 			}	
-		}		
+		}
+		boolean dup = fDuplicatesButton.getSelection();
+		if (dup) {
+			configuration.setAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, true);		
+		} else {
+			configuration.setAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, (String)null);
+		}
 	}	
 	
 	/**
@@ -337,6 +361,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List)null);
+		configuration.setAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, (String)null);
 	}
 
 	/**
