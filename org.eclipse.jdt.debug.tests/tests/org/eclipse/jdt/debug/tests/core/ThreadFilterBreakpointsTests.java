@@ -109,7 +109,7 @@ public class ThreadFilterBreakpointsTests extends AbstractDebugTest {
 			
 	public void testModificationWatchpointThreadFilterBreakpoint() throws Exception {
 		String typeName = "MultiThreadedList";
-		IJavaLineBreakpoint bp1 = createLineBreakpoint(21, typeName);
+		IJavaLineBreakpoint bp1 = createLineBreakpoint(22, typeName);
 		
 		IJavaThread thread= null;
 		try {
