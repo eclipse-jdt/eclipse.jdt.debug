@@ -155,7 +155,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			switch (getType()) {
 				case PROJECT :
 					String name = root.getAttribute("projectName"); //$NON-NLS-1$
-					if (name == null) {
+					if (isEmpty(name)) {
 						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_project_name_4"), null); //$NON-NLS-1$
 					} else {
 						IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
@@ -164,10 +164,10 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					break;
 				case ARCHIVE :
 					path = root.getAttribute("externalArchive"); //$NON-NLS-1$
-					if (path == null) {
+					if (isEmpty(path)) {
 						// internal
 						path = root.getAttribute("internalArchive"); //$NON-NLS-1$
-						if (path == null) {
+						if (isEmpty(path)) {
 							abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_archive_path_5"), null); //$NON-NLS-1$
 						} else {
 							IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(path));
@@ -180,7 +180,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					break;
 				case VARIABLE :
 					String var = root.getAttribute("containerPath"); //$NON-NLS-1$
-					if (var == null) {
+					if (isEmpty(var)) {
 						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_6"), null); //$NON-NLS-1$
 					} else {
 						setClasspathEntry(JavaCore.newVariableEntry(new Path(var), sourcePath, rootPath));
@@ -188,7 +188,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 					break;
 				case CONTAINER :
 					var = root.getAttribute("containerPath"); //$NON-NLS-1$
-					if (var == null) {
+					if (isEmpty(var)) {
 						abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_variable_name_7"), null); //$NON-NLS-1$
 					} else {
 						setClasspathEntry(JavaCore.newContainerEntry(new Path(var)));
@@ -570,4 +570,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		return fResolvedEntry;
 	}
 		
+	protected boolean isEmpty(String string) {
+		return string == null || string.length() == 0;
+	}
 }
