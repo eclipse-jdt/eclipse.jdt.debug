@@ -418,11 +418,12 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	}
 	
 	protected void updatePathList(java.util.List listStructure, List listWidget) {
+		listWidget.removeAll();
 		if (listStructure == null) {
 			return;
 		}
 		String[] stringArray = new String[listStructure.size()];
-		listStructure.toArray(stringArray);
+		stringArray = (String[])listStructure.toArray(stringArray);
 		listWidget.setItems(stringArray);
 	}
 	
