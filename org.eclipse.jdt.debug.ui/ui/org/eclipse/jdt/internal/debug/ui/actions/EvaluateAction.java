@@ -499,7 +499,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IDataDisplay dataDisplay= getDirectDataDisplay();
 		if (dataDisplay != null) {
 			if (message.length() != 0) {
-				dataDisplay.displayExpressionValue(MessageFormat.format(ActionMessages.getString("EvaluateAction.(evaluation_failed)_Reason"), new String[] {message})); //$NON-NLS-1$
+				dataDisplay.displayExpressionValue(MessageFormat.format(ActionMessages.getString("EvaluateAction.(evaluation_failed)_Reason"), new String[] {format(message)})); //$NON-NLS-1$
 			} else {
 				dataDisplay.displayExpressionValue(ActionMessages.getString("EvaluateAction.(evaluation_failed)_1")); //$NON-NLS-1$
 			}
@@ -507,6 +507,18 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
 			ErrorDialog.openError(getShell(), ActionMessages.getString("Evaluate.error.title.eval_problems"), null, status); //$NON-NLS-1$
 		}
+	}
+	
+	private String format(String message) {
+		StringBuffer result= new StringBuffer();
+		int index= 0, pos;
+		while ((pos= message.indexOf('\n', index)) != -1) {
+			result.append("\t\t").append(message.substring(index, index= pos + 1));
+		}
+		if (index < message.length()) {
+			result.append("\t\t").append(message.substring(index));
+		}
+		return result.toString();
 	}
 	
 	protected String getExceptionMessage(Throwable exception) {

@@ -12,7 +12,6 @@ import java.text.MessageFormat;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
@@ -32,21 +31,6 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	 * debug model.
 	 */
 	private String fResult;
-	
-	protected String getErrorMessage(Message[] errors) {
-		String message= ""; //$NON-NLS-1$
-		for (int i= 0; i < errors.length; i++) {
-			Message error= errors[i];
-			//more than a warning
-			String msg= error.getMessage();
-			if (i == 0) {
-				message= "\t\t" + msg; //$NON-NLS-1$
-			} else {
-				message= MessageFormat.format(ActionMessages.getString("DisplayAction.error.problem_append_pattern"), new Object[] { message, msg }); //$NON-NLS-1$
-			}
-		}
-		return message;
-	}
 	
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
