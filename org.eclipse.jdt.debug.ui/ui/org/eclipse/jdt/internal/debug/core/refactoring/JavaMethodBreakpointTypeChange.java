@@ -35,8 +35,8 @@ public class JavaMethodBreakpointTypeChange extends JavaLineBreakpointTypeChange
 	private boolean fIsNativeOnly;
 	private boolean fIsEnable;
 	
-	public JavaMethodBreakpointTypeChange(IJavaMethodBreakpoint methodBreakpoint, IType changedType, Object argument, int changeType) throws CoreException {
-		super(methodBreakpoint, changedType, argument, changeType);
+	public JavaMethodBreakpointTypeChange(IJavaMethodBreakpoint methodBreakpoint, Object changedElement, Object argument, int changeType) throws CoreException {
+		super(methodBreakpoint, changedElement, argument, changeType);
 		fMethodName= methodBreakpoint.getMethodName();
 		fMethodSignature= methodBreakpoint.getMethodSignature();
 		fIsEntry= methodBreakpoint.isEntry();
@@ -62,7 +62,7 @@ public class JavaMethodBreakpointTypeChange extends JavaLineBreakpointTypeChange
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointTypeNameChange#performChange(org.eclipse.jdt.core.IType, java.lang.String)
 	 */
-	public Change performChange(IType newType, IType undoChangedType, Object undoArgument, int changeType) throws CoreException {
+	public Change performChange(IType newType, Object undoChangedElement, Object undoArgument, int changeType) throws CoreException {
 		String[] parameterTypes= Signature.getParameterTypes(fMethodSignature);
 		for (int i= 0; i < parameterTypes.length; i++) {
 			parameterTypes[i]= parameterTypes[i].replace('/', '.');
@@ -86,7 +86,7 @@ public class JavaMethodBreakpointTypeChange extends JavaLineBreakpointTypeChange
 				attributes);
 		newMethodBreakpoint.setEnabled(fIsEnable);
 		getBreakpoint().delete();
-		return new JavaMethodBreakpointTypeChange(newMethodBreakpoint, undoChangedType, undoArgument, changeType);
+		return new JavaMethodBreakpointTypeChange(newMethodBreakpoint, undoChangedElement, undoArgument, changeType);
 	}
 
 }

@@ -29,8 +29,8 @@ public class JavaClassPrepareBreakpointTypeChange extends JavaBreakpointTypeChan
 
 	private int fMemberType;
 	
-	public JavaClassPrepareBreakpointTypeChange(IJavaClassPrepareBreakpoint classPrepareBreakpoint, IType changedType, Object argument, int changeType) throws CoreException {
-		super(classPrepareBreakpoint, changedType, argument, changeType);
+	public JavaClassPrepareBreakpointTypeChange(IJavaClassPrepareBreakpoint classPrepareBreakpoint, Object changedElement, Object argument, int changeType) throws CoreException {
+		super(classPrepareBreakpoint, changedElement, argument, changeType);
 		fMemberType= classPrepareBreakpoint.getMemberType();
 	}	
 
@@ -51,7 +51,7 @@ public class JavaClassPrepareBreakpointTypeChange extends JavaBreakpointTypeChan
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointTypeNameChange#performChange(org.eclipse.jdt.core.IType, java.lang.String)
 	 */
-	public Change performChange(IType newType, IType undoChangedType, Object undoArgument, int changeType) throws CoreException {
+	public Change performChange(IType newType, Object undoChangedElement, Object undoArgument, int changeType) throws CoreException {
 		Map attributes= getAttributes();
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, newType);
 		ISourceRange range= newType.getNameRange();
@@ -72,7 +72,7 @@ public class JavaClassPrepareBreakpointTypeChange extends JavaBreakpointTypeChan
 				attributes);
 		// delete the old one
 		getBreakpoint().delete();
-		return new JavaClassPrepareBreakpointTypeChange(newClassPrepareBreakpoint, undoChangedType, undoArgument, changeType);
+		return new JavaClassPrepareBreakpointTypeChange(newClassPrepareBreakpoint, undoChangedElement, undoArgument, changeType);
 	}
 
 }

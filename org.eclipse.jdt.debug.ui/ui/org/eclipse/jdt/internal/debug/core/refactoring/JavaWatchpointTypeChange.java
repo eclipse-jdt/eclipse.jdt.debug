@@ -31,8 +31,8 @@ public class JavaWatchpointTypeChange extends JavaLineBreakpointTypeChange {
 	private boolean fIsAccess;
   	private boolean fIsModification;
 
-	public JavaWatchpointTypeChange(IJavaWatchpoint watchpoint, IType changedType, Object argument, int changeType) throws CoreException {
-		super(watchpoint, changedType, argument, changeType);
+	public JavaWatchpointTypeChange(IJavaWatchpoint watchpoint, Object changedElement, Object argument, int changeType) throws CoreException {
+		super(watchpoint, changedElement, argument, changeType);
 		fFieldName= watchpoint.getFieldName();
 		fIsAccess= watchpoint.isAccess();
 		fIsModification= watchpoint.isModification();
@@ -55,7 +55,7 @@ public class JavaWatchpointTypeChange extends JavaLineBreakpointTypeChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointTypeNameChange#performChange(org.eclipse.jdt.core.IType, java.lang.String)
 	 */
-	public Change performChange(IType newType, IType undoTypeChanged, Object undoArgument, int changeType) throws CoreException {
+	public Change performChange(IType newType, Object undoChangedElement, Object undoArgument, int changeType) throws CoreException {
 		IField newField= newType.getField(fFieldName);
 		Map attributes= getAttributes();
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, newField);
@@ -75,7 +75,7 @@ public class JavaWatchpointTypeChange extends JavaLineBreakpointTypeChange {
 		newWatchpoint.setEnabled(getEnable());
 		// delete the old one
 		getBreakpoint().delete();
-		return new JavaWatchpointTypeChange(newWatchpoint, undoTypeChanged, undoArgument, changeType);
+		return new JavaWatchpointTypeChange(newWatchpoint, undoChangedElement, undoArgument, changeType);
 	}
 
 }

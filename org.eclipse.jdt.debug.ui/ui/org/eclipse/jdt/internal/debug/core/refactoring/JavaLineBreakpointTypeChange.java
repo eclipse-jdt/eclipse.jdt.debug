@@ -30,8 +30,8 @@ public class JavaLineBreakpointTypeChange extends JavaBreakpointTypeChange {
 	private int fCharStart;
 	private int fCharEnd;
 	
-	public JavaLineBreakpointTypeChange(IJavaLineBreakpoint lineBreakpoint, IType changedType, Object argument, int changeType) throws CoreException {
-		super(lineBreakpoint, changedType, argument, changeType);
+	public JavaLineBreakpointTypeChange(IJavaLineBreakpoint lineBreakpoint, Object changedElement, Object argument, int changeType) throws CoreException {
+		super(lineBreakpoint, changedElement, argument, changeType);
 		fLineNumber= lineBreakpoint.getLineNumber();
 		fCharStart= lineBreakpoint.getCharStart();
 		fCharEnd= lineBreakpoint.getCharEnd();
@@ -54,7 +54,7 @@ public class JavaLineBreakpointTypeChange extends JavaBreakpointTypeChange {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointTypeNameChange#performChange(org.eclipse.jdt.core.IType, java.lang.String)
 	 */
-	public Change performChange(IType newType, IType undoChangedType, Object undoArgument, int changeType) throws CoreException {
+	public Change performChange(IType newType, Object undoChangedElement, Object undoArgument, int changeType) throws CoreException {
 		Map attributes= getAttributes();
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, newType);
 		// create the new breakpoint
@@ -70,7 +70,7 @@ public class JavaLineBreakpointTypeChange extends JavaBreakpointTypeChange {
 				);
 		// delete the old one
 		getBreakpoint().delete();
-		return new JavaLineBreakpointTypeChange(newLineBreakpoint, undoChangedType, undoArgument, changeType);
+		return new JavaLineBreakpointTypeChange(newLineBreakpoint, undoChangedElement, undoArgument, changeType);
 	}
 
 	public int getCharEnd() {

@@ -30,8 +30,8 @@ public class JavaExceptionBreakpointTypeChange extends JavaBreakpointTypeChange 
 	private boolean fIsUncaught;
 	private boolean fIsChecked;
 	
-	public JavaExceptionBreakpointTypeChange(IJavaExceptionBreakpoint classPrepareBreakpoint, IType changedType, Object argument, int changeType) throws CoreException {
-		super(classPrepareBreakpoint, changedType, argument, changeType);
+	public JavaExceptionBreakpointTypeChange(IJavaExceptionBreakpoint classPrepareBreakpoint, Object changedElement, Object argument, int changeType) throws CoreException {
+		super(classPrepareBreakpoint, changedElement, argument, changeType);
 		fIsCaught= classPrepareBreakpoint.isCaught();
 		fIsUncaught= classPrepareBreakpoint.isUncaught();
 		fIsChecked= classPrepareBreakpoint.isChecked();
@@ -54,7 +54,7 @@ public class JavaExceptionBreakpointTypeChange extends JavaBreakpointTypeChange 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointTypeNameChange#performChange(org.eclipse.jdt.core.IType, java.lang.String)
 	 */
-	public Change performChange(IType newType, IType undoChangedType, Object undoArgument, int changeType) throws CoreException {
+	public Change performChange(IType newType, Object undoChangedElement, Object undoArgument, int changeType) throws CoreException {
 		Map attributes= getAttributes();
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, newType);
 		// create the new breakpoint
@@ -68,7 +68,7 @@ public class JavaExceptionBreakpointTypeChange extends JavaBreakpointTypeChange 
 				attributes);
 		// delete the old one
 		getBreakpoint().delete();
-		return new JavaExceptionBreakpointTypeChange(newExceptionBreakpoint, undoChangedType, undoArgument, changeType);
+		return new JavaExceptionBreakpointTypeChange(newExceptionBreakpoint, undoChangedElement, undoArgument, changeType);
 	}
 
 }
