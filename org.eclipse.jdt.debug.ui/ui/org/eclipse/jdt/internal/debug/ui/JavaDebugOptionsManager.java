@@ -60,7 +60,7 @@ import com.sun.jdi.ObjectReference;
 /**
  * Manages options for the Java Debugger:<ul>
  * <li>Suspend on compilation errors</li>
- * <li>Ssuspend on uncaught exceptions</li>
+ * <li>Suspend on uncaught exceptions</li>
  * <li>Step filters</li>
  * <li>Sets a system property that the Java debugger is active if
  * there are launches that contain running debug targets. Used for Java
