@@ -82,7 +82,7 @@
             id="org.eclipse.jdt.debug.CompilationUnitEditor.BreakpointRulerActions">
          <action
                label="%AddBreakpoint.label"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                actionID="RulerDoubleClick"
                id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointRulerAction">
          </action>
@@ -92,7 +92,7 @@
             id="org.eclipse.jdt.debug.ClassFileEditor.BreakpointRulerActions">
          <action
                label="%AddBreakpoint.label"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                actionID="RulerDoubleClick"
                id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointRulerAction">
          </action>
@@ -1239,9 +1239,9 @@
          <action
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointRulerActionDelegate">
+               id="org.eclipse.jdt.debug.ui.actions.BreakpointRulerActionDelegate">
          </action>
       </viewerContribution>
       <viewerContribution
@@ -1264,9 +1264,9 @@
          <action
                label="%AddBreakpoint.label"
                helpContextId="manage_breakpoint_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
                menubarPath="debug"
-               id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointRulerActionDelegate">
+               id="org.eclipse.jdt.debug.ui.actions.BreakpointRulerActionDelegate">
          </action>
       </viewerContribution>
       <viewerContribution

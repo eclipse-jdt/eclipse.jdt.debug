@@ -32,7 +32,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -90,7 +90,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  * @since 3.0
  */
-public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
+public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension {
 		
 	protected void report(final String message, final IWorkbenchPart part) {
 		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
@@ -675,14 +675,26 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @exception CoreException if an exceptoin occurrs
 	 */
 	protected ISelection translateToMembers(IWorkbenchPart part, ISelection selection) throws CoreException {
-		if (selection instanceof ITextSelection && part instanceof IEditorPart) {
+		if (selection instanceof ITextSelection && part instanceof ITextEditor) {
 			ITextSelection textSelection = (ITextSelection)selection;
-			IEditorPart editorPart = (IEditorPart) part;
+			ITextEditor editorPart = (ITextEditor) part;
 			IEditorInput editorInput = editorPart.getEditorInput();
+			IDocument document = editorPart.getDocumentProvider().getDocument(editorInput);
+			int offset = textSelection.getOffset();
+			if (document != null) {
+				try {
+					IRegion region = document.getLineInformationOfOffset(offset);
+					int end = offset + region.getLength();
+					while (Character.isWhitespace(document.getChar(offset)) && offset < end) {
+						offset++;
+					}
+				} catch (BadLocationException e) {
+				}
+			}
 			IMember m= null;
 			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
 			if (classFile != null) {
-				IJavaElement e= classFile.getElementAt(textSelection.getOffset());
+				IJavaElement e= classFile.getElementAt(offset);
 				if (e instanceof IMember) {
 					m= (IMember)e;
 				}
@@ -693,7 +705,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					synchronized (unit) {
 						unit.reconcile(ICompilationUnit.NO_AST /*don't create ast*/, false/*don't force problem detection*/, null/*use primary owner*/, null/*no progress monitor*/);
 					}
-					IJavaElement e = unit.getElementAt(textSelection.getOffset());
+					IJavaElement e = unit.getElementAt(offset);
 					if (e instanceof IMember) {
 						m= (IMember)e;
 					}
@@ -838,5 +850,19 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			}
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
+		toggleLineBreakpoints(part, selection, true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public boolean canToggleBreakpoints(IWorkbenchPart part, ISelection selection) {
+		return canToggleLineBreakpoints(part, selection);
 	}	
 }
