@@ -207,7 +207,7 @@ public class JavaProjectSourceContainerBrowser extends AbstractSourceContainerBr
 						break;
 					case IClasspathEntry.CPE_LIBRARY:
 						IPackageFragmentRoot[] roots = proj.findPackageFragmentRoots(entry);
-						if (roots != null) {
+						if (roots != null && roots.length > 0) {
 							sourceContainer = new PackageFragmentRootSourceContainer(roots[0]);
 						}
 						break;
