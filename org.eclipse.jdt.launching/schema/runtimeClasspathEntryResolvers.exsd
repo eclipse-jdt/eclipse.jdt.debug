@@ -52,7 +52,7 @@ lookup path, for corresponding classpath variables and classpath containers.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the class that implements this resolver.  The class must implement &lt;samp&gt;IRuntimeClasspathEntryResolver&lt;/samp&gt;.
+                  the class that implements this resolver.  The class must implement &lt;code&gt;IRuntimeClasspathEntryResolver&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.IRuntimeClasspathEntryResolver"/>
@@ -62,16 +62,14 @@ lookup path, for corresponding classpath variables and classpath containers.
          <attribute name="variable" type="string">
             <annotation>
                <documentation>
-                  the name of the classpath variable this resolver is registered for.
-                  At least one of variable or container must be specified, and at most one resolver can be registered for a variable or container.
+                  the name of the classpath variable this resolver is registered for. At least one of variable or container must be specified, and at most one resolver can be registered for a variable or container.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="container" type="string">
             <annotation>
                <documentation>
-                  the identifier of the classpath container this resolver is registered for.
-                  At least one of variable or container must be specified, and at most one resolver can be registered for a variable or container.
+                  the identifier of the classpath container this resolver is registered for.  At least one of variable or container must be specified, and at most one resolver can be registered for a variable or container.
                </documentation>
             </annotation>
          </attribute>

@@ -59,7 +59,7 @@ The UI is shown only when a VM of the specified install type is selected in the 
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a fully qualified name of a Java class that implements &lt;samp&gt;ILaunchConfigurationTab&lt;/samp&gt;.
+                  specifies a fully qualified name of a Java class that implements &lt;code&gt;ILaunchConfigurationTab&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.AbstractLaunchConfigurationTab"/>

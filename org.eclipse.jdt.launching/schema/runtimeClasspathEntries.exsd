@@ -9,14 +9,6 @@
          This in an internal extension point that allows the Java debugger to extend the set of runtime classpath entries used for launching Java applications. Clients are not intended to use this extension point.
       </documentation>
    </annotation>
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         3.0
-      </documentation>
-   </annotation>
 
    <element name="extension">
       <complexType>
@@ -59,7 +51,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the class that implements this runtime classpath entry.  The class must implement &lt;samp&gt;IRuntimeClasspathEntry2&lt;/samp&gt;.
+                  the class that implements this runtime classpath entry.  The class must implement &lt;code&gt;IRuntimeClasspathEntry2&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.internal.IRuntimeClasspathEntry2"/>
@@ -68,6 +60,15 @@
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>

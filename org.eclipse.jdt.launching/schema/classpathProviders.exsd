@@ -51,7 +51,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the class that implements this classpath provider. The class must implement IRuntimeClasspathProvider
+                  the class that implements this classpath provider. The class must implement &lt;code&gt;IRuntimeClasspathProvider&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.AbstractVMInstallType"/>
@@ -99,7 +99,7 @@
       </documentation>
    </annotation>
 
-    <annotation>
+   <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>

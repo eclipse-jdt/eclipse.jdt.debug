@@ -2,22 +2,21 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.jdt.launching">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.jdt.launching" id="vmConnectors" name="Java VM Connectors"/>
-   </appInfo>
-   <documentation>
-      This extension point represents different kinds of connections to remote VMs.  Each extension must implement
-&lt;samp&gt;org.eclipse.jdt.launching.IVMConnector&lt;/samp&gt;.  An IVMConnector is responsible for establishing a connection
-with a remote VM.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.jdt.launching" id="vmConnectors" name="Java VM Connectors"/>
+      </appInfo>
+      <documentation>
+         This extension point represents different kinds of connections to remote VMs.  Each extension must implement
+&lt;code&gt;org.eclipse.jdt.launching.IVMConnector&lt;/code&gt;.  An &lt;code&gt;IVMConnector&lt;/code&gt; is responsible for establishing a connection with a remote VM.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
             <element ref="vmConnector" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-                 <attribute name="point" type="string" use="required">
+         <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
                   a fully qualified identifier of the target extension point
@@ -34,7 +33,7 @@ with a remote VM.
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -53,7 +52,7 @@ with a remote VM.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the class that implements this connector.  The class must implement &lt;samp&gt;IVMConnector&lt;/samp&gt;.
+                  the class that implements this connector.  The class must implement &lt;code&gt;IVMConnector&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.launching.IVMConnector"/>
@@ -72,12 +71,12 @@ with a remote VM.
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.jdt.launching.vmConnectors"&gt;
-		&lt;vmConnector
-			class="com.example.ConnectorImplementation"
-			id="com.example.ConnectorId"&gt;
-		&lt;/vmConnector&gt;
-	&lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.jdt.launching.vmConnectors&quot;&gt;
+  &lt;vmConnector
+   class=&quot;com.example.ConnectorImplementation&quot;
+   id=&quot;com.example.ConnectorId&quot;&gt;
+  &lt;/vmConnector&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>

@@ -54,7 +54,7 @@
          <attribute name="subtypes" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  specify if this java logical structure should be used also for the objects of a subtype of the specified type, or only for the objects of the specified type. This attribute is optional, the default value is &lt;code&gt;true&lt;/code&gt;.
+                  specify if this Java logical structure should be used also for the objects of a subtype of the specified type, or only for the objects of the specified type. This attribute is optional, the default value is &lt;code&gt;true&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -70,6 +70,9 @@
                <documentation>
                   a description of this logical structure.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
