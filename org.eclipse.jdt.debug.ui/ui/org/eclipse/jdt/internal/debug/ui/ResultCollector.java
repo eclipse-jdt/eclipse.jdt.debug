@@ -50,7 +50,6 @@ import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.ui.text.java.ProposalLabelProvider;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.Assert;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -91,7 +90,6 @@ public class ResultCollector extends CompletionRequestor {
 	private ICompilationUnit fCompilationUnit; // set when imports can be added
 	private int fCodeAssistOffset;
 	private int fContextOffset;
-	private ITextViewer fTextViewer;
 	private int fUserReplacementLength;
 	private IProblem fLastProblem;	
 	
@@ -442,13 +440,6 @@ public class ResultCollector extends CompletionRequestor {
 	}
 	
 	/**
-	 * Sets the text viewer.
-	 */
-	public void setViewer(ITextViewer viewer) {
-		fTextViewer= viewer;
-	}
-	
-	/**
 	 * If the replacement length is set, it overrides the length returned from
 	 * the content assist infrastructure.
 	 * Use this setting if code assist is called with a none empty selection.
@@ -583,9 +574,6 @@ public class ResultCollector extends CompletionRequestor {
 	}
 	protected final IJavaProject getJavaProject() {
 		return fJavaProject;
-	}
-	protected final ITextViewer getTextViewer() {
-		return fTextViewer;
 	}
 	
 	protected final ProposalLabelProvider getLabelProvider() {
