@@ -1483,6 +1483,10 @@
 		name= "%ActionDefinition.localJavaShortcut.name"
 		description="%ActionDefinition.localJavaShortcut.description"/>
 	<actionDefinition
+		id="org.eclipse.jdt.debug.ui.javaAppletShortcut"
+		name= "%ActionDefinition.javaAppletShortcut.name"
+		description="%ActionDefinition.javaAppletShortcut.description"/>		
+	<actionDefinition
 		 id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
   		 name="%ActionDefinition.manageWatchpoint.name"
   		 description= "%ActionDefinition.manageWatchpoint.description"/>
@@ -1525,6 +1529,7 @@
 		scopeId="org.eclipse.ui.globalScope"
 		configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 		<accelerator key="" id="org.eclipse.jdt.debug.ui.localJavaShortcut"/>
+		<accelerator key="" id="org.eclipse.jdt.debug.ui.javaAppletShortcut"/>
 		<accelerator key="" id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"/>
 		<accelerator key="" id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"/>
 		<accelerator key="" id="org.eclipse.jdt.debug.ui.actionSet.AddException"/>
