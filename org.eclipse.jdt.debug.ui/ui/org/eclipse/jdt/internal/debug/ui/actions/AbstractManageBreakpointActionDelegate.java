@@ -13,10 +13,14 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -85,5 +89,26 @@ public abstract class AbstractManageBreakpointActionDelegate extends ManageBreak
 	
 	protected void update(ISelection selection) {
 		setEnabledState(null);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate#report(java.lang.String)
+	 */
+	protected void report(String message) {
+		IWorkbenchPart part= getTargetPart();
+		IStatusLineManager statusLineManager= null;
+		if (part instanceof IViewPart) {
+			statusLineManager= ((IViewPart)part).getViewSite().getActionBars().getStatusLineManager();
+		} else if (part instanceof IEditorPart) {
+			statusLineManager= ((IEditorPart)part).getEditorSite().getActionBars().getStatusLineManager();
+		}
+		if (statusLineManager != null) {
+			statusLineManager.setErrorMessage(message);
+			if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
+				JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
+			}
+		} else {
+			super.report(message);
+		}
 	}
 }
