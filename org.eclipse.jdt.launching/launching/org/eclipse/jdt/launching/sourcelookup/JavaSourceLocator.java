@@ -67,6 +67,35 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	}
 	
 	/**
+	 * Constructs a new Java source locator that looks in the
+	 * specified project for source, and required projects, if
+	 * <code>includeRequired</code> is <code>true</code>.
+	 * 
+	 * @param projects the projects in which to look for source
+	 * @param includeRequired whether to look in required projects
+	 * 	as well
+	 */
+	public JavaSourceLocator(IJavaProject[] projects, boolean includeRequired) throws JavaModelException {
+		
+		ArrayList requiredProjects = new ArrayList();
+		for (int i= 0; i < projects.length; i++) {
+			if (includeRequired) {
+				collectRequiredProjects(projects[i], requiredProjects);
+			} else {
+				if (!requiredProjects.contains(projects[i])) {
+					requiredProjects.add(projects[i]);
+				}
+			}
+		}
+		IJavaSourceLocation[] locations = new IJavaSourceLocation[requiredProjects.size()];
+		for (int i = 0; i < requiredProjects.size(); i++) {
+			locations[i] = new JavaProjectSourceLocation((IJavaProject)requiredProjects.get(i));
+		}	
+		setSourceLocations(locations);
+		
+	}	
+	
+	/**
 	 * Constructs a new JavaSourceLocator that searches the
 	 * specified set of source locations for source elements.
 	 * 

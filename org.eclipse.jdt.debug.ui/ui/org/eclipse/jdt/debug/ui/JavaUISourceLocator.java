@@ -76,6 +76,20 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 		fSourceLocator = new JavaSourceLocator();
 		fAllowedToAsk= true;
 	}
+
+	/**
+	 * Constructs a new source locator that looks in the
+	 * specified project for source, and required projects, if
+	 * <code>includeRequired</code> is <code>true</code>.
+	 * 
+	 * @param projects the projects in which to look for source
+	 * @param includeRequired whether to look in required projects
+	 * 	as well
+	 */
+	public JavaUISourceLocator(IJavaProject[] projects, boolean includeRequired) throws JavaModelException {
+		fSourceLocator = new JavaSourceLocator(projects, includeRequired);
+		fAllowedToAsk = true;
+	}	
 		
 	/**
 	 * Constructs a source locator that searches for source
