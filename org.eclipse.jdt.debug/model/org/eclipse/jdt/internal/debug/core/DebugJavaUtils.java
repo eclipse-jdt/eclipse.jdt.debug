@@ -187,6 +187,17 @@ public class DebugJavaUtils {
 	}
 	
 	/**
+	 * Returns whether the given breakpoint is a Java line breakpoint.
+	 */
+	public static boolean isJavaLineBreakpoint(IMarker breakpoint) {
+		try {
+			return breakpoint.isSubtypeOf(IJavaDebugConstants.JAVA_LINE_BREAKPOINT);
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+	
+	/**
 	 * Returns whether the given breakpoint is a run to line breakpoint.
 	 */
 	public static boolean isRunToLineBreakpoint(IMarker breakpoint) {

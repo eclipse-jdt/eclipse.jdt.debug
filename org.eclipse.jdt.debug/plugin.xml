@@ -93,4 +93,17 @@
          name="methodHandle">
    </attribute>
 </extension>
+<extension
+      id="patternBreakpoint"
+      point="org.eclipse.core.resources.markers">
+   <super
+         type="org.eclipse.debug.core.lineBreakpoint">
+   </super>
+   <persistent
+         value="true">
+   </persistent>
+   <attribute
+         name="pattern">
+   </attribute>
+</extension>
 </plugin>

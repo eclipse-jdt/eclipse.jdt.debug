@@ -37,7 +37,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	private final static String ERROR_HCR_NOT_SUPPORTED = ERROR + "hcr.not_supported";
 	private final static String ERROR_HCR_FAILED = ERROR + "hcr.failed";
 	private final static String ERROR_HCR_IGNORED = ERROR + "hcr.ignored";
-	private final static String ERROR_BREAKPOINT_NO_TYPE = ERROR + "breakpoint.no_type";	
+	protected final static String ERROR_BREAKPOINT_NO_TYPE = ERROR + "breakpoint.no_type";	
 	private final static String ERROR_RESUME_NOT_SUPPORTED = ERROR + "resume.not_supported";
 	private final static String ERROR_SUSPEND_NOT_SUPPORTED = ERROR + "suspend.not_supported";
 	private final static String ERROR_TERMINATE_NOT_SUPPORTED = ERROR + "terminate.not_supported";
@@ -763,7 +763,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			exceptionBreakpointAdded(breakpoint);
 		} else if (DebugJavaUtils.isMethodEntryBreakpoint(breakpoint)) {
 			methodEntryBreakpointAdded(breakpoint);
-		} else {
+		} else if (DebugJavaUtils.isJavaLineBreakpoint(breakpoint)) {
 			lineBreakpointAdded(breakpoint);
 		}
 	}
@@ -1272,7 +1272,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Attempts to install a deferred breakpoint
 	 * into the newly loaded class.
 	 */
-	private void installDeferredBreakpoints(ClassPrepareEvent event) {
+	protected void installDeferredBreakpoints(ClassPrepareEvent event) {
 		String className= jdiGetTypeName(event.referenceType());
 		String topLevelName= className;
 		int index= className.indexOf('$');
@@ -1317,7 +1317,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			exceptionBreakpointRemoved(breakpoint);
 		} else if (DebugJavaUtils.isMethodEntryBreakpoint(breakpoint)) {
 			methodEntryBreakpointRemoved(breakpoint);
-		} else {
+		} else if (DebugJavaUtils.isJavaLineBreakpoint(breakpoint)) {
 			lineBreakpointRemoved(breakpoint);
 		}
 	}
