@@ -178,6 +178,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					}
 				} else {
 					typeName= type.getFullyQualifiedName();
+					int index= typeName.indexOf('$');
+					if (index >= 0 ) {
+						typeName= typeName.substring(0, index);
+					}
 					IJavaLineBreakpoint existingBreakpoint= JDIDebugModel.lineBreakpointExists(typeName, lineNumber);
 					if (existingBreakpoint != null) {
 						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(existingBreakpoint, true);
