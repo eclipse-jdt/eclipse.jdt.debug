@@ -223,14 +223,14 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		try {
-			Integer.parseInt(this.fWidthText.getText().trim());
-		} catch(NumberFormatException e) {
+			Integer.parseInt(fWidthText.getText().trim());
+		} catch(NumberFormatException nfe) {
 			setErrorMessage(LauncherMessages.getString("appletlauncher.argumenttab.width.error.notaninteger")); //$NON-NLS-1$
 			return false;
 		}
 		try {
-			Integer.parseInt(this.fHeightText.getText().trim());
-		} catch(NumberFormatException e) {
+			Integer.parseInt(fHeightText.getText().trim());
+		} catch(NumberFormatException nfe) {
 			setErrorMessage(LauncherMessages.getString("appletlauncher.argumenttab.height.error.notaninteger")); //$NON-NLS-1$
 			return false;
 		}
