@@ -42,6 +42,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	private Label fWorkingDirLabel;
 	private Text fWorkingDirText;
 	private Button fWorkingDirBrowseButton;
+	private Button fUseDefaultWorkingDirButton;
 	
 	private static final String EMPTY_STRING = "";
 		
@@ -87,6 +88,17 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		fWorkingDirBrowseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleWorkingDirBrowseButtonSelected();
+			}
+		});
+		
+		fUseDefaultWorkingDirButton = new Button(workingDirComp,SWT.CHECK);
+		fUseDefaultWorkingDirButton.setText("Use de&fault working directory");
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fUseDefaultWorkingDirButton.setLayoutData(gd);
+		fUseDefaultWorkingDirButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleUseDefaultWorkingDirButtonSelected();
 			}
 		});
 		
@@ -194,6 +206,27 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			fWorkingDirText.setText(selectedDirectory);
 		}		
 	}
+	
+	/**
+	 * The default working dir check box has been toggled.
+	 */
+	protected void handleUseDefaultWorkingDirButtonSelected() {
+		if (fUseDefaultWorkingDirButton.getSelection()) {
+			fWorkingDirText.setText(getDefaultWorkingDir());
+			fWorkingDirText.setEnabled(false);
+			fWorkingDirBrowseButton.setEnabled(false);
+		} else {
+			fWorkingDirBrowseButton.setEnabled(true);
+			fWorkingDirText.setEnabled(true);
+		}
+	}
+	
+	/**
+	 * Returns the default working directory
+	 */
+	protected String getDefaultWorkingDir() {
+		return System.getProperty("user.dir");
+	}
 
 	/**
 	 * @see ILaunchConfigurationTab#isPageComplete()
@@ -236,8 +269,16 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			fPrgmArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""));
-			fWorkingDirText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""));
 			fVMArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""));
+			
+			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, "");
+			if (wd.trim().length() == 0) {
+				fUseDefaultWorkingDirButton.setSelection(true);
+			} else {
+				fUseDefaultWorkingDirButton.setSelection(false);
+				fWorkingDirText.setText(wd);
+			}
+			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
 			setErrorMessage("Exception occurred reading configuration: " + e.getStatus().getMessage());
 		}
@@ -249,7 +290,11 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getAttributeValueFrom(fPrgmArgumentsText));
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getAttributeValueFrom(fVMArgumentsText));
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, getAttributeValueFrom(fWorkingDirText));
+		String wd = null;
+		if (!fUseDefaultWorkingDirButton.getSelection()) {
+			wd = getAttributeValueFrom(fWorkingDirText);
+		} 
+		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, wd);
 	}
 
 	/**
