@@ -200,15 +200,15 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 			// Launch configuration support
 			try {
 				String projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
-				if (projectName == null) {
-					return types;
-				}	
-				javaProject= JavaCore.create(workspace.getRoot().getProject(projectName));
+				if (projectName != null) {
+					javaProject= JavaCore.create(workspace.getRoot().getProject(projectName));
+				}
 			} catch (CoreException e) {
-				return types;
 			}
 		}
-
+		if (javaProject == null) {
+			return types;
+		}
 
 		SearchEngine engine= new SearchEngine();
 		IJavaSearchScope scope= engine.createJavaSearchScope(new IJavaProject[] {javaProject}, true);
