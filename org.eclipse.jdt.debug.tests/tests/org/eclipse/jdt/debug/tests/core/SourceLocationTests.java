@@ -15,6 +15,9 @@ import java.io.File;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -127,8 +130,7 @@ public class SourceLocationTests extends AbstractDebugTest {
 		assertNull("Should not have found source", source);
 	}	
 	
-	//see bug 25520..reenable with coordination from jdt core
-	/*public void testPositiveSystemLibrarySourceLocation() throws Exception {
+	public void testPositiveSystemLibrarySourceLocation() throws Exception {
 		IClasspathEntry[] cpes = getJavaProject().getRawClasspath();
 		IClasspathEntry lib = null;
 		for (int i = 0; i < cpes.length; i++) {
@@ -141,7 +143,7 @@ public class SourceLocationTests extends AbstractDebugTest {
 		}
 		assertNotNull("Could not find JRE_LIB entry", lib);
 		
-		IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots(lib);
+		IPackageFragmentRoot[] roots = getJavaProject().findPackageFragmentRoots(lib);
 		assertEquals("Should be one root for JRE_LIB", roots.length, 1);
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(roots[0]);
 		
@@ -154,9 +156,9 @@ public class SourceLocationTests extends AbstractDebugTest {
 		assertTrue("Did not find source for 'Vector$1'", source instanceof IClassFile);
 		cf = (IClassFile)source;
 		assertEquals("Did not find source for 'Vector$1'", "Vector$1.class", cf.getElementName());
-	}*/
+	}
 	
-	/*public void testNegativeSystemLibrarySourceLocation() throws Exception {
+	public void testNegativeSystemLibrarySourceLocation() throws Exception {
 		IClasspathEntry[] cpes = getJavaProject().getRawClasspath();
 		IClasspathEntry lib = null;
 		for (int i = 0; i < cpes.length; i++) {
@@ -169,13 +171,12 @@ public class SourceLocationTests extends AbstractDebugTest {
 		}
 		assertNotNull("Could not find JRE_LIB entry", lib);
 		
-		IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots(lib);
+		IPackageFragmentRoot[] roots = getJavaProject().findPackageFragmentRoots(lib);
 		assertEquals("Should be one root for JRE_LIB", roots.length, 1);
 		IJavaSourceLocation location = new PackageFragmentRootSourceLocation(roots[0]);
 		
 		Object source = location.findSourceElement("xyz.abc.Object");
 		assertNull("Should not find source", source);
 
-	}*/
-		
+	}	
 }
