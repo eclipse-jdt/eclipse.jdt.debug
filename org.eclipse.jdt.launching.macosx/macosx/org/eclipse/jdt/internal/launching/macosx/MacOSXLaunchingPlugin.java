@@ -58,11 +58,19 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		for (int i= 0; i < cmdLine.length; i++) {
 			String arg= cmdLine[i];
 			if (arg.indexOf("swt.jar") >= 0 || arg.indexOf("org.eclipse.swt") >= 0 || "-ws".equals(arg)) {	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				try {
-					return new String[] { createBundle(clazz, cmdLine) };
-				} catch (IOException e) {
-					e.printStackTrace();
-				}		
+
+				if (false) {
+					
+					cmdLine[0]= "/Eclipse/Apple/WWDC\'2003/simpleJavaLauncher/build/simple"; //$NON-NLS-1$
+					return cmdLine;
+					
+				} else {
+					try {
+						return new String[] { createBundle(clazz, cmdLine) };
+					} catch (IOException e) {
+						e.printStackTrace();
+					}		
+				}
 			}
 		}
 		return cmdLine;
