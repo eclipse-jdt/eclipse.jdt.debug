@@ -68,5 +68,16 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */
 	public boolean isChecked() throws CoreException;
+	
+	/**
+	 * Returns the fully qualified type name of the exception that
+	 * last caused this breakpoint to suspend, of <code>null</code>
+	 * if this breakpoint has not causes a thread to suspend. Note
+	 * that this name may be a subtype of the exception that this
+	 * breakpoint is associated with.
+	 * 
+	 * @return fully qualified exception name or <code>null</code>
+	 */
+	public String getExceptionTypeName();
 }
 

@@ -5,10 +5,11 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
 
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IClassFile;
@@ -18,7 +19,9 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IDocument;
@@ -28,8 +31,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
@@ -56,12 +57,15 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 		update();
 	}
 	/**
-	 * Creates a breakpoint marker.
+	 * Creates a breakpoint.
 	 */
 	protected IBreakpoint createBreakpoint(IEditorInput editorInput) {
 		if (breakpointCanBeCreated(editorInput)) {
 			try {
-				return JDIDebugModel.createLineBreakpoint(getType(), getLineNumber(), -1, -1, 0);
+				Map attributes = new HashMap(10);
+				BreakpointUtils.addJavaBreakpointAttributes(attributes, getType());
+				IJavaLineBreakpoint bp = JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(getType()), getType().getFullyQualifiedName(), getLineNumber(), -1, -1, 0, true, attributes);
+				return bp;
 			} catch (CoreException ce) {
 			}
 		}
@@ -208,4 +212,4 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 	
-	}
+}

@@ -29,7 +29,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -44,12 +43,9 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
-import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
-import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
@@ -62,7 +58,6 @@ import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JDIDebugUtils;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
-import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 
 import com.sun.jdi.ClassNotLoadedException;
@@ -395,21 +390,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	
 	protected void initializeSuspendOnUncaughtExceptionBreakpoint() {
 		if (JDIDebugModel.suspendOnUncaughtExceptions()) {
-			List typesFound= new ArrayList(1);
 			try {
-				IJavaSearchResultCollector collector= new TypeCollector(typesFound, new NullProgressMonitor());				
-				new SearchEngine().search(ResourcesPlugin.getWorkspace(), "java.lang.Throwable", IJavaSearchConstants.TYPE, //$NON-NLS-1$
-					IJavaSearchConstants.DECLARATIONS, SearchEngine.createWorkspaceScope(), collector); 
-			} catch (JavaModelException jme) {
-				JDIDebugPlugin.logError(jme);
-			}
-			if (!typesFound.isEmpty()) {
-				try {
-					setSuspendOnUncaughtExceptionBreakpoint(new JavaExceptionBreakpoint((IType)typesFound.get(0), false, true, false, false));
-					breakpointAdded(getSuspendOnUncaughtExceptionBreakpoint());
-				} catch (DebugException de) {
-					JDIDebugPlugin.logError(de);
-				}
+				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null);
+				bp.setPersisted(false);
+				setSuspendOnUncaughtExceptionBreakpoint(bp);
+				breakpointAdded(bp);
+			} catch (CoreException e) {
+				JDIDebugPlugin.logError(e);
 			}
 		}
 	}
@@ -795,7 +782,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			breakpoint= copy[i];
 			if (breakpoint instanceof JavaLineBreakpoint) {
 				try {
-					installedType= breakpoint.getType().getFullyQualifiedName();
+					installedType= breakpoint.getTypeName();
 					if (classNames.contains(installedType)) {
 						breakpointAdded(breakpoint);
 					}

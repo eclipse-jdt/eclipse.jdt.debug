@@ -6,21 +6,17 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  */
  
 import java.util.List;
+
 import java.util.Map;
 
+import javax.naming.directory.Attribute;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModelStatusConstants;
-import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -40,43 +36,35 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	private static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpointMarker"; //$NON-NLS-1$
 	// Marker label String keys
 	protected static final String LINE= "line"; //$NON-NLS-1$
-	/**
-	 * Sets of attributes used to configure a line breakpoint
-	 */
-	protected static final String[] fgTypeAndHitCountAttributes= new String[]{TYPE_HANDLE, HIT_COUNT, EXPIRED};	
-	/**
-	 * Sets of attributes used to configure a line breakpoint
-	 */
-	protected static final String[] fgLineBreakpointAttributes= new String[]{ENABLED, IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};
 		
 	public JavaLineBreakpoint() {
 	}
-	
-	public JavaLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd, int hitCount) throws DebugException {
-		this(type, lineNumber, charStart, charEnd, hitCount, JAVA_LINE_BREAKPOINT);
-	}
 
-	protected JavaLineBreakpoint(final IType type, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final String markerType) throws DebugException {
+	/**
+	 * @see JDIDebugModel#createLineBreakpoint(IResource, String, int, int, int, int, boolean, Map)
+	 */
+	public JavaLineBreakpoint(final IResource resource, final String typeName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, boolean add, Map attributes) throws DebugException {
+		this(resource, typeName,lineNumber, charStart, charEnd, hitCount, add, attributes, JAVA_LINE_BREAKPOINT);
+	}
+	
+	protected JavaLineBreakpoint(final IResource resource, final String typeName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean add, final Map attributes, final String markerType) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IResource resource= getResource(type);
-
 	
 				// create the marker
 				setMarker(resource.createMarker(markerType));
-				setLineBreakpointAttributes(getModelIdentifier(), true, lineNumber, charStart, charEnd);
-	
-				// configure the hit count and type handle
-				setTypeAndHitCount(type, hitCount);
-	
-				// configure the marker as a Java marker
-				IMarker marker = ensureMarker();
-				Map attributes= marker.getAttributes();
-				JavaCore.addJavaElementMarkerAttributes(attributes, type);
-				marker.setAttributes(attributes);
 				
-				// Lastly, add the breakpoint manager
-				addToBreakpointManager();
+				// add attributes
+				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
+				addTypeNameAndHitCount(attributes, typeName, hitCount);
+				
+				// set attributes
+				ensureMarker().setAttributes(attributes);
+				
+				// add to breakpoint manager
+				if (add) {
+					addToBreakpointManager();
+				}
 			}
 		};
 		run(wr);
@@ -108,29 +96,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	public static String getMarkerType() {
 		return JAVA_LINE_BREAKPOINT;
 	}
-	
-	/**
-	 * Get the resource associated with the given type. This is
-	 * used to set the breakpoint's resource during initialization.
-	 */
-	protected IResource getResource(IType type) throws CoreException {
-		IResource resource= null;
-		try {
-			resource= type.getUnderlyingResource();
-		} catch (JavaModelException e) {
-			IStatus status = e.getStatus();
-			if (status.getCode() != IJavaModelStatusConstants.ELEMENT_DOES_NOT_EXIST) {
-				throw e;
-			}
-			// use the associated project if the type does
-			// not actually exist as a resource
-		}
-		if (resource == null) {
-			resource= type.getJavaProject().getProject();
-		}
-		return resource;
-	}
-	
+		
 	/**
 	 * @see JavaBreakpoint#newRequest(JDIDebugTarget, ReferenceType)
 	 */
@@ -226,112 +192,43 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	/**
-	 * Set standard attributes of a line breakpoint.
+	 * Adds the standard attributes of a line breakpoint to
+	 * the given attribute map.
 	 * The standard attributes are:
 	 * <ol>
-	 * <li>IDebugConstants.MODEL_IDENTIFIER</li>
-	 * <li>IDebugConstants.ENABLED</li>
+	 * <li>IBreakpoint.ID</li>
+	 * <li>IBreakpoint.ENABLED</li>
 	 * <li>IMarker.LINE_NUMBER</li>
 	 * <li>IMarker.CHAR_START</li>
 	 * <li>IMarker.CHAR_END</li>
 	 * </ol>	
+	 * 
 	 */	
-	public void setLineBreakpointAttributes(String modelIdentifier, boolean enabled, int lineNumber, int charStart, int charEnd) throws CoreException {
-		Object[] values= new Object[]{new Boolean(true), new Integer(lineNumber), new Integer(charStart), new Integer(charEnd)};
-		ensureMarker().setAttributes(fgLineBreakpointAttributes, values);			
+	public void addLineBreakpointAttributes(Map attributes, String modelIdentifier, boolean enabled, int lineNumber, int charStart, int charEnd) {
+		attributes.put(IBreakpoint.ID, modelIdentifier);
+		attributes.put(IBreakpoint.ENABLED, new Boolean(enabled));
+		attributes.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+		attributes.put(IMarker.CHAR_START, new Integer(charStart));
+		attributes.put(IMarker.CHAR_END, new Integer(charEnd)); 
 	}		
 	
 	/**
-	 * Sets the type in which this breakpoint is installed.
+	 * Adds type name and hit count attributes to the given
+	 * map.
 	 *
-	 * If <code>hitCount > 0</code>, sets the <code>HIT_COUNT</code> attribute of the given breakpoint,
-	 * and resets the <code>EXPIRED</code> attribute to false (since, if
-	 * the hit count is changed, the breakpoint should no longer be expired).
+	 * If <code>hitCount > 0</code>, adds the <code>HIT_COUNT</code> attribute
+	 * to the given breakpoint, and resets the <code>EXPIRED</code> attribute
+	 * to false (since, if the hit count is changed, the breakpoint should no
+	 * longer be expired).
 	 */
-	public void setTypeAndHitCount(IType type, int hitCount) throws CoreException {
-		if (hitCount == 0) {
-			setType(type);
-			return;
+	public void addTypeNameAndHitCount(Map attributes, String typeName, int hitCount) {
+		attributes.put(TYPE_NAME, typeName);
+		if (hitCount > 0) {
+			attributes.put(HIT_COUNT, new Integer(hitCount));
+			attributes.put(EXPIRED, new Boolean(false));
 		}
-		String handle = type.getHandleIdentifier();
-		Object[] values= new Object[]{handle, new Integer(hitCount), Boolean.FALSE};
-		ensureMarker().setAttributes(fgTypeAndHitCountAttributes, values);
-	}
-
-	/**
-	 * @see IJavaLineBreakpoint#getMember()
-	 */
-	public IMember getMember() throws CoreException {
-		int start = getCharStart();
-		int end = getCharEnd();
-		IType type = getType();
-		IMember member = null;
-		if ((type != null) && (end >= start) && (start >= 0)) {
-			try {
-				member= binSearch(type, start, end);
-			} catch (CoreException ce) {
-				JDIDebugPlugin.logError(ce);
-			}
-		}
-		if (member == null) {
-			member= type;
-		}
-		return member;
 	}
 	
-	/**
-	 * Searches the given source range of the container for a member that is
-	 * not the same as the given type.
-	 */
-	protected IMember binSearch(IType type, int start, int end) throws JavaModelException {
-		IJavaElement je = getElementAt(type, start);
-		if (je != null && !je.equals(type)) {
-			return asMember(je);
-		}
-		if (end > start) {
-			je = getElementAt(type, end);
-			if (je != null && !je.equals(type)) {
-				return asMember(je);
-			}
-			int mid = ((end - start) / 2) + start;
-			if (mid > start) {
-				je = binSearch(type, start + 1, mid);
-				if (je == null) {
-					je = binSearch(type, mid + 1, end - 1);
-				}
-				return asMember(je);
-			}
-		}
-		return null;
-	}	
-	
-	/**
-	 * Returns the given Java element if it is an
-	 * <code>IMember</code>, otherwise <code>null</code>.
-	 * 
-	 * @param element Java element
-	 * @return the given element if it is a type member,
-	 * 	otherwise <code>null</code>
-	 */
-	private IMember asMember(IJavaElement element) {
-		if (element instanceof IMember) {
-			return (IMember)element;
-		} else {
-			return null;
-		}		
-	}
-	
-	/**
-	 * Returns the element at the given position in the given type
-	 */
-	protected IJavaElement getElementAt(IType type, int pos) throws JavaModelException {
-		if (type.isBinary()) {
-			return type.getClassFile().getElementAt(pos);
-		} else {
-			return type.getCompilationUnit().getElementAt(pos);
-		}
-	}
-
 }
 
 

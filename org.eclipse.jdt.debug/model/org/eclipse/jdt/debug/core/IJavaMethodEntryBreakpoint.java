@@ -10,20 +10,32 @@ import org.eclipse.jdt.core.IMethod;
 
 /**
  * Method entry breakpoints are java line breakpoints that
- * suspend execution when a specific method is entered. Method
- * entry breakpoints can only be set on binaries.
+ * suspend execution when a specific method is entered.
  * 
  * Clients are not intended to implement this interface.
  */
 public interface IJavaMethodEntryBreakpoint extends IJavaLineBreakpoint {
 
 	/**
-	 * Returns the method this entry breakpoint is located in.
+	 * Returns the name of the method this breakpoint is
+	 * located in.
 	 * 
-	 * @return the method this entry breakpoint is located in
+	 * @return the name of the method this breakpoint is
+	 *  located in
 	 * @exception CoreException if a <code>CoreException</code> is
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */
-	public IMethod getMethod() throws CoreException;
+	public String getMethodName() throws CoreException;
+	
+	/**
+	 * Returns the signature of the method this breakpoint is
+	 * located in.
+	 * 
+	 * @return the signature of the method this breakpoint is
+	 *  located in
+	 * @exception CoreException if a <code>CoreException</code> is
+	 * 	thrown accessing this breakpoint's underlying marker
+	 */
+	public String getMethodSignature() throws CoreException;	
 }
 

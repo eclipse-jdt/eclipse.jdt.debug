@@ -5,6 +5,9 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
 
+import java.util.HashMap;
+import java.util.Map;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
@@ -16,6 +19,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
@@ -58,8 +62,11 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	
 			IBreakpoint breakpoint= null;
 			try {
-				breakpoint= JDIDebugModel.createRunToLineBreakpoint(type, getLineNumber(), -1, -1);
-			} catch (DebugException de) {
+				Map attributes = new HashMap(10);
+				BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
+				BreakpointUtils.addRunToLineAttributes(attributes);
+				breakpoint= JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), getLineNumber(), -1, -1, 1, false, attributes);
+			} catch (CoreException de) {
 				errorDialog(de.getStatus());
 				return;
 			} 

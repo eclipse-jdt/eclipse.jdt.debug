@@ -9,12 +9,14 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
+import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
@@ -38,23 +40,30 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	
 	private String fResourceName= null;
 	
-	public JavaPatternBreakpoint(IResource resource, String pattern, int lineNumber, int hitCount) throws DebugException {
-		this(resource, pattern, lineNumber, hitCount, PATTERN_BREAKPOINT);
+	/**
+	 * @see JDIDebugModel#createPatternBreakpoint(IResource, String, int, int, int, int, boolean, Map)
+	 */	
+	public JavaPatternBreakpoint(IResource resource, String pattern, int lineNumber, int charStart, int charEnd, int hitCount, boolean add, final Map attributes) throws DebugException {
+		this(resource, pattern, lineNumber, charStart, charEnd, hitCount, add, attributes, PATTERN_BREAKPOINT);
 	}
 	
-	public JavaPatternBreakpoint(final IResource resource, final String pattern, final int lineNumber, final int hitCount, final String markerType) throws DebugException {
+	public JavaPatternBreakpoint(final IResource resource, final String pattern, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean add, final Map attributes, final String markerType) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 	
 				// create the marker
 				setMarker(resource.createMarker(markerType));
-				setLineBreakpointAttributes(getModelIdentifier(), true, lineNumber, -1, -1);
-	
-				// configure the hit count and pattern handle
-				setPatternAndHitCount(pattern, hitCount);
 				
-				// Lastly, add the breakpoint manager
-				addToBreakpointManager();
+				// add attributes
+				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
+				addPatternAndHitCount(attributes, pattern, hitCount);
+				
+				// set attributes
+				ensureMarker().setAttributes(attributes);
+				
+				if (add) {
+					addToBreakpointManager();
+				}
 			}
 		};
 		run(wr);
@@ -180,16 +189,14 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 		return fResourceName;
 	}
 	/**
-	 * Sets the class name pattern in which this breakpoint will install itself.
-	 * If <code>hitCount > 0</code>, sets the hit count of the given breakpoint.
+	 * Adds the class name pattern and hit count attributes to the gvien map.
 	 */
-	protected void setPatternAndHitCount(String pattern, int hitCount) throws CoreException {
-		if (hitCount == 0) {
-			ensureMarker().setAttribute(PATTERN, pattern);
-			return;
+	protected void addPatternAndHitCount(Map attributes, String pattern, int hitCount) throws CoreException {
+		attributes.put(PATTERN, pattern);
+		if (hitCount > 0) {
+			attributes.put(HIT_COUNT, new Integer(hitCount));
+			attributes.put(EXPIRED, new Boolean(false));
 		}
-		Object[] values= new Object[]{pattern, new Integer(hitCount), Boolean.FALSE};
-		ensureMarker().setAttributes(fgPatternAndHitCountAttributes, values);
 	}
 	
 	/**

@@ -103,7 +103,7 @@ public class JavaBreakpointPropertySource extends BreakpointPropertySource {
 						buffer.append(lineNumber);
 						buffer.append(']');
 					}
-					IMember member = jlbp.getMember();
+					IMember member = BreakpointUtils.getMember(jlbp);
 					if (member != null) {
 						buffer.append(" - "); //$NON-NLS-1$
 						buffer.append(fJavaLabelProvider.getText(member));							
@@ -154,7 +154,7 @@ public class JavaBreakpointPropertySource extends BreakpointPropertySource {
 	protected StringBuffer getFullyQualifiedTypeName(IJavaBreakpoint bp) {
 		StringBuffer buffer = new StringBuffer(20);
 		try {
-			IType type = bp.getType();
+			IType type = BreakpointUtils.getType(bp);
 			buffer.append(type.getFullyQualifiedName());
 		} catch (CoreException ce) {			
 		}

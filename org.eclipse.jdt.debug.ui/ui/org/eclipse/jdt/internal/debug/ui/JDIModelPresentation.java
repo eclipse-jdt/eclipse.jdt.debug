@@ -43,7 +43,6 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
-import org.eclipse.jdt.debug.core.IJavaRunToLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -402,19 +401,22 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (breakpoint != null) {
 			String typeName= getMarkerTypeName(breakpoint, qualified);
 			if (breakpoint instanceof IJavaExceptionBreakpoint) {
+				String exName = ((IJavaExceptionBreakpoint)breakpoint).getExceptionTypeName();
+				if (exName == null) {
+					exName = typeName;
+				} else if (!qualified) {
+					int index = exName.lastIndexOf('.');
+					exName = exName.substring(index + 1);
+				} 
 				if (thread.isSystemThread()) {
-					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(exception_{1}))_13"), new String[] {thread.getName(), typeName}); //$NON-NLS-1$
+					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(exception_{1}))_13"), new String[] {thread.getName(), exName}); //$NON-NLS-1$
 				} else {
-					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(exception_{1}))_14"), new String[] {thread.getName(), typeName}); //$NON-NLS-1$
+					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(exception_{1}))_14"), new String[] {thread.getName(), exName}); //$NON-NLS-1$
 				}
 			}
 			if (breakpoint instanceof IJavaWatchpoint) {
 				IJavaWatchpoint wp = (IJavaWatchpoint)breakpoint;
-				IField field = wp.getField();
-				String fieldName = ""; //$NON-NLS-1$
-				if (field != null) {
-					fieldName = field.getElementName();
-				}
+				String fieldName = wp.getFieldName(); //$NON-NLS-1$
 				if (wp.isAccessSuspend(thread.getDebugTarget())) {
 					if (thread.isSystemThread()) {
 						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(access_of_field_{1}_in_{2}))_16"), new String[] {thread.getName(), fieldName, typeName}); //$NON-NLS-1$
@@ -432,11 +434,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			if (breakpoint instanceof IJavaMethodEntryBreakpoint) {
 				IJavaMethodEntryBreakpoint me= (IJavaMethodEntryBreakpoint)breakpoint;
-				IMethod method= me.getMethod();
-				String methodName= ""; //$NON-NLS-1$
-				if (method != null) {
-					methodName= method.getElementName();
-				}
+				String methodName= me.getMethodName();
 				if (thread.isSystemThread()) {
 					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(entry_into_method_{1}_in_{2}))_21"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
 				} else {
@@ -444,16 +442,17 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 			if (breakpoint instanceof IJavaLineBreakpoint) {
-				int lineNumber= ((IJavaLineBreakpoint)breakpoint).getLineNumber();
+				IJavaLineBreakpoint jlbp = (IJavaLineBreakpoint)breakpoint;
+				int lineNumber= jlbp.getLineNumber();
 				if (lineNumber > -1) {
 					if (thread.isSystemThread()) {
-						if (breakpoint instanceof IJavaRunToLineBreakpoint) {
+						if (BreakpointUtils.isRunToLineBreakpoint(jlbp)) {
 							return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(run_to_line_{1}_in_{2}))_23"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
 						} else {
 							return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(breakpoint_at_line_{1}_in_{2}))_24"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
 						}
 					} else {
-						if (breakpoint instanceof IJavaRunToLineBreakpoint) {
+						if (BreakpointUtils.isRunToLineBreakpoint(jlbp)) {
 							return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(run_to_line_{1}_in_{2}))_25"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
 						} else {
 							return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(breakpoint_at_line_{1}_in_{2}))_26"), new String[] {thread.getName(), String.valueOf(lineNumber), typeName}); //$NON-NLS-1$
@@ -691,15 +690,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected String getMarkerTypeName(IJavaBreakpoint breakpoint, boolean qualified) throws CoreException {
-		String typeName= ""; //$NON-NLS-1$
-		IType type = breakpoint.getType();
-		if (type != null) {
-			typeName= type.getFullyQualifiedName();
-			if (!qualified) {
-				int index= typeName.lastIndexOf('.');
-				if (index != -1) {
-					typeName= typeName.substring(index + 1);
-				}
+		String typeName= breakpoint.getTypeName();
+		if (!qualified) {
+			int index= typeName.lastIndexOf('.');
+			if (index != -1) {
+				typeName= typeName.substring(index + 1);
 			}
 		}
 		return typeName;
@@ -735,7 +730,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected Image getBreakpointImage(IJavaBreakpoint breakpoint) throws CoreException {
 		if (breakpoint instanceof IJavaExceptionBreakpoint) {
 			return getExceptionBreakpointImage((IJavaExceptionBreakpoint)breakpoint);
-		} if (breakpoint instanceof IJavaRunToLineBreakpoint) {
+		} if (BreakpointUtils.isRunToLineBreakpoint((IJavaLineBreakpoint)breakpoint)) {
 			return null;
 		} else {
 			return getJavaBreakpointImage(breakpoint);
@@ -870,7 +865,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				item = getBreakpoint((IMarker)item);
 			}
 			if (item instanceof IJavaBreakpoint) {
-				item= ((IJavaBreakpoint)item).getType();
+				item= BreakpointUtils.getType((IJavaBreakpoint)item);
 			}
 			if (item instanceof LocalFileStorage) {
 				return new LocalFileStorageEditorInput((LocalFileStorage)item);
@@ -1069,9 +1064,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected String getExceptionBreakpointText(IJavaExceptionBreakpoint breakpoint) throws CoreException {
-
 		StringBuffer buffer = new StringBuffer();
-		IType type = breakpoint.getType();
+		IType type = BreakpointUtils.getType(breakpoint);
 		if (type != null) {
 			boolean showQualified= isShowQualifiedNames();
 			if (showQualified) {
@@ -1088,7 +1082,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			buffer.append(hitCount);
 			buffer.append(']');
 		}		
-
 		String state= null;
 		boolean c= breakpoint.isCaught();
 		boolean u= breakpoint.isUncaught();
@@ -1107,14 +1100,13 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			label= MessageFormat.format(format, new Object[] {state, buffer});
 		}
 		return label;
-
 	}
 
 	protected String getLineBreakpointText(IJavaLineBreakpoint breakpoint) throws CoreException {
 
 		boolean showQualified= isShowQualifiedNames();
-		IType type= breakpoint.getType();
-		IMember member= breakpoint.getMember();
+		IType type= BreakpointUtils.getType(breakpoint);
+		IMember member= BreakpointUtils.getMember(breakpoint);
 		if (type != null) {
 			StringBuffer label= new StringBuffer();
 			if (showQualified) {

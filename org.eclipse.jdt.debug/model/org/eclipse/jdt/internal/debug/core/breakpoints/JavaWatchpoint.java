@@ -6,9 +6,8 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  */
  
 import java.util.HashMap;
-import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
+import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -18,14 +17,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.ISourceRange;
-import org.eclipse.jdt.core.IWorkingCopy;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.Field;
@@ -65,8 +59,16 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * Breakpoint attribute storing the handle identifier of the Java element
 	 * corresponding to the field on which a breakpoint is set
 	 * (value <code>"fieldHandle"</code>). This attribute is a <code>String</code>.
+	 * 
+	 * No longer used - replaced with FIELD_NAME
 	 */
-	protected static final String FIELD_HANDLE= "fieldHandle"; //$NON-NLS-1$		
+	protected static final String FIELD_HANDLE= "fieldHandle"; //$NON-NLS-1$	
+	/**
+	 * Breakpoint attribute storing the name of the field
+	 * on which a breakpoint is set.
+	 * (value <code>"fieldName"</code>). This attribute is a <code>String</code>.
+	 */
+	protected static final String FIELD_NAME= "fieldName"; //$NON-NLS-1$		
 	/**
 	 * Flag indicating that this breakpoint last suspended execution
 	 * due to a field access
@@ -91,51 +93,27 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	}
 
 	/**
-	 * Creates and returns a watchpoint on the
-	 * given field.
-	 * If hitCount > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times.
-	 * 
-	 * @param field the field on which to suspend (on access or modification)
-	 * @param hitCount the number of times the breakpoint will be hit before
-	 * 	suspending execution - 0 if it should always suspend
-	 * @return a watchpoint
-	 * @exception DebugException if unable to create the breakpoint marker due
-	 * 	to a lower level exception
+	 * @see JDIDebugModel#createWatchpoint(IResource, String, String, int, int, int, int, boolean, Map)
 	 */
-	public JavaWatchpoint(final IField field, final int hitCount) throws DebugException {
+	public JavaWatchpoint(final IResource resource, final String typeName, final String fieldName, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean add, final Map attributes) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {		
-				IResource resource = null;
-				ICompilationUnit compilationUnit = getCompilationUnit(field);
-				if (compilationUnit != null) {
-					resource = compilationUnit.getUnderlyingResource();
-				}
-				if (resource == null) {
-					resource = field.getJavaProject().getProject();
-				}
-				
 				setMarker(resource.createMarker(JAVA_WATCHPOINT));
 				
-				// configure the standard attributes
-				setStandardAttributes(field);
-				// configure the type handle and hit count
-				setTypeAndHitCount(field.getDeclaringType(), hitCount);
+				// add attributes
+				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
+				addTypeNameAndHitCount(attributes, typeName, hitCount);
 				// configure the field handle
-				setField(field);
+				addFieldName(attributes, fieldName);
 				// configure the access and modification flags to defaults
-				setDefaultAccessAndModification();
-				setAutoDisabled(false);				
+				addDefaultAccessAndModification(attributes);			
 				
+				// set attributes
+				ensureMarker().setAttributes(attributes);
 				
-				// configure the marker as a Java marker
-				IMarker marker = ensureMarker();
-				Map attributes= marker.getAttributes();
-				JavaCore.addJavaElementMarkerAttributes(attributes, field);
-				marker.setAttributes(attributes);
-				
-				// Lastly, add the breakpoint manager
-				addToBreakpointManager();
+				if (add) {
+					addToBreakpointManager();
+				}
 			}
 		};
 		run(wr);
@@ -151,10 +129,9 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * both. Finally, the requests are registered with the given target.
 	 */	
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
-		IField javaField= getField();
 		Field field= null;
 		
-		field= type.fieldByName(javaField.getElementName());
+		field= type.fieldByName(getFieldName());
 		if (field == null) {
 			// error
 			return false;
@@ -356,68 +333,34 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		ensureMarker().setAttributes(attributes, values);
 	}
 
+
 	/**
-	 * Sets the field on which this watchpoint is installed
+	 * Adds the default access and modification attributes of
+	 * the watchpoint to the given map
+	 * <ul>
+	 * <li>access = false
+	 * <li>modification = true
+	 * <li>auto disabled = false
+	 * <ul>
 	 */
-	protected void setField(IField field) throws CoreException {
-		String handle = field.getHandleIdentifier();
-		ensureMarker().setAttribute(FIELD_HANDLE, handle);
+	protected void addDefaultAccessAndModification(Map attributes) {
+		attributes.put(ACCESS, new Boolean(false));
+		attributes.put(MODIFICATION, new Boolean(true));
+		attributes.put(AUTO_DISABLED, new Boolean(false));
 	}
 	
 	/**
-	 * Set standard attributes of a watchpoint based on the
-	 * given field.
+	 * Adds the field name to the given attribute map
 	 */
-	protected void setStandardAttributes(IField field) throws CoreException {
-		// find the name range if available
-		int start = -1;
-		int stop = -1;
-		
-		ISourceRange range = field.getNameRange();
-		if (range != null) {
-			start = range.getOffset();
-			stop = start + range.getLength() - 1;
-		}
-		super.setLineBreakpointAttributes(getModelIdentifier(), true, -1, start, stop);
-	}		
+	protected void addFieldName(Map attributes, String fieldName) {
+		attributes.put(FIELD_NAME, fieldName);
+	}	
 
 	/**
-	 * Sets the whether this watchpoint has been automatically disabled
-	 * (because modification and access were both set <code>false</code>).
+	 * @see IJavaWatchpoint#getFieldName()
 	 */
-	protected void setAutoDisabled(boolean autoDisabled) throws CoreException {
-		ensureMarker().setAttribute(AUTO_DISABLED, autoDisabled);
-	}
-
-	/**
-	 * Returns the underlying compilation unit of an element.
-	 */
-	public static ICompilationUnit getCompilationUnit(IJavaElement element) {
-		if (element instanceof IWorkingCopy) {
-			IWorkingCopy copy= (IWorkingCopy) element;
-			if (copy.isWorkingCopy()) {
-				return (ICompilationUnit)copy.getOriginalElement();
-			}
-		}
-		if (element instanceof ICompilationUnit) {
-			return (ICompilationUnit) element;
-		}		
-		IJavaElement parent = element.getParent();
-		if (parent != null) {
-			return getCompilationUnit(parent);
-		}
-		return null;
-	}
-	
-	/**
-	 * @see IJavaWatchpoint#getField()
-	 */
-	public IField getField() throws CoreException {
-		String handle= (String) ensureMarker().getAttribute(FIELD_HANDLE);;
-		if (handle != null && handle != "") { //$NON-NLS-1$
-			return (IField)JavaCore.create(handle);
-		}
-		return null;
+	public String getFieldName() throws CoreException {
+		return ensureMarker().getAttribute(FIELD_NAME, null);
 	}
 	
 	/**

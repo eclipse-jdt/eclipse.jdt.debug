@@ -11,8 +11,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -28,15 +30,12 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint;
-import org.eclipse.jdt.internal.debug.core.breakpoints.JavaRunToLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
@@ -184,13 +183,23 @@ public class JDIDebugModel {
 	}
 	
 	/**
-	 * Creates and returns a line breakpoint in the
-	 * given type, at the given line number. If a character range within the
-	 * line is known, it may be specified by charStart/charEnd.
+	 * Creates and returns a line breakpoint in the type with the
+	 * given name, at the given line number. The marker associated with the]
+	 * breakpoint will be created on the specified resource. If a character
+	 * range within the line is known, it may be specified by charStart/charEnd.
 	 * If hitCount is > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times.
-	 *
-	 * @param type the type in which to create the breakpoint
+	 * "hit" the specified number of times. Adding the breakpoint to the
+	 * breakpoint manager is a client responsibility.
+	 * 
+	 * @param resource the resource on which to create the associated breakpoint
+	 *  marker
+	 * @param typeName the fully qualified name of the type the breakpoint is
+	 *  to be installed in. If the breakpoint is to be installed in an inner type,
+	 *  it is sufficient to provide the name of the top level enclosing type.
+	 * 	If an inner class name is specified, it should be formatted as the 
+	 *  associated class file name (i.e. with <code>$</code>). For example,
+	 * 	<code>example.SomeClass$InnerType</code>, could be specified, but
+	 * 	<code>example.SomeClass</code> is sufficient.
 	 * @param lineNumber the lineNumber on which the breakpoint is created - line
 	 *   numbers are 1 based, associated with the compilation unit in which
 	 *   the type is defined
@@ -200,13 +209,20 @@ public class JDIDebugModel {
 	 *   or -1 if unspecified
 	 * @param hitCount the number of times the breakpoint will be hit before
 	 *   suspending execution - 0 if it should always suspend
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @param attributes a map of client defined attributes that should be assigned
+ 	 *  to the underlying breakpoint marker on creation
 	 * @return a line breakpoint
-	 * @exception DebugException If this method fails. Reasons include:<ul> 
-	 *<li>Failure creating underlying marker.  The DebugException's status contains
+	 * @exception CoreException If this method fails. Reasons include:<ul> 
+	 *<li>Failure creating underlying marker.  The exception's status contains
 	 * the underlying exception responsible for the failure.</li></ul>
+	 * @since 2.0
 	 */
-	public static IJavaLineBreakpoint createLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd, int hitCount) throws DebugException {
-		return new JavaLineBreakpoint(type, lineNumber, charStart, charEnd, hitCount);
+	public static IJavaLineBreakpoint createLineBreakpoint(IResource resource, String typeName, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+		if (attributes == null) {
+			attributes = new HashMap(10);
+		}		
+		return new JavaLineBreakpoint(resource, typeName, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
 	
 	/**
@@ -223,57 +239,54 @@ public class JDIDebugModel {
 	 *   Note that the line number refers to the debug attributes in the generated
 	 * 	 class file. Generally, this refers to a line number in the original
 	 *   source, but the attribute is client defined.
-	 * @param hitCount the number of times the breakpoint will be hit before
-	 *   suspending execution - 0 if it should always suspend
-	 * @return a pattern breakpoint
-	 * @exception DebugException If this method fails. Reasons include:<ul> 
-	 *<li>Failure creating underlying marker.  The DebugException's status contains
-	 * the underlying exception responsible for the failure.</li></ul>
-	 */
-	public static IJavaPatternBreakpoint createPatternBreakpoint(IResource resource, String pattern, int lineNumber, int hitCount) throws DebugException {
-		return new JavaPatternBreakpoint(resource, pattern, lineNumber, hitCount);
-	}
-	
-	/**
-	 * Creates and returns a run-to-line breakpoint in the
-	 * given type, at the given line number. If a character range within the
-	 * line is known, it may be specified by charStart/charEnd. Run-to-line
-	 * breakpoints have a hit count of 1.
-	 *
-	 * @param type the type in which to create the breakpoint
-	 * @param lineNumber the lineNumber on which the breakpoint is created - line
-	 *   numbers are 1 based, associated with the compilation unit in which
-	 *   the type is defined
 	 * @param charStart the first character index associated with the breakpoint,
 	 *   or -1 if unspecified
  	 * @param charEnd the last character index associated with the breakpoint,
 	 *   or -1 if unspecified
-	 * @return a run-to-line breakpoint
-	 * @exception DebugException If this method fails. Reasons include:<ul> 
-	 *<li>Failure creating underlying marker.  The DebugException's status contains
+	 * @param hitCount the number of times the breakpoint will be hit before
+	 *   suspending execution - 0 if it should always suspend
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @param attributes a map of client defined attributes that should be assigned
+ 	 *  to the underlying breakpoint marker on creation
+	 * @return a pattern breakpoint
+	 * @exception CoreException If this method fails. Reasons include:<ul> 
+	 *<li>Failure creating underlying marker.  The exception's status contains
 	 * the underlying exception responsible for the failure.</li></ul>
 	 */
-	public static IJavaRunToLineBreakpoint createRunToLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd) throws DebugException {
-		return new JavaRunToLineBreakpoint(type, lineNumber, charStart, charEnd);
-	}
+	public static IJavaPatternBreakpoint createPatternBreakpoint(IResource resource, String pattern, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+		if (attributes == null) {
+			attributes = new HashMap(10);
+		}		
+		return new JavaPatternBreakpoint(resource, pattern, lineNumber, charStart, charEnd, hitCount, register, attributes);
+	}	
 	
 	/**
 	 * Creates and returns an exception breakpoint for the
 	 * given (throwable) type. Caught and uncaught specify where the exception
 	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
 	 * Checked indicates if the given exception is a checked exception.
-	 *
-	 * @param type the exception for which to create the breakpoint
+	 * 
+	 * @param resource the resource on which to create the associated
+	 *  breakpoint marker
+	 * @param exceptionName the fully qualified name of the exception for
+	 *  which to create the breakpoint
 	 * @param caught whether to suspend in caught locations
 	 * @param uncaught whether to suspend in uncaught locations
  	 * @param checked whether the exception is a checked exception
+ 	 * @param register whether to add this breakpoint to the breakpoint manager
+ 	 * @param attributes a map of client defined attributes that should be assigned
+ 	 *  to the underlying breakpoint marker on creation
 	 * @return an exception breakpoint
-	 * @exception DebugException If this method fails. Reasons include:<ul> 
-	 *<li>Failure creating underlying marker.  The DebugException's status contains
+	 * @exception CoreException If this method fails. Reasons include:<ul> 
+	 *<li>Failure creating underlying marker.  The exception's status contains
 	 * the underlying exception responsible for the failure.</li></ul>
+	 * @since 2.0
 	 */
-	public static IJavaExceptionBreakpoint createExceptionBreakpoint(IType exception, boolean caught, boolean uncaught, boolean checked) throws DebugException {
-		return new JavaExceptionBreakpoint(exception, caught, uncaught, checked);
+	public static IJavaExceptionBreakpoint createExceptionBreakpoint(IResource resource, String exceptionName, boolean caught, boolean uncaught, boolean checked, boolean register, Map attributes) throws CoreException {
+		if (attributes == null) {
+			attributes = new HashMap(10);
+		}
+		return new JavaExceptionBreakpoint(resource, exceptionName, caught, uncaught, checked, register, attributes);
 	}
 
 	/**
@@ -282,16 +295,39 @@ public class JDIDebugModel {
 	 * If hitCount > 0, the breakpoint will suspend execution when it is
 	 * "hit" the specified number of times.
 	 * 
-	 * @param field the field on which to suspend (on access or modification)
+	 * @param resource the resource on which to create the associated breakpoint
+	 *  marker
+	 * @param typeName the fully qualified name of the type the breakpoint is
+	 *  to be installed in. If the breakpoint is to be installed in an inner type,
+	 *  it is sufficient to provide the name of the top level enclosing type.
+	 * 	If an inner class name is specified, it should be formatted as the 
+	 *  associated class file name (i.e. with <code>$</code>). For example,
+	 * 	<code>example.SomeClass$InnerType</code>, could be specified, but
+	 * 	<code>example.SomeClass</code> is sufficient.
+	 * @param fieldName the name of the field on which to suspend (on access or modification)
+	 * @param lineNumber the lineNumber with which the breakpoint is asscoiated,
+	 *   or -1 is unspecfied. Line numbers are 1 based, associated with the compilation
+	 *   unit in which the type is defined
+	 * @param charStart the first character index associated with the breakpoint,
+	 *   or -1 if unspecified
+ 	 * @param charEnd the last character index associated with the breakpoint,
+	 *   or -1 if unspecified
 	 * @param hitCount the number of times the breakpoint will be hit before
 	 * 	suspending execution - 0 if it should always suspend
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @param attributes a map of client defined attributes that should be assigned
+ 	 *  to the underlying breakpoint marker on creation
 	 * @return a watchpoint
-	 * @exception DebugException If this method fails. Reasons include:<ul> 
-	 *<li>Failure creating underlying marker.  The DebugException's status contains
+	 * @exception CoreException If this method fails. Reasons include:<ul> 
+	 *<li>Failure creating underlying marker.  The CoreException's status contains
 	 * the underlying exception responsible for the failure.</li></ul>
+	 * @since 2.0
 	 */
-	public static IJavaWatchpoint createWatchpoint(IField field, int hitCount) throws DebugException {
-		return new JavaWatchpoint(field, hitCount);
+	public static IJavaWatchpoint createWatchpoint(IResource resource, String typeName, String fieldName, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+		if (attributes == null) {
+			attributes = new HashMap(10);
+		}		
+		return new JavaWatchpoint(resource, typeName, fieldName, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
 
 	/**
@@ -300,16 +336,36 @@ public class JDIDebugModel {
 	 * If hitCount is > 0, the breakpoint will suspend execution when it is
 	 * "hit" the specified number of times.
 	 *
-	 * @param method the method in which to suspend on entry
+	 * @param resource the resource on which to create the associated
+	 *  breakpoint marker
+	 * @param typeName the fully qualified name of the type in which
+	 *  the method is contained
+	 * @param methodName the name of the method in which to suspend on entry
+	 * @param methodSignature the signature of the method in which to suspsend
+	 *  on entry
+	 * @param lineNumber the lineNumber with which the breakpoint is asscoiated,
+	 *   or -1 is unspecfied. Line numbers are 1 based, associated with the compilation
+	 *   unit in which the type is defined
+	 * @param charStart the first character index associated with the breakpoint,
+	 *   or -1 if unspecified
+ 	 * @param charEnd the last character index associated with the breakpoint,
+	 *   or -1 if unspecified
 	 * @param hitCount the number of times the breakpoint will be hit before
 	 *   suspending execution - 0 if it should always suspend
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @param attributes a map of client defined attributes that should be assigned
+ 	 *  to the underlying breakpoint marker on creation
 	 * @return a method entry breakpoint
-	 * @exception DebugException If this method fails. Reasons include:<ul> 
-	 *<li>Failure creating underlying marker.  The DebugException's status contains
+	 * @exception CoreException If this method fails. Reasons include:<ul> 
+	 *<li>Failure creating underlying marker.  The exception's status contains
 	 * the underlying exception responsible for the failure.</li></ul>
+	 * @since 2.0
 	 */
-	public static IJavaMethodEntryBreakpoint createMethodEntryBreakpoint(final IMethod method, final int hitCount) throws DebugException {
-		return new JavaMethodEntryBreakpoint(method, hitCount);
+	public static IJavaMethodEntryBreakpoint createMethodEntryBreakpoint(IResource resource, String typeName, String methodName, String methodSignature, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+		if (attributes == null) {
+			attributes = new HashMap(10);
+		}
+		return new JavaMethodEntryBreakpoint(resource, typeName, methodName, methodSignature, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
 	
 	/**
@@ -334,7 +390,7 @@ public class JDIDebugModel {
 			}
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) breakpoints[i];
 			if (breakpoint.getMarker().getType().equals(markerType)) {
-				if (breakpoint.getType().equals(containingType)) {
+				if (breakpoint.getTypeName().equals(containingType)) {
 					if (breakpoint.getLineNumber() == lineNumber) {
 						return true;
 					}
@@ -704,5 +760,21 @@ public class JDIDebugModel {
 	
 	public static boolean suspendOnUncaughtExceptions() {
 		return fgSuspendOnUncaughtExceptions;
+	}
+	
+	/**
+	 * Returns the resource with which to associate a breakpoint
+	 * marker in the give type.
+	 * 
+	 * @param type Java model type
+	 * @return resource with which to associate a breakpoint
+	 *  marker
+	 */
+	private static IResource getResource(IType type) throws CoreException {
+		IResource res = type.getUnderlyingResource();
+		if (res == null) {
+			return type.getJavaProject().getProject();
+		}
+		return res;
 	}
 }

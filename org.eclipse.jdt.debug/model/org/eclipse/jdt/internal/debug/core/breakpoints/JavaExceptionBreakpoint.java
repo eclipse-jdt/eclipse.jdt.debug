@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  * All Rights Reserved.
  */
  
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -21,11 +22,13 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.event.Event;
+import com.sun.jdi.event.ExceptionEvent;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.ExceptionRequest;
 
 public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExceptionBreakpoint {
-	
+
 	private static final String JAVA_EXCEPTION_BREAKPOINT= "org.eclipse.jdt.debug.javaExceptionBreakpointMarker"; //$NON-NLS-1$
 	
 	/**
@@ -49,8 +52,11 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 */
 	protected static final String CHECKED = "checked"; //$NON-NLS-1$	
 	
-	// Attribute strings
-	protected static final String[] fgExceptionBreakpointAttributes= new String[]{CHECKED, TYPE_HANDLE};		
+	/**
+	 * Name of the exception that was actually hit (could be a
+	 * subtype of the type that is being caught)
+	 */
+	protected String fExceptionName = null;
 	
 	public JavaExceptionBreakpoint() {
 	}
@@ -60,42 +66,36 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * given (throwable) type. Caught and uncaught specify where the exception
 	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
 	 * Checked indicates if the given exception is a checked exception.
-	 * @param type the exception for which to create the breakpoint
+	 * @param resource the resource on which to create the associated
+	 *  breakpoint marker 
+	 * @param exceptionName the fully qualified name of the exception for
+	 *  which to create the breakpoint
 	 * @param caught whether to suspend in caught locations
 	 * @param uncaught whether to suspend in uncaught locations
  	 * @param checked whether the exception is a checked exception
- 	 * @param add whether to add the exception to the breakpoint manager
+ 	 * @param add whether to add this breakpoint to the breakpoint manager
 	 * @return a Java exception breakpoint
 	 * @exception DebugException if unable to create the associated marker due
 	 *  to a lower level exception.
 	 */	
-	public JavaExceptionBreakpoint(final IType exception, final boolean caught, final boolean uncaught, final boolean checked, final boolean add) throws DebugException {
+	public JavaExceptionBreakpoint(final IResource resource, final String exceptionName, final boolean caught, final boolean uncaught, final boolean checked, final boolean add, final Map attributes) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IResource resource= null;
-				resource= exception.getUnderlyingResource();
-
-				if (resource == null) {
-					resource= exception.getJavaProject().getProject();
-				}
-				
+			public void run(IProgressMonitor monitor) throws CoreException {				
 				// create the marker
 				setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
-				// configure the standard attributes
-				setEnabled(true);
-				// configure caught, uncaught, checked, and the type attributes
-				setCaughtAndUncaught(caught, uncaught);
-				setTypeAndChecked(exception, checked);
-
-				// configure the marker as a Java marker
-				IMarker marker = ensureMarker();
-				Map attributes= marker.getAttributes();
-				JavaCore.addJavaElementMarkerAttributes(attributes, exception);
-				marker.setAttributes(attributes);
+				
+				// add attributes
+				attributes.put(TYPE_NAME, exceptionName);
+				attributes.put(ENABLED, new Boolean(true));
+				attributes.put(CAUGHT, new Boolean(caught));
+				attributes.put(UNCAUGHT, new Boolean(uncaught));
+				attributes.put(CHECKED, new Boolean(checked));
+				
+				ensureMarker().setAttributes(attributes);
 				
 				if (add) {
-					addToBreakpointManager();				
+					addToBreakpointManager();
 				}
 			}
 
@@ -103,46 +103,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		run(wr);
 
 	}
-	/**
-	 * Creates and returns an exception breakpoint for the
-	 * given (throwable) type. Caught and uncaught specify where the exception
-	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
-	 * Checked indicates if the given exception is a checked exception.
-	 * The breakpoint is added to the breakpoint manager.
-	 *
-	 * @param type the exception for which to create the breakpoint
-	 * @param caught whether to suspend in caught locations
-	 * @param uncaught whether to suspend in uncaught locations
- 	 * @param checked whether the exception is a checked exception
-	 * @return a Java exception breakpoint
-	 * @exception DebugException if unable to create the associated marker due
-	 *  to a lower level exception.
-	 */	
-	public JavaExceptionBreakpoint(IType exception, boolean caught, boolean uncaught, boolean checked) throws DebugException {
-		this(exception, caught, uncaught, checked, true);
-	}
-	
-	/**
-	 * Sets the exception type on which this breakpoint is installed and whether
-	 * or not that exception is a checked exception.
-	 */
-	protected void setTypeAndChecked(IType exception, boolean checked) throws CoreException {
-		String handle = exception.getHandleIdentifier();
-		Object[] values= new Object[]{new Boolean(checked), handle};
-		ensureMarker().setAttributes(fgExceptionBreakpointAttributes, values);
-	}
-	
-	/**
-	 * Sets the values for whether this breakpoint will
-	 * suspend execution when the associated exception is thrown
-	 * and caught or not caught..
-	 */
-	public void setCaughtAndUncaught(boolean caught, boolean uncaught) throws CoreException {
-		Object[] values= new Object[]{new Boolean(caught), new Boolean(uncaught)};
-		String[] attributes= new String[]{CAUGHT, UNCAUGHT};
-		ensureMarker().setAttributes(attributes, values);
-	}
-	
+		
 	/**
 	 * Creates a request in the given target to suspend when the given exception
 	 * type is thrown. The request is returned installed, configured, and enabled
@@ -186,6 +147,17 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		}
 	}
 	
+	/**
+	 * Sets the values for whether this breakpoint will
+	 * suspend execution when the associated exception is thrown
+	 * and caught or not caught..
+	 */
+	public void setCaughtAndUncaught(boolean caught, boolean uncaught) throws CoreException {
+		Object[] values= new Object[]{new Boolean(caught), new Boolean(uncaught)};
+		String[] attributes= new String[]{CAUGHT, UNCAUGHT};
+		ensureMarker().setAttributes(attributes, values);
+	}
+		
 	/**
 	 * @see IJavaExceptionBreakpoint#isCaught()
 	 */
@@ -298,5 +270,32 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		}
 		return request;
 	}	
+	
+	/**
+	 * @see IJDIEventListener#handleEvent(Event)
+	 */
+	public boolean handleEvent(Event event, JDIDebugTarget target) {
+		if (event instanceof ExceptionEvent) {
+			setExceptionName(((ExceptionEvent)event).exception().type().name());
+		}	
+		return super.handleEvent(event, target);
+	}	
+	
+	/**
+	 * Sets the name of the exception that was last hit
+	 * 
+	 * @param name fully qualified exception name
+	 */
+	protected void setExceptionName(String name) {
+		fExceptionName = name;
+	}
+	
+	/**
+	 * @see IJavaExceptionBreakpoint#getExceptionTypeName()
+	 */
+	public String getExceptionTypeName() {
+		return fExceptionName;
+	}
+
 }
 

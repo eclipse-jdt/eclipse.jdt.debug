@@ -58,13 +58,13 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 */
 	public void setModification(boolean modification) throws CoreException;	
 	/**
-	 * Returns the field associated with this watchpoint
+	 * Returns the name of the field associated with this watchpoint
 	 * 
-	 * @return field the field on which this watchpoint is installed
+	 * @return field the name of the field on which this watchpoint is installed
 	 * @exception CoreException if a <code>CoreException</code> is
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */
-	public IField getField() throws CoreException;	
+	public String getFieldName() throws CoreException;	
 	
 	/**
 	 * Returns whether this breakpoint last suspended in this target due to an access

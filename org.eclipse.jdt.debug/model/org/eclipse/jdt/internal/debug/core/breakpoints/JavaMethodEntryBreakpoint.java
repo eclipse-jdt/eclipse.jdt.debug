@@ -6,18 +6,11 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  */
 
 import java.util.Map;
-
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.ISourceRange;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -34,12 +27,21 @@ import com.sun.jdi.request.MethodEntryRequest;
 public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJavaMethodEntryBreakpoint {
 	
 	private static final String JAVA_METHOD_ENTRY_BREAKPOINT = "org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"; //$NON-NLS-1$
+	
 	/**
-	 * Breakpoint attribute storing the handle identifier of the Java element
-	 * corresponding to the method in which a breakpoint is contained
-	 * (value <code>"methodHandle"</code>). This attribute is a <code>String</code>.
+	 * Breakpoint attribute storing the name of the method
+	 * in which a breakpoint is contained.
+	 * (value <code>"methodName"</code>). This attribute is a <code>String</code>.
 	 */
-	private static final String METHOD_HANDLE = "methodHandle"; //$NON-NLS-1$
+	private static final String METHOD_NAME = "methodName"; //$NON-NLS-1$	
+	
+	/**
+	 * Breakpoint attribute storing the signature of the method
+	 * in which a breakpoint is contained.
+	 * (value <code>"methodSignature"</code>). This attribute is a <code>String</code>.
+	 */
+	private static final String METHOD_SIGNATURE = "methodSignature"; //$NON-NLS-1$	
+	
 	/**
 	 * Caches the name and signature of the method in which this breakpoint is installed
 	 * Array entries are:
@@ -54,55 +56,25 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	}
 	
 	/**
-	 * Creates and returns a method entry breakpoint in the
-	 * given method.
-	 * If hitCount is > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times.
-	 *
-	 * @param method the method in which to suspend on entry
-	 * @param hitCount the number of times the breakpoint will be hit before
-	 *   suspending execution - 0 if it should always suspend
-	 * @return a method entry breakpoint
-	 * @exception DebugException if unable to create the breakpoint marker due
-	 *  to a lower level exception.
+	 * @see JDIDebugModel#createMethodEntryBreakpoint(IResource, String, String, String, int, int, int, int, boolean, Map)
 	 */
-	public JavaMethodEntryBreakpoint(final IMethod method, final int hitCount) throws DebugException {
+	public JavaMethodEntryBreakpoint(final IResource resource, final String typeName, final String methodName, final String methodSignature, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final boolean add, final Map attributes) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				// determine the resource to associate the marker with				
-				IResource resource= null;
-				resource= method.getUnderlyingResource();
-				if (resource == null) {
-					resource= method.getJavaProject().getProject();
-				}
-
 				// create the marker
 				setMarker(resource.createMarker(JAVA_METHOD_ENTRY_BREAKPOINT));
 				
-				// find the name range if available
-				int start = -1;
-				int end = -1;
-				ISourceRange range = method.getNameRange();
-				if (range != null) {
-					start = range.getOffset();
-					end = start + range.getLength() - 1;
+				// add attributes
+				addLineBreakpointAttributes(attributes, getModelIdentifier(), true, lineNumber, charStart, charEnd);
+				addMethodNameAndSignature(attributes, methodName, methodSignature);
+				addTypeNameAndHitCount(attributes, typeName, hitCount);
+				
+				//set attributes
+				ensureMarker().setAttributes(attributes);
+				
+				if (add) {
+					addToBreakpointManager();
 				}
-				// configure the standard attributes
-				setLineBreakpointAttributes(getModelIdentifier(), true, -1, start, end);
-				// configure the type handle and hit count
-				setTypeAndHitCount(method.getDeclaringType(), hitCount);
-
-				// configure the method handle
-				setMethod(method);
-				
-				// configure the marker as a Java marker
-				IMarker marker = ensureMarker();
-				Map attributes= marker.getAttributes();
-				JavaCore.addJavaElementMarkerAttributes(attributes, method);
-				marker.setAttributes(attributes);
-				
-				// Lastly, add the breakpoint manager
-				addToBreakpointManager();
 			}
 
 		};
@@ -113,8 +85,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
-		IType type = getType();
-		String className = type.getFullyQualifiedName();
+		String className = getTypeName();
 		
 		MethodEntryRequest request;
 		try {
@@ -167,13 +138,18 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	}
 	
 	/**
-	 * Sets the method on which this breakpoint is set.
+	 * Adds the method name and signature attributes to the
+	 * given attribute map, and intializes the local cache
+	 * of method name and signature.
 	 */
-	private void setMethod(IMethod method) throws CoreException {
-		String handle = method.getHandleIdentifier();
-		ensureMarker().setAttribute(METHOD_HANDLE, handle);
+	private void addMethodNameAndSignature(Map attributes, String methodName, String methodSignature) {
+		attributes.put(METHOD_NAME, methodName);
+		attributes.put(METHOD_SIGNATURE, methodSignature);
+		fMethodNameSignature= new String[2];
+		fMethodNameSignature[0]= methodName;
+		fMethodNameSignature[1]= methodSignature;
 	}
-
+	
 	/**
 	 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
 	 * 
@@ -262,39 +238,25 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	}
 	
 	/**
-	 * @see IJavaLineBreakpoint#getMember()
-	 */	
-	public IMember getMember() throws CoreException {
-		return getMethod();
-	}
+	 * @see IJavaMethodEntryBreakpoint#getMethodName()		
+	 */
+	public String getMethodName() throws CoreException {
+		return ensureMarker().getAttribute(METHOD_NAME, null);
+	}	
 	
 	/**
-	 * @see IJavaMethodEntryBreakpoint#getMethod()		
+	 * @see IJavaMethodEntryBreakpoint#getMethodSignature()		
 	 */
-	public IMethod getMethod() throws CoreException {
-		String handle = (String) ensureMarker().getAttribute(METHOD_HANDLE);
-		if (handle != null) {
-			return (IMethod)JavaCore.create(handle);
-		}
-		return null;
-	}	
+	public String getMethodSignature() throws CoreException {
+		return ensureMarker().getAttribute(METHOD_SIGNATURE, null);
+	}		
 	
 	/**
 	 * Returns the name and signature of the method in which this
 	 * breakpoint is installed.
-	 * This information is computed once and cached for future queries.
+	 * This information is initialized by <code>addMethodNameAndSignature</code>.
 	 */
 	protected String[] getMethodNameSignature() throws CoreException {
-		if (fMethodNameSignature == null) {
-			fMethodNameSignature= new String[2];
-			IMethod aMethod= getMethod(); 
-			if (aMethod.isConstructor()) {
-				fMethodNameSignature[0]= "<init>"; //$NON-NLS-1$
-			} else {
-				 fMethodNameSignature[0]= aMethod.getElementName();
-			}
-			fMethodNameSignature[1]= aMethod.getSignature();
-		}
 		return fMethodNameSignature;
 	}		
 }

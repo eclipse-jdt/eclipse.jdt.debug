@@ -5,14 +5,19 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
  
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
@@ -28,7 +33,7 @@ public class ManageWatchpointAction extends Action implements IObjectActionDeleg
 
 	private IField fField;
 	
-	private IBreakpoint fBreakpoint;
+	private IJavaBreakpoint fBreakpoint;
 	
 	private String fAddText, fAddDescription, fAddToolTip;
 	private String fRemoveText, fRemoveDescription, fRemoveToolTip;
@@ -51,8 +56,18 @@ public class ManageWatchpointAction extends Action implements IObjectActionDeleg
 	public void run() {
 		if (getBreakpoint() == null) {
 			try {
-				setBreakpoint(JDIDebugModel.createWatchpoint(getField(), 0));
-			} catch (DebugException x) {
+				IType type = getField().getDeclaringType();
+				int start = -1;
+				int end = -1;
+				ISourceRange range = getField().getNameRange();
+				if (range != null) {
+					start = range.getOffset();
+					end = start + range.getLength();
+				}
+				Map attributes = new HashMap(10);
+				BreakpointUtils.addJavaBreakpointAttributes(attributes, getField());
+				setBreakpoint(JDIDebugModel.createWatchpoint(BreakpointUtils.getBreakpointResource(type),type.getFullyQualifiedName(), getField().getElementName(), -1, start, end, 0, true, attributes));
+			} catch (CoreException x) {
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManagerWatchPointAction.Problems_adding_watchpoint_7"), x.getMessage()); //$NON-NLS-1$
 			}
 		} else {
@@ -83,11 +98,10 @@ public class ManageWatchpointAction extends Action implements IObjectActionDeleg
 					if (breakpoint instanceof IJavaWatchpoint) {
 						IField breakpointField= null;
 						try {
-							breakpointField = ((IJavaWatchpoint) breakpoint).getField();
+							if (breakpointField != null && equalFields(fField, (IJavaWatchpoint)breakpoint)) {
+								return false;
+							}
 						} catch (CoreException e) {
-							return false;
-						}
-						if (breakpointField != null && equalFields(breakpointField, fField)) {
 							return false;
 						}
 					}
@@ -102,9 +116,9 @@ public class ManageWatchpointAction extends Action implements IObjectActionDeleg
 	 * Compare two fields for <code>canActionBeAdded()</code>. The default <code>equals()</code>
 	 * method for <code>IField</code> doesn't give the comparison desired.
 	 */
-	private boolean equalFields(IField breakpointField, IField field) {
-		return (breakpointField.getElementName().equals(field.getElementName()) &&
-		breakpointField.getDeclaringType().getElementName().equals(field.getDeclaringType().getElementName()));
+	private boolean equalFields(IField breakpointField, IJavaWatchpoint watchpoint) throws CoreException {
+		return (breakpointField.getElementName().equals(watchpoint.getFieldName()) &&
+		breakpointField.getDeclaringType().getFullyQualifiedName().equals(watchpoint.getTypeName()));
 	}
 	
 	/**
@@ -129,20 +143,17 @@ public class ManageWatchpointAction extends Action implements IObjectActionDeleg
 		updateAction(action);
 	}
 	
-	private IBreakpoint getBreakpoint(IField selectedField) {
+	private IJavaBreakpoint getBreakpoint(IField selectedField) {
 		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 		IBreakpoint[] breakpoints= breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
 		for (int i= 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint= breakpoints[i];
 			if (breakpoint instanceof IJavaWatchpoint) {
-				IField field = null;
 				try {
-					field= ((IJavaWatchpoint) breakpoint).getField();
+					if (equalFields(selectedField, (IJavaWatchpoint)breakpoint))
+						return (IJavaBreakpoint)breakpoint;
 				} catch (CoreException e) {
-					return null;
 				}
-				if (equalFields(selectedField, field))
-					return breakpoint;
 			}
 		}
 		return null;
@@ -182,11 +193,11 @@ public class ManageWatchpointAction extends Action implements IObjectActionDeleg
 		action.setDescription(getDescription());
 	}
 	
-	protected IBreakpoint getBreakpoint() {
+	protected IJavaBreakpoint getBreakpoint() {
 		return fBreakpoint;
 	}
 
-	protected void setBreakpoint(IBreakpoint breakpoint) {
+	protected void setBreakpoint(IJavaBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
 	}
 	

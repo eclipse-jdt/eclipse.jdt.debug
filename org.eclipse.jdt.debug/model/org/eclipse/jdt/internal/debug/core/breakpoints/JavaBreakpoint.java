@@ -40,7 +40,7 @@ import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.MethodEntryRequest;
 
 public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener {
-	
+
 	/**
 	 * Breakpoint attribute storing the expired value (value <code>"expired"</code>).
 	 * This attribute is stored as a <code>boolean</code>. Once a hit count has
@@ -63,8 +63,18 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Breakpoint attribute storing the handle identifier of the Java element
 	 * corresponding to the type in which a breakpoint is contained
 	 * (value <code>"typeHandle"</code>). This attribute is a <code>String</code>.
+	 * 
+	 * This attribute is no longer used - it has been replaced
+	 * by <code>TYPE_NAME</code>.
 	 */
 	protected static final String TYPE_HANDLE = "typeHandle"; //$NON-NLS-1$	
+	
+	/**
+	 * Breakpoint attribute storing the fully qualified name of the type
+	 * this breakpoint is located in.
+	 * (value <code>"typeName"</code>). This attribute is a <code>String</code>.
+	 */
+	protected static final String TYPE_NAME = "typeName"; //$NON-NLS-1$		
 	
 	/**
 	 * Stores the collection of requests that this breakpoint has installed in
@@ -113,6 +123,13 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
+	 * Add this breakpoint to the breakpoint manager
+	 */
+	protected void addToBreakpointManager() throws CoreException {
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(this);
+	}	
+	
+	/**
 	 * Add the given event request to the given debug target. If 
 	 * the request is the breakpoint request associated with this 
 	 * breakpoint, increment the install count.
@@ -139,41 +156,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * is located or <code>null</code> if no reference type could be
 	 * found.
 	 */
-	protected String getEnclosingReferenceTypeName() {
-		String name= null;
-		try {
-			IType type = getType();
-			if (type != null) {
-				while (type.getDeclaringType() != null) {
-					type = type.getDeclaringType();
-				}
-				name= type.getFullyQualifiedName();
-			}
-		} catch (CoreException ce) {
-			JDIDebugPlugin.logError(ce);
+	protected String getEnclosingReferenceTypeName() throws CoreException {
+		String name= getTypeName();
+		int index = name.indexOf('$');
+		if (index == -1) {
+			return name;
+		} else {
+			return name.substring(0, index);
 		}
-		return name;
 	}	
-	
-	/**
-	 * Returns a String corresponding to the reference type
-	 * name in which this breakpoint is installed or
-	 * <code>null</code> if no reference type could be
-	 * found.
-	 */
-	protected String getReferenceTypeName() {
-		String name= null;
-		try {
-			IType type = getType();
-			if (type != null) {
-				name= type.getFullyQualifiedName();
-			}
-		} catch (CoreException ce) {
-			JDIDebugPlugin.logError(ce);
-		}
-		return name;
-	}	
-	
+		
 	/**
 	 * Returns the requests that this breakpoint has installed
 	 * in the given target.
@@ -225,12 +217,12 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public boolean handleEvent(Event event, JDIDebugTarget target) {
 		if (event instanceof ClassPrepareEvent) {
 			ClassPrepareEvent cpe = (ClassPrepareEvent)event;
-			if (!installableReferenceType(cpe.referenceType())) {
-				// Don't install this breakpoint in an
-				// inappropriate type
-				return true;
-			}			
 			try {
+				if (!installableReferenceType(cpe.referenceType())) {
+					// Don't install this breakpoint in an
+					// inappropriate type
+					return true;
+				}			
 				createRequest(target, cpe.referenceType());
 			} catch (CoreException e) {
 				JDIDebugPlugin.logError(e);
@@ -253,11 +245,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Returns whether the given reference type is appropriate for this
 	 * breakpoint to be installed in.
 	 */
-	protected boolean installableReferenceType(ReferenceType type) {
+	protected boolean installableReferenceType(ReferenceType type) throws CoreException {
 		if (type instanceof InterfaceType) {
 			return false;
 		}
-		String installableType= getReferenceTypeName();
+		String installableType= getTypeName();
 		String queriedType= type.name();
 		if (installableType == null || queriedType == null) {
 			return false;
@@ -349,7 +341,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * execution of that target as appropriate.
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
-		String referenceTypeName= getReferenceTypeName();
+		String referenceTypeName= getTypeName();
 		String enclosingTypeName= getEnclosingReferenceTypeName();
 		if (referenceTypeName == null || enclosingTypeName == null) {
 			return;
@@ -573,24 +565,19 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			}
 		}
 	}
-
-	/**
-	 * Sets the type in which this breakpoint is set.
-	 */
-	protected void setType(IType type) throws CoreException {
-		String handle = type.getHandleIdentifier();
-		ensureMarker().setAttribute(TYPE_HANDLE, handle);
-	}
 	
 	/**
-	 * @see IJavaBreakpoint#getType()
+	 * Sets the type name in which to install this breakpoint.
 	 */
-	public IType getType() throws CoreException {
-		String handle = (String) ensureMarker().getAttribute(TYPE_HANDLE);
-		if (handle != null) {
-			return (IType)JavaCore.create(handle);
-		}
-		return null;
+	protected void setTypeName(String typeName) throws CoreException {
+		ensureMarker().setAttribute(TYPE_NAME, typeName);
+	}	
+
+	/**
+	 * @see IJavaBreakpoint#getTypeName()
+	 */
+	public String getTypeName() throws CoreException {
+		return ensureMarker().getAttribute(TYPE_NAME, null);
 	}
 	
 	/**
@@ -630,13 +617,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			ensureMarker().setAttributes((String[])attributes.toArray(strAttributes), values.toArray());
 		}
 	}	
-
-	/**
-	 * Add this breakpoint to the breakpoint manager
-	 */
-	protected void addToBreakpointManager() throws DebugException {
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(this);
-	}
 
 	/**
 	 * @see IJavaBreakpoint#getHitCount()

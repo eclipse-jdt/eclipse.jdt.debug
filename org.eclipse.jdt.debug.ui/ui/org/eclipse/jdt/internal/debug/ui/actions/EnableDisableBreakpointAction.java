@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -103,7 +104,7 @@ public class EnableDisableBreakpointAction extends AddBreakpointAction implement
 				if (match) {
 					IType breakpointType= null;
 					try {
-						breakpointType= jBreakpoint.getType();
+						breakpointType= BreakpointUtils.getType(jBreakpoint);
 					} catch (CoreException ce) {
 						JDIDebugUIPlugin.logError(ce);
 						continue;

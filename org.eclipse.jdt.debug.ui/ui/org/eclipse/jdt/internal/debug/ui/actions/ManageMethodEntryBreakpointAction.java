@@ -5,14 +5,19 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
  
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
@@ -30,7 +35,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class ManageMethodEntryBreakpointAction extends Action implements IObjectActionDelegate {
 	
 	private IMethod fMethod;
-	private IBreakpoint fBreakpoint;
+	private IJavaBreakpoint fBreakpoint;
 	
 	private String fAddText, fAddDescription, fAddToolTip;
 	private String fRemoveText, fRemoveDescription, fRemoveToolTip;
@@ -59,8 +64,18 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 		if (getBreakpoint() == null) {
 			// add breakpoint
 			try {
-				setBreakpoint(JDIDebugModel.createMethodEntryBreakpoint(getMethod(), 0));
-			} catch (DebugException x) {
+				IMethod method = getMethod();
+				int start = -1;
+				int end = -1;
+				ISourceRange range = method.getNameRange();
+				if (range != null) {
+					start = range.getOffset();
+					end = start + range.getLength();
+				}
+				Map attributes = new HashMap(10);
+				BreakpointUtils.addJavaBreakpointAttributes(attributes, method);
+				setBreakpoint(JDIDebugModel.createMethodEntryBreakpoint(BreakpointUtils.getBreakpointResource(method),method.getDeclaringType().getFullyQualifiedName(), getMethod().getElementName(), getMethod().getSignature(), -1, start, end, 0, true, attributes));
+			} catch (CoreException x) {
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodEntryBreakpointAction.Problems_creating_breakpoint_7"), x.getMessage()); //$NON-NLS-1$
 			}
 		} else {
@@ -94,20 +109,20 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 		}
 	}
 	
-	private IBreakpoint getBreakpoint(IMethod method) {
+	private IJavaBreakpoint getBreakpoint(IMethod method) {
 		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 		IBreakpoint[] breakpoints= breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
 		for (int i= 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint= breakpoints[i];
 			if (breakpoint instanceof IJavaMethodEntryBreakpoint) {
-				IMethod container = null;
+				IMember container = null;
 				try {
-					container= ((IJavaMethodEntryBreakpoint) breakpoint).getMethod();
+					container= BreakpointUtils.getMember((IJavaMethodEntryBreakpoint) breakpoint);
 				} catch (CoreException e) {
 					return null;
 				}
 				if (method.equals(container))
-					return breakpoint;
+					return (IJavaBreakpoint)breakpoint;
 			}
 		}
 		return null;
@@ -161,11 +176,11 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 		fMethod = method;
 	}
 	
-	protected IBreakpoint getBreakpoint() {
+	protected IJavaBreakpoint getBreakpoint() {
 		return fBreakpoint;
 	}
 
-	protected void setBreakpoint(IBreakpoint breakpoint) {
+	protected void setBreakpoint(IJavaBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
 	}
 }

@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLauncherDelegate;
 import org.eclipse.jdt.launching.IVMRunner;
@@ -179,8 +180,7 @@ public class ScrapbookLauncherDelegate extends JavaApplicationLauncherDelegate i
 	 */
 	IBreakpoint createMagicBreakpoint(IType type) {
 		try {
-			fMagicBreakpoint= JDIDebugModel.createRunToLineBreakpoint(type, 49, -1, -1);
-			fMagicBreakpoint.setHitCount(0);
+			fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), 49, -1, -1, 0, false, null);
 			return fMagicBreakpoint;
 		} catch (CoreException e) {
 			e.printStackTrace();

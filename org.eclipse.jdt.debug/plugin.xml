@@ -38,11 +38,6 @@
 		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint">
 	</breakpoint>
 	<breakpoint
-		id="javaRunToLineBreakpoint"
-		markerType="org.eclipse.jdt.debug.javaRunToLineBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaRunToLineBreakpoint">
-	</breakpoint>
-	<breakpoint
 		id="javaExceptionBreakpoint"
 		markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker"
 		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint">
@@ -116,17 +111,6 @@
 		name="pattern">
 	</attribute>
 </extension>	
-
-<extension
-      id="javaRunToLineBreakpointMarker"
-      point="org.eclipse.core.resources.markers">
-   <super
-         type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
-   </super>
-   <persistent
-         value="false">
-   </persistent>
-</extension>
 
 <extension
       id="javaExceptionBreakpointMarker"

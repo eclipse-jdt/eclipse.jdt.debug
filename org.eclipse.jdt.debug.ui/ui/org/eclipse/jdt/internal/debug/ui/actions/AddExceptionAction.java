@@ -6,9 +6,14 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugException;
+import java.util.HashMap;
+import java.util.Map;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.jface.action.IAction;
@@ -31,8 +36,10 @@ public class AddExceptionAction implements IViewActionDelegate {
 			boolean caught= dialog.isCaughtSelected();
 			boolean uncaught= dialog.isUncaughtSelected();
 			try {
-				JDIDebugModel.createExceptionBreakpoint(result, caught, uncaught, exceptionKind == AddExceptionDialog.CHECKED_EXCEPTION);
-			} catch (DebugException exc) {
+				Map attributes = new HashMap(10);
+				BreakpointUtils.addJavaBreakpointAttributes(attributes, result);
+				IJavaBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(BreakpointUtils.getBreakpointResource(result), result.getFullyQualifiedName(), caught, uncaught, exceptionKind == AddExceptionDialog.CHECKED_EXCEPTION, true, attributes);
+			} catch (CoreException exc) {
 				ExceptionHandler.handle(exc, ActionMessages.getString("AddExceptionAction.error.title"), ActionMessages.getString("AddExceptionAction.error.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			}
 		}

@@ -33,15 +33,16 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 */
 	public boolean isInstalled() throws CoreException;
 	/**
-	 * Returns the type this breakpoint is located in,
-	 * or <code>null</code> is this breakpoint is not located
-	 * in a type - for example, a pattern breakpoint
+	 * Returns the fully qualified name of type this breakpoint
+	 * is located in, or <code>null</code> is this breakpoint
+	 * is not located in a type - for example, a pattern breakpoint
 	 * 
-	 * @return the type this breakpoint is located in, or <code>null</code>
+	 * @return the fully qualified name of the type this breakpoint
+	 *  is located in, or <code>null</code>
 	 * @exception CoreException if a <code>CoreException</code> is
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */
-	public IType getType() throws CoreException;
+	public String getTypeName() throws CoreException;
 	/**
 	 * Returns this breakpoint's hit count or, -1 if this
 	 * breakpoint does not have a hit count.
