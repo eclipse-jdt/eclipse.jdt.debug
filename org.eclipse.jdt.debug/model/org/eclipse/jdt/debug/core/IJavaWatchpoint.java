@@ -74,8 +74,6 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 *  target due to a field access; <code>false</code> if this watchpoint last
 	 *  suspended the given target due to a modification access or if this
 	 *  watchpoint hasn't suspended the given target.
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
 	 */
 	public boolean isAccessSuspend(IDebugTarget target);
 }

@@ -46,7 +46,7 @@ public interface IEvaluationResult {
 	 * evaluation.
 	 *
 	 * @return whether there were any problems.
-	 * @see #getProblems()
+	 * @see #getErrors()
 	 * @see #getException()
 	 */
 	boolean hasErrors();

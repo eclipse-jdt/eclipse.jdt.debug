@@ -25,7 +25,7 @@ public interface IValue {
 	 * Returns the type of this vlaue.
 	 * 
 	 * @return the type of this value
-	 * @exception
+	 * @exception CoreException if unable to retrieve this value's type
 	 */
 	IType getType() throws CoreException;
 	

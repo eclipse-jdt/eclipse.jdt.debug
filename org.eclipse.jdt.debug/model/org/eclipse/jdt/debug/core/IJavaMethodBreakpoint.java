@@ -132,8 +132,6 @@ public interface IJavaMethodBreakpoint extends IJavaLineBreakpoint {
 	 *  target due to a method entry; <code>false</code> if this breakpoint last
 	 *  suspended in the given target due to a method exit or if this
 	 *  breakpoint hasn't suspended the given target.
-	 * @exception CoreException if a <code>CoreException</code> is
-	 * 	thrown accessing this breakpoint's underlying marker
 	 */
 	public boolean isEntrySuspend(IDebugTarget target);	
 }
