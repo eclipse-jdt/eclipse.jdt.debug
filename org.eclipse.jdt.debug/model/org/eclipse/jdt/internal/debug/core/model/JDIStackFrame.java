@@ -927,4 +927,22 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		return null;
 	}
 
+	/**
+	 * Expression level stepping not supported.
+	 * 
+	 * @see IStackFrame#getCharEnd()
+	 */
+	public int getCharEnd() {
+		return -1;
+	}
+
+	/**
+	 * Expression level stepping not supported.
+	 * 
+	 * @see IStackFrame#getCharStart()
+	 */
+	public int getCharStart() {
+		return -1;
+	}
+
 }
