@@ -248,7 +248,6 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		}
 	}
 
-		
 	/**
 	 * Configure the given request's hit count. Since method
 	 * entry/exit requests do not support hit counts, we simulate
