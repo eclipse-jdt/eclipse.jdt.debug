@@ -31,6 +31,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -896,10 +897,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof IMarker) {
 				item = getBreakpoint((IMarker)item);
 			}
-			if (item instanceof IJavaPatternBreakpoint || item instanceof IJavaTargetPatternBreakpoint) {
-				item = ((IJavaBreakpoint)item).getMarker().getResource();
-			} else if (item instanceof IJavaBreakpoint) {
-				item= BreakpointUtils.getType((IJavaBreakpoint)item);
+			if (item instanceof IJavaBreakpoint) {
+				IType type = BreakpointUtils.getType((IJavaBreakpoint)item);
+				if (type == null) {
+					// if the breakpoint is not associated with a type, use its resource
+					item = ((IJavaBreakpoint)item).getMarker().getResource();
+				} else {
+					item = type;
+				}
 			}
 			if (item instanceof LocalFileStorage) {
 				return new LocalFileStorageEditorInput((LocalFileStorage)item);
