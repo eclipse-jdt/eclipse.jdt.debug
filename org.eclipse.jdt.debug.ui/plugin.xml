@@ -2576,4 +2576,12 @@
             class="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetDocumentSetupParticipant">
       </participant>
    </extension>
+   
+   <!-- Scrapbook Source Lookup -->
+   <extension point="org.eclipse.jdt.launching.classpathProviders">
+       <classpathProvider
+          id="org.eclipse.jdt.debug.ui.scrapbookSourcepathProvider"
+          class="org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookSourcepathProvider">
+       </classpathProvider>
+   </extension>
 </plugin>

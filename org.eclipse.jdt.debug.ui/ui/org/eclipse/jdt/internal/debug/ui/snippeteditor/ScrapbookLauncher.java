@@ -202,6 +202,9 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpathList);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, p.getElementName());
+			if (wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String)null) == null) {
+				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.jdt.debug.ui.scrapbookSourcepathProvider"); //$NON-NLS-1$
+			}
 			
 			StringBuffer urlsString = new StringBuffer();
 			for (int i = 0; i < urls.length; i++) {
@@ -347,7 +350,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, page.getProject().getName());
 		wc.setAttribute(SCRAPBOOK_LAUNCH, SCRAPBOOK_LAUNCH);
 		wc.setAttribute(SCRAPBOOK_FILE_PATH, page.getFullPath().toString());
-		
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.jdt.debug.ui.scrapbookSourcepathProvider"); //$NON-NLS-1$
 		ILaunchConfiguration config = wc.doSave();
 		setLaunchConfigMemento(page, config.getMemento());
 		return config;		
