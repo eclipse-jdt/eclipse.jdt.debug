@@ -15,7 +15,6 @@ import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.LocalVariable;
-import com.sun.jdi.Location;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
@@ -73,12 +72,6 @@ public class StackFrameTest extends AbstractJDITest {
 
 		assertTrue("7", !fFrame.equals(new Object()));
 		assertTrue("8", !fFrame.equals(null));
-	}
-	/**
-	 * Test JDI location().
-	 */
-	public void testJDILocation() {
-		assertTrue("1", fFrame.location() instanceof Location);
 	}
 	/**
 	 * Test JDI setValue(LocalVariable, Value), getValue(LocalVariable) and
