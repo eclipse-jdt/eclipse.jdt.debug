@@ -13,6 +13,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 /**
@@ -49,6 +50,13 @@ public class JDIDebugPlugin extends Plugin {
 		JDIDebugModel.setupState();
 	}
 	
+	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
+		fJavaHCRMgr.addHotCodeReplaceListener(listener);
+	}
+	
+	public void removeHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
+		fJavaHCRMgr.removeHotCodeReplaceListener(listener);
+	}
 
 	/**
 	 * Shutdown the HCR mgr and the Java debug targets.

@@ -43,12 +43,10 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
  * Currently, replacing .jar files has no effect on running targets.
  */
 public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaunchListener, IDebugEventListener {
-
 	/**
 	 * Singleton 
 	 */
 	private static JavaHotCodeReplaceManager fgInstance= null;
-
 	/**
 	 * The class file extension
 	 */
@@ -65,7 +63,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 */
 	private List fHotSwapTargets= new ArrayList(1);
 	private List fNoHotSwapTargets= new ArrayList(1);
-
 	/**
 	 * Visitor for resource deltas.
 	 */
@@ -77,14 +74,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	public JavaHotCodeReplaceManager() {
 		fgInstance= this;
 	}
-
 	/**
 	 * Returns the singleton HCR manager
 	 */
 	public static JavaHotCodeReplaceManager getDefault() {
 		return fgInstance;
 	}
-
 	/**
 	 * Registers this HCR manager as a resource change listener. This method
 	 * is called by the JDI debug model plugin on startup.
@@ -93,7 +88,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
-
 	/**
 	 * Deregisters this HCR manager as a resource change listener. Removes all hot
 	 * code replace listeners. This method* is called by the JDI debug model plugin
@@ -106,7 +100,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		fHotCodeReplaceListeners.removeAll();
 		clearHotSwapTargets();
 	}
-
 	/**
 	 * Returns the workspace.
 	 */
@@ -120,8 +113,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-
-
 	/**
 	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
@@ -213,9 +204,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				fireHCRSucceeded();
 			} catch (DebugException de) {
 				// target update failed
-				JDIDebugPlugin.logError(de);
+				fireHCRFailed(target, de);
 				notifyFailedHCR(target, resources, qualifiedNames);
-				fireHCRFailed(de);
 			}
 		}
 		if (!ms.isOK()) {
@@ -236,13 +226,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	/**
 	 * Notifies listeners that a hot code replace attempt failed with the given exception
 	 */
-	private void fireHCRFailed(DebugException exception) {
+	private void fireHCRFailed(JDIDebugTarget target, DebugException exception) {
 		Object[] listeners= fHotCodeReplaceListeners.getListeners();
 		for (int i=0; i<listeners.length; i++) {
-			((IJavaHotCodeReplaceListener)listeners[i]).hotCodeReplaceFailed(exception);
+			((IJavaHotCodeReplaceListener)listeners[i]).hotCodeReplaceFailed(target, exception);
 		}
 	}
-
 	/**
 	 * Looks for the deepest effected stack frame in the stack
 	 * and forces a drop to frame.  Does this for all of the active
@@ -305,7 +294,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			}
 		}
 	}
-
 	/**
 	 * Returns the changed class files in the delta or <code>null</code> if none.
 	 */
@@ -320,10 +308,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			JDIDebugPlugin.logError(e);
 			return new ArrayList(0); // quiet failure
 		}
-
 		return fVisitor.getChangedClassFiles();
 	}
-
 	/**
 	 * A visitor which collects changed class files.
 	 */
@@ -332,7 +318,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		 * The collection of changed class files.
 		 */
 		protected List fFiles= null;
-
 		/**
 		 * Answers whether children should be visited.
 		 * <p>
@@ -358,7 +343,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			}
 			return true;
 		}
-
 		/**
 		 * Resets the file collection to empty
 		 */
@@ -416,7 +400,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		}
 		deregisterTarget((JDIDebugTarget) launch.getDebugTarget());
 	}
-
 	/**
 	 * @see ILaunchListener#launchRegistered(ILaunch)
 	 * 
@@ -465,6 +448,5 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		// To get here, there must be no JDIDebugTargets
 		getWorkspace().removeResourceChangeListener(this);
 	}
-
 }
 
