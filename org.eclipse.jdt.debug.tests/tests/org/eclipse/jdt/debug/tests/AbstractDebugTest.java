@@ -624,7 +624,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			boolean suspendOnException = jdiUIPreferences.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
 			jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 			
-			DebugEventWaiter waiter = new DebugEventWaiter(DebugEvent.TERMINATE);
+			DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.TERMINATE, debugTarget);
 			try {
 				removeAllBreakpoints();
 				IThread[] threads = debugTarget.getThreads();
@@ -645,6 +645,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 			}
 		}
 		getLaunchManager().removeLaunch(launch);
+        // ensure event queue is flushed
+        DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.MODEL_SPECIFIC, this);
+        DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(this, DebugEvent.MODEL_SPECIFIC)});
+        waiter.waitForEvent();
 	}
 	
 	/**
