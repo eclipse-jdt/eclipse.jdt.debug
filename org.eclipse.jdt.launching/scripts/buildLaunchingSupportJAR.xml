@@ -10,10 +10,7 @@
 	<target name="init" depends="properties">
 		<property name="bootclasspath" value=""/>
 		<property name="plugin" value="org.eclipse.jdt.launching"/>
-		<property name="version.suffix" value="_2.1.0"/>
-		<property name="full.name" value="${plugin}${version.suffix}"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
-		<property name="plugin.destination" value="${basedir}"/>
 		<property name="build.result.folder" value="${basedir}"/>
 	</target>
 
@@ -30,10 +27,6 @@
 			 bootclasspath="${bootclasspath}" classpath="">
 			<src path="support/"/>
 		</javac>
-		<!-- copy necessary resources -->
-		<copy todir="${temp.folder}/lib/launchingsupport.jar.bin">
-			<fileset dir="support/" excludes="**/*.java"/>
-		</copy>
 		<mkdir dir="${build.result.folder}/lib"/>
 		<jar jarfile="${build.result.folder}/lib/launchingsupport.jar" basedir="${temp.folder}/lib/launchingsupport.jar.bin"/>
 		<delete dir="${temp.folder}"/>
