@@ -55,7 +55,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	/**
 	 * Layout for the page container.
 	 *
-	 * @see #pageContainer
+	 * @see JavaBreakpointPropertiesDialog#createPageContainer(Composite, int)
 	 */
 	private class PageLayout extends Layout {
 		public void layout(Composite composite, boolean force) {
@@ -122,7 +122,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	
 	/**
 	 * A preference store that presents the state of the properties
-	 * of a Java breakpoint.
+	 * of a Java breakpoint.  Default settings are not supported.
 	 */
 	protected class JavaBreakpointPreferenceStore implements IPreferenceStore {
 		
@@ -301,6 +301,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		 * @see IPreferenceStore#removePropertyChangeListener(IPropertyChangeListener)
 		 */
 		public void removePropertyChangeListener(IPropertyChangeListener listener) {
+			fListeners.remove(listener);
 		}
 
 		/**
@@ -361,13 +362,14 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		 * @see IPreferenceStore#setValue(String, double)
 		 */
 		public void setValue(String name, double value) {
-			
+			//breakpoints do not currently have any double properties
 		}
 
 		/**
 		 * @see IPreferenceStore#setValue(String, float)
 		 */
 		public void setValue(String name, float value) {
+			//breakpoints do not currently have any float properties
 		}
 
 		/**
@@ -386,6 +388,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		 * @see IPreferenceStore#setValue(String, long)
 		 */
 		public void setValue(String name, long value) {
+			//breakpoints do not currently have any long properties
 		}
 
 		/**
@@ -403,7 +406,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		protected void setDirty(boolean isDirty) {
 			fIsDirty = isDirty;
 		}
-}
+	}
 	
 	private JavaBreakpointPreferenceStore fJavaBreakpointPreferenceStore;
 	
@@ -411,27 +414,6 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		super(parentShell);
 		setBreakpoint(breakpoint);
 		fJavaBreakpointPreferenceStore= new JavaBreakpointPreferenceStore();
-	}
-
-	/**
-	 * @see Dialog#buttonPressed(int)
-	 */
-	protected void buttonPressed(int buttonId) {
-		super.buttonPressed(buttonId);
-	}
-
-	/**
-	 * @see Dialog#cancelPressed()
-	 */
-	protected void cancelPressed() {
-		super.cancelPressed();
-	}
-
-	/**
-	 * @see Window#createContents(Composite)
-	 */
-	protected Control createContents(Composite parent) {
-		return super.createContents(parent);
 	}
 
 	/**
@@ -452,6 +434,10 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		super.okPressed();
 	}
 	
+	/**
+	 * All of the properties that the user has changed via the dialog
+	 * are written through to the breakpoint.
+	 */
 	protected void setBreakpointProperties(final List changedProperties) {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -533,7 +519,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.logError(ce);
 		}	
-		}
+	}
 	/**
 	 * Sets the title for this dialog.
 	 * @param title the title.
@@ -588,7 +574,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	}
 	
 	/**
-	 * Creates the wizard's title area.
+	 * Creates the dialog's title area.
 	 *
 	 * @param parent the SWT parent for the title area composite
 	 * @return the created title area composite
@@ -738,7 +724,9 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		}
 	}
 	
-	
+	/**
+	 * @see IPreferencePageContainer#updateMessage()
+	 */
 	public void updateMessage() {
 		String pageMessage = fPage.getMessage();
 		String pageErrorMessage = fPage.getErrorMessage();
@@ -789,6 +777,9 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		setTitle(fPage.getTitle());
 	}
 	
+	/**
+	 * @see Dialog#createButtonsForButtonBar(Composite)
+	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		fOkButton= createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
