@@ -26,7 +26,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaApplicationWizard;
 import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
@@ -134,7 +133,7 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 				return false;
 			}
 			
-			final VMRunnerConfiguration config= new VMRunnerConfiguration(JavaModelUtil.getFullyQualifiedName(mainType), classPath);
+			final VMRunnerConfiguration config= new VMRunnerConfiguration(mainType.getFullyQualifiedName(), classPath);
 
 			if (args != null) {
 				String[] vmArgs= args.getVMArgumentsArray();

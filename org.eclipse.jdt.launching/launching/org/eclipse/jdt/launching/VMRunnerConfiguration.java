@@ -42,8 +42,7 @@ public class VMRunnerConfiguration {
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.classNotNull")); //$NON-NLS-1$
 		if (classPath == null)
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.classPathNotNull")); //$NON-NLS-1$
-		//see bug 7178
-		fClassToLaunch= classToLaunch.replace('.','$');
+		fClassToLaunch= classToLaunch;
 		fClassPath= classPath;
 	}
 	
