@@ -147,14 +147,18 @@ public class JavaSourceLookupUtil {
 			try {
 				IJavaProject[] jps = model.getJavaProjects();
 				for (int i = 0; i < jps.length; i++) {
-					IPackageFragmentRoot[] allRoots = jps[i].getPackageFragmentRoots();
-					for (int j = 0; j < allRoots.length; j++) {
-						IPackageFragmentRoot root = allRoots[j];
-						if (root.isExternal() && root.getPath().equals(new Path(entry.getLocation()))) {
-							if (!considerSourceAttachment || isSourceAttachmentEqual(root, entry)) {
-								// use package fragment root
-								return root;
-							}							
+					IJavaProject jp = jps[i];
+					IProject p =  jp.getProject();
+					if (p.isOpen()) {
+						IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
+						for (int j = 0; j < allRoots.length; j++) {
+							IPackageFragmentRoot root = allRoots[j];
+							if (root.isExternal() && root.getPath().equals(new Path(entry.getLocation()))) {
+								if (!considerSourceAttachment || isSourceAttachmentEqual(root, entry)) {
+									// use package fragment root
+									return root;
+								}							
+							}
 						}
 					}
 				}
@@ -166,7 +170,7 @@ public class JavaSourceLookupUtil {
 			IProject project = resource.getProject();
 			IJavaProject jp = JavaCore.create(project);
 			try {
-				if (jp.exists()) {
+				if (project.isOpen() && jp.exists()) {
 					IPackageFragmentRoot root = jp.getPackageFragmentRoot(resource);
 					IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
 					for (int j = 0; j < allRoots.length; j++) {
@@ -185,14 +189,18 @@ public class JavaSourceLookupUtil {
 				IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 				IJavaProject[] jps = model.getJavaProjects();
 				for (int i = 0; i < jps.length; i++) {
-					IPackageFragmentRoot[] allRoots = jps[i].getPackageFragmentRoots();
-					for (int j = 0; j < allRoots.length; j++) {
-						IPackageFragmentRoot root = allRoots[j];
-						if (!root.isExternal() && root.getPath().equals(entry.getPath())) {
-							if (!considerSourceAttachment || isSourceAttachmentEqual(root, entry)) {
-								// use package fragment root
-								return root;
-							}							
+					IJavaProject jp1 = jps[i];
+					IProject p = jp1.getProject();
+					if (p.isOpen()) {
+						IPackageFragmentRoot[] allRoots = jp1.getPackageFragmentRoots();
+						for (int j = 0; j < allRoots.length; j++) {
+							IPackageFragmentRoot root = allRoots[j];
+							if (!root.isExternal() && root.getPath().equals(entry.getPath())) {
+								if (!considerSourceAttachment || isSourceAttachmentEqual(root, entry)) {
+									// use package fragment root
+									return root;
+								}							
+							}
 						}
 					}
 				}

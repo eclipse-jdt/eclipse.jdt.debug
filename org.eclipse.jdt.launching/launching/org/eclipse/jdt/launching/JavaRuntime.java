@@ -794,12 +794,10 @@ public final class JavaRuntime {
 				// if the project has multiple output locations, they must be returned
 				IResource resource = entry.getResource();
 				if (resource instanceof IProject) {
-					IJavaProject project = JavaCore.create((IProject)resource);
-					if (project == null || !project.exists()) { 
-						abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_project__{0}_1"), new String[]{entry.getPath().lastSegment()}), null); //$NON-NLS-1$
-					}
-					if (!project.getProject().isOpen()) {
-						abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_closed_project__{0}_2"), new String[]{entry.getPath().lastSegment()}), null); //$NON-NLS-1$
+					IProject p = (IProject)resource;
+					IJavaProject project = JavaCore.create(p);
+					if (project == null || !p.exists() || !p.isOpen() || !project.exists()) { 
+						return new IRuntimeClasspathEntry[0];
 					}
 					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project, entry.getClasspathProperty());
 					if (entries != null) {
@@ -966,12 +964,15 @@ public final class JavaRuntime {
 				// if the project has multiple output locations, they must be returned
 				IResource resource = entry.getResource();
 				if (resource instanceof IProject) {
-					IJavaProject jp = JavaCore.create((IProject)resource);
-					if (jp.exists() && jp.getProject().isOpen()) {
+					IProject p = (IProject)resource;
+					IJavaProject jp = JavaCore.create(p);
+					if (jp != null && p.exists() && p.isOpen() && jp.exists()) {
 						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp, entry.getClasspathProperty());
 						if (entries != null) {
 							return entries;
 						}
+					} else {
+						return new IRuntimeClasspathEntry[0];
 					}
 				}
 				break;			
