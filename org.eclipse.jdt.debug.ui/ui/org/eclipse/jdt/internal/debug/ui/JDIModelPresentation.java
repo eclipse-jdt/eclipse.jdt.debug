@@ -395,7 +395,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (breakpoint != null) {
 			String typeName= getMarkerTypeName(breakpoint, qualified);
 			if (BreakpointUtils.isProblemBreakpoint(breakpoint)) {
-				String message = breakpoint.getMarker().getAttribute(ProblemManager.ATTR_PROBLEM_MESSAGE, DebugUIMessages.getString("JDIModelPresentation.Compilation_error_1")); //$NON-NLS-1$
+				String message = breakpoint.getMarker().getAttribute(JavaDebugOptionsManager.ATTR_PROBLEM_MESSAGE, DebugUIMessages.getString("JDIModelPresentation.Compilation_error_1")); //$NON-NLS-1$
 				if (thread.isSystemThread()) {
 					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_({1}))_2"), new String[] {thread.getName(), message}); //$NON-NLS-1$
 				} else {

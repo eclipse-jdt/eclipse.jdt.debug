@@ -271,6 +271,6 @@ public class BreakpointUtils {
 	 *  breakpoint
 	 */
 	public static boolean isProblemBreakpoint(IBreakpoint breakpoint) throws CoreException {
-		return breakpoint.getMarker().getAttribute(ProblemManager.ATTR_PROBLEM_BREAKPOINT, false);
+		return breakpoint.getMarker().getAttribute(JavaDebugOptionsManager.ATTR_PROBLEM_BREAKPOINT, false);
 	}	
 }

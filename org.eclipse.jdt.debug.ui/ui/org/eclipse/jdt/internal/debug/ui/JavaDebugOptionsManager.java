@@ -31,24 +31,33 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
- * Creates breakpoints corresponding to compilation errors
+ * Manages options for the Java Debugger:<ul>
+ * <li>Creates breakpoints corresponding to compilation errors</li>
+ * <li>Creates breakpoint for the 'suspend on uncaught' exceptions option</li>
+ * </ul>
  */
-public class ProblemManager implements IResourceChangeListener, ILaunchListener, IPropertyChangeListener {
+public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunchListener, IPropertyChangeListener {
 	
 	/**
-	 * Singleton problem manager
+	 * Singleton options manager
 	 */
-	private static ProblemManager fgProblemManager = null;
+	private static JavaDebugOptionsManager fgOptionsManager = null;
 	
 	/**
 	 * Map of problems to associated breakpoints
 	 */
 	private HashMap fProblemMap = new HashMap(10);
+	
+	/**
+	 * Breakpoint used to suspend on uncaught exceptions
+	 */
+	private IJavaExceptionBreakpoint fSuspendOnExceptionBreakpoint = null;
 	
 	/**
 	 * Constants indicating whether a notification
@@ -99,17 +108,17 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener,
 	 * 
 	 * @see
 	 */
-	private ProblemManager() {
+	private JavaDebugOptionsManager() {
 	}
 	
 	/**
-	 * Return the default problem manager
+	 * Return the default options manager
 	 */
-	public static ProblemManager getDefault() {
-		if (fgProblemManager == null) {
-			fgProblemManager = new ProblemManager();
+	public static JavaDebugOptionsManager getDefault() {
+		if (fgOptionsManager == null) {
+			fgOptionsManager = new JavaDebugOptionsManager();
 		}
-		return fgProblemManager;
+		return fgOptionsManager;
 	}
 	
 	/**
@@ -133,17 +142,26 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener,
 	}	
 	
 	/**
-	 * Creates breakpoints for existing problems
+	 * Creates breakpoints for existing problems, and
+	 * the global exception breakpoint.
 	 * 
 	 * @exception CoreException if unable to initialize
 	 */
 	protected void initialize() throws CoreException {
+		// compilation errors
 		IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE);
 		if (problems != null) {
 			for (int i = 0; i < problems.length; i++) {
 				problemAdded(problems[i]);
 			}
 		}
+
+		// uncaught exception breakpoint
+		IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
+		bp.setPersisted(false);
+		bp.setRegistered(false);
+		bp.setEnabled(isSuspendOnUncaughtExceptions());
+		setSuspendOnUncaughtExceptionBreakpoint(bp);
 	}
 
 	/**
@@ -157,7 +175,7 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener,
 	 * @exception CoreException if an exception occurrs accessing
 	 *  marker properties
 	 */
-	protected IBreakpoint createBreakpoint(IMarker problem) throws CoreException {
+	protected IBreakpoint createCompilationBreakpoint(IMarker problem) throws CoreException {
 		IBreakpoint breakpoint = null;
 		if (problem.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) == IMarker.SEVERITY_ERROR) {
 			IResource res = problem.getResource();
@@ -193,7 +211,7 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener,
 					}	
 					if (breakpoint != null) {
 						breakpoint.setPersisted(false);
-						breakpoint.setEnabled(isEnabled());
+						breakpoint.setEnabled(isSuspendOnCompilationErrors());
 					}				
 				}
 			}
@@ -207,7 +225,7 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener,
 	 */
 	protected void problemAdded(IMarker problem) {
 		try {
-			IBreakpoint breakpoint = createBreakpoint(problem);
+			IBreakpoint breakpoint = createCompilationBreakpoint(problem);
 			if (breakpoint != null) {
 				setBreakpoint(problem, breakpoint);
 				notifyTargets(breakpoint, ADDED);
@@ -261,7 +279,7 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener,
 	/**
 	 * Returns the current set of problem breakpoints
 	 */
-	protected IBreakpoint[] getBreakpoints() {
+	protected IBreakpoint[] getCompilationBreakpoints() {
 		Collection collection = fProblemMap.values();
 		return (IBreakpoint[])collection.toArray(new IBreakpoint[collection.size()]);
 	}
@@ -311,11 +329,17 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener,
 	public void launchAdded(ILaunch launch) {
 		IDebugTarget target = launch.getDebugTarget();
 		if (target instanceof IJavaDebugTarget) { 
-			IBreakpoint[] breakpoints = getBreakpoints();
+			IJavaDebugTarget javaTarget = (IJavaDebugTarget)target;
+			// compilation breakpoints
+			IBreakpoint[] breakpoints = getCompilationBreakpoints();
 			for (int i = 0; i < breakpoints.length; i++) {
-				notifyTarget((IJavaDebugTarget)target, breakpoints[i], ADDED);
+				notifyTarget(javaTarget, breakpoints[i], ADDED);
 			}
+			// uncaught exception breakpoint
+			notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
 		}
+		
+		
 	}
 
 	/*
@@ -351,7 +375,9 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener,
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS)) {
-			setEnabled(((Boolean)event.getNewValue()).booleanValue());
+			setSuspendOnCompilationErrors(((Boolean)event.getNewValue()).booleanValue());
+		} else if (event.getProperty().equals(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS)) {
+			setSuspendOnUncaughtExceptions(((Boolean)event.getNewValue()).booleanValue());
 		}
 	}
 	
@@ -360,8 +386,8 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener,
 	 * 
 	 * @param enabled whether to suspend on compilation errors
 	 */
-	protected void setEnabled(boolean enabled) {
-		IBreakpoint[] breakpoints = getBreakpoints();
+	protected void setSuspendOnCompilationErrors(boolean enabled) {
+		IBreakpoint[] breakpoints = getCompilationBreakpoints();
 		for (int i = 0; i < breakpoints.length; i++) {
 			try {
 				breakpoints[i].setEnabled(enabled);
@@ -373,14 +399,58 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener,
 	}
 	
 	/**
+	 * Sets whether or not to suspend on uncaught exceptions
+	 * 
+	 * @param enabled whether or not to suspend on uncaught exceptions
+	 */
+	protected void setSuspendOnUncaughtExceptions(boolean enabled) {
+		IBreakpoint breakpoint = getSuspendOnUncaughtExceptionBreakpoint();
+		try {
+			breakpoint.setEnabled(enabled);
+			notifyTargets(breakpoint, CHANGED);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+	}	
+	
+	/**
 	 * Returns whether suspend on comiplation errors is
 	 * enabled.
 	 * 
 	 * @return whether suspend on comiplation errors is
 	 * enabled
 	 */
-	protected boolean isEnabled() {
+	protected boolean isSuspendOnCompilationErrors() {
 		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS);
 	}
+	
+	/**
+	 * Returns whether suspend on uncaught exception is
+	 * enabled
+	 * 
+	 * @return whether suspend on uncaught exception is
+	 * enabled
+	 */
+	protected boolean isSuspendOnUncaughtExceptions() {
+		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS);
+	}	
 
+
+	/**
+	 * Sets the breakpoint used to suspend on uncaught exceptions
+	 * 
+	 * @param breakpoint exception breakpoint
+	 */
+	private void setSuspendOnUncaughtExceptionBreakpoint(IJavaExceptionBreakpoint breakpoint) {
+		fSuspendOnExceptionBreakpoint = breakpoint;
+	}
+	
+	/**
+	 * Returns the breakpoint used to suspend on uncaught exceptions
+	 * 
+	 * @return exception breakpoint
+	 */
+	protected IJavaExceptionBreakpoint getSuspendOnUncaughtExceptionBreakpoint() {
+		return fSuspendOnExceptionBreakpoint;
+	}	
 }

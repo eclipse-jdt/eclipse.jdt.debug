@@ -1038,7 +1038,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fHexButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_HEX_VALUES));
 		fCharButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_CHAR_VALUES));
 		fUnsignedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));		
-		fSuspendButton.setSelection(JDIDebugModel.suspendOnUncaughtExceptions());
+		fSuspendButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
 		fSuspendOnCompilationErrors.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
 		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
 		fAlertObsoleteButton.setSelection(store.getBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS));
@@ -1053,7 +1053,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.SHOW_HEX_VALUES, fHexButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.SHOW_CHAR_VALUES, fCharButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, fUnsignedButton.getSelection());
-		JDIDebugModel.setSuspendOnUncaughtExceptions(fSuspendButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS, fSuspendButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, fSuspendOnCompilationErrors.getSelection());
 		store.setValue(IJDIPreferencesConstants.ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());

@@ -9,17 +9,14 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -36,7 +33,6 @@ import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -151,12 +147,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * The thread start event handler
 	 */
 	private ThreadStartHandler fThreadStartHandler= null;
-	
-	/**
-	 * A "hidden" breakpoint used to suspend this VM when 
-	 * any uncaught is thrown. Controled by user preference.
-	 */
-	private IJavaExceptionBreakpoint fSuspendOnUncaughtExceptionBreakpoint= null;
 	
 	/**
 	 * Whether this VM is suspended.
@@ -302,7 +292,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		initializeState();
 		fireCreationEvent();
 		initializeBreakpoints();
-		initializeSuspendOnUncaughtExceptionBreakpoint();
 		new Thread(getEventDispatcher(), JDIDebugModel.getPluginIdentifier() + JDIDebugModelMessages.getString("JDIDebugTarget.JDI_Event_Dispatcher")).start(); //$NON-NLS-1$
 	}
 	
@@ -357,39 +346,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			}
 		}
 	}
-	
-	protected void initializeSuspendOnUncaughtExceptionBreakpoint() {
-		if (JDIDebugModel.suspendOnUncaughtExceptions()) {
-			try {
-				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
-				bp.setPersisted(false);
-				setSuspendOnUncaughtExceptionBreakpoint(bp);
-				breakpointAdded(bp);
-			} catch (CoreException e) {
-				JDIDebugPlugin.logError(e);
-			}
-		}
-	}
-	
-	public void setEnabledSuspendOnUncaughtException(boolean enable) {
 		
-		if (!isAvailable()) {
-			return;
-		}
-		try {
-			IJavaExceptionBreakpoint breakpoint= getSuspendOnUncaughtExceptionBreakpoint();
-			if (enable && breakpoint == null) {
-				initializeSuspendOnUncaughtExceptionBreakpoint();
-				return;
-			}
-			if (breakpoint != null && breakpoint.isEnabled() != enable) {
-				breakpoint.setEnabled(enable);
-				breakpointChanged(breakpoint, null);
-			}
-		} catch (CoreException ce) {
-			JDIDebugPlugin.logError(ce);
-		}
-	}
 	/**
 	 * Creates, adds and returns a thread for the given
 	 * underlying thread reference. A creation event
@@ -1253,14 +1210,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			}
 		}
 		getBreakpoints().clear();
-		if (getSuspendOnUncaughtExceptionBreakpoint() != null) {
-			try {
-				getSuspendOnUncaughtExceptionBreakpoint().delete();
-				setSuspendOnUncaughtExceptionBreakpoint(null);
-			} catch (CoreException ce) {
-				logError(ce);
-			}
-		}
 	}
 
 	/**
@@ -1819,13 +1768,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			return null;
 	}
 
-	protected IJavaExceptionBreakpoint getSuspendOnUncaughtExceptionBreakpoint() {
-		return fSuspendOnUncaughtExceptionBreakpoint;
-	}
-
-	protected void setSuspendOnUncaughtExceptionBreakpoint(IJavaExceptionBreakpoint suspendOnUncaughtExceptionBreakpoint) {
-		fSuspendOnUncaughtExceptionBreakpoint = suspendOnUncaughtExceptionBreakpoint;
-	}
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */

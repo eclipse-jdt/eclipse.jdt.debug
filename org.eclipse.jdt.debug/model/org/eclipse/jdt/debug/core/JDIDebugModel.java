@@ -107,10 +107,6 @@ public class JDIDebugModel {
 	private static final String ACTIVE_FILTERS_KEY = "active_filters"; //$NON-NLS-1$
 	private static final String INACTIVE_FILTERS_KEY = "inactive_filters"; //$NON-NLS-1$
 	
-	
-	private static boolean fgSuspendOnUncaughtExceptions= false;
-	private static final String SUSPEND_ON_UNCAUGHT_EXCEPTIONS_KEY= "suspend_on_uncaught_exceptions"; //$NON-NLS-1$
-	
 	/**
 	 * Not to be instantiated.
 	 */
@@ -685,8 +681,7 @@ public class JDIDebugModel {
 		setFilterConstructors(parseBoolean(getProperties().getProperty(FILTER_CONSTRUCTORS_KEY, "false"))); //$NON-NLS-1$
 		setActiveStepFilters(parseList(getProperties().getProperty(ACTIVE_FILTERS_KEY, ""))); //$NON-NLS-1$
 		setInactiveStepFilters(parseList(getProperties().getProperty(INACTIVE_FILTERS_KEY, ""))); //$NON-NLS-1$
-		
-		setSuspendOnUncaughtExceptions(parseBoolean(getProperties().getProperty(SUSPEND_ON_UNCAUGHT_EXCEPTIONS_KEY, "true"))); //$NON-NLS-1$
+	
 		setStateModified(false);
 	}
 	
@@ -725,7 +720,6 @@ public class JDIDebugModel {
 			props.setProperty(FILTER_CONSTRUCTORS_KEY, serializeBoolean(fgFilterConstructors));
 			props.setProperty(ACTIVE_FILTERS_KEY, serializeList(fgActiveStepFilterList));
 			props.setProperty(INACTIVE_FILTERS_KEY, serializeList(fgInactiveStepFilterList));
-			props.setProperty(SUSPEND_ON_UNCAUGHT_EXCEPTIONS_KEY, serializeBoolean(fgSuspendOnUncaughtExceptions));
 			
 			fos = new FileOutputStream(file);
 			getProperties().store(fos, PROPERTIES_HEADER);
@@ -781,24 +775,5 @@ public class JDIDebugModel {
 	private static void setStateModified(boolean stepFiltersModified) {
 		fgStateModified = stepFiltersModified;
 	}
-	
-	public static void setSuspendOnUncaughtExceptions(boolean suspend) {
-		fgSuspendOnUncaughtExceptions= suspend;
-		setStateModified(true);
-		//update all of the current JDI debug targets
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-		IDebugTarget[] targets= launchManager.getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			IDebugTarget iDebugTarget = targets[i];
-			if (iDebugTarget instanceof JDIDebugTarget) {
-				JDIDebugTarget jdiTarget= (JDIDebugTarget)iDebugTarget;
-				jdiTarget.setEnabledSuspendOnUncaughtException(suspend);
-			}
-		}
-	}
-	
-	public static boolean suspendOnUncaughtExceptions() {
-		return fgSuspendOnUncaughtExceptions;
-	}
-	
+			
 }
