@@ -404,7 +404,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		// create request to listen to class loads
 		if (referenceTypeName.indexOf('$') == -1) {
 			registerRequest(target.createClassPrepareRequest(enclosingTypeName), target);
-			//register to ensure we here about local and anonymous inner classes
+			//register to ensure we hear about local and anonymous inner classes
 			registerRequest(target.createClassPrepareRequest(enclosingTypeName + "$*"), target);  //$NON-NLS-1$
 		} else {
 			registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
@@ -441,7 +441,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * The local type is enclosed within the top level type according
 	 * to the VM.
 	 * So if "normal" attempts to create a request when a breakpoint is
-	 * being added to a target, we must be dealing with a local type and therefore resort
+	 * being added to a target fail, we must be dealing with a local type and therefore resort
 	 * to looking up all of the nested types of the top level enclosing type.
 	 */
 	protected void addToTargetForLocalType(JDIDebugTarget target, String enclosingTypeName) throws CoreException {
