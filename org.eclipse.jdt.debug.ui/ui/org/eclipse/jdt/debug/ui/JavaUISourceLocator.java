@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
  
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -107,8 +108,13 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 		if (res == null && fAllowedToAsk) {
 			IJavaStackFrame frame= (IJavaStackFrame)stackFrame.getAdapter(IJavaStackFrame.class);
 			if (frame != null) {
-				showDebugSourcePage(frame);
-				res= fSourceLocator.getSourceElement(stackFrame);
+				try {
+					if (!frame.isObsolete()) {
+						showDebugSourcePage(frame);
+						res= fSourceLocator.getSourceElement(stackFrame);
+					}
+				} catch (DebugException e) {
+				}
 			}
 		}
 		return res;

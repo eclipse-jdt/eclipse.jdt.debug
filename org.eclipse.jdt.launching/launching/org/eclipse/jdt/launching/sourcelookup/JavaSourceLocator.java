@@ -192,6 +192,9 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			IJavaStackFrame frame = (IJavaStackFrame)stackFrame;
 			String name = null;
 			try {
+				if (frame.isObsolete()) {
+					return null;
+				}
 				String sourceName = frame.getSourceName();
 				if (sourceName == null) {
 					// no debug attributes, guess at source name
