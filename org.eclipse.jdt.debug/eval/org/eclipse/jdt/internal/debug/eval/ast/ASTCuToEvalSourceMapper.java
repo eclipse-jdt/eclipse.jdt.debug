@@ -485,9 +485,9 @@ public class ASTCuToEvalSourceMapper extends ASTVisitor  {
 		AnonymousClassDeclaration anonymousClassDeclaration = node.getAnonymousClassDeclaration();
 		if (anonymousClassDeclaration != null && !rightTypeFound() && containsLine(node)) {
 			setRightTypeFound(true);
-			
 			fSource= buildRunMethod(anonymousClassDeclaration.bodyDeclarations());
-		}
+			fEvaluateNextEndTypeDeclaration = true;
+		}			
 		
 		if (rightTypeFound()) {
 			
