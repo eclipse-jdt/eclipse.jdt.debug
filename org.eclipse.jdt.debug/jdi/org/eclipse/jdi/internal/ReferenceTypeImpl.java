@@ -5,20 +5,37 @@ package org.eclipse.jdi.internal;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.AbsentInformationException;
-import com.sun.jdi.Value;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.connect.*;
-import org.eclipse.jdi.internal.request.*;
-import org.eclipse.jdi.internal.event.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.spy.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.io.*;
+import java.util.Map;
+import java.util.Vector;
+
+import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
+import org.eclipse.jdi.internal.jdwp.JdwpFieldID;
+import org.eclipse.jdi.internal.jdwp.JdwpID;
+import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
+import org.eclipse.jdi.internal.jdwp.JdwpReferenceTypeID;
+import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassLoaderReference;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.ClassNotPreparedException;
+import com.sun.jdi.ClassObjectReference;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.Field;
+import com.sun.jdi.InternalException;
+import com.sun.jdi.InvalidLineNumberException;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.Value;
 
 /**
  * this class implements the corresponding interfaces
@@ -673,6 +690,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		while (allMethods.hasNext()) {
 			MethodImpl method = (MethodImpl)allMethods.next();
 			try {
+				if (method.isNative()) {
+					continue;
+				}
 				locations = method.locationsOfLine(line);
 			} catch (AbsentInformationException e) {
 				continue;
