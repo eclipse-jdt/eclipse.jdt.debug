@@ -149,7 +149,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 		if (fPropertyMap == null)
 			fPropertyMap = new HashMap();
 			
-		if (key == null)
+		if (value == null)
 			fPropertyMap.remove(key);
 		else
 			fPropertyMap.put(key, value);
