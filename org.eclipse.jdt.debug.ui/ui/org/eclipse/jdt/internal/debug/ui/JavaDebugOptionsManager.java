@@ -74,12 +74,12 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 	/**
 	 * Marker attribute denoting a problem breakpoint
 	 */
-	public static final String ATTR_PROBLEM_BREAKPOINT = "org.eclipse.jdt.debug.ui.problemBreakpoint";
+	public static final String ATTR_PROBLEM_BREAKPOINT = "org.eclipse.jdt.debug.ui.problemBreakpoint"; //$NON-NLS-1$
 	
 	/**
 	 * Marker attribute problem message
 	 */
-	public static final String ATTR_PROBLEM_MESSAGE = "org.eclipse.jdt.debug.ui.problemBreakpoint.message";
+	public static final String ATTR_PROBLEM_MESSAGE = "org.eclipse.jdt.debug.ui.problemBreakpoint.message"; //$NON-NLS-1$
 	
 	/**
 	 * Local cache of active step filters.
@@ -91,7 +91,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		
-		final IMarkerDelta[] deltas = event.findMarkerDeltas("org.eclipse.jdt.core.problem", true);
+		final IMarkerDelta[] deltas = event.findMarkerDeltas("org.eclipse.jdt.core.problem", true); //$NON-NLS-1$
 		if (deltas != null) {
 			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor m) throws CoreException {
@@ -158,7 +158,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 	 */
 	protected void initialize() throws CoreException {
 		// compilation errors
-		IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE);
+		IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
 		if (problems != null) {
 			for (int i = 0; i < problems.length; i++) {
 				problemAdded(problems[i]);
