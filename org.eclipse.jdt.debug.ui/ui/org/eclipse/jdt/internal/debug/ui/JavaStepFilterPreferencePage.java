@@ -571,6 +571,26 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		return Arrays.asList(strings);
 	}
 	
+	/**
+	 * Returns a list of the default active step filters.
+	 * 
+	 * @return list
+	 */
+	protected List createDefaultActiveStepFiltersList() {
+		String[] strings = JavaDebugOptionsManager.parseList(getPreferenceStore().getDefaultString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST));
+		return Arrays.asList(strings);
+	}
+	
+	/**
+	 * Returns a list of the default active step filters.
+	 * 
+	 * @return list
+	 */
+	protected List createDefaultInactiveStepFiltersList() {
+		String[] strings = JavaDebugOptionsManager.parseList(getPreferenceStore().getDefaultString(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST));
+		return Arrays.asList(strings);
+	}
+	
 	protected void updateActions() {
 		if (fEnableAllButton != null) {
 			boolean enabled= fFilterViewer.getTable().getItemCount() > 0;
@@ -597,13 +617,13 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		
 		public void setDefaults() {
 			fViewer.remove(fFilters.toArray());			
-			List active = createActiveStepFiltersList();
-			List inactive = createInactiveStepFiltersList();
+			List active = createDefaultActiveStepFiltersList();
+			List inactive = createDefaultInactiveStepFiltersList();
 			populateFilters(active, inactive);		
 							
-			fFilterSyntheticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
-			fFilterStaticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
-			fFilterConstructorButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
+			fFilterSyntheticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
+			fFilterStaticButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
+			fFilterConstructorButton.setSelection(getPreferenceStore().getDefaultBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
 		}
 		
 		protected void populateFilters(List activeList, List inactiveList) {
