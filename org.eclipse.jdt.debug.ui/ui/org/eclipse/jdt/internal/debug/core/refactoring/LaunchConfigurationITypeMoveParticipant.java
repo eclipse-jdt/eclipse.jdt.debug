@@ -42,7 +42,7 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 				if (fType.isLocal()) {
 					return false;
 				}
-				declaringType= fType.getDeclaringType();
+				declaringType= declaringType.getDeclaringType();
 			}
 		} catch (JavaModelException e) {
 			JDIDebugUIPlugin.log(e);
