@@ -335,8 +335,8 @@ public abstract class AbstractJDITest extends TestCase {
 		List classes = fVM.classesByName(name);
 		if (classes.size() == 0)
 			return null;
-		else
-			return (ClassType) classes.get(0);
+		
+		return (ClassType) classes.get(0);
 	}
 	/**
 	 * Returns the class loader of
@@ -374,8 +374,8 @@ public abstract class AbstractJDITest extends TestCase {
 		Field result = type.fieldByName(fieldName);
 		if (result == null)
 			throw new Error("Unknown field: " + fieldName);
-		else
-			return result;
+		
+		return result;
 	}
 	/**
 	 * Returns the n frame (starting at the top of the stack) of the thread 
@@ -464,8 +464,8 @@ public abstract class AbstractJDITest extends TestCase {
 		}
 		if (method == null)
 			throw new Error("Unknown method: " + name + signature);
-		else
-			return method;
+		
+		return method;
 	}
 	/**
 	 * Creates and returns a modification watchpoint request
@@ -538,8 +538,8 @@ public abstract class AbstractJDITest extends TestCase {
 		List classes = fVM.classesByName("java.lang.Object");
 		if (classes.size() == 0)
 			return null;
-		else
-			return (ClassType) classes.get(0);
+		
+		return (ClassType) classes.get(0);
 	}
 	/**
 	 * Returns the thread contained in the static field "fThread" in 
@@ -572,8 +572,8 @@ public abstract class AbstractJDITest extends TestCase {
 		Value value = type.getValue(field);
 		if (value == null)
 			return null;
-		else
-			return (ThreadReference) value;
+		
+		return (ThreadReference) value;
 	}
 	/**
 	 * Returns the VM info for this test.
@@ -1247,8 +1247,8 @@ public abstract class AbstractJDITest extends TestCase {
 		if (event == null)
 			throw new Error(
 				"Event for " + request + " didn't come in after " + TIMEOUT + "ms");
-		else
-			return event;
+		
+		return event;
 	}
 	/**
 	 * Triggers and waits for the given event to come in.

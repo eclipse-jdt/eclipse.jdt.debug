@@ -24,9 +24,7 @@ public class SampleDynamicVariableResolver implements IDynamicVariableResolver {
 	public String resolveValue(IDynamicVariable variable, String argument) {
 		if (argument == null) {
 			return "no arg";
-		} else {
-			return "the arg is " + argument;
-		}
+		} 
+		return "the arg is " + argument;
 	}
-
 }

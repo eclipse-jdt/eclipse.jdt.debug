@@ -73,9 +73,8 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		public int breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
 			if (breakpoint == fTheBreakpoint) {
 				return fVote;
-			} else {
-				return DONT_CARE;
 			}
+			return DONT_CARE;
 		}
 
 		/* (non-Javadoc)
@@ -111,11 +110,9 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 		public int installingBreakpoint(IJavaDebugTarget target, IJavaBreakpoint breakpoint, IJavaType type) {
 			if (breakpoint.equals(fTheBreakpoint)) {
 				return fVote;
-			} else {
-				return DONT_CARE;
 			}
+			return DONT_CARE;
 		}
-
 }
 			
 	public JavaBreakpointListenerTests(String name) {

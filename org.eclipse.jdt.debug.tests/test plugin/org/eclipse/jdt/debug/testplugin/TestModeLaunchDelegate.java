@@ -40,10 +40,8 @@ public class TestModeLaunchDelegate implements ILaunchConfigurationDelegate {
 			if (fgTestCase == null) {
 				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests",
 				 0, "No test case registered.", null));
-			} else {
-				fgTestCase.launch(configuration, mode);
-			}
-
+			} 
+			fgTestCase.launch(configuration, mode);
 	}
 	
 	public static void setTestCase(LaunchModeTests testCase) {

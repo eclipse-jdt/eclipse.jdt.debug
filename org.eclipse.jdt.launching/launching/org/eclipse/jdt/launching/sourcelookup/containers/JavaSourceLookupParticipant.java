@@ -92,9 +92,8 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 			} catch (DebugException e) {
 				if (e.getStatus().getCode() == IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
 					return null;
-				} else {
-					throw e;
 				}
+				throw e;
 			}
 		}
 		if (object instanceof String) {

@@ -154,10 +154,9 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 				return objects;
 			}
 			return filtered.toArray();			
-		} else {
-			// look elsewhere if non a ".java" file
-			return findSourceElements(name, fOthers);
-		}
+		} 
+		// look elsewhere if non a ".java" file
+		return findSourceElements(name, fOthers);
 	}
 	public void dispose() {
 		fSourceFolders = null;

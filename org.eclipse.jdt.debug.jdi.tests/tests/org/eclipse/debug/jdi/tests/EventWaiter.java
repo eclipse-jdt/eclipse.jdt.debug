@@ -67,8 +67,8 @@ public class EventWaiter implements EventListener {
 		if ((event.request() != null) && (event.request().equals(fRequest))) {
 			notifyEvent(event);
 			return fShouldGo;
-		} else
-			return true;
+		} 
+		return true;
 	}
 	public boolean modificationWatchpoint(ModificationWatchpointEvent event) {
 		return handleEvent(event);
