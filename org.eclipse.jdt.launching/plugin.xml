@@ -48,7 +48,9 @@
             name="%localJavaApplication"
             delegate="org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate"
             modes="run, debug"
-            id="org.eclipse.jdt.launching.localJavaApplication">
+            id="org.eclipse.jdt.launching.localJavaApplication"
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
             name="%remoteJavaApplication"
@@ -134,5 +136,33 @@
             id="org.eclipse.jdt.launching.sourcepathComparator">
       </launchConfigurationComparator>
    </extension>
+   
+   <!-- Source Lookup -->
+   <extension point="org.eclipse.debug.core.sourceContainerTypes">
+   		<sourceContainerType
+   			id="org.eclipse.jdt.launching.sourceContainer.javaProject"
+   			name="Java Project"
+   			class="org.eclipse.jdt.internal.launching.JavaProjectSourceContainerTypeDelegate">
+   		</sourceContainerType> 
+   		<sourceContainerType
+   			id="org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot"
+   			name="Package Fragment Root"
+   			class="org.eclipse.jdt.internal.launching.PackageFragmentRootSourceContainerTypeDelegate">
+   		</sourceContainerType>    		
+   </extension>
+   <extension point="org.eclipse.debug.core.sourcePathComputers">
+   		<sourcePathComputer
+   			id="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer"
+   			class="org.eclipse.jdt.internal.launching.JavaApplicationSourcePathComputer">
+   		</sourcePathComputer>
+   </extension>
+   <extension point="org.eclipse.debug.core.sourceLocators">
+   		<sourceLocator
+   			id="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+   			class="org.eclipse.jdt.internal.launching.JavaSourceLookupDirector"
+   			name="Java Source Locator">
+   		</sourceLocator>
+   </extension>
+   		
 
 </plugin>
