@@ -6,21 +6,7 @@ package org.eclipse.jdt.internal.debug.core;
  * (c) Copyright IBM Corp 2000
  */
  
-import com.sun.jdi.*;
-import com.sun.jdi.request.DuplicateRequestException;
-import com.sun.jdi.request.EventRequestManager;
-import com.sun.jdi.request.InvalidRequestStateException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
-import org.eclipse.jdi.TimeoutException;
-import org.eclipse.jdi.hcr.OperationRefusedException;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.sun.jdi.*;import com.sun.jdi.request.*;import java.util.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.*;import org.eclipse.jdi.TimeoutException;import org.eclipse.jdi.hcr.OperationRefusedException;import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 public abstract class JDIDebugElement extends PlatformObject implements IDebugElement {
 	
