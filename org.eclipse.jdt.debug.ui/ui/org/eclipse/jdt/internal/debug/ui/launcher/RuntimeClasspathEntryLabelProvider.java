@@ -71,7 +71,11 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				boolean source = (entry.getSourceAttachmentPath() != null && !Path.EMPTY.equals(entry.getSourceAttachmentPath()));
 				String key = null;
 				if (external) {
-					if (source) {
+					IPath path = entry.getPath();
+					File file = path.toFile();
+					if (file.exists() && file.isDirectory()) {
+						key = ISharedImages.IMG_OBJS_PACKFRAG_ROOT;
+					} else if (source) {
                         key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE_WITH_SOURCE;
 					} else {
 						key = ISharedImages.IMG_OBJS_EXTERNAL_ARCHIVE;
@@ -130,6 +134,8 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					for (int i = 0; i < segments.length - 1; i++) { 
 						displayPath.append(segments[i]).append(File.separator);
 					}
+				} else {
+					displayPath.append(path.toOSString());
 				}
 				return displayPath.toString();
 			case IRuntimeClasspathEntry.VARIABLE:
