@@ -23,6 +23,7 @@ import org.eclipse.jdt.debug.tests.core.ClasspathContainerTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathProviderTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathVariableTests;
 import org.eclipse.jdt.debug.tests.core.ConditionalBreakpointsTests;
+import org.eclipse.jdt.debug.tests.core.ConsoleTests;
 import org.eclipse.jdt.debug.tests.core.DebugEventTests;
 import org.eclipse.jdt.debug.tests.core.DefaultSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
@@ -93,7 +94,6 @@ public class AutomatedSuite extends TestSuite {
 	public AutomatedSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
 		
-		
 		addTest(new TestSuite(LaunchModeTests.class));
 		addTest(new TestSuite(LaunchDelegateTests.class));
 		addTest(new TestSuite(LaunchTests.class));
@@ -102,6 +102,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(DebugEventTests.class));
 		addTest(new TestSuite(ClasspathContainerTests.class));
 		addTest(new TestSuite(LaunchConfigurationArgumentTests.class));
+		addTest(new TestSuite(ConsoleTests.class));
 		addTest(new TestSuite(LaunchConfigurationTests.class));
 		addTest(new TestSuite(DeferredBreakpointTests.class));
 		addTest(new TestSuite(ConditionalBreakpointsTests.class));
