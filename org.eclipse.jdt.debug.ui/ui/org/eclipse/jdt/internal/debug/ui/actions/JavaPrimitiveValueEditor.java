@@ -63,6 +63,13 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
         }
         return true;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.actions.IVariableValueEditor#saveVariable(org.eclipse.debug.core.model.IVariable, java.lang.String, org.eclipse.swt.widgets.Shell)
+     */
+    public boolean saveVariable(IVariable variable, String expression, Shell shell) {
+        return false;
+    }
     
     /**
      * Input validator for primitive types

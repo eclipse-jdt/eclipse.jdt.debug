@@ -56,7 +56,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
         try {
             IJavaVariable javaVariable = (IJavaVariable) variable;
             String signature = javaVariable.getSignature();
-            if (signature.equals("Ljava/lang/String;")) { //$NON-NLS-1$
+            if ("Ljava/lang/String;".equals(signature)) { //$NON-NLS-1$
                 StringValueInputDialog dialog= new StringValueInputDialog(shell, javaVariable);
                 if (dialog.open() == Window.OK) {
                     String result = dialog.getResult();
@@ -74,27 +74,56 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
                 }
             }
         } catch (DebugException e) {
-            Throwable cause = e.getStatus().getException();
-            if (cause instanceof InvalidTypeException) {
-                IStatus status = DebugUIPlugin.newErrorStatus(cause.getMessage(), null);
-                reportProblem(shell, status);
-            } else {
-                DebugUIPlugin.errorDialog(shell, ActionMessages.getString("JavaObjectValueEditor.0"), ActionMessages.getString("JavaObjectValueEditor.1"), e); //$NON-NLS-1$ //$NON-NLS-2$
-            }
+            handleException(e, shell);
+        }
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.actions.IVariableValueEditor#saveVariable(org.eclipse.debug.core.model.IVariable, java.lang.String, org.eclipse.swt.widgets.Shell)
+     */
+    public boolean saveVariable(IVariable variable, String expression, Shell shell) {
+        IJavaVariable javaVariable = (IJavaVariable) variable;
+        String signature= null;
+        try {
+            signature = javaVariable.getSignature();
+	        if ("Ljava/lang/String;".equals(signature)) { //$NON-NLS-1$
+	            return false;
+	        }
+	        setValue(variable, shell, expression);
+        } catch (DebugException e) {
+            handleException(e, shell);
         }
         return true;
     }
 
     /**
-     * @param variable
-     * @param shell
-     * @param result
-     * @throws DebugException
+     * Evaluates the given expression and sets the given variable's value
+     * using the result.
+     * 
+     * @param variable the variable whose value should be set
+     * @param shell a shell for reporting errors
+     * @param expression the expression to evaluate
+     * @throws DebugException if an exception occurs evaluating the expression
+     *  or setting the variable's value
      */
-    private void setValue(IVariable variable, Shell shell, String result) throws DebugException {
-        IValue newValue = evaluate(shell, result);
+    protected void setValue(IVariable variable, Shell shell, String expression) throws DebugException {
+        IValue newValue = evaluate(shell, expression);
         if (newValue != null) {
             variable.setValue(newValue);
+        }
+    }
+
+    /**
+     * Handles the given exception, which occurred during edit/save.
+     */
+    protected void handleException(DebugException e, Shell shell) {
+        Throwable cause = e.getStatus().getException();
+        if (cause instanceof InvalidTypeException) {
+            IStatus status = DebugUIPlugin.newErrorStatus(cause.getMessage(), null);
+            reportProblem(shell, status);
+        } else {
+            DebugUIPlugin.errorDialog(shell, ActionMessages.getString("JavaObjectValueEditor.0"), ActionMessages.getString("JavaObjectValueEditor.1"), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 

@@ -28,25 +28,48 @@ public class JavaVariableValueEditor implements IVariableValueEditor {
      * @see org.eclipse.debug.ui.actions.IVariableValueEditor#editVariable(org.eclipse.debug.core.model.IVariable, org.eclipse.swt.widgets.Shell)
      */
     public boolean editVariable(IVariable variable, Shell shell) {
-        IJavaVariable javaVariable = (IJavaVariable) variable.getAdapter(IJavaVariable.class);
-        if (javaVariable == null) {
-            return false;
-        }
         String signature= null;
         try {
-            IJavaType javaType = javaVariable.getJavaType();
-            signature = javaType.getSignature();
-        } catch (DebugException e) {
-            DebugUIPlugin.errorDialog(shell, ActionMessages.getString("JavaVariableValueEditor.0"), ActionMessages.getString("JavaVariableValueEditor.1"), e); //$NON-NLS-1$ //$NON-NLS-2$
-            return true;
-        }
+            signature= getSignature(variable);
+	    } catch (DebugException e) {
+	        DebugUIPlugin.errorDialog(shell, ActionMessages.getString("JavaVariableValueEditor.0"), ActionMessages.getString("JavaVariableValueEditor.1"), e); //$NON-NLS-1$ //$NON-NLS-2$
+	    }
+	    if (signature == null) {
+	        return false;
+	    }
+	    IVariableValueEditor editor;
         if (JDIModelPresentation.isObjectValue(signature)) {
-            JavaObjectValueEditor editor= new JavaObjectValueEditor();
-            return editor.editVariable(javaVariable, shell);
+            editor= new JavaObjectValueEditor();
+        } else {
+            // Primitive variable
+            editor= new JavaPrimitiveValueEditor(signature);
         }
-        // Primitive variabel
-        JavaPrimitiveValueEditor editor= new JavaPrimitiveValueEditor(signature);
-        return editor.editVariable(javaVariable, shell);
+        return editor.editVariable(variable, shell);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.actions.IVariableValueEditor#saveVariable(org.eclipse.debug.core.model.IVariable, java.lang.String, org.eclipse.swt.widgets.Shell)
+     */
+    public boolean saveVariable(IVariable variable, String expression, Shell shell) {
+        try {
+	        if (JDIModelPresentation.isObjectValue(getSignature(variable))) {
+	            IVariableValueEditor editor= new JavaObjectValueEditor();
+	            return editor.saveVariable(variable, expression, shell);
+	        }
+	    } catch (DebugException e) {
+	        DebugUIPlugin.errorDialog(shell, ActionMessages.getString("JavaVariableValueEditor.0"), ActionMessages.getString("JavaVariableValueEditor.1"), e); //$NON-NLS-1$ //$NON-NLS-2$
+	    }
+        return false;
+    }
+    
+    public static String getSignature(IVariable variable) throws DebugException {
+        String signature= null;
+        IJavaVariable javaVariable = (IJavaVariable) variable.getAdapter(IJavaVariable.class);
+        if (javaVariable != null) {
+                IJavaType javaType = javaVariable.getJavaType();
+                signature = javaType.getSignature();
+        }
+        return signature;
     }
 
 }
