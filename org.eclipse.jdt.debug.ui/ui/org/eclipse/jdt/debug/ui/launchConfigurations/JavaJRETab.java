@@ -176,7 +176,9 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
 		}	
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
-		if (dynamicTab != null) {
+		if (dynamicTab == null) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+		} else {
 			dynamicTab.performApply(configuration);
 		}
 	}
