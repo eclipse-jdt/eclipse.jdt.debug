@@ -204,16 +204,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	 */
 	public	void setValue(IValue v) throws DebugException {
 		if (verifyValue(v)) {
-			JDIValue value = (JDIValue)v;
-			try {
-				getObjectReference().setValue(getField(), value.getUnderlyingValue());
-			} catch (InvalidTypeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_while_attempting_to_set_value_of_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
-			} catch (ClassNotLoadedException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_while_attempting_to_set_value_of_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
-			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_while_attempting_to_set_value_of_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
-			}
+			setValue(((JDIValue)v).getUnderlyingValue());
 		}
 	}
 	
