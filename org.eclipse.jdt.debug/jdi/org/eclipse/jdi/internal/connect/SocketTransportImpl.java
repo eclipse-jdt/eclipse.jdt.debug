@@ -43,9 +43,8 @@ public class SocketTransportImpl extends TransportImpl {
 	/**
 	 * Establishes a client connection to a virtual machine.
 	 */
-	public void attach(String hostname, int port, int timeout) throws IOException {
+	public void attach(String hostname, int port) throws IOException {
 		fSocket = new Socket(hostname, port);
-		fSocket.setSoTimeout(timeout);
 		PerformHandshake();
 	}
 	

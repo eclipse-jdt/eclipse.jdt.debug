@@ -99,7 +99,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 	public VirtualMachine attach(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
 		try {
-			((SocketTransportImpl)fTransport).attach(fHostname, fPort, virtualMachineManager().getGlobalRequestTimeout());
+			((SocketTransportImpl)fTransport).attach(fHostname, fPort);
 		} catch (IllegalArgumentException e) {
 			List args = new ArrayList();
 			args.add("hostname"); //$NON-NLS-1$
