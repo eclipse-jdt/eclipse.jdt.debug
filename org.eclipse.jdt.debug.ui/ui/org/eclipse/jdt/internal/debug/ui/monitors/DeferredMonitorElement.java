@@ -11,8 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.debug.ui.DebugElementWorkbenchAdapter;
+import org.eclipse.debug.internal.ui.views.launch.DeferredDebugElementWorkbenchAdapter;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -24,7 +23,7 @@ import org.eclipse.ui.progress.IElementCollector;
 /**
  * A deferred workbench adapter for elements presenting monitor information in the debug veiw.
  */
-public abstract class DeferredMonitorElement extends DebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter, IPropertyChangeListener {
+public abstract class DeferredMonitorElement extends DeferredDebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter, IPropertyChangeListener {
 
     private boolean fDisplayMonitors= false;
     protected static final Object[] EMPTY = new Object[0];
@@ -47,20 +46,6 @@ public abstract class DeferredMonitorElement extends DebugElementWorkbenchAdapte
 	protected boolean isDisplayMonitors() {
 	    return fDisplayMonitors;
 	}
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
-     */
-    public boolean isContainer() {
-        return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
-     */
-    public ISchedulingRule getRule(Object object) {
-        return null;
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
