@@ -478,11 +478,15 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	 */
 	private void cleanupEditor() {
 		if (fEditorText != null) {
-			fEditorText.dispose();
-			fEditorText = null;
 			fNewFilter = null;
 			fNewTableItem = null;
 			fTableEditor.setEditor(null, null, 0);			
+			fEditorText.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					fEditorText.dispose();
+					fEditorText = null;
+				}
+			});		
 		}
 	}
 	
