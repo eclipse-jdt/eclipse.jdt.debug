@@ -22,45 +22,45 @@ public interface IJavaDebugConstants {
 	
 	/**
 	 * Java breakpoint marker type
-	 * (value <code>"org.eclipse.jdt.debug.javaBreakpoint"</code>).
+	 * (value <code>"org.eclipse.jdt.debug.javaBreakpointMarker"</code>).
 	 */
-	public static final String JAVA_BREAKPOINT= "org.eclipse.jdt.debug.javaBreakpoint";
+	public static final String JAVA_BREAKPOINT= "org.eclipse.jdt.debug.javaBreakpointMarker";
 	
 	/**
 	 * Java line breakpoint marker type
-	 * (value <code>"org.eclipse.jdt.debug.javaLineBreakpoint"</code>).
+	 * (value <code>"org.eclipse.jdt.debug.javaLineBreakpointMarker"</code>).
 	 */
-	public static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpoint";
+	public static final String JAVA_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaLineBreakpointMarker";
 				
 	/**
 	 * Java run-to-line breakpoint marker type
-	 * (value <code>"org.eclipse.jdt.debug.javaRunToLineBreakpoint"</code>).
+	 * (value <code>"org.eclipse.jdt.debug.javaRunToLineBreakpointMarker"</code>).
 	 */
-	public static final String JAVA_RUN_TO_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaRunToLineBreakpoint";
+	public static final String JAVA_RUN_TO_LINE_BREAKPOINT = "org.eclipse.jdt.debug.javaRunToLineBreakpointMarker";
 				
 	/**
 	 * Java exception breakpoint marker type
-	 * (value <code>"org.eclipse.jdt.debug.javaExceptionBreakpoint"</code>).
+	 * (value <code>"org.eclipse.jdt.debug.javaExceptionBreakpointMarker"</code>).
 	 */
-	public static final String JAVA_EXCEPTION_BREAKPOINT = "org.eclipse.jdt.debug.javaExceptionBreakpoint";
+	public static final String JAVA_EXCEPTION_BREAKPOINT = "org.eclipse.jdt.debug.javaExceptionBreakpointMarker";
 	
 	/**
 	 * Java watchpoint marker type
-	 * (value <code>"org.eclipse.jdt.debug.javaWatchpoint"</code>).
+	 * (value <code>"org.eclipse.jdt.debug.javaWatchpointMarker"</code>).
 	 */
-	public static final String JAVA_WATCHPOINT= "org.eclipse.jdt.debug.javaWatchpoint";
+	public static final String JAVA_WATCHPOINT= "org.eclipse.jdt.debug.javaWatchpointMarker";
 	
 	/**
 	 * Java method entry breakpoint marker type
-	 * (value <code>"org.eclipse.jdt.debug.javaMethodEntryBreakpoint"</code>).
+	 * (value <code>"org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"</code>).
 	 */
-	public static final String JAVA_METHOD_ENTRY_BREAKPOINT = "org.eclipse.jdt.debug.javaMethodEntryBreakpoint";
+	public static final String JAVA_METHOD_ENTRY_BREAKPOINT = "org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker";
 	
 	/**
 	 * Snippet support line breakpoint marker type
-	 * (value <code>"org.eclipse.jdt.debug.snippetSupportLineBreakpoint"</code>).
+	 * (value <code>"org.eclipse.jdt.debug.snippetSupportLineBreakpointMarker"</code>).
 	 */
-	public static final String SNIPPET_SUPPORT_LINE_BREAKPOINT= "org.eclipse.jdt.debug.snippetSupportLineBreakpoint";
+	public static final String SNIPPET_SUPPORT_LINE_BREAKPOINT= "org.eclipse.jdt.debug.snippetSupportLineBreakpointMarker";
 	
 	/**
 	 * Breakpoint attribute storing the handle identifier of the Java element

@@ -711,8 +711,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (isTerminated() || isDisconnected()) {
 			return;
 		}
-		if (breakpoint instanceof IJavaBreakpoint) {
-			breakpoint.addToTarget(this);
+		if (breakpoint instanceof JavaBreakpoint) {
+			((JavaBreakpoint)breakpoint).addToTarget(this);
 		}
 	}
 
@@ -723,8 +723,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (isTerminated() || isDisconnected()) {
 			return;
 		}		
-		if (breakpoint instanceof IJavaBreakpoint) {		
-			breakpoint.changeForTarget(this);
+		if (breakpoint instanceof JavaBreakpoint) {		
+			((JavaBreakpoint)breakpoint).changeForTarget(this);
 		}
 	}
 	
@@ -735,8 +735,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (isTerminated() || isDisconnected()) {
 			return;
 		}		
-		if (breakpoint instanceof IJavaBreakpoint) {		
-			breakpoint.removeFromTarget(this);
+		if (breakpoint instanceof JavaBreakpoint) {		
+			((JavaBreakpoint)breakpoint).removeFromTarget(this);
 		}
 	}
 	
@@ -903,7 +903,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			getEventRequestManager().deleteEventRequest(request);
 			Iterator itr= ((ArrayList) markers.clone()).iterator();
 			while (itr.hasNext()) {
-				IJavaBreakpoint breakpoint= (IJavaBreakpoint) itr.next();
+				JavaBreakpoint breakpoint= (JavaBreakpoint) itr.next();
 				breakpoint.addToTarget(this);
 			}			
 		}
@@ -915,7 +915,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	protected void uninstallAllBreakpoints() {
 		Iterator breakpoints= ((Map)((HashMap)fInstalledBreakpoints).clone()).keySet().iterator();
 		while (breakpoints.hasNext()) {
-			IJavaBreakpoint breakpoint= (IJavaBreakpoint) breakpoints.next();
+			JavaBreakpoint breakpoint= (JavaBreakpoint) breakpoints.next();
 			try {
 				breakpoint.decrementInstallCount();				
 			} catch (CoreException e) {
@@ -935,7 +935,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			while (itr.hasNext()) {
 				// do not notify the breakpoint manager of uninstall, as we
 				// are in a resource change callback and cannot modify the resource tree
-				IJavaBreakpoint breakpoint= (IJavaBreakpoint) itr.next();
+				JavaBreakpoint breakpoint= (JavaBreakpoint) itr.next();
 				if (breakpoint instanceof JavaWatchpoint) {
 					Object[] requests= (Object[])fInstalledBreakpoints.remove(breakpoint);
 					for (int i=0; i<requests.length; i++) {

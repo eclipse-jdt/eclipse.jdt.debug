@@ -319,7 +319,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		Object[] requests= (Object[]) target.getRequest(this);
 		if (requests == null) {
 			//deferred breakpoint
-			if (!this.exists()) {
+			if (!this.getMarker().exists()) {
 				//resource no longer exists
 				return;
 			}

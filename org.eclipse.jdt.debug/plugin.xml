@@ -25,29 +25,22 @@
 </runtime>
 
 <!-- Extensions -->
-<!-- Extension points -->
-<extension point = "org.eclipse.debug.core.breakpoint_factories">
-<breakpoint_factory
-	    id="org.eclipse.jdt.core.JavaBreakpointFactory"
-	   	class="org.eclipse.jdt.internal.debug.core.JavaBreakpointFactory"
-   		type="org.eclipse.jdt.debug.javaBreakpoint"/>
-</extension>
 
 <extension
-	id="javaBreakpoint"
+	id="javaBreakpointMarker"
 	point="org.eclipse.core.resources.markers">
 	<super
-		type="org.eclipse.debug.core.breakpoint">
+		type="org.eclipse.debug.core.breakpointMarker">
 	</super>
 </extension>
 <extension
-      id="javaLineBreakpoint"
+      id="javaLineBreakpointMarker"
       point="org.eclipse.core.resources.markers">
 	<super
-		type="org.eclipse.jdt.debug.javaBreakpoint">
+		type="org.eclipse.jdt.debug.javaBreakpointMarker">
 	</super>
    <super
-         type="org.eclipse.debug.core.lineBreakpoint">
+         type="org.eclipse.debug.core.lineBreakpointMarker">
    </super>
    <persistent
          value="true">
@@ -65,21 +58,35 @@
          name="expired">
    </attribute>
 </extension>
+
 <extension
-      id="javaRunToLineBreakpoint"
+	id="javaLineBreakpoint"
+	point="org.eclipse.debug.core.breakpoints">
+	markerType="org.eclipse.jdt.debug.javaLineBreakpointMarker">
+</extension>
+
+<extension
+      id="javaRunToLineBreakpointMarker"
       point="org.eclipse.core.resources.markers">
    <super
-         type="org.eclipse.jdt.debug.javaLineBreakpoint">
+         type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
    </super>
    <persistent
          value="false">
    </persistent>
 </extension>
+
 <extension
-      id="javaExceptionBreakpoint"
+	id="javaRunToLineBreakpoint"
+	point="org.eclipse.debug.core.breakpoints">
+	markerType="org.eclipse.jdt.debug.javaRunToLineBreakpointMarker">
+</extension>
+
+<extension
+      id="javaExceptionBreakpointMarker"
       point="org.eclipse.core.resources.markers">
 	<super
-		type="org.eclipse.jdt.debug.javaBreakpoint">
+		type="org.eclipse.jdt.debug.javaBreakpointMarker">
 	</super>
    <persistent
          value="true">
@@ -97,11 +104,18 @@
          name="checked">
    </attribute>
 </extension>
+
 <extension
-	id="javaWatchpoint"
+	id="javaExceptionBreakpoint"
+	point="org.eclipse.debug.core.breakpoints">
+	markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker">
+</extension>
+
+<extension
+	id="javaWatchpointMarker"
 	point="org.eclipse.core.resources.markers">
 	<super
-		type="org.eclipse.jdt.debug.javaLineBreakpoint">
+		type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
 	</super>
 	<persistent
 		value="true">
@@ -119,11 +133,18 @@
 		name="auto_disabled">
 	</attribute>
 </extension>
+
 <extension
-      id="javaMethodEntryBreakpoint"
+	id="javaWatchpoint"
+	point="org.eclipse.debug.core.breakpoints">
+	markerType="org.eclipse.jdt.debug.javaWatchpointMarker">
+</extension>
+
+<extension
+      id="javaMethodEntryBreakpointMarker"
       point="org.eclipse.core.resources.markers">
    <super
-         type="org.eclipse.jdt.debug.javaLineBreakpoint">
+         type="org.eclipse.jdt.debug.javaLineBreakpointMarker">
    </super>
    <persistent
          value="true">
@@ -142,4 +163,11 @@
 		value="false">
 	</persistent>
 </extension>
+
+<extension
+	id="javaMethodEntryBreakpoint"
+	point="org.eclipse.debug.core.breakpoints">
+	markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker">
+</extension>
+
 </plugin>

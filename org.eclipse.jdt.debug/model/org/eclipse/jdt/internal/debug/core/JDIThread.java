@@ -190,7 +190,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * @see IJavaThread
 	 */
 	public IJavaBreakpoint getBreakpoint() {
-		if (fCurrentBreakpoint != null && !fCurrentBreakpoint.exists()) {
+		if (fCurrentBreakpoint != null && !fCurrentBreakpoint.getMarker().exists()) {
 			fCurrentBreakpoint= null;
 		}
 		return fCurrentBreakpoint;

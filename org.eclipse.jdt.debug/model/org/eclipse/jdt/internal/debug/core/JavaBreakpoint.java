@@ -10,10 +10,11 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.core.Breakpoint;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.debug.core.*;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaDebugConstants;
 
 import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.event.Event;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.MethodEntryRequest;
 
@@ -69,13 +70,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			removeFromTarget((JDIDebugTarget) target);
 		}
 	}
-
+	
 	/**
-	 * This breakpoint has been removed.
-	 * Remove the request from the given target.
+	 * Handles the given event in the given target.
 	 */
-	public abstract void removeFromTarget(JDIDebugTarget target);
+	protected abstract void handleEvent(Event event, JDIDebugTarget target);
 
+	protected abstract void addToTarget(JDIDebugTarget target);
+	protected abstract void changeForTarget(JDIDebugTarget target);
+	protected abstract void removeFromTarget(JDIDebugTarget target);
+	
 	/**
 	 * Update the enabled state of the given request, which is associated
 	 * with this breakpoint. Set the enabled state of the request
@@ -193,9 +197,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * @see IJavaBreakpoint#getInstalledType()
+	 * @see IJavaBreakpoint#getType()
 	 */
-	public IType getInstalledType() {
+	public IType getType() {
 		try {
 			String handle = getTypeHandleIdentifier();
 			if (handle != null) {
@@ -219,7 +223,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * the given breakpoint is associated with, or <code>null</code>.
 	 */
 	public String getTopLevelTypeName() {
-		IType type = getInstalledType();
+		IType type = getType();
 		if (type != null) {
 			while (type.getDeclaringType() != null) {
 				type = type.getDeclaringType();
@@ -244,7 +248,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	
 	public String getBreakpointTypeName(boolean qualified) {
 		String typeName= "";
-		typeName= getInstalledType().getFullyQualifiedName();
+		typeName= getType().getFullyQualifiedName();
 		if (!qualified) {
 			int index= typeName.lastIndexOf('.');
 			if (index != -1) {

@@ -364,7 +364,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		BreakpointRequest request= (BreakpointRequest) target.getRequest(this);
 		if (request == null) {
 			//deferred breakpoint
-			if (!this.exists()) {
+			if (!this.getMarker().exists()) {
 				//resource no longer exists
 				return;
 			}
@@ -495,7 +495,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	public IMember getMember() {
 		int start = getCharStart();
 		int end = getCharEnd();
-		IType type = getInstalledType();
+		IType type = getType();
 		IMember member = null;
 		if (type != null && end >= start && start >= 0) {
 			try {
@@ -582,7 +582,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	public String getMarkerText(boolean showQualified, String memberString) {
-		IType type= getInstalledType();
+		IType type= getType();
 		if (type != null) {
 			StringBuffer label= new StringBuffer();
 			if (showQualified) {

@@ -96,7 +96,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
      * Create or update the request.
 	 */
 	public void addToTarget(JDIDebugTarget target) {
-		IType type = getInstalledType();
+		IType type = getType();
 		String className = type.getFullyQualifiedName();
 		
 		MethodEntryRequest request = target.getMethodEntryRequest(className);
