@@ -286,6 +286,26 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 					bootpathInfo[2][i]= bootEntriesApp[i].getLocation();
 				}
 			}
+			IVMInstall install = getVMInstall(configuration);
+			LibraryLocation[] libraryLocations = install.getLibraryLocations();
+			if (libraryLocations != null) {
+				// non-default JRE libaries - use explicit bootpath only
+				String[] bootpath = new String[bootEntriesPrep.length + libraryLocations.length + bootEntriesApp.length];
+				if (bootEntriesPrep.length > 0) {
+					System.arraycopy(bootpathInfo[0], 0, bootpath, 0, bootEntriesPrep.length);
+				}
+				int dest = bootEntriesPrep.length;
+				for (int i = 0; i < libraryLocations.length; i++) {
+					bootpath[dest] = libraryLocations[i].getSystemLibraryPath().toOSString();
+					dest++;
+				}
+				if (bootEntriesApp.length > 0) {
+					System.arraycopy(bootpathInfo[2], 0, bootpath, dest, bootEntriesApp.length);
+				}
+				bootpathInfo[0] = null;
+				bootpathInfo[1] = bootpath;
+				bootpathInfo[2] = null;
+			}
 		} else {
 			if (entriesPrep == null) {
 				bootpathInfo[1]= new String[0];
@@ -420,7 +440,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		String[] pre = paths[0];
 		String[] boot = paths[1];
 		String[] app = paths[2];
-		if (pre != null || app != null) {
+		if (pre != null || app != null || boot != null) {
 			if (map == null) {
 				map = new HashMap(3);
 			}
