@@ -34,17 +34,21 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -75,13 +79,18 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * A composite that displays installed JRE's in a table. JREs can be 
  * added, removed, edited, and searched for.
+ * <p>
+ * This block implements ISelectionProvider - it sends selection change events
+ * when the checked JRE in the table changes, or when the "use default" button
+ * check state changes.
+ * </p>
  */
-public class InstalledJREsBlock implements IAddVMDialogRequestor {
+public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProvider {
 	
 	/**
 	 * This block's control
 	 */
-	private Control fControl;
+	private Composite fControl;
 	
 	/**
 	 * VMs being displayed
@@ -102,7 +111,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	// column weights
 	private float fWeight1 = 1/3F;
 	private float fWeight2 = 1/3F;
-
+	private float fWeight3 = 1/3F;
 	// ignore column re-sizing when the table is being resized
 	private boolean fResizingTable = false; 
 	
@@ -110,15 +119,20 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	private int fSortColumn = 0;
 	
 	/**
-	 * Default JRE descriptor or <code>null</code> if none.
+	 * Selection listeners (checked JRE changes)
 	 */
-	private DefaultJREDescriptor fDefaultDescriptor = null;
+	private ListenerList fSelectionListeners = new ListenerList();
 	
 	/**
-	 * Default JRE checkbox or <code>null</code> if none
+	 * Flag used to determine if a selection change was fired
 	 */
-	private Button fDefaultButton = null;
+	private boolean fFired = false;
 	
+	/**
+	 * Previous selection
+	 */
+	private ISelection fPrevSelection = new StructuredSelection();
+			
 	// Make sure that VMStandin ids are unique if multiple calls to System.currentTimeMillis()
 	// happen very quickly
 	private static String fgLastUsedID;	
@@ -174,10 +188,50 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		}
 
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		fSelectionListeners.add(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+	 */
+	public ISelection getSelection() {
+		return new StructuredSelection(fVMList.getCheckedElements());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+		fSelectionListeners.remove(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
+	 */
+	public void setSelection(ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			if (!selection.equals(fPrevSelection)) {
+				fPrevSelection = selection;
+				Object jre = ((IStructuredSelection)selection).getFirstElement();
+				fVMList.setCheckedElements(new Object[]{jre});
+				fVMList.reveal(jre);
+				fireSelectionChanged();
+			}
+		}
+	}
+
 	/**
 	 * Creates this block's control in the given control.
 	 * 
 	 * @param anscestor containing control
+	 * @param useManageButton whether to present a single 'manage...' button to
+	 *  the user that opens the installed JREs pref page for JRE management,
+	 *  or to provide 'add, remove, edit, and search' buttons.
 	 */
 	public void createControl(Composite ancestor) {
 		
@@ -192,22 +246,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		fControl = parent;	
 		
 		GridData data;
-		
-		// display a 'use default JRE' check box
-		if (fDefaultDescriptor != null) {
-			fDefaultButton = new Button(parent, SWT.CHECK);
-			fDefaultButton.setText(fDefaultDescriptor.getDescription());
-			fDefaultButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					setUseDefaultJRE(fDefaultButton.getSelection());
-				}
-			});
-			data = new GridData();
-			data.horizontalSpan = 2;
-			fDefaultButton.setLayoutData(data);
-			fDefaultButton.setFont(font);
-		}
-		
+				
 		Label tableLabel = new Label(parent, SWT.NONE);
 		tableLabel.setText(JREMessages.getString("InstalledJREsBlock.15")); //$NON-NLS-1$
 		data = new GridData();
@@ -265,8 +304,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		
 		fVMList.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				IVMInstall vm=  (IVMInstall)event.getElement();
-				fVMList.setCheckedElements(new Object[] { vm });
+				if (event.getChecked()) {
+					setCheckedJRE((IVMInstall)event.getElement());
+				} else {
+					setCheckedJRE(null);
+				}
 			}
 		});
 		
@@ -320,11 +362,24 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		
 		configureTableResizing(parent, buttons, table, column1, column2, column3);
 		
+		fillWithWorkspaceJREs();
 		enableButtons();
 		fAddButton.setEnabled(JavaRuntime.getVMInstallTypes().length > 0);
-
 	}
 	
+	/**
+	 * Fire current selection
+	 */
+	private void fireSelectionChanged() {
+		SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
+		Object[] listeners = fSelectionListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			ISelectionChangedListener listener = (ISelectionChangedListener)listeners[i];
+			listener.selectionChanged(event);
+			fFired = true;
+		}	
+	}
+
 	/**
 	 * Sorts by VM type, and name within type.
 	 */
@@ -433,6 +488,13 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 				}
 			}
 		});
+		column3.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				if (column3.getWidth() > 0 && !fResizingTable) {
+					fWeight3 = getColumnWeight(2);
+				}
+			}
+		});
 	}	
 
 	private void resizeTable(Composite parent, Composite buttons, Table table, TableColumn column1, TableColumn column2, TableColumn column3) {
@@ -491,7 +553,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	 * 
 	 * @param vms JREs to be displayed
 	 */
-	public void setJREs(IVMInstall[] vms) {
+	protected void setJREs(IVMInstall[] vms) {
 		fVMs.clear();
 		for (int i = 0; i < vms.length; i++) {
 			fVMs.add(vms[i]);
@@ -581,7 +643,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	/**
 	 * Search for installed VMs in the file system
 	 */
-	public void search() {
+	protected void search() {
 		
 		// choose a root directory for the search 
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
@@ -737,9 +799,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	 */
 	public void setCheckedJRE(IVMInstall vm) {
 		if (vm == null) {
-			fVMList.setCheckedElements(new Object[]{});
+			setSelection(new StructuredSelection());
 		} else {
-			fVMList.setCheckedElements(new Object[] {vm});
+			setSelection(new StructuredSelection(vm));
 		}
 	}
 	
@@ -791,7 +853,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	public void restoreColumnSettings(IDialogSettings settings, String qualifier) {
 		fWeight1 = restoreColumnWeight(settings, qualifier, 0);
 		fWeight2 = restoreColumnWeight(settings, qualifier, 1);
-		
+		fWeight3 = restoreColumnWeight(settings, qualifier, 2);
 		fVMList.getTable().layout(true);
 		try {
 			fSortColumn = settings.getInt(qualifier + ".sortColumn"); //$NON-NLS-1$
@@ -811,18 +873,19 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		}
 	}
 	
-	private float restoreColumnWeight(IDialogSettings settings, String qualifier, int col) {
+	private float restoreColumnWeight(IDialogSettings settings, String qualifier, int col) {		
 		try {
 			return settings.getFloat(qualifier + ".column" + col); //$NON-NLS-1$
 		} catch (NumberFormatException e) {
 			return 1/3F;
 		}
+
 	}
 	
 	/**
 	 * Populates the JRE table with existing JREs defined in the workspace.
 	 */
-	public void fillWithWorkspaceJREs() {
+	protected void fillWithWorkspaceJREs() {
 		// fill with JREs
 		List standins = new ArrayList();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
@@ -836,36 +899,5 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		}
 		setJREs((IVMInstall[])standins.toArray(new IVMInstall[standins.size()]));	
 	}
-	
-	/**
-	 * Sets the Default JRE Descriptor for this block. When non-null, a
-	 * 'use default JRE' check box is displayed, and the descriptor is
-	 * consulted for a default VM setting when required.
-	 * 
-	 * @param descriptor default JRE descriptor
-	 */
-	public void setDefaultJREDescriptor(DefaultJREDescriptor descriptor) {
-		fDefaultDescriptor = descriptor;
-	}
-	
-	/**
-	 * Sets this control to use the 'default' JRE, as specified by the
-	 * default JRE descriptor.
-	 * 
-	 * @param useDefault
-	 */
-	public void setUseDefaultJRE(boolean useDefault) {
-		if (fDefaultDescriptor != null) {
-			if (useDefault != fDefaultButton.getSelection()) {
-				fDefaultButton.setSelection(useDefault);
-			}
-			if (useDefault) {
-				IVMInstall def = fDefaultDescriptor.getDefaultJRE();
-				if (def != null) {
-					setCheckedJRE(def);	
-				}
-			}
-			fVMList.getTable().setEnabled(!useDefault);
-		}
-	}
+		
 }

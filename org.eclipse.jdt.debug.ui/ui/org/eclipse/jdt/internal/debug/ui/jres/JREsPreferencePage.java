@@ -62,20 +62,6 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	}
 	
 	/**
-	 * Set the VM list that will be input for the main list control.
-	 */
-	private void populateVMList() {
-		
-		// force auto-dection to occurr before populating the VM list.
-		JavaRuntime.getDefaultVMInstall();
-		
-		fJREBlock.fillWithWorkspaceJREs();
-		
-		// Set up the default VM
-		initDefaultVM();
-	}
-	
-	/**
 	 * Find & verify the default VM.
 	 */
 	private void initDefaultVM() {
@@ -121,7 +107,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
 						
 		WorkbenchHelp.setHelp(parent, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);		
-		populateVMList();
+		initDefaultVM();
 		return parent;
 	}
 			

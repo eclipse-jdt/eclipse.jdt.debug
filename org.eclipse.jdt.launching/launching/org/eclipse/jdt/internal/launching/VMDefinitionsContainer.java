@@ -69,15 +69,15 @@ public class VMDefinitionsContainer {
 	private Map fVMTypeToVMMap;
 	
 	/**
+	 * Cached list of VMs in this container
+	 */
+	private List fVMList;
+	
+	/**
 	 * VMs managed by this container whose install locations don't actually exist.
 	 */
 	private List fInvalidVMList;
-		
-	/**
-	 * The number of VMs managed by this container.
-	 */
-	private int fVMCount = 0;
-	
+			
 	/**
 	 * The composite identifier of the default VM.  This consists of the install type ID
 	 * plus an ID for the VM.
@@ -94,7 +94,8 @@ public class VMDefinitionsContainer {
 	 */
 	public VMDefinitionsContainer() {
 		fVMTypeToVMMap = new HashMap(10);
-		fInvalidVMList = new ArrayList(5);			
+		fInvalidVMList = new ArrayList(10);	
+		fVMList = new ArrayList(10);		
 	}
 		
 	/**
@@ -107,19 +108,21 @@ public class VMDefinitionsContainer {
 	 * 
 	 * @param vm the VM to be added to this container
 	 */
-	public void addVM(IVMInstall vm) {	
-		IVMInstallType vmInstallType = vm.getVMInstallType();
-		List vmList = (List) fVMTypeToVMMap.get(vmInstallType);
-		if (vmList == null) {
-			vmList = new ArrayList(3);
-			fVMTypeToVMMap.put(vmInstallType, vmList);			
-		}		
-		vmList.add(vm);
-		File installLocation = vm.getInstallLocation();
-		if (installLocation == null || !vmInstallType.validateInstallLocation(installLocation).isOK()) {
-			fInvalidVMList.add(vm);
+	public void addVM(IVMInstall vm) {
+		if (!fVMList.contains(vm)) {	
+			IVMInstallType vmInstallType = vm.getVMInstallType();
+			List vmList = (List) fVMTypeToVMMap.get(vmInstallType);
+			if (vmList == null) {
+				vmList = new ArrayList(3);
+				fVMTypeToVMMap.put(vmInstallType, vmList);			
+			}
+			vmList.add(vm);
+			File installLocation = vm.getInstallLocation();
+			if (installLocation == null || !vmInstallType.validateInstallLocation(installLocation).isOK()) {
+				fInvalidVMList.add(vm);
+			}
+			fVMList.add(vm);
 		}
-		fVMCount++;
 	}
 	
 	/**
@@ -159,17 +162,7 @@ public class VMDefinitionsContainer {
 	 * @return List the data structure containing all VMs managed by this container
 	 */
 	public List getVMList() {
-		List resultList = new ArrayList(fVMCount);
-		
-		Set keySet = getVMTypeToVMMap().keySet();
-		Iterator keyIterator = keySet.iterator();
-		while (keyIterator.hasNext()) {
-			IVMInstallType vmInstallType = (IVMInstallType) keyIterator.next();
-			List vmList = (List) getVMTypeToVMMap().get(vmInstallType);
-			resultList.addAll(vmList);
-		}
-		
-		return resultList;
+		return fVMList;
 	}
 	
 	/**
