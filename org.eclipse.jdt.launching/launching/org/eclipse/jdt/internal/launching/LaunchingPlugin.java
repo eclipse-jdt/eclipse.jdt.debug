@@ -8,6 +8,10 @@ package org.eclipse.jdt.internal.launching;
 import java.util.HashMap;
 import java.util.Hashtable;
 
+import org.eclipse.core.internal.events.ResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -27,7 +31,7 @@ import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 
-public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener {
+public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener {
 	
 	/**
 	 * Identifier for 'vmConnectors' extension point
@@ -79,7 +83,8 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
-		ArchiveSourceLocation.shutdown();
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		ArchiveSourceLocation.closeArchives();
 		getPluginPreferences().removePropertyChangeListener(this);
 		JavaRuntime.removeVMInstallChangedListener(this);
 		super.shutdown();
@@ -114,6 +119,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		getPluginPreferences().addPropertyChangeListener(this);
 
 		JavaRuntime.addVMInstallChangedListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, ResourceChangeEvent.PRE_DELETE | ResourceChangeEvent.PRE_CLOSE);
 	}
 	
 	/**
@@ -206,6 +212,16 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			log(e);
 		}
 	}
+
+	/**
+	 * Clear the archive cache when a project is about to be deleted.
+	 * 
+	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		ArchiveSourceLocation.closeArchives();
+	}
+
 
 }
 

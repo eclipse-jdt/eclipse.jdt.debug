@@ -69,9 +69,9 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * Closes all zip files that have been opened,
 	 * and removes them from the zip file cache.
 	 * This method is only to be called by the launching
-	 * plug-in on shutdown.
+	 * plug-in.
 	 */
-	public static void shutdown() {
+	public static void closeArchives() {
 		Iterator iter = fZipFileCache.values().iterator();
 		while (iter.hasNext()) {
 			ZipFile file = (ZipFile)iter.next();
@@ -85,14 +85,14 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	}
 	
 	/**
-	 * The archive associated with this source location
-	 */
-	private ZipFile fArchive;
-	
-	/**
 	 * The root source folder in the archive
 	 */
 	private IPath fRootPath;
+	
+	/**
+	 * The name of the archive
+	 */
+	private String fName;
 
 	/**
 	 * Constructs a new empty source location to be initialized with 
@@ -109,12 +109,10 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * @param sourceRoot a path to the root source folder in the
 	 *  specified archive, or <code>null</code> if the root source folder
 	 *  is the root of the archive
-	 * @exception IOException if unable to access the zip file
 	 */
-	public ArchiveSourceLocation(String archiveName, String sourceRoot) throws IOException {
+	public ArchiveSourceLocation(String archiveName, String sourceRoot) {
 		super();
-		ZipFile zip = getZipFile(archiveName);
-		setArchive(zip);
+		setName(archiveName);
 		setRootPath(sourceRoot);
 	}
 		
@@ -122,37 +120,32 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * @see IJavaSourceLocation#findSourceElement(String)
 	 */
 	public Object findSourceElement(String name) throws CoreException {
-		if (getArchive() == null) {
+		try {
+			if (getArchive() == null) {
+				return null;
+			}
+			
+			// guess at source name if an inner type
+			String pathStr= name.replace('.', '/');
+			int dotIndex= pathStr.lastIndexOf('/');
+			int dollarIndex= pathStr.indexOf('$', dotIndex + 1);
+			if (dollarIndex >= 0) {
+				pathStr = pathStr.substring(0, dollarIndex);
+			}		
+			pathStr += ".java"; //$NON-NLS-1$
+			IPath path = new Path(pathStr); 
+			if (getRootPath() != null) {
+				path = getRootPath().append(path);
+			}
+			ZipEntry entry = getArchive().getEntry(path.toString());
+			if (entry != null) {
+				return new ZipEntryStorage(getArchive(), entry);
+			}
 			return null;
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
+				MessageFormat.format("Unable to locate source element in archive {0}", new String[] {getName()}), e));
 		}
-		
-		// guess at source name if an inner type
-		String pathStr= name.replace('.', '/');
-		int dotIndex= pathStr.lastIndexOf('/');
-		int dollarIndex= pathStr.indexOf('$', dotIndex + 1);
-		if (dollarIndex >= 0) {
-			pathStr = pathStr.substring(0, dollarIndex);
-		}		
-		pathStr += ".java"; //$NON-NLS-1$
-		IPath path = new Path(pathStr); 
-		if (getRootPath() != null) {
-			path = getRootPath().append(path);
-		}
-		ZipEntry entry = getArchive().getEntry(path.toString());
-		if (entry != null) {
-			return new ZipEntryStorage(getArchive(), entry);
-		}
-		return null;
-	}
-
-	/**
-	 * Sets the archive in which source elements will
-	 * be searched for.
-	 * 
-	 * @param archive a zip file
-	 */
-	private void setArchive(ZipFile archive) {
-		fArchive = archive;
 	}
 	
 	/**
@@ -161,8 +154,8 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * 
 	 * @return zip file
 	 */
-	public ZipFile getArchive() {
-		return fArchive;
+	protected ZipFile getArchive() throws IOException {
+		return getZipFile(getName());
 	}
 	
 	/**
@@ -174,7 +167,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * the archive, or <code>null</code> if the root source
 	 * folder is the root of the arhcive
 	 */
-	public void setRootPath(String path) {
+	private void setRootPath(String path) {
 		if (path == null || path.trim().length() == 0) {
 			fRootPath = null;
 		} else {
@@ -196,18 +189,40 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	}	
 	
 	/**
+	 * Returns the name of the archive associated with this 
+	 * source location
+	 * 
+	 * @return the name of the archive associated with this
+	 *  source location
+	 */
+	public String getName() {
+		return fName;
+	}
+	
+	/**
+	 * Sets the name of the archive associated with this 
+	 * source location
+	 * 
+	 * @param name the name of the archive associated with this
+	 *  source location
+	 */
+	private void setName(String name) {
+		fName = name;
+	}	
+	
+	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {		
 		return object instanceof ArchiveSourceLocation &&
-			 getArchive().equals(((ArchiveSourceLocation)object).getArchive());
+			 getName().equals(((ArchiveSourceLocation)object).getName());
 	}
 	
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getArchive().hashCode();
+		return getName().hashCode();
 	}	
 	
 	/**
@@ -217,7 +232,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		Document doc = new DocumentImpl();
 		Element node = doc.createElement("archiveSourceLocation"); //$NON-NLS-1$
 		doc.appendChild(node);
-		node.setAttribute("archivePath", getArchive().getName()); //$NON-NLS-1$
+		node.setAttribute("archivePath", getName()); //$NON-NLS-1$
 		if (getRootPath() != null) {
 			node.setAttribute("rootPath", getRootPath().toString()); //$NON-NLS-1$
 		}
@@ -225,7 +240,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		try {
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
-			abort(MessageFormat.format(LaunchingMessages.getString("ArchiveSourceLocation.Unable_to_create_memento_for_archive_source_location_{0}_1"), new String[] {getArchive().getName()}), e); //$NON-NLS-1$
+			abort(MessageFormat.format(LaunchingMessages.getString("ArchiveSourceLocation.Unable_to_create_memento_for_archive_source_location_{0}_1"), new String[] {getName()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach here
 		return null;
@@ -250,8 +265,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			}
 			String rootPath = root.getAttribute("rootPath"); //$NON-NLS-1$
 			
-			ZipFile zip = getZipFile(path);
-			setArchive(zip);
+			setName(path);
 			setRootPath(rootPath);
 			return;
 		} catch (ParserConfigurationException e) {

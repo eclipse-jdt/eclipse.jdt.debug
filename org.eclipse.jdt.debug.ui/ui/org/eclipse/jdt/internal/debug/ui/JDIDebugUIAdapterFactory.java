@@ -62,7 +62,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 					return ((DirectorySourceLocation)o).getDirectory().getName();
 				}
 			} else if (o instanceof ArchiveSourceLocation) {
-				return ((ArchiveSourceLocation)o).getArchive().getName();
+				return ((ArchiveSourceLocation)o).getName();
 			}
 			return null;
 		}
