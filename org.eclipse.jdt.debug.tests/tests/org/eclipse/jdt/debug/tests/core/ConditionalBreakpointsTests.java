@@ -29,7 +29,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	public void testSimpleConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "i == 3");
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "i == 3", true);
 		
 		IJavaThread thread= null;
 		try {
@@ -53,7 +53,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	public void testStaticMethodCallConditionalBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
-		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "ArgumentsTests.fact(i) == 24");
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "ArgumentsTests.fact(i) == 24", true);
 		
 		IJavaThread thread= null;
 		try {
@@ -74,4 +74,40 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
+
+	public void testSimpleConditionalBreakpointSuspendOnChange() throws Exception {
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint bp = createConditionalLineBreakpoint(16, typeName, "i != 9", false);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			IVariable var = frame.findVariable("i");
+			assertNotNull("Could not find variable 'i'", var);
+			
+			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
+			assertNotNull("variable 'i' has no value", value);
+			int iValue = value.getIntValue();
+			assertEquals(0, iValue);
+			
+			resumeToLineBreakpoint(thread, bp);
+			
+			frame = (IJavaStackFrame)thread.getTopStackFrame();
+			var = frame.findVariable("i");
+			assertNotNull("Could not find variable 'i'", var);
+			
+			value = (IJavaPrimitiveValue)var.getValue();
+			assertNotNull("variable 'i' has no value", value);
+			iValue = value.getIntValue();
+			assertEquals(9, iValue);
+			
+			bp.delete();
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+
 }

@@ -415,10 +415,11 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param typeName type name
 	 * @param condition condition
 	 */
-	protected IJavaLineBreakpoint createConditionalLineBreakpoint(int lineNumber, String typeName, String condition) throws Exception {
+	protected IJavaLineBreakpoint createConditionalLineBreakpoint(int lineNumber, String typeName, String condition, boolean suspendOnTrue) throws Exception {
 		IJavaLineBreakpoint bp = JDIDebugModel.createLineBreakpoint(getBreakpointResource(typeName), typeName, lineNumber, -1, -1, 0, true, null);
 		bp.setCondition(condition);
 		bp.setConditionEnabled(true);
+		bp.setConditionSuspendOnTrue(suspendOnTrue);
 		return bp;
 	}
 	
