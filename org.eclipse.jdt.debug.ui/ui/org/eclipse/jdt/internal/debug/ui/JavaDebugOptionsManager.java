@@ -777,6 +777,29 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
 	public void breakpointsAdded(final IBreakpoint[] breakpoints) {
+		// if a breakpoint is added, but already has a message, do not update it
+		List update = new ArrayList();
+		for (int i = 0; i < breakpoints.length; i++) {
+			IBreakpoint breakpoint = breakpoints[i];
+			try {
+				if (breakpoint instanceof IJavaBreakpoint && breakpoint.getMarker().getAttribute(IMarker.MESSAGE) == null) {
+					update.add(breakpoint);
+				}
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
+		}
+		if (!update.isEmpty()) {
+			updateBreakpointMessages((IBreakpoint[])update.toArray(new IBreakpoint[update.size()]));
+		}
+	}
+	
+	/**
+	 * Updates message attributes on the given java breakpoints.
+	 * 
+	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
+	 */
+	private void updateBreakpointMessages(final IBreakpoint[] breakpoints) {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				for (int i = 0; i < breakpoints.length; i++) {
@@ -801,7 +824,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
-	}
+	}	
 
 	/**
 	 * Updates message attributes on java breakpoints.
@@ -811,7 +834,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	public void breakpointsChanged(
 		IBreakpoint[] breakpoints,
 		IMarkerDelta[] deltas) {
-			breakpointsAdded(breakpoints);
+			updateBreakpointMessages(breakpoints);
 
 	}
 
