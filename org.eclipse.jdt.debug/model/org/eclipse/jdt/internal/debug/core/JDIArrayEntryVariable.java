@@ -48,7 +48,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	}
 
 	/**
-	 * @see IDebugElement
+	 * @see IVariable#getName()
 	 */
 	public String getName() {
 		return "[" + fIndex + "]"; //$NON-NLS-2$ //$NON-NLS-1$
@@ -76,7 +76,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	}
 	
 	/**
-	 * @see IVariable
+	 * @see IVariable#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() throws DebugException {
 		try {
@@ -102,7 +102,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	}
 	
 	/**
-	 * @see IJavaVariable
+	 * @see IJavaVariable#getSignature()
 	 */
 	public String getSignature() throws DebugException {
 		try {
@@ -113,8 +113,5 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 		return getUnknownMessage();
 	}
 	
-	protected VirtualMachine getVirtualMachine() {
-		return getArrayReference().virtualMachine();
-	}
 }
 
