@@ -4,11 +4,14 @@
  */
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -21,11 +24,10 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
-import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
-import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
+import org.eclipse.jdt.internal.debug.eval.model.EvaluationThread;
 import org.eclipse.jdt.internal.debug.eval.model.EvaluationValue;
 import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
 import org.eclipse.jdt.internal.debug.eval.model.IValue;
@@ -38,6 +40,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	private IJavaProject fProject;
 	
 	private IJavaDebugTarget fDebugTarget;
+	
+	private List fEvaluationThreads= new ArrayList();
 
 	public ASTEvaluationEngine(IJavaProject project, IJavaDebugTarget debugTarget) {
 		setJavaProject(project);
@@ -88,50 +92,147 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * Evaluates the given expression in the given thread and the given runtime context.
 	 */
 	private void doEvaluation(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener) throws DebugException {		
-		Thread evaluationThread= new Thread(new Runnable() {
-			public void run() {
-
-				EvaluationResult result = new EvaluationResult(ASTEvaluationEngine.this, expression.getSnippet(), thread);
-				if (expression.hasErrors()) {
-					Message[] errors= expression.getErrors();
-					for (int i= 0, numErrors= errors.length; i < numErrors; i++) {
-						result.addError(errors[i]);
-					}
-					listener.evaluationComplete(result);
-					return;
-				}
-		
-				final IValue[] valuez = new IValue[1];
-				final InstructionSequence instructionSet = (InstructionSequence)expression;
-				IEvaluationRunnable er = new IEvaluationRunnable() {
-					public void run(IJavaThread jt, IProgressMonitor pm) {
-						valuez[0] = instructionSet.evaluate(context);
-					}
-				};
-				CoreException exception = null;
-				try {
-					thread.runEvaluation(er, null, DebugEvent.EVALUATION);
-				} catch (DebugException e) {
-					exception = e;
-				}
-				IValue value = valuez[0];
-				
-
-				if (exception == null) {
-					exception= instructionSet.getException();
-				}
-				
-				if (value != null) {
-					IJavaValue jv = ((EvaluationValue)value).getJavaValue();
-					result.setValue(jv);
-				}
-				if (exception != null) {
-					result.setException(new DebugException(exception.getStatus()));
-				}
-				listener.evaluationComplete(result);
+		getEvaluationThread().evaluate(expression, context, thread, listener);
+	}
+	
+	private EvaluationThread getEvaluationThread() {
+		Iterator iter= fEvaluationThreads.iterator();
+		EvaluationThread thread= null;
+		while (iter.hasNext()) {
+			thread= (EvaluationThread)iter.next();
+			if (!thread.isEvaluating()) {
+				return thread;
 			}
-		}, "Evaluation thread");
-		evaluationThread.start();
+		}
+		thread= new EvaluationThread();
+		fEvaluationThreads.add(thread);
+		return thread;
+	}
+	
+	/**
+	 * Notifies this evaluation engine that the given evaluation thread
+	 * has completed an evaluation. If there are any threads available
+	 * (not currently evaluating), the given thread is stopped. Otherwise
+	 * the thread is allowed to keep running - it will be reused for the
+	 * next evaluation.
+	 */
+	private void evaluationThreadFinished(EvaluationThread thread) {
+		if (fEvaluationThreads.size() == 1) {
+			// Always leave at least one thread running
+			return;
+		}
+		boolean allBusy= true;
+		Iterator iter= fEvaluationThreads.iterator();
+		EvaluationThread tempThread= null;
+		while (iter.hasNext()) {
+			tempThread= (EvaluationThread)iter.next();
+			if (!tempThread.isEvaluating()) {
+				// Another thread is available. The given thread
+				// can be stopped
+				allBusy= false;
+			}
+		}
+		if (!allBusy) {
+			thread.stop();
+			fEvaluationThreads.remove(thread);
+		}
+	}
+	
+	class EvaluationThread {
+		private ICompiledExpression fExpression;
+		private IRuntimeContext fContext;
+		private IJavaThread fThread;
+		private IEvaluationListener fListener;
+
+		private boolean fEvaluating= false;
+		private Thread fEvaluationThread;
+		private boolean fStopped= false;
+		private Object fLock= new Object();
+		
+		public boolean isEvaluating() {
+			return fEvaluating;
+		}
+		
+		public void stop() {
+			fStopped= true;
+			synchronized (fLock) {
+				fLock.notify();
+			}
+		}
+		
+		public void evaluate(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener) {
+			fExpression= expression;
+			fContext= context;
+			fThread= thread;
+			fListener= listener;
+			if (fEvaluationThread == null) {
+				// Create a new thread
+				fEvaluationThread= new Thread(new Runnable() {
+					public void run() {
+						while (!fStopped) {
+							synchronized (fLock) {
+								doEvaluation();
+								try {
+									// Sleep until the next evaluation
+									fLock.wait();
+								} catch (InterruptedException exception) {
+								}
+							}
+						}
+					}
+				}, "Evaluation thread");
+				fEvaluationThread.start();
+			} else {
+				// Use the existing thread
+				synchronized (fLock) {
+					fLock.notify();
+				}
+			}
+		}
+		
+		public synchronized void doEvaluation() {
+			fEvaluating= true;
+			EvaluationResult result = new EvaluationResult(ASTEvaluationEngine.this, fExpression.getSnippet(), fThread);
+			if (fExpression.hasErrors()) {
+				Message[] errors= fExpression.getErrors();
+				for (int i= 0, numErrors= errors.length; i < numErrors; i++) {
+					result.addError(errors[i]);
+				}
+				fListener.evaluationComplete(result);
+				return;
+			}
+	
+			final IValue[] valuez = new IValue[1];
+			final InstructionSequence instructionSet = (InstructionSequence)fExpression;
+			IEvaluationRunnable er = new IEvaluationRunnable() {
+				public void run(IJavaThread jt, IProgressMonitor pm) {
+					valuez[0] = instructionSet.evaluate(fContext);
+				}
+			};
+			CoreException exception = null;
+			try {
+				fThread.runEvaluation(er, null, DebugEvent.EVALUATION);
+			} catch (DebugException e) {
+				exception = e;
+			}
+			IValue value = valuez[0];
+			
+
+			if (exception == null) {
+				exception= instructionSet.getException();
+			}
+			
+			if (value != null) {
+				IJavaValue jv = ((EvaluationValue)value).getJavaValue();
+				result.setValue(jv);
+			}
+			if (exception != null) {
+				result.setException(new DebugException(exception.getStatus()));
+			}
+			fEvaluating= false;
+			evaluationThreadFinished(this);
+			fListener.evaluationComplete(result);
+		}
 	}
 
 	/**
@@ -249,6 +350,16 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see IEvaluationEngine#dispose()
 	 */
 	public void dispose() {
+		// Stop all evaluation threads.
+		Iterator iter= fEvaluationThreads.iterator();
+		while (iter.hasNext()) {
+			((EvaluationThread)iter.next()).stop();
+		}
+	}
+	
+	protected void finalize() throws Throwable {
+		dispose();
+		super.finalize();
 	}
 
 }

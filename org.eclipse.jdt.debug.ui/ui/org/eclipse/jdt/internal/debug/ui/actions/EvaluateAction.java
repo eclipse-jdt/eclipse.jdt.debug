@@ -220,7 +220,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 						dataDisplay.displayExpression(expression);
 					}
 					
-					engine = EvaluationManager.newAstEvaluationEngine(project, (IJavaDebugTarget)jFrame.getDebugTarget());
+					engine = JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)jFrame.getDebugTarget());
 					if (object == null) {
 						engine.evaluate(expression, jFrame, this);
 					} else {
@@ -229,10 +229,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					
 				} catch (CoreException e) {
 					reportError(e);
-				} finally {
-					if (engine != null) {
-						engine.dispose();
-					}
 				}
 			} else {
 				reportError(ActionMessages.getString("Evaluate.error.message.src_context")); //$NON-NLS-1$

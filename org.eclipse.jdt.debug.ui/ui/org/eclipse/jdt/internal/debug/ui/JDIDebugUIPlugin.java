@@ -5,26 +5,29 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
  
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.jdt.core.IElementChangedListener;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
+import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.core.JavaModelManager;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -46,6 +49,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private FileDocumentProvider fSnippetDocumentProvider;
 	
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
+	
+	private JavaEvaluationEngineManager fEvaluationEngineManager;
 	
 	/**
 	 * Java Debug UI listeners
@@ -208,6 +213,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		initializeHCRListener();
 		initializeOptionsManager();
 		initializeAdapterManager();
+		initializeEvaluationEngineManager();
 		initializeJavaModelListener();
 		initializeImageRegistry();	
 	}
@@ -222,6 +228,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();
 		}
+		fEvaluationEngineManager.dispose();
 		super.shutdown();
 	}
 	
@@ -237,6 +244,10 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	private void initializeAdapterManager() {
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);
+	}
+	
+	private void initializeEvaluationEngineManager() {
+		fEvaluationEngineManager= new JavaEvaluationEngineManager();
 	}
 	
 	private void initializeJavaModelListener() {
@@ -274,6 +285,19 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (display == null)
 			display= Display.getDefault();
 		return display;		
+	}
+	
+	/**
+	 * Returns an evaluation engine for the given project in the given debug target.
+	 * 
+	 * @see JavaEvaluationEngineManager#getEvaluationEngine(IJavaProject, IJavaDebugTarget)
+	 * 
+	 * @param project java project
+	 * @param target the debug target
+	 * @return evalaution engine
+	 */
+	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
+		return fEvaluationEngineManager.getEvaluationEngine(project, target);
 	}
 }
 
