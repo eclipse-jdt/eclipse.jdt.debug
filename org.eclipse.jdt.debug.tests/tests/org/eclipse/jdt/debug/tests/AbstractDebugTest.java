@@ -70,7 +70,9 @@ import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 
 
@@ -208,6 +210,20 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null, false, register);
 		Object suspendee= waiter.waitForEvent();
 		if (suspendee == null) {
+            System.out.println();
+            System.out.println("Test case: " + this.getName());
+            System.out.println("Never received event: " + waiter.getEventKindName());
+            if (launch.isTerminated()) {
+                System.out.println("Process exit value: " + launch.getProcesses()[0].getExitValue());
+            }
+            IConsole console = DebugUITools.getConsole(launch.getProcesses()[0]);
+            if (console instanceof TextConsole) {
+                TextConsole textConsole = (TextConsole)console;
+                String string = textConsole.getDocument().get();
+                System.out.println("Console output follows:");
+                System.out.println(string);
+            }
+            System.out.println();
 			try {
 				launch.terminate();
 			} catch (CoreException e) {

@@ -78,8 +78,8 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	/**
 	 * Answers the event name associated with the given flag.
 	 */
-	public String getEventName(int flag) {
-		switch (flag) {
+	public String getEventKindName() {
+		switch (fEventType) {
 			case DebugEvent.CREATE :
 				return "Create";
 			case DebugEvent.TERMINATE :
