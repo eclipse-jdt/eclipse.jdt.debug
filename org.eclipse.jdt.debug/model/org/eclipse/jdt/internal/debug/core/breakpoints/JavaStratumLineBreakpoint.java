@@ -172,7 +172,12 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		if (vm == null) {
 			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.Unable_to_add_breakpoint_-_VM_disconnected._1"), null); //$NON-NLS-1$
 		}
-		List classes= vm.allClasses();
+		List classes = null;
+		try {
+			classes= vm.allClasses();
+		} catch (RuntimeException e) {
+			target.targetRequestFailed(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.0"), e); //$NON-NLS-1$
+		}
 		if (classes != null) {
 			Iterator iter = classes.iterator();
 			while (iter.hasNext()) {
