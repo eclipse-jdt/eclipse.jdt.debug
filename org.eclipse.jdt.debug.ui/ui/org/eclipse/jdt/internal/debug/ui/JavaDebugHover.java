@@ -16,6 +16,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.IEditorPart;
@@ -63,7 +64,11 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 		if (targets != null && targets.length > 0) {
 			try {
 				
-				String variableName= textViewer.getDocument().get(hoverRegion.getOffset(), hoverRegion.getLength());
+				IDocument document= textViewer.getDocument();
+				if (document == null)
+					return null;
+					
+				String variableName= document.get(hoverRegion.getOffset(), hoverRegion.getLength());
 				
 				boolean first= true;
 				StringBuffer buffer= new StringBuffer();
@@ -73,7 +78,7 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 						try {
 							IVariable variable= javaTarget.findVariable(variableName);
 							if (variable != null) {
-								if (!first) {
+								if (!first) {					
 									buffer.append('\n');
 								}
 								first= false;
