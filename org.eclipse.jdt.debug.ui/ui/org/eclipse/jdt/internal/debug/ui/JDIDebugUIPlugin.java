@@ -357,12 +357,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		JavaCore.addElementChangedListener(fJavaModelListener);
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
-		getStandardDisplay().asyncExec(
-			new Runnable() {
-				public void run() {
-					createImageRegistry();
-				}
-			});	
 	}
 	
 	/**

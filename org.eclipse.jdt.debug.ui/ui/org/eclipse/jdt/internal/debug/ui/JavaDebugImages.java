@@ -9,6 +9,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -35,7 +37,8 @@ public class JavaDebugImages {
 	}
 	
 	// The plugin registry
-	private final static ImageRegistry IMAGE_REGISTRY= new ImageRegistry(JDIDebugUIPlugin.getStandardDisplay());
+	private static ImageRegistry fgImageRegistry = null;
+	private static HashMap fgAvoidSWTErrorMap = null;
 
 	/*
 	 * Available cached Images in the Java debug plug-in image registry.
@@ -162,7 +165,7 @@ public class JavaDebugImages {
 	 * @return the image managed under the given key
 	 */ 
 	public static Image get(String key) {
-		return IMAGE_REGISTRY.get(key);
+		return fgImageRegistry.get(key);
 	}
 	
 	/**
@@ -185,7 +188,15 @@ public class JavaDebugImages {
 	 * Helper method to access the image registry from the JDIDebugUIPlugin class.
 	 */
 	/* package */ static ImageRegistry getImageRegistry() {
-		return IMAGE_REGISTRY;
+		if (fgImageRegistry == null) {
+			fgImageRegistry= new ImageRegistry();
+			for (Iterator iter= fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext();) {
+				String key= (String) iter.next();
+				fgImageRegistry.put(key, (ImageDescriptor) fgAvoidSWTErrorMap.get(key));
+			}
+			fgAvoidSWTErrorMap= null;
+		}
+		return fgImageRegistry;
 	}
 
 	//---- Helper methods to access icons on the file system --------------------------------------
@@ -214,7 +225,13 @@ public class JavaDebugImages {
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		try {
 			ImageDescriptor result= ImageDescriptor.createFromURL(makeIconFileURL(prefix, name.substring(NAME_PREFIX_LENGTH)));
-			IMAGE_REGISTRY.put(name, result);
+			if (fgAvoidSWTErrorMap == null) {
+				fgAvoidSWTErrorMap = new HashMap(); 
+			}
+			fgAvoidSWTErrorMap.put(name, result);
+			if (fgImageRegistry != null) {
+				JDIDebugUIPlugin.logErrorMessage("Internal Error: Image registry already defined"); //$NON-NLS-1$
+			}
 			return result;
 		} catch (MalformedURLException e) {
 			JDIDebugUIPlugin.log(e);
