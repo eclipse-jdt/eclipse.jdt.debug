@@ -1731,7 +1731,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		 */
 		public boolean handleEvent(Event event, JDIDebugTarget target) {
 			ThreadReference thread= ((ThreadStartEvent)event).thread();
-			if (thread.isCollected()) {
+			try {
+				if (thread.isCollected()) {
+					return false;
+				}
+			} catch (VMDisconnectedException exception) {
 				return false;
 			}
 			JDIThread jdiThread= findThread(thread);
