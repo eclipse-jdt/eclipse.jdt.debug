@@ -1,11 +1,9 @@
-package org.eclipse.jdi.hcr;/*
- * JDI Interface Specification class. 
- *
- * (BB)
- * (C) Copyright IBM Corp. 2000
+package org.eclipse.jdi.hcr;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
-
 
 /**
  * Thrown to indicate that the target VM refused to perform an operation.

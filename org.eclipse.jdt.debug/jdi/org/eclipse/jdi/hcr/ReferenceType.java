@@ -1,11 +1,9 @@
-package org.eclipse.jdi.hcr;/*
- * JDI Interface Specification class. 
- *
- * (BB)
- * (C) Copyright IBM Corp. 2000
+package org.eclipse.jdi.hcr;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
-
 
 /**
  * Hot code replacement extension to <code>com.sun.jdi.ReferenceType</code>.

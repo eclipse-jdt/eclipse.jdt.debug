@@ -1,10 +1,9 @@
-package org.eclipse.jdi;/*
- * JDI Interface Specification class. 
- *
- * (BB)
- * (C) Copyright IBM Corp. 2000
- */
+package org.eclipse.jdi;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 public class TimeoutException extends RuntimeException {
 	public TimeoutException() {	}

@@ -1,11 +1,9 @@
-package org.eclipse.jdi.internal.jdwp;/*
- * JDI class Implementation
- *
- * (BB)
- * (C) Copyright IBM Corp. 2000
+package org.eclipse.jdi.internal.jdwp;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
-
 
 import java.io.*;
 import org.eclipse.jdi.internal.VirtualMachineImpl;

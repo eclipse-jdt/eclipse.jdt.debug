@@ -1,11 +1,9 @@
-package org.eclipse.jdi.internal;/*
- * JDI class Implementation
- *
- * (BB)
- * (C) Copyright IBM Corp. 2000
+package org.eclipse.jdi.internal;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
-
 
 import java.util.*;
 import java.lang.ref.*;

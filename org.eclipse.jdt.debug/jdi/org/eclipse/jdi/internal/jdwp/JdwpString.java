@@ -1,6 +1,9 @@
 package org.eclipse.jdi.internal.jdwp;
 
-import java.io.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */import java.io.*;
 
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP) ID

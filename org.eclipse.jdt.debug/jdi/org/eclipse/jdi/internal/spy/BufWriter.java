@@ -1,11 +1,9 @@
-package org.eclipse.jdi.internal.spy;/*
- * JDI class Implementation
- *
- * (BB)
- * (C) Copyright IBM Corp. 2000
+package org.eclipse.jdi.internal.spy;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
-
 
 import java.util.*;
 import java.io.*;

@@ -1,11 +1,9 @@
-package org.eclipse.jdi.internal.connect;/*
- * JDI class Implementation
- *
- * (BB)
- * (C) Copyright IBM Corp. 2000
+package org.eclipse.jdi.internal.connect;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-
-
 
 import com.sun.jdi.*;
 import com.sun.jdi.connect.*;
