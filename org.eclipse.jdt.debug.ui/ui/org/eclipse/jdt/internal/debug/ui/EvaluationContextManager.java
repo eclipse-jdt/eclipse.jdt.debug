@@ -33,7 +33,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 
-
 /**
  * Manages the current evaluation context (stack frame) for evaluation actions.
  * In each page, the selection is tracked in each debug view (if any). When a stack
@@ -288,7 +287,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 * @see IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partClosed(IWorkbenchPartReference ref) {
-		if (ref.getId().equals(IDebugUIConstants.ID_DEBUG_VIEW)) {
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(ref.getId())) {
 			removeContext(ref.getPage());
 		}
 	}
