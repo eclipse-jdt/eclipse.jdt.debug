@@ -65,6 +65,7 @@ public class BreakpointConditionEditor {
 	private IJavaLineBreakpoint fBreakpoint;
 	
 	private HandlerSubmission submission;
+    private IDocumentListener fDocumentListener;
 		
 	public BreakpointConditionEditor(Composite parent, JavaLineBreakpointPage page) {
 		fPage= page;
@@ -106,13 +107,14 @@ public class BreakpointConditionEditor {
 		control.setLayoutData(gd);
 		
 		// listener for check the value
-		fViewer.getDocument().addDocumentListener(new IDocumentListener() {
+		fDocumentListener= new IDocumentListener() {
             public void documentAboutToBeChanged(DocumentEvent event) {
             }
             public void documentChanged(DocumentEvent event) {
                 valueChanged();
             }
-        });
+        };
+		fViewer.getDocument().addDocumentListener(fDocumentListener);
 		
 		// we can only do code assist if there is an associated type
 		IType type= BreakpointUtils.getType(fBreakpoint);
@@ -233,6 +235,7 @@ public class BreakpointConditionEditor {
 			IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 			commandSupport.removeHandlerSubmission(submission);
 	    }
+	    fViewer.getDocument().removeDocumentListener(fDocumentListener);
 		fViewer.dispose();
 	}
 }
