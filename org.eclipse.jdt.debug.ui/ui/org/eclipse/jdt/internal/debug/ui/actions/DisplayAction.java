@@ -118,7 +118,7 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	public void detailComputed(IValue value, final String result) {
 		fResult= result;
 		synchronized (fLock) {
-			fLock.notify();
+			fLock.notifyAll();
 		}
 	}
 	
