@@ -12,7 +12,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayCompletionProcessor;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetCompletionProcessor;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.IColorManager;
