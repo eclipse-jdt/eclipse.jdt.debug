@@ -49,6 +49,7 @@ public abstract class ToggleViewAction implements IViewActionDelegate, IUpdate {
 	 */
 	public void run(IAction action) {
 		fMonitorsView.setViewId(getViewId());
+		fMonitorsView.updateObjects();
 	}
 	
 	protected abstract int getViewId();
