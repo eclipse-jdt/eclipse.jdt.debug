@@ -233,7 +233,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 		} catch (RuntimeException e) {
 			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_locating_result_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
-		getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_locating_result_value"), new String[] {""}), null); //$NON-NLS-1$
+		getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_locating_result_value"), new String[] {""}), null); //$NON-NLS-1$ //$NON-NLS-2$
 		// execution will not reach this line, as
 		// #targetRequestFailed will thrown an exception			
 		return null;
@@ -312,7 +312,6 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	
 	protected ClassType getCodeSnippetClass(String codeSnippetClassName) throws DebugException {
 		VirtualMachine jdiVM = getModelThread().getVM();
-		ThreadReference jdiThread = getUnderlyingThread();
 		// Get the code snippet class
 		List classes = jdiVM.classesByName(codeSnippetClassName);
 		if (classes.size() == 0) {
@@ -366,12 +365,10 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			}
 			
 			Method forName = (Method)methods.get(0);
-			ThreadReference jdiThread = getUnderlyingThread();
 			StringReference nameArg = jdiVM.mirrorOf(className);
 			List args = new ArrayList(1);
 			args.add(nameArg);
-			ClassObjectReference classObject = (ClassObjectReference)getModelThread().invokeMethod(classClass, null, forName, args);
-			// translate the ClassObjectReference to the ClassType
+			getModelThread().invokeMethod(classClass, null, forName, args);
 			ClassType loadedClass = null;
 			classes = jdiVM.classesByName(className);
 			if (classes.size() > 0) {
