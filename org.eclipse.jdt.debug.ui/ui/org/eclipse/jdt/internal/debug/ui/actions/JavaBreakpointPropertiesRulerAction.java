@@ -12,13 +12,17 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
 /**
- * Presents a custom properties dialog to configure
+ * Presents the standard properties dialog to configure
  * the attibutes of a Java Breakpoint from the ruler popup menu of a 
  * text editor.
  */
@@ -37,9 +41,19 @@ public class JavaBreakpointPropertiesRulerAction extends AbstractBreakpointRuler
 	 */
 	public void run() {
 		if (getBreakpoint() != null) {
-			Dialog d= 
-				new JavaBreakpointPropertiesDialog(getTextEditor().getEditorSite().getShell(), (IJavaBreakpoint)getBreakpoint());
-			d.open();	
+			PropertyDialogAction action= 
+				new PropertyDialogAction(getTextEditor().getEditorSite().getShell(), new ISelectionProvider() {
+					public void addSelectionChangedListener(ISelectionChangedListener listener) {
+					}
+					public ISelection getSelection() {
+						return new StructuredSelection(getBreakpoint());
+					}
+					public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+					}
+					public void setSelection(ISelection selection) {
+					}
+				});
+			action.run();	
 		}
 	}
 	

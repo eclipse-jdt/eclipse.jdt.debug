@@ -13,14 +13,17 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 
 /**
- * Presents a custom properties dialog to configure
+ * Presents the standard properties dialog to configure
  * the attibutes of a Java Breakpoint.
  */
 public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
@@ -32,9 +35,19 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		Dialog d= 
-			new JavaBreakpointPropertiesDialog(getActivePart().getSite().getShell(), getBreakpoint());
-		d.open();
+		PropertyDialogAction propertyAction= 
+			new PropertyDialogAction(getActivePart().getSite().getShell(), new ISelectionProvider() {
+				public void addSelectionChangedListener(ISelectionChangedListener listener) {
+				}
+				public ISelection getSelection() {
+					return new StructuredSelection(getBreakpoint());
+				}
+				public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+				}
+				public void setSelection(ISelection selection) {
+				}
+			});
+		propertyAction.run();
 	}
 
 	/**

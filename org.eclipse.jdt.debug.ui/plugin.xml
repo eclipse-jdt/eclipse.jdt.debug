@@ -449,13 +449,13 @@
             objectClass="org.eclipse.jdt.debug.core.IJavaBreakpoint"
             id="org.eclipse.jdt.debug.JavaBreakpointActions">
          <action
-               id="org.eclipse.jdt.ui.actions.BreakpointHitCount"
-               class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
-               enablesFor="1"
+               label="%hitCount.label"
                icon="icons/full/elcl16/sethitcount_co.gif"
                helpContextId="hit_count_action_context"
-               label="%hitCount.label"
-               menubarPath="emptyBreakpointGroup">
+               class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
+               menubarPath="emptyBreakpointGroup"
+               enablesFor="1"
+               id="org.eclipse.jdt.ui.actions.BreakpointHitCount">
          </action>
          <action
                label="%suspendPolicy.label"
@@ -764,22 +764,22 @@
             targetID="org.eclipse.jdt.debug.ui.MonitorsView"
             id="org.eclipse.jdt.debug.MonitorsViewPopupActions">
          <action
-               id="org.eclipse.jdt.ui.actions.MonitorTraceAction"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
+               label="%MonitorTraceAction.label"
                icon="../org.eclipse.debug.ui/icons/full/elcl16/suspend_co.gif"
                helpContextId="monitor_trace_action_context"
-               label="%MonitorTraceAction.label"
+               tooltip="%MonitorTraceAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
                menubarPath="vmGroup"
-               tooltip="%MonitorTraceAction.tooltip">
+               id="org.eclipse.jdt.ui.actions.MonitorTraceAction">
          </action>
          <action
-               id="org.eclipse.jdt.ui.actions.MonitorQuitAction"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
+               label="%MonitorQuitAction.label"
                icon="../org.eclipse.debug.ui/icons/full/elcl16/resume_co.gif"
                helpContextId="monitor_quit_action_context"
-               label="%MonitorQuitAction.label"
+               tooltip="%MonitorQuitAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
                menubarPath="vmGroup"
-               tooltip="%MonitorQuitAction.tooltip">
+               id="org.eclipse.jdt.ui.actions.MonitorQuitAction">
          </action>
       </viewerContribution>
    </extension>
@@ -1796,6 +1796,34 @@
             nameFilter="*.jpage"
             class="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorPropertyPage"
             id="org.eclipse.jdt.debug.ui.snippeteditor.SnippetEditorPage">
+      </page>
+      <page
+            objectClass="org.eclipse.jdt.debug.core.IJavaLineBreakpoint"
+            adaptable="true"
+            name="Common"
+            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaLineBreakpointPage"
+            id="org.eclipse.jdt.debug.ui.propertypages.common">
+      </page>
+      <page
+            objectClass="org.eclipse.jdt.debug.core.IJavaLineBreakpoint"
+            adaptable="true"
+            name="Filtering"
+            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointAdvancedPage"
+            id="org.eclipse.jdt.debug.ui.propertypages.common">
+      </page>
+      <page
+            objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint"
+            adaptable="true"
+            name="Filtering"
+            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointAdvancedPage"
+            id="org.eclipse.jdt.debug.ui.propertypages.common">
+      </page>
+      <page
+            objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint"
+            adaptable="true"
+            name="Common"
+            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointPage"
+            id="org.eclipse.jdt.debug.ui.propertypages.common">
       </page>
    </extension>
    <extension
