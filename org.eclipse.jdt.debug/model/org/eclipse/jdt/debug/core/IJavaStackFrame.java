@@ -13,28 +13,19 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * A Java stack frame is an extension of a regular stack
- * frame, providing support specific to the JDI debug model.
- * A Java stack frame is also available as an adapter from
- * stack frames originating for the JDI debug model.
+ * A stack frame in a thread on a Java virtual machine.
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see org.eclipse.debug.core.model.IStackFrame
- * @see org.eclipse.core.runtime.IAdaptable 
  */
 
 public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 			
 	/**
-	 * Drops to this stack frame by popping stack frames in this stack
+	 * Drops to this stack frame by popping frames in this 
 	 * frame's owning thread until this stack frame is the top stack frame.
-	 * Execution marker is set to the beginning of this stack frame's
+	 * The execution location is set to the beginning of this frame's
 	 * associated method.
 	 *
 	 * @exception DebugException if this method fails.  Reasons include:
@@ -42,7 +33,6 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
-	 * </ul>
 	 * <li>The capability is not supported by the target.</li>
 	 * <li>This stack frame is no longer valid. That is, the thread
 	 *   containing this stack frame has since been resumed.</li>
@@ -93,9 +83,13 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 * is a static initializer.
 	 * 
 	 * @return whether this stack frame is a static initializer
-	 * @exception DebugException on failure. Reasons include:<ul>
-	 * <li>TARGET_REQUEST_FAILED - unable to determine if this
-	 *   stack frame is a static initializer.
+	 * @exception DebugException if this method fails. Reasons include:<ul>
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
 	public boolean isStaticInitializer() throws DebugException;
@@ -119,7 +113,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 * is running code in the VM that is out of synch with the code
 	 * in the workspace.
 	 * 
-	 * @return whether this stack frame is out of synch with the VM.
+	 * @return whether this stack frame is out of synch with the workspace.
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
@@ -128,6 +122,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 * <li>This stack frame is no longer valid. That is, the thread
 	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
+	 * @since 2.0
 	 */
 	public boolean isOutOfSynch() throws DebugException;
 	/**
@@ -145,6 +140,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 * <li>This stack frame is no longer valid. That is, the thread
 	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
+	 * @since 2.0
 	 */
 	public boolean isObsolete() throws DebugException;
 	/**
@@ -163,7 +159,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 */
 	public String getDeclaringTypeName() throws DebugException;
 	/**
-	 * Returns the fully qualified name of the type that is the receiver object
+	 * Returns the fully qualified name of the type that is the receiving object
 	 * associated with this stack frame
 	 *
 	 * @return receiving type name
@@ -179,8 +175,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	public String getReceivingTypeName() throws DebugException;
 	
 	/**
-	 * Returns the signature for the method this stack frame is associated with.
-	 * The signature is in JNI format.
+	 * Returns the JNI signature for the method this stack frame is associated with.
 	 *
 	 * @return signature
 	 * @exception DebugException if this method fails.  Reasons include:
@@ -240,15 +235,14 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
 	 */
-	IJavaVariable findVariable(String variableName) throws DebugException;
+	public IJavaVariable findVariable(String variableName) throws DebugException;
 	
 	/**
-	 * Returns the unqualified name of the source file this stack frame is associated 
-	 * with, or <code>null</code> if the source name is not known. For example, if the
-	 * declaring type associated with this stack frame is "com.example.Example", 
-	 * the associated source name would be "Example.java".
+	 * Returns the source name debug attribute associated with the declaring
+	 * type of this stack frame, or <code>null</code> if the source name debug
+	 * attribute not present.
 	 * 
-	 * @return unqualified source file name, or <code>null</code>
+	 * @return source name debug attribute, or <code>null</code>
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
@@ -274,6 +268,7 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 * <li>This stack frame is no longer valid. That is, the thread
 	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
+	 * @since 2.0
 	 */
 	public IJavaVariable[] getLocalVariables() throws DebugException;
 	
@@ -308,19 +303,22 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers {
 	 * <li>This stack frame is no longer valid. That is, the thread
 	 *   containing this stack frame has since been resumed.</li>
 	 * </ul>
+	 * @since 2.0
 	 */
 	public IJavaClassType getDeclaringType() throws DebugException;	
 	
 	/**
 	 * Returns whether local variable information was available
-	 * when variables were retrieved from the target. Returns
-	 * <code>true</code> if locals have never been retrieved. This
-	 * data is available after the fact, since variable retrieval
-	 * is expensive.
+	 * when local variables were retrieved from the target for this
+	 * frame. Returns <code>true</code> if locals have never been
+	 * retrieved. This data is available after the fact, since variable
+	 * retrieval is expensive.
 	 * 
 	 * @return whether local variable information was available
 	 * when variables were retrieved from the target. Returns
 	 * <code>true</code> if locals have never been retrieved
+	 * 
+	 * @since 2.0
 	 */
 	public boolean wereLocalsAvailable();
 }

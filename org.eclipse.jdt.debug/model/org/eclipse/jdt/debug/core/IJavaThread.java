@@ -13,20 +13,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 
 /**
- * A Java thread is an extension of a regular thread,
- * providing support specific to the JDI debug model.
- * A Java thread is also available as an adapter from
- * threads originating from the JDI debug model.
+ * A thread in a Java virtual machine.
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see org.eclipse.debug.core.model.IThread
- * @see org.eclipse.core.runtime.IAdaptable 
  */
 public interface IJavaThread extends IThread {
 	
@@ -47,24 +38,26 @@ public interface IJavaThread extends IThread {
 	 * are running code in the VM that is out of synch with the code
 	 * in the workspace.
 	 * 
-	 * @return whether this thread is out of synch with the VM.
+	 * @return whether this thread is out of synch with the workspace.
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * @since 2.0
 	 */
 	boolean isOutOfSynch() throws DebugException;
 	/**
 	 * Returns whether this thread may be running code in the VM that
 	 * is out of synch with the code in the workspace.
 	 * 
-	 * @return whether this thread may be out of synch with the VM.
+	 * @return whether this thread may be out of synch with the workspace.
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * @since 2.0
 	 */
 	boolean mayBeOutOfSynch() throws DebugException;	
 	/**
@@ -73,6 +66,7 @@ public interface IJavaThread extends IThread {
 	 * 
 	 * @return whether this thread is currently performing
 	 * 	an evaluation
+	 * @since 2.0
 	 */
 	boolean isPerformingEvaluation();
 	/**
@@ -130,6 +124,7 @@ public interface IJavaThread extends IThread {
 	 *  complete before firing a resume event on the given thread
 	 * @exception DebugException if an exception occurs performing
 	 *  the evaluation
+	 * @since 2.0
 	 */
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail) throws DebugException; 
 
