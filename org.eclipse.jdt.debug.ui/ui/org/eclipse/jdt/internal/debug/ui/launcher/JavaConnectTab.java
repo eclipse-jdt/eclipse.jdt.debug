@@ -376,5 +376,12 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		}
 				
 		return true;
-	}	
+	}
+	
+	/**
+	 * @see ILaunchConfigurationTab#getName()
+	 */
+	public String getName() {
+		return "Conn&ect";
+	}			
 }

@@ -308,5 +308,12 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		}
 		return null;
 	}
+	
+	/**
+	 * @see ILaunchConfigurationTab#getName()
+	 */
+	public String getName() {
+		return "&Arguments";
+	}	
 }
 

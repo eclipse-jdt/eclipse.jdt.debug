@@ -1004,4 +1004,11 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			selectJREComboBoxEntry(vmID);
 		}
 	}	
+	
+	/**
+	 * @see ILaunchConfigurationTab#getName()
+	 */
+	public String getName() {
+		return "En&vironment";
+	}	
 }

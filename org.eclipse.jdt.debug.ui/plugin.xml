@@ -710,31 +710,17 @@
 	</launchConfigurationTypeImage>	
 </extension>
 
-<extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
-	<launchConfigurationTab
-		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaMain"
+<extension point = "org.eclipse.debug.ui.launchConfigurationTabGroups">
+	<launchConfigurationTabGroup
+		id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
 		type ="org.eclipse.jdt.launching.localJavaApplication"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaMainTab"
-		name="%javaMainTabName">
-	</launchConfigurationTab>
-	<launchConfigurationTab
-		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaArguments"
-		type ="org.eclipse.jdt.launching.localJavaApplication"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaArgumentsTab"
-		name="%javaArgumentsTabName">
-	</launchConfigurationTab>
-	<launchConfigurationTab
-		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaEnvironment"
-		type ="org.eclipse.jdt.launching.localJavaApplication"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaEnvironmentTab"
-		name="%javaEnvironmentTabName">
-	</launchConfigurationTab>
-	<launchConfigurationTab
-		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaConnect"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.LocalJavaApplicationTabGroup">
+	</launchConfigurationTabGroup>
+	<launchConfigurationTabGroup
+		id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.remoteJavaApplication"
 		type ="org.eclipse.jdt.launching.remoteJavaApplication"
-		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaConnectTab"
-		name="%javaConnectTabName">
-	</launchConfigurationTab>
+		class="org.eclipse.jdt.internal.debug.ui.launcher.RemoteJavaApplicationTabGroup">
+	</launchConfigurationTabGroup>
 </extension>
 
 <extension point = "org.eclipse.debug.core.statusHandlers">

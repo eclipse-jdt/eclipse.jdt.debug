@@ -423,5 +423,12 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		initializeDefaultVM(config);
 	}
 
+	/**
+	 * @see ILaunchConfigurationTab#getName()
+	 */
+	public String getName() {
+		return "&Main";
+	}
+
 }
 
