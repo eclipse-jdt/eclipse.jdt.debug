@@ -2612,7 +2612,7 @@ M4 = Platform-specific fourth key
          point="org.eclipse.ui.console.consolePatternMatchListeners">
       <consolePatternMatchListener
             class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
-            regex="\S+\(.*\.java:.*\)"
+            regex="\w\S*\(.*\.java:.*\)"
             qualifier="java:"
             id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
          <enablement>
@@ -2625,7 +2625,7 @@ M4 = Platform-specific fourth key
       </consolePatternMatchListener>
       <consolePatternMatchListener
             class="org.eclipse.jdt.internal.debug.ui.console.JavaNativeConsoleTracker"
-            regex="\S\w\S.*\(Native Method\)"
+            regex="\w\S*\(Native Method\)"
             qualifier="Native Method"
             id="org.eclipse.jdt.debug.ui.JavaNativeConsoleTracker">
          <enablement>
@@ -2638,7 +2638,7 @@ M4 = Platform-specific fourth key
       </consolePatternMatchListener>
             <consolePatternMatchListener
             class="org.eclipse.jdt.internal.debug.ui.console.JavaExceptionConsoleTracker"
-            regex="[\S]+Exception\s"
+            regex="\w[^\(\s]+Exception[\s|:]"
             qualifier="Exception"
             id="org.eclipse.jdt.debug.ui.JavaExceptionConsoleTracker">
          <enablement>
