@@ -99,7 +99,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Whether to ignore change callbacks - used when updating intall counts
 	 */
-	private boolean fIngoreChange = false;
+	private boolean fIgnoreChange = false;
 	
 	/**
 	 * Propery identifier for a breakpoint object on an event request
@@ -995,14 +995,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Sets whether change callbacks should be ignored
 	 */
 	protected void setIgnoreChange(boolean ignore) {
-		fIngoreChange = ignore;
+		fIgnoreChange = ignore;
 	}
 	
 	/**
 	 * Returns whether change callbacks should be ignored
 	 */
 	protected boolean isIgnoreChange() {
-		return fIngoreChange;
+		return fIgnoreChange;
 	}
 }
 
