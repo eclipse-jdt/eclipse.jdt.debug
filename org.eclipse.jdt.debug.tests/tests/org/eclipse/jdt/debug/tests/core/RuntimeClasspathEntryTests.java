@@ -86,6 +86,9 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 	/**
 	 * Tests that a project can be lanuched if it contains the JRE_CONTAINER variable
 	 * instead of JRE_LIB
+	 * 
+	 * XXX: test waiting for bug fix in JCORE - unable to bind container if there
+	 * is no corresponding classpath entry.
 	 */
 //	public void testJREContainerEntry() throws Exception {
 //		ILaunchConfiguration lc = getLaunchConfiguration("Breakpoints");
