@@ -22,9 +22,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -46,7 +46,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * <li>Creates breakpoint for the 'suspend on uncaught' exceptions option</li>
  * </ul>
  */
-public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunchListener, IPropertyChangeListener {
+public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventListener, IPropertyChangeListener {
 	
 	/**
 	 * Singleton options manager
@@ -135,7 +135,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 	 */
 	public void startup() throws CoreException {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		DebugPlugin.getDefault().addDebugEventListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		initialize();
 	}
@@ -145,7 +145,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 	 */
 	public void shutdown() throws CoreException {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		fProblemMap.clear();
 	}	
@@ -366,40 +366,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 	}
 	
 	/**
-	 * @see ILaunchListener#launchAdded(ILaunch)
-	 */
-	public void launchAdded(ILaunch launch) {
-		IDebugTarget target = launch.getDebugTarget();
-		if (target instanceof IJavaDebugTarget) { 
-			IJavaDebugTarget javaTarget = (IJavaDebugTarget)target;
-			// compilation breakpoints
-			IBreakpoint[] breakpoints = getCompilationBreakpoints();
-			for (int i = 0; i < breakpoints.length; i++) {
-				notifyTarget(javaTarget, breakpoints[i], ADDED);
-			}
-			// uncaught exception breakpoint
-			notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
-			
-			// step filters
-			notifyTargetOfFilters(javaTarget);
-		}
-		
-		
-	}
-
-	/*
-	 * @see ILaunchListener#launchChanged(ILaunch)
-	 */
-	public void launchChanged(ILaunch launch) {
-	}
-
-	/*
-	 * @see ILaunchListener#launchRemoved(ILaunch)
-	 */
-	public void launchRemoved(ILaunch launch) {
-	}
-
-	/**
 	 * Forks the runnable in a new thread
 	 */
 	protected void fork(final IWorkspaceRunnable wRunnable) {
@@ -574,4 +540,30 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 		setActiveStepFilters(filters);
 		notifyTargetsOfFilters();
 	}
+	
+	/**
+	 * When a Java debug target is created, install options in
+	 * the target.
+	 * 
+	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 */
+	public void handleDebugEvent(DebugEvent event) {
+		if (event.getKind() == DebugEvent.CREATE) {
+			Object source = event.getSource();
+			if (source instanceof IJavaDebugTarget) {
+				IJavaDebugTarget javaTarget = (IJavaDebugTarget)source;
+				// compilation breakpoints
+				IBreakpoint[] breakpoints = getCompilationBreakpoints();
+				for (int i = 0; i < breakpoints.length; i++) {
+					notifyTarget(javaTarget, breakpoints[i], ADDED);
+				}
+				// uncaught exception breakpoint
+				notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
+				
+				// step filters
+				notifyTargetOfFilters(javaTarget);
+			}
+		}
+	}
+
 }
