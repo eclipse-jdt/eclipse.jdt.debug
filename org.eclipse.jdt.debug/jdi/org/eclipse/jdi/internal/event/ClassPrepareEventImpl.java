@@ -48,9 +48,6 @@ public class ClassPrepareEventImpl extends EventImpl implements ClassPrepareEven
 		event.fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
 		event.fReferenceType = ReferenceTypeImpl.readWithTypeTagAndSignature(target, dataInStream);
 		event.fStatus = target.readInt("class status", ReferenceTypeImpl.classStatusVector(), dataInStream); //$NON-NLS-1$
-		// Events that do not have status prepared are not given to the application.
-		if ((event.fStatus & ReferenceTypeImpl.JDWP_CLASS_STATUS_PREPARED) == 0)
-			return null;
 		return event;
    	}
    	
