@@ -39,6 +39,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -143,6 +145,13 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 				editType();
 			}
 		}); 
+		table.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.character == SWT.DEL && event.stateMask == 0) {
+					removeTypes();
+				}
+			}
+		});	
 		fFormatterListViewer.setInput(this);
 
 		createDetailFormatsButtons(container);
