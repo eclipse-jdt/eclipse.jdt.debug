@@ -93,6 +93,15 @@
   		 menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
   		 id="org.eclipse.jdt.debug.ui.RunToLineAction"> 
   	    </action>
+  	    <action id="org.eclipse.jdt.debug.ui.RunSnippet" 
+			label="%RunSnippet.label" 
+			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
+			icon="icons/full/etool16/run_sbook.gif"
+			disabledIcon="icons/full/dtool16/run_sbook.gif"
+  		 	hoverIcon="icons/full/ctool16/run_sbook.gif"
+			helpContextId="run_snippet_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.snippeteditor.RunAction"> 
+		</action>
   		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
