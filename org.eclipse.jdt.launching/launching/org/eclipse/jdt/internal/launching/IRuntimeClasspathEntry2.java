@@ -19,6 +19,9 @@ import org.w3c.dom.Element;
  * extensible runtime classpath entries. Contributed runtime classpath
  * entries have a type of <code>OTHER</code>.
  * <p>
+ * TODO: XML example
+ * </p>
+ * <p>
  * This interface is yet experimental.
  * </p>
  * <p>
