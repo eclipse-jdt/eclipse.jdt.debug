@@ -140,7 +140,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 							event.getDetail() == DebugEvent.BREAKPOINT) {
 						IBreakpoint[] breakpoints = ((IThread) source).getBreakpoints();
 						for (int j = 0; j < breakpoints.length; j++) {
-							if (breakpoints[i] == breakpoint) {
+							if (breakpoints[j] == breakpoint) {
 								manager.setEnabled(true);
 							}
 						}
