@@ -60,6 +60,9 @@
    <attribute
          name="expired">
    </attribute>
+   <attribute
+   		name="condition">
+   	</attribute>
 </extension>
 <extension
       id="javaRunToLineBreakpoint"

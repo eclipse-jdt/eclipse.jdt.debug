@@ -7,8 +7,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IDebugConstants;
+import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.debug.core.IJavaDebugConstants;
+import org.eclipse.jdt.debug.core.*;
 
 import com.sun.jdi.*;
 import com.sun.jdi.event.Event;
@@ -16,7 +17,7 @@ import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.EventRequest;
 
-public class LineBreakpoint extends JavaBreakpoint {
+public class LineBreakpoint extends JavaBreakpoint implements IJavaEvaluationListener {
 	
 	// Thread label String keys
 	private static final String LINE_BREAKPOINT_SYS= THREAD_LABEL + "line_breakpoint_sys";
@@ -26,6 +27,9 @@ public class LineBreakpoint extends JavaBreakpoint {
 	private static final String HITCOUNT= "hitCount";
 		
 	static String fMarkerType= IJavaDebugConstants.JAVA_LINE_BREAKPOINT;
+	
+	protected Event fEvent= null;
+	
 	/**
 	 * Sets of attributes used to configure a line breakpoint
 	 */
@@ -46,11 +50,8 @@ public class LineBreakpoint extends JavaBreakpoint {
 	public LineBreakpoint(final IType type, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final String markerType) throws DebugException {
 		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IResource resource= null;
-				resource= type.getUnderlyingResource();
-				if (resource == null) {
-					resource= type.getJavaProject().getProject();
-				}
+				IResource resource= getResource(type);
+
 	
 				// create the marker
 				fMarker= resource.createMarker(markerType);
@@ -69,9 +70,27 @@ public class LineBreakpoint extends JavaBreakpoint {
 	}		
 	
 	/**
+	 * Get the resource associated with the given type. This is
+	 * used to set the breakpoint's resource during initialization.
+	 */
+	protected IResource getResource(IType type) {
+		IResource resource= null;
+		try {
+			resource= type.getUnderlyingResource();
+			if (resource == null) {
+				resource= type.getJavaProject().getProject();
+			}
+		} catch (JavaModelException jme) {
+			logError(jme);
+		}
+		return resource;
+	}
+	
+	/**
 	 * @see JavaBreakpoint#installIn(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) {
+		fTarget= target;
 		String topLevelName= getTopLevelTypeName();
 		if (topLevelName == null) {
 //			internalError(ERROR_BREAKPOINT_NO_TYPE);
@@ -285,16 +304,100 @@ public class LineBreakpoint extends JavaBreakpoint {
 		if (!(event instanceof LocatableEvent)) {
 			return;
 		}
-		ThreadReference threadRef= ((LocatableEvent)event).thread();
-		JDIThread thread= target.findThread(threadRef);		
-		if (thread == null) {
-			target.resume(threadRef);
-			return;
-		} else {
-			thread.handleSuspendForBreakpoint(this);
-			expireHitCount((LocatableEvent)event);	
-		}			
+		fEvent= event;
+		ThreadReference threadRef= ((LocatableEvent)fEvent).thread();
+		JDIThread thread= target.findThread(threadRef);
+		thread.handleSuspendForBreakpointQuiet(this);		
+		evaluateCondition(getCondition());		
 	}
+	
+	/**
+	 * Evaluate the given condition in the context of this breakpoint's
+	 * last known target.
+	 */
+	public void evaluateCondition(String conditionString) {
+		if (conditionString.equals("")) {
+			evaluationComplete(null);
+		}
+		IStackFrame stackFrame= getContextFromTarget(fTarget);
+		IJavaStackFrame adapter= (IJavaStackFrame) stackFrame.getAdapter(IJavaStackFrame.class);			
+		IJavaElement javaElement= getJavaElement(stackFrame);
+		if (javaElement == null) {
+			return;
+		}
+		IJavaProject project = javaElement.getJavaProject();
+		try {
+			adapter.evaluate(conditionString, this, project);
+		} catch (DebugException e) {
+			logError(e);
+		}
+	}
+	
+	/**
+	 * @see IJavaEvaluationListener
+	 */
+	public void evaluationComplete(IJavaEvaluationResult result) {
+		IValue value= null;
+		ThreadReference threadRef= ((LocatableEvent)fEvent).thread();
+		JDIThread thread= fTarget.findThread(threadRef);					
+		if (result != null) {
+			value= result.getValue();
+		}
+		if (result == null || result.hasProblems() || value == null || !trueCondition(value)){		
+			fTarget.resume(threadRef);
+		}
+		else {
+			thread.notifyOfSuspendForBreakpoint(this);
+			expireHitCount((LocatableEvent)fEvent);	
+		}
+	}
+	
+	/**
+	 * Returns whether the given value represents the boolean value
+	 * "true".
+	 */
+	private boolean trueCondition(IValue value) {
+		try {
+			if (value.getValueString() == "true") {
+				return true;
+			}
+		} catch (DebugException de) {
+		}
+		return false;
+	}
+	
+	protected IJavaElement getJavaElement(IStackFrame stackFrame) {
+		// Get the corresponding element.
+		ISourceLocator locator= stackFrame.getSourceLocator();
+		if (locator == null)
+			return null;
+		
+		Object sourceElement = locator.getSourceElement(stackFrame);
+		if (sourceElement instanceof IType)
+			return (IType) sourceElement;
+		
+		return null;
+	}	
+	
+	/**
+	 * Resolves a stack frame context from the model
+	 */
+	protected IStackFrame getContextFromTarget(IDebugTarget dt) {
+		if (!dt.isTerminated()) {
+			try {
+				IDebugElement[] threads= dt.getChildren();
+				for (int i= 0; i < threads.length; i++) {
+					IThread thread= (IThread)threads[i];
+					if (thread.isSuspended()) {
+						return thread.getTopStackFrame();
+					}
+				}
+			} catch(DebugException x) {
+				logError(x);
+			}
+		}
+		return null;
+	}	
 	
 	/**
 	 * Called when a breakpoint event is encountered
@@ -353,6 +456,14 @@ public class LineBreakpoint extends JavaBreakpoint {
 			}
 		}
 	}	
+	
+	/**
+	 * Returns the <code>CONDITION</code> attribute of the given breakpoint
+	 * or "" if the attribute is not set.
+	 */
+	public String getCondition() {
+		return "grah() == 3";
+	}
 	
 	/**
 	 * Returns the <code>HIT_COUNT</code> attribute of the given breakpoint
@@ -448,7 +559,7 @@ public class LineBreakpoint extends JavaBreakpoint {
 	public IMember getMember() {
 		int start = getCharStart();
 		int end = getCharEnd();
-		IType type = getBreakpointType();
+		IType type = getInstalledType();
 		IMember member = null;
 		if (type != null && end >= start && start >= 0) {
 			try {
@@ -535,7 +646,7 @@ public class LineBreakpoint extends JavaBreakpoint {
 	}
 	
 	public String getMarkerText(boolean showQualified, String memberString) {
-		IType type= getBreakpointType();
+		IType type= getInstalledType();
 		if (type != null) {
 			StringBuffer label= new StringBuffer();
 			if (showQualified) {

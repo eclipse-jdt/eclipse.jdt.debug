@@ -243,7 +243,7 @@ public abstract class JavaBreakpoint extends Breakpoint {
 	 * Returns the type the given breakpoint is installed in
 	 * or <code>null</code> a type cannot be resolved.
 	 */
-	public IType getBreakpointType() {
+	public IType getInstalledType() {
 		try {
 			String handle = getTypeHandleIdentifier();
 			if (handle != null) {
@@ -267,7 +267,7 @@ public abstract class JavaBreakpoint extends Breakpoint {
 	 * the given breakpoint is associated with, or <code>null</code>.
 	 */
 	public String getTopLevelTypeName() {
-		IType type = getBreakpointType();
+		IType type = getInstalledType();
 		if (type != null) {
 			while (type.getDeclaringType() != null) {
 				type = type.getDeclaringType();
@@ -294,7 +294,7 @@ public abstract class JavaBreakpoint extends Breakpoint {
 	
 	public String getBreakpointTypeName(boolean qualified) {
 		String typeName= "";
-		typeName= getBreakpointType().getFullyQualifiedName();
+		typeName= getInstalledType().getFullyQualifiedName();
 		if (!qualified) {
 			int index= typeName.lastIndexOf('.');
 			if (index != -1) {

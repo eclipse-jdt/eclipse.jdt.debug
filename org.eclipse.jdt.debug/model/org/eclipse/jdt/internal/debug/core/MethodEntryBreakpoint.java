@@ -94,7 +94,7 @@ public class MethodEntryBreakpoint extends LineBreakpoint {
      * Create or update the request.
 	 */
 	public void addToTarget(JDIDebugTarget target) {
-		IType type = getBreakpointType();
+		IType type = getInstalledType();
 		if (type == null) {
 //			internalError(ERROR_BREAKPOINT_NO_TYPE);
 			return;

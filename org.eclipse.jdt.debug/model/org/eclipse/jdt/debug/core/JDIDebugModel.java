@@ -182,7 +182,7 @@ public class JDIDebugModel {
 	public static IType getType(IMarker marker) {
 		JavaBreakpoint breakpoint= getBreakpoint(marker);
 		if (breakpoint != null) {
-			return breakpoint.getBreakpointType();
+			return breakpoint.getInstalledType();
 		}
 		return null;
 	}

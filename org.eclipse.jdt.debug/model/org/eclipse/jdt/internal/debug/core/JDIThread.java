@@ -76,6 +76,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	protected boolean fStepping;
 	protected int fStepCount= 0;
+	/**
+	 * Whether we should notify of suspend/resume events.
+	 */
+	protected boolean fNotify= true;
 	
 	/**
 	 * Whether suspended by an event in the VM such as a
@@ -584,6 +588,28 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		setRunning(false, DebugEvent.BREAKPOINT);
 	}
 	
+	/**
+	 * Suspend this thread for the given breakpoint without sending
+	 * notification of the change.
+	 */
+	protected void handleSuspendForBreakpointQuiet(JavaBreakpoint breakpoint) {
+		fNotify= false;
+		handleSuspendForBreakpoint(breakpoint);
+	}
+	
+	/**
+	 * Notify interested parties that this thread has been suspended by
+	 * a breakpoint
+	 */
+	protected void notifyOfSuspendForBreakpoint(JavaBreakpoint breakpoint) {
+		fNotify= true;
+		fireSuspendEvent(DebugEvent.BREAKPOINT);
+	}
+	
+	/**
+	 * Suspend this thread for the given breakpoint. If notify equals <code>true</code>,
+	 * send notification of the change. Otherwise, do not.
+	 */
 	protected void handleSuspendForBreakpoint(JavaBreakpoint breakpoint) {
 		abortDropAndStep();
 		fCurrentBreakpoint= breakpoint;
@@ -725,7 +751,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				} else {
 					fChildren = null;
 				}
-				if (!fStepping || fStepCount == 1) {
+				if ((!fStepping || fStepCount == 1) && fNotify){
 					fireResumeEvent(detail);
 				}
 			} else {
@@ -741,7 +767,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 						internalError(e);
 					}
 					fStepping= false;
-					fireSuspendEvent(detail);
+					if (fNotify) {
+						fireSuspendEvent(detail);
+					}
 				}
 				fEventSuspend = detail != DebugEvent.CLIENT_REQUEST;
 			}

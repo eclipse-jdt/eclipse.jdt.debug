@@ -121,7 +121,7 @@ public class ExceptionBreakpoint extends JavaBreakpoint  {
 		boolean uncaught= isUncaught();
 
 		if (caught || uncaught) {
-			IType exceptionType = getBreakpointType();
+			IType exceptionType = getInstalledType();
 			if (exceptionType == null) {
 //				internalError(ERROR_BREAKPOINT_NO_TYPE);
 				return;
@@ -167,7 +167,7 @@ public class ExceptionBreakpoint extends JavaBreakpoint  {
 	 * An exception breakpoint has been removed
 	 */
 	public void removeFromTarget(JDIDebugTarget target) {
-		IType type = getBreakpointType();
+		IType type = getInstalledType();
 		if (type == null) {
 //			internalError(ERROR_BREAKPOINT_NO_TYPE);
 			return;
@@ -338,9 +338,9 @@ public class ExceptionBreakpoint extends JavaBreakpoint  {
 	public String getMarkerText(boolean showQualified) {
 		String name;
 		if (showQualified) {
-			name= getBreakpointType().getFullyQualifiedName();
+			name= getInstalledType().getFullyQualifiedName();
 		} else {
-			name= getBreakpointType().getElementName();
+			name= getInstalledType().getElementName();
 		}
 
 		String state= null;
