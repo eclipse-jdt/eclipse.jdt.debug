@@ -17,8 +17,8 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -45,7 +45,7 @@ public class PreLaunchBreakpointTest extends AbstractDebugTest {
 		getLaunchManager().addLaunchListener(new MyListener());
 		
 		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
-		preferenceStore.setValue(IDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.ALWAYS);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.ALWAYS);
 		
 		try {
 			createTargetPatternBreakpoint(77, sourceName);
@@ -68,7 +68,7 @@ public class PreLaunchBreakpointTest extends AbstractDebugTest {
 		} finally {
 			removeAllBreakpoints();
 			//this must get done... other tests might fail.
-			preferenceStore.setValue(IDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.NEVER);
+			preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.NEVER);
 		}
 	}
 	

@@ -23,7 +23,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -146,11 +146,11 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		setSuspendOnUncaughtExceptionsPreference(false);
 		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		// Don't prompt for perspective switching
-		preferenceStore.setValue(IDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.ALWAYS);
-		preferenceStore.setValue(IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, AlwaysNeverDialog.ALWAYS);
-		preferenceStore.setValue(IDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.NEVER);
-		preferenceStore.setValue(IDebugUIConstants.PREF_WAIT_FOR_BUILD, AlwaysNeverDialog.ALWAYS);
-		preferenceStore.setValue(IDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, AlwaysNeverDialog.ALWAYS);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.ALWAYS);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, AlwaysNeverDialog.ALWAYS);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.NEVER);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, AlwaysNeverDialog.ALWAYS);
+		preferenceStore.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, AlwaysNeverDialog.ALWAYS);
 		
 		preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		// Set the timeout preference to a high value, to avoid timeouts while testing
