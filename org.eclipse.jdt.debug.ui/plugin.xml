@@ -555,7 +555,7 @@
                helpContextId="drop_to_frame_action_context"
                tooltip="%dropFrameAction.tooltip"
                class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameAction"
-               menubarPath="emptyThreadGroup"
+               menubarPath="stepReturnGroup"
                enablesFor="1"
                id="org.eclipse.jdt.debug.ui.actions.DropToFrame">
          </action>
