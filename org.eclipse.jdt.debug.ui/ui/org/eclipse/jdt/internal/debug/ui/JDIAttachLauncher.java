@@ -29,7 +29,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.launching.ProjectSourceLocator;
+import org.eclipse.jdt.internal.debug.ui.launcher.JavaUISourceLocator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -90,7 +90,7 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 				IDebugTarget target= 
 					JDIDebugModel.newDebugTarget(vm, vmLabel.toString(), null, allowTermination(), true);
 				IJavaProject javaProject= JavaCore.create((IProject)element);
-				ISourceLocator sl= new ProjectSourceLocator(javaProject);
+				ISourceLocator sl= new JavaUISourceLocator(javaProject);
 				ILaunch launch= new Launch(launcher, ILaunchManager.DEBUG_MODE, element, sl, null, target);
 				DebugPlugin.getDefault().getLaunchManager().addLaunch(launch);
 				return true;
