@@ -130,6 +130,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 				// Another thread is available. The given thread
 				// can be stopped
 				allBusy= false;
+				break;
 			}
 		}
 		if (!allBusy) {
