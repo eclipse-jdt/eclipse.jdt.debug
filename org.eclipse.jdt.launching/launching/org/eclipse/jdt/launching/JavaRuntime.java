@@ -1,9 +1,15 @@
 package org.eclipse.jdt.launching;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 2001, 2002 International Business Machines Corp. and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -958,9 +964,9 @@ public final class JavaRuntime {
 						}
 						break;
 					case IClasspathEntry.CPE_CONTAINER:
-						IClasspathContainer conatiner = JavaCore.getClasspathContainer(entry.getPath(), project);
+						IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), project);
 						int property = -1;
-						switch (conatiner.getKind()) {
+						switch (container.getKind()) {
 							case IClasspathContainer.K_APPLICATION:
 								property = IRuntimeClasspathEntry.USER_CLASSES;
 								break;
@@ -972,14 +978,19 @@ public final class JavaRuntime {
 								break;
 						}
 						IRuntimeClasspathEntry r = newRuntimeContainerClasspathEntry(entry.getPath(), property);
-						// only add a container once 
+						// check for duplicate/redundant entries 
 						boolean duplicate = false;
 						for (int i = 0; i < expandedPath.size(); i++) {
 							Object o = expandedPath.get(i);
 							if (o instanceof IRuntimeClasspathEntry) {
 								IRuntimeClasspathEntry re = (IRuntimeClasspathEntry)o;
 								if (re.getType() == IRuntimeClasspathEntry.CONTAINER) {
-									if (re.getVariableName().equals(r.getVariableName())) {
+									if (container instanceof IRuntimeContainerComparator) {
+										duplicate = ((IRuntimeContainerComparator)container).isDuplicate(re.getPath());
+										if (duplicate) {
+											break;
+										}
+									} else if (re.getVariableName().equals(r.getVariableName())) {
 										duplicate = true;
 										break;
 									}
