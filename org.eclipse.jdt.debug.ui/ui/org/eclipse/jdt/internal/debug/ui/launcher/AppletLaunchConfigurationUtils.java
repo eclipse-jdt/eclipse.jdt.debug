@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -77,7 +78,7 @@ public class AppletLaunchConfigurationUtils {
 		} catch (JavaModelException jme) {
 		}
 		if (mainType == null) {
-			abort(LauncherMessages.getString("appletlauncher.utils.error.main_type_does_not_exist"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
+			abort(MessageFormat.format(LauncherMessages.getString("appletlauncher.utils.error.main_type_does_not_exist"), new String[] {mainTypeName, javaProject.getElementName()}), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
 		return mainType;
 	}		
