@@ -13,9 +13,9 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
-import org.eclipse.jdt.internal.ui.IUIConstants;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
@@ -77,7 +77,7 @@ public class AddVMDialog extends StatusDialog {
 		
 		fEditedVM= editedVM;
 		
-		fDialogSettings= JavaPlugin.getDefault().getDialogSettings();
+		fDialogSettings= JDIDebugUIPlugin.getDefault().getDialogSettings();
 	}
 	
 	/**
@@ -365,14 +365,14 @@ public class AddVMDialog extends StatusDialog {
 				if (e == null)
 					return new StatusInfo(flag, LauncherMessages.getString("addVMDialog.noObjectClass")); //$NON-NLS-1$
 			} catch (IOException e) {
-				JavaPlugin.log(e);
+				JDIDebugUIPlugin.log(e);
 				return new StatusInfo(flag, LauncherMessages.getString("addVMDialog.jreJarException")); //$NON-NLS-1$
 			} finally {
 				if (zip != null)
 					zip.close();
 			}
 		} catch (IOException e) {
-			JavaPlugin.log(e);
+			JDIDebugUIPlugin.log(e);
 		}
 		return new StatusInfo();
 	}
@@ -422,7 +422,7 @@ public class AddVMDialog extends StatusDialog {
 				}
 			}
 		} catch (IOException e) {
-			JavaPlugin.log(e);
+			JDIDebugUIPlugin.log(e);
 		} finally {
 			if (zip != null) {
 				try { zip.close(); } catch (IOException e) {};
@@ -436,15 +436,16 @@ public class AddVMDialog extends StatusDialog {
 		dialog.setFilterPath(fJDKRoot.getText());
 		dialog.setMessage(LauncherMessages.getString("addVMDialog.pickJRERootDialog.message")); //$NON-NLS-1$
 		String newPath= dialog.open();
-		if  (newPath != null)
+		if (newPath != null) {
 			fJDKRoot.setText(newPath);
+		}
 	}
 	
 	private void browseForSystemLibrary() {
 		String currPath= fSystemLibrary.getText();
 		String lastUsedDir;	
 		if (currPath.length() == 0) {
-			lastUsedDir= fDialogSettings.get(IUIConstants.DIALOGSTORE_LASTEXTJAR);
+			lastUsedDir= fDialogSettings.get(IInternalDebugUIConstants.DIALOGSTORE_LASTEXTJAR);
 			if (lastUsedDir == null) {
 				lastUsedDir= fJDKRoot.getText();
 			}
@@ -463,7 +464,7 @@ public class AddVMDialog extends StatusDialog {
 		String newPath= dialog.open();
 		if  (newPath != null) {
 			fSystemLibrary.setText(newPath);
-			fDialogSettings.put(IUIConstants.DIALOGSTORE_LASTEXTJAR, dialog.getFilterPath());
+			fDialogSettings.put(IInternalDebugUIConstants.DIALOGSTORE_LASTEXTJAR, dialog.getFilterPath());
 		}
 	}
 	
@@ -488,8 +489,9 @@ public class AddVMDialog extends StatusDialog {
 		dialog.setText(LauncherMessages.getString("addVMDialog.pickJRESourceDialog.text")); //$NON-NLS-1$
 		dialog.setFilterExtensions(new String[] { "*.jar;*.zip"}); //$NON-NLS-1$
 		String newPath= dialog.open();
-		if  (newPath != null)
+		if  (newPath != null) {
 			fSystemLibrarySource.setText(newPath);
+		}
 	}
 
 	private void useDefaultSystemLibrary() {
@@ -530,8 +532,6 @@ public class AddVMDialog extends StatusDialog {
 		return id;
 	}
 	
-
-
 	protected void setFieldValuesToVM(IVMInstall vm) {
 		vm.setInstallLocation(new File(fJDKRoot.getText()).getAbsoluteFile());
 		vm.setName(fVMName.getText());
@@ -550,8 +550,9 @@ public class AddVMDialog extends StatusDialog {
 	}
 	
 	protected File getAbsoluteFileOrEmpty(String path) {
-		if (path == null || "".equals(path)) //$NON-NLS-1$
+		if (path == null || "".equals(path)) {//$NON-NLS-1$
 			return new File(""); //$NON-NLS-1$
+		}
 		return new File(path).getAbsoluteFile();
 	}
 }
