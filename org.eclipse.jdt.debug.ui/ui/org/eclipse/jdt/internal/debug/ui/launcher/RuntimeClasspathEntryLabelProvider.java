@@ -59,9 +59,11 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					}
 					return JavaPluginImages.get(key);
 				case IRuntimeClasspathEntry.VARIABLE:
+					// XXX: illegal internal access
+					return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_ENV_VAR);				
 				case IRuntimeClasspathEntry.CONTAINER:
 					// XXX: illegal internal access
-					return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_ENV_VAR);
+					return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
 			}	
 			return null;
 		}
