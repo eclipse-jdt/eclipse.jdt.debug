@@ -447,6 +447,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					}
 				} else if (length == 0) {
 					fStackFrames = Collections.EMPTY_LIST;
+				} else if (length == fStackFrames.size()) {
+					if (!topDown) {
+						// replace stack frames with new objects such that equality
+						// is not preserved (i.e. the top stack frame is different)
+						fStackFrames = createAllStackFrames();		
+					}
 				}
 				// update frame indicies
 				for (int i= 0; i < stackSize; i++) {
