@@ -283,22 +283,6 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 	}
 
-
-	private String getQualifiedIdentifier(Name name) {
-		String typeName = ""; //$NON-NLS-1$
-		while (name.isQualifiedName()) {
-			QualifiedName qualifiedName = (QualifiedName) name;
-			typeName = "." + qualifiedName.getName().getIdentifier() + typeName; //$NON-NLS-1$
-			name = qualifiedName.getQualifier();
-		}
-		if (name.isSimpleName()) {
-			typeName = ((SimpleName)name).getIdentifier() + typeName;
-		} else {
-			// throw exception
-		}
-		return typeName;
-	}
-
 	private String getTypeName(ITypeBinding typeBinding) {
 		StringBuffer name;
 		if (typeBinding.isArray()) {
@@ -2873,30 +2857,5 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				return Instruction.T_void;
 		}
 		return Instruction.T_undefined;
-	}
-
-	private String getPrimitiveTypeSignature(String typeName) {
-		switch (getPrimitiveTypeId(typeName)) {
-			case Instruction.T_byte:
-				return "B"; //$NON-NLS-1$
-			case Instruction.T_char:
-				return "C"; //$NON-NLS-1$
-			case Instruction.T_double:
-				return "D"; //$NON-NLS-1$
-			case Instruction.T_float:
-				return "F"; //$NON-NLS-1$
-			case Instruction.T_int:
-				return "I"; //$NON-NLS-1$
-			case Instruction.T_long:
-				return "J"; //$NON-NLS-1$
-			case Instruction.T_short:
-				return "S"; //$NON-NLS-1$
-			case Instruction.T_boolean:
-				return "Z"; //$NON-NLS-1$
-			case Instruction.T_void:
-				return "V"; //$NON-NLS-1$
-		}
-		// throw exception
-		return null;
 	}
 }

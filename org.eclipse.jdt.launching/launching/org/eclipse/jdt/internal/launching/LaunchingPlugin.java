@@ -47,7 +47,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMConnector;
@@ -616,13 +615,6 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 
 	public boolean isIgnoreVMDefPropertyChangeEvents() {
 		return fIgnoreVMDefPropertyChangeEvents;
-	}
-
-	/**
-	 * Convenience method to get the java model.
-	 */
-	private static IJavaModel getJavaModel() {
-		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 	}
 
 	/**

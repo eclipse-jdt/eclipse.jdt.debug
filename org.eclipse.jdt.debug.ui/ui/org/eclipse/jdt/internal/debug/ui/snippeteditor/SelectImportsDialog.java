@@ -47,7 +47,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -274,37 +273,6 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		}		
 	}
 	
-	/**
-	 * Creates composite control and sets the default layout data.
-	 *
-	 * @param parent  the parent of the new composite
-	 * @param numColumns  the number of columns for the new composite
-	 * @param labelText  the text label of the new composite
-	 * @return the newly-created composite
-	 */
-	private Composite createLabelledComposite(Composite parent, int numColumns, String labelText) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		
-		//GridLayout
-		GridLayout layout = new GridLayout();
-		layout.numColumns = numColumns;
-		comp.setLayout(layout);
-
-		//GridData
-		GridData gd= new GridData();
-		gd.verticalAlignment = GridData.FILL;
-		gd.horizontalAlignment = GridData.FILL;
-		comp.setLayoutData(gd);
-		
-		//Label
-		Label label = new Label(comp, SWT.NONE);
-		label.setText(labelText);
-		gd = new GridData();
-		gd.horizontalSpan = numColumns;
-		label.setLayoutData(gd);
-
-		return comp;
-	}
 	/**
 	 * @see Dialog#createDialogArea(Composite)
 	 */

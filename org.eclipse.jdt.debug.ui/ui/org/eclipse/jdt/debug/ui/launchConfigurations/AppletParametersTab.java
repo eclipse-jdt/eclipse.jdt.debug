@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -25,10 +23,6 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ControlEditor;
-import org.eclipse.swt.custom.TableCursor;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -423,108 +417,6 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	 */
 	private void createVerticalSpacer(Composite comp) {
 		new Label(comp, SWT.NONE);
-	}	
-	
-	private Table createParameterTable(Composite comp) {
-		
-		String[][] data;
-		int count = 3;
-		data = new String[count][2];
-		for (int i = 0; i < count; i++) {
-			data[i] = new String[] {};
-		};
-		
-		int style = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
-		final Table table = new Table(comp, style | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
-		table.setFont(comp.getFont());
-		TableColumn column1 = new TableColumn(table, SWT.NONE);
-		column1.setText(LauncherMessages.getString("appletlauncher.argumenttab.parameterscolumn.name.text")); //$NON-NLS-1$
-		column1.setWidth(150);
-		TableColumn column2 = new TableColumn(table, SWT.NONE);
-		column2.setText(LauncherMessages.getString("appletlauncher.argumenttab.parameterscolumn.value.text")); //$NON-NLS-1$
-		column2.setWidth(150);
-		for (int i = 0; i < data.length; i++) {
-			TableItem item = new TableItem(table, 0);
-			item.setText(data[i]);
-		}
-		// create a TableCursor to navigate around the table
-		final TableCursor cursor = new TableCursor(table, SWT.SINGLE);
-		// create an editor to edit the cell when the user hits "ENTER" 
-		// while over a cell in the table
-		final ControlEditor editor = new ControlEditor(cursor);
-		editor.grabHorizontal = true;
-		editor.grabVertical = true;
-		cursor.addSelectionListener(new SelectionAdapter() {
-			// when the TableEditor is over a cell, select the corresponding row in 
-			// the table
-			public void widgetSelected(SelectionEvent e) {
-				table.setSelection(new TableItem[] { cursor.getRow()});
-			}
-			// when the user hits "ENTER" in the TableCursor, pop up a text editor so that 
-			// they can change the text of the cell
-			public void widgetDefaultSelected(SelectionEvent e) {
-				final Text text = new Text(cursor, SWT.NONE);
-				TableItem row = cursor.getRow();
-				int column = cursor.getColumn();
-				text.setText(row.getText(column));
-				text.addKeyListener(new KeyAdapter() {
-					public void keyPressed(KeyEvent e) {
-						// close the text editor and copy the data over 
-						// when the user hits "ENTER"
-						if (e.character == SWT.CR) {
-							TableItem row = cursor.getRow();
-							int column = cursor.getColumn();
-							row.setText(column, text.getText());
-							text.dispose();
-						}
-						// close the text editor when the user hits "ESC"
-						if (e.character == SWT.ESC) {
-							text.dispose();
-						}
-					}
-				});
-				editor.setEditor(text);
-				text.setFocus();
-			}
-		});
-		// Hide the TableCursor when the user hits the "CTRL" or "SHIFT" key.
-		// This alows the user to select multiple items in the table.
-		cursor.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.CTRL
-					|| e.keyCode == SWT.SHIFT
-					|| (e.stateMask & SWT.CONTROL) != 0
-					|| (e.stateMask & SWT.SHIFT) != 0) {
-					cursor.setVisible(false);
-				}
-			}
-		});
-		// Show the TableCursor when the user releases the "SHIFT" or "CTRL" key.
-		// This signals the end of the multiple selection task.
-		table.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				if (e.keyCode == SWT.CONTROL && (e.stateMask & SWT.SHIFT) != 0)
-					return;
-				if (e.keyCode == SWT.SHIFT && (e.stateMask & SWT.CONTROL) != 0)
-					return;
-				if (e.keyCode != SWT.CONTROL && (e.stateMask & SWT.CONTROL) != 0)
-					return;
-				if (e.keyCode != SWT.SHIFT && (e.stateMask & SWT.SHIFT) != 0)
-					return;
-
-				TableItem[] selection = table.getSelection();
-				TableItem row =
-					(selection.length == 0) ? table.getItem(table.getTopIndex()) : selection[0];
-				table.showItem(row);
-				cursor.setSelection(row, 0);
-				cursor.setVisible(true);
-				cursor.setFocus();
-			}
-		});		
-		table.pack();
-		return table;
 	}
 
 	/**
@@ -533,20 +425,12 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	public String getName() {
 		return LauncherMessages.getString("appletlauncher.argumenttab.name"); //$NON-NLS-1$
 	}	
-
-	/**
-	 * Convenience method to get the workspace root.
-	 */
-	private IWorkspaceRoot getWorkspaceRoot() {
-		return ResourcesPlugin.getWorkspace().getRoot();
-	}
-
+	
 	/**
 	 * @see ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
 	}	
-
 }
 

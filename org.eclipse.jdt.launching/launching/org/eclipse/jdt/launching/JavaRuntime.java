@@ -1621,17 +1621,6 @@ public final class JavaRuntime {
 	}	
 	
 	/**
-	 * Returns the provider registered for the given identifier, or
-	 * <code>null</code> if none.
-	 * 
-	 * @return the provider registered for the given identifier, or
-	 * <code>null</code> if none
-	 */
-	private static IRuntimeClasspathProvider getClasspathProvider(String identifier) {
-		return (IRuntimeClasspathProvider)getClasspathProviders().get(identifier);
-	}
-	
-	/**
 	 * Adds the given listener to the list of registered VM install changed
 	 * listeners. Has no effect if an identical listener is already registered.
 	 * 

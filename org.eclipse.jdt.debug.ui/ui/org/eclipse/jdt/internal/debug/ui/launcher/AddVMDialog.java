@@ -8,19 +8,13 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
@@ -54,7 +48,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AddVMDialog extends StatusDialog {
-	private static final String JAVA_LANG_OBJECT= "java/lang/Object.java"; //$NON-NLS-1$
 
 	private IAddVMDialogRequestor fRequestor;
 	
@@ -360,42 +353,6 @@ public class AddVMDialog extends StatusDialog {
 		updateStatus(max);
 	}
 			
-	/**
-	 * try finding the package prefix
-	 */
-	private IPath determinePackagePrefix(IPath sourceJar) {
-		if (sourceJar.isEmpty() || !sourceJar.toFile().isFile()) {
-			return null;
-		}
-		ZipFile zip= null;
-		try {
-			zip= new ZipFile(sourceJar.toFile());
-			Enumeration zipEntries= zip.entries();
-			while (zipEntries.hasMoreElements()) {
-				ZipEntry entry= (ZipEntry) zipEntries.nextElement();
-				String name= entry.getName();
-				if (name.endsWith(JAVA_LANG_OBJECT)) {
-					String prefix= name.substring(0, name.length() - JAVA_LANG_OBJECT.length());
-					if (prefix.endsWith("/")) { //$NON-NLS-1$
-						prefix= prefix.substring(0, prefix.length() - 1);
-					}
-					return new Path(prefix);
-				}
-			}
-		} catch (IOException e) {
-			JDIDebugUIPlugin.log(e);
-		} finally {
-			if (zip != null) {
-				try { 
-					zip.close();
-				} catch (IOException e) {
-					JDIDebugUIPlugin.log(e);
-				}
-			}
-		}
-		return null;
-	}
-	
 	private void browseForInstallDir() {
 		DirectoryDialog dialog= new DirectoryDialog(getShell());
 		dialog.setFilterPath(fJRERoot.getText());
@@ -474,16 +431,8 @@ public class AddVMDialog extends StatusDialog {
 		return new File(path).getAbsoluteFile();
 	}
 	
-	private IStatus getVMNameStatus() {
-		return fStati[0];
-	}
-	
 	private void setVMNameStatus(IStatus status) {
 		fStati[0]= status;
-	}
-	
-	private IStatus getJRELocationStatus() {
-		return fStati[1];
 	}
 	
 	private void setJRELocationStatus(IStatus status) {
@@ -492,10 +441,6 @@ public class AddVMDialog extends StatusDialog {
 	
 	private void setJavadocURLStatus(IStatus status) {
 		fStati[2] = status;
-	}
-	
-	private IStatus getJavaURLStatus() {
-		return fStati[2];
 	}
 	
 	protected IStatus getSystemLibraryStatus() {

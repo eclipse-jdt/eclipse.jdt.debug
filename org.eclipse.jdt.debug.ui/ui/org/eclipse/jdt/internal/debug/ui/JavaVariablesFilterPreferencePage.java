@@ -85,11 +85,6 @@ public class JavaVariablesFilterPreferencePage extends PreferencePage implements
 		}
 
 	}
-
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
-	private static final int HORIZONTAL_GRID_SPACING = 10;
-	private static final int VERTICAL_GRID_SPACING = 10;
 	
 	private static final String COLUMN_KEY = "column"; //$NON-NLS-1$
 	private static final String PLUS_KEY = "plus"; //$NON-NLS-1$
