@@ -1571,7 +1571,7 @@
 		<accelerator key="Ctrl+R" id="org.eclipse.jdt.debug.ui.RunToLineAction"/>
 		<accelerator key="Ctrl+U" id="org.eclipse.jdt.debug.ui.Execute"/>
 		<accelerator key="Ctrl+D" id="org.eclipse.jdt.debug.ui.Display"/>
-		<accelerator key="Ctrl+Q" id="org.eclipse.jdt.debug.ui.Inspect"/>
+		<accelerator key="" id="org.eclipse.jdt.debug.ui.Inspect"/>
 	</acceleratorSet>
 </extension>
 
