@@ -19,7 +19,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.custom.BusyIndicator;
 
 /**
  * ArchiveFilter
@@ -53,8 +55,12 @@ public class ArchiveFilter extends ObjectFilter {
 	 * Search for all archives in the workspace.
 	 */
 	private void init() {
-		fArchives = new HashSet();
-		traverse(ResourcesPlugin.getWorkspace().getRoot(), fArchives);
+		BusyIndicator.showWhile(JDIDebugUIPlugin.getStandardDisplay(), new Runnable() {
+			public void run() {
+				fArchives = new HashSet();
+				traverse(ResourcesPlugin.getWorkspace().getRoot(), fArchives);
+			}
+		});
 	}
 
 	/**
