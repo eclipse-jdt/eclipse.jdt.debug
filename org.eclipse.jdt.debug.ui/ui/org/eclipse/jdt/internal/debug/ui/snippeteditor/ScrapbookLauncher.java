@@ -121,9 +121,24 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			return null;
 		}
 		
-		IRuntimeClasspathEntry[] classPath = new IRuntimeClasspathEntry[] {JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(jarURL.getFile()))};
-		
-		return doLaunch(javaProject, page, classPath);
+		List cp = new ArrayList(3);
+		IRuntimeClasspathEntry supportEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(jarURL.getFile()));
+		cp.add(supportEntry);
+		// get bootpath entries
+		try {
+			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(javaProject);
+			for (int i = 0; i < entries.length; i++) {
+				if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
+					cp.add(entries[i]);
+				}
+			}
+			IRuntimeClasspathEntry[] classPath = (IRuntimeClasspathEntry[])cp.toArray(new IRuntimeClasspathEntry[cp.size()]);
+			
+			return doLaunch(javaProject, page, classPath);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Unable_to_launch_scrapbook_VM_6"), e); //$NON-NLS-1$
+		}
+		return null;
 	}
 
 	private ILaunch doLaunch(IJavaProject p, IFile page, IRuntimeClasspathEntry[] classPath) {
