@@ -108,7 +108,8 @@ public class JavaMethodBreakpointMethodNameChange extends Change {
 		IJavaMethodBreakpoint newMethodBreakpoint= JDIDebugModel.createMethodBreakpoint(
 				fMethodBreakpoint.getMarker().getResource(),
 				fMethodBreakpoint.getTypeName(),
-				fNewMethodName, methodSignature,
+				fNewMethodName,
+				methodSignature,
 				fMethodBreakpoint.isEntry(),
 				fMethodBreakpoint.isExit(),
 				fMethodBreakpoint.isNativeOnly(),
