@@ -968,7 +968,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 		} catch (DebugException exception) {
 		}
-		if (typeName.length() > 0) {
+		if (showTypes) {
 			buff.append(typeName);
 			buff.append(' ');
 		}
