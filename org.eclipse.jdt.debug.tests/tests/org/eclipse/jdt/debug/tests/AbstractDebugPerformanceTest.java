@@ -70,6 +70,31 @@ public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 	}
 	
 	/**
+	 * Mark the scenario of this test case
+	 * to be included into the component performance summary. The summary shows
+	 * the given dimension of the scenario and labels the scenario with the short name.
+	 * 
+	 * @param shortName a short (shorter than 40 characters) descritive name of the scenario
+	 * @param dimension the dimension to show in the summary
+	 */
+	public void tagAsSummary(String shortName, Dimension dimension) {
+		tagAsSummary(shortName, new Dimension[]{dimension});
+	}
+	
+	/**
+	 * Mark the scenario of this test case
+	 * to be included into the component performance summary. The summary shows
+	 * the given dimension of the scenario and labels the scenario with the short name.
+	 * 
+	 * @param shortName a short (shorter than 40 characters) descritive name of the scenario
+	 * @param dimensions an array of dimensions to show in the summary
+	 */
+	public void tagAsSummary(String shortName, Dimension[] dimensions) {
+		Performance performance= Performance.getDefault();
+		performance.tagAsSummary(fPerformanceMeter, shortName, dimensions);
+	}
+	
+	/**
 	 * Called from within a test case immediately before the code to measure is run.
 	 * It starts capturing of performance data.
 	 * Must be followed by a call to {@link PerformanceTestCase#stopMeasuring()} before subsequent calls
