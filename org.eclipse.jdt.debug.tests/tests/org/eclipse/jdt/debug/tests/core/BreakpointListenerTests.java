@@ -168,6 +168,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			
 			resetCallbacks();
 			getJavaProject().getProject().close(null);
+			waitForAutoBuild();
 			assertEquals("Should have received one remove notification", 1, fRemoveCallbacks);
 			assertEquals("Should of breakpoints removed incorrect", bps.size(), fTotalRemoved);
 			assertEquals("Should be no changes", 0, fChangeCallabcks);
@@ -175,6 +176,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			
 			resetCallbacks();
 			getJavaProject().getProject().open(null);
+			waitForAutoBuild();
 			assertEquals("Should have received one add notification", 1, fAddCallbacks);
 			assertEquals("Number of breakpoints added incorrect", bps.size(), fTotalAdded);
 			assertEquals("Should be no changes", 0, fChangeCallabcks);
@@ -192,6 +194,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 		ICompilationUnit cu = (ICompilationUnit)project.findElement(new Path("Breakpoints.java"));
 		assertNotNull("Did not find compilation unit", cu);
 		cu.copy(cu.getParent(), null, "BreakpointsCopyA.java", false, null);
+		waitForAutoBuild();
 		List bps = createBreakpoints("BreakpointsCopyA");
 		cu = (ICompilationUnit)project.findElement(new Path("BreakpointsCopyA.java"));
 		assertNotNull("Did not find compilation unit copy", cu);
@@ -208,6 +211,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			
 			resetCallbacks();
 			cu.rename("BreakpointsCopyTwoA.java", false, null);
+			waitForAutoBuild();
 			assertEquals("Should have received one remove notification", 1, fRemoveCallbacks);
 			assertEquals("Number of breakpoints removed incorrect", bps.size(), fTotalRemoved);
 			assertEquals("Should be no changes", 0, fChangeCallabcks);
@@ -216,6 +220,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			cu = (ICompilationUnit)project.findElement(new Path("BreakpointsCopyTwoA.java"));
 			assertNotNull("Did not find CU", cu);
 			cu.delete(false, null);
+			waitForAutoBuild();
 			
 		} finally {
 			getBreakpointManager().removeBreakpointListener((IBreakpointsListener)this);
@@ -229,6 +234,7 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 		ICompilationUnit cu = (ICompilationUnit)project.findElement(new Path("Breakpoints.java"));
 		assertNotNull("Did not find compilation unit", cu);
 		cu.copy(cu.getParent(), null, "BreakpointsCopy.java", false, null);
+		waitForAutoBuild();
 		List bps = createBreakpoints("BreakpointsCopy");
 		cu = (ICompilationUnit)project.findElement(new Path("BreakpointsCopy.java"));
 		assertNotNull("Did not find compilation unit copy", cu);
@@ -245,14 +251,16 @@ public class BreakpointListenerTests extends AbstractDebugTest implements IBreak
 			
 			resetCallbacks();
 			cu.rename("BreakpointsCopyTwo.java", false, null);
-			assertEquals("Should have received one remove notification", bps.size(), fRemoveCallbacks);
-			assertEquals("Should of breakpoints removed incorrect", bps.size(), fTotalRemoved);
+			waitForAutoBuild();
+			assertEquals("Incorrect number of remove notifications", bps.size(), fRemoveCallbacks);
+			assertEquals("Incorrect number of breakpoints removed", bps.size(), fTotalRemoved);
 			assertEquals("Should be no changes", 0, fChangeCallabcks);
 			assertEquals("Should be no additions", 0, fAddCallbacks);
 			
 			cu = (ICompilationUnit)project.findElement(new Path("BreakpointsCopyTwo.java"));
 			assertNotNull("Did not find CU", cu);			
 			cu.delete(false, null);
+			waitForAutoBuild();
 			
 		} finally {
 			getBreakpointManager().removeBreakpointListener((IBreakpointListener)this);

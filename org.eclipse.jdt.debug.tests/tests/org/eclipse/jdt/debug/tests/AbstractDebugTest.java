@@ -19,7 +19,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -691,5 +693,16 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		IResource r = p.getFolder(root);
 		return project.getPackageFragmentRoot(r).getPackageFragment(pkg).getCompilationUnit(name);
 	}
+	
+	/**
+	 * Wait for autobuild to occur
+	 */
+	public void waitForAutoBuild() {
+		try {
+			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+		} catch (OperationCanceledException e) {
+		} catch (InterruptedException e) {
+		}
+	}	
 }
 
