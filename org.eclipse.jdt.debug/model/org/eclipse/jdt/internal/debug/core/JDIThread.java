@@ -395,13 +395,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					
 					int modelFramesIndex = 0;
 					int underlyingFramesIndex = 0;
-					int numFramesToCompare = 0;
 					if (numModelFrames > numUnderlyingFrames) {
 						modelFramesIndex = numModelFrames - numUnderlyingFrames;
-						numFramesToCompare = numUnderlyingFrames;
 					} else {
 						underlyingFramesIndex = numUnderlyingFrames - numModelFrames;
-						numFramesToCompare = numModelFrames;
 					}
 					
 					StackFrame underlyingFrame= null;
