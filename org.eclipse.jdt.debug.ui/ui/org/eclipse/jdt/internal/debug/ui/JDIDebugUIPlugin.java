@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
  
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -38,6 +40,8 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvid
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
@@ -300,25 +304,49 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * are included.  If no Java projects are provided, all Java projects in the
 	 * workspace are considered.
 	 */
-	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell, IJavaProject[] projects) throws JavaModelException{
-		if (projects == null) {
+	public static ElementListSelectionDialog createAllPackagesDialog(Shell shell, IJavaProject[] originals) throws JavaModelException{
+		final List packageList = new ArrayList();
+		if (originals == null) {
 			IWorkspaceRoot wsroot= ResourcesPlugin.getWorkspace().getRoot();
 			IJavaModel model= JavaCore.create(wsroot);
-			projects= model.getJavaProjects();
+			originals= model.getJavaProjects();
 		}
-		Set packageNameSet= new HashSet(); 
-		List packageList = new ArrayList();
-		for (int i = 0; i < projects.length; i++) {						
-			IPackageFragment[] pkgs= projects[i].getPackageFragments();	
-			for (int j = 0; j < pkgs.length; j++) {
-				IPackageFragment pkg = pkgs[j];
-				if (!pkg.hasChildren() && (pkg.getNonJavaResources().length > 0)) {
-					continue;
-				}
-				if (packageNameSet.add(pkg.getElementName())) {
-					packageList.add(pkg);
+		final IJavaProject[] projects= originals;
+		final JavaModelException[] exception= new JavaModelException[1];
+		ProgressMonitorDialog monitor= new ProgressMonitorDialog(shell);
+		IRunnableWithProgress r= new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					Set packageNameSet= new HashSet();
+					monitor.beginTask(DebugUIMessages.getString("JDIDebugUIPlugin.Searching_1"), projects.length); //$NON-NLS-1$
+					for (int i = 0; i < projects.length; i++) {						
+						IPackageFragment[] pkgs= projects[i].getPackageFragments();	
+						for (int j = 0; j < pkgs.length; j++) {
+							IPackageFragment pkg = pkgs[j];
+							if (!pkg.hasChildren() && (pkg.getNonJavaResources().length > 0)) {
+								continue;
+							}
+							if (packageNameSet.add(pkg.getElementName())) {
+								packageList.add(pkg);
+							}
+						}
+						monitor.worked(1);
+					}
+					monitor.done();
+				} catch (JavaModelException jme) {
+					exception[0]= jme;
 				}
 			}
+		};
+		try {
+			monitor.run(false, false, r);	
+		} catch (InvocationTargetException e) {
+			JDIDebugUIPlugin.log(e);
+		} catch (InterruptedException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		if (exception[0] != null) {
+			throw exception[0];
 		}
 		int flags= JavaElementLabelProvider.SHOW_DEFAULT;
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(shell, new JavaElementLabelProvider(flags));
