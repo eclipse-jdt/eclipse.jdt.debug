@@ -100,7 +100,8 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		String[] classpath = getClasspath(configuration);
 		
 		// Create VM config
-		VMRunnerConfiguration runConfig = new VMRunnerConfiguration("sun.applet.AppletViewer", classpath); //$NON-NLS-1$
+		String appletViewerClassName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
+		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(appletViewerClassName, classpath);
 		runConfig.setProgramArguments(new String[] {buildHTMLFile(configuration)});
 		String[] vmArgs = execArgs.getVMArgumentsArray();
 		String[] realArgs = new String[vmArgs.length+1];

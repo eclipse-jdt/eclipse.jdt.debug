@@ -222,21 +222,29 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_APPLET_HEIGHT = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_HEIGHT";	 //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute key. The value is an String
-	 * indicating the HTML name of the applet.
+	 * Launch configuration attribute key. The value is a String indicating the
+	 * HTML name of the applet.
 	 * 
 	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_NAME = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_NAME";	 //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute key. The value is an Map.
-	 * Keys in the map represent applet parameter names and the
-	 * values in the map are the corresponding parameter values
+	 * Launch configuration attribute key. The value is a Map. Keys in the map
+	 * represent applet parameter names and the values in the map are the
+	 * corresponding parameter values
 	 * 
 	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_PARAMETERS = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_PARAMETERS";	 //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a String indicating the
+	 * fully qualified name of the appletviewer utility class to use.
+	 * 
+	 * @since 2.1
+	 */
+	public static final String ATTR_APPLET_APPLETVIEWER_CLASS = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_APPLETVIEWER_CLASS";	 //$NON-NLS-1$
 
 	/**
 	 * Status code indicating a launch configuration does not
@@ -386,5 +394,10 @@ public interface IJavaLaunchConfigurationConstants {
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */
-	public static final int ERR_INTERNAL_ERROR = 150;			
+	public static final int ERR_INTERNAL_ERROR = 150;		
+
+	/**
+	 * Default value for the 'ATTR_APPLET_APPLETVIEWER' attribute.
+	 */	
+	public static final String DEFAULT_APPLETVIEWER_CLASS = "sun.applet.AppletViewer";	
 }

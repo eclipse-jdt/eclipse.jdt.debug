@@ -70,6 +70,11 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	private Text fMainText;
 	private Button fSearchButton;
 	
+	// Applet viewer UI widgets
+	private Label fAppletViewerClassLabel;
+	private Text fAppletViewerClassText;
+	private Button fAppletViewerClassDefaultButton;
+	
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
 	/**
@@ -150,14 +155,63 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 				handleSearchButtonSelected();
 			}
 		});
+		
+		createVerticalSpacer(projComp);
+		
+		fAppletViewerClassLabel = new Label(comp, SWT.NONE);
+		fAppletViewerClassLabel.setText(LauncherMessages.getString("AppletMainTab.Name_of_appletviewer_class__1")); //$NON-NLS-1$
+		fAppletViewerClassLabel.setFont(font);
+		
+		fAppletViewerClassText = new Text(comp, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fAppletViewerClassText.setLayoutData(gd);
+		fAppletViewerClassText.setFont(font);
+		fAppletViewerClassText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		fAppletViewerClassDefaultButton = new Button(comp, SWT.CHECK);
+		fAppletViewerClassDefaultButton.setFont(font);
+		fAppletViewerClassDefaultButton.setText(LauncherMessages.getString("AppletMainTab.Use_default_appletviewer_class_2")); //$NON-NLS-1$
+		fAppletViewerClassDefaultButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				setAppletViewerTextEnabledState();
+				if (isDefaultAppletViewerClassName()) {
+					fAppletViewerClassText.setText(IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
+				} else {
+					fAppletViewerClassText.setText(EMPTY_STRING);
+				}
+			}
+		});
 	}
 		
+	/**
+	 * Set the appropriate enabled state for the appletviewqer text widget.
+	 */
+	protected void setAppletViewerTextEnabledState() {
+		if (isDefaultAppletViewerClassName()) {
+			fAppletViewerClassText.setEnabled(false);
+		} else {
+			fAppletViewerClassText.setEnabled(true);
+		}
+	}
+	
+	/**
+	 * Returns whether the default appletviewer is to be used
+	 */
+	protected boolean isDefaultAppletViewerClassName() {
+		return fAppletViewerClassDefaultButton.getSelection();
+	}
+	
 	/**
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
 		updateMainTypeFromConfig(config);
+		updateAppletViewerClassNameFromConfig(config);
 	}
 	
 	private void updateProjectFromConfig(ILaunchConfiguration config) {
@@ -179,6 +233,23 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		}	
 		fMainText.setText(mainTypeName);
 	}
+	
+	private void updateAppletViewerClassNameFromConfig(ILaunchConfiguration config) {
+		String appletViewerClassName = null;
+		try {
+			appletViewerClassName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, (String)null);
+			if (appletViewerClassName == null) {
+				fAppletViewerClassText.setText(IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
+				fAppletViewerClassDefaultButton.setSelection(true);
+			} else {
+				fAppletViewerClassText.setText(appletViewerClassName);
+				fAppletViewerClassDefaultButton.setSelection(false);
+			}
+			setAppletViewerTextEnabledState();
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce);				
+		}
+	}
 		
 	/**
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
@@ -187,6 +258,21 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)fProjText.getText());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)fMainText.getText());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, getProjectOutputDirectory());		
+		performApplyAppletViewerClassName(config);		
+	}
+	
+	/**
+	 * Set the current appletviewer class name on the specified working copy.
+	 */
+	private void performApplyAppletViewerClassName(ILaunchConfigurationWorkingCopy config) {
+		String appletViewerClassName = null;
+		if (!isDefaultAppletViewerClassName()) {
+			appletViewerClassName = fAppletViewerClassText.getText().trim();
+			if (appletViewerClassName.length() <= 0) {
+				appletViewerClassName = null;
+			}
+		}
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, appletViewerClassName);
 	}
 			
 	/**
@@ -311,6 +397,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		
+		// Verify project
 		String name = fProjText.getText().trim();
 		if (name.length() > 0) {
 			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
@@ -318,6 +405,8 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 				return false;
 			}
 		}
+		
+		// Verify applet class
 		name = fMainText.getText().trim();
 		if (name.length() == 0) {
 			setErrorMessage(LauncherMessages.getString("appletlauncher.maintab.type.error.doesnotexist")); //$NON-NLS-1$
@@ -334,6 +423,13 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 			}
 		}	
 		
+		// Verify appletviewer class
+		name = fAppletViewerClassText.getText().trim();
+		if (name.length() == 0) {
+			setErrorMessage(LauncherMessages.getString("AppletMainTab.Appletviewer_class_must_be_specified_3"));  //$NON-NLS-1$
+			return false;			
+		}
+		
 		return true;
 	}
 	
@@ -345,6 +441,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		initializeJavaProject(javaElement, config);
 		initializeMainTypeAndName(javaElement, config);
 		initializeHardCodedDefaults(config);
+		initializeAppletViewerClass(config);
 	}
 
 	/**
@@ -419,6 +516,13 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	 */
 	private void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {
 		initializeDefaultVM(config);
+	}
+	
+	/**
+	 * Initialize the appletviewer class name attribute.
+	 */
+	private void initializeAppletViewerClass(ILaunchConfigurationWorkingCopy config) {
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, (String)null);
 	}
 
 	/**
