@@ -1,19 +1,16 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
+http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -134,26 +131,32 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 				IJavaElement e= classFile.getElementAt(selection.getOffset());
 				if (e instanceof IMember) {
 					m= (IMember)e;
-					setMember(m);
 				}
 			} else {
 				IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
 				ICompilationUnit unit= manager.getWorkingCopy(editorInput);
-				if (unit == null) {
-					return null;
+				if (unit != null) {
+					synchronized (unit) {
+						unit.reconcile();
+					}
+					IJavaElement e = unit.getElementAt(selection.getOffset());
+					if (e instanceof IMember) {
+						m= (IMember)e;
+					}
 				}
-				synchronized (unit) {
-					unit.reconcile();
-				}
-				IJavaElement e = unit.getElementAt(selection.getOffset());
-				if (e instanceof IMember) {
-					m= (IMember)e;
-					setMember(m);
+			}
+
+			if (m != null) {
+				IJavaProject project= m.getJavaProject();
+				if (!m.exists() || (project == null || !project.isOnClasspath(m))) {
+					m= null;
 				}
 			}
 		} catch (JavaModelException jme) {
 			JDIDebugUIPlugin.log(jme);
 		}
+		
+		setMember(m);
 		return m;
 	}
 	
