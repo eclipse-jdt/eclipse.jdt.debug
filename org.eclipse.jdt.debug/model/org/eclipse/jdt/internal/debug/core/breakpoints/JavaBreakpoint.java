@@ -371,6 +371,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * @return Whether a request was created
 	 */
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+			return false;
+		}
 		EventRequest request= newRequest(target, type);
 		if (request == null) {
 			return false;
@@ -473,7 +476,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Creates event requests for the given target
 	 */
 	protected void createRequests(JDIDebugTarget target) throws CoreException {
-		if (target.isTerminated()) {
+		if (target.isTerminated() || !DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
 			return;
 		}
 		String referenceTypeName= getTypeName();

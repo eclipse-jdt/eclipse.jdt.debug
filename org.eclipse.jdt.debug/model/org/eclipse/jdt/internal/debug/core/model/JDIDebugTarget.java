@@ -1091,7 +1091,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		if (!isAvailable()) {
 			return;
 		}		
-		if (supportsBreakpoint(breakpoint)) {	
+		if (supportsBreakpoint(breakpoint) && DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
 			((JavaBreakpoint)breakpoint).changeForTarget(this);
 		}
 	}

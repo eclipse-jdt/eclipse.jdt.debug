@@ -127,6 +127,9 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * both. Finally, the requests are registered with the given target.
 	 */	
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+			return false;
+		}
 		Field field= null;
 		
 		field= type.fieldByName(getFieldName());

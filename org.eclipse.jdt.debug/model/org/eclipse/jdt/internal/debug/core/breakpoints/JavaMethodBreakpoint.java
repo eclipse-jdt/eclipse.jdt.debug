@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -650,7 +651,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
 	 */
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
-		if (type.name().equals(getTypeName())) {
+		if (type.name().equals(getTypeName()) && DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
 			EventRequest entryRequest= createMethodEntryRequest(target, type);
 			EventRequest exitRequest= createMethodExitRequest(target, type);
 			
