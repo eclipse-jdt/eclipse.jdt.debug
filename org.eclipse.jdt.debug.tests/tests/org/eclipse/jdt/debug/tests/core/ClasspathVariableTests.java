@@ -54,19 +54,6 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertEquals("Should resolve to location of local JRE", libs[0].getSystemLibraryPath().toOSString().toLowerCase(), resolved[0].getPath().toOSString().toLowerCase());
 	}
 	
-//	/**
-//	 * Test a null source attachment on JRE_LIB
-//	 * @throws CoreException
-//	 */
-//	public void testNullSourceAttachment() throws CoreException {
-//		IRuntimeClasspathEntry entry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(JavaRuntime.JRELIB_VARIABLE));
-//		entry.setSourceAttachmentPath(new Path("NULL_VARIABLE"));
-//		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entry, getJavaProject());
-//		assertTrue("Should resolve to at least on entry", resolved.length > 0);
-//		IRuntimeClasspathEntry first = resolved[0];
-//		assertNull("should be no source attachment path", first.getSourceAttachmentPath());
-//	}
-	
 	/**
 	 * Test that a variable set to the location of an archive via variable
 	 * extension resolves properly, with a null source attachment.
