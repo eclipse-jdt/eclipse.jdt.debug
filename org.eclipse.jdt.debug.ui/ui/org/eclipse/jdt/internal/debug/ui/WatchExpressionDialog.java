@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Dialog for edit watch expression.
@@ -50,11 +51,15 @@ public class WatchExpressionDialog extends StatusDialog {
 		super(parent);
 		fWatchExpression= watchExpression;
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
+		String helpContextId = null;
 		if (editDialog) {
 			setTitle(DebugUIMessages.getString("WatchExpressionDialog.Edit_Watch_Expression_1")); //$NON-NLS-1$
+			helpContextId = IJavaDebugHelpContextIds.EDIT_WATCH_EXPRESSION_DIALOG;
 		} else {
 			setTitle(DebugUIMessages.getString("WatchExpressionDialog.Add_Watch_Expression_2")); //$NON-NLS-1$
+			helpContextId = IJavaDebugHelpContextIds.ADD_WATCH_EXPRESSION_DIALOG;
 		}
+		WorkbenchHelp.setHelp(parent, helpContextId);
 	}
 
 	/**
