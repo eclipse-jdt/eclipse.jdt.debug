@@ -52,7 +52,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 			Object[] selections = dialog.getResult();
 			IRuntimeClasspathEntry[] entries = new IRuntimeClasspathEntry[selections.length];
 			for (int i = 0; i < selections.length; i++) {
-				entries[i] = JavaRuntime.newRuntimeClasspathEntry((IJavaProject)selections[i]);
+				entries[i] = JavaRuntime.newProjectRuntimeClasspathEntry((IJavaProject)selections[i]);
 			}
 			getViewer().addEntries(entries);
 		}				

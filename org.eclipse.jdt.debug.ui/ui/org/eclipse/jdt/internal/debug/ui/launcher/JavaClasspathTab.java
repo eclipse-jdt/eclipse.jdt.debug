@@ -14,6 +14,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
+import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
+import org.eclipse.jdt.internal.debug.ui.actions.AddFolderAction;
+import org.eclipse.jdt.internal.debug.ui.actions.AddJarAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddProjectAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
@@ -35,6 +39,8 @@ import org.eclipse.swt.widgets.TabItem;
 
 
 /**
+ * <b>THIS CLASS IS EXPERIMENTAL AND STILL UNDER CONSTRUCTION</b>
+ * 
  * Tab for setting classpath and bootpath.
  */
 public class JavaClasspathTab extends JavaLaunchConfigurationTab {
@@ -133,7 +139,27 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
 		addAction(action);		
-				
+
+		action = new AddJarAction(null);								
+		button  = createPushButton(pathButtonComp, action.getText(), null);
+		action.setButton(button);
+		addAction(action);		
+
+		action = new AddExternalJarAction(null);								
+		button  = createPushButton(pathButtonComp, action.getText(), null);
+		action.setButton(button);
+		addAction(action);		
+
+		action = new AddFolderAction(null);								
+		button  = createPushButton(pathButtonComp, action.getText(), null);
+		action.setButton(button);
+		addAction(action);		
+
+		action = new AddExternalFolderAction(null);								
+		button  = createPushButton(pathButtonComp, action.getText(), null);
+		action.setButton(button);
+		addAction(action);		
+												
 		retargetActions(fClasspathViewer);
 //		
 //		fPathAddDirectoryButton = createPushButton(pathButtonComp, LauncherMessages.getString("JavaEnvironmentTab.Add_&Folder_16"), null); //$NON-NLS-1$
