@@ -439,7 +439,6 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		tempMemento= null;
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
@@ -463,16 +462,16 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 			// visible. To tell that the view has been "closed",
 			// try to find it.
 			if (id.equals(getViewSite().getId())) {
-				IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-				if (window != null) {
-					IWorkbenchPage activePage = window.getActivePage();
-					if (activePage != null && activePage.findView(id) == null) {
+				// TODO: Uncomment when Bug 60039 is fixed -
+//				IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+//				if (window != null) {
+//					IWorkbenchPage activePage = window.getActivePage();
+//					if (activePage != null && activePage.findView(id) == null) {
 						// Display view closed
 						tempMemento= XMLMemento.createWriteRoot("DisplayViewMemento"); //$NON-NLS-1$
 						saveState(tempMemento);
-					}
-				}
-				
+//					}
+//				}				
 			}
 		}
 	}
