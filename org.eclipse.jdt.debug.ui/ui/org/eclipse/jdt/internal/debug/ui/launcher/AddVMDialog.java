@@ -67,6 +67,7 @@ public class AddVMDialog extends StatusDialog {
 	private StringDialogField fVMName;
 
 	private StringButtonDialogField fJavadocURL;
+	private boolean fAutoDetectJavadocLocation = false;
 	
 	private IDialogSettings fDialogSettings;
 	
@@ -86,6 +87,9 @@ public class AddVMDialog extends StatusDialog {
 		fEditedVM= editedVM;
 		
 		fDialogSettings= JDIDebugUIPlugin.getDefault().getDialogSettings();
+		
+		//only detect the javadoc location if not already set
+		fAutoDetectJavadocLocation = fEditedVM == null || fEditedVM.getJavadocLocation() == null;
 	}
 	
 	/**
@@ -205,7 +209,7 @@ public class AddVMDialog extends StatusDialog {
 	public void create() {
 		super.create();
 		fVMName.setFocus();
-		selectVMType();
+		selectVMType();  
 	}
 	
 	private String[] getVMTypeNames() {
@@ -281,7 +285,25 @@ public class AddVMDialog extends StatusDialog {
 			fLibraryBlock.setHomeDirectory(null);
 		}
 		fLibraryBlock.update();
+		detectJavadocLocation();
 		return s;
+	}
+	
+	/**
+	 * Auto-detects the default javadoc location
+	 */
+	private void detectJavadocLocation() {
+		if (fAutoDetectJavadocLocation) {
+			if (getVMType() instanceof AbstractVMInstallType) {
+				AbstractVMInstallType type = (AbstractVMInstallType)getVMType();
+				URL url = type.getDefaultJavadocLocation(getInstallLocation());
+				if (url == null) { 
+					fJavadocURL.setText("");
+				} else {
+					fJavadocURL.setText(url.toExternalForm());
+				}
+			}
+		}
 	}
 
 	private IStatus validateVMName() {
