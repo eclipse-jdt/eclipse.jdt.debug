@@ -173,7 +173,7 @@ public class LaunchVariableTests extends LaunchConfigurationTests {
 	 */
 	public void testSimpleVariable() {
 		String variableName= "SimpleVariable";
-		ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(variableName, null, null);
+		ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(variableName, null, null, false);
 		String variableValue= "VariableValue";
 		variable.setValue(variableValue);
 		ILaunchVariableManager manager= DebugPlugin.getDefault().getLaunchVariableManager(); 
