@@ -124,6 +124,13 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}
 	
 	/**
+	 * Returns the type of marker associated with Java exception breakpoints
+	 */
+	public static String getMarkerType() {
+		return JAVA_EXCEPTION_BREAKPOINT;
+	}
+	
+	/**
 	 * Sets the exception type on which this breakpoint is installed and whether
 	 * or not that exception is a checked exception.
 	 */
