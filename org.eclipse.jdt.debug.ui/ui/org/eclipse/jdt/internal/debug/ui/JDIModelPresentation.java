@@ -31,6 +31,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -217,6 +218,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return null;
 			} else if (item instanceof IBreakpoint) {
 				return getBreakpointText((IBreakpoint)item);
+			} else if (item instanceof IWatchExpression) {
+				return getWatchExpressionText((IWatchExpression)item);
 			} else if (item instanceof IExpression) {
 				return getExpressionText((IExpression)item);
 			} else {
@@ -1107,7 +1110,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 		}
 		return buff.toString();
-	}	
+	}
+	
+	protected String getWatchExpressionText(IWatchExpression expression) throws DebugException {
+		return getExpressionText(expression) + (expression.isEnabled() ? "" : DebugUIMessages.getString("JDIModelPresentation.116")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 	/**
 	 * Given the reference type name of an array type, insert the array length
