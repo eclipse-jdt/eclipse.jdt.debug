@@ -32,6 +32,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
@@ -194,18 +195,33 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
-		update();
+		asyncUpdate();
 	}
 	/**
 	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-		update();
+		asyncUpdate();
 	}
 	/**
 	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
 	 */
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+	}
+	
+	/**
+	 * Update in the UI thread
+	 */
+	protected void asyncUpdate() {
+		Display d = Display.getDefault();
+		if (d != null) {
+			Runnable r = new Runnable() {
+				public void run() {
+					update();
+				}
+			};
+			d.asyncExec(r);
+		}
 	}
 	
 	/**
