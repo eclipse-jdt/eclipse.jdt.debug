@@ -5,6 +5,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -67,6 +68,7 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperFieldAccess;
@@ -107,6 +109,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.LeftShiftAssignmentO
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.LeftShiftOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.LessEqualOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.LessOperator;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.LocalVariableCreation;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.MinusAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.MinusOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.MultiplyAssignmentOperator;
@@ -161,11 +164,33 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.XorOperator;
 public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
+	 * Represent a break or a continue instruction.
+	 * These instructions needs are stored and managed later by their
+	 * related statement.
+	 */	
+	class CompleteInstruction {
+		Jump fInstruction;
+		String fLabel;
+		boolean fIsBreak;
+		
+		public CompleteInstruction(Jump instruction, String label, boolean isBreak) {
+			fInstruction= instruction;
+			fLabel= label;
+			fIsBreak= isBreak;
+		}
+	}
+
+	/**
 	 * Whether to print debug messages to the console
 	 */
 	private static boolean VERBOSE = false;
 	
 	private InstructionSequence fInstructions;
+	
+	/**
+	 * The list of pending break and continue instruction.
+	 */
+	private List fCompleteInstructions;
 	
 	private int fStartPosition;
 	
@@ -185,6 +210,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		fStartPosition = startPosition;
 		fInstructions = new InstructionSequence(snippet);
 		fStack = new Stack();
+		fCompleteInstructions= new ArrayList();
 	}
 	
 	/**
@@ -360,6 +386,51 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return isInstanceOf(current.getSuperclass(), reference);
 		}
 	}
+	
+	/**
+	 * Return the label associated with the given statement.
+	 * 
+	 * @param statement the statement.
+	 * @return the associated label, or <code>null</code> if there is none.
+	 */
+	private String getLabel(Statement statement) {
+		ASTNode parent= statement.getParent();
+		if (parent instanceof LabeledStatement) {
+			return ((LabeledStatement)parent).getLabel().getIdentifier();
+		}
+		return null;
+	}
+
+	/**
+	 * Append a pop instruction in the instruction list if needed.
+	 * A pop instruction is added when the expression has a return value,
+	 * i.e. all expressions expect method invocation expressions which
+	 * have <code>void</code> as return type and variable declaration expression.
+	 * 
+	 * @param expression the expressien to test.
+	 */
+	private void addPopInstructionIfNeeded(Expression expression) {
+		boolean pop= true;
+		
+		if (expression instanceof MethodInvocation) {
+			IMethodBinding methodBinding= (IMethodBinding)((MethodInvocation)expression).getName().resolveBinding();
+			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
+				pop= false;
+			}
+		} else if (expression instanceof SuperMethodInvocation) {
+			IMethodBinding methodBinding= (IMethodBinding)((SuperMethodInvocation)expression).getName().resolveBinding();
+			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
+				pop= false;
+			}
+		} else if (expression instanceof VariableDeclarationExpression) {
+			pop= false;
+		}
+		
+		if (pop) {
+			push(new Pop());
+			storeInstruction();			
+		}
+	}
 
 	/**
 	 * End visit methods
@@ -456,7 +527,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(BreakStatement)
 	 */
 	public void endVisit(BreakStatement node) {
-
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();			
 	}
 
 	/**
@@ -543,14 +616,65 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(ContinueStatement)
 	 */
 	public void endVisit(ContinueStatement node) {
-
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();			
 	}
 
 	/**
 	 * @see ASTVisitor#endVisit(DoStatement)
 	 */
 	public void endVisit(DoStatement node) {
-
+		if (!isActive() || hasErrors())
+			return;
+			
+		/* The structure of generated instructions is :
+		 * 
+		 * --
+		 * | body
+		 * --
+		 * --
+		 * |condition
+		 * --
+		 * - jump to the first instruction of the body if the condition is true.
+		 * 
+		 */
+		
+		String label= getLabel(node);
+		
+		// get adress of each part
+		int conditionAddress= fInstructions.getEnd();
+		Instruction condition= fInstructions.getInstruction(conditionAddress);
+		int bodyAddress= conditionAddress - condition.getSize();
+		Instruction body= fInstructions.getInstruction(bodyAddress);
+		
+		// add the conditionnalJump
+		ConditionalJump conditionalJump= new ConditionalJump(true);
+		fInstructions.add(conditionalJump);
+		fCounter++;
+		
+		// set jump offsets
+		conditionalJump.setOffset(-(condition.getSize() + body.getSize() + 1));
+		
+		// for each pending break or continue instruction which are related to
+		// this loop, set the offset of the corresponding jump.
+		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
+			CompleteInstruction instruction= (CompleteInstruction) iter.next();
+			if (instruction.fLabel == null || instruction.fLabel.equals(label)) {
+				iter.remove();
+				Jump jumpInstruction= instruction.fInstruction;
+				int instructionAddress= fInstructions.indexOf(jumpInstruction);
+				if (instruction.fIsBreak) {
+					// jump to the instruction after the last jump
+					jumpInstruction.setOffset((conditionAddress - instructionAddress) + 1);
+				} else {
+					// jump to the first instruction of the condition
+					jumpInstruction.setOffset(bodyAddress - instructionAddress);
+				}
+			}
+		}
+		
+		storeInstruction();
 	}
 
 	/**
@@ -566,24 +690,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(ExpressionStatement node) {
 		if (!isActive() || hasErrors())
 			return;
-		boolean pop= true;
-
-		Expression expression= node.getExpression();
-		if (expression instanceof MethodInvocation) {
-			IMethodBinding methodBinding= (IMethodBinding)((MethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
-				pop= false;
-			}
-		} else if (expression instanceof SuperMethodInvocation) {
-			IMethodBinding methodBinding= (IMethodBinding)((SuperMethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
-				pop= false;
-			}
-		}
-
-		if (pop) {
-			storeInstruction();			
-		}
+			
+		addPopInstructionIfNeeded(node.getExpression());
 	}
 
 	/**
@@ -606,7 +714,92 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(ForStatement)
 	 */
 	public void endVisit(ForStatement node) {
+		if (!isActive() || hasErrors())
+			return;
+		
+		/* The structure of generated instructions is :
+		 * 
+		 * --
+		 * |initialization
+		 * --
+		 * --
+		 * |condition
+		 * --
+		 * - jump to the instruction after the last jump if the condition is false.
+		 * --
+		 * | body
+		 * --
+		 * --
+		 * | updaters
+		 * --
+		 * - jump to the first instruction of the condition.
+		 * 
+		 */
+		
+		String label= getLabel(node);
+		boolean hasCondition= node.getExpression() != null;
 
+		// get adress of each part
+		int updatersAddress= fInstructions.getEnd();
+		Instruction updaters= fInstructions.getInstruction(updatersAddress);
+		int bodyAddress= updatersAddress - updaters.getSize();
+		Instruction body= fInstructions.getInstruction(bodyAddress);
+
+		int conditionAddress;		
+		Instruction condition;
+		int initializersAddress;
+		Instruction initializers;
+		
+		if (hasCondition) {
+			conditionAddress= bodyAddress - body.getSize();
+			condition= fInstructions.getInstruction(conditionAddress);
+			initializersAddress= conditionAddress - condition.getSize();
+			initializers= fInstructions.getInstruction(initializersAddress);
+		} else {
+			conditionAddress= 0;
+			condition= null;
+			initializersAddress= bodyAddress - body.getSize();
+			initializers= fInstructions.getInstruction(initializersAddress);
+		}
+
+		// add jump
+		Jump jump= new Jump();
+		fInstructions.add(jump);
+		fCounter++;
+		
+		if (hasCondition) {
+			// add conditionnal jump
+			ConditionalJump condJump= new ConditionalJump(false);
+			fInstructions.insert(condJump, conditionAddress + 1);
+			bodyAddress++;
+			updatersAddress++;
+			fCounter++;
+			// conditionnal set jump offset
+			condJump.setOffset(body.getSize() + updaters.getSize() + 1);
+		}
+		
+		// set jump offset
+		jump.setOffset(-((hasCondition ? condition.getSize() : 0) + body.getSize() + updaters.getSize() + 2));
+		
+		// for each pending break or continue instruction which are related to
+		// this loop, set the offset of the corresponding jump.
+		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
+			CompleteInstruction instruction= (CompleteInstruction) iter.next();
+			if (instruction.fLabel == null || instruction.fLabel.equals(label)) {
+				iter.remove();
+				Jump jumpInstruction= instruction.fInstruction;
+				int instructionAddress= fInstructions.indexOf(jumpInstruction);
+				if (instruction.fIsBreak) {
+					// jump to the instruction after the last jump
+					jumpInstruction.setOffset((updatersAddress - instructionAddress) + 1);
+				} else {
+					// jump to the first instruction of the condition
+					jumpInstruction.setOffset(bodyAddress - instructionAddress);
+				}
+			}
+		}
+
+		storeInstruction();
 	}
 
 	/**
@@ -698,7 +891,25 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(LabeledStatement)
 	 */
 	public void endVisit(LabeledStatement node) {
-
+		if (!isActive() || hasErrors())
+			return;
+			
+		String label= node.getLabel().getIdentifier();
+		
+		// for each pending continue instruction which are related to
+		// this statement, set the offset of the corresponding jump.
+		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
+			CompleteInstruction instruction= (CompleteInstruction) iter.next();
+			if (instruction.fLabel != null && instruction.fLabel.equals(label)) {
+				iter.remove();
+				Jump jumpInstruction= instruction.fInstruction;
+				int instructionAddress= fInstructions.indexOf(jumpInstruction);
+				if (instruction.fIsBreak) {
+					// jump to the instruction after the statement
+					jumpInstruction.setOffset(fInstructions.getEnd() - instructionAddress);
+				}
+			}
+		}
 	}
 
 	/**
@@ -810,7 +1021,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(SingleVariableDeclaration)
 	 */
 	public void endVisit(SingleVariableDeclaration node) {
-
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();			
 	}
 
 	/**
@@ -923,7 +1136,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(VariableDeclarationFragment)
 	 */
 	public void endVisit(VariableDeclarationFragment node) {
-
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();			
 	}
 
 	/**
@@ -937,7 +1152,62 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(WhileStatement)
 	 */
 	public void endVisit(WhileStatement node) {
-
+		if (!isActive() || hasErrors())
+			return;
+		
+		/* The structure of generated instructions is :
+		 * 
+		 * --
+		 * |condition
+		 * --
+		 * - jump to the instruction after the last jump if the condition is false.
+		 * --
+		 * | body
+		 * --
+		 * - jump to the first instruction of the condition.
+		 * 
+		 */
+		
+		String label= getLabel(node);
+		
+		// get adress of each part
+		int bodyAddress= fInstructions.getEnd();
+		Instruction body= fInstructions.getInstruction(bodyAddress);
+		int conditionAddress= bodyAddress - body.getSize();
+		Instruction condition= fInstructions.getInstruction(conditionAddress);
+		
+		// add the conditionnalJump
+		ConditionalJump conditionalJump= new ConditionalJump(false);
+		fInstructions.insert(conditionalJump, conditionAddress + 1);
+		
+		// add the jump
+		Jump jump= new Jump();
+		fInstructions.add(jump);
+		
+		// set jump offsets
+		conditionalJump.setOffset(body.getSize() + 1);
+		jump.setOffset(-(condition.getSize() + body.getSize() + 2));
+		
+		// for each pending break or continue instruction which are related to
+		// this loop, set the offset of the corresponding jump.
+		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
+			CompleteInstruction instruction= (CompleteInstruction) iter.next();
+			if (instruction.fLabel == null || instruction.fLabel.equals(label)) {
+				iter.remove();
+				Jump jumpInstruction= instruction.fInstruction;
+				int instructionAddress= fInstructions.indexOf(jumpInstruction);
+				if (instruction.fIsBreak) {
+					// jump to the instruction after the last jump
+					jumpInstruction.setOffset((bodyAddress - instructionAddress) + 2);
+				} else {
+					// jump to the first instruction of the condition
+					jumpInstruction.setOffset((conditionAddress - condition.getSize()) - instructionAddress);
+				}
+			}
+		}
+		
+		fCounter+= 2;
+		storeInstruction();
 	}
 
 	/**
@@ -1157,8 +1427,21 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#visit(BreakStatement)
 	 */
 	public boolean visit(BreakStatement node) {
-		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Break_Statement_cannot_be_used_in_an_evaluation_expression_5"), node.getStartPosition())); //$NON-NLS-1$
+		if (!isActive()) {
+			return false;
+		}
+		// create the equivalent jump instruction in the instruction
+		// and add an element in the list of pending break and continue
+		// instructions
+		Jump instruction= new Jump();
+		SimpleName labelName= node.getLabel();
+		String label= null;
+		if (labelName != null) {
+			label= labelName.getIdentifier();
+		}
+		push(instruction);
+		fCompleteInstructions.add(new CompleteInstruction(instruction, label, true));
+		
 		return false;
 	}
 
@@ -1307,8 +1590,21 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#visit(ContinueStatement)
 	 */
 	public boolean visit(ContinueStatement node) {
-		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Continue_statement_cannot_be_used_in_an_evaluation_expression_10"), node.getStartPosition())); //$NON-NLS-1$
+		if (!isActive()) {
+			return false;
+		}
+		// create the equivalent jump instruction in the instruction
+		// and add an element in the list of pending break and continue
+		// instructions
+		Jump instruction= new Jump();
+		SimpleName labelName= node.getLabel();
+		String label= null;
+		if (labelName != null) {
+			label= labelName.getIdentifier();
+		}
+		push(instruction);
+		fCompleteInstructions.add(new CompleteInstruction(instruction, label, false));
+		
 		return false;
 	}
 
@@ -1316,9 +1612,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#visit(DoStatement)
 	 */
 	public boolean visit(DoStatement node) {
-		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Do_statement_cannot_be_used_in_an_evaluation_expression_11"), node.getStartPosition())); //$NON-NLS-1$
-		return false;
+		if (!isActive()) {
+			return false;
+		}
+		
+		push(new NoOp(fCounter));
+		return true;
 	}
 
 	/**
@@ -1338,26 +1637,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return true;
 		}
-
-		boolean pop= true;
-
-		Expression expression= node.getExpression();
-		if (expression instanceof MethodInvocation) {
-			IMethodBinding methodBinding= (IMethodBinding)((MethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
-				pop= false;
-			}
-		} else if (expression instanceof SuperMethodInvocation) {
-			IMethodBinding methodBinding= (IMethodBinding)((SuperMethodInvocation)expression).getName().resolveBinding();
-			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
-				pop= false;
-			}
-		}
-
-		if (pop) {
-			push(new Pop());
-		}
 		
+		addPopInstructionIfNeeded(node.getExpression());
 		return true;
 	}
 
@@ -1408,10 +1689,40 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * @see ASTVisitor#visit(ForStatement)
+	 * return <code>false</code>, don't use the standart accept order.
+	 * order used for visite children :
+	 * initializers, condition, body, updaters
 	 */
 	public boolean visit(ForStatement node) {
-		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.For_statement_cannot_be_used_in_an_evaluation_expression_12"), node.getStartPosition())); //$NON-NLS-1$
+		if (!isActive()) {
+			return false;
+		}
+		
+		push(new NoOp(fCounter));
+		
+		push(new NoOp(fCounter));
+		for (Iterator iter= node.initializers().iterator(); iter.hasNext();) {
+			Expression expr= (Expression) iter.next();
+			expr.accept(this);
+			addPopInstructionIfNeeded(expr);
+		}
+		storeInstruction();
+		
+		Expression condition= node.getExpression();
+		if (condition != null) {
+			condition.accept(this);
+		}
+		
+		node.getBody().accept(this);
+		
+		push(new NoOp(fCounter));
+		for (Iterator iter= node.updaters().iterator(); iter.hasNext();) {
+			Expression expr= (Expression) iter.next();
+			expr.accept(this);
+			addPopInstructionIfNeeded(expr);
+		}
+		storeInstruction();
+		
 		return false;
 	}
 
@@ -1714,10 +2025,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * @see ASTVisitor#visit(LabeledStatement)
+	 * return <code>false</code>, don't use the standart accept order.
 	 */
 	public boolean visit(LabeledStatement node) {
-		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Labeled_Statement_cannot_be_used_in_an_evaluation_expression_14"), node.getStartPosition())); //$NON-NLS-1$
+		node.getBody().accept(this);
 		return false;
 	}
 
@@ -2142,14 +2453,22 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * @see ASTVisitor#visit(SingleVariableDeclaration)
+	 * return <code>false</code>, don't use the standart accept order.
 	 */
 	public boolean visit(SingleVariableDeclaration node) {
 		if (!isActive()) {
 			return false;
 		}
-		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Single_variable_declaration_cannot_be_used_in_an_evaluation_expression_18"), node.getStartPosition())); //$NON-NLS-1$
-		return true;
+		
+		Expression initializer= node.getInitializer();
+		boolean hasInitializer= initializer != null;
+		
+		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeName(node.getType().resolveBinding()), hasInitializer, fCounter));
+		if (hasInitializer) {
+			initializer.accept(this);
+		}
+		
+		return false;
 	}
 
 	/**
@@ -2370,46 +2689,78 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * @see ASTVisitor#visit(VariableDeclarationExpression)
+	 * return <code>false</code>, don't use the standart accept order.
 	 */
 	public boolean visit(VariableDeclarationExpression node) {
 		if (!isActive()) {
 			return false;
 		}
-		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Variable_declaration_cannot_be_used_in_an_evaluation_expression_26"), node.getStartPosition())); //$NON-NLS-1$
-		return true;
+		for (Iterator iter= node.fragments().iterator(); iter.hasNext();) {
+			((VariableDeclarationFragment) iter.next()).accept(this);
+		}
+		return false;
 	}
 
 	/**
 	 * @see ASTVisitor#visit(VariableDeclarationFragment)
+	 * return <code>false</code>, don't use the standart accept order.
 	 */
 	public boolean visit(VariableDeclarationFragment node) {
-		// Don't add error here. A variable declaration fragment is contained in a 
-		// variable declaraction expression or statement, or in a field declaration.
-		// The appropriate error is already added inthe first case, no error should
-		// be added in the second case.
-		return true;
+		if (!isActive()) {
+			return false;
+		}
+		// get the type of the variable
+		String typeName;
+		ASTNode parent= node.getParent();
+		switch (parent.getNodeType()) {
+			case ASTNode.VARIABLE_DECLARATION_EXPRESSION:
+				typeName= getTypeName(((VariableDeclarationExpression)parent).getType().resolveBinding());
+				break;
+			case ASTNode.VARIABLE_DECLARATION_STATEMENT:
+				typeName= getTypeName(((VariableDeclarationStatement)parent).getType().resolveBinding());
+				break;
+			default:
+				setHasError(true);
+				addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Error_in_type_declaration_statement"), node.getStartPosition())); //$NON-NLS-1$
+				return false;
+		}
+
+		Expression initializer= node.getInitializer();
+		boolean hasInitializer= initializer != null;
+		
+		push(new LocalVariableCreation(node.getName().getIdentifier(), typeName, hasInitializer, fCounter));
+		
+		if (hasInitializer) {
+			initializer.accept(this);
+		}
+		
+		return false;
 	}
 
 	/**
 	 * @see ASTVisitor#visit(VariableDeclarationStatement)
+	 * return <code>false</code>, don't use the standart accept order.
 	 */
 	public boolean visit(VariableDeclarationStatement node) {
 		if (!isActive()) {
 			return false;
 		}
-		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Variable_declaration_cannot_be_used_in_an_evaluation_expression_27"), node.getStartPosition())); //$NON-NLS-1$
-		return true;
+		for (Iterator iter= node.fragments().iterator(); iter.hasNext();) {
+			((VariableDeclarationFragment) iter.next()).accept(this);
+		}
+		return false;
 	}
 
 	/**
 	 * @see ASTVisitor#visit(WhileStatement)
 	 */
 	public boolean visit(WhileStatement node) {
-		setHasError(true);
-		addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.While_statement_cannot_be_used_in_an_evaluation_expression_28"), node.getStartPosition())); //$NON-NLS-1$
-		return false;
+		if (!isActive()) {
+			return false;
+		}
+		
+		push(new NoOp(fCounter));
+		return true;
 	}
 	
 	//--------------------------
