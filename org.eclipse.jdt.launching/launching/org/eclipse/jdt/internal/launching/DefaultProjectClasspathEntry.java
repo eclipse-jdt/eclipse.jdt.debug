@@ -39,8 +39,6 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	
 	public static final String TYPE_ID = "org.eclipse.jdt.launching.classpathentry.defaultClasspath"; //$NON-NLS-1$
 	
-	private IJavaProject fProject = null;
-	
 	/**
 	 * Default constructor need to instantiate extensions
 	 */
@@ -53,7 +51,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 * @param project Java project
 	 */
 	public DefaultProjectClasspathEntry(IJavaProject project) {
-		fProject = project;
+		setJavaProject(project);
 	}
 	
 	/* (non-Javadoc)
@@ -72,7 +70,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 			abort(LaunchingMessages.getString("DefaultProjectClasspathEntry.3"), null); //$NON-NLS-1$
 		}		
 		IJavaProject project = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(name));
-		fProject = project;
+		setJavaProject(project);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getTypeId()
@@ -85,15 +83,6 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 */
 	public int getType() {
 		return OTHER;
-	}
-	
-	/**
-	 * Returns the Java project this entry is associated with.
-	 * 
-	 * @return the Java project this entry is associated with
-	 */
-	public IJavaProject getJavaProject() {
-		return fProject;
 	}
 	
 	protected IProject getProject() {
@@ -220,7 +209,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 									property = IRuntimeClasspathEntry.BOOTSTRAP_CLASSES;
 									break;
 							}
-							IRuntimeClasspathEntry r = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), property);
+							IRuntimeClasspathEntry r = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), property, project);
 							// check for duplicate/redundant entries 
 							boolean duplicate = false;
 							ClasspathContainerInitializer initializer = JavaCore.getClasspathContainerInitializer(r.getPath().segment(0));

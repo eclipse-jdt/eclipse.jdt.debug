@@ -232,7 +232,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 								kind = IRuntimeClasspathEntry.STANDARD_CLASSES;
 								break;
 						}
-						rte = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), kind);
+						rte = JavaRuntime.newRuntimeContainerClasspathEntry(entry.getPath(), kind, proj);
 						break;
 					case IClasspathEntry.CPE_LIBRARY:
 						rte = JavaRuntime.newArchiveRuntimeClasspathEntry(entry.getPath());

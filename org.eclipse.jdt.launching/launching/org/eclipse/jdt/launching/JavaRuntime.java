@@ -567,9 +567,29 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, int classpathProperty) throws CoreException {
-		IClasspathEntry cpe = JavaCore.newContainerEntry(path);
-		return new RuntimeClasspathEntry(cpe, classpathProperty);
+		return newRuntimeContainerClasspathEntry(path, classpathProperty, null);
 	}
+	
+	/**
+	 * Returns a runtime classpath entry for the given container path with the given
+	 * classpath property to be resolved in the context of the given Java project.
+	 * 
+	 * @param path container path
+	 * @param classpathProperty the type of entry - one of <code>USER_CLASSES</code>,
+	 * 	<code>BOOTSTRAP_CLASSES</code>, or <code>STANDARD_CLASSES</code>
+	 * @param project Java project context used for resolution, or <code>null</code>
+	 *  if to be resolved in the context of the launch configuration this entry
+	 *  is referenced in
+	 * @return runtime classpath entry
+	 * @exception CoreException if unable to construct a runtime classpath entry
+	 * @since 3.0
+	 */
+	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, int classpathProperty, IJavaProject project) throws CoreException {
+		IClasspathEntry cpe = JavaCore.newContainerEntry(path);
+		RuntimeClasspathEntry entry = new RuntimeClasspathEntry(cpe, classpathProperty);
+		entry.setJavaProject(project);
+		return entry;
+	}	
 		
 	/**
 	 * Returns a runtime classpath entry constructed from the given memento.
@@ -649,10 +669,10 @@ public final class JavaRuntime {
 								// don't look at application entries
 								break;
 							case IClasspathContainer.K_DEFAULT_SYSTEM:
-								classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.STANDARD_CLASSES));
+								classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.STANDARD_CLASSES, project));
 								break;	
 							case IClasspathContainer.K_SYSTEM:
-								classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.BOOTSTRAP_CLASSES));
+								classpathEntries.add(newRuntimeContainerClasspathEntry(container.getPath(), IRuntimeClasspathEntry.BOOTSTRAP_CLASSES, project));
 								break;
 						}						
 					}
@@ -984,7 +1004,11 @@ public final class JavaRuntime {
 	 * Delegates to the Java model.
 	 */
 	private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, ILaunchConfiguration config) throws CoreException {
-		return computeDefaultContainerEntries(entry, getJavaProject(config));
+		IJavaProject project = entry.getJavaProject();
+		if (project == null) {
+			project = getJavaProject(config);
+		}
+		return computeDefaultContainerEntries(entry, project);
 	}
 	
 	/**

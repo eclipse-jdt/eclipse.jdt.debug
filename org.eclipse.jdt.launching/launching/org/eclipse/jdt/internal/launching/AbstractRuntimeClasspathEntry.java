@@ -18,9 +18,10 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.launching.*;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -37,6 +38,10 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	private IPath sourceAttachmentPath = null;
 	private IPath rootSourcePath = null;
 	private int classpathProperty = IRuntimeClasspathEntry.USER_CLASSES;
+	/**
+	 * Associated Java project, or <code>null</code>
+	 */
+	private IJavaProject fJavaProject;
 	
 	/* (non-Javadoc)
 	 * 
@@ -209,5 +214,20 @@ public abstract class AbstractRuntimeClasspathEntry extends PlatformObject imple
 	 */
 	public IClasspathEntry getClasspathEntry() {
 		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getJavaProject()
+	 */
+	public IJavaProject getJavaProject() {
+		return fJavaProject;
+	}
+	
+	/**
+	 * Sets the Java project associated with this entry.
+	 * 
+	 * @param javaProject
+	 */
+	protected void setJavaProject(IJavaProject javaProject) {
+		fJavaProject = javaProject;
 	}
 }

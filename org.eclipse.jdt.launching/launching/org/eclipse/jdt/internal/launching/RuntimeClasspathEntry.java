@@ -68,6 +68,11 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	private IClasspathEntry fResolvedEntry = null;
 	
 	/**
+	 * Associated Java project, or <code>null</code>
+	 */
+	private IJavaProject fJavaProject = null;
+	
+	/**
 	 * Constructs a new runtime classpath entry based on the
 	 * (build) classpath entry.
 	 * 
@@ -182,6 +187,14 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 				}
 				break;
 		}	
+		
+		String name = root.getAttribute("javaProject"); //$NON-NLS-1$
+		if (isEmpty(name)) {
+			fJavaProject = null;
+		} else {
+			IProject project2 = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			fJavaProject = JavaCore.create(project2);
+		}
 	}
 	
 	/**
@@ -265,7 +278,9 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		if (getSourceAttachmentRootPath() != null) {
 			node.setAttribute("sourceRootPath", getSourceAttachmentRootPath().toString()); //$NON-NLS-1$
 		}
-		
+		if (getJavaProject() != null) {
+			node.setAttribute("javaProject", getJavaProject().getElementName()); //$NON-NLS-1$
+		}
 		try {
 			return JavaLaunchConfigurationUtils.serializeDocument(doc);
 		} catch (IOException e) {
@@ -585,5 +600,20 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		}
 		return super.toString();
 		
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getJavaProject()
+	 */
+	public IJavaProject getJavaProject() {
+		return fJavaProject;
+	}
+	
+	/**
+	 * Sets the Java project associated with this classpath entry.
+	 * 
+	 * @param project Java project
+	 */
+	public void setJavaProject(IJavaProject project) {
+		fJavaProject = project;
 	}
 }

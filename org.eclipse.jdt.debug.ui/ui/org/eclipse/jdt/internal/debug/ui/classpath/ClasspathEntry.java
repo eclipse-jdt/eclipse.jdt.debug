@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
 
@@ -23,6 +24,12 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 
 	private IRuntimeClasspathEntry entry= null;
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getJavaProject()
+	 */
+	public IJavaProject getJavaProject() {
+		return entry.getJavaProject();
+	}
 	public ClasspathEntry(IRuntimeClasspathEntry entry, IClasspathEntry parent) {
 		this.parent= parent;
 		this.entry= entry;

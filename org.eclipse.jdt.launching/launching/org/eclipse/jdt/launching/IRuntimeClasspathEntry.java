@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 
 /**
  * Represents an entry on a runtime classpath. A runtime classpath entry
@@ -311,4 +312,16 @@ public interface IRuntimeClasspathEntry {
 	 * @since 2.1
 	 */
 	public IClasspathEntry getClasspathEntry();
+	
+	/**
+	 * Returns the Java project associated with this runtime classpath entry
+	 * or <code>null</code> if none. Runtime classpath entries of type
+	 * <code>CONTAINER</code> may be associated with a project for the
+	 * purposes of resolving the entries in a container. 
+	 * 
+	 * @return the Java project associated with this runtime classpath entry
+	 * or <code>null</code> if none
+	 * @since 3.0
+	 */
+	public IJavaProject getJavaProject();
 }
