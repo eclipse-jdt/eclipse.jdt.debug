@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,7 @@ import java.util.Iterator;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.actions.PopupInformationControl;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
@@ -25,69 +23,31 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
-import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jdt.internal.ui.text.JavaWordFinder;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.TextViewer;
-import org.eclipse.jface.text.information.IInformationProvider;
-import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 
-
-public class InspectAction extends EvaluateAction implements IInformationProvider {
-	private TextViewer viewer;
+/**
+ * Places the result of an evaluation in the debug expression view.
+ */
+public class InspectAction extends EvaluateAction {
 	
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
 	protected void displayResult(final IEvaluationResult result) {
-				
-		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-				final JavaInspectExpression expression = new JavaInspectExpression(result);
-				IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
-				IAction action = new Action() {
-					public void run() {
-						DebugPlugin.getDefault().getExpressionManager().addExpression(expression);	
-						showExpressionView();						
-					}
-				};
-				action.setText(ActionMessages.getString("InspectAction.1")); //$NON-NLS-1$
-				action.setToolTipText(ActionMessages.getString("InspectAction.2")); //$NON-NLS-1$
-				return new PopupInformationControl(parent, DebugUITools.newExpressionInformationControlAdapter(page, expression), action);
-			}
-		});
-		
-
-		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+		final Display display= JDIDebugUIPlugin.getStandardDisplay();
+		display.asyncExec(new Runnable() {
 			public void run() {
-				Point p = viewer.getSelectedRange();
-				IDocument doc = viewer.getDocument();
-				try {
-					String contentType = doc.getContentType(p.x);
-					infoPresenter.setInformationProvider(InspectAction.this, contentType);				
-					
-					infoPresenter.install(viewer);
-//TODO: should be able to compute size constraints dynamically					
-					infoPresenter.setSizeConstraints(50, 10, true, false);
-					infoPresenter.showInformation();
-				} catch (BadLocationException e) {
-					return;
-				}				
+				if (!display.isDisposed()) {				
+					showExpressionView();
+					JavaInspectExpression exp = new JavaInspectExpression(result);
+					DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
+				}
+				evaluationCleanup();
 			}
 		});
 	}
@@ -124,9 +84,6 @@ public class InspectAction extends EvaluateAction implements IInformationProvide
 		
 		Object selection= getSelectedObject();
 		if (!(selection instanceof IStructuredSelection)) {
-			JavaEditor editor = (JavaEditor)part;
-			viewer = (TextViewer)editor.getViewer();
-			
 			super.run();
 			return;
 		}
@@ -149,18 +106,4 @@ public class InspectAction extends EvaluateAction implements IInformationProvide
 	protected IDataDisplay getDataDisplay() {
 		return getDirectDataDisplay();
 	}
-
-	public IRegion getSubject(ITextViewer textViewer, int offset) {
-		StyledText textWidget = viewer.getTextWidget();				
-		Point selectedRange = textWidget.getSelectionRange();
-		IRegion region = JavaWordFinder.findWord(viewer.getDocument(), selectedRange.x);
-		return region;
-	}
-
-	public String getInformation(ITextViewer textViewer, IRegion subject) {
-//		the ExpressionInformationControlAdapter was constructed with everything that it needs
-//		returning null would result in popup not being displayed 
-		return "null";  //$NON-NLS-1$
-	}
-
 }
