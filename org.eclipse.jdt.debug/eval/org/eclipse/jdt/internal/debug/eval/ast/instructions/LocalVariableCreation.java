@@ -63,7 +63,7 @@ public class LocalVariableCreation extends CompoundInstruction {
 	public void execute() throws CoreException {
 		IJavaType type;
 		if (fDimension == 0) {
-			type= getType(Signature.toString(fTypeSignature));
+			type= getType(RuntimeSignature.toString(fTypeSignature)); // See Bug 22165
 		} else {
 			type= getArrayType(fTypeSignature, fDimension);
 		}
