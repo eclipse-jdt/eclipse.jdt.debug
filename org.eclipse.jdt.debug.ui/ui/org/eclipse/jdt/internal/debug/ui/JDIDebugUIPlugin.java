@@ -40,6 +40,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -86,6 +87,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	
 	private ActionFilterAdapterFactory fActionFilterAdapterFactory;
 	private JavaSourceLocationWorkbenchAdapterFactory fSourceLocationAdapterFactory;
+	private JavaBreakpointWorkbenchAdapterFactory fBreakpointAdapterFactory;
 	
 	private IDebugModelPresentation fUtilPresentation;
 	
@@ -331,6 +333,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(fActionFilterAdapterFactory, JavaWatchExpression.class);
 		fSourceLocationAdapterFactory = new JavaSourceLocationWorkbenchAdapterFactory();
 		manager.registerAdapters(fSourceLocationAdapterFactory, IJavaSourceLocation.class);
+		fBreakpointAdapterFactory= new JavaBreakpointWorkbenchAdapterFactory();
+		manager.registerAdapters(fBreakpointAdapterFactory, IJavaBreakpoint.class);
 		
 		fEvaluationEngineManager= new JavaEvaluationEngineManager();
 		fJavaModelListener= new JavaModelListener();
@@ -354,6 +358,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.unregisterAdapters(fActionFilterAdapterFactory);
 		manager.unregisterAdapters(fSourceLocationAdapterFactory);
+		manager.unregisterAdapters(fBreakpointAdapterFactory);
 		if (fUtilPresentation != null) {
 			fUtilPresentation.dispose();
 		}
