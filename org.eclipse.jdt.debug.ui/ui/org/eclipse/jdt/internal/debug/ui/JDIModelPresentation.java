@@ -46,6 +46,7 @@ import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -1167,18 +1168,41 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 		if (breakpoint instanceof IJavaExceptionBreakpoint) {
 			return getExceptionBreakpointText((IJavaExceptionBreakpoint)breakpoint);
-		}
-		if (breakpoint instanceof IJavaWatchpoint) {
+		} else if (breakpoint instanceof IJavaWatchpoint) {
 			return getWatchpointText((IJavaWatchpoint)breakpoint);
 		} else if (breakpoint instanceof IJavaPatternBreakpoint) {
 			return getJavaPatternBreakpointText((IJavaPatternBreakpoint)breakpoint);
 		} else if (breakpoint instanceof IJavaTargetPatternBreakpoint) {
 			return getJavaTargetPatternBreakpointText((IJavaTargetPatternBreakpoint)breakpoint);
+		} else if (breakpoint instanceof IJavaStratumLineBreakpoint) {
+			return getJavaStratumLineBreakpointText((IJavaStratumLineBreakpoint)breakpoint);
 		} else if (breakpoint instanceof IJavaLineBreakpoint) {
 			return getLineBreakpointText((IJavaLineBreakpoint)breakpoint);
 		}
 
 		return ""; //$NON-NLS-1$
+	}
+
+	/**
+	 * @param breakpoint
+	 * @return
+	 */
+	private String getJavaStratumLineBreakpointText(IJavaStratumLineBreakpoint breakpoint) throws CoreException {
+		// TODO: finish this method
+		IResource resource= breakpoint.getMarker().getResource();
+		IMember member= BreakpointUtils.getMember(breakpoint);
+		StringBuffer label= new StringBuffer(resource.getName());
+		appendLineNumber(breakpoint, label);
+		appendHitCount(breakpoint, label);
+		appendSuspendPolicy(breakpoint,label);
+		appendThreadFilter(breakpoint, label);
+					
+		if (member != null) {
+			label.append(" - "); //$NON-NLS-1$
+			label.append(getJavaLabelProvider().getText(member));
+		}
+		
+		return label.toString();
 	}
 
 	protected String getExceptionBreakpointText(IJavaExceptionBreakpoint breakpoint) throws CoreException {

@@ -71,6 +71,11 @@
 		markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"
 		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint">
 	</breakpoint>		
+	<breakpoint
+		id="javaStratumLineBreakpointMarker"
+		markerType="org.eclipse.jdt.debug.javaStratumLineBreakpointMarker"
+		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaStratumLineBreakpoint">
+	</breakpoint>		
 </extension>
 
 <extension id="javaBreakpointMarker" point="org.eclipse.core.resources.markers">
@@ -137,6 +142,15 @@
    <persistent value="true"/>
    <attribute name="org.eclipse.jdt.debug.core.methodName"/>
    <attribute name="org.eclipse.jdt.debug.core.methodSignature"/>
+</extension>
+
+<extension id="javaStratumLineBreakpointMarker" point="org.eclipse.core.resources.markers">
+   <super type="org.eclipse.jdt.debug.commonJavaLineBreakpointMarker"/>
+   <persistent value="true"/>
+   <attribute name="org.eclipse.jdt.debug.core.stratum"/>
+   <attribute name="org.eclipse.jdt.debug.core.sourceName"/>
+   <attribute name="org.eclipse.jdt.debug.core.sourcePath"/>
+   <attribute name="org.eclipse.jdt.debug.core.pattern"/>
 </extension>
 
 </plugin>

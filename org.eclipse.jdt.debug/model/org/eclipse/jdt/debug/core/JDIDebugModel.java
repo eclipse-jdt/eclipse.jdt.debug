@@ -32,6 +32,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaStratumLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaTargetPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -292,6 +293,53 @@ public class JDIDebugModel {
 			attributes = new HashMap(10);
 		}		
 		return new JavaPatternBreakpoint(resource, sourceName, pattern, lineNumber, charStart, charEnd, hitCount, register, attributes);
+	}	
+	
+	/**
+	 * Creates and returns a pattern breakpoint for the given resource at the
+	 * given line number, which is installed in all classes whose fully 
+	 * qualified name matches the given pattern.
+	 * If hitCount > 0, the breakpoint will suspend execution when it is
+	 * "hit" the specified number of times. 
+	 * 
+	 * @param resource the resource on which to create the associated breakpoint
+	 *  marker
+	 * @param stratum the stratum in which the source name, source path and line number
+	 *  are relative.
+	 * @param sourceName the name of the source file in which the breakpoint is
+	 *  set. The pattern breakpoint will install itself in classes that have a source
+	 *  file name debug attribute that matches this value in the specified stratum,
+	 *  and satisfies the class name pattern.
+	 * @param sourcePath the path in the project of the source file in which the breakpoint is
+	 *  set, or <code>null</code>. When specified, the pattern breakpoint will
+	 *  install itself in classes that have a source file path in the specified stratum
+	 *  that matches this value, and satisfies the class name pattern.
+	 * @param pattern the class name pattern in which the pattern breakpoint should
+	 *   be installed. The pattern breakpoint will install itself in every class which
+	 *   matches the pattern.
+	 * @param lineNumber the lineNumber on which the breakpoint is set - line
+	 *   numbers are 1 based, associated with the source file in which
+	 *   the breakpoint is set
+	 * @param charStart the first character index associated with the breakpoint,
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
+	 * @param charEnd the last character index associated with the breakpoint,
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
+	 * @param hitCount the number of times the breakpoint will be hit before
+	 *   suspending execution - 0 if it should always suspend
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @param attributes a map of client defined attributes that should be assigned
+	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
+	 * @return a pattern breakpoint
+	 * @exception CoreException If this method fails. Reasons include:<ul> 
+	 *<li>Failure creating underlying marker.  The exception's status contains
+	 * the underlying exception responsible for the failure.</li></ul>
+	 * @since 3.0
+	 */
+	public static IJavaStratumLineBreakpoint createStratumBreakpoint(IResource resource, String stratum, String sourceName, String sourcePath, String classNamePattern, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+		if (attributes == null) {
+			attributes = new HashMap(10);
+		}		
+		return new JavaStratumLineBreakpoint(resource, stratum, sourceName, sourcePath, classNamePattern, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}	
 	
 	/**
