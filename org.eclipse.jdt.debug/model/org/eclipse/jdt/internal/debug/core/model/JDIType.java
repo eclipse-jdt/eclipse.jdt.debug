@@ -12,6 +12,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassType;
+import com.sun.jdi.InterfaceType;
 import com.sun.jdi.Type;
 
 /**
@@ -52,6 +53,9 @@ public class JDIType implements IJavaType {
 		if (type instanceof ClassType) {
 			return new JDIClassType(target, (ClassType)type);
 		}
+		if (type instanceof InterfaceType) {
+			return new JDIInterfaceType(target, (InterfaceType)type);
+    	}	
 		return new JDIType(target, type);
 	}
 	
