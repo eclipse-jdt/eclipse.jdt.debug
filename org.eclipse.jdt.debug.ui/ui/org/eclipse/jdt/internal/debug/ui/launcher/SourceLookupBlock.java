@@ -13,13 +13,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddAdvancedAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
@@ -32,12 +27,16 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -47,7 +46,6 @@ import org.eclipse.swt.widgets.Label;
  */
 public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILaunchConfigurationTab {
 	
-	protected IJavaProject fProject;
 	protected ILaunchConfiguration fConfig;
 	
 	protected RuntimeClasspathViewer fPathViewer;
@@ -227,19 +225,26 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	 * launch configuration.
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
+		setLaunchConfiguration(config);
+		boolean useDefault = true;
 		try {
-			setLaunchConfiguration(config);
-			IJavaProject project = JavaRuntime.getJavaProject(config);
-			setProject(project);
-			boolean useDefault = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
-			fDefaultButton.setSelection(useDefault);
-			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);
-			fPathViewer.setEntries(entries);
-			fPathViewer.setEnabled(!useDefault);
-			fPathViewer.setLaunchConfiguration(config);
+			useDefault = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
+		fDefaultButton.setSelection(useDefault);
+		try {
+			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);
+			fPathViewer.setEntries(entries);
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() != IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT) {
+				// do not log error for non-existant project
+				JDIDebugUIPlugin.log(e);
+			}
+		}
+		fPathViewer.setEnabled(!useDefault);
+		fPathViewer.setLaunchConfiguration(config);
+
 	}
 	
 	/**
@@ -271,25 +276,6 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	public IRuntimeClasspathEntry[] getEntries() {
 		return fPathViewer.getEntries();
 	}	
-	/**
-	 * Returns the Java project associated with the launch configuration
-	 * or <code>null</code> if none.
-	 * 
-	 * @return Java project or <code>null</code>
-	 */
-	protected IJavaProject getProject() {
-		return fProject;
-	}
-
-	/**
-	 * Sets the Java project associated with the launch configuration
-	 * or <code>null</code> if none.
-	 * 
-	 * @param project Java project or <code>null</code>
-	 */
-	private void setProject(IJavaProject project) {
-		fProject = project;
-	}
 	
 	/**
 	 * Sets the configuration associated with this source lookup
