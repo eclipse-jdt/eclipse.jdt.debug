@@ -16,7 +16,7 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 		super(name);
 	}
 
-	public void testSimpleHitCountBreakpoint() throws Exception {
+	public void testResetHitCountBreakpoint() throws Exception {
 		String typeName = "HitCountLooper";
 		IJavaLineBreakpoint bp = createLineBreakpoint(5, typeName);
 		bp.setHitCount(3);
@@ -43,7 +43,34 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 			iValue = value.getIntValue();
 			assertTrue("value of 'i' should be '4', but was " + iValue, iValue == 4);
 			
-			exit(thread2);
+			resumeAndExit(thread2);
+			
+			bp.delete();
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+
+	public void testExpiredHitCountBreakpoint() throws Exception {
+		String typeName = "HitCountLooper";
+		IJavaLineBreakpoint bp = createLineBreakpoint(5, typeName);
+		bp.setHitCount(3);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			IVariable var = frame.findVariable("i");
+			assertNotNull("Could not find variable 'i'", var);
+			
+			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
+			assertNotNull("variable 'i' has no value", value);
+			int iValue = value.getIntValue();
+			assertTrue("value of 'i' should be '2', but was " + iValue, iValue == 2);
+			
+			resumeAndExit(thread);
 			
 			bp.delete();
 		} finally {

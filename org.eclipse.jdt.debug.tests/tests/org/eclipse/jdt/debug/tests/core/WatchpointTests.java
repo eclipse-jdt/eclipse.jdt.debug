@@ -128,4 +128,69 @@ public class WatchpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}	
+
+	public void testDisabledAccess() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
+		
+		IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, false);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launch(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+
+			IBreakpoint hit = getBreakpoint(thread);
+			IStackFrame frame = thread.getTopStackFrame();
+			assertNotNull("No breakpoint", hit);
+			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
+			assertEquals("Should be line 26", frame.getLineNumber(), 26);			
+			
+			wp.setEnabled(false);
+						
+			resumeAndExit(thread);
+
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
+
+	public void testHitCountAccess() throws Exception {
+		String typeName = "org.eclipse.debug.tests.targets.Watchpoint";
+		
+		IJavaWatchpoint wp = createWatchpoint(typeName, "list", true, false);
+		wp.setHitCount(4);
+		
+		IJavaThread thread= null;
+		try {
+			thread= launch(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+
+			IBreakpoint hit = getBreakpoint(thread);
+			IStackFrame frame = thread.getTopStackFrame();
+			assertNotNull("No breakpoint", hit);
+			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
+			assertEquals("Should be line 26", frame.getLineNumber(), 26);			
+			
+			wp.setHitCount(0);
+			
+			// should hit access 6 more times
+			int count = 6;
+			while (count > 0) {
+				thread = resume(thread);
+				hit = getBreakpoint(thread);
+				frame = thread.getTopStackFrame();
+				assertNotNull("No breakpoint", hit);
+				assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
+				assertEquals("Should be line 26", frame.getLineNumber(), 26);
+				count--;
+			}
+			
+			resumeAndExit(thread);
+
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
 }
