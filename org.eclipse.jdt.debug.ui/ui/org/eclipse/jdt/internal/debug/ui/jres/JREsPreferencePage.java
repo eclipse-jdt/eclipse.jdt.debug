@@ -28,6 +28,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -113,11 +114,14 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		
-		IVMInstall defaultVM = getCurrentDefaultVM();
-		IVMInstall[] vms = fJREBlock.getJREs();
-		JREsUpdater updater = new JREsUpdater(getShell());
-		updater.updateJRESettings(vms, defaultVM);
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				IVMInstall defaultVM = getCurrentDefaultVM();
+				IVMInstall[] vms = fJREBlock.getJREs();
+				JREsUpdater updater = new JREsUpdater(getShell());
+				updater.updateJRESettings(vms, defaultVM);
+			}
+		});
 		
 		// save column widths
 		IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
