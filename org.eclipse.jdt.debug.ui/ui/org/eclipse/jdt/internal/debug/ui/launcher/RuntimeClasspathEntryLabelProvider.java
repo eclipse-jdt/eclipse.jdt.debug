@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaElement;
@@ -52,7 +53,7 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 						return lp.getImage(res);
 					}
 					boolean external = res == null;
-					boolean source = entry.getSourceAttachmentPath() != null;
+					boolean source = (entry.getSourceAttachmentPath() != null && !Path.EMPTY.equals(entry.getSourceAttachmentPath()));
 					String key = null;
 					if (external) {
 						if (source) {
