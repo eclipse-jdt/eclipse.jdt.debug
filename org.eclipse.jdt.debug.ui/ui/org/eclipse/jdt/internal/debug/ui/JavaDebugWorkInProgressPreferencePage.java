@@ -27,7 +27,7 @@ public class JavaDebugWorkInProgressPreferencePage extends PreferencePage implem
 	 * Set the default preferences for this page.
 	 */
 	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IJDIPreferencesConstants.PREF_USE_AST_EVALUATION, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_USE_AST_EVALUATION, true);
 	}
 
 	/*
