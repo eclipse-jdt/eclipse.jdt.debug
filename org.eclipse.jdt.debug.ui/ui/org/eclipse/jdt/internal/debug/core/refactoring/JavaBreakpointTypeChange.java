@@ -81,7 +81,8 @@ public abstract class JavaBreakpointTypeChange extends Change {
 			IBreakpoint breakpoint= breakpoints[i];
 			if (breakpoint instanceof IJavaBreakpoint) {
 				IJavaBreakpoint javaBreakpoint= (IJavaBreakpoint) breakpoint;
-				if (project.equals(BreakpointUtils.getType(javaBreakpoint).getJavaProject())) {
+				IType breakpointType= BreakpointUtils.getType(javaBreakpoint);
+				if (breakpointType != null && project.equals(breakpointType.getJavaProject())) {
 					changes.add(createChange(javaBreakpoint, null, newName, PROJECT_RENAME));
 				}
 			}
@@ -116,10 +117,11 @@ public abstract class JavaBreakpointTypeChange extends Change {
 			IBreakpoint breakpoint= breakpoints[i];
 			if (breakpoint instanceof IJavaBreakpoint) {
 				IJavaBreakpoint javaBreakpoint= (IJavaBreakpoint) breakpoint;
+				IType breakpointType= BreakpointUtils.getType(javaBreakpoint);
 				// check the name of the type where the breakpoint is installed
-				if (javaBreakpoint.getTypeName().startsWith(typeName)) {
+				if (breakpointType != null && javaBreakpoint.getTypeName().startsWith(typeName)) {
 					// if it matcheds, check the type
-					if (changedType.equals(BreakpointUtils.getType(javaBreakpoint))) {
+					if (changedType.equals(breakpointType)) {
 						changes.add(createChange(javaBreakpoint, changedType, argument, changeType));
 					} else {
 						// if it's not the type, check the inner types
@@ -165,7 +167,8 @@ public abstract class JavaBreakpointTypeChange extends Change {
 			IBreakpoint breakpoint= breakpoints[i];
 			if (breakpoint instanceof IJavaBreakpoint) {
 				IJavaBreakpoint javaBreakpoint= (IJavaBreakpoint) breakpoint;
-				if (packageFragment.equals(BreakpointUtils.getType(javaBreakpoint).getPackageFragment())) {
+				IType breakpointType= BreakpointUtils.getType(javaBreakpoint);
+				if (breakpointType != null && packageFragment.equals(breakpointType.getPackageFragment())) {
 					changes.add(createChange(javaBreakpoint, packageFragment, argument, changeType));
 				}
 			}
