@@ -12,6 +12,8 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICodeAssist;
 import org.eclipse.jdt.core.IJavaElement;
@@ -160,6 +162,12 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		IAdaptable context = DebugUITools.getDebugContext(); 
+		if (context instanceof IJavaStackFrame) {
+			action.setEnabled(true);
+		} else {
+			action.setEnabled(false);
+		}
 	}
 
 	/**
