@@ -1335,6 +1335,11 @@
     class ="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
     processType = "java">
   </consoleLineTracker>
+  <consoleLineTracker
+    id = "org.eclipse.jdt.debug.ui.J9ConsoleTracker"
+    class ="org.eclipse.jdt.internal.debug.ui.console.J9ConsoleTracker"
+    processType = "j9">
+  </consoleLineTracker>  
 </extension>
 
 </plugin>
