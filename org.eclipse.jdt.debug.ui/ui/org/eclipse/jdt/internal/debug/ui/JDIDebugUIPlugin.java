@@ -188,7 +188,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 			public void run() {
 				Shell shell= getActiveWorkbenchShell();
 				String vmName= fLabelProvider.getText(target);
-				DebugErrorDialog dialog= new DebugErrorDialog(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Hot_code_replace_failed_1"), MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), new Object[] {vmName}), exception.getStatus(), IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); //$NON-NLS-1$ //$NON-NLS-2$
+				IStatus status;
+				if (exception == null) {
+					status= new Status(IStatus.WARNING, getPluginId(), IStatus.WARNING, "The target VM does not support hot code replace", null);
+				} else {
+					status= exception.getStatus();
+				}
+				DebugErrorDialog dialog= new DebugErrorDialog(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Hot_code_replace_failed_1"), MessageFormat.format(DebugUIMessages.getString("JDIDebugUIPlugin.{0}_was_unable_to_replace_the_running_code_with_the_code_in_the_workspace._2"), new Object[] {vmName}), status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR); //$NON-NLS-1$ //$NON-NLS-2$
 				dialog.open();
 			}
 		});
