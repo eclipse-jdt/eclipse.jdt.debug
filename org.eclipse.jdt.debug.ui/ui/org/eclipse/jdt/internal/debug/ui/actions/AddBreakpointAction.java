@@ -213,11 +213,13 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 	 * Update in the UI thread
 	 */
 	protected void asyncUpdate() {
-		Display d = Display.getDefault();
-		if (d != null) {
+		final Display d = Display.getDefault();
+		if (d != null && !d.isDisposed()) {
 			Runnable r = new Runnable() {
 				public void run() {
-					update();
+					if (!d.isDisposed()) {
+						update();
+					}
 				}
 			};
 			d.asyncExec(r);
