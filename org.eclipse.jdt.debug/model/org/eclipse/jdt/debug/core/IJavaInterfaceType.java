@@ -30,7 +30,7 @@ public interface IJavaInterfaceType  extends IJavaType {
 	 * the failure.</li>
 	 * </ul>
 	 */
-	public IJavaVariable getField(String name) throws DebugException;	
+	public IJavaFieldVariable getField(String name) throws DebugException;	
 		
 	/**
 	 * Returns the class object associated with this interface type.

@@ -18,27 +18,6 @@ import org.eclipse.debug.core.model.IVariable;
 public interface IJavaVariable extends IVariable, IJavaModifiers {
 	
 	/**
-	 * Returns whether this variable is declared as transient.
-	 *
-	 * @return whether this variable has been declared as transient
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li></ul>
-	 */
-	public boolean isTransient() throws DebugException;
-	/**
-	 * Returns whether this variable is declared as volatile.
-	 * 
-	 * @return whether this variable has been declared as volatile
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li></ul>
-	 */
-	public boolean isVolatile() throws DebugException;
-	
-	/**
 	 * Returns the JNI-style signature for the declared type of this
 	 * variable, or <code>null</code> if the type associated with the
 	 * signature is not yet loaded in the target VM.
@@ -65,20 +44,6 @@ public interface IJavaVariable extends IVariable, IJavaModifiers {
 	 */
 	public IJavaType getJavaType() throws DebugException;	
 	
-	/**
-	 * Returns the declaring type of this variable if this variable
-	 * represents a field, otherwise <code>null</code>.
-	 * 
-	 * @return the declaring type of this field, or <code>null</code>
-	 */
-	public IJavaType getDeclaringType();	
-	
-	/**
-	 * Returns whether this variable contains the value of a field
-	 * 
-	 * @return whether this variable contains the value of a field
-	 */
-	public boolean isField();
 }
 
 

@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.ITypeNameRequestor;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -149,8 +150,8 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 				Object o=  ss.getFirstElement();
 				if (o instanceof IField) {
 					return (IField) o;
-				} else if (o instanceof IJavaVariable && ((IJavaVariable)o).isField()) {
-					return getField((IJavaVariable) o);
+				} else if (o instanceof IJavaFieldVariable) {
+					return getField((IJavaFieldVariable) o);
 				}
 			}
 		}
@@ -161,7 +162,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 	 * Return the associated IField (Java model) for the given
 	 * IJavaFieldVariable (JDI model)
 	 */
-	public IField getField(IJavaVariable variable) {
+	public IField getField(IJavaFieldVariable variable) {
 		IField field= (IField)fFoundFields.get(variable);
 		if (field != null) {
 			return field;
@@ -188,7 +189,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 	 * Returns a list of matching types (IType - Java model) that correspond to the 
 	 * declaring type (ReferenceType - JDI model) of the given variable.
 	 */
-	protected List searchForDeclaringType(IJavaVariable variable) {
+	protected List searchForDeclaringType(IJavaFieldVariable variable) {
 		List types= new ArrayList();
 		ILaunch launch = variable.getDebugTarget().getLaunch();
 		if (launch == null) {
@@ -286,11 +287,6 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 		}
 		return typeName.toCharArray();
 	}
-	
-	protected void update() {
-		super.update();
-		getAction().setEnabled(getElement() != null);
-	}	
-	
+		
 }
 

@@ -79,7 +79,7 @@ public interface IJavaClassType  extends IJavaType {
 	 * the failure.</li>
 	 * </ul>
 	 */
-	public IJavaVariable getField(String name) throws DebugException;	
+	public IJavaFieldVariable getField(String name) throws DebugException;	
 	
 	/**
 	 * Returns the superclass of this class type, or <code>null</code>

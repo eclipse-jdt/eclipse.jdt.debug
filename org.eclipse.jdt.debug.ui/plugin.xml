@@ -641,7 +641,7 @@
     </objectContribution>
   	<objectContribution 
 		id="org.eclipse.jdt.debug.ui.WatchpointActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
+		objectClass="org.eclipse.jdt.debug.core.IJavaFieldVariable">
   		<action id="org.eclipse.jdt.debug.ui.VariableWatchpoint"
   			label="%manageWatchpointAction.label"
   			helpContextId="manage_watchpoint_action_context"

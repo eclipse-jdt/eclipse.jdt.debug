@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -85,7 +86,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	/**
 	 * @see IJavaObject#getField(String, boolean)
 	 */
-	public IJavaVariable getField(String name, boolean superField) throws DebugException {
+	public IJavaFieldVariable getField(String name, boolean superField) throws DebugException {
 		ReferenceType ref = getUnderlyingReferenceType();
 		try {
 			if (superField) {
@@ -117,7 +118,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	/**
 	 * @see IJavaObject#getField(String, String)
 	 */
-	public IJavaVariable getField(String name, String typeSignature) throws DebugException {
+	public IJavaFieldVariable getField(String name, String typeSignature) throws DebugException {
 		ReferenceType ref= getUnderlyingReferenceType();
 		try {
 			Field field= null, enclosingThis= null, fieldTmp= null;

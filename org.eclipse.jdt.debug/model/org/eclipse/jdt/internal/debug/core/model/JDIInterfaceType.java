@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 
@@ -32,7 +33,7 @@ public class JDIInterfaceType extends JDIType implements IJavaInterfaceType {
 	/**
 	 * @see IJavaInterfaceType#getField(String)
 	 */
-	public IJavaVariable getField(String name) throws DebugException {
+	public IJavaFieldVariable getField(String name) throws DebugException {
 		try {
 			Field field = ((InterfaceType)getUnderlyingType()).fieldByName(name);
 			if (field != null) {

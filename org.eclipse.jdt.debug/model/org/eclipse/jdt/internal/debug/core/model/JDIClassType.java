@@ -13,6 +13,7 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -119,7 +120,7 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 	/**
 	 * @see IJavaClassType#getField(String)
 	 */
-	public IJavaVariable getField(String name) throws DebugException {
+	public IJavaFieldVariable getField(String name) throws DebugException {
 		try {
 			Field field = ((ClassType)getUnderlyingType()).fieldByName(name);
 			if (field != null) {

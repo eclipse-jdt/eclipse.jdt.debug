@@ -133,21 +133,7 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	public boolean verifyValue(IValue value) {
 		return false;
 	}		
-	 
-	/**
-	 * @see IJavaVariable#isVolatile()
-	 */
-	public boolean isVolatile() throws DebugException {
-		return false;
-	}
-	
-	/**
-	 * @see IJavaVariable#isTransient()
-	 */
-	public boolean isTransient() throws DebugException {
-		return false;
-	}
-	
+	 	
 	/**
 	 * @see IJavaModifiers#isSynthetic()
 	 */
@@ -252,20 +238,6 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	 */
 	public boolean hasValueChanged() throws DebugException {
 		return getChangeCount() == getJavaDebugTarget().getSuspendCount();
-	}
-
-	/**
-	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getDeclaringType()
-	 */
-	public IJavaType getDeclaringType() {
-		return null;
-	}
-	
-	/**
-	 * @see org.eclipse.jdt.debug.core.IJavaVariable#isField() 
-	 */
-	public boolean isField() {
-		return false;
 	}
 }
 
