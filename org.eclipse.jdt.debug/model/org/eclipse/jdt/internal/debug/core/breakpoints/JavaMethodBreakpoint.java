@@ -207,7 +207,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			if (hitCount > 0) {
 				request.putProperty(HIT_COUNT, new Integer(hitCount));
 			}		
-			request.setEnabled(isEnabled() && isExit());
+			request.setEnabled(isEnabled() && (isExit() || isEntry()));
 		} catch (VMDisconnectedException e) {
 			if (!target.isAvailable()) {
 				return null;
