@@ -158,6 +158,7 @@ public abstract class ConnectorImpl implements Connector {
 
 	 	protected ArgumentImpl(String name, String description, String label, boolean mustSpecify) {
 	 		fName = name;
+	 		fLabel = label;
 	 		fDescription = description;
 	 		fMustSpecify = mustSpecify;
 	 	}
