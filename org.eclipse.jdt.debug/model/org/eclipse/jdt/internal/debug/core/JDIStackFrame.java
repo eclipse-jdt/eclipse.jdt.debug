@@ -839,7 +839,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			// could have been set via a call to JDIThread#updateStackFrames
 			((JDIThread)getThread()).computeStackFrames();
 			if (fStackFrame == null) {
-				requestFailed("Thread non suspended, stack frame unavailable.", null);
+				requestFailed("Thread not suspended, stack frame unavailable.", null);
 			}
 		}
 		return fStackFrame;
