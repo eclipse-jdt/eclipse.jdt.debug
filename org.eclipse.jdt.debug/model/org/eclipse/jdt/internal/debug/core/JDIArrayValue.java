@@ -32,7 +32,12 @@ public class JDIArrayValue extends JDIValue implements IJavaArray {
 	 */
 	public IJavaValue[] getValues() throws DebugException {
 		List list = getUnderlyingValues();
-		return (IJavaValue[])(list.toArray(new IJavaValue[list.size()]));
+		int count = list.size();
+		IJavaValue[] values = new IJavaValue[count];
+		for (int i = 0; i < count; i++) {
+			values[i] = getValue(i);
+		}
+		return values;
 	}
 
 	/**
