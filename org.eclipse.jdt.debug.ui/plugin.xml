@@ -2370,6 +2370,12 @@
             icon="icons/full/obj16/library_obj.gif"
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.classpathContainer">
       </sourceContainerPresentation>
+      <sourceContainerPresentation
+            browserClass="org.eclipse.jdt.internal.debug.ui.sourcelookup.JavaProjectSourceContainerBrowser"
+            containerTypeID="org.eclipse.jdt.launching.sourceContainer.javaProject"
+            icon="icons/full/obj16/prj_obj.gif"
+            id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.javaProject">
+      </sourceContainerPresentation>      
    </extension>
 	<extension point="org.eclipse.core.runtime.adapters">
          <factory 

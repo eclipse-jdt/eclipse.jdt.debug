@@ -11,8 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jdt.internal.launching.ClasspathVariableSourceContainer;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.NewVariableEntryDialog;
@@ -28,7 +28,7 @@ public class ClasspathVariableSourceContainerBrowser implements ISourceContainer
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell, ILaunchConfiguration configuration) {
+	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director) {
 		NewVariableEntryDialog dialog= new NewVariableEntryDialog(shell);
 		dialog.setTitle(SourceLookupMessages.getString("ClasspathVariableSourceContainerBrowser.0")); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {			

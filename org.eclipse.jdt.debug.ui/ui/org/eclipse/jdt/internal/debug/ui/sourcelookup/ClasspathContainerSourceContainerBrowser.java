@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.ui.sourcelookup;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -33,11 +34,14 @@ public class ClasspathContainerSourceContainerBrowser implements ISourceContaine
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell, ILaunchConfiguration configuration) {
+	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director) {
 		IJavaProject project = null;
-		try {
-			project = JavaRuntime.getJavaProject(configuration);
-		} catch (CoreException e) {
+		ILaunchConfiguration configuration = director.getLaunchConfiguration();
+		if (configuration != null) {
+			try {
+				project = JavaRuntime.getJavaProject(configuration);
+			} catch (CoreException e) {
+			}
 		}
 		ClasspathContainerWizard wizard = new ClasspathContainerWizard((IClasspathEntry)null, project, new IClasspathEntry[0]);
 		
