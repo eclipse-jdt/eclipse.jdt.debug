@@ -2106,4 +2106,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 
+	/**
+	 * @see IThread#hasStackFrames()
+	 */
+	public boolean hasStackFrames() throws DebugException {
+		return computeStackFrames().size() > 0;
+	}
+
 }

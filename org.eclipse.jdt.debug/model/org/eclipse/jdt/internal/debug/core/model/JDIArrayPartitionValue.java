@@ -123,4 +123,11 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 			return null;
 	}
 
+	/**
+	 * @see IValue#hasVariables()
+	 */
+	public boolean hasVariables() throws DebugException {
+		return getVariables0().size() > 0;
+	}
+
 }

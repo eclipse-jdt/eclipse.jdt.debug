@@ -1048,4 +1048,18 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			fireChangeEvent(DebugEvent.STATE);
 		}
 	}	
+	/**
+	 * @see IStackFrame#hasRegisterGroups()
+	 */
+	public boolean hasRegisterGroups() throws DebugException {
+		return false;
+	}
+
+	/**
+	 * @see IStackFrame#hasVariables()
+	 */
+	public boolean hasVariables() throws DebugException {
+		return getVariables0().size() > 0;
+	}
+
 }

@@ -1981,5 +1981,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		}				
 	}
 
+	/**
+	 * @see IDebugTarget#hasThreads()
+	 */
+	public boolean hasThreads() throws DebugException {
+		return getThreadList().size() > 0;
+	}
+
 }
 

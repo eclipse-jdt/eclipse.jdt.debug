@@ -365,4 +365,11 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	public String toString() {
 		return getUnderlyingValue().toString();
 	}
+	/**
+	 * @see IValue#hasVariables()
+	 */
+	public boolean hasVariables() throws DebugException {
+		return getVariables0().size() > 0;
+	}
+
 }
