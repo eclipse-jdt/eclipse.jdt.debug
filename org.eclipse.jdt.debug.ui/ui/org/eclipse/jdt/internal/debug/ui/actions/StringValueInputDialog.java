@@ -70,7 +70,11 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * (source viewer or simple text viewer) in the input area.
      */
     protected void populateInputArea() {
-        boolean useEvaluation = getDialogSettings().getBoolean(USE_EVALUATION);
+        boolean useEvaluation= false;
+        IDialogSettings settings = getDialogSettings();
+        if (settings != null) {
+            useEvaluation= settings.getBoolean(USE_EVALUATION);
+        }
         if (useEvaluation) {
             createSourceViewer();
             fUseLiteralValue= false;
@@ -107,7 +111,12 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         }
         fWrapText= new Button(parent, SWT.CHECK);
         fWrapText.setText(ActionMessages.getString("StringValueInputDialog.4")); //$NON-NLS-1$
-        fWrapText.setSelection(getDialogSettings().getBoolean(WRAP_TEXT));
+        boolean wrap= true;
+        IDialogSettings settings = getDialogSettings();
+        if (settings != null) {
+            wrap= settings.getBoolean(WRAP_TEXT);
+        }
+        fWrapText.setSelection(wrap);
         updateWordWrap();
         fWrapText.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
