@@ -166,6 +166,7 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     }
 
     protected void launchWorkingCopyAndWait(ILaunchConfigurationWorkingCopy workingCopy) throws Exception {
+    	System.gc();
         workingCopy.launch(ILaunchManager.RUN_MODE, null, false);
         synchronized (fLock) {
             if (!fStopped) {
