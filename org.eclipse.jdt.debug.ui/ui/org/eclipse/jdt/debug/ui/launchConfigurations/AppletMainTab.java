@@ -52,8 +52,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
- * This tab appears in the LaunchConfigurationDialog for launch configurations that
- * require Java-specific launching information such as a main type and JRE.
+ * This tab appears for java applet launch configurations and allows the user to edit
+ * attributes such as the applet class to launch and its owning project, if any.
+ * 
+ * @since 2.1
  */
 public class AppletMainTab extends JavaLaunchConfigurationTab {
 		

@@ -47,10 +47,12 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
  
 /**
- * This tab appears for local java launch configurations and allows the user to edit
- * program arguments, VM arguments, and the working directory attributes.
+ * This tab appears for java applet launch configurations and allows the user to edit
+ * applet-specific attributes such as width, height, name & applet parameters.
+ * 
+ * @since 2.1
  */
-public class AppletArgumentsTab extends JavaLaunchConfigurationTab {
+public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	
 	private Label fWidthLabel;
 	private Text fWidthText;
@@ -65,8 +67,13 @@ public class AppletArgumentsTab extends JavaLaunchConfigurationTab {
 
 	private static final String EMPTY_STRING = "";	 //$NON-NLS-1$
 	
+	/**
+	 * The default value for the 'width' attribute.	 */
 	public static final int DEFAULT_APPLET_WIDTH = 200;
 	
+	/**
+	 * The default value for the 'height' attribute.
+	 */
 	public static final int DEFAULT_APPLET_HEIGHT = 200;
 
 	/**
@@ -77,91 +84,92 @@ public class AppletArgumentsTab extends JavaLaunchConfigurationTab {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = 3;
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
 		createVerticalSpacer(comp);
 		
-		Composite projComp = new Composite(comp, SWT.NONE);
-		GridLayout projLayout = new GridLayout();
-		projLayout.numColumns = 3;
-		projLayout.marginHeight = 0;
-		projLayout.marginWidth = 0;
-		projComp.setLayout(projLayout);
-		gd = new GridData();
-		gd.horizontalSpan = 3;
-		projComp.setLayoutData(gd);
+		Composite widthHeightNameComp = new Composite(comp, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		widthHeightNameComp.setLayoutData(gd);
+		GridLayout widthHeightNameLayout = new GridLayout();
+		widthHeightNameLayout.marginHeight = 0;
+		widthHeightNameLayout.marginWidth = 0;
+		widthHeightNameComp.setLayout(widthHeightNameLayout);
 		
-		this.fWidthLabel= new Label(projComp, SWT.NONE);
-		this.fWidthLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.widthlabel.text")); //$NON-NLS-1$
-		gd = new GridData();
-		this.fWidthLabel.setLayoutData(gd);
+		fWidthLabel= new Label(widthHeightNameComp, SWT.NONE);
+		fWidthLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.widthlabel.text")); //$NON-NLS-1$
 		
-		this.fWidthText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		this.fWidthText.setLayoutData(gd);
-		this.fWidthText.addModifyListener(new ModifyListener() {
+		fWidthText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fWidthText.setLayoutData(gd);
+		fWidthText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		this.fHeightLabel= new Label(projComp, SWT.NONE);
-		this.fHeightLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.heightlabel.text")); //$NON-NLS-1$
-		gd = new GridData();
-		this.fHeightLabel.setLayoutData(gd);
 		
-		this.fHeightText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		this.fHeightText.setLayoutData(gd);
-		this.fHeightText.addModifyListener(new ModifyListener() {
+		fHeightLabel= new Label(widthHeightNameComp, SWT.NONE);
+		fHeightLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.heightlabel.text")); //$NON-NLS-1$
+		
+		fHeightText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fHeightText.setLayoutData(gd);
+		fHeightText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		this.fNameLabel = new Label(projComp, SWT.NONE);
-		this.fNameLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.namelabel.text")); //$NON-NLS-1$
-		gd = new GridData();
-		this.fNameLabel.setLayoutData(gd); 
 		
-		this.fNameText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		this.fNameText.setLayoutData(gd);
-		this.fNameText.addModifyListener(new ModifyListener() {
+		fNameLabel = new Label(widthHeightNameComp, SWT.NONE);
+		fNameLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.namelabel.text")); //$NON-NLS-1$
+		
+		fNameText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fNameText.setLayoutData(gd);
+		fNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
 		});	
 		
-		Label parameterLabel = new Label(comp, SWT.NONE);
+		createVerticalSpacer(comp);
+		
+		Composite parametersComp = new Composite(comp, SWT.NONE);
+		gd = new GridData(GridData.FILL_BOTH);
+		parametersComp.setLayoutData(gd);
+		GridLayout parametersLayout = new GridLayout();
+		parametersLayout.numColumns = 2;
+		parametersLayout.marginHeight = 0;
+		parametersLayout.marginWidth = 0;
+		parametersComp.setLayout(parametersLayout);
+		
+		Label parameterLabel = new Label(parametersComp, SWT.NONE);
 		parameterLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.parameterslabel.text")); //$NON-NLS-1$
 		gd = new GridData();
-		gd.horizontalSpan = 3;
+		gd.horizontalSpan = 2;
 		parameterLabel.setLayoutData(gd);
 		
-		this.fParametersTable = new Table(comp, SWT.BORDER | SWT.MULTI);
-		this.fParametersTable.setData(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS);
+		fParametersTable = new Table(parametersComp, SWT.BORDER | SWT.MULTI);
+		fParametersTable.setData(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS);
 		TableLayout tableLayout = new TableLayout();
-		this.fParametersTable.setLayout(tableLayout);
+		fParametersTable.setLayout(tableLayout);
 		gd = new GridData(GridData.FILL_BOTH);
-		this.fParametersTable.setLayoutData(gd);
+		fParametersTable.setLayoutData(gd);
 		TableColumn column1 = new TableColumn(this.fParametersTable, SWT.NONE);
 		column1.setText(LauncherMessages.getString("appletlauncher.argumenttab.parameterscolumn.name.text")); //$NON-NLS-1$
 		TableColumn column2 = new TableColumn(this.fParametersTable, SWT.NONE);
 		column2.setText(LauncherMessages.getString("appletlauncher.argumenttab.parameterscolumn.value.text"));		 //$NON-NLS-1$
 		tableLayout.addColumnData(new ColumnWeightData(100));
 		tableLayout.addColumnData(new ColumnWeightData(100));
-		this.fParametersTable.setHeaderVisible(true);
-		this.fParametersTable.setLinesVisible(true);
-		this.fParametersTable.addSelectionListener(new SelectionAdapter() {
+		fParametersTable.setHeaderVisible(true);
+		fParametersTable.setLinesVisible(true);
+		fParametersTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				setParametersButtonsEnableState();
 			}
 		});
-		this.fParametersTable.addMouseListener(new MouseAdapter() {
+		fParametersTable.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
 				setParametersButtonsEnableState();
 				if (fParametersEditButton.isEnabled()) {
@@ -170,7 +178,7 @@ public class AppletArgumentsTab extends JavaLaunchConfigurationTab {
 			}
 		});
 	
-		Composite envButtonComp = new Composite(comp, SWT.NONE);
+		Composite envButtonComp = new Composite(parametersComp, SWT.NONE);
 		GridLayout envButtonLayout = new GridLayout();
 		envButtonLayout.marginHeight = 0;
 		envButtonLayout.marginWidth = 0;
@@ -195,7 +203,7 @@ public class AppletArgumentsTab extends JavaLaunchConfigurationTab {
 		fParametersRemoveButton = createPushButton(envButtonComp, LauncherMessages.getString("appletlauncher.argumenttab.parameters.button.remove.text"), null); //$NON-NLS-1$
 		fParametersRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				handleEnvRemoveButtonSelected();
+				handleParametersRemoveButtonSelected();
 			}
 		});
 	}
@@ -243,7 +251,7 @@ public class AppletArgumentsTab extends JavaLaunchConfigurationTab {
 		openNewParameterDialog(dialog, selectedItem);		
 	}
 
-	private void handleEnvRemoveButtonSelected() {
+	private void handleParametersRemoveButtonSelected() {
 		int[] selectedIndices = this.fParametersTable.getSelectionIndices();
 		this.fParametersTable.remove(selectedIndices);
 		setParametersButtonsEnableState();
