@@ -19,6 +19,7 @@ import junit.framework.TestSuite;
 import org.eclipse.jdt.debug.tests.core.ArchiveSourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.BootpathTests;
 import org.eclipse.jdt.debug.tests.core.BreakpointListenerTests;
+import org.eclipse.jdt.debug.tests.core.BreakpointLocationVerificationTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathContainerTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathProviderTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathVariableTests;
@@ -147,6 +148,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(WatchExpressionTests.class));
 		addTest(new TestSuite(LineTrackerTests.class));
 		addTest(new TestSuite(StratumTests.class));
+		addTest(new TestSuite(BreakpointLocationVerificationTests.class));
 		// HCR tests are last - they modify resources
 		addTest(new TestSuite(HcrTests.class));
 	}
