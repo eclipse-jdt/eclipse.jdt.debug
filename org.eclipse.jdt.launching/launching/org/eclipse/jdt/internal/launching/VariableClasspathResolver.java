@@ -1,9 +1,20 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.jdt.internal.launching;
 
-import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -31,7 +42,7 @@ public class VariableClasspathResolver implements IRuntimeClasspathEntryResolver
 
 	private IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry) throws CoreException{
 		String variableString = ((VariableClasspathEntry)entry).getVariableString();
-		String strpath = StringVariableManager.getDefault().performStringSubstitution(variableString);
+		String strpath = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(variableString);
 		IPath path = new Path(strpath);
 		IRuntimeClasspathEntry archiveEntry = JavaRuntime.newArchiveRuntimeClasspathEntry(path);
 		return new IRuntimeClasspathEntry[] { archiveEntry };	
