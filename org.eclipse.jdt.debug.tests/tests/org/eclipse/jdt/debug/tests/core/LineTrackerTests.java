@@ -228,5 +228,51 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			terminateAndRemove(fTarget);
 		}	    
 	}
+	
+	public void testStringConcatenation() throws Exception {
+	    ConsoleLineTracker.setDelegate(this);
+	    String typeName = "PrintConcatenation";
+	    createConditionalLineBreakpoint(20, typeName, "System.out.println(\"var = \" + foo); return false;", true);
+	    fTarget = null;
+	    try {
+	        fTarget = launchAndTerminate(typeName);
+	        synchronized (fLock) {
+			    if (!fStopped) {
+			        fLock.wait(30000);
+			    }
+			}
+	        assertTrue("Never received 'start' notification", fStarted);
+			assertTrue("Never received 'stopped' notification", fStopped);
+			assertEquals("Wrong number of lines output", 2, fLinesRead.size());
+			assertEquals("Wrong output", "var = foo", fLinesRead.get(0));
+	    } finally {
+	        ConsoleLineTracker.setDelegate(null);
+	        removeAllBreakpoints();
+	        terminateAndRemove(fTarget);
+	    }
+	}
+	
+	public void testIntConcatenation() throws Exception {
+	    ConsoleLineTracker.setDelegate(this);
+	    String typeName = "PrintConcatenation";
+	    createConditionalLineBreakpoint(20, typeName, "System.out.println(\"var = \" + x); return false;", true);
+	    fTarget = null;
+	    try {
+	        fTarget = launchAndTerminate(typeName);
+	        synchronized (fLock) {
+			    if (!fStopped) {
+			        fLock.wait(30000);
+			    }
+			}
+	        assertTrue("Never received 'start' notification", fStarted);
+			assertTrue("Never received 'stopped' notification", fStopped);
+			assertEquals("Wrong number of lines output", 2, fLinesRead.size());
+			assertEquals("Wrong output", "var = 35", fLinesRead.get(0));
+	    } finally {
+	        ConsoleLineTracker.setDelegate(null);
+	        removeAllBreakpoints();
+	        terminateAndRemove(fTarget);
+	    }
+	}	
 
 }
