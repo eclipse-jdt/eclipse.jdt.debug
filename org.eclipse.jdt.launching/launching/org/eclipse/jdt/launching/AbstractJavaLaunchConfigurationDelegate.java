@@ -702,9 +702,10 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	private void getReferencedProjectSet(IProject project, HashSet referencedProjSet) throws CoreException{
 		IProject[] projects = project.getReferencedProjects();
 		for (int i = 0; i < projects.length; i++) {
-			if (!referencedProjSet.contains(projects[i])) {
-				referencedProjSet.add(projects[i]);
-				getReferencedProjectSet(projects[i], referencedProjSet);
+			IProject refProject= projects[i];
+			if (refProject.exists() && !referencedProjSet.contains(refProject)) {
+				referencedProjSet.add(refProject);
+				getReferencedProjectSet(refProject, referencedProjSet);
 			}
 		}
 		
