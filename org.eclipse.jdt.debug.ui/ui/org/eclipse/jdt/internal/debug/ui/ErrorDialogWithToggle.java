@@ -48,7 +48,6 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		fStore= store;
 		fPreferenceKey= preferenceKey;
 		fToggleMessage= toggleMessage;
-		setBlockOnOpen(false);
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -66,7 +65,6 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
 		button.setText(label);		
 
-		// FieldEditor GridData
 		GridData data = new GridData(SWT.NONE);
 		data.horizontalSpan= 2;
 		data.horizontalAlignment= GridData.CENTER;
