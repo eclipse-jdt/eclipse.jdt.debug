@@ -685,6 +685,13 @@
                id="org.eclipse.jdt.debug.ui.variableViewActions.PrimitiveOptions">
          </action>
          <action
+               helpContextId="edit_logical_structures_action_context"
+               label="%editLogicalStructuresAction.label"
+               tooltip="%editLogicalStructuresAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.actions.EditLogicalStructuresAction"
+               menubarPath="javaActions"
+               id="org.eclipse.jdt.debug.ui.variableViewActions.LogicalStructures"/>         
+         <action
                label="%detailOptionsAction.label"
                helpContextId="detail_options_action_context"
                tooltip="%detailOptionsAction.tooltip"
@@ -731,13 +738,6 @@
                menubarPath="javaActions"
                tooltip="%showConstantsAction.tooltip">
          </action>
-         <action
-               helpContextId="edit_logical_structures_action_context"
-               label="%editLogicalStructuresAction.label"
-               tooltip="%editLogicalStructuresAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.actions.EditLogicalStructuresAction"
-               menubarPath="javaActions"
-               id="org.eclipse.jdt.debug.ui.variableViewActions.LogicalStructures"/>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.ExpressionView"
