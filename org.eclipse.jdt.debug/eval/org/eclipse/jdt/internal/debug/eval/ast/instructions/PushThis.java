@@ -6,6 +6,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
@@ -23,15 +25,18 @@ public class PushThis extends SimpleInstruction {
 	
 	public void execute() throws CoreException {
 		IRuntimeContext context= getContext();
-		IJavaObject rec = context.getThis();
-		if (rec == null) {
+		IJavaObject thisInstance = context.getThis();
+		if (thisInstance == null) {
 			// static context
 			push(context.getReceivingType());
 		} else {
 			if (fEnclosingLevel != 0) {
-				rec= ((JDIObjectValue)rec).getEnclosingObject(fEnclosingLevel);
+				thisInstance= ((JDIObjectValue)thisInstance).getEnclosingObject(fEnclosingLevel);
+				if (thisInstance == null) {
+					throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, InstructionsEvaluationMessages.getString("PushThis.Unable_to_retrieve_the_correct_enclosing_instance_of__this__2"), null)); //$NON-NLS-1$
+				}
 			}
-			push(rec);
+			push(thisInstance);
 		}
 	}
 
