@@ -1413,7 +1413,7 @@ public class VerbosePacketStream extends PrintStream {
 			String name= readString(in);
 			String signature= readString(in);
 			int modifiers= in.readInt();
-			printlnFieldId(TcpIpSpyMessages.getString("VerbosePacketStream.Method_id__113"), methodId); //$NON-NLS-1$
+			printlnMethodId(TcpIpSpyMessages.getString("VerbosePacketStream.Method_id__113"), methodId); //$NON-NLS-1$
 			println(TcpIpSpyMessages.getString("VerbosePacketStream.Name__110"), name); //$NON-NLS-1$
 			println(TcpIpSpyMessages.getString("VerbosePacketStream.Signature__106"), signature); //$NON-NLS-1$
 			printModifiers(modifiers);
