@@ -316,7 +316,6 @@
 			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewerContribution>
@@ -328,7 +327,6 @@
 			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewerContribution>
@@ -494,7 +492,6 @@
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewContribution>
@@ -506,7 +503,6 @@
 			toolbarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
-			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewContribution>
