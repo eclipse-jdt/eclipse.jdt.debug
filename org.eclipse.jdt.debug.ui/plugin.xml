@@ -2650,5 +2650,15 @@ M4 = Platform-specific fourth key
          </enablement>
       </consolePatternMatchListener>
    </extension>   
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipse.jdt.internal.debug.ui.console.JavaStackTracePageParticipant"
+            id="org.eclipse.jdt.debug.ui.stackTraceConsoleParticipant">
+         <enablement>
+            <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
 
 </plugin>

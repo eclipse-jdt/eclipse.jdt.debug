@@ -26,24 +26,35 @@ import org.eclipse.ui.console.IOConsole;
  */
 public class JavaStackTraceConsoleFactory implements IConsoleFactory {
     public final static String CONSOLE_TYPE = "javaStackTraceConsole"; //$NON-NLS-1$
-    
-    private IOConsole fConsole;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleFactory#openConsole()
      */
     public void openConsole() {
-        if (fConsole == null) {
-        fConsole = new IOConsole(ConsoleMessages.getString("JavaStackTraceConsoleFactory.0"), CONSOLE_TYPE, null); //$NON-NLS-1$
-        try {
-            fConsole.getInputStream().close();
-        } catch (IOException e) {
-        }
+        IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
+        IConsole[] consoles = consoleManager.getConsoles();
+        IOConsole theConsole = null;
+        for (int i = 0; i < consoles.length; i++) {
+            IConsole console = consoles[i];
+            if (console instanceof IOConsole) {
+                IOConsole ioConsole = ((IOConsole)console);
+                if (ioConsole.getType().equals(CONSOLE_TYPE)) {
+                    theConsole = ioConsole;
+                    break;
+                }
+            }
         }
         
-        IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
-        consoleManager.addConsoles(new IConsole[]{fConsole});
-        consoleManager.showConsoleView(fConsole);
+        if (theConsole == null) {
+            theConsole = new IOConsole(ConsoleMessages.getString("JavaStackTraceConsoleFactory.0"), CONSOLE_TYPE, null); //$NON-NLS-1$
+	        try {
+	            theConsole.getInputStream().close();
+	        } catch (IOException e) {
+	        }
+	        consoleManager.addConsoles(new IConsole[]{theConsole});
+        }
+        
+        consoleManager.showConsoleView(theConsole);
     }
 
 }
