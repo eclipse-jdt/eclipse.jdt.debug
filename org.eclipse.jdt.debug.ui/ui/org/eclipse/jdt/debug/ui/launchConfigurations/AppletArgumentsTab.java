@@ -15,7 +15,15 @@ import org.eclipse.jdt.internal.debug.ui.launcher.AppletWorkingDirectoryBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
 import org.eclipse.ui.help.WorkbenchHelp;
 
- 
+/**
+ * A launch configuration tab that displays and edits program arguments,
+ * VM arguments, and working directory launch configuration attributes,
+ * for applets.
+ * <p>
+ * This class may be instantiated. This class is not intended to be subclassed.
+ * </p>
+ * @since 2.1
+ */
 public class AppletArgumentsTab extends JavaArgumentsTab {
 
 	/**
