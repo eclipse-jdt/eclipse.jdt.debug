@@ -48,6 +48,43 @@
    </editor>
 </extension>
 
+<extension point="org.eclipse.ui.actionSets">
+	<actionSet 
+		label="%JDTDebugActionSet.label" 
+		visible="false" 
+		id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
+	<menu
+        label="%DebugMenu.label"
+          id="org.eclipse.debug.ui.DebugMenu">
+        <separator
+           name="jdtGroup">
+         </separator>
+      </menu>
+  	<action
+  		 label="%runToLineAction.label"
+  		 icon="icons/full/clcl16/runtoline_co.gif"
+  		 helpContextId="run_to_line_action_context"
+  		 class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineAction"
+  		 menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
+  		 id="org.eclipse.jdt.debug.ui.RunToLineAction"> 
+  		</action>
+  		<action id="org.eclipse.jdt.debug.ui.Display" 
+			label="%Display.label" 
+			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
+			icon="icons/full/etool16/disp_sbook.gif" 
+			helpContextId="run_to_line_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
+		</action>
+		<action id="org.eclipse.jdt.debug.ui.Inspect" 
+			label="%Inspect.label" 
+			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
+			icon="icons/full/etool16/insp_sbook.gif"
+			helpContextId="run_to_line_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
+		</action> 
+  </actionSet>
+  </extension>
+
 <extension 
 	point="org.eclipse.ui.views">
 	<view
@@ -57,6 +94,24 @@
 	   	icon="icons/full/ctool16/disp_sbook.gif"
 	   	class="org.eclipse.jdt.internal.debug.ui.display.DisplayView">
 	</view>
+</extension>
+
+<extension point="org.eclipse.ui.perspectiveExtensions">
+	<perspectiveExtension 
+		targetID="org.eclipse.debug.ui.DebugPerspective">
+		<actionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
+	</perspectiveExtension>
+	<perspectiveExtension 
+		targetID="org.eclipse.jdt.ui.JavaPerspective">
+		<actionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
+	</perspectiveExtension>
+    <perspectiveExtension 
+    	targetID="org.eclipse.debug.ui.DebugPerspective"> 
+    	<view id="org.eclipse.jdt.debug.ui.DisplayView" 
+        	relative="org.eclipse.debug.ui.InspectorView" 
+    		relationship="stack"/> 
+    	<viewShortcut id="org.eclipse.jdt.debug.ui.DisplayView"/>
+     </perspectiveExtension> 
 </extension>
 
 <extension point="org.eclipse.ui.popupMenus">
@@ -232,41 +287,6 @@
 	</viewContribution>
 </extension>
 
-<extension point="org.eclipse.ui.editorActions"> 
-	<editorContribution 
-		id="org.eclipse.jdt.debug.ui.CUEditMenu" 
-		targetID="org.eclipse.jdt.ui.CompilationUnitEditor"> 
-		<action id="org.eclipse.jdt.debug.ui.Display" 
-			label="%Display.label" 
-			menubarPath="edit/additions" 
-			icon="icons/full/etool16/disp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
-		</action>
-		<action id="org.eclipse.jdt.debug.ui.Inspect" 
-			label="%Inspect.label" 
-			menubarPath="edit/additions" 
-			icon="icons/full/etool16/insp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
-		</action> 
-	</editorContribution>		
-	<editorContribution 
-		id="org.eclipse.jdt.debug.ui.CFEditMenu" 
-		targetID="org.eclipse.jdt.ui.ClassFileEditor"> 
-		<action id="org.eclipse.jdt.debug.ui.Display" 
-			label="%Display.label" 
-			menubarPath="edit/additions" 
-			icon="icons/full/etool16/disp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.EditorDisplayAction"> 
-		</action> 		
-		<action id="org.eclipse.jdt.debug.ui.Inspect" 
-			label="%Inspect.label" 
-			menubarPath="edit/additions" 
-			icon="icons/full/etool16/insp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
-		</action> 
-	</editorContribution>
-</extension> 
-
 <!-- Property adapters for Java breakpoints -->
 <extension point="org.eclipse.debug.ui.breakpointPropertyAdapters">
 		<breakpointPropertyAdapter
@@ -390,7 +410,28 @@
 			menubarPath="group.add/add" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.AddBreakpointAction"> 
 		</action> 
-     </viewerContribution> 
+     </viewerContribution>
+     <objectContribution 
+     	id="org.eclipse.jdt.debug.ui.CFMethodEntryBreakpointActions"
+     	objectClass="org.eclipse.jdt.core.IMethod">
+		<action id="org.eclipse.jdt.debug.ui.MethodEntryBreakpoint"
+		 	label="%manageMethodEntryBreakpointAction.label"
+		 	menubarPath="additions" 
+		 	class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodEntryBreakpointAction"
+		 	enablesFor="1">
+		  <filter name="isBinary" value="true" /> 
+	  </action>
+  	</objectContribution>
+	<objectContribution 
+		id="org.eclipse.jdt.debug.ui.WatchpointActions"
+		objectClass="org.eclipse.jdt.core.IField">
+  		<action id="org.eclipse.jdt.debug.ui.Watchpoint"
+  			label="%manageWatchpointAction.label"
+  			menubarPath="additions"
+  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointAction"
+  			enablesFor="1">
+  		</action> 
+  </objectContribution>
 </extension>
 
 <extension
@@ -523,5 +564,4 @@
 		name="Main">
 	</launchConfigurationTab>
 </extension>
-
 </plugin>
