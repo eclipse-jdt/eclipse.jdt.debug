@@ -70,6 +70,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
+import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.VirtualMachine;
 
@@ -382,7 +383,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 						attemptPopFrames(target, resources, qualifiedNames, poppedThreads);
 						framesPopped= true; // No exception occurred
 					} catch (DebugException de) {
-						ms.merge(de.getStatus());
+					    if (shouldLogHCRException(de)) {
+					        ms.merge(de.getStatus());
+					    }
 					}
 				}
 				target.removeOutOfSynchTypes(qualifiedNames);
@@ -394,22 +397,24 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				if (containsObsoleteMethods(target)) {
 					fireObsoleteMethods(target);
 				}
-				if (target.canPopFrames() && framesPopped) {
-					// Second half of JDK 1.4 drop to frame support:
-					// All affected frames have been popped and the classes
-					// have been reloaded. Step into the first changed
-					// frame of each affected thread.
-					try {
-						// must re-set 'is doing HCR' to be able to step
-						target.setIsPerformingHotCodeReplace(false);
-						attemptStepIn(poppedThreads);
-					} catch (DebugException de) {
-						ms.merge(de.getStatus());
+				try {
+					if (target.canPopFrames() && framesPopped) {
+						// Second half of JDK 1.4 drop to frame support:
+						// All affected frames have been popped and the classes
+						// have been reloaded. Step into the first changed
+						// frame of each affected thread.
+							// must re-set 'is doing HCR' to be able to step
+							target.setIsPerformingHotCodeReplace(false);
+							attemptStepIn(poppedThreads);
+					} else {
+						// J9 drop to frame support:
+						// After redefining classes, drop to frame
+						attemptDropToFrame(target, resources, qualifiedNames);
 					}
-				} else {
-					// J9 drop to frame support:
-					// After redefining classes, drop to frame
-					attemptDropToFrame(target, resources, qualifiedNames);
+				} catch (DebugException de) {
+				    if (shouldLogHCRException(de)) {
+				        ms.merge(de.getStatus());
+				    }
 				}
 				fireHCRSucceeded(target);
 			} catch (DebugException de) {
@@ -424,6 +429,16 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			JDIDebugPlugin.log(ms);
 		}
 		fDeltaCache.clear();
+	}
+	
+	/**
+	 * Returns whether the given exception, which occurred during HCR, should be logged.
+	 * We anticipate that we can get IncompatibleThreadStateExceptions if the user happens
+	 * to resume a thread at just the right moment. Since this has no ill effects for HCR,
+	 * we don't log these exceptions.
+	 */
+	private boolean shouldLogHCRException(DebugException exception) {
+	    return !(exception.getCause() instanceof IncompatibleThreadStateException);
 	}
 
 	/**
