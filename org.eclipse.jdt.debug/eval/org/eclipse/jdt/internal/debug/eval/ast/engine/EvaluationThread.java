@@ -161,7 +161,11 @@ class EvaluationThread {
 			result.addError(new Message(EvaluationEngineMessages.getString("EvaluationThreadAn_unknown_error_occurred_during_evaluation_1"), 0)); //$NON-NLS-1$
 		}
 		if (exception != null) {
-			result.setException(new DebugException(exception.getStatus()));
+			if (exception instanceof DebugException) {
+				result.setException((DebugException)exception);
+			} else {
+				result.setException(new DebugException(exception.getStatus()));
+			}
 		}
 		evaluationFinished(result);
 	}
