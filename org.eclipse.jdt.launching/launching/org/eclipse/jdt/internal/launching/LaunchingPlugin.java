@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
