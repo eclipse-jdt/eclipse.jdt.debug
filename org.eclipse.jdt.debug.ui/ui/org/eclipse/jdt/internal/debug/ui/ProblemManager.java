@@ -24,7 +24,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
@@ -33,11 +32,13 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * Creates breakpoints corresponding to compilation errors
  */
-public class ProblemManager implements IResourceChangeListener, ILaunchListener {
+public class ProblemManager implements IResourceChangeListener, ILaunchListener, IPropertyChangeListener {
 	
 	/**
 	 * Singleton problem manager
@@ -55,6 +56,7 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener 
 	 */
 	private static final int ADDED = 0;
 	private static final int REMOVED = 1;
+	private static final int CHANGED = 2;
 	
 	/**
 	 * Marker attribute denoting a problem breakpoint
@@ -116,6 +118,7 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener 
 	public void startup() throws CoreException {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		initialize();
 	}
 	
@@ -125,6 +128,7 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener 
 	public void shutdown() throws CoreException {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		fProblemMap.clear();
 	}	
 	
@@ -189,6 +193,7 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener 
 					}	
 					if (breakpoint != null) {
 						breakpoint.setPersisted(false);
+						breakpoint.setEnabled(isEnabled());
 					}				
 				}
 			}
@@ -266,7 +271,7 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener 
 	 * addition or removal.
 	 * 
 	 * @param breakpoint a breakpoint
-	 * @param kind ADDED or REMOVED
+	 * @param kind ADDED, REMOVED, or CHANGED
 	 */
 	protected void notifyTargets(IBreakpoint breakpoint, int kind) {
 		IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
@@ -284,7 +289,7 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener 
 	 * 
 	 * @param target Java debug target
 	 * @param breakpoint a breakpoint
-	 * @param kind ADDED or REMOVED
+	 * @param kind ADDED, REMOVED, or CHANGED
 	 */	
 	protected void notifyTarget(IJavaDebugTarget target, IBreakpoint breakpoint, int kind) {
 		switch (kind) {
@@ -293,6 +298,9 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener 
 				break;
 			case REMOVED:
 				target.breakpointRemoved(breakpoint,null);
+				break;
+			case CHANGED:
+				target.breakpointChanged(breakpoint,null);
 				break;
 		}
 	}
@@ -337,4 +345,42 @@ public class ProblemManager implements IResourceChangeListener, ILaunchListener 
 		};
 		new Thread(runnable).start();
 	}
+	
+	/**
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS)) {
+			setEnabled(((Boolean)event.getNewValue()).booleanValue());
+		}
+	}
+	
+	/**
+	 * Sets whether or not to suspend on compilation errors
+	 * 
+	 * @param enabled whether to suspend on compilation errors
+	 */
+	protected void setEnabled(boolean enabled) {
+		IBreakpoint[] breakpoints = getBreakpoints();
+		for (int i = 0; i < breakpoints.length; i++) {
+			try {
+				breakpoints[i].setEnabled(enabled);
+				notifyTargets(breakpoints[i], CHANGED);
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
+		}
+	}
+	
+	/**
+	 * Returns whether suspend on comiplation errors is
+	 * enabled.
+	 * 
+	 * @return whether suspend on comiplation errors is
+	 * enabled
+	 */
+	protected boolean isEnabled() {
+		return JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS);
+	}
+
 }

@@ -101,6 +101,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	
 	// Preference widgets
 	private Button fSuspendButton;
+	private Button fSuspendOnCompilationErrors;
 	private Button fAlertHCRButton;
 	private Button fAlertObsoleteButton;
 	private Button fHexButton;
@@ -442,6 +443,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setDefault(IJDIPreferencesConstants.SHOW_HEX_VALUES, false);
 		store.setDefault(IJDIPreferencesConstants.SHOW_CHAR_VALUES, false);
 		store.setDefault(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, false);		
+		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);		
 	}
 
 	/**
@@ -461,6 +463,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setLayoutData(data);		
 		
 		fSuspendButton= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_&execution_on_uncaught_exceptions_1")); //$NON-NLS-1$
+		fSuspendOnCompilationErrors= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_execution_on_co&mpilation_errors_1")); //$NON-NLS-1$
 		fAlertHCRButton= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
 		fAlertObsoleteButton= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_obsolete_methods_remain_1")); //$NON-NLS-1$
 	
@@ -959,6 +962,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		fStepFilterContentProvider.setDefaults();
 		fSuspendButton.setSelection(JDIDebugModel.getDefaultSuspendOnUncaughtExceptions());
+		fSuspendOnCompilationErrors.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
 		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS));
 	}
@@ -1035,6 +1039,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fCharButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_CHAR_VALUES));
 		fUnsignedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));		
 		fSuspendButton.setSelection(JDIDebugModel.suspendOnUncaughtExceptions());
+		fSuspendOnCompilationErrors.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
 		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
 		fAlertObsoleteButton.setSelection(store.getBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS));
 	}
@@ -1049,6 +1054,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IJDIPreferencesConstants.SHOW_CHAR_VALUES, fCharButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, fUnsignedButton.getSelection());
 		JDIDebugModel.setSuspendOnUncaughtExceptions(fSuspendButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, fSuspendOnCompilationErrors.getSelection());
 		store.setValue(IJDIPreferencesConstants.ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
 	}
