@@ -638,6 +638,12 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		if (fMethodID.value() == 0) {
 			return true;
 		}
+		if (!virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 4)) {
+			// The JDWP command is new to 1.4
+			// Sending a new command to an old VM 
+			// kills the VM. Don't do it.
+			return false;
+		}
 		boolean obsolete= false;
 		initJdwpRequest();
 		try {
