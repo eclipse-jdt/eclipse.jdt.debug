@@ -392,6 +392,11 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final int ERR_NOT_AN_APPLET = 121;		
 
 	/**
+	 * Status code indicating that no launch configuration was specified.
+	 */
+	public static final int ERR_UNSPECIFIED_LAUNCH_CONFIG = 122;		
+
+	/**
 	 * Status code indicating an unexpected internal error.
 	 */
 	public static final int ERR_INTERNAL_ERROR = 150;		
