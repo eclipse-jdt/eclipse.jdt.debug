@@ -691,20 +691,26 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * in an incorrect state.
 	 */
 	private void configureAtStartup() throws CoreException {
-		List attributes= new ArrayList(3);
-		List values= new ArrayList(3);
+		List attributes= null;
+		List values= null;
 		if (isInstalled()) {
+			attributes= new ArrayList(3);
+			values= new ArrayList(3);
 			attributes.add(INSTALL_COUNT);
 			values.add(new Integer(0));
 		}
 		if (isExpired()) {
+			if (attributes == null) {
+				attributes= new ArrayList(3);
+				values= new ArrayList(3);
+			}
 			// if breakpoint was auto-disabled, re-enable it
 			attributes.add(EXPIRED);
 			values.add(Boolean.FALSE);
 			attributes.add(ENABLED);
 			values.add(Boolean.TRUE);
 		}
-		if (!attributes.isEmpty()) {
+		if (attributes != null) {
 			String[] strAttributes= new String[attributes.size()];
 			ensureMarker().setAttributes((String[])attributes.toArray(strAttributes), values.toArray());
 		}
