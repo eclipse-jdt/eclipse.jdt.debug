@@ -7,9 +7,6 @@ package org.eclipse.jdt.internal.debug.core.model;
  
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 
-import org.eclipse.jdt.internal.debug.core.*;
-import org.eclipse.jdt.internal.debug.core.model.*;
-
 import com.sun.jdi.PrimitiveValue;
 import com.sun.jdi.Value;
 

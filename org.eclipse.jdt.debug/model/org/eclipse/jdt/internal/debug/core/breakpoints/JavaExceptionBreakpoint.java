@@ -5,8 +5,6 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  * All Rights Reserved.
  */
  
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -18,13 +16,11 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
-
-import org.eclipse.jdt.internal.debug.core.*;
-import org.eclipse.jdt.internal.debug.core.model.*;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.ExceptionRequest;
 
@@ -124,13 +120,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 */	
 	public JavaExceptionBreakpoint(IType exception, boolean caught, boolean uncaught, boolean checked) throws DebugException {
 		this(exception, caught, uncaught, checked, true);
-	}
-	
-	/**
-	 * Returns the type of marker associated with Java exception breakpoints
-	 */
-	public static String getMarkerType() {
-		return JAVA_EXCEPTION_BREAKPOINT;
 	}
 	
 	/**

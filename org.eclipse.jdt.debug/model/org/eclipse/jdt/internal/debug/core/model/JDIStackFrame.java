@@ -22,9 +22,7 @@ import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-
-import org.eclipse.jdt.internal.debug.core.*;
-import org.eclipse.jdt.internal.debug.core.model.*;
+import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;

@@ -5,11 +5,10 @@ package org.eclipse.jdt.internal.debug.core.model;
  * All Rights Reserved.
  */
  
-import com.sun.jdi.ClassObjectReference;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.internal.debug.core.*;
-import org.eclipse.jdt.internal.debug.core.model.*;
+
+import com.sun.jdi.ClassObjectReference;
 
 /**
  * An object on the target VM that is an instance of

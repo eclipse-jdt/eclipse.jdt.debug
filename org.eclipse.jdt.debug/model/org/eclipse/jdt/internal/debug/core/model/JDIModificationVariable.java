@@ -10,11 +10,9 @@ import java.util.ArrayList;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
-
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.internal.debug.core.*;
-import org.eclipse.jdt.internal.debug.core.model.*;
+import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;

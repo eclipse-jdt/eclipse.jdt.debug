@@ -5,18 +5,18 @@ package org.eclipse.jdt.internal.debug.core.model;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.ArrayReference;
-import com.sun.jdi.ArrayType;
-
-import com.sun.jdi.ClassNotLoadedException;
-import com.sun.jdi.Type;
-
 import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.internal.debug.core.*;
+import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
+
+import com.sun.jdi.ArrayReference;
+import com.sun.jdi.ArrayType;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.Type;
  
 /**
  * The type of an array

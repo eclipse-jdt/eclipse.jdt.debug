@@ -11,13 +11,10 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
-
-import org.eclipse.jdt.internal.debug.core.*;
-import org.eclipse.jdt.internal.debug.core.model.*;
+import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.Type;
-import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 
 /**

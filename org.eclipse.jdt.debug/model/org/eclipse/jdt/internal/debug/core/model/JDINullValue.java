@@ -5,17 +5,11 @@ package org.eclipse.jdt.internal.debug.core.model;
  * All Rights Reserved.
  */
  
-import com.sun.jdi.Type;
-
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.internal.debug.core.*;
-import org.eclipse.jdt.internal.debug.core.model.*;
 
 /**
  * Represents a value of "null"

@@ -5,11 +5,6 @@ package org.eclipse.jdt.internal.debug.core.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.jdt.internal.debug.core.*;
-import org.eclipse.jdt.internal.debug.core.model.*;
-
-import com.sun.jdi.Type;
-
 /**
  * Void type. Since it is not possible to retrieve the
  * void type from the target VM on demand, there is a

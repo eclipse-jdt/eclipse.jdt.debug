@@ -19,11 +19,10 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-
-import org.eclipse.jdt.internal.debug.core.*;
-import org.eclipse.jdt.internal.debug.core.model.*;
-
-import org.eclipse.jdt.internal.debug.core.breakpoints.*;
+import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
+import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
+import org.eclipse.jdt.internal.debug.core.StringMatcher;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
