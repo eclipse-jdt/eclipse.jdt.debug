@@ -46,7 +46,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("f : wrong result : ", fStringValue_0, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -65,7 +65,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_T_b : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_b : wrong result : ", bStringValue_0, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -84,7 +84,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_T_A_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_d : wrong result : ", dStringValue_1, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -103,7 +103,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_A_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_d : wrong result : ", dStringValue_1, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -122,7 +122,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_T_A_AA_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_AA_f : wrong result : ", fStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -141,7 +141,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_T_A_AB_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_A_AB_f : wrong result : ", fStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -160,7 +160,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_A_AA_j : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_AA_j : wrong result : ", jStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -179,7 +179,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_A_AB_j : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_A_AB_j : wrong result : ", jStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -198,7 +198,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_T_B_h : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_B_h : wrong result : ", hStringValue_1, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -217,7 +217,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_B_d : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_B_d : wrong result : ", dStringValue_1, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -236,7 +236,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_T_B_BB_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_T_B_BB_f : wrong result : ", fStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -255,7 +255,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("T_B_BB_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("T_B_BB_f : wrong result : ", fStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -274,7 +274,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("I_A_h : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("I_A_h : wrong result : ", hStringValue_1, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -293,7 +293,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("I_AA_c : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("I_AA_c : wrong result : ", cStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -312,7 +312,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("I_AA_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("I_AA_f : wrong result : ", fStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -331,7 +331,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("I_AA_j : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("I_AA_j : wrong result : ", jStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -350,7 +350,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("I_AB_c : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("I_AB_c : wrong result : ", cStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -369,7 +369,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("I_AB_f : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("I_AB_f : wrong result : ", fStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -388,7 +388,7 @@ public class TestsNestedTypes2 extends Tests {
 		assertEquals("I_AB_i : wrong type : ", "java.lang.String", typeName);
 		String stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("I_AB_i : wrong result : ", iStringValue_2, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

@@ -65,7 +65,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final char xVarCharValue = (char)-5;
 	static final short xVarShortValue = (short)-5;
 	static final int xVarIntValue = -5;
-	static final long xVarLongValue = (long)-5;
+	static final long xVarLongValue = -5;
 	static final float xVarFloatValue = (float)-5.3;
 	static final double xVarDoubleValue = -5.3;
 	static final String xVarStringValue = "minus five";
@@ -87,7 +87,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final char yCharValue = (char)8;
 	static final short yShortValue = (short)8;
 	static final int yIntValue = 8;
-	static final long yLongValue = (long)8;
+	static final long yLongValue = 8;
 	static final float yFloatValue = (float)7.8;
 	static final double yDoubleValue = 7.8;
 	static final String yStringValue = "eight";
@@ -109,7 +109,7 @@ public abstract class Tests extends AbstractDebugTest {
 	static final char yVarCharValue = (char)7;
 	static final short yVarShortValue = (short)7;
 	static final int yVarIntValue = 7;
-	static final long yVarLongValue = (long)7;
+	static final long yVarLongValue = 7;
 	static final float yVarFloatValue = (float)6.9;
 	static final double yVarDoubleValue = 6.9;
 	static final String yVarStringValue = "seven";
@@ -435,7 +435,7 @@ public abstract class Tests extends AbstractDebugTest {
 			public boolean evaluationTimedOut(IJavaThread thread) {
 				return true;
 			}
-		};
+		}
 		Listener listener= new Listener();
 		try {
 			fEngine.evaluate(command, fFrame, listener, DebugEvent.EVALUATION_IMPLICIT, false);

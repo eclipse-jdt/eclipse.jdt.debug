@@ -44,7 +44,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char plus byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char plus byte : wrong result : ", yCharValue + xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -63,7 +63,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char plus char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char plus char : wrong result : ", yCharValue + xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -82,7 +82,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char plus short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char plus short : wrong result : ", yCharValue + xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -101,7 +101,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char plus int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char plus int : wrong result : ", yCharValue + xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -120,7 +120,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char plus long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("char plus long : wrong result : ", yCharValue + xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -139,7 +139,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char plus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("char plus float : wrong result : ", yCharValue + xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -158,7 +158,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char plus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("char plus double : wrong result : ", yCharValue + xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -177,7 +177,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char plus java.lang.String : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("char plus java.lang.String : wrong result : ", yCharValue + xStringValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -198,7 +198,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char minus byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char minus byte : wrong result : ", yCharValue - xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -217,7 +217,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char minus char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char minus char : wrong result : ", yCharValue - xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -236,7 +236,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char minus short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char minus short : wrong result : ", yCharValue - xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -255,7 +255,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char minus int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char minus int : wrong result : ", yCharValue - xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -274,7 +274,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char minus long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("char minus long : wrong result : ", yCharValue - xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -293,7 +293,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char minus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("char minus float : wrong result : ", yCharValue - xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -312,7 +312,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char minus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("char minus double : wrong result : ", yCharValue - xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -333,7 +333,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char multiply byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char multiply byte : wrong result : ", yCharValue * xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -352,7 +352,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char multiply char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char multiply char : wrong result : ", yCharValue * xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -371,7 +371,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char multiply short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char multiply short : wrong result : ", yCharValue * xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -390,7 +390,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char multiply int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char multiply int : wrong result : ", yCharValue * xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -409,7 +409,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char multiply long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("char multiply long : wrong result : ", yCharValue * xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -428,7 +428,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char multiply float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("char multiply float : wrong result : ", yCharValue * xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -447,7 +447,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char multiply double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("char multiply double : wrong result : ", yCharValue * xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -468,7 +468,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char divide byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char divide byte : wrong result : ", yCharValue / xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -487,7 +487,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char divide char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char divide char : wrong result : ", yCharValue / xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -506,7 +506,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char divide short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char divide short : wrong result : ", yCharValue / xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -525,7 +525,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char divide int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char divide int : wrong result : ", yCharValue / xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -544,7 +544,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char divide long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("char divide long : wrong result : ", yCharValue / xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -563,7 +563,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char divide float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("char divide float : wrong result : ", yCharValue / xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -582,7 +582,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char divide double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("char divide double : wrong result : ", yCharValue / xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -603,7 +603,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char remainder byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char remainder byte : wrong result : ", yCharValue % xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -622,7 +622,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char remainder char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char remainder char : wrong result : ", yCharValue % xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -641,7 +641,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char remainder short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char remainder short : wrong result : ", yCharValue % xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -660,7 +660,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char remainder int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char remainder int : wrong result : ", yCharValue % xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -679,7 +679,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char remainder long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("char remainder long : wrong result : ", yCharValue % xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -698,7 +698,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char remainder float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("char remainder float : wrong result : ", yCharValue % xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -717,7 +717,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char remainder double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("char remainder double : wrong result : ", yCharValue % xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -744,7 +744,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greater byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greater byte : wrong result : ", xCharValue > xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -769,7 +769,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greater char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greater char : wrong result : ", xCharValue > xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -794,7 +794,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greater short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greater short : wrong result : ", xCharValue > xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -819,7 +819,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greater int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greater int : wrong result : ", xCharValue > xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -844,7 +844,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greater long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greater long : wrong result : ", xCharValue > xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -869,7 +869,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greater float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greater float : wrong result : ", xCharValue > xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -894,7 +894,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greater double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greater double : wrong result : ", xCharValue > xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -921,7 +921,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greaterEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greaterEqual byte : wrong result : ", xCharValue >= xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -946,7 +946,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greaterEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greaterEqual char : wrong result : ", xCharValue >= xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -971,7 +971,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greaterEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greaterEqual short : wrong result : ", xCharValue >= xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -996,7 +996,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greaterEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greaterEqual int : wrong result : ", xCharValue >= xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1021,7 +1021,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greaterEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greaterEqual long : wrong result : ", xCharValue >= xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1046,7 +1046,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greaterEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greaterEqual float : wrong result : ", xCharValue >= xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1071,7 +1071,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char greaterEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char greaterEqual double : wrong result : ", xCharValue >= xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1098,7 +1098,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char less byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char less byte : wrong result : ", xCharValue < xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1123,7 +1123,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char less char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char less char : wrong result : ", xCharValue < xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1148,7 +1148,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char less short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char less short : wrong result : ", xCharValue < xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1173,7 +1173,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char less int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char less int : wrong result : ", xCharValue < xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1198,7 +1198,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char less long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char less long : wrong result : ", xCharValue < xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1223,7 +1223,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char less float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char less float : wrong result : ", xCharValue < xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1248,7 +1248,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char less double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char less double : wrong result : ", xCharValue < xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1275,7 +1275,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char lessEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char lessEqual byte : wrong result : ", xCharValue <= xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1300,7 +1300,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char lessEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char lessEqual char : wrong result : ", xCharValue <= xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1325,7 +1325,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char lessEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char lessEqual short : wrong result : ", xCharValue <= xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1350,7 +1350,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char lessEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char lessEqual int : wrong result : ", xCharValue <= xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1375,7 +1375,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char lessEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char lessEqual long : wrong result : ", xCharValue <= xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1400,7 +1400,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char lessEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char lessEqual float : wrong result : ", xCharValue <= xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1425,7 +1425,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char lessEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char lessEqual double : wrong result : ", xCharValue <= xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1452,7 +1452,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char equalEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char equalEqual byte : wrong result : ", xCharValue == xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1477,7 +1477,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char equalEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char equalEqual char : wrong result : ", xCharValue == xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1502,7 +1502,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char equalEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char equalEqual short : wrong result : ", xCharValue == xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1527,7 +1527,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char equalEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char equalEqual int : wrong result : ", xCharValue == xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1552,7 +1552,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char equalEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char equalEqual long : wrong result : ", xCharValue == xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1577,7 +1577,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char equalEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char equalEqual float : wrong result : ", xCharValue == xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1602,7 +1602,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char equalEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char equalEqual double : wrong result : ", xCharValue == xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1629,7 +1629,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char notEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char notEqual byte : wrong result : ", xCharValue != xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1654,7 +1654,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char notEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char notEqual char : wrong result : ", xCharValue != xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1679,7 +1679,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char notEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char notEqual short : wrong result : ", xCharValue != xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1704,7 +1704,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char notEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char notEqual int : wrong result : ", xCharValue != xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1729,7 +1729,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char notEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char notEqual long : wrong result : ", xCharValue != xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1754,7 +1754,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char notEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char notEqual float : wrong result : ", xCharValue != xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1779,7 +1779,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char notEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("char notEqual double : wrong result : ", xCharValue != xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1800,7 +1800,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char leftShift byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char leftShift byte : wrong result : ", yCharValue << xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1819,7 +1819,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char leftShift char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char leftShift char : wrong result : ", yCharValue << xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1838,7 +1838,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char leftShift short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char leftShift short : wrong result : ", yCharValue << xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1857,7 +1857,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char leftShift int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char leftShift int : wrong result : ", yCharValue << xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1876,7 +1876,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char leftShift long : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char leftShift long : wrong result : ", yCharValue << xLongValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1897,7 +1897,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char rightShift byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char rightShift byte : wrong result : ", yCharValue >> xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1916,7 +1916,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char rightShift char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char rightShift char : wrong result : ", yCharValue >> xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1935,7 +1935,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char rightShift short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char rightShift short : wrong result : ", yCharValue >> xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1954,7 +1954,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char rightShift int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char rightShift int : wrong result : ", yCharValue >> xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1973,7 +1973,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char rightShift long : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char rightShift long : wrong result : ", yCharValue >> xLongValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1994,7 +1994,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char unsignedRightShift byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char unsignedRightShift byte : wrong result : ", yCharValue >>> xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2013,7 +2013,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char unsignedRightShift char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char unsignedRightShift char : wrong result : ", yCharValue >>> xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2032,7 +2032,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char unsignedRightShift short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char unsignedRightShift short : wrong result : ", yCharValue >>> xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2051,7 +2051,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char unsignedRightShift int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char unsignedRightShift int : wrong result : ", yCharValue >>> xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2070,7 +2070,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char unsignedRightShift long : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char unsignedRightShift long : wrong result : ", yCharValue >>> xLongValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2091,7 +2091,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char or byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char or byte : wrong result : ", yCharValue | xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2110,7 +2110,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char or char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char or char : wrong result : ", yCharValue | xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2129,7 +2129,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char or short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char or short : wrong result : ", yCharValue | xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2148,7 +2148,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char or int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char or int : wrong result : ", yCharValue | xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2167,7 +2167,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char or long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("char or long : wrong result : ", yCharValue | xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2188,7 +2188,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char and byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char and byte : wrong result : ", yCharValue & xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2207,7 +2207,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char and char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char and char : wrong result : ", yCharValue & xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2226,7 +2226,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char and short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char and short : wrong result : ", yCharValue & xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2245,7 +2245,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char and int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char and int : wrong result : ", yCharValue & xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2264,7 +2264,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char and long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("char and long : wrong result : ", yCharValue & xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2285,7 +2285,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char xor byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char xor byte : wrong result : ", yCharValue ^ xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2304,7 +2304,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char xor char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char xor char : wrong result : ", yCharValue ^ xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2323,7 +2323,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char xor short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char xor short : wrong result : ", yCharValue ^ xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2342,7 +2342,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char xor int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char xor int : wrong result : ", yCharValue ^ xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2361,7 +2361,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("char xor long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("char xor long : wrong result : ", yCharValue ^ xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2382,7 +2382,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("plus char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("plus char : wrong result : ", + yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2403,7 +2403,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("minus char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("minus char : wrong result : ", - yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2424,7 +2424,7 @@ public class CharOperatorsTests extends Tests {
 		assertEquals("twiddle char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("twiddle char : wrong result : ", ~ yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

@@ -44,7 +44,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float plus byte : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float plus byte : wrong result : ", yFloatValue + xByteValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -63,7 +63,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float plus char : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float plus char : wrong result : ", yFloatValue + xCharValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -82,7 +82,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float plus short : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float plus short : wrong result : ", yFloatValue + xShortValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -101,7 +101,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float plus int : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float plus int : wrong result : ", yFloatValue + xIntValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -120,7 +120,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float plus long : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float plus long : wrong result : ", yFloatValue + xLongValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -139,7 +139,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float plus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float plus float : wrong result : ", yFloatValue + xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -158,7 +158,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float plus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("float plus double : wrong result : ", yFloatValue + xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -177,7 +177,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float plus java.lang.String : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("float plus java.lang.String : wrong result : ", yFloatValue + xStringValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -198,7 +198,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float minus byte : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float minus byte : wrong result : ", yFloatValue - xByteValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -217,7 +217,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float minus char : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float minus char : wrong result : ", yFloatValue - xCharValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -236,7 +236,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float minus short : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float minus short : wrong result : ", yFloatValue - xShortValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -255,7 +255,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float minus int : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float minus int : wrong result : ", yFloatValue - xIntValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -274,7 +274,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float minus long : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float minus long : wrong result : ", yFloatValue - xLongValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -293,7 +293,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float minus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float minus float : wrong result : ", yFloatValue - xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -312,7 +312,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float minus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("float minus double : wrong result : ", yFloatValue - xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -333,7 +333,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float multiply byte : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float multiply byte : wrong result : ", yFloatValue * xByteValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -352,7 +352,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float multiply char : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float multiply char : wrong result : ", yFloatValue * xCharValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -371,7 +371,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float multiply short : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float multiply short : wrong result : ", yFloatValue * xShortValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -390,7 +390,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float multiply int : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float multiply int : wrong result : ", yFloatValue * xIntValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -409,7 +409,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float multiply long : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float multiply long : wrong result : ", yFloatValue * xLongValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -428,7 +428,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float multiply float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float multiply float : wrong result : ", yFloatValue * xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -447,7 +447,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float multiply double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("float multiply double : wrong result : ", yFloatValue * xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -468,7 +468,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float divide byte : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float divide byte : wrong result : ", yFloatValue / xByteValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -487,7 +487,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float divide char : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float divide char : wrong result : ", yFloatValue / xCharValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -506,7 +506,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float divide short : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float divide short : wrong result : ", yFloatValue / xShortValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -525,7 +525,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float divide int : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float divide int : wrong result : ", yFloatValue / xIntValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -544,7 +544,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float divide long : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float divide long : wrong result : ", yFloatValue / xLongValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -563,7 +563,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float divide float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float divide float : wrong result : ", yFloatValue / xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -582,7 +582,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float divide double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("float divide double : wrong result : ", yFloatValue / xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -603,7 +603,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float remainder byte : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float remainder byte : wrong result : ", yFloatValue % xByteValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -622,7 +622,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float remainder char : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float remainder char : wrong result : ", yFloatValue % xCharValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -641,7 +641,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float remainder short : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float remainder short : wrong result : ", yFloatValue % xShortValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -660,7 +660,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float remainder int : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float remainder int : wrong result : ", yFloatValue % xIntValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -679,7 +679,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float remainder long : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float remainder long : wrong result : ", yFloatValue % xLongValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -698,7 +698,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float remainder float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float remainder float : wrong result : ", yFloatValue % xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -717,7 +717,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float remainder double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("float remainder double : wrong result : ", yFloatValue % xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -744,7 +744,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greater byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greater byte : wrong result : ", xFloatValue > xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -769,7 +769,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greater char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greater char : wrong result : ", xFloatValue > xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -794,7 +794,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greater short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greater short : wrong result : ", xFloatValue > xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -819,7 +819,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greater int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greater int : wrong result : ", xFloatValue > xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -844,7 +844,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greater long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greater long : wrong result : ", xFloatValue > xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -869,7 +869,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greater float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greater float : wrong result : ", xFloatValue > xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -894,7 +894,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greater double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greater double : wrong result : ", xFloatValue > xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -921,7 +921,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greaterEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greaterEqual byte : wrong result : ", xFloatValue >= xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -946,7 +946,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greaterEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greaterEqual char : wrong result : ", xFloatValue >= xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -971,7 +971,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greaterEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greaterEqual short : wrong result : ", xFloatValue >= xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -996,7 +996,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greaterEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greaterEqual int : wrong result : ", xFloatValue >= xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1021,7 +1021,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greaterEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greaterEqual long : wrong result : ", xFloatValue >= xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1046,7 +1046,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greaterEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greaterEqual float : wrong result : ", xFloatValue >= xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1071,7 +1071,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float greaterEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float greaterEqual double : wrong result : ", xFloatValue >= xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1098,7 +1098,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float less byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float less byte : wrong result : ", xFloatValue < xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1123,7 +1123,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float less char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float less char : wrong result : ", xFloatValue < xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1148,7 +1148,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float less short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float less short : wrong result : ", xFloatValue < xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1173,7 +1173,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float less int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float less int : wrong result : ", xFloatValue < xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1198,7 +1198,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float less long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float less long : wrong result : ", xFloatValue < xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1223,7 +1223,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float less float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float less float : wrong result : ", xFloatValue < xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1248,7 +1248,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float less double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float less double : wrong result : ", xFloatValue < xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1275,7 +1275,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float lessEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float lessEqual byte : wrong result : ", xFloatValue <= xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1300,7 +1300,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float lessEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float lessEqual char : wrong result : ", xFloatValue <= xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1325,7 +1325,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float lessEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float lessEqual short : wrong result : ", xFloatValue <= xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1350,7 +1350,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float lessEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float lessEqual int : wrong result : ", xFloatValue <= xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1375,7 +1375,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float lessEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float lessEqual long : wrong result : ", xFloatValue <= xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1400,7 +1400,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float lessEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float lessEqual float : wrong result : ", xFloatValue <= xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1425,7 +1425,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float lessEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float lessEqual double : wrong result : ", xFloatValue <= xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1452,7 +1452,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float equalEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float equalEqual byte : wrong result : ", xFloatValue == xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1477,7 +1477,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float equalEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float equalEqual char : wrong result : ", xFloatValue == xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1502,7 +1502,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float equalEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float equalEqual short : wrong result : ", xFloatValue == xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1527,7 +1527,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float equalEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float equalEqual int : wrong result : ", xFloatValue == xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1552,7 +1552,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float equalEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float equalEqual long : wrong result : ", xFloatValue == xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1577,7 +1577,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float equalEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float equalEqual float : wrong result : ", xFloatValue == xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1602,7 +1602,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float equalEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float equalEqual double : wrong result : ", xFloatValue == xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1629,7 +1629,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float notEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float notEqual byte : wrong result : ", xFloatValue != xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1654,7 +1654,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float notEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float notEqual char : wrong result : ", xFloatValue != xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1679,7 +1679,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float notEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float notEqual short : wrong result : ", xFloatValue != xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1704,7 +1704,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float notEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float notEqual int : wrong result : ", xFloatValue != xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1729,7 +1729,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float notEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float notEqual long : wrong result : ", xFloatValue != xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1754,7 +1754,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float notEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float notEqual float : wrong result : ", xFloatValue != xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1779,7 +1779,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("float notEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("float notEqual double : wrong result : ", xFloatValue != xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1800,7 +1800,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("plus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("plus float : wrong result : ", + yFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1821,7 +1821,7 @@ public class FloatOperatorsTests extends Tests {
 		assertEquals("minus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("minus float : wrong result : ", - yFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

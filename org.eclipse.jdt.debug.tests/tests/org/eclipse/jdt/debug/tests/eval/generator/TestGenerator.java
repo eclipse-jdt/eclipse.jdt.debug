@@ -108,6 +108,10 @@ public class TestGenerator {
 
 	static final String[] prefixList = new String[] {"foo.", "EvalTypeTests.", ""};
 
+	/**
+	 * Set the working directory of the launch configuration to generate the files
+	 * in the correct package location.
+	 */
 	static public void main(String[] args) throws Exception {
 		
 		genTestsNumericTypeAllOpsAllTypes(T_byte);
@@ -1347,7 +1351,7 @@ public class TestGenerator {
 	}
 
 	public static void tryBlockEnd(StringBuffer code) {
-		code.append("\t\t} finally {;\n\t\tend();\n\t\t}\n");
+		code.append("\t\t} finally {\n\t\tend();\n\t\t}\n");
 	}
 
 	//------------------------------

@@ -46,7 +46,7 @@ public class TestsOperators1 extends Tests {
 		assertEquals("int plus int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int plus int : wrong result : ", yIntValue + xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -65,7 +65,7 @@ public class TestsOperators1 extends Tests {
 		assertEquals("java.lang.String plus java.lang.String : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String plus java.lang.String : wrong result : ", yStringValue + xStringValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -84,7 +84,7 @@ public class TestsOperators1 extends Tests {
 		assertEquals("int local variable value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int local variable value : wrong result : ", yVarIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -103,7 +103,7 @@ public class TestsOperators1 extends Tests {
 		assertEquals("java.lang.String local variable value : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String local variable value : wrong result : ", yVarStringValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

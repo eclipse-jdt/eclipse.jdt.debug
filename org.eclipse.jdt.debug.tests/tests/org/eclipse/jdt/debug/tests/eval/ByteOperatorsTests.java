@@ -44,7 +44,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte plus byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte plus byte : wrong result : ", yByteValue + xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -63,7 +63,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte plus char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte plus char : wrong result : ", yByteValue + xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -82,7 +82,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte plus short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte plus short : wrong result : ", yByteValue + xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -101,7 +101,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte plus int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte plus int : wrong result : ", yByteValue + xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -120,7 +120,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte plus long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("byte plus long : wrong result : ", yByteValue + xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -139,7 +139,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte plus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("byte plus float : wrong result : ", yByteValue + xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -158,7 +158,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte plus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("byte plus double : wrong result : ", yByteValue + xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -177,7 +177,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte plus java.lang.String : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("byte plus java.lang.String : wrong result : ", yByteValue + xStringValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -198,7 +198,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte minus byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte minus byte : wrong result : ", yByteValue - xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -217,7 +217,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte minus char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte minus char : wrong result : ", yByteValue - xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -236,7 +236,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte minus short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte minus short : wrong result : ", yByteValue - xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -255,7 +255,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte minus int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte minus int : wrong result : ", yByteValue - xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -274,7 +274,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte minus long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("byte minus long : wrong result : ", yByteValue - xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -293,7 +293,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte minus float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("byte minus float : wrong result : ", yByteValue - xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -312,7 +312,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte minus double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("byte minus double : wrong result : ", yByteValue - xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -333,7 +333,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte multiply byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte multiply byte : wrong result : ", yByteValue * xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -352,7 +352,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte multiply char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte multiply char : wrong result : ", yByteValue * xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -371,7 +371,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte multiply short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte multiply short : wrong result : ", yByteValue * xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -390,7 +390,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte multiply int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte multiply int : wrong result : ", yByteValue * xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -409,7 +409,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte multiply long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("byte multiply long : wrong result : ", yByteValue * xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -428,7 +428,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte multiply float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("byte multiply float : wrong result : ", yByteValue * xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -447,7 +447,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte multiply double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("byte multiply double : wrong result : ", yByteValue * xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -468,7 +468,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte divide byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte divide byte : wrong result : ", yByteValue / xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -487,7 +487,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte divide char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte divide char : wrong result : ", yByteValue / xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -506,7 +506,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte divide short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte divide short : wrong result : ", yByteValue / xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -525,7 +525,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte divide int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte divide int : wrong result : ", yByteValue / xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -544,7 +544,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte divide long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("byte divide long : wrong result : ", yByteValue / xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -563,7 +563,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte divide float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("byte divide float : wrong result : ", yByteValue / xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -582,7 +582,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte divide double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("byte divide double : wrong result : ", yByteValue / xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -603,7 +603,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte remainder byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte remainder byte : wrong result : ", yByteValue % xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -622,7 +622,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte remainder char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte remainder char : wrong result : ", yByteValue % xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -641,7 +641,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte remainder short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte remainder short : wrong result : ", yByteValue % xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -660,7 +660,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte remainder int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte remainder int : wrong result : ", yByteValue % xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -679,7 +679,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte remainder long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("byte remainder long : wrong result : ", yByteValue % xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -698,7 +698,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte remainder float : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("byte remainder float : wrong result : ", yByteValue % xFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -717,7 +717,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte remainder double : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("byte remainder double : wrong result : ", yByteValue % xDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -744,7 +744,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greater byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greater byte : wrong result : ", xByteValue > xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -769,7 +769,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greater char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greater char : wrong result : ", xByteValue > xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -794,7 +794,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greater short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greater short : wrong result : ", xByteValue > xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -819,7 +819,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greater int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greater int : wrong result : ", xByteValue > xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -844,7 +844,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greater long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greater long : wrong result : ", xByteValue > xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -869,7 +869,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greater float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greater float : wrong result : ", xByteValue > xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -894,7 +894,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greater double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greater double : wrong result : ", xByteValue > xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -921,7 +921,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greaterEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greaterEqual byte : wrong result : ", xByteValue >= xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -946,7 +946,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greaterEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greaterEqual char : wrong result : ", xByteValue >= xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -971,7 +971,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greaterEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greaterEqual short : wrong result : ", xByteValue >= xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -996,7 +996,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greaterEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greaterEqual int : wrong result : ", xByteValue >= xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1021,7 +1021,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greaterEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greaterEqual long : wrong result : ", xByteValue >= xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1046,7 +1046,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greaterEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greaterEqual float : wrong result : ", xByteValue >= xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1071,7 +1071,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte greaterEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte greaterEqual double : wrong result : ", xByteValue >= xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1098,7 +1098,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte less byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte less byte : wrong result : ", xByteValue < xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1123,7 +1123,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte less char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte less char : wrong result : ", xByteValue < xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1148,7 +1148,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte less short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte less short : wrong result : ", xByteValue < xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1173,7 +1173,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte less int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte less int : wrong result : ", xByteValue < xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1198,7 +1198,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte less long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte less long : wrong result : ", xByteValue < xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1223,7 +1223,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte less float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte less float : wrong result : ", xByteValue < xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1248,7 +1248,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte less double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte less double : wrong result : ", xByteValue < xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1275,7 +1275,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte lessEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte lessEqual byte : wrong result : ", xByteValue <= xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1300,7 +1300,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte lessEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte lessEqual char : wrong result : ", xByteValue <= xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1325,7 +1325,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte lessEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte lessEqual short : wrong result : ", xByteValue <= xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1350,7 +1350,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte lessEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte lessEqual int : wrong result : ", xByteValue <= xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1375,7 +1375,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte lessEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte lessEqual long : wrong result : ", xByteValue <= xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1400,7 +1400,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte lessEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte lessEqual float : wrong result : ", xByteValue <= xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1425,7 +1425,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte lessEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte lessEqual double : wrong result : ", xByteValue <= xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1452,7 +1452,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte equalEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte equalEqual byte : wrong result : ", xByteValue == xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1477,7 +1477,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte equalEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte equalEqual char : wrong result : ", xByteValue == xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1502,7 +1502,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte equalEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte equalEqual short : wrong result : ", xByteValue == xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1527,7 +1527,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte equalEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte equalEqual int : wrong result : ", xByteValue == xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1552,7 +1552,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte equalEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte equalEqual long : wrong result : ", xByteValue == xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1577,7 +1577,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte equalEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte equalEqual float : wrong result : ", xByteValue == xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1602,7 +1602,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte equalEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte equalEqual double : wrong result : ", xByteValue == xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1629,7 +1629,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte notEqual byte : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte notEqual byte : wrong result : ", xByteValue != xByteValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1654,7 +1654,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte notEqual char : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte notEqual char : wrong result : ", xByteValue != xCharValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1679,7 +1679,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte notEqual short : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte notEqual short : wrong result : ", xByteValue != xShortValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1704,7 +1704,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte notEqual int : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte notEqual int : wrong result : ", xByteValue != xIntValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1729,7 +1729,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte notEqual long : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte notEqual long : wrong result : ", xByteValue != xLongValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1754,7 +1754,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte notEqual float : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte notEqual float : wrong result : ", xByteValue != xFloatValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1779,7 +1779,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte notEqual double : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("byte notEqual double : wrong result : ", xByteValue != xDoubleValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1800,7 +1800,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte leftShift byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte leftShift byte : wrong result : ", yByteValue << xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1819,7 +1819,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte leftShift char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte leftShift char : wrong result : ", yByteValue << xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1838,7 +1838,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte leftShift short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte leftShift short : wrong result : ", yByteValue << xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1857,7 +1857,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte leftShift int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte leftShift int : wrong result : ", yByteValue << xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1876,7 +1876,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte leftShift long : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte leftShift long : wrong result : ", yByteValue << xLongValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1897,7 +1897,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte rightShift byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte rightShift byte : wrong result : ", yByteValue >> xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1916,7 +1916,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte rightShift char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte rightShift char : wrong result : ", yByteValue >> xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1935,7 +1935,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte rightShift short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte rightShift short : wrong result : ", yByteValue >> xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1954,7 +1954,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte rightShift int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte rightShift int : wrong result : ", yByteValue >> xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1973,7 +1973,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte rightShift long : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte rightShift long : wrong result : ", yByteValue >> xLongValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1994,7 +1994,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte unsignedRightShift byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte unsignedRightShift byte : wrong result : ", yByteValue >>> xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2013,7 +2013,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte unsignedRightShift char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte unsignedRightShift char : wrong result : ", yByteValue >>> xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2032,7 +2032,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte unsignedRightShift short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte unsignedRightShift short : wrong result : ", yByteValue >>> xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2051,7 +2051,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte unsignedRightShift int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte unsignedRightShift int : wrong result : ", yByteValue >>> xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2070,7 +2070,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte unsignedRightShift long : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte unsignedRightShift long : wrong result : ", yByteValue >>> xLongValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2091,7 +2091,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte or byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte or byte : wrong result : ", yByteValue | xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2110,7 +2110,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte or char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte or char : wrong result : ", yByteValue | xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2129,7 +2129,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte or short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte or short : wrong result : ", yByteValue | xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2148,7 +2148,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte or int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte or int : wrong result : ", yByteValue | xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2167,7 +2167,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte or long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("byte or long : wrong result : ", yByteValue | xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2188,7 +2188,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte and byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte and byte : wrong result : ", yByteValue & xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2207,7 +2207,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte and char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte and char : wrong result : ", yByteValue & xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2226,7 +2226,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte and short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte and short : wrong result : ", yByteValue & xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2245,7 +2245,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte and int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte and int : wrong result : ", yByteValue & xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2264,7 +2264,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte and long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("byte and long : wrong result : ", yByteValue & xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2285,7 +2285,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte xor byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte xor byte : wrong result : ", yByteValue ^ xByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2304,7 +2304,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte xor char : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte xor char : wrong result : ", yByteValue ^ xCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2323,7 +2323,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte xor short : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte xor short : wrong result : ", yByteValue ^ xShortValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2342,7 +2342,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte xor int : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte xor int : wrong result : ", yByteValue ^ xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2361,7 +2361,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("byte xor long : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("byte xor long : wrong result : ", yByteValue ^ xLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2382,7 +2382,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("plus byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("plus byte : wrong result : ", + yByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2403,7 +2403,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("minus byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("minus byte : wrong result : ", - yByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2424,7 +2424,7 @@ public class ByteOperatorsTests extends Tests {
 		assertEquals("twiddle byte : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("twiddle byte : wrong result : ", ~ yByteValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

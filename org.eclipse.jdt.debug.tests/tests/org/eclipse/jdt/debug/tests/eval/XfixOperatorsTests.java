@@ -56,7 +56,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("byte local variable value : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("byte local variable value : wrong result : ", tmpyVar, byteValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -87,7 +87,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("byte local variable value : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("byte local variable value : wrong result : ", tmpyVar, byteValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -118,7 +118,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("byte local variable value : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("byte local variable value : wrong result : ", tmpyVar, byteValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -149,7 +149,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("byte local variable value : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("byte local variable value : wrong result : ", tmpyVar, byteValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -183,7 +183,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("char local variable value : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("char local variable value : wrong result : ", tmpyVar, charValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -214,7 +214,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("char local variable value : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("char local variable value : wrong result : ", tmpyVar, charValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -245,7 +245,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("char local variable value : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("char local variable value : wrong result : ", tmpyVar, charValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -276,7 +276,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("char local variable value : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("char local variable value : wrong result : ", tmpyVar, charValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -310,7 +310,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -341,7 +341,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -372,7 +372,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -403,7 +403,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -437,7 +437,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("int local variable value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int local variable value : wrong result : ", tmpyVar, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -468,7 +468,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("int local variable value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int local variable value : wrong result : ", tmpyVar, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -499,7 +499,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("int local variable value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int local variable value : wrong result : ", tmpyVar, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -530,7 +530,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("int local variable value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int local variable value : wrong result : ", tmpyVar, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -564,7 +564,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("long local variable value : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long local variable value : wrong result : ", tmpyVar, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -595,7 +595,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("long local variable value : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long local variable value : wrong result : ", tmpyVar, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -626,7 +626,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("long local variable value : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long local variable value : wrong result : ", tmpyVar, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -657,7 +657,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("long local variable value : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long local variable value : wrong result : ", tmpyVar, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -691,7 +691,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -722,7 +722,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -753,7 +753,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -784,7 +784,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -818,7 +818,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("double local variable value : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double local variable value : wrong result : ", tmpyVar, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -849,7 +849,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("double local variable value : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double local variable value : wrong result : ", tmpyVar, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -880,7 +880,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("double local variable value : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double local variable value : wrong result : ", tmpyVar, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -911,7 +911,7 @@ public class XfixOperatorsTests extends Tests {
 		assertEquals("double local variable value : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double local variable value : wrong result : ", tmpyVar, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

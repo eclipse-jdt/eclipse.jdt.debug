@@ -70,7 +70,7 @@ public class TestsArrays extends Tests {
 		assertEquals("int array value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int array value : wrong result : ", yArrayIntValue[2], intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -89,7 +89,7 @@ public class TestsArrays extends Tests {
 		assertEquals("int array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int array length : wrong result : ", yArrayIntValue.length, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -162,7 +162,7 @@ public class TestsArrays extends Tests {
 		assertEquals("int array value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int array value : wrong result : ", yIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -213,7 +213,7 @@ public class TestsArrays extends Tests {
 		assertEquals("int array value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int array value : wrong result : ", xIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -256,7 +256,7 @@ public class TestsArrays extends Tests {
 		assertEquals("java.lang.String array value : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String array value : wrong result : ", yArrayStringValue[2], stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -275,7 +275,7 @@ public class TestsArrays extends Tests {
 		assertEquals("java.lang.String array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("java.lang.String array length : wrong result : ", yArrayStringValue.length, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -348,7 +348,7 @@ public class TestsArrays extends Tests {
 		assertEquals("java.lang.String array value : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String array value : wrong result : ", yStringValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -400,7 +400,7 @@ public class TestsArrays extends Tests {
 		assertEquals("java.lang.String array value : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String array value : wrong result : ", xStringValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

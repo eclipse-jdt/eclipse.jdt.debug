@@ -81,7 +81,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -138,7 +138,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -195,7 +195,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -252,7 +252,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -309,7 +309,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -366,7 +366,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -423,7 +423,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -482,7 +482,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -539,7 +539,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -596,7 +596,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -653,7 +653,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -710,7 +710,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -767,7 +767,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -824,7 +824,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -883,7 +883,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -940,7 +940,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -997,7 +997,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1054,7 +1054,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1111,7 +1111,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1168,7 +1168,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1225,7 +1225,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1284,7 +1284,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1341,7 +1341,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1398,7 +1398,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1455,7 +1455,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1512,7 +1512,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1569,7 +1569,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1626,7 +1626,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1685,7 +1685,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1742,7 +1742,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1799,7 +1799,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1856,7 +1856,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1913,7 +1913,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1970,7 +1970,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2027,7 +2027,7 @@ public class FloatAssignmentOperatorsTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", tmpyVar, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

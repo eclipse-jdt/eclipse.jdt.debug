@@ -38,7 +38,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("iaa.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("iaa.m1 : wrong result : ", 1, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -51,7 +51,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("aa.m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("aa.m2 : wrong result : ", 2, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -64,7 +64,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("ab.s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ab.s2 : wrong result : ", 9, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -77,7 +77,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("ac.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ac.m1 : wrong result : ", 111, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -90,7 +90,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("ibb.m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ibb.m3 : wrong result : ", 33, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -103,7 +103,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("ibc.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("ibc.m1 : wrong result : ", 111, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -116,7 +116,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("bb.m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bb.m1 : wrong result : ", 11, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -129,7 +129,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("bb.m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bb.m3 : wrong result : ", 33, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -142,7 +142,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("bc.s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bc.s2 : wrong result : ", 99, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -155,7 +155,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("bc.s4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("bc.s4 : wrong result : ", 88, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -168,7 +168,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("icc.m3 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("icc.m3 : wrong result : ", 333, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -181,7 +181,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("cc.m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.m2 : wrong result : ", 222, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -194,7 +194,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("cc.m4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.m4 : wrong result : ", 444, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -207,7 +207,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("cc.m6 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("cc.m6 : wrong result : ", 666, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -220,7 +220,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("new A().m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new A().m1 : wrong result : ", 1, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -233,7 +233,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("new B().m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new B().m1 : wrong result : ", 11, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -246,7 +246,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("new B().m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new B().m2 : wrong result : ", 22, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -259,7 +259,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("new B().s4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new B().s4 : wrong result : ", 88, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -272,7 +272,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("new C().m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().m1 : wrong result : ", 111, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -285,7 +285,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("new C().m4 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().m4 : wrong result : ", 444, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -298,7 +298,7 @@ public class TestsTypeHierarchy1 extends Tests {
 		assertEquals("new C().s6 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("new C().s6 : wrong result : ", 777, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

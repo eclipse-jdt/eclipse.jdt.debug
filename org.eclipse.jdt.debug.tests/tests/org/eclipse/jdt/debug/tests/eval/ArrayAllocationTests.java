@@ -48,7 +48,7 @@ public class ArrayAllocationTests extends Tests {
 		assertEquals("byte array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("byte array length : wrong result : ", yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -74,7 +74,7 @@ public class ArrayAllocationTests extends Tests {
 		assertEquals("char array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("char array length : wrong result : ", yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -100,7 +100,7 @@ public class ArrayAllocationTests extends Tests {
 		assertEquals("short array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("short array length : wrong result : ", yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -126,7 +126,7 @@ public class ArrayAllocationTests extends Tests {
 		assertEquals("int array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int array length : wrong result : ", yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -152,7 +152,7 @@ public class ArrayAllocationTests extends Tests {
 		assertEquals("long array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("long array length : wrong result : ", yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -178,7 +178,7 @@ public class ArrayAllocationTests extends Tests {
 		assertEquals("float array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("float array length : wrong result : ", yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -204,7 +204,7 @@ public class ArrayAllocationTests extends Tests {
 		assertEquals("double array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("double array length : wrong result : ", yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -230,7 +230,7 @@ public class ArrayAllocationTests extends Tests {
 		assertEquals("java.lang.String array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("java.lang.String array length : wrong result : ", yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -256,7 +256,7 @@ public class ArrayAllocationTests extends Tests {
 		assertEquals("boolean array length : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("boolean array length : wrong result : ", yCharValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

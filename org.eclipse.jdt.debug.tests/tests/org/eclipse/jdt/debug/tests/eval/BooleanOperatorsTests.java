@@ -55,7 +55,7 @@ public class BooleanOperatorsTests extends Tests {
 		assertEquals("boolean or boolean : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean or boolean : wrong result : ", yBooleanValue | yBooleanValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -88,7 +88,7 @@ public class BooleanOperatorsTests extends Tests {
 		assertEquals("boolean and boolean : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean and boolean : wrong result : ", yBooleanValue & yBooleanValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -121,7 +121,7 @@ public class BooleanOperatorsTests extends Tests {
 		assertEquals("boolean xor boolean : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean xor boolean : wrong result : ", yBooleanValue ^ yBooleanValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -142,7 +142,7 @@ public class BooleanOperatorsTests extends Tests {
 		assertEquals("not boolean : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("not boolean : wrong result : ", ! yBooleanValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

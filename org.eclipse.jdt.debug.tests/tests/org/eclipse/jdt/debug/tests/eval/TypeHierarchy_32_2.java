@@ -38,7 +38,7 @@ public class TypeHierarchy_32_2 extends Tests {
 		assertEquals("m1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("m1 : wrong result : ", 11, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -51,7 +51,7 @@ public class TypeHierarchy_32_2 extends Tests {
 		assertEquals("m2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("m2 : wrong result : ", 22, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -64,7 +64,7 @@ public class TypeHierarchy_32_2 extends Tests {
 		assertEquals("s2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("s2 : wrong result : ", 9, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

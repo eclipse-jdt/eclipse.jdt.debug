@@ -44,7 +44,7 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("byte local variable value : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("byte local variable value : wrong result : ", yVarByteValue, byteValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -63,7 +63,7 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("char local variable value : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("char local variable value : wrong result : ", yVarCharValue, charValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -82,7 +82,7 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", yVarShortValue, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -101,7 +101,7 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("int local variable value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int local variable value : wrong result : ", yVarIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -120,7 +120,7 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("long local variable value : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long local variable value : wrong result : ", yVarLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -139,7 +139,7 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("float local variable value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float local variable value : wrong result : ", yVarFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -158,7 +158,7 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("double local variable value : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double local variable value : wrong result : ", yVarDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -177,7 +177,7 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("java.lang.String local variable value : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String local variable value : wrong result : ", yVarStringValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -196,7 +196,7 @@ public class LocalVarValueTests extends Tests {
 		assertEquals("boolean local variable value : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean local variable value : wrong result : ", yVarBooleanValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

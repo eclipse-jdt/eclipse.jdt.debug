@@ -43,7 +43,7 @@ public class StringPlusOpTests extends Tests {
 		assertEquals("java.lang.String plus byte : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String plus byte : wrong result : ", yStringValue + xByteValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -62,7 +62,7 @@ public class StringPlusOpTests extends Tests {
 		assertEquals("java.lang.String plus char : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String plus char : wrong result : ", yStringValue + xCharValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -81,7 +81,7 @@ public class StringPlusOpTests extends Tests {
 		assertEquals("java.lang.String plus short : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String plus short : wrong result : ", yStringValue + xShortValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -100,7 +100,7 @@ public class StringPlusOpTests extends Tests {
 		assertEquals("java.lang.String plus int : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String plus int : wrong result : ", yStringValue + xIntValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -119,7 +119,7 @@ public class StringPlusOpTests extends Tests {
 		assertEquals("java.lang.String plus long : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String plus long : wrong result : ", yStringValue + xLongValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -138,7 +138,7 @@ public class StringPlusOpTests extends Tests {
 		assertEquals("java.lang.String plus double : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String plus double : wrong result : ", yStringValue + xDoubleValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -157,7 +157,7 @@ public class StringPlusOpTests extends Tests {
 		assertEquals("java.lang.String plus boolean : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String plus boolean : wrong result : ", yStringValue + xBooleanValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -176,7 +176,7 @@ public class StringPlusOpTests extends Tests {
 		assertEquals("java.lang.String plus java.lang.String : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String plus java.lang.String : wrong result : ", yStringValue + xStringValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -195,7 +195,7 @@ public class StringPlusOpTests extends Tests {
 		assertEquals("java.lang.String plus null : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String plus null : wrong result : ", yStringValue + xNullValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

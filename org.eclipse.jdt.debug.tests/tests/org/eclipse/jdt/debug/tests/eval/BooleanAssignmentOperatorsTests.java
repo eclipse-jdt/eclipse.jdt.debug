@@ -81,7 +81,7 @@ public class BooleanAssignmentOperatorsTests extends Tests {
 		assertEquals("boolean local variable value : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean local variable value : wrong result : ", tmpyVar, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -140,7 +140,7 @@ public class BooleanAssignmentOperatorsTests extends Tests {
 		assertEquals("boolean local variable value : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean local variable value : wrong result : ", tmpyVar, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -199,7 +199,7 @@ public class BooleanAssignmentOperatorsTests extends Tests {
 		assertEquals("boolean local variable value : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean local variable value : wrong result : ", tmpyVar, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

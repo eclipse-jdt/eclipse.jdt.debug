@@ -81,7 +81,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -138,7 +138,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -195,7 +195,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -252,7 +252,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -309,7 +309,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -366,7 +366,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -423,7 +423,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -482,7 +482,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -539,7 +539,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -596,7 +596,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -653,7 +653,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -710,7 +710,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -767,7 +767,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -824,7 +824,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -883,7 +883,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -940,7 +940,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -997,7 +997,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1054,7 +1054,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1111,7 +1111,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1168,7 +1168,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1225,7 +1225,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1284,7 +1284,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1341,7 +1341,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1398,7 +1398,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1455,7 +1455,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1512,7 +1512,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1569,7 +1569,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1626,7 +1626,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1685,7 +1685,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1742,7 +1742,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1799,7 +1799,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1856,7 +1856,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1913,7 +1913,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -1970,7 +1970,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2027,7 +2027,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2086,7 +2086,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2143,7 +2143,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2200,7 +2200,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2257,7 +2257,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2314,7 +2314,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2373,7 +2373,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2430,7 +2430,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2487,7 +2487,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2544,7 +2544,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2601,7 +2601,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2660,7 +2660,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2717,7 +2717,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2774,7 +2774,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2831,7 +2831,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2888,7 +2888,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -2947,7 +2947,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3004,7 +3004,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3061,7 +3061,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3118,7 +3118,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3175,7 +3175,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3234,7 +3234,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3291,7 +3291,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3348,7 +3348,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3405,7 +3405,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3462,7 +3462,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3521,7 +3521,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3578,7 +3578,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3635,7 +3635,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3692,7 +3692,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -3749,7 +3749,7 @@ public class ShortAssignmentOperatorsTests extends Tests {
 		assertEquals("short local variable value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short local variable value : wrong result : ", tmpyVar, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

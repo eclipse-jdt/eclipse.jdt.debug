@@ -42,7 +42,7 @@ public class FieldValueTests extends Tests {
 		assertEquals("byte field value : wrong type : ", "byte", typeName);
 		byteValue = ((IJavaPrimitiveValue)value).getByteValue();
 		assertEquals("byte field value : wrong result : ", yFieldByteValue, byteValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -61,7 +61,7 @@ public class FieldValueTests extends Tests {
 		assertEquals("char field value : wrong type : ", "char", typeName);
 		charValue = ((IJavaPrimitiveValue)value).getCharValue();
 		assertEquals("char field value : wrong result : ", yFieldCharValue, charValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -80,7 +80,7 @@ public class FieldValueTests extends Tests {
 		assertEquals("short field value : wrong type : ", "short", typeName);
 		shortValue = ((IJavaPrimitiveValue)value).getShortValue();
 		assertEquals("short field value : wrong result : ", yFieldShortValue, shortValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -99,7 +99,7 @@ public class FieldValueTests extends Tests {
 		assertEquals("int field value : wrong type : ", "int", typeName);
 		intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("int field value : wrong result : ", yFieldIntValue, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -118,7 +118,7 @@ public class FieldValueTests extends Tests {
 		assertEquals("long field value : wrong type : ", "long", typeName);
 		longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("long field value : wrong result : ", yFieldLongValue, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -137,7 +137,7 @@ public class FieldValueTests extends Tests {
 		assertEquals("float field value : wrong type : ", "float", typeName);
 		floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("float field value : wrong result : ", yFieldFloatValue, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -156,7 +156,7 @@ public class FieldValueTests extends Tests {
 		assertEquals("double field value : wrong type : ", "double", typeName);
 		doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("double field value : wrong result : ", yFieldDoubleValue, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -175,7 +175,7 @@ public class FieldValueTests extends Tests {
 		assertEquals("java.lang.String field value : wrong type : ", "java.lang.String", typeName);
 		stringValue = ((JDIObjectValue)value).getValueString();
 		assertEquals("java.lang.String field value : wrong result : ", yFieldStringValue, stringValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -194,7 +194,7 @@ public class FieldValueTests extends Tests {
 		assertEquals("boolean field value : wrong type : ", "boolean", typeName);
 		booleanValue = ((IJavaPrimitiveValue)value).getBooleanValue();
 		assertEquals("boolean field value : wrong result : ", yFieldBooleanValue, booleanValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}

@@ -38,7 +38,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("0 : wrong result : ", 0, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -51,7 +51,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("00 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("00 : wrong result : ", 00, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -64,7 +64,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0x0 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("0x0 : wrong result : ", 0x0, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -77,7 +77,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("-1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("-1 : wrong result : ", -1, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -90,7 +90,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("1 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("1 : wrong result : ", 1, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -103,7 +103,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("2147483647 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("2147483647 : wrong result : ", 2147483647, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -116,7 +116,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("-2147483648 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("-2147483648 : wrong result : ", -2147483648, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -129,7 +129,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0x7fffffff : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("0x7fffffff : wrong result : ", 0x7fffffff, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -142,7 +142,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0x80000000 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("0x80000000 : wrong result : ", 0x80000000, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -155,7 +155,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0xffffffff : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("0xffffffff : wrong result : ", 0xffffffff, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -168,7 +168,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("017777777777 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("017777777777 : wrong result : ", 017777777777, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -181,7 +181,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("020000000000 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("020000000000 : wrong result : ", 020000000000, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -194,7 +194,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("037777777777 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("037777777777 : wrong result : ", 037777777777, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -207,7 +207,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("2 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("2 : wrong result : ", 2, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -220,7 +220,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0372 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("0372 : wrong result : ", 0372, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -233,7 +233,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0xDadaCafe : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("0xDadaCafe : wrong result : ", 0xDadaCafe, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -246,7 +246,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("1996 : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("1996 : wrong result : ", 1996, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -259,7 +259,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0x00FF00FF : wrong type : ", "int", typeName);
 		int intValue = ((IJavaPrimitiveValue)value).getIntValue();
 		assertEquals("0x00FF00FF : wrong result : ", 0x00FF00FF, intValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -272,7 +272,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("0L : wrong result : ", 0L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -285,7 +285,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("00L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("00L : wrong result : ", 00L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -298,7 +298,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0x0L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("0x0L : wrong result : ", 0x0L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -311,7 +311,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("-1L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("-1L : wrong result : ", -1L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -324,7 +324,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("1L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("1L : wrong result : ", 1L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -337,7 +337,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("9223372036854775807L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("9223372036854775807L : wrong result : ", 9223372036854775807L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -350,7 +350,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("-9223372036854775808L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("-9223372036854775808L : wrong result : ", -9223372036854775808L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -363,7 +363,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0x7fffffffffffffffL : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("0x7fffffffffffffffL : wrong result : ", 0x7fffffffffffffffL, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -376,7 +376,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0x8000000000000000L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("0x8000000000000000L : wrong result : ", 0x8000000000000000L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -389,7 +389,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0xffffffffffffffffL : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("0xffffffffffffffffL : wrong result : ", 0xffffffffffffffffL, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -402,7 +402,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0777777777777777777777L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("0777777777777777777777L : wrong result : ", 0777777777777777777777L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -415,7 +415,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("01000000000000000000000L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("01000000000000000000000L : wrong result : ", 01000000000000000000000L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -428,7 +428,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("01777777777777777777777L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("01777777777777777777777L : wrong result : ", 01777777777777777777777L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -441,7 +441,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0777l : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("0777l : wrong result : ", 0777l, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -454,7 +454,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0x100000000L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("0x100000000L : wrong result : ", 0x100000000L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -467,7 +467,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("2147483648L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("2147483648L : wrong result : ", 2147483648L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -480,7 +480,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0xC0B0L : wrong type : ", "long", typeName);
 		long longValue = ((IJavaPrimitiveValue)value).getLongValue();
 		assertEquals("0xC0B0L : wrong result : ", 0xC0B0L, longValue);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -493,7 +493,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("3.40282347e+38f : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("3.40282347e+38f : wrong result : ", 3.40282347e+38f, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -506,7 +506,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("1.40239846e-45f : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("1.40239846e-45f : wrong result : ", 1.40239846e-45f, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -519,7 +519,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("1e1f : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("1e1f : wrong result : ", 1e1f, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -532,7 +532,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("2.f : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("2.f : wrong result : ", 2.f, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -545,7 +545,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals(".3f : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals(".3f : wrong result : ", .3f, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -558,7 +558,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0f : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("0f : wrong result : ", 0f, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -571,7 +571,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("3.14f : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("3.14f : wrong result : ", 3.14f, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -584,7 +584,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("6.022137e+23f : wrong type : ", "float", typeName);
 		float floatValue = ((IJavaPrimitiveValue)value).getFloatValue();
 		assertEquals("6.022137e+23f : wrong result : ", 6.022137e+23f, floatValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -597,7 +597,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("1.79769313486231570e+308 : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("1.79769313486231570e+308 : wrong result : ", 1.79769313486231570e+308, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -610,7 +610,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("4.94065645841246544e-324 : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("4.94065645841246544e-324 : wrong result : ", 4.94065645841246544e-324, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -623,7 +623,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("1e1 : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("1e1 : wrong result : ", 1e1, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -636,7 +636,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("2. : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("2. : wrong result : ", 2., doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -649,7 +649,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals(".3 : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals(".3 : wrong result : ", .3, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -662,7 +662,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("0.0 : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("0.0 : wrong result : ", 0.0, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -675,7 +675,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("3.14 : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("3.14 : wrong result : ", 3.14, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -688,7 +688,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("1e-9d : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("1e-9d : wrong result : ", 1e-9d, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
@@ -701,7 +701,7 @@ public class TestsNumberLiteral extends Tests {
 		assertEquals("1e137 : wrong type : ", "double", typeName);
 		double doubleValue = ((IJavaPrimitiveValue)value).getDoubleValue();
 		assertEquals("1e137 : wrong result : ", 1e137, doubleValue, 0);
-		} finally {;
+		} finally {
 		end();
 		}
 	}
