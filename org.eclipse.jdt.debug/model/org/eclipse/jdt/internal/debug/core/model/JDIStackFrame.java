@@ -39,6 +39,7 @@ import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.LocalVariable;
+import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
@@ -54,18 +55,17 @@ import com.sun.jdi.VirtualMachine;
 public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 
 	/**
-	 * This frame's depth in the call stack
+	 * This frame's depth in the call stack (0 == bottom of stack).
+	 * A new frame is indicated by -2.
+	 * An invalid frame is indicated by -1.
 	 */
-	private int fDepth;
+	private int fDepth = -2;
 	
 	/**
 	 * Underlying JDI stack frame.
 	 */
 	private StackFrame fStackFrame;
-	/**
-	 * The last (previous) underlying method.
-	 */
-	private Method fLastMethod;
+
 	/**
 	 * Containing thread.
 	 */
@@ -74,21 +74,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * Visible variables.
 	 */
 	private List fVariables;
-	/**
-	 * The method this stack frame is associated with.
-	 * Cached lazily on first access.
-	 */
-	private Method fMethod= null;
+
 	/**
 	 * The underlying Object associated with this stack frame.  
 	 * Cached lazily on first access.
 	 */
 	private ObjectReference fThisObject;
-	/**
-	 * The name of the type in which the method for this stack frame was
-	 * declared (implemented).  Cached lazily on first access.
-	 */
-	private String fDeclaringTypeName;
+
 	/**
 	 * The name of the type of the object that received the method call associated
 	 * with this stack frame.  Cached lazily on first access.
@@ -104,46 +96,70 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * calculating its out of synch state.
 	 */
 	private boolean fIsOutOfSynch= false;
-	/**
-	 * The source name debug attribute. Cached lazily on first access.
-	 */
-	private String fSourceName;
 	
 	/**
 	 * Whether local variable information was available
 	 */
 	private boolean fLocalsAvailable = true;
+	
+	/**
+	 * Location of this stack frame
+	 */
+	private Location fLocation;
 
 	/**
 	 * Creates a new stack frame in the given thread.
 	 * 
 	 * @param thread The parent JDI thread
-	 * @param stackFrame The underlying stack frame
+	 * @param frame underlying frame
+	 * @param depth depth on the stack (0 is bottom)
 	 */
-	public JDIStackFrame(JDIThread thread, int depth) {
+	public JDIStackFrame(JDIThread thread, StackFrame frame, int depth) {
 		super((JDIDebugTarget)thread.getDebugTarget());
-		setDepth(depth);
 		setThread(thread);
+		bind(frame, depth);
 	}
 	
 	/**
-	 * Sets this frame's depth in the call stack.
+	 * Binds this frame to the given underlying frame
+	 * on the target VM or returns a new frame representing the
+	 * given frame. A frame can only be re-bound to an underlying frame
+	 * if it refers to the same depth on the stack in the same method.
 	 * 
-	 * @param depth index in the call stack
+	 * @param frame underlying frame, or <code>null</code>
+	 * @param depth depth in the call stack, or -1 to indicate the
+	 *  frame should become invalid
+	 *  @param return a frame to refer to the given frame or <code>null</code>
 	 */
-	protected void setDepth(int depth) {
-		fDepth = depth;
-		clearCachedData();
-		fRefreshVariables = true;
-	}
-	
-	/**
-	 * Returns this fame's depth in the call stack.
-	 * 
-	 * @return this frame's depth in the call stack
-	 */
-	protected int getDepth() {
-		return fDepth;
+	protected JDIStackFrame bind(StackFrame frame, int depth) {
+		synchronized (fThread) {
+			if (fDepth == -2) {
+				// first initialization
+				fStackFrame = frame;
+				fDepth = depth;
+				fLocation = frame.location();
+				return this;
+			} else if (depth == -1) {
+				// mark as invalid
+				fDepth = -1;
+				fStackFrame = null;
+				return null;
+			} else if (fDepth == depth) {
+				Location location = frame.location();
+				if (location.method().equals(fLocation.method())) {
+					// TODO: what about receiving type being the same?
+					fStackFrame = frame;
+					fLocation = location;
+					clearCachedData();
+					return this;
+				}
+			}
+			// invalidate this franme
+			bind(null, -1);
+			// return a new frame
+			return new JDIStackFrame(fThread, frame, depth);
+		}
+
 	}
 	
 	/**
@@ -183,12 +199,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IStep#canStepOver()
 	 */
 	public boolean canStepOver() {
-		try {
-			return exists() && !isObsolete() && getThread().canStepOver();
-		} catch (DebugException e) {
-			logError(e);
-			return false;
-		}
+		return exists() && !isObsolete() && getThread().canStepOver();
 	}
 
 	/**
@@ -221,17 +232,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * Returns the underlying method associated with this stack frame,
 	 * retreiving the method is necessary.
 	 */
-	public Method getUnderlyingMethod() throws DebugException {
+	public Method getUnderlyingMethod() {
 		synchronized (fThread) {
-			if (fStackFrame == null || fMethod == null) {
-				try {
-					fMethod= getUnderlyingStackFrame().location().method();
-					fLastMethod = fMethod;
-				} catch (RuntimeException e) {
-					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method"), new String[] {e.toString()}), e); //$NON-NLS-1$
-				}
-			}
-			return fMethod;
+			return fLocation.method();
 		}
 	}
 
@@ -358,9 +361,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IStackFrame#getLineNumber()
 	 */
 	public int getLineNumber() throws DebugException {
-		if (isSuspended()) {
+		synchronized (fThread) {
 			try {
-				return getUnderlyingStackFrame().location().lineNumber();
+				return fLocation.lineNumber();
 			} catch (RuntimeException e) {
 				if (getThread().isSuspended()) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_line_number"), new String[] {e.toString()}), e); //$NON-NLS-1$
@@ -667,18 +670,19 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
 	protected List getUnderlyingVisibleVariables() throws DebugException {
-		List variables= Collections.EMPTY_LIST;
-		try {
-			variables= getUnderlyingStackFrame().visibleVariables();
-		} catch (AbsentInformationException e) {
-			setLocalsAvailable(false);
-		} catch (NativeMethodException e) {
-			setLocalsAvailable(false);
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables_2"),new String[] {e.toString()}), e); //$NON-NLS-1$
+		synchronized (fThread) {
+			List variables= Collections.EMPTY_LIST;
+			try {
+				variables= getUnderlyingStackFrame().visibleVariables();
+			} catch (AbsentInformationException e) {
+				setLocalsAvailable(false);
+			} catch (NativeMethodException e) {
+				setLocalsAvailable(false);
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables_2"),new String[] {e.toString()}), e); //$NON-NLS-1$
+			}
+			return variables;
 		}
-
-		return variables;
 	}
 
 	/**
@@ -688,17 +692,19 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
 	protected ObjectReference getUnderlyingThisObject() throws DebugException {
-		if (fStackFrame == null || fThisObject == null && !isStatic()) {
-			try {
-				fThisObject = getUnderlyingStackFrame().thisObject();
-			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_this"),new String[] {e.toString()}), e); //$NON-NLS-1$
-				// execution will not reach this line, as 
-				// #targetRequestFailed will throw an exception			
-				return null;
+		synchronized (fThread) {
+			if ((fStackFrame == null || fThisObject == null) && !isStatic()) {
+				try {
+					fThisObject = getUnderlyingStackFrame().thisObject();
+				} catch (RuntimeException e) {
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_this"),new String[] {e.toString()}), e); //$NON-NLS-1$
+					// execution will not reach this line, as 
+					// #targetRequestFailed will throw an exception			
+					return null;
+				}
 			}
+			return fThisObject;
 		}
-		return fThisObject;
 	}
 	
 	/**
@@ -729,13 +735,12 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#getDeclaringTypeName()
 	 */
 	public String getDeclaringTypeName() throws DebugException {
-		if (fStackFrame == null || fDeclaringTypeName == null) {
+		synchronized (fThread) {
 			try {
 				if (isObsolete()) {
-					fDeclaringTypeName=  JDIDebugModelMessages.getString("JDIStackFrame.<unknown_declaring_type>_1"); //$NON-NLS-1$
-				} else {
-					fDeclaringTypeName= JDIReferenceType.getGenericName(getUnderlyingMethod().declaringType());
+					return  JDIDebugModelMessages.getString("JDIStackFrame.<unknown_declaring_type>_1"); //$NON-NLS-1$
 				}
+				return JDIReferenceType.getGenericName(getUnderlyingMethod().declaringType());
 			} catch (RuntimeException e) {
 				if (getThread().isSuspended()) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_declaring_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
@@ -743,7 +748,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				return JDIDebugModelMessages.getString("JDIStackFrame.<unknown_declaring_type>_1"); //$NON-NLS-1$
 			}
 		}
-		return fDeclaringTypeName;
 	}
 	
 	/**
@@ -867,18 +871,18 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#getSourceName()
 	 */
 	public String getSourceName() throws DebugException {
-		if (fStackFrame == null || fSourceName == null) {
+		synchronized (fThread) {
 			try {
-				fSourceName = getUnderlyingStackFrame().location().sourceName();
+				return fLocation.sourceName();
 			} catch (AbsentInformationException e) {
-				fSourceName = null;
+				return null;
 			} catch (NativeMethodException e) {
-				fSourceName = null;
+				return null;
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
 		}
-		return fSourceName;
+		return null;
 	}
 	
 	protected boolean isTopStackFrame() throws DebugException {
@@ -916,7 +920,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * @see IJavaStackFrame#isObsolete()
 	 */
-	public boolean isObsolete() throws DebugException {
+	public boolean isObsolete() {
 		if (!JDIDebugPlugin.isJdiVersionGreaterThanOrEqual(new int[] {1,4}) || !((JDIDebugTarget)getDebugTarget()).hasHCROccurred()) {
 			// If no hot code replace has occurred, this frame
 			// cannot be obsolete.
@@ -924,34 +928,25 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 		// if this frame's thread is not suspended, the obsolete status cannot
 		// change until it suspends again
-		if (getThread().isSuspended()) {
-			try {
+		synchronized (fThread) {
+			if (getThread().isSuspended()) {
 				return getUnderlyingMethod().isObsolete();
-			} catch (RuntimeException re) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.Exception_occurred_determining_if_stack_frame_is_obsolete_1"), new String[] {re.toString()}), re); //$NON-NLS-1$
-				// execution will not reach this line, as 
-				// #targetRequestFailed will throw an exception			
-				return true;
 			}
+			return false;
 		}
-		return false;
 	}
 	
-	protected boolean exists() throws DebugException {
-		return ((JDIThread)getThread()).computeStackFrames().indexOf(this) != -1;
+	protected boolean exists() {
+		synchronized (fThread) {
+			return fDepth != -1;
+		}
 	}
 	
 	/**
 	 * @see ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		boolean exists= false;
-		try {
-			exists= exists();
-		} catch (DebugException e) {
-			logError(e);
-		}
-		return exists && getThread().canTerminate() || getDebugTarget().canTerminate();
+		return exists() && getThread().canTerminate() || getDebugTarget().canTerminate();
 	}
 
 	/**
@@ -983,21 +978,19 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	protected StackFrame getUnderlyingStackFrame() throws DebugException {
 		synchronized (fThread) {
 			if (fStackFrame == null) {
-				int depth= getDepth();
-				if (depth == -1) {
-					if (fThread.isSuspended()) {
-						// re-index stack frames - See Bug 47198
-						fThread.computeStackFrames();
-						depth = getDepth();
-						if (depth == -1) {
-							// If depth still -1, then this is an invalid frame
-							throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaStackFrame.ERR_INVALID_STACK_FRAME, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
-						}
-					} else {
-						throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaThread.ERR_THREAD_NOT_SUSPENDED, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
-					}
+				if (fDepth == -1) {
+					throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaStackFrame.ERR_INVALID_STACK_FRAME, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
 				}
-				setUnderlyingStackFrame(((JDIThread)getThread()).getUnderlyingFrame(depth));
+				if (fThread.isSuspended()) {
+					// re-index stack frames - See Bug 47198
+					fThread.computeStackFrames();
+					if (fDepth == -1) {
+						// If depth is -1, then this is an invalid frame
+						throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaStackFrame.ERR_INVALID_STACK_FRAME, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
+					}
+				} else {
+					throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IJavaThread.ERR_THREAD_NOT_SUSPENDED, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
+				}
 			}
 			return fStackFrame;
 		}
@@ -1013,21 +1006,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		synchronized (fThread) {
 			fStackFrame = frame;
 			if (frame == null) {
-				fDepth = -1;
 				fRefreshVariables = true;
 			}
 		}
 	}
 	
-	/**
-	 * The underlying method that existed before the current underlying
-	 * method.  Used only so that equality can be checked on stack frame
-	 * after the new one has been set.
-	 */
-	protected Method getLastMethod() {
-		return fLastMethod;
-	}
-
 	protected void setThread(JDIThread thread) {
 		fThread = thread;
 	}
@@ -1109,11 +1092,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * that the cached data may not be valid.
 	 */
 	private void clearCachedData() {
-		fMethod= null;
 		fThisObject= null;
-		fDeclaringTypeName= null;
 		fReceivingTypeName= null;	
-		fSourceName= null;
 	}
 	
 	/**
@@ -1173,11 +1153,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getSourcePath(java.lang.String)
 	 */
 	public String getSourcePath(String stratum) throws DebugException {
-		try {
-			return getUnderlyingStackFrame().location().sourcePath(stratum);
-		} catch (AbsentInformationException e) {
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_path"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		synchronized (fThread) {
+			try {
+				return fLocation.sourcePath(stratum);
+			} catch (AbsentInformationException e) {
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_path"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			}
 		}
 		return null;
 	}
@@ -1186,11 +1168,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getSourcePath()
 	 */
 	public String getSourcePath() throws DebugException {
-		try {
-			return getUnderlyingStackFrame().location().sourcePath();
-		} catch (AbsentInformationException e) {
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_path"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		synchronized (fThread) {
+			try {
+				return fLocation.sourcePath();
+			} catch (AbsentInformationException e) {
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_path"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			}
 		}
 		return null;
 	}	
@@ -1199,9 +1183,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getLineNumber(java.lang.String)
 	 */
 	public int getLineNumber(String stratum) throws DebugException {
-		if (isSuspended()) {
+		synchronized (fThread) {
 			try {
-				return getUnderlyingStackFrame().location().lineNumber(stratum);
+				return fLocation.lineNumber(stratum);
 			} catch (RuntimeException e) {
 				if (getThread().isSuspended()) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_line_number"), new String[] {e.toString()}), e); //$NON-NLS-1$
@@ -1215,12 +1199,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getSourceName(java.lang.String)
 	 */
 	public String getSourceName(String stratum) throws DebugException {
-		try {
-			return getUnderlyingStackFrame().location().sourceName(stratum);
-		} catch (AbsentInformationException e) {
-		} catch (NativeMethodException e) {
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		synchronized (fThread) {
+			try {
+				return fLocation.sourceName(stratum);
+			} catch (AbsentInformationException e) {
+			} catch (NativeMethodException e) {
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			}
 		}
 		return null;
 	}

@@ -215,7 +215,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * collected and cannot be initialized
 	 */
 	protected void initialize() throws ObjectCollectedException {
-		fStackFrames= Collections.EMPTY_LIST;
+		fStackFrames= new ArrayList();
 		// system thread
 		try {
 			determineIfSystemThread();
@@ -407,78 +407,35 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected synchronized List computeStackFrames(boolean refreshChildren) throws DebugException {
 		if (isSuspended()) {
 			if (isTerminated()) {
-				fStackFrames = Collections.EMPTY_LIST;
+				fStackFrames.clear();
 			} else if (refreshChildren) {
-				if (fStackFrames.isEmpty()) {
-					fStackFrames = createAllStackFrames();
-					if (fStackFrames.isEmpty()) {	
-						//leave fRefreshChildren == true
-						//bug 6393
-						return fStackFrames;
-					}
-				} 
-				int stackSize = getUnderlyingFrameCount();
-				
-				// Determine whether to preserve frame objects. If the
-				// stack is now deeper, compare the old TOS with the frame
-				// in the equivalent position on the current stack. If 
-				// the stack is now shorter, compare the current TOS with
-				// the frame in the equivalent position in the old stack.
-				boolean preserve = false;
-				int currIndex = -1;
-				int oldIndex = -1;
-				if (stackSize >=  fStackFrames.size()) {
-					oldIndex =  0;
-					currIndex = stackSize - fStackFrames.size();					
-				} else if (stackSize > 0) {
-					// is the TOS equal to a method futher down the stack in same position?
-					oldIndex = fStackFrames.size() - stackSize;
-					currIndex = 0;
+				List frames = getUnderlyingFrames();
+				int oldSize = fStackFrames.size();
+				int newSize = frames.size();
+				int discard = oldSize - newSize; // number of old frames to discard, if any
+				for (int i = 0; i < discard; i++) {
+					JDIStackFrame invalid = (JDIStackFrame) fStackFrames.remove(0);
+					invalid.bind(null, -1);
 				}
-				if (currIndex >= 0 && oldIndex >= 0) {
-					Method lastMethod = ((JDIStackFrame)fStackFrames.get(oldIndex)).getLastMethod();
-					Method currMethod = getUnderlyingFrame(currIndex).location().method();
-					if (lastMethod == null || currMethod.equals(lastMethod)) {
-						// method still in same position
-						preserve = true;					
+				int newFrames = newSize - oldSize; // number of frames to create, if any
+				int depth = oldSize;
+				for (int i = newFrames - 1; i >= 0; i--) {
+					fStackFrames.add(0, new JDIStackFrame(this, (StackFrame) frames.get(i), depth));
+					depth++;
+				}
+				int numToRebind = Math.min(newSize, oldSize); // number of frames to attempt to rebind
+				int offset = newSize - 1;
+				for (depth = 0; depth < numToRebind; depth++) {
+					JDIStackFrame oldFrame = (JDIStackFrame) fStackFrames.get(offset);
+					StackFrame frame = (StackFrame) frames.get(offset);
+					JDIStackFrame newFrame = oldFrame.bind(frame, depth);
+					if (newFrame != oldFrame) {
+						fStackFrames.set(offset, newFrame);
 					}
+					offset--;
 				}
 				
-				if (preserve) {
-					// compute new or removed stack frames
-					int offset= 0, length= stackSize;
-					if (length > fStackFrames.size()) {
-						// add new frames to the top of the stack, preserve bottom up
-						offset= length - fStackFrames.size();
-						for (int i= offset - 1; i >= 0; i--) {
-							JDIStackFrame newStackFrame= new JDIStackFrame(this, 0);
-							fStackFrames.add(0, newStackFrame);
-						}
-						length= fStackFrames.size() - offset;
-					} else if (length < fStackFrames.size()) {
-						int removed= fStackFrames.size() - length;
-						// remove frames from the top of the stack, preserve bottom up
-						for (int i= 0; i < removed; i++) {
-							fStackFrames.remove(0);
-						}
-					}
-					// update frame indicies to update stack frames
-					for (int i= 0; i < stackSize; i++) {
-						((JDIStackFrame)fStackFrames.get(i)).setDepth(i);	
-					}					
-				} else {
-					// If we're not preserving stack frames, set all
-					// old frame indices to -1. This allows obsolete
-					// stack frames to shortcut methods. For example, when
-					// a background label provider asks them for information
-					// after they're obsolete. See Bug 47198.
-					Iterator iter= fStackFrames.iterator();
-					while (iter.hasNext()) {
-						JDIStackFrame frame= (JDIStackFrame) iter.next();
-						frame.setDepth(-1);
-					}
-					fStackFrames = createAllStackFrames();
-				}
+
 			}
 			fRefreshChildren = false;
 		} else {
@@ -532,39 +489,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return computeStackFrames(true);
 	}
 
-	/**
-	 * Helper method for <code>#computeStackFrames()</code> to create all
-	 * underlying stack frames.
-	 * 
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul>
-	 * <li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
-	 * </ul>
-	 */
-	protected List createAllStackFrames() throws DebugException {
-		int stackSize= getUnderlyingFrameCount();
-		List list= new ArrayList(stackSize);
-		for (int i = 0; i < stackSize; i++) {
-			JDIStackFrame newStackFrame= new JDIStackFrame(this, i);
-			list.add(newStackFrame);			
-		}
-		return list;
-	}
-
-	/**
-	 * Retrieves and returns the underlying stack frame at the specified depth
-	 * 
-	 * @return stack frame
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul>
-	 * <li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
-	 * </ul>
-	 */
-	protected StackFrame getUnderlyingFrame(int depth) throws DebugException {
+	private List getUnderlyingFrames() throws DebugException {
 		if (!isSuspended()) {
 			// Checking isSuspended here eliminates a race condition in resume
 			// between the time stack frames are preserved and the time the
@@ -572,16 +497,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Unable_to_retrieve_stack_frame_-_thread_not_suspended._1"), null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
 		}
 		try {
-			return getUnderlyingThread().frame(depth);
+			return getUnderlyingThread().frames();
 		} catch (IncompatibleThreadStateException e) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Unable_to_retrieve_stack_frame_-_thread_not_suspended._1"), e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
-		} catch (IndexOutOfBoundsException e) {
-			try {
-			computeNewStackFrames();
-			} catch (DebugException de) {
-			}
-			fireChangeEvent(DebugEvent.CONTENT);
-			requestFailed(JDIDebugModelMessages.getString("JDIThread.41"), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InternalError e) {
@@ -590,29 +508,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		// execution will not reach this line, as
 		// #targetRequestFailed will thrown an exception
 		return null;
-	}
-
-	/**
-	 * Returns the underlying method for the given stack frame
-	 * 
-	 * @param frame an underlying JDI stack frame
-	 * @return underlying method
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul>
-	 * <li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
-	 * </ul>
-	 */
-	protected Method getUnderlyingMethod(StackFrame frame) throws DebugException {
-		try {
-			return frame.location().method();
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_method"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// execution will not reach this line, as
-			// #targetRequestFailed will thrown an exception			
-			return null;			
-		}
 	}
 
 	/**
@@ -954,7 +849,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see #invokeMethod(ClassType, ObjectReference, Method, List)
  	 * @see #newInstance(ClassType, Method, List)
 	 */
-	protected void invokeComplete(int restoreTimeout) {
+	protected synchronized void invokeComplete(int restoreTimeout) {
         if (!fIsEvaluatingConditionalBreakpoint) {
             abortStep();
         }
@@ -1288,7 +1183,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see computeStackFrames()
 	 */
 	protected synchronized void disposeStackFrames() {
-		fStackFrames= Collections.EMPTY_LIST;
+		fStackFrames.clear();
 		fRefreshChildren = true;
 	}
 	
@@ -2386,16 +2281,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IThread#hasStackFrames()
 	 */
 	public boolean hasStackFrames() throws DebugException {
-		try {
-			return computeStackFrames().size() > 0;
-		} catch (DebugException e) {
-			// do not throw an exception if the thread resumed while determining
-			// whether stack frames are present
-			if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
-				throw e;
-			}
-		}
-		return false;
+		return isSuspended();
 	}
 		
 	/**

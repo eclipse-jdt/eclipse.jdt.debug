@@ -55,8 +55,10 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 * Returns this variable's current Value.
 	 */
 	protected Value retrieveValue() throws DebugException {
-		if (getStackFrame().isSuspended()) {
-			return getStackFrame().getUnderlyingStackFrame().getValue(fLocal);
+		synchronized (fStackFrame.getThread()) {
+			if (getStackFrame().isSuspended()) {
+				return getStackFrame().getUnderlyingStackFrame().getValue(fLocal);
+			}
 		}
 		// bug 6518
 		return getLastKnownValue();
@@ -81,7 +83,9 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 */
 	protected void setJDIValue(Value value) throws DebugException {
 		try {
-			getStackFrame().getUnderlyingStackFrame().setValue(getLocal(), value);
+			synchronized (getStackFrame().getThread()) {
+				getStackFrame().getUnderlyingStackFrame().setValue(getLocal(), value);
+			}
 			fireChangeEvent(DebugEvent.CONTENT);
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_modifying_local_variable_value_1"), new String[] {e.toString()}), e); //$NON-NLS-1$
