@@ -1004,6 +1004,11 @@
          class="org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage"
          category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
 	</page>
+	<page name="%javaDetailFormattersPrefName"
+         id="org.eclipse.jdt.ui.JavaDetailFormattersPreferencePage"
+         class="org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage"
+         category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
+	</page>
 </extension>
 
 <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">

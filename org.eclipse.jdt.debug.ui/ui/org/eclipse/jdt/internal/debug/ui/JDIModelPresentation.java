@@ -1476,7 +1476,28 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fRequestedValues.put(fListener, fValue);
 			
 			Runnable detailRunnable = new Runnable() {	
-				public void run() {	
+				public void run() {
+					IValue requestedValue= fValue;
+					if (fValue instanceof IJavaObject && ! (fValue instanceof IJavaArray)) {
+						// try to use the detail formatters system on the object
+						IJavaValue prettyPrinterResult;
+						try {
+							prettyPrinterResult= JavaDetailFormattersManager.getDefault().getValueDetail((IJavaObject)fValue, fJavaThread);
+						} catch (DebugException e) {
+							handleDebugException(e, (IJavaValue)fValue);
+							return;
+						}
+						if (prettyPrinterResult != null) {
+							if (prettyPrinterResult instanceof IJavaPrimitiveValue) {
+								appendJDIPrimitiveValueString(fValue);
+								if (requestedValue == fRequestedValues.remove(fListener)) {
+									notifyListener();
+								}
+								return;
+							}
+							fValue= prettyPrinterResult;
+						}
+					}
 					IEvaluationRunnable er = new IEvaluationRunnable() {
 						public void run(IJavaThread jt, IProgressMonitor pm) {
 							if (fValue instanceof IJavaArray) {
@@ -1497,7 +1518,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					} catch (DebugException e) {
 						handleDebugException(e, (IJavaValue)fValue);
 					}
-					if (fValue == fRequestedValues.remove(fListener)) {
+					if (requestedValue == fRequestedValues.remove(fListener)) {
 						// If another evaluation occurs before this one finished,
 						// don't display this result
 						notifyListener();

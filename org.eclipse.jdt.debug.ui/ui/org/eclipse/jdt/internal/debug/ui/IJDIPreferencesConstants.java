@@ -1,7 +1,7 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -127,4 +127,12 @@ public interface IJDIPreferencesConstants {
 	 * @since 2.0
 	 */
 	public static final String PREF_SHOW_FINAL_FIELDS= IJavaDebugUIConstants.PLUGIN_ID + ".show_final_fields"; //$NON-NLS-1$
+	
+	/**
+	 * List of defined detail formatters.A String containing a comma
+	 * separated list of fully qualified type names, the associated
+	 * code snippet and an 'enabled' flag.
+	 */
+	public static final String PREF_DETAIL_FORMATTERS_LIST= IJavaDebugUIConstants.PLUGIN_ID + ".detail_formatters"; //$NON-NLS-1$
+	
 }
