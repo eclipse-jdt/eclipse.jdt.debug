@@ -42,7 +42,7 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	private String fResult;
 	
 	protected boolean reportErrors(IEvaluationResult result) {
-		boolean severeProblems= reportErrors(result);
+		boolean severeProblems= super.reportErrors(result);
 		if (severeProblems) {
 			IDataDisplay dataDisplay= getDataDisplay();
 			if (dataDisplay != null) {
