@@ -60,12 +60,12 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 			List methods = refType.methodsByName(selector, signature);
 			if (methods.isEmpty()) {
-				requestFailed(MessageFormat.format("Receiver does not implement selector \"{0}\" with signature \"{1}\"", new String[] {selector, signature}), null);
+				requestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.Receiver_does_not_implement_selector"), new String[] {selector, signature}), null); //$NON-NLS-1$
 			} else {
 				method = (Method)methods.get(0);
 			}
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while performing method lookup for selector \"{1}\" with signature \"{2}\"", new String[] {e.toString(), selector, signature}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 		}
 		Value result = javaThread.invokeMethod(null, object, method, arguments);
 		return JDIValue.createValue((JDIDebugTarget)getDebugTarget(), result);
@@ -91,7 +91,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
 			}
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred retrieving field.", new String[]{e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// it is possible to return null
 		return null;
@@ -109,7 +109,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		try {
 			return getUnderlyingObject().referenceType();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred retrieving reference type.", new String[]{e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_reference_type"), new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach this line, as an exception will
 		// be thrown.

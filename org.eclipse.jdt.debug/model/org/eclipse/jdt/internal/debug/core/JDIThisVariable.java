@@ -80,7 +80,7 @@ public class JDIThisVariable extends JDIVariable {
 		try {
 			return retrieveValue().type();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving type 'this'.", new String[]{e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariable.exception_while_retrieving_type_this"), new String[]{e.toString()}), e); //$NON-NLS-1$
 		}
 		// this line will not be exceucted as an exception
 		// will be throw in type retrieval fails

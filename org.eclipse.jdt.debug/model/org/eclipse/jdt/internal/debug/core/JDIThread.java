@@ -511,9 +511,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		try {
 			return getUnderlyingThread().frameCount();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred retrieving frame count.", new String[] {e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_frame_count"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (IncompatibleThreadStateException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred retrieving frame count.", new String[] {e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_frame_count"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach here - try block will either
 		// return or exception will be thrown
@@ -566,7 +566,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	protected Value invokeMethod(ClassType receiverClass, ObjectReference receiverObject, Method method, List args) throws DebugException {
 		if (receiverClass != null && receiverObject != null) {
-			throw new IllegalArgumentException("Internal error - can only specify one receiver for a method invocation");
+			throw new IllegalArgumentException(JDIDebugModelMessages.getString("JDIThread.can_only_specify_one_receiver_for_a_method_invocation")); //$NON-NLS-1$
 		}
 		if (isPerformingEvaluation()) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null); //$NON-NLS-1$
@@ -1228,9 +1228,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					stepInto();	
 				}
 			} catch (IncompatibleThreadStateException exception) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
 			} catch (RuntimeException exception) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
 			}
 		} else {
 			// J9 support
@@ -1973,7 +1973,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					hcrThread.doReturn(null, true);
 				} catch (RuntimeException e) {
 					stepEnd();
-					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("{0} occurred while popping stack frame."), new String[] {e.toString()}), e);
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString(JDIDebugModelMessages.getString("JDIThread.exception_while_popping_stack_frame")), new String[] {e.toString()}), e); //$NON-NLS-1$
 				}
 			}
 		}

@@ -107,7 +107,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	 * @see JavaBreakpoint#getReferenceTypeName()
 	 */
 	protected String getReferenceTypeName() {
-		String name= "";
+		String name= ""; //$NON-NLS-1$
 		try {
 			name= getPattern();
 		} catch (CoreException ce) {

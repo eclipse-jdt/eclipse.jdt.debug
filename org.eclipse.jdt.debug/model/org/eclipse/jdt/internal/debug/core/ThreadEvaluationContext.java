@@ -320,7 +320,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			ClassType codeSnippetClass= classForName(codeSnippetClassName);
 			if (codeSnippetClass == null) {
 				throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-					DebugException.INTERNAL_ERROR, "Code snippet class could not be found", null));
+					DebugException.INTERNAL_ERROR, JDIDebugModelMessages.getString("ThreadEvaluationContext.Code_snippet_class_could_not_be_found"), null)); //$NON-NLS-1$
 			}
 			return codeSnippetClass;
 		} else {

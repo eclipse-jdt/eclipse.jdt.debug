@@ -413,7 +413,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		try {
 			return getUnderlyingValue().type();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred retrieving type", new String[] {e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not fall through to here,
 			// as #requestFailed will throw an exception			
 			return null;

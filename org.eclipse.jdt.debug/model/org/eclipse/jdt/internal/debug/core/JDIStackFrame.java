@@ -865,7 +865,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			Type type = method.declaringType();
 			return (IJavaClassType)JDIType.createType((JDIDebugTarget)getDebugTarget(), type);
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred retreiving declaring type.", new String[] {e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retreiving_declaring_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		return null;
 	}
