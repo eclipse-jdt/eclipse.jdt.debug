@@ -26,7 +26,7 @@ public interface IVMInstall {
 	 * 
 	 * @param mode the mode the VM should be launched in; one of the constants
 	 *   declared in <code>org.eclipse.debug.core.ILaunchManager</code>
-	 * @return 	a VMRunner for a given mode May return null if the given mode
+	 * @return 	a VMRunner for a given mode May return <code>null</code> if the given mode
 	 * 			is not supported by this VM.
 	 * @see org.eclipse.debug.core.ILaunchManager
 	 */
@@ -35,14 +35,14 @@ public interface IVMInstall {
 	 * Returns the id for this VM. VM ids are unique within the VMs 
 	 * of a given VM type. The VM id is not intended to be presented to users.
 	 * 
-	 * @return the VM identifier. Must not return null.
+	 * @return the VM identifier. Must not return <code>null</code>.
 	 */
 	String getId();
 	/**
 	 * Returns the display name of this VM.
 	 * The VM name is intended to be presented to users.
 	 * 
-	 * @return the display name of this VM. May return null.
+	 * @return the display name of this VM. May return <code>null</code>.
 	 */
 	String getName();
 	/**
@@ -56,7 +56,7 @@ public interface IVMInstall {
 	 * Returns the root directory of the install location of this VM.
 	 * 
 	 * @return the root directory of this VM installation. May
-	 * 			return null.
+	 * 			return <code>null</code>.
 	 */
 	File getInstallLocation();
 	/**
@@ -74,10 +74,14 @@ public interface IVMInstall {
 	IVMInstallType getVMInstallType();
 	
 	/**
-	 * Returns the library locations of this IVMInstall.
+	 * Returns the library locations of this IVMInstall. Generally,
+	 * clients should use <code>JavaRuntime.getLibraryLocations(IVMInstall)</code>
+	 * to determine the libraries associated with this VM install.
+	 * 
 	 * @see IVMInstall#setLibraryLocations(LibraryLocation[])
 	 * @return 	The library locations of this IVMInstall.
-	 * 			Returns null when not set or previously set to null.
+	 * 			Returns <code>null</code> to indicate that this VM install uses
+	 * 			the default library locations associated with this VM's install type.
 	 * @since 2.0
 	 */
 	LibraryLocation[] getLibraryLocations();	
@@ -86,7 +90,8 @@ public interface IVMInstall {
 	 * Sets the library locations of this IVMInstall.
 	 * @param	locations The <code>LibraryLocation</code>s to associate
 	 * 			with this IVMInstall.
-	 * 			May be null to clear the property.
+	 * 			May be <code>null</code> to indicate that this VM install uses
+	 * 			the default library locations associated with this VM's install type.
 	 * @since 2.0
 	 */
 	void setLibraryLocations(LibraryLocation[] locations);	

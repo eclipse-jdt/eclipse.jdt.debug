@@ -10,20 +10,20 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * Represents an entry on the runtime classpath. A runtime classpath entry
+ * Represents an entry on a runtime classpath. A runtime classpath entry
  * may refer to one of the following:
  * <ul>
  * 	<li>A Java project (type <code>PROJECT</code>) - a project entry refers
  * 		to all of the built classes in a project, and resolves to the output
  * 		location the associated Java project.</li>
- * 	<li>A jar (type <code>ARCHIVE</code>) - an archive refers to a jar, zip, or
+ * 	<li>An archive (type <code>ARCHIVE</code>) - an archive refers to a jar, zip, or
  * 		folder in the workspace or in the local file system containing class
  * 		files. An archive may have attached source.</li>
  * 	<li>A variable (type <code>VARIABLE</code>) - a variable refers to a 
  * 		classpath variable, which may refer to a jar.</li>
  * 	<li>A library (type <code>CONTAINER</code>) - a container refers to classpath
  * 		conatiner variable which refers to a collection of archives derived
- * 		dynamically.</li>
+ * 		dynamically, on a per project basis.</li>
  * </ul>
  * <p>
  * Clients are not intended to implement this interface.
@@ -33,45 +33,46 @@ import org.eclipse.core.runtime.IPath;
 public interface IRuntimeClasspathEntry {
 	
 	/**
-	 * Identifier for project entries.
+	 * Type identifier for project entries.
 	 */
 	public static final int PROJECT = 1;
 	
 	/**
-	 * Identifier for archive entries.
+	 * Type identifier for archive entries.
 	 */
 	public static final int ARCHIVE = 2;	
 		
 	/**
-	 * Identifier for variable entries.
+	 * Type identifier for variable entries.
 	 */
 	public static final int VARIABLE = 3;
 	
 	/**
-	 * Identifier for container entries.
+	 * Tpye identifier for container entries.
 	 */
 	public static final int CONTAINER = 4;
 
 	/**
-	 * Identifier for entries that appear on the
+	 * Classpath property identifier for entries that appear on the
 	 * bootstrap path by default.
 	 */
 	public static final int STANDARD_CLASSES = 1;	
 	
 	/**
-	 * Identifier for entries that should appear on the
-	 * bootstrap explicitly.
+	 * Classpath property identifier for entries that should appear on the
+	 * bootstrap path explicitly.
 	 */
 	public static final int BOOTSTRAP_CLASSES = 2;	
 		
 	/**
-	 * Identifier for entries that should appear on the
+	 * Classpath property identifier for entries that should appear on the
 	 * user classpath.
 	 */
 	public static final int USER_CLASSES = 3;	
 	
 	/**
-	 * Returns this classpath entry's type, one of:
+	 * Returns this classpath entry's type. The type of a runtime classpath entry is
+	 * identified by one of the following constants:
 	 * <ul>
 	 * <li><code>PROJECT</code></li>
 	 * <li><code>ARCHIVE</code></li>
@@ -125,8 +126,8 @@ public interface IRuntimeClasspathEntry {
 	 * source attachment.
 	 * <p>
 	 * Only archive and variable entries may have source attachments.
-	 * For archive entries, the result path (if present) locates a source
-	 * archive. For variable entries, the result path (if present) has
+	 * For archive entries, the path (if present) locates a source
+	 * archive. For variable entries, the path (if present) has
 	 * an analogous form and meaning as the variable path, namely the first segment 
 	 * is the name of a classpath variable.
 	 * </p>
@@ -175,9 +176,8 @@ public interface IRuntimeClasspathEntry {
 	
 	/**
 	 * Returns a constant indicating where this entry should appear on the 
-	 * runtime classpath by default. the bootstrap classpath or user classpath, or whether this entry is
-	 * a standard bootstrap entry that does not need to appear on the classpath.
-	 * The constant returned is one of:
+	 * runtime classpath by default.
+	 * The value returned is one of the following:
 	 * <ul>
 	 * <li><code>STANDARD_CLASSES</code> - a standard entry does not need to appear
 	 * 		on the runtime classpath</li>
@@ -205,7 +205,7 @@ public interface IRuntimeClasspathEntry {
 	 * 		conatining user or application classes</li>
 	 * </ul>
 	 * 
-	 * @param location a location constant
+	 * @param location a classpat property constant
 	 */
 	public void setClasspathProperty(int location);	
 	
@@ -237,12 +237,10 @@ public interface IRuntimeClasspathEntry {
 	public String getSourceAttachmentRootLocation();		
 	
 	/**
-	 * Returns the name of the variable associated with this entry, or <code>null</code>
+	 * Returns the first segment of the path associated with this entry, or <code>null</code>
 	 * if this entry is not of type <code>VARIABLE</code> or <code>CONTAINER</code>.
-	 * When this entry is of type <code>CONTAINER</code>, the first segment of the
-	 * container id is returned.
 	 * 
-	 * @return the name of the variable associated with this entry, or <code>null</code>
+	 * @return the first segment of the path associated with this entry, or <code>null</code>
 	 *  if this entry is not of type <code>VARIABLE</code> or <code>CONTAINER</code>
 	 */
 	public String getVariableName();

@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * Represents a particular type of VM for which there may be
  * any number of VM installations. An example of a VM type
- * might be the standard JRE which might have instances corresponding 
+ * is the standard JRE which might have instances corresponding 
  * to different installed versions such as JRE 1.2.2 and
  * JRE 1.3.
  * <p>
@@ -49,11 +49,12 @@ public interface IVMInstallType {
 	IVMInstall findVMInstallByName(String name);	
 	
 	/**
-	 * Remove the given VM from the set of VMs managed by this VM type.
-	 * Does nothing if the given VM is not managed to this type.
-	 * A IVMInstall that is disposed may not be used anymore.
+	 * Remove the VM associated with the given id from the set of VMs managed by
+	 * this VM type. Has no effect if a VM with the given id is not currently managed
+	 * by this type.
+	 * A VM install that is disposed may not be used anymore.
 	 * 
-	 * @param vm the VM to be disposed.
+	 * @param id the id of the VM to be disposed.
 	 */
 	void disposeVMInstall(String id);
 	/**
@@ -90,19 +91,20 @@ public interface IVMInstallType {
 	IStatus validateInstallLocation(File installLocation);
 	
 	/**
-	 * Tries to detect an installed VM that matches this IVMInstallType
+	 * Tries to detect an installed VM that matches this VM install type.
 	 * Typically, this method will detect the VM installation the
-	 * platform runs on. Implementers should return null if they
+	 * Eclipse platform runs on. Implementers should return <code>null</code> if they
 	 * can't assure that a given vm install matches this IVMInstallType.
 	 * @return The location of an VM installation that can be used
-	 * 			with this IVMInstallType.
+	 * 			with this VM install type, or <code>null</code> if unable
+	 * 			to locate an installed VM.
 	 */
 	File detectInstallLocation();
 		
 	/**
 	 * Returns a collection of <code>LibraryLocation</code>s that represent the
-	 * default system libraries of this IVMInstallType if the VM was installed
-	 * at <code>installLocation</code>.
+	 * default system libraries of this VM install type, if a VM was installed
+	 * at the given <code>installLocation</code>.
 	 * The returned <code>LibraryLocation</code>s may not exist if the
 	 * <code>installLocation</code> is not a valid install location.
 	 * 

@@ -16,7 +16,7 @@ import org.eclipse.jdt.core.IJavaProject;
  * as an extension (<code>org.eclipse.jdt.launching.runtimeClasspathEntryResolver</code>),
  * or be registered with the <code>JavaRuntime</code> programatically.
  * <p>
- * A resolver is registered for a runtime classpath entry of type
+ * A resolver is registered for a specific classpath
  * <code>VARIABLE</code> and/or <code>CONTAINER</code>. A resolver is
  * consulted when a runtime classpath entry is needs to be resolved.
  * </p>
@@ -28,9 +28,9 @@ import org.eclipse.jdt.core.IJavaProject;
  *   &lt;runtimeClasspathEntryResolver 
  *      id="com.example.ExampleResolver"
  *      class="com.example.ExampleResolverImpl"
- * 		variable="VAR_NAME"
- * 		container="CONTAINER_ID"
- *   &lt;/runtimeClasspathEntryResolvers&gt;
+ *      variable="VAR_NAME"
+ *      container="CONTAINER_ID"
+ *   &lt;/runtimeClasspathEntryResolver&gt;
  * &lt;/extension&gt;
  * </pre>
  * The attributes are specified as follows:
@@ -54,7 +54,7 @@ import org.eclipse.jdt.core.IJavaProject;
 public interface IRuntimeClasspathEntryResolver {
 	
 	/**
-	 * Returns resolved runtime classpath entries for the given classpath entry,
+	 * Returns resolved runtime classpath entries for the given runtime classpath entry,
 	 * in the context of the given launch configuration.
 	 * 
 	 * @param entry runtime classpath entry to resolve, of type
@@ -67,7 +67,7 @@ public interface IRuntimeClasspathEntryResolver {
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException;
 	
 	/**
-	 * Returns resolved runtime classpath entries for the given classpath entry,
+	 * Returns resolved runtime classpath entries for the given runtime classpath entry,
 	 * in the context of the given Java project.
 	 * 
 	 * @param entry runtime classpath entry to resolve, of type

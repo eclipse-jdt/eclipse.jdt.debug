@@ -44,7 +44,11 @@ public interface IVMConnector {
 	 * specified in the given map, contributing results (debug targets and processes),
 	 * to the given launch.
 	 * 
-	 * @param map argument map to use in establishing a connection
+	 * @param arguments Argument map to use in establishing a connection. The keys of
+	 * 	the map are strings corresponding to the names of arguments returned by this
+	 * 	connector's <code>getDefaultAgruments()</code> method. The values of the map
+	 * 	are strings corresponding to the (String) values of the asscoiated
+	 *  <code>com.sun.jdi.connect.Connector.Argument</code>s to use.
 	 * @param monitor progress monitor
 	 * @param launch launch to contribute debug target(s) and/or process(es) to
 	 * @exception CoreException if unable to establish a connection with the target VM
