@@ -211,7 +211,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		}
 		List resources= getChangedClassFiles(event);
 		if (!resources.isEmpty()) {
-			System.out.println("Get time: " + new Date().getTime() + " for changed classfiles");
 			doHotCodeReplace(resources);
 		}
 	}
@@ -242,7 +241,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		Iterator iter= projects.iterator();
 		IProject project= null;
 		Date currentDate= new Date();
-		System.out.println("Set time: " + currentDate.getTime() + " for project build");
 		ProjectBuildTime buildTime= null;
 		while (iter.hasNext()) {
 			project= (IProject) iter.next();
@@ -599,7 +597,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					project= compilationUnit.getCorrespondingResource().getProject();
 					method= getMethod(frame, resources);
 					if (method != null) {
-						System.out.println("Get time: " + getLastProjectBuildTime(project) + " for compilation unit delta");
 						delta= new CompilationUnitDelta(compilationUnit, getLastProjectBuildTime(project));
 						if (!delta.hasChanged(method)) {
 							continue;
