@@ -32,11 +32,9 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 
 	private CompilationUnit parseCompilationUnit(ICompilationUnit unit) {
-		ASTParser c = ASTParser.newParser(AST.LEVEL_2_0);
-		c.setSource(unit);
-		c.setResolveBindings(false);
-		c.setWorkingCopyOwner(null);
-		return (CompilationUnit) c.createAST(null);
+		ASTParser parser = ASTParser.newParser(AST.LEVEL_2_0);
+		parser.setSource(unit);
+		return (CompilationUnit) parser.createAST(null);
 	}
 	
 	private void testLocation(int lineToTry, int expectedLineNumber, String expectedTypeName) throws JavaModelException {

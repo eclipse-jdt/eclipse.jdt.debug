@@ -157,12 +157,12 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	}
 	
 	private CompilationUnit parseCompilationUnit(char[] source, String unitName, IJavaProject project) {
-		ASTParser c = ASTParser.newParser(AST.LEVEL_2_0);
-		c.setSource(source);
-		c.setUnitName(unitName);
-		c.setProject(project);
-		c.setWorkingCopyOwner(null);
-		return (CompilationUnit) c.createAST(null);
+		ASTParser parser= ASTParser.newParser(AST.LEVEL_2_0);
+		parser.setSource(source);
+		parser.setUnitName(unitName);
+		parser.setProject(project);
+		parser.setResolveBindings(true);
+		return (CompilationUnit) parser.createAST(null);
 	}
 
 	// ******

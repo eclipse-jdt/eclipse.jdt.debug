@@ -124,9 +124,9 @@ public abstract class AbstractManageBreakpointActionDelegate extends ManageBreak
 	protected CompilationUnit parseCompilationUnit() {
 		IEditorInput editorInput = getTextEditor().getEditorInput();
 		IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
-		ASTParser c = ASTParser.newParser(AST.LEVEL_2_0);
-		c.setSource(document.get().toCharArray());
-		return (CompilationUnit) c.createAST(null);
+		ASTParser parser = ASTParser.newParser(AST.LEVEL_2_0);
+		parser.setSource(document.get().toCharArray());
+		return (CompilationUnit) parser.createAST(null);
 	}
 	
 	protected IResource getResource() {
