@@ -82,6 +82,10 @@ public class JavaSourceLookupParticipant extends AbstractSourceLookupParticipant
 				return sourceName;	
 			}
 		}
+		if (object instanceof String) {
+			// assume it's a file name
+			return (String)object;
+		}
 		return null;
 	}
 	/* (non-Javadoc)
