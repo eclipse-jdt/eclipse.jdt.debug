@@ -2206,7 +2206,7 @@
    <extension
          point="org.eclipse.ui.activities">
       <activity
-            name="Debugging Java"
+            name="%debuggingJavaActivityName"
             description=""
             id="org.eclipse.debugging.java">
       </activity>
