@@ -123,29 +123,12 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	private Image fOldTitleImage= null;
 	private IClassFileEvaluationEngine fEngine= null;
 	
-	private IPropertyChangeListener fJavaPluginPreferenceStoreListener= new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			JDISourceViewer isv= (JDISourceViewer) getSourceViewer();
-			if (isv != null) {
-				IContentAssistant assistant= isv.getContentAssistant();
-				if (assistant instanceof ContentAssistant) {
-					JDIContentAssistPreference.changeConfiguration((ContentAssistant) assistant, event);
-				}				
-				
-				handlePreferenceStoreChanged(event);
-			}
-		}
-	};
-	
-	
 	public JavaSnippetEditor() {
 		super();
 		setDocumentProvider(JDIDebugUIPlugin.getDefault().getSnippetDocumentProvider());
-		JavaTextTools textTools= JavaPlugin.getDefault().getJavaTextTools();
-		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(textTools, this));		
+		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(JavaPlugin.getDefault().getJavaTextTools(), this));		
 		fSnippetStateListeners= new ArrayList(4);
-		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
-		JavaPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fJavaPluginPreferenceStoreListener);
+		setPreferenceStore(JavaPlugin.getDefault().getPreferenceStore());
 	}
 	
 	protected void doSetInput(IEditorInput input) throws CoreException {
@@ -156,7 +139,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	public void dispose() {
 		shutDownVM();
 		fSnippetStateListeners= Collections.EMPTY_LIST;
-		JavaPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fJavaPluginPreferenceStoreListener);
 		super.dispose();
 	}
 	
@@ -723,6 +705,21 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		JavaTextTools textTools= JavaPlugin.getDefault().getJavaTextTools();
 		return textTools.affectsBehavior(event);
+	}
+	
+	/**
+	 * @see AbstractTextEditor#handlePreferenceStoreChanged(PropertyChangeEvent)
+	 */
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		JDISourceViewer isv= (JDISourceViewer) getSourceViewer();
+			if (isv != null) {
+				IContentAssistant assistant= isv.getContentAssistant();
+				if (assistant instanceof ContentAssistant) {
+					JDIContentAssistPreference.changeConfiguration((ContentAssistant) assistant, event);
+				}				
+				
+				super.handlePreferenceStoreChanged(event);
+			}
 	}
 	
 	protected IJavaThread getThread() {
