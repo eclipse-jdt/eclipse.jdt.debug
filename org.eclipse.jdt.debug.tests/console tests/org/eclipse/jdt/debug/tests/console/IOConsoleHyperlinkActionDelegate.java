@@ -11,7 +11,6 @@
 package org.eclipse.jdt.debug.tests.console;
 
 import java.io.PrintStream;
-import java.util.regex.Pattern;
 
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
