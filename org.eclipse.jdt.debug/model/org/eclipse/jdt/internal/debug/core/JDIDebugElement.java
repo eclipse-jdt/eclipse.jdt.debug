@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -169,7 +168,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	protected void requestFailed(String message,  Exception e) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			IDebugStatusConstants.REQUEST_FAILED, message, e));	
+			DebugException.REQUEST_FAILED, message, e));	
 	}
 	
 	/**
@@ -184,7 +183,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	protected void targetRequestFailed(String message, RuntimeException e) throws DebugException {
 		if (e == null || fgJDIExceptions.contains(e.getClass())) {
 			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				IDebugStatusConstants.TARGET_REQUEST_FAILED, message, e));
+				DebugException.TARGET_REQUEST_FAILED, message, e));
 		} else {
 			throw e;
 		}
@@ -199,7 +198,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	protected void targetRequestFailed(String message, Throwable e) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			IDebugStatusConstants.TARGET_REQUEST_FAILED, message, e));
+			DebugException.TARGET_REQUEST_FAILED, message, e));
 	}
 	
 	/**
@@ -210,7 +209,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	protected void notSupported(String message) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			IDebugStatusConstants.NOT_SUPPORTED, message, null));
+			DebugException.NOT_SUPPORTED, message, null));
 	}
 	
 	/**
@@ -235,7 +234,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	protected void internalError(String message) {
 		logError(new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			IDebugStatusConstants.INTERNAL_ERROR, message, null)));
+			DebugException.INTERNAL_ERROR, message, null)));
 	}
 
 	/**

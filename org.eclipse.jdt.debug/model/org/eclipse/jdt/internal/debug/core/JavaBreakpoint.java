@@ -20,7 +20,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IDebugConstants;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
@@ -113,7 +112,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected IMarker ensureMarker() throws DebugException {
 		IMarker m = getMarker();
 		if (m == null || !m.exists()) {
-			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), IDebugStatusConstants.REQUEST_FAILED,
+			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED,
 				JDIDebugModelMessages.getString("JavaBreakpoint.no_associated_marker"),null)); //$NON-NLS-1$
 		}
 		return m;

@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
@@ -321,7 +320,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			ClassType codeSnippetClass= classForName(codeSnippetClassName);
 			if (codeSnippetClass == null) {
 				throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-					IDebugStatusConstants.INTERNAL_ERROR, "Code snippet class could not be found", null));
+					DebugException.INTERNAL_ERROR, "Code snippet class could not be found", null));
 			}
 			return codeSnippetClass;
 		} else {

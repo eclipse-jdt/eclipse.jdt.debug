@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -198,7 +197,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 */
 	protected void notSupported(String message) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
-			IDebugStatusConstants.NOT_SUPPORTED, message, null)); //$NON-NLS-1$		
+			DebugException.NOT_SUPPORTED, message, null)); //$NON-NLS-1$		
 	}
 	
 	/**

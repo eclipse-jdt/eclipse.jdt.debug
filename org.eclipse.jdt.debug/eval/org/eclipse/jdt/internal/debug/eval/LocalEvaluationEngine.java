@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -257,7 +256,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 				if (field == null) {
 					throw new DebugException(
 						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						IDebugStatusConstants.REQUEST_FAILED, "Evaluation failed - unable to initialize local variables.", null)
+						DebugException.REQUEST_FAILED, "Evaluation failed - unable to initialize local variables.", null)
 					);
 				} else {
 					field.setValue(local.getValue());
@@ -270,7 +269,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 			if (field == null) {
 				throw new DebugException(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-					IDebugStatusConstants.REQUEST_FAILED, "Evaluation failed - unable to initialize 'this' context.", null)
+					DebugException.REQUEST_FAILED, "Evaluation failed - unable to initialize 'this' context.", null)
 				);				
 			} else {
 				field.setValue(thisObject);
@@ -301,7 +300,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 				if (field == null) {
 					throw new DebugException(
 						new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-						IDebugStatusConstants.REQUEST_FAILED, "Evaluation failed - unable to initialize local variables.", null)
+						DebugException.REQUEST_FAILED, "Evaluation failed - unable to initialize local variables.", null)
 					);
 				} else {
 					local.setValue(field.getValue());
@@ -495,7 +494,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		if (isDisposed()) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				IDebugStatusConstants.REQUEST_FAILED, "Evaluation failed - evaluation context has been disposed.", null)
+				DebugException.REQUEST_FAILED, "Evaluation failed - evaluation context has been disposed.", null)
 			);
 		}
 	}
@@ -511,7 +510,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		if (!getThread().isSuspended()) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				IDebugStatusConstants.REQUEST_FAILED, "Evaluation failed - evaluation thread must be suspended.", null)
+				DebugException.REQUEST_FAILED, "Evaluation failed - evaluation thread must be suspended.", null)
 			);
 		}
 	}	
@@ -662,7 +661,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 							LocalEvaluationEngine.this.addSnippetFile(classFile);
 						} catch (IOException e) {
 							throw new DebugException(
-								new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), IDebugStatusConstants.REQUEST_FAILED, 
+								new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
 									MessageFormat.format("{0} occurred deploying class file for evaluation", new String[] {e.toString()}), e)
 							);
 						}
@@ -772,7 +771,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 				// unable to load the class
 				throw new DebugException(
 					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-					IDebugStatusConstants.REQUEST_FAILED, "Evaluation failed - unable to instantiate code snippet class.", null)
+					DebugException.REQUEST_FAILED, "Evaluation failed - unable to instantiate code snippet class.", null)
 				);				
 			}
 			IJavaValue[] args = new IJavaValue[] {getDebugTarget().newValue(className)};
@@ -846,7 +845,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		}
 		throw new DebugException(
 			new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			IDebugStatusConstants.REQUEST_FAILED, "Evaluation failed - internal error retreiving result.", null)
+			DebugException.REQUEST_FAILED, "Evaluation failed - internal error retreiving result.", null)
 		);
 	}
 	
@@ -1017,14 +1016,14 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		if (type == null) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				IDebugStatusConstants.REQUEST_FAILED, "Evaluation failed - unable to determine declaring type context.", null)
+				DebugException.REQUEST_FAILED, "Evaluation failed - unable to determine declaring type context.", null)
 			);
 		}
 		
 		if (type.getParent() instanceof IType) {
 			throw new DebugException(
 				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-				IDebugStatusConstants.REQUEST_FAILED, "Evaluation in context of inner type not supported.", null)
+				DebugException.REQUEST_FAILED, "Evaluation in context of inner type not supported.", null)
 			);
 		}	
 		
