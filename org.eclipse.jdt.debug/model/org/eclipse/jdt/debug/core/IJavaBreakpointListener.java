@@ -26,37 +26,35 @@ public interface IJavaBreakpointListener {
 	
 	/**
 	 * Return code in response to a "breakpoint hit" notification, indicating
-	 * that this listener thinks the breakpoint should suspend the given
-	 * thread.
+	 * a vote to suspend the associated thread.
 	 * 
 	 * @since 3.0
 	 */
 	public static int SUSPEND= 0x0000;
 	/**
 	 * Return code in response to a "breakpoint hit" notification, indicating
-	 * that this listener thinks the breakpoint should not suspend the given
-	 * thread.
+	 * a vote to not suspend (i.e. resume) the associated thread.
 	 * 
 	 * @since 3.0
 	 */
 	public static int DONT_SUSPEND= 0x0001;
 	/**
 	 * Return code in response to an "installing" notification, indicating
-	 * that this listener thinks the breakpoint should be installed.
+	 * a vote to install the associated breakpoint.
 	 * 
 	 * @since 3.0
 	 */
 	public static int INSTALL= 0x0000;
 	/**
 	 * Return code in response to an "installing" notification, indicating
-	 * that this listener does not think the breakpoint should be installed.
+	 * a vote to not install the associated breakpoint.
 	 * 
 	 * @since 3.0
 	 */
 	public static int DONT_INSTALL= 0x0001;
 	/**
-	 * Return code indicating that this listener does not care about the
-	 * notification.
+	 * Return code indicating that this listener should not be considered
+	 * in a vote to suspend a thread or install a breakpoint.
 	 * 
 	 * @since 3.0
 	 */
@@ -75,10 +73,14 @@ public interface IJavaBreakpointListener {
 	
 	/**
 	 * Notification that the given breakpoint is about to be installed in
-	 * the specified target, in the specified type. Returns whether the
-	 * installation should proceed. If any registered listener returns
-	 * <code>DONT_INSTALL</code> the breakpoint is not installed in the given
-	 * target for the given type.
+	 * the specified target, in the specified type. Allows this listener to
+	 * vote to determine if the given breakpoint should be installed in
+	 * the specified type and target. If at least one listener votes to
+	 * <code>INSTALL</code>, the breakpoint will be installed. If there
+	 * are no votes to install the breakpoint, there must be at least one
+	 * <code>DONT_INSTALL</code> vote to cancel the installation. If all
+	 * listeners vote <code>DONT_CARE</code>, the breakpoint will be installed
+	 * by default.   
 	 * 
 	 * @param target Java debug target
 	 * @param breakpoint Java breakpoint
@@ -103,12 +105,13 @@ public interface IJavaBreakpointListener {
 	
 	/**
 	 * Notification that the given breakpoint has been hit
-	 * in the specified thread - returns whether the thread
-	 * should suspend. This allows the listener to override
-	 * default thread suspension when a breakpoint is hit.
-	 * The breakpoint will cause the thread to suspend if
-	 * at least one listener returns <code>SUSPEND</code>
-	 * or if all listeners vote <code>DONT_CARE</code>.
+	 * in the specified thread. Allows this listener to
+	 * vote to determine if the given thread should be suspended in
+	 * reponse to the breakpoint. If at least one listener votes to
+	 * <code>SUSPEND</code>, the thread will suspend. If there
+	 * are no votes to suspend the thread, there must be at least one
+	 * <code>DONT_SUSPEND</code> vote to avoid the suspension (resume). If all
+	 * listeners vote <code>DONT_CARE</code>, the thread will suspend by default.
 	 * 
 	 * @param thread Java thread
 	 * @param breakpoint Java breakpoint
