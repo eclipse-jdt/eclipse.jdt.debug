@@ -2405,7 +2405,16 @@ public class VerbosePacketStream extends PrintStream {
 	protected void println(String description, String value) {
 		printDescription(description);
 		print('\"');
-		print(value.replaceAll("\n", "\n" + shift)); //$NON-NLS-1$ //$NON-NLS-2$
+		StringBuffer val= new StringBuffer();
+		int pos= 0, lastPos= 0;
+		while ((pos= value.indexOf('\n', lastPos)) != -1) {
+			pos++;
+			val.append(value.substring(lastPos, pos));
+			val.append(shift);
+			lastPos= pos;
+		}
+		val.append(value.substring(lastPos, value.length()));
+		print(val);
 		println('"');
 	}
 	
