@@ -49,7 +49,7 @@ public class SendStaticMessage extends CompoundInstruction {
 		} else {
 			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("SendStaticMessage.Cannot_send_a_static_message_to_a_non_class_type_object_1"), null)); //$NON-NLS-1$
 		}
-		
+		setLastValue(result);
 		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$
 			// only push the result if not a void method
 			push(result);

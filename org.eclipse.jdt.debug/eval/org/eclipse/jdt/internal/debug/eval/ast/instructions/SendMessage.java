@@ -52,6 +52,7 @@ public class SendMessage extends CompoundInstruction {
 		} else {
 			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, InstructionsEvaluationMessages.getString("SendMessage.Attempt_to_send_a_message_to_a_non_object_value_1"), null)); //$NON-NLS-1$
 		}
+		setLastValue(result);
 		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$
 			// only push the result if not a void method
 			push(result);

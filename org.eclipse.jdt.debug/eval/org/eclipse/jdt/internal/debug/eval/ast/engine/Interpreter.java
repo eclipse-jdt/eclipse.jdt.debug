@@ -17,6 +17,7 @@ public class Interpreter {
 	private int fInstructionCounter;
 	private IRuntimeContext fContext;
 	private Stack fStack;
+	private IJavaValue fLastValue;
 	
 	private boolean fStopped= false;
 	
@@ -80,8 +81,12 @@ public class Interpreter {
 	}
 	
 	public IJavaValue getResult() {
-		if (fStack == null || fStack.isEmpty())
-			return getContext().getVM().voidValue();
+		if (fStack == null || fStack.isEmpty()) {
+			if (fLastValue == null) {
+				return getContext().getVM().voidValue();
+			}
+			return fLastValue;
+		}
 		Object top= fStack.peek();
 		if (top instanceof IJavaVariable) {
 			try {
@@ -95,5 +100,9 @@ public class Interpreter {
 		}
 		// XXX: exception
 		return null;		
-	}	
+	}
+	
+	public void setLastValue(IJavaValue value) {
+		fLastValue= value;
+	}
 }

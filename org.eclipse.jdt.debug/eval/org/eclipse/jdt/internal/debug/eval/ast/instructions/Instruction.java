@@ -29,6 +29,11 @@ public abstract class Instruction {
 	public void setInterpreter(Interpreter interpreter) {
 		fInterpreter= interpreter;
 	}
+	
+	public void setLastValue(IJavaValue value) {
+		fInterpreter.setLastValue(value);
+	}
+	
 	public static int getBinaryPromotionType(int left, int right) {
 		return fTypeTable[left][right];
 	}	
