@@ -253,8 +253,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 						type= ((IMember)e).getDeclaringType();
 					}
 				}
-				resource= BreakpointUtils.getBreakpointResource(type);
-//				resource= ((IFileEditorInput)editorInput).getFile();
+				resource= ((IFileEditorInput)editorInput).getFile();
 			} else {
 				resource= ResourcesPlugin.getWorkspace().getRoot();
 			}
