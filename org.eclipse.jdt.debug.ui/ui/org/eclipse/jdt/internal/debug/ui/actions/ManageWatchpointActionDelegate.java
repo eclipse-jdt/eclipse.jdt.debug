@@ -40,6 +40,7 @@ import org.eclipse.jdt.internal.corext.util.TypeInfo;
 import org.eclipse.jdt.internal.corext.util.TypeInfoRequestor;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -277,7 +278,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	protected void setEnabledState(ITextEditor editor) {
 		if (getAction() != null && getPage() != null) {
 			IWorkbenchPart part = getPage().getActivePart();
-			if (part == null) {
+			if (part == null || part instanceof JavaSnippetEditor) {
 				getAction().setEnabled(false);
 			} else if (part != getPage().getActiveEditor()) {
 				ISelectionProvider sp= part.getSite().getSelectionProvider();
