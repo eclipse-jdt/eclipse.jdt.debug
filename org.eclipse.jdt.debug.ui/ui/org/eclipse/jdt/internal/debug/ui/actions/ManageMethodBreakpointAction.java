@@ -30,9 +30,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Adds a method entry breakpoint on a single selected element of type IMethod 
+ * Adds a method breakpoint on a single selected element of type IMethod 
  */
-public class ManageMethodEntryBreakpointAction extends Action implements IObjectActionDelegate {
+public class ManageMethodBreakpointAction extends Action implements IObjectActionDelegate {
 	
 	private IMethod fMethod;
 	private IJavaBreakpoint fBreakpoint;
@@ -41,16 +41,16 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 	private String fRemoveText, fRemoveDescription, fRemoveToolTip;
 	
 	
-	public ManageMethodEntryBreakpointAction() {
+	public ManageMethodBreakpointAction() {
 		super();
 		
-		fAddText= ActionMessages.getString("ManageMethodEntryBreakpointAction.&Add_Entry_Breakpoint_1"); //$NON-NLS-1$
-		fAddDescription= ActionMessages.getString("ManageMethodEntryBreakpointAction.Add_a_method_entry_breakpoint_2"); //$NON-NLS-1$
-		fAddToolTip= ActionMessages.getString("ManageMethodEntryBreakpointAction.Add_Entry_Breakpoint_3"); //$NON-NLS-1$
+		fAddText= ActionMessages.getString("ManageMethodBreakpointAction.&Add_Method_Breakpoint_1"); //$NON-NLS-1$
+		fAddDescription= ActionMessages.getString("ManageMethodBreakpointAction.Add_a_method_breakpoint_2"); //$NON-NLS-1$
+		fAddToolTip= ActionMessages.getString("ManageMethodBreakpointAction.Add_Method_Breakpoint_3"); //$NON-NLS-1$
 		
-		fRemoveText= ActionMessages.getString("ManageMethodEntryBreakpointAction.Remove_&Entry_Breakpoint_4"); //$NON-NLS-1$
-		fRemoveDescription= ActionMessages.getString("ManageMethodEntryBreakpointAction.Remove_a_method_entry_breakpoint_5"); //$NON-NLS-1$
-		fRemoveToolTip= ActionMessages.getString("ManageMethodEntryBreakpointAction.Remove_Entry_Breakpoint_6"); //$NON-NLS-1$
+		fRemoveText= ActionMessages.getString("ManageMethodBreakpointAction.Remove_&Method_Breakpoint_4"); //$NON-NLS-1$
+		fRemoveDescription= ActionMessages.getString("ManageMethodBreakpointAction.Remove_a_method_breakpoint_5"); //$NON-NLS-1$
+		fRemoveToolTip= ActionMessages.getString("ManageMethodBreakpointAction.Remove_Method_Breakpoint_6"); //$NON-NLS-1$
 		setText(fAddText);
 		setDescription(fAddDescription);
 		setToolTipText(fAddToolTip);
@@ -80,7 +80,7 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 				}
 				setBreakpoint(JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(method),method.getDeclaringType().getFullyQualifiedName(), methodName, getMethod().getSignature(), true, false, false, -1, start, end, 0, true, attributes));
 			} catch (CoreException x) {
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodEntryBreakpointAction.Problems_creating_breakpoint_7"), x.getMessage()); //$NON-NLS-1$
+				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodBreakpointAction.Problems_creating_breakpoint_7"), x.getMessage()); //$NON-NLS-1$
 			}
 		} else {
 			// remove breakpoint
@@ -88,7 +88,7 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 				IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 				breakpointManager.removeBreakpoint(getBreakpoint(), true);
 			} catch (CoreException x) {
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodEntryBreakpointAction.Problems_removing_breakpoint_8"), x.getMessage()); //$NON-NLS-1$
+				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodBreakpointAction.Problems_removing_breakpoint_8"), x.getMessage()); //$NON-NLS-1$
 			}
 		}
 		update();

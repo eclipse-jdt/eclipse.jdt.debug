@@ -484,12 +484,12 @@
 		</action> 
      </viewerContribution>
      <objectContribution 
-     	id="org.eclipse.jdt.debug.ui.MethodEntryBreakpointActions"
+     	id="org.eclipse.jdt.debug.ui.MethodBreakpointActions"
      	objectClass="org.eclipse.jdt.core.IMethod">
-		<action id="org.eclipse.jdt.debug.ui.MethodEntryBreakpoint"
-		 	label="%manageMethodEntryBreakpointAction.label"
+		<action id="org.eclipse.jdt.debug.ui.MethodBreakpoint"
+		 	label="%manageMethodBreakpointAction.label"
 		 	menubarPath="additions" 
-		 	class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodEntryBreakpointAction"
+		 	class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointAction"
 		 	enablesFor="1">
 	  </action>
   	</objectContribution>
