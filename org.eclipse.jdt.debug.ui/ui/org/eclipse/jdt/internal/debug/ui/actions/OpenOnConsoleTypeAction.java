@@ -19,10 +19,10 @@ import org.eclipse.jdt.core.search.ITypeNameRequestor;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jdt.internal.ui.util.TypeInfo;
 import org.eclipse.jdt.internal.ui.util.TypeInfoLabelProvider;
 import org.eclipse.jdt.internal.ui.util.TypeInfoRequestor;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -180,7 +180,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 	 */
 	protected void openAndPositionEditor(IType type) {
 		try {
-			IEditorPart editor = EditorUtility.openInEditor(type);
+			IEditorPart editor = JavaUI.openInEditor(type);
 			if ((editor instanceof ITextEditor)  && (fLineNumber > 0)) {
 				int zeroBasedLineNumber = fLineNumber - 1;
 				ITextEditor textEditor = (ITextEditor) editor;
