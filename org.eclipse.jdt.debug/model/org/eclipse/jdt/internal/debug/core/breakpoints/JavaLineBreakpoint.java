@@ -333,7 +333,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	protected boolean hasCondition() {
 		try {
-			return isConditionEnabled() && !"".equals(getCondition());
+			String condition = getCondition();
+			return isConditionEnabled() && condition != null && (condition.length() > 0);
 		} catch (CoreException exception) {
 			// log error
 			return false;
@@ -376,7 +377,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			return !suspendForEvent(event, thread);
 		}
 		final String condition= getCondition();
-		if (!isConditionEnabled() || "".equals(condition)) {
+		if (!hasCondition()) {
 			return !suspendForEvent(event, thread);
 		}
 		IMarker marker= getMarker();
@@ -517,7 +518,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * @see IJavaLineBreakpoint#getCondition()
 	 */
 	public String getCondition() throws CoreException {
-		return ensureMarker().getAttribute(CONDITION, "");
+		return ensureMarker().getAttribute(CONDITION, null);
 	}
 	
 	/**
@@ -526,6 +527,9 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	public void setCondition(String condition) throws CoreException {
 		// Clear the cached compiled expression
 		fCompiledExpression= null;	
+		if (condition != null && condition.trim().length() == 0) {
+			condition = null;
+		}
 		ensureMarker().setAttributes(new String []{CONDITION},
 			new Object[]{condition});
 	}			

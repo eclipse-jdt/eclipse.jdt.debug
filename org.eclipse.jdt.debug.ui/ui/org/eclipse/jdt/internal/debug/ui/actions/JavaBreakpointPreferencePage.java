@@ -306,6 +306,9 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			if (lineBreakpoint.supportsCondition()) {
 				createConditionEditor(getFieldEditorParent());
 				String condition= lineBreakpoint.getCondition();
+				if (condition == null) {
+					condition = "";
+				}
 				store.setValue(JavaBreakpointPreferenceStore.CONDITION, condition);
 				if (lineBreakpoint.isConditionEnabled()) {
 					store.setValue(JavaBreakpointPreferenceStore.CONDITION_ENABLED, true);

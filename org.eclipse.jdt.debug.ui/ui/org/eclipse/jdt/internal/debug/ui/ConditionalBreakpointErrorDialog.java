@@ -38,6 +38,9 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 			condition= fBreakpoint.getCondition();
 		} catch(CoreException e) {
 		}
+		if (condition == null) {
+			condition = "";
+		}
 		fTextArea= createEditArea(parent, condition, "Edit the condition");
 		
 		return dialogArea;
