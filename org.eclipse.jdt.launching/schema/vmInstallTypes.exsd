@@ -19,7 +19,7 @@ A UI for managing IVMInstalls is provided by the Java Debug UI plug-in.
          <sequence>
             <element ref="vmInstallType" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-                 <attribute name="point" type="string" use="required">
+        <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
                   a fully qualified identifier of the target extension point
