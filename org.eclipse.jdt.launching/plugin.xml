@@ -48,24 +48,12 @@
 	   name="%localJavaApplication"
 	   delegate="org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate"
 	   modes= "run, debug">
-	   <fileExtension
-	   		extension="java"
-	   		default="true"/>
-	   <fileExtension
-	   		extension="class"
-	   		default="true"/>
    </launchConfigurationType>
    <launchConfigurationType
    	   id="org.eclipse.jdt.launching.remoteJavaApplication"
 	   name="%remoteJavaApplication"
 	   delegate="org.eclipse.jdt.internal.launching.JavaRemoteApplicationLaunchConfigurationDelegate"
 	   modes= "debug">
-	   <fileExtension
-	   		extension="java"
-	   		default="false"/>
-	   <fileExtension
-	   		extension="class"
-	   		default="false"/>
    </launchConfigurationType>
 </extension>
 
