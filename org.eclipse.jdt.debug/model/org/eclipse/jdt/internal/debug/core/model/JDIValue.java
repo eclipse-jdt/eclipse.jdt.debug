@@ -19,7 +19,6 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ClassObjectReference;
@@ -135,7 +134,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	public String getReferenceTypeName() throws DebugException {
 		try {
 			if (fValue == null) {
-				return JDIDebugModelMessages.getString("JDIValue.null_10"); //$NON-NLS-1$
+				return JDIDebugModelMessages.getString("JDIValue.null_4"); //$NON-NLS-1$
 			}
 			return getUnderlyingType().name();
 		} catch (RuntimeException e) {
