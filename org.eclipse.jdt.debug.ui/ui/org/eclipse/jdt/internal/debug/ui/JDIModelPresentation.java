@@ -1351,6 +1351,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 								} catch (DebugException e) {
 									handleDebugException(e, (IJavaValue)value);
 								}
+							} else {
+								appendJDIValueString(value);
 							}
 						}
 					};
