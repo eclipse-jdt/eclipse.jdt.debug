@@ -1,17 +1,14 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
+http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -24,65 +21,88 @@ import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaElementDelta;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 /**
- * Listens to Java model element changes and uninstalls breakpoints when the breakpoint
- * type's corresponding package fragment root is removed, closed, or removed from the classpath.
+ * Listens to Java model element changes and uninstalls breakpoints when:<ul>
+ *  <li>the breakpoint type's corresponding package fragment root is removed, closed, or removed from the classpath.</li>
+ *  <li>the breakpoints is a method breakpoint and the method has been removed.</li>
+ * </ul>
  */
 class JavaModelListener implements IElementChangedListener {
 	/**
 	 * @see IElementChangedListener#elementChanged(ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent e) {
-		final List removedRoots= new ArrayList();
-		getRemovedPackageFragmentRoots(e.getDelta(), removedRoots);
-		if (removedRoots.size() == 0) {
+		if (e.getType() != e.POST_CHANGE) {
 			return;
 		}
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getUniqueIdentifier());
-				IJavaBreakpoint breakpoint= null;
-				for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
-					if (!(breakpoints[i] instanceof IJavaBreakpoint)) {
-						continue;
-					}
-					breakpoint= (IJavaBreakpoint)breakpoints[i];
-					try {
-						IType type= BreakpointUtils.getType(breakpoint);
-						if (type != null) {
-							if (removedRoots.contains(type.getPackageFragment().getParent())) {
-								DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
-							}
-						}
-					} catch (CoreException x) {
-						JDIDebugUIPlugin.log(x);
-					}
-				}
+		List removedElements= new ArrayList();
+		getRemovedElements(e.getDelta(), removedElements);
+		final List breakpointsToRemove= new ArrayList();
+		
+		IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getUniqueIdentifier());
+		IJavaBreakpoint breakpoint= null;
+		for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
+			breakpoint= (IJavaBreakpoint)breakpoints[i];
+			if (!(breakpoint instanceof IJavaBreakpoint)) {
+				continue;
 			}
-		};
-		fork(wr);
+			if (breakpoint instanceof IJavaMethodBreakpoint) {
+				IJavaMethodBreakpoint methodBreakpoint= (IJavaMethodBreakpoint)breakpoint;
+				IMethod method= null;
+				try {
+					method = BreakpointUtils.getMethod(methodBreakpoint);
+				} catch (CoreException x) {
+					JDIDebugUIPlugin.log(x);
+				}
+				if (method != null && containedInCollection(method, removedElements)) {
+					breakpointsToRemove.add(breakpoint);
+				}
+				continue;
+			}
+			
+			try {
+				IType type= BreakpointUtils.getType(breakpoint);
+				if (type != null && containedInCollection(type, removedElements)) {
+					breakpointsToRemove.add(breakpoint);
+				}
+			} catch (CoreException x) {
+				JDIDebugUIPlugin.log(x);
+			}
+		}
+		if (!breakpointsToRemove.isEmpty()) {
+			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					Iterator itr= breakpointsToRemove.iterator();
+					while (itr.hasNext()) {
+						IBreakpoint breakpoint = (IBreakpoint) itr.next();
+						DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);	
+					}	
+				}
+			};
+			
+			fork(wr);
+		} 
 	}
 	
 	/**
-	 * Recursively traverses the given java element delta looking for package
-	 * fragment roots which have been removed, closed, or removed from the classpath
+	 * Recursively traverses the given Java element delta looking for Java elements
+	 * which have been removed, closed, or removed from the classpath
 	 */
-	protected void getRemovedPackageFragmentRoots(IJavaElementDelta delta, List removedRoots) {
-		IJavaElement element= delta.getElement();
-		if (element.getElementType() == IJavaElement.PACKAGE_FRAGMENT_ROOT) {
-			if ((delta.getKind() & IJavaElementDelta.REMOVED) != 0 || (delta.getFlags() & IJavaElementDelta.F_CLOSED) != 0 ||
-				(delta.getFlags() & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0) {
-				removedRoots.add(delta.getElement());
-			}
-			return; // Stop traversal once a package fragment root is encountered.
+	protected void getRemovedElements(IJavaElementDelta delta, List removedElements) {
+		if ((delta.getKind() & IJavaElementDelta.REMOVED) != 0 || (delta.getFlags() & IJavaElementDelta.F_CLOSED) != 0 ||
+			(delta.getFlags() & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0) {
+			removedElements.add(delta.getElement());
 		}
+			
 		IJavaElementDelta[] subdeltas= delta.getAffectedChildren();
 		for (int i= 0, numDeltas= subdeltas.length; i < numDeltas; i++) {
-			getRemovedPackageFragmentRoots(subdeltas[i], removedRoots);
+			getRemovedElements(subdeltas[i], removedElements);
 		}
 	}
 	
@@ -98,4 +118,18 @@ class JavaModelListener implements IElementChangedListener {
 		};
 		new Thread(runnable).start();
 	}	
+	
+	protected boolean containedInCollection(IJavaElement element, List removedElements) {
+		if (removedElements.contains(element)) {
+			return true;
+		}
+		IJavaElement parent= element.getParent();
+		while (parent != null) {
+			if(removedElements.contains(parent)) {
+				return true;
+			}
+			parent= parent.getParent();
+		}
+		return false;
+	}
 }

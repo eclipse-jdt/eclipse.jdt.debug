@@ -17,11 +17,12 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.Flags;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -53,8 +54,12 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 					JDIDebugUIPlugin.log(e);
 					return null;
 				}
-				if (method.equals(container)) {
-					return (IJavaBreakpoint)breakpoint;
+				if (method.getDeclaringType().getFullyQualifiedName().equals(container.getDeclaringType().getFullyQualifiedName())) {
+					if (method instanceof IMethod && container instanceof IMethod) {
+						if (((IMethod)method).isSimilar((IMethod)container)) {
+							return (IJavaBreakpoint)breakpoint;
+						}
+					}
 				}
 			}
 		}
@@ -101,8 +106,21 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 				if (((IMethod)method).isConstructor()) {
 					methodName = "<init>"; //$NON-NLS-1$
 				}
+				IType type= method.getDeclaringType();
+				String methodSignature= method.getSignature();
+				if (!type.isBinary()) {
+					//resolve the type names
+					methodSignature= resolveMethodSignature(type, methodSignature);
+					if (methodSignature == null) {
+						IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), Status.ERROR, "Source method signature could not be resolved", null); //$NON-NLS-1$
+						JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageMethodBreakpointActionDelegate.Add_Method_Breakpoint_Failed_2"), status); //$NON-NLS-1$
+						return;
+					}
+				}
+				
+				
 				setBreakpoint(JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(method), 
-					method.getDeclaringType().getFullyQualifiedName(), methodName, method.getSignature(), true, false, false, -1, start, end, 0, true, attributes));
+					type.getFullyQualifiedName(), methodName, methodSignature, true, false, false, -1, start, end, 0, true, attributes));
 			} catch (CoreException x) {
 				JDIDebugUIPlugin.log(x);
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodBreakpointAction.Problems_creating_breakpoint_7"), x.getMessage()); //$NON-NLS-1$
@@ -118,13 +136,61 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 			}
 		}
 	}
+
+	protected String resolveMethodSignature(IType type, String methodSignature) throws JavaModelException {
+		String[] parameterTypes= Signature.getParameterTypes(methodSignature);
+		
+		StringBuffer resolvedSig= new StringBuffer("("); //$NON-NLS-1$
+		for (int i = 0; i < parameterTypes.length; i++) {
+			String parameterType = parameterTypes[i];
+			if (parameterType.length() > 1) {
+				if (!generateQualifiedName(type, resolvedSig, parameterType)) {
+					return null;
+				}
+				resolvedSig.append(';');
+			} else {
+				resolvedSig.append(parameterType);
+			}
+		}
+		resolvedSig.append(')');
+		String returnType= Signature.getReturnType(methodSignature);
+		if (returnType.length() > 1) {
+			if (!generateQualifiedName(type, resolvedSig, returnType)) {
+				return null;
+			}
+			resolvedSig.append(';');
+		} else {
+			resolvedSig.append(returnType);
+		}
+		methodSignature= resolvedSig.toString();
+		return methodSignature;
+	}
+
+	protected boolean generateQualifiedName(IType type, StringBuffer resolvedSig, String typeName) throws JavaModelException {
+		int count= Signature.getArrayCount(typeName);
+		typeName= Signature.getElementType(typeName.substring(1 + count, typeName.length() - 1));
+		String[][] resolvedType= type.resolveType(typeName);
+		if (resolvedType != null && resolvedType.length == 1) {
+			String[] typeNames= resolvedType[0];
+			String qualifiedName= Signature.toQualifiedName(typeNames);
+			
+			for (int j = 0; j < count; j++) {
+				resolvedSig.append('[');
+			}
+			resolvedSig.append(Signature.C_RESOLVED);
+			resolvedSig.append(qualifiedName.replace('.', '/'));	
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	/**
 	 * @see AbstractManageBreakpointActionDelegate#enableForMember(IMember)
 	 */
 	protected boolean enableForMember(IMember member) {
 		try {
-			return member instanceof IMethod && member.isBinary() && !Flags.isAbstract(member.getFlags());
+			return member instanceof IMethod && !Flags.isAbstract(member.getFlags());
 		} catch (JavaModelException e) {
 			JDIDebugUIPlugin.log(e);
 		}
@@ -132,7 +198,7 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 	}
 	
 	/**
-	 * Only enabled for binary methods
+	 * Only enabled for concrete methods
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
@@ -147,8 +213,7 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 				getAction().setEnabled(false);
 			} else {
 				if (part == getPage().getActiveEditor()) {
-					IClassFile classFile= (IClassFile)getPage().getActiveEditor().getEditorInput().getAdapter(IClassFile.class);
-					getAction().setEnabled(classFile != null);
+					getAction().setEnabled(true);
 				} else {
 					ISelectionProvider sp= part.getSite().getSelectionProvider();
 					getAction().setEnabled(sp != null && enableForMember(getMember(sp.getSelection())));
