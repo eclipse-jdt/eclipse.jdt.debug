@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
-import java.text.MessageFormat;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.jdt.core.IClasspathContainer;
-import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
  * A source container for a classpath container.
@@ -31,60 +32,57 @@ import org.eclipse.jdt.core.JavaCore;
 public class ClasspathContainerSourceContainer extends CompositeSourceContainer {
 	
 	/**
-	 * Associated classpath container.
+	 * Associated classpath container path.
 	 */
-	private IClasspathContainer fContainer;
-	
-	/**
-	 * Unique identifier for Java project source container type
-	 * (value <code>org.eclipse.jdt.launching.sourceContainer.classpathContainer</code>).
-	 */
-	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.classpathContainer";   //$NON-NLS-1$
-	
+	private IPath fContainerPath;
+		
 	/**
 	 * Constructs a new source container for the given classpath container.
 	 * 
-	 * @param container classpath container
+	 * @param containerPath classpath container path
 	 */
-	public ClasspathContainerSourceContainer(IClasspathContainer container) {
-		fContainer = container;
+	public ClasspathContainerSourceContainer(IPath containerPath) {
+		fContainerPath = containerPath;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
 	public String getName() {
-		return fContainer.getDescription();
+		IClasspathContainer container = null;
+		try {
+			container = getClasspathContainer();
+		} catch (CoreException e) {
+		}
+		if (container == null) {
+			return getPath().toString();
+		} else {
+			return container.getDescription();
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(TYPE_ID);
+		return SourceLookupUtils.getSourceContainerType(ClasspathContainerSourceContainerTypeDelegate.TYPE_ID);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
-		IClasspathEntry[] entries = fContainer.getClasspathEntries();
-		ISourceContainer[] containers = new ISourceContainer[entries.length];
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			switch (entry.getEntryKind()) {
-				case IClasspathEntry.CPE_PROJECT:
-					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(entry.getPath().segment(0));
-					containers[i] = new JavaProjectSourceContainer(JavaCore.create(project));
-					break;
-				case IClasspathEntry.CPE_LIBRARY:
-					// TODO:
-					break;
-				default:
-					abort(MessageFormat.format("Classpath container does not resolve to projects and/or libraries: {0}", new String[]{fContainer.getPath().toOSString()}), null);
-					break;
-			}
-		}
-		return containers;
+		IRuntimeClasspathEntry entry = JavaRuntime.newRuntimeContainerClasspathEntry(getPath(), IRuntimeClasspathEntry.USER_CLASSES);
+		IRuntimeClasspathEntry[] entries = JavaRuntime.resolveSourceLookupPath(new IRuntimeClasspathEntry[]{entry}, getDirector().getLaunchConfiguration());
+		return JavaApplicationSourcePathComputer.translate(entries, true);
+	}
+	
+	/**
+	 * Returns the classpath container's path
+	 * 
+	 * @return classpath container's path
+	 */
+	public IPath getPath() {
+		return fContainerPath;
 	}
 
 	/* (non-Javadoc)
@@ -92,7 +90,7 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	 */
 	public boolean equals(Object obj) {
 		if (obj instanceof ClasspathContainerSourceContainer) {
-			return getClasspathContainer().equals(((ClasspathContainerSourceContainer)obj).getClasspathContainer());
+			return getPath().equals(((ClasspathContainerSourceContainer)obj).getPath());
 		}
 		return false;
 	}
@@ -100,16 +98,27 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getClasspathContainer().hashCode();
+		return getPath().hashCode();
 	}
 	
 	/**
-	 * Returns the classpath container associated with this source
-	 * container.
+	 * Returns the associated container or <code>null</code> if unavailable.
 	 * 
-	 * @return classpath container
+	 * @return classpath container or <code>null</code>
+	 * @throws CoreException if unable to retrieve container
 	 */
-	public IClasspathContainer getClasspathContainer() {
-		return fContainer;
+	protected IClasspathContainer getClasspathContainer() throws CoreException {
+		ISourceLookupDirector director = getDirector();
+		if (director != null) {
+			ILaunchConfiguration configuration = director.getLaunchConfiguration();
+			if (configuration != null) {
+				IJavaProject project = JavaRuntime.getJavaProject(configuration);
+				if (project != null) {
+					return JavaCore.getClasspathContainer(getPath(), project);
+				}
+			}
+		}
+		return null;
 	}
+	
 }

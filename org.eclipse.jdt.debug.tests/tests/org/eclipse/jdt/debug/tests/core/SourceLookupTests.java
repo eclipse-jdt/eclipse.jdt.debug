@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -47,6 +49,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 			IStackFrame frame = frames[2]; 
 			ISourceLocator sourceLocator = thread.getLaunch().getSourceLocator();
 			Object source1 = sourceLocator.getSourceElement(frame);
+			source1 = ((IAdaptable)source1).getAdapter(IJavaElement.class);
 			
 			IPackageFragment[] fragments = getJavaProject().getPackageFragments();
 			IPackageFragment fragment = null;
@@ -65,6 +68,7 @@ public class SourceLookupTests extends AbstractDebugTest {
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			IStackFrame frame2 = thread.getStackFrames()[2];
 			Object source2 = sourceLocator.getSourceElement(frame2);
+			source2 = ((IAdaptable)source2).getAdapter(IJavaElement.class);
 			ICompilationUnit unit2 = fragment.getCompilationUnit("ClassTwo.java");
 			assertEquals("Source lookup failed for frame2", unit2, source2);
 						

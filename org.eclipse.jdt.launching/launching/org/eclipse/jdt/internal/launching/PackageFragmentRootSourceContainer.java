@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.launching;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.debug.internal.core.sourcelookup.containers.AbstractSourceContainer;
@@ -112,5 +113,11 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 			return getPackageFragmentRoot();
 		}
 		return super.getAdapter(adapter);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getPath()
+	 */
+	public IPath getPath() {
+		return getPackageFragmentRoot().getPath();
 	}
 }

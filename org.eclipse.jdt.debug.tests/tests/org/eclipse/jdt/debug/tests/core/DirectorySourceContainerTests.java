@@ -14,6 +14,7 @@ import java.io.File;
 
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupParticipant;
@@ -58,7 +59,7 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 		DirectorySourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("Breakpoints.java");
 		assertEquals("Expected 1 result", 1, objects.length);
-		assertEquals("Wrong file", new File(container.getDirectory(), "Breakpoints.java"), objects[0]);
+		assertEquals("Wrong file", new File(container.getDirectory(), "Breakpoints.java"), ((LocalFileStorage)objects[0]).getFile());
 	}
 	
 	public void testSimpleSourceLookupNegative() throws Exception {
@@ -71,7 +72,7 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 		DirectorySourceContainer container = getContainer(true, false);
 		Object[] objects = container.findSourceElements("InfiniteLoop.java");
 		assertEquals("Expected 1 result", 1, objects.length);
-		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), objects[0]);		
+		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());		
 	}
 	
 	public void testSimpleNestedSourceLookupNegative() throws Exception {
@@ -84,7 +85,7 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 		DirectorySourceContainer container = getContainer(false, false);
 		Object[] objects = container.findSourceElements("org/eclipse/debug/tests/targets/InfiniteLoop.java");
 		assertEquals("Expected 1 result", 1, objects.length);
-		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), objects[0]);
+		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());
 	}
 	
 	public void testQualifiedSourceLookupNegative() throws Exception {
@@ -97,6 +98,6 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 		DirectorySourceContainer container = getContainer(true, false);
 		Object[] objects = container.findSourceElements("debug/tests/targets/InfiniteLoop.java");
 		assertEquals("Expected 1 result", 1, objects.length);
-		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), objects[0]);
+		assertEquals("Wrong file", new File(container.getDirectory(), "org/eclipse/debug/tests/targets/InfiniteLoop.java"), ((LocalFileStorage)objects[0]).getFile());
 	}	
 }

@@ -10,29 +10,27 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.debug.internal.core.sourcelookup.containers.AbstractSourceContainerTypeDelegate;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * Java project source container type.
+ * Classpath variable source container type.
+ * 
+ * @since 3.0
  */
-public class JavaProjectSourceContainerTypeDelegate extends AbstractSourceContainerTypeDelegate {
-
+public class ClasspathVariableSourceContainerTypeDelegate extends AbstractSourceContainerTypeDelegate {
+	
 	/**
 	 * Unique identifier for Java project source container type
-	 * (value <code>org.eclipse.jdt.launching.sourceContainer.javaProject</code>).
+	 * (value <code>org.eclipse.jdt.launching.sourceContainer.classpathVariable</code>).
 	 */
-	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.javaProject";   //$NON-NLS-1$
+	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.classpathVariable";   //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#createSourceContainer(java.lang.String)
@@ -41,30 +39,27 @@ public class JavaProjectSourceContainerTypeDelegate extends AbstractSourceContai
 		Node node = SourceLookupUtils.parseDocument(memento);
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
-			if ("javaProject".equals(element.getNodeName())) { //$NON-NLS-1$
-				String string = element.getAttribute("name"); //$NON-NLS-1$
+			if ("classpathVariable".equals(element.getNodeName())) { //$NON-NLS-1$
+				String string = element.getAttribute("path"); //$NON-NLS-1$
 				if (string == null || string.length() == 0) {
-					abort(LaunchingMessages.getString("JavaProjectSourceContainerTypeDelegate.5"), null); //$NON-NLS-1$
+					abort(LaunchingMessages.getString("ClasspathVariableSourceContainerTypeDelegate.5"), null); //$NON-NLS-1$
 				}
-				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				IProject project = workspace.getRoot().getProject(string);
-				IJavaProject javaProject = JavaCore.create(project);
-				return new JavaProjectSourceContainer(javaProject);
+				return new ClasspathVariableSourceContainer(new Path(string));
 			} else {
-				abort(LaunchingMessages.getString("JavaProjectSourceContainerTypeDelegate.6"), null); //$NON-NLS-1$
+				abort(LaunchingMessages.getString("ClasspathVariableSourceContainerTypeDelegate.6"), null); //$NON-NLS-1$
 			}
 		}
-		abort(LaunchingMessages.getString("JavaProjectSourceContainerTypeDelegate.7"), null); //$NON-NLS-1$
+		abort(LaunchingMessages.getString("ClasspathVariableSourceContainerTypeDelegate.7"), null); //$NON-NLS-1$
 		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
 	public String getMemento(ISourceContainer container) throws CoreException {
-		JavaProjectSourceContainer project = (JavaProjectSourceContainer) container;
+		ClasspathVariableSourceContainer var =  (ClasspathVariableSourceContainer) container;
 		Document document = SourceLookupUtils.newDocument();
-		Element element = document.createElement("javaProject"); //$NON-NLS-1$
-		element.setAttribute("name", project.getName()); //$NON-NLS-1$
+		Element element = document.createElement("classpathVariable"); //$NON-NLS-1$
+		element.setAttribute("path", var.getPath().toString()); //$NON-NLS-1$
 		document.appendChild(element);
 		return SourceLookupUtils.serializeDocument(document);
 	}

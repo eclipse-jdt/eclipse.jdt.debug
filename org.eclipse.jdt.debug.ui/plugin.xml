@@ -2395,4 +2395,20 @@
             contextId="org.eclipse.jdt.debug.ui.debugging">
       </contextViewBinding>
    </extension>
+   
+   <!-- Source Lookup (in progress) -->
+   <extension
+         point="org.eclipse.debug.ui.sourceContainerPresentations">
+      <sourceContainerPresentation
+            containerTypeID="org.eclipse.jdt.launching.sourceContainer.classpathVariable"
+            browserClass="org.eclipse.jdt.internal.debug.ui.sourcelookup.ClasspathVariableSourceContainerBrowser"
+            id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.classpathVariable">
+      </sourceContainerPresentation>
+      <sourceContainerPresentation
+            browserClass="org.eclipse.jdt.internal.debug.ui.sourcelookup.ClasspathContainerSourceContainerBrowser"
+            containerTypeID="org.eclipse.jdt.launching.sourceContainer.classpathContainer"
+            id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.classpathContainer">
+      </sourceContainerPresentation>
+   </extension>
+      
 </plugin>

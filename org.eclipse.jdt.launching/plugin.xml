@@ -49,6 +49,10 @@
             delegate="org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate"
             modes="run, debug"
             id="org.eclipse.jdt.launching.localJavaApplication">
+<!--  Platform source lookup disabled (in progress)
+            sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"
+            sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaApplicationSourcePathComputer">
+-->
       </launchConfigurationType>
       <launchConfigurationType
             name="%remoteJavaApplication"
@@ -146,6 +150,16 @@
    			id="org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot"
    			name="Package Fragment Root"
    			class="org.eclipse.jdt.internal.launching.PackageFragmentRootSourceContainerTypeDelegate">
+   		</sourceContainerType>    		
+   		<sourceContainerType
+   			id="org.eclipse.jdt.launching.sourceContainer.classpathVariable"
+   			name="Java Classpath Variable"
+   			class="org.eclipse.jdt.internal.launching.ClasspathVariableSourceContainerTypeDelegate">
+   		</sourceContainerType>   		
+   		<sourceContainerType
+   			id="org.eclipse.jdt.launching.sourceContainer.classpathContainer"
+   			name="Java Library"
+   			class="org.eclipse.jdt.internal.launching.ClasspathContainerSourceContainerTypeDelegate">
    		</sourceContainerType>    		
    </extension>
    <extension point="org.eclipse.debug.core.sourcePathComputers">

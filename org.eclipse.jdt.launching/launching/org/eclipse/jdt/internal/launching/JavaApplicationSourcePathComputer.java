@@ -56,7 +56,7 @@ public class JavaApplicationSourcePathComputer implements ISourcePathComputerDel
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(configuration);
 		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveSourceLookupPath(entries, configuration);
-		return translate(resolved);
+		return translate(resolved, true);
 	}
 	
 	/**
@@ -64,22 +64,29 @@ public class JavaApplicationSourcePathComputer implements ISourcePathComputerDel
 	 * containers.
 	 * 
 	 * @param entries entries to translate
+	 * @param considerSourceAttachments whether to consider source attachments
+	 *  when comparing against existing packagr fragment roots
 	 * @exception CoreException if unable to expand the path
 	 */
-	private ISourceContainer[] translate(IRuntimeClasspathEntry[] entries) throws CoreException {
+	protected static ISourceContainer[] translate(IRuntimeClasspathEntry[] entries, boolean considerSourceAttachments) throws CoreException {
 		List containers = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];
 			switch (entry.getType()) {
 				case IRuntimeClasspathEntry.ARCHIVE:
-					IPackageFragmentRoot root = getPackageFragmentRoot(entry);
+					IPackageFragmentRoot root = getPackageFragmentRoot(entry, considerSourceAttachments);
 					if (root == null) {
 						String path = entry.getSourceAttachmentLocation();
-						if (path != null) {
-							ISourceContainer container = new ArchiveSourceContainer(path, true);
-							if (!containers.contains(container)) {
-								containers.add(container);
-							}
+						ISourceContainer container = null;
+						if (path == null) {
+							// use the archive itself
+							container = new ArchiveSourceContainer(entry.getLocation(), true);
+						} else {
+							container = new ArchiveSourceContainer(path, true);
+
+						}
+						if (!containers.contains(container)) {
+							containers.add(container);
 						}
 					} else {
 						ISourceContainer container = new PackageFragmentRootSourceContainer(root);
@@ -145,9 +152,11 @@ public class JavaApplicationSourcePathComputer implements ISourcePathComputerDel
 	 * <code>null</code>.
 	 *  
 	 * @param entry archive runtime classpath entry
+	 * @param considerSourceAttachment whether the source attachments should be
+	 *  considered comparing against package fragment roots
 	 * @return package fragment root or <code>null</code>
 	 */
-	private static IPackageFragmentRoot getPackageFragmentRoot(IRuntimeClasspathEntry entry) {
+	private static IPackageFragmentRoot getPackageFragmentRoot(IRuntimeClasspathEntry entry, boolean considerSourceAttachment) {
 		IResource resource = entry.getResource();
 		if (resource == null) { 
 			// Check all package fragment roots for case of external archive.
@@ -161,7 +170,7 @@ public class JavaApplicationSourcePathComputer implements ISourcePathComputerDel
 					for (int j = 0; j < allRoots.length; j++) {
 						IPackageFragmentRoot root = allRoots[j];
 						if (root.isExternal() && root.getPath().equals(new Path(entry.getLocation()))) {
-							if (isSourceAttachmentEqual(root, entry)) {
+							if (!considerSourceAttachment || isSourceAttachmentEqual(root, entry)) {
 								// use package fragment root
 								return root;
 							}							
@@ -182,7 +191,7 @@ public class JavaApplicationSourcePathComputer implements ISourcePathComputerDel
 					for (int j = 0; j < allRoots.length; j++) {
 						if (allRoots[j].equals(root)) {
 							// ensure source attachment paths match
-							if (isSourceAttachmentEqual(root, entry)) {
+							if (!considerSourceAttachment || isSourceAttachmentEqual(root, entry)) {
 								// use package fragment root
 								return root;
 							}
@@ -199,7 +208,7 @@ public class JavaApplicationSourcePathComputer implements ISourcePathComputerDel
 					for (int j = 0; j < allRoots.length; j++) {
 						IPackageFragmentRoot root = allRoots[j];
 						if (!root.isExternal() && root.getPath().equals(entry.getPath())) {
-							if (isSourceAttachmentEqual(root, entry)) {
+							if (!considerSourceAttachment || isSourceAttachmentEqual(root, entry)) {
 								// use package fragment root
 								return root;
 							}							
