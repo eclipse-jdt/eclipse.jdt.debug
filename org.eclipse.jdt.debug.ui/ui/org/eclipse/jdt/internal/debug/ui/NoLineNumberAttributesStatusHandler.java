@@ -24,7 +24,7 @@ public class NoLineNumberAttributesStatusHandler implements IStatusHandler {
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		ReferenceType type= (ReferenceType) source;
-		final ErrorDialog dialog= new ErrorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), "Java Breakpoint", MessageFormat.format("Attempting to install a breakpoint in the type {0} that has no line number attributes.  The breakpoint cannot be installed.  Class files must be generated with the line number attributes.", new String[] {type.name()}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO);
+		final ErrorDialog dialog= new ErrorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.Java_Breakpoint_1"), MessageFormat.format(DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.Attempting_to_install_a_breakpoint_in_the_type_{0}_that_has_no_line_number_attributes.__The_breakpoint_cannot_be_installed.__Class_files_must_be_generated_with_the_line_number_attributes._2"), new String[] {type.name()}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO); //$NON-NLS-1$ //$NON-NLS-2$
 		Display display= JDIDebugUIPlugin.getStandardDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
