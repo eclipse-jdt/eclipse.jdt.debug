@@ -79,14 +79,14 @@ public abstract class AbstractJavaLaunchConfigurationDelegate extends LaunchConf
 	private List orderedProjects;
 
 	/**
-	 * Unresolved classpath entries as returned by JavaRuntime
+	 * Resolved classpath entries as returned by JavaRuntime
 	 */
-	private IRuntimeClasspathEntry[] resolvedClasspathEntries;
+	protected IRuntimeClasspathEntry[] resolvedClasspathEntries;
 	
 	/**
-	 * resolved classpath entries
+	 * Unresolved classpath entries as returned by JavaRuntime
 	 */
-	private IRuntimeClasspathEntry[] unresolvedClasspathEntries;
+	protected IRuntimeClasspathEntry[] unresolvedClasspathEntries;
 	
 	
 	/**
