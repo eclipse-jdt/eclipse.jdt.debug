@@ -26,14 +26,22 @@ public class JavaEvaluationEngineManager implements IDebugEventSetListener {
 	/**
 	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
 	 * 
-	 * Removes debug targets from the engine map when they terminate
+	 * Removes debug targets from the engine map when they terminate,
+	 * and dispose of engines.
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		DebugEvent event;
 		for (int i= 0, numEvents= events.length; i < numEvents; i++) {
 			event= events[i];
 			if (event.getKind() == DebugEvent.TERMINATE && event.getSource() instanceof IJavaDebugTarget) {
-				fTargetMap.remove((IJavaDebugTarget)event.getSource());
+				HashMap map = (HashMap)fTargetMap.remove((IJavaDebugTarget)event.getSource());
+				if (map != null) {
+					Iterator iter = map.values().iterator();
+					while (iter.hasNext()) {
+						((IAstEvaluationEngine)iter.next()).dispose();
+					}
+					map.clear();
+				}
 			}
 		}
 	}
