@@ -308,8 +308,8 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		}
 		
 		// Program & VM args
-		String pgmArgs = configuration.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, "");	//$NON-NLS-1$
-		String vmArgs = configuration.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, ""); //$NON-NLS-1$
+		String pgmArgs = configuration.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, "");	//$NON-NLS-1$
+		String vmArgs = configuration.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, ""); //$NON-NLS-1$
 		ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
 		
 		// Classpath
