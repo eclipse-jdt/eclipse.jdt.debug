@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.jdt.launching.macosx"
+   name="%pluginName"
+   version="2.1.0"
+   provider-name="%providerName"
+   class="org.eclipse.jdt.internal.launching.macosx.MacOSXLaunchingPlugin">
+
+<!-- Required plugins -->
+
+<requires>
+   <import plugin="org.eclipse.jdt.debug"/>
+   <import plugin="org.eclipse.debug.core"/>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.eclipse.jdt.core"/>
+   <import plugin="org.eclipse.jdt.launching"/>
+</requires>
+
+<!-- Runtime -->
+
+<runtime>
+   <library name="macosxlaunching.jar"/>
+</runtime>
+
+<!-- Extension points -->
+
+<!-- Extensions -->
+
+<extension point="org.eclipse.jdt.launching.vmInstallTypes">
+	<vmInstallType
+		id="org.eclipse.jdt.internal.launching.macosx.MacOSXType"
+		class="org.eclipse.jdt.internal.launching.macosx.MacOSXVMInstallType"
+	/>
+</extension>
+
+</plugin>
