@@ -5,6 +5,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -48,7 +50,7 @@ public class SendMessage extends CompoundInstruction {
 		if (receiver instanceof IJavaObject) {
 			result = ((IJavaObject)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread(), fSuperSend);
 		} else {
-			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Try to send an message to an not object value", null));
+			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, InstructionsEvaluationMessages.getString("SendMessage.Attempt_to_send_a_message_to_a_non_object_value_1"), null)); //$NON-NLS-1$
 		}
 		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$
 			// only push the result if not a void method
@@ -57,8 +59,7 @@ public class SendMessage extends CompoundInstruction {
 	}
 	
 	public String toString() {
-		return "send message " + fSelector + " " + fSignature;
+		return MessageFormat.format(InstructionsEvaluationMessages.getString("SendMessage.send_message_{0}_{1}_2"), new String[]{fSelector,fSignature}); //$NON-NLS-1$
 	}
-
 }
 

@@ -5,6 +5,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  * All Rights Reserved.
  */
  
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -36,7 +38,7 @@ public class PushLocalVariable extends SimpleInstruction {
 			}
 		}
 
-		throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Cannot find the variable : " + fName, null));
+		throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("PushLocalVariable.Cannot_find_the_variable____1"), new String[]{fName}), null)); //$NON-NLS-1$
 	}
 	
 	/**
@@ -51,8 +53,7 @@ public class PushLocalVariable extends SimpleInstruction {
 	}
 
 	public String toString() {
-		return "push '" + getName() + "'";
+		return MessageFormat.format(InstructionsEvaluationMessages.getString("PushLocalVariable.push___{0}__2"), new String[]{getName()}); //$NON-NLS-1$
 	}
-
 }
 
