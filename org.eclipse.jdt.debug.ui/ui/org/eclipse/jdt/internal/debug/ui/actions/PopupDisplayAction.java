@@ -16,7 +16,6 @@ import org.eclipse.debug.ui.actions.PopupInformationControl;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jdt.internal.ui.text.JavaWordFinder;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.BadLocationException;
@@ -44,7 +43,7 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 	private String resultString;
 
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
-		return snippet + " - " +resultString; //$NON-NLS-1$
+		return resultString;
 	}
 
 	public IRegion getSubject(ITextViewer textViewer, int offset) {

@@ -44,7 +44,6 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.display.DataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ISnippetStateChangedListener;
@@ -53,7 +52,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -401,12 +399,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IWorkbenchPart part= getTargetPart();
 		if (part != null) {
 			IDataDisplay display= (IDataDisplay)part.getAdapter(IDataDisplay.class);
-//			if (display == null) {
-//				ITextViewer viewer = (ITextViewer)part.getAdapter(ITextViewer.class);
-//				if (viewer != null) {
-//					display= new DataDisplay(viewer);
-//				}
-//			}
 			if (display != null) {
 				IWorkbenchPage page= JDIDebugUIPlugin.getActivePage();
 				if (page != null) {
@@ -428,10 +420,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				if (display != null) {
 					return display;
 				}	
-				ITextViewer viewer = (ITextViewer)activePart.getAdapter(ITextViewer.class);
-				if (viewer != null) {
-					return new DataDisplay(viewer);
-				}
 			}
 		}
 		return null;
