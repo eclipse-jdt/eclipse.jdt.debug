@@ -343,14 +343,12 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				if (item instanceof ITerminate) {
 					if (((ITerminate) item).isTerminated()) {
 						label.insert(0, DebugUIMessages.getString("JDIModelPresentation.<terminated>_2")); //$NON-NLS-1$
-						label.insert(0, ' '); //$NON-NLS-1$
 						return label.toString();
 					}
 				}
 				if (item instanceof IDisconnect) {
 					if (((IDisconnect) item).isDisconnected()) {
 						label.insert(0, DebugUIMessages.getString("JDIModelPresentation.<disconnected>_4")); //$NON-NLS-1$
-						label.insert(0, ' '); //$NON-NLS-1$
 						return label.toString();
 					}
 				}
@@ -475,7 +473,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	/**
-	 * Build the text for an IJavaThread.
+	 * Build the text for an IJavaDebugTarget.
 	 */
 	protected String getDebugTargetText(IJavaDebugTarget debugTarget, boolean qualified) throws DebugException {
 		String labelString= debugTarget.getName();
@@ -1425,8 +1423,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	
 	protected void appendSuspendPolicy(IJavaBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
 		if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
+			buffer.append(' ');
 			buffer.append(DebugUIMessages.getString("JDIModelPresentation.Suspend_VM")); //$NON-NLS-1$
 		}
 	}
-	
 }
