@@ -421,6 +421,28 @@
 			enablesFor="1">
 		</action>
 	</objectContribution>
+	<objectContribution
+		id="org.eclipse.jdt.debug.AddStepFilterActions"
+		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
+		<action
+			id="org.eclipse.jdt.ui.actions.AddPackageStepFilterAction"
+			label="%addPackageStepFilterAction.label"
+			tooltip="%addPackageStepFilterAction.tooltip"
+			menubarPath="emptyThreadGroup"
+			helpContextId="add_package_step_filter_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.AddPackageStepFilterAction"
+			enablesFor="+">
+		</action>
+		<action
+			id="org.eclipse.jdt.ui.actions.AddTypeStepFilterAction"
+			label="%addTypeStepFilterAction.label"
+			tooltip="%addTypeStepFilterAction.tooltip"
+			menubarPath="emptyThreadGroup"
+			helpContextId="add_type_step_filter_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.AddTypeStepFilterAction"
+			enablesFor="+">
+		</action>
+	</objectContribution>
 	  <objectContribution
 	objectClass="org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression"
 	id="org.eclipse.jdt.debug.ui.JavaInspectExpressionActions">

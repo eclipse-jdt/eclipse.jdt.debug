@@ -499,7 +499,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		Shell shell= getShell();
 		ElementListSelectionDialog dialog = null;
 		try {
-			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null, true);
+			dialog = JDIDebugUIPlugin.createAllPackagesDialog(shell, null, false);
 		} catch (JavaModelException jme) {
 			String title= DebugUIMessages.getString("JavaStepFilterPreferencePage.Add_package_to_step_filters_24"); //$NON-NLS-1$
 			String message= DebugUIMessages.getString("JavaStepFilterPreferencePage.Could_not_open_package_selection_dialog_for_step_filters_25"); //$NON-NLS-1$
@@ -519,12 +519,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			for (int i = 0; i < packages.length; i++) {
 				IJavaElement pkg = (IJavaElement)packages[i];
 				
-				String filter = pkg.getElementName();
-				if (filter.length() < 1) {
-					filter = "(default package)" ; //$NON-NLS-1$
-				} else {
-					filter += ".*"; //$NON-NLS-1$
-				}
+				String filter = pkg.getElementName() + ".*"; //$NON-NLS-1$
 				fStepFilterContentProvider.addFilter(filter, true);
 			}
 		}		
