@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -28,14 +29,18 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Property page for configuring IJavaBreakpoints.
@@ -69,6 +74,8 @@ public class JavaBreakpointPage extends PropertyPage {
 				IJavaBreakpoint breakpoint = getBreakpoint();
 				boolean delOnCancel = breakpoint.getMarker().getAttribute(ATTR_DELETE_ON_CANCEL) != null;
 				if (delOnCancel) {
+				    // if this breakpoint is being created, remove the "delete on cancel" attribute
+				    // and register with the breakpoint manager
 					breakpoint.getMarker().setAttribute(ATTR_DELETE_ON_CANCEL, (String)null);
 					breakpoint.setRegistered(true);
 				}
@@ -199,8 +206,46 @@ public class JavaBreakpointPage extends PropertyPage {
 			JDIDebugUIPlugin.log(e);
 		}
 		setValid(true);
+		// if this breakpoint is being created, change the shell title to indicate 'creation'
+		try {
+            if (getBreakpoint().getMarker().getAttribute(ATTR_DELETE_ON_CANCEL) != null) {
+            	getShell().addShellListener(new ShellListener() {
+                    public void shellActivated(ShellEvent e) {
+                        Shell shell = (Shell)e.getSource();
+                        shell.setText(MessageFormat.format(PropertyPageMessages.getString("JavaBreakpointPage.10"), new String[]{getName(getBreakpoint())})); //$NON-NLS-1$
+                        shell.removeShellListener(this);
+                    }
+                    public void shellClosed(ShellEvent e) {
+                    }
+                    public void shellDeactivated(ShellEvent e) {
+                    }
+                    public void shellDeiconified(ShellEvent e) {
+                    }
+                    public void shellIconified(ShellEvent e) {
+                    }
+                });
+            }
+        } catch (CoreException e) {
+        }
 		return mainComposite;
 	}
+	
+    /**
+     * Returns the name of the given element.
+     * 
+     * @param element
+     *            the element
+     * @return the name of the element
+     */
+    private String getName(IAdaptable element) {
+        IWorkbenchAdapter adapter = (IWorkbenchAdapter) element
+                .getAdapter(IWorkbenchAdapter.class);
+        if (adapter != null) {
+            return adapter.getLabel(element);
+        } else {
+            return "";//$NON-NLS-1$
+        }
+    }	
 	
 	/**
 	 * Creates the labels displayed for the breakpoint.
@@ -420,6 +465,7 @@ public class JavaBreakpointPage extends PropertyPage {
 	public boolean performCancel() {
 		try {
 			if (getBreakpoint().getMarker().getAttribute(ATTR_DELETE_ON_CANCEL) != null) {
+			    // if this breakpoint is being created, delete on cancel
 				getBreakpoint().delete();
 			}
 		} catch (CoreException e) {
