@@ -223,7 +223,7 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
-		if (part instanceof IEditorPart) {
+		if (part instanceof ITextEditor) {
 			setEditor((ITextEditor)part);
 			update();
 		}
