@@ -983,16 +983,16 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return events;
 	}
 	
-	/**
-	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		JavaTextTools textTools= JavaPlugin.getDefault().getJavaTextTools();
 		return textTools.affectsBehavior(event);
 	}
 	
-	/**
-	 * @see AbstractTextEditor#handlePreferenceStoreChanged(PropertyChangeEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		JDISourceViewer isv= (JDISourceViewer) getSourceViewer();

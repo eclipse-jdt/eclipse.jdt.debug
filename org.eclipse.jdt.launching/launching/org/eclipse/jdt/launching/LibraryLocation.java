@@ -74,8 +74,8 @@ public final class LibraryLocation {
 	public IPath getPackageRootPath() {
 		return fPackageRootPath;
 	}
-	/**
-	 * @see Object#equals(Object)
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
 		if (obj instanceof LibraryLocation) {
@@ -87,8 +87,8 @@ public final class LibraryLocation {
 		return false;
 	}
 
-	/**
-	 * @see Object#hashCode()
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return getSystemLibraryPath().hashCode();
@@ -96,6 +96,9 @@ public final class LibraryLocation {
 	
 	/**
 	 * Returns whether the given paths are equal - either may be <code>null</code>.
+	 * @param path1 path to be compared
+	 * @param path2 path to be compared
+	 * @return whether the given paths are equal
 	 */
 	protected boolean equals(IPath path1, IPath path2) {
 		if (path1 == null) {
@@ -106,5 +109,4 @@ public final class LibraryLocation {
 		}
 		return path1.equals(path2);
 	}
-
 }

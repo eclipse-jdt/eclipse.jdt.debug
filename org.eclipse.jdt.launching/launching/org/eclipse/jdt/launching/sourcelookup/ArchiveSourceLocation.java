@@ -124,7 +124,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * Constructs a new source location that will retrieve source
 	 * elements from the zip file with the given name.
 	 * 
-	 * @param archive zip file
+	 * @param archiveName zip file
 	 * @param sourceRoot a path to the root source folder in the
 	 *  specified archive, or <code>null</code> if the root source folder
 	 *  is the root of the archive
@@ -135,8 +135,8 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		setRootPath(sourceRoot);
 	}
 		
-	/**
-	 * @see IJavaSourceLocation#findSourceElement(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
 	public Object findSourceElement(String name) throws CoreException {
 		try {

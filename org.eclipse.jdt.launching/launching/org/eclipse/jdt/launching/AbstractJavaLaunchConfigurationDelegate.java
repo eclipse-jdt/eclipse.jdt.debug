@@ -75,6 +75,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @param exception lower level exception associated with the
 	 *  error, or <code>null</code> if none
 	 * @param code error code
+	 * @throws CoreException the "abort" core exception
 	 */
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception));
@@ -594,6 +595,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	/**
 	 * Handles the "stop-in-main" option.
 	 * 
+	 * @param events the debug events.
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {

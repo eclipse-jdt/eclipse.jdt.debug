@@ -57,8 +57,8 @@ public class ZipEntryStorage extends PlatformObject implements IStorage {
 		setZipEntry(entry);
 	}
 
-	/**
-	 * @see IStorage#getContents()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#getContents()
 	 */
 	public InputStream getContents() throws CoreException {
 		try {
@@ -68,15 +68,15 @@ public class ZipEntryStorage extends PlatformObject implements IStorage {
 		}
 	}
 
-	/**
-	 * @see IStorage#getFullPath()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#getFullPath()
 	 */
 	public IPath getFullPath() {
 		return new Path(getArchive().getName()).append(getZipEntry().getName());
 	}
 
-	/**
-	 * @see IStorage#getName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#getName()
 	 */
 	public String getName() {
 		int index = getZipEntry().getName().lastIndexOf('\\');
@@ -90,8 +90,8 @@ public class ZipEntryStorage extends PlatformObject implements IStorage {
 		}
 	}
 
-	/**
-	 * @see IStorage#isReadOnly()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#isReadOnly()
 	 */
 	public boolean isReadOnly() {
 		return true;
@@ -133,7 +133,7 @@ public class ZipEntryStorage extends PlatformObject implements IStorage {
 		return fZipEntry;
 	}		
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {		
@@ -142,7 +142,7 @@ public class ZipEntryStorage extends PlatformObject implements IStorage {
 			 getZipEntry().getName().equals(((ZipEntryStorage)object).getZipEntry().getName());
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {

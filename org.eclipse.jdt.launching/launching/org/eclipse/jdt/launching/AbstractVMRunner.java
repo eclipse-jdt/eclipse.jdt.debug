@@ -98,9 +98,9 @@ public abstract class AbstractVMRunner implements IVMRunner {
 	/**
 	 * Returns a new process aborting if the process could not be created.
 	 * @param launch the launch the process is contained in
-	 * @param process the system process to wrap
+	 * @param p the system process to wrap
 	 * @param label the label assigned to the process
-	 * @param initial values for the attribute map
+	 * @param attributes values for the attribute map
 	 * @return the new process
 	 * @throws CoreException problems occurred creating the process
 	 * @since 3.0

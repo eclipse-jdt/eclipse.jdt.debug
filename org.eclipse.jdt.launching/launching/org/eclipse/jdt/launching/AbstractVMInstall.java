@@ -117,15 +117,15 @@ public abstract class AbstractVMInstall implements IVMInstall {
 		return null;
 	}
 
-	/**
-	 * @see IVMInstall#getLibraryLocations()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstall#getLibraryLocations()
 	 */
 	public LibraryLocation[] getLibraryLocations() {
 		return fSystemLibraryDescriptions;
 	}
 
-	/**
-	 * @see IVMInstall#setLibraryLocations(LibraryLocation[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstall#setLibraryLocations(org.eclipse.jdt.launching.LibraryLocation[])
 	 */
 	public void setLibraryLocations(LibraryLocation[] locations) {
 		if (locations == fSystemLibraryDescriptions) {
@@ -160,15 +160,15 @@ public abstract class AbstractVMInstall implements IVMInstall {
 		}
 	}
 
-	/**
-	 * @see IVMInstall#getJavadocLocation()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstall#getJavadocLocation()
 	 */
 	public URL getJavadocLocation() {
 		return fJavadocLocation;
 	}
 
-	/**
-	 * @see IVMInstall#setJavadocLocation(URL)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstall#setJavadocLocation(java.net.URL)
 	 */
 	public void setJavadocLocation(URL url) {
 		if (url == fJavadocLocation) {
@@ -197,9 +197,10 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	protected void setNotify(boolean notify) {
 		fNotify = notify;
 	}
-	/**
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
-	 * @since 2.1
+     * @since 2.1
 	 */
 	public boolean equals(Object object) {
 		if (object instanceof IVMInstall) {
@@ -210,12 +211,11 @@ public abstract class AbstractVMInstall implements IVMInstall {
 		return false;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 * @since 2.1
 	 */
 	public int hashCode() {
 		return getVMInstallType().hashCode() + getId().hashCode();
 	}
-
 }

@@ -296,7 +296,7 @@ public class DetailFormatterDialog extends StatusDialog {
 	}
 	
 	/**
-	 * Use the java search engine for find the (a) type which corresponds
+	 * Use the Java search engine to find the type which corresponds
 	 * to the given name.
 	 */
 	private void findCorrespondingType() {

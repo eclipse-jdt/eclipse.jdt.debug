@@ -29,8 +29,8 @@ import org.eclipse.jdt.core.IJavaProject;
  */
 public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 
-	/**
-	 * @see IRuntimeClasspathProvider#computeUnresolvedClasspath(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
@@ -66,8 +66,8 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 		}
 	}
 
-	/**
-	 * @see IRuntimeClasspathProvider#resolveClasspath(IRuntimeClasspathEntry[], ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		List all = new ArrayList(entries.length);

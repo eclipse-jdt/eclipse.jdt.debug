@@ -107,11 +107,23 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 	 */
 	protected abstract IVMInstall doCreateVMInstall(String id);
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
+	 */
 	/**
 	 * Initializes the id parameter from the "id" attribute
 	 * in the configuration markup.
 	 * Subclasses should not override this method.
-	 * @see IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
+	 * @param config the configuration element used to trigger this execution. 
+	 *		It can be queried by the executable extension for specific
+	 *		configuration properties
+	 * @param propertyName the name of an attribute of the configuration element
+	 *		used on the <code>createExecutableExtension(String)</code> call. This
+	 *		argument can be used in the cases where a single configuration element
+	 *		is used to define multiple executable extensions.
+	 * @param data adapter data in the form of a <code>String</code>, 
+	 *		a <code>Hashtable</code>, or <code>null</code>.
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) {
 		fId= config.getAttribute("id"); //$NON-NLS-1$
@@ -125,8 +137,8 @@ public abstract class AbstractVMInstallType implements IVMInstallType, IExecutab
 		return fId;
 	}
 
-	/**
-	 * @see IVMInstallType#findVMInstallByName(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstallType#findVMInstallByName(java.lang.String)
 	 */
 	public IVMInstall findVMInstallByName(String name) {
 		for (int i= 0; i < fVMs.size(); i++) {

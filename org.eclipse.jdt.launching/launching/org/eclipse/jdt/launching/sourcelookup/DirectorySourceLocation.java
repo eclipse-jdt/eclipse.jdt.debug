@@ -70,8 +70,8 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 		setDirectory(directory);
 	}
 	
-	/**
-	 * @see IJavaSourceLocation#findSourceElement(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#findSourceElement(java.lang.String)
 	 */
 	public Object findSourceElement(String name) throws CoreException {
 		if (getDirectory() == null) {
@@ -124,7 +124,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 		return fDirectory;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {		
@@ -132,15 +132,15 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 			 getDirectory().equals(((DirectorySourceLocation)object).getDirectory());
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return getDirectory().hashCode();
 	}	
 	
-	/**
-	 * @see IJavaSourceLocation#getMemento()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#getMemento()
 	 */
 	public String getMemento() throws CoreException {
 		try {
@@ -160,8 +160,8 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 		return null;
 	}
 
-	/**
-	 * @see IJavaSourceLocation#initializeFrom(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation#initializeFrom(java.lang.String)
 	 */
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;

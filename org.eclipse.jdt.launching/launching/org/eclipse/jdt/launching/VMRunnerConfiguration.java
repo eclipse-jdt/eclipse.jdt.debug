@@ -251,7 +251,7 @@ public class VMRunnerConfiguration {
 	 * </p>
 	 * @return The boot classpath. An emptry array indicates an empty
 	 *  bootpath and <code>null</code> indicates a default bootpah.
-	 * @see #setBootClassPath
+	 * @see #setBootClassPath(String[])
 	 */
 	public String[] getBootClassPath() {
 		return fBootClassPath;
@@ -261,7 +261,7 @@ public class VMRunnerConfiguration {
 	 * Returns the arguments to the VM itself.
 	 *
 	 * @return The VM arguments. Default is an empty array. Will not be <code>null</code>.
-	 * @see #setVMArguments
+	 * @see #setVMArguments(String[])
 	 */
 	public String[] getVMArguments() {
 		if (fVMArgs == null) {
@@ -274,7 +274,7 @@ public class VMRunnerConfiguration {
 	 * Returns the arguments to the Java program.
 	 *
 	 * @return The Java program arguments. Default is an empty array. Will not be <code>null</code>.
-	 * @see #setProgramArguments
+	 * @see #setProgramArguments(String[])
 	 */
 	public String[] getProgramArguments() {
 		if (fProgramArgs == null) {

@@ -28,6 +28,7 @@ public interface IRuntimeContainerComparator {
 	 * Returns whether this container is a duplicate of the conatiner
 	 * identified by the given path.
 	 * 
+	 * @param containerPath the container to compare against
 	 * @return whether this container is a duplicate of the conatiner
 	 * identified by the given path
 	 */

@@ -26,8 +26,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class StandardSourcePathProvider extends StandardClasspathProvider {
 	
-	/**
-	 * @see IRuntimeClasspathProvider#computeUnresolvedClasspath(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
@@ -43,8 +43,8 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 
 	}
 
-	/**
-	 * @see IRuntimeClasspathProvider#resolveClasspath(IRuntimeClasspathEntry[], ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
 		List all = new ArrayList(entries.length);

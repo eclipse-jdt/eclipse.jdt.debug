@@ -252,6 +252,7 @@ public final class JavaRuntime {
 	 * The project must exist. The VM assigned to a project is
 	 * determined from its build path.
 	 * 
+	 * @param project the project to retrieve the VM from
 	 * @return the VM instance that is assigned to build the given Java project
 	 * 		   Returns <code>null</code> if no VM is referenced on the project's build path.
 	 * @throws CoreException if unable to determine the project's VM install
@@ -286,6 +287,7 @@ public final class JavaRuntime {
 	
 	/**
 	 * Returns the VM install type with the given unique id. 
+	 * @param id the VM install type unique id
 	 * @return	The VM install type for the given id, or <code>null</code> if no
 	 * 			VM install type with the given id is registered.
 	 */

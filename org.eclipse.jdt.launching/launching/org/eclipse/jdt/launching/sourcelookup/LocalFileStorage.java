@@ -51,8 +51,8 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 		setFile(file);
 	}
 	
-	/**
-	 * @see IStorage#getContents()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#getContents()
 	 */
 	public InputStream getContents() throws CoreException {
 	
@@ -63,8 +63,8 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 		}
 	}
 	
-	/**
-	 * @see IStorage#getFullPath
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#getFullPath()
 	 */
 	public IPath getFullPath() {
 		try {
@@ -74,14 +74,16 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 			return null;
 		}
 	}
-	/**
-	 * @see IStorage#getName
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#getName()
 	 */
 	public String getName() {
 		return getFile().getName();
 	}
-	/**
-	 * @see IStorage#isReadOnly()
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IStorage#isReadOnly()
 	 */
 	public boolean isReadOnly() {
 		return true;
@@ -105,7 +107,7 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 		return fFile;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {		
@@ -113,12 +115,10 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 			 getFile().equals(((LocalFileStorage)object).getFile());
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return getFile().hashCode();
 	}	
 }
-
-

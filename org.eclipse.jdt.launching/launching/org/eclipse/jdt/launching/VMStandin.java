@@ -35,7 +35,7 @@ package org.eclipse.jdt.launching;
  */
 public class VMStandin extends AbstractVMInstall {
 
-	/**
+	/*
 	 * @see org.eclipse.jdt.launching.AbstractVMInstall#AbstractVMInstall(org.eclipse.jdt.launching.IVMInstallType, java.lang.String)
 	 */
 	public VMStandin(IVMInstallType type, String id) {

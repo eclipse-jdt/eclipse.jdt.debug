@@ -78,8 +78,8 @@ public class JavaSourceLookupDialog extends Dialog {
 		return fNotAskAgain;
 	}
 			
-	/**
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
@@ -115,7 +115,7 @@ public class JavaSourceLookupDialog extends Dialog {
 		return composite;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
