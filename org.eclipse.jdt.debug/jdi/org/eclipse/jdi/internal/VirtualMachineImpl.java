@@ -254,12 +254,19 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	}
 
 	/*
-	 * @exception Throws UnsupportedOperationException if VM does not support HCR.
+	 * @exception Throws UnsupportedOperationException if VM does not support J9 HCR.
 	 */
 	public void checkHCRSupported() throws UnsupportedOperationException {
-		if (!name().equals("j9")) //$NON-NLS-1$
+		if (!isHCRSupported())
 			throw new UnsupportedOperationException(MessageFormat.format(JDIMessages.getString("VirtualMachineImpl.Target_VM_{0}_does_not_support_Hot_Code_Replacement_1"), new String[]{name()})); //$NON-NLS-1$
 	}
+	
+	/*
+	 * Returns whether J9 HCR is supported
+	 */
+	public boolean isHCRSupported() throws UnsupportedOperationException {
+		return name().equals("j9"); //$NON-NLS-1$
+	}	
 
 	/*
 	 * @return Returns Manager for receiving packets from the Virtual Machine.
@@ -829,26 +836,31 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * Retrieves the HCR capabilities of the VM.
 	 */
 	public void getHCRCapabilities() {
-		checkHCRSupported();
 		if (fHcrCapabilities != null)
 			return;
 		fHcrCapabilities = new boolean[HCR_CAN_REENTER_ON_EXIT + 1];
 		
-		initJdwpRequest();
-		try {
-			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.HCR_CAPABILITIES);
-			defaultReplyErrorHandler(replyPacket.errorCode());
-			DataInputStream replyData = replyPacket.dataInStream();
-		
-			fHcrCapabilities[HCR_CAN_RELOAD_CLASSES] = readBoolean("reload classes", replyData); //$NON-NLS-1$
-			fHcrCapabilities[HCR_CAN_GET_CLASS_VERSION] = readBoolean("get class version", replyData); //$NON-NLS-1$
-			fHcrCapabilities[HCR_CAN_DO_RETURN] = readBoolean("do return", replyData); //$NON-NLS-1$
-			fHcrCapabilities[HCR_CAN_REENTER_ON_EXIT] = readBoolean("reenter on exit", replyData); //$NON-NLS-1$
-		} catch (IOException e) {
-			fHcrCapabilities = null;
-			defaultIOExceptionHandler(e);
-		} finally {
-			handledJdwpRequest();
+		if (isHCRSupported()) {
+			initJdwpRequest();
+			try {
+				JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.HCR_CAPABILITIES);
+				defaultReplyErrorHandler(replyPacket.errorCode());
+				DataInputStream replyData = replyPacket.dataInStream();
+			
+				fHcrCapabilities[HCR_CAN_RELOAD_CLASSES] = readBoolean("reload classes", replyData); //$NON-NLS-1$
+				fHcrCapabilities[HCR_CAN_GET_CLASS_VERSION] = readBoolean("get class version", replyData); //$NON-NLS-1$
+				fHcrCapabilities[HCR_CAN_DO_RETURN] = readBoolean("do return", replyData); //$NON-NLS-1$
+				fHcrCapabilities[HCR_CAN_REENTER_ON_EXIT] = readBoolean("reenter on exit", replyData); //$NON-NLS-1$
+			} catch (IOException e) {
+				fHcrCapabilities = null;
+				defaultIOExceptionHandler(e);
+			} finally {
+				handledJdwpRequest();
+			}
+		} else {
+			for (int i = 0; i < fHcrCapabilities.length; i++) {
+				fHcrCapabilities[i] = false;
+			}
 		}
 	}
 	
