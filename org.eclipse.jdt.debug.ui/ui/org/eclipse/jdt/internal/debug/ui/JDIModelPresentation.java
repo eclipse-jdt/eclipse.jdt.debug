@@ -21,9 +21,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
@@ -32,6 +34,8 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
@@ -1394,6 +1398,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		private Thread fDetailThread;
 		private IValue fValue;
 		private IJavaThread fJavaThread;
+		private IJavaProject fJavaProject;
 		private IValueDetailListener fListener;
 		private static final int EVAL_TIMEOUT = 3000;		
 		
@@ -1422,6 +1427,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fValue = value;
 			fListener = listener;
 			fJavaThread = thread;
+			fJavaProject= getJavaProject();
 						
 			// check the queue to avoid concurrent evaluations
 			List queue = (List)fgDetailQueue.get(fJavaThread);
@@ -1483,7 +1489,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 						// try to use the detail formatters system on the object
 						IJavaValue prettyPrinterResult;
 						try {
-							prettyPrinterResult= JavaDetailFormattersManager.getDefault().getValueDetail((IJavaObject)fValue, fJavaThread);
+							prettyPrinterResult= JavaDetailFormattersManager.getDefault().getValueDetail((IJavaObject)fValue, fJavaThread, fJavaProject);
 						} catch (DebugException e) {
 							handleDebugException(e, (IJavaValue)fValue);
 							return;
@@ -1531,6 +1537,35 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fDetailThread.start();
 
 		}
+
+		private IJavaProject getJavaProject() {
+			IAdaptable context = DebugUITools.getDebugContext();
+			if (context instanceof IThread) {
+				try {
+					context = ((IThread)context).getTopStackFrame();
+				} catch (DebugException e) {
+					JDIDebugUIPlugin.log(e);
+				}
+			}
+			if (context == null) {
+				return null;
+			}
+			IJavaStackFrame stackFrame = (IJavaStackFrame) context.getAdapter(IJavaStackFrame.class);
+			ILaunch launch = stackFrame.getLaunch();
+			if (launch == null) {
+				return null;
+			}
+			ISourceLocator locator= launch.getSourceLocator();
+			if (locator == null)
+				return null;
+			
+			Object sourceElement = locator.getSourceElement(stackFrame);
+			if (sourceElement instanceof IJavaElement) {
+				return ((IJavaElement) sourceElement).getJavaProject();
+			}			
+			return null;
+		}
+	
 				
 		protected void appendJDIPrimitiveValueString(IValue value) {
 			if (value instanceof IJavaValue) {

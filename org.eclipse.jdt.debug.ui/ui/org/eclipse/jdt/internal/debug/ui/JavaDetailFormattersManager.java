@@ -13,9 +13,6 @@ Contributors:
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -24,7 +21,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -36,7 +32,6 @@ import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -88,7 +83,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		fDetailFormattersMap= new HashMap(detailFormattersList.length / 3);
 		for (int i= 0, length= detailFormattersList.length; i < length;) {
 			String typeName= detailFormattersList[i++];
-			String snippet= detailFormattersList[i++];
+			String snippet= detailFormattersList[i++].replace('\u0000', ',');
 			boolean enabled= ! "0".equals(detailFormattersList[i++]);
 			if (enabled) {
 				fDetailFormattersMap.put(typeName, snippet);
@@ -101,18 +96,12 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * If no formatter is find for the type of the given object,
 	 * return <code>null</code>.
 	 * 	 * @param objectValue the object to	 * @param thread thread in which the code snippet will be executed. 	 * @return a string which represent the object	 * @throws DebugException	 */
-	public IJavaValue getValueDetail(IJavaObject objectValue, final IJavaThread thread) throws DebugException {
-		// get the project associated to the thread
-		JDIDebugTarget debugTarget= (JDIDebugTarget) thread.getDebugTarget();
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		String projectName= null;
-		try {
-			projectName= debugTarget.getLaunch().getLaunchConfiguration().getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
-		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
+	public IJavaValue getValueDetail(IJavaObject objectValue, final IJavaThread thread, IJavaProject project) throws DebugException {
+		if (project == null) {
+			return null;
 		}
-		IJavaProject project= JavaCore.create(root.getProject(projectName));
 		// get the evaluation engine
+		JDIDebugTarget debugTarget= (JDIDebugTarget) thread.getDebugTarget();
 		IAstEvaluationEngine evaluationEngine= JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, debugTarget);
 		// get the compiled expression to use
 		ICompiledExpression compiledExpression= getCompiledExpression(objectValue, debugTarget, evaluationEngine);
