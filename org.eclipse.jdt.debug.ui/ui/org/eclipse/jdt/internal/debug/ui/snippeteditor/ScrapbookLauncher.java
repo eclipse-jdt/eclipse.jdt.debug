@@ -11,12 +11,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -33,7 +34,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -45,8 +45,6 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
-import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
@@ -74,11 +72,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	private HashMap fVMsToScrapbooks = new HashMap(10);
 	
 	private static ScrapbookLauncher fgDefault = null;
-	
-	private ScrapbookLauncher() {
-		DebugPlugin.getDefault().addDebugEventListener(this);
-	}
-	
+		
 	public static ScrapbookLauncher getDefault() {
 		if (fgDefault == null) {
 			fgDefault = new ScrapbookLauncher();
@@ -94,7 +88,10 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	 * @return resulting launch, or <code>null</code> on failure
 	 */
 	protected ILaunch launch(IFile page) {
-				
+
+		// clean up orphaned launch cofigs
+		cleanupLaunchConfigurations();
+							
 		if (!page.getFileExtension().equals("jpage")) { //$NON-NLS-1$
 			showNoPageDialog();
 			return null;
@@ -128,6 +125,10 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 
 	private ILaunch doLaunch(IJavaProject p, IFile page, IRuntimeClasspathEntry[] classPath) {
 		try {
+			if (fVMsToScrapbooks.isEmpty()) {
+				// register for debug events if a scrapbook is not currently running
+				DebugPlugin.getDefault().addDebugEventListener(this);
+			}
 			ILaunchConfiguration config = null;
 			ILaunchConfigurationWorkingCopy wc = null;
 			try {
@@ -268,6 +269,10 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			if (launch != null) {
 				getLaunchManager().removeLaunch(launch);
 			}
+			if (fVMsToScrapbooks.isEmpty()) {
+				// no need to listen to events if no scrapbooks running
+				DebugPlugin.getDefault().removeDebugEventListener(this);
+			}
 		}
 	}
 	
@@ -387,4 +392,31 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		}
 	}	
 	
+	/**
+	 * Deletes any scrapbook launch configurations for scrapbooks that
+	 * have been deleted. Rather than listening to all resource deltas,
+	 * configs are deleted each time a scrapbook is launched - which is
+	 * infrequent.
+	 */
+	public void cleanupLaunchConfigurations() {
+		try {
+			ILaunchConfigurationType lcType = getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
+			ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations(lcType);
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			for (int i = 0; i < configs.length; i++) {
+				String path = configs[i].getAttribute(SCRAPBOOK_FILE_PATH, (String)null);
+				if (path != null) {
+					IPath pagePath = new Path(path);
+					IResource res = root.findMember(pagePath);
+					if (res == null) {
+						// config without a page - delete it
+						configs[i].delete();
+					}
+				}
+			}
+		} catch (CoreException e) {
+			// log quietly
+			JDIDebugUIPlugin.log(e);
+		}
+	}
 }
