@@ -348,30 +348,6 @@
 	</viewContribution>
 </extension>
 
-<!-- Property adapters for Java breakpoints -->
-<extension point="org.eclipse.debug.ui.breakpointPropertyAdapters">
-		<breakpointPropertyAdapter
-			id="org.eclipse.jdt.debug.javaBreakpointPropertyAdapter"
-			markerType="org.eclipse.jdt.debug.javaLineBreakpointMarker"
-			class="org.eclipse.jdt.internal.debug.ui.JavaBreakpointPropertySource">
-		</breakpointPropertyAdapter>
-		<breakpointPropertyAdapter
-			id="org.eclipse.jdt.debug.javaMethodBreakpointPropertyAdapter"
-			markerType="org.eclipse.jdt.debug.javaMethodBreakpointMarker"
-			class="org.eclipse.jdt.internal.debug.ui.JavaBreakpointPropertySource">
-		</breakpointPropertyAdapter>
-		<breakpointPropertyAdapter
-			id="org.eclipse.jdt.debug.javaExceptionBreakpointPropertyAdapter"
-			markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker"
-			class="org.eclipse.jdt.internal.debug.ui.JavaExceptionBreakpointPropertySource">
-		</breakpointPropertyAdapter>
-		<breakpointPropertyAdapter
-			id="org.eclipse.jdt.debug.javaWatchpointPropertyAdapter"
-			markerType="org.eclipse.jdt.debug.javaWatchpointMarker"
-			class="org.eclipse.jdt.internal.debug.ui.JavaWatchpointPropertySource">
-		</breakpointPropertyAdapter>
-</extension>
-
 <!--Java debug model presentation -->
 <extension point = "org.eclipse.debug.ui.debugModelPresentations"> 
          <debugModelPresentation
