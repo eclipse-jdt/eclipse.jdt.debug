@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
@@ -26,6 +27,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -47,7 +49,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 		
 		Object o = selection.getFirstElement();
 		if (o instanceof IJavaVariable) {
-			IJavaVariable var = (IJavaVariable)o;
+			final IJavaVariable var = (IJavaVariable)o;
 			try {
 				IValue value = var.getValue();
 				if (value instanceof IJavaObject) {
@@ -61,8 +63,37 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 						}
 						
 						public void inputChanged(Viewer viewer, Object a, Object b) {};
-					}; 
-					ListSelectionDialog dialog = new ListSelectionDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, content, DebugUITools.newDebugModelPresentation(), MessageFormat.format(ActionMessages.getString("InstanceFiltersAction.Restrict_selected_breakpoint(s)_to_object___{0}__1"), new String[] {var.getName()})); //$NON-NLS-1$
+					};
+					final IDebugModelPresentation modelPresentation= DebugUITools.newDebugModelPresentation();
+					ListSelectionDialog dialog = new ListSelectionDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, content, modelPresentation, MessageFormat.format(ActionMessages.getString("InstanceFiltersAction.Restrict_selected_breakpoint(s)_to_object___{0}__1"), new String[] {var.getName()})){ //$NON-NLS-1$
+						public void okPressed() {
+							// check if breakpoints have already been restricted to other objects.
+							Object[] checkBreakpoint= getViewer().getCheckedElements();
+							for (int k= 0; k < checkBreakpoint.length; k++) {
+								IJavaBreakpoint breakpoint= (IJavaBreakpoint) checkBreakpoint[k];
+								try {
+									IJavaObject[] instanceFilters= breakpoint.getInstanceFilters();
+									if (instanceFilters.length > 0) {
+										MessageDialog dialog= new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("InstanceFiltersAction.Instance_Filter_Breakpoint_Selection_2"), //$NON-NLS-1$
+											null, MessageFormat.format(ActionMessages.getString("InstanceFiltersAction.breakpoint_{0}_already_restricted._Reset_the_restriction_to_object_{1}_"), new String[] { modelPresentation.getText(breakpoint), var.getName()}), //$NON-NLS-1$
+											MessageDialog.QUESTION, new String[] { ActionMessages.getString("InstanceFiltersAction.Yes_2"), ActionMessages.getString("InstanceFiltersAction.Cancel_3")}, //$NON-NLS-1$ //$NON-NLS-2$
+											0);
+										if (dialog.open() == 0) {
+											for (int i= 0; i < instanceFilters.length; i++) {
+												breakpoint.removeInstanceFilter(instanceFilters[i]);
+											}
+										} else {
+											// if 'cancel', do not close the instance filter dialog
+											return;
+										}
+									}
+								} catch (CoreException e) {
+									JDIDebugUIPlugin.log(e);
+								}
+							}
+							super.okPressed();
+						}
+					};
 					dialog.setTitle(ActionMessages.getString("InstanceFiltersAction.Instance_Filter_Breakpoint_Selection_2")); //$NON-NLS-1$
 					
 					// determine initial selection
