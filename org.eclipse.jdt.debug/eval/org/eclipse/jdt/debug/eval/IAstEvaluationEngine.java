@@ -14,7 +14,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 
 /**
  * An evaluation engine that performs evaluations by
- * iterpretting abstract syntax trees. An AST evalutaion engine
+ * interpretting abstract syntax trees. An AST evalutaion engine
  * is capable of creating compiled expressions that can be
  * evaluated multiple times in a given runtime context.
  * <p>
