@@ -48,6 +48,14 @@ import org.xml.sax.SAXException;
  * </p>
  * @see IJavaSourceLocation
  * @since 2.1
+ * @deprecated In 3.0, the debug platform provides source lookup facilities that
+ *  should be used in place of the Java source lookup support provided in 2.0.
+ *  The new facilities provide a source lookup director that coordinates source
+ *  lookup among a set of participants, searching a set of source containers.
+ *  See the following packages: <code>org.eclipse.debug.core.sourcelookup</code>
+ *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
+ *  has been replaced by
+ *  <code>org.eclipse.jdt.launching.sourcelookup.containers.PackageFragmentRootSourceContainer</code>.
  */
 public class PackageFragmentRootSourceLocation extends PlatformObject implements IJavaSourceLocation {
 	

@@ -25,6 +25,14 @@ import org.eclipse.core.runtime.IAdaptable;
  * This interface is may be implemented by clients.
  * </p>
  * @since 2.0
+ * @deprecated In 3.0, the debug platform provides source lookup facilities that
+ *  should be used in place of the Java source lookup support provided in 2.0.
+ *  The new facilities provide a source lookup director that coordinates source
+ *  lookup among a set of participants, searching a set of source containers.
+ *  See the following packages: <code>org.eclipse.debug.core.sourcelookup</code>
+ *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This interface
+ *  has been replaced by
+ *  <code>org.eclipse.debug.core.sourcelookup.ISourceContainer</code>.
  */
 public interface IJavaSourceLocation extends IAdaptable {
 	
