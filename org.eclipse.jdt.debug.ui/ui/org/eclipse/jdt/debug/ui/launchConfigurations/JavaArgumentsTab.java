@@ -14,6 +14,7 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -26,10 +27,13 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -100,6 +104,22 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
+		});
+		
+		Button pgrmArgVariableButton = createPushButton(comp, LauncherMessages.getString("JavaArgumentsTab.5"), null);  //$NON-NLS-1$
+		pgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		pgrmArgVariableButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+				dialog.open();
+				String variable = dialog.getVariableExpression();
+				if (variable != null) {
+					fPrgmArgumentsText.append(variable);
+				}
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
 		});
 		
 		createSeparator(comp, 1);

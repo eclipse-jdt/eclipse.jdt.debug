@@ -14,14 +14,18 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -66,6 +70,21 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 			}
 		});	
 				
+		Button pgrmArgVariableButton = createPushButton(comp, LauncherMessages.getString("VMArgumentsBlock.4"), null); //$NON-NLS-1$
+		pgrmArgVariableButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		pgrmArgVariableButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+				dialog.open();
+				String variable = dialog.getVariableExpression();
+				if (variable != null) {
+					fVMArgumentsText.append(variable);
+				}
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+			
+		});
 	}
 
 	/**
