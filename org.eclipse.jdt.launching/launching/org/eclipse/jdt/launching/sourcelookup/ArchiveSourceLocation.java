@@ -34,8 +34,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
  
 /**
- * Locates source elements in an acrhive (zip) in the local
- * file system. Returns instances of <code>ZipEntryStorage</code>.
+ * Locates source elements in an archive (zip) in the local file system. Returns
+ * instances of <code>ZipEntryStorage</code>.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -199,11 +199,11 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	/**
 	 * Sets the location of the root source folder within
 	 * the archive, or <code>null</code> if the root source
-	 * folder is the root of the arhcive
+	 * folder is the root of the archive
 	 * 
 	 * @param path the location of the root source folder within
 	 * the archive, or <code>null</code> if the root source
-	 * folder is the root of the arhcive
+	 * folder is the root of the archive
 	 */
 	private void setRootPath(String path) {
 		if (path == null || path.trim().length() == 0) {
