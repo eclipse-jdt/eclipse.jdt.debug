@@ -2659,5 +2659,7 @@ M4 = Platform-specific fourth key
          </enablement>
       </consolePageParticipant>
    </extension>
-
+	<extension point="org.eclipse.core.runtime.preferences">
+		<initializer class="org.eclipse.jdt.internal.debug.ui.JDIDebugUIPreferenceInitializer"/>
+	</extension>
 </plugin>
