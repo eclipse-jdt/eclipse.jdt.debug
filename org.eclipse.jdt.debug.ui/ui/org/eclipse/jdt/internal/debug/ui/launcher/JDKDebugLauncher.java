@@ -183,7 +183,9 @@ public class JDKDebugLauncher extends JDKLauncher {
 		
 		Connector.IntegerArgument timeoutArg= (Connector.IntegerArgument) map.get("timeout"); //$NON-NLS-1$
 		// bug #5163
-		timeoutArg.setValue(20000);
+		if (timeoutArg != null) {
+			timeoutArg.setValue(20000);
+		}
 	}
 
 	protected ListeningConnector getConnector() {
