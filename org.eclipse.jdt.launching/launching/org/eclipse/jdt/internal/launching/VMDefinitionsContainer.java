@@ -115,7 +115,8 @@ public class VMDefinitionsContainer {
 			fVMTypeToVMMap.put(vmInstallType, vmList);			
 		}		
 		vmList.add(vm);
-		if (!vmInstallType.validateInstallLocation(vm.getInstallLocation()).isOK()) {
+		File installLocation = vm.getInstallLocation();
+		if (installLocation == null || !vmInstallType.validateInstallLocation(installLocation).isOK()) {
 			fInvalidVMList.add(vm);
 		}
 		fVMCount++;
@@ -137,22 +138,6 @@ public class VMDefinitionsContainer {
 			IVMInstall vm = (IVMInstall) iterator.next();
 			addVM(vm);
 		}
-	}
-	
-	/**
-	 * Return <code>true</code> if the specified VM's install location exists on the
-	 * file system, <code>false</code> otherwise.
-	 * 
-	 * @param vm the instance of <code>IVMInstall</code> whose install location will be verified
-	 * @return boolean <code>true</code> if the specified VMs install location exists on the
-	 * 			file system, <code>false</code> otherwise.
-	 */
-	private boolean verifyInstallLocation(IVMInstall vm) {
-		File installLocation = vm.getInstallLocation();
-		if (installLocation != null) {
-			return installLocation.exists();
-		}
-		return false;
 	}
 
 	/**
