@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
@@ -160,7 +159,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 			// do nothing - cannot install pattern breakpoint without source name debug attribtue
 			return null;
 		} catch (RuntimeException e) {
-			target.targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JavaPatternBreakpoint.exception_source_name"),new String[] {e.toString(), type.name()}) ,e); //$NON-NLS-1$
+			target.targetRequestFailed(MessageFormat.format(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.exception_source_name"),new String[] {e.toString(), type.name()}) ,e); //$NON-NLS-1$
 			// execution will not reach this line, as 
 			// #targetRequestFailed will throw an exception			
 			return null;

@@ -25,7 +25,6 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IWorkingCopy;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
@@ -166,7 +165,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			accessRequest= createAccessWatchpoint(target, field);
 			registerRequest(accessRequest, target);
 		} else {
-			notSupported(JDIDebugModelMessages.getString("JavaWatchpoint.no_access_watchpoints"));				 //$NON-NLS-1$
+			notSupported(JDIDebugBreakpointMessages.getString("JavaWatchpoint.no_access_watchpoints"));				 //$NON-NLS-1$
 		}
 		if (modificationSupportedBy(target.getVM())) {
 			modificationRequest= createModificationWatchpoint(target, field);
@@ -176,7 +175,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			registerRequest(modificationRequest, target);
 			return true;
 		} else {
-			notSupported(JDIDebugModelMessages.getString("JavaWatchpoint.no_modification_watchpoints")); //$NON-NLS-1$
+			notSupported(JDIDebugBreakpointMessages.getString("JavaWatchpoint.no_modification_watchpoints")); //$NON-NLS-1$
 		}
 		return false;
 	}

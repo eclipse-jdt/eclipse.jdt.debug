@@ -24,7 +24,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
-import org.eclipse.jdt.internal.debug.core.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
@@ -108,7 +107,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		IMarker m = getMarker();
 		if (m == null || !m.exists()) {
 			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED,
-				JDIDebugModelMessages.getString("JavaBreakpoint.no_associated_marker"),null)); //$NON-NLS-1$
+				JDIDebugBreakpointMessages.getString("JavaBreakpoint.no_associated_marker"),null)); //$NON-NLS-1$
 		}
 		return m;
 	}
