@@ -112,6 +112,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	private Map fCompiledExpressions= new HashMap();
 	
 	/**
+	 * Cache of projects for stack frames to avoid repetitive porject resolution on conditional 
+	 * breakpoints.
+	 */
+	private Map fProjectsByFrame= new HashMap();
+	
+	/**
 	 * The map of the result value of the condition (IValue) for this
 	 * breakpoint, keyed by debug target.
 	 */
@@ -202,6 +208,23 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	protected void clearCachedExpressionFor(JDIDebugTarget target) {
 		removeCachedThreads(fCompiledExpressions, target);
+
+		// clean up cached projects for stack frames
+		Set frames= fProjectsByFrame.keySet();
+		List framesToRemove= new ArrayList();
+		Iterator iter= frames.iterator();
+		JDIStackFrame frame;
+		while (iter.hasNext()) {
+			frame= (JDIStackFrame)iter.next();
+			if (frame.getDebugTarget() == target) {
+				framesToRemove.add(frame);
+			}
+		}
+		iter= framesToRemove.iterator();
+		while (iter.hasNext()) {
+			fProjectsByFrame.remove(iter.next());
+		}		
+		
 	}
 	
 	/* (non-Javadoc)
@@ -475,6 +498,17 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	private IJavaProject getJavaProject(JDIStackFrame stackFrame) {
+	    IJavaProject project= (IJavaProject) fProjectsByFrame.get(stackFrame);
+	    if (project == null) {
+	        project = computeJavaProject(stackFrame);
+	        if (project != null) {
+	            fProjectsByFrame.put(stackFrame, project);
+	        }
+	    }
+	    return project;
+	}
+	
+	private IJavaProject computeJavaProject(JDIStackFrame stackFrame) {
 		ILaunch launch = stackFrame.getLaunch();
 		if (launch == null) {
 			return null;
