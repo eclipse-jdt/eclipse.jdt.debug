@@ -6,7 +6,7 @@ package org.eclipse.jdt.launching;
 
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.internal.launching.*;
+import org.eclipse.jdt.internal.launching.LaunchingMessages;
 
 
 /**
@@ -29,11 +29,12 @@ public class VMRunnerResult {
 	public VMRunnerResult(IDebugTarget target, IProcess[] processes) {
 		fDebugTarget= target;
 		fProcesses= processes;
-		if (processes == null)
+		if (processes == null) {
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerResult.assert.processesNotNull")); //$NON-NLS-1$
+		}
 	}
 	
-	/*
+	/**
 	 * @return 	The debug target passed into the constructor.
 	 */
 	public IDebugTarget getDebugTarget() {
