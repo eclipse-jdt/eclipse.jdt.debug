@@ -12,43 +12,31 @@ package org.eclipse.jdt.internal.debug.core.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jdt.core.IPackageFragment;
+
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 public class LaunchConfigurationIPackageFragmentRenameParticipant extends RenameParticipant {
 	
 	private IPackageFragment fPackageFragment;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#initialize(org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringProcessor, java.lang.Object)
-	 */
-	public void initialize(RefactoringProcessor processor, Object element) throws CoreException {
-		setProcessor(processor);
+	protected boolean initialize(Object element) {
 		fPackageFragment= (IPackageFragment)element;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#isAvailable()
-	 */
-	public boolean isApplicable() throws CoreException {
 		return true;
 	}
 
+	public String getName() {
+		return RefactoringMessages.getString("LaunchConfigurationIPackageFragmentRenameParticipant.0"); //$NON-NLS-1$
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#checkActivation()
 	 */
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
-		return new RefactoringStatus();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#checkInput(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
+	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) {
 		return new RefactoringStatus();
 	}
 

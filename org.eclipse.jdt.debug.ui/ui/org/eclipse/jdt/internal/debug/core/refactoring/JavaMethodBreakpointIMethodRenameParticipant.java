@@ -12,11 +12,13 @@ package org.eclipse.jdt.internal.debug.core.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.JavaModelException;
+
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 /**
@@ -26,12 +28,17 @@ public class JavaMethodBreakpointIMethodRenameParticipant extends RenameParticip
 
 	private IMethod fMethod;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#initialize(org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringProcessor, java.lang.Object)
-	 */
-	public void initialize(RefactoringProcessor processor, Object element) throws CoreException {
-		setProcessor(processor);
+	public boolean initialize(Object element) {
 		fMethod= (IMethod) element;
+		try {
+			return !fMethod.getDeclaringType().isLocal();
+		} catch (JavaModelException e) {
+			return false;
+		}
+	}
+	
+	public String getName() {
+		return RefactoringMessages.getString("JavaMethodBreakpointIMethodRenameParticipant.0"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -42,23 +49,9 @@ public class JavaMethodBreakpointIMethodRenameParticipant extends RenameParticip
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#isApplicable()
-	 */
-	public boolean isApplicable() throws CoreException {
-		return !fMethod.getDeclaringType().isLocal();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-	 */
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
-		return new RefactoringStatus();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkFinalConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
 	 */
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
+	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) {
 		return new RefactoringStatus();
 	}
 }

@@ -12,12 +12,12 @@ package org.eclipse.jdt.internal.debug.core.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jdt.core.IJavaProject;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 /**
@@ -26,32 +26,19 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends RenamePart
 
 	private IJavaProject fJavaProject;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#initialize(org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringProcessor, java.lang.Object)
-	 */
-	public void initialize(RefactoringProcessor processor, Object element) {
-		setProcessor(processor);
+	protected boolean initialize(Object element) {
 		fJavaProject= (IJavaProject) element;
+		return true;
+	}
+	
+	public String getName() {
+		return RefactoringMessages.getString("LaunchConfigurationIJavaProjectRenameParticipant.0"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#isAvailable()
-	 */
-	public boolean isApplicable() {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#checkActivation()
-	 */
-	public RefactoringStatus checkInitialConditions(IProgressMonitor pm, CheckConditionsContext context) {
-		return new RefactoringStatus();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#checkInput(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) {
+	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) {
 		return new RefactoringStatus();
 	}
 
