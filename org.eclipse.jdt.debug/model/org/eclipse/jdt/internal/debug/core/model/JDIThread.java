@@ -2169,4 +2169,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		return false;
 	}
 
+	/**
+	 * @see IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IJavaThread.class) {
+			return this;
+		}
+		return super.getAdapter(adapter);
+	}
 }
