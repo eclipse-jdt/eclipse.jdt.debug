@@ -76,7 +76,7 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 				dialog.open();
 				String variable = dialog.getVariableExpression();
 				if (variable != null) {
-					fVMArgumentsText.append(variable);
+					fVMArgumentsText.insert(variable);
 				}
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {

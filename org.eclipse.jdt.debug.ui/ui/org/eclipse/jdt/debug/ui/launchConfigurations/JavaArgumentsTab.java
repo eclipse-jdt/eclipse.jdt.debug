@@ -122,7 +122,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 				dialog.open();
 				String variable = dialog.getVariableExpression();
 				if (variable != null) {
-					fPrgmArgumentsText.append(variable);
+                    fPrgmArgumentsText.insert(variable);
 				}
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {

@@ -235,7 +235,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	protected void handleWorkingDirVariablesButtonSelected() {
 		String variableText = getVariable();
 		if (variableText != null) {
-			fWorkingDirText.append(variableText);
+			fWorkingDirText.insert(variableText);
 		}
 	}
 	

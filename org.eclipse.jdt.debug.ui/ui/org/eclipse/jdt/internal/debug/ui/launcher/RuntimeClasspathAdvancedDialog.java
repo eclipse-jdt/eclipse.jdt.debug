@@ -118,7 +118,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 				dialog.open();
 				String variable = dialog.getVariableExpression();
 				if (variable != null) {
-					fVariableString.append(variable);
+					fVariableString.insert(variable);
 				}
 			}
 		});
