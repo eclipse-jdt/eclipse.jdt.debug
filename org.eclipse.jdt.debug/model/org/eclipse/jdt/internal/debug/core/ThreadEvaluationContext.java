@@ -12,7 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
@@ -20,6 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaEvaluationListener;
 import org.eclipse.jdt.debug.core.IJavaEvaluationResult;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 import com.sun.jdi.ClassObjectReference;
 import com.sun.jdi.ClassType;
@@ -27,82 +31,101 @@ import com.sun.jdi.Field;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StringReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 
 /**
- * An evaluation context for a stack frame.
+ * An evaluation context for a thread.
  */
 
 public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable, IJavaEvaluationResult {	 
 	
 	/**
-	 * The evaluation context for the associated java project
+	 * The evaluation context
 	 */
-	protected IEvaluationContext fContext;
+	private IEvaluationContext fContext;
 	
 	/**
 	 * The thread to perform the evaluation in
 	 */
-	protected JDIThread fModelThread;
+	private JDIThread fModelThread;
 	
 	/**
-	 * Problems, source fragments, and kinds
+	 * List of Problems
 	 */
-	protected List fProblems, fSourceFragments, fKinds;
+	private List fProblems;
+	
+	/**
+	 * List of source fragments
+	 */
+	private List fSourceFragments;
+	
+	/**
+	 * List of kinds of problems.
+	 */
+	private List fKinds;
 		
 	/**
 	 * The actual code snippet
 	 */
-	protected String fSnippet;
+	private String fSnippet;
 	
 	/**
 	 * The debug exception that describes the evaluation failure, if any
 	 */
-	protected DebugException fDebugException = null;	 
+	private DebugException fDebugException = null;	 
 
 	/**
 	 * The listener that we report back to
 	 */
-	protected IJavaEvaluationListener fListener;
+	private IJavaEvaluationListener fListener;
 	
 	/**
 	 * The resulting value
 	 */
-	protected IJavaValue fValue;
+	private IJavaValue fValue;
 	
 	/**
 	 * The (JDI) result
 	 */
-	protected ObjectReference fResult;
+	private ObjectReference fResult;
 	
 	/**
 	 * The (JDI) type of the result value
 	 */
-	protected ClassObjectReference fResultType;
+	private ClassObjectReference fResultType;
 	 	
 	/**
-	 * Constructs a context for a thread and IEvaluationContext
+	 * Constructs a context for a thread in the given context
+	 * 
+	 * @param modelThread The associated thread
+	 * @param context The evaluation context
 	 */
 	public ThreadEvaluationContext(JDIThread modelThread, IEvaluationContext context) {
-		fContext = context;
-		fModelThread = modelThread;
-		fProblems = new ArrayList();
-		fSourceFragments = new ArrayList();
-		fKinds = new ArrayList();
+		setContext(context);
+		setModelThread(modelThread);
+		setProblemsInternal(new ArrayList(0));
+		setSourceFragments(new ArrayList(0));
+		setKinds(new ArrayList(0));
 	}	
-		
+	
 	/**
-	 * @see IJavaEvaluationAdapter
-	 */
-	public void evaluate(String expression, IJavaEvaluationListener listener) throws DebugException {
+	 * Evaluates the given expression and reports the result back to the
+	 * given listener. 
+	 * Evaluation is run in a separate thread.
+	 * 
+	  * @exception DebugException If this method fails. Reasons include:<ul>
+	 * <li>REQUEST_FAILED - The request failed as the associated thread was
+	 * 		not suspended.
+	 * </ul>
+	 */	
+	protected void evaluate(String expression, IJavaEvaluationListener listener) throws DebugException {
 		
 		if (getModelThread().isSuspended()) {
-			fListener = listener;
-			fSnippet = expression;
+			setListener(listener);
+			setSnippet(expression);
 			
 			Thread t = new Thread(this);
 			t.start();
@@ -112,7 +135,9 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	}
 	
 	/**
-	 * Runs the evaluation
+	 * Runs the evaluation.
+	 * 
+	 * @see Runnable#run()
 	 */
 	public void run() {
 						
@@ -120,10 +145,10 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			doEvaluation();
 			convertResult();
 		} catch (DebugException e) {
-			fDebugException = e;
+			setException(e);
 		}
 		
-		fListener.evaluationComplete(this);
+		getListener().evaluationComplete(this);
 	}
 	
 	/**
@@ -131,57 +156,61 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	 */
 	protected void doEvaluation() throws DebugException {
 		try {
-			getEvaluationContext().evaluateCodeSnippet(fSnippet, this, null);
+			getEvaluationContext().evaluateCodeSnippet(getSnippet(), this, null);
 		} catch (JavaModelException e) {
 			throw new DebugException(e.getStatus());
 		}
 	}
 	
 	/**
-	 * Makes an IValue from the result of the evaluation
+	 * Constucts an IValue from the result of the evaluation
 	 */
 	protected void convertResult() throws DebugException {
-		if (fResult != null) {
+		if (getResult() != null) {
 			// check the type of the result - if a primitive type, convert it
-			String sig = fResultType.reflectedType().signature();
+			String sig = getReflectedTypeSignature();
 			if (sig.length() == 1) {
 				// primitive type
 				Field valueField = getValueField(sig);
 				if (valueField != null) {
 					try {
-						Value v= fResult.getValue(valueField);
-						fValue = new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), v);
-						return;
+						Value v= getResult().getValue(valueField);
+						setValue(new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), v));
 					} catch (RuntimeException e) {
 						getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_retreiving_evaluation_result"), new String[] {e.toString()}), e); //$NON-NLS-1$
 						return;
 					}
 				}
+			} else {
+				// not a primite type
+				setValue(new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), getResult()));
 			}
-			// not a primite type
-			fValue = new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), fResult);
 		} else {
-			if (fResultType != null) {
-				try {
-					ReferenceType ref= fResultType.reflectedType();
-					String sig = ref.signature();
-					if (sig.equals("V") || sig.equals("Lvoid;")) { //$NON-NLS-2$ //$NON-NLS-1$
-						// void
-						fValue = new JDIVoidValue((JDIDebugTarget)getModelThread().getDebugTarget());
-						return;
-					}
-				} catch (RuntimeException e) {
-					getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_retreiving_evaluation_result_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
-					return;
+			if (getResultType() != null) {
+				String sig = getReflectedTypeSignature();
+				if (sig.equals("V") || sig.equals("Lvoid;")) { //$NON-NLS-2$ //$NON-NLS-1$
+					// void
+					setValue(new JDIVoidValue((JDIDebugTarget)getModelThread().getDebugTarget()));
+				}
+			} else {
+				if (hasProblems()) {
+					setValue(null);
+				} else {
+				// null
+					setValue(new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), null));
 				}
 			}
-			if (hasProblems()) {
-				fValue= null;
-			} else {
-				// null
-				fValue = new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), null);
-			}
 		}
+	}
+	
+	protected String getReflectedTypeSignature() throws DebugException {
+		String sig = "";
+		try {
+			sig= getResultType().reflectedType().signature();
+		} catch (RuntimeException e) {
+			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_retreiving_evaluation_result_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+		return sig;
 	}
 	
 	/**
@@ -190,7 +219,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	 */
 	protected Field getValueField(String signature) throws DebugException {
 		try {
-			Iterator iter= fResult.referenceType().fields().iterator();
+			Iterator iter= getResult().referenceType().fields().iterator();
 			while (iter.hasNext()) {
 				Field f = (Field)iter.next();
 				if (!f.isStatic() && f.signature().equals(signature)) {
@@ -199,20 +228,21 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			}
 		} catch (RuntimeException e) {
 			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_locating_result_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			return null;
 		}
+		getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_locating_result_value"), new String[] {""}), null); //$NON-NLS-1$
+		//cannot be reached
 		return null;
 	}
 	
 	/**
-	 * @see ICodeSnippetRuntime
+	 * @see ICodeSnippetRequestor#acceptClassFiles(byte[][], String[][], String)
 	 */
 	public boolean acceptClassFiles(byte[][] classFiles, String[][] classFileNames, String codeSnippetClassName) {
 		// deploy the class files
 		try {
-			deploy(classFiles, classFileNames);
+			getDebugTarget().deploy(classFiles, classFileNames, getEvaluationContext());
 		} catch (DebugException e) {
-			fDebugException = e;
+			setException(e);
 			return false;
 		}
 		
@@ -221,7 +251,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			try { 
 				runSnippet(codeSnippetClassName);
 			} catch (DebugException e) {
-				fDebugException = e;
+				setException(e);
 				// dump stack trace if invocation exception
 				Throwable underlyingException = e.getStatus().getException();
 				if (underlyingException instanceof InvocationException) {
@@ -233,6 +263,7 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 								try {
 									getModelThread().invokeMethod(null, theException, (Method)methods.get(0), Collections.EMPTY_LIST);
 								} catch (DebugException de) {
+									JDIDebugPlugin.logError(de);
 								}
 							}
 						} catch (RuntimeException re) {
@@ -247,58 +278,23 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	}
 	
 	/**
-	 * Deploy the class files.
-	 *
-	 * <p>Currently, this involves writing them to the output folder of the
-	 * associated Java Project.
-	 *
-	 * @exception DebugException if this fails due to a lower level exception.
-	 */
-	protected void deploy(byte[][] classFiles, String[][] classFileNames) throws DebugException {
-		getDebugTarget().deploy(classFiles, classFileNames, getEvaluationContext());
-	}
-	
-	/**
 	 * Evaluate the code snippet 
 	 */
 	protected void runSnippet(String codeSnippetClassName) throws DebugException {
-		ClassType codeSnippetClass;
-		ObjectReference codeSnippet;
-		Method method;
-		List arguments;
-		ObjectReference codeSnippetRunner;
-		VirtualMachine jdiVM = getVM();
-		ThreadReference jdiThread = getUnderlyingThread();
 		try {
-			// Get the code snippet class
-			List classes = jdiVM.classesByName(codeSnippetClassName);
-			if (classes.size() == 0) {
-				// Load the class
-				codeSnippetClass = classForName(codeSnippetClassName);
-				if (codeSnippetClass == null) {
-					getModelThread().requestFailed(JDIDebugModelMessages.getString("ThreadEvaluationContext.unable_to_load_code_snippet"), null); //$NON-NLS-1$
-					return;
-				}
-			} else {
-				codeSnippetClass = (ClassType)classes.get(0);
-			}
-
-			// Create a new code snippet
-			Method constructor = (Method)codeSnippetClass.methodsByName("<init>").get(0); //$NON-NLS-1$
-			codeSnippet = getModelThread().newInstance(codeSnippetClass, constructor, new ArrayList());
+			ClassType codeSnippetClass= getCodeSnippetClass(codeSnippetClassName);
+			ObjectReference codeSnippet = getCodeSnippet(codeSnippetClass);
 
 			// Get the method 'runCodeSnippet' and its arguments		
-			method = (Method)codeSnippetClass.methodsByName(RUN_METHOD).get(0);
-			arguments = new ArrayList();
-			
+			Method method = (Method)codeSnippetClass.methodsByName(RUN_METHOD).get(0);
 			// Invoke runCodeSnippet(CodeSnippet)
-			getModelThread().invokeMethod(null, codeSnippet, method, arguments);
+			getModelThread().invokeMethod(null, codeSnippet, method, Collections.EMPTY_LIST);
 		
 			// Retrieve the result	
 			Field resultField = codeSnippetClass.fieldByName(RESULT_VALUE_FIELD);
-			fResult = (ObjectReference)codeSnippet.getValue(resultField);
+			setResult((ObjectReference)codeSnippet.getValue(resultField));
 			Field resultTypeField = codeSnippetClass.fieldByName(RESULT_TYPE_FIELD);
-			fResultType = (ClassObjectReference)codeSnippet.getValue(resultTypeField);
+			setResultType((ClassObjectReference)codeSnippet.getValue(resultTypeField));
 		} catch (DebugException e) {
 			throw e;
 		} catch (RuntimeException e) {
@@ -307,13 +303,37 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 		}
 	}
 	
+	protected ClassType getCodeSnippetClass(String codeSnippetClassName) throws DebugException {
+		VirtualMachine jdiVM = getModelThread().getVM();
+		ThreadReference jdiThread = getUnderlyingThread();
+		// Get the code snippet class
+		List classes = jdiVM.classesByName(codeSnippetClassName);
+		if (classes.size() == 0) {
+			// Load the class
+			ClassType codeSnippetClass= classForName(codeSnippetClassName);
+			if (codeSnippetClass == null) {
+				throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
+					IDebugStatusConstants.INTERNAL_ERROR, "Code snippet class could not be found", null));
+			}
+			return codeSnippetClass;
+		} else {
+			return (ClassType)classes.get(0);
+		}
+	}
+	
+	protected ObjectReference getCodeSnippet(ClassType codeSnippetClass) throws DebugException {	
+		// Create a new code snippet
+		Method constructor = (Method)codeSnippetClass.methodsByName("<init>").get(0); //$NON-NLS-1$
+		return getModelThread().newInstance(codeSnippetClass, constructor, Collections.EMPTY_LIST);
+	}
+	
 	/**
-	 * @see ICodeSnippetRequestor
+	 * @see ICodeSnippetRequestor#acceptProblem(IMarker, String, int)
 	 */
 	public void acceptProblem(IMarker problem, String sourceFragment, int kind) {
-		fProblems.add(problem);
-		fSourceFragments.add(sourceFragment);
-		fKinds.add(new Integer(kind));
+		getProblemsInternal().add(problem);
+		getSourceFragments().add(sourceFragment);
+		getKinds().add(new Integer(kind));
 	}
 	
 	/**
@@ -325,21 +345,23 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	protected ClassType classForName(String className) throws DebugException {
 		try {
 			// get java.lang.Class
-			VirtualMachine jdiVM = getVM();
+			VirtualMachine jdiVM = getModelThread().getVM();
 			List classes = jdiVM.classesByName("java.lang.Class"); //$NON-NLS-1$
 			if (classes.size() == 0) {
+				getModelThread().requestFailed(JDIDebugModelMessages.getString("ThreadEvaluationContext.unable_to_load_code_snippet"), null); //$NON-NLS-1$
 				return null;
 			}
 			ClassType classClass= (ClassType)classes.get(0);
 			List methods= classClass.methodsByName("forName", "(Ljava/lang/String;)Ljava/lang/Class;"); //$NON-NLS-2$ //$NON-NLS-1$
 			if (methods.isEmpty()) {
+				getModelThread().requestFailed(JDIDebugModelMessages.getString("ThreadEvaluationContext.unable_to_load_code_snippet"), null); //$NON-NLS-1$
 				return null;
 			}
 			
 			Method forName = (Method)methods.get(0);
 			ThreadReference jdiThread = getUnderlyingThread();
 			StringReference nameArg = jdiVM.mirrorOf(className);
-			List args = new ArrayList();
+			List args = new ArrayList(1);
 			args.add(nameArg);
 			ClassObjectReference classObject = (ClassObjectReference)getModelThread().invokeMethod(classClass, null, forName, args);
 			// translate the ClassObjectReference to the ClassType
@@ -347,7 +369,10 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			classes = jdiVM.classesByName(className);
 			if (classes.size() > 0) {
 				loadedClass = (ClassType)classes.get(0);
-			}		
+			} else {
+				getModelThread().requestFailed(JDIDebugModelMessages.getString("ThreadEvaluationContext.unable_to_load_code_snippet"), null); //$NON-NLS-1$
+				return null;
+			}	
 			return loadedClass;
 		} catch (RuntimeException e) {
 			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_attempting_to_load_class"), new String[] {e.toString(), className}), e); //$NON-NLS-1$
@@ -356,29 +381,22 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	}
 		
 	/**
-	 * Helper method - returns the jdi thread reference on the target,
+	 * Returns the JDI thread reference on the target,
 	 * based on the "model" thread.
 	 */
 	protected ThreadReference getUnderlyingThread() {
-		return getModelThread().fThread;
+		return getModelThread().getUnderlyingThread();
 	}
 	
-	/**
-	 * Helper method - returns the model thread
-	 */
 	protected JDIThread getModelThread() {
 		return fModelThread;
 	}
 
-	public IJavaThread getThread() {
-		return getModelThread();
-	}
-	
 	/**
-	 * Helper method - returns the jdi VM
+	 * @see IJavaEvaluationResult#getThread()
 	 */
-	protected VirtualMachine getVM() {
-		return fModelThread.getVM();
+	public IJavaThread getThread() {
+		return fModelThread;
 	}
 
 	/**
@@ -396,28 +414,28 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	}
 	
 	/**
-	 * @see IJavaEvaluationResult
+	 * @see IJavaEvaluationResult#getValue()
 	 */
 	public IJavaValue getValue() {
 		return fValue;
 	}
 	
 	/**
-	 * @see IJavaEvaluationResult
+	 * @see IJavaEvaluationResult#hasProblems()
 	 */
 	public boolean hasProblems() {
 		return !fProblems.isEmpty() || fDebugException != null;
 	}
 	
 	/**
-	 * @see IJavaEvaluationResult
+	 * @see IJavaEvaluationResult#getProblems()
 	 */
 	public IMarker[] getProblems() {
 		return (IMarker[])fProblems.toArray(new IMarker[fProblems.size()]);
 	}
 	
 	/**
-	 * @see IJavaEvaluationResult
+	 * @see IJavaEvaluationResult#getSourceFragment(IMarker)
 	 */
 	public String getSourceFragment(IMarker problem) {
 		int index = fProblems.indexOf(problem);
@@ -429,11 +447,11 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	}
 	
 	/**
-	 * @see IJavaEvaluationResult
+	 * @see IJavaEvaluationResult#getKind(IMarker)
 	 */
 	public int getKind(IMarker problem) {
 		int index = fProblems.indexOf(problem);
-		if (index >=0) {
+		if (index >= 0) {
 			return ((Integer)fKinds.get(index)).intValue();
 		} else {
 			return -1;
@@ -441,18 +459,88 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	}
 	
 	/**
-	 * @see IJavaEvaluationResult
+	 * @see IJavaEvaluationResult#getSnippet()
 	 */
 	public String getSnippet() {
 		return fSnippet;
 	}
 	
 	/**
-	 * @see IJavaEvaluationResult
+	 * @see IJavaEvaluationResult#getException()
 	 */
 	public Throwable getException() {
 		return fDebugException;
 	}
+	
+	protected List getKinds() {
+		return fKinds;
+	}
+
+	protected void setKinds(List kinds) {
+		fKinds = kinds;
+	}
+
+	protected List getSourceFragments() {
+		return fSourceFragments;
+	}
+
+	protected void setSourceFragments(List sourceFragments) {
+		fSourceFragments = sourceFragments;
+	}
+	
+	protected List getProblemsInternal() {
+		return fProblems;
+	}
+
+	protected void setProblemsInternal(List problems) {
+		fProblems = problems;
+	}
+
+	protected IEvaluationContext getContext() {
+		return fContext;
+	}
+
+	protected void setContext(IEvaluationContext context) {
+		fContext = context;
+	}
+	
+	protected void setException(DebugException debugException) {
+		fDebugException = debugException;
+	}
+
+	protected IJavaEvaluationListener getListener() {
+		return fListener;
+	}
+
+	protected void setListener(IJavaEvaluationListener listener) {
+		fListener = listener;
+	}
+
+	protected void setModelThread(JDIThread modelThread) {
+		fModelThread = modelThread;
+	}
+
+	protected ObjectReference getResult() {
+		return fResult;
+	}
+
+	protected void setResult(ObjectReference result) {
+		fResult = result;
+	}
+
+	protected ClassObjectReference getResultType() {
+		return fResultType;
+	}
+
+	protected void setResultType(ClassObjectReference resultType) {
+		fResultType = resultType;
+	}
+
+	protected void setSnippet(String snippet) {
+		fSnippet = snippet;
+	}
+
+	protected void setValue(IJavaValue value) {
+		fValue = value;
+	}
 }
-
-

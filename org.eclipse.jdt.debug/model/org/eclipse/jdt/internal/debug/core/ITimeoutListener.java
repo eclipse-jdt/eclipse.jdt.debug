@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.core;
  
 /**
  * A timeout listener is notified when a timer expires.
+ * @see Timer
  */
 public interface ITimeoutListener {
 

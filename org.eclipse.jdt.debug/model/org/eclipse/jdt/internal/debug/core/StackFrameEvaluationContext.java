@@ -6,15 +6,36 @@ package org.eclipse.jdt.internal.debug.core;
  */
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 
-import com.sun.jdi.*;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.ClassObjectReference;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.Field;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.LocalVariable;
+import com.sun.jdi.Method;
+import com.sun.jdi.NativeMethodException;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
+import com.sun.jdi.Value;
+
 /**
  * An evaluation context for a stack frame.
  */
@@ -24,29 +45,28 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 	/**
 	 * The stack frame context
 	 */
-	protected JDIStackFrame fModelFrame;
+	private JDIStackFrame fModelFrame;
 	
 	/**
 	 * Cache of local variables and context info - computed on each evaluation.
 	 */
-	protected String[] fLocalVariableTypeNames;
-	protected String[] fLocalVariableNames;
-	protected int[] fLocalVariableModifiers;
-	protected String fDeclaringTypeName;
-	protected boolean fIsStatic;
+	private String[] fLocalVariableTypeNames;
+	private String[] fLocalVariableNames;
+	private int[] fLocalVariableModifiers;
+	private boolean fIsStatic;
 	 
 	/**
-	 * Constructs a context for a stack frame and IEvaluationContext
+	 * Constructs a context for a stack frame in the given context.
+	 * 
+	 * @param modelFrame The associated stack frame
+	 * @param context The associated evaluation context
 	 */
 	public StackFrameEvaluationContext(JDIStackFrame modelFrame, IEvaluationContext context) {
 		super((JDIThread)modelFrame.getThread(), context);
-		fModelFrame = modelFrame;
+		setModelFrame(modelFrame);
 	}	
 			
-	/**
-	 * Runs the evaluation
-	 */
-	public void doEvaluation() throws DebugException {			
+	protected void doEvaluation() throws DebugException {			
 		prepare();
 
 		IEvaluationContext context = getEvaluationContext();
@@ -74,24 +94,23 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 		}
 		
 		if (type == null) {
-			fModelFrame.requestFailed(JDIDebugModelMessages.getString("StackFrameEvaluationContext.unable_to_determine_type"), null); //$NON-NLS-1$
+			getModelFrame().requestFailed(JDIDebugModelMessages.getString("StackFrameEvaluationContext.unable_to_determine_type"), null); //$NON-NLS-1$
 		}
 		
 		if (type.getParent() instanceof IType) {
-			fModelFrame.requestFailed(JDIDebugModelMessages.getString("StackFrameEvaluationContext.context_of_inner_type_not_supported"), null); //$NON-NLS-1$
+			getModelFrame().requestFailed(JDIDebugModelMessages.getString("StackFrameEvaluationContext.context_of_inner_type_not_supported"), null); //$NON-NLS-1$
 		}
 		
 		try {
-			context.evaluateCodeSnippet(fSnippet, fLocalVariableTypeNames, fLocalVariableNames, fLocalVariableModifiers, type, fIsStatic, false, this, null);
+			context.evaluateCodeSnippet(getSnippet(), getLocalVariableTypeNames(), getLocalVariableNames(), getLocalVariableModifiers(), type, isStatic(), false, this, null);
 		} catch (JavaModelException e) {
 			throw new DebugException(e.getStatus());
 		}
-
 	}
 	
 	private IPath computeElementPath() throws DebugException {
-		String typeName = fModelFrame.getDeclaringTypeName();
-		String sourceName = fModelFrame.getSourceName();
+		String typeName = getModelFrame().getDeclaringTypeName();
+		String sourceName =getModelFrame().getSourceName();
 		if (sourceName == null) {
 			int dollarIndex= typeName.indexOf('$');
 			if (dollarIndex >= 0)
@@ -113,7 +132,7 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 	}
 			
 	protected String[] computeNestedTypes() throws DebugException {
-		String declType = fModelFrame.getDeclaringTypeName();
+		String declType = getModelFrame().getDeclaringTypeName();
 		int index = declType.lastIndexOf('.');
 		if (index >= 0)
 			declType= declType.substring(index + 1);
@@ -132,33 +151,12 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 	 * Evaluate the code snippet 
 	 */
 	protected void runSnippet(String codeSnippetClassName) throws DebugException {
-		ClassType codeSnippetClass = null;
-		ObjectReference codeSnippet = null;
-		Method method = null;
-		List arguments = null;
-		ObjectReference codeSnippetRunner = null;
-		VirtualMachine jdiVM = getVM();
-		ThreadReference jdiThread = getUnderlyingThread();
 		try {
-			// Get the code snippet class
-			List classes = jdiVM.classesByName(codeSnippetClassName);
-			if (classes.size() == 0) {
-				// Load the class
-				codeSnippetClass = classForName(codeSnippetClassName);
-				if (codeSnippetClass == null) {
-					//XXX: throw an exception - class not found
-					return;
-				}
-			} else {
-				codeSnippetClass = (ClassType)classes.get(0);
-			}
-
-			// Create a new code snippet
-			Method constructor = (Method)codeSnippetClass.methodsByName("<init>").get(0); //$NON-NLS-1$
-			codeSnippet = getModelThread().newInstance(codeSnippetClass, constructor, new ArrayList());
+			ClassType codeSnippetClass= getCodeSnippetClass(codeSnippetClassName);
+			ObjectReference codeSnippet = getCodeSnippet(codeSnippetClass);
 
 			// Install local variables and "this" into generated fields
-			StackFrame stackFrame = getUnderlyingStackFrame();
+			StackFrame stackFrame = getModelFrame().getUnderlyingStackFrame();
 			try {
 				Iterator variables = stackFrame.visibleVariables().iterator();
 				while (variables.hasNext()) {
@@ -173,28 +171,18 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 				// No variables
 			}
 			
-			if (!fIsStatic) {
+			if (!isStatic()) {
 				Field delegateThis = codeSnippetClass.fieldByName(DELEGATE_THIS);
 				codeSnippet.setValue(delegateThis, stackFrame.thisObject());
 			}
 
 			// Get the method 'runCodeSnippet' and its arguments		
-			method = (Method)codeSnippetClass.methodsByName(RUN_METHOD).get(0);
-			arguments = new ArrayList();
-		} catch (ClassNotLoadedException e) {
-			evaluationFailed(e);
-		} catch (InvalidTypeException e) {
-			evaluationFailed(e);
-		} catch (RuntimeException e) {
-			evaluationFailed(e);
-		}
-
-		try {
+			Method method = (Method)codeSnippetClass.methodsByName(RUN_METHOD).get(0);
+		
 			// Invoke runCodeSnippet(CodeSnippet)
-			getModelThread().invokeMethod(null, codeSnippet, method, arguments);
+			getModelThread().invokeMethod(null, codeSnippet, method, Collections.EMPTY_LIST);
 			
 			// Retrieve values of local variables and put them back in the stack frame
-			StackFrame stackFrame = getUnderlyingStackFrame();
 			try {
 				Iterator variables = stackFrame.visibleVariables().iterator();
 				while (variables.hasNext()) {
@@ -212,9 +200,10 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 				// No variables
 			}
 			Field resultField = codeSnippetClass.fieldByName(RESULT_VALUE_FIELD);
-			fResult = (ObjectReference)codeSnippet.getValue(resultField);
+			setResult((ObjectReference)codeSnippet.getValue(resultField));
 			Field resultTypeField = codeSnippetClass.fieldByName(RESULT_TYPE_FIELD);
-			fResultType = (ClassObjectReference)codeSnippet.getValue(resultTypeField);
+			setResultType((ClassObjectReference)codeSnippet.getValue(resultTypeField));
+			
 		} catch (ClassNotLoadedException e) {
 			evaluationFailed(e);
 		} catch (InvalidTypeException e) {
@@ -223,21 +212,13 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			evaluationFailed(e);
 		}
 	}
-			
-	/**
-	 * Helper method - returns the top jdi stack frame on the target,
-	 * based on the "model" thread.
-	 */
-	protected StackFrame getUnderlyingStackFrame() {
-		return fModelFrame.getUnderlyingStackFrame();
-	}
 					
 	/**
 	 * Prepare for an evaluation. Retrieve local variables and declaring type info.
 	 */
 	protected void prepare() throws DebugException {
 		
-		StackFrame stackFrame = getUnderlyingStackFrame();
+		StackFrame stackFrame = getModelFrame().getUnderlyingStackFrame();
 		try {
 			List list = stackFrame.visibleVariables();
 			int size = list.size();
@@ -253,35 +234,44 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 				}
 			}
 			
-			fLocalVariableTypeNames = (String[])typeNames.toArray(new String[typeNames.size()]);
-			fLocalVariableNames = (String[])varNames.toArray(new String[varNames.size()]);
-			fLocalVariableModifiers = new int[typeNames.size()];
+			setLocalVariableTypeNames((String[])typeNames.toArray(new String[typeNames.size()]));
+			setLocalVariableNames((String[])varNames.toArray(new String[varNames.size()]));
+			setLocalVariableModifiers(new int[typeNames.size()]);
 			// cannot determine if local is final, so specify as default
-			Arrays.fill(fLocalVariableModifiers, 0);
+			Arrays.fill(getLocalVariableModifiers(), 0);
 			
 		} catch (AbsentInformationException e) {
-			// No variables
-			fLocalVariableTypeNames = new String[0];
-			fLocalVariableNames = new String[0];
-			fLocalVariableModifiers = new int[0];
+			setNoVariableInformation();
 		} catch (NativeMethodException e) {
-			// No variables
-			fLocalVariableTypeNames = new String[0];
-			fLocalVariableNames = new String[0];
-			fLocalVariableModifiers = new int[0];
+			setNoVariableInformation();
 		} catch (RuntimeException e) {
 			evaluationFailed(e);
 		}
 
 		try {
 			Method method = stackFrame.location().method();
-			fDeclaringTypeName = method.declaringType().name();
-			fIsStatic = method.isStatic();
+			setStatic(method.isStatic());
 		} catch (RuntimeException e) {
 			evaluationFailed(e);
 		}
 	}
 	
+	protected void setNoVariableInformation() {
+		setLocalVariableTypeNames(new String[0]);
+		setLocalVariableNames(new String[0]);
+		setLocalVariableModifiers(new int[0]);
+	}
+	
+	/**
+	 * Returns a translated local variables type name.
+	 * Returns <code>null</code> if the variable's enclosing type is
+	 * an anonymous inner class.  Otherwise returns the enclosing type's name
+	 * with all occurrances of '$' replaced with '.'.
+	 * 
+	 * @param local The local variable
+	 * @return The translated String or <code>null</code> if the
+	 * 	local is defined in anonymous inner type.
+	 */
 	protected String getTranslatedTypeName(LocalVariable local) {
 		String name = local.typeName();
 		int index = name.lastIndexOf('$');
@@ -302,6 +292,46 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 	}
 
 	protected void evaluationFailed(Throwable e) throws DebugException {
-		fModelFrame.targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("StackFrameEvaluationContext.exception_performing_evaluation"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		getModelFrame().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("StackFrameEvaluationContext.exception_performing_evaluation"), new String[] {e.toString()}), e); //$NON-NLS-1$
+	}
+	
+	protected JDIStackFrame getModelFrame() {
+		return fModelFrame;
+	}
+
+	protected void setModelFrame(JDIStackFrame modelFrame) {
+		fModelFrame = modelFrame;
+	}
+	
+	protected boolean isStatic() {
+		return fIsStatic;
+	}
+
+	protected void setStatic(boolean isStatic) {
+		fIsStatic = isStatic;
+	}
+	
+	protected int[] getLocalVariableModifiers() {
+		return fLocalVariableModifiers;
+	}
+
+	protected void setLocalVariableModifiers(int[] localVariableModifiers) {
+		fLocalVariableModifiers = localVariableModifiers;
+	}
+	
+	protected String[] getLocalVariableNames() {
+		return fLocalVariableNames;
+	}
+
+	protected void setLocalVariableNames(String[] localVariableNames) {
+		fLocalVariableNames = localVariableNames;
+	}
+
+	protected String[] getLocalVariableTypeNames() {
+		return fLocalVariableTypeNames;
+	}
+
+	protected void setLocalVariableTypeNames(String[] localVariableTypeNames) {
+		fLocalVariableTypeNames = localVariableTypeNames;
 	}
 }
