@@ -108,18 +108,24 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 				IJavaElement proj = JavaCore.create(res);
 				return lp.getText(proj);
 			case IRuntimeClasspathEntry.ARCHIVE:
-				res = entry.getResource();
-				if (res == null) {
-					return entry.getPath().toOSString();
-				} else {
-					String[] segments = entry.getPath().segments();
-					StringBuffer displayPath = new StringBuffer();
-					for (int i = 0; i < segments.length-1; i++) 
-						displayPath.append(segments[i] + File.separator);					
-					return lp.getText(res) + " - " + displayPath.toString(); //$NON-NLS-1$
-				}
-			case IRuntimeClasspathEntry.VARIABLE:
 				IPath path = entry.getPath();
+				String[] segments = path.segments();
+				StringBuffer displayPath = new StringBuffer();
+				if (segments.length > 0) {
+					displayPath.append(segments[segments.length - 1]);
+					displayPath.append(" - "); //$NON-NLS-1$
+					String device = path.getDevice();
+					if (device != null) {
+						displayPath.append(device);
+						displayPath.append(File.separator);
+					}
+					for (int i = 0; i < segments.length - 1; i++) { 
+						displayPath.append(segments[i] + File.separator);
+					}
+				}
+				return displayPath.toString();
+			case IRuntimeClasspathEntry.VARIABLE:
+				path = entry.getPath();
 				IPath srcPath = entry.getSourceAttachmentPath();
 				StringBuffer buf = new StringBuffer(path.toString());
 				if (srcPath != null) {
