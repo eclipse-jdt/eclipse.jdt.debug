@@ -129,6 +129,10 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		String[] bootpath = getBootpath(configuration);
 		runConfig.setBootClassPath(bootpath);
 		
+		// VM-specific attributes
+		Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
+		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
+		
 		monitor.worked(1);
 		
 		// Add a debug listener if necessary 
