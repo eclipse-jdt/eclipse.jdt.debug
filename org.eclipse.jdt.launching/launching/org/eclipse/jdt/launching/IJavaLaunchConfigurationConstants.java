@@ -2,10 +2,12 @@ package org.eclipse.jdt.launching;
 
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 /**
  * Constant definitions for Java launch configurations.
@@ -45,6 +47,15 @@ public interface IJavaLaunchConfigurationConstants {
 	 * of a main type to launch.
 	 */
 	public static final String ATTR_MAIN_TYPE_NAME = LaunchingPlugin.getUniqueIdentifier() + ".MAIN_TYPE";	 //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute key. The value is a boolean specifying
+	 * whether execution should stop when main is entered. The default value
+	 * is <code>false</code>.
+	 * 
+	 * @since 2.1
+	 */
+	public static final String ATTR_STOP_IN_MAIN = LaunchingPlugin.getUniqueIdentifier() + ".STOP_IN_MAIN";	 //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute key. The value is a string specifying

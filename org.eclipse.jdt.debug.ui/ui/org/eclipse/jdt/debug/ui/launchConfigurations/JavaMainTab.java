@@ -1,9 +1,11 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.lang.reflect.InvocationTargetException;
 
@@ -73,6 +75,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	protected Text fMainText;
 	protected Button fSearchButton;
 	protected Button fSearchExternalJarsCheckButton;
+	protected Button fStopInMainCheckButton;
 			
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
@@ -156,6 +159,15 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		
 		fSearchExternalJarsCheckButton = new Button(mainComp, SWT.CHECK);
 		fSearchExternalJarsCheckButton.setText(LauncherMessages.getString("JavaMainTab.E&xt._jars_6")); //$NON-NLS-1$
+
+		fStopInMainCheckButton = new Button(comp, SWT.CHECK);
+		fStopInMainCheckButton.setText(LauncherMessages.getString("JavaMainTab.St&op_in_main_1")); //$NON-NLS-1$
+		fStopInMainCheckButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});		
+		
 	}
 		
 	/**
@@ -164,6 +176,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
 		updateMainTypeFromConfig(config);
+		updateStopInMainFromConfig(config);
 	}
 	
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
@@ -185,6 +198,16 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		}	
 		fMainText.setText(mainTypeName);	
 	}
+	
+	protected void updateStopInMainFromConfig(ILaunchConfiguration configuration) {
+		boolean stop = false;
+		try {
+			stop = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, false);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		fStopInMainCheckButton.setSelection(stop);
+	}
 		
 	/**
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
@@ -192,6 +215,13 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)fProjText.getText());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)fMainText.getText());
+		
+		// attribute added in 2.1, so null must be used instead of false for backwards compatibility
+		if (fStopInMainCheckButton.getSelection()) {
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
+		} else {
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, (String)null);
+		}
 	}
 			
 	/**

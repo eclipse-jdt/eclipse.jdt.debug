@@ -1,19 +1,17 @@
 package org.eclipse.jdt.debug.tests.core;
 
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
-
-Contributors:
-    IBM Corporation - Initial implementation
-*********************************************************************/
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -22,6 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 /**
  * Tests method breakpoints.
@@ -62,6 +61,31 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
+	
+	public void testStopInMain() throws Exception {
+		String typeName = "DropTests";
+		ILaunchConfiguration config = getLaunchConfiguration(typeName);
+		assertNotNull("Could not find launch config", config);
+		ILaunchConfigurationWorkingCopy wc = config.copy("DropTests - Stop in main");
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, true);
+		config = wc.doSave();		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchAndSuspend(config);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			
+			IBreakpoint hit = getBreakpoint(thread);
+			assertNotNull("suspended, but not by breakpoint", hit);
+			
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			assertTrue("Should be in 'main'", frame.getMethodName().equals("main") && frame.isStatic());
+
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}	
 	
 	public void testDisabledEntryAndExitBreakpoints() throws Exception {
 		String typeName = "DropTests";

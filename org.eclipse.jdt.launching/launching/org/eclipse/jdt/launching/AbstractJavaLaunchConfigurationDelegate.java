@@ -1,13 +1,16 @@
 package org.eclipse.jdt.launching;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +23,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
@@ -28,6 +33,9 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
@@ -42,7 +50,7 @@ import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
  * </p>
  * @since 2.0
  */
-public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
+public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunchConfigurationDelegate, IDebugEventSetListener {
 	
 	/**
 	 * Convenience method to get the launch manager.
@@ -440,7 +448,21 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 */
 	public boolean isAllowTerminate(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);
-	}					
+	}	
+	
+	/**
+	 * Returns whether the given launch configuration
+	 * specifies that execution should suspend on entry of the
+	 * main method.
+	 * 
+	 * @param configuration launch configuration
+	 * @return whether execution should suspend in main
+	 * @exception CoreException if unable to retrieve the attribute
+	 * @since 2.1
+	 */
+	public boolean isStopInMain(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, false);
+	}						
 	
 	/**
 	 * Assigns a default source locator to the given launch if a source
@@ -460,6 +482,60 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 				if (javaProject != null) {
 					ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
 					launch.setSourceLocator(sourceLocator);					
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Determines if the given launch configuration specifies the
+	 * "stop-in-main" attribute, and sets up an event listener to
+	 * handle the option if required.
+	 * 
+	 * @param configuration configuration being launched
+	 * @exception CoreException if unable to access the attribute
+	 * @since 2.1
+	 */
+	protected void prepareStopInMain(ILaunchConfiguration configuration) throws CoreException {
+		if (isStopInMain(configuration)) {
+			// This listener does not remove itself from the debug plug-in
+			// as an event listener (there is no dispose notification for
+			// launch delegates). However, since there is only one delegate
+			// instantiated per config type, this is tolerable.
+			DebugPlugin.getDefault().addDebugEventListener(this);
+		}
+	}
+	
+	/**
+	 * Handles the "stop-in-main" option.
+	 * 
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(DebugEvent[])
+	 */
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getKind() == DebugEvent.CREATE && event.getSource() instanceof IJavaDebugTarget) {
+				IJavaDebugTarget target = (IJavaDebugTarget)event.getSource();
+				ILaunch launch = target.getLaunch();
+				if (launch != null) {
+					ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+					if (configuration != null) {
+						try {
+							if (isStopInMain(configuration)) {
+								String mainType = getMainTypeName(configuration);
+								if (mainType != null) {
+									Map map = new HashMap();
+									map.put(IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN, IJavaLaunchConfigurationConstants.ATTR_STOP_IN_MAIN);
+									IJavaMethodBreakpoint bp = JDIDebugModel.createMethodBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), mainType, "main",  //$NON-NLS-1$
+										"([Ljava/lang/String;)V", true, false, false, -1, -1, -1, 1, false, map); //$NON-NLS-1$
+									bp.setPersisted(false);
+									target.breakpointAdded(bp);
+								}
+							}
+						} catch (CoreException e) {
+							LaunchingPlugin.log(e);
+						}
+					}
 				}
 			}
 		}
