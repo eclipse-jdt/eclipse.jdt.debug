@@ -348,28 +348,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					}
 				} 
 				List frames= getUnderlyingFrames();
-				// Stepping can invalidate cached stack frame data. If any of the cached 
-				// stack frame are out of synch with the underlying frames, discard the cached frames.
-				int numModelFrames= fStackFrames.size();
-				int numUnderlyingFrames= frames.size();
-					
-				int modelFramesIndex = 0;
-				int underlyingFramesIndex = 0;
-				if (numModelFrames > numUnderlyingFrames) {
-					modelFramesIndex = numModelFrames - numUnderlyingFrames;
-				} else {
-					underlyingFramesIndex = numUnderlyingFrames - numModelFrames;
-				}
-
-				StackFrame underlyingFrame= null;
-				JDIStackFrame modelFrame= null;
-				for ( ; modelFramesIndex < numModelFrames; modelFramesIndex++, underlyingFramesIndex++) {
-					underlyingFrame= (StackFrame) frames.get(underlyingFramesIndex);
-					modelFrame= (JDIStackFrame) fStackFrames.get(modelFramesIndex);
-					if (!equalFrame(underlyingFrame, modelFrame.getLastUnderlyingStackFrame())) {
-						modelFrame.setUnderlyingStackFrame(underlyingFrame);
-					}
-				}
 				// compute new or removed stack frames
 				int offset= 0, length= frames.size();
 				if (length > fStackFrames.size()) {
@@ -447,18 +425,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public List computeNewStackFrames() throws DebugException {
 		return computeStackFrames(true);
-	}
-	
-	/**
-	 * Helper method for computeStackFrames(). For the purposes of detecting if
-	 * an underlying stack frame needs to be disposed, stack frames are equal if
-	 * the frames are equal and the locations are equal.
-	 */
-	private boolean equalFrame(StackFrame frameOne, StackFrame frameTwo) {
-		if (frameOne.equals(frameTwo) && frameOne.location().equals(frameTwo.location())) {
-			return true;
-		}
-		return false;
 	}
 
 	/**

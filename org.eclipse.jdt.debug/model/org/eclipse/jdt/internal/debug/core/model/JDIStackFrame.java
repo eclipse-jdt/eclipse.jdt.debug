@@ -183,7 +183,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * retreiving the method is necessary.
 	 */
 	protected Method getUnderlyingMethod() throws DebugException {
-		if (fMethod == null) {
+		if (fStackFrame == null || fMethod == null) {
 			try {
 				fMethod= getUnderlyingStackFrame().location().method();
 			} catch (RuntimeException e) {
@@ -596,7 +596,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see JDIDebugElement#targetRequestFailed(String, RuntimeException)
 	 */
 	protected ObjectReference getUnderlyingThisObject() throws DebugException {
-		if (fThisObject == null && !isStatic()) {
+		if (fStackFrame == null || fThisObject == null && !isStatic()) {
 			try {
 				fThisObject = getUnderlyingStackFrame().thisObject();
 			} catch (RuntimeException e) {
@@ -637,7 +637,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#getDeclaringTypeName()
 	 */
 	public String getDeclaringTypeName() throws DebugException {
-		if (fDeclaringTypeName == null) {
+		if (fStackFrame == null || fDeclaringTypeName == null) {
 			try {
 				Method underlyingMethod= getUnderlyingMethod();
 				if (underlyingMethod.isObsolete()) {
@@ -659,7 +659,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#getReceivingTypeName()
 	 */
 	public String getReceivingTypeName() throws DebugException {
-		if (fReceivingTypeName == null) {
+		if (fStackFrame == null || fReceivingTypeName == null) {
 			try {
 				if (getUnderlyingMethod().isObsolete()) {
 					fReceivingTypeName=JDIDebugModelMessages.getString("JDIStackFrame.<unknown_receiving_type>_2"); //$NON-NLS-1$
@@ -911,14 +911,28 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @param frame The underlying stack frame
 	 */
 	protected void setUnderlyingStackFrame(StackFrame frame) {
-		clearCachedData();
 		if (frame != null) {
+			if (fLastStackFrame != null && !equalFrame(fLastStackFrame, frame)) {
+				clearCachedData();
+		}
 			fLastStackFrame = frame;
 		} else {
 			fLastStackFrame = fStackFrame;
 		}
 		fStackFrame = frame;
 		fRefreshVariables = true;
+	}
+	
+	/**
+	 * Helper method for computeStackFrames(). For the purposes of detecting if
+	 * an underlying stack frame needs to be disposed, stack frames are equal if
+	 * the frames are equal and the locations are equal.
+	 */
+	private boolean equalFrame(StackFrame frameOne, StackFrame frameTwo) {
+		if (frameOne.thread().equals(frameTwo.thread()) &&  frameOne.location().method().equals(frameTwo.location().method())) {
+			return true;
+		}
+		return false;
 	}
 
 	protected void setThread(JDIThread thread) {
