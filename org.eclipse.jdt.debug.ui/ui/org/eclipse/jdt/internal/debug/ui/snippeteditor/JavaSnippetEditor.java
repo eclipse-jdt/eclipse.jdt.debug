@@ -120,7 +120,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	private int fSnippetStart;
 	private int fSnippetEnd;
 	
-	private String fPackageName= null;
+	private String fPackageHandle= null;
 	
 	private Image fOldTitleImage= null;
 	private IClassFileEvaluationEngine fEngine= null;
@@ -137,7 +137,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
-		fPackageName = getPage().getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), PACKAGE_CONTEXT));
+		fPackageHandle = getPage().getPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), PACKAGE_CONTEXT));
 	}
 		
 	public void dispose() {
@@ -267,18 +267,18 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}
 	
-	public void setPackage(String packageName) {
-		fPackageName= packageName;
+	public void setPackage(String packageHandle) {
+		fPackageHandle= packageHandle;
 		// persist
 		try {
-			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), PACKAGE_CONTEXT), packageName);
+			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), PACKAGE_CONTEXT), packageHandle);
 		} catch (CoreException e) {
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.packagecontext"), null, e.getStatus()); //$NON-NLS-1$
 		}
 	}
 	
 	public String getPackage() {
-		return fPackageName;
+		return fPackageHandle;
 	}
 			
 	protected IEvaluationContext getEvaluationContext() {
@@ -288,8 +288,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				fEvaluationContext= project.newEvaluationContext();
 			}
 		}
-		if (fEvaluationContext != null && fPackageName != null) {		
-			fEvaluationContext.setPackageName(fPackageName);
+		if (fEvaluationContext != null && fPackageHandle != null) {		
+			String packageName = JavaCore.create(fPackageHandle).getElementName();	
+			fEvaluationContext.setPackageName(packageName);
 		}
 		return fEvaluationContext;
 	}
@@ -389,8 +390,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			return;
 		}
 		try {
-			if (fPackageName != null) {
-				getEvaluationEngine().setPackageName(fPackageName);
+			if (fPackageHandle != null) {
+				String packageName = JavaCore.create(fPackageHandle).getElementName();		
+				getEvaluationEngine().setPackageName(packageName);
 			}
 			getEvaluationEngine().evaluate(snippet,getThread(), this);
 		} catch (DebugException e) {
