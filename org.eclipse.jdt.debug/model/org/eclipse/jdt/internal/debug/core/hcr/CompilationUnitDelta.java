@@ -328,7 +328,7 @@ public class CompilationUnitDelta {
 				if (i > 0)
 					sb.append(", "); //$NON-NLS-1$
 				if (types != null)
-					sb.append(Signature.getSimpleName(Signature.toString(types[i])));
+					sb.append(unqualifyName(Signature.getSimpleName(Signature.toString(types[i]))));
 			}
 			sb.append(')');
 			break;
@@ -352,6 +352,14 @@ public class CompilationUnitDelta {
 			return null;
 		}
 		return sb.toString();
+	}
+	
+	private static String unqualifyName(String qualifiedName) {
+		int index= qualifiedName.lastIndexOf('/');
+		if (index > -1) {
+			return qualifiedName.substring(index + 1);
+		}
+		return qualifiedName;
 	}
 
 	/**
