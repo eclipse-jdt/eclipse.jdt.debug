@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -209,19 +208,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			fSnippetDocumentProvider= new SnippetFileDocumentProvider();
 		}
 		return fSnippetDocumentProvider;
-	}	
-	
-	/**
-	 * Logs the given message if in debug mode.
-	 * 
-	 * @param String message to log
-	 */
-	public static void logDebugMessage(String message) {
-		if (getDefault().isDebugging()) {
-			// this message is intentionally not internationalized, as an exception may
-			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal message logged from JDT Debug UI: " + message, null)); //$NON-NLS-1$
-		}
 	}
 	
 	public static void errorDialog(String message, IStatus status) {

@@ -227,19 +227,6 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	}
 	
 	/**
-	 * Logs the given message if in debug mode.
-	 * 
-	 * @param String message to log
-	 */
-	public static void logDebugMessage(String message) {
-		if (getDefault().isDebugging()) {
-			// this message is intentionally not internationalized, as an exception may
-			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from JDI Debug: " + message, null));  //$NON-NLS-1$		
-		}
-	}
-	
-	/**
 	 * Logs the specified status with this plug-in's log.
 	 * 
 	 * @param status status to log
