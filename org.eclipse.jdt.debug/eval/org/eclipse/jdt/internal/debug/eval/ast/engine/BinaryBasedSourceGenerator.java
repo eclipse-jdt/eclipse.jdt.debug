@@ -25,6 +25,7 @@ import com.sun.jdi.Type;
 public class BinaryBasedSourceGenerator {
 	
 	private static final String RUN_METHOD_NAME= "___run";
+	private static final String EVAL_METHOD_NAME= "___eval"; //$NON-NLS-1$
 	
 	private int[] fLocalModifiers;
 	
@@ -73,13 +74,16 @@ public class BinaryBasedSourceGenerator {
 		fCompilationUnitName= getSimpleName(refType.name());
 	}
 	
-	private StringBuffer buildRunMethod(ReferenceType type) {
-		String methodName= RUN_METHOD_NAME;
+	protected String getUniqueMethodName(String methodName, ReferenceType type) {
 		List methods= type.methodsByName(methodName);
 		while (!methods.isEmpty()) {
 			methodName += '_';
 			methods= type.methodsByName(methodName);
 		}
+		return methodName;
+	}
+	
+	private StringBuffer buildRunMethod(ReferenceType type) {
 		StringBuffer source = new StringBuffer();
 		
 		if (isInStaticMethod()) {
@@ -87,7 +91,7 @@ public class BinaryBasedSourceGenerator {
 		}
 
 		source.append("void ");
-		source.append(methodName);
+		source.append(getUniqueMethodName(RUN_METHOD_NAME, type));
 		source.append('(');
 		for(int i= 0, length= fLocalModifiers.length; i < length; i++) {
 			if (fLocalModifiers[i] != 0) {
@@ -151,7 +155,9 @@ public class BinaryBasedSourceGenerator {
 		if (isAnonymousType) {
 			ClassType classType= (ClassType) referenceType;
 			
-			source.append("void __eval__() {\n");
+			source.append("void ");
+			source.append(getUniqueMethodName(EVAL_METHOD_NAME, referenceType));
+			source.append("() {\n");
 			source.append("new ").append(getDotName(classType.superclass().name())).append("()");
 			
 		} else {
