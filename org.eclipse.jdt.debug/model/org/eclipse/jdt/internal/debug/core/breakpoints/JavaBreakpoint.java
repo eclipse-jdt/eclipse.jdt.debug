@@ -527,10 +527,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected int getJDISuspendPolicy() throws CoreException {
 		int breakpointPolicy = getSuspendPolicy();
-		if (breakpointPolicy == EventRequest.SUSPEND_EVENT_THREAD) {
-			return IJavaBreakpoint.SUSPEND_THREAD;
+		if (breakpointPolicy == IJavaBreakpoint.SUSPEND_THREAD) {
+			return EventRequest.SUSPEND_EVENT_THREAD;
 		}
-		return IJavaBreakpoint.SUSPEND_VM;
+		return EventRequest.SUSPEND_ALL;
 	}
 	
 	/**
