@@ -63,6 +63,11 @@
 		markerType="org.eclipse.jdt.debug.javaMethodBreakpointMarker"
 		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint">
 	</breakpoint>	
+	<breakpoint
+		id="javaMethodEntryBreakpoint"
+		markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"
+		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint">
+	</breakpoint>		
 </extension>
 
 <extension id="javaBreakpointMarker" point="org.eclipse.core.resources.markers">
@@ -122,6 +127,13 @@
    <attribute name="org.eclipse.jdt.debug.core.entry"/>
    <attribute name="org.eclipse.jdt.debug.core.exit"/>   
    <attribute name="org.eclipse.jdt.debug.core.native"/>
+</extension>
+
+<extension id="javaMethodEntryBreakpointMarker" point="org.eclipse.core.resources.markers">
+   <super type="org.eclipse.jdt.debug.javaLineBreakpointMarker"/>
+   <persistent value="true"/>
+   <attribute name="org.eclipse.jdt.debug.core.methodName"/>
+   <attribute name="org.eclipse.jdt.debug.core.methodSignature"/>
 </extension>
 
 </plugin>

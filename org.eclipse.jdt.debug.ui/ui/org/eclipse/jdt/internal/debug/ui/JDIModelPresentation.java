@@ -40,6 +40,7 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
@@ -669,6 +670,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		} else if (breakpoint instanceof IJavaWatchpoint) {
 			IJavaWatchpoint watchpoint= (IJavaWatchpoint)breakpoint;
 			return getJavaWatchpointImage(watchpoint);
+		} else if (breakpoint instanceof IJavaMethodEntryBreakpoint) {
+			IJavaMethodEntryBreakpoint meBreakpoint = (IJavaMethodEntryBreakpoint)breakpoint;
+			return getJavaMethodEntryBreakpointImage(meBreakpoint);
 		} else {
 			int flags= computeBreakpointAdornmentFlags(breakpoint);
 			JDIImageDescriptor descriptor= null;
@@ -692,6 +696,18 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			
 		return fDebugImageRegistry.get(descriptor);
 	}
+	
+	protected Image getJavaMethodEntryBreakpointImage(IJavaMethodEntryBreakpoint mBreakpoint) throws CoreException {
+		int flags= computeBreakpointAdornmentFlags(mBreakpoint);
+		JDIImageDescriptor descriptor= null;
+		if (mBreakpoint.isEnabled()) {
+			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT), flags);
+		} else {
+			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
+		}
+			
+		return fDebugImageRegistry.get(descriptor);
+	}	
 	
 	protected Image getJavaWatchpointImage(IJavaWatchpoint watchpoint) throws CoreException {
 		int flags= computeBreakpointAdornmentFlags(watchpoint);
@@ -818,6 +834,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					if (mBreakpoint.isExit()) {
 						flags |= JDIImageDescriptor.EXIT;
 					}
+				}
+				if (breakpoint instanceof IJavaMethodEntryBreakpoint) {
+					flags |= JDIImageDescriptor.ENTRY;
 				}
 			} else if (breakpoint instanceof IJavaExceptionBreakpoint) {
 				IJavaExceptionBreakpoint eBreakpoint= (IJavaExceptionBreakpoint)breakpoint;
