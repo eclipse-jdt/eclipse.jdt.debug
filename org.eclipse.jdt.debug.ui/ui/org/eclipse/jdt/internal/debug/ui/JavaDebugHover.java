@@ -11,17 +11,12 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.ui.text.HTMLTextPresenter;
@@ -34,17 +29,68 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 
 
-public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension {
+public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension, ISelectionListener, IPartListener {
 		
 	
 	protected IEditorPart fEditor;
+	protected ISelection fSelection = null;
 	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart part) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+		if (part.equals(fEditor)) {
+			IWorkbenchPage page = fEditor.getSite().getPage();
+			page.removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+			page.removePartListener(this);
+			fSelection = null;
+			fEditor = null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		fSelection = selection;
+	}
+
 	public JavaDebugHover() {
 	}
 
@@ -53,6 +99,16 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 */
 	public void setEditor(IEditorPart editor) {
 		fEditor= editor;
+		final IWorkbenchPage page = editor.getSite().getPage();
+		page.addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		page.addPartListener(this);
+		// initialize selection
+		Runnable r = new Runnable() {
+			public void run() {
+				fSelection = page.getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+			}
+		};
+		JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
 	}
 		
 	/**
@@ -61,24 +117,33 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		return JavaWordFinder.findWord(textViewer.getDocument(), offset);
 	}
+	
+	/**
+	 * Returns the stack frame in which to search for variables, or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the stack frame in which to search for variables, or <code>null</code>
+	 * if none
+	 */
+	protected IJavaStackFrame getFrame() {
+		if (fSelection instanceof IStructuredSelection) {
+			IStructuredSelection selection = (IStructuredSelection)fSelection;
+			if (selection.size() == 1) {
+				Object el = selection.getFirstElement();
+				if (el instanceof IAdaptable) {
+					return (IJavaStackFrame)((IAdaptable)el).getAdapter(IJavaStackFrame.class); 
+				}
+			}
+		}
+		return null;
+	}
 		
 	/**
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-				
-		DebugPlugin debugPlugin= DebugPlugin.getDefault();
-		if (debugPlugin == null) {
-			return null;
-		}
-			
-		ILaunchManager launchManager= debugPlugin.getLaunchManager();
-		if (launchManager == null) {
-			return null;
-		}
-			
-		IDebugTarget[] targets= launchManager.getDebugTargets();
-		if (targets != null && targets.length > 0) {
+		IJavaStackFrame frame = getFrame();				
+		if (frame != null) {
 			try {
 				
 				IDocument document= textViewer.getDocument();
@@ -86,29 +151,15 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 					return null;
 					
 				String variableName= document.get(hoverRegion.getOffset(), hoverRegion.getLength());
-				
-				List javaTargetList = new ArrayList(targets.length);
-				for (int i = 0; i < targets.length; i++) {
-					IJavaDebugTarget javaTarget = (IJavaDebugTarget) targets[i].getAdapter(IJavaDebugTarget.class);
-					if (javaTarget != null) {
-						javaTargetList.add(i, javaTarget);
-					}					
-				}
-												
-				StringBuffer buffer= new StringBuffer();
-				boolean showDebugTarget = javaTargetList.size() > 1;
-				Iterator iterator = javaTargetList.iterator();
-				while (iterator.hasNext()) {
-					IJavaDebugTarget javaTarget = (IJavaDebugTarget) iterator.next();	
-					try {
-						IVariable variable= javaTarget.findVariable(variableName);
-						if (variable != null) {
-							String debugTargetName = showDebugTarget ? javaTarget.getName() : null;
-							appendVariable(buffer, variable, debugTargetName);
-						}
-					} catch (DebugException x) {
-						JDIDebugUIPlugin.log(x);
+																
+				StringBuffer buffer= new StringBuffer();	
+				try {
+					IVariable variable= frame.findVariable(variableName);
+					if (variable != null) {
+						appendVariable(buffer, variable);
 					}
+				} catch (DebugException x) {
+					JDIDebugUIPlugin.log(x);
 				}
 				
 				if (buffer.length() > 0) {
@@ -124,14 +175,11 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	}
 
 	/**
-	 * A variable gets one line for each debug target it appears in.
+	 * Append HTML for the given variable to the given buffer
 	 */
-	private static void appendVariable(StringBuffer buffer, IVariable variable, String debugTargetName) throws DebugException {
+	private static void appendVariable(StringBuffer buffer, IVariable variable) throws DebugException {
 
 		buffer.append("<p>"); //$NON-NLS-1$
-		if (debugTargetName != null) {
-			buffer.append('[' + debugTargetName + "]&nbsp;"); //$NON-NLS-1$ 
-		}
 		buffer.append("<pre>").append(variable.getName()).append("</pre>"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append(" ="); //$NON-NLS-1$
 		
