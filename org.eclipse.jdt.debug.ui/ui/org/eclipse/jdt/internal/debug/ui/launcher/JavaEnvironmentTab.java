@@ -136,7 +136,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		fBootPathList.setData(JavaDebugUI.BOOTPATH_ATTR);
 		fBootPathList.addSelectionListener(getListSelectionAdapter());
 		fBootPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 0);
-		fBootPathTabItem.setText("Bootpath");
+		fBootPathTabItem.setText("&Bootpath");
 		fBootPathTabItem.setControl(fBootPathList);
 		fBootPathTabItem.setData(fBootPathList);
 		
@@ -146,7 +146,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		fClassPathList.setData(JavaDebugUI.CLASSPATH_ATTR);
 		fClassPathList.addSelectionListener(getListSelectionAdapter());
 		fClassPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 1);
-		fClassPathTabItem.setText("Classpath");
+		fClassPathTabItem.setText("Class&path");
 		fClassPathTabItem.setControl(fClassPathList);
 		fClassPathTabItem.setData(fClassPathList);
 		
@@ -156,7 +156,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		fExtensionPathList.setData(JavaDebugUI.EXTPATH_ATTR);
 		fExtensionPathList.addSelectionListener(getListSelectionAdapter());
 		fExtensionPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 2);
-		fExtensionPathTabItem.setText("Extension path");
+		fExtensionPathTabItem.setText("E&xtension path");
 		fExtensionPathTabItem.setControl(fExtensionPathList);
 		fExtensionPathTabItem.setData(fExtensionPathList);
 		
@@ -171,7 +171,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		createVerticalSpacer(pathButtonComp, 1);
 		
 		fPathAddArchiveButton = new Button(pathButtonComp, SWT.PUSH);
-		fPathAddArchiveButton.setText("Add archive");
+		fPathAddArchiveButton.setText("Add arc&hive...");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fPathAddArchiveButton.setLayoutData(gd);
 		fPathAddArchiveButton.addSelectionListener(new SelectionAdapter() {
@@ -181,7 +181,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		});
 		
 		fPathAddDirectoryButton = new Button(pathButtonComp, SWT.PUSH);
-		fPathAddDirectoryButton.setText("Add folder");
+		fPathAddDirectoryButton.setText("Add &folder...");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fPathAddDirectoryButton.setLayoutData(gd);
 		fPathAddDirectoryButton.addSelectionListener(new SelectionAdapter() {
@@ -191,7 +191,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		});
 		
 		fPathRemoveButton = new Button(pathButtonComp, SWT.PUSH);
-		fPathRemoveButton.setText("Remove");
+		fPathRemoveButton.setText("&Remove");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fPathRemoveButton.setLayoutData(gd);
 		fPathRemoveButton.addSelectionListener(new SelectionAdapter() {
@@ -201,7 +201,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		});
 		
 		fPathMoveUpButton = new Button(pathButtonComp, SWT.PUSH);
-		fPathMoveUpButton.setText("Move up");
+		fPathMoveUpButton.setText("Move &up");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fPathMoveUpButton.setLayoutData(gd);
 		fPathMoveUpButton.addSelectionListener(new SelectionAdapter() {
@@ -211,7 +211,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		});
 		
 		fPathMoveDownButton = new Button(pathButtonComp, SWT.PUSH);
-		fPathMoveDownButton.setText("Move down");
+		fPathMoveDownButton.setText("Move &down");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fPathMoveDownButton.setLayoutData(gd);
 		fPathMoveDownButton.addSelectionListener(new SelectionAdapter() {
@@ -259,7 +259,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		envButtonComp.setLayoutData(gd);
 		
 		fEnvAddButton = new Button(envButtonComp, SWT.PUSH);
-		fEnvAddButton.setText("Add");
+		fEnvAddButton.setText("A&dd...");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fEnvAddButton.setLayoutData(gd);
 		fEnvAddButton.addSelectionListener(new SelectionAdapter() {
@@ -269,7 +269,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		});
 		
 		fEnvEditButton = new Button(envButtonComp, SWT.PUSH);
-		fEnvEditButton.setText("Edit");
+		fEnvEditButton.setText("Ed&it...");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fEnvEditButton.setLayoutData(gd);
 		fEnvEditButton.addSelectionListener(new SelectionAdapter() {
@@ -279,7 +279,7 @@ public class JavaEnvironmentTab implements ILaunchConfigurationTab {
 		});
 		
 		fEnvRemoveButton = new Button(envButtonComp, SWT.PUSH);
-		fEnvRemoveButton.setText("Remove");
+		fEnvRemoveButton.setText("Rem&ove");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fEnvRemoveButton.setLayoutData(gd);
 		fEnvRemoveButton.addSelectionListener(new SelectionAdapter() {

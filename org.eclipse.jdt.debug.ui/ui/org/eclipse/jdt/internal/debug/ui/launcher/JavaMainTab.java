@@ -133,7 +133,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		projComp.setLayoutData(gd);
 		
 		fProjLabel = new Label(projComp, SWT.NONE);
-		fProjLabel.setText("Project:");
+		fProjLabel.setText("&Project:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
@@ -148,7 +148,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		});
 		
 		fProjButton = new Button(projComp, SWT.PUSH);
-		fProjButton.setText("Browse");
+		fProjButton.setText("&Browse...");
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
@@ -165,7 +165,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		mainComp.setLayoutData(gd);
 		
 		fMainLabel = new Label(mainComp, SWT.NONE);
-		fMainLabel.setText("Main class:");
+		fMainLabel.setText("Main cla&ss:");
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fMainLabel.setLayoutData(gd);
@@ -180,7 +180,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		});
 		
 		fSearchButton = new Button(mainComp, SWT.PUSH);
-		fSearchButton.setText("Search");
+		fSearchButton.setText("Searc&h...");
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSearchButtonSelected();
@@ -188,7 +188,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		});
 		
 		fSearchExternalJarsCheckButton = new Button(mainComp, SWT.CHECK);
-		fSearchExternalJarsCheckButton.setText("Ext. jars");
+		fSearchExternalJarsCheckButton.setText("E&xt. jars");
 		fSearchExternalJarsCheckButton.setToolTipText("Include external jars when searching for a main class");
 				
 		createVerticalSpacer(comp);
@@ -203,7 +203,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		jreComp.setLayoutData(gd);
 		
 		fJRELabel = new Label(jreComp, SWT.NONE);
-		fJRELabel.setText("JRE:");
+		fJRELabel.setText("&JRE:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fJRELabel.setLayoutData(gd);
@@ -219,7 +219,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		});
 		
 		fJREAddButton = new Button(jreComp, SWT.PUSH);
-		fJREAddButton.setText("Add...");
+		fJREAddButton.setText("A&dd...");
 		fJREAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleJREAddButtonSelected();
@@ -229,7 +229,7 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 		createVerticalSpacer(comp);
 				
 		fBuildCheckButton = new Button(comp, SWT.CHECK);
-		fBuildCheckButton.setText("Build before launch");
+		fBuildCheckButton.setText("B&uild before launch");
 		fBuildCheckButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				updateConfigFromBuild();

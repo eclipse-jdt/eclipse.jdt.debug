@@ -670,25 +670,25 @@
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaMain"
 		type ="org.eclipse.jdt.debug.ui.localJavaApplication"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaMainTab"
-		name="Java Main">
+		name="%javaMainTabName">
 	</launchConfigurationTab>
 	<launchConfigurationTab
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaArguments"
 		type ="org.eclipse.jdt.debug.ui.localJavaApplication"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaArgumentsTab"
-		name="Java Arguments">
+		name="%javaArgumentsTabName">
 	</launchConfigurationTab>
 	<launchConfigurationTab
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaEnvironment"
 		type ="org.eclipse.jdt.debug.ui.localJavaApplication"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaEnvironmentTab"
-		name="Java Environment">
+		name="%javaEnvironmentTabName">
 	</launchConfigurationTab>
 	<launchConfigurationTab
 		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.JavaConnect"
 		type ="org.eclipse.jdt.debug.ui.remoteJavaApplication"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.JavaConnectTab"
-		name="Java Connect">
+		name="%javaConnectTabName">
 	</launchConfigurationTab>
 </extension>
 </plugin>
