@@ -87,6 +87,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 		fErrorMessages.remove(message);
 		fErrorMessages.add(message);
 		setErrorMessage(message);
+		setValid(false);
 	}
 	
 	/**
@@ -108,6 +109,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 		fErrorMessages.remove(message);
 		if (fErrorMessages.isEmpty()) {
 			setErrorMessage(null);
+			setValid(true);
 		} else {
 			setErrorMessage((String) fErrorMessages.get(fErrorMessages.size() - 1));
 		}
