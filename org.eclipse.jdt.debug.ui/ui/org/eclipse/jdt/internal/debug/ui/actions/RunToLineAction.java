@@ -16,7 +16,6 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.debug.core.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
@@ -87,31 +86,29 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		IDebugTarget target= getContextFromUI();
 		if (target == null) {
 			target= getContextFromModel();
+			//target has already been checked for suspended thread
+			return target;
 		}
 		if (target == null) {
 			return null;
 		}
 		IThread[] threads= target.getThreads();
-		boolean threadSuspended= false;
 		for (int i= 0; i < threads.length; i++) {
 			IThread thread= threads[i];
 			if (thread.canResume()) {
-				threadSuspended=true;
-				break;
+				return target;
 			}
 		}
-		if (threadSuspended) {
-			return target;
-		}
+		
 		return null;
 	}
 	/**
 	 * Resolves a debug target context from the model
 	 */
-	protected JDIDebugTarget getContextFromModel() throws DebugException {
+	protected IDebugTarget getContextFromModel() throws DebugException {
 		IDebugTarget[] dts= DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
 		for (int i= 0; i < dts.length; i++) {
-			JDIDebugTarget dt= (JDIDebugTarget)dts[i];
+			IDebugTarget dt= dts[i];
 			if (getContextFromDebugTarget(dt) != null) {
 				return dt;
 			}
@@ -121,9 +118,9 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	/**
 	 * Resolves a debug target context from the model
 	 */
-	protected JDIDebugTarget getContextFromThread(IThread thread) throws DebugException {
+	protected IDebugTarget getContextFromThread(IThread thread) throws DebugException {
 		if (thread.isSuspended()) {
-			return (JDIDebugTarget) thread.getDebugTarget();
+			return thread.getDebugTarget();
 		}
 		return null;
 	}
@@ -153,7 +150,10 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	 */
 	public void update() {
 		try {
-			setEnabled(getContext() != null && getTextEditor() != null);
+			IDebugTarget target= getContext();
+			setEnabled(target != null 
+				&& !(target.isDisconnected() || target.isTerminated())
+				&& getTextEditor() != null);
 		} catch (DebugException de) {
 			setEnabled(false);
 			JDIDebugUIPlugin.logError(de);
@@ -171,7 +171,7 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	/**
 	 * Resolves a stack frame context from the model
 	 */
-	protected JDIDebugTarget getContextFromDebugTarget(JDIDebugTarget dt) throws DebugException {
+	protected IDebugTarget getContextFromDebugTarget(IDebugTarget dt) throws DebugException {
 		if (dt.isTerminated() || dt.isDisconnected()) {
 			return null;
 		}
