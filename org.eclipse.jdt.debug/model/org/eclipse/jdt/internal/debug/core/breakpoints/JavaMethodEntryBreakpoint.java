@@ -84,7 +84,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 			}
 
 		};
-		run(null, wr);
+		run(getMarkerRule(resource), wr);
 	}
 		
 	/**

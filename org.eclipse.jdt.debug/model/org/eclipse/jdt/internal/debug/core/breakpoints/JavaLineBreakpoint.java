@@ -156,7 +156,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				register(add);
 			}
 		};
-		run(null, wr);
+		run(getMarkerRule(resource), wr);
 	}
 	
 	/* (non-Javadoc)

@@ -138,7 +138,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			}
 
 		};
-		run(null, wr);
+		run(getMarkerRule(resource), wr);
 	}
 		
 	/**

@@ -90,7 +90,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaC
 			}
 
 		};
-		run(null, wr);
+		run(getMarkerRule(resource), wr);
 	}	
 	
 	public JavaClassPrepareBreakpoint() {

@@ -67,7 +67,7 @@ public class JavaTargetPatternBreakpoint extends JavaLineBreakpoint implements I
 				register(add);
 			}
 		};
-		run(null, wr);
+		run(getMarkerRule(resource), wr);
 	}
 	
 	/**
