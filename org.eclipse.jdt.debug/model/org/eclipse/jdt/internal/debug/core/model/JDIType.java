@@ -98,7 +98,7 @@ public class JDIType implements IJavaType {
 	 * 
 	 * @return the underlying type on the VM
 	 */
-	protected Type getUnderlyingType() {
+	public Type getUnderlyingType() {
 		return fType;
 	}
 
