@@ -355,4 +355,10 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @since 3.0
 	 */
 	public boolean supportsModificationWatchpoints();	
+	
+	/**
+	 * Set the default stratum used in this debug target.
+	 * @since 3.0
+	 */
+	public void setDefaultStratum(String stratum);
 }

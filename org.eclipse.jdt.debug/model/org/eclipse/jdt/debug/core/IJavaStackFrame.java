@@ -260,6 +260,25 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IFilteredS
 	public String getSourceName() throws DebugException;
 	
 	/**
+	 * Returns the source path debug attribute associated with
+	 * this stack frame in the specified stratum, or 
+	 * <code>null</code> if the source path is not known.
+	 * 
+	 * @param stratum the stratum to use.
+	 * @return source name debug attribute, or <code>null</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This stack frame is no longer valid. That is, the thread
+	 *   containing this stack frame has since been resumed.</li>
+	 * </ul>
+	 * @since 3.0
+	 */
+	public String getSourcePath(String stratum) throws DebugException;
+	
+	/**
 	 * Returns a collection of local variables that are visible
 	 * at the current point of execution in this stack frame. The
 	 * list includes arguments.

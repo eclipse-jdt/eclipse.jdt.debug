@@ -1135,4 +1135,15 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		((IJavaThread)getThread()).stepWithFilters();
 	}
 
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getSourcePath(java.lang.String)
+	 */
+	public String getSourcePath(String stratum) throws DebugException {
+		try {
+			return getUnderlyingStackFrame().location().sourcePath(stratum);
+		} catch (AbsentInformationException e) {
+			return null;
+		}
+	}
+
 }

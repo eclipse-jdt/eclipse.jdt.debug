@@ -234,6 +234,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		setSupportsDisconnect(supportDisconnect);
 		setVM(jvm);
 		jvm.setDebugTraceMode(VirtualMachine.TRACE_NONE);
+		jvm.setDefaultStratum("Java");
 		setProcess(process);
 		setTerminated(false);
 		setTerminating(false);
@@ -2014,6 +2015,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			return vm.canWatchFieldModification();
 		}
 		return false;
+	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#setDefaultStratum()
+	 */
+	public void setDefaultStratum(String stratum) {
+		getVM().setDefaultStratum(stratum);
 	}
 
 }
