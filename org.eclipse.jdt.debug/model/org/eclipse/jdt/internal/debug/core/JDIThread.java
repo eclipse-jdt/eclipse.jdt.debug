@@ -274,10 +274,27 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			fStepRequest= erm.createStepRequest(fThread, StepRequest.STEP_LINE, type);
 			fStepRequest.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
 			fStepRequest.addCountFilter(1);
+			attachFiltersToStepRequest(fStepRequest);
 			fStepRequest.enable();
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(ERROR_CREATING_STEP_REQUEST, e);
+		}
+	}
+	
+	/**
+	 * If step filters are currently switched on, set all active filters on the step request.
+	 */
+	protected void attachFiltersToStepRequest(StepRequest stepRequest) {
+		JDIDebugPlugin plugin = JDIDebugPlugin.getDefault();
+		if (!plugin.useStepFilters()) {
+			return;
+		}
+		List activeFilters = plugin.getActiveStepFilters();
+		Iterator iterator = activeFilters.iterator();
+		while (iterator.hasNext()) {
+			String filter = (String)iterator.next();
+			fStepRequest.addClassExclusionFilter(filter);
 		}
 	}
 	
