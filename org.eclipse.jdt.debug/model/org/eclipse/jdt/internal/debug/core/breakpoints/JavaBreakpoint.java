@@ -431,8 +431,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected void updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		updateEnabledState(request);
+		updateSuspendPolicy(request, target);
 		EventRequest newRequest = updateHitCount(request, target);
-		newRequest = updateSuspendPolicy(request, target); 
 		if (newRequest != request) {
 			replaceRequest(target, request, newRequest);
 			request = newRequest;
@@ -449,14 +449,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Update the given request in the given debug target to
 	 * reflect the current suspend policy of this breakpoint.
 	 */
-	protected EventRequest updateSuspendPolicy(EventRequest request, JDIDebugTarget target) throws CoreException {
+	protected void updateSuspendPolicy(EventRequest request, JDIDebugTarget target) throws CoreException {
 		int breakpointPolicy = getSuspendPolicy();
 		int requestPolicy = request.suspendPolicy();
 		if (requestPolicy == EventRequest.SUSPEND_EVENT_THREAD && breakpointPolicy == IJavaBreakpoint.SUSPEND_THREAD) {
-			return request;
+			return;
 		}
 		if (requestPolicy == EventRequest.SUSPEND_ALL && breakpointPolicy == IJavaBreakpoint.SUSPEND_VM) {
-			return request;
+			return;
 		}
 		try {
 			switch (breakpointPolicy) {
@@ -470,8 +470,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		} catch (RuntimeException e) {
 			JDIDebugPlugin.logError(e);
 		}
-		
-		return request;
 	}
 	
 	/**
