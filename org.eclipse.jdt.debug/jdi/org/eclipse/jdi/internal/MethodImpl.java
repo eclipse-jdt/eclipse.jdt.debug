@@ -843,6 +843,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	}
 
 	public boolean isVarargs() {
-		return (fModifierBits & MODIFIER_ACC_VARARGS) != 0;
+		// TODO: remove this test when j9 solve its problem
+		// it returns invalid 1.5 flags for 1.4 classes.
+		// see bug 53870
+		return !virtualMachine().name().equals("j9") && (fModifierBits & MODIFIER_ACC_VARARGS) != 0;
 	}
 }
