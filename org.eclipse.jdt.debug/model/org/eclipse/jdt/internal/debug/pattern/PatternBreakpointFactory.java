@@ -8,8 +8,23 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 /**
- * Creates pattern breakpoints.  Pattern breakpoints
- * are only installed in <code>PatternDebugTarget</code>s.
+ * Creates pattern breakpoints. Pattern breakpoints are line
+ * breakpoints to be installed in java classes that were created
+ * by compiling a non-Java source file into a .java file, which is
+ * then compiled into a .class file. By specifying the pattern of
+ * the name of the Java type associated with the source file that will
+ * be loaded at runtime, breakpoints are installed.
+ * <p>
+ * When a type is loaded at debug time, the pattern debug target
+ * checks all pattern breakpoints that match the name of the type
+ * just loaded. For each match, the source file name debug attribute of
+ * the loaded type is checked for a match against the breakpoint's
+ * associated file name. If they match, the breakpoint is installed.
+ * This requires that line number and source file name debug
+ * attributes in the .class file loaded at debug time, reflect 
+ * the original source.
+ * <p>
+ * Pattern breakpoints are only installed in pattern debug targets.
  */
 public class PatternBreakpointFactory {
 	/**
@@ -31,8 +46,8 @@ public class PatternBreakpointFactory {
 	 */
 	private PatternBreakpointFactory() {}
 	
-	public IMarker createLineBreakpoint(IFile file, int line) throws DebugException {
-		BreakpointCreator wr= new BreakpointCreator(file, line);
+	public IMarker createPatternBreakpoint(IFile file, int line, String pattern) throws DebugException {
+		BreakpointCreator wr= new BreakpointCreator(file, line, pattern);
 
 		try {
 			ResourcesPlugin.getWorkspace().run(wr, null);
@@ -51,9 +66,11 @@ class BreakpointCreator implements IWorkspaceRunnable {
 	protected IMarker fBreakpoint;
 	protected IFile fFile;
 	protected int fLine;
-	public BreakpointCreator(IFile file, int line) {
+	protected String fPattern;
+	public BreakpointCreator(IFile file, int line, String pattern) {
 		fFile = file;
 		fLine = line;
+		fPattern = pattern;
 	}
 
 	public IMarker getBreakpoint() {
@@ -69,5 +86,6 @@ class BreakpointCreator implements IWorkspaceRunnable {
 		// configure the standard attributes
 		DebugPlugin.getDefault().getBreakpointManager().configureLineBreakpoint(
 			fBreakpoint, JDIDebugModel.getPluginIdentifier(), true, fLine, -1, -1);
+		fBreakpoint.setAttribute(PatternDebugModel.PATTERN, fPattern);
 	}
 }

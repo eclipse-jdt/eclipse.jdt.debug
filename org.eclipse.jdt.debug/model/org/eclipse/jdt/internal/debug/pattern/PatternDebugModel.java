@@ -10,7 +10,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 /**
- * Creates PatternDebugTargets
+ * Creates pattern debug targets.
  */
 public class PatternDebugModel {
 	
@@ -21,7 +21,7 @@ public class PatternDebugModel {
 	
 	/**
 	 * The <code>PATTERN</code> field is used to match 
-	 * classfile names to patterns given by breakpoints.
+	 * type names to patterns given by breakpoints.
 	 * This is used to install breakpoints.
 	 */
 	public static final String PATTERN= "pattern";
