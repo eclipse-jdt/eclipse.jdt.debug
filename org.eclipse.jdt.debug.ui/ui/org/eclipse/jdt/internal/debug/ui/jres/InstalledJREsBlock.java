@@ -327,6 +327,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		buttons.setLayout(layout);
+		buttons.setFont(font);
 		
 		fAddButton = createPushButton(buttons, JREMessages.getString("InstalledJREsBlock.3")); //$NON-NLS-1$
 		fAddButton.addListener(SWT.Selection, new Listener() {

@@ -92,17 +92,15 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		layout.numColumns= 1;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		parent.setLayout(layout);		
-		
-		GridData data;
+		parent.setLayout(layout);
+		parent.setFont(font);
 					
 		fJREBlock = new InstalledJREsBlock();
 		fJREBlock.createControl(parent);
 		Control control = fJREBlock.getControl();
-		data = new GridData(GridData.FILL_BOTH);
+		GridData data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 1;
 		control.setLayoutData(data);
-		control.setFont(font);
 		
 		fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
 						
