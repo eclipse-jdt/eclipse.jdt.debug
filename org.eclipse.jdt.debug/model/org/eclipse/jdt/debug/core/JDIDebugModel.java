@@ -402,7 +402,7 @@ public class JDIDebugModel {
 	 *  which to create the breakpoint
 	 * @param caught whether to suspend in caught locations
 	 * @param uncaught whether to suspend in uncaught locations
- 	 * @param checked whether the exception is a checked exception (i.e. complier
+ 	 * @param checked whether the exception is a checked exception (i.e. compiler
  	 *  detected)
  	 * @param register whether to add this breakpoint to the breakpoint manager
  	 * @param attributes a map of client defined attributes that should be assigned
