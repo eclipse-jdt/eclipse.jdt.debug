@@ -26,7 +26,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DefaultObjectBrowser;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaType;
@@ -55,15 +54,15 @@ public class JavaObjectBrowser extends DefaultObjectBrowser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IObjectBrowser#getChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.debug.core.model.IValue)
 	 */
-	public IVariable[] getChildren(IDebugView view, IValue value) throws DebugException {
+	public IVariable[] getChildren(IValue value) throws DebugException {
 		IJavaObjectBrowser objectBrowser = getObjectBrowser(value);		
 		if (objectBrowser == null) {
-			return super.getChildren(view, value);
+			return super.getChildren(value);
 		}
-		IJavaVariable[] result = objectBrowser.getChildren(view, (IJavaValue)value);
+		IJavaVariable[] result = objectBrowser.getChildren((IJavaValue)value);
 		// If specified content provider can't get children, defer to the default content provider
 		if (result == null) {
-			return super.getChildren(view, value);
+			return super.getChildren(value);
 		}
 		return result;
 	}
@@ -71,12 +70,12 @@ public class JavaObjectBrowser extends DefaultObjectBrowser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IObjectBrowser#hasChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.debug.core.model.IValue)
 	 */
-	public boolean hasChildren(IDebugView view, IValue value) throws DebugException {
+	public boolean hasChildren(IValue value) throws DebugException {
 		IJavaObjectBrowser objectBrowser = getObjectBrowser(value);		
 		if (objectBrowser == null) {
-			return super.hasChildren(view, value);
+			return super.hasChildren(value);
 		}
-		return objectBrowser.hasChildren(view, (IJavaValue)value);
+		return objectBrowser.hasChildren((IJavaValue)value);
 	}
 
 	protected IJavaObjectBrowser getObjectBrowser(IValue value) throws DebugException {

@@ -11,7 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -33,12 +32,12 @@ public class JavaUtilCollectionObjectBrowser extends AbstractJavaObjectBrowser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#getChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
-	public IJavaVariable[] getChildren(IDebugView view, IJavaValue value) throws DebugException {
+	public IJavaVariable[] getChildren(IJavaValue value) throws DebugException {
 		IJavaObject objectValue = getObjectValue(value);
 		if (objectValue == null) {
 			return null;
 		}
-		IJavaThread javaThread = getJavaThread(view, objectValue);		
+		IJavaThread javaThread = getJavaThread(objectValue);		
 		if (javaThread == null) {
 			return null;	
 		}
@@ -55,7 +54,7 @@ public class JavaUtilCollectionObjectBrowser extends AbstractJavaObjectBrowser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#hasChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
-	public boolean hasChildren(IDebugView view, IJavaValue value) throws DebugException {
+	public boolean hasChildren(IJavaValue value) throws DebugException {
 		return true;
 	}
 	

@@ -13,8 +13,6 @@ package org.eclipse.jdt.debug.ui;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.debug.ui.IRootVariablesContentProvider;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -47,45 +45,12 @@ public abstract class AbstractJavaObjectBrowser implements IJavaObjectBrowser {
 	}
 	
 	/**
-	 * Return the java thread associated with the specified debug view.  If there is none,
-	 * return the java thread associated with the specified java value, or <code>null</code>
-	 * if there is none.
-	 */
-	protected IJavaThread getJavaThread(IDebugView view, IJavaValue value) {
-		IJavaThread javaThread = getJavaThreadFor(view);
-		if (javaThread == null) {
-			javaThread = getJavaThreadFor(value);
-		}
-		return javaThread;
-	}
-	
-	/**
-	 * Return the java thread corresponding to the current stack frame input in the
-	 * variables view.
-	 * 
-	 * @param view the debug view in which to look for the java thread
-	 * @return the java thread corresponding to the current stack frame input in the
-	 * variables view
-	 */
-	protected IJavaThread getJavaThreadFor(IDebugView view) {
-		IRootVariablesContentProvider rootCP = (IRootVariablesContentProvider) view.getAdapter(IRootVariablesContentProvider.class);
-		if (rootCP == null) {
-			return null;
-		}
-		IJavaThread javaThread = (IJavaThread) rootCP.getThread();		
-		if (javaThread != null && javaThread.isSuspended()) {
-			return javaThread;
-		}
-		return null;
-	}
-	
-	/**
 	 * Return the java thread corresponding to the specified java value.
 	 * 
 	 * @param javaValue the java value 
 	 * @return the java thread corresponding to the specified java value
 	 */
-	protected IJavaThread getJavaThreadFor(IJavaValue javaValue) {
+	protected IJavaThread getJavaThread(IJavaValue javaValue) {
 		if (javaValue == null) {
 			return null;
 		}

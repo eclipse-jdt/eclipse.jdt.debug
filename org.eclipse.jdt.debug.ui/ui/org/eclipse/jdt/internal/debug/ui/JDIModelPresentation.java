@@ -155,7 +155,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	
 	/**
 	 * Returns a thread from the specified VM that can be
-	 * used for an evaluationm or <code>null</code> if
+	 * used for an evaluation or <code>null</code> if
 	 * none.
 	 * 
 	 * @param debug target the target in which a thread is 

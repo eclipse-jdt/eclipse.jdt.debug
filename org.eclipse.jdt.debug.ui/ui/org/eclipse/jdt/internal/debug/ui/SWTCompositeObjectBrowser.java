@@ -37,12 +37,12 @@ public class SWTCompositeObjectBrowser extends AbstractJavaObjectBrowser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#getChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
-	public IJavaVariable[] getChildren(IDebugView view, IJavaValue value) throws DebugException {
+	public IJavaVariable[] getChildren(IJavaValue value) throws DebugException {
 		IJavaObject objectValue = getObjectValue(value);
 		if (objectValue == null) {
 			return null;
 		}
-		IJavaThread javaThread = getJavaThread(view, value);		
+		IJavaThread javaThread = getJavaThread(value);		
 		if (javaThread == null) {
 			return null;	
 		}
@@ -70,7 +70,7 @@ public class SWTCompositeObjectBrowser extends AbstractJavaObjectBrowser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.IJavaObjectBrowser#hasChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.jdt.debug.core.IJavaValue)
 	 */
-	public boolean hasChildren(IDebugView view, IJavaValue value) throws DebugException {
+	public boolean hasChildren(IJavaValue value) throws DebugException {
 		// It's safe to always return true here, since a Composite will always have a
 		// layout, even if it's null
 		return true;
