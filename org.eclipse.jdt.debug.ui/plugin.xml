@@ -2403,8 +2403,7 @@
       <contextViewBinding
             viewId="org.eclipse.jdt.debug.ui.DisplayView"
             contextId="org.eclipse.jdt.debug.ui.debugging"
-            autoOpen="false"
-            autoClose="false">
+            autoOpen="false">
       </contextViewBinding>
       <contextViewBinding
             viewId="org.eclipse.jdt.debug.ui.MonitorsView"
