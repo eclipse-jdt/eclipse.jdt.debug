@@ -731,7 +731,6 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 					if (sl == null || sl instanceof JavaSourceLocator) {
 						IJavaProject jp = JavaLaunchConfigurationUtils.getJavaProject(config);
 						if (jp != null) {
-							
 								JavaUISourceLocator jsl = new JavaUISourceLocator(jp);
 								launch.setSourceLocator(jsl);
 						}

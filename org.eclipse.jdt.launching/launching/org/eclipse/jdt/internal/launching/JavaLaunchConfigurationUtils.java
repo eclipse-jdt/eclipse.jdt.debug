@@ -58,17 +58,23 @@ public class JavaLaunchConfigurationUtils {
 	 * <code>CoreException</code> whose message explains why this couldn't be done.
 	 */
 	public static IType getMainType(ILaunchConfiguration configuration) throws CoreException {
-		return getMainType(configuration, getJavaProject(configuration));
+		IJavaProject project = getJavaProject(configuration);
+		if (project == null) {
+			abort(LaunchingMessages.getString("JavaLaunchConfigurationUtils.No_project_specified_1"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT); //$NON-NLS-1$
+		}
+		return getMainType(configuration, project);
 	}
 	
 	/**
-	 * Return the <code>IJavaProject</code> referenced in the specified configuration or throw a
-	 * <code>CoreException</code> whose message explains why this couldn't be done.
+	 * Return the <code>IJavaProject</code> referenced in the specified configuration or
+	 * <code>null</code> if none.
+	 *
+	 * @exception CoreException if the referenced Java project does not exist
 	 */
 	public static IJavaProject getJavaProject(ILaunchConfiguration configuration) throws CoreException {
 		String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 		if ((projectName == null) || (projectName.trim().length() < 1)) {
-			abort(LaunchingMessages.getString("JavaLaunchConfigurationUtils.No_project_specified_1"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT); //$NON-NLS-1$
+			return null;
 		}			
 		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);		
 		if ((javaProject == null) || !javaProject.exists()) {

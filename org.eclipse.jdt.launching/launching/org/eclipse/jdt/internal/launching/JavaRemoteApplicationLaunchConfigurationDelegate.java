@@ -68,8 +68,10 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 			if (id == null) {
 				IJavaProject javaProject = JavaLaunchConfigurationUtils.getJavaProject(configuration);
-				ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
-				launch.setSourceLocator(sourceLocator);
+				if (javaProject != null) {
+					ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
+					launch.setSourceLocator(sourceLocator);
+				}
 			}
 		}
 	}
