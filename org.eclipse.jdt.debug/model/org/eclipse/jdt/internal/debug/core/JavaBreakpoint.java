@@ -167,8 +167,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Returns the requests that this breakpoint has installed
 	 * in the given target.
 	 */
-	protected List getRequests(JDIDebugTarget target) {
-		List list= (List)fRequestsByTarget.get(target);
+	protected ArrayList getRequests(JDIDebugTarget target) {
+		ArrayList list= (ArrayList)fRequestsByTarget.get(target);
 		if (list == null) {
 			list= new ArrayList(0);
 		}
@@ -349,7 +349,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * given target to reflect the current state of this breakpoint.
 	 */
 	protected void changeForTarget(JDIDebugTarget target) throws CoreException {
-		List requests = getRequests(target);
+		// Must iterate over a copy of the requests because updating a
+		// request will modify the underlying list.
+		ArrayList requests = (ArrayList) getRequests(target).clone();
 		if (!requests.isEmpty()) {
 			Iterator iter = requests.iterator();
 			while (iter.hasNext()) {
