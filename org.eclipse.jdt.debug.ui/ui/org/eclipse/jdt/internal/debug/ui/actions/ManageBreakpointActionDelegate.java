@@ -13,9 +13,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
@@ -26,8 +23,6 @@ import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
-import org.eclipse.jdt.ui.IWorkingCopyManager;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -50,6 +45,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * by the source shown in the active Java Editor.
  */
 public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDelegate, IBreakpointListener, IPartListener {
+	
+	private boolean fInitialized= false;
 	private IAction fAction= null;
 	private int fLineNumber;
 	private IType fType= null;
@@ -137,30 +134,15 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	}
 	
 	protected IType getType0(ITextSelection selection, IEditorInput editorInput) {
+		IMember member= ActionDelegateHelper.getDefault().getCurrentMember(selection);
 		IType type= null;
-		try {
-			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
-			if (classFile != null) {
-				type = classFile.getType();
-				setType(type);
-			} else {
-				IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
-				ICompilationUnit unit= manager.getWorkingCopy(editorInput);
-				if (unit == null) {
-					return null;
-				}
-				IJavaElement e = unit.getElementAt(selection.getOffset());
-				if (e instanceof IType) {
-					type = (IType)e;
-				} else if (e != null && e instanceof IMember) {
-					type = ((IMember) e).getDeclaringType();
-				}
-				
-				setType(type);
-			}
-		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.log(jme);
+		if (member instanceof IType) {
+			type = (IType)member;
+		} else if (member != null) {
+			type= member.getDeclaringType();
 		}
+	
+		setType(type);
 		return type;
 	}
 	
@@ -178,18 +160,43 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		setPluginAction(action);
-		update();
+		if (!fInitialized) {
+			setAction(action);
+			if (getWorkbenchWindow() != null) {
+				IWorkbenchPage page= getWorkbenchWindow().getActivePage();
+				if (page != null) {
+					IEditorPart part= page.getActiveEditor();
+					if (part instanceof ITextEditor) {
+						if (!(part instanceof JavaSnippetEditor)) {
+							setTextEditor((ITextEditor)part);
+						}
+					}
+				}
+			}
+			fInitialized= true;
+		}
+		update(selection);
+		
 	}
 		
+	protected void update(ISelection selection) {
+		if (selection instanceof ITextSelection) {
+			//only interested in text selection changes
+			update();
+		}
+	}
+	
 	protected void update() {
-		IAction action= getPluginAction();
+		IAction action= getAction();
 		if (action != null) {
 			if (getTextEditor() != null) {
 				boolean exists= breakpointExists(getTextEditor().getEditorInput());
-				getPluginAction().setText(exists && getType() != null ? ADD_TEXT : REMOVE_TEXT);
+				action.setText(exists && getType() != null ? ADD_TEXT : REMOVE_TEXT);
 			}
 			action.setEnabled(getTextEditor()!= null && getType() != null);
+			if (!action.isEnabled()) {
+				action.setText(ADD_TEXT);
+			}
 		}
 	}
 	
@@ -209,11 +216,11 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 		fType = type;
 	}
 	
-	protected IAction getPluginAction() {
+	protected IAction getAction() {
 		return fAction;
 	}
-	
-	protected void setPluginAction(IAction action) {
+
+	protected void setAction(IAction action) {
 		fAction = action;
 	}
 	
@@ -320,15 +327,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	public void init(IWorkbenchWindow window) {
 		setWorkbenchWindow(window);
-		IWorkbenchPage page= window.getActivePage();
-		if (page != null) {
-			IEditorPart part= page.getActiveEditor();
-			if (part instanceof ITextEditor) {
-				if (!(part instanceof JavaSnippetEditor)) {
-					setTextEditor((ITextEditor)part);
-				}
-			}
-		}
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 		window.getPartService().addPartListener(this);
 	}

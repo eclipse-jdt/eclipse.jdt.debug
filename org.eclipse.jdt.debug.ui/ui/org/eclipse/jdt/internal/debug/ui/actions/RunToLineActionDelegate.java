@@ -154,8 +154,8 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	 * Updates the enabled state of this action and the plugin action
 	 * this action is the delegate for.
 	 */
-	public void update() {
-		IAction action= getPluginAction();
+	protected void update() {
+		IAction action= getAction();
 		if (action != null) {
 			try {
 				IDebugTarget target= getContext();
@@ -190,7 +190,7 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		setPluginAction(action);
+		setAction(action);
 		if (targetEditor instanceof ITextEditor) {
 			setTextEditor((ITextEditor)targetEditor);
 		}

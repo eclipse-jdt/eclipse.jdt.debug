@@ -42,17 +42,11 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActionDelegate {
-	
-	/**
-	 * Cache of fields that have already been searched for and found
-	 * key: The variable to be search on (IJavaVariable)
-	 * value: The field that was found (IField)
-	 */
-	private Map fFoundFields= new HashMap();
 	
 	public ManageWatchpointActionDelegate() {
 		super();
@@ -142,7 +136,8 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 					return getField((IJavaFieldVariable) o);
 				}
 			}
-		}
+		} 
+		
 		return null;
 	}
 	
@@ -150,23 +145,21 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	 * Return the associated IField (Java model) for the given
 	 * IJavaFieldVariable (JDI model)
 	 */
-	public IField getField(IJavaFieldVariable variable) {
-		IField field= (IField)fFoundFields.get(variable);
-		if (field != null) {
-			return field;
+	protected IField getField(IJavaFieldVariable variable) {
+		String varName= null;
+		try {
+			varName= variable.getName();
+		} catch (DebugException x) {
+			JDIDebugUIPlugin.log(x);
+			return null;
 		}
+		IField field;
 		List types= searchForDeclaringType(variable);
 		Iterator iter= types.iterator();
 		while (iter.hasNext()) {
-			try {
-				field= ((IType)iter.next()).getField(variable.getName());
-			} catch (DebugException x) {
-				JDIDebugUIPlugin.log(x);
-			}
-			if (field != null) {
-				// Return the first Java model field that is found which
-				// matches the JDI model field.
-				fFoundFields.put(variable, field);
+			IType type= (IType)iter.next();
+			field= type.getField(varName);
+			if (field.exists()) {
 				return field;
 			}
 		}
@@ -267,6 +260,12 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 			typeName= typeName.substring(lastInnerClass + 1);
 		}
 		return typeName.toCharArray();
+	}
+	/**
+	 * @see AbstractManageBreakpointActionDelegate#enableForMember(IMember)
+	 */
+	protected boolean enableForMember(IMember member) {
+		return member instanceof IField;
 	}
 }
 

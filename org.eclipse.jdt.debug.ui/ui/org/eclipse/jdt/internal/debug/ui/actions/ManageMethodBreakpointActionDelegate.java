@@ -15,9 +15,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -25,7 +22,6 @@ import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -40,23 +36,6 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 		fAddDescription= ActionMessages.getString("ManageMethodBreakpointAction.Add_a_method_breakpoint_2"); //$NON-NLS-1$
 		fRemoveText= ActionMessages.getString("ManageMethodBreakpointAction.Remove_&Method_Breakpoint_4"); //$NON-NLS-1$
 		fRemoveDescription= ActionMessages.getString("ManageMethodBreakpointAction.Remove_a_method_breakpoint_5"); //$NON-NLS-1$
-	}
-		
-	protected void update() {
-		IMember member= getMember();
-		if (member instanceof IMethod) {
-			IMethod method= (IMethod)member;
-			if (method.isBinary()) { // only add to class files
-				getAction().setEnabled(true);
-				setBreakpoint(getBreakpoint(method));
-				boolean doesNotExist= getBreakpoint() == null;
-				getAction().setText(doesNotExist ? fAddText : fRemoveText);
-				getAction().setDescription(doesNotExist ? fAddDescription : fRemoveDescription);
-				return;
-			}
-		}
-		
-		getAction().setEnabled(false);
 	}
 	
 	protected IJavaBreakpoint getBreakpoint(IMember method) {
@@ -88,11 +67,6 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 				if (o instanceof IMethod) {
 					return (IMethod) o;
 				}
-			}
-		} else if (s instanceof ITextSelection) {
-			ITextSelection ts= (ITextSelection)s;
-			if (getTextEditor() != null) {
-				return getMember0(ts, getTextEditor().getEditorInput());
 			}
 		}
 		return null;
@@ -138,32 +112,10 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 		update();
 	}
 	
-	protected String resolveMethodSignature(IMethod method) {
-		try {
-			IType type= method.getDeclaringType();
-			String signature= method.getSignature();
-			String[] pTypes= Signature.getParameterTypes(signature);
-			String returnType= Signature.getReturnType(signature);
-			String[] resolvedTypes= new String[pTypes.length];
-			for (int i = 0; i < pTypes.length; i++) {
-				String unresolvedTypeName= pTypes[i];
-				unresolvedTypeName= unresolvedTypeName.substring(1, unresolvedTypeName.length() - 2);
-				String[][] resolvedTypeNames= type.resolveType(unresolvedTypeName);
-				if (resolvedTypeNames == null || resolvedTypeNames.length > 1) {
-					//cannot be uniquely resolved
-					return null;
-				}
-				StringBuffer buf= new StringBuffer();
-				for (int j= 0; j < resolvedTypeNames[0].length; j++) {
-					buf.append(resolvedTypeNames[0][j]);
-				}
-				resolvedTypes[i]= buf.toString();
-			}
-			
-			return Signature.createMethodSignature(resolvedTypes, returnType);	
-		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.log(jme);
-			return null;
-		} 
+	/**
+	 * @see AbstractManageBreakpointActionDelegate#enableForMember(IMember)
+	 */
+	protected boolean enableForMember(IMember member) {
+		return member instanceof IMethod && member.isBinary();
 	}
 }
