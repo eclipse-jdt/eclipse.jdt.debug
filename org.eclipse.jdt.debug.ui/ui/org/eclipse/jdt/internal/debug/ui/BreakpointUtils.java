@@ -131,7 +131,7 @@ public class BreakpointUtils {
 		}
 		
 		IMember member = null;
-		if ((type != null) && (end >= start) && (start >= 0)) {
+		if ((type != null && type.exists()) && (end >= start) && (start >= 0)) {
 			member= binSearch(type, start, end);
 		}
 		if (member == null) {
