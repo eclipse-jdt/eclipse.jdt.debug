@@ -9,7 +9,10 @@ import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 
-import com.sun.jdi.*;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Value;
 
 /**
  * Represents the receiver in a stack frame.
