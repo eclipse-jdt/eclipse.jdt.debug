@@ -23,7 +23,6 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.launching.JREContainer;
 import org.eclipse.jdt.internal.launching.JREContainerInitializer;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
@@ -161,7 +160,6 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 							}
 						}
 					} catch (CoreException e) {
-						JDIDebugUIPlugin.log(e);
 					}
 				}
 				return entry.getPath().toString();
