@@ -125,7 +125,7 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 		if (debugTargetName != null) {
 			buffer.append('[' + debugTargetName + "]&nbsp;"); //$NON-NLS-1$ 
 		}
-		buffer.append("<pre>").append(variable.getName()).append("</pre>");
+		buffer.append("<pre>").append(variable.getName()).append("</pre>"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append(" ="); //$NON-NLS-1$
 		
 		String type= getTypeName(variable);
@@ -142,7 +142,7 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 			buffer.append(value);
 		} else {
 			buffer.append(" ("); //$NON-NLS-1$
-			buffer.append("<pre>").append(type).append("</pre>");
+			buffer.append("<pre>").append(type).append("</pre>"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append(") "); //$NON-NLS-1$
 			buffer.append(value);			
 		}		
