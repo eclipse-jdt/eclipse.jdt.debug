@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
@@ -82,6 +83,29 @@ public class SourceLocationTests extends AbstractDebugTest {
 		assertEquals("1st locations not equal", location1, locations[0]);
 		assertEquals("2nd locations not equal", location2, locations[1]);
 		assertEquals("3rd locations not equal", location3, locations[2]);
+	}
+	
+	public void testJavaUISourceLocatorMemento() throws Exception {
+		IJavaSourceLocation location1 = new JavaProjectSourceLocation(getJavaProject());
+		File dir = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+		IJavaSourceLocation location2 = new DirectorySourceLocation(dir);
+		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
+		IJavaSourceLocation location3 = new ArchiveSourceLocation(JavaRuntime.getLibraryLocations(vm)[0].getSystemLibraryPath().toOSString(), null);
+		
+		JavaUISourceLocator locator = new JavaUISourceLocator(getJavaProject());
+		locator.setSourceLocations(new IJavaSourceLocation[] {location1, location2, location3});
+		locator.setFindAllSourceElement(true);
+		
+		String memento = locator.getMemento();
+		JavaUISourceLocator restored = new JavaUISourceLocator();
+		restored.initializeFromMemento(memento);
+		IJavaSourceLocation[] locations = restored.getSourceLocations();
+		
+		assertEquals("wrong number of source locations", 3, locations.length);
+		assertEquals("1st locations not equal", location1, locations[0]);
+		assertEquals("2nd locations not equal", location2, locations[1]);
+		assertEquals("3rd locations not equal", location3, locations[2]);
+		assertTrue("Should find all source locations", locator.isFindAllSourceElements());		
 	}
 	
 	public void testPackageFragmentRootLocationMemento() throws Exception {
