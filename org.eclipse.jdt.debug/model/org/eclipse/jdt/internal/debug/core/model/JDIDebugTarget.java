@@ -43,7 +43,6 @@ import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
-import sun.security.util.Debug;
 
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ReferenceType;
