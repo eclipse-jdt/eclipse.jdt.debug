@@ -113,7 +113,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * <li>Method exit (value <code>EXIT_EVENT</code>)</li>
 	 * </ol>
 	 */
-	private HashMap fLastEventTypes= new HashMap(10); //$NON-NLS-1$
+	private Map fLastEventTypes= new HashMap(10); //$NON-NLS-1$
 	
 	/**
 	 * Used to match type names 
@@ -413,7 +413,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			// simulate hit count
 			Integer count = (Integer)event.request().getProperty(HIT_COUNT);
 			if (count != null) {
-				return handleHitCount(event, count, target, thread);
+				return handleHitCount(event, count, thread);
 			} else {
 				// no hit count - suspend
 				return !suspend(thread); // resume if suspend fails
@@ -430,7 +430,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * When a method event is received, decrement the hit count
 	 * property on the request and suspend if the hit count reaches 0.
 	 */
-	private boolean handleHitCount(LocatableEvent event, Integer count, JDIDebugTarget target, JDIThread thread) {	
+	private boolean handleHitCount(LocatableEvent event, Integer count, JDIThread thread) {	
 	// decrement count and suspend if 0
 		int hitCount = count.intValue();
 		if (hitCount > 0) {
