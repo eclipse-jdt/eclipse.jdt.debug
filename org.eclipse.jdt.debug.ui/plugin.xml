@@ -2220,7 +2220,7 @@
             id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeRename"> 
          <enablement>
            <with variable="affectedNatures">
-             <iterate>
+             <iterate operator="or">
                <equals value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
@@ -2235,7 +2235,7 @@
             id="org.eclipse.jdt.debug.refactoring.launchConfigurationIJavaProjectRename">
          <enablement>
            <with variable="affectedNatures">
-             <iterate>
+             <iterate operator="or">
                <equals value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
@@ -2250,7 +2250,7 @@
       		id="org.eclipse.jdt.debug.refractoring.launchConfigurationIPackageFragmentRename">
          <enablement>
            <with variable="affectedNatures">
-             <iterate>
+             <iterate operator="or">
                <equals value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
@@ -2265,7 +2265,7 @@
       		id="org.eclipse.jdt.debug.refractoring.javaWatchpointIFieldRename">
          <enablement>
            <with variable="affectedNatures">
-             <iterate>
+             <iterate operator="or">
                <equals value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
@@ -2280,7 +2280,7 @@
                id="org.eclipse.jdt.debug.refractoring.javaMethodBreakpointIMethodRename">
          <enablement>
            <with variable="affectedNatures">
-             <iterate>
+             <iterate operator="or">
                <equals value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
@@ -2296,7 +2296,7 @@
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointITypeRename">
          <enablement>
            <with variable="affectedNatures">
-             <iterate>
+             <iterate operator="or">
                <equals value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
@@ -2313,7 +2313,7 @@
             id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeMove">
          <enablement>
            <with variable="affectedNatures">
-             <iterate>
+             <iterate operator="or">
                <equals value="org.eclipse.jdt.core.javanature"/>
              </iterate>
            </with>
