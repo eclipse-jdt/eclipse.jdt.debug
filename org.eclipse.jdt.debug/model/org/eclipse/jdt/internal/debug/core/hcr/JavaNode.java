@@ -7,7 +7,7 @@ package org.eclipse.jdt.internal.debug.core.hcr;
 
 import java.util.ArrayList;
 
-import org.eclipse.jdt.internal.compiler.parser.InvalidInputException;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.eclipse.jdt.internal.compiler.parser.Scanner;
 import org.eclipse.jdt.internal.compiler.parser.TerminalSymbols;
 import org.eclipse.jdt.internal.core.JavaElement;
