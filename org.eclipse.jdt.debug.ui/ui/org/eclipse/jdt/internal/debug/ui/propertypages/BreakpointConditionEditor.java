@@ -54,8 +54,6 @@ public class BreakpointConditionEditor {
 		
 	private String fOldValue;
 	private String fErrorMessage;
-		
-	private Composite fParent;
 	
 	private JavaLineBreakpointPage fPage;
 	private IJavaLineBreakpoint fBreakpoint;
@@ -73,8 +71,6 @@ public class BreakpointConditionEditor {
 		}
 		fErrorMessage= PropertyPageMessages.getString("BreakpointConditionEditor.1"); //$NON-NLS-1$
 		fOldValue= ""; //$NON-NLS-1$
-		
-		fParent= parent;
 			
 		// the source viewer
 		fViewer= new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -236,7 +232,6 @@ public class BreakpointConditionEditor {
 	}
 	
 	public void valueChanged() {
-		boolean oldState= fIsValid;
 		refreshValidState();
 				
 		String newValue = fViewer.getDocument().get();
