@@ -22,6 +22,7 @@ import org.eclipse.jdt.ui.IWorkingCopyManager;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWindowListener;
@@ -113,7 +114,11 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 			return null;
 		}
 		IEditorInput editorInput= editor.getEditorInput();
-		ITextSelection selection= (ITextSelection)editor.getSelectionProvider().getSelection();
+		ISelectionProvider sp= editor.getSelectionProvider();
+		if (sp == null) {
+			return null;
+		}
+		ITextSelection selection= (ITextSelection)sp.getSelection();
 		IMember m= null;
 		try {
 			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
