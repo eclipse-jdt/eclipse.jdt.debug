@@ -110,7 +110,6 @@ public abstract class AbstractAddRemoveBreakpointActionDelegate extends PartEven
 		return AST.parseCompilationUnit(content.toCharArray());
 	}
 	
-
 	/**
 	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
 	 */
@@ -169,13 +168,4 @@ public abstract class AbstractAddRemoveBreakpointActionDelegate extends PartEven
 		ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), "Error", null, e.getStatus());
 	}
 	
-	/**
-	 * Returns the offset in the given complation unit, that is closest
-	 * to the specified pffset, at which a line breakpoint may be placed.
-	 * Returns -1 if there is no offset that supports a breakpoint.
-	 * 	 * @param compilationUnit	 * @param offset	 * @return closest line number at which a valid breakpoint may be set	 */
-	protected int verifyBreakpointLocation(CompilationUnit compilationUnit, int offset) {
-		BreakpointLocationVerifier verifier = new BreakpointLocationVerifier(offset, compilationUnit);
-		return verifier.verifyLocation();
-	}
 }
