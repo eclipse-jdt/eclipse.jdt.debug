@@ -14,10 +14,9 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.IJavaPartitions;
-import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -42,7 +41,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
@@ -230,11 +228,7 @@ public class JDISourceViewer extends SourceViewer implements IPropertyChangeList
 	 * @return the Java UI preferences
 	 */
 	protected IPreferenceStore getPreferenceStore() {
-		// TODO need and API way of getting the Java UI plugin.  Here we cannot go to the 
-		// general preference store mechanism as getPreferenceStore() is part of a different
-		// preference mechanism.
-		AbstractUIPlugin p= (AbstractUIPlugin)Platform.getPlugin(JavaUI.ID_PLUGIN);
-		return p.getPreferenceStore();
+		return PreferenceConstants.getPreferenceStore();
 	}
 	
 	/**
