@@ -94,14 +94,15 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 													: "MacOSXVMType.jvmName");				//$NON-NLS-1$
 						vm.setName(MessageFormat.format(format, new Object[] { version } ));
 						vm.setLibraryLocations(getDefaultLibraryLocations(home));
-						URL doc= getDefaultJavaDocLocation(version);
+						URL doc= getDefaultJavadocLocation(home);
 						if (doc != null)
 							vm.setJavadocLocation(doc);
 						
-						IVMInstall vm2= vm.convertToRealVM();
+						IVMInstall rvm= vm.convertToRealVM();
+						
 						if (currentJDK.equals(versions[i])) {
 							try {
-								JavaRuntime.setDefaultVMInstall(vm2, null);
+								JavaRuntime.setDefaultVMInstall(rvm, null);
 							} catch (CoreException e) {
 								// exception intentionally ignored
 							}
@@ -116,16 +117,7 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 	 * @see IVMInstallType#getDefaultSystemLibraryDescription(File)
 	 */
 	public LibraryLocation[] getDefaultLibraryLocations(File installLocation) {
-		
-		// HACK
-//		String id= "1.4.1";
-//		URL url= getDefaultJavaDocLocation(id);
-//		if (url != null) {
-//			IVMInstall vm= findVMInstall(id);
-//			if (vm != null)
-//				vm.setJavadocLocation(url);
-//		}
-		
+				
 		IPath libHome= new Path(installLocation.toString()); //$NON-NLS-1$
 		libHome= libHome.append(".."); //$NON-NLS-1$
 		libHome= libHome.append("Classes"); //$NON-NLS-1$
@@ -143,9 +135,19 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 		};
 	}
 	
-	private URL getDefaultJavaDocLocation(String id) {
+	public URL getDefaultJavadocLocation(File installLocation) {
+		String id= null;	
+		try {
+			String post= File.separator + JVM_ROOT;
+			String path= installLocation.getCanonicalPath();
+			if (path.startsWith(JVM_VERSION_LOC) && path.endsWith(post))
+				id= path.substring(JVM_VERSION_LOC.length(), path.length()-post.length());
+		} catch (IOException ex) {
+		}
+		if (id == null)
+			return null;
+				
 		URL doc= null;
-		
 		// first try in local filesystem
 		File docLocation= new File(JAVADOC_LOC + id);
 		if (docLocation.exists()) {
