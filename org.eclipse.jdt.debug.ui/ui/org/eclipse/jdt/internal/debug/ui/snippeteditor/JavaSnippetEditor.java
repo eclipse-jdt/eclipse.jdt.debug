@@ -369,8 +369,12 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				fEvaluationContext= project.newEvaluationContext();
 			}
 		}
-		if (fEvaluationContext != null && getImports() != null) {		
-			fEvaluationContext.setImports(getImports());
+		if (fEvaluationContext != null) {
+			if (getImports() != null) {		
+				fEvaluationContext.setImports(getImports());
+			} else {
+				fEvaluationContext.setImports(new String[]{});
+			}
 		}
 		return fEvaluationContext;
 	}
@@ -472,9 +476,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			return;
 		}
 		try {
-			if (getImports() != null) {
-				getEvaluationEngine().setImports(getImports());
-			}
 			getEvaluationEngine().evaluate(snippet,getThread(), this, true);
 		} catch (DebugException e) {
 			JDIDebugUIPlugin.log(e);
@@ -1101,6 +1102,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			IPath outputLocation =	getJavaProject().getProject().getPluginWorkingLocation(JDIDebugUIPlugin.getDefault().getDescriptor());
 			java.io.File f = new java.io.File(outputLocation.toOSString());
 			fEngine = EvaluationManager.newClassFileEvaluationEngine(getJavaProject(), (IJavaDebugTarget)getThread().getDebugTarget(), f);
+		}
+		if (getImports() != null) {
+			fEngine.setImports(getImports());
+		} else {
+			fEngine.setImports(new String[]{});
 		}
 		return fEngine;
 	}
