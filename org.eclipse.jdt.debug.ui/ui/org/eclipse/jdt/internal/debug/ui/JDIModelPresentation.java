@@ -216,8 +216,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return null;
 			} else if (item instanceof IBreakpoint) {
 				return getBreakpointText((IBreakpoint)item);
-			} else if (item instanceof JavaWatchExpression) {
-				return getWatchExpressionText((JavaWatchExpression)item);
 			} else if (item instanceof IExpression) {
 				return getExpressionText((IExpression)item);
 			} else {
@@ -796,8 +794,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (expression instanceof JavaInspectExpression) {
 			image= JavaDebugImages.DESC_OBJ_JAVA_INSPECT_EXPRESSION;
 			bigSize = true;
-		} else if (expression instanceof JavaWatchExpression) {
-			image= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_EXPRESSION);
 		}
 		if (image == null) {
 			return null;
@@ -1473,50 +1469,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		return null;
 	}
 	
-	protected String getWatchExpressionText(JavaWatchExpression watchExpression) throws DebugException {
-		StringBuffer result= new StringBuffer();
-		result.append('"').append(watchExpression.getExpressionText()).append('"');
-		if (watchExpression.isPending()) {
-			result.append(DebugUIMessages.getString("JDIModelPresentation._(pending)_1")); //$NON-NLS-1$
-		} else if (watchExpression.hasErrors()) {
-			result.append(DebugUIMessages.getString("JDIModelPresentation._<error(s)_during_the_evaluation>_2")); //$NON-NLS-1$
-		} else {
-			IJavaValue javaValue= (IJavaValue) watchExpression.getValue();
-			if (javaValue != null) {
-				String typeName=null;
-				try {
-					typeName= javaValue.getReferenceTypeName();
-				} catch (DebugException exception) {
-					// ObjectCollectedException is an expected exception which will
-					// occur if the inspected object has been garbage collected.
-					if (exception.getStatus().getException() instanceof ObjectCollectedException) {
-						return DebugUIMessages.getString("JDIModelPresentation.<garbage_collected_object>_6"); //$NON-NLS-1$
-					} else {
-						throw exception;
-					}
-				}
-				if (isShowVariableTypeNames()) {
-					typeName= getQualifiedName(typeName);
-					if (typeName.length() > 0) {
-						result.insert(0, ' ').insert(0,typeName);
-					}
-				}
-	
-				String valueString= getValueText(javaValue);
-				if (valueString.length() > 0) {
-					result.append("= ").append(valueString); //$NON-NLS-1$
-				}
-			}
-		}
-		if (watchExpression.isObsolete()) {
-			result.append(DebugUIMessages.getString("JDIModelPresentation._(obsolete)_1")); //$NON-NLS-1$
-		}
-		if (!watchExpression.isEnabled()) {
-			result.append(DebugUIMessages.getString("JDIModelPresentation._(disabled)_3")); //$NON-NLS-1$
-		}
-		return result.toString();
-	}
-
 	protected String getQualifiedName(String qualifiedName) {
 		if (!isShowQualifiedNames()) {
 			int index= qualifiedName.lastIndexOf('.');
