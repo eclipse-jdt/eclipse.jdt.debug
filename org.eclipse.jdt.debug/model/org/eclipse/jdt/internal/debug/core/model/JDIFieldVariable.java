@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 
 import com.sun.jdi.ClassNotLoadedException;
@@ -252,6 +253,13 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 			return fField.hashCode() + fObject.hashCode();
 		}
 		return fField.hashCode();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaFieldVariable#getObject()
+	 */
+	public IJavaObject getReceiver() {
+		return (IJavaObject)JDIValue.createValue(getJavaDebugTarget(), getObjectReference());
 	}
 
 }

@@ -40,12 +40,14 @@ import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
@@ -1034,6 +1036,19 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		buff.append(varLabel);
 
+		// add declaring type name if required
+		if (var instanceof IJavaFieldVariable) {
+			IJavaFieldVariable field = (IJavaFieldVariable)var;
+			if (isDuplicateName(field)) {
+				String decl;
+				try {
+					decl = field.getDeclaringType().getName();
+					buff.append(MessageFormat.format(" ({0})", new String[]{getQualifiedName(decl)})); //$NON-NLS-1$
+				} catch (DebugException e) {
+				}
+			}
+		}
+		
 		String valueString= DebugUIMessages.getString("JDIModelPresentation<unknown_value>_3"); //$NON-NLS-1$
 		try {
 			IJavaValue javaValue= (IJavaValue) var.getValue();
@@ -1556,5 +1571,26 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fJavaLabelProvider = new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);		
 		}
 		return fJavaLabelProvider;
+	}
+	
+	/**
+	 * Returns whether the given field variable has the same name as any variables
+	 * @param variable
+	 * @return
+	 */
+	protected boolean isDuplicateName(IJavaFieldVariable variable) {
+		IJavaObject javaObject = variable.getReceiver();
+		try {
+			String[] names = ((IJavaReferenceType)javaObject.getJavaType()).getAllFieldNames();
+			int occurrences = 0;
+			for (int i = 0; i < names.length; i++) {
+				if (variable.getName().equals(names[i])) {
+					occurrences++;
+				}
+			}
+			return occurrences > 1;
+		} catch (DebugException e) {
+		}
+		return false;
 	}
 }
