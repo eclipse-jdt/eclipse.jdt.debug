@@ -25,7 +25,7 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	 */
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
 		IVMInstall configJRE = JavaRuntime.computeVMInstall(configuration);
-		return resolveLibraryLocations(configJRE);
+		return resolveLibraryLocations(configJRE, entry.getClasspathProperty());
 	}
 	
 	/**
@@ -33,15 +33,14 @@ public class JRERuntimeClasspathEntryResolver implements IRuntimeClasspathEntryR
 	 */
 	public IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
 		IVMInstall projectJRE = JavaRuntime.getVMInstall(project);
-		return resolveLibraryLocations(projectJRE);
+		return resolveLibraryLocations(projectJRE, entry.getClasspathProperty());
 	}
 
 	/**
 	 * Resolves libray locations for the given VM install
 	 */
-	protected IRuntimeClasspathEntry[] resolveLibraryLocations(IVMInstall vm) {
+	protected IRuntimeClasspathEntry[] resolveLibraryLocations(IVMInstall vm, int kind) {
 		IRuntimeClasspathEntry[] resolved = null;
-		int kind = IRuntimeClasspathEntry.STANDARD_CLASSES;
 		LibraryLocation[] libs = vm.getLibraryLocations();
 		if (libs == null) {
 			// default system libs
