@@ -16,7 +16,7 @@ lookup path, for corresponding classpath variables and classpath containers.
          <sequence>
             <element ref="runtimeClasspathEntryResolver" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-                  <attribute name="point" type="string" use="required">
+          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
                   a fully qualified identifier of the target extension point
