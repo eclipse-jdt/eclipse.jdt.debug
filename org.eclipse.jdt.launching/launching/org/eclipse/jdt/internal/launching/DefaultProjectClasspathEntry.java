@@ -63,7 +63,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#initializeFrom(org.w3c.dom.Element)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#initializeFrom(org.w3c.dom.Element)
 	 */
 	public void initializeFrom(Element memento) throws CoreException {
 		String name = memento.getAttribute("project"); //$NON-NLS-1$
@@ -74,7 +74,7 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		fProject = project;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getTypeId()
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getTypeId()
 	 */
 	public String getTypeId() {
 		return TYPE_ID;
@@ -119,8 +119,9 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public IResource getResource() {
 		return getProject();
 	}
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(getJavaProject().getProject().getFullPath());
@@ -266,13 +267,13 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		return;
 	}	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#isComposite()
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
 	 */
 	public boolean isComposite() {
 		return true;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getName()
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
 	 */
 	public String getName() {
 		return MessageFormat.format(LaunchingMessages.getString("DefaultProjectClasspathEntry.4"), new String[] {getJavaProject().getElementName()}); //$NON-NLS-1$
