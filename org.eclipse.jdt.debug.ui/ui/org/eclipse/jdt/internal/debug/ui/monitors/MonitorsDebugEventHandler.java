@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
@@ -77,4 +78,11 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 			((MonitorsView)getView()).refreshCurrentViewer(monitorInformationAvailable, false);
 		}
 	}
+	/**
+	 * @see org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler#refresh()
+	 */
+	public void refresh() {
+		((MonitorsView)getView()).selectionChanged(null, getView().getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW));
+	}
+
 }

@@ -228,9 +228,6 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 
 		// listen to selection in debug view
 		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		
-		// initialize the view
-		selectionChanged(null, getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW));
 	}
 
 	/**
