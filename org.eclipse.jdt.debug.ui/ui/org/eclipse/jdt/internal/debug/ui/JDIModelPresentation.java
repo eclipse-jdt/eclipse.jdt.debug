@@ -891,6 +891,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		IJavaVariable javaVariable= (IJavaVariable) element.getAdapter(IJavaVariable.class);
 		if (javaVariable != null) {
 			try {
+				if (javaVariable.isLocal())
+					return DebugUITools.getDefaultImageDescriptor(javaVariable);
 				if (javaVariable.isPublic())
 					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PUBLIC);
 				if (javaVariable.isProtected())
