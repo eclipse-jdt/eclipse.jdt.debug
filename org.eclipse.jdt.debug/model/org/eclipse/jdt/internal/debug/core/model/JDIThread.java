@@ -275,7 +275,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 
 	/**
-	 * @see IStep@canStepInto()
+	 * @see IStep#canStepInto()
 	 */
 	public boolean canStepInto() {
 		return isSuspended() && !isStepping();
@@ -1584,6 +1584,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * when the step completes). A resume event with a step detail
 		 * is fired for this thread.
 		 * </p>
+		 * Note this method does nothing if this thread has no stack frames.
 		 * 
 		 * @exception DebugException if this method fails.  Reasons include:
 		 * <ul>
@@ -1593,12 +1594,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * </ul>
 		 */
 		protected void step() throws DebugException {
-			setOriginalStepKind(getStepKind());
 			JDIStackFrame top = (JDIStackFrame)getTopStackFrame();
-			Location location = null;
-			if (top != null) {
-				location = top.getUnderlyingStackFrame().location();
-			} 
+			if (top == null) {
+				return;
+			}
+			setOriginalStepKind(getStepKind());
+			Location location = top.getUnderlyingStackFrame().location();
 			setOriginalStepLocation(location);
 			setOriginalStepStackDepth(computeStackFrames().size());
 			setStepRequest(createStepRequest());
