@@ -1,5 +1,10 @@
 package org.eclipse.jdt.internal.debug.core;
 
+/*
+ * (c) Copyright IBM Corp. 2002.
+ * All Rights Reserved.
+ */
+ 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -62,6 +67,5 @@ public class JDIDebugUtils {
 		// switch to dot separated
 		return resourceName.replace(IPath.SEPARATOR, '.');
 	}
-
 }
 
