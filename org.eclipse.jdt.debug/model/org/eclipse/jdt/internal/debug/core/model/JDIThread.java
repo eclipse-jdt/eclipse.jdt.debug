@@ -628,11 +628,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected boolean canRunEvaluation() {
 		// NOTE similar to #canStep, except a quiet suspend state is OK
 		try {
-			return isSuspended()
+			return isSuspendedQuiet() || (isSuspended()
 				&& !(isPerformingEvaluation() || isInvokingMethod())
-				&& (!isStepping() || isSuspendedQuiet())
+				&& !isStepping()
 				&& getTopStackFrame() != null
-				&& !getJavaDebugTarget().isPerformingHotCodeReplace();
+				&& !getJavaDebugTarget().isPerformingHotCodeReplace());
 		} catch (DebugException e) {
 			return false;
 		}
