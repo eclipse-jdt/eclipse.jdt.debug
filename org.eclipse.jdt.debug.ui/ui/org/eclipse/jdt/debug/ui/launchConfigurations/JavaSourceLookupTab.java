@@ -17,6 +17,7 @@ import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
@@ -53,7 +54,9 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 		fSourceLookupBlock = new SourceLookupBlock();
 		fSourceLookupBlock.setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 		fSourceLookupBlock.createControl(comp);
-		
+		GridData gd = (GridData)fSourceLookupBlock.getControl().getLayoutData();
+		gd.heightHint = 200;
+		gd.widthHint = 250;				
 	}
 
 	/**
