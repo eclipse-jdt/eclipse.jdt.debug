@@ -186,7 +186,6 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                definitionId="org.eclipse.jdt.debug.ui.commands.Display"
                disabledIcon="icons/full/dtool16/disp_sbook.gif"
-               enablesFor="+"
                icon="icons/full/etool16/disp_sbook.gif"
                label="%Display.label"
                helpContextId="display_action_context"
@@ -215,7 +214,6 @@
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                definitionId="org.eclipse.jdt.debug.ui.commands.Inspect"
                disabledIcon="icons/full/dtool16/insp_sbook.gif"
-               enablesFor="+"
                icon="icons/full/etool16/insp_sbook.gif"
                label="%Inspect.label"
                helpContextId="inspect_action_context"
@@ -1407,7 +1405,6 @@
                helpContextId="display_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                menubarPath="additions"
-               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cuPopup.Display">
             <enablement>
                <and>
@@ -1427,7 +1424,6 @@
                helpContextId="inspect_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="additions"
-               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cuPopup.Inspect">
             <enablement>
                <and>
@@ -1528,7 +1524,6 @@
                helpContextId="display_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                menubarPath="additions"
-               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cfPopup.Display">
             <enablement>
                <and>
@@ -1548,7 +1543,6 @@
                helpContextId="inspect_action_context"
                class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="additions"
-               enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cfPopup.Inspect">
             <enablement>
                <and>

@@ -46,12 +46,15 @@ import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.EvaluationContextManager;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JavaWordFinder;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ISnippetStateChangedListener;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
@@ -73,6 +76,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
@@ -302,17 +306,26 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			if (textHasContent(text)) {
 				selectedObject= text;
 				fRegion = new Region(ts.getOffset(), ts.getLength());
+			} else if (getTargetPart() instanceof IEditorPart) {
+				IEditorPart editor= (IEditorPart)getTargetPart();
+				if (editor instanceof ITextEditor) {
+					selectedObject = resolveSelectedObjectUsingToken(selectedObject, ts, editor);
+				}
 			}
 		} else if (selection instanceof IStructuredSelection) {
 			if (!selection.isEmpty()) {
 				if (getTargetPart().getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW)) {
 					//work on the editor selection
-					setTargetPart(getTargetPart().getSite().getPage().getActiveEditor());
+					IEditorPart editor= getTargetPart().getSite().getPage().getActiveEditor();
+					setTargetPart(editor);
 					selection= getTargetSelection();
 					if (selection instanceof ITextSelection) {
-						String text= ((ITextSelection)selection).getText();
+						ITextSelection ts = (ITextSelection)selection;
+						String text= ts.getText();
 						if (textHasContent(text)) {
 							selectedObject= text;
+						} else if (editor instanceof ITextEditor) {
+							selectedObject= resolveSelectedObjectUsingToken(selectedObject, ts, editor);
 						}
 					}
 				} else {
@@ -331,6 +344,19 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		setSelectedObject(selectedObject);
 	}
 	
+	private Object resolveSelectedObjectUsingToken(Object selectedObject, ITextSelection ts, IEditorPart editor) {
+		ITextEditor textEditor= (ITextEditor) editor;
+		IDocument doc= textEditor.getDocumentProvider().getDocument(editor.getEditorInput());
+		fRegion= JavaWordFinder.findWord(doc, ts.getOffset());
+		if (fRegion != null) {
+			try {
+				selectedObject= doc.get(fRegion.getOffset(), fRegion.getLength());
+			} catch (BadLocationException e) {
+			}
+		}
+		return selectedObject;
+	}
+
 	protected ISelection getTargetSelection() {
 		IWorkbenchPart part = getTargetPart();
 		if (part != null) {
@@ -433,6 +459,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		}
 		return null;
 	}
+	
 	protected boolean textHasContent(String text) {
 		if (text != null) {
 			int length= text.length();
