@@ -38,6 +38,7 @@ public interface IHelpContextIds {
 	public static final String SOURCE_LOOKUP_PROPERTY_PAGE= PREFIX + "source_lookup_property_page_context"; //$NON-NLS-1$
 	public static final String LAUNCH_JRE_PROPERTY_PAGE= PREFIX + "launch_jre_property_page_context"; //$NON-NLS-1$
 	public static final String JAVA_DEBUG_PREFERENCE_PAGE= PREFIX + "java_debug_preference_page_context"; //$NON-NLS-1$
+	public static final String JAVA_DEBUG_APPEARANCE_PREFERENCE_PAGE= PREFIX + "java_debug_appearance_preference_page_context"; //$NON-NLS-1$	
 	public static final String JAVA_STEP_FILTER_PREFERENCE_PAGE= PREFIX + "java_step_filter_preference_page_context"; //$NON-NLS-1$
 
 	// Wizard pages

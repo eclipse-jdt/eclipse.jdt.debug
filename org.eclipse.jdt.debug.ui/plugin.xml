@@ -789,6 +789,11 @@
 	     class="org.eclipse.jdt.internal.debug.ui.JavaDebugPreferencePage"
          category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage">
 	</page>
+	<page name="%javaDebugAppearancePrefName"
+         id="org.eclipse.jdt.ui.JavaDebugAppearancePreferencePage"   
+         class="org.eclipse.jdt.internal.debug.ui.JavaDebugAppearancePreferencePage"
+         category="org.eclipse.jdt.ui.JavaDebugPreferencePage">
+	</page>	
 	<page name="%javaStepFilterPrefName"
          id="org.eclipse.jdt.ui.JavaStepFilterPreferencePage"   
          class="org.eclipse.jdt.internal.debug.ui.JavaStepFilterPreferencePage"

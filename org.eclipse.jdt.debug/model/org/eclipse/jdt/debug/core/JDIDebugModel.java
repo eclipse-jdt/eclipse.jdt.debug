@@ -53,7 +53,7 @@ public class JDIDebugModel {
 	/**
 	 * Preference key for default JDI request timeout value.
 	 */
-	public static final String PREF_REQUEST_TIMEOUT = getPluginIdentifier() + ".PREF_REQUEST_TIMEOUT";
+	public static final String PREF_REQUEST_TIMEOUT = getPluginIdentifier() + ".PREF_REQUEST_TIMEOUT"; //$NON-NLS-1$
 	
 	/**
 	 * The default JDI request timeout when no preference is set.
