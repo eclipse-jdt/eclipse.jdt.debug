@@ -42,10 +42,13 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 	 */
 	public IJavaValue[] getValues() throws DebugException {
 		List list = getUnderlyingValues();
+
 		int count = list.size();
 		IJavaValue[] values = new IJavaValue[count];
+		JDIDebugTarget target = (JDIDebugTarget) getDebugTarget();
 		for (int i = 0; i < count; i++) {
-			values[i] = getValue(i);
+			Value value = (Value)list.get(i);
+			values[i] = JDIValue.createValue(target, value);
 		}
 		return values;
 	}

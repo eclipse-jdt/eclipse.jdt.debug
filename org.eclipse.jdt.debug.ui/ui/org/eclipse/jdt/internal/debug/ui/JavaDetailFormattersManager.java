@@ -37,8 +37,10 @@ import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -70,7 +72,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return fgDefault;
 	}
-
+	
 	/**
 	 * Map of types to the associated formatter (code snippet).
 	 * (<code>String</code> -> <code>String</code>)
@@ -107,7 +109,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			fDetailFormattersMap.put(typeName, new DetailFormatter(typeName, snippet, enabled));
 		}
 	}
-
+	
 	/**
 	 * Compute asynchronously the 'toString' of the given value. If a formatter is associated to
 	 * the type of the given value, this formatter is used instead of the <code>toString()</code>
@@ -178,7 +180,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		ISourceLocator locator= launch.getSourceLocator();
 		if (locator == null)
 			return null;
-
+		
 		Object sourceElement;
 		try {
 			IStackFrame frame = thread.getTopStackFrame();
@@ -209,9 +211,9 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return null;
 	}
-
-
-
+	
+	
+	
 	public boolean hasAssociatedDetailFormatter(IJavaType type) {
 		return getAssociatedDetailFormatter(type) != null;
 	}
@@ -237,8 +239,8 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		fDetailFormattersMap.put(detailFormatter.getTypeName(), detailFormatter);
 		savePreference();
 	}
-
-
+	
+	
 	private void savePreference() {
 		Collection valuesList= fDetailFormattersMap.values();
 		String[] values= new String[valuesList.size() * 3];
@@ -270,7 +272,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return getDetailFormatter(type.getSuperclass());
 	}
-
+	
 	/**
 	 * Return the compiled expression which corresponds to the code formatter associated
 	 * with the type of the given object.
@@ -292,7 +294,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return null;
 	}
-
+	
 	/**
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
@@ -313,19 +315,19 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}	
 		}
 	}
-
+	
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(ILaunch[])
 	 */
 	public void launchesAdded(ILaunch[] launches) {
 	}
-
+	
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(ILaunch[])
 	 */
 	public void launchesChanged(ILaunch[] launches) {
 	}
-
+	
 	/**
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(ILaunch[])
 	 */
@@ -340,7 +342,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 		}
 	}
-
+	
 	/**
 	 * Remove from the cache compiled expression associated with
 	 * the given debug target.
@@ -355,7 +357,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			}
 		}
 	}
-
+	
 	/**
 	 * Object used as the key in the cache map for associate a compiled
 	 * expression with a pair type name/debug target
@@ -377,7 +379,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				return false;
 			}
 		}
-
+		
 		public int hashCode() {
 			return fTypeName.hashCode() / 2 + fDebugTarget.hashCode() / 2;
 		}
@@ -388,20 +390,20 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * Utilise the 'standart' pretty printer methods to return the result.
 	 */
 	static private class EvaluationListener implements IEvaluationListener {
-
+		
 		/**
 		 * The selector of <code>java.lang.Object#toString()</code>,
 		 * used to evaluate 'toString()' for displaying details of values.
 		 */
 		private static final String fgToString= "toString"; //$NON-NLS-1$
-
-
+		
+		
 		/**
 		 * The signature of <code>java.lang.Object#toString()</code>,
 		 * used to evaluate 'toString()' for displaying details of values.
 		 */
 		private static final String fgToStringSignature= "()Ljava/lang/String;"; //$NON-NLS-1$
-			
+		
 		private IJavaValue fValue;
 		
 		private IValueDetailListener fListener;
@@ -413,7 +415,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			fThread= thread;
 			fListener= listener;
 		}
-
+		
 		public void evaluationComplete(IEvaluationResult result) {
 			if (result.hasErrors()) {
 				StringBuffer error= new StringBuffer(DebugUIMessages.getString("JavaDetailFormattersManager.Detail_formatter_error___1")); //$NON-NLS-1$
@@ -469,11 +471,82 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			fThread.runEvaluation(eval, null, DebugEvent.EVALUATION_IMPLICIT, false);
 		}
 		
+		/*
+		 * Tries to use Arrays.asList() on target because List has a better toString() to 
+		 * display. If not possible (or if array is of a primitive type), appendArrayDetailIndividually
+		 * is called.
+		 */
 		protected void appendArrayDetail(StringBuffer result, IJavaArray arrayValue) throws DebugException {
+			IJavaType componentType = null;
+			try {
+				IJavaArrayType javaArrayType = (IJavaArrayType) arrayValue.getJavaType();
+				componentType = javaArrayType.getComponentType();
+			} catch (DebugException de) {
+				JDIDebugUIPlugin.log(de);
+				result.append(de.getStatus().getMessage());
+				return;	
+			}
+			
+			if (!(componentType instanceof IJavaReferenceType)) {
+				//if it is an array of primatives, cannot use Arrays.asList()
+				appendArrayDetailIndividually(result, arrayValue);
+				return;
+			}
+			
+			IJavaDebugTarget target = (IJavaDebugTarget) arrayValue.getDebugTarget();
+			
+			//Load java.util.Arrays
+			IJavaType[] types;
+			try {
+				types = target.getJavaTypes("java.lang.Class");
+			} catch (DebugException de) {
+				types = null;
+			}
+			
+			if (types != null && types.length >0) {
+				try {
+					IJavaClassType type = (IJavaClassType) types[0];
+					IJavaValue arg = target.newValue("java.util.Arrays");
+					type.sendMessage("forName", "(Ljava/lang/String;)Ljava/lang/Class;", new IJavaValue[] {arg}, fThread);
+				} catch (DebugException de) {
+					//java.util.Arrays didn't load properly. Can't use Arrays.asList()
+					appendArrayDetailIndividually(result, arrayValue);
+				}
+			} else {
+				//didn't get java.lang.Class, can't load java.utils.Arrays.
+				appendArrayDetailIndividually(result, arrayValue);
+			}
+			
+			types = null;
+			types = target.getJavaTypes("java.util.Arrays");
+			if (types != null && types.length >0) {
+				IJavaClassType type = (IJavaClassType) types[0];
+				IJavaObject javaObject;
+				try {
+					//execute Arrays.asList() on target
+					javaObject = (IJavaObject) type.sendMessage("asList", "([Ljava/lang/Object;)Ljava/util/List;", new IJavaValue[] {arrayValue}, fThread);
+				} catch (DebugException de) {
+					//asList() failed.
+					appendArrayDetailIndividually(result, arrayValue);
+					return;
+				}
+				appendObjectDetail(result, javaObject);
+			} else {
+				// didn't get java.util.Arrays. Can't use asList() 
+				appendArrayDetailIndividually(result, arrayValue);
+			}
+		}
+		
+		/*
+		 * Gets all values in array and appends the toString() if it is an array of Objects or the value if primative.
+		 * NB - this method is only called by appendArrayDetail which first tries to use Arrays.asList() to minimize
+		 * toString() calls on remote target (ie one call to List.toString() instead of one call per item in the array). 
+		 */
+		private void appendArrayDetailIndividually(StringBuffer result, IJavaArray arrayValue) throws DebugException {
 			result.append('[');
 			IJavaValue[] arrayValues;
-			try {
-				arrayValues= arrayValue.getValues();
+			try {				
+				arrayValues= arrayValue.getValues();				
 			} catch (DebugException de) {
 				JDIDebugUIPlugin.log(de);
 				result.append(de.getStatus().getMessage());
@@ -493,19 +566,19 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 					result.append(' ');
 				}
 			}
-			result.append(']');
+			result.append(']');	
 		}
-
+		
 		protected void appendJDIPrimitiveValueString(StringBuffer result, IJavaValue value) throws DebugException {
 			result.append(value.getValueString());
 		}
-
-
+		
+		
 		protected void appendJDIValueString(StringBuffer result, IJavaValue value) throws DebugException {
 			result.append(value.getValueString());
 		}
-
-
+		
+		
 		protected void appendObjectDetail(StringBuffer result, IJavaObject objectValue) throws DebugException {
 			IJavaValue toStringValue= objectValue.sendMessage(EvaluationListener.fgToString, EvaluationListener.fgToStringSignature, null, fThread, false);
 			if (toStringValue == null) {
@@ -514,11 +587,11 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				appendJDIValueString(result, toStringValue);
 			}
 		}
-
-
-	
+		
+		
+		
 	}
-
+	
 	/**
 	 * (non java-doc)
 	 * Remove the provided <code>detailFormatter</code> from the map
@@ -528,5 +601,5 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		fDetailFormattersMap.remove(detailFormatter.getTypeName());
 		savePreference();
 	}
-
+	
 }
