@@ -9,12 +9,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -99,13 +96,6 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 		} else {
 			abort("Shared memory attaching connector not available", null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE);
 		}
-
-		// Persist config info as default values on the launched resource
-		IResource projectResource = null;
-		try {
-			projectResource = javaProject.getUnderlyingResource();
-		} catch (CoreException ce) {			
-		}		
 			
 		ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
 		Launch launch = new Launch(configuration, mode, sourceLocator, null, debugTarget);
@@ -170,6 +160,4 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 	private ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-
-	
 }
