@@ -189,6 +189,7 @@ public class WatchExpressionTests extends AbstractDebugTest {
 					IWorkbench workbench = PlatformUI.getWorkbench();
 					IWorkbenchPage page = workbench.showPerspective(IDebugUIConstants.ID_DEBUG_PERSPECTIVE, DebugUIPlugin.getActiveWorkbenchWindow());
 					page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+                    page.showView(IDebugUIConstants.ID_DEBUG_VIEW);
 				} catch (WorkbenchException e) {
 					e.printStackTrace();
 				}
