@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaType;
 
 public class LocalVariableCreation extends CompoundInstruction {

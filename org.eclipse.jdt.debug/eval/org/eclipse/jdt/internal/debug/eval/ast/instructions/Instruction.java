@@ -1,15 +1,18 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-import com.sun.jdi.InvocationException;
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -20,9 +23,11 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
+
+import com.sun.jdi.InvocationException;
  
 /**
- * Common behavoir for instructions.
+ * Common behavior for instructions.
  */
 public abstract class Instruction {
 
