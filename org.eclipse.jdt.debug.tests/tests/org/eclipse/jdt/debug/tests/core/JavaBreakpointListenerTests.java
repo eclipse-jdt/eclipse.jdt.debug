@@ -548,6 +548,26 @@ public class JavaBreakpointListenerTests extends AbstractDebugTest implements IJ
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}		
+	}	
+	
+	/**
+	 * Vote: Suspend 0, Don't Care 1 (java debug options manager), Don't Suspend 1 = RESUME
+	 */	
+	public void testMethodBreakpointDontSuspendVote() throws Exception {
+		IJavaMethodBreakpoint breakpoint1 = createMethodBreakpoint("DropTests", "method2", "()V", true, false);
+		IJavaMethodBreakpoint breakpoint2 = createMethodBreakpoint("DropTests", "method4", "()V", true, false);
+		SuspendVoter v1 = new SuspendVoter(DONT_SUSPEND, breakpoint1);
+		JDIDebugModel.addJavaBreakpointListener(v1);
+		IJavaThread thread = null;
+		try {		
+			thread = launchToBreakpoint("DropTests");
+			assertNotNull(thread);
+			assertEquals(breakpoint2, thread.getBreakpoints()[0]);
+		} finally {
+			JDIDebugModel.removeJavaBreakpointListener(v1);
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
 	}		
 	
 	/* (non-Javadoc)
