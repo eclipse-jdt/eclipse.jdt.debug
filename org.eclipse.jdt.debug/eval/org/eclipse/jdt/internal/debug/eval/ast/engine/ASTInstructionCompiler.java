@@ -1850,11 +1850,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		} else {
 			switch (getBase(token)) {
 				case 8:
-					return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 3) | Integer.decode("0" + token.charAt(tokenLength - 1)).intValue();
+					return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 3) | Integer.decode("0" + token.charAt(tokenLength - 1)).intValue(); //$NON-NLS-1$
 				case 10:
 					return Integer.decode(token).intValue();
 				case 16:
-					return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 4) | Integer.decode("0x" + token.charAt(tokenLength - 1)).intValue();
+					return (Integer.decode(token.substring(0, tokenLength - 1)).intValue() << 4) | Integer.decode("0x" + token.charAt(tokenLength - 1)).intValue(); //$NON-NLS-1$
 				default:
 					// getBase(String) only returns 8, 10, or 16. This code is unreachable
 					return 0;
@@ -1875,11 +1875,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		} else {
 			switch (getBase(token)) {
 				case 8:
-					return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 3) | Long.decode("0" + token.charAt(tokenLength - 1)).longValue();
+					return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 3) | Long.decode("0" + token.charAt(tokenLength - 1)).longValue(); //$NON-NLS-1$
 				case 10:
 					return Long.decode(token).longValue();
 				case 16:
-					return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 4) | Long.decode("0x" + token.charAt(tokenLength - 1)).longValue();
+					return (Long.decode(token.substring(0, tokenLength - 1)).longValue() << 4) | Long.decode("0x" + token.charAt(tokenLength - 1)).longValue(); //$NON-NLS-1$
 				default:
 					// getBase(String) only returns 8, 10, or 16. This code is unreachable
 					return 0;
