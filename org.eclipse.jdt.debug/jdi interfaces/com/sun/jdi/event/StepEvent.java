@@ -14,5 +14,4 @@ package com.sun.jdi.event;
 import com.sun.jdi.ThreadReference;
 
 public interface StepEvent extends LocatableEvent {
-	public ThreadReference thread();
 }

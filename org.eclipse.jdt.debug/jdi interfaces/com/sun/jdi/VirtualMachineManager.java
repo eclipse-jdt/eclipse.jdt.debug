@@ -20,9 +20,9 @@ import com.sun.jdi.connect.spi.Connection;
 public interface VirtualMachineManager {
 	public List allConnectors();
 	public List attachingConnectors();
+	public List connectedVirtualMachines();
 	public VirtualMachine createVirtualMachine(Connection arg1) throws IOException;
 	public VirtualMachine createVirtualMachine(Connection arg1, Process arg2) throws IOException;
-	public List connectedVirtualMachines();
 	public LaunchingConnector defaultConnector();
 	public List launchingConnectors();
 	public List listeningConnectors();

@@ -26,7 +26,8 @@ public interface ObjectReference extends com.sun.jdi.Value {
 	public int hashCode();
 	public Value invokeMethod(ThreadReference arg1, Method arg2, List arg3, int arg4) throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException, InvocationException;
 	public boolean isCollected();
-	public ThreadReference owningThread() throws IncompatibleThreadStateException;	public com.sun.jdi.ReferenceType referenceType();
+	public ThreadReference owningThread() throws IncompatibleThreadStateException;
+	public com.sun.jdi.ReferenceType referenceType();
 	public void setValue(Field arg1, Value arg2) throws InvalidTypeException, ClassNotLoadedException;
 	public long uniqueID();
 	public List waitingThreads() throws IncompatibleThreadStateException;

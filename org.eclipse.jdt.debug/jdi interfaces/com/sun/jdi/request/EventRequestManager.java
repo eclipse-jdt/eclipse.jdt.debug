@@ -34,6 +34,7 @@ public interface EventRequestManager extends Mirror {
 	public StepRequest createStepRequest(ThreadReference arg1, int arg2, int arg3);
 	public ThreadDeathRequest createThreadDeathRequest();
 	public ThreadStartRequest createThreadStartRequest();
+	public VMDeathRequest createVMDeathRequest();
 	public void deleteAllBreakpoints();
 	public void deleteEventRequest(EventRequest arg1);
 	public void deleteEventRequests(List arg1);
@@ -44,6 +45,5 @@ public interface EventRequestManager extends Mirror {
 	public List stepRequests();
 	public List threadDeathRequests();
 	public List threadStartRequests();
-	public VMDeathRequest createVMDeathRequest();
 	public List vmDeathRequests();
 }

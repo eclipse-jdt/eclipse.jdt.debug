@@ -19,9 +19,9 @@ public interface ExceptionRequest extends EventRequest {
 	public void addClassExclusionFilter(String arg1);
    	public void addClassFilter(ReferenceType arg1);
 	public void addClassFilter(String arg1);
+	public void addInstanceFilter(ObjectReference instance);
 	public void addThreadFilter(ThreadReference arg1);
 	public ReferenceType exception();
 	public boolean notifyCaught();
 	public boolean notifyUncaught();
-	public void addInstanceFilter(ObjectReference instance);
 }

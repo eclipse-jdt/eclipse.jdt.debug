@@ -15,6 +15,7 @@ import java.util.List;
 
 public interface Method extends TypeComponent , Locatable , Comparable {
 	public List allLineLocations() throws AbsentInformationException;
+	public List allLineLocations(String arg1, String arg2) throws AbsentInformationException;
 	public List arguments() throws AbsentInformationException;
 	public List argumentTypeNames();
 	public List argumentTypes() throws ClassNotLoadedException;
@@ -25,16 +26,15 @@ public interface Method extends TypeComponent , Locatable , Comparable {
 	public boolean isBridge();
 	public boolean isConstructor();
 	public boolean isNative();
+	public boolean isObsolete();
 	public boolean isStaticInitializer();
 	public boolean isSynchronized();
-	public boolean isObsolete();
 	public boolean isVarargs();
 	public Location locationOfCodeIndex(long arg1);
 	public List locationsOfLine(int arg1) throws AbsentInformationException;
+	public List locationsOfLine(String arg1, String arg2, int arg3) throws AbsentInformationException;
 	public Type returnType() throws ClassNotLoadedException;
 	public String returnTypeName();
 	public List variables() throws AbsentInformationException;
 	public List variablesByName(String arg1) throws AbsentInformationException;
-	public List allLineLocations(String arg1, String arg2) throws AbsentInformationException;
-	public List locationsOfLine(String arg1, String arg2, int arg3) throws AbsentInformationException;
 }

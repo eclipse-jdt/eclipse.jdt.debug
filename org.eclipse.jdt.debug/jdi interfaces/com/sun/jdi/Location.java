@@ -17,10 +17,10 @@ public interface Location extends Mirror , Comparable {
 	public boolean equals(Object arg1);
 	public int hashCode();
 	public int lineNumber();
+   	public int lineNumber(String stratum);
 	public Method method();
    	public String sourceName() throws AbsentInformationException;
-   	public int lineNumber(String stratum);
    	public String sourceName(String stratum) throws AbsentInformationException;
-   	public String sourcePath(String stratum) throws AbsentInformationException;
    	public String sourcePath() throws AbsentInformationException;
+   	public String sourcePath(String stratum) throws AbsentInformationException;
 }

@@ -31,11 +31,11 @@ public interface ThreadReference extends ObjectReference {
 	public boolean isSuspended();
 	public String name();
 	public List ownedMonitors() throws IncompatibleThreadStateException;
+	public void popFrames(StackFrame frame) throws IncompatibleThreadStateException;
 	public void resume();
 	public int status();
 	public void stop(ObjectReference arg1) throws InvalidTypeException;
 	public void suspend();
 	public int suspendCount();
 	public ThreadGroupReference threadGroup();
-	public void popFrames(StackFrame frame) throws IncompatibleThreadStateException;
 }

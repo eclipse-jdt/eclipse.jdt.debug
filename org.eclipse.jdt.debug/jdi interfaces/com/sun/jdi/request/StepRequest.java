@@ -24,8 +24,8 @@ public interface StepRequest extends EventRequest {
 	public void addClassExclusionFilter(String arg1);
 	public void addClassFilter(ReferenceType arg1);
 	public void addClassFilter(String arg1);
+	public void addInstanceFilter(ObjectReference instance);
 	public int depth();
 	public int size();
 	public ThreadReference thread();
-	public void addInstanceFilter(ObjectReference instance);
 }

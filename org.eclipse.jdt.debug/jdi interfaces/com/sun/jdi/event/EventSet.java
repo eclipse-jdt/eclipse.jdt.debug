@@ -17,6 +17,6 @@ import com.sun.jdi.Mirror;
 
 public interface EventSet extends Mirror , Collection {
 	public EventIterator eventIterator();
-	public int suspendPolicy();
 	public void resume();
+	public int suspendPolicy();
 }

@@ -12,6 +12,6 @@ package com.sun.jdi;
 
 
 public interface Type extends Mirror {
-	public abstract String name();
-	public abstract String signature();
+	public String name();
+	public String signature();
 }

@@ -12,9 +12,7 @@ package com.sun.jdi.event;
 
 
 import com.sun.jdi.Method;
-import com.sun.jdi.ThreadReference;
 
 public interface MethodEntryEvent extends LocatableEvent {
 	public Method method();
-	public ThreadReference thread();
 }

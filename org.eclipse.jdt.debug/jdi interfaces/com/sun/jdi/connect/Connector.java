@@ -17,37 +17,39 @@ import java.util.Map;
 
 public interface Connector {
 	public Map defaultArguments();
-	public Transport transport();
-	public String name();
 	public String description();
+	public String name();
+	public Transport transport();
 
 	public interface Argument extends Serializable {
-		public String name();
-		public String label();
 		public String description();
 		public boolean isValid(String arg1);
-		public String value();
-		public void setValue(String arg1);
+		public String label();
 		public boolean mustSpecify();
+		public String name();
+		public void setValue(String arg1);
+		public String value();
 	}
 	
 	public interface StringArgument extends Connector.Argument {
+		public boolean isValid(String arg1);
 	}
 
 	public interface IntegerArgument extends Connector.Argument {
-		public void setValue(int arg1);
-		public boolean isValid(int arg1);
-		public String stringValueOf(int arg1);
 		public int intValue();
+		public boolean isValid(int arg1);
+		public boolean isValid(String arg1);
 		public int max();
 		public int min();
+		public void setValue(int arg1);
+		public String stringValueOf(int arg1);
 	}
 
 	public interface BooleanArgument extends Connector.Argument {
-		public void setValue(boolean arg1);
-		public boolean isValid(String arg1);
-		public String stringValueOf(boolean arg1);
 		public boolean booleanValue();
+		public boolean isValid(String arg1);
+		public void setValue(boolean arg1);
+		public String stringValueOf(boolean arg1);
 	}
 	
 	public interface SelectedArgument extends Connector.Argument {

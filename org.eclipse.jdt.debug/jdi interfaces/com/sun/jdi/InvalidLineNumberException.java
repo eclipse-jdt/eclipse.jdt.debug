@@ -10,9 +10,17 @@
  *******************************************************************************/
 package com.sun.jdi;
 
-
+/**
+ * @deprecated This exception is no longer thrown.
+ */
 public class InvalidLineNumberException extends RuntimeException {
+	/**
+	 * @deprecated
+	 */
 	public InvalidLineNumberException() { }
+	/**
+	 * @deprecated
+	 */
 	public InvalidLineNumberException(String arg1) {
 	   	super(arg1);
 	}

@@ -20,7 +20,7 @@ public interface WatchpointRequest extends EventRequest {
 	public void addClassExclusionFilter(String arg1);
 	public void addClassFilter(ReferenceType arg1);
 	public void addClassFilter(String arg1);
+	public void addInstanceFilter(ObjectReference instance);
 	public void addThreadFilter(ThreadReference arg1);
 	public Field field();
-	public void addInstanceFilter(ObjectReference instance);
 }

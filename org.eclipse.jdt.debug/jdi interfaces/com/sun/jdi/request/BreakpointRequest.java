@@ -18,6 +18,6 @@ import com.sun.jdi.ThreadReference;
 
 public interface BreakpointRequest extends EventRequest , Locatable {
 	public void addThreadFilter(ThreadReference arg1);
-	public Location location();
 	public void addInstanceFilter(ObjectReference instance);
+	public Location location();
 }

@@ -10,9 +10,17 @@
  *******************************************************************************/
 package com.sun.jdi;
 
-
+/**
+ * @deprecated This exception is no longer thrown.
+ */
 public class InvalidCodeIndexException extends RuntimeException {
+	/**
+	 * @deprecated
+	 */
 	public InvalidCodeIndexException() { }
+	/**
+	 * @deprecated
+	 */
 	public InvalidCodeIndexException(String arg1) {
 		super(arg1);
 	}

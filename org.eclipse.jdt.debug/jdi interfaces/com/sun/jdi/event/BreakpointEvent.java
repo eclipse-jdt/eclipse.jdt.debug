@@ -10,9 +10,5 @@
  *******************************************************************************/
 package com.sun.jdi.event;
 
-
-import com.sun.jdi.ThreadReference;
-
 public interface BreakpointEvent extends LocatableEvent {
-	public ThreadReference thread();
 }

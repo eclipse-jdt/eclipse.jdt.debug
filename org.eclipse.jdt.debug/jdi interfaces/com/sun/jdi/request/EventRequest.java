@@ -20,10 +20,10 @@ public interface EventRequest extends Mirror {
 	public void addCountFilter(int arg1) throws InvalidRequestStateException;
 	public void disable();
 	public void enable();
+	public Object getProperty(Object key);
 	public boolean isEnabled();
+	public void putProperty(Object key, Object value);
 	public void setEnabled(boolean arg1);
 	public void setSuspendPolicy(int arg1);
 	public int suspendPolicy();
-	public Object getProperty(Object key);
-	public void putProperty(Object key, Object value);
 }
