@@ -479,7 +479,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				// frame are native. Unable to pop native stack frames.
 				List frames= thread.computeStackFrames();
 				if (jdkSupport) {
-					// JDK VMs are currently unable to pop the bottom
+					// JDK 1.4 VMs are currently unable to pop the bottom
 					// stack frame.
 					if (frames.get(frames.size() - 1) == this) {
 						return false;
@@ -493,6 +493,13 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						return false;
 					}
 					if (frame.equals(this)) {
+						if (jdkSupport) {
+							// JDK 1.4 VMs are currently unable to pop the
+							// frame directly above a native frame
+							if (iter.hasNext() && ((JDIStackFrame)iter.next()).isNative()) {
+								return false;
+							}
+						}
 						return true;
 					}
 				}
