@@ -14,6 +14,7 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetCompletionProc
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.IColorManager;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -62,18 +63,18 @@ public class JDIContentAssistPreference {
 		if (dcp == null) {
 			return;
 		}
-		String triggers= store.getString(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVA);
+		String triggers= store.getString(PreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS_JAVA);
 		if (triggers != null) {
 			dcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 		}
 			
-		boolean enabled= store.getBoolean(ContentAssistPreference.SHOW_VISIBLE_PROPOSALS);
+		boolean enabled= store.getBoolean(PreferenceConstants.CODEASSIST_SHOW_VISIBLE_PROPOSALS);
 		restrictProposalsToVisibility(enabled);
 		
-		enabled= store.getBoolean(ContentAssistPreference.CASE_SENSITIVITY);
+		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_CASE_SENSITIVITY);
 		restrictProposalsToMatchingCases(enabled);
 		
-		enabled= store.getBoolean(ContentAssistPreference.ORDER_PROPOSALS);
+		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_ORDER_PROPOSALS);
 		dcp.orderProposalsAlphabetically(enabled);
 	}
 	
@@ -83,18 +84,18 @@ public class JDIContentAssistPreference {
 			return;
 		}
 			
-		String triggers= store.getString(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVA);
+		String triggers= store.getString(PreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS_JAVA);
 		if (triggers != null) {
 			cp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 		}
 			
-		boolean enabled= store.getBoolean(ContentAssistPreference.SHOW_VISIBLE_PROPOSALS);
+		boolean enabled= store.getBoolean(PreferenceConstants.CODEASSIST_SHOW_VISIBLE_PROPOSALS);
 		restrictProposalsToVisibility(enabled);
 		
-		enabled= store.getBoolean(ContentAssistPreference.CASE_SENSITIVITY);
+		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_CASE_SENSITIVITY);
 		restrictProposalsToMatchingCases(enabled);
 		
-		enabled= store.getBoolean(ContentAssistPreference.ORDER_PROPOSALS);
+		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_ORDER_PROPOSALS);
 		cp.orderProposalsAlphabetically(enabled);
 	}
 	
@@ -105,27 +106,27 @@ public class JDIContentAssistPreference {
 		
 		IPreferenceStore store= getPreferenceStore();
 		
-		boolean enabled= store.getBoolean(ContentAssistPreference.AUTOACTIVATION);
+		boolean enabled= store.getBoolean(PreferenceConstants.CODEASSIST_AUTOACTIVATION);
 		assistant.enableAutoActivation(enabled);
 		
-		int delay= store.getInt(ContentAssistPreference.AUTOACTIVATION_DELAY);
+		int delay= store.getInt(PreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
 		assistant.setAutoActivationDelay(delay);
 		
-		Color c= getColor(store, ContentAssistPreference.PROPOSALS_FOREGROUND, manager);
+		Color c= getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
 		assistant.setProposalSelectorForeground(c);
 		
-		c= getColor(store, ContentAssistPreference.PROPOSALS_BACKGROUND, manager);
+		c= getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
 		assistant.setProposalSelectorBackground(c);
 		
-		c= getColor(store, ContentAssistPreference.PARAMETERS_FOREGROUND, manager);
+		c= getColor(store, PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND, manager);
 		assistant.setContextInformationPopupForeground(c);
 		assistant.setContextSelectorForeground(c);
 		
-		c= getColor(store, ContentAssistPreference.PARAMETERS_BACKGROUND, manager);
+		c= getColor(store, PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND, manager);
 		assistant.setContextInformationPopupBackground(c);
 		assistant.setContextSelectorBackground(c);
 		
-		enabled= store.getBoolean(ContentAssistPreference.AUTOINSERT);
+		enabled= store.getBoolean(PreferenceConstants.CODEASSIST_AUTOINSERT);
 		assistant.enableAutoInsert(enabled);
 
 		configureDisplayProcessor(assistant, store);
@@ -138,13 +139,13 @@ public class JDIContentAssistPreference {
 		if (dcp == null) {
 			return;
 		}
-		if (ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVA.equals(key)) {
-			String triggers= store.getString(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVA);
+		if (PreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS_JAVA.equals(key)) {
+			String triggers= store.getString(PreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS_JAVA);
 			if (triggers != null) {
 				dcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 			}
-		} else if (ContentAssistPreference.ORDER_PROPOSALS.equals(key)) {
-			boolean enable= store.getBoolean(ContentAssistPreference.ORDER_PROPOSALS);
+		} else if (PreferenceConstants.CODEASSIST_ORDER_PROPOSALS.equals(key)) {
+			boolean enable= store.getBoolean(PreferenceConstants.CODEASSIST_ORDER_PROPOSALS);
 			dcp.orderProposalsAlphabetically(enable);
 		}
 	}
@@ -154,13 +155,13 @@ public class JDIContentAssistPreference {
 		if (cp == null) {
 			return;
 		}
-		if (ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVA.equals(key)) {
-			String triggers= store.getString(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVA);
+		if (PreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS_JAVA.equals(key)) {
+			String triggers= store.getString(PreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS_JAVA);
 			if (triggers != null) {
 				cp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 			}
-		} else if (ContentAssistPreference.ORDER_PROPOSALS.equals(key)) {
-			boolean enable= store.getBoolean(ContentAssistPreference.ORDER_PROPOSALS);
+		} else if (PreferenceConstants.CODEASSIST_ORDER_PROPOSALS.equals(key)) {
+			boolean enable= store.getBoolean(PreferenceConstants.CODEASSIST_ORDER_PROPOSALS);
 			cp.orderProposalsAlphabetically(enable);
 		}	
 	}
@@ -175,28 +176,28 @@ public class JDIContentAssistPreference {
 		IPreferenceStore store= getPreferenceStore();
 		String p= event.getProperty();
 		
-		if (ContentAssistPreference.AUTOACTIVATION.equals(p)) {
-			boolean enabled= store.getBoolean(ContentAssistPreference.AUTOACTIVATION);
+		if (PreferenceConstants.CODEASSIST_AUTOACTIVATION.equals(p)) {
+			boolean enabled= store.getBoolean(PreferenceConstants.CODEASSIST_AUTOACTIVATION);
 			assistant.enableAutoActivation(enabled);
-		} else if (ContentAssistPreference.AUTOACTIVATION_DELAY.equals(p)) {
-			int delay= store.getInt(ContentAssistPreference.AUTOACTIVATION_DELAY);
+		} else if (PreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY.equals(p)) {
+			int delay= store.getInt(PreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
 			assistant.setAutoActivationDelay(delay);
-		} else if (ContentAssistPreference.PROPOSALS_FOREGROUND.equals(p)) {
-			Color c= getColor(store, ContentAssistPreference.PROPOSALS_FOREGROUND);
+		} else if (PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND.equals(p)) {
+			Color c= getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND);
 			assistant.setProposalSelectorForeground(c);
-		} else if (ContentAssistPreference.PROPOSALS_BACKGROUND.equals(p)) {
-			Color c= getColor(store, ContentAssistPreference.PROPOSALS_BACKGROUND);
+		} else if (PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p)) {
+			Color c= getColor(store, PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND);
 			assistant.setProposalSelectorBackground(c);
-		} else if (ContentAssistPreference.PARAMETERS_FOREGROUND.equals(p)) {
-			Color c= getColor(store, ContentAssistPreference.PARAMETERS_FOREGROUND);
+		} else if (PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND.equals(p)) {
+			Color c= getColor(store, PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND);
 			assistant.setContextInformationPopupForeground(c);
 			assistant.setContextSelectorForeground(c);
-		} else if (ContentAssistPreference.PARAMETERS_BACKGROUND.equals(p)) {
-			Color c= getColor(store, ContentAssistPreference.PARAMETERS_BACKGROUND);
+		} else if (PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND.equals(p)) {
+			Color c= getColor(store, PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND);
 			assistant.setContextInformationPopupBackground(c);
 			assistant.setContextSelectorBackground(c);
-		} else if (ContentAssistPreference.AUTOINSERT.equals(p)) {
-			boolean enabled= store.getBoolean(ContentAssistPreference.AUTOINSERT);
+		} else if (PreferenceConstants.CODEASSIST_AUTOINSERT.equals(p)) {
+			boolean enabled= store.getBoolean(PreferenceConstants.CODEASSIST_AUTOINSERT);
 			assistant.enableAutoInsert(enabled);
 		}
 		
