@@ -16,7 +16,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
  * <ul>
  * 	<li>A Java project (type <code>PROJECT</code>) - a project entry refers
  * 		to all of the built classes in a project, and resolves to the output
- * 		location the associated Java project.</li>
+ * 		location(s) of the associated Java project.</li>
  * 	<li>An archive (type <code>ARCHIVE</code>) - an archive refers to a jar, zip, or
  * 		folder in the workspace or in the local file system containing class
  * 		files. An archive may have attached source.</li>

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -663,8 +664,10 @@ public final class JavaRuntime {
 	 * Returns resolved entries for the given entry in the context of the given
 	 * launch configuration. If the entry is of kind
 	 * <code>VARIABLE</code> or <code>CONTAINTER</code>, variable and contanier
-	 * resolvers are consulted, otherwise, the returned entry is the same as the 
-	 * given entry.
+	 * resolvers are consulted. If the entry is of kind <code>PROJECT</code>,
+	 * and the associated Java project specifies non-default output locations,
+	 * the corresponding output locations are returned. Otherwise, the given
+	 * entry is returnred.
 	 * <p>
 	 * If the given entry is a variable entry, and a resolver is not registered,
 	 * the entry itself is returned. If the given entry is a container, and a
@@ -681,6 +684,19 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, ILaunchConfiguration configuration) throws CoreException {
 		switch (entry.getType()) {
+			case IRuntimeClasspathEntry.PROJECT:
+				// if the project has multiple output locations, they must be returned
+				IResource resource = entry.getResource();
+				if (resource instanceof IProject) {
+					IJavaProject project = JavaCore.create((IProject)resource);
+					if (project.exists() && project.isOpen()) {
+						IRuntimeClasspathEntry[] entries = resolveOutputLocations(project);
+						if (entries != null) {
+							return entries;
+						}
+					}
+				}
+				break;
 			case IRuntimeClasspathEntry.VARIABLE:
 				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
 				if (resolver == null) {
@@ -703,11 +719,53 @@ public final class JavaRuntime {
 	}
 	
 	/**
+	 * Returns runtime classpath entries corresponding to the output locations
+	 * of the given project, or null if the project only uses the default
+	 * output location.
+	 * 
+	 * @param project
+	 * @return IRuntimeClasspathEntry[] or <code>null</code>
+	 * @throws CoreException
+	 */
+	private static IRuntimeClasspathEntry[] resolveOutputLocations(IJavaProject project) throws CoreException {
+		List nonDefault = new ArrayList();
+		if (project.exists() && project.isOpen()) {
+			IClasspathEntry entries[] = project.getRawClasspath();
+			for (int i = 0; i < entries.length; i++) {
+				IClasspathEntry classpathEntry = entries[i];
+				if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+					IPath path = classpathEntry.getOutputLocation();
+					if (path != null) {
+						nonDefault.add(path);
+					}
+				}
+			}
+		}
+		if (nonDefault.isEmpty()) {
+			return null; 
+		} else {
+			// add the default location if not already included
+			IPath def = project.getOutputLocation();
+			if (!nonDefault.contains(def)) {
+				nonDefault.add(def);						
+			}
+			IRuntimeClasspathEntry[] locations = new IRuntimeClasspathEntry[nonDefault.size()];
+			for (int i = 0; i < locations.length; i++) {
+				IClasspathEntry newEntry = JavaCore.newLibraryEntry((IPath)nonDefault.get(i), null, null);
+				locations[i] = new RuntimeClasspathEntry(newEntry);
+			}
+			return locations;						
+		}
+	}
+	
+	/**
 	 * Returns resolved entries for the given entry in the context of the given
 	 * Java project. If the entry is of kind
 	 * <code>VARIABLE</code> or <code>CONTAINTER</code>, variable and contanier
-	 * resolvers are consulted, otherwise, the returned entry is the same as the given
-	 * entry.
+	 * resolvers are consulted. If the entry is of kind <code>PROJECT</code>,
+	 * and the associated Java project specifies non-default output locations,
+	 * the corresponding output locations are returned. Otherwise, the given
+	 * entry is returnred.
 	 * <p>
 	 * If the given entry is a variable entry, and a resolver is not registered,
 	 * the entry itself is returned. If the given entry is a container, and a
@@ -724,6 +782,19 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry[] resolveRuntimeClasspathEntry(IRuntimeClasspathEntry entry, IJavaProject project) throws CoreException {
 		switch (entry.getType()) {
+			case IRuntimeClasspathEntry.PROJECT:
+				// if the project has multiple output locations, they must be returned
+				IResource resource = entry.getResource();
+				if (resource instanceof IProject) {
+					IJavaProject jp = JavaCore.create((IProject)resource);
+					if (jp.exists() && jp.isOpen()) {
+						IRuntimeClasspathEntry[] entries = resolveOutputLocations(jp);
+						if (entries != null) {
+							return entries;
+						}
+					}
+				}
+				break;			
 			case IRuntimeClasspathEntry.VARIABLE:
 				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
 				if (resolver == null) {

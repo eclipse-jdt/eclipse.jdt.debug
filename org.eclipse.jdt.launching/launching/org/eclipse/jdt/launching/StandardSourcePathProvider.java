@@ -11,6 +11,9 @@ package org.eclipse.jdt.launching;
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
@@ -39,4 +42,24 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 		return entries;
 
 	}
+
+	/**
+	 * @see IRuntimeClasspathProvider#resolveClasspath(IRuntimeClasspathEntry[], ILaunchConfiguration)
+	 */
+	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
+		List all = new ArrayList(entries.length);
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getType() == IRuntimeClasspathEntry.PROJECT) {
+				// a project resolves to itself for source lookup (rather than the class file output locations)
+				all.add(entries[i]);
+			} else {
+				IRuntimeClasspathEntry[] resolved =JavaRuntime.resolveRuntimeClasspathEntry(entries[i], configuration);
+				for (int j = 0; j < resolved.length; j++) {
+					all.add(resolved[j]);
+				}				
+			}
+		}
+		return (IRuntimeClasspathEntry[])all.toArray(new IRuntimeClasspathEntry[all.size()]);
+	}
+
 }
