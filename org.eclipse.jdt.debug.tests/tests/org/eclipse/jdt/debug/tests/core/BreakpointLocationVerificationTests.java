@@ -31,7 +31,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 
 	private void testLocation(int lineToTry, int expectedLineNumber, String expectedTypeName) throws JavaModelException {
-		IType type= getJavaProject().findType("Breakpoints");
+		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
 		CompilationUnit compilationUnit= AST.parseCompilationUnit(type.getCompilationUnit(), false);
 		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineToTry);
@@ -48,27 +48,35 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	public void testLineBeforeTypeDeclaration() throws Exception {
-		testLocation(9, 16, "Breakpoints");
+		testLocation(9, 18, "BreakpointsLocation");
 	}
 	
 	public void testLineMethodSignature() throws Exception {
-		testLocation(51, 52, "Breakpoints");
+		testLocation(32, 33, "BreakpointsLocation");
 	}
 	
 	public void testLineInInnerType() throws Exception {
-		testLocation(22, 22, "Breakpoints$InnerBreakpoints");
+		testLocation(25, 25, "BreakpointsLocation$InnerClass");
 	}
 	
 	public void testLineInAnnonymousType() throws Exception {
-		testLocation(43, 43, "Breakpoints");
+		testLocation(39, 39, "BreakpointsLocation");
 	}
 	
 	public void testLineAfterAllCode() throws Exception {
-		testLocation(160, -1, null);
+		testLocation(58, -1, null);
+	}
+	
+	public void testLineVariableDeclarationWithAssigment() throws Exception {
+		testLocation(43, 44, "BreakpointsLocation");
+	}
+	
+	public void testLineFieldDeclarationWithAssigment() throws Exception {
+		testLocation(51, 53, "BreakpointsLocation");
 	}
 	
 	public void testField(int line, int offsetInLine, String expectedFieldName, String expectedTypeName) throws Exception {
-		IType type= getJavaProject().findType("WatchItemTests");
+		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
 		ICompilationUnit unit= type.getCompilationUnit();
 		CompilationUnit compilationUnit= AST.parseCompilationUnit(unit, false);
@@ -82,15 +90,15 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 	
 	public void testFieldLocationOnField() throws Exception {
-		testField(22, 19, "fVector", "WatchItemTests");
+		testField(30, 20, "fList", "BreakpointsLocation");
 	}
 	
 	public void testFieldLocationNotOnField() throws Exception {
-		testField(26, 16, null, null);
+		testField(33, 18, null, null);
 	}
 	
 	public void testMethod(int line, int offsetInLine, String expectedMethodName, String expectedTypeName, String expectedMethodSignature) throws Exception {
-		IType type= getJavaProject().findType("WatchItemTests");
+		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
 		ICompilationUnit unit= type.getCompilationUnit();
 		CompilationUnit compilationUnit= AST.parseCompilationUnit(unit, false);
@@ -106,11 +114,11 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 	
 	public void testMethodOnSignature() throws Exception {
-		testMethod(34, 20, "fillVector", "WatchItemTests", "()V");
+		testMethod(17, 20, "test1", "BreakpointsLocation", "()V");
 	}
 		
 	public void testMethodOnCode() throws Exception {
-		testMethod(36, 19, "fillVector", "WatchItemTests", "()V");
+		testMethod(19, 17, "test1", "BreakpointsLocation", "()V");
 	}
 	
 	public void testMethodNotOnMethod() throws Exception {
@@ -118,6 +126,6 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 	}
 	
 	public void testMethodOnMethodSignatureNotAvailable() throws Exception {
-		testMethod(25, 23, "main", "WatchItemTests", null);
+		testMethod(32, 1, "test2", "BreakpointsLocation", null);
 	}
 }

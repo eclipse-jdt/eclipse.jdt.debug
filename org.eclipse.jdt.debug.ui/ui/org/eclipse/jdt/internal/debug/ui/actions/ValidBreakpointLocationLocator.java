@@ -624,6 +624,7 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public boolean visit(VariableDeclarationFragment node) {
 		Expression initializer = node.getInitializer();
 		if (visit(node, false) && initializer != null) {
+			visit(node.getName(), true);
 			initializer.accept(this);
 		}
 		return false;
