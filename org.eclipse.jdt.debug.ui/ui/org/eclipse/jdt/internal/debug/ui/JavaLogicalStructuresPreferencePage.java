@@ -45,6 +45,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -369,6 +371,13 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
                 }
             }
         });
+        table.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent event) {
+                if (event.character == SWT.DEL && event.stateMask == 0) {
+                    removeLogicalStrutures();
+                }
+            }
+        }); 
         fLogicalStructuresViewer.setSorter(new ViewerSorter() {
             public int compare(Viewer iViewer, Object e1, Object e2) {
                 if (e1 == null) {
