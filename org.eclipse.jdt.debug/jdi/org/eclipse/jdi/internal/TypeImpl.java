@@ -188,31 +188,45 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 					signature.append('Z');
 					return signature.toString();
 				}
+				break;
 			case 'i':
 				if (name.equals("int")) {
 					signature.append('I');
 					return signature.toString();
 				}
+				break;
 			case 'd':
 				if (name.equals("double")) {
 					signature.append('D');
 					return signature.toString();
 				}
+				break;
 			case 's':
 				if (name.equals("short")) {
 					signature.append('S');
 					return signature.toString();
 				}
+				break;
 			case 'c':
 				if (name.equals("char")) {
 					signature.append('C');
 					return signature.toString();
 				}
+				break;
 			case 'l':			
 				if (name.equals("long")) {
 					signature.append('J');
 					return signature.toString();
 				}
+				break;
+				/*
+			case 'f':
+				if (name.equals("float")) {
+					signature.append('F');
+					return signature.toString();
+				}
+				break;
+				*/
 		}
 		// Class type array
 		signature.append('L');
