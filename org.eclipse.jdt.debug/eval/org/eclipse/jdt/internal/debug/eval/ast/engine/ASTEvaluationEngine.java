@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
@@ -21,6 +22,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -162,6 +164,9 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		parser.setUnitName(unitName);
 		parser.setProject(project);
 		parser.setResolveBindings(true);
+		Map options=JavaCore.getDefaultOptions();
+		options.put(JavaCore.COMPILER_COMPLIANCE, project.getOption(JavaCore.COMPILER_COMPLIANCE, true));
+		parser.setCompilerOptions(options);
 		return (CompilationUnit) parser.createAST(null);
 	}
 
