@@ -165,7 +165,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 	
 	public void testStringVariablePath() throws Exception {
 		//add A.jar
-		File jar = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testjars\\A.jar"));
+		File jar = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testjars" + File.separator + "A.jar"));
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		IValueVariable variable = manager.newValueVariable("a-path", "testStringVariablePath");
 		IPath rootPath = new Path(jar.getParentFile().getAbsolutePath());
