@@ -179,7 +179,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		// Add type button
 		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
 		fAddTypeButton.setText("Add &Type...");
-		fAddTypeButton.setToolTipText("Choose a Java Type to Add as an Import");
+		fAddTypeButton.setToolTipText("Choose a Type to Add as an Import");
 		gd = getButtonGridData(fAddTypeButton);
 		fAddTypeButton.setLayoutData(gd);
 		fAddTypeButton.addSelectionListener(new SelectionListener() {
@@ -193,7 +193,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		// Add package button
 		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
 		fAddPackageButton.setText("Add &Package...");
-		fAddPackageButton.setToolTipText("Choose a Package to Add an an Import");
+		fAddPackageButton.setToolTipText("Choose a Package to Add as an Import");
 		gd = getButtonGridData(fAddPackageButton);
 		fAddPackageButton.setLayoutData(gd);
 		fAddPackageButton.addSelectionListener(new SelectionListener() {
