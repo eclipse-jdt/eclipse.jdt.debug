@@ -31,11 +31,13 @@ import org.eclipse.jdt.debug.tests.core.InstanceVariableTests;
 import org.eclipse.jdt.debug.tests.core.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.MethodBreakpointTests;
+import org.eclipse.jdt.debug.tests.core.MiscBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.PatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
 import org.eclipse.jdt.debug.tests.core.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
+import org.eclipse.jdt.debug.tests.core.StepFilterTests;
 import org.eclipse.jdt.debug.tests.core.SuspendVMBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
@@ -80,11 +82,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(ThreadFilterBreakpointsTests.class));
 		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
 
-		// This test suite is commented out because it references preferences
-		// in a UI plugin.  This causes the UI plugin to get loaded as soon
-		// as this class is created, resulting in random timing-related
-		// failures in other tests.  
-		//addTest(new TestSuite(StepFilterTests.class));
+		addTest(new TestSuite(StepFilterTests.class));
 
 		addTest(new TestSuite(InstanceVariableTests.class));
 		addTest(new TestSuite(LocalVariableTests.class));
@@ -113,12 +111,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(TestsTypeHierarchy1.class));
 		addTest(new TestSuite(TestsTypeHierarchy2.class));
 		
-		// This test suite is commented out because it references preferences
-		// in a UI plugin.  This causes the UI plugin to get loaded as soon
-		// as this class is created, resulting in random timing-related
-		// failures in other tests.  This can be uncommented when bug
-		// 15737 is fixed.		
-		//addTest(new TestSuite(MiscBreakpointsTests.class));
+		addTest(new TestSuite(MiscBreakpointsTests.class));
 	}
 	
 	public static void main(String[] args) {

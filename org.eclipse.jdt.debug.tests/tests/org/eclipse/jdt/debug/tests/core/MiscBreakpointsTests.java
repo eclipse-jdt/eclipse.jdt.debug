@@ -63,6 +63,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	 */
 	public void testSuspendOnCompilationErrors() throws Exception {
 		String typeName = "CompileError";
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);		
 		
 		IType type = fJavaProject.findType(typeName);
@@ -88,6 +89,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 
 	public void testDontSuspendOnCompilationErrors() throws Exception {
 		String typeName = "CompileError";
+		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);		
 		
 		IType type = fJavaProject.findType(typeName);
