@@ -97,9 +97,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	private boolean fSupportsTerminate;
 	/**
-	 * Whether terminated or disconnected
+	 * Whether terminated
 	 */
 	private boolean fTerminated;
+	/**
+	 * Whether disconnected
+	 */
+	private boolean fDisconnected;
 	/**
 	 * Whether disconnect is supported.
 	 */
@@ -164,6 +168,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		getVM().setDebugTraceMode(VirtualMachine.TRACE_NONE);
 		setProcess(process);
 		setTerminated(false);
+		setDisconnected(false);
 		setName(name);
 		setBreakpoints(new ArrayList(5));
 		setThreadList(new ArrayList(5));
@@ -449,7 +454,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public void disconnect() throws DebugException {
 
-		if (isTerminated() || isDisconnected()) {
+		if (isDisconnected()) {
 			// already done
 			return;
 		}
@@ -461,9 +466,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		try {
 			getVM().dispose();
 		} catch (VMDisconnectedException e) {
-			// if the VM diconnects while disconnecting, perform
-			// normal termination handling
-			terminate0();
+			// if the VM disconnects while disconnecting, perform
+			// normal disconnect handling
+			disconnected();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_disconnecting"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -733,7 +738,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @param event VM death event
 	 */
 	protected void handleVMDeath(VMDeathEvent event) {
-		terminate0();
+		terminated();
 	}
 
 	/**
@@ -743,7 +748,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @param event disconnect event
 	 */
 	protected void handleVMDisconnect(VMDisconnectEvent event) {
-		terminate0();
+		disconnected();
 	}
 	
 	/**
@@ -771,10 +776,20 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 	
 	/**
+	 * Sets whether this debug target is disconnected
+	 * 
+	 * @param disconnected <code>true</code> if this debug
+	 *  target is disconnected, otherwise <code>false</code>
+	 */
+	protected void setDisconnected(boolean disconnected) {
+		fDisconnected= disconnected;
+	}
+	
+	/**
 	 * @see IDisconnect#isDisconnected()
 	 */
 	public boolean isDisconnected() {
-		return isTerminated();
+		return fDisconnected;
 	}
 	
 	/**
@@ -892,7 +907,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @see ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		if (isTerminated() || isDisconnected()) {
+		if (isTerminated()) {
 			return;
 		}
 		if (!canTerminate()) {
@@ -903,7 +918,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		} catch (VMDisconnectedException e) {
 			// if the VM diconnects while exiting, perform 
 			// normal termination processing
-			terminate0();
+			terminated();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_terminating"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -911,27 +926,49 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 
 	/**
 	 * Updates the state of this target to be terminated,
-	 * if not already termianted. 
+	 * if not already termianted.
+	 */
+	protected void terminated() {
+		if (!isTerminated()) {
+			setTerminated(true);
+			setDisconnected(true);
+			cleanup0();
+			fireTerminateEvent();
+		}
+	}
+	
+	/**
+	 * Updates the state of this target for disconnection
+	 * from the VM.
+	 */
+	protected void disconnected() {
+		if (!isDisconnected()) {
+			setDisconnected(true);
+			cleanup0();
+			fireChangeEvent();
+		}
+	}
+
+	/** 
+	 * Cleans up the internal state of this debug
+	 * target as a result of a session ending with a
+	 * VM (as a result of a disconnect or termination of
+	 * the VM).
 	 * <p>
 	 * All threads are removed from this target.
 	 * This target is removed as a breakpoint listener,
 	 * and all breakpoints are removed from this target.
 	 * Temporary .class files created for evaluation
-	 * are deleted, and eveluation contexts are cleared.
-	 * Finally a terminate event is fired.
+	 * are deleted, and evaluation contexts are cleared.
 	 * </p>
 	 */
-	protected void terminate0() {
-		if (!isTerminated()) {
-			setTerminated(true);
-			removeAllThreads();
-			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
-			removeAllBreakpoints();
-			cleanupTempFiles();
-			if (fEvaluationContexts != null) {
-				fEvaluationContexts.clear();
-			}
-			fireTerminateEvent();
+	protected void cleanup0() {
+		removeAllThreads();
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+		removeAllBreakpoints();
+		cleanupTempFiles();
+		if (fEvaluationContexts != null) {
+			fEvaluationContexts.clear();
 		}
 	}
 

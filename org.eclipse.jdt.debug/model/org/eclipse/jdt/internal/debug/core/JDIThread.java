@@ -219,8 +219,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		try {
 			setRunning(!getUnderlyingThread().isSuspended());
 		} catch (VMDisconnectedException e) {
-			setTerminated(true);
-			if (getDebugTarget().isDisconnected() || getDebugTarget().isTerminated()) {
+			disconnected();
+			if (getDebugTarget().isDisconnected()) {
 				return;
 			}
 			logError(e);
@@ -955,6 +955,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			disposeStackFrames();
 			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			getUnderlyingThread().resume();
+		} catch (VMDisconnectedException e) {
+			disconnected();
 		} catch (RuntimeException e) {
 			setRunning(false);
 			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
@@ -1329,6 +1331,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		setRunning(false);
 		dispose();		
 		fireTerminateEvent();
+	}
+	
+	/**
+	 * Notification that the VM has disconnected - update
+	 * state and fire a change event
+	 */
+	protected void disconnected() {
+		setRunning(false);
+		dispose();
+		fireChangeEvent();
 	}
 	
 	/** 
