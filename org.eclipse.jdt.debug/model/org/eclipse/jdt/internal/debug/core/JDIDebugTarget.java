@@ -1745,9 +1745,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @see IJavaDebugTarget
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
-		Iterator threads = getChildren0().iterator();
-		while (threads.hasNext()) {
-			JDIThread thread = (JDIThread)threads.next();
+		IDebugElement[] threads = getChildren();
+		for (int i = 0; i < threads.length; i++) {
+			JDIThread thread = (JDIThread)threads[i];
 			IVariable var = thread.findVariable(varName);
 			if (var != null) {
 				return var;

@@ -9,6 +9,7 @@ import com.sun.jdi.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
@@ -452,11 +453,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IVariableLookup
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
-		List list= getChildren0();
-		Iterator variables = list.iterator();
+		IDebugElement[] variables = getChildren();
 		JDIThisVariable thisVariable= null;
-		while (variables.hasNext()) {
-			IVariable var= (IVariable) variables.next();
+		for (int i = 0; i < variables.length; i++) {
+			IVariable var= (IVariable) variables[i];
 			if (var.getName().equals(varName)) {
 				return var;
 			}
@@ -467,9 +467,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 
 		if (thisVariable != null) {
-			variables= ((JDIValue)thisVariable.getValue()).getChildren0().iterator();
-			while (variables.hasNext()) {
-				IVariable var= (IVariable) variables.next();
+			Iterator thisChildren = ((JDIValue)thisVariable.getValue()).getChildren0().iterator();
+			while (thisChildren.hasNext()) {
+				IVariable var= (IVariable) thisChildren.next();
 				if (var.getName().equals(varName)) {
 					return var;
 				}

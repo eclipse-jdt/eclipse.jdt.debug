@@ -1012,9 +1012,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	public IVariable findVariable(String varName) throws DebugException {
 		if (isSuspended()) {
-			Iterator stackframes= getChildren0().iterator();
-			while (stackframes.hasNext()) {
-				JDIStackFrame sf= (JDIStackFrame) stackframes.next();
+			IDebugElement[] stackframes= getChildren();
+			for (int i = 0; i < stackframes.length; i++) {
+				JDIStackFrame sf= (JDIStackFrame) stackframes[i];
 				IVariable var= sf.findVariable(varName);
 				if (var != null) {
 					return var;
