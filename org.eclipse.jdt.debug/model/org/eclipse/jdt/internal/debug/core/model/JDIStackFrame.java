@@ -437,6 +437,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			} catch (DebugException exception) {
 				if (!getThread().isSuspended()) {
 					thisObject= null;
+                    System.out.println(">> Thread not suspended, removed 'this' <<");
+                    exception.printStackTrace(System.out);
 				} else {
 					throw exception;
 				}
@@ -449,6 +451,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				// removal of 'this'
 				fVariables.remove(0);
 				index= 0;
+                System.out.println("\t>>previous 'this' not null");
 			} else {
 				if (oldThisObject == null && thisObject != null) {
 					// creation of 'this'
@@ -609,27 +612,35 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return null;
 		}
 		IVariable[] variables = getVariables();
+        System.out.println("findVariable(" + varName +")");
 		IJavaVariable thisVariable= null;
 		for (int i = 0; i < variables.length; i++) {
 			IJavaVariable var = (IJavaVariable) variables[i];
+            System.out.println("\tcomparing local: " + var.getName());
 			if (var.getName().equals(varName)) {
+                System.out.println("\t>>found");
 				return var;
 			}
 			if (var instanceof JDIThisVariable) {
 				// save for later - check for instance and static vars
 				thisVariable= var;
+                System.out.println("\t>>[cache 'this']");
 			}
 		}
 
 		if (thisVariable != null) {
 			IVariable[] thisChildren = thisVariable.getValue().getVariables();
+            System.out.println("\t>>searching field members of 'this'");
 			for (int i = 0; i < thisChildren.length; i++) {
 				IJavaVariable var= (IJavaVariable) thisChildren[i];
+                System.out.println("\tcomparing field: " + var.getName());
 				if (var.getName().equals(varName)) {
+                    System.out.println("\t>>found");
 					return var;
 				}
 			}
 		}
+        System.out.println("\t>>no matches");
 
 		return null;
 
