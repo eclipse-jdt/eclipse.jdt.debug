@@ -113,5 +113,9 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 		}
 		return null;
 	}	
-
+	
+	public void setEnabled(boolean enabled) {
+		fVMArgumentsLabel.setEnabled(enabled);
+		fVMArgumentsText.setEnabled(enabled);
+	}
 }
