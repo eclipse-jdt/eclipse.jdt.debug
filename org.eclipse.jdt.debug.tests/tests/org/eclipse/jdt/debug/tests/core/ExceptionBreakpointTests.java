@@ -41,6 +41,20 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		}		
 	}
 	
+	public void testDisabledCaughtNPE() throws Exception {
+		String typeName = "ThrowsNPE";
+		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
+		ex.setEnabled(false);
+		
+		IJavaDebugTarget debugTarget= null;
+		try {
+			debugTarget= launchAndTerminate(typeName, 3000);
+		} finally {
+			terminateAndRemove(debugTarget);
+			removeAllBreakpoints();
+		}		
+	}
+	
 	public void testInclusiveScopedException() throws Exception {
 		String typeName = "ThrowsNPE";
 		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
