@@ -112,11 +112,6 @@
             class="org.eclipse.jdt.internal.launching.JRERuntimeClasspathEntryResolver"
             id="org.eclipse.jdt.launching.JRE_RESOLVER">
       </runtimeClasspathEntryResolver>
-      <runtimeClasspathEntryResolver
-			runtimeClasspathEntryId="org.eclipse.jdt.launching.classpathentry.defaultClasspath"
-            class="org.eclipse.jdt.internal.launching.DefaultProjectClasspathEntryResolver"
-            id="org.eclipse.jdt.launching.classpathentry.project.resolver">
-      </runtimeClasspathEntryResolver>      
    </extension>
    <extension
          point="org.eclipse.jdt.launching.runtimeClasspathEntries">
