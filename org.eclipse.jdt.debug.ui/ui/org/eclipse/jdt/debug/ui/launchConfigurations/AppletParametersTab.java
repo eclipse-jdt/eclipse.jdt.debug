@@ -65,6 +65,35 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	private Button fParametersAddButton;
 	private Button fParametersRemoveButton;
 	private Button fParametersEditButton;
+	
+	private class AppletTabListener extends SelectionAdapter implements ModifyListener {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
+		 */
+		public void modifyText(ModifyEvent e) {
+			updateLaunchConfigurationDialog();
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+		 */
+		public void widgetSelected(SelectionEvent e) {
+			Object source= e.getSource();
+			if (source == fParametersTable) {
+				setParametersButtonsEnableState();
+			} else if (source == fParametersAddButton) {
+				handleParametersAddButtonSelected();
+			} else if (source == fParametersEditButton) {
+				handleParametersEditButtonSelected();
+			} else if (source == fParametersRemoveButton) {
+				handleParametersRemoveButtonSelected();
+			}
+		}
+
+	}
+	
+	private AppletTabListener fListener= new AppletTabListener();
 
 	private static final String EMPTY_STRING = "";	 //$NON-NLS-1$
 	
@@ -109,11 +138,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWidthText.setLayoutData(gd);
 		fWidthText.setFont(font);
-		fWidthText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fWidthText.addModifyListener(fListener);
 
 		fNameLabel = new Label(widthHeightNameComp, SWT.NONE);
 		fNameLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.namelabel.text")); //$NON-NLS-1$
@@ -123,11 +148,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fNameText.setLayoutData(gd);
 		fNameText.setFont(font);
-		fNameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});	
+		fNameText.addModifyListener(fListener);	
 
 		fHeightLabel= new Label(widthHeightNameComp, SWT.NONE);
 		fHeightLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.heightlabel.text")); //$NON-NLS-1$
@@ -137,11 +158,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fHeightText.setLayoutData(gd);
 		fHeightText.setFont(font);
-		fHeightText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fHeightText.addModifyListener(fListener);
 		
 		Label blank = new Label(widthHeightNameComp, SWT.NONE);
 		blank.setText(EMPTY_STRING);
@@ -185,11 +202,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		tableLayout.addColumnData(new ColumnWeightData(100));
 		fParametersTable.setHeaderVisible(true);
 		fParametersTable.setLinesVisible(true);
-		fParametersTable.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				setParametersButtonsEnableState();
-			}
-		});
+		fParametersTable.addSelectionListener(fListener);
 		fParametersTable.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
 				setParametersButtonsEnableState();
@@ -209,25 +222,13 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		envButtonComp.setFont(font);
 		
 		fParametersAddButton = createPushButton(envButtonComp ,LauncherMessages.getString("appletlauncher.argumenttab.parameters.button.add.text"), null); //$NON-NLS-1$
-		fParametersAddButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleParametersAddButtonSelected();
-			}
-		});
+		fParametersAddButton.addSelectionListener(fListener);
 		
 		fParametersEditButton = createPushButton(envButtonComp, LauncherMessages.getString("appletlauncher.argumenttab.parameters.button.edit.text"), null); //$NON-NLS-1$
-		fParametersEditButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleParametersEditButtonSelected();
-			}
-		});
+		fParametersEditButton.addSelectionListener(fListener);
 		
 		fParametersRemoveButton = createPushButton(envButtonComp, LauncherMessages.getString("appletlauncher.argumenttab.parameters.button.remove.text"), null); //$NON-NLS-1$
-		fParametersRemoveButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleParametersRemoveButtonSelected();
-			}
-		});
+		fParametersRemoveButton.addSelectionListener(fListener);
 	}
 
 		
@@ -279,6 +280,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		int[] selectedIndices = this.fParametersTable.getSelectionIndices();
 		this.fParametersTable.remove(selectedIndices);
 		setParametersButtonsEnableState();
+		updateLaunchConfigurationDialog();
 	}
 
 	/**
