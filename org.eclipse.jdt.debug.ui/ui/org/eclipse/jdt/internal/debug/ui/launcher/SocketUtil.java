@@ -21,7 +21,6 @@ public class SocketUtil {
 			try {
 				new Socket(host, port);
 			} catch (ConnectException e) {
-				JDIDebugUIPlugin.logError(e);
 				return port;
 			} catch (IOException e) {
 			}
