@@ -93,25 +93,29 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunch
 		
 
 		// First look for a default config for this config type and the specified resource
-		try {
-			IResource resource = javaElement.getUnderlyingResource();
-			if (resource != null) {
-				String configTypeID = workingCopy.getType().getIdentifier();
-				boolean foundDefault = getLaunchManager().initializeFromDefaultLaunchConfiguration(resource, workingCopy, configTypeID);
-				if (foundDefault) {
-					initializeFromContextJavaProject(workingCopy, javaElement);
-					initializeFromContextName(workingCopy, javaElement);
-					return;
+		if (javaElement != null) {
+			try {
+				IResource resource = javaElement.getUnderlyingResource();
+				if (resource != null) {
+					String configTypeID = workingCopy.getType().getIdentifier();
+					boolean foundDefault = getLaunchManager().initializeFromDefaultLaunchConfiguration(resource, workingCopy, configTypeID);
+					if (foundDefault) {
+						initializeFromContextJavaProject(workingCopy, javaElement);
+						initializeFromContextName(workingCopy, javaElement);
+						return;
+					}
 				}
+			} catch (JavaModelException jme) {			
+			} catch (CoreException ce) {			
 			}
-		} catch (JavaModelException jme) {			
-		} catch (CoreException ce) {			
 		}
 				
 		// If no default config was found, initialize all attributes we can from the specified 
 		// context object and from 'hard-coded' defaults known to this delegate
-		initializeFromContextJavaProject(workingCopy, javaElement);
-		initializeFromContextName(workingCopy, javaElement);
+		if (javaElement != null) {
+			initializeFromContextJavaProject(workingCopy, javaElement);
+			initializeFromContextName(workingCopy, javaElement);
+		}
 		initializeFromDefaultHostName(workingCopy);
 		initializeFromDefaultPortNumber(workingCopy);
 		initializeFromDefaultAllowTerminate(workingCopy);
