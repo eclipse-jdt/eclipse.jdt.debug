@@ -311,22 +311,22 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		if (request instanceof MethodEntryRequest) {
 			if (isEntry()) {
 				if (enabled != request.isEnabled()) {
-					internalUpdateEnabeldState(request, enabled);
+					internalUpdateEnabledState(request, enabled);
 				}
 			} else {
 				if (request.isEnabled()) {
-					internalUpdateEnabeldState(request, false);
+					internalUpdateEnabledState(request, false);
 				}
 			}
 		}
 		if (request instanceof MethodExitRequest) {
 			if (isExit()) {
 				if (enabled != request.isEnabled()) {
-					internalUpdateEnabeldState(request, enabled);
+					internalUpdateEnabledState(request, enabled);
 				}
 			} else {
 				if (request.isEnabled()) {
-					internalUpdateEnabeldState(request, false);
+					internalUpdateEnabledState(request, false);
 				}
 			}
 		}
@@ -336,7 +336,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * Set the enabled state of the given request to the given
 	 * value
 	 */
-	protected void internalUpdateEnabeldState(EventRequest request, boolean enabled) {
+	protected void internalUpdateEnabledState(EventRequest request, boolean enabled) {
 		// change the enabled state
 		try {
 			// if the request has expired, do not enable/disable.
