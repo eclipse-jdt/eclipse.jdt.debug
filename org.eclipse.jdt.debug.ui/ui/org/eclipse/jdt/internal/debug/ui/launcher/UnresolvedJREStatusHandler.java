@@ -99,13 +99,7 @@ public class UnresolvedJREStatusHandler implements IStatusHandler {
 		} else {
 			IVMInstallType vmType = JavaRuntime.getVMInstallType(typeId);
 			if (vmType != null) {
-				IVMInstall[] vms = vmType.getVMInstalls();
-				for (int i = 0; i < vms.length; i++) {
-					if (vms[i].getName().equals(name)) {
-						vm = vms[i];
-						break;
-					}
-				}
+				vm = vmType.findVMInstallByName(name);
 			}
 		}
 		return vm;
