@@ -71,7 +71,12 @@ public class LaunchConfigurationProjectMainTypeChange extends Change {
 		IType declaringType= type.getDeclaringType();
 		String newFullyQualifiedName;
 		if (declaringType == null) {
-			newFullyQualifiedName= type.getPackageFragment().getElementName() + '.' + newName;
+			IPackageFragment packageFragment = type.getPackageFragment();
+			if (packageFragment.isDefaultPackage()) {
+				newFullyQualifiedName= newName;
+			} else {
+				newFullyQualifiedName= packageFragment.getElementName() + '.' + newName;
+			}
 		} else {
 			newFullyQualifiedName= declaringType.getFullyQualifiedName() + '$' + newName;
 		}
