@@ -191,7 +191,8 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 				// just try to create one with the infos
 			}
 		}
-		StringBuffer res= new StringBuffer(Signature.toString(type.signature()).replace('/', '.'));
+		String signature= type.signature();
+		StringBuffer res= new StringBuffer(signature.substring(1, signature.length() - 1).replace('/','.'));
 		String genericSignature= type.genericSignature();
 		if (genericSignature != null) {
 			String[] typeParameters= Signature.getTypeParameters(genericSignature);

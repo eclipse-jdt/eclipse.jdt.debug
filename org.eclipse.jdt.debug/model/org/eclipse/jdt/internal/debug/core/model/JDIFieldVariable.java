@@ -187,7 +187,10 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 	public String getReferenceTypeName() throws DebugException {
 		String genericSignature= getField().genericSignature();
 		if (genericSignature != null) {
-			return Signature.toString(genericSignature).replace('/', '.');
+			// we want to keep the '$'s
+			int index= genericSignature.indexOf('<');
+			String name= Signature.toString(genericSignature).replace('/', '.');
+			return genericSignature.substring(1, index).replace('/', '.') + name.substring(index - 1);
 		}
 		Type underlyingType= getUnderlyingType();
 		if (underlyingType instanceof ReferenceType) {

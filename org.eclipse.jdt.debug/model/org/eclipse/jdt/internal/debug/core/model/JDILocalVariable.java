@@ -99,7 +99,10 @@ public class JDILocalVariable extends JDIModificationVariable {
 		try {
 			String genericSignature= getLocal().genericSignature();
 			if (genericSignature != null) {
-				return Signature.toString(genericSignature).replace('/','.');
+				// we want to keep the '$'s
+				int index= genericSignature.indexOf('<');
+				String name= Signature.toString(genericSignature).replace('/', '.');
+				return genericSignature.substring(1, index).replace('/', '.') + name.substring(index - 1);
 			}
 			Type underlyingType= getUnderlyingType();
 			if (underlyingType instanceof ReferenceType) {
