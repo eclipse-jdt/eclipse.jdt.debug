@@ -302,7 +302,9 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST)) {
+		String property = event.getProperty();
+		if (property.equals(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST) ||
+				property.equals(IJDIPreferencesConstants.PREF_SHOW_DETAILS)) {
 			populateDetailFormattersMap();
 			fCacheMap.clear();
 			// If a Java stack frame is selected in the Debug view, fire a change event on
