@@ -45,6 +45,10 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fHexButton;
 	private Button fCharButton;
 	private Button fUnsignedButton;
+	//view settings
+	private Button fPackagesButton;
+	private Button fFinalButton;
+	private Button fStaticButton;
 	
 	private PropertyChangeListener fPropertyChangeListener;
 	
@@ -52,46 +56,16 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		private boolean fHasStateChanged= false;
 		
 		public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty().equals(IJDIPreferencesConstants.SHOW_HEX_VALUES)) {
+			if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES)) {
 				fHasStateChanged= true;
-			} else if (event.getProperty().equals(IJDIPreferencesConstants.SHOW_CHAR_VALUES)) {
+			} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES)) {
 				fHasStateChanged= true;
-			} else if (event.getProperty().equals(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES)) {
+			} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES)) {
 				fHasStateChanged= true;
-			} else if (!event.getProperty().equals(IJDIPreferencesConstants.VARIABLE_RENDERING)) {
-				return;
-			}
-			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-				public void run() {
-					// Refresh interested views
-					IWorkbenchWindow[] windows= JDIDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
-					IWorkbenchPage page= null;
-					for (int i= 0; i < windows.length; i++) {
-						page= windows[i].getActivePage();
-						refreshViews(page, IDebugUIConstants.ID_EXPRESSION_VIEW);
-						refreshViews(page, IDebugUIConstants.ID_VARIABLE_VIEW);
-					}
-				}
-			});
-		}
-		
-		/**
-		 * Refresh all views in the given workbench page with the given view id
-		 */
-		private void refreshViews(IWorkbenchPage page, String viewID) {
-			IViewPart part= page.findView(viewID);
-			if (part != null) {
-				IDebugView adapter= (IDebugView)part.getAdapter(IDebugView.class);
-				if (adapter != null) {
-					Viewer viewer= adapter.getViewer();
-					if (viewer instanceof StructuredViewer) {
-						((StructuredViewer)viewer).refresh();
-					}
-				}
 			}
 		}
 		
-		public boolean hasStateChanged() {
+		protected boolean hasStateChanged() {
  			return fHasStateChanged;
  		}
 	}
@@ -109,11 +83,17 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 * Set the default preferences for this page.
 	 */
 	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IJDIPreferencesConstants.SHOW_HEX_VALUES, false);
-		store.setDefault(IJDIPreferencesConstants.SHOW_CHAR_VALUES, false);
-		store.setDefault(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, false);		
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES, false);		
 		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);
-		store.setDefault(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);
+		
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS, false);
+		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS, false);
 	}
 	/**
 	 * @see PreferencePage#createContents(Composite)
@@ -137,16 +117,28 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fSuspendButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_&execution_on_uncaught_exceptions_1")); //$NON-NLS-1$
 		fSuspendOnCompilationErrors= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_execution_on_co&mpilation_errors_1")); //$NON-NLS-1$
 		
+		createSpacer(composite, 1);
+		
 		comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Hot_Code_Replace_Error_Reporting_2")); //$NON-NLS-1$
 		fAlertHCRButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
 		fAlertObsoleteButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_obsolete_methods_remain_1")); //$NON-NLS-1$
 		
+		createSpacer(composite, 1);
+		
 		createPrimitiveDisplayPreferences(composite);
+		
+		createSpacer(composite, 1);
+		
+		comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Opened_View_Default_Settings_1")); //$NON-NLS-1$
+		fPackagesButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Show_&qualified_names_2")); //$NON-NLS-1$
+		fFinalButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Show_&final_fields_3")); //$NON-NLS-1$
+		fStaticButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.&Show_static_fields_4")); //$NON-NLS-1$
 		
 		setValues();
 		
 		return composite;		
 	}
+	
 	/**
 	 * Create the primitive display preferences composite widget
 	 */
@@ -163,6 +155,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	public void init(IWorkbench workbench) {
 	}
+	
 	/**
 	 * @see IPreferencePage#performOk()
 	 * Also, notifies interested listeners
@@ -170,10 +163,44 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	public boolean performOk() {
 		storeValues();
 		if (getPropertyChangeListener().hasStateChanged()) {
-			//only fire the notification if the user has toggled a button.
-			getPreferenceStore().firePropertyChangeEvent(IJDIPreferencesConstants.VARIABLE_RENDERING, Boolean.TRUE, Boolean.FALSE);
+			refreshViews();
 		}
 		return true;
+	}
+	
+	/**
+	 * Refresh the variables and expression views as changes
+	 * have occurred that affects these views.
+	 */
+	private void refreshViews() {
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				// Refresh interested views
+				IWorkbenchWindow[] windows= JDIDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();
+				IWorkbenchPage page= null;
+				for (int i= 0; i < windows.length; i++) {
+					page= windows[i].getActivePage();
+					refreshViews(page, IDebugUIConstants.ID_EXPRESSION_VIEW);
+					refreshViews(page, IDebugUIConstants.ID_VARIABLE_VIEW);
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Refresh all views in the given workbench page with the given view id
+	 */
+	private void refreshViews(IWorkbenchPage page, String viewID) {
+		IViewPart part= page.findView(viewID);
+		if (part != null) {
+			IDebugView adapter= (IDebugView)part.getAdapter(IDebugView.class);
+			if (adapter != null) {
+				Viewer viewer= adapter.getViewer();
+				if (viewer instanceof StructuredViewer) {
+					((StructuredViewer)viewer).refresh();
+				}
+			}
+		}
 	}
 	
 	/**
@@ -187,14 +214,14 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private void setDefaultValues() {
 		IPreferenceStore store = getPreferenceStore();
-		fHexButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_HEX_VALUES));
-		fCharButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_CHAR_VALUES));
-		fUnsignedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));
+		fHexButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES));
+		fCharButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES));
+		fUnsignedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES));
 		
-		fSuspendButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
+		fSuspendButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
 		fSuspendOnCompilationErrors.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
-		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
-		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS));
+		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
+		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
 	}
 	
 	/**
@@ -241,13 +268,17 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private void setValues() {
 		IPreferenceStore store = getPreferenceStore();
 		
-		fHexButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_HEX_VALUES));
-		fCharButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_CHAR_VALUES));
-		fUnsignedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));		
-		fSuspendButton.setSelection(store.getBoolean(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
+		fHexButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES));
+		fCharButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES));
+		fUnsignedButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES));		
+		fSuspendButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
 		fSuspendOnCompilationErrors.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
-		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
-		fAlertObsoleteButton.setSelection(store.getBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS));
+		fAlertHCRButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED));
+		fAlertObsoleteButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS));
+		
+		fStaticButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS));
+		fFinalButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS));
+		fPackagesButton.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES));
 	}
 	
 	/**
@@ -256,14 +287,18 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	private void storeValues() {
 		IPreferenceStore store = getPreferenceStore();
-		store.setValue(IJDIPreferencesConstants.SHOW_HEX_VALUES, fHexButton.getSelection());
-		store.setValue(IJDIPreferencesConstants.SHOW_CHAR_VALUES, fCharButton.getSelection());
-		store.setValue(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, fUnsignedButton.getSelection());
-		store.setValue(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS, fSuspendButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_SHOW_HEX_VALUES, fHexButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_SHOW_CHAR_VALUES, fCharButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_SHOW_UNSIGNED_VALUES, fUnsignedButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, fSuspendButton.getSelection());
 		store.setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, fSuspendOnCompilationErrors.getSelection());
-		store.setValue(IJDIPreferencesConstants.ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
-		store.setValue(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, fAlertHCRButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, fAlertObsoleteButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_SHOW_FINAL_FIELDS, fFinalButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_SHOW_STATIC_FIELDS, fStaticButton.getSelection());
+		store.setValue(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, fPackagesButton.getSelection());
 	}
+	
 	protected PropertyChangeListener getPropertyChangeListener() {
 		if (fPropertyChangeListener == null) {
 			fPropertyChangeListener= new PropertyChangeListener();
@@ -272,11 +307,17 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	}
 	
 	/**
-	 * @see Dialog#dispose()
+	 * @see DialogPage#dispose()
 	 */
 	public void dispose() {
 		super.dispose();
 		getPreferenceStore().removePropertyChangeListener(getPropertyChangeListener());
 	}
+	
+	protected void createSpacer(Composite composite, int columnSpan) {
+		Label label = new Label(composite, SWT.NONE);
+		GridData gd = new GridData();
+		gd.horizontalSpan = columnSpan;
+		label.setLayoutData(gd);
+	}
 }
-
