@@ -117,7 +117,20 @@ public class BundleBuilder implements BundleAttributes {
 		pair(jdict, "JVMVersion", JVMVERSION, null); //$NON-NLS-1$
 		pair(jdict, "MainClass", MAINCLASS, null); //$NON-NLS-1$
 		pair(jdict, "WorkingDirectory", WORKINGDIR, null); //$NON-NLS-1$
-		pair(jdict, "Arguments", ARGUMENTS, null); //$NON-NLS-1$
+		
+		String arguments= fBundleDescription.get(ARGUMENTS, null);
+		if (arguments != null) {
+			Element argArray= doc.createElement("array");	//$NON-NLS-1$
+			add(jdict, "Arguments", argArray);	//$NON-NLS-1$
+			StringTokenizer st= new StringTokenizer(arguments);	
+			while (st.hasMoreTokens()) {
+				String arg= st.nextToken();
+				Element type= doc.createElement("string"); //$NON-NLS-1$
+				argArray.appendChild(type);	
+				type.appendChild(doc.createTextNode(arg));			
+			}
+		}
+		
 		pair(jdict, "VMOptions", VMOPTIONS, null); //$NON-NLS-1$
 		
 		int[] id= new int[] { 0 };
