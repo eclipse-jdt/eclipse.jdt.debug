@@ -17,7 +17,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
  * <p>
  * A resolver is registered for a runtime classpath entry of type
  * <code>VARIABLE</code> and/or <code>CONTAINER</code>. A resolver is
- * consulted when a runtime classpath entry is needs to be resolved..
+ * consulted when a runtime classpath entry is needs to be resolved.
  * </p>
  * A resolver extension is defined in <code>plugin.xml</code>.
  * Following is an example definition of a runtime classpath entry

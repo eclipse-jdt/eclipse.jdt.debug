@@ -12,8 +12,8 @@ package org.eclipse.jdt.launching;import java.io.File;import java.net.URL;
  * configured dynamically at run-time. This is typically done by the user 
  * interactively in the UI.
  * <p>
- * Instance are factories for creating VM runners for actually running Java programs
- * in the various different run modes.
+ * A VM install is responsible for creating VM runners to launch a Java program
+ * in a specific mode.
  * </p>
  * <p>
  * This interface is intended to be implemented by clients that contribute

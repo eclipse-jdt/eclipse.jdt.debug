@@ -11,8 +11,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 
 /**
- * <b>THIS INTERFACE IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>.
- * 
  * Represents an entry on the runtime classpath. A runtime classpath entry
  * may refer to one of the following:
  * <ul>
@@ -244,6 +242,8 @@ public interface IRuntimeClasspathEntry {
 	/**
 	 * Returns the name of the variable associated with this entry, or <code>null</code>
 	 * if this entry is not of type <code>VARIABLE</code> or <code>CONTAINER</code>.
+	 * When this entry is of type <code>CONTAINER</code>, the first segment of the
+	 * container id is returned.
 	 * 
 	 * @return the name of the variable associated with this entry, or <code>null</code>
 	 *  if this entry is not of type <code>VARIABLE</code> or <code>CONTAINER</code>

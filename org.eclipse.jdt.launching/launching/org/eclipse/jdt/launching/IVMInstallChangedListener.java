@@ -12,7 +12,8 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
  * A VM install changed listener is notified 
- * the workspace default VM install changes.
+ * the workspace default VM install changes, or when an attribute of
+ * a specific VM install changes.
  * Listeners register with <code>JavaRuntime</code>.
  * <p>
  * Clients may implement this interface.

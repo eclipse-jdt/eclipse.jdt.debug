@@ -70,7 +70,7 @@ public interface IRuntimeClasspathProvider {
 	/**
 	 * Returns the resolved path corresponding to the given path, in the context of the
 	 * given launch configuration. Variable and container entries are resolved. The returned
-	 * (resolved) path may not have the same number of entries as the given (unresolved)
+	 * (resolved) path need not have the same number of entries as the given (unresolved)
 	 * path.
 	 * 
 	 * @param entries entries to resolve

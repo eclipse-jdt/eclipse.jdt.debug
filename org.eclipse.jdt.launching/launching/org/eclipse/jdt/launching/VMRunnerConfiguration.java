@@ -16,12 +16,6 @@ import org.eclipse.jdt.internal.launching.LaunchingMessages;
  * <p>
  * Clients may instantiate this class; it is not intended to be subclassed.
  * </p>
- * <p>
- * Note: This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  */
 public class VMRunnerConfiguration {
 	private String fClassToLaunch;
@@ -57,6 +51,7 @@ public class VMRunnerConfiguration {
 	 * VM-specific attributes.
 	 * 
 	 * @param map the <code>Map</code> of VM-specific attributes.
+	 * @since 2.0
 	 */
 	public void setVMSpecificAttributesMap(Map map) {
 		fVMSpecificAttributesMap = map;
@@ -113,6 +108,7 @@ public class VMRunnerConfiguration {
 	 * VM-specific attributes.
 	 * 
 	 * @return The <code>Map</code> of VM-specific attributes.
+	 * @since 2.0
 	 */
 	public Map getVMSpecificAttributesMap() {
 		return fVMSpecificAttributesMap;

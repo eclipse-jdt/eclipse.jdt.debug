@@ -71,14 +71,14 @@ import org.xml.sax.SAXException;
 /**
  * The central access point for launching support. This class manages
  * the registered VM types contributed through the 
- * <code>"org.eclipse.jdt.launching.vmType"</code> extension point, and
- * supports associating particular VMs with Java projects.
+ * <code>"org.eclipse.jdt.launching.vmType"</code> extension point.
+ * As well, this class provides VM install change notification,
+ * and computes classpaths and source lookup paths for launch
+ * configurations.
  * <p>
  * This class provides static methods only; it is not intended to be
  * instantiated or subclassed by clients.
  * </p>
- * 
- * @see IVMInstallType
  */
 public final class JavaRuntime {
 	
@@ -142,6 +142,8 @@ public final class JavaRuntime {
 	 * to the status handler is the Java project for which the path could not be
 	 * resolved. The status handler must return an <code>IVMInstall</code> or <code>null</code>.
 	 * The container resolver will re-set the project's classpath if required.
+	 * 
+	 * @since 2.0
 	 */
 	public static final int ERR_UNABLE_TO_RESOLVE_JRE = 160;
 	
@@ -361,6 +363,7 @@ public final class JavaRuntime {
 	 * saveVMConfiguration is called. 
 	 * @param	connector The connector to make the default. May be null to clear 
 	 * 				the default.
+	 * @since 2.0
 	 */
 	public static void setDefaultVMConnector(IVMConnector connector, IProgressMonitor monitor) throws CoreException {
 		fgDefaultVMConnectorId= connector.getIdentifier();
@@ -400,6 +403,7 @@ public final class JavaRuntime {
 	/**
 	 * Return the default VM connector.
 	 * @return	Returns the default VM connector.
+	 * @since 2.0
 	 */
 	public static IVMConnector getDefaultVMConnector() {
 		String id = getDefaultVMConnectorId();
@@ -438,12 +442,11 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
-	 * 
 	 * Returns a new runtime classpath entry for the given project.
 	 * 
 	 * @param project Java project
 	 * @return runtime classpath entry
+	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry newProjectRuntimeClasspathEntry(IJavaProject project) {
 		IClasspathEntry cpe = JavaCore.newProjectEntry(project.getProject().getFullPath());
@@ -452,12 +455,11 @@ public final class JavaRuntime {
 	
 	
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
-	 * 
 	 * Returns a new runtime classpath entry for the given archive.
 	 * 
 	 * @param resource archive resource
 	 * @return runtime classpath entry
+	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IResource resource) {
 		IClasspathEntry cpe = JavaCore.newLibraryEntry(resource.getLocation(), null, null);
@@ -465,13 +467,12 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
-	 * 
 	 * Returns a new runtime classpath entry for the given archive (possibly
 	 * external).
 	 * 
 	 * @param path absolute path to an archive
 	 * @return runtime classpath entry
+	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IPath path) {
 		IClasspathEntry cpe = JavaCore.newLibraryEntry(path, null, null);
@@ -479,13 +480,12 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
-	 * 
 	 * Returns a new runtime classpath entry for the classpath
 	 * variable with the given name.
 	 * 
 	 * @param name class path variable name
 	 * @return runtime classpath entry
+	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry newVariableRuntimeClasspathEntry(String name) {
 		IClasspathEntry cpe = JavaCore.newVariableEntry(new Path(name), null, null);
@@ -493,8 +493,6 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
-	 * 
 	 * Returns a runtime classpath entry for the given container path in the
 	 * conext of the project with the given name.
 	 * 
@@ -503,6 +501,7 @@ public final class JavaRuntime {
 	 * 	<code>BOOTSTRAP_CLASSES</code>, or <code>STANDARD_CLASSES</code>
 	 * @return runtime classpath entry
 	 * @exception CoreException if unable to construct a runtime classpath entry
+	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, int classpathProperty) throws CoreException {
 		IClasspathEntry cpe = JavaCore.newContainerEntry(path);
@@ -510,27 +509,25 @@ public final class JavaRuntime {
 	}
 		
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
-	 * 
 	 * Returns a runtime classpath entry constructed from the given memento.
 	 * 
 	 * @param memento a menento for a runtime classpath entry
 	 * @return runtime classpath entry
 	 * @exception CoreException if unable to construct a runtime classpath entry
+	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry newRuntimeClasspathEntry(String memento) throws CoreException {
 		return new RuntimeClasspathEntry(memento);
 	}
 	
 	/**
-	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
-	 * 
 	 * Returns a runtime classpath entry that corresponds to the given
 	 * classpath entry. The classpath entry may not be of type <code>CPE_SOURCE</code>
 	 * or <code>CPE_CONTAINER</code>.
 	 * 
 	 * @param entry a classpath entry
 	 * @return runtime classpath entry
+	 * @since 2.0
 	 */
 	private static IRuntimeClasspathEntry newRuntimeClasspathEntry(IClasspathEntry entry) {
 		return new RuntimeClasspathEntry(entry);
@@ -757,6 +754,7 @@ public final class JavaRuntime {
 	 * <code>null</code> if none.
 	 *
 	 * @exception CoreException if the referenced Java project does not exist
+	 * @since 2.0
 	 */
 	public static IJavaProject getJavaProject(ILaunchConfiguration configuration) throws CoreException {
 		String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
