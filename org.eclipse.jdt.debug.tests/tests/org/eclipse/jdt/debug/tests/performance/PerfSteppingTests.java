@@ -14,6 +14,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
+import org.eclipse.test.performance.Dimension;
 
 /**
  * Tests performance of stepping.
@@ -33,6 +34,7 @@ public class PerfSteppingTests extends AbstractDebugPerformanceTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			tagAsGlobalSummary("Debug Step Over", Dimension.CPU_TIME);
 			for (int i = 0; i < 100; i++) {
 			    startMeasuring();
 				stepOver(frame);

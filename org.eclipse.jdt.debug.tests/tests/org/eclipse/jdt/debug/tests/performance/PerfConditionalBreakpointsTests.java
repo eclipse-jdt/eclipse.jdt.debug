@@ -20,6 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
+import org.eclipse.test.performance.Dimension;
 
 /**
  * Tests performance of conditional breakpoints.
@@ -41,6 +42,7 @@ public class PerfConditionalBreakpointsTests extends
             //cold launch, open editor etc.
             IJavaThread thread  = launchToLineBreakpoint(typeName, bp);
             threads.add(thread);
+            tagAsGlobalSummary("Conditional Breakpoint", Dimension.CPU_TIME);
             for (int i = 0; i < 5; i++) {
                 try {
                     startMeasuring();
