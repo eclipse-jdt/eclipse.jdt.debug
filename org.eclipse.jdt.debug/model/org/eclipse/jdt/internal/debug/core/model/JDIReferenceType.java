@@ -21,7 +21,6 @@ import org.eclipse.jdt.debug.core.IJavaReferenceType;
 
 import com.sun.jdi.ClassObjectReference;
 import com.sun.jdi.Field;
-import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 
