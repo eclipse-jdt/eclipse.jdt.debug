@@ -80,7 +80,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 						validateInput();
 					} else {
 						getOkButton().setEnabled(true);
-						getErrorMessageLabel().setText(""); //$NON-NLS-1$
+						setErrorMessage(""); //$NON-NLS-1$
 					}
 				}
 				
@@ -177,9 +177,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 		}
 		if (dialog.isHitCountEnabled()) {
 			return Integer.parseInt(dialog.getValue().trim());
-		} else {
-			return 0;
 		}
+		return 0;
 	}
-
 }
