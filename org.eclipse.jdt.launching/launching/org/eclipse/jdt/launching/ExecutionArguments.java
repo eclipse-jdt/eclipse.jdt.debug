@@ -93,13 +93,14 @@ public class ExecutionArguments {
 			
 			ch= getNext();
 			while (ch > 0) {
-				while (Character.isWhitespace((char)ch))
+				if (Character.isWhitespace((char)ch)) {
 					ch= getNext();	
-				
-				if (ch == '"') {
-					v.add(parseString());
 				} else {
-					v.add(parseToken());
+					if (ch == '"') {
+						v.add(parseString());
+					} else {
+						v.add(parseToken());
+					}
 				}
 			}
 	

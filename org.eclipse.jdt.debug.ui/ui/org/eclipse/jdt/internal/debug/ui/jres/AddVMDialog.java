@@ -269,8 +269,12 @@ public class AddVMDialog extends StatusDialog {
 			String[] vmArgs = fEditedVM.getVMArguments();
 			if (vmArgs != null) {
 				StringBuffer buffer = new StringBuffer();
-				for (int i = 0; i < vmArgs.length; i++) {
-					buffer.append(vmArgs[i] + " "); //$NON-NLS-1$
+				int length= vmArgs.length;
+				if (length > 0) {
+					buffer.append(vmArgs[0]);
+					for (int i = 1; i < length; i++) {
+						buffer.append(' ').append(vmArgs[i]);
+					}
 				}
 				fVMArgs.setText(buffer.toString());
 			}
