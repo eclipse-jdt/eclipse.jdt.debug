@@ -385,6 +385,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		IEvaluationListener listener)
 		throws DebugException {
 			checkDisposed();
+			checkEvaluating();
 			try {
 				evaluationStarted();
 				setListener(listener);
@@ -412,13 +413,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				
 				Thread t = new Thread(r);
 				t.start();
-			} finally {
-				evaluationEnded();
-				if (isDisposed()) {
-					// if the engine was disposed during an evaluation
-					// do the cleanup now
-					dispose();
-				}
+			} catch (DebugException d) {
+				evaluationAborted();
+				throw d;
 			}
 			
 	}
@@ -432,6 +429,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		IEvaluationListener listener)
 		throws DebugException {
 			checkDisposed();
+			checkEvaluating();
 			try {
 				evaluationStarted();
 				setListener(listener);
@@ -491,13 +489,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				
 				Thread t = new Thread(r);
 				t.start();
-			} finally {
-				evaluationEnded();
-				if (isDisposed()) {
-					// if the engine was disposed during an evaluation
-					// do the cleanup now
-					dispose();
-				}
+			} catch (DebugException d) {
+				evaluationAborted();
+				throw d;
 			}				
 	}
 	
@@ -511,6 +505,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		IEvaluationListener listener)
 		throws DebugException {
 			checkDisposed();
+			checkEvaluating();
 			try {
 				evaluationStarted();
 				setListener(listener);
@@ -552,13 +547,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 				
 				Thread t = new Thread(r);
 				t.start();
-			} finally {
-				evaluationEnded();
-				if (isDisposed()) {
-					// if the engine was disposed during an evaluation
-					// do the cleanup now
-					dispose();
-				}
+			} catch (DebugException d) {
+				evaluationAborted();
+				throw d;
 			}				
 	}
 	
@@ -576,6 +567,22 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			);
 		}
 	}
+	
+	/**
+	 * Throws an exception if this engine is already in an
+	 * evaluation.
+	 * 
+	 * @exception DebugException if this engine is currently
+	 *  performing an evaluation
+	 */
+	protected void checkEvaluating() throws DebugException {
+		if (isEvaluating()) {
+			throw new DebugException(
+				new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
+				DebugException.REQUEST_FAILED, "Cannot perform nested evaluations.", null) //$NON-NLS-1$
+			);
+		}
+	}	
 	
 	/**
 	 * Throws an exception if this engine's current evaluation
@@ -882,7 +889,13 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 */
 	protected void evaluationComplete() {
 		getListener().evaluationComplete(getResult());
+		evaluationEnded();
 		reset();
+		if (isDisposed()) {
+			// if the engine was disposed during an evaluation
+			// do the cleanup now
+			dispose();
+		}				
 	}
 	
 	/**
@@ -896,7 +909,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * Decrements the evaluation counter.
 	 */
 	private void evaluationEnded() {
-		fEvaluationCount--;
+		if (fEvaluationCount > 0) {
+			fEvaluationCount--;
+		}
 	}	
 	
 	/**
@@ -905,6 +920,21 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 */
 	protected boolean isEvaluating() {
 		return fEvaluationCount > 0;
+	}
+	
+	/**
+	 * Called when an evaluation is aborted due to an
+	 * exception. Decrements the evalution count, and
+	 * disposes this engine if the target VM disconnected
+	 * or terminated during the evaluation attempt.
+	 */
+	private void evaluationAborted() {
+		evaluationEnded();
+		if (isDisposed()) {
+			// if the engine was disposed during an evaluation
+			// do the cleanup now
+			dispose();
+		}		
 	}
 	
 	/**
