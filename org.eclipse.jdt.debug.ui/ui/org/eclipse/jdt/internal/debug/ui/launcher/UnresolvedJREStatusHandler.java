@@ -18,19 +18,15 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * When a project's JRE cannot be resolved for building, this status handler
@@ -44,9 +40,6 @@ public class UnresolvedJREStatusHandler implements IStatusHandler {
 		
 		private JavaJRETab fJRETab;
 			
-		/**
-		 * 
-		 */
 		public JREDialog(IStatus status) {
 			super(JDIDebugUIPlugin.getActiveWorkbenchShell(), LauncherMessages.getString("UnresolvedJREStatusHandler.Error_1"), LauncherMessages.getString("UnresolvedJREStatusHandler.Unable_to_resolve_system_library._Select_an_alternate_JRE._2"), status, IStatus.ERROR); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -76,11 +69,10 @@ public class UnresolvedJREStatusHandler implements IStatusHandler {
 			fJRETab.performApply(fConfig);
 			super.okPressed();
 		}
-
 	}
 	
 	/**
-	 * @param source source is an instnace of <code>IJavaProject</code>
+	 * @param source source is an instance of <code>IJavaProject</code>
 	 * @return an instance of <code>IVMInstall</code> or <code>null</code>
 	 * 
 	 * @see IStatusHandler#handleStatus(IStatus, Object)
@@ -110,5 +102,4 @@ public class UnresolvedJREStatusHandler implements IStatusHandler {
 		}
 		return vm;
 	}
-
 }
