@@ -16,7 +16,6 @@ import java.text.MessageFormat;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
-import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 
 import com.sun.jdi.ArrayReference;
@@ -65,20 +64,6 @@ public class JDIArrayType extends JDIReferenceType implements IJavaArrayType {
 		}
 		// execution will not reach this line as
 		// an exception will be thrown
-		return null;
-	}
-	/**
-	 * @see org.eclipse.jdt.debug.core.IJavaArrayType#getClassObject()
-	 */
-	public IJavaClassObject getClassObject() throws DebugException {
-		try {
-			ArrayType type= (ArrayType)getUnderlyingType();
-			return (IJavaClassObject)JDIValue.createValue(getDebugTarget(), type.classObject());
-		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_class_object"), new String[] {e.toString()}), e); //$NON-NLS-1$
-		}
-		// execution will not fall through to here,
-		// as #requestFailed will throw an exception
 		return null;
 	}
 

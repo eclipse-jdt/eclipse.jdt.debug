@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaReferenceType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -59,6 +63,92 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			removeAllBreakpoints();
 		}		
 	}
+
+	public void testGetDeclaredFieldNames() throws Exception {
+		String typeName = "InstanceVariablesTests";
+		
+		ILineBreakpoint bp = createLineBreakpoint(28, typeName);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+	
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			IJavaObject object = frame.getThis();
+			assertNotNull("'this' is null", object);
+			
+			String[] names = ((IJavaReferenceType)object.getJavaType()).getDeclaredFieldNames();
+			assertEquals("Should be 7 declared fields", 7, names.length);
+			List fields = new ArrayList();
+			for (int i = 0; i < names.length; i++) {
+				String string = names[i];
+				fields.add(string);
+			}
+			assertTrue("Missing 'pubStr'", fields.indexOf("pubStr") >= 0);
+			assertTrue("Missing 'protStr'", fields.indexOf("protStr") >= 0);
+			assertTrue("Missing 'defStr'", fields.indexOf("defStr") >= 0);
+			assertTrue("Missing 'privStr'", fields.indexOf("privStr") >= 0);
+			assertTrue("Missing 'nullStr'", fields.indexOf("nullStr") >= 0);
+			assertTrue("Missing 'date'", fields.indexOf("date") >= 0);
+			assertTrue("Missing 'nullDate'", fields.indexOf("nullDate") >= 0);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+	
+	public void testGetDeclaredFieldNamesInSubclass() throws Exception {
+		String typeName = "InstanceVariablesTests";
+		
+		ILineBreakpoint bp = createLineBreakpoint(30, typeName);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			IVariable ivt = frame.findVariable("ivt");
+			assertNotNull("Could not find variable 'ivt'", ivt);
+			IJavaObject object = (IJavaObject)ivt.getValue();
+			
+			String[] names = ((IJavaReferenceType)object.getJavaType()).getDeclaredFieldNames();
+			assertEquals("Should be 3 declared fields", 3, names.length);
+			List fields = new ArrayList();
+			for (int i = 0; i < names.length; i++) {
+				String string = names[i];
+				fields.add(string);
+			}
+			assertTrue("Missing 'pubStr'", fields.indexOf("pubStr") >= 0);
+			assertTrue("Missing 'protStr'", fields.indexOf("protStr") >= 0);
+			assertTrue("Missing 'defStr'", fields.indexOf("defStr") >= 0);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+	
+	public void testGetAllFieldNamesInSubclass() throws Exception {
+		String typeName = "InstanceVariablesTests";
+		
+		ILineBreakpoint bp = createLineBreakpoint(30, typeName);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			IVariable ivt = frame.findVariable("ivt");
+			assertNotNull("Could not find variable 'ivt'", ivt);
+			IJavaObject object = (IJavaObject)ivt.getValue();
+			
+			String[] names = ((IJavaReferenceType)object.getJavaType()).getAllFieldNames();
+			assertTrue("Should be at least 10 fields", names.length >= 10);
+			// note: can be > 10 if Object defines any inst vars (depends on class libs)
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}		
 	
 	public void testEvaluationAssignments() throws Exception {
 		String typeName = "InstanceVariablesTests";

@@ -21,22 +21,7 @@ import org.eclipse.debug.core.DebugException;
  * @see IJavaValue
  * @since 2.0
  */
-public interface IJavaInterfaceType  extends IJavaReferenceType {
-		
-	/**
-	 * Returns a variable representing the static field in this interface
-	 * with the given name, or <code>null</code> if there is no
-	 * field with the given name, or the name is ambiguous.
-	 * 
-	 * @param name field name
-	 * @return the variable representing the static field, or <code>null</code>
-	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul><li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
-	 * </ul>
-	 */
-	public IJavaFieldVariable getField(String name) throws DebugException;	
+public interface IJavaInterfaceType  extends IJavaReferenceType {	
 			
    /**
 	* Returns the class objects associated with the implementors of this interface type.

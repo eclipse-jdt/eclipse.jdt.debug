@@ -18,20 +18,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;
-import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
 import com.sun.jdi.ClassType;
-import com.sun.jdi.Field;
 import com.sun.jdi.InterfaceType;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Value;
 
 /**
@@ -125,21 +121,6 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 		}
 		return arguments;	
 	}
-	/**
-	 * @see IJavaClassType#getField(String)
-	 */
-	public IJavaFieldVariable getField(String name) throws DebugException {
-		try {
-			Field field = ((ClassType)getUnderlyingType()).fieldByName(name);
-			if (field != null) {
-				return new JDIFieldVariable(getDebugTarget(), field, null);
-			}			
-		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_field"), new String[] {e.toString(), name}), e); //$NON-NLS-1$
-		}
-		// it is possible to return null		
-		return null;
-	}
 
 	/**
 	 * @see IJavaClassType#getSuperclass()
@@ -157,21 +138,6 @@ public class JDIClassType extends JDIReferenceType implements IJavaClassType {
 		return null;
 	}
 	
-	/**
-	 * @see IJavaClassType#getClassObject()
-	 */
-	public IJavaClassObject getClassObject() throws DebugException {
-		try {
-			ReferenceType type= (ReferenceType)getUnderlyingType();
-			return (IJavaClassObject)JDIValue.createValue(getDebugTarget(), type.classObject());
-		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_class_object"), new String[] {e.toString()}), e); //$NON-NLS-1$
-		}
-		// execution will not fall through to here,
-		// as #requestFailed will throw an exception
-		return null;
-	}	
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaClassType#getAllInterfaces()
 	 */
