@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.ui.DebugElementWorkbenchAdapter;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
@@ -18,6 +19,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
+import org.eclipse.ui.progress.IElementCollector;
 
 /**
  * A deferred workbench adapter for elements presenting monitor information in the debug veiw.
@@ -25,6 +27,7 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 public abstract class DeferredMonitorElement extends DebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter, IPropertyChangeListener {
 
     private boolean fDisplayMonitors= false;
+    protected static final Object[] EMPTY = new Object[0];
     
     public DeferredMonitorElement() {
         IPreferenceStore preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
@@ -59,4 +62,14 @@ public abstract class DeferredMonitorElement extends DebugElementWorkbenchAdapte
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
+        Object[] children = getChildren(object);
+        if (children.length > 0) {
+            collector.add(children, monitor);
+        }
+        collector.done();
+    }
 }

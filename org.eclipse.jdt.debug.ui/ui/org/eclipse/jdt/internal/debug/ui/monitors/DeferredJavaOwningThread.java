@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.progress.IElementCollector;
 
 /**
  * Workbench adapter for a contended monitor
@@ -19,16 +17,16 @@ import org.eclipse.ui.progress.IElementCollector;
 public class DeferredJavaOwningThread extends DeferredMonitorElement {
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
      */
-    public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
-        JavaContendedMonitor contendedMonitor= ((JavaOwningThread)object).getContendedMonitor();
-		if (contendedMonitor != null) {
-			collector.add(contendedMonitor, monitor);
+    public Object[] getChildren(Object parent) {
+        JavaContendedMonitor contendedMonitor= ((JavaOwningThread)parent).getContendedMonitor();
+		if (contendedMonitor == null) {
+		    return EMPTY;
 		}
-        collector.done();
+		return new Object[]{contendedMonitor};
     }
-
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
      */

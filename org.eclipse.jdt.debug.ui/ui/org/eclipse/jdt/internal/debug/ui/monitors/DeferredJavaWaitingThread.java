@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.progress.IElementCollector;
 
 /**
  * Workbench adapter for a waiting thread
@@ -19,11 +17,10 @@ import org.eclipse.ui.progress.IElementCollector;
 public class DeferredJavaWaitingThread extends DeferredMonitorElement {
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
      */
-    public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
-		collector.add(((JavaWaitingThread)object).getOwnedMonitors(), monitor);
-        collector.done();
+    public Object[] getChildren(Object parent) {
+        return ((JavaWaitingThread)parent).getOwnedMonitors();
     }
 
     /* (non-Javadoc)

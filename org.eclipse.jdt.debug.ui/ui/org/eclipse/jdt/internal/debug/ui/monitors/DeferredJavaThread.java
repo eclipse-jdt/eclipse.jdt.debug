@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.ui.progress.IElementCollector;
 
@@ -20,6 +21,44 @@ import org.eclipse.ui.progress.IElementCollector;
  */
 public class DeferredJavaThread extends DeferredMonitorElement {
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+     */
+    public Object[] getChildren(Object parent) {
+        IJavaThread thread = (IJavaThread) parent;
+        JavaOwnedMonitor[] ownedMonitors = null;
+        JavaContendedMonitor contendedMonitor = null;
+        if (isDisplayMonitors()) {
+			ThreadMonitorManager threadMonitorManager= ThreadMonitorManager.getDefault();
+			ownedMonitors= threadMonitorManager.getOwnedMonitors(thread);
+			contendedMonitor= threadMonitorManager.getContendedMonitor(thread);
+        }
+		try {
+            IStackFrame[] frames = thread.getStackFrames();
+            int length = frames.length;
+            if (ownedMonitors != null) {
+                length+=ownedMonitors.length;
+            }
+            if (contendedMonitor != null) {
+                length++;
+            }
+            Object[] children = new Object[length];
+            int offset = 0;
+            if (ownedMonitors != null && ownedMonitors.length > 0) {
+                System.arraycopy(ownedMonitors, 0, children, 0, ownedMonitors.length);
+                offset = ownedMonitors.length;
+            }
+            if (contendedMonitor != null) {
+                children[offset] = contendedMonitor;
+                offset++;
+            }
+            System.arraycopy(frames, 0, children, offset, frames.length);
+            return children;
+        } catch (DebugException e) {
+            return EMPTY;
+        }
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
      */
