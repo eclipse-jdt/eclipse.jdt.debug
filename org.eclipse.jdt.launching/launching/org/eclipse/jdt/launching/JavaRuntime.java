@@ -527,7 +527,8 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry[] computeUnresolvedRuntimeClasspath(IJavaProject project) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(project.getProject().getFullPath());
-		List classpathEntries = expandProject(entry);
+		List classpathEntries = new ArrayList(5);
+		expandProject(entry, classpathEntries);
 		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries == null ? 0 : classpathEntries.size()];
 		for (int i = 0; i < runtimeEntries.length; i++) {
 			Object e = classpathEntries.get(i);
@@ -911,20 +912,21 @@ public final class JavaRuntime {
 	 * given project entry.
 	 * 
 	 * @param projectEntry project classpath entry
-	 * @return list of classpath entries and runtime classpath entries for containers
+	 * @param a list of entries already expanded, should be empty to begin,
+	 *  and contains the result
 	 * @exception CoreException if unable to expand the classpath
 	 */
-	private static List expandProject(IClasspathEntry projectEntry) throws CoreException {
+	private static void expandProject(IClasspathEntry projectEntry, List expandedPath) throws CoreException {
 		// 1. Get the raw classpath
 		// 2. Replace source folder entries with a project entry
 		IPath projectPath = projectEntry.getPath();
 		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(projectPath.lastSegment());
 		if (res == null) {
-			return null;
+			return;
 		}
 		IJavaProject project = (IJavaProject)JavaCore.create(res);
 		if (project == null) {
-			return null;
+			return;
 		}
 		IClasspathEntry[] buildPath = project.getRawClasspath();
 		List unexpandedPath = new ArrayList(buildPath.length);
@@ -941,7 +943,6 @@ public final class JavaRuntime {
 		}
 		// 3. expand each project entry (except for the root project)
 		// 4. replace each container entry with a runtime entry associated with the project
-		List expandedPath = new ArrayList(unexpandedPath.size());
 		Iterator iter = unexpandedPath.iterator();
 		while (iter.hasNext()) {
 			IClasspathEntry entry = (IClasspathEntry)iter.next();
@@ -951,16 +952,7 @@ public final class JavaRuntime {
 				switch (entry.getEntryKind()) {
 					case IClasspathEntry.CPE_PROJECT:
 						if (!expandedPath.contains(entry)) {
-							List projectEntries = expandProject(entry);
-							if (projectEntries != null) {
-								Iterator entries = projectEntries.iterator();
-								while (entries.hasNext()) {
-									Object e = entries.next();
-									if (!expandedPath.contains(e)) {
-										expandedPath.add(e);
-									}
-								}
-							}
+							expandProject(entry, expandedPath);
 						}
 						break;
 					case IClasspathEntry.CPE_CONTAINER:
@@ -988,7 +980,9 @@ public final class JavaRuntime {
 							r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
 							r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
 							r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
-							expandedPath.add(r);
+							if (!expandedPath.contains(r)) {
+								expandedPath.add(r);
+							}
 							break;
 						}
 						// fall through if not the special JRELIB variable
@@ -1000,7 +994,7 @@ public final class JavaRuntime {
 				}
 			}
 		}
-		return expandedPath;
+		return;
 	}
 		
 	/**
