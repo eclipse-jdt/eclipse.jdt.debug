@@ -95,6 +95,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		GridLayout widthHeightNameLayout = new GridLayout();
 		widthHeightNameLayout.marginHeight = 0;
 		widthHeightNameLayout.marginWidth = 0;
+		widthHeightNameLayout.numColumns = 4;
 		widthHeightNameComp.setLayout(widthHeightNameLayout);
 		
 		fWidthLabel= new Label(widthHeightNameComp, SWT.NONE);
@@ -108,7 +109,19 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+
+		fNameLabel = new Label(widthHeightNameComp, SWT.NONE);
+		fNameLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.namelabel.text")); //$NON-NLS-1$
 		
+		fNameText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fNameText.setLayoutData(gd);
+		fNameText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});	
+
 		fHeightLabel= new Label(widthHeightNameComp, SWT.NONE);
 		fHeightLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.heightlabel.text")); //$NON-NLS-1$
 		
@@ -121,18 +134,13 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fNameLabel = new Label(widthHeightNameComp, SWT.NONE);
-		fNameLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.namelabel.text")); //$NON-NLS-1$
-		
-		fNameText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fNameText.setLayoutData(gd);
-		fNameText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});	
-		
+		Label blank = new Label(widthHeightNameComp, SWT.NONE);
+		blank.setText(EMPTY_STRING);
+		Label hint = new Label(widthHeightNameComp, SWT.NONE);
+		hint.setText(LauncherMessages.getString("AppletParametersTab.(optional_applet_instance_name)_1")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+		hint.setLayoutData(gd);
+				
 		createVerticalSpacer(comp);
 		
 		Composite parametersComp = new Composite(comp, SWT.NONE);
