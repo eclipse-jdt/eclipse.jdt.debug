@@ -292,7 +292,7 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 		
 		String name= selection.substring(nameFirstChar, nameLastChar);
 		
-		String fileSeparator= System.getProperty("file.separator");
+		String fileSeparator= System.getProperty("file.separator"); //$NON-NLS-1$
 		String typeName= null;
 		boolean isFind= false;
 		if (name.indexOf(fileSeparator) != -1) { // may be the absolute path of a file
