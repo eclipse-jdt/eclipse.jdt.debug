@@ -30,7 +30,6 @@ import org.eclipse.jdt.internal.compiler.IProblemFactory;
 import org.eclipse.jdt.internal.compiler.SourceElementParser;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.core.JavaElement;
-import org.eclipse.jdt.internal.core.builder.ProblemFactory;
 
 /**
  * A <code>CompilationUnitDelta</code> represents the source code changes between
