@@ -100,10 +100,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected Map fFilteredThreadsByTarget;
 	
 	/**
-	 * Stores the name of the type that this breakpoint was actually installed
+	 * Stores the type that this breakpoint was actually installed
 	 * in. When a breakpoint is created, the TYPE_NAME attribute assigned to it
-	 * is that of its top level enclosing type. When installed, the type name
-	 * may actually be an inner type. We need to keep track of the name of the
+	 * is that of its top level enclosing type. When installed, the type
+	 * may actually be an inner type. We need to keep track of the type 
 	 * type the breakpoint was installed in, in case we need to re-install
 	 * the breakpoint for HCR (i.e. in case an inner type is HCR'd).
 	 */
@@ -1021,4 +1021,3 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		return JDIDebugPlugin.getDefault().fireInstalling(target, this, jt);
 	}
 }
-
