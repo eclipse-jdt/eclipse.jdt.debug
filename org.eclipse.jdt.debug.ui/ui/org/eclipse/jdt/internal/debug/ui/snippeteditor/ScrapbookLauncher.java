@@ -401,6 +401,20 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	}
 	
 	/**
+	 * Returns the VM args attribute for the given snippet file,
+	 * possibly <code>null</code>.
+	 * 
+	 * @exception CoreException if unable to retrieve the attribute
+	 */
+	public static String getVMArgsAttribute(IFile file) throws CoreException {
+		ILaunchConfiguration config = getLaunchConfigurationTemplate(file);
+		if (config != null) {
+			return config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
+		}
+		return null;
+	}	
+	
+	/**
 	 * Returns the VM install used to launch the given snippet file.
 	 * 
 	 * @exception CoreException if unable to retrieve the attribute

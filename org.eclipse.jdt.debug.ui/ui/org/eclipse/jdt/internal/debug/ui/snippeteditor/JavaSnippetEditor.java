@@ -132,6 +132,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	private IDebugTarget fVM;
 	private String[] fLaunchedClassPath;
 	private String fLaunchedWorkingDir;
+	private String fLaunchedVMArgs;
 	private IVMInstall fLaunchedVM;
 	private List fSnippetStateListeners;	
 	
@@ -356,6 +357,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 		if (!changed) {
 			changed = vmHasChanged();
+		}
+		if (!changed) {
+			changed = vmArgsChanged();
 		}
 		boolean launch= fVM == null || changed;
 
@@ -825,6 +829,24 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return changed;
 	}
 	
+	protected boolean vmArgsChanged() {
+		String args = getVMArgsAttribute();
+		boolean changed = false;
+		if (args == null || fLaunchedVMArgs == null) {
+			if (args != fLaunchedVMArgs) {
+				changed = true;
+			}
+		} else {
+			if (!args.equals(fLaunchedVMArgs)) {
+				changed = true;
+			}
+		}
+		if (changed && fVM != null) {
+			MessageDialog.openWarning(getShell(), SnippetMessages.getString("SnippetEditor.Warning_1"), SnippetMessages.getString("SnippetEditor.1")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return changed;
+	}	
+	
 	protected boolean vmHasChanged() {
 		IVMInstall vm = getVMInstall();
 		boolean changed = false;
@@ -1024,6 +1046,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		DebugPlugin.getDefault().addDebugEventFilter(this);
 		fLaunchedClassPath = getClassPath(getJavaProject());
 		fLaunchedWorkingDir = getWorkingDirectoryAttribute();
+		fLaunchedVMArgs = getVMArgsAttribute();
 		fLaunchedVM = getVMInstall();
 		Runnable r = new Runnable() {
 			public void run() {
@@ -1195,6 +1218,18 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the working directory attribute for this scrapbook
+	 */
+	protected String getVMArgsAttribute() {
+		try {
+			return ScrapbookLauncher.getVMArgsAttribute(getPage());
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		return null;
+	}	
 	
 	/**
 	 * Returns the vm install for this scrapbook
