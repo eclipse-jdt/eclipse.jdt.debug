@@ -18,7 +18,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -36,7 +35,6 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -478,7 +476,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 			listWidget.setSelection(insertAtIndex, nextInsertionPoint - 1);
 			setPathButtonsEnableState();
 		}
-		refreshStatus();
+		updateLaunchConfigurationDialog();
 	}
 	
 	/**
@@ -522,7 +520,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		int[] selectedIndices = listWidget.getSelectionIndices();
 		listWidget.remove(selectedIndices);
 		setPathButtonsEnableState();
-		refreshStatus();
+		updateLaunchConfigurationDialog();
 	}
 	
 	/**
@@ -541,7 +539,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		listWidget.setItem(selectedIndex, targetText);
 		listWidget.setSelection(targetIndex);
 		setPathButtonsEnableState();
-		refreshStatus();
+		updateLaunchConfigurationDialog();
 	}
 	
 	/**
@@ -567,7 +565,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 			}
 		}
 		setPathButtonsEnableState();
-		refreshStatus();
+		updateLaunchConfigurationDialog();
 	}
 	
 	/**
@@ -575,7 +573,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 	 * it from the main tab.
 	 */
 	protected IJavaProject getJavaProject() {
-		ILaunchConfigurationTab[] tabs = getLaunchDialog().getTabs();
+		ILaunchConfigurationTab[] tabs = getLaunchConfigurationDialog().getTabs();
 		for (int i = 0; i < tabs.length; i++) {
 			if (tabs[i] instanceof JavaMainTab) {
 				return ((JavaMainTab)tabs[i]).getJavaProject();
@@ -644,7 +642,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 			tableItem.setText(nameValuePair);
 		}
 		fEnvTable.setSelection(new TableItem[] {tableItem});
-		refreshStatus();	
+		updateLaunchConfigurationDialog();	
 	}
 
 	protected void handleEnvRemoveButtonSelected() {
@@ -714,16 +712,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		}
 		return fListSelectionAdapter;
 	}
-	
-	/**
-	 * Convenience method to get the shell.  It is important that the shell be the one 
-	 * associated with the launch configuration dialog, and not the active workbench
-	 * window.
-	 */
-	private Shell getShell() {
-		return fEnvLabel.getShell();
-	}
-	
+		
 	/**
 	 * Initialize defaults based on the given java element.
 	 */

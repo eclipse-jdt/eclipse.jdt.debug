@@ -7,17 +7,9 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  
 import java.io.File;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -28,11 +20,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -89,7 +78,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		fWorkingDirText.setLayoutData(gd);
 		fWorkingDirText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});
 		
@@ -112,7 +101,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		fPrgmArgumentsText.setLayoutData(gd);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});
 		
@@ -125,7 +114,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		fVMArgumentsText.setLayoutData(gd);	
 		fVMArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});	
 		
@@ -204,15 +193,6 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		if (selectedDirectory != null) {
 			fWorkingDirText.setText(selectedDirectory);
 		}		
-	}
-	
-	/**
-	 * Convenience method to get the shell.  It is important that the shell be the one 
-	 * associated with the launch configuration dialog, and not the active workbench
-	 * window.
-	 */
-	private Shell getShell() {
-		return fWorkingDirLabel.getShell();
 	}
 
 	/**

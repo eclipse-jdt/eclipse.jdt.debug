@@ -11,13 +11,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -33,7 +31,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class JavaConnectTab extends JavaLaunchConfigurationTab {
@@ -90,7 +87,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		fProjText.setLayoutData(gd);
 		fProjText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});
 		
@@ -112,7 +109,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		fHostText.setLayoutData(gd);
 		fHostText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});
 		
@@ -124,7 +121,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		fPortText.setLayoutData(gd);
 		fPortText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});
 
@@ -132,7 +129,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		fAllowTerminateButton.setText("&Allow termination of remote VM");
 		fAllowTerminateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});
 	}
@@ -270,15 +267,6 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	}
 	
 	/**
-	 * Convenience method to get the shell.  It is important that the shell be the one 
-	 * associated with the launch configuration dialog, and not the active workbench
-	 * window.
-	 */
-	private Shell getShell() {
-		return fProjLabel.getShell();
-	}
-	
-	/**
 	 * Convenience method to get the workspace root.
 	 */
 	private IWorkspaceRoot getWorkspaceRoot() {
@@ -326,7 +314,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 			if (index > 0) {
 				name = name.substring(0, index);
 			}
-			name = getLaunchDialog().generateName(name);				
+			name = getLaunchConfigurationDialog().generateName(name);				
 		} catch (JavaModelException jme) {
 		}
 		config.rename(name);

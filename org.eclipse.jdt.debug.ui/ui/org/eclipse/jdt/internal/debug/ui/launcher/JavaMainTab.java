@@ -10,17 +10,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -32,9 +26,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.debug.ui.JavaDebugUI;
-import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
@@ -43,9 +34,6 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.ProjectSourceLocator;
-import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
-import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
@@ -63,7 +51,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
@@ -127,7 +114,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		fProjText.setLayoutData(gd);
 		fProjText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});
 		
@@ -159,7 +146,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		fMainText.setLayoutData(gd);
 		fMainText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});
 		
@@ -198,7 +185,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		initializeJREComboBox();
 		fJRECombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				refreshStatus();
+				updateLaunchConfigurationDialog();
 			}
 		});
 		
@@ -366,7 +353,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		
 		Shell shell = getShell();
 		SelectionDialog dialog = JavaUI.createMainTypeDialog(shell, 
-															 getLaunchDialog(), 
+															 getLaunchConfigurationDialog(), 
 															 searchScope, 
 															 constraints, 
 															 false, 
@@ -452,15 +439,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 			return null;
 		}
 		return getJavaModel().getJavaProject(projectName);		
-	}
-	
-	/**
-	 * Convenience method to get the shell.  It is important that the shell be the one 
-	 * associated with the launch configuration dialog, and not the active workbench
-	 * window.
-	 */
-	private Shell getShell() {
-		return fMainLabel.getShell();
 	}
 	
 	/**
@@ -592,7 +570,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 			if (index > 0) {
 				name = name.substring(index + 1);
 			}		
-			name = getLaunchDialog().generateName(name);
+			name = getLaunchConfigurationDialog().generateName(name);
 			config.rename(name);
 		}
 	}
