@@ -19,10 +19,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ExpandVariableContext;
+import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
-import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
+import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.core.variables.SimpleLaunchVariable;
-import org.eclipse.debug.core.variables.VariableUtil;
 
 /**
  * Tests launch configuration variables
@@ -177,10 +177,10 @@ public class LaunchConfigurationVariableTests extends LaunchConfigurationTests {
 		ISimpleLaunchVariable variable= new SimpleLaunchVariable(variableName);
 		String variableValue= "VariableValue";
 		variable.setText(variableValue);
-		ISimpleLaunchVariableRegistry registry= DebugPlugin.getDefault().getSimpleVariableRegistry(); 
-		registry.addVariables(new ISimpleLaunchVariable[] { variable });
-		assertNotNull("Added variable not retrieved from simple variable registry.", registry.getVariable(variableName));
-		String expandedValue= VariableUtil.expandVariables("${" + variableName + "}", new MultiStatus(DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "An exception occurred while retrieving simple variable value.", null), null);
+		ILaunchVariableManager manager= DebugPlugin.getDefault().getLaunchVariableManager(); 
+		manager.addSimpleVariables(new ISimpleLaunchVariable[] { variable });
+		assertNotNull("Added variable not retrieved from simple variable registry.", manager.getSimpleVariable(variableName));
+		String expandedValue= LaunchVariableUtil.expandVariables("${" + variableName + "}", new MultiStatus(DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, "An exception occurred while retrieving simple variable value.", null), null);
 		assertEquals("Simple variable value not equal to set value", variableValue, expandedValue);
 	}
 	
@@ -193,7 +193,7 @@ public class LaunchConfigurationVariableTests extends LaunchConfigurationTests {
 	 * 		context of the resurce returned from <code>getSelectedResource()</code>.
 	 */
 	protected void doTestContextExpandVariable(String variableName, String argument, String expectedValue) {
-		assertNotNull(MessageFormat.format("{0} variable should not be null", new String[] { variableName }), DebugPlugin.getDefault().getContextVariableRegistry().getVariable(variableName));
+		assertNotNull(MessageFormat.format("{0} variable should not be null", new String[] { variableName }), DebugPlugin.getDefault().getLaunchVariableManager().getContextVariable(variableName));
 		StringBuffer variableString= new StringBuffer("${");
 		variableString.append(variableName);
 		if (argument != null) {
@@ -203,7 +203,7 @@ public class LaunchConfigurationVariableTests extends LaunchConfigurationTests {
 		
 		MultiStatus status= new MultiStatus(DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format("An exception occurred while expanding variable {0}", new String[] { variableName }), null);
 		IResource selectedResource= getJavaProject().getResource();
-		String expandedString= VariableUtil.expandVariables(variableString.toString(), status, new ExpandVariableContext(selectedResource));
+		String expandedString= LaunchVariableUtil.expandVariables(variableString.toString(), status, new ExpandVariableContext(selectedResource));
 		assertEquals(MessageFormat.format("{0} should match selected resource", new String[] { variableName }), expectedValue, expandedString);
 	}
 	
