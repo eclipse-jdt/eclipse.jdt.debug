@@ -101,7 +101,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 	public void testInclusiveScopedException() throws Exception {
 		String typeName = "ThrowsNPE";
 		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
-		ex.setFilters(new String[] {"ThrowsNPE"}, true);
+		ex.setInclusionFilters(new String[] {"ThrowsNPE"});
 		
 		IJavaThread thread= null;
 		try {
@@ -121,7 +121,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 	public void testExclusiveScopedException() throws Exception {
 		String typeName = "ThrowsNPE";
 		IJavaExceptionBreakpoint ex = createExceptionBreakpoint("java.lang.NullPointerException", true, false);		
-		ex.setFilters(new String[] {"ThrowsNPE"}, false);
+		ex.setExclusionFilters(new String[] {"ThrowsNPE"});
 		
 		IJavaDebugTarget debugTarget = null;
 		try {
