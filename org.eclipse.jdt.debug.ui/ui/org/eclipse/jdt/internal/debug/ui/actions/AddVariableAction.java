@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
@@ -28,7 +30,8 @@ public class AddVariableAction extends RuntimeClasspathAction {
 	 */	
 	public void run() {
 		
-		NewVariableEntryDialog dialog = new NewVariableEntryDialog(getShell(), ActionMessages.getString("AddVariableAction.Variable_Selection_1"), null); //$NON-NLS-1$
+		NewVariableEntryDialog dialog = new NewVariableEntryDialog(getShell());
+		dialog.setTitle(ActionMessages.getString("AddVariableAction.Variable_Selection_1")); //$NON-NLS-1$
 		
 		if (dialog.open() == NewVariableEntryDialog.OK) {			
 			IPath[] paths = dialog.getResult();
@@ -45,6 +48,5 @@ public class AddVariableAction extends RuntimeClasspathAction {
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return getViewer().isEnabled();
-	}
-	
+	}	
 }
