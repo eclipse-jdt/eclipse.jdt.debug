@@ -118,7 +118,7 @@ public class NameValuePairDialog extends Dialog {
 	protected void updateButtons() {
 		String name = fNameText.getText().trim();
 		String value = fValueText.getText().trim();
-		getOKButton().setEnabled((name.length() > 0) &&(value.length() > 0));
+		getButton(IDialogConstants.OK_ID).setEnabled((name.length() > 0) &&(value.length() > 0));
 	}
 	
 	/**
@@ -128,5 +128,4 @@ public class NameValuePairDialog extends Dialog {
 		super.create();
 		updateButtons();
 	}
-	
 }
