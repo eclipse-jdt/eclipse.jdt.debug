@@ -1182,6 +1182,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			setTerminating(true);
 			getThreadStartHandler().deleteRequest();
 			getVM().exit(1);
+			IProcess process= getProcess();
+			if (process != null) {
+				process.terminate();
+			}
 		} catch (VMDisconnectedException e) {
 			// if the VM disconnects while exiting, perform 
 			// normal termination processing
@@ -1192,7 +1196,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			if (process != null && process.isTerminated()) {
 				terminated();
 			} else {
-				// all we can do is disconnect
+				// All we can do is disconnect
 				disconnected();
 			}
 		} catch (RuntimeException e) {
