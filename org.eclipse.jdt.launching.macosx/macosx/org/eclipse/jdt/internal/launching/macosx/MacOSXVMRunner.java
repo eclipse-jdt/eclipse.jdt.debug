@@ -37,19 +37,11 @@ public class MacOSXVMRunner extends StandardVMRunner {
 		
 		buff.append(command);
 		String program= buff.toString();
-		File exe= new File(program + ".exe"); //$NON-NLS-1$
 		File javaCommand= new File(program); 
-		
-		if (!exe.isFile() && !javaCommand.isFile()) {
-			File java= new File(jdkLocation + "java.exe"); //$NON-NLS-1$
-			if (java.isFile()) {
+		if (!javaCommand.isFile()) {
+			File java= new File(jdkLocation + "java"); //$NON-NLS-1$
+			if (java.isFile())
 				program= java.getAbsolutePath();
-			} else {
-				java= new File(jdkLocation + "java"); //$NON-NLS-1$
-				if (java.isFile()) {
-					program= java.getAbsolutePath();
-				}
-			}
 		}
 		return program;
 	}	
@@ -62,10 +54,10 @@ public class MacOSXVMRunner extends StandardVMRunner {
 		
 		String[] cmdLine2= new String[cmdLine.length + 2];
 		
-		String wrapper= MacOSXLaunchingPlugin.createWrapper(getClass(), "start_carbon.sh");
+		String wrapper= MacOSXLaunchingPlugin.createWrapper(getClass(), "start_carbon.sh");	//$NON-NLS-1$
 		
 		int j= 0;
-		cmdLine2[j++]= "/bin/sh";
+		cmdLine2[j++]= "/bin/sh";	//$NON-NLS-1$
 		cmdLine2[j++]= wrapper;
 		for (int i= 0; i < cmdLine.length; i++)
 			cmdLine2[j++]= cmdLine[i];

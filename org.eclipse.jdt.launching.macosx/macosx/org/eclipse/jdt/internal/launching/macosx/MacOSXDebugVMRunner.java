@@ -21,10 +21,10 @@ public class MacOSXDebugVMRunner extends StandardVMDebugger {
 		
 		String[] cmdLine2= new String[cmdLine.length + 2];
 		
-		String wrapper= MacOSXLaunchingPlugin.createWrapper(getClass(), "start_carbon.sh");
+		String wrapper= MacOSXLaunchingPlugin.createWrapper(getClass(), "start_carbon.sh");	//$NON-NLS-1$
 		
 		int j= 0;
-		cmdLine2[j++]= "/bin/sh";
+		cmdLine2[j++]= "/bin/sh";	//$NON-NLS-1$
 		cmdLine2[j++]= wrapper;
 		for (int i= 0; i < cmdLine.length; i++)
 			cmdLine2[j++]= cmdLine[i];
