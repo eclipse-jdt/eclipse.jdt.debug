@@ -16,6 +16,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICodeAssist;
@@ -74,7 +75,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		}
 		ITextSelection textSelection= getTextSelection();
 		IMethod method= getMethod();
-		IType callingType= getCallingType();
+		IType callingType= getType();
 		if (method == null || callingType == null) {
 			return;
 		}
@@ -85,7 +86,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 				doStepIn(frame, method);
 			} else {
 				// not on current line
-				runToLineBeforeStepIn(textSelection, frame, method);
+				runToLineBeforeStepIn(textSelection, frame.getThread(), method);
 				return;
 			}
 		} catch (DebugException e) {
@@ -115,9 +116,9 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * the currently executing one, first perform a "run to line" to get to
 	 * the desired location, then perform a "step into selection."
 	 */
-	private void runToLineBeforeStepIn(ITextSelection textSelection, final IJavaStackFrame startFrame, final IMethod method) {
+	private void runToLineBeforeStepIn(ITextSelection textSelection, final IThread thread, final IMethod method) {
 		IRunToLineTarget runToLineAction = new RunToLineAdapter();
-		runToLineType= getCallingType().getFullyQualifiedName();
+		runToLineType= getType().getFullyQualifiedName();
 		runToLineLine= textSelection.getStartLine() + 1;
 		if (runToLineType == null || runToLineLine == -1) {
 			return;
@@ -188,14 +189,14 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 			 */
 			private void handleTerminateEvent(DebugEvent event) {
 				Object source = event.getSource();
-				if (startFrame.getDebugTarget() == source) {
+				if (thread.getDebugTarget() == source) {
 					DebugPlugin.getDefault().removeDebugEventListener(listener);
 				}
 			}
 		};
 		DebugPlugin.getDefault().addDebugEventListener(listener);
 		try {
-			runToLineAction.runToLine(getActiveEditor(), textSelection, startFrame);
+			runToLineAction.runToLine(getActiveEditor(), textSelection, thread);
 		} catch (CoreException e) {
 			DebugPlugin.getDefault().removeDebugEventListener(listener);
 			showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.4")); //$NON-NLS-1$
@@ -254,7 +255,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * Return the type containing the selected text, or <code>null</code> if the
 	 * selection is not in a type.
 	 */
-	protected IType getCallingType() {
+	protected IType getType() {
 		IMember member= ActionDelegateHelper.getDefault().getCurrentMember(getTextSelection());
 		IType type= null;
 		if (member instanceof IType) {
