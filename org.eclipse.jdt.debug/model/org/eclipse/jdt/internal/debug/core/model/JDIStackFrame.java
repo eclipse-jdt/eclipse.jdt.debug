@@ -948,16 +948,18 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 *  resumed, and is not yet suspended).
 	 */
 	protected synchronized StackFrame getUnderlyingStackFrame() throws DebugException {
-		if (fStackFrame == null) {
+		StackFrame stackFrame= fStackFrame;
+		if (stackFrame == null) {
 			int depth= getDepth();
 			if (depth == -1) {
 				// Depth is set to -1 when the thread clears its handles
 				// to this object. See Bug 47198.
 				throw new DebugException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, JDIDebugModelMessages.getString("JDIStackFrame.25"), null)); //$NON-NLS-1$
 			}
-			setUnderlyingStackFrame(((JDIThread)getThread()).getUnderlyingFrame(depth));
+			stackFrame= ((JDIThread)getThread()).getUnderlyingFrame(depth);
+			setUnderlyingStackFrame(stackFrame);
 		}
-		return fStackFrame;
+		return stackFrame;
 	}
 	
 	/**
@@ -966,7 +968,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * 
 	 * @param frame The underlying stack frame
 	 */
-	protected synchronized void setUnderlyingStackFrame(StackFrame frame) {
+	protected void setUnderlyingStackFrame(StackFrame frame) {
 		fStackFrame = frame;
 	}
 	
