@@ -46,7 +46,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         try {
             DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
 
-            int[] lineNumbers = new int[20];
+            int[] lineNumbers = new int[150];
             for (int i = 0; i < lineNumbers.length; i++) {
                 lineNumbers[i] = 15 + i;
             }
@@ -59,7 +59,8 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 breakpointCount = 0;  
             }
 
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 10; i++) {
+                System.gc();
                 startMeasuring();
                 createLineBreakpoints(resource, typeName, lineNumbers);
                 waitForBreakpointCount(lineNumbers.length);
@@ -103,15 +104,16 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
                 waitForBreakpointCount(0);
             }
 
-            lineNumbers = new int[50];
+            lineNumbers = new int[250];
             for (int i = 0; i < lineNumbers.length; i++) {
                 lineNumbers[i] = 15 + i;
             }
 
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 10; i++) {
                 createLineBreakpoints(resource, typeName, lineNumbers);
                 waitForBreakpointCount(lineNumbers.length);
                 IBreakpoint[] breakpoints = manager.getBreakpoints();
+                System.gc();
                 startMeasuring();
                 manager.removeBreakpoints(breakpoints, true);
                 waitForBreakpointCount(0);
@@ -141,19 +143,20 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         try {
             manager.addBreakpointListener(this);
 
-            String[] methods = new String[100];
+            String[] methods = new String[300];
             for (int i = 0; i < methods.length; i++) {
                 methods[i] = "method"+(i+1);
             }
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 2; i++) {
                 createMethodEntryBreakpoints(project, typeName, methods);
                 waitForBreakpointCount(methods.length);
                 removeAllBreakpoints();
                 waitForBreakpointCount(0);
             }
 
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 10; i++) {
+                System.gc();
                 startMeasuring();
                 createMethodEntryBreakpoints(project, typeName, methods);
                 waitForBreakpointCount(methods.length);
@@ -175,7 +178,7 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         String typeName = "LotsOfFields";
         IResource resource = getBreakpointResource(typeName);
         
-        IJavaLineBreakpoint bp = createLineBreakpoint(116, typeName);
+        IJavaLineBreakpoint bp = createLineBreakpoint(516, typeName);
         IJavaThread thread = launchToBreakpoint(typeName);
         bp.delete();
 
@@ -183,19 +186,20 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         try {
             manager.addBreakpointListener(this);
 
-            String[] fields = new String[100];
+            String[] fields = new String[300];
             for (int i = 0; i < fields.length; i++) {
                 fields[i] = "field_"+(i+1);
             }
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 2; i++) {
                 createWatchpoints(resource, typeName, fields);
                 waitForBreakpointCount(fields.length);
                 removeAllBreakpoints();
                 waitForBreakpointCount(0);
             }
 
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 10; i++) {
+                System.gc();
                 startMeasuring();
                 createWatchpoints(resource, typeName, fields);
                 waitForBreakpointCount(fields.length);
