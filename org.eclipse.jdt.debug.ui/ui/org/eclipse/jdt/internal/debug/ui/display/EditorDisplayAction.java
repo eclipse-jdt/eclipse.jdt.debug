@@ -44,7 +44,7 @@ public class EditorDisplayAction extends DisplayAction {
 			try {
 				view= page.showView(DisplayView.ID_DISPLAY_VIEW);		
 			} catch (PartInitException e) {
-				MessageDialog.openError(getShell(), "Cannot open Display viewer", e.getMessage());
+				MessageDialog.openError(getShell(), DisplayMessages.getString("EditorDisplayAction.Cannot_open_Display_viewer_1"), e.getMessage()); //$NON-NLS-1$
 			} finally {
 				page.activate(activePart);
 			}
