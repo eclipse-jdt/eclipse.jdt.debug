@@ -52,12 +52,14 @@ public class RunToLineTests extends AbstractDebugTest {
          * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
          */
         public void partActivated(IWorkbenchPart part) {
+        	partOpened(part);
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
          */
         public void partBroughtToTop(IWorkbenchPart part) {
+        	partOpened(part);
         }
 
         /* (non-Javadoc)
@@ -150,7 +152,7 @@ public class RunToLineTests extends AbstractDebugTest {
                 }
             };
             Display display = DebugUIPlugin.getStandardDisplay();
-            display.asyncExec(closeAll);
+            display.syncExec(closeAll);
             
 			thread= launchToLineBreakpoint(typeName, breakpoint);
 			// wait for editor to open
