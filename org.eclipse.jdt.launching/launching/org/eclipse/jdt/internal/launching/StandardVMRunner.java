@@ -117,10 +117,18 @@ public class StandardVMRunner extends AbstractVMRunner {
 			return exe.getAbsolutePath();
 		}
 				
-		// Build the path to the java executable.  First try 'jre/bin', and if that
-		// doesn't exist, try just 'bin'
+		// Build the path to the java executable.  First try 'bin', and if that
+		// doesn't exist, try 'jre/bin'
 		String installLocation = fVMInstance.getInstallLocation().getAbsolutePath() + File.separatorChar;
-		File exe = new File(installLocation + "jre" + File.separatorChar + "bin" + File.separatorChar + command); //$NON-NLS-1$ //$NON-NLS-2$
+		File exe = new File(installLocation + "bin" + File.separatorChar + command); //$NON-NLS-1$ //$NON-NLS-2$		
+		if (fileExists(exe)){
+			return exe.getAbsolutePath();
+		}
+		exe = new File(exe.getAbsolutePath() + ".exe"); //$NON-NLS-1$
+		if (fileExists(exe)){
+			return exe.getAbsolutePath();
+		}
+		exe = new File(installLocation + "jre" + File.separatorChar + "bin" + File.separatorChar + command); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fileExists(exe)) {
 			return exe.getAbsolutePath(); 
 		}
@@ -128,14 +136,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (fileExists(exe)) {
 			return exe.getAbsolutePath(); 
 		}		
-		exe = new File(installLocation + "bin" + File.separatorChar + command); //$NON-NLS-1$ //$NON-NLS-2$		
-		if (fileExists(exe)){
-			return exe.getAbsolutePath();
-		}
-		exe = new File(exe.getAbsolutePath() + ".exe"); //$NON-NLS-1$
-		if (fileExists(exe)){
-			return exe.getAbsolutePath();
-		}		 
+
 		
 		// not found
 		abort(MessageFormat.format(LaunchingMessages.getString("StandardVMRunner.Specified_executable_{0}_does_not_exist_for_{1}_4"), new String[]{command, fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
