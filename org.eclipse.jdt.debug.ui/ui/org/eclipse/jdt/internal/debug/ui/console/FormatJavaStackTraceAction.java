@@ -36,6 +36,7 @@ public class FormatJavaStackTraceAction extends Action {
         IDocument document = fConsole.getDocument();
         String orig = document.get();
         if (orig != null && orig.length() > 0) {
+            document.set(""); //$NON-NLS-1$ hack avoids bug in the default position updater
             document.set(format(orig));
         }
     }
