@@ -691,7 +691,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	public void resume() {
 		initJdwpRequest();
 		try {
-			primeThreadsForResume();
+			resetThreadEventFlags();
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.VM_RESUME);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 		} finally {
@@ -764,22 +764,14 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	}
 			
 	/**
-	 * Prepares the VM's threads for VM resume.
-	 * 
 	 * Reset event flags of all threads.
-	 * 
-	 * Also, make sure the suspend count on each thread is not greater than 1. If it is,
-	 * resuming the VM will not actually resume the thread.
 	 */
-	private void primeThreadsForResume() {
+	private void resetThreadEventFlags() {
 		Iterator iter = allThreads().iterator();
 		ThreadReferenceImpl thread;
 		while (iter.hasNext()) {
 			thread = (ThreadReferenceImpl)iter.next();
 			thread.resetEventFlags();
-			while (thread.suspendCount() > 1) {
-				thread.resume();
-			}
 		}
 	}
 

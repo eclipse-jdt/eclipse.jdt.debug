@@ -1378,12 +1378,20 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 
 	/**
-	 * Notifies this thread that is has been resumed due
+	 * Notifies this thread that is about to be resumed due
 	 * to a VM resume.
 	 */
 	protected void resumedByVM() {
 		setRunning(true);
 		preserveStackFrames();
+		// This method is called *before* the VM is actually resumed.
+		// To ensure that all threads will fully resume when the VM
+		// is resumed, make sure the suspend count of each thread
+		// is no greater than 1. @see Bugs 23328 and 27622
+		ThreadReference thread= getUnderlyingThread();
+		while (thread.suspendCount() > 1) {
+			thread.resume();
+		}
 	}
 
 	/**
