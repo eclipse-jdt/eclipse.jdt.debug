@@ -23,8 +23,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.actions.AddAdvancedAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
@@ -45,7 +47,6 @@ import org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.classpath.RuntimeClasspathViewer;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -387,10 +388,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public static Image getClasspathImage() {
-		if (fgClasspathImage == null) {
-			fgClasspathImage = JavaPluginImages.DESC_TOOL_CLASSPATH_ORDER.createImage();
-		}
-		return fgClasspathImage;
+		return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_CLASSPATH);
 	}		
 	
 	/**
