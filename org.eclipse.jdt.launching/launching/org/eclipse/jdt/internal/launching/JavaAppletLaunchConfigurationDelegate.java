@@ -369,8 +369,12 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 				// if no project attribute, default to eclipse directory
 				return new File(System.getProperty("user.dir"));  //$NON-NLS-1$
 			}
-			File workspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-			return new File(workspaceRoot, outputDir);
+			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(outputDir);
+			if (resource == null || !resource.exists()) {
+				//default to eclipse directory
+				return new File(System.getProperty("user.dir"));  //$NON-NLS-1$
+			}
+			return resource.getLocation().toFile(); 
 		} else {
 			if (path.isAbsolute()) {
 				File dir = new File(path.toOSString());
