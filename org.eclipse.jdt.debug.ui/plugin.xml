@@ -2432,11 +2432,6 @@ M4 = Platform-specific fourth key
             class="" 
             adaptableType="org.eclipse.core.resources.IResource">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
-         </factory>         
-         <factory 
-            class="" 
-            adaptableType="org.eclipse.ui.part.FileEditorInput">
-            <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>
          <factory 
             class="" 
