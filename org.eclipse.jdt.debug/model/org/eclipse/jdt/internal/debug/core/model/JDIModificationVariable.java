@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
 
- 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.debug.core.DebugEvent;
@@ -45,6 +43,9 @@ public abstract class JDIModificationVariable extends JDIVariable {
 		super(target);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
+	 */
 	public boolean supportsValueModification() {
 		try {
 			if (!isFinal()) {
@@ -52,10 +53,9 @@ public abstract class JDIModificationVariable extends JDIVariable {
 				if (currentValue != null) {
 					String signature = currentValue.type().signature();
 					return fgValidSignatures.contains(signature);
-				} else {
-					String signature = getSignature();
-					return fgValidSignatures.contains(signature);
-				}
+				} 
+				String signature = getSignature();
+				return fgValidSignatures.contains(signature);
 			}
 		} catch (DebugException e) {
 			logError(e);
@@ -180,8 +180,8 @@ public abstract class JDIModificationVariable extends JDIVariable {
 		return vmValue;
 	}
 	
-	/**
-	 * @see IValueModification#verifyValue(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
 	public boolean verifyValue(String expression) {
 		try {
@@ -192,16 +192,16 @@ public abstract class JDIModificationVariable extends JDIVariable {
 		}
 	}
 	
-	/**
-	 * @see IValueModification#verifyValue(IValue)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
 	public boolean verifyValue(IValue value) {
 		return value instanceof IJavaValue &&
 			value.getDebugTarget().equals(getDebugTarget());
 	}	
 	
-	/**
-	 * @see IValueModification#setValue(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
 	public final void setValue(String expression) throws DebugException {
 	 	Value value= generateVMValue(expression);
