@@ -985,6 +985,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			fStackFrame = frame;
 			if (frame == null) {
 				fDepth = -1;
+				fRefreshVariables = true;
 			}
 		}
 	}
