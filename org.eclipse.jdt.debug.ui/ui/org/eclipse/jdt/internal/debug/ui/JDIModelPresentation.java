@@ -35,6 +35,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -1174,6 +1175,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return getExceptionBreakpointText((IJavaExceptionBreakpoint)breakpoint);
 		} else if (breakpoint instanceof IJavaWatchpoint) {
 			return getWatchpointText((IJavaWatchpoint)breakpoint);
+		} else if (breakpoint instanceof IJavaMethodBreakpoint) {
+			return getMethodBreakpointText((IJavaMethodBreakpoint)breakpoint);
 		} else if (breakpoint instanceof IJavaPatternBreakpoint) {
 			return getJavaPatternBreakpointText((IJavaPatternBreakpoint)breakpoint);
 		} else if (breakpoint instanceof IJavaTargetPatternBreakpoint) {
@@ -1253,19 +1256,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		appendConditional(breakpoint, label);
 		appendInstanceFilter(breakpoint, label);
 		
-		if (breakpoint instanceof IJavaMethodBreakpoint) {
-			IJavaMethodBreakpoint mbp = (IJavaMethodBreakpoint)breakpoint;
-			boolean entry = mbp.isEntry();
-			boolean exit = mbp.isExit();
-			if (entry && exit) {
-				label.append(DebugUIMessages.getString("JDIModelPresentation.entry_and_exit")); //$NON-NLS-1$
-			} else if (entry) {
-				label.append(DebugUIMessages.getString("JDIModelPresentation.entry")); //$NON-NLS-1$
-			} else if (exit) {
-				label.append(DebugUIMessages.getString("JDIModelPresentation.exit")); //$NON-NLS-1$
-			}
-		}
-					
 		if (member != null) {
 			label.append(" - "); //$NON-NLS-1$
 			label.append(getJavaLabelProvider().getText(member));
@@ -1359,6 +1349,37 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			label.append(getJavaLabelProvider().getText(member));
 		} else {
 			label.append(watchpoint.getFieldName());
+		}
+
+		return label.toString();	
+	}	
+
+	protected String getMethodBreakpointText(IJavaMethodBreakpoint methodBreakpoint) throws CoreException {
+		
+		String typeName= methodBreakpoint.getTypeName();
+		IMember member= BreakpointUtils.getMember(methodBreakpoint);
+		StringBuffer label= new StringBuffer();
+		label.append(getQualifiedName(typeName));
+		appendHitCount(methodBreakpoint, label);
+		appendSuspendPolicy(methodBreakpoint,label);
+		appendThreadFilter(methodBreakpoint, label);
+		
+
+		boolean entry = methodBreakpoint.isEntry();
+		boolean exit = methodBreakpoint.isExit();
+		if (entry && exit) {
+			label.append(DebugUIMessages.getString("JDIModelPresentation.entry_and_exit")); //$NON-NLS-1$
+		} else if (entry) {
+			label.append(DebugUIMessages.getString("JDIModelPresentation.entry")); //$NON-NLS-1$
+		} else if (exit) {
+			label.append(DebugUIMessages.getString("JDIModelPresentation.exit")); //$NON-NLS-1$
+		}
+		
+		label.append(" - "); //$NON-NLS-1$
+		if (member != null) {
+			label.append(getJavaLabelProvider().getText(member));
+		} else {
+			label.append(Signature.toString(methodBreakpoint.getMethodSignature(), methodBreakpoint.getMethodName(), null, false, false));
 		}
 
 		return label.toString();	

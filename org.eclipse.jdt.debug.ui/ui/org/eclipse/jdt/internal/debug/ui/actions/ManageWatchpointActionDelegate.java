@@ -96,6 +96,20 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 								return;
 							}
 							String typeName= locator.getTypeName();
+							// check if the watchpoint already exists. If yes, remove it
+							IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
+							IBreakpoint[] breakpoints= breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
+							for (int i= 0; i < breakpoints.length; i++) {
+								IBreakpoint breakpoint= breakpoints[i];
+								if (breakpoint instanceof IJavaWatchpoint) {
+									IJavaWatchpoint watchpoint= (IJavaWatchpoint)breakpoint;
+									if (typeName.equals(watchpoint.getTypeName()) && fieldName.equals(watchpoint.getFieldName())) {
+										breakpointManager.removeBreakpoint(watchpoint, true);
+										return;
+									}
+								}
+							}
+							// add the watchpoint
 							setBreakpoint(JDIDebugModel.createWatchpoint(resource, typeName, fieldName, -1, -1, -1, 0, true, new HashMap(10)));
 						}
 					}
