@@ -108,9 +108,11 @@ public class Timer {
 	 * Disposes this timer
 	 */
 	public void dispose() {
-		setAlive(false);
-		getThread().interrupt();
-		setThread(null);
+		if (isAlive()) {
+			setAlive(false);
+			getThread().interrupt();
+			setThread(null);
+		}
 	}
 	
 	/**
