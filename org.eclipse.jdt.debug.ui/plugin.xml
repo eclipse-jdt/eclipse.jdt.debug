@@ -2235,8 +2235,7 @@
            </with>
          </enablement>
       </renameParticipant>
-
-<!--      <renameParticipant
+      <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointITypeRenameParticipant"
             name="%JavaBreakpointITypeRenameParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointITypeRename">
@@ -2250,12 +2249,27 @@
    	         <instanceof value="org.eclipse.jdt.core.IType"/>
            </with>
          </enablement>
-      </renameParticipant>  -->
+      </renameParticipant>
    </extension>
    <extension point="org.eclipse.ltk.core.refactoring.moveParticipants">
       <moveParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationITypeMoveParticipant"
             name="%LaunchConfigurationITypeMoveParticipant.name"
+            id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeMove">
+         <enablement>
+           <with variable="affectedNatures">
+             <iterate operator="or">
+               <equals value="org.eclipse.jdt.core.javanature"/>
+             </iterate>
+           </with>
+           <with variable="element">
+   	         <instanceof value="org.eclipse.jdt.core.IType"/>
+           </with>
+         </enablement>
+      </moveParticipant>
+      <moveParticipant
+            class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointITypeMoveParticipant"
+            name="%JavaBreakpointITypeMoveParticipant.name"
             id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeMove">
          <enablement>
            <with variable="affectedNatures">

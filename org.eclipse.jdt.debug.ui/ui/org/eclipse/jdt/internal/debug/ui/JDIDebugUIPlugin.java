@@ -92,7 +92,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * Java Debug UI listeners
 	 */
 	private IJavaHotCodeReplaceListener fHCRListener;
-	private IElementChangedListener fJavaModelListener;
 	
 	// Map of VMInstallTypeIDs to IConfigurationElements
 	protected Map fVmInstallTypePageMap;
@@ -334,8 +333,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(fBreakpointAdapterFactory, IJavaBreakpoint.class);
 		
 		fEvaluationEngineManager= new JavaEvaluationEngineManager();
-		fJavaModelListener= new JavaModelListener();
-		JavaCore.addElementChangedListener(fJavaModelListener);
 		fHCRListener= new JavaHotCodeReplaceListener();
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
 	}
@@ -346,7 +343,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	public void shutdown() throws CoreException {
 		setShuttingDown(true);
 		JDIDebugModel.removeHotCodeReplaceListener(fHCRListener);
-		JavaCore.removeElementChangedListener(fJavaModelListener);
 		JavaDebugOptionsManager.getDefault().shutdown();
 		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();
