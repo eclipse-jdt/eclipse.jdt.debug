@@ -191,4 +191,14 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 		return userEntries;
 	}
+	
+	/**
+	 * Constructs a new classpath model with root entries 
+	 */
+	public ClasspathModel() {
+		super();
+		getBootstrapEntry();
+		getUserEntry();
+	}
+
 }
