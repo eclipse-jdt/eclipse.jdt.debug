@@ -110,16 +110,18 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	}
 	
 	private void handleSuspendResume() {
-		Object[] threads = fJavaMonitorThreads.values().toArray();
+		JavaMonitorThread[] threads = getJavaMonitorThreads();
 		for (int i = 0; i < threads.length; i++) {
-			((JavaMonitorThread) threads[i]).setToUpdate();
+			threads[i].setToUpdate();
 		}
 		DebugPlugin.getDefault().asyncExec(new RefreshAndDetectDeadlock());
 	}
 
 	private void handleThreadTerminate(IJavaThread thread) {
 		// remove this thread
-		fJavaMonitorThreads.remove(thread);
+		synchronized(fJavaMonitorThreads) {
+			fJavaMonitorThreads.remove(thread);
+		}
 	}
 
 	private void handleDebugTargetTerminate(IJavaDebugTarget debugTarget) {
@@ -129,10 +131,16 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	}
 
 	private void clean(Map map, IJavaDebugTarget debugTarget) {
-		Object[] elements = map.keySet().toArray();
-		for (int i = 0; i < elements.length; i++) {
-			if (((IDebugElement) elements[i]).getDebugTarget().equals(debugTarget)) {
-				map.remove(elements[i]);
+		IDebugElement debugElements[] = null;
+		synchronized(map) {
+			debugElements = new IDebugElement[map.size()]; 
+			debugElements =	(IDebugElement[]) map.keySet().toArray(debugElements);
+		}
+		for(int i = 0; i < debugElements.length; ++i) {
+			if (debugElements[i].getDebugTarget().equals(debugTarget)) {
+				synchronized(map) {
+					map.remove(debugElements[i]);
+				}
 			}
 		}
 	}
@@ -141,32 +149,38 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 * Returns the unique JavaMonitorThread object for the given thread.
 	 */
 	protected JavaMonitorThread getJavaMonitorThread(IJavaThread thread) {
-		JavaMonitorThread javaMonitorThread= (JavaMonitorThread) fJavaMonitorThreads.get(thread);
-		if (javaMonitorThread == null) {
-			javaMonitorThread= new JavaMonitorThread(thread);
-			fJavaMonitorThreads.put(thread, javaMonitorThread);
-			DebugPlugin.getDefault().asyncExec(new DetectDeadlock());			
+		synchronized (fJavaMonitorThreads) {
+			JavaMonitorThread javaMonitorThread= (JavaMonitorThread) fJavaMonitorThreads.get(thread);
+			if (javaMonitorThread == null) {
+				javaMonitorThread= new JavaMonitorThread(thread);
+				fJavaMonitorThreads.put(thread, javaMonitorThread);
+				DebugPlugin.getDefault().asyncExec(new DetectDeadlock());			
+			}
+			return javaMonitorThread;
 		}
-		return javaMonitorThread;
 	}
 	
 	/**
 	 * Returns the unique JavaMonitor object for the give monitor.
 	 */
 	protected JavaMonitor getJavaMonitor(IJavaObject monitor) {
-		JavaMonitor javaMonitor= (JavaMonitor) fJavaMonitors.get(monitor);
-		if (javaMonitor == null) {
-			javaMonitor= new JavaMonitor(monitor);
-			fJavaMonitors.put(monitor, javaMonitor);
+		synchronized (fJavaMonitors) {
+			JavaMonitor javaMonitor= (JavaMonitor) fJavaMonitors.get(monitor);
+			if (javaMonitor == null) {
+				javaMonitor= new JavaMonitor(monitor);
+				fJavaMonitors.put(monitor, javaMonitor);
+			}
+			return javaMonitor;
 		}
-		return javaMonitor;
 	}
 
 	/**
 	 * Removes a monitor from the monitor map.
 	 */
 	protected void removeJavaMonitor(JavaMonitor monitor) {
-		fJavaMonitors.remove(monitor.getMonitor());
+		synchronized(fJavaMonitors) {
+			fJavaMonitors.remove(monitor.getMonitor());
+		}
 	}
 			
 	/**
@@ -197,9 +211,9 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 	 */
 	class RefreshAndDetectDeadlock extends DetectDeadlock {
 		public void run() {
-			Object[] threads= fJavaMonitorThreads.values().toArray();
+			JavaMonitorThread[] threads= getJavaMonitorThreads();
 			for (int i = 0; i < threads.length; i++) {
-				((JavaMonitorThread) threads[i]).refresh();
+				threads[i].refresh();
 			}
 			super.run();
 		}
@@ -207,11 +221,11 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 
 	class DetectDeadlock implements Runnable {
 		public void run() {
-			Object[] threads= fJavaMonitorThreads.values().toArray();
-			Object[] monitors= fJavaMonitors.values().toArray();
+			JavaMonitorThread[] threads= getJavaMonitorThreads();
+			JavaMonitor[] monitors= getJavaMonitors();
 			List inDeadlock= new ArrayList();
 			for (int i = 0; i < threads.length; i++) {
-				JavaMonitorThread thread= (JavaMonitorThread) threads[i];
+				JavaMonitorThread thread= threads[i];
 				List threadStack= new ArrayList();
 				List monitorStack= new ArrayList();
 				while (thread != null) {
@@ -243,11 +257,11 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 				}
 			}
 			for (int i = 0; i < threads.length; i++) {
-				JavaMonitorThread thread= (JavaMonitorThread) threads[i];
+				JavaMonitorThread thread= threads[i];
 				thread.setInDeadlock(inDeadlock.contains(thread));
 			}
 			for (int i = 0; i < monitors.length; i++) {
-				JavaMonitor monitor= (JavaMonitor) monitors[i];
+				JavaMonitor monitor= monitors[i];
 				monitor.setInDeadlock(inDeadlock.contains(monitor));
 			}
 		}
@@ -278,4 +292,17 @@ public class ThreadMonitorManager implements IDebugEventSetListener, IPropertyCh
 		return getJavaMonitorThread(thread).isInDeadlock();
 	}
 
+	private JavaMonitor[] getJavaMonitors() {
+		synchronized(fJavaMonitors) {
+			JavaMonitor[] monitors = new JavaMonitor[fJavaMonitors.size()];
+			return (JavaMonitor[]) fJavaMonitors.values().toArray(monitors);
+		}
+	}
+	
+	private JavaMonitorThread[] getJavaMonitorThreads() {
+		synchronized(fJavaMonitorThreads) {
+			JavaMonitorThread[] threads = new JavaMonitorThread[fJavaMonitorThreads.size()];
+			return (JavaMonitorThread[]) fJavaMonitorThreads.values().toArray(threads);
+		}
+	}
 }
