@@ -100,11 +100,11 @@ public class BreakpointConditionEditor {
 		// listener for activate the code assist
 		fViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
 			public void verifyKey(VerifyEvent event) {
-				if (event.stateMask == SWT.CTRL && event.keyCode == 0) {
-					if (event.character == 0x20) { //do code assist for CTRL-SPACE
+				if (event.stateMask == SWT.CTRL) {
+					if (event.keyCode == ' ') { //do code assist for CTRL-SPACE
 						fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 						event.doit= false;
-					} else if (event.character == 0x1A) { // undo for CTRL-z
+					} else if (event.keyCode == 'z') { // undo for CTRL-z
 						undoManager.undo();
 						event.doit= false;
 					}

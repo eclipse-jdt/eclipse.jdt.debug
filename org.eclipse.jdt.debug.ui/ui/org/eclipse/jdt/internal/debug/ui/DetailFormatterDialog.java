@@ -210,8 +210,8 @@ public class DetailFormatterDialog extends StatusDialog {
 		fSnippetViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
 			public void verifyKey(VerifyEvent event) {
 				//do code assist for CTRL-SPACE
-				if (event.stateMask == SWT.CTRL && event.keyCode == 0) {
-					if (event.character == 0x20) {
+				if (event.stateMask == SWT.CTRL) {
+					if (event.keyCode == ' ') {
 						findCorrespondingType();
 						fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 						event.doit= false;
