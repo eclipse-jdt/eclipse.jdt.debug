@@ -138,9 +138,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 
 		};
 		run(wr);
-		if (isTypePattern()) {
-			fMatcher= new StringMatcher(typePattern, false, false);
-		}
+		fMatcher= new StringMatcher(typePattern, false, false);
 	}
 	
 	/**
@@ -579,7 +577,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		fMethodName = marker.getAttribute(METHOD_NAME, null);
 		fMethodSignature = marker.getAttribute(METHOD_SIGNATURE, null);
 		String typePattern= marker.getAttribute(TYPE_NAME, ""); //$NON-NLS-1$
-		if (typePattern != null && isTypePattern()) {
+		if (typePattern != null) {
 			fMatcher= new StringMatcher(typePattern, false, false);
 		}
 		
