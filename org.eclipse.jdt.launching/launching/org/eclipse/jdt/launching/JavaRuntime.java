@@ -355,7 +355,7 @@ public final class JavaRuntime {
 		JavaClasspathVariablesInitializer updater= new JavaClasspathVariablesInitializer();
 		updater.updateJREVariables(monitor);
 		JREContainerInitializer conatinerUpdater = new JREContainerInitializer();
-		conatinerUpdater.updateDefatultJREContainers(monitor);
+		conatinerUpdater.updateDefaultJREContainers(monitor);
 	}
 	/**
 	 * Return the default VM set with <code>setDefaultVM()</code>.

@@ -125,9 +125,9 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	}
 	
 	/**
-	 * Update conatiners that point to the default JRE, which has changed
+	 * Update containers that point to the default JRE, which has changed
 	 */
-	public void updateDefatultJREContainers(IProgressMonitor monitor) throws CoreException {
+	public void updateDefaultJREContainers(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}		
