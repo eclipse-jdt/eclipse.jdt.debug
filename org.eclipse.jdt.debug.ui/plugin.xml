@@ -631,7 +631,7 @@
 		<action id="org.eclipse.jdt.ui.variableViewActions.FilterPreferences"
 			label="%filterPreferencesAction.label"
 			menubarPath="filterActions"
-			icon="icons/full/obj16/var_filters.gif"
+			icon="icons/full/ctool16/var_filters.gif"
 			tooltip="%filterPreferencesAction.tooltip"
 			helpContextId="java_variables_filter_preference_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.JavaVariablesViewFilterPreferenceAction">
@@ -652,7 +652,7 @@
 		<action id="org.eclipse.jdt.ui.expressionViewActions.FilterPreferences"
 			label="%filterPreferencesAction.label"
 			menubarPath="filterActions"
-			icon="icons/full/obj16/var_filters.gif"
+			icon="icons/full/ctool16/var_filters.gif"
 			tooltip="%filterPreferencesAction.tooltip"
 			helpContextId="java_variables_filter_preference_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.JavaExpressionsViewFilterPreferenceAction">
