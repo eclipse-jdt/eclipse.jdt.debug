@@ -68,6 +68,9 @@ public class JavaLineBreakpoint extends AbstractJavaLineBreakpoint {
 		run(wr);
 	}	
 	
+	/**
+	 * Returns the type of marker associated with java line breakpoints
+	 */
 	public static String getMarkerType() {
 		return JAVA_LINE_BREAKPOINT;
 	}
