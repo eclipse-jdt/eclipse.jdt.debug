@@ -14,14 +14,23 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILauncherDelegate;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.jdt.core.ElementChangedEvent;
+import org.eclipse.jdt.core.IElementChangedListener;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaElementDelta;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
+import org.eclipse.jdt.internal.core.JavaModelManager;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncherDelegate;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
@@ -194,12 +203,67 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);		
 		
+		JavaModelManager.getJavaModelManager().addElementChangedListener(new JavaModelListener());
+		
 		getStandardDisplay().asyncExec(
 			new Runnable() {
 				public void run() {
 					createImageRegistry();
 				}
 			});		
+	}
+	
+	/**
+	 * Listens to Java model element changes and uninstalls breakpoints when the breakpoint
+	 * type's corresponding package fragment root is removed, closed, or removed from the classpath.
+	 */
+	class JavaModelListener implements IElementChangedListener {
+		/**
+		 * @see IElementChangedListener#elementChanged
+		 */
+		public void elementChanged(ElementChangedEvent e) {
+			IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier());
+			IJavaBreakpoint breakpoint= null;
+			for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
+				if (!(breakpoint instanceof IJavaBreakpoint)) {
+					continue;
+				}
+				breakpoint= (IJavaBreakpoint)breakpoints[i];
+				try {
+					check(breakpoint, e.getDelta());
+				} catch (CoreException exception) {
+					logError(exception);
+				}
+			}
+		}
+		/**
+		 * Recursively check whether the class file has been deleted. 
+		 * Returns true if delta processing can be stopped.
+		 */
+		protected boolean check(IJavaBreakpoint breakpoint, IJavaElementDelta delta) throws CoreException {
+			IJavaElement element= delta.getElement();
+			IJavaElement parent= BreakpointUtils.getType(breakpoint).getPackageFragment().getParent();
+
+			if ((delta.getKind() & IJavaElementDelta.REMOVED) != 0 || (delta.getFlags() & IJavaElementDelta.F_CLOSED) != 0) { 
+				if (element.equals(parent)) {
+					DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
+					return true;
+				}
+			}
+
+			if (((delta.getFlags() & IJavaElementDelta.F_REMOVED_FROM_CLASSPATH) != 0) && element.equals(parent)) {
+				DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, true);
+				return true;
+			}
+
+			IJavaElementDelta[] subdeltas= delta.getAffectedChildren();
+			for (int i= 0; i < subdeltas.length; i++) {
+				if (check(breakpoint, subdeltas[i]))
+					return true;
+			}
+
+			return false;
+		}
 	}
 	
 	/**
