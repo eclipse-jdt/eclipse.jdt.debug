@@ -1722,6 +1722,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		 * and adds it to the collection of threads for this 
 		 * debug target. As a side effect of creating the thread,
 		 * a create event is fired for the model thread.
+		 * The event is ignored if the underlying thread is already
+		 * marked as collected.
 		 * 
 		 * @param event a thread start event
 		 * @param target the target in which the thread started
@@ -1729,6 +1731,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		 */
 		public boolean handleEvent(Event event, JDIDebugTarget target) {
 			ThreadReference thread= ((ThreadStartEvent)event).thread();
+			if (thread.isCollected()) {
+				return false;
+			}
 			JDIThread jdiThread= findThread(thread);
 			if (jdiThread == null) {
 				jdiThread = createThread(thread);
