@@ -289,10 +289,11 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
 			return;
 		}
-		if(MonitorManager.getDefault().getNumberOfDeadlocks() == 0){
+		if(MonitorManager.getDefault().getNumberOfDeadlocks() == 0 && MonitorManager.getDefault().getThreads().length > 0) {
 			showMessage(MonitorMessages.getString("MonitorsView.No_deadlock_detected_3")); //$NON-NLS-1$
-		} else{
+		} else {
 			((TreeViewer)getDeadLocksViewer()).expandAll();
+			getDeadLocksViewer().refresh();
 			getPageBook().showPage(getDeadLocksViewer().getControl());
 		}
 	}
@@ -311,24 +312,35 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 
 	
 	public void refreshViewers(boolean monitorInformationAvailable) {
+		if (getPageBook().isDisposed()) {
+			return;
+		}
+		boolean changeToHavingMonitorInformation= monitorInformationAvailable && !fMonitorInformationAvailable;
 		fMonitorInformationAvailable= monitorInformationAvailable;
 		if (!monitorInformationAvailable) {
 			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
 			return;
 		}
+		Control page= null;
 		switch (fViewId) {
 			case VIEW_ID_THREAD:
 				getViewer().refresh();
 				((TreeViewer)getViewer()).expandAll();
+				page= getViewer().getControl();
 				break;
 			case VIEW_ID_DEADLOCK:
 				getDeadLocksViewer().refresh();
 				((TreeViewer)getDeadLocksViewer()).expandAll();
+				page= getDeadLocksViewer().getControl();
 				break;
 			case VIEW_ID_MONITOR:
 				getMonitorsViewer().refresh();
 				((TreeViewer)getMonitorsViewer()).expandAll();
+				page= getMonitorsViewer().getControl();
 				break;
+		}
+		if (changeToHavingMonitorInformation) {
+			getPageBook().showPage(page);
 		}
 		updateObjects();
 	}

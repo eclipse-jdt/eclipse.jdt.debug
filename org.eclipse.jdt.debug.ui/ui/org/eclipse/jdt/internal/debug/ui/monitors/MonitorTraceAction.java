@@ -7,7 +7,6 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jface.action.IAction;
 
@@ -26,13 +25,6 @@ public class MonitorTraceAction extends MonitorAction {
 			return;
 		}
 		MonitorManager.getDefault().update(target);
-		IDebugView debugView= (IDebugView)fView.getAdapter(IDebugView.class);
-		if (debugView != null) {
-			debugView.getViewer().refresh();
-			((MonitorsView)debugView).getDeadLocksViewer().refresh();
-			((MonitorsView)debugView).getMonitorsViewer().refresh();
-		}
-		
+		fView.refreshViewers(target.supportsMonitorInformation());
 	}
-
 }

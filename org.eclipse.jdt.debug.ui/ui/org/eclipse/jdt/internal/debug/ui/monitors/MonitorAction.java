@@ -18,7 +18,7 @@ import org.eclipse.ui.IViewPart;
 
 public abstract class MonitorAction implements IViewActionDelegate {
 
-	protected IViewPart fView;
+	protected MonitorsView fView;
 	
 	/**
 	 * Returns the current selection in the debug view or <code>null</code>
@@ -52,7 +52,7 @@ public abstract class MonitorAction implements IViewActionDelegate {
 	 * @see org.eclipse.ui.IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {
-		fView= view;
+		fView= (MonitorsView)view;
 	}
 
 	/**

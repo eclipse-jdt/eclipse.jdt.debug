@@ -27,7 +27,8 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 	protected void doHandleDebugEvents(DebugEvent[] events) {
 		DebugEvent event;
 		Object source;
-		boolean monitorInformationAvailable= true;	
+		boolean monitorInformationAvailable= true;
+		boolean updateNeeded= false;
 		for (int i = 0; i < events.length; i++) {
 			event= events[i];
 			source= event.getSource();
@@ -39,12 +40,14 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 					monitorInformationAvailable= target.supportsMonitorInformation();
 					if (monitorInformationAvailable) {
 						MonitorManager.getDefault().updatePartial(target);
+						updateNeeded= true;
 					} 
 				} else if (source instanceof IJavaThread) {
 					IJavaDebugTarget target= (IJavaDebugTarget)((IJavaThread)source).getDebugTarget();
 					monitorInformationAvailable= target.supportsMonitorInformation();
 					if (monitorInformationAvailable) {
 						MonitorManager.getDefault().updatePartial(target);
+						updateNeeded= true;
 					}
 					
 				}
@@ -54,19 +57,24 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 					monitorInformationAvailable= target.supportsMonitorInformation();
 					if (monitorInformationAvailable) {
 						MonitorManager.getDefault().updatePartial((IJavaDebugTarget)source);
+						updateNeeded= true;
 					}
 				} else if (source instanceof IJavaThread) {
 					IJavaDebugTarget target= (IJavaDebugTarget)((IJavaThread)source).getDebugTarget();
 					monitorInformationAvailable= target.supportsMonitorInformation();
 					if (monitorInformationAvailable) {
 						MonitorManager.getDefault().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
+						updateNeeded= true;
 					}
 				}
 			} else if(event.getKind() == DebugEvent.TERMINATE && source instanceof IJavaDebugTarget) {
 				MonitorManager.getDefault().removeMonitorInformation((IJavaDebugTarget)source);
+				updateNeeded= true;
 				
 			}
 		}
-		((MonitorsView)getView()).refreshViewers(monitorInformationAvailable);
+		if (updateNeeded) {
+			((MonitorsView)getView()).refreshViewers(monitorInformationAvailable);
+		}
 	}
 }
