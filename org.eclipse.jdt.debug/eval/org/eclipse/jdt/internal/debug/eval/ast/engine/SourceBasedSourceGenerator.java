@@ -308,9 +308,24 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			source.append(getDotName(getTypeName(singleVariableDeclaration.getType())));
 			source.append(' ');
 			source.append(singleVariableDeclaration.getName().getIdentifier());
+			int extraDimension= singleVariableDeclaration.getExtraDimensions();
+			if (extraDimension > 0) {
+				source.append(' ');
+				for (int i= 0; i < extraDimension; i ++) {
+					source.append("[]");
+				}
+			}
 		}
 		
 		source.append(')');
+		
+		int extraDimension= methodDeclaration.getExtraDimensions();
+		if (extraDimension > 0) {
+			source.append(' ');
+			for (int i= 0; i < extraDimension; i ++) {
+				source.append("[]");
+			}
+		}
 		
 		first = true;
 		for (Iterator iterator = methodDeclaration.thrownExceptions().iterator(); iterator.hasNext();) {
