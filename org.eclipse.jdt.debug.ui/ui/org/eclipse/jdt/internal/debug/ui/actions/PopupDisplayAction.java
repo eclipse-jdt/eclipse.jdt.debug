@@ -138,7 +138,7 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 		}
 	}
 
-	protected void displayStringResult(final String snippet,final String resultString) {
+	protected void displayStringResult(String currentSnippet, String currentResultString) {
 		IWorkbenchPart part = getTargetPart();
 		viewer = (ITextViewer) part.getAdapter(ITextViewer.class);
 		if (viewer == null) {
@@ -147,10 +147,10 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 			}
 		}
 		if (viewer == null) {
-			super.displayStringResult(snippet, resultString);
+			super.displayStringResult(currentSnippet, currentResultString);
 		} else {
-			this.snippet = snippet;
-			this.resultString = resultString;
+			snippet = currentSnippet;
+			resultString = currentResultString;
 			showPopup();
 		}
 	}
