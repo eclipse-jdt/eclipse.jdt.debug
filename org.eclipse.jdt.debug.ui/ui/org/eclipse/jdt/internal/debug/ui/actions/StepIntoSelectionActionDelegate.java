@@ -29,6 +29,7 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.texteditor.IEditorStatusLine;
 
 /**
  * Steps into the selected method.
@@ -63,6 +64,12 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		
 		if (method == null) {
 			// no resolved method
+			if (getActiveEditor() != null) {
+				IEditorStatusLine statusLine= (IEditorStatusLine) getActiveEditor().getAdapter(IEditorStatusLine.class);
+				if (statusLine != null) {
+					statusLine.setMessage(true, "Current text selection does not resolve to a Java method", null);
+				}
+			}		
 			JDIDebugUIPlugin.getStandardDisplay().beep();
 		} else {
 			StepIntoSelectionHandler handler = new StepIntoSelectionHandler((IJavaThread)getStackFrame().getThread(), getStackFrame(), method);
