@@ -447,7 +447,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 			
 			final boolean isStatic = frame.isStatic();
 			final boolean isConstructor = frame.isConstructor();
-			final IType declaringType = getReceivingType(frame);
+			final IType receivingType = getReceivingType(frame);
 			
 			// do the evaluation in a different thread
 			Runnable r = new Runnable() {
@@ -459,7 +459,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 							LocalEvaluationEngine.this.getLocalVariableTypeNames(),
 							LocalEvaluationEngine.this.getLocalVariableNames(),
 							LocalEvaluationEngine.this.getLocalVariableModifiers(),
-							declaringType,
+							receivingType,
 							isStatic,
 							isConstructor,
 							LocalEvaluationEngine.this,
@@ -967,7 +967,10 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 	private IType getReceivingType(IJavaStackFrame frame) throws DebugException {
 		String typeName = frame.getReceivingTypeName();
 		String sourceName =frame.getSourceName();
-		if (sourceName == null) {
+		if (sourceName == null || !typeName.equals(frame.getDeclaringTypeName())) {
+			// if there is no debug attribute or the declaring type is not the
+			// same as the receiving type, we must guess at the receiver's source
+			// file
 			int dollarIndex= typeName.indexOf('$');
 			if (dollarIndex >= 0)
 				typeName= typeName.substring(0, dollarIndex);
@@ -989,7 +992,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 		IType type = null;
 		try {
 			IJavaElement result = getJavaProject().findElement(sourcePath);
-			String[] typeNames = getNestedTypeNames(frame.getDeclaringTypeName());
+			String[] typeNames = getNestedTypeNames(frame.getReceivingTypeName());
 			if (result != null) {
 				if (result instanceof IClassFile) {
 					type = ((IClassFile)result).getType();
