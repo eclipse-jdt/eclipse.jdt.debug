@@ -643,6 +643,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 					JDIDebugPlugin.log(e);
 				}
 			} catch (RuntimeException e) {
+                if (!e.getClass().getName().startsWith("com.sun.jdi")) { //$NON-NLS-1$
+                  // Rethrow non-JDI exceptions
+                  throw e;
+                }
 				JDIDebugPlugin.log(e);
 			} finally {
 				deregisterRequest(req, target);

@@ -11,9 +11,6 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
  
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -26,62 +23,22 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IStepFilters;
-import org.eclipse.jdi.TimeoutException;
-import org.eclipse.jdi.hcr.OperationRefusedException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.EventDispatcher;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
-import com.sun.jdi.ClassNotPreparedException;
-import com.sun.jdi.InconsistentDebugInfoException;
-import com.sun.jdi.InternalException;
-import com.sun.jdi.InvalidCodeIndexException;
-import com.sun.jdi.InvalidLineNumberException;
-import com.sun.jdi.InvalidStackFrameException;
-import com.sun.jdi.NativeMethodException;
-import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.VMMismatchException;
-import com.sun.jdi.VMOutOfMemoryException;
 import com.sun.jdi.VirtualMachine;
-import com.sun.jdi.request.DuplicateRequestException;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
-import com.sun.jdi.request.InvalidRequestStateException;
 
 public abstract class JDIDebugElement extends PlatformObject implements IDebugElement, IDisconnect {
-			
-	/**
-	 * Collection of possible JDI exceptions (runtime)
-	 */
-	private static List fgJDIExceptions;
 	
 	/**
 	 * Debug target associated with this element
 	 */
 	private JDIDebugTarget fDebugTarget;
-	
-	static {
-		fgJDIExceptions = new ArrayList(15);
-		
-		// Runtime/unchecked exceptions
-		fgJDIExceptions.add(ClassNotPreparedException.class);
-		fgJDIExceptions.add(InconsistentDebugInfoException.class);
-		fgJDIExceptions.add(InternalException.class);
-		fgJDIExceptions.add(InvalidCodeIndexException.class);
-		fgJDIExceptions.add(InvalidLineNumberException.class);
-		fgJDIExceptions.add(InvalidStackFrameException.class);
-		fgJDIExceptions.add(NativeMethodException.class);
-		fgJDIExceptions.add(ObjectCollectedException.class);
-		fgJDIExceptions.add(TimeoutException.class);
-		fgJDIExceptions.add(VMDisconnectedException.class);
-		fgJDIExceptions.add(VMMismatchException.class);
-		fgJDIExceptions.add(VMOutOfMemoryException.class);
-		fgJDIExceptions.add(DuplicateRequestException.class);
-		fgJDIExceptions.add(InvalidRequestStateException.class);
-		fgJDIExceptions.add(OperationRefusedException.class);
-	}
 	
 	/**
 	 * Creates a JDI debug element associated with the
@@ -234,7 +191,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	public void targetRequestFailed(String message, RuntimeException e) throws DebugException {
-		if (e == null || fgJDIExceptions.contains(e.getClass())) {
+		if (e == null || e.getClass().getName().startsWith("com.sun.jdi")) { //$NON-NLS-1$
 			requestFailed(message, e, DebugException.TARGET_REQUEST_FAILED);
 		} else {
 			throw e;
@@ -303,7 +260,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @param e The internal runtime exception
 	 */
 	public void internalError(RuntimeException e) {
-		if (fgJDIExceptions.contains(e.getClass())) {
+		if (e.getClass().getName().startsWith("com.sun.jdi")) { //$NON-NLS-1$
 			logError(e);
 		} else {
 			throw e;
