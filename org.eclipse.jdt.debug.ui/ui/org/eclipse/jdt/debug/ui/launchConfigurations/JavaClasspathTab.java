@@ -210,8 +210,8 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		}
 		fClasspathViewer.setEnabled(!useDefault);
 		fBootpathViewer.setEnabled(!useDefault);
-		updateLaunchConfigurationDialog();
 		setDirty(true);
+		updateLaunchConfigurationDialog();
 	}
 
 	/**
