@@ -137,7 +137,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * invocations cannot be performed.
 	 */
 	protected boolean fInEvaluation = false;
-	protected boolean fEvaluationAborted = false;
 
 	/**
 	 * Creates a new thread on the underlying thread reference.
@@ -444,21 +443,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 
 		invokeComplete(timeout);
-		if (fEvaluationAborted) {
-			fEvaluationAborted = false;
-			resume();
-		}
 		return result;
-	}
-	
-	/**
-	 * Called by JDIValue when an evaluation of
-	 * #toString times out. Causes this thread to
-	 * be automatically resumed when it returns from
-	 * its evaluation - see <code>invokeMethod</code>.
-	 */
-	protected void abortEvaluation() {
-		fEvaluationAborted = true;
 	}
 	
 	/**
