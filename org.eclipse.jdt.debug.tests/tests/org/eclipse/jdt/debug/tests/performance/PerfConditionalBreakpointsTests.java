@@ -20,7 +20,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -65,7 +64,8 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
 
         fBP = createLineBreakpoint(22, fTypeName);
 
-        DebugPlugin.getDefault().addDebugEventListener(new BreakpointListener());
+        BreakpointListener listener = new BreakpointListener();
+		DebugPlugin.getDefault().addDebugEventListener(listener);
         ILaunchConfiguration config = getLaunchConfiguration(fTypeName);
         fTarget = launchAndTerminate(config, 5 * 60 * 1000);
         
@@ -76,6 +76,7 @@ public class PerfConditionalBreakpointsTests extends AbstractDebugPerformanceTes
         commitMeasurements();
         assertPerformance();
         
+        DebugPlugin.getDefault().removeDebugEventListener(listener);
         removeAllBreakpoints();
     }
 
