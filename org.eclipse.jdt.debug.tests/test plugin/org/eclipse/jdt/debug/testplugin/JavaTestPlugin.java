@@ -19,17 +19,17 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 
 
 public class JavaTestPlugin extends AbstractUIPlugin {
 	
 	private static JavaTestPlugin fgDefault;
 	
-	public JavaTestPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public JavaTestPlugin() {
+		super();
 		fgDefault= this;
 	}
 	
@@ -51,7 +51,8 @@ public class JavaTestPlugin extends AbstractUIPlugin {
 	
 	public File getFileInPlugin(IPath path) {
 		try {
-			URL installURL= new URL(getDescriptor().getInstallURL(), path.toString());
+			Bundle bundle = Platform.getBundle("org.eclipse.jdt.debug.tests");
+			URL installURL= new URL(bundle.getEntry("/"), path.toString());
 			URL localURL= Platform.asLocalURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException e) {

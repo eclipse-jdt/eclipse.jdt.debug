@@ -38,7 +38,7 @@ public class TestModeLaunchDelegate implements ILaunchConfigurationDelegate {
 		IProgressMonitor monitor)
 		throws CoreException {
 			if (fgTestCase == null) {
-				throw new CoreException(new Status(IStatus.ERROR, JavaTestPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.jdt.debug.tests",
 				 0, "No test case registered.", null));
 			} else {
 				fgTestCase.launch(configuration, mode);
