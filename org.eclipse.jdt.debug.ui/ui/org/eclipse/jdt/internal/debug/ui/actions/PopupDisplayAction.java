@@ -70,7 +70,7 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 	private void showPopup() {		
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				DisplayInformationControl control = new DisplayInformationControl(parent, ActionMessages.getString("PopupDisplayAction.2"), ACTION_DEFINITION_ID);
+				DisplayInformationControl control = new DisplayInformationControl(parent, ActionMessages.getString("PopupDisplayAction.2"), ACTION_DEFINITION_ID); //$NON-NLS-1$
 				control.addDisposeListener(new DisposeListener() {
                     public void widgetDisposed(DisposeEvent e) {
                         getInformationPresenter().uninstall();
