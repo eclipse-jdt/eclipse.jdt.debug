@@ -1,12 +1,13 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.io.File;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -371,13 +372,9 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected void populateJREComboBox() {
 		String[] vmNames = new String[fVMStandins.size() + 1];
 
-		// Set the name of the 'default' VM, include the path in parentheses
-		String defaultVMLocation = "";		//$NON-NLS-1$
-		try {
-			defaultVMLocation = JavaRuntime.getDefaultVMInstall().getInstallLocation().getCanonicalPath();
-		} catch (IOException ioe) {
-		}
-		vmNames[0] = DEFAULT_JRE_NAME_PREFIX + " (" + defaultVMLocation + ')'; //$NON-NLS-1$
+		// Show the name of the 'default' VM
+		String defaultVMName = JavaRuntime.getDefaultVMInstall().getName();
+		vmNames[0] = DEFAULT_JRE_NAME_PREFIX + " (" + defaultVMName + ')'; //$NON-NLS-1$
 		fDefaultVMName = vmNames[0];
 
 		// Add all installed VMs
