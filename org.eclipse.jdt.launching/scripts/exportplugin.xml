@@ -3,7 +3,7 @@
 	<target name="init">
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
-		<property name="plugin"  value="org.eclipse.jdt.launching_2.0.0" />
+		<property name="plugin"  value="org.eclipse.jdt.launching_2.1.0" />
 		<property name="dest"  value="${destdir}/${plugin}" />
 	</target>
 
