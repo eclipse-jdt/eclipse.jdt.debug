@@ -147,7 +147,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		fTimeoutText = new JavaDebugIntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.Debugger_&timeout__2"), spacingComposite); //$NON-NLS-1$
 		fTimeoutText.setPreferenceStore(store);
-		fTimeoutText.setPreferencePage(this);
+		fTimeoutText.setPage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		minValue= store.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
 		fTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
@@ -156,7 +156,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fTimeoutText.setPropertyChangeListener(this);
 		fConnectionTimeoutText = new JavaDebugIntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.&Launch_timeout_(ms)__1"), spacingComposite); //$NON-NLS-1$
 		fConnectionTimeoutText.setPreferenceStore(store);
-		fConnectionTimeoutText.setPreferencePage(this);
+		fConnectionTimeoutText.setPage(this);
 		fConnectionTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		minValue= store.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
 		fConnectionTimeoutText.setValidRange(minValue, Integer.MAX_VALUE);
