@@ -541,7 +541,13 @@
 		objectClass="org.eclipse.core.resources.IProject"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.VMPropertyPage">
 		<filter name="nature" value="org.eclipse.jdt.core.javanature"/>
-    </page>    
+    </page>
+   <page
+         objectClass="org.eclipse.jdt.core.IJavaProject"
+         name="%LauncherPropertyPage.name"
+         class="org.eclipse.debug.internal.ui.LauncherPropertyPage"
+         id="org.eclipse.debug.internal.ui.LauncherPropertyPage">
+   </page>
 </extension>
 
 <extension point = "org.eclipse.ui.preferencePages">
