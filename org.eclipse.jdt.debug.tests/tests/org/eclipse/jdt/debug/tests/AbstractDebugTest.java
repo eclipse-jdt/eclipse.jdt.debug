@@ -148,6 +148,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * event occurred.
 	 * 
 	 * @param mainTypeName the program to launch
+	 * @param timeout the number of milliseconds to wait for a terminate event
 	 * @return debug target in which the terminate event occurred
 	 */
 	protected IJavaDebugTarget launchAndTerminate(String mainTypeName, int timeout) throws Exception {
@@ -162,6 +163,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * event occurred.
 	 * 
 	 * @param config the configuration to launch
+	 * @param timeout the number of milliseconds to wait for a terminate event
 	 * @return thread in which the first suspend event occurred
 	 */	
 	protected IJavaDebugTarget launchAndTerminate(ILaunchConfiguration config, int timeout) throws Exception {

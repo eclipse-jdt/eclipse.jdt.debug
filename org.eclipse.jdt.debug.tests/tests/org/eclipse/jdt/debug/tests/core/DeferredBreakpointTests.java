@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
@@ -88,5 +89,35 @@ public class DeferredBreakpointTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}		
+	}
+
+	public void testDisabledBreakpoint() throws Exception {
+		String typeName = "Breakpoints";
+		ILineBreakpoint bp = createLineBreakpoint(41, typeName);
+		bp.setEnabled(false);
+		
+		IJavaDebugTarget debugTarget = null;
+		try {
+			debugTarget= launchAndTerminate(typeName, 3000);
+		} finally {
+			terminateAndRemove(debugTarget);
+			removeAllBreakpoints();
+		}				
+	}
+
+	public void testEnableDisableBreakpoint() throws Exception {
+		String typeName = "HitCountLooper";
+		ILineBreakpoint bp = createLineBreakpoint(5, typeName);
+		bp.setEnabled(true);
+		
+		IJavaThread thread = null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+			bp.setEnabled(false);
+			resumeAndExit(thread);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}				
 	}
 }
