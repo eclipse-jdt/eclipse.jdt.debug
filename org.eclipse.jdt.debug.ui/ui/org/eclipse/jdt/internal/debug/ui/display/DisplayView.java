@@ -28,7 +28,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -78,7 +77,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.FindReplaceAction;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 
 public class DisplayView extends ViewPart implements IPropertyChangeListener, ITextInputListener {
@@ -205,7 +204,7 @@ public class DisplayView extends ViewPart implements IPropertyChangeListener, IT
 			 * @see IDocumentListener#documentChanged(DocumentEvent)
 			 */
 			public void documentChanged(DocumentEvent event) {
-				updateAction(ITextEditorActionConstants.FIND);
+				updateAction(IWorkbenchActionConstants.FIND);
 			}
 		};
 		doc.addDocumentListener(fDocumentListener);
@@ -235,36 +234,36 @@ public class DisplayView extends ViewPart implements IPropertyChangeListener, IT
 		action.setText(DisplayMessages.getString("DisplayView.Cut.label")); //$NON-NLS-1$
 		action.setToolTipText(DisplayMessages.getString("DisplayView.Cut.tooltip")); //$NON-NLS-1$
 		action.setDescription(DisplayMessages.getString("DisplayView.Cut.description")); //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.CUT, action);
+		setGlobalAction(actionBars, IWorkbenchActionConstants.CUT, action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.COPY);
 		action.setText(DisplayMessages.getString("DisplayView.Copy.label")); //$NON-NLS-1$
 		action.setToolTipText(DisplayMessages.getString("DisplayView.Copy.tooltip")); //$NON-NLS-1$
 		action.setDescription(DisplayMessages.getString("DisplayView.Copy.description")); //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, action);
+		setGlobalAction(actionBars, IWorkbenchActionConstants.COPY, action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.PASTE);
 		action.setText(DisplayMessages.getString("DisplayView.Paste.label")); //$NON-NLS-1$
 		action.setToolTipText(DisplayMessages.getString("DisplayView.Paste.tooltip")); //$NON-NLS-1$
 		action.setDescription(DisplayMessages.getString("DisplayView.Paste.Description")); //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.PASTE, action);
+		setGlobalAction(actionBars, IWorkbenchActionConstants.PASTE, action);
 		
 		action= new DisplayViewAction(this, ITextOperationTarget.SELECT_ALL);
 		action.setText(DisplayMessages.getString("DisplayView.SelectAll.label")); //$NON-NLS-1$
 		action.setToolTipText(DisplayMessages.getString("DisplayView.SelectAll.tooltip")); //$NON-NLS-1$
 		action.setDescription(DisplayMessages.getString("DisplayView.SelectAll.description")); //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.SELECT_ALL, action);
+		setGlobalAction(actionBars, IWorkbenchActionConstants.SELECT_ALL, action);
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.jdt.internal.debug.ui.display.DisplayMessages"); //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this)); //$NON-NLS-1$
+		setGlobalAction(actionBars, IWorkbenchActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this)); //$NON-NLS-1$
 		
-		fSelectionActions.add(ITextEditorActionConstants.CUT);
-		fSelectionActions.add(ITextEditorActionConstants.COPY);
-		fSelectionActions.add(ITextEditorActionConstants.PASTE);
+		fSelectionActions.add(IWorkbenchActionConstants.CUT);
+		fSelectionActions.add(IWorkbenchActionConstants.COPY);
+		fSelectionActions.add(IWorkbenchActionConstants.PASTE);
 		
 		fContentAssistAction= new DisplayViewAction(this, ISourceViewer.CONTENTASSIST_PROPOSALS);
-		fContentAssistAction.setActionDefinitionId(IJavaEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		fContentAssistAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		fContentAssistAction.setText(DisplayMessages.getString("DisplayView.Co&ntent_Assist@Ctrl+Space_1")); //$NON-NLS-1$
 		fContentAssistAction.setDescription(DisplayMessages.getString("DisplayView.Content_Assist_2")); //$NON-NLS-1$
 		fContentAssistAction.setToolTipText(DisplayMessages.getString("DisplayView.Content_Assist_2")); //$NON-NLS-1$
@@ -323,12 +322,12 @@ public class DisplayView extends ViewPart implements IPropertyChangeListener, IT
 			menu.add(fContentAssistAction);
 		}
 		menu.add(new Separator());		
-		menu.add((IAction) fGlobalActions.get(ITextEditorActionConstants.CUT));
-		menu.add((IAction) fGlobalActions.get(ITextEditorActionConstants.COPY));
-		menu.add((IAction) fGlobalActions.get(ITextEditorActionConstants.PASTE));
-		menu.add((IAction) fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
+		menu.add((IAction) fGlobalActions.get(IWorkbenchActionConstants.CUT));
+		menu.add((IAction) fGlobalActions.get(IWorkbenchActionConstants.COPY));
+		menu.add((IAction) fGlobalActions.get(IWorkbenchActionConstants.PASTE));
+		menu.add((IAction) fGlobalActions.get(IWorkbenchActionConstants.SELECT_ALL));
 		menu.add(new Separator());
-		menu.add((IAction) fGlobalActions.get(ITextEditorActionConstants.FIND));
+		menu.add((IAction) fGlobalActions.get(IWorkbenchActionConstants.FIND));
 		menu.add(fClearDisplayAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}

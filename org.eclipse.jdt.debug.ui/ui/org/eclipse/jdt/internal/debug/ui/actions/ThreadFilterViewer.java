@@ -29,11 +29,11 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -218,7 +218,7 @@ public class ThreadFilterViewer extends FieldEditor {
 		protected void checkTarget(IDebugTarget target, boolean checked) {
 			fThreadViewer.setChecked(target, checked);
 			if (checked) {
-				fThreadViewer.expandToLevel(target, TreeViewer.ALL_LEVELS);
+				fThreadViewer.expandToLevel(target, AbstractTreeViewer.ALL_LEVELS);
 				IThread[] threads;
 				try {
 					threads= target.getThreads();

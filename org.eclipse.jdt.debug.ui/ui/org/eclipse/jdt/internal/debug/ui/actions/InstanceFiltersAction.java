@@ -32,12 +32,12 @@ import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -94,13 +94,13 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 					final IJavaObject object = (IJavaObject)value;
 					final List breakpoints = getApplicableBreakpoints(var, object);
 					IStructuredContentProvider content = new IStructuredContentProvider() {
-						public void dispose() {};
+						public void dispose() {}
 						
 						public Object[] getElements(Object input) {
 							return breakpoints.toArray();
 						}
 						
-						public void inputChanged(Viewer viewer, Object a, Object b) {};
+						public void inputChanged(Viewer viewer, Object a, Object b) {}
 					};
 					final IDebugModelPresentation modelPresentation= DebugUITools.newDebugModelPresentation();
 					ListSelectionDialog dialog = new InstanceFilterDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), breakpoints, content, modelPresentation, MessageFormat.format(ActionMessages.getString("InstanceFiltersAction.Restrict_selected_breakpoint(s)_to_object___{0}__1"), new String[] {var.getName()})){ //$NON-NLS-1$
@@ -124,7 +124,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 											null, MessageFormat.format(ActionMessages.getString("InstanceFiltersAction.breakpoint_{0}_already_restricted._Reset_the_restriction_to_object_{1}_"), new String[] { modelPresentation.getText(breakpoint), var.getName()}), //$NON-NLS-1$
 											MessageDialog.QUESTION, new String[] { ActionMessages.getString("InstanceFiltersAction.Yes_2"), ActionMessages.getString("InstanceFiltersAction.Cancel_3")}, //$NON-NLS-1$ //$NON-NLS-2$
 											0);
-										if (messageDialog.open() == Dialog.OK) {
+										if (messageDialog.open() == Window.OK) {
 											for (int i= 0; i < instanceFilters.length; i++) {
 												breakpoint.removeInstanceFilter(instanceFilters[i]);
 											}
@@ -157,7 +157,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 					}
 					dialog.setInitialSelections(existing.toArray());
 					
-					if (dialog.open() == ListSelectionDialog.OK) {
+					if (dialog.open() == Window.OK) {
 						Object[] selectedBreakpoints = dialog.getResult();
 						if (selectedBreakpoints != null) {
 							// add

@@ -117,7 +117,7 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 					//resolve the type names
 					methodSignature= resolveMethodSignature(type, methodSignature);
 					if (methodSignature == null) {
-						IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), Status.ERROR, "Source method signature could not be resolved", null); //$NON-NLS-1$
+						IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "Source method signature could not be resolved", null); //$NON-NLS-1$
 						JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageMethodBreakpointActionDelegate.Add_Method_Breakpoint_Failed_2"), status); //$NON-NLS-1$
 						return;
 					}

@@ -21,8 +21,8 @@ import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.jdt.internal.ui.wizards.IStatusChangeListener;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.SourceAttachmentBlock;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -89,7 +89,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	public void run() {
 		SourceAttachmentDialog dialog = new SourceAttachmentDialog(getShell(), fEntry);
 		int res = dialog.open();
-		if (res == Dialog.OK) {
+		if (res == Window.OK) {
 			fEntry.setSourceAttachmentPath(dialog.getSourceAttachmentPath());
 			fEntry.setSourceAttachmentRootPath(dialog.getSourceAttachmentRootPath());
 			getViewer().refresh(fEntry);

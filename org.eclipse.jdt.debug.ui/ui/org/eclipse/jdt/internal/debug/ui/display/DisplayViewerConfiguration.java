@@ -48,7 +48,7 @@ public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 
 		JDIContentAssistPreference.configure(assistant, getColorManager());
 
-		assistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_ABOVE);
+		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		assistant.setInformationControlCreator(
 			getInformationControlCreator(sourceViewer));
 

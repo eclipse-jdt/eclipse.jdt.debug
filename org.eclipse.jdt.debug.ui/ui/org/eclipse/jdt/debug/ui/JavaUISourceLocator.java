@@ -33,6 +33,7 @@ import org.eclipse.jdt.internal.debug.ui.launcher.SourceElementQualifierProvider
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 /**
@@ -235,7 +236,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 							message,
 							configuration);
 					int result = dialog.open();
-					if (result == JavaSourceLookupDialog.OK) {
+					if (result == Window.OK) {
 						fAllowedToAsk = !dialog.isNotAskAgain();
 						JavaUISourceLocator.this.initializeDefaults(
 							configuration);

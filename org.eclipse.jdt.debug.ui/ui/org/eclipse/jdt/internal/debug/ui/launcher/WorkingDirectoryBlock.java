@@ -78,7 +78,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		Font font = parent.getFont();
 				
 		Composite workingDirComp = new Composite(parent, SWT.NONE);
-		WorkbenchHelp.setHelp(workingDirComp, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);;		
+		WorkbenchHelp.setHelp(workingDirComp, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);		
 		GridLayout workingDirLayout = new GridLayout();
 		workingDirLayout.numColumns = 3;
 		workingDirLayout.marginHeight = 0;

@@ -28,6 +28,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -73,7 +74,7 @@ public class AddFolderAction extends RuntimeClasspathAction {
 		dialog.setMessage(ActionMessages.getString("AddFolderAction.Choose_folders_to_add__5")); //$NON-NLS-1$
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
 
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			Object[] elements= dialog.getResult();
 			IRuntimeClasspathEntry[] res= new IRuntimeClasspathEntry[elements.length];
 			for (int i= 0; i < res.length; i++) {

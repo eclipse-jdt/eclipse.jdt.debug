@@ -35,6 +35,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -97,7 +98,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 			dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Type_Selection_Run")); //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
-		if (dialog.open() == MainTypeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			return (IType)dialog.getFirstResult();
 		}
 		return null;
@@ -176,7 +177,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
-		if (result == MainTypeSelectionDialog.OK) {
+		if (result == Window.OK) {
 			return (ILaunchConfiguration) dialog.getFirstResult();
 		}
 		return null;		

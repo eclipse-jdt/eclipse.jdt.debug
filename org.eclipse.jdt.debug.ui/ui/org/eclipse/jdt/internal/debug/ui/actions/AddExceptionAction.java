@@ -22,6 +22,7 @@ import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -33,7 +34,7 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 	public void run(IAction action) {		
 		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
 		AddExceptionDialog dialog= new AddExceptionDialog(shell);
-		if (dialog.open() == AddExceptionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IType type= dialog.getType();
 			boolean checked= dialog.getExceptionType() == AddExceptionDialog.CHECKED_EXCEPTION;
 			boolean caught= dialog.isCaughtSelected();

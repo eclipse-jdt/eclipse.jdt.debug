@@ -46,6 +46,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -430,7 +431,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		if (javaProject != null) {
 			dialog.setInitialSelections(new Object[] { javaProject });
 		}
-		if (dialog.open() == ElementListSelectionDialog.OK) {			
+		if (dialog.open() == Window.OK) {			
 			return (IJavaProject) dialog.getFirstResult();
 		}			
 		return null;		

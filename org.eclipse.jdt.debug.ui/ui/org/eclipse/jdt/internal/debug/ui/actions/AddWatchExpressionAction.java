@@ -15,9 +15,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaWatchExpression;
 import org.eclipse.jdt.internal.debug.ui.WatchExpressionDialog;
-import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
@@ -40,7 +40,7 @@ public class AddWatchExpressionAction extends WatchExpressionAction implements I
 		// create a watch expression
 		JavaWatchExpression watchExpression= new JavaWatchExpression(""); //$NON-NLS-1$
 		// open the watch expression dialog
-		if (new WatchExpressionDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), watchExpression, false).open() == StatusDialog.OK) {
+		if (new WatchExpressionDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), watchExpression, false).open() == Window.OK) {
 			// if OK is selected, add the expression to the expression view and try to evaluate the expression.
 			DebugPlugin.getDefault().getExpressionManager().addExpression(watchExpression);
 			watchExpression.setExpressionContext(getContext());

@@ -575,7 +575,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				break;
 			default :
 				return null;
-		};
+		}
 		StringBuffer charText = new StringBuffer();
 		if (Character.getType((char) intValue) == Character.CONTROL) {
 			Character ctrl = new Character((char) (intValue + 64));

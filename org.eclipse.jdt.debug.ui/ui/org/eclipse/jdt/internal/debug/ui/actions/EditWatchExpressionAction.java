@@ -14,8 +14,8 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaWatchExpression;
 import org.eclipse.jdt.internal.debug.ui.WatchExpressionDialog;
-import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.window.Window;
 
 /**
  * Open the watch expression dialog for the select watch expression.
@@ -29,7 +29,7 @@ public class EditWatchExpressionAction extends WatchExpressionAction {
 	public void run(IAction action) {
 		JavaWatchExpression watchExpression= (JavaWatchExpression)getCurrentSelection().getFirstElement();
 		// display the watch expression dialog for the currently selected watch expression
-		if (new WatchExpressionDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), watchExpression, true).open() == StatusDialog.OK) {
+		if (new WatchExpressionDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), watchExpression, true).open() == Window.OK) {
 			// re-evaluate and refresh if necessary
 			watchExpression.setExpressionContext(getContext());
 		}

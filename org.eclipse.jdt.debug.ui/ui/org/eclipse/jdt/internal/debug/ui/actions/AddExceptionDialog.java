@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IType;
@@ -188,7 +189,7 @@ public class AddExceptionDialog extends StatusDialog {
 		if (fResolvedType == null || !typeRef.getFullyQualifiedName().equals(fResolvedType.getFullyQualifiedName())) {
 			resolveType(typeRef);
 			if (fResolvedType == null) {
-				updateStatus(new StatusInfo(StatusInfo.ERROR, MessageFormat.format(ActionMessages.getString("AddExceptionDialog.An_exception_type_could_not_be_resolved_for_{0}_1"), new Object[]{typeRef.getFullyQualifiedName()}))); //$NON-NLS-1$
+				updateStatus(new StatusInfo(IStatus.ERROR, MessageFormat.format(ActionMessages.getString("AddExceptionDialog.An_exception_type_could_not_be_resolved_for_{0}_1"), new Object[]{typeRef.getFullyQualifiedName()}))); //$NON-NLS-1$
 				return;
 			}
 		}
@@ -196,7 +197,7 @@ public class AddExceptionDialog extends StatusDialog {
 		resolveExceptionType(fResolvedType);
 		
 		if (getExceptionType() == NO_EXCEPTION) {
-			updateStatus(new StatusInfo(StatusInfo.ERROR, ActionMessages.getString("AddExceptionDialog.error.notThrowable"))); //$NON-NLS-1$
+			updateStatus(new StatusInfo(IStatus.ERROR, ActionMessages.getString("AddExceptionDialog.error.notThrowable"))); //$NON-NLS-1$
 			return;
 		}
 		setIsCaughtSelected(getCaughtBox().getSelection());

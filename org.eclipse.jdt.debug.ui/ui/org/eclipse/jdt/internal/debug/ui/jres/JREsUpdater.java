@@ -160,7 +160,7 @@ public class JREsUpdater {
 								return true;
 							}
 							break;
-					};
+					}
 				}
 			}
 		}

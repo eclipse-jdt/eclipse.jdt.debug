@@ -17,6 +17,7 @@ import org.eclipse.jdt.internal.ui.wizards.buildpaths.NewVariableEntryDialog;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 
 /**
  * Adds a variable to the runtime class path.
@@ -37,7 +38,7 @@ public class AddVariableAction extends RuntimeClasspathAction {
 		NewVariableEntryDialog dialog = new NewVariableEntryDialog(getShell());
 		dialog.setTitle(ActionMessages.getString("AddVariableAction.Variable_Selection_1")); //$NON-NLS-1$
 		
-		if (dialog.open() == NewVariableEntryDialog.OK) {			
+		if (dialog.open() == Window.OK) {			
 			IPath[] paths = dialog.getResult();
 			IRuntimeClasspathEntry[] entries = new IRuntimeClasspathEntry[paths.length];
 			for (int i = 0; i < paths.length; i++) {

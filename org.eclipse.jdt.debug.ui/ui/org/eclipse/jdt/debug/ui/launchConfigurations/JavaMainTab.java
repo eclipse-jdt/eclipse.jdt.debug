@@ -46,6 +46,7 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -308,7 +309,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 															 fMainText.getText()); 
 		dialog.setTitle(LauncherMessages.getString("JavaMainTab.Choose_Main_Type_11")); //$NON-NLS-1$
 		dialog.setMessage(LauncherMessages.getString("JavaMainTab.Choose_a_main_&type_to_launch__12")); //$NON-NLS-1$
-		if (dialog.open() == SelectionDialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 		
@@ -362,7 +363,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		if (javaProject != null) {
 			dialog.setInitialSelections(new Object[] { javaProject });
 		}
-		if (dialog.open() == ElementListSelectionDialog.OK) {			
+		if (dialog.open() == Window.OK) {			
 			return (IJavaProject) dialog.getFirstResult();
 		}			
 		return null;		

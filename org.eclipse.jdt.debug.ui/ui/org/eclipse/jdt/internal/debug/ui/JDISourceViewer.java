@@ -14,7 +14,7 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.internal.ui.text.JavaPartitionScanner;
+import org.eclipse.jdt.internal.ui.text.IJavaPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -66,7 +66,7 @@ public class JDISourceViewer extends SourceViewer {
 		
 		List segmentation= new ArrayList();
 		for (int i= 0; i < linePartitioning.length; i++) {
-			if (JavaPartitionScanner.JAVA_STRING.equals(linePartitioning[i].getType()))
+			if (IJavaPartitions.JAVA_STRING.equals(linePartitioning[i].getType()))
 				segmentation.add(linePartitioning[i]);
 		}
 		

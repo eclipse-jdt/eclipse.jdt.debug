@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -66,7 +67,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 			GridData data = new GridData(
 				GridData.GRAB_HORIZONTAL |
 				GridData.HORIZONTAL_ALIGN_FILL);
-			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
+			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			b.setLayoutData(data);
 			b.setFont(parent.getFont());
 			b.setText(ActionMessages.getString("BreakpointHitCountAction.Enable_Hit_Count_1")); //$NON-NLS-1$
@@ -171,7 +172,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 		}
 		Shell activeShell= JDIDebugUIPlugin.getActiveWorkbenchShell();
 		HitCountDialog dialog= new HitCountDialog(activeShell, title, message, initialValue, validator);
-		if (dialog.open() != HitCountDialog.OK) {
+		if (dialog.open() != Window.OK) {
 			return -1;
 		}
 		if (dialog.isHitCountEnabled()) {

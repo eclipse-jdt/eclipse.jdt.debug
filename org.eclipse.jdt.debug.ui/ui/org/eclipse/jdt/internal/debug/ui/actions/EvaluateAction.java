@@ -383,7 +383,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (page != null) {
 			IWorkbenchPart activePart= page.getActivePart();
 			if (activePart != null) {
-				IViewPart view = page.findView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);;
+				IViewPart view = page.findView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);
 				if (view == null) {
 					try {
 						view= page.showView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);

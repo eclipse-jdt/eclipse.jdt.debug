@@ -20,9 +20,9 @@ import org.eclipse.jdt.internal.debug.ui.DetailFormatterDialog;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersManager;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
-import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 
 public class NewDetailFormatterAction extends ObjectActionDelegate {
 
@@ -54,7 +54,7 @@ public class NewDetailFormatterAction extends ObjectActionDelegate {
 		}
 		JavaDetailFormattersManager detailFormattersManager= JavaDetailFormattersManager.getDefault();
 		DetailFormatter detailFormatter= new DetailFormatter(typeName, "", true); //$NON-NLS-1$
-		if (new DetailFormatterDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), detailFormatter, null, false, true).open() == StatusDialog.OK) {
+		if (new DetailFormatterDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), detailFormatter, null, false, true).open() == Window.OK) {
 			detailFormattersManager.setAssociatedDetailFormatter(detailFormatter);
 		}
 	}

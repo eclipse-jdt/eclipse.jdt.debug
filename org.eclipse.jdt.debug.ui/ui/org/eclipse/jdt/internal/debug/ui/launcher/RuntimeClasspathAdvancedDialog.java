@@ -21,6 +21,7 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -181,7 +182,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		dialog.setMinimumPageSize(convertWidthInCharsToPixels(40), convertHeightInCharsToPixels(20));
 		dialog.create();
 		dialog.getShell().setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Select_Container_2")); //$NON-NLS-1$
-		if (dialog.open() == WizardDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IClasspathEntry created= wizard.getNewEntry();
 			if (created != null) {
 				// XXX: kind needs to be resolved

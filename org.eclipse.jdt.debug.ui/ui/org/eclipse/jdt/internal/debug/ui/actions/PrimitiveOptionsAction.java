@@ -18,11 +18,11 @@ import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
@@ -75,7 +75,7 @@ public class PrimitiveOptionsAction implements IViewActionDelegate, IActionDeleg
 		final StructuredViewer viewer = getStructuredViewer();
 		PrimitiveOptionsDialog dialog = new PrimitiveOptionsDialog(viewer.getControl().getShell(), getView().getSite().getId());
 		int res = dialog.open();
-		if (res == Dialog.OK) {
+		if (res == Window.OK) {
 			BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
 				public void run() {
 					applyPreferences();

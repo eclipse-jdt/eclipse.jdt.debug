@@ -39,6 +39,7 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -308,7 +309,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 				javaProject);
 		dialog.setTitle(LauncherMessages.getString("appletlauncher.maintab.selection.applet.dialog.title")); //$NON-NLS-1$
 		dialog.setMessage(LauncherMessages.getString("appletlauncher.maintab.selection.applet.dialog.message")); //$NON-NLS-1$
-		if (dialog.open() == AppletSelectionDialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 		
@@ -362,7 +363,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		if (javaProject != null) {
 			dialog.setInitialSelections(new Object[] { javaProject });
 		}
-		if (dialog.open() == ElementListSelectionDialog.OK) {			
+		if (dialog.open() == Window.OK) {			
 			return (IJavaProject) dialog.getFirstResult();
 		}			
 		return null;		

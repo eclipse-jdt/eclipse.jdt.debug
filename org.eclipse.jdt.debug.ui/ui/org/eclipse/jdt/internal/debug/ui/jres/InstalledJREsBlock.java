@@ -52,6 +52,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -565,7 +566,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 	private void addVM() {
 		AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), null);
 		dialog.setTitle(JREMessages.getString("InstalledJREsBlock.7")); //$NON-NLS-1$
-		if (dialog.open() != AddVMDialog.OK) {
+		if (dialog.open() != Window.OK) {
 			return;
 		}
 		fVMList.refresh();
@@ -598,7 +599,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		IVMInstall vm= (IVMInstall)selection.getFirstElement();
 		AddVMDialog dialog= new AddVMDialog(this, getShell(), JavaRuntime.getVMInstallTypes(), vm);
 		dialog.setTitle(JREMessages.getString("InstalledJREsBlock.8")); //$NON-NLS-1$
-		if (dialog.open() != AddVMDialog.OK) {
+		if (dialog.open() != Window.OK) {
 			return;
 		}
 		fVMList.refresh(vm);
