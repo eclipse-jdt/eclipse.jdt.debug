@@ -47,6 +47,9 @@ public interface IEvaluationEngine {
 	 *   when/if the evalaution completes
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
+	 * @param hitBreakpoints whether or not breakpoints should be honored
+	 *  in the evaluation thread during the evaluation. If <code>false</code>,
+	 *  breakpoints hit in the evaluation thread will be ignored.
 	 * @exception DebugException if this method fails.  Reasons include:<ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -59,7 +62,7 @@ public interface IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail) throws DebugException;
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException;
 	/**
 	 * Asynchronously evaluates the given snippet in the context of
 	 * the specified type, reporting the result back to the given listener.
@@ -82,6 +85,9 @@ public interface IEvaluationEngine {
 	 *   when/if the evalaution completes
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
+	 * @param hitBreakpoints whether or not breakpoints should be honored
+	 *  in the evaluation thread during the evaluation. If <code>false</code>,
+	 *  breakpoints hit in the evaluation thread will be ignored.
 	 * @exception DebugException if this method fails.  Reasons include:<ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -94,7 +100,7 @@ public interface IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) throws DebugException;
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException;
 
 	/**
 	 * Returns the Java project in which snippets are

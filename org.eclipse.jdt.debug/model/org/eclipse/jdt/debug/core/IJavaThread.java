@@ -151,10 +151,13 @@ public interface IJavaThread extends IThread {
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
 	 * @param timeout the number of milliseconds to wait for the evaluation to
 	 *  complete before firing a resume event on the given thread
+	 * @param hitBreakpoints whether or not breakpoints should be honored
+	 *  in this thread during the evaluation. If <code>false</code>, breakpoints
+	 *  hit in this thread during the evaluation will be ignored.
 	 * @exception DebugException if an exception occurs performing
 	 *  the evaluation
 	 * @since 2.0
 	 */
-	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail) throws DebugException; 
+	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail, boolean hitBreakpoints) throws DebugException; 
 
 }

@@ -349,17 +349,17 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	}	
 	
 	/**
-	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget)
+	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget, JDIThread)
 	 */
-	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target) {
+	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target, JDIThread thread) {
 		if (event instanceof MethodEntryEvent) {
 			MethodEntryEvent entryEvent= (MethodEntryEvent) event;
 			fLastEventTypes.put(target, ENTRY_EVENT);
-			return handleMethodEvent(entryEvent, entryEvent.method(), target);
+			return handleMethodEvent(entryEvent, entryEvent.method(), target, thread);
 		} else if (event instanceof MethodExitEvent) {
 			MethodExitEvent exitEvent= (MethodExitEvent) event;
 			fLastEventTypes.put(target, EXIT_EVENT);
-			return handleMethodEvent(exitEvent, exitEvent.method(), target);
+			return handleMethodEvent(exitEvent, exitEvent.method(), target, thread);
 		}
 		return true;
 	}
@@ -371,7 +371,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * the event has been fired by a method invocation that this breakpoint
 	 * is interested in. If it is not, do nothing.
 	 */
-	protected boolean handleMethodEvent(LocatableEvent event, Method method, JDIDebugTarget target) {
+	protected boolean handleMethodEvent(LocatableEvent event, Method method, JDIDebugTarget target, JDIThread thread) {
 		try {
 			if (getMethodName() != null) {
 				if (!method.name().equals(getMethodName())) {
@@ -400,10 +400,10 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			// simulate hit count
 			Integer count = (Integer)event.request().getProperty(HIT_COUNT);
 			if (count != null) {
-				return handleHitCount(event, count, target);
+				return handleHitCount(event, count, target, thread);
 			} else {
 				// no hit count - suspend
-				return !suspend(event.thread(), target); // resume if suspend fails
+				return !suspend(thread, target); // resume if suspend fails
 			}
 			
 		} catch (CoreException e) {
@@ -416,13 +416,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * Suspend the given thread in the given target, and returns
 	 * whether the thread suspended.
 	 */
-	private boolean suspend(ThreadReference threadRef, JDIDebugTarget target) {
-		JDIThread thread= target.findThread(threadRef);	
-		if (thread == null) {
-			return false;
-		} else {
-			return suspend(thread);				
-		}		
+	private boolean suspend(JDIThread thread, JDIDebugTarget target) {
+		return suspend(thread);	
 	}
 	
 	/**
@@ -430,7 +425,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * When a method event is received, decrement the hit count
 	 * property on the request and suspend if the hit count reaches 0.
 	 */
-	private boolean handleHitCount(LocatableEvent event, Integer count, JDIDebugTarget target) {	
+	private boolean handleHitCount(LocatableEvent event, Integer count, JDIDebugTarget target, JDIThread thread) {	
 	// decrement count and suspend if 0
 		int hitCount = count.intValue();
 		if (hitCount > 0) {
@@ -439,7 +434,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			event.request().putProperty(HIT_COUNT, count);
 			if (hitCount == 0) {
 				// the count has reached 0, breakpoint hit
-				boolean resume = !suspend(event.thread(), target); // resume if suspend fails
+				boolean resume = !suspend(thread, target); // resume if suspend fails
 				try {
 					// make a note that we auto-disabled the breakpoint
 					// order is important here...see methodEntryChanged

@@ -41,6 +41,9 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *   when/if the evalaution completes
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
+	 * @param hitBreakpoints whether or not breakpoints should be honored
+	 *  in the evaluation thread during the evaluation. If <code>false</code>,
+	 *  breakpoints hit in the evaluation thread will be ignored.
 	 * @exception DebugException if this method fails.  Reasons include:<ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -53,7 +56,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail) throws DebugException;
+	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException;
 
 	/**
 	 * Asynchronously evaluates the given expression in the context of
@@ -76,6 +79,9 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *   when/if the evalaution completes
 	 * @param evaluationDetail one of <code>DebugEvent.EVALUATION</code> or
 	 *  <code>DebugEvent.EVALUATION_IMPLICIT</code>
+	 * @param hitBreakpoints whether or not breakpoints should be honored
+	 *  in the evaluation thread during the evaluation. If <code>false</code>,
+	 *  breakpoints hit in the evaluation thread will be ignored.
 	 * @exception DebugException if this method fails.  Reasons include:<ul>
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
@@ -88,7 +94,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) throws DebugException;
+	public void evaluateExpression(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException;
 
 	/**
 	 * Synchronously generates a compiled expression from the given expression

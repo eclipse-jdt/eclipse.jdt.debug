@@ -65,42 +65,42 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	}
 
 	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener)
+	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener, int, boolean)
 	 */
-	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail) throws DebugException {
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		ICompiledExpression expression= getCompiledExpression(snippet, frame);
-		evaluateExpression(expression, frame, listener, evaluationDetail);
+		evaluateExpression(expression, frame, listener, evaluationDetail, hitBreakpoints);
 	}
 	
 	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener)
+	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener, int, boolean)
 	 */
-	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) throws DebugException {
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		ICompiledExpression expression= getCompiledExpression(snippet, thisContext);
-		evaluateExpression(expression, thisContext, thread, listener, evaluationDetail);
+		evaluateExpression(expression, thisContext, thread, listener, evaluationDetail, hitBreakpoints);
 	}
 	
 	/**
-	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaStackFrame, IEvaluationListener)
+	 * @see IAstEvaluationEngine#evaluateExpression(ICompiledExpression, IJavaStackFrame, IEvaluationListener, int, boolean)
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		RuntimeContext context = new RuntimeContext(getJavaProject(), frame);
-		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener, evaluationDetail);
+		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener, evaluationDetail, hitBreakpoints);
 	}
 
 	/**
-	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener)
+	 * @see IAstEvaluationEngine#evaluateExpression(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener, int, boolean)
 	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		IRuntimeContext context = new JavaObjectRuntimeContext(thisContext, getJavaProject(), thread);
-		doEvaluation(expression, context, thread, listener, evaluationDetail);
+		doEvaluation(expression, context, thread, listener, evaluationDetail, hitBreakpoints);
 	}
 	
 	/**
 	 * Evaluates the given expression in the given thread and the given runtime context.
 	 */
-	private void doEvaluation(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) throws DebugException {		
-		getEvaluationThread().evaluate(expression, context, thread, listener, evaluationDetail);
+	private void doEvaluation(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) throws DebugException {		
+		getEvaluationThread().evaluate(expression, context, thread, listener, evaluationDetail, hitBreakpoints);
 	}
 	
 	private EvaluationThread getEvaluationThread() {
@@ -153,6 +153,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		private IJavaThread fThread;
 		private IEvaluationListener fListener;
 		private int fEvaluationDetail;
+		private boolean fHitBreakpoints;
 
 		private boolean fEvaluating= false;
 		private Thread fEvaluationThread;
@@ -170,12 +171,13 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			}
 		}
 		
-		public void evaluate(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail) {
+		public void evaluate(ICompiledExpression expression, IRuntimeContext context, IJavaThread thread, IEvaluationListener listener, int evaluationDetail, boolean hitBreakpoints) {
 			fExpression= expression;
 			fContext= context;
 			fThread= thread;
 			fListener= listener;
 			fEvaluationDetail= evaluationDetail;
+			fHitBreakpoints= hitBreakpoints;
 			if (fEvaluationThread == null) {
 				// Create a new thread
 				fEvaluationThread= new Thread(new Runnable() {
@@ -222,7 +224,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			};
 			CoreException exception = null;
 			try {
-				fThread.runEvaluation(er, null, fEvaluationDetail);
+				fThread.runEvaluation(er, null, fEvaluationDetail, fHitBreakpoints);
 			} catch (DebugException e) {
 				exception = e;
 			}

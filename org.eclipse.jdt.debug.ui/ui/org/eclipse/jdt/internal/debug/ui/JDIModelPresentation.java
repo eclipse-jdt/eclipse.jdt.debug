@@ -1348,7 +1348,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 						}
 					};
 					try {
-						thread.runEvaluation(er, null, DebugEvent.EVALUATION_IMPLICIT);
+						thread.runEvaluation(er, null, DebugEvent.EVALUATION_IMPLICIT, false);
 					} catch (DebugException e) {
 						JDIDebugUIPlugin.log(e);
 					}

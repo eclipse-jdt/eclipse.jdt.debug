@@ -305,28 +305,22 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	/**
-	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget)
+	 * @see JavaBreakpoint#handleBreakpointEvent(Event, JDIDebugTarget, JDIThread)
 	 * 
 	 * (From referenced JavaDoc:
 	 * 	Returns whethers the thread should be resumed
 	 */
-	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target) {
-		ThreadReference threadRef= ((LocatableEvent)event).thread();
-		JDIThread thread= target.findThread(threadRef);		
-		if (thread == null) {
-			return true;
-		} else {
-			if (hasCondition()) {
-				try {
-					return handleConditionalBreakpointEvent(event, thread, target);
-				} catch (CoreException exception) {
-					// log error
-					return !suspendForEvent(event, thread);
-				}
-			} else {
-				return !suspendForEvent(event, thread); // Resume if suspend fails
+	public boolean handleBreakpointEvent(Event event, JDIDebugTarget target, JDIThread thread) {
+		if (hasCondition()) {
+			try {
+				return handleConditionalBreakpointEvent(event, thread, target);
+			} catch (CoreException exception) {
+				// log error
+				return !suspendForEvent(event, thread);
 			}
-		}						
+		} else {
+			return !suspendForEvent(event, thread); // Resume if suspend fails
+		}					
 	}
 	
 	/**
@@ -404,7 +398,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			return !suspendForEvent(event, thread);
 		}
 		fSuspendEvents.put(thread, event);
-		engine.evaluateExpression(fCompiledExpression, frame, listener, DebugEvent.EVALUATION_IMPLICIT);
+		engine.evaluateExpression(fCompiledExpression, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
 
 		// Do not resume. When the evaluation returns, the evaluation listener
 		// will resume the thread if necessary or update for suspension.

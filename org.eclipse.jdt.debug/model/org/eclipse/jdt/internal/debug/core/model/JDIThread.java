@@ -57,50 +57,41 @@ import com.sun.jdi.request.StepRequest;
  * thread on a VM.
  */
 public class JDIThread extends JDIDebugElement implements IJavaThread {
-	
 	/**
 	 * Constant for the name of the main thread group.
 	 */
 	private static final String MAIN_THREAD_GROUP = "main"; //$NON-NLS-1$
-
 	/**
 	 * Underlying thread.
 	 */
 	private ThreadReference fThread;
-	
 	/**
 	 * Collection of stack frames
 	 */
 	private List fStackFrames;
-
 	/**
 	 * Underlying thread group, cached on first access.
 	 */
 	private ThreadGroupReference fThreadGroup;
-	
 	/**
 	 * Name of underlying thread group, cached on first access.
 	 */
 	private String fThreadGroupName;
-	
 	/**
 	 * Whether children need to be refreshed. Set to
 	 * <code>true</code> when stack frames are re-used
 	 * on the next suspend.
 	 */
 	private boolean fRefreshChildren = true;
-	
 	/**
 	 * Currently pending step handler, <code>null</code>
 	 * when not performing a step.
 	 */
 	private StepHandler fStepHandler= null;
-	
 	/**
 	 * Whether running.
 	 */
 	private boolean fRunning;
-		
 	/**
 	 * <code>true</code> when suspended by an event in the
 	 * VM such as a breakpoint or step, and <code>false</code>
@@ -108,7 +99,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * a call is made to <code>#suspend()</code>).
 	 */
 	private boolean fEventSuspend = false;
-
 	/**
 	 * Whether terminated.
 	 */
@@ -117,28 +107,33 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Whether this thread is a system thread.
 	 */
 	private boolean fIsSystemThread;
-
 	/**
 	 * The collection of breakpoints that caused the last suspend, or 
 	 * an empty collection if the thread is not suspended or was not
 	 * suspended by any breakpoint(s).
 	 */
 	private List fCurrentBreakpoints = new ArrayList(2);
-
 	/**
 	 * The cached named of the underlying thread.
 	 */
 	private String fName= null;
-	
-	private boolean fIsPerformingEvaluation= false;
 	/**
 	 * Whether this thread is currently performing
-	 * an evaluation (invoke method). Nested method
-	 * invocations cannot be performed.
+	 * an evaluation. An evaluation may involve a series
+	 * of method invocations.
+	 */
+	private boolean fIsPerformingEvaluation= false;
+	/**
+	 * Whether this thread is currently invoking a method.
+	 * Nested method invocations cannot be performed.
 	 */
 	private boolean fIsInvokingMethod = false;
-	
-		
+	/**
+	 * Whether or not this thread is currently honoring
+	 * breakpoints. This flag allows breakpoints to be
+	 * disabled during evaluations.
+	 */
+	private boolean fHonorBreakpoints= true;
 	/**
 	 * The kind of step that was originally requested.  Zero or
 	 * more 'secondary steps' may be performed programmatically after
@@ -146,12 +141,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * type (step into, over, return) of the original step.
 	 */
 	private int fOriginalStepKind;
-
 	/**
 	 * The JDI Location from which an original user-requested step began.
 	 */
 	private Location fOriginalStepLocation;
-
 	/**
 	 * The total stack depth at the time an original (user-requested) step
 	 * is initiated.  This is used along with the original step Location
@@ -544,8 +537,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * @see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)
 	 */ 
-	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail) throws DebugException {
+	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
 		fIsPerformingEvaluation = true;
+		fHonorBreakpoints= hitBreakpoints;
 		fireResumeEvent(evaluationDetail);
 		try {
 			evaluation.run(this, monitor);			
@@ -553,6 +547,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			throw e;
 		} finally {
 			fIsPerformingEvaluation = false;
+			fHonorBreakpoints= true;
 			fireSuspendEvent(evaluationDetail);
 		}
 	}	
@@ -1470,6 +1465,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public boolean isInvokingMethod() {
 		return fIsInvokingMethod;
+	}
+	
+	/**
+	 * Returns whether this thread is currently ignoring
+	 * breakpoints.
+	 */
+	public boolean isIgnoringBreakpoints() {
+		return !fHonorBreakpoints;
 	}
 	
 	/**
