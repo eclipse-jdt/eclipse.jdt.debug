@@ -30,10 +30,6 @@ import org.eclipse.ui.IEditorInput;
 public class MonitorModelPresentation extends LabelProvider implements IDebugModelPresentation {
 
 	protected ImageDescriptorRegistry fDebugImageRegistry= JDIDebugUIPlugin.getImageDescriptorRegistry();
-
-	public MonitorModelPresentation() {
-		super();
-	}
 			
 	/**
 	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
@@ -171,7 +167,7 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 	public Image getImage(Object item) {
 				
 		if (item instanceof ThreadsViewContentProvider.ThreadWrapper) {
-			return getThreadWrapperThreadImage((ThreadsViewContentProvider.ThreadWrapper)item);
+			return getThreadWrapperThreadImage(((ThreadsViewContentProvider.ThreadWrapper)item).thread);
 		} else if (item instanceof ThreadsViewContentProvider.MonitorWrapper) {
 			ThreadsViewContentProvider.MonitorWrapper monitorWrapper= (ThreadsViewContentProvider.MonitorWrapper)item;
 			JDIImageDescriptor descriptor= null;
@@ -189,8 +185,13 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 			}
 			return fDebugImageRegistry.get(descriptor);
 		} else if (item instanceof IJavaObject) {
-			return getMonitorImage((IJavaObject)item);
-		} 
+			return getMonitorImage();
+		} else if (item instanceof DeadLocksViewContentProvider.ContentMonitorWrapper) {
+			return getMonitorImage();
+			
+		} else if (item instanceof DeadLocksViewContentProvider.ContentThreadWrapper ) {
+			return getThreadWrapperThreadImage(((DeadLocksViewContentProvider.ContentThreadWrapper)item).fThread);
+		}
 		
 		return null;
 	}
@@ -198,9 +199,9 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 	/**
 	 * Image for a ThreadWrapper in ThreadsViewContentProvider
 	 */
-	private Image getThreadWrapperThreadImage(ThreadsViewContentProvider.ThreadWrapper thread){
+	private Image getThreadWrapperThreadImage(IJavaThread thread){
 		ImageDescriptor descriptor= null;
-		if (thread.thread.isSuspended()) {
+		if (thread.isSuspended()) {
 			descriptor= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED);
 		} else {
 			descriptor= DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING);
@@ -211,7 +212,7 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 	/**
 	 * Image for monitors
 	 */
-	private Image getMonitorImage(IJavaObject monitor){
+	private Image getMonitorImage(){
 		return fDebugImageRegistry.get(JavaDebugImages.DESC_OBJ_MONITOR);
 	}
 
