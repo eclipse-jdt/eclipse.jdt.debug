@@ -77,6 +77,23 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				super.doStore();
 			}
 		}
+		/**
+ 		 * Clears the error message from the message line if the error
+ 		 * message is the error message from this field editor.
+		 */
+		protected void clearErrorMessage() {
+			if (getPreferencePage() != null) {
+				String message= getPreferencePage().getErrorMessage();
+				if (message != null) {
+					if(getErrorMessage().equals(message)) {
+						super.clearErrorMessage();
+					}
+					
+				} else {
+					super.clearErrorMessage();
+				}
+			}
+		}
 	}
 
 	class BreakpointStringFieldEditor extends StringFieldEditor {
@@ -106,8 +123,26 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		/**
 		 * @see FieldEditor#refreshValidState()
 		 */
-		public void refreshValidState() {
+		protected void refreshValidState() {
 			super.refreshValidState();
+		}
+		
+		/**
+ 		 * Clears the error message from the message line if the error
+ 		 * message is the error message from this field editor.
+		 */
+		protected void clearErrorMessage() {
+			if (getPreferencePage() != null) {
+				String message= getPreferencePage().getErrorMessage();
+				if (message != null) {
+					if(getErrorMessage().equals(message)) {
+						super.clearErrorMessage();
+					}
+					
+				} else {
+					super.clearErrorMessage();
+				}
+			}
 		}
 	}
 	
@@ -201,6 +236,9 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				boolean enabled = fHitCountEnabler.getBooleanValue();
 				fHitCountTextControl.setEnabled(enabled);
 				fHitCount.refreshValidState();
+				if (fHitCount.isValid() && fCondition != null) {
+					fCondition.refreshValidState();
+				}
 				checkState();
 			}
 		});
@@ -215,6 +253,9 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				boolean enabled = fConditionEnabler.getBooleanValue();
 				fConditionTextControl.setEnabled(enabled);
 				fCondition.refreshValidState();
+				if (fCondition.isValid() && fHitCount != null) {
+					fHitCount.refreshValidState();
+				}
 				checkState();
 			}
 		});	
@@ -313,7 +354,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		IPreferenceStore store= getPreferenceStore();
 		if (breakpoint instanceof IJavaExceptionBreakpoint) {
 			IJavaExceptionBreakpoint jeBreakpoint = (IJavaExceptionBreakpoint) breakpoint;
-			this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Exception_Breakpoint_Properties_8")); //$NON-NLS-1$
+			setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Exception_Breakpoint_Properties_8")); //$NON-NLS-1$
 			store.setValue(
 				JavaBreakpointPreferenceStore.UNCAUGHT, jeBreakpoint.isUncaught());
 			store.setValue(JavaBreakpointPreferenceStore.CAUGHT, jeBreakpoint.isCaught());
@@ -337,7 +378,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			}
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint jmBreakpoint = (IJavaMethodBreakpoint) breakpoint;
-				this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Method_Breakpoint_Properties_10")); //$NON-NLS-1$
+				setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Method_Breakpoint_Properties_10")); //$NON-NLS-1$
 				store.setValue(
 					JavaBreakpointPreferenceStore.METHOD_ENTRY, jmBreakpoint.isEntry());
 				store.setValue(
@@ -346,16 +387,16 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				addField(createMethodExitEditor(getFieldEditorParent()));
 			} else if (breakpoint instanceof IJavaWatchpoint) {
 				IJavaWatchpoint jWatchpoint = (IJavaWatchpoint) breakpoint;
-				this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Watchpoint_Properties_12")); //$NON-NLS-1$
+				setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Watchpoint_Properties_12")); //$NON-NLS-1$
 				store.setValue(JavaBreakpointPreferenceStore.ACCESS, jWatchpoint.isAccess());
 				store.setValue(
 					JavaBreakpointPreferenceStore.MODIFICATION, jWatchpoint.isModification());
 				addField(createAccessEditor(getFieldEditorParent()));
 				addField(createModificationEditor(getFieldEditorParent()));
 			} else if (breakpoint instanceof IJavaPatternBreakpoint) {
-				this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Pattern_Breakpoint_Properties_14")); //$NON-NLS-1$
+				setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Pattern_Breakpoint_Properties_14")); //$NON-NLS-1$
 			} else {
-				this.setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Line_Breakpoint_Properties_16")); //$NON-NLS-1$
+			 	setTitle(ActionMessages.getString("JavaBreakpointPreferencePage.Java_Line_Breakpoint_Properties_16")); //$NON-NLS-1$
 			}
 		}
 	}
@@ -470,4 +511,34 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.UNCAUGHT, ActionMessages.getString("JavaBreakpointPreferencePage.&Uncaught_32"), parent); //$NON-NLS-1$
 		return bfe;
 	}
+	
+	/**
+ 	 * The preference page implementation of this <code>IPreferencePage</code>
+	 * (and <code>IPropertyChangeListener</code>) method intercepts <code>IS_VALID</code> 
+     * events but passes other events on to its superclass.
+     */
+	public void propertyChange(PropertyChangeEvent event) {
+
+		if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+			boolean newValue = ((Boolean) event.getNewValue()).booleanValue();
+			// If the new value is true then we must check all field editors.
+			// If it is false, then the page is invalid in any case.
+			if (newValue) {
+				if (fHitCount != null && event.getSource() != fHitCount) {
+					fHitCount.refreshValidState();
+				} 
+				if (fCondition != null && event.getSource() != fCondition) {
+					fCondition.refreshValidState();
+				}
+				checkState();
+			} else {
+				super.propertyChange(event);
+			}
+
+		} else {
+			super.propertyChange(event);
+		}
+}
+
+
 }
