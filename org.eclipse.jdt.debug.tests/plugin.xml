@@ -67,8 +67,10 @@
 	<launchConfigurationTabGroup
 		id="org.eclipse.jdt.debug.tests.launchConfigurationTabGroup.testJavaApplication"
 		type ="org.eclipse.jdt.launching.localJavaApplication"
-		class="org.eclipse.jdt.debug.testplugin.TestJavaApplicationTabGroup"
-		modes="TEST_MODE">
+		class="org.eclipse.jdt.debug.testplugin.TestJavaApplicationTabGroup">
+		<launchMode
+			mode="TEST_MODE">
+		</launchMode>
 	</launchConfigurationTabGroup>
 </extension>
 
