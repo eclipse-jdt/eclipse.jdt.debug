@@ -271,7 +271,7 @@ public class JavaLogicalStructuresPreferencePage extends PreferencePage implemen
         IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
         document.setDocumentPartitioner(partitioner);
         partitioner.connect(document);      
-        fCodeViewer.configure(new JavaSourceViewerConfiguration(tools, null));
+        fCodeViewer.configure(new JavaSourceViewerConfiguration(tools.getColorManager(), JavaPlugin.getDefault().getPreferenceStore(), null, null));
         fCodeViewer.setEditable(false);
         fCodeViewer.setDocument(document);
         fCodeViewer.getTextWidget().setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
