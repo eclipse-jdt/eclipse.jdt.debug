@@ -65,7 +65,7 @@ public class LaunchModeTests extends AbstractDebugTest {
 	}
 
 	/**
-	 * Tests that launch delegate for "TEST_MODE" and java apps is invoked when
+	 * Tests that launch delegate for "TEST_MODE" and Java apps is invoked when
 	 * "TEST_MODE" is used.
 	 * 
 	 * @throws CoreException
@@ -93,15 +93,16 @@ public class LaunchModeTests extends AbstractDebugTest {
 	}
 	
 	/**
-	 * Returns the source of the accepted event, or <code>null</code>
-	 * if no event was accepted.
+	 * Returns the launch configuration set by the TestModeLaunchDelegate , or <code>null</code>
+	 * if no launch configuration was set (the correct delegate was not called).
+	 * A wait must occur due to the use of Jobs for launching.
 	 */
 	private synchronized Object getLaunchConfigurationSetByDelegate() {
 		if (fConfiguration == null) {
 			try {
 				wait(10000);
 			} catch (InterruptedException ie) {
-				System.err.println("Interrupted waiting for event");
+				System.err.println("Interrupted waiting for launch configuration");
 			}
 		}
 		
