@@ -198,6 +198,13 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	public boolean supportsHotCodeReplace();
 	
 	/**
+	 * Returns whether this target supports instance breakpoints.
+	 * 
+	 * @return whether this target supports instance breakpoints
+	 */
+	public boolean supportsInstanceBreakpoints();
+	
+	/**
 	 * Returns whether step filters are enabled
 	 * in this target.
 	 * 

@@ -66,7 +66,16 @@ public interface IJavaWatchpoint extends IJavaLineBreakpoint {
 	 * 	this breakpoint's underlying marker
 	 */
 	public String getFieldName() throws CoreException;	
-	
+	/**
+	 * Returns the identifier of the enclosing instance of the field associated
+	 * with this watchpoint or <code>null</code> if none. If this watchpoint
+	 * has an enclosing instance, it will only suspend execution when the
+	 * field is accessed or modified within the instance.
+	 * 
+	 * @return the name of the enclosing instance of this watchpoint's field
+	 * 	or <code>null</code> if none.
+	 */
+	public String getInstanceIdentifier();
 	/**
 	 * Returns whether this breakpoint last suspended in this target due to an access
 	 * (<code>true</code>) or modification (<code>false</code>).

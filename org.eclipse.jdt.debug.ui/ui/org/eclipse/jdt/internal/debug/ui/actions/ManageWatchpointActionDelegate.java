@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -78,7 +79,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 				}
 				Map attributes = new HashMap(10);
 				BreakpointUtils.addJavaBreakpointAttributes(attributes, element);
-				setBreakpoint(JDIDebugModel.createWatchpoint(BreakpointUtils.getBreakpointResource(type),type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes));
+				setBreakpoint(createBreakpoint(BreakpointUtils.getBreakpointResource(type),type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes));
 			} catch (JavaModelException e) {
 				JDIDebugUIPlugin.log(e);
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), ActionMessages.getString("ManageWatchpointAction.The_selected_field_is_not_visible_in_the_currently_selected_debug_context._A_stack_frame_or_suspended_thread_which_contains_the_declaring_type_of_this_field_must_be_selected_1")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -96,6 +97,10 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_removing_watchpoint_8"), x.getMessage()); //$NON-NLS-1$
 			}
 		}
+	}
+	
+	protected IJavaBreakpoint createBreakpoint(IResource resource, String typeName, String fieldName, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+		return JDIDebugModel.createWatchpoint(resource, typeName, fieldName, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
 	
 	protected IJavaBreakpoint getBreakpoint(IMember selectedField) {
@@ -169,7 +174,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	 * Returns a list of matching types (IType - Java model) that correspond to the 
 	 * declaring type (ReferenceType - JDI model) of the given variable.
 	 */
-	protected List searchForDeclaringType(IJavaFieldVariable variable) {
+	protected static List searchForDeclaringType(IJavaFieldVariable variable) {
 		List types= new ArrayList();
 		ILaunch launch = variable.getDebugTarget().getLaunch();
 		if (launch == null) {
@@ -250,7 +255,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	 * The package name is assumed to be the dot-separated prefix of the 
 	 * type name.
 	 */
-	protected char[] getPackage(String fullyQualifiedName) {
+	protected static char[] getPackage(String fullyQualifiedName) {
 		int index= fullyQualifiedName.lastIndexOf('.');
 		if (index == -1) {
 			return new char[0];
@@ -263,7 +268,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	 * The type name is assumed to be the last contiguous segment of the 
 	 * fullyQualifiedName not containing a '.' or '$'
 	 */
-	protected char[] getTypeName(String fullyQualifiedName) {
+	protected static char[] getTypeName(String fullyQualifiedName) {
 		int index= fullyQualifiedName.lastIndexOf('.');
 		String typeName= fullyQualifiedName.substring(index + 1);
 		int lastInnerClass= typeName.lastIndexOf('$');

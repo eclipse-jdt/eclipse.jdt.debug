@@ -181,7 +181,7 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 		return fField;
 	}
 	
-	protected ObjectReference getObjectReference() {
+	public ObjectReference getObjectReference() {
 		return fObject;
 	}
 	

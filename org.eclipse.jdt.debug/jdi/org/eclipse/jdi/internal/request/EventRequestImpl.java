@@ -502,6 +502,8 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 			count += fFieldFilters.size();
 		if (fThreadStepFilters != null)
 			count += fThreadStepFilters.size();
+		if (fInstanceFilters != null)
+			count += fInstanceFilters.size();
 			
 		return count;
 	}

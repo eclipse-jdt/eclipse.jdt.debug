@@ -389,7 +389,51 @@ public class JDIDebugModel {
 		if (attributes == null) {
 			attributes = new HashMap(10);
 		}		
-		return new JavaWatchpoint(resource, typeName, fieldName, lineNumber, charStart, charEnd, hitCount, register, attributes);
+		return new JavaWatchpoint(resource, typeName, fieldName, null, lineNumber, charStart, charEnd, hitCount, register, attributes);
+	}
+	
+	/**
+	 * Creates and returns a watchpoint on a field with the given name
+	 * in a type with the given name. The watchpoint returned will only suspend
+	 * execution when the given field is accessed or modified in the given instance.
+	 * The marker associated with the breakpoint will be created on the specified resource.
+	 * If hitCount > 0, the breakpoint will suspend execution when it is
+	 * "hit" the specified number of times.
+	 * 
+	 * @param resource the resource on which to create the associated breakpoint
+	 *  marker
+	 * @param typeName the fully qualified name of the type the breakpoint is
+	 *  to be installed in. If the breakpoint is to be installed in an inner type,
+	 *  it is sufficient to provide the name of the top level enclosing type.
+	 * 	If an inner class name is specified, it should be formatted as the 
+	 *  associated class file name (i.e. with <code>$</code>). For example,
+	 * 	<code>example.SomeClass$InnerType</code>, could be specified, but
+	 * 	<code>example.SomeClass</code> is sufficient.
+	 * @param fieldName the name of the field on which to suspend (on access or modification)
+	 * @param fieldVariable the instance of the field whose access or modification will cause suspension.
+	 * @param lineNumber the lineNumber on which the breakpoint is set - line
+	 *   numbers are 1 based, associated with the source file in which
+	 *   the breakpoint is set
+	 * @param charStart the first character index associated with the breakpoint,
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
+ 	 * @param charEnd the last character index associated with the breakpoint,
+	 *   or -1 if unspecified, in the source file in which the breakpoint is set
+	 * @param hitCount the number of times the breakpoint will be hit before
+	 * 	suspending execution - 0 if it should always suspend
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @param attributes a map of client defined attributes that should be assigned
+ 	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
+	 * @return a watchpoint
+	 * @exception CoreException If this method fails. Reasons include:<ul> 
+	 *<li>Failure creating underlying marker.  The CoreException's status contains
+	 * the underlying exception responsible for the failure.</li></ul>
+	 * @since 2.0
+	 */
+	public static IJavaWatchpoint createInstanceWatchpoint(IResource resource, String typeName, String fieldName, IJavaFieldVariable fieldVariable, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+		if (attributes == null) {
+			attributes = new HashMap(10);
+		}
+		return new JavaWatchpoint(resource, typeName, fieldName, fieldVariable, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
 	
 	/**

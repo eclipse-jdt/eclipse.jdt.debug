@@ -531,6 +531,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 	
 	/**
+	 * @see IJavaDebugTarget#supportsInstanceBreakpoints()
+	 */
+	public boolean supportsInstanceBreakpoints() {
+		if (isAvailable() && JDIDebugPlugin.getJDIVersion() >= (float)1.4) {
+			return getVM().canUseInstanceFilters();
+		}
+		return false;
+	}
+	
+	/**
 	 * Returns whether this debug target supports hot code replace for the J9 VM.
 	 * 
 	 * @return whether this debug target supports J9 hot code replace

@@ -907,6 +907,18 @@
   			enablesFor="1">
   		</action> 
     </objectContribution>
+	<objectContribution 
+		id="org.eclipse.jdt.debug.ui.InstanceWatchpointActions"
+		objectClass="org.eclipse.jdt.debug.core.IJavaFieldVariable">
+		<filter name="JavaVariableActionFilter" value="instanceWatchpoint"/>
+  		<action id="org.eclipse.jdt.debug.ui.InstanceWatchpoint"
+  			label="%manageInstanceWatchpointAction.label"
+  			helpContextId="manage_instance_watchpoint_action_context"
+  			menubarPath="additions"
+  			class="org.eclipse.jdt.internal.debug.ui.actions.ManageInstanceWatchpointActionDelegate"
+  			enablesFor="1">
+  		</action> 
+    </objectContribution>
   	<objectContribution 
 		id="org.eclipse.jdt.debug.ui.WatchpointActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaFieldVariable">

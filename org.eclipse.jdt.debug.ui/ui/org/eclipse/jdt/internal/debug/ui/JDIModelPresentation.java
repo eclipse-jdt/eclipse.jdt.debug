@@ -1162,6 +1162,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		appendSuspendPolicy(breakpoint,label);
 		appendThreadFilter(breakpoint, label);
 		appendConditional(breakpoint, label);
+		appendInstanceFilter(breakpoint, label);
 		
 		if (breakpoint instanceof IJavaMethodBreakpoint) {
 			IJavaMethodBreakpoint mbp = (IJavaMethodBreakpoint)breakpoint;
@@ -1255,7 +1256,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			state= DebugUIMessages.getString("JDIModelPresentation.access_71"); //$NON-NLS-1$
 		} else if (modification) {
 			state= DebugUIMessages.getString("JDIModelPresentation.modification_72"); //$NON-NLS-1$
-		}		
+		}
 		String label= null;
 		if (state == null) {
 			label= lineInfo;
@@ -1605,6 +1606,16 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		if (breakpoint.isConditionEnabled() && breakpoint.getCondition() != null) {
 			buffer.append(' ');
 			buffer.append(DebugUIMessages.getString("JDIModelPresentation.[conditional]_2")); //$NON-NLS-1$
+		}
+	}
+	
+	protected void appendInstanceFilter(IJavaLineBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
+		if (breakpoint instanceof IJavaWatchpoint) {
+			String instanceText= ((IJavaWatchpoint)breakpoint).getInstanceIdentifier();
+			if (instanceText != null) {
+				buffer.append(' ');
+				buffer.append(MessageFormat.format(DebugUIMessages.getString("JDIModelPresentation.instance_1"), new String[] {instanceText})); //$NON-NLS-1$
+			}
 		}
 	}
 }

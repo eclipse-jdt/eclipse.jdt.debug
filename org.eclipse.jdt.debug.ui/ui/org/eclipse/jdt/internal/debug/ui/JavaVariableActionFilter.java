@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.actions.OpenVariableTypeAction;
 import org.eclipse.ui.IActionFilter;
@@ -39,17 +40,21 @@ public class JavaVariableActionFilter implements IActionFilter {
 	public boolean testAttribute(Object target, String name, String value) {
 		if (target instanceof IJavaVariable) {
 			IJavaVariable var = (IJavaVariable) target;
-			if (name.equals("PrimitiveVariableActionFilter") //$NON-NLS-1$
-			&& value.equals("isPrimitive")) { //$NON-NLS-1$
+			if (name.equals("PrimitiveVariableActionFilter") && value.equals("isPrimitive")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return isPrimitiveType(var);
-			} else if (name.equals("ConcreteVariableActionFilter") 
-						&& value.equals("isConcrete")) {
-					try {
-						return isDeclaredSameAsConcrete(var);
-					} catch (DebugException de) {
-						JDIDebugUIPlugin.log(de);
-					}
+			} else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					return isDeclaredSameAsConcrete(var);
+				} catch (DebugException de) {
+					JDIDebugUIPlugin.log(de);
 				}
+			} else if (name.equals("JavaVariableActionFilter") && value.equals("instanceWatchpoint")) { //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					return !var.isStatic() && ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceBreakpoints();
+				} catch (DebugException exception) {
+					JDIDebugUIPlugin.log(exception);
+				}
+			}
 		}
 
 		return false;
