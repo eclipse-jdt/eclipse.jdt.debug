@@ -88,7 +88,7 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 				errorDialog(DebugUIMessages.getString("JDIAttachLauncher.Unable_to_connect_to_specified_address_1"), //$NON-NLS-1$
 				 		IJDIStatusConstants.CODE_CONNECTION_FAILED, e);
 			} catch (IllegalConnectorArgumentsException e) {
-				DebugUIUtils.logError(e);
+				JDIDebugUIPlugin.logError(e);
 			}
 
 		} else {

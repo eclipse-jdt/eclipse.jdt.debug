@@ -154,7 +154,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 						}
 					}
 				} catch (DebugException e) {
-					DebugUIUtils.logError(e);
+					JDIDebugUIPlugin.logError(e);
 				}
 			}
 		}
@@ -170,7 +170,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			DefaultJavaValueDetailProvider detailProvider = new DefaultJavaValueDetailProvider();
 			detailProvider.computeDetail(value, thread, listener);
 		} catch (DebugException de) {
-			DebugUIUtils.logError(de);
+			JDIDebugUIPlugin.logError(de);
 		}
 	}
 	
@@ -1249,7 +1249,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				String result= value.getValueString();
 				fResultBuffer.append(result);
 			} catch (DebugException de) {
-				DebugUIUtils.logError(de);
+				JDIDebugUIPlugin.logError(de);
 				fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.<error>_79")); //$NON-NLS-1$
 			}
 		}
@@ -1263,7 +1263,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					appendJDIValueString(toStringValue);
 				}
 			} catch (DebugException de) {
-				DebugUIUtils.logError(de);
+				JDIDebugUIPlugin.logError(de);
 				fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.<error>_81")); //$NON-NLS-1$
 			}
 		}
@@ -1274,7 +1274,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			try {
 				arrayValues = arrayValue.getValues();
 			} catch (DebugException de) {
-				DebugUIUtils.logError(de);
+				JDIDebugUIPlugin.logError(de);
 				fResultBuffer.append(DebugUIMessages.getString("JDIModelPresentation.<error>_82")); //$NON-NLS-1$
 				return;
 			}
