@@ -45,7 +45,7 @@ public class DisplayAction extends EvaluateAction {
 				if (sig != null) {
 					resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.type_name_pattern"), new Object[] { value.getReferenceTypeName() }); //$NON-NLS-1$
 				} else {
-					resultString= "";
+					resultString= ""; //$NON-NLS-1$
 				}
 				getDebugModelPresentation().computeDetail(value, new IValueDetailListener() {
 					public void detailComputed(IValue value, String result) {
