@@ -59,10 +59,10 @@ public class VMRunnerConfiguration {
 
 	/**
 	 * Sets the custom VM arguments. These arguments will be appended to the list of 
-	 * VM arguments that a IVMRunner uses when launching a VM. Typically, these VM arguments
+	 * VM arguments that a VM runner uses when launching a VM. Typically, these VM arguments
 	 * are set by the user.
-	 * These arguments will not be interpreted by the IVMRunner, the client is responsible for
-	 * passing arguments compatible with a particular IVMRunner.
+	 * These arguments will not be interpreted by a VM runner, the client is responsible for
+	 * passing arguments compatible with a particular VM runner.
 	 *
 	 * @param args the list of VM arguments
 	 */
@@ -75,10 +75,10 @@ public class VMRunnerConfiguration {
 	
 	/**
 	 * Sets the custom program arguments. These arguments will be appended to the list of 
-	 * program arguments that a IVMRunner uses when launching a VM (in general: none). 
+	 * program arguments that a VM runner uses when launching a VM (in general: none). 
 	 * Typically, these VM arguments are set by the user.
-	 * These arguments will not be interpreted by the IVMRunner, the client is responsible for
-	 * passing arguments compatible with a particular IVMRunner.
+	 * These arguments will not be interpreted by a VM runner, the client is responsible for
+	 * passing arguments compatible with a particular VM runner.
 	 *
 	 * @param args the list of arguments	
 	 */
@@ -115,7 +115,7 @@ public class VMRunnerConfiguration {
 	/**
 	 * Returns the name of the class to launch.
 	 *
-	 * @return The fully qualified name of the class to launch. Will not be null.
+	 * @return The fully qualified name of the class to launch. Will not be <code>null</code>.
 	 */
 	public String getClassToLaunch() {
 		return fClassToLaunch;
@@ -145,7 +145,7 @@ public class VMRunnerConfiguration {
 	/**
 	 * Returns the arguments to the VM itself.
 	 *
-	 * @return The VM arguments. Default is an empty array. Will not be null.
+	 * @return The VM arguments. Default is an empty array. Will not be <code>null</code>.
 	 * @see #setVMArguments
 	 */
 	public String[] getVMArguments() {
@@ -158,7 +158,7 @@ public class VMRunnerConfiguration {
 	/**
 	 * Returns the arguments to the Java program.
 	 *
-	 * @return The Java program arguments. Default is an empty array. Will not be null.
+	 * @return The Java program arguments. Default is an empty array. Will not be <code>null</code>.
 	 * @see #setProgramArguments
 	 */
 	public String[] getProgramArguments() {
@@ -173,7 +173,7 @@ public class VMRunnerConfiguration {
 	 * 
 	 * @param path the absolute path to the working directory
 	 *  to be used by a launched VM, or <code>null</code> if
-	 *  the working directory is to be inherited from the
+	 *  the default working directory is to be inherited from the
 	 *  current process
 	 * @since 2.0
 	 */

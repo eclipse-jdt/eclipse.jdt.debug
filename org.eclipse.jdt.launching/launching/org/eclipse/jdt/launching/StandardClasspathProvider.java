@@ -78,7 +78,8 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 	
 	/**
 	 * Returns a collection of runtime classpath entries that are defined in the
-	 * specified attribute of the given launch configuration.
+	 * specified attribute of the given launch configuration. When present,
+	 * the attribute must contain a list of runtime classpath entry mementos.
 	 * 
 	 * @param configuration launch configuration
 	 * @param attribute attribute name containing the list of entries

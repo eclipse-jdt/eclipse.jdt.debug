@@ -11,11 +11,11 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	/**
 	 * Constructs a new VM install.	 * 
 	 * @param	type	The type of this VM install.
-	 * 					Must not be null
+	 * 					Must not be <code>null</code>
 	 * @param	id		The unique identifier of this VM instance
-	 * 					Must not be null;
+	 * 					Must not be <code>null</code>.
 	 * @throws	IllegalArgumentException	if any of the required
-	 * 					parameters are null.
+	 * 					parameters are <code>null</code>.
 	 */
 	public AbstractVMInstall(IVMInstallType type, String id) {
 		if (type == null)

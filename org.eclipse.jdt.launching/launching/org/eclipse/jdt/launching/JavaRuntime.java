@@ -158,11 +158,12 @@ public final class JavaRuntime {
 	public static final int DEF_CONNECT_TIMEOUT = 20000;
 	
 	/**
-	 * The class org.eclipse.debug.core.model.IProcess allows attaching
+	 * Attribute key for a process property. The class
+	 * <code>org.eclipse.debug.core.model.IProcess</code> allows attaching
 	 * String properties to processes.
-	 * The intent of this property is to show the command line a process
-	 * was launched with. Implementers of IVMRunners use this property
-	 * key to attach the command line to the IProcesses they create.
+	 * The value of this attribute is the command line a process
+	 * was launched with. Implementers of <code>IVMRunner</code> should use
+	 * this attribute key to attach the command lines to the processes they create.
 	 */
 	public final static String ATTR_CMDLINE= LaunchingPlugin.getUniqueIdentifier() + ".launcher.cmdLine"; //$NON-NLS-1$
 
@@ -252,8 +253,8 @@ public final class JavaRuntime {
 	 * The project must exist. The VM assigned to a project is
 	 * determined from its build path.
 	 * 
-	 * @return the VM instance that is selected for the given Java project
-	 * 		   Returns null if no VM is reference on the project's build path.
+	 * @return the VM instance that is assigned to build the given Java project
+	 * 		   Returns <code>null</code> if no VM is referenced on the project's build path.
 	 * @throws CoreException if unable to determine the project's VM install
 	 */
 	public static IVMInstall getVMInstall(IJavaProject project) throws CoreException {
@@ -299,9 +300,9 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns the IVMInstallType with the given unique id. 
-	 * @return	The IVMInstallType for the given id, or null if no
-	 * 			IVMInstallType with the given type is registered.
+	 * Returns the VM install type with the given unique id. 
+	 * @return	The VM install type for the given id, or <code>null</code> if no
+	 * 			VM install type with the given id is registered.
 	 */
 	public static IVMInstallType getVMInstallType(String id) {
 		IVMInstallType[] vmTypes= getVMInstallTypes();
@@ -358,7 +359,7 @@ public final class JavaRuntime {
 	}
 	/**
 	 * Return the default VM set with <code>setDefaultVM()</code>.
-	 * @return	Returns the default VM. May return null when no default
+	 * @return	Returns the default VM. May return <code>null</code> when no default
 	 * 			VM was set or when the default VM has been disposed.
 	 */
 	public static IVMInstall getDefaultVMInstall() {
@@ -476,8 +477,8 @@ public final class JavaRuntime {
 	}
 
 	/**
-	 * Returns a runtime classpath entry for the given container path in the
-	 * conext of the project with the given name.
+	 * Returns a runtime classpath entry for the given container path with the given
+	 * classpath property.
 	 * 
 	 * @param path container path
 	 * @param classpathProperty the type of entry - one of <code>USER_CLASSES</code>,
@@ -625,10 +626,10 @@ public final class JavaRuntime {
 		
 	/**
 	 * Returns resolved entries for the given entry in the context of the given
-	 * launch configuration for a runtime classpath. If the entry is of kind
+	 * launch configuration. If the entry is of kind
 	 * <code>VARIABLE</code> or <code>CONTAINTER</code>, variable and contanier
-	 * resolvers are consulted, otherwise, the resolved entry is the given
-	 * entry.
+	 * resolvers are consulted, otherwise, the returned entry is the same as the 
+	 * given entry.
 	 * <p>
 	 * If the given entry is a variable entry, and a resolver is not registered,
 	 * the entry itself is returned. If the given entry is a container, and a
@@ -668,9 +669,9 @@ public final class JavaRuntime {
 	
 	/**
 	 * Returns resolved entries for the given entry in the context of the given
-	 * Java project for a runtime classpath. If the entry is of kind
+	 * Java project. If the entry is of kind
 	 * <code>VARIABLE</code> or <code>CONTAINTER</code>, variable and contanier
-	 * resolvers are consulted, otherwise, the resolved entry is the given
+	 * resolvers are consulted, otherwise, the returned entry is the same as the given
 	 * entry.
 	 * <p>
 	 * If the given entry is a variable entry, and a resolver is not registered,
@@ -827,13 +828,13 @@ public final class JavaRuntime {
 	
 	/**
 	 * Returns the VM install for the given launch configuration.
-	 * The VM install is determined in the following way:
+	 * The VM install is determined in the following prioritized way:
 	 * <ol>
 	 * <li>The VM install is explicitly specified on the launch configuration
 	 * 	via the <code>ATTR_VM_INSTALL_TYPE</code> and <code>ATTR_VM_INSTALL_ID</code>
 	 *  attributes.</li>
 	 * <li>If no explicit VM install is specified, the VM install associated with
-	 * 	the launch confiugration's project is returned.<li>
+	 * 	the launch confiugration's project is returned.</li>
 	 * <li>If no project is specified, or the project does not specify a custom
 	 * 	VM install, the workspace default VM install is returned.</li>
 	 * </ol>
@@ -1359,6 +1360,7 @@ public final class JavaRuntime {
 	 * the default JRE container entry.
 	 * 
 	 * @return a new IClasspathEntry that describes the default JRE container entry
+	 * @since 2.0
 	 */
 	public static IClasspathEntry getDefaultJREContainerEntry() {
 		return JavaCore.newContainerEntry(new Path(JRE_CONTAINER));
