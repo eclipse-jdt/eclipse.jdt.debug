@@ -37,7 +37,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
 			IBreakpoint hit = getBreakpoint(thread);
@@ -68,7 +68,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		
 		IJavaDebugTarget debugTarget= null;
 		try {
-			debugTarget= launchAndTerminate(typeName, 6000);
+			debugTarget= launchAndTerminate(typeName, 3000);
 		} finally {
 			terminateAndRemove(debugTarget);
 			removeAllBreakpoints();
@@ -84,7 +84,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeNamePattern);
+			thread= launchToBreakpoint(typeNamePattern);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
 			IBreakpoint hit = getBreakpoint(thread);
@@ -109,7 +109,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch("A");
+			thread= launchToBreakpoint("A");
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
 			IBreakpoint hit = getBreakpoint(thread);
@@ -146,7 +146,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Method entry breakpoint not hit within timeout period", thread);
 			
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
@@ -173,7 +173,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Method exit breakpoint not hit within timeout period", thread);
 			
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();

@@ -29,7 +29,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
 			IBreakpoint hit = getBreakpoint(thread);
@@ -48,7 +48,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			assertTrue("'2ndThread' should have hit exception", thread.getName().equals("2ndThread"));
 			
@@ -97,7 +97,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			
 			IBreakpoint hit = getBreakpoint(thread);
@@ -131,7 +131,7 @@ public class ExceptionBreakpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertTrue("Should have been '1stThread' that got second hit", thread.getName().equals("1stThread"));
 			
 			ex.delete();

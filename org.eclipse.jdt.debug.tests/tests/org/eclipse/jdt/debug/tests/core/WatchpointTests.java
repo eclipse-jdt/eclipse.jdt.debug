@@ -30,7 +30,7 @@ public class WatchpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 
 			IBreakpoint hit = getBreakpoint(thread);
@@ -69,7 +69,7 @@ public class WatchpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 
 			IBreakpoint hit = getBreakpoint(thread);
@@ -111,7 +111,7 @@ public class WatchpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 
 			IBreakpoint hit = getBreakpoint(thread);
@@ -147,7 +147,7 @@ public class WatchpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 
 			IBreakpoint hit = getBreakpoint(thread);
@@ -174,7 +174,7 @@ public class WatchpointTests extends AbstractDebugTest {
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch(typeName);
+			thread= launchToBreakpoint(typeName);
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 
 			IBreakpoint hit = getBreakpoint(thread);

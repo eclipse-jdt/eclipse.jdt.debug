@@ -79,7 +79,7 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 		
 		IJavaThread thread= null;
 		try {
-			thread= launch("Breakpoints");
+			thread= launchToBreakpoint("Breakpoints");
 			assertNotNull("Breakpoint not hit within timeout period", thread);
 			while (!bps.isEmpty()) {
 				IBreakpoint hit = getBreakpoint(thread);

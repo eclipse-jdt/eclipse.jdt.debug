@@ -20,6 +20,7 @@ import org.eclipse.jdt.debug.tests.core.InstanceVariableTests;
 import org.eclipse.jdt.debug.tests.core.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.MethodBreakpointTests;
+import org.eclipse.jdt.debug.tests.core.MiscBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.PatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
