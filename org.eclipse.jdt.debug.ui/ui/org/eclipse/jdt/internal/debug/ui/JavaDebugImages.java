@@ -62,13 +62,13 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_CONDITIONAL_BREAKPOINT_DISABLED= NAME_PREFIX + "conditional_ovr_disabled.gif";	//$NON-NLS-1$
 
 	public static final String IMG_OBJS_SCOPED_BREAKPOINT= NAME_PREFIX + "scoped_ovr.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_SCOPED_BREAKPOINT_DISABLED= NAME_PREFIX + "scoped_ovr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_SCOPED_BREAKPOINT_DISABLED= NAME_PREFIX + "scoped_ovr_disabled.gif";	//$NON-NLS-1$
 	
 	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT= NAME_PREFIX + "uncaught_ovr.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "uncaught_ovr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_UNCAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "uncaught_ovr_disabled.gif";	//$NON-NLS-1$
 	
 	public static final String IMG_OBJS_CAUGHT_BREAKPOINT= NAME_PREFIX + "caught_ovr.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_CAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "caught_ovr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_CAUGHT_BREAKPOINT_DISABLED= NAME_PREFIX + "caught_ovr_disabled.gif";	//$NON-NLS-1$
 	
 	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
 
@@ -78,7 +78,7 @@ public class JavaDebugImages {
 	private static final String T_OBJ= "obj16"; 		//$NON-NLS-1$
 	private static final String T_OVR= "ovr16"; 		//$NON-NLS-1$
 	private static final String T_WIZBAN= "wizban"; 	//$NON-NLS-1$
-	private static final String T_LCL= "clcl16"; 		//$NON-NLS-1$
+	private static final String T_LCL= "clcl16"; 	//$NON-NLS-1$
 	private static final String T_CTOOL= "ctool16"; 	//$NON-NLS-1$
 	private static final String T_DTOOL= "dtool16"; 	//$NON-NLS-1$
 	private static final String T_ETOOL= "etool16"; 	//$NON-NLS-1$
