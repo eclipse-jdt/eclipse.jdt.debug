@@ -366,7 +366,7 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 			case '[':
 				return ArrayReferenceImpl.tag;
 			case '(':
-				throw new InternalError("Can't covert method signature to tag.");
+				throw new InternalError("Can't covert method signature to tag: " + signature);
 		}
 		throw new InternalError("Invalid signature: \"" + signature + "\"");
 	}
