@@ -57,8 +57,8 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 			String[] typeNames = computeNestedTypes();
 			if (result != null) {
 				if (result instanceof IClassFile) {
-					fModelFrame.requestFailed(ERROR_BINARY_TYPE, null);
-					//type = ((IClassFile)result).getType();
+					//fModelFrame.requestFailed(ERROR_BINARY_TYPE, null);
+					type = ((IClassFile)result).getType();
 				} else if (result instanceof ICompilationUnit) {
 					type = ((ICompilationUnit)result).getType(typeNames[0]);
 				}
