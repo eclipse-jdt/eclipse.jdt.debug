@@ -49,6 +49,7 @@ public interface IJavaValue extends IValue {
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li></ul>
+	 * @deprecated use <code>IJavaArray.getLength()</code>
 	 */
 	public int getArrayLength() throws DebugException;
 	
