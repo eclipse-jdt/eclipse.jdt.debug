@@ -86,5 +86,50 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}		
-	}	
+	}
+	
+	public void testValueHasChanged() throws Exception {
+		String typeName = "VariableChanges";
+		
+		ILineBreakpoint bp = createLineBreakpoint(17, typeName);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToLineBreakpoint(typeName, bp);
+
+			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+			IVariable count = frame.findVariable("count");
+			IVariable i = frame.findVariable("i");
+			
+			assertNotNull("could not find variable 'count'", count);
+			assertNotNull("could not find variable 'i'", i);
+			
+			// on first suspend, change should be false
+			count.getValue();
+			i.getValue();
+			assertFalse("count should not have changed", count.hasValueChanged());
+			assertFalse("i should not have changed", i.hasValueChanged());
+			
+			// after a step over "count++" it should have changed
+			stepOver(frame);
+			
+			// count should have changed, and i should not
+			count.getValue();
+			i.getValue();			
+			assertTrue("count should have changed value", count.hasValueChanged());
+			assertFalse("i should still be the same", i.hasValueChanged());
+			
+			stepOver(frame);
+			
+			// now count should be the same, and i should have changed
+			count.getValue();
+			i.getValue();
+			assertFalse("count should not have changed", count.hasValueChanged());
+			assertTrue("i should have changd", i.hasValueChanged());
+
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}				
+	}
 }

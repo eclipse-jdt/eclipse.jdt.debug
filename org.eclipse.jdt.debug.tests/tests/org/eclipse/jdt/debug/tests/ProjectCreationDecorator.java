@@ -105,7 +105,8 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("EvalTypeHierarchyTests");
 		createLaunchConfiguration("WorkingDirectoryTest");
 		createLaunchConfiguration("OneToTen");
-		createLaunchConfiguration("ConditionalStepReturn");			
+		createLaunchConfiguration("ConditionalStepReturn");	
+		createLaunchConfiguration("VariableChanges");		
 	}
 	
 	/**
