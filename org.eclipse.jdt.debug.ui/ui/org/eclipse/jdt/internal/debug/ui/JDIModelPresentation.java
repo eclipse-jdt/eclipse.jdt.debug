@@ -788,32 +788,35 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 	
 	protected Image getJavaWatchpointImage(IJavaWatchpoint watchpoint) throws CoreException {
-		boolean enabled= watchpoint.isEnabled();
+		int flags= computeBreakpointAdornmentFlags(watchpoint);
+		JDIImageDescriptor descriptor= null;
+		boolean enabled= (flags & JDIImageDescriptor.ENABLED) != 0;
 		if (watchpoint.isAccess()) {
 			if (watchpoint.isModification()) {
 				//access and modification
 				if (enabled) {
-					return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_WATCHPOINT_ENABLED);
+					descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_WATCHPOINT_ENABLED, flags);
 				} else {
-					return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_WATCHPOINT_DISABLED);
+					descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_WATCHPOINT_DISABLED, flags);
 				}
 			} else {
 				if (enabled) {
-					return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_ACCESS_WATCHPOINT_ENABLED);
+					descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_ACCESS_WATCHPOINT_ENABLED, flags);
 				} else {
-					return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_ACCESS_WATCHPOINT_DISABLED);
+					descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_ACCESS_WATCHPOINT_DISABLED, flags);
 				}
 			}
 		} else if (watchpoint.isModification()) {
 			if (enabled) {
-				return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_MODIFICATION_WATCHPOINT_ENABLED);
+				descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_MODIFICATION_WATCHPOINT_ENABLED, flags);
 			} else {
-				return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED);
+				descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_MODIFICATION_WATCHPOINT_DISABLED, flags);
 			}
 		} else {
 			//neither access nor modification
-			return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_WATCHPOINT_DISABLED);
+			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_WATCHPOINT_DISABLED, flags);
 		}
+		return fDebugImageRegistry.get(descriptor);
 	}
 	
 	protected Image getVariableImage(IAdaptable element) {
