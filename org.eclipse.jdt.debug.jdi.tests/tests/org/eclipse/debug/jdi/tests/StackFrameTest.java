@@ -74,6 +74,12 @@ public class StackFrameTest extends AbstractJDITest {
 		assertTrue("8", !fFrame.equals(null));
 	}
 	/**
+	 * Test JDI location().
+	 */
+	public void testJDILocation() {
+		assertNotNull("1", fFrame.location());
+	}
+	/**
 	 * Test JDI setValue(LocalVariable, Value), getValue(LocalVariable) and
 	 * getValues(List).
 	 */
