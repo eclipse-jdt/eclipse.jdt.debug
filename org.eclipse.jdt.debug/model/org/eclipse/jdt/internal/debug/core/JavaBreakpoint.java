@@ -64,6 +64,12 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected static final String TYPE_HANDLE = "typeHandle"; //$NON-NLS-1$	
 	
+	/**
+	 * Stores the collection of requests that this breakpoint has installed in
+	 * debug targets.
+	 * key: a debug target
+	 * value: the requests this breakpoint has installed in that target
+	 */
 	protected HashMap fRequestsByTarget;
 	
 	/**
@@ -76,29 +82,49 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */	
 	protected static final String[] fgExpiredEnabledAttributes= new String[]{EXPIRED, IDebugConstants.ENABLED};
 	
+	/**
+	 * Returns the identifier for this JDI debug model plug-in
+	 *
+	 * @return plugin identifier
+	 */
+	public static String getPluginIdentifier() {
+		return JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier();
+	}		
+	
 	public JavaBreakpoint() {
 		fRequestsByTarget = new HashMap(2);
 	}	
 	
+	/**
+	 * @see IBreakpoint#getModelIdentifier()
+	 */
 	public String getModelIdentifier() {
 		return JDIDebugModel.getPluginIdentifier();
 	}
 
+	/**
+	 * @see IBreakpoint#setMarker(IMarker)
+	 */
 	public void setMarker(IMarker marker) throws CoreException {
 		super.setMarker(marker);
 		configureAtStartup();
 	}
-	
+
 	protected IMarker ensureMarker() throws DebugException {
 		IMarker m = getMarker();
 		if (m == null || !m.exists()) {
 			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), IDebugStatusConstants.REQUEST_FAILED,
-				JDIDebugModelMessages.getString("JavaBreakpoint.no_asscoiated_marker"),null)); //$NON-NLS-1$
+				JDIDebugModelMessages.getString("JavaBreakpoint.no_assocoiated_marker"),null)); //$NON-NLS-1$
 		}
 		return m;
 	}
 	
-	protected void registerRequest(JDIDebugTarget target, EventRequest request) throws CoreException {
+	/**
+	 * Add the given event request to the given debug target. If 
+	 * the request is the breakpoint request associated with this 
+	 * breakpoint, increment the install count.
+	 */
+	protected void registerRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		if (request == null) {
 			return;
 		}
@@ -115,10 +141,43 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 	}
 	
+	/**
+	 * Returns a string corresponding to the reference type
+	 * name in which this breakpoint will be installed.
+	 */
+	protected String getReferenceTypeName() {
+		String name= "";
+		try {
+			IType type = getType();
+			if (type != null) {
+				while (type.getDeclaringType() != null) {
+					type = type.getDeclaringType();
+				}
+				name= type.getFullyQualifiedName();
+			}
+		} catch (CoreException ce) {
+			JDIDebugPlugin.logError(ce);
+		}
+		return name;
+	}	
+	
+	/**
+	 * Returns the requests that this breakpoint has installed
+	 * in the given target.
+	 */
 	protected List getRequests(JDIDebugTarget target) {
-		return (List)fRequestsByTarget.get(target);
+		List list= (List)fRequestsByTarget.get(target);
+		if (list == null) {
+			list= new ArrayList(0);
+		}
+		return list;
 	}
 	
+	/**
+	 * Remove the given request from the given target. If the request
+	 * is the breakpoint request associated with this breakpoint,
+	 * decrement the install count.
+	 */
 	protected void deregisterRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		target.removeJDIEventListener(this, request);
 		if (!(request instanceof ClassPrepareRequest)) {
@@ -126,12 +185,12 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 	}
 
+	/**
+	 * Removes the <code>oldRequest</code> from the given target if present
+	 * and replaces it with <code>newRequest</code>
+	 */
 	protected void replaceRequest(JDIDebugTarget target, EventRequest oldRequest, EventRequest newRequest) {
 		List list = getRequests(target);
-		if (list == null) {
-			// error
-			return;
-		}
 		list.remove(oldRequest);
 		list.add(newRequest);
 		target.removeJDIEventListener(this, oldRequest);
@@ -139,12 +198,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 
 	/**
-	 * @see IJavaBreakpoint#handleEvent(Event)
+	 * @see IJDIEventListener#handleEvent(Event)
 	 */
 	public boolean handleEvent(Event event, JDIDebugTarget target) {
 		if (event instanceof ClassPrepareEvent) {
-			// create a new request
 			ClassPrepareEvent cpe = (ClassPrepareEvent)event;
+			if (!installableReferenceType(cpe.referenceType())) {
+				// Don't install this breakpoint in an
+				// inappropriate type
+				return true;
+			}			
 			try {
 				createRequest(target, cpe.referenceType());
 			} catch (CoreException e) {
@@ -162,7 +225,28 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				return false;
 			}						
 		}		
-	}	
+	}
+	
+	/**
+	 * Returns whether the given reference type is appropriate for this
+	 * breakpoint to be installed in.
+	 */
+	protected boolean installableReferenceType(ReferenceType type) {
+		String installableType= getReferenceTypeName();
+		String queriedType= type.name();
+		int installableLength= installableType.length();
+		int queriedLength= queriedType.length();
+		if (queriedType.regionMatches(0, installableType, 0, installableLength)) {
+			if (queriedLength > installableLength) {
+				if (queriedType.charAt(installableLength) == '$') {
+					return true;
+				}
+			} else {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * Called when a breakpoint event is encountered
@@ -182,10 +266,23 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 	}	
 
+	/**
+	 * Create a breakpoint request for this breakpoint in the given
+	 * reference type in the given target.
+	 */
 	protected abstract void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException;
 	
+	/**
+	 * Add this breakpoint to the given target. After it has been
+	 * added to the given target, this breakpoint will suspend
+	 * execution of that target as appropriate.
+	 */
 	protected abstract void addToTarget(JDIDebugTarget target) throws CoreException;
 	
+	/**
+	 * Update all requests that this breakpoint has installed in the
+	 * given target to reflect the current state of this breakpoint.
+	 */
 	protected void changeForTarget(JDIDebugTarget target) throws CoreException {
 		List requests = getRequests(target);
 		if (requests != null) {
@@ -199,6 +296,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 	}
 
+	/**
+	 * Update the given request in the given target to reflect
+	 * the current state of this breakpoint.
+	 */
 	protected void updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		updateEnabledState(request);
 		EventRequest newRequest = updateHitCount(request, target);
@@ -208,6 +309,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 	}
 	
+	/**
+	 * Update the given request in the given debug target to
+	 * reflect the current hit count of this breakpoint.
+	 */
 	protected abstract EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException;
 	
 	/**
@@ -224,35 +329,17 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		return hitCount != oldCount;
 	}
 	
-	protected void fork(final IWorkspaceRunnable wRunnable) {
-		Runnable runnable= new Runnable() {
-			public void run() {
-				try {
-					ResourcesPlugin.getWorkspace().run(wRunnable, null);
-				} catch (CoreException ce) {
-					JDIDebugPlugin.logError(ce);
-				}
-			}
-		};
-		new Thread(runnable).start();
-	}
-	
 	/**
-	 * An exception breakpoint has been removed
+	 * Remove all requests that this breakpoint has installed in the given
+	 * debug target.
 	 */
 	protected void removeFromTarget(JDIDebugTarget target) throws CoreException {
 		List requests = getRequests(target);
-		if (requests == null) {
-			// error
-			return;
-		}
-		
 		Iterator iter = requests.iterator();
 		while (iter.hasNext()) {
 			EventRequest req = (EventRequest)iter.next();
-			try {
-				// cannot delete an expired request
-				if (!isExpired(req)) {
+			try {				
+				if (!isExpired(req)) { // cannot delete an expired request
 					target.getEventRequestManager().deleteEventRequest(req); // disable & remove
 				}
 			} catch (VMDisconnectedException e) {
@@ -316,9 +403,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}	
 	
 	/**
-	 * Increments the install count on this breakpoint
+	 * Increments the install count of this breakpoint
 	 */
-	public void incrementInstallCount() throws CoreException {
+	protected void incrementInstallCount() throws CoreException {
 		int count = getInstallCount();
 		ensureMarker().setAttribute(INSTALL_COUNT, count + 1);
 	}	
@@ -332,9 +419,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}	
 
 	/**
-	 * @see IJavaBreakpoint
+	 * Decrements the install count of this breakpoint
 	 */
-	public void decrementInstallCount() throws CoreException {
+	protected void decrementInstallCount() throws CoreException {
 		int count= getInstallCount();
 		if (count > 0) {
 			ensureMarker().setAttribute(INSTALL_COUNT, count - 1);	
@@ -349,63 +436,27 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 
 	/**
-	 * Sets the <code>TYPE_HANDLE</code> attribute of the given breakpoint, associated
-	 * with the given IType.
+	 * Sets the type in which this breakpoint is set.
 	 */
-	public void setType(IType type) throws CoreException {
+	protected void setType(IType type) throws CoreException {
 		String handle = type.getHandleIdentifier();
-		setTypeHandleIdentifier(handle);
-	}
-	
-	/**
-	 * Sets the <code>TYPE_HANDLE</code> attribute of the given breakpoint.
-	 */
-	public void setTypeHandleIdentifier(String identifier) throws CoreException {
-		ensureMarker().setAttribute(TYPE_HANDLE, identifier);
+		ensureMarker().setAttribute(TYPE_HANDLE, handle);
 	}
 	
 	/**
 	 * @see IJavaBreakpoint#getType()
 	 */
 	public IType getType() throws CoreException {
-		String handle = getTypeHandleIdentifier();
+		String handle = (String) ensureMarker().getAttribute(TYPE_HANDLE);
 		if (handle != null) {
 			return (IType)JavaCore.create(handle);
 		}
 		return null;
-	}	
-	
-	/**
-	 * Returns the <code>TYPE_HANDLE</code> attribute of the given breakpoint.
-	 */
-	public String getTypeHandleIdentifier() throws CoreException {
-		return (String) ensureMarker().getAttribute(TYPE_HANDLE);
-	}	
-	
-	/**
-	 * Returns the top-level type name associated with the type 
-	 * the given breakpoint is associated with, or <code>null</code>.
-	 */
-	public String getTopLevelTypeName() throws CoreException {
-		IType type = getType();
-		if (type != null) {
-			while (type.getDeclaringType() != null) {
-				type = type.getDeclaringType();
-			}
-			return type.getFullyQualifiedName();
-		}
-		return null;
 	}
-		
-	/**
-	 * Returns the identifier for this JDI debug model plug-in
-	 *
-	 * @return plugin identifier
-	 */
-	public static String getPluginIdentifier() {
-		return JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier();
-	}	
 	
+	/**
+	 * Execute the given workspace runnable
+	 */
 	protected void run(IWorkspaceRunnable wr) throws DebugException {
 		try {
 			ResourcesPlugin.getWorkspace().run(wr, null);

@@ -1,20 +1,34 @@
 package org.eclipse.jdt.internal.debug.core;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IDebugConstants;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassNotPreparedException;
+import com.sun.jdi.InvalidLineNumberException;
+import com.sun.jdi.Location;
+import com.sun.jdi.NativeMethodException;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.EventRequest;
 
-public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
+/**
+ * @see IJavaLineBreakpoint
+ */
+public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreakpoint {
 	
 	// Marker label String keys
 	private static final String LINE= "line"; //$NON-NLS-1$
@@ -51,7 +65,7 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 	}
 		
 	/**
-	 * Installs a line breakpoint in the given type, returning whether successful.
+	 * @see JavaBreakpoint#createRequest(JDIDebutTarget, ReferenceType)
 	 */
 	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		Location location= null;
@@ -63,12 +77,12 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 		}
 		
 		EventRequest request = createLineBreakpointRequest(location, target);	
-		registerRequest(target, request);		
+		registerRequest(request, target);		
 	}	
 	
 	/**
 	 * Creates, installs, and returns a line breakpoint request at
-	 * the given location for the given breakpoint.
+	 * the given location for this breakpoint.
 	 */
 	protected BreakpointRequest createLineBreakpointRequest(Location location, JDIDebugTarget target) throws CoreException {
 		BreakpointRequest request = null;
@@ -188,13 +202,6 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 		}
 		// Important: only enable a request after it has been configured
 		updateEnabledState(request);
-	}	
-		
-	/**
-	 * @see JavaBreakpoint#isSupportedBy(VirtualMachine)
-	 */
-	public boolean isSupportedBy(VirtualMachine vm) {
-		return true;
 	}
 	
 	/**
@@ -206,7 +213,7 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 	 * <li>IMarker.LINE_NUMBER</li>
 	 * <li>IMarker.CHAR_START</li>
 	 * <li>IMarker.CHAR_END</li>
-	 * <li>IJavaDebugConstants.CONDITION</li>		
+	 * </ol>	
 	 */	
 	public void setLineBreakpointAttributes(String modelIdentifier, boolean enabled, int lineNumber, int charStart, int charEnd) throws CoreException {
 		Object[] values= new Object[]{new Boolean(true), new Integer(lineNumber), new Integer(charStart), new Integer(charEnd)};
@@ -221,13 +228,9 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 		int end = getCharEnd();
 		IType type = getType();
 		IMember member = null;
-		if (type != null && end >= start && start >= 0) {
+		if ((type != null) && (end >= start) && (start >= 0)) {
 			try {
-				if (type.isBinary()) {
-					member= binSearch(type.getClassFile(), type, start, end);
-				} else {
-					member= binSearch(type.getCompilationUnit(), type, start, end);
-				}
+				member= binSearch(type, start, end);
 			} catch (CoreException ce) {
 				JDIDebugPlugin.logError(ce);
 			}
@@ -242,21 +245,21 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 	 * Searches the given source range of the container for a member that is
 	 * not the same as the given type.
 	 */
-	protected IMember binSearch(IClassFile container, IType type, int start, int end) throws JavaModelException {
-		IJavaElement je = container.getElementAt(start);
+	protected IMember binSearch(IType type, int start, int end) throws JavaModelException {
+		IJavaElement je = getElementAt(type, start);
 		if (je != null && !je.equals(type)) {
 			return (IMember)je;
 		}
 		if (end > start) {
-			je = container.getElementAt(end);
+			je = getElementAt(type, end);
 			if (je != null && !je.equals(type)) {
 				return (IMember)je;
 			}
 			int mid = ((end - start) / 2) + start;
 			if (mid > start) {
-				je = binSearch(container, type, start + 1, mid);
+				je = binSearch(type, start + 1, mid);
 				if (je == null) {
-					je = binSearch(container, type, mid + 1, end - 1);
+					je = binSearch(type, mid + 1, end - 1);
 				}
 				return (IMember)je;
 			}
@@ -265,29 +268,14 @@ public abstract class AbstractJavaLineBreakpoint extends JavaBreakpoint {
 	}	
 	
 	/**
-	 * Searches the given source range of the container for a member that is
-	 * not the same as the given type.
+	 * Returns the element at the given position in the given type
 	 */
-	protected IMember binSearch(ICompilationUnit container, IType type, int start, int end) throws JavaModelException {
-		IJavaElement je = container.getElementAt(start);
-		if (je != null && !je.equals(type)) {
-			return (IMember)je;
+	protected IJavaElement getElementAt(IType type, int pos) throws JavaModelException {
+		if (type.isBinary()) {
+			return type.getClassFile().getElementAt(pos);
+		} else {
+			return type.getCompilationUnit().getElementAt(pos);
 		}
-		if (end > start) {
-			je = container.getElementAt(end);
-			if (je != null && !je.equals(type)) {
-				return (IMember)je;
-			}
-			int mid = ((end - start) / 2) + start;
-			if (mid > start) {
-				je = binSearch(container, type, start + 1, mid);
-				if (je == null) {
-					je = binSearch(container, type, mid + 1, end - 1);
-				}
-				return (IMember)je;
-			}
-		}
-		return null;
 	}
 
 }
