@@ -1155,10 +1155,6 @@
             objectClass="org.eclipse.jdt.debug.core.IJavaVariable"
             id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions">
          <filter
-               name="PrimitiveVariableActionFilter"
-               value="isValuePrimitive">
-         </filter>
-         <filter
                name="DetailFormatterFilter"
                value="isDefined">
          </filter>

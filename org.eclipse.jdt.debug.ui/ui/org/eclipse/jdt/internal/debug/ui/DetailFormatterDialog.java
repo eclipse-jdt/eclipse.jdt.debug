@@ -107,7 +107,7 @@ public class DetailFormatterDialog extends StatusDialog {
 
 	private List submissions;
 
-	private Shell shell;
+	private Shell fShell;
 	
 	/**
 	 * DetailFormatterDialog constructor.
@@ -154,11 +154,11 @@ public class DetailFormatterDialog extends StatusDialog {
 			}
 		};
 		
-		shell = parent.getShell();
+		fShell = parent.getShell();
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		
 		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);		
+		contextSupport.registerShell(fShell, IWorkbenchContextSupport.TYPE_WINDOW);		
 		
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();		
 		submissions = Collections.singletonList(new HandlerSubmission(null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, 4, null)); //$NON-NLS-1$
@@ -201,6 +201,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		setButtonLayoutData(typeSearchButton);
 		gd= (GridData)typeSearchButton.getLayoutData();
 		gd.horizontalAlignment = GridData.END;
+		typeSearchButton.setEnabled(fEditTypeName);
 		typeSearchButton.setLayoutData(gd);
 		typeSearchButton.setFont(font);		
 		typeSearchButton.addListener(SWT.Selection, new Listener() {
@@ -340,7 +341,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		}
 		fType= null;
 		fTypeSearched= true;
-		final String pattern= fTypeNameText.getText().trim();
+		final String pattern= fTypeNameText.getText().trim().replace('$', '.');
 		if (pattern == null || "".equals(pattern)) { //$NON-NLS-1$
 			return;
 		}
@@ -393,7 +394,7 @@ public class DetailFormatterDialog extends StatusDialog {
 	public boolean close() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		contextSupport.unregisterShell(shell);
+		contextSupport.unregisterShell(fShell);
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 		commandSupport.removeHandlerSubmissions(submissions);
 		
