@@ -13,7 +13,6 @@ package org.eclipse.jdt.debug.tests.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -27,7 +26,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -374,7 +372,6 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		fRemoved = null;
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		manager.addValueVariableListener(this);
-		SelectedResourceManager.setDebug(true);
 	}
 
 	/* (non-Javadoc)
@@ -387,7 +384,6 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		fAdded = null;
 		fChanged = null;
 		fRemoved = null;
-		SelectedResourceManager.setDebug(false);
 	}
 
 	/* (non-Javadoc)

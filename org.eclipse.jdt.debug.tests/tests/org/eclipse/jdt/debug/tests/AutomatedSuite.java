@@ -16,6 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.jdt.debug.tests.core.ExternalArchiveSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.ArchiveSourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.ArrayTests;
@@ -75,6 +76,10 @@ import org.eclipse.swt.widgets.Display;
  * Tests for integration and nightly builds.
  */
 public class AutomatedSuite extends TestSuite {
+	
+	static {
+		SelectedResourceManager.setDebug(true);
+	}
 	
 	/**
 	 * Flag that indicates test are in progress
