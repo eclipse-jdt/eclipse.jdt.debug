@@ -233,6 +233,7 @@ public final class JavaRuntime {
 	public static void setDefaultVMInstall(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		fgDefaultVMId= getIdFromVM(vm);
 		initializeJREVariables(monitor);
+		saveVMConfiguration();
 	}	
 	
 	/**
