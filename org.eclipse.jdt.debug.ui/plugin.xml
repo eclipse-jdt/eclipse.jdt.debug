@@ -79,20 +79,11 @@
 		id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
 	<menu
         label="%RunMenu.label"
-          id="org.eclipse.ui.run">
-        <separator
-           name="debugGroup">
-         </separator>         
-        <separator
-           name="runGroup">
-         </separator>                            
-        <separator
-           name="jdtGroup">
-         </separator>
-         <separator
-           name="breakpointGroup">
-         </separator>
-      </menu>
+        id="org.eclipse.ui.run"
+		path="additions">
+        <separator name="jdtGroup"/>
+        <separator name="breakpointGroup"/>
+     </menu>
         <action id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
   			label="%manageWatchpointAction.label"
   			icon="icons/full/obj16/brkpi_obj.gif"
@@ -162,29 +153,41 @@
              	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
             </enablement>
 		</action> 
-        <action
-            label="%DebugJavaApplicationAction.label"
-            icon="icons/full/etool16/java_app.gif"
-            disabledIcon="icons/full/dtool16/java_app.gif"
-            hoverIcon="icons/full/ctool16/java_app.gif"
-            helpContextId="debug_java_application_action_context"
-            tooltip="%DebugJavaApplicationAction.tooltip"
-            class="org.eclipse.jdt.internal.debug.ui.launcher.DebugJavaApplicationAction"
-            menubarPath="org.eclipse.ui.run/debugGroup"
-            id="org.eclipse.jdt.debug.ui.actions.debugJavaApp">
-        </action>
-        <action
-            label="%RunJavaApplicationAction.label"
-            icon="icons/full/etool16/java_app.gif"
-            disabledIcon="icons/full/dtool16/java_app.gif"
-            hoverIcon="icons/full/ctool16/java_app.gif"
-            helpContextId="run_java_application_context"
-            tooltip="%RunJavaApplicationAction.tooltip"
-            class="org.eclipse.jdt.internal.debug.ui.launcher.RunJavaApplicationAction"
-            menubarPath="org.eclipse.ui.run/runGroup"
-            id="org.eclipse.jdt.debug.ui.actions.runJavaApp">
-        </action>      
-   </actionSet>  
+   </actionSet>
+    <actionSet
+            label="%JDTLaunchActionSet.label"
+            visible="false"
+            id="org.eclipse.jdt.debug.ui.JDTLaunchActionSet">
+         <menu
+               label="%RunMenu.label"
+               id="org.eclipse.ui.run"
+               path="additions">
+            <separator name="jdtRunLaunchGroup"/>
+            <groupMarker name="jdtDebugLaunchGroup"/>
+         </menu>
+         <action
+               id="org.eclipse.jdt.debug.ui.actions.debugJavaApp"
+               hoverIcon="icons/full/ctool16/java_app.gif"
+               class="org.eclipse.jdt.internal.debug.ui.launcher.DebugJavaApplicationAction"
+               disabledIcon="icons/full/dtool16/java_app.gif"
+               icon="icons/full/etool16/java_app.gif"
+               helpContextId="debug_java_application_action_context"
+               label="%DebugJavaApplicationAction.label"
+               menubarPath="org.eclipse.ui.run/jdtDebugLaunchGroup"
+               tooltip="%DebugJavaApplicationAction.tooltip">
+         </action>
+         <action
+               id="org.eclipse.jdt.debug.ui.actions.runJavaApp"
+               hoverIcon="icons/full/ctool16/java_app.gif"
+               class="org.eclipse.jdt.internal.debug.ui.launcher.RunJavaApplicationAction"
+               disabledIcon="icons/full/dtool16/java_app.gif"
+               icon="icons/full/etool16/java_app.gif"
+               helpContextId="run_java_application_context"
+               label="%RunJavaApplicationAction.label"
+               menubarPath="org.eclipse.ui.run/jdtRunLaunchGroup"
+               tooltip="%RunJavaApplicationAction.tooltip">
+         </action>
+      </actionSet>
 </extension>
 
 <extension 
@@ -204,8 +207,16 @@
 		<actionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
 	</perspectiveExtension>
 	<perspectiveExtension 
+		targetID="org.eclipse.debug.ui.DebugPerspective">
+		<actionSet id="org.eclipse.jdt.debug.ui.JDTLaunchActionSet"/>
+	</perspectiveExtension>
+	<perspectiveExtension 
 		targetID="org.eclipse.jdt.ui.JavaPerspective">
 		<actionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
+	</perspectiveExtension>
+	<perspectiveExtension 
+		targetID="org.eclipse.jdt.ui.JavaPerspective">
+		<actionSet id="org.eclipse.jdt.debug.ui.JDTLaunchActionSet"/>
 	</perspectiveExtension>
 	<perspectiveExtension 
 		targetID="org.eclipse.jdt.ui.JavaHierarchyPerspective">
