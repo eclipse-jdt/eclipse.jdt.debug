@@ -278,7 +278,7 @@ public abstract class Instruction {
 		} catch (CoreException e) {
 			if (e.getStatus().getException() instanceof InvocationException) {
 				// Don't throw ClassNotFoundException
-				if (((InvocationException)e.getStatus().getException()).exception().referenceType().name().equals("java.lang.ClassNotFoundException")) {
+				if (((InvocationException)e.getStatus().getException()).exception().referenceType().name().equals("java.lang.ClassNotFoundException")) { //$NON-NLS-1$
 					return null;
 				}
 			}
