@@ -416,7 +416,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		int count = 3;
 		data = new String[count][2];
 		for (int i = 0; i < count; i++) {
-			data[i] = new String[] { , };
+			data[i] = new String[] {};
 		};
 		
 		int style = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
