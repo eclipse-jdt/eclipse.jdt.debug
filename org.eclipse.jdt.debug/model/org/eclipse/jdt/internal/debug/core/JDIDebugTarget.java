@@ -69,7 +69,7 @@ import com.sun.jdi.request.EventRequestManager;
  * Debug target for JDI debug model.
  */
 
-public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget {
+public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget, IJDIEventListener {
 		
 	/**
 	 * Threads contained in this debug target. When a thread
@@ -162,7 +162,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * an attach is made to a VM that is already running
 	 * (has already started up).
 	 */
-	public void handleVMStart(VMStartEvent event) {
+	protected void handleVMStart(VMStartEvent event) {
 		try {
 			for (int i= 0; i < fThreads.size(); i++) {
 				((JDIThread) fThreads.get(i)).setRunning(true);
@@ -179,7 +179,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * to process an events from the target until our state is
 	 * initialized.
 	 */
-	public synchronized void initialize() {
+	protected synchronized void initialize() {
 		fEventDispatcher= new EventDispatcher(this);
 		initializeRequests();
 		initializeState();
@@ -220,6 +220,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		} catch (RuntimeException e) {
 			internalError(e);
 		}
+		addJDIEventListener(this, req);
 		
 
 		try {
@@ -229,6 +230,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		} catch (RuntimeException e) {
 			internalError(e);
 		}
+		addJDIEventListener(this, req);
 		
 		// Listen for all class loads so we can create an instance of ThreadDeath to terminate threads. 
 		new ThreadTerminator();
@@ -341,6 +343,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 
 	}
+	
+	/**
+	 * Returns the underlying virtual machine associated with this
+	 * debug target.
+	 * 
+	 * @return the underlying VM
+	 */
+	protected VirtualMachine getVM() {
+		return fVirtualMachine;
+	}
 
 	/**
 	 * Notifies this target that the specified types have been changed and
@@ -426,9 +438,35 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			internalError(e);
 		}
 	}
+	
+	/**
+	 * A debug target regisiters for the following types of events:
+	 * <ul>
+	 * <li>ThreadStartEvent</li>
+	 * <li>ThreadDeathEvent</li>
+	 * </ul>
+	 * <p>
+	 * This method delegates based on the type of event received.
+	 * </p>
+	 * 
+	 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
+	 * @return <code>true</code> - any threads suspended due to
+	 * 	either event should be resumed.
+	 */
+	public boolean handleEvent(Event event, JDIDebugTarget target) {
+		if (event instanceof ThreadDeathEvent) {
+			handleThreadDeath((ThreadDeathEvent)event);
+		} else if (event instanceof ThreadStartEvent) {
+			handleThreadStart((ThreadStartEvent)event);
+		}
+		return true;
+	}
 
 	/**
-	 * Handles a thread death event.
+	 * Locates the model thread associated with the underlying jdi thread
+	 * that has terminated, and removes it from the collection of
+	 * threads belonging to this debug target. A terminate event is
+	 * fired for the model thread.
 	 */
 	protected void handleThreadDeath(ThreadDeathEvent event) {
 		JDIThread thread= findThread(event.thread());
@@ -439,7 +477,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 
 	/**
-	 * Handles a thread start event.
+	 * Creates a model thread for the underlying jdi thread
+	 * and adds it to the collection of threads for this 
+	 * debug target. As a side effect of creating the threadm
+	 * a create event is fired for the model thread.
 	 */
 	protected void handleThreadStart(ThreadStartEvent event) {
 		ThreadReference thread= event.thread();
@@ -570,13 +611,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	protected void run(IWorkspaceRunnable wr) throws CoreException {
 		ResourcesPlugin.getWorkspace().run(wr, null);
 	}
-	
-	/**
-	 * @see IBreakpointSupport
-	 */
-	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
-		return !isTerminated() && !isDisconnected() && JDIDebugModel.getPluginIdentifier().equals(breakpoint.getModelIdentifier());
-	}
 
 	/**
 	 * @see ISuspendResume
@@ -611,7 +645,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	protected void terminate0() {
 		if (!fTerminated) {
 			fTerminated= true;
-			removeAllChildren();
+			removeAllThreads();
 			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
 			uninstallAllBreakpoints();
 			cleanupTempFiles();
@@ -623,9 +657,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 
 	/**
-	 * Removes all of the children from this element.
+	 * 
 	 */
-	public void removeAllChildren() {
+	protected void removeAllThreads() {
 		Iterator itr= fThreads.iterator();
 		fThreads= Collections.EMPTY_LIST;
 		while (itr.hasNext()) {
@@ -648,13 +682,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			}
 		}
 		fBreakpoints.clear();
-	}
-
-	/**
-	 * Adds this child to the collection of children for this element.
-	 */
-	public void addChild(IDebugElement child) {
-
 	}
 
 	/**
@@ -708,13 +735,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * @see IDebugElement
-	 */
-	public IDebugTarget getDebugTarget() {
-		return this;
 	}
 	
 	/**
@@ -800,7 +820,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	/**
 	 * Deletes deployed temporary class files
 	 */
-	public void cleanupTempFiles() {
+	protected void cleanupTempFiles() {
 		if (fTempFiles == null) {
 			return;
 		}
@@ -821,7 +841,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Returns an evaluation context for the given Java project, creating
 	 * one if not yet created.
 	 */
-	public IEvaluationContext getEvaluationContext(IJavaProject project) {
+	protected IEvaluationContext getEvaluationContext(IJavaProject project) {
 		if (fEvaluationContexts == null) {
 			fEvaluationContexts = new HashMap(2);
 		}
@@ -842,10 +862,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		cleanupTempFiles();
 	}
 	
-	public VirtualMachine getVM() {
-		return fVirtualMachine;
-	}
-	
 	/**
 	 * Returns the CRC-32 of the entire class file contents associated with
 	 * given type, on the target VM, or <code>null</code> if the type is
@@ -857,7 +873,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @exception DebugException if an exception occurs retrieving the CRC from the target
 	 *     or if CRC's are not supported
 	 */
-	public Integer getCRC(String typeName) throws DebugException {
+	protected Integer getCRC(String typeName) throws DebugException {
 		if (getVM() instanceof org.eclipse.jdi.hcr.VirtualMachine) {
 			List classes = jdiClassesByName(typeName);
 			if (!classes.isEmpty()) {
