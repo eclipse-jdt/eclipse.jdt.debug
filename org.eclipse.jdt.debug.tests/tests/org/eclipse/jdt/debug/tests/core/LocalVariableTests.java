@@ -17,7 +17,6 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 public class LocalVariableTests extends AbstractDebugTest {
@@ -79,11 +78,11 @@ public class LocalVariableTests extends AbstractDebugTest {
 			assertNotNull("Could not find variable 'i2'", i2);
 			assertEquals("'i2' value should be '1'", target.newValue(1), i2.getValue());
 						
-			IEvaluationResult result = evaluate("i1 = 73;", frame);			
+			evaluate("i1 = 73;", frame);			
 			// the value should have changed
 			assertEquals("'i1' value should be '73'", target.newValue(73), i1.getValue());
 			
-			result = evaluate("i2 = i1;", frame);
+			evaluate("i2 = i1;", frame);
 			// the value should have changed
 			assertEquals("'i2' value should be '73'", target.newValue(73), i2.getValue());
 			

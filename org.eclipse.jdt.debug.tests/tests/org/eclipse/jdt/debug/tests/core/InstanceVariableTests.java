@@ -18,7 +18,6 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
-import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 public class InstanceVariableTests extends AbstractDebugTest {
@@ -77,11 +76,11 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			assertNotNull("Could not find variable 'pubStr'", pubStr);
 			assertEquals("'pubStr' value should be 'public'", "public", pubStr.getValue().getValueString());
 			
-			IEvaluationResult result = evaluate("pubStr = \"hello\";", frame);			
+			evaluate("pubStr = \"hello\";", frame);			
 			// the value should have changed
 			assertEquals("'pubStr' value should be 'hello'", "hello", pubStr.getValue().getValueString());
 			
-			result = evaluate("pubStr = null;", frame);
+			evaluate("pubStr = null;", frame);
 			// the value should have changed
 			assertEquals("'pubStr' value should be 'null'", ((IJavaDebugTarget)frame.getDebugTarget()).nullValue(), pubStr.getValue());
 			

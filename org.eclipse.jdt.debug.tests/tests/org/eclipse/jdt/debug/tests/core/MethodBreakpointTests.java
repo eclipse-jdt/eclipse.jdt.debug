@@ -146,7 +146,6 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 
 	public void testHitCountEntryBreakpoint() throws Exception {
 		String typeName = "MethodLoop";
-		List bps = new ArrayList();
 		IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "calculateSum", "()V", true, false);
 		bp.setHitCount(3);
 		
@@ -173,7 +172,6 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 
 	public void testHitCountExitBreakpoint() throws Exception {
 		String typeName = "MethodLoop";
-		List bps = new ArrayList();
 		IJavaMethodBreakpoint bp = createMethodBreakpoint(typeName, "calculateSum", "()V", false, true);
 		bp.setHitCount(3);
 		

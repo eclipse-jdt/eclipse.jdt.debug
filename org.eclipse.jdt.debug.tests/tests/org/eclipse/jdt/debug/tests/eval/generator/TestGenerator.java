@@ -1,9 +1,15 @@
-
 package org.eclipse.jdt.debug.tests.eval.generator;
-/*
- * (c) Copyright 2001 MyCorporation.
- * All Rights Reserved.
- */
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+*********************************************************************/
 
 import java.io.File;
 import java.io.FileWriter;
@@ -1052,7 +1058,6 @@ public class TestGenerator {
 		String vName = variable[var];
 		String iName = immediate[imm];
 		String oName = opName[Op_equal];
-		String oSymbol = opSymbol[Op_equal];
 
 		genCodeEval(vName + tUName + " + " + oName + "Op +" + iName + tUName, first, code);
 		genCodeReturnTypeCheck(tName + " local variable assignment", tName, first,code);
@@ -1236,7 +1241,6 @@ public class TestGenerator {
 		String vName = variable[var];
 		String iName = immediate[imm];
 		String oName = opName[Op_equal];
-		String oSymbol = opSymbol[Op_equal];
 
 		genCodeEval(vName + tUName + " + \"[" + index + "]\" + " + oName + "Op +" + iName + tUName, first, code);
 		genCodeReturnTypeCheck(tName + " array assignment", tName, first,code);
@@ -1262,7 +1266,6 @@ public class TestGenerator {
 		String vName = variable[var];
 		String iName = immediate[dim];
 		String oName = opName[Op_equal];
-		String oSymbol = opSymbol[Op_equal];
 
 		genCodeEval(vName + tUName + " + " + oName + "Op + \"new " + tName + "[\" + " + iName + charUName + " + \"]\"", first, code);
 		genCodeReturnTypeCheck(tName + " array assignment", tName + "[]", first, code);
@@ -1277,8 +1280,6 @@ public class TestGenerator {
 		String tUName = typeUpperName[type];
 		String vName = variable[var];
 		String oName = opName[Op_equal];
-		String oSymbol = opSymbol[Op_equal];
-		String i0Name = immediate[var % 2];
 		String i1Name = immediate[(var + 1) % 2];
 		
 		String value = "";
