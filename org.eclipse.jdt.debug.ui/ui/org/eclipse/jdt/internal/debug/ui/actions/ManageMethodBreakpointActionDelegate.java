@@ -94,7 +94,7 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 					IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), Status.ERROR, ActionMessages.getString("ManageMethodBreakpointActionDelegate.CantAdd"), null); //$NON-NLS-1$
 					Shell shell = JDIDebugUIPlugin.getActiveWorkbenchShell();
 					if (shell != null) {
-						ErrorDialog.openError(shell, "Action Failed", ActionMessages.getString("ManageMethodBreakpointActionDelegate.Add_Method_Breakpoint_Failed_2"), status); //$NON-NLS-1$
+						ErrorDialog.openError(shell, ActionMessages.getString("ManageMethodBreakpointActionDelegate.Error_1"), ActionMessages.getString("ManageMethodBreakpointActionDelegate.Add_Method_Breakpoint_Failed_2"), status); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					return;
 				} 
