@@ -131,6 +131,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		setSourceViewerConfiguration(new JavaSnippetViewerConfiguration(JavaPlugin.getDefault().getJavaTextTools(), this));		
 		fSnippetStateListeners= new ArrayList(4);
 		setPreferenceStore(JavaPlugin.getDefault().getPreferenceStore());
+		setEditorContextMenuId("#JavaSnippetEditorContext"); //$NON-NLS-1$
+		setRulerContextMenuId("#JavaSnippetRulerContext"); //$NON-NLS-1$
 	}
 	
 	protected void doSetInput(IEditorInput input) throws CoreException {
@@ -162,10 +164,10 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	public Object getAdapter(Class adapter) {
 		if (adapter == IDisplayAction.class) {
-			return getAction("Display");
+			return getAction("Display"); //$NON-NLS-1$
 		}
 		if (adapter == IInspectAction.class) {
-			return getAction("Inspect");
+			return getAction("Inspect"); //$NON-NLS-1$
 		}		
 		return super.getAdapter(adapter);
 	}
