@@ -4,7 +4,10 @@
  */
 package org.eclipse.jdt.debug.tests;
 
+import java.util.Enumeration;
+
 import junit.framework.Test;
+import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import org.eclipse.jdt.debug.testplugin.TestPluginLauncher;
 import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
@@ -17,11 +20,17 @@ import org.eclipse.jdt.debug.tests.core.PatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
 import org.eclipse.jdt.debug.tests.core.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Test all areas of the UI.
  */
 public class AutomatedSuite extends TestSuite {
+	
+	/**
+	 * Flag that indicates test are in progress
+	 */
+	protected boolean fTesting = true;
 
 	/**
 	 * Returns the suite.  This is required to
@@ -46,13 +55,48 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(PatternBreakpointTests.class));
 		addTest(new TestSuite(TargetPatternBreakpointTests.class));
 		addTest(new TestSuite(EventSetTests.class));
-		addTest(new TestSuite(CloseWorkbenchDecorator.class));
 	}
 	
 	public static void main(String[] args) {
 		TestPluginLauncher.run(TestPluginLauncher.getLocationFromProperties(), AutomatedSuite.class, args);
 	}		
 
+	/**
+	 * Runs the tests and collects their result in a TestResult.
+	 * The debug tests cannot be run in the UI thread or the event
+	 * waiter blocks the UI when a resource changes.
+	 */
+	public void run(final TestResult result) {
+		final Display display = Display.getCurrent();
+		Thread thread = null;
+		try {
+			Runnable r = new Runnable() {
+				public void run() {
+					for (Enumeration e= tests(); e.hasMoreElements(); ) {
+				  		if (result.shouldStop() )
+				  			break;
+						Test test= (Test)e.nextElement();
+						runTest(test, result);
+					}					
+					fTesting = false;
+					display.wake();
+				}
+			};
+			thread = new Thread(r);
+			thread.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+				
+		while (fTesting) {
+			try {
+				if (!display.readAndDispatch())
+					display.sleep();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}			
+		}		
+	}
 
 }
 

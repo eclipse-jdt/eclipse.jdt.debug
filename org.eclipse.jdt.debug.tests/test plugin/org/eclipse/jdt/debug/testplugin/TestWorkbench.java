@@ -37,38 +37,20 @@ public class TestWorkbench extends Workbench {
 		System.out.println("Workspace-location: " + location.toString());
 				
 		
-		Thread thread = null;
-		try {
-			String[] args= getCommandLineArgs();
-			if (args.length > 2) {
-				// must run tests in a separate thread - or event
-				// waiter will block UI thread on a resource change
-				final Test test= getTest(args[2]);
-				Runnable r = new Runnable() {
-					public void run() {
-						TestRunner.run(test);
-					}
-				};
-				thread = new Thread(r);
-				thread.start();
-			} else {
-				System.out.println("TestWorkbench: Argument must be class name");
+		String[] args= getCommandLineArgs();
+		if (args.length > 2) {
+			try {
+				Test test= getTest(args[2]);
+				TestRunner.run(test);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			display.wake();
+		} else {
+			System.out.println("TestWorkbench: Argument must be class name");
 		}
 				
-		while (thread != null && thread.isAlive()) {
-			try {
-				if (!display.readAndDispatch())
-					display.sleep();
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}			
-		}
-		
+		close();
+				
 	}
 	
 	public Test getTest(String className) throws Exception {
