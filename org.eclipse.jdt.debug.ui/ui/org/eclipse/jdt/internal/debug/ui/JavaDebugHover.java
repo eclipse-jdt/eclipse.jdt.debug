@@ -18,6 +18,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.ui.text.HTMLTextPresenter;
@@ -163,7 +164,9 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 						appendVariable(buffer, variable);
 					}
 				} catch (DebugException x) {
-					JDIDebugUIPlugin.log(x);
+					if (x.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+						JDIDebugUIPlugin.log(x);
+					}
 				}
 				
 				if (buffer.length() > 0) {
