@@ -12,6 +12,7 @@ Contributors:
 **********************************************************************/
 
 import junit.framework.TestCase;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -49,6 +50,8 @@ import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventDetailWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugElementKindEventWaiter;
 import org.eclipse.jdt.debug.testplugin.DebugEventWaiter;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 
  
@@ -589,6 +592,13 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
 		return (IJavaThread) suspendee;		
+	}
+
+	/**
+	 * Sets the "suspend on uncaught exception" preference as specified.
+	 * 	 * @param on of off	 */	
+	protected void setSuspendOnUncaughtExceptionsPreference(boolean on) {
+		JDIDebugUIPlugin.getDefault().getPreferenceStore().setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, on);
 	}
 
 }

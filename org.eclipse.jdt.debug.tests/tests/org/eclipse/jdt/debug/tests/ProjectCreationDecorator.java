@@ -77,6 +77,9 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 			configs[i].delete();
 		}
 		
+		// turn of suspend on  uncaught exceptions
+		setSuspendOnUncaughtExceptionsPreference(false);
+		
 		// create launch configurations
 		createLaunchConfiguration("Breakpoints");
 		createLaunchConfiguration("InstanceVariablesTests");
