@@ -45,8 +45,6 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
-import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration;
-import org.eclipse.jdt.internal.compiler.lookup.CompilationUnitScope;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.JDIValue;
@@ -137,6 +135,17 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * context (static method, or not context)
 	 */
 	private IJavaObject fThis;
+	
+	/**
+	 * Whether this engine has been disposed.
+	 */
+	private boolean fDisposed = false;
+	
+	/**
+	 * The number of evaluations currently being
+	 * performed.
+	 */
+	private int fEvaluationCount = 0;
 	
 	/**
 	 * Constant for empty array of <code>java.lang.String</code>
@@ -315,14 +324,6 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			getResult().addProblem(problemMarker, fragmentKind, fragmentSource);
 	}
 
-	/*
-	 * @see ICodeSnippetRequestor#acceptAst(CompilationUnitDeclaration, CompilationUnitScope)
-	 */
-	public void acceptAst(
-		CompilationUnitDeclaration ast,
-		CompilationUnitScope scope) {
-	}
-
 	/**
 	 * @see IEvaluationEngine#getDebugTarget()
 	 */
@@ -384,31 +385,41 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		IEvaluationListener listener)
 		throws DebugException {
 			checkDisposed();
-			setListener(listener);
-			setResult(new EvaluationResult(this, snippet, thread));
-			checkThread();
-			// no receiver/stack frame context
-			setThis(null);
-			setLocalVariableNames(EMPTY_STRING_ARRAY);
-			setLocalVariableTypeNames(EMPTY_STRING_ARRAY);
-			setLocalVariableModifiers(EMPTY_INT_ARRAY);
-			
-			// do the evaluation in a different thread
-			Runnable r = new Runnable() {
-				public void run() {
-					try {
-						LocalEvaluationEngine.this.getEvaluationContext().
-							evaluateCodeSnippet(LocalEvaluationEngine.this.getSnippet(),
-								LocalEvaluationEngine.this, null);
-					} catch (JavaModelException e) {
-						LocalEvaluationEngine.this.getResult().setException(e);
+			try {
+				evaluationStarted();
+				setListener(listener);
+				setResult(new EvaluationResult(this, snippet, thread));
+				checkThread();
+				// no receiver/stack frame context
+				setThis(null);
+				setLocalVariableNames(EMPTY_STRING_ARRAY);
+				setLocalVariableTypeNames(EMPTY_STRING_ARRAY);
+				setLocalVariableModifiers(EMPTY_INT_ARRAY);
+				
+				// do the evaluation in a different thread
+				Runnable r = new Runnable() {
+					public void run() {
+						try {
+							LocalEvaluationEngine.this.getEvaluationContext().
+								evaluateCodeSnippet(LocalEvaluationEngine.this.getSnippet(),
+									LocalEvaluationEngine.this, null);
+						} catch (JavaModelException e) {
+							LocalEvaluationEngine.this.getResult().setException(e);
+						}
+						LocalEvaluationEngine.this.evaluationComplete();
 					}
-					LocalEvaluationEngine.this.evaluationComplete();
+				};
+				
+				Thread t = new Thread(r);
+				t.start();
+			} finally {
+				evaluationEnded();
+				if (isDisposed()) {
+					// if the engine was disposed during an evaluation
+					// do the cleanup now
+					dispose();
 				}
-			};
-			
-			Thread t = new Thread(r);
-			t.start();
+			}
 			
 	}
 
@@ -421,63 +432,73 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		IEvaluationListener listener)
 		throws DebugException {
 			checkDisposed();
-			setListener(listener);
-			setStackFrame(frame);
-			setResult(new EvaluationResult(this, snippet, (IJavaThread)frame.getThread()));
-			checkThread();
-			
-			// set up local variables and 'this' context for evaluation
-			IJavaVariable[] locals = frame.getLocalVariables();
-			
-			List typeNames = new ArrayList(locals.length);
-			List varNames = new ArrayList(locals.length);
-
-			for (int i = 0; i < locals.length; i++) {
-				IJavaVariable var = locals[i];
-				String typeName = getTranslatedTypeName(var.getReferenceTypeName());
-				if (typeName != null) {
-					typeNames.add(typeName);
-					varNames.add(var.getName());
-				}
-			}
-			
-			setLocalVariableTypeNames((String[])typeNames.toArray(new String[typeNames.size()]));
-			setLocalVariableNames((String[])varNames.toArray(new String[varNames.size()]));
-			int[] modifiers = new int[typeNames.size()];
-			// cannot determine if local is final, so specify as default
-			Arrays.fill(modifiers, 0);
-			setLocalVariableModifiers(modifiers);
-			
-			setThis(frame.getThis());
-			
-			final boolean isStatic = frame.isStatic();
-			final boolean isConstructor = frame.isConstructor();
-			final IType receivingType = getReceivingType(frame);
-			
-			// do the evaluation in a different thread
-			Runnable r = new Runnable() {
-				public void run() {
-					try {
-						LocalEvaluationEngine.this.getEvaluationContext().
-							evaluateCodeSnippet(
-							LocalEvaluationEngine.this.getSnippet(),
-							LocalEvaluationEngine.this.getLocalVariableTypeNames(),
-							LocalEvaluationEngine.this.getLocalVariableNames(),
-							LocalEvaluationEngine.this.getLocalVariableModifiers(),
-							receivingType,
-							isStatic,
-							isConstructor,
-							LocalEvaluationEngine.this,
-							null);
-					} catch (JavaModelException e) {
-						LocalEvaluationEngine.this.getResult().setException(e);
+			try {
+				evaluationStarted();
+				setListener(listener);
+				setStackFrame(frame);
+				setResult(new EvaluationResult(this, snippet, (IJavaThread)frame.getThread()));
+				checkThread();
+				
+				// set up local variables and 'this' context for evaluation
+				IJavaVariable[] locals = frame.getLocalVariables();
+				
+				List typeNames = new ArrayList(locals.length);
+				List varNames = new ArrayList(locals.length);
+	
+				for (int i = 0; i < locals.length; i++) {
+					IJavaVariable var = locals[i];
+					String typeName = getTranslatedTypeName(var.getReferenceTypeName());
+					if (typeName != null) {
+						typeNames.add(typeName);
+						varNames.add(var.getName());
 					}
-					LocalEvaluationEngine.this.evaluationComplete();
 				}
-			};
-			
-			Thread t = new Thread(r);
-			t.start();
+				
+				setLocalVariableTypeNames((String[])typeNames.toArray(new String[typeNames.size()]));
+				setLocalVariableNames((String[])varNames.toArray(new String[varNames.size()]));
+				int[] modifiers = new int[typeNames.size()];
+				// cannot determine if local is final, so specify as default
+				Arrays.fill(modifiers, 0);
+				setLocalVariableModifiers(modifiers);
+				
+				setThis(frame.getThis());
+				
+				final boolean isStatic = frame.isStatic();
+				final boolean isConstructor = frame.isConstructor();
+				final IType receivingType = getReceivingType(frame);
+				
+				// do the evaluation in a different thread
+				Runnable r = new Runnable() {
+					public void run() {
+						try {
+							LocalEvaluationEngine.this.getEvaluationContext().
+								evaluateCodeSnippet(
+								LocalEvaluationEngine.this.getSnippet(),
+								LocalEvaluationEngine.this.getLocalVariableTypeNames(),
+								LocalEvaluationEngine.this.getLocalVariableNames(),
+								LocalEvaluationEngine.this.getLocalVariableModifiers(),
+								receivingType,
+								isStatic,
+								isConstructor,
+								LocalEvaluationEngine.this,
+								null);
+						} catch (JavaModelException e) {
+							LocalEvaluationEngine.this.getResult().setException(e);
+						}
+						LocalEvaluationEngine.this.evaluationComplete();
+					}
+				};
+				
+				Thread t = new Thread(r);
+				t.start();
+			} finally {
+				evaluationEnded();
+				if (isDisposed()) {
+					// if the engine was disposed during an evaluation
+					// do the cleanup now
+					dispose();
+				}
+			}				
 	}
 	
 	/*
@@ -490,45 +511,55 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		IEvaluationListener listener)
 		throws DebugException {
 			checkDisposed();
-			setListener(listener);
-			setResult(new EvaluationResult(this, snippet, thread));
-			checkThread();
-						
-			// no locals			
-			setLocalVariableTypeNames(new String[0]);
-			setLocalVariableNames(new String[0]);
-			setLocalVariableModifiers(new int[0]);
-			
-			setThis(thisContext);
-			
-			final boolean isStatic = false;
-			final boolean isConstructor = false;
-			final IType receivingType = getReceivingType(thisContext);
-			
-			// do the evaluation in a different thread
-			Runnable r = new Runnable() {
-				public void run() {
-					try {
-						LocalEvaluationEngine.this.getEvaluationContext().
-							evaluateCodeSnippet(
-							LocalEvaluationEngine.this.getSnippet(),
-							LocalEvaluationEngine.this.getLocalVariableTypeNames(),
-							LocalEvaluationEngine.this.getLocalVariableNames(),
-							LocalEvaluationEngine.this.getLocalVariableModifiers(),
-							receivingType,
-							isStatic,
-							isConstructor,
-							LocalEvaluationEngine.this,
-							null);
-					} catch (JavaModelException e) {
-						LocalEvaluationEngine.this.getResult().setException(e);
+			try {
+				evaluationStarted();
+				setListener(listener);
+				setResult(new EvaluationResult(this, snippet, thread));
+				checkThread();
+							
+				// no locals			
+				setLocalVariableTypeNames(new String[0]);
+				setLocalVariableNames(new String[0]);
+				setLocalVariableModifiers(new int[0]);
+				
+				setThis(thisContext);
+				
+				final boolean isStatic = false;
+				final boolean isConstructor = false;
+				final IType receivingType = getReceivingType(thisContext);
+				
+				// do the evaluation in a different thread
+				Runnable r = new Runnable() {
+					public void run() {
+						try {
+							LocalEvaluationEngine.this.getEvaluationContext().
+								evaluateCodeSnippet(
+								LocalEvaluationEngine.this.getSnippet(),
+								LocalEvaluationEngine.this.getLocalVariableTypeNames(),
+								LocalEvaluationEngine.this.getLocalVariableNames(),
+								LocalEvaluationEngine.this.getLocalVariableModifiers(),
+								receivingType,
+								isStatic,
+								isConstructor,
+								LocalEvaluationEngine.this,
+								null);
+						} catch (JavaModelException e) {
+							LocalEvaluationEngine.this.getResult().setException(e);
+						}
+						LocalEvaluationEngine.this.evaluationComplete();
 					}
-					LocalEvaluationEngine.this.evaluationComplete();
+				};
+				
+				Thread t = new Thread(r);
+				t.start();
+			} finally {
+				evaluationEnded();
+				if (isDisposed()) {
+					// if the engine was disposed during an evaluation
+					// do the cleanup now
+					dispose();
 				}
-			};
-			
-			Thread t = new Thread(r);
-			t.start();
+			}				
 	}
 	
 	/**
@@ -568,6 +599,12 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * @see IEvaluationEngine#dispose()
 	 */
 	public void dispose() {
+		fDisposed = true;
+		if (isEvaluating()) {
+			// cannot dispose if in an evalutaion, must
+			// wait for evaluation to complete
+			return;
+		}
 		List snippetFiles = getSnippetFiles();
 		Iterator iter = snippetFiles.iterator();
 		while (iter.hasNext()) {
@@ -836,7 +873,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 *  disposed
 	 */
 	protected boolean isDisposed() {
-		return getJavaProject() == null;
+		return fDisposed;
 	}
 	
 	/**
@@ -846,6 +883,28 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	protected void evaluationComplete() {
 		getListener().evaluationComplete(getResult());
 		reset();
+	}
+	
+	/**
+	 * Increments the evaluation counter.
+	 */
+	private void evaluationStarted() {
+		fEvaluationCount++;
+	}
+	
+	/**
+	 * Decrements the evaluation counter.
+	 */
+	private void evaluationEnded() {
+		fEvaluationCount--;
+	}	
+	
+	/**
+	 * Returns whether this engine is currently in the
+	 * midst of an evaluation.
+	 */
+	protected boolean isEvaluating() {
+		return fEvaluationCount > 0;
 	}
 	
 	/**
