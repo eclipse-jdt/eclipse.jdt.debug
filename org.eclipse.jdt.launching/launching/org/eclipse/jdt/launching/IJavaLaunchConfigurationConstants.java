@@ -9,7 +9,9 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  
 /**
  * Constant definitions for Java launch configurations.
- * 
+ * <p>
+ * Constant definitions only; not to be implemented.
+ * </p>
  * @since 2.0
  */
 public interface IJavaLaunchConfigurationConstants {
