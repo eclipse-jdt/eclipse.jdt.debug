@@ -438,4 +438,12 @@ public class ExpressionInputDialog extends Dialog {
     protected String getHeightPreferenceKey() {
         return "EXPRESSION_DIALOG_HEIGHT"; //$NON-NLS-1$
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#close()
+     */
+    public boolean close() {
+        dispose();
+        return super.close();
+    }
 }
