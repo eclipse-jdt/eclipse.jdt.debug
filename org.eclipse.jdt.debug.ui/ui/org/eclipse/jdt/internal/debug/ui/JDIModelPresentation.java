@@ -994,8 +994,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			valueString= getValueText(javaValue);
 		} catch (DebugException exception) {
 		}
-		buff.append("= "); //$NON-NLS-1$
-		buff.append(valueString);
+		//do not put the equal sign for array partitions
+		if (valueString.length() != 0) {
+			buff.append("= "); //$NON-NLS-1$
+			buff.append(valueString);
+		}
 		return buff.toString();
 	}
 	
