@@ -1112,4 +1112,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			fTimer.stop();
 		}
 	}
+	
+	/**
+	 * Returns whether this thread is currently performing
+	 * an evaluation.
+	 * 
+	 * @return whether this thread is currently performing
+	 * 	an evaluation
+	 */
+	protected boolean isPerformingEvaluation() {
+		return fInEvaluation;
+	}
 }

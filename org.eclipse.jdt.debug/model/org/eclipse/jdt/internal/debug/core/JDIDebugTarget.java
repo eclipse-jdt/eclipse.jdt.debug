@@ -34,7 +34,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
@@ -414,14 +413,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	public IProcess getProcess() {
 		return fProcess;
-	}
-
-	/**
-	 * Returns the thread death instance used to terminate threads,
-	 * possibly <code>null</code>.
-	 */
-	public ObjectReference getThreadDeathInstance() {
-		return fThreadDeath;
 	}
 
 	/**
@@ -902,7 +893,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * 
 	 * @see ThreadTerminator
 	 */
-	protected void setThreadDeath(ObjectReference threadDeath) {
+	protected void setThreadDeathInstance(ObjectReference threadDeath) {
 		fThreadDeath = threadDeath;
 	}
 	
@@ -913,7 +904,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * 
 	 * @see ThreadTerminator
 	 */
-	protected ObjectReference getThreadDeath() {
+	protected ObjectReference getThreadDeathInstance() {
 		return fThreadDeath;
 	}
 	
@@ -979,8 +970,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			// NB: This has to be done when the VM is interrupted by an event
 			if (fThreadDeath == null) {
 				JDIThread jt = findThread(threadRef);
-				if (jt != null && jt.fInEvaluation) {
-					// invalid state to perform an evaluation
+				if (jt != null && jt.isPerformingEvaluation()) {
+					// cannot perform nested evaluations
 					return true;
 				}
 				//non NLS
@@ -1015,7 +1006,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 							logError(e);
 							return true;
 						}
-						setThreadDeath(threadDeath);
+						setThreadDeathInstance(threadDeath);
 						deleteRequest();
 					}
 				}
