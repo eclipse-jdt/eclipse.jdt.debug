@@ -117,6 +117,7 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 		 assertTrue("Configuration should exist in project index", existsIn(configs, handle));
 		 
 		 ILaunchConfigurationWorkingCopy softCopy = handle.copy("CopyOf" + handle.getName());
+		 assertNull("Original in copy should be null", softCopy.getOriginal());
 		 ILaunchConfiguration hardCopy = softCopy.doSave();
 
 		 // retrieve attributes
