@@ -25,7 +25,7 @@ public class IllegalConnectorArgumentsException extends Exception {
 	public IllegalConnectorArgumentsException(String arg1, String arg2) {
 		super(arg1);
 		fNames = new ArrayList(1);
-		fNames.add(arg1);
+		fNames.add(arg2);
 	}
 	
 	public List argumentNames() { 
