@@ -165,7 +165,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		try {
 			request= target.getEventRequestManager().createMethodEntryRequest();
 			request.addClassFilter(getTypeName());
-			request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+			request.setSuspendPolicy(getJDISuspendPolicy());
 			int hitCount = getHitCount();
 			if (hitCount > 0) {
 				request.putProperty(HIT_COUNT, new Integer(hitCount));
@@ -196,7 +196,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		try {
 			request= target.getEventRequestManager().createMethodExitRequest();
 			request.addClassFilter(getTypeName());
-			request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+			request.setSuspendPolicy(getJDISuspendPolicy());
 			int hitCount = getHitCount();
 			if (hitCount > 0) {
 				request.putProperty(HIT_COUNT, new Integer(hitCount));

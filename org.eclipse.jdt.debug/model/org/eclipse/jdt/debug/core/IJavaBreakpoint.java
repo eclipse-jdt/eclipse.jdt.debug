@@ -23,6 +23,19 @@ import org.eclipse.jdt.core.IType;
  * Clients are not intended to implement this interface
  */
 public interface IJavaBreakpoint extends IBreakpoint {
+	
+	/**
+	 * Suspend policy constant indicating a breakpoint will
+	 * suspend the target VM when hit.
+	 */
+	public static final int SUSPEND_VM = 1;
+	
+	/**
+	 * Default suspend policy constant indicating a breakpoint will
+	 * suspend only the thread in which it occurred.
+	 */
+	public static final int SUSPEND_THREAD = 2;
+	
 	/**
 	 * Returns whether this breakpoint is installed in at least
 	 * one debug target.
@@ -62,6 +75,29 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * 	thrown accessing this breakpoint's underlying marker
 	 */
 	public void setHitCount(int count) throws CoreException;	
+	
+	/**
+	 * Sets whether all threads in the target VM will be suspended
+	 * when this breakpoint is hit. When <code>SUSPEND_VM</code> the target
+	 * VM is suspended, and when <code>SUSPEND_THREAD</code> only the thread
+	 * in which the breakpoint occurred is suspended.
+	 * 
+	 * @param suspendPolicy one of <code>SUSPEND_VM</code> or
+	 *  <code>SUSPEND_THREAD</code>
+	 * @exception CoreException if a <code>CoreException</code> is
+	 * 	thrown accessing this breakpoint's underlying marker
+	 */
+	public void setSuspendPolicy(int suspendPolicy) throws CoreException;
+	
+	/**
+	 * Returns the suspend policy used by this breakpoint, one of
+	 * <code>SUSPEND_VM</code> or <code>SUSPEND_THREAD</code>.
+	 * 
+	 * @return one of <code>SUSPEND_VM</code> or <code>SUSPEND_THREAD</code>
+	 * @exception CoreException if a <code>CoreException</code> is
+	 * 	thrown accessing this breakpoint's underlying marker
+	 */
+	public int getSuspendPolicy() throws CoreException;	
 
 }
 

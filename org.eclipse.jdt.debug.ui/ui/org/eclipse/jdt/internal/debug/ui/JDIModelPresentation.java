@@ -1089,6 +1089,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			buffer.append(hitCount);
 			buffer.append(']');
 		}		
+		appendSuspendPolicy(breakpoint, buffer);
 		String state= null;
 		boolean c= breakpoint.isCaught();
 		boolean u= breakpoint.isUncaught();
@@ -1139,6 +1140,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				label.append(']');
 			}
 			
+			appendSuspendPolicy(breakpoint,label);
+			
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint mbp = (IJavaMethodBreakpoint)breakpoint;
 				boolean entry = mbp.isEntry();
@@ -1166,6 +1169,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected String getWatchpointText(IJavaWatchpoint watchpoint) throws CoreException {
 		
 		String lineInfo= getLineBreakpointText(watchpoint);
+		StringBuffer buf = new StringBuffer(lineInfo);
+		appendSuspendPolicy(watchpoint, buf);
+		lineInfo = buf.toString();
 
 		String state= null;
 		boolean access= watchpoint.isAccess();
@@ -1414,4 +1420,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			fResultBuffer.append(']');
 		}
 	}	
+	
+	protected void appendSuspendPolicy(IJavaBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
+		if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
+			buffer.append(DebugUIMessages.getString("JDIModelPresentation.Suspend_VM")); //$NON-NLS-1$
+		}
+	}
+	
 }

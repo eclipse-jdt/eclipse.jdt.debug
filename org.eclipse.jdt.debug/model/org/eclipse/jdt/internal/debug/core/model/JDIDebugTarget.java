@@ -275,6 +275,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public void handleVMStart(VMStartEvent event) {
 		if (isResumeOnStartup()) {
 			try {
+				setSuspended(true);
 				resume();
 			} catch (DebugException e) {
 				logError(e);
@@ -1089,15 +1090,36 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			setSuspended(true);
 			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
 			getVM().suspend();
+			suspendThreads();
 		} catch (RuntimeException e) {
 			setSuspended(false);
 			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_suspend"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
+		
+	}
+	
+	/**
+	 * Notifies threads that they have been suspended
+	 */
+	protected void suspendThreads() {
 		Iterator threads = getThreadList().iterator();
 		while (threads.hasNext()) {
 			((JDIThread)threads.next()).suspendedByVM();
 		}
+	}
+	
+	/**
+	 * Notifies this VM it has been suspended by the
+	 * given breakpoint
+	 * 
+	 * @param breakpoint the breakpoint that caused the
+	 *  suspension
+	 */
+	protected void suspendedByBreakpoint(JavaBreakpoint breakpoint) {
+		setSuspended(true);
+		suspendThreads();
+		fireSuspendEvent(DebugEvent.BREAKPOINT);
 	}
 
 	/**

@@ -76,7 +76,7 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 				BreakpointUtils.addJavaBreakpointAttributes(attributes, method);
 				String methodName = method.getElementName();
 				if (method.isConstructor()) {
-					methodName = "<init>";
+					methodName = "<init>"; //$NON-NLS-1$
 				}
 				setBreakpoint(JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(method),method.getDeclaringType().getFullyQualifiedName(), methodName, getMethod().getSignature(), true, false, false, -1, start, end, 0, true, attributes));
 			} catch (CoreException x) {

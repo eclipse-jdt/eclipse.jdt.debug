@@ -160,7 +160,7 @@
 		</action>		
 	</objectContribution>
 	<objectContribution
-		id="org.eclipse.jdt.debug.BreakpointHitCountActions"
+		id="org.eclipse.jdt.debug.JavaBreakpointActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaBreakpoint">
 		<action
 			id="org.eclipse.jdt.ui.actions.BreakpointHitCount"
@@ -169,6 +169,13 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointHitCountAction"
 			enablesFor="1">
 		</action>
+		<action
+			id="org.eclipse.jdt.ui.actions.SuspendPolicy"
+			label="%suspendPolicy.label"
+			menubarPath="emptyBreakpointGroup"
+			class="org.eclipse.jdt.internal.debug.ui.actions.BreakpointThreadToggleAction"
+			enablesFor="1">
+		</action>		
 	</objectContribution>	
 	<objectContribution
 		id="org.eclipse.jdt.debug.ExceptionCaughtToggleActions"

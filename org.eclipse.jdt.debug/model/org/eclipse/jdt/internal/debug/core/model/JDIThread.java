@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -913,8 +914,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	public void handleSuspendForBreakpoint(JavaBreakpoint breakpoint) {
 		abortStep();
 		fCurrentBreakpoint= breakpoint;
-		setRunning(false);
-		fireSuspendEvent(DebugEvent.BREAKPOINT);
+		try {
+			if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
+				((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint);
+			} else {
+				setRunning(false);
+			}
+			fireSuspendEvent(DebugEvent.BREAKPOINT);
+		} catch (CoreException e) {
+			logError(e);
+		}
 	}
 
 	/**

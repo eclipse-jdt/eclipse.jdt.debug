@@ -66,6 +66,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected static final String TYPE_NAME = "org.eclipse.jdt.debug.core.typeName"; //$NON-NLS-1$		
 	
 	/**
+	 * Breakpoint attribute storing suspend policy code for 
+	 * this breakpoint.
+	 * (value <code>"org.eclipse.jdt.debug.core.suspendPolicy</code>).
+	 * This attribute is an <code>int</code> correspoinding
+	 * to <code>IJavaBreakpoint.SUSPEND_VM</code> or
+	 * <code>IJavaBreakpoint.SUSPEND_THREAD</code>.
+	 */
+	protected static final String SUSPEND_POLICY = "org.eclipse.jdt.debug.core.suspendPolicy"; //$NON-NLS-1$			
+	
+	/**
 	 * Stores the collection of requests that this breakpoint has installed in
 	 * debug targets.
 	 * key: a debug target
@@ -302,7 +312,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * the event thread.
 	 */
 	protected void configureRequest(EventRequest request) throws CoreException {
-		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+		request.setSuspendPolicy(getJDISuspendPolicy());
 		request.putProperty(JAVA_BREAKPOINT_PROPERTY, this);								
 		int hitCount= getHitCount();
 		if (hitCount > 0) {
@@ -422,6 +432,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected void updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		updateEnabledState(request);
 		EventRequest newRequest = updateHitCount(request, target);
+		newRequest = updateSuspendPolicy(request, target); 
 		if (newRequest != request) {
 			replaceRequest(target, request, newRequest);
 			request = newRequest;
@@ -433,6 +444,52 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * reflect the current hit count of this breakpoint.
 	 */
 	protected abstract EventRequest updateHitCount(EventRequest request, JDIDebugTarget target) throws CoreException;
+	
+	/**
+	 * Update the given request in the given debug target to
+	 * reflect the current suspend policy of this breakpoint.
+	 */
+	protected EventRequest updateSuspendPolicy(EventRequest request, JDIDebugTarget target) throws CoreException {
+		int breakpointPolicy = getSuspendPolicy();
+		int requestPolicy = request.suspendPolicy();
+		if (requestPolicy == EventRequest.SUSPEND_EVENT_THREAD && breakpointPolicy == IJavaBreakpoint.SUSPEND_THREAD) {
+			return request;
+		}
+		if (requestPolicy == EventRequest.SUSPEND_ALL && breakpointPolicy == IJavaBreakpoint.SUSPEND_VM) {
+			return request;
+		}
+		try {
+			switch (breakpointPolicy) {
+				case IJavaBreakpoint.SUSPEND_THREAD :
+					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+					break;
+				case IJavaBreakpoint.SUSPEND_VM :
+					request.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+					break;					
+			} 
+		} catch (RuntimeException e) {
+			JDIDebugPlugin.logError(e);
+		}
+		
+		return request;
+	}
+	
+	/**
+	 * Returns the JDI suspend policy that corresponds to this
+	 * breakpoint's suspend policy
+	 * 
+	 * @return the JDI suspend policy that corresponds to this
+	 *  breakpoint's suspend policy
+	 * @exception CoreException if unable to access this breakpoint's
+	 *  suspend policy setting
+	 */
+	protected int getJDISuspendPolicy() throws CoreException {
+		int breakpointPolicy = getSuspendPolicy();
+		if (breakpointPolicy == EventRequest.SUSPEND_EVENT_THREAD) {
+			return IJavaBreakpoint.SUSPEND_THREAD;
+		}
+		return IJavaBreakpoint.SUSPEND_VM;
+	}
 	
 	/**
 	 * Returns whether the hitCount of this breakpoint is equal to the hitCount of
@@ -634,5 +691,21 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		ensureMarker().setAttribute(EXPIRED, expired);	
 	}	
 
+	/**
+	 * @see IJavaBreakpoint#getSuspendPolicy()
+	 */
+	public int getSuspendPolicy() throws CoreException {
+		return ensureMarker().getAttribute(SUSPEND_POLICY, IJavaBreakpoint.SUSPEND_THREAD);
+	}
+
+	/**
+	 * @see IJavaBreakpoint#setSuspendPolicy(int)
+	 */
+	public void setSuspendPolicy(int suspendPolicy) throws CoreException {
+		if (getSuspendPolicy() != suspendPolicy) {
+			ensureMarker().setAttribute(SUSPEND_POLICY, suspendPolicy);
+		}
+	}
+	
 }
 
