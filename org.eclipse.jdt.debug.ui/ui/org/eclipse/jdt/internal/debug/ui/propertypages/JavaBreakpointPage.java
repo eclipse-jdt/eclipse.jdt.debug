@@ -109,10 +109,6 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	 */
 	protected void doStore() throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
-		boolean enabled= fEnabledButton.getSelection();
-		if (enabled != breakpoint.isEnabled()) {
-			breakpoint.setEnabled(enabled);
-		}
 		if (fSuspendThreadButton.getSelection()) {
 			breakpoint.setSuspendPolicy(IJavaBreakpoint.SUSPEND_THREAD);
 		} else {
@@ -121,16 +117,22 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 		boolean hitCountEnabled= fHitCountButton.getSelection();
 		int hitCount= -1;
 		String hitCountText= fHitCountText.getText();
-		try {
-			hitCount= Integer.parseInt(hitCountText);
-			if (!hitCountEnabled && breakpoint.getHitCount() > 0) {
-				// Disable hit count
-				breakpoint.setHitCount(-1);
-			} else if (hitCountEnabled && hitCount != breakpoint.getHitCount()) {
-				breakpoint.setHitCount(hitCount);
+		if (hitCountEnabled) {
+			try {
+				hitCount= Integer.parseInt(hitCountText);
+			} catch (NumberFormatException e) {
+				JDIDebugUIPlugin.log(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(PropertyPageMessages.getString("JavaBreakpointPage.2"), new String[] {hitCountText}), e)); //$NON-NLS-1$
 			}
-		} catch (NumberFormatException e) {
-			JDIDebugUIPlugin.log(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(PropertyPageMessages.getString("JavaBreakpointPage.2"), new String[] {hitCountText}), e)); //$NON-NLS-1$
+		}
+		if (!hitCountEnabled && breakpoint.getHitCount() > 0) {
+			// Disable hit count
+			breakpoint.setHitCount(-1);
+		} else if (hitCountEnabled && hitCount != breakpoint.getHitCount()) {
+			breakpoint.setHitCount(hitCount);
+		}
+		boolean enabled= fEnabledButton.getSelection();
+		if (enabled != breakpoint.isEnabled()) {
+			breakpoint.setEnabled(enabled);
 		}
 	}
 
@@ -171,11 +173,11 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	 */
 	private void createSuspendPolicyEditor(Composite parent) throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
-		createLabel(parent, PropertyPageMessages.getString("JavaBreakpointPage.8")); //$NON-NLS-1$
+		createLabel(parent, "Suspend Policy");
 		boolean suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
-		fSuspendThreadButton= createRadioButton(parent, PropertyPageMessages.getString("JavaBreakpointPage.9")); //$NON-NLS-1$
+		fSuspendThreadButton= createRadioButton(parent, "Suspend &Thread");
 		fSuspendThreadButton.setSelection(suspendThread);
-		fSuspendVMButton= createRadioButton(parent, PropertyPageMessages.getString("JavaBreakpointPage.10")); //$NON-NLS-1$
+		fSuspendVMButton= createRadioButton(parent, "Suspend &VM");
 		fSuspendVMButton.setSelection(!suspendThread);
 	}
 
