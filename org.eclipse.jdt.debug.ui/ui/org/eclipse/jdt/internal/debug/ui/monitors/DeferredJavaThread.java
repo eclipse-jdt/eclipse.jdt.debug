@@ -12,8 +12,10 @@ package org.eclipse.jdt.internal.debug.ui.monitors;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.ui.JavaDebugUtils;
 import org.eclipse.ui.progress.IElementCollector;
 
 /**
@@ -26,12 +28,11 @@ public class DeferredJavaThread extends DeferredMonitorElement {
      */
     public Object[] getChildren(Object parent) {
         IJavaThread thread = (IJavaThread) parent;
-        JavaOwnedMonitor[] ownedMonitors = null;
-        JavaContendedMonitor contendedMonitor = null;
+        IDebugElement[] ownedMonitors = null;
+        IDebugElement contendedMonitor = null;
         if (isDisplayMonitors()) {
-			ThreadMonitorManager threadMonitorManager= ThreadMonitorManager.getDefault();
-			ownedMonitors= threadMonitorManager.getOwnedMonitors(thread);
-			contendedMonitor= threadMonitorManager.getContendedMonitor(thread);
+			ownedMonitors= JavaDebugUtils.getOwnedMonitors(thread);
+			contendedMonitor= JavaDebugUtils.getContendedMonitor(thread);
         }
 		try {
             IStackFrame[] frames = thread.getStackFrames();
@@ -65,12 +66,11 @@ public class DeferredJavaThread extends DeferredMonitorElement {
     public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
         IJavaThread thread = (IJavaThread) object;
         if (isDisplayMonitors()) {
-			ThreadMonitorManager threadMonitorManager= ThreadMonitorManager.getDefault();
-			JavaOwnedMonitor[] ownedMonitors= threadMonitorManager.getOwnedMonitors(thread);
+			IDebugElement[] ownedMonitors= JavaDebugUtils.getOwnedMonitors(thread);
 			if (ownedMonitors.length > 0) {
 			    collector.add(ownedMonitors, monitor);
 			}
-			JavaContendedMonitor contendedMonitor= threadMonitorManager.getContendedMonitor(thread);
+			IDebugElement contendedMonitor= JavaDebugUtils.getContendedMonitor(thread);
 			if (contendedMonitor != null) {
 			    collector.add(contendedMonitor, monitor);
 			}
