@@ -152,7 +152,7 @@ public class JavaMonitor {
 								}
 								tmp[i]= threadMonitorManager.getJavaMonitorThread(waitingThreads[i]);
 							}
-							changed= sameThread == waitingThreads.length;
+							changed= sameThread != waitingThreads.length;
 						}
 						fWaitingThreads= tmp;
 					}

@@ -154,7 +154,7 @@ public class JavaMonitorThread {
 				// update the contended monitor
 				IJavaObject contendedMonitor= fThread.getContendedMonitor();
 				if (contendedMonitor == null) {
-					changed= fContendedMonitor == null;
+					changed= fContendedMonitor != null;
 					fContendedMonitor= null;
 				} else {
 					changed= fContendedMonitor == null || !contendedMonitor.equals(fContendedMonitor.getMonitor());
@@ -164,7 +164,7 @@ public class JavaMonitorThread {
 				IJavaObject[] ownedMonitors= fThread.getOwnedMonitors();
 				if (ownedMonitors == null || ownedMonitors.length == 0) {
 					// no owned monitor, not much to do
-					changed= fOwnedMonitors == null || fOwnedMonitors.length != 0;
+					changed= fOwnedMonitors != null && fOwnedMonitors.length != 0;
 					fOwnedMonitors= new JavaMonitor[0];
 				} else {
 					JavaMonitor[] tmp= new JavaMonitor[ownedMonitors.length];
