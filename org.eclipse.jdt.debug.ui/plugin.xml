@@ -32,10 +32,13 @@
 <extension-point name="%vmInstallTypePage" id="vmInstallTypePage"/>
 
 <!-- Extensions -->
-- <extension point="org.eclipse.jdt.ui.javaEditorTextHovers">
-  <hover id="org.eclipse.jdt.internal.debug.ui.JavaDebugHover" 
-  	class="org.eclipse.jdt.internal.debug.ui.JavaDebugHover" /> 
-  </extension>
+
+<extension point="org.eclipse.jdt.ui.javaEditorTextHovers">
+  <hover
+  	id="org.eclipse.jdt.internal.debug.ui.JavaDebugHover" 
+  	class="org.eclipse.jdt.internal.debug.ui.JavaDebugHover"
+  	label = "%javaVariableHover"/> 
+</extension>
 <extension
     point= "org.eclipse.ui.editors"
     id= "org.eclipse.jdt.debug.ui.editors">
