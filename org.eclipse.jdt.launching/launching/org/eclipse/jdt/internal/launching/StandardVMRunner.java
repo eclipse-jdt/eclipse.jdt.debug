@@ -210,8 +210,14 @@ public class StandardVMRunner extends AbstractVMRunner {
 		// options like '-client' & '-server' which are required to be the first option
 		String[] vmArgs= config.getVMArguments();
 		addArguments(vmArgs, arguments);
-				
-		String[] bootCP= config.getBootClassPath();
+		
+		// bootpath
+		String[] prependBootCP= config.getPrependBootClassPath();
+		String[] bootCP= config.getMainBootClassPath();
+		String[] appendBootCP= config.getAppendBootClassPath();
+		if (prependBootCP != null) {
+			arguments.add("-Xbootclasspath/p:" + convertClassPath(prependBootCP)); //$NON-NLS-1$
+		}
 		if (bootCP != null) {
 			if (bootCP.length > 0) {
 				arguments.add("-Xbootclasspath:" + convertClassPath(bootCP)); //$NON-NLS-1$
@@ -219,6 +225,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 				// empty
 				arguments.add("-Xbootclasspath:"); //$NON-NLS-1$	
 			}
+		}
+		if (appendBootCP != null) {
+			arguments.add("-Xbootclasspath/a:" + convertClassPath(appendBootCP)); //$NON-NLS-1$
 		}
 		
 		String[] cp= config.getClassPath();

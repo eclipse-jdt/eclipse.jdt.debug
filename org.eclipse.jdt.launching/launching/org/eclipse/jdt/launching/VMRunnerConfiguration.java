@@ -29,6 +29,9 @@ public class VMRunnerConfiguration {
 	private String[] fProgramArgs;
 	private String[] fEnvironment;
 	private String[] fClassPath;
+	private String[] fPrependBootClassPath;
+	private String[] fMainBootClassPath;
+	private String[] fAppendBootClassPath;
 	private String[] fBootClassPath;
 	private String fWorkingDirectory;
 	private Map fVMSpecificAttributesMap;
@@ -110,6 +113,34 @@ public class VMRunnerConfiguration {
 	}
 	
 	/**
+	 * Set the classpath to prepend to the boot classpath.
+	 * 
+	 * @param prependBootClassPath
+	 */
+	public void setPrependBootClassPath(String[] prependBootClassPath) {
+		fPrependBootClassPath= prependBootClassPath;
+	}
+	
+	/**
+	 * Set the main part of the boot classpath.
+	 * <code>null</code> represent the default boot classpath.
+	 * 
+	 * @param bootClassPath the main part of the boot classpath.
+	 */
+	public void setMainBootClassPath(String[] bootClassPath) {
+		fMainBootClassPath= bootClassPath;
+	}
+	
+	/**
+	 * Set the classpath to append to the boot classpath.
+	 * 
+	 * @param appendBootClassPath
+	 */
+	public void setAppendBootClassPath(String[] appendBootClassPath) {
+		fAppendBootClassPath= appendBootClassPath;
+	}
+	
+	/**
 	 * Sets the boot classpath. Note that the boot classpath will be passed to the 
 	 * VM "as is". This means it has to be complete. Interpretation of the boot class path
 	 * is up to the VM runner this object is passed to.
@@ -151,8 +182,40 @@ public class VMRunnerConfiguration {
 	}
 	
 	/**
-	 * Returns the boot classpath. An emptry array indicates an empty
+	 * Return the classpath to prepend to the boot classpath.
+	 * 
+	 * @return the classpath to prepend to the boot classpath.
+	 */
+	public String[] getPrependBootClassPath() {
+		return fPrependBootClassPath;
+	}
+	
+	/**
+	 * Return the main part of the boot classpath.
+	 * <code>null</code> represents the default boot classpath.
+	 * 
+	 * @return the main part of the boot classpath.
+	 */
+	public String[] getMainBootClassPath() {
+		return fMainBootClassPath;
+	}
+	
+	/**
+	 * Return the classpath to append to the boot classpath.
+	 * 
+	 * @return the classpath to append to the boot classpath.
+	 */
+	public String[] getAppendBootClassPath() {
+		return fAppendBootClassPath;
+	}
+
+	/**
+	 * Returns the boot classpath. An empty array indicates an empty
 	 * bootpath and <code>null</code> indicates a default bootpah.
+	 * 
+	 * #getPrependBootClassPath(), #getMainBootClassPath() and
+	 * #getAppendBootClassPath() should be used instead of this method,
+	 * as they return more accurate information.
 	 *
 	 * @return The boot classpath. An emptry array indicates an empty
 	 *  bootpath and <code>null</code> indicates a default bootpah.

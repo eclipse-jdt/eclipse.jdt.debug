@@ -36,6 +36,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -215,6 +216,74 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		} else {
 			return (String[])bootEntries.toArray(new String[bootEntries.size()]);		
 		}
+	}
+	
+	/**
+	 * Returns three sets of entries which represent the boot classpath specified in the
+	 * launch configuration, as an array of three arrays of resolved strings.
+	 * The first array represents the classpath that should be prepend to the
+	 * boot classpath.
+	 * The second array represents the main part of the boot classpath. <code>null</code>
+	 * represents the default bootclasspath.
+	 * The third array represents the classpath that should be append to the
+	 * boot classpath.
+	 * 
+	 * @param configuration launch configuration
+	 * @return a description of the boot classpath specified by the given launch
+	 *  configuration.
+	 * @exception CoreException if unable to retrieve the attribute
+	 */
+	public String[][] getBootpathExt(ILaunchConfiguration configuration) throws CoreException {
+		String [][] bootpathInfo= new String[3][];
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
+		List bootEntriesPrepend= new ArrayList();
+		int index= 0;
+		boolean jreContainerFound= false;
+		while (!jreContainerFound && index < entries.length) {
+			IRuntimeClasspathEntry entry= entries[index++];
+			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES || entry.getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES) {
+				int entryKind= entry.getClasspathEntry().getEntryKind();
+				String segment0= entry.getPath().segment(0);
+				if (entryKind == IClasspathEntry.CPE_CONTAINER && JavaRuntime.JRE_CONTAINER.equals(segment0)
+						|| entryKind == IClasspathEntry.CPE_VARIABLE && JavaRuntime.JRELIB_VARIABLE.equals(segment0)) {
+					jreContainerFound= true;
+				} else {
+					bootEntriesPrepend.add(entry);
+				}
+			}
+		}
+		IRuntimeClasspathEntry[] bootEntriesPrep= JavaRuntime.resolveRuntimeClasspath((IRuntimeClasspathEntry[])bootEntriesPrepend.toArray(new IRuntimeClasspathEntry[bootEntriesPrepend.size()]), configuration);
+		String[] entriesPrep= null;
+		if (bootEntriesPrep.length > 0) {
+			entriesPrep= new String[bootEntriesPrep.length];
+			for (int i= 0; i < bootEntriesPrep.length; i++) {
+				entriesPrep[i]= bootEntriesPrep[i].getLocation();
+			}
+		}
+		if (jreContainerFound) {
+			List bootEntriesAppend= new ArrayList();
+			for (; index < entries.length; index ++) {
+				IRuntimeClasspathEntry entry= entries[index++];
+				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) {
+						bootEntriesAppend.add(entry);
+				}
+			}
+			bootpathInfo[0]= entriesPrep;
+			IRuntimeClasspathEntry[] bootEntriesApp= JavaRuntime.resolveRuntimeClasspath((IRuntimeClasspathEntry[])bootEntriesAppend.toArray(new IRuntimeClasspathEntry[bootEntriesAppend.size()]), configuration);
+			if (bootEntriesApp.length > 0) {
+				bootpathInfo[2]= new String[bootEntriesApp.length];
+				for (int i= 0; i < bootEntriesApp.length; i++) {
+					bootpathInfo[2][i]= bootEntriesApp[i].getLocation();
+				}
+			}
+		} else {
+			if (entriesPrep == null) {
+				bootpathInfo[1]= new String[0];
+			} else {
+				bootpathInfo[1]= entriesPrep;
+			}
+		}
+		return bootpathInfo;
 	}
 
 	/**

@@ -31,7 +31,12 @@ public class BootpathTests extends AbstractDebugTest {
 		JavaLocalApplicationLaunchConfigurationDelegate delegate = new JavaLocalApplicationLaunchConfigurationDelegate();
 		String[] path = delegate.getBootpath(config);
 		assertNull("Default bootpath should be null", path);
-		
+		String[][] pathInfo= delegate.getBootpathExt(config);
+		assertNotNull("Bootpath info shouldn't be null", pathInfo);
+		assertEquals("Wrong bootpath info array size",3, pathInfo.length);
+		assertNull("Prepend bootpath should be null", pathInfo[0]);
+		assertNull("Main bootpath should be null", pathInfo[1]);
+		assertNull("Append bootpath should be null", pathInfo[2]);
 	}
 	
 	public void testEmptyBootpath() throws Exception {
@@ -44,7 +49,12 @@ public class BootpathTests extends AbstractDebugTest {
 		String[] path = delegate.getBootpath(wc);
 		assertNotNull("Empty bootpath should be empty array", path);
 		assertEquals("bootpath should be empty", 0, path.length);
-		
+		String[][] pathInfo= delegate.getBootpathExt(config);
+		assertNotNull("Bootpath info should'nt be null", pathInfo);
+		assertEquals("Wrong bootpath info array size",3, pathInfo.length);
+		assertNull("Prepend bootpath should be null", pathInfo[0]);
+		assertNull("Main bootpath should be empty array", pathInfo[1]);
+		assertNull("Append bootpath should be null", pathInfo[2]);
 	}
 		
 }

@@ -93,8 +93,12 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
 
 		// Bootpath
-		String[] bootpath = getBootpath(configuration);
-		runConfig.setBootClassPath(bootpath);
+		runConfig.setBootClassPath(getBootpath(configuration));
+		// new bootpath info
+		String[][] bootpathInfo = getBootpathExt(configuration);
+		runConfig.setPrependBootClassPath(bootpathInfo[0]);
+		runConfig.setMainBootClassPath(bootpathInfo[1]);
+		runConfig.setAppendBootClassPath(bootpathInfo[2]);
 		
 		// check for cancellation
 		if (monitor.isCanceled()) {

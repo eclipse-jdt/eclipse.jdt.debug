@@ -126,8 +126,12 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		runConfig.setWorkingDirectory(workingDirName);
 
 		// Bootpath
-		String[] bootpath = getBootpath(configuration);
-		runConfig.setBootClassPath(bootpath);
+		runConfig.setBootClassPath(getBootpath(configuration));
+		// new bootpath info
+		String[][] bootpathInfo = getBootpathExt(configuration);
+		runConfig.setPrependBootClassPath(bootpathInfo[0]);
+		runConfig.setMainBootClassPath(bootpathInfo[1]);
+		runConfig.setAppendBootClassPath(bootpathInfo[2]);
 		
 		// VM-specific attributes
 		Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
