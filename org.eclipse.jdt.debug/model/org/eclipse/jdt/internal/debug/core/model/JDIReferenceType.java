@@ -14,15 +14,12 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaReferenceType;
-import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayType;
@@ -190,7 +187,6 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 				}
 				return type.name();
 			} catch (ClassNotLoadedException e) {
-				System.out.println();
 				// we cannot create the generic name using the component type,
 				// just try to create one with the infos
 			}
