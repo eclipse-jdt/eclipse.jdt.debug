@@ -37,28 +37,32 @@ public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 		if (useDefault) {
 			IJavaProject proj = JavaRuntime.getJavaProject(configuration);
 			if (proj == null) {
-				// no project - use JRE's libraries by default
-				IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
-				LibraryLocation[] libs = JavaRuntime.getLibraryLocations(vm);
-				if (libs == null) {
-					return new IRuntimeClasspathEntry[0];
-				} else {
-					IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[libs.length];
-					for (int i = 0; i < libs.length; i++) {
-						IRuntimeClasspathEntry r = JavaRuntime.newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
-						r.setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
-						r.setSourceAttachmentRootPath(libs[i].getPackageRootPath());
-						r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
-						rtes[i] = r;
-					}
-					return rtes;
-				}				
+				//no project - use JRE's libraries by default
+				return computeJRELibraries(configuration);				
 			} else {
-				return JavaRuntime.computeUnresolvedRuntimeClasspath(proj);						
+				return JavaRuntime.computeUnresolvedRuntimeClasspath(proj);
 			}
 		} else {
 			// recover persisted classpath
 			return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
+		}
+	}
+
+	private IRuntimeClasspathEntry[] computeJRELibraries(ILaunchConfiguration configuration) throws CoreException {
+		IVMInstall vm = JavaRuntime.computeVMInstall(configuration);
+		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(vm);
+		if (libs == null) {
+			return new IRuntimeClasspathEntry[0];
+		} else {
+			IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[libs.length];
+			for (int i = 0; i < libs.length; i++) {
+				IRuntimeClasspathEntry r = JavaRuntime.newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
+				r.setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
+				r.setSourceAttachmentRootPath(libs[i].getPackageRootPath());
+				r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
+				rtes[i] = r;
+			}
+			return rtes;
 		}
 	}
 
