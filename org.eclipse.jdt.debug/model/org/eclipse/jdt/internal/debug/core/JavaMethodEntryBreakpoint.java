@@ -23,7 +23,16 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	 * corresponding to the method in which a breakpoint is contained
 	 * (value <code>"methodHandle"</code>). This attribute is a <code>String</code>.
 	 */
-	private static final String METHOD_HANDLE = "methodHandle"; //$NON-NLS-1$	
+	private static final String METHOD_HANDLE = "methodHandle"; //$NON-NLS-1$
+	/**
+	 * Caches the name and signature of the method in which this breakpoint is installed
+	 * Array entries are:
+	 * <ol>
+	 * <li>String[0] - name</li>
+	 * <li>String[1] - signature</li>
+	 * </ol>
+	 */
+	private String[] fMethodNameSignature= null;
 	
 	public JavaMethodEntryBreakpoint() {
 	}
@@ -86,8 +95,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	}	
 	
 	/**
-	 * A method entry breakpoint has been added.
-     * Create or update the request.
+	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
 		IType type = getType();
@@ -144,34 +152,21 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	}
 	
 	/**
-	 * Sets the <code>METHOD_HANDLE</code> attribute of this breakpoint, associated
-	 * with the given IMethod.
+	 * Sets the method on which this breakpoint is set.
 	 */
-	public void setMethod(IMethod method) throws CoreException {
+	private void setMethod(IMethod method) throws CoreException {
 		String handle = method.getHandleIdentifier();
-		setMethodHandleIdentifier(handle);
+		ensureMarker().setAttribute(METHOD_HANDLE, handle);
 	}
-	
-	
+
 	/**
-	 * Sets the <code>METHOD_HANDLE</code> attribute of this breakpoint.
-	 */
-	public void setMethodHandleIdentifier(String identifier) throws CoreException {
-		ensureMarker().setAttribute(METHOD_HANDLE, identifier);
-	}	
-	
-	/**
-	 * Returns the <code>METHOD_HANDLE</code> attribute of the given breakpoint.
-	 */
-	public String getMethodHandleIdentifier() throws CoreException {
-		return (String) ensureMarker().getAttribute(METHOD_HANDLE);
-	}	
-		
-	
-	/**
-	 * Handles a method entry event. If this method entry event is
-	 * in a method that a method entry breakpoint has been set for,
-	 * dispatch the event to the correct breakpoint.
+	 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
+	 * 
+	 * Method entry events are fired each time any method is invoked in a class
+	 * in which a method entry breakpoint has been installed.
+	 * When a method entry event is received by this breakpoint, ensure that
+	 * the event has been fired by a method invocation that this breakpoint
+	 * is interested in. If it is not, do nothing.
 	 */
 	public boolean handleEvent(Event genericEvent, JDIDebugTarget target) {
 		if (!(genericEvent instanceof MethodEntryEvent)) {
@@ -207,7 +202,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	 * Suspend the given thread in the given target, and returns
 	 * whether the thread should be suspended.
 	 */
-	protected boolean doSuspend(ThreadReference threadRef, JDIDebugTarget target) {
+	private boolean doSuspend(ThreadReference threadRef, JDIDebugTarget target) {
 		JDIThread thread= target.findThread(threadRef);	
 		if (thread == null) {
 			return true;
@@ -217,7 +212,12 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 		}		
 	}
 	
-	protected boolean handleHitCountMethodEntryBreakpoint(MethodEntryEvent event, Integer count, JDIDebugTarget target) {	
+	/**
+	 * Method entry breakpoints simulate hit count.
+	 * When a method entry event is received, decrement the hit count
+	 * property on the request and suspend if the hit count reaches 0.
+	 */
+	private boolean handleHitCountMethodEntryBreakpoint(MethodEntryEvent event, Integer count, JDIDebugTarget target) {	
 	// decrement count and suspend if 0
 		int hitCount = count.intValue();
 		if (hitCount > 0) {
@@ -254,26 +254,33 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	}
 	
 	/**
-	 * @see IJavaLineBreakpoint#getMethod()		
+	 * @see IJavaMethodEntryBreakpoint#getMethod()		
 	 */
 	public IMethod getMethod() throws CoreException {
-		String handle = getMethodHandleIdentifier();
+		String handle = (String) ensureMarker().getAttribute(METHOD_HANDLE);
 		if (handle != null) {
 			return (IMethod)JavaCore.create(handle);
 		}
 		return null;
 	}	
 	
+	/**
+	 * Returns the name and signature of the method in which this
+	 * breakpoint is installed.
+	 * This information is computed once and cached for future queries.
+	 */
 	protected String[] getMethodNameSignature() throws CoreException {
-		String[] nameSignature= new String[2];
-		IMethod aMethod= getMethod(); 
-		if (aMethod.isConstructor()) {
-			nameSignature[0]= "<init>"; //$NON-NLS-1$
-		} else {
-			 nameSignature[0]= aMethod.getElementName();
+		if (fMethodNameSignature == null) {
+			fMethodNameSignature= new String[2];
+			IMethod aMethod= getMethod(); 
+			if (aMethod.isConstructor()) {
+				fMethodNameSignature[0]= "<init>"; //$NON-NLS-1$
+			} else {
+				 fMethodNameSignature[0]= aMethod.getElementName();
+			}
+			fMethodNameSignature[1]= aMethod.getSignature();
 		}
-		nameSignature[1]= aMethod.getSignature();
-		return nameSignature;
+		return fMethodNameSignature;
 	}		
 }
 

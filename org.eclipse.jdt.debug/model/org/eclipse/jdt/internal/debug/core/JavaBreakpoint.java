@@ -129,7 +129,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			return;
 		}
 		List reqs = getRequests(target);
-		if (reqs == null) {
+		if (reqs.isEmpty()) {
 			reqs = new ArrayList(1);
 			fRequestsByTarget.put(target, reqs);
 		}
@@ -285,7 +285,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected void changeForTarget(JDIDebugTarget target) throws CoreException {
 		List requests = getRequests(target);
-		if (requests != null) {
+		if (!requests.isEmpty()) {
 			Iterator iter = requests.iterator();
 			while (iter.hasNext()) {
 				EventRequest req = (EventRequest)iter.next();
@@ -496,14 +496,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Add this breakpoint to the breakpoint manager
 	 */
 	protected void addToBreakpointManager() throws DebugException {
-		getBreakpointManager().addBreakpoint(this);
-	}
-
-	/**
-	 * Returns the breakpoint manager
-	 */
-	protected IBreakpointManager getBreakpointManager() {
-		return DebugPlugin.getDefault().getBreakpointManager();
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(this);
 	}
 
 	/**
@@ -527,7 +520,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}	
 	
 	/**
-	 * Sets the <code>EXPIRED</code> attribute of the given breakpoint.
+	 * Sets whether or not this breakpoint's hit count has expired.
 	 */
 	public void setExpired(boolean expired) throws CoreException {
 		ensureMarker().setAttribute(EXPIRED, expired);	
