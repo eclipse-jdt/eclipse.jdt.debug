@@ -168,9 +168,6 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 				ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, type.getElementName() + " [" + type.getJavaProject().getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
-				IVMInstall vm = JavaRuntime.computeVMInstall(wc);
-				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vm.getVMInstallType().getId());
-				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vm.getId());
 				wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 				wc.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
 				config = wc.doSave();

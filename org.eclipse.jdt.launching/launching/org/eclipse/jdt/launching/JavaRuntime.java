@@ -665,25 +665,28 @@ public final class JavaRuntime {
 				}
 			}
 		} else {
-			String id = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, (String)null);
-			if (id == null) {
-				// error - type specified without a specific install
-				abort(LaunchingMessages.getString("JavaRuntime.VM_install_ID_not_specified_1"), null); //$NON-NLS-1$
+			IVMInstallType vt = getVMInstallType(type);
+			if (vt == null) {
+				// error type does not exist
+				abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_type_does_not_exist__{0}_2"), new String[] {type}), null); //$NON-NLS-1$
+			}
+			IVMInstall[] vms = vt.getVMInstalls();
+				// look for a name
+			String name = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
+			if (name == null) {
+				// error - type specified without a specific install (could be an old config that specified a VM ID)
+				// log the error, but choose the default VM.
+				IStatus status = new Status(IStatus.WARNING, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL, MessageFormat.format(LaunchingMessages.getString("JavaRuntime.VM_not_fully_specified_in_launch_configuration_{0}_-_missing_VM_name._Reverting_to_default_VM._1"), new String[] {configuration.getName()}), null); //$NON-NLS-1$
+				LaunchingPlugin.log(status);
+				return getDefaultVMInstall();
 			} else {
-				IVMInstallType vt = getVMInstallType(type);
-				if (vt == null) {
-					// error type does not exist
-					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_type_does_not_exist__{0}_2"), new String[] {type}), null); //$NON-NLS-1$
-				} else {
-					IVMInstall[] vms = vt.getVMInstalls();
-					for (int i = 0; i < vms.length; i++) {
-						if (id.equals(vms[i].getId())) {
-							return vms[i];
-						}
+				for (int i = 0; i < vms.length; i++) {
+					if (name.equals(vms[i].getName())) {
+						return vms[i];
 					}
-					// error - install not found
-					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_not_found__type_{0},_id_{1}_3"), new String[] {type, id}), null); //$NON-NLS-1$
 				}
+			// error - install not found
+			abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_not_found__type_{0},_name_{1}_2"), new String[] {type, name}), null);					 //$NON-NLS-1$
 			}
 		}
 		

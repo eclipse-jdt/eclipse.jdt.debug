@@ -81,18 +81,18 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	}
 
 	/**
-	 * Returns the VM install identifier specified by
+	 * Returns the VM install name specified by
 	 * the given launch configuration, or <code>null</code> if none.
 	 * 
 	 * @param configuration launch configuration
-	 * @return the VM install identifier specified by the given 
+	 * @return the VM install name specified by the given 
 	 *  launch configuration, or <code>null</code> if none
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
-	protected String getVMInstallId(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, (String)null);
+	protected String getVMInstallName(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 	}
-
+	
 	/**
 	 * Returns the VM install type specified by
 	 * the given launch configuration, or <code>null</code> if none.

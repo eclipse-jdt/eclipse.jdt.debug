@@ -155,14 +155,14 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		int selectedIndex = fJRECombo.getSelectionIndex();
 		if (selectedIndex > -1) {
-			String vmID = null;
+			String vmName = null;
 			String vmTypeID = null;
 			if (selectedIndex > 0) {
 				VMStandin vmStandin = (VMStandin)fVMStandins.get(selectedIndex - 1);
-				vmID = vmStandin.getId();
+				vmName = vmStandin.getName();
 				vmTypeID = vmStandin.getVMInstallType().getId();
 			} 
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vmID);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
 		}	
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
@@ -241,17 +241,19 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		}
 		fVMStandins.add(vm);
 		populateJREComboBox();
-		selectJREComboBoxEntry(vm.getId());
+		selectJREComboBoxEntry(vm.getVMInstallType().getId(), vm.getName());
 	}
 
 	protected void updateJREFromConfig(ILaunchConfiguration config) {
-		String vmID = null;
+		String vmName = null;
+		String vmTypeID = null;
 		try {
-			vmID = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, EMPTY_STRING);
+			vmTypeID = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+			vmName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);			
 		}
-		selectJREComboBoxEntry(vmID);
+		selectJREComboBoxEntry(vmTypeID, vmName);
 	}	
 	
 	/**
@@ -303,16 +305,19 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	}	
 	
 	/**
-	 * Cause the VM with the specified ID to be selected in the JRE combo box.
+	 * Cause the specified VM to be selected in the JRE combo box.
 	 * This relies on the fact that the JRE names in the combo box are in the
 	 * same order as they are in the <code>fVMStandins</code> list.
+	 * 
+	 * @param typeID the VM install type identifier, or <code>null</code> to select "default"
+	 * @param vmName vm name, or <code>null</code> to select "default"
 	 */
-	protected void selectJREComboBoxEntry(String vmID) {
+	protected void selectJREComboBoxEntry(String typeID, String vmName) {
 		int index = 0;
-		if (vmID != null) {
+		if (typeID != null && vmName != null) {
 			for (int i = 0; i < fVMStandins.size(); i++) {
 				VMStandin vmStandin = (VMStandin)fVMStandins.get(i);
-				if (vmStandin.getId().equals(vmID)) {
+				if (vmStandin.getVMInstallType().getId().equals(typeID) && vmStandin.getName().equals(vmName)) {
 					index = i + 1;
 					break;
 				}

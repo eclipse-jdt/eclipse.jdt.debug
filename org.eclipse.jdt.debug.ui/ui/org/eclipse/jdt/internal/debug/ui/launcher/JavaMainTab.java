@@ -346,7 +346,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		IJavaElement javaElement = getContext();
-		initializeHardCodedDefaults(config);
 		if (javaElement != null) {
 			initializeJavaProject(javaElement, config);
 		} else {
@@ -396,27 +395,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 			name = getLaunchConfigurationDialog().generateName(name);
 			config.rename(name);
 		}
-	}
-
-	/**
-	 * Set the VM attributes on the working copy based on the workbench default VM.
-	 */
-	protected void initializeDefaultVM(ILaunchConfigurationWorkingCopy config) {
-		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
-		if (vmInstall == null) {
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, (String)null);
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-		} else {
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vmInstall.getId());
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmInstall.getVMInstallType().getId());
-		}
-	}
-
-	/**
-	 * Initialize those attributes whose default values are independent of any context.
-	 */
-	protected void initializeHardCodedDefaults(ILaunchConfigurationWorkingCopy config) {
-		initializeDefaultVM(config);
 	}
 
 	/**

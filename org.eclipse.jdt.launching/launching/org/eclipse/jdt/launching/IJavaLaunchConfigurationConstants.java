@@ -74,9 +74,18 @@ public interface IJavaLaunchConfigurationConstants {
 	 * VM install launch configuration attribute name.
 	 * The <code>id</code> of an <code>IVMInstall</code>
 	 * identifying a VM to use for a launch.
+	 * 
+	 * @deprecated use <code>ATTR_VM_INSTALL_NAME</code>
 	 */
 	public static final String ATTR_VM_INSTALL = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_ID"; //$NON-NLS-1$
-	
+
+	/**
+	 * VM install launch configuration attribute name.
+	 * The name of an <code>IVMInstall</code>
+	 * identifying a VM to use for a launch.
+	 */
+	public static final String ATTR_VM_INSTALL_NAME = LaunchingPlugin.getUniqueIdentifier() + ".VM_INSTALL_NAME"; //$NON-NLS-1$
+		
 	/**
 	 * VM install type launch configuration attribute name.
 	 * The <code>id</code> of an <code>IVMInstallType</code>

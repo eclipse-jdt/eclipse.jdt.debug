@@ -361,7 +361,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			try {
 				tab = (ILaunchConfigurationTab) configElement.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch(CoreException ce) {			 
-				log(new Status(Status.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "An error occurred retrieving a VMInstallType page", ce));
+				log(new Status(Status.ERROR, getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.getString("JDIDebugUIPlugin.An_error_occurred_retrieving_a_VMInstallType_page_1"), ce)); //$NON-NLS-1$
 			} 
 		}
 		return tab;
