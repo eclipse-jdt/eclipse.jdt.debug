@@ -17,7 +17,6 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IActionDelegate;
 
 
 /**
@@ -25,8 +24,8 @@ import org.eclipse.ui.IActionDelegate;
  */
 public class MonitorQuitAction extends MonitorAction {
 	
-	/**
-	 * @see IActionDelegate#run(IAction)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {	
 		IJavaDebugTarget target= getDebugTarget();
