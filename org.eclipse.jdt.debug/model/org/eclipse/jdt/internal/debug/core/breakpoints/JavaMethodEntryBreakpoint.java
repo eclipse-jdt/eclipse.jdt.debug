@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  */
 
 import java.util.Map;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;

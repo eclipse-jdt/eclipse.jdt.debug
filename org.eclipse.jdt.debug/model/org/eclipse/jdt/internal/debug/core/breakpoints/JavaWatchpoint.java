@@ -6,8 +6,8 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  */
  
 import java.util.HashMap;
-
 import java.util.Map;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +19,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.Field;

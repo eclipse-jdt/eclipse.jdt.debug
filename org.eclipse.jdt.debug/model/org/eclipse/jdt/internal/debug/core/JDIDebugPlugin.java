@@ -17,7 +17,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager;
-import org.eclipse.jdt.internal.debug.core.model.*;
+import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 /**
  * The plugin class for the JDI Debug Model plug-in.
