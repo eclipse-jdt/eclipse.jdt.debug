@@ -16,7 +16,7 @@ import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +36,12 @@ public class ValueCache {
 	 * Map to store <key, Reference> pairs,
 	 * where Reference is a soft reference to an Object.
 	 */
-	private Map cacheTable = new HashMap();
+	private Map cacheTable = new Hashtable();
 	/**
 	 * Map to store <Reference, key> pairs,
 	 * to find the cacheTable-key of a garbage collected Reference.
 	 */
-	private Map refTable = new HashMap();
+	private Map refTable = new Hashtable();
 	
 	/**
 	 * The reference-queue that is registered with the soft references.
