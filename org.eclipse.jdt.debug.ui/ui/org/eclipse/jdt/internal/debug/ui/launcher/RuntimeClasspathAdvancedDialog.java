@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.PixelConverter;
+import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.ClasspathContainerDescriptor;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.ClasspathContainerWizard;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -80,10 +81,11 @@ public class RuntimeClasspathAdvancedDialog extends TitleAreaDialog {
 		
 		fButtons = new Button[fActions.length];
 		for (int i = 0; i < fActions.length; i++) {
+			IAction action= fActions[i];
 			fButtons[i] = new Button(inner, SWT.RADIO);
-			fButtons[i].setText(fActions[i].getText());
-			fButtons[i].setData(fActions[i]);
-			fButtons[i].setEnabled(fActions[i].isEnabled());
+			fButtons[i].setText(action.getText());
+			fButtons[i].setData(action);
+			fButtons[i].setEnabled(action.isEnabled());
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			fButtons[i].setLayoutData(gd);
@@ -130,6 +132,9 @@ public class RuntimeClasspathAdvancedDialog extends TitleAreaDialog {
 			for (int i = 0; i < fButtons.length; i++) {
 				if (fButtons[i].getSelection()) {
 					IAction action = (IAction)fButtons[i].getData();
+					if (action instanceof RuntimeClasspathAction) {
+						((RuntimeClasspathAction)action).setShell(getShell());
+					}
 					action.run();
 					break;
 				}
@@ -160,5 +165,4 @@ public class RuntimeClasspathAdvancedDialog extends TitleAreaDialog {
 		}			
 		return null;
 	}	
-
 }

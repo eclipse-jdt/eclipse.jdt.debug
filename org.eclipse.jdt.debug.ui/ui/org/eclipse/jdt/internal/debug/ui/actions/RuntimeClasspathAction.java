@@ -25,6 +25,7 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	
 	private RuntimeClasspathViewer fViewer;
 	private Button fButton;
+	private Shell fShell;
 	
 	public RuntimeClasspathAction(String label, RuntimeClasspathViewer viewer) {
 		super(label);
@@ -144,9 +145,19 @@ public abstract class RuntimeClasspathAction extends SelectionListenerAction {
 	}
 	
 	/**
-	 * Returns the shell associated with the viewer
+	 * Returns the shell used to realize this action's dialog (if any).
 	 */
 	protected Shell getShell() {
-		return getViewer().getControl().getShell();
+		if (fShell == null) {
+			fShell= getViewer().getControl().getShell();
+		} 
+		return fShell;
+	}
+	
+	/**
+	 * Sets the shell used to realize this action's dialog (if any).
+	 */
+	public void setShell(Shell shell) {
+		fShell= shell;
 	}
 }
