@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
@@ -74,8 +76,14 @@ public class ExpressionInputDialog extends Dialog {
 
     protected Control createDialogArea(Composite parent) {
         Composite composite= (Composite) super.createDialogArea(parent);
+        String name= ActionMessages.getString("ExpressionInputDialog.3"); //$NON-NLS-1$
+        try {
+            name= fVariable.getName();
+        } catch (DebugException e) {
+            DebugUIPlugin.log(e);
+        }
         Label label= new Label(composite, SWT.WRAP);
-        label.setText(ActionMessages.getString("ExpressionInputDialog.0")); //$NON-NLS-1$
+        label.setText(MessageFormat.format(ActionMessages.getString("ExpressionInputDialog.0"), new String[] {name})); //$NON-NLS-1$
         GridData data = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.VERTICAL_ALIGN_CENTER);
