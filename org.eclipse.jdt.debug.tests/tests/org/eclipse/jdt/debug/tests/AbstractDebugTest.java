@@ -219,14 +219,17 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.TERMINATE, IJavaDebugTarget.class);
 		waiter.setTimeout(timeout);
 		
-		config.launch(ILaunchManager.DEBUG_MODE, null);
+		ILaunch launch = config.launch(ILaunchManager.DEBUG_MODE, null);
 
-		Object terminatee= waiter.waitForEvent();
-		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not terminate.", terminatee);
-		assertTrue("terminatee is not an IJavaDebugTarget", terminatee instanceof IJavaDebugTarget);
-		IJavaDebugTarget debugTarget = (IJavaDebugTarget) terminatee;
-		assertTrue("debug target is not terminated", debugTarget.isTerminated() || debugTarget.isDisconnected());
+		IJavaDebugTarget debugTarget = (IJavaDebugTarget)launch.getDebugTarget();
+		if (debugTarget == null || !(debugTarget.isTerminated() || debugTarget.isDisconnected())) {
+			Object terminatee= waiter.waitForEvent();
+			setEventSet(waiter.getEventSet());
+			assertNotNull("Program did not terminate.", terminatee);
+			assertTrue("terminatee is not an IJavaDebugTarget", terminatee instanceof IJavaDebugTarget);
+			debugTarget = (IJavaDebugTarget) terminatee;
+			assertTrue("debug target is not terminated", debugTarget.isTerminated() || debugTarget.isDisconnected());
+		}
 		return debugTarget;		
 	}
 	
