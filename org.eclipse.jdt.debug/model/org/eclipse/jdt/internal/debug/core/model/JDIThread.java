@@ -366,28 +366,25 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				} 
 				List frames= getUnderlyingFrames();
 				// compute new or removed stack frames
-				int offset= 0, length= frames.size();
+				int length= frames.size();
 				if (length > fStackFrames.size()) {
-					// compute new frames
-					offset= length - fStackFrames.size();
-					for (int i= offset - 1; i >= 0; i--) {
-						JDIStackFrame newStackFrame= new JDIStackFrame(this, (StackFrame) frames.get(i));
-						fStackFrames.add(0, newStackFrame);
+					// add new (empty) frames at the end to preserve frames top-down
+					int num = length - fStackFrames.size();
+					for (int i= 0; i < num; i++) {
+						JDIStackFrame newStackFrame= new JDIStackFrame(this, null);
+						fStackFrames.add(newStackFrame);
 					}
-					length= fStackFrames.size() - offset;
 				} else if (length < fStackFrames.size()) {
-					// compute removed children
+					// remove frames from the end to preserve frames top-down
 					int removed= fStackFrames.size() - length;
 					for (int i= 0; i < removed; i++) {
-						fStackFrames.remove(0);
+						fStackFrames.remove(fStackFrames.size() - 1);
 					}
 				} else if (length == 0) {
 					fStackFrames = Collections.EMPTY_LIST;
 				}
 				// update preserved frames
-				if (offset < fStackFrames.size()) {
-					updateStackFrames(frames, offset, length);
-				}
+				updateStackFrames(frames, 0, length);
 			}
 			fRefreshChildren = false;
 		} else {
