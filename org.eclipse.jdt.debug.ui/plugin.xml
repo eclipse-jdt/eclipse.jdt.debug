@@ -545,7 +545,7 @@
 		</action>		
          <action
                label="%addWatchExpressionAction.label"
-               icon="icons/full/elcl16/final_co.gif"
+               icon="icons/full/ctool16/expression_obj.gif"
                helpContextId="add_watch_expression_context"
                tooltip="%addWatchExpressionAction.tooltip"
                menubarPath="additions"
