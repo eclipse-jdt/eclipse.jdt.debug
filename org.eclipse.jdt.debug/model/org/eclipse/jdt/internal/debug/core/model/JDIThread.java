@@ -363,8 +363,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				} else {
 					underlyingFramesIndex = numUnderlyingFrames - numModelFrames;
 				}
-				
-				boolean framesChanged= false;
+
 				StackFrame underlyingFrame= null;
 				JDIStackFrame modelFrame= null;
 				for ( ; modelFramesIndex < numModelFrames; modelFramesIndex++, underlyingFramesIndex++) {
@@ -373,11 +372,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					if (!equalFrame(underlyingFrame, modelFrame.getLastUnderlyingStackFrame())) {
 						modelFrame.clearCachedData();
 						modelFrame.setUnderlyingStackFrame(underlyingFrame);
-						framesChanged= true;
 					}
-				}
-				if (framesChanged) {
-					fireChangeEvent();
 				}
 				// compute new or removed stack frames
 				int offset= 0, length= frames.size();
