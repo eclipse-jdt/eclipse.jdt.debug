@@ -484,14 +484,13 @@
 		</action> 
      </viewerContribution>
      <objectContribution 
-     	id="org.eclipse.jdt.debug.ui.CFMethodEntryBreakpointActions"
+     	id="org.eclipse.jdt.debug.ui.MethodEntryBreakpointActions"
      	objectClass="org.eclipse.jdt.core.IMethod">
 		<action id="org.eclipse.jdt.debug.ui.MethodEntryBreakpoint"
 		 	label="%manageMethodEntryBreakpointAction.label"
 		 	menubarPath="additions" 
 		 	class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodEntryBreakpointAction"
 		 	enablesFor="1">
-		  <filter name="isBinary" value="true" /> 
 	  </action>
   	</objectContribution>
 	<objectContribution 
