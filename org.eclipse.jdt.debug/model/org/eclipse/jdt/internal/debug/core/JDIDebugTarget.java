@@ -100,6 +100,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Whether terminated
 	 */
 	private boolean fTerminated;
+	
+	/**
+	 * Whether in the process of terminating
+	 */
+	private boolean fTerminating;
 	/**
 	 * Whether disconnected
 	 */
@@ -126,9 +131,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	private String fName;
 	
 	/**
-	 * A cache of evaluation contexts keyed by java projects. When 
-	 * an evaluation is performed, a reuseable evaluation context
-	 * is cached for the associated java project. Contexts are discarded
+	 * A cache of evaluation contexts keyed by Java projects. When 
+	 * an evaluation is performed, a reusable evaluation context
+	 * is cached for the associated Java project. Contexts are discarded
 	 * when this VM terminates.
 	 */
 	private HashMap fEvaluationContexts;
@@ -144,6 +149,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * own thread.
 	 */
 	private EventDispatcher fEventDispatcher= null;
+	
+	/**
+	 * The thread start event handler
+	 */
+	private ThreadStartHandler fThreadStartHandler= null;
 	 
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
@@ -155,7 +165,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 *  is supported by this debug target
 	 * @param supportsDisconnect whether the disconnect action is
 	 * 	supported by this debug target
-	 * @param process the system process assocated with the
+	 * @param process the system process associated with the
 	 * 	underlying VM, or <code>null</code> if no system process
 	 *  is available (for example, a remote VM)
 	 */
@@ -168,6 +178,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		getVM().setDebugTraceMode(VirtualMachine.TRACE_NONE);
 		setProcess(process);
 		setTerminated(false);
+		setTerminating(false);
 		setDisconnected(false);
 		setName(name);
 		setBreakpoints(new ArrayList(5));
@@ -260,7 +271,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 	 
 	/**
-	 * Initialize event requests and state from the underying VM.
+	 * Initialize event requests and state from the underlying VM.
 	 * This method is synchronized to ensure that we do not start
 	 * to process an events from the target until our state is
 	 * initialized.
@@ -302,8 +313,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @see ThreadTerminator 
 	 */
 	protected void initializeRequests() {
-		new ThreadStartHandler();
-		new ThreadDeathtHandler();		
+		setThreadStartHandler(new ThreadStartHandler());
+		new ThreadDeathHandler();		
 		new ThreadTerminator();
 	}
 
@@ -326,12 +337,17 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Creates, adds and returns a thread for the given
 	 * underlying thread reference. A creation event
 	 * is fired for the thread.
+	 * Returns <code>null</code> if during the creation of the thread this target
+	 * is set to the disconnected state.
 	 * 
 	 * @param thread underlying thread
 	 * @return model thread
 	 */
 	protected JDIThread createThread(ThreadReference thread) {
 		JDIThread jdiThread= new JDIThread(this, thread);
+		if (isDisconnected()) {
+			return null;
+		}
 		getThreadList().add(jdiThread);
 		jdiThread.fireCreationEvent();
 		return jdiThread;
@@ -390,7 +406,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 	
 	/**
-	 * Sets whether this debug target supports diconnection.
+	 * Sets whether this debug target supports disconnection.
 	 * Set on creation.
 	 * 
 	 * @param supported <code>true</code> if this target supports
@@ -464,6 +480,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 
 		try {
+			getThreadStartHandler().deleteRequest();
 			getVM().dispose();
 		} catch (VMDisconnectedException e) {
 			// if the VM disconnects while disconnecting, perform
@@ -690,7 +707,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * retrieved lazily from the underlying VM.
 	 * 
 	 * @param name the name of this VM or <code>null</code>
-	 * 	if the name should be retreived from the underlying VM
+	 * 	if the name should be retrieved from the underlying VM
 	 */
 	protected void setName(String name) {
 		fName = name;
@@ -748,7 +765,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @param event disconnect event
 	 */
 	protected void handleVMDisconnect(VMDisconnectEvent event) {
-		disconnected();
+		if (isTerminating()) {
+			terminated();
+		} else {
+			disconnected();
+		}
 	}
 	
 	/**
@@ -826,7 +847,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 
 	/**
-	 * Notifiation a breakpoint has been added to the
+	 * Notification a breakpoint has been added to the
 	 * breakpoint manager. If the breakpoint is a Java
 	 * breakpoint and this target is not terminated,
 	 * the breakpoint is installed.
@@ -914,9 +935,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_termination")); //$NON-NLS-1$
 		}
 		try {
+			setTerminating(true);
+			getThreadStartHandler().deleteRequest();
 			getVM().exit(1);
 		} catch (VMDisconnectedException e) {
-			// if the VM diconnects while exiting, perform 
+			// if the VM disconnects while exiting, perform 
 			// normal termination processing
 			terminated();
 		} catch (RuntimeException e) {
@@ -926,9 +949,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 
 	/**
 	 * Updates the state of this target to be terminated,
-	 * if not already termianted.
+	 * if not already terminated.
 	 */
 	protected void terminated() {
+		setTerminating(false);
 		if (!isTerminated()) {
 			setTerminated(true);
 			setDisconnected(true);
@@ -945,7 +969,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (!isDisconnected()) {
 			setDisconnected(true);
 			cleanup();
-			fireChangeEvent();
+			fireTerminateEvent();
 		}
 	}
 
@@ -1140,7 +1164,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Returns an evaluation context for the given Java project, creating
 	 * one if not yet created.
 	 * 
-	 * @param project the java project for which a context is required
+	 * @param project the Java project for which a context is required
 	 * @return an evaluation context
 	 */
 	protected IEvaluationContext getEvaluationContext(IJavaProject project) {
@@ -1218,7 +1242,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving class for name {1}", new String[]{e.toString(), name}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
-			// #targetRequestFailed will will throw an exception
+			// #targetRequestFailed will throw an exception
 			return null;
 		}
 	}
@@ -1331,8 +1355,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		return fThreadDeath;
 	}
 	
+	protected boolean isTerminating() {
+		return fTerminating;
+	}
+
+	protected void setTerminating(boolean terminating) {
+		fTerminating = terminating;
+	}
+	
 	/**
-	 * A jdi debug target creates a thread terminator on initialization.
+	 * A JDI debug target creates a thread terminator on initialization.
 	 * A thread terminator listens to all class loads, and when a class
 	 * is loaded, it attempts to create an instance of <code>java.lang.ThreadDeath</code>,
 	 * in the thread in which the class load occurred. The instance of
@@ -1368,7 +1400,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		protected ClassPrepareRequest fClassPrepareReq;
 		
 		/**
-		 * Constructs a new thread terminator which attemps to create
+		 * Constructs a new thread terminator which attempts to create
 		 * an instance of <code>java.lang.ThreadDeath</code> for its
 		 * debug target.
 		 */
@@ -1510,6 +1542,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 */
 	class ThreadStartHandler implements IJDIEventListener {
 		
+		protected EventRequest fRequest;
+		
 		protected ThreadStartHandler() {
 			createRequest();
 		} 
@@ -1524,13 +1558,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
 				req.enable();
 				addJDIEventListener(this, req);
+				setRequest(req);
 			} catch (RuntimeException e) {
 				logError(e);
 			}
 		}
 
 		/**
-		 * Creates a model thread for the underlying jdi thread
+		 * Creates a model thread for the underlying JDI thread
 		 * and adds it to the collection of threads for this 
 		 * debug target. As a side effect of creating the thread,
 		 * a create event is fired for the model thread.
@@ -1544,20 +1579,41 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			JDIThread jdiThread= findThread(thread);
 			if (jdiThread == null) {
 				jdiThread = createThread(thread);
+				if (jdiThread == null) {
+					return false;
+				}
 			}	
 			jdiThread.setRunning(true);
 			return true;
 		}
-	}
+		
+		/**
+		 * Deregisters this event listener.
+		 */
+		protected void deleteRequest() {
+			if (getRequest() != null) {
+				removeJDIEventListener(this, getRequest());
+				setRequest(null);
+			}
+		}
+		
+		protected EventRequest getRequest() {
+			return fRequest;
+		}
+
+		protected void setRequest(EventRequest request) {
+			fRequest = request;
+		}
+}
 	
 	/**
 	 * An event handler for thread death events. When a thread
 	 * dies in the target VM, its associated model thread is
 	 * removed from the debug target.
 	 */
-	class ThreadDeathtHandler implements IJDIEventListener {
+	class ThreadDeathHandler implements IJDIEventListener {
 		
-		protected ThreadDeathtHandler() {
+		protected ThreadDeathHandler() {
 			createRequest();
 		}
 		
@@ -1577,7 +1633,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 				
 		/**
-		 * Locates the model thread associated with the underlying jdi thread
+		 * Locates the model thread associated with the underlying JDI thread
 		 * that has terminated, and removes it from the collection of
 		 * threads belonging to this debug target. A terminate event is
 		 * fired for the model thread.
@@ -1595,6 +1651,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			}
 			return true;
 		}
+	}
+	
+	protected ThreadStartHandler getThreadStartHandler() {
+		return fThreadStartHandler;
+	}
+
+	protected void setThreadStartHandler(ThreadStartHandler threadStartHandler) {
+		fThreadStartHandler = threadStartHandler;
 	}
 }
 
