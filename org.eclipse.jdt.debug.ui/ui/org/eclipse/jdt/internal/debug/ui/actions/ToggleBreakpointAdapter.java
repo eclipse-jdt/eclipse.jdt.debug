@@ -648,7 +648,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	protected CompilationUnit parseCompilationUnit(ITextEditor editor) {
 		IEditorInput editorInput = editor.getEditorInput();
 		IDocument document= editor.getDocumentProvider().getDocument(editorInput);
-		ASTParser parser = ASTParser.newParser(AST.JLS2);
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(document.get().toCharArray());
 		return (CompilationUnit) parser.createAST(null);
 	}

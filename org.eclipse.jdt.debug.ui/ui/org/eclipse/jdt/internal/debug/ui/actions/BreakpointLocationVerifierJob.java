@@ -112,13 +112,7 @@ public class BreakpointLocationVerifierJob extends Job {
 		if (javaElement != null) {
 			project= javaElement.getJavaProject();
 		}
-		int apiLevel;
-		if (project != null && "1.5".equals(project.getOptions(true).get(JavaCore.COMPILER_COMPLIANCE))) { //$NON-NLS-1$
-			apiLevel= AST.JLS3;
-		} else {
-			apiLevel= AST.JLS2;
-		}
-		ASTParser parser = ASTParser.newParser(apiLevel);
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(fDocument.get().toCharArray());
 		boolean resolveBindings= project != null;
 		if (resolveBindings) {

@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.Flags;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
@@ -115,8 +114,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	private String[] fLocalVariableTypeNames;
 	private String[] fLocalVariableNames;
 	private String fCodeSnippet;
-	
-	private boolean fIsJLS3;
 		
 	private boolean fRightTypeFound;
 	
@@ -156,7 +153,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		fLocalVariableNames= localVariables;
 		fCodeSnippet= codeSnippet;
 		fCreateInAStaticMethod= createInAStaticMethod;
-		fIsJLS3= unit.getAST().apiLevel() == AST.JLS3;
 	}
 	
 	/**
@@ -429,7 +425,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		boolean isConstructor= methodDeclaration.isConstructor();
 		
 		if (!isConstructor) {
-			source.append(getDotName(getTypeName(fIsJLS3 ? methodDeclaration.getReturnType2() : methodDeclaration.getReturnType())));
+			source.append(getDotName(getTypeName(methodDeclaration.getReturnType2())));
 			source.append(' ');
 		}
 		
@@ -445,7 +441,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				source.append(',');
 			}
 			source.append(getDotName(getTypeName(singleVariableDeclaration.getType())));
-			if (fIsJLS3 && singleVariableDeclaration.isVarargs()) {
+			if (singleVariableDeclaration.isVarargs()) {
 				source.append("..."); //$NON-NLS-1$
 			}
 			source.append(' ');
@@ -475,7 +471,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		} else {
 			source.append('{').append('\n');
 			if (!isConstructor) {
-				source.append(getReturnExpression(fIsJLS3 ? methodDeclaration.getReturnType2() : methodDeclaration.getReturnType())); 
+				source.append(getReturnExpression(methodDeclaration.getReturnType2())); 
 			}
 			source.append('}').append('\n');
 		}
@@ -530,14 +526,27 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		
 		source.append(typeDeclaration.getName().getIdentifier());
 
-		if (fIsJLS3) {
-			List typeParameters= typeDeclaration.typeParameters();
-			if (!typeParameters.isEmpty()) {
-				source.append('<');
-				Iterator iter= typeParameters.iterator();
-				TypeParameter typeParameter= (TypeParameter) iter.next();
+		List typeParameters= typeDeclaration.typeParameters();
+		if (!typeParameters.isEmpty()) {
+			source.append('<');
+			Iterator iter= typeParameters.iterator();
+			TypeParameter typeParameter= (TypeParameter) iter.next();
+			source.append(typeParameter.getName().getIdentifier());
+			List typeBounds= typeParameter.typeBounds();
+			if (!typeBounds.isEmpty()) {
+				source.append(" extends "); //$NON-NLS-1$
+				Iterator iter2= typeBounds.iterator();
+				source.append(getTypeName((Type) iter2.next()));
+				while (iter.hasNext()) {
+					source.append('&');
+					source.append(getTypeName((Type) iter2.next()));
+				}
+			}
+			while (iter.hasNext()) {
+				source.append(',');
+				typeParameter= (TypeParameter) iter.next();
 				source.append(typeParameter.getName().getIdentifier());
-				List typeBounds= typeParameter.typeBounds();
+				typeBounds= typeParameter.typeBounds();
 				if (!typeBounds.isEmpty()) {
 					source.append(" extends "); //$NON-NLS-1$
 					Iterator iter2= typeBounds.iterator();
@@ -547,64 +556,27 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 						source.append(getTypeName((Type) iter2.next()));
 					}
 				}
-				while (iter.hasNext()) {
-					source.append(',');
-					typeParameter= (TypeParameter) iter.next();
-					source.append(typeParameter.getName().getIdentifier());
-					typeBounds= typeParameter.typeBounds();
-					if (!typeBounds.isEmpty()) {
-						source.append(" extends "); //$NON-NLS-1$
-						Iterator iter2= typeBounds.iterator();
-						source.append(getTypeName((Type) iter2.next()));
-						while (iter.hasNext()) {
-							source.append('&');
-							source.append(getTypeName((Type) iter2.next()));
-						}
-					}
-				}
-				source.append('>');
 			}
+			source.append('>');
+		}
 
-			Type superClass = typeDeclaration.getSuperclassType();
-			if (superClass != null) {
+		Type superClass = typeDeclaration.getSuperclassType();
+		if (superClass != null) {
+			source.append(" extends "); //$NON-NLS-1$
+			source.append(getTypeName(superClass));
+		}
+
+		Iterator iter= typeDeclaration.superInterfaceTypes().iterator();
+		if (iter.hasNext()) {
+			if (typeDeclaration.isInterface()) {
 				source.append(" extends "); //$NON-NLS-1$
-				source.append(getTypeName(superClass));
+			} else {
+				source.append(" implements "); //$NON-NLS-1$
 			}
-
-			Iterator iter= typeDeclaration.superInterfaceTypes().iterator();
-			if (iter.hasNext()) {
-				if (typeDeclaration.isInterface()) {
-					source.append(" extends "); //$NON-NLS-1$
-				} else {
-					source.append(" implements "); //$NON-NLS-1$
-				}
+			source.append(getTypeName((Type) iter.next()));
+			while (iter.hasNext()) {
+				source.append(',');
 				source.append(getTypeName((Type) iter.next()));
-				while (iter.hasNext()) {
-					source.append(',');
-					source.append(getTypeName((Type) iter.next()));
-				}
-			}
-		} else {
-			Name superClass = typeDeclaration.getSuperclass();
-			if (superClass != null) {
-				source.append(" extends "); //$NON-NLS-1$
-				source.append(getQualifiedIdentifier(superClass));
-			}
-
-			boolean first = true;
-			for (Iterator iterator = typeDeclaration.superInterfaces().iterator(); iterator.hasNext();) {
-				Name name = (Name) iterator.next();
-				if (first) {
-					first = false;
-					if (typeDeclaration.isInterface()) {
-						source.append(" extends "); //$NON-NLS-1$
-					} else {
-						source.append(" implements "); //$NON-NLS-1$
-					}
-				} else {
-					source.append(',');
-				}
-				source.append(getQualifiedIdentifier(name));
 			}
 		}
 		
@@ -822,11 +794,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 					fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
 					fSource.append("() {\n"); //$NON-NLS-1$
 					fSource.append("new "); //$NON-NLS-1$
-					if (fIsJLS3) {
-						fSource.append(getTypeName(node.getType()));
-					} else {
-						fSource.append(getQualifiedIdentifier(node.getName()));
-					}
+					fSource.append(getTypeName(node.getType())); 
 					fSource.append("()"); //$NON-NLS-1$
 					
 					fSnippetStartPosition+= fSource.length();
@@ -849,11 +817,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 					fSource.append(' ');
 					fSource.append(getUniqueFieldName(EVAL_FIELD_NAME, bodyDeclarations));
 					fSource.append(" = new "); //$NON-NLS-1$
-					if (fIsJLS3) {
-						fSource.append(getTypeName(node.getType()));
-					} else {
-						fSource.append(getQualifiedIdentifier(node.getName()));
-					}
+					fSource.append(getTypeName(node.getType()));
 					fSource.append("()"); //$NON-NLS-1$
 					
 					fSnippetStartPosition+= fSource.length();

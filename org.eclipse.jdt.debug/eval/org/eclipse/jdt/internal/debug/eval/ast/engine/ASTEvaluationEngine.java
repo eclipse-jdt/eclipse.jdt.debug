@@ -13,6 +13,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import java.util.Map;
 import java.util.StringTokenizer;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -169,13 +170,8 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	}
 	
 	private CompilationUnit parseCompilationUnit(char[] source, String unitName, IJavaProject project) {
-		ASTParser parser;
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		String compilerCompliance= project.getOption(JavaCore.COMPILER_COMPLIANCE, true);
-		if ("1.5".equals(compilerCompliance)) { //$NON-NLS-1$
-			parser= ASTParser.newParser(AST.JLS3);
-		} else {
-			parser= ASTParser.newParser(AST.JLS2);
-		}
 		parser.setSource(source);
 		parser.setUnitName(unitName);
 		parser.setProject(project);

@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
 import org.eclipse.jdt.internal.debug.core.model.JDIReferenceType;
 
@@ -41,8 +40,6 @@ public class BinaryBasedSourceGenerator {
 	
 	private boolean fIsInStaticMethod;
 	
-	private int fApiLevel;
-	
 	private StringBuffer fSource;
 	
 	private int fRunMethodStartOffset;
@@ -51,11 +48,10 @@ public class BinaryBasedSourceGenerator {
 	
 	private String fCompilationUnitName;
 	
-	public BinaryBasedSourceGenerator(String[] localTypesNames, String[] localVariables, boolean isInStaticMethod, int apiLevel) {
+	public BinaryBasedSourceGenerator(String[] localTypesNames, String[] localVariables, boolean isInStaticMethod) {
 		fLocalVariableTypeNames= localTypesNames;
 		fLocalVariableNames= localVariables;
 		fIsInStaticMethod= isInStaticMethod;
-		fApiLevel= apiLevel;
 	}
 	
 	/**
@@ -209,7 +205,7 @@ public class BinaryBasedSourceGenerator {
 				source.append(getSimpleName(typeName)).append(' ');
 
 				String genericSignature= referenceType.genericSignature();
-				if (fApiLevel == AST.JLS3 && genericSignature != null) {
+				if (genericSignature != null) {
 					String[] typeParameters= Signature.getTypeParameters(genericSignature);
 					if (typeParameters.length > 0) {
 						source.append('<');
@@ -375,7 +371,7 @@ public class BinaryBasedSourceGenerator {
 		}
 		
 		String genericSignature= method.genericSignature();
-		if (fApiLevel == AST.JLS3 && genericSignature != null) {
+		if (genericSignature != null) {
 			String[] typeParameters= Signature.getTypeParameters(genericSignature);
 			if (typeParameters.length > 0) {
 				source.append('<');

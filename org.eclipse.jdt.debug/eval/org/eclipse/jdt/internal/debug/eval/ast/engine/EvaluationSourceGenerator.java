@@ -147,15 +147,13 @@ public class EvaluationSourceGenerator {
 		return fCodeSnippet;
 	}
 
-	private void createEvaluationSourceFromSource(String source, String typeName, int position, boolean createInAStaticMethod, int apiLevel) throws DebugException {
-		ASTParser parser = ASTParser.newParser(apiLevel);
+	private void createEvaluationSourceFromSource(String source, String typeName, int position, boolean createInAStaticMethod, IJavaProject project) throws DebugException {
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(source.toCharArray());
-		if (apiLevel == 3) {
-			Map options=JavaCore.getDefaultOptions();
-			options.put(JavaCore.COMPILER_COMPLIANCE, "1.5"); //$NON-NLS-1$
-			options.put(JavaCore.COMPILER_SOURCE, "1.5"); //$NON-NLS-1$
-			parser.setCompilerOptions(options);
-		}
+		Map options=JavaCore.getDefaultOptions();
+		options.put(JavaCore.COMPILER_COMPLIANCE, project.getOption(JavaCore.COMPILER_COMPLIANCE, true));
+		options.put(JavaCore.COMPILER_SOURCE, project.getOption(JavaCore.COMPILER_SOURCE, true));
+		parser.setCompilerOptions(options);
 		CompilationUnit unit= (CompilationUnit)parser.createAST(null);
 		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, typeName, position, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
 		unit.accept(visitor);
@@ -184,14 +182,14 @@ public class EvaluationSourceGenerator {
 		setSource(objectToEvaluationSourceMapper.getSource().insert(objectToEvaluationSourceMapper.getCodeSnippetPosition(), fCodeSnippet).toString());
 	}
 	
-	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIReferenceType referenceType, boolean isInStaticMethod, int apiLevel) {
-		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod, apiLevel);
+	private BinaryBasedSourceGenerator getInstanceSourceMapper(JDIReferenceType referenceType, boolean isInStaticMethod) {
+		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
 		objectToEvaluationSourceMapper.buildSource(referenceType);
 		return objectToEvaluationSourceMapper;
 	}
 	
-	private BinaryBasedSourceGenerator getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod, int apiLevel) {
-		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod, apiLevel);
+	private BinaryBasedSourceGenerator getStaticSourceMapper(JDIClassType classType, boolean isInStaticMethod) {
+		BinaryBasedSourceGenerator objectToEvaluationSourceMapper = new BinaryBasedSourceGenerator(fLocalVariableTypeNames, fLocalVariableNames, isInStaticMethod);
 		objectToEvaluationSourceMapper.buildSourceStatic(classType);
 		return objectToEvaluationSourceMapper;
 	}
@@ -199,26 +197,20 @@ public class EvaluationSourceGenerator {
 	public String getSource(IJavaStackFrame frame, IJavaProject javaProject) throws DebugException {
 		if (fSource == null) {
 			try {
-				int apiLevel;
-				if ("1.5".equals(javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true))) { //$NON-NLS-1$
-					apiLevel= AST.JLS3;
-				} else {
-					apiLevel= AST.JLS2;
-				}
 				String baseSource= getSourceFromFrame(frame);
 				int lineNumber= frame.getLineNumber();
 				if (baseSource != null && lineNumber != -1) {
-					createEvaluationSourceFromSource(baseSource, frame.getDeclaringType().getName(), frame.getLineNumber(), frame.isStatic(), apiLevel);
+					createEvaluationSourceFromSource(baseSource, frame.getDeclaringType().getName(), frame.getLineNumber(), frame.isStatic(), javaProject);
 				} 
 				if (fSource == null) {
 					JDIObjectValue object= (JDIObjectValue)frame.getThis();
 					BinaryBasedSourceGenerator mapper;
 					if (object != null) {
 						// Class instance context
-						mapper= getInstanceSourceMapper((JDIReferenceType)object.getJavaType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic(), apiLevel);
+						mapper= getInstanceSourceMapper((JDIReferenceType)object.getJavaType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
 					} else {
 						// Static context
-						mapper= getStaticSourceMapper((JDIClassType)frame.getDeclaringType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic(), apiLevel);
+						mapper= getStaticSourceMapper((JDIClassType)frame.getDeclaringType(), ((JDIStackFrame)frame).getUnderlyingMethod().isStatic());
 					}
 					createEvaluationSourceFromJDIObject(mapper);
 				}
@@ -231,19 +223,13 @@ public class EvaluationSourceGenerator {
 	
 	public String getSource(IJavaReferenceType type, IJavaProject javaProject) throws DebugException {
 		if (fSource == null) {
-			int apiLevel;
-			if ("1.5".equals(javaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true))) { //$NON-NLS-1$
-				apiLevel= AST.JLS3;
-			} else {
-				apiLevel= AST.JLS2;
-			}
 			String baseSource= getTypeSourceFromProject(type.getName(), javaProject);
 			int lineNumber= getLineNumber((JDIReferenceType)type);
 			if (baseSource != null && lineNumber != -1) {
-				createEvaluationSourceFromSource(baseSource, type.getName(), lineNumber, false, apiLevel);
+				createEvaluationSourceFromSource(baseSource, type.getName(), lineNumber, false, javaProject);
 			}
 			if (fSource == null) {
-				BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIReferenceType) type, false, apiLevel);
+				BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIReferenceType) type, false);
 				createEvaluationSourceFromJDIObject(mapper);
 			}
 		}
