@@ -65,7 +65,7 @@ public class ClasspathContainerSourceContainer extends CompositeSourceContainer 
 		} catch (CoreException e) {
 		}
 		if (container == null) {
-			return getPath().lastSegment().toString();
+			return getPath().lastSegment();
 		} 
 		return container.getDescription();
 	}
