@@ -67,10 +67,10 @@ public abstract class AbstractManageBreakpointActionDelegate extends ManageBreak
 		fMember = element;
 	}
 	
-	protected abstract IMember getElement(ISelection s);
+	protected abstract IMember getMember(ISelection s);
 	
 	protected void update(ISelection selection) {
-		setMember(getElement(selection));
+		setMember(getMember(selection));
 		update();
 	}	
 	

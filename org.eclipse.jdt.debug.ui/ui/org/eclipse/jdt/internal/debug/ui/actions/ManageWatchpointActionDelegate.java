@@ -14,8 +14,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -23,7 +21,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ISourceRange;
@@ -36,7 +33,6 @@ import org.eclipse.jdt.core.search.ITypeNameRequestor;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
-import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.corext.util.TypeInfo;
@@ -48,7 +44,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchPart;
 
 public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActionDelegate {
 	
@@ -66,13 +61,6 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 		
 		fRemoveText= ActionMessages.getString("ManageWatchpointAction.Remove_&Watchpoint_4"); //$NON-NLS-1$
 		fRemoveDescription= ActionMessages.getString("ManageWatchpointAction.Remove_a_field_watchpoint_5"); //$NON-NLS-1$
-	}
-	
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
-	 */
-	public void setActivePart(IAction action, IWorkbenchPart part) {
-		setAction(action);
 	}
 
 	/**
@@ -143,7 +131,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 		breakpointField.getDeclaringType().getFullyQualifiedName().equals(watchpoint.getTypeName()));
 	}
 	
-	protected IMember getElement(ISelection s) {
+	protected IMember getMember(ISelection s) {
 		if (s instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection) s;
 			if (ss.size() == 1) {					
@@ -280,6 +268,5 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 		}
 		return typeName.toCharArray();
 	}
-		
 }
 

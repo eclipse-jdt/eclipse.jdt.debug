@@ -80,7 +80,7 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 		return null;
 	}
 	
-	protected IMember getElement(ISelection s) {
+	protected IMember getMember(ISelection s) {
 		if (s instanceof IStructuredSelection) {
 			IStructuredSelection ss= (IStructuredSelection) s;
 			if (ss.size() == 1) {					
