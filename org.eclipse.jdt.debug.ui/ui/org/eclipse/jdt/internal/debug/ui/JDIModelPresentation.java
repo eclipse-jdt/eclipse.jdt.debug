@@ -1141,10 +1141,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		long longValue;
 		char sigValue = sig.charAt(0);
 		try {
-			if (sigValue == 'C') 
+			if (sigValue == 'C') {
 				longValue = value.getValueString().charAt(0);
-			else
+			} else {
 				longValue= Long.parseLong(value.getValueString());
+			}
 		} catch (NumberFormatException e) {
 			return null;
 		}
