@@ -1148,4 +1148,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		recreate();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#supportsInstanceFilters()
+	 */
+	public boolean supportsInstanceFilters() {
+		return true;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaBreakpoint#supportsThreadFilters()
+	 */
+	public boolean supportsThreadFilters() {
+		return true;
+	}
 }

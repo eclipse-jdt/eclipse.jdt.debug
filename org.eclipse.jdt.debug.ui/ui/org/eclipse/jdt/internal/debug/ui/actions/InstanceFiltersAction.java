@@ -209,7 +209,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 					} else if (superTypeNames.contains(jbp.getTypeName()) || jbp instanceof IJavaExceptionBreakpoint) {
 						valid = jbp;
 					}
-					if (valid != null) {
+					if (valid != null && valid.supportsInstanceFilters()) {
 						breakpoints.add(valid);
 					}
 				}

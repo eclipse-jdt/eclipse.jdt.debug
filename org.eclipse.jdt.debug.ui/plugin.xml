@@ -114,6 +114,15 @@
             </separator>
          </menu>
          <action
+	           definitionId="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint"
+               label="%classPrepareAction.label"
+               icon="icons/full/obj16/class_obj.gif"
+               helpContextId="add_class_prepare_action_context"
+               class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddClassPrepareBreakpointAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.jdt.debug.ui.actions.AddClassPrepareBreakpoint">
+         </action>         
+         <action
                definitionId="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint"
                label="%exceptionAction.accel.label"
                icon="icons/full/clcl16/exc_catch.gif"
@@ -1716,28 +1725,36 @@
       <page
             objectClass="org.eclipse.jdt.debug.core.IJavaLineBreakpoint"
             adaptable="true"
-            name="Common"
+            name="%commonPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaLineBreakpointPage"
             id="org.eclipse.jdt.debug.ui.propertypages.common">
       </page>
       <page
             objectClass="org.eclipse.jdt.debug.core.IJavaLineBreakpoint"
             adaptable="true"
-            name="Filtering"
+            name="%filteringPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointAdvancedPage"
             id="org.eclipse.jdt.debug.ui.propertypages.common">
       </page>
       <page
+            objectClass="org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint"
+            adaptable="true"
+            name="%commonPage.label"
+            class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage"
+            id="org.eclipse.jdt.debug.ui.propertypages.common">
+      </page>      
+      
+      <page
             objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint"
             adaptable="true"
-            name="Filtering"
+            name="%filteringPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointAdvancedPage"
             id="org.eclipse.jdt.debug.ui.propertypages.common">
       </page>
       <page
             objectClass="org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint"
             adaptable="true"
-            name="Common"
+            name="%commonPage.label"
             class="org.eclipse.jdt.internal.debug.ui.propertypages.JavaExceptionBreakpointPage"
             id="org.eclipse.jdt.debug.ui.propertypages.common">
       </page>
@@ -2004,6 +2021,18 @@
             command="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ActionDefinition.addClassPrepareBreakpoint.name"
+            description="%ActionDefinition.addClassPrepareBreakpoint.description"
+            category="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
       <command
             name="%ActionDefinition.stepIntoSelection.name"
             description="%ActionDefinition.stepIntoSelection.description"

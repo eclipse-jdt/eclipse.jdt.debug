@@ -40,7 +40,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 /**
  * Property page for configuring IJavaBreakpoints.
  */
-public abstract class JavaBreakpointPage extends PropertyPage {
+public class JavaBreakpointPage extends PropertyPage {
 	
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	protected Button fEnabledButton;

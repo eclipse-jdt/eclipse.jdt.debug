@@ -968,6 +968,28 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @exception CoreException if unable to create the request
 	 */
 	public ClassPrepareRequest createClassPrepareRequest(String classPattern, String classExclusionPattern) throws CoreException {
+		return createClassPrepareRequest(classPattern, classExclusionPattern, true);
+	}
+	
+	/**
+	 * Creates, enables and returns a class prepare request for the
+	 * specified class name in this target. Can specify a class exclusion filter
+	 * as well.
+	 * This is a utility method used by event requesters that need to
+	 * create class prepare requests.
+	 * 
+	 * @param classPattern regular expression specifying the pattern of
+	 * 	class names that will cause the event request to fire. Regular
+	 * 	expressions may begin with a '*', end with a '*', or be an exact
+	 * 	match.
+	 *  @param classExclusionPattern regular expression specifying the pattern of
+	 * 	class names that will not cause the event request to fire. Regular
+	 * 	expressions may begin with a '*', end with a '*', or be an exact
+	 * 	match.  May be <code>null</code>.
+	 * @param enabled whether to enable the event request
+	 * @exception CoreException if unable to create the request
+	 */
+	public ClassPrepareRequest createClassPrepareRequest(String classPattern, String classExclusionPattern, boolean enabled) throws CoreException {
 		EventRequestManager manager= getEventRequestManager();
 		if (!isAvailable() || manager == null) {
 			requestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.Unable_to_create_class_prepare_request_-_VM_disconnected._2"), null); //$NON-NLS-1$
@@ -980,7 +1002,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				req.addClassExclusionFilter(classExclusionPattern);
 			}
 			req.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-			req.enable();
+			if (enabled) {
+				req.enable();
+			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(JDIDebugModelMessages.getString("JDIDebugTarget.Unable_to_create_class_prepare_request._3"), e); //$NON-NLS-1$
 			// execution will not reach here

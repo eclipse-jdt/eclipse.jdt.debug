@@ -151,12 +151,14 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	/**
 	 * Adds the given object to the list of objects in which this
 	 * breakpoint is restricted to suspend execution. Has no effect
-	 * if the object has already been added.<br>
-	 * 
+	 * if the object has already been added. Note that clients should
+	 * first ensure that a breakpoint supports instance filters.
+	 * <p>
 	 * Note: This implementation will add more than one filter. However, if there is
 	 * more than one instance filter for a debug target, the breakpoint will never be hit
 	 * in that target, as the current context cannot be two different instances at the
 	 * same time.
+	 * </p>
 	 * 
 	 * @param object instance filter to add
 	 * @exception CoreException if unable to add the given instance filter
@@ -176,6 +178,14 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	public void removeInstanceFilter(IJavaObject object) throws CoreException;
 	
 	/**
+	 * Returns whether this breakpoints supports instance filters.
+	 * 
+	 * @return whether this breakpoints supports instance filters
+	 * @since 3.0
+	 */
+	public boolean supportsInstanceFilters();
+	
+	/**
 	 * Returns the current set of active instance filters.
 	 * 
 	 * @return the current set of active instance filters.
@@ -183,5 +193,14 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * @since 2.1
 	 */	
 	public IJavaObject[] getInstanceFilters() throws CoreException;
+
+	/**
+	 * Returns whether this breakpoints supports thread filters.
+	 * 
+	 * @return whether this breakpoints supports thread filters
+	 * @since 3.0
+	 */
+	public boolean supportsThreadFilters();
+	
 }
 

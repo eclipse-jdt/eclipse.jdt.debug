@@ -40,6 +40,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaClassPrepareBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaFieldVariable;
@@ -389,6 +390,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					}
 				}
 			}
+			if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
+				return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.115"), new String[]{thread.getName(), getQualifiedName(breakpoint.getTypeName())}); //$NON-NLS-1$
+			}
 		}
 
 		// Otherwise, it's just suspended
@@ -648,7 +652,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected Image getBreakpointImage(IJavaBreakpoint breakpoint) throws CoreException {
 		if (breakpoint instanceof IJavaExceptionBreakpoint) {
 			return getExceptionBreakpointImage((IJavaExceptionBreakpoint)breakpoint);
-		} 
+		} else if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
+			return getClassPrepareBreakpointImage((IJavaClassPrepareBreakpoint)breakpoint);
+		}
 		
 		if (breakpoint instanceof IJavaLineBreakpoint && BreakpointUtils.isRunToLineBreakpoint((IJavaLineBreakpoint)breakpoint)) {
 			return null;
@@ -713,6 +719,17 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
 		}
 			
+		return getDebugImageRegistry().get(descriptor);
+	}
+	
+	protected Image getClassPrepareBreakpointImage(IJavaClassPrepareBreakpoint breakpoint) throws CoreException {
+		int flags= computeBreakpointAdornmentFlags(breakpoint);
+		JDIImageDescriptor descriptor= null;
+		if (breakpoint.getMemberType() == IJavaClassPrepareBreakpoint.TYPE_CLASS) {
+			descriptor= new JDIImageDescriptor(JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_CLASS), flags);
+		} else {
+			descriptor= new JDIImageDescriptor(JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_INTERFACE), flags);
+		}
 		return getDebugImageRegistry().get(descriptor);
 	}	
 	
@@ -1206,6 +1223,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return getJavaStratumLineBreakpointText((IJavaStratumLineBreakpoint)breakpoint);
 		} else if (breakpoint instanceof IJavaLineBreakpoint) {
 			return getLineBreakpointText((IJavaLineBreakpoint)breakpoint);
+		} else if (breakpoint instanceof IJavaClassPrepareBreakpoint) {
+			return getClassPrepareBreakpointText((IJavaClassPrepareBreakpoint)breakpoint);
 		}
 
 		return ""; //$NON-NLS-1$
@@ -1284,6 +1303,15 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		
 		return label.toString();
 	}
+	
+	protected String getClassPrepareBreakpointText(IJavaClassPrepareBreakpoint breakpoint) throws CoreException {
+		String typeName= breakpoint.getTypeName();
+		StringBuffer label = new StringBuffer();
+		label.append(getQualifiedName(typeName));
+		appendHitCount(breakpoint, label);
+		appendSuspendPolicy(breakpoint, label);
+		return label.toString();
+	}	
 	
 	protected StringBuffer appendLineNumber(IJavaLineBreakpoint breakpoint, StringBuffer label) throws CoreException {
 		int lineNumber= breakpoint.getLineNumber();

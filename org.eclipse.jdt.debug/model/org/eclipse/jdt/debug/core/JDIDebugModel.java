@@ -27,6 +27,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaClassPrepareBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
@@ -602,4 +603,29 @@ public class JDIDebugModel {
 	public static void savePreferences() {
 		JDIDebugPlugin.getDefault().savePluginPreferences();
 	}
+	
+	/**
+	 * Creates and returns a class prepare breakpoint for a type with the given name.
+	 * The marker associated with the breakpoint will be created on the specified resource.
+	 * 
+	 * @param resource the resource on which to create the associated
+	 *  breakpoint marker
+	 * @param typeName the fully qualified name of the type for
+	 *  which to create the breakpoint
+	 * @param memberType one of <code>TYPE_CLASS</code> or <code>TYPE_INTERFACE</code>
+ 	 * @param register whether to add this breakpoint to the breakpoint manager
+ 	 * @param attributes a map of client defined attributes that should be assigned
+ 	 *  to the underlying breakpoint marker on creation or <code>null</code> if none.
+	 * @return an exception breakpoint
+	 * @exception CoreException If this method fails. Reasons include:<ul> 
+	 *<li>Failure creating underlying marker.  The exception's status contains
+	 * the underlying exception responsible for the failure.</li></ul>
+	 * @since 3.0
+	 */
+	public static IJavaClassPrepareBreakpoint createClassPrepareBreakpoint(IResource resource, String typeName, int memberType, boolean register, Map attributes) throws CoreException {
+		if (attributes == null) {
+			attributes = new HashMap(10);
+		}
+		return new JavaClassPrepareBreakpoint(resource, typeName, memberType, register, attributes);
+	}	
 }
