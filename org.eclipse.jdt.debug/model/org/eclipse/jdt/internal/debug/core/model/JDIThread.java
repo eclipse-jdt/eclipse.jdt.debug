@@ -2059,6 +2059,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Handler for step return requests.
 	 */
 	class StepReturnHandler extends StepHandler {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jdt.internal.debug.core.model.JDIThread.StepHandler#locationShouldBeFiltered(com.sun.jdi.Location)
+		 */
+		protected boolean locationShouldBeFiltered(Location location) throws DebugException {
+			// if still at the same depth, do another step return (see bug 38744)
+			if (getOriginalStepStackDepth() == getUnderlyingFrameCount()) {
+				return true;
+			}
+			return super.locationShouldBeFiltered(location);
+		}
+
 		/**
 		 * @see StepHandler#getStepKind()
 		 */
