@@ -21,12 +21,11 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.tests.AbstractDebugPerformanceTest;
 import org.eclipse.test.performance.Dimension;
 
-/* TODO: watchpoint creation
- */
 public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements IBreakpointListener {
 
     int breakpointCount = 0;
@@ -171,6 +170,48 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         }        
     }
 
+    public void testWatchpointCreation() throws Exception {
+        tagAsSummary("Install Watchpoints", Dimension.CPU_TIME);
+        String typeName = "LotsOfFields";
+        IResource resource = getBreakpointResource(typeName);
+        
+        IJavaLineBreakpoint bp = createLineBreakpoint(116, typeName);
+        IJavaThread thread = launchToBreakpoint(typeName);
+        bp.delete();
+
+        IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+        try {
+            manager.addBreakpointListener(this);
+
+            String[] fields = new String[100];
+            for (int i = 0; i < fields.length; i++) {
+                fields[i] = "field_"+(i+1);
+            }
+
+            for (int i = 0; i < 5; i++) {
+                createWatchpoints(resource, typeName, fields);
+                waitForBreakpointCount(fields.length);
+                removeAllBreakpoints();
+                waitForBreakpointCount(0);
+            }
+
+            for (int i = 0; i < 50; i++) {
+                startMeasuring();
+                createWatchpoints(resource, typeName, fields);
+                waitForBreakpointCount(fields.length);
+                stopMeasuring();
+                removeAllBreakpoints();
+                breakpointCount = 0;
+            }
+            commitMeasurements();
+            assertPerformance();
+        } finally {
+            DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+            removeAllBreakpoints();
+            terminateAndRemove(thread);
+        }        
+    }
+    
     private synchronized void waitForBreakpointCount(int i) throws Exception {
         long end = System.currentTimeMillis() + 60000;
         while (breakpointCount != i && System.currentTimeMillis() < end) {
@@ -189,6 +230,14 @@ public class PerfBreakpointTests extends AbstractDebugPerformanceTest implements
         for (int i = 0; i < methods.length; i++) {
             String methodName = methods[i];
             JDIDebugModel.createMethodBreakpoint(project, typeName, methodName, "()V", true, false, false, -1, -1, -1, 0, true, null);
+        }
+    }
+    
+    private void createWatchpoints(IResource resource, String typeName, String[] fields) throws Exception {
+        for(int i = 0; i < fields.length; i++) {
+            IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(getBreakpointResource(typeName), typeName, fields[i], -1, -1, -1, 0, true, null);
+            wp.setAccess(true);
+            wp.setModification(true);
         }
     }
     
