@@ -138,7 +138,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 	/**
 	 * @see SelectionDispatchAction#selectionChanged(ITextSelection)
 	 */
-	protected void selectionChanged(ITextSelection selection) {
+	public void selectionChanged(ITextSelection selection) {
 		setEnabled(fEditor != null);
 	}
 }
