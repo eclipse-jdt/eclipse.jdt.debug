@@ -12,11 +12,13 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -32,7 +34,7 @@ http://www.eclipse.org/legal/cpl-v10.html
  * Manages the current evaluation context (stack frame) for evaluation actions.
  * In each page, the selection is tracked in each debug view (if any). 
  */
-public class EvaluationContextManager implements IWindowListener, IPageListener, ISelectionListener {
+public class EvaluationContextManager implements IWindowListener, IPageListener, ISelectionListener, IPartListener2 {
 
 	private static EvaluationContextManager fgManager;
 	
@@ -97,6 +99,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 */
 	public void pageClosed(IWorkbenchPage page) {
 		page.removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		page.removePartListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -104,6 +107,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 */
 	public void pageOpened(IWorkbenchPage page) {
 		page.addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		page.addPartListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -247,4 +251,56 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 			return frame;
 		}
 	}
+	
+	/**
+	 * @see IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partActivated(IWorkbenchPartReference ref) {
+	}
+
+	/**
+	 * @see IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partBroughtToTop(IWorkbenchPartReference ref) {
+	}
+
+	/**
+	 * @see IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partClosed(IWorkbenchPartReference ref) {
+		if (ref.getId().equals(IDebugUIConstants.ID_DEBUG_VIEW)) {
+			removeContext(ref.getPage());
+		}
+	}
+
+	/**
+	 * @see IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partDeactivated(IWorkbenchPartReference ref) {
+	}
+
+	/**
+	 * @see IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+	 */ 
+	public void partOpened(IWorkbenchPartReference ref) {
+	}
+
+	/**
+	 * @see IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+	 */	
+	public void partHidden(IWorkbenchPartReference ref) {
+	}
+
+	/**
+	 * @see IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partVisible(IWorkbenchPartReference ref) {
+	}
+
+	/**
+	 * @see IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partInputChanged(IWorkbenchPartReference ref) {
+	}
+	
 }
