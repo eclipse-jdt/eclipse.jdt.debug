@@ -483,8 +483,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * 	 * @param root package fragment root	 * @param entry runtime classpath entry	 * @return whether the source attachments of the given package fragment
 	 * root and runtime classpath entry are equal	 * @throws JavaModelException 	 */
 	private static boolean isSourceAttachmentEqual(IPackageFragmentRoot root, IRuntimeClasspathEntry entry) throws JavaModelException {
-		return equalOrNull(root.getSourceAttachmentPath(), entry.getSourceAttachmentPath())
-		   && equalOrNull(root.getSourceAttachmentRootPath(), entry.getSourceAttachmentRootPath());
+		return equalOrNull(root.getSourceAttachmentPath(), entry.getSourceAttachmentPath());
 	}
 	
 	/**
