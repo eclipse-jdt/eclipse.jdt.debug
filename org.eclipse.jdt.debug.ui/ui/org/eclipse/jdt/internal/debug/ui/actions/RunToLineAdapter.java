@@ -24,12 +24,13 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.actions.IRunToLineTarget;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -52,7 +53,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class RunToLineAdapter implements IRunToLineTarget {
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
+	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
 		IEditorPart editorPart = (IEditorPart)part;
@@ -161,4 +162,11 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
+	 */
+	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
+		return target instanceof IDebugElement &&
+		 ((IDebugElement)target).getModelIdentifier().equals(JDIDebugModel.getPluginIdentifier());
+	}
 }

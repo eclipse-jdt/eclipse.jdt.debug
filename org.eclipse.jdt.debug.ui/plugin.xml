@@ -2287,29 +2287,29 @@
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
             adaptableType="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor">
-            <adapter type="org.eclipse.debug.internal.ui.actions.IRunToLineTarget"/>
-            <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
+            <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
+            <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
          </factory>
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
             adaptableType="org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor">
-            <adapter type="org.eclipse.debug.internal.ui.actions.IRunToLineTarget"/>
-            <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
+            <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
+            <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
          </factory>         
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
             adaptableType="org.eclipse.jdt.core.IMethod">
-            <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
+            <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
          </factory>         
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
             adaptableType="org.eclipse.jdt.core.IField">
-            <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
+            <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
          </factory>         
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
             adaptableType="org.eclipse.jdt.debug.core.IJavaFieldVariable">
-            <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
+            <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
          </factory>                  
       </extension>     	
       

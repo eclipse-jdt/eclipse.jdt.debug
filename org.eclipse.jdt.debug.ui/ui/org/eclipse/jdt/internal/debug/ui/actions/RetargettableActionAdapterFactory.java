@@ -11,8 +11,8 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.debug.internal.ui.actions.IRunToLineTarget;
-import org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget;
+import org.eclipse.debug.ui.actions.IRunToLineTarget;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 
 /**
  * Creates adapters for retargettable actions in debug platform.
