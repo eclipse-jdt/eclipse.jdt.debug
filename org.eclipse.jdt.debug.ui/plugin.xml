@@ -38,7 +38,8 @@
   <hover
   	id="org.eclipse.jdt.internal.debug.ui.JavaDebugHover" 
   	class="org.eclipse.jdt.internal.debug.ui.JavaDebugHover"
-  	label = "%javaVariableHover"/> 
+  	label = "%javaVariableHoverLabel"
+  	description="%javaVariableHoverDescription"/> 
 </extension>
 <extension
     point= "org.eclipse.ui.editors"
