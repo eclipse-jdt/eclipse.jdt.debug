@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -20,6 +21,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.internal.ui.text.HTMLTextPresenter;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -222,12 +224,15 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getInformationControlCreator()
 	 */
 	public IInformationControlCreator getInformationControlCreator() {
-		return new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-	  			return new DefaultInformationControl(parent, SWT.NONE, 
-	  				new HTMLTextPresenter(true),
-				   	DebugUIMessages.getString("JavaDebugHover.16")); //$NON-NLS-1$
-			 }
-  		};
+		if (Platform.getPlugin("org.eclipse.jdt.ui").getPluginPreferences().getBoolean(PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) { //$NON-NLS-1$
+			return new IInformationControlCreator() {
+				public IInformationControl createInformationControl(Shell parent) {
+	  				return new DefaultInformationControl(parent, SWT.NONE, 
+	  					new HTMLTextPresenter(true),
+				   		DebugUIMessages.getString("JavaDebugHover.16")); //$NON-NLS-1$
+			 	}
+  			};
+		}
+		return null;
 	}
 }
