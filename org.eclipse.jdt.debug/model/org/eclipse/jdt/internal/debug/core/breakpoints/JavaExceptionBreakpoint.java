@@ -21,8 +21,10 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
+import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
+import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
@@ -75,6 +77,11 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * subtype of the type that is being caught).
 	 */
 	protected String fExceptionName = null;
+	
+	/**
+	 * The current set of class filters.
+	 */
+	protected String[] fClassFilters= null;
 	
 	public JavaExceptionBreakpoint() {
 	}
@@ -168,7 +175,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * suspend execution when the associated exception is thrown
 	 * and caught or not caught.
 	 */
-	public void setCaughtAndUncaught(boolean caught, boolean uncaught) throws CoreException {
+	protected void setCaughtAndUncaught(boolean caught, boolean uncaught) throws CoreException {
 		Object[] values= new Object[]{new Boolean(caught), new Boolean(uncaught)};
 		String[] attributes= new String[]{CAUGHT, UNCAUGHT};
 		setAttributes(attributes, values);
@@ -281,14 +288,42 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	}
 	
 	/**
-	 * @see IJDIEventListener#handleEvent(Event)
+	 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
 	 */
 	public boolean handleEvent(Event event, JDIDebugTarget target) {
 		if (event instanceof ExceptionEvent) {
 			setExceptionName(((ExceptionEvent)event).exception().type().name());
+			if (getClassFilters().length > 1) {
+				if (isExceptionEventExcluded((ExceptionEvent)event)) {
+					return true;
+				}
+			}
 		}	
 		return super.handleEvent(event, target);
 	}	
+	
+	/**
+	 * Returns whether this is an event that has 
+	 * has been set to be filtered (ie not hit).
+	 */
+	protected boolean isExceptionEventExcluded(ExceptionEvent event) {
+		Location location= event.location();
+		String fullyQualifiedName= location.declaringType().name();
+		String[] filters= getClassFilters();
+		
+		try {
+			boolean inclusive= isInclusiveFiltered();
+			for (int i= 0; i < filters.length; i++) {
+				StringMatcher matcher= new StringMatcher(filters[i], false, false);
+				if (matcher.match(fullyQualifiedName)) {
+					return !inclusive;
+				}
+			} 
+		} catch (CoreException ce) {
+			JDIDebugPlugin.logError(ce);
+		}
+		return true;
+	}
 	
 	/**
 	 * Sets the name of the exception that was last hit
@@ -306,14 +341,18 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		return fExceptionName;
 	}
 	
+	/**
+	 * @see IJavaExceptionBreakpoint#getFilters()
+	 */
 	public String[] getFilters() throws CoreException {
-		return parseList(ensureMarker().getAttribute(FILTERS, "")); //$NON-NLS-1$
+		return getClassFilters();
 	}
 	
 	/**
 	 * @see IJavaExceptionBreakpoint#setFilters(String[], boolean)
 	 */
 	public void setFilters(String[] filters, boolean inclusive) throws CoreException {
+		setClassFilters(filters);
 		String serializedFilters= serializeList(filters);
 		if (inclusive == ensureMarker().getAttribute(INCLUSIVE_FILTERS, false)) {
 			if (serializedFilters.equals(ensureMarker().getAttribute(FILTERS, ""))) { //$NON-NLS-1$
@@ -359,18 +398,30 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 */
 	protected void configureRequest(EventRequest eRequest, JDIDebugTarget target) throws CoreException {
 		ExceptionRequest request= (ExceptionRequest)eRequest;
-		String[] filters= getFilters();
+		String[] filters= getClassFilters();
 		boolean inclusive= ensureMarker().getAttribute(INCLUSIVE_FILTERS, true);
-		for (int i = 0; i < filters.length; i++) {
+		if (filters.length == 1) {
+			//JDI / JDWP can only handle a single class / class exclusion filter
+			//emulated for more than one class filter
 			if (inclusive) {
-				request.addClassFilter(filters[i]);
+				request.addClassFilter(filters[0]);
 			} else {
-				request.addClassExclusionFilter(filters[i]);
+				request.addClassExclusionFilter(filters[0]);
 			}
+		} else {
+			//XXX to do
+			//String commonPattern= generateGreatestCommonPatternFilter();
 		}
 		super.configureRequest(request, target);
 	}
 	
+	/**
+	 * Returns the longest common pattern from the class filters specified
+	 * for this breakpoint.
+	 */
+	protected String generateGreatestCommonPatternFilter() {
+		return ""; //$NON-NLS-1$
+	}
 	/**
 	 * Serializes the array of strings into one comma
 	 * separated string.
@@ -406,6 +457,21 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 */
 	public boolean isInclusiveFiltered() throws CoreException {
 		return ensureMarker().getAttribute(INCLUSIVE_FILTERS, true);
+	}
+	
+	protected String[] getClassFilters() {
+		if (fClassFilters == null) {
+			try {
+				fClassFilters= parseList(ensureMarker().getAttribute(FILTERS, "")); //$NON-NLS-1$
+			} catch (CoreException ce) {
+				fClassFilters= new String[]{};
+			}
+		}
+		return fClassFilters;
+	}
+
+	protected void setClassFilters(String[] filters) {
+		fClassFilters = filters;
 	}
 }
 
