@@ -1362,6 +1362,16 @@ public final class JavaRuntime {
 	}
 	
 	/**
+	 * Creates and returns a classpath entry describing
+	 * the default JRE container entry.
+	 * 
+	 * @return a new IClasspathEntry that describes the default JRE container entry
+	 */
+	public static IClasspathEntry getDefaultJREContainerEntry() {
+		return JavaCore.newContainerEntry(new Path(JRE_CONTAINER));
+	}	
+	
+	/**
 	 * Returns the VM connetor defined with the specified identifier,
 	 * or <code>null</code> if none.
 	 * 
