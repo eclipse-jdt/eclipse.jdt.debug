@@ -63,7 +63,7 @@ public class TypeNameResolver extends ResourceResolver {
 			case IJavaElement.COMPILATION_UNIT :
 				type= ((ICompilationUnit) element).findPrimaryType();
 				break;
-		};
+		}
 		return type;
 	}
 }
