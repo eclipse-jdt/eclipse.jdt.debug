@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -28,7 +29,6 @@ import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -185,7 +185,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 				Item[] children = getChildren(getControl());
 				if (children != null) {
 					//to be changed
-					Color c= JFaceResources.getColorRegistry().get(IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR);
+					Color c= DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CHANGED_VARIABLE_COLOR);
 					for (int i = 0; i < children.length; i++) {
 						updateColor((TreeItem)children[i], c, 0);
 					}
