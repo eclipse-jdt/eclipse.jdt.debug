@@ -211,21 +211,14 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected void run() {		
 		// eval in context of object or stack frame
 		IJavaObject object = getObjectContext();		
-		IStackFrame stackFrame= getStackFrameContext();
+		IJavaStackFrame stackFrame= getStackFrameContext();
 		if (stackFrame == null) {
 			reportError(ActionMessages.getString("Evaluate.error.message.stack_frame_context")); //$NON-NLS-1$
 			return;
 		}
 		
-		IJavaStackFrame jFrame = null;
-		if (stackFrame != null) {
-			jFrame = (IJavaStackFrame) stackFrame.getAdapter(IJavaStackFrame.class);
-		}
-
 		setNewTargetPart(getTargetPart());
-		if (jFrame == null) {
-			reportError(ActionMessages.getString("Evaluate.error.message.eval_adapter")); //$NON-NLS-1$
-		} else if (jFrame.isSuspended()) {
+		if (stackFrame.isSuspended()) {
 			IJavaElement javaElement= getJavaElement(stackFrame);
 			if (javaElement != null) {
 				IJavaProject project = javaElement.getJavaProject();
@@ -237,12 +230,12 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					}
 					String expression= (String)selection;
 					
-					engine = JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)jFrame.getDebugTarget());
+					engine = JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)stackFrame.getDebugTarget());
 					setEvaluating(true);
 					if (object == null) {
-						engine.evaluate(expression, jFrame, this, DebugEvent.EVALUATION, true);
+						engine.evaluate(expression, stackFrame, this, DebugEvent.EVALUATION, true);
 					} else {
-						engine.evaluate(expression, object, (IJavaThread)jFrame.getThread(), this, DebugEvent.EVALUATION, true);
+						engine.evaluate(expression, object, (IJavaThread)stackFrame.getThread(), this, DebugEvent.EVALUATION, true);
 					}
 					return;
 				} catch (CoreException e) {
