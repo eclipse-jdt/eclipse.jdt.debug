@@ -298,7 +298,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		outer.setLayout(topLayout);
 		outer.setFont(font);
 		
-		setTitle(MessageFormat.format(SnippetMessages.getString("SelectImportsDialog.Manage_the_Java_Snippet_Editor_Imports_for___{0}__1"), new String[]{fEditor.getPage().getName()})); //$NON-NLS-1$
+		setTitle(MessageFormat.format(SnippetMessages.getString("SelectImportsDialog.Manage_the_Java_Snippet_Editor_Imports_for___{0}__1"), new String[]{fEditor.getEditorInput().getName()})); //$NON-NLS-1$
 		
 		GridData gd = new GridData();
 		gd.verticalAlignment = GridData.FILL;

@@ -14,7 +14,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.text.MessageFormat;
 import java.util.Iterator;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -76,7 +75,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
-
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -728,7 +726,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 * @see ISnippetStateChangedListener#snippetStateChanged(JavaSnippetEditor)
 	 */
 	public void snippetStateChanged(JavaSnippetEditor editor) {
-		if (editor != null && !editor.isEvaluating()) {
+		if (editor != null && !editor.isEvaluating() && editor.getFile() != null) {
 			update();
 		} else {
 			getAction().setEnabled(false);

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
 import org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart;
 import org.eclipse.jface.action.Action;
@@ -56,9 +57,12 @@ public class ShowInPackageViewAction extends Action {
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
+		IFile file= fEditor.getFile();
+		if (file == null) {
+			return;
+		}
 		PackageExplorerPart view= PackageExplorerPart.openInActivePerspective();
-
-		if (!reveal(view, fEditor.getPage())) {
+		if (!reveal(view, file)) {
 			MessageDialog.openInformation(fEditor.getShell(), getDialogTitle(), SnippetMessages.getString("ShowInPackageViewAction.not_found")); //$NON-NLS-1$
 		}
 	}
