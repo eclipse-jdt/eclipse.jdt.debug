@@ -11,8 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.internal.debug.ui.DebugUIUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -84,7 +82,7 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 					breakpoint.setHitCount(newHitCount);
 					breakpoint.setEnabled(true);
 				} catch (CoreException ce) {
-					DebugUIUtils.logError(ce);
+					JDIDebugUIPlugin.logError(ce);
 				}
 			}
 		}
@@ -137,7 +135,7 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 	}
 
 	/**
-	 * @see IActionDelegate
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection sel) {
 		if (sel instanceof IStructuredSelection) {
@@ -148,7 +146,7 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 	}
 
 	/**
-	 * @see IViewActionDelegate
+	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {
 	}

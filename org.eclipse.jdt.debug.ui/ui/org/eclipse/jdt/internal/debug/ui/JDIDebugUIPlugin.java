@@ -93,13 +93,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * @see Plugin.isDebugging()
-	 */ 
-	public static boolean isDebug() {
-		return getDefault().isDebugging();
-	}
-	
-	/**
 	 * Returns the active workbench window
 	 * 
 	 * @return the active workbench window
@@ -134,5 +127,15 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			fSnippetDocumentProvider= new SnippetFileDocumentProvider();
 		return fSnippetDocumentProvider;
 	}	
+	
+	public static void logError(Exception e) {
+		if (getDefault().isDebugging()) {
+			// this message is intentionally not internationalized, as an exception may
+			// be due to the resource bundle itself
+			System.out.println("Internal error logged from UI: "); //$NON-NLS-1$
+			e.printStackTrace();
+			System.out.println();
+		}
+	}
 }
 
