@@ -8,8 +8,10 @@ package org.eclipse.jdt.internal.debug.ui;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
@@ -18,6 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
+import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -165,6 +168,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	public void startup() throws CoreException {
 		JDIDebugModel.addHotCodeReplaceListener(this);
 		super.startup();
+		
+		IAdapterManager manager= Platform.getAdapterManager();
+		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);		
 	}
 	
 	public void shutdown() throws CoreException {

@@ -5,9 +5,15 @@ package org.eclipse.jdt.launching.sourcelookup;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
@@ -107,5 +113,53 @@ public class JavaSourceLocator implements ISourceLocator {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Adds all projects required by <code>proj</code> to the list
+	 * <code>res</code>
+	 * 
+	 * @param proj the project for which to compute required
+	 *  projects
+	 * @param res the list to add all required projects too
+	 */
+	protected static void collectRequiredProjects(IJavaProject proj, ArrayList res) throws JavaModelException {
+		if (!res.contains(proj)) {
+			res.add(proj);
+			
+			IJavaModel model= proj.getJavaModel();
+			
+			IClasspathEntry[] entries= proj.getRawClasspath();
+			for (int i= 0; i < entries.length; i++) {
+				IClasspathEntry curr= entries[i];
+				if (curr.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+					IJavaProject ref= model.getJavaProject(curr.getPath().segment(0));
+					if (ref.exists()) {
+						collectRequiredProjects(ref, res);
+					}
+				}
+			}
+		}
+	}	
+	
+	/**
+	 * Returns a default collection of source locations for
+	 * the given Java project. Default sourcelocations consist
+	 * to the given project and all of its required projects .
+	 * 
+	 * @param project Java project
+	 * @return a collection of source locations for all required
+	 *  projects
+	 * @exception JavaModelException if an exception occurrs reading
+	 *  the classpath of the given or any required project
+	 */
+	public static IJavaSourceLocation[] getDefaultSourceLocations(IJavaProject project) throws JavaModelException {
+		ArrayList list = new ArrayList();
+		collectRequiredProjects(project,list);
+		IJavaSourceLocation[] locations = new IJavaSourceLocation[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			locations[i] = new JavaProjectSourceLocation((IJavaProject)list.get(i));
+		}
+		return locations;
 	}
 }

@@ -78,7 +78,15 @@ public class ZipEntryStorage extends PlatformObject implements IStorage {
 	 * @see IStorage#getName()
 	 */
 	public String getName() {
-		return getZipEntry().getName();
+		int index = getZipEntry().getName().lastIndexOf('\\');
+		if (index == -1) {
+			index = getZipEntry().getName().lastIndexOf('/');
+		}
+		if (index == -1) {
+			return getZipEntry().getName();
+		} else {
+			return getZipEntry().getName().substring(index + 1);
+		}
 	}
 
 	/**
@@ -124,4 +132,19 @@ public class ZipEntryStorage extends PlatformObject implements IStorage {
 		return fZipEntry;
 	}		
 
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {		
+		return object instanceof ZipEntryStorage &&
+			 getArchive().equals(((ZipEntryStorage)object).getArchive()) &&
+			 getZipEntry().getName().equals(((ZipEntryStorage)object).getZipEntry().getName());
+	}
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getZipEntry().getName().hashCode();
+	}
 }

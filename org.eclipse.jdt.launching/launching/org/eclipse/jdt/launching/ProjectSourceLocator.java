@@ -5,13 +5,17 @@
 package org.eclipse.jdt.launching;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
@@ -21,6 +25,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -28,6 +33,11 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
+import org.eclipse.jdt.launching.sourcelookup.DirectorySourceLocation;
+import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
+import org.eclipse.jdt.launching.sourcelookup.JavaProjectSourceLocation;
+import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 
 /**
@@ -46,148 +56,96 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  * </p>
  *
  * @see org.eclipse.debug.core.model.ISourceLocator
+ * @deprecated use org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator
  */
-public class ProjectSourceLocator implements ISourceLocator {
+public class ProjectSourceLocator extends JavaSourceLocator {
 
-	private ArrayList fProjects;
 	private IJavaProject fCustomSearchPathProject;
 	
 	private static boolean fgCustomSearchPathChanged;
 	
+	/**
+	 * Preference used in 1.0, replaced with
+	 * <code>ADDITIONAL_LOCATIONS_PROPERTY</code>
+	 */
 	private static final String ADDITIONAL_LOOKUP_PROPERTY= "additional_lookup"; //$NON-NLS-1$
+
+	/**
+	 * Persistent property with a set of source locations
+	 */	
+	private static final String ADDITIONAL_LOCATIONS_PROPERTY= "additional_locations"; //$NON-NLS-1$
 
 	/**
 	 * Constructs a new ProjectSourceLocator for a project. Uses the custom search path for sources, if
 	 * set.
+	 * 
+	 * @deprecated use org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator
 	 */
 	public ProjectSourceLocator(IJavaProject project) {
+		super(new IJavaSourceLocation[0]);
 		fCustomSearchPathProject= project;
 		fgCustomSearchPathChanged= true;
-		
-		fProjects= new ArrayList();
 		try {
-			updateCustomSearchPath(project, fProjects);
-
+			updateCustomSearchPath(project);
 		} catch (JavaModelException e) {
 			LaunchingPlugin.log(e);
 		}
 	}
 	
-	private void updateCustomSearchPath(IJavaProject jproject, ArrayList list) throws JavaModelException {
+	private void updateCustomSearchPath(IJavaProject jproject) throws JavaModelException {
 		if (fgCustomSearchPathChanged) {
-			list.clear();
 			IJavaProject[] projects= getSourceLookupPath(jproject);
+			IJavaSourceLocation[] locations = getPersistedSourceLocations(jproject);
 			if (projects != null) {
-				fProjects.addAll(Arrays.asList(projects));
-			} else {
-				collectRequiredProjects(jproject, fProjects);
+				locations = asSourceLocations(projects);
+				// replace the old preference with the new locations
+				setPersistedSourceLocations(jproject, locations);
+				setSourceLookupPath(jproject, null);
+			} else if (locations == null) {
+				locations = getDefaultSourceLocations(jproject);
 			}
+			setSourceLocations(locations);
 			fgCustomSearchPathChanged= false;
 		}
 	}
 	
 	/**
+	 * Returns source locations for the given projects.
+	 * 
+	 * @param projects list of java projects
+	 * @return corresponding java project source locations
+	 */
+	private IJavaSourceLocation[] asSourceLocations(IJavaProject[] projects) {
+		IJavaSourceLocation[] locations = new IJavaSourceLocation[projects.length];
+		for (int i = 0; i < projects.length; i++) {
+			locations[i] = new JavaProjectSourceLocation(projects[i]);
+		}	
+		return locations;
+	}
+	/**
 	 * Constructs a new ProjectSourceLocator for a specified set of projects.
 	 * Does not use the custom search path settings
+	 * 
+	 * @deprecated use org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator
 	 */
 	public ProjectSourceLocator(IJavaProject[] projects, boolean includeRequired) throws JavaModelException {
+		super(new IJavaSourceLocation[0]);
 		fCustomSearchPathProject= null;
 		
-		fProjects= new ArrayList();
+		ArrayList requiredProjects = new ArrayList();
 		for (int i= 0; i < projects.length; i++) {
 			if (includeRequired) {
-				collectRequiredProjects(projects[i], fProjects);
+				collectRequiredProjects(projects[i], requiredProjects);
 			} else {
-				if (!fProjects.contains(projects[i])) {
-					fProjects.add(projects[i]);
+				if (!requiredProjects.contains(projects[i])) {
+					requiredProjects.add(projects[i]);
 				}
 			}
 		}
-	}
-	
-	private void collectRequiredProjects(IJavaProject proj, ArrayList res) throws JavaModelException {
-		if (!res.contains(proj)) {
-			res.add(proj);
-			
-			IJavaModel model= proj.getJavaModel();
-			
-			IClasspathEntry[] entries= proj.getRawClasspath();
-			for (int i= 0; i < entries.length; i++) {
-				IClasspathEntry curr= entries[i];
-				if (curr.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
-					IJavaProject ref= model.getJavaProject(curr.getPath().segment(0));
-					if (ref.exists()) {
-						collectRequiredProjects(ref, res);
-					}
-				}
-			}
-		}
-	}
-	
-	/*
-	 *@see ISourceLocator#getSourceElement
-	 */
-	public Object getSourceElement(IStackFrame stackFrame) {
-		IJavaStackFrame frame= (IJavaStackFrame)stackFrame.getAdapter(IJavaStackFrame.class);
-		if (frame != null) {
-			try {
-				if (fCustomSearchPathProject != null) {
-					updateCustomSearchPath(fCustomSearchPathProject, fProjects);
-				}
-				String name = null;
-				String sourceName = frame.getSourceName();
-				if (sourceName == null) {
-					// no debug attributes, guess at source name
-					name = frame.getDeclaringTypeName();
-				} else {
-					// build source name from debug attributes using
-					// the source file name and the package of the declaring
-					// type
-					String declName= frame.getDeclaringTypeName();
-					int index = declName.lastIndexOf('.');
-					if (index >= 0) {
-						name = declName.substring(0, index + 1);
-					} else {
-						name = ""; //$NON-NLS-1$
-					}
-					index = sourceName.lastIndexOf('.');
-					if (index >= 0) {
-						name += sourceName.substring(0, index) ;
-					}					
-				}
-				for (int i= 0; i < fProjects.size(); i++) {
-					IJavaProject curr= (IJavaProject) fProjects.get(i);
-					IJavaElement openable= findOpenable(curr, name);
-					if (openable != null) {
-						return openable;
-					}
-				}
-			} catch (CoreException e) {
-				LaunchingPlugin.log(e);
-			}
-		}
-		return null;
-	}
+		setSourceLocations(asSourceLocations((IJavaProject[])requiredProjects.toArray(new IJavaProject[requiredProjects.size()])));
 		
-	/** 
-	 * Finds the classfile / compilation unit for the declaring type name.
-	 * The type name is in debug format and can contain '$' for a inner type
-	 */
-	private static IJavaElement findOpenable(IJavaProject jproject, String typeName) throws JavaModelException {
-		String pathStr= typeName.replace('.', '/') + ".java"; //$NON-NLS-1$
-		IJavaElement jelement= jproject.findElement(new Path(pathStr));
-		if (jelement == null) {
-			// maybe an inner type
-			int dotIndex= pathStr.lastIndexOf('/');
-			int dollarIndex= pathStr.indexOf('$', dotIndex + 1);
-			if (dollarIndex != -1) {
-				jelement= jproject.findElement(new Path(pathStr.substring(0, dollarIndex) + ".java")); //$NON-NLS-1$
-			}
-		}
-
-		return jelement;
-	}	
-	
+	}
+			
 	/**
 	 * Get's a list of java project from a persistent property.
 	 * @param project	The project you get the lookup path for
@@ -209,6 +167,30 @@ public class ProjectSourceLocator implements ISourceLocator {
 			throw new JavaModelException(e, IStatus.ERROR);
 		}
 	}
+	
+	/**
+	 * Returns a set of source locations persisted with the given
+	 * project, or <code>null</code> if none.
+	 * 
+	 * @param project Java project
+	 * @return source locations associated with the project,
+	 * 	or <code>null</code> if none have been set
+	 * @throws JavaModelException	When access to the underlying <code>IProject</code> 
+	 *  fails or when the persistent property has an invalid format.
+	 */
+	public static IJavaSourceLocation[] getPersistedSourceLocations(IJavaProject project) throws JavaModelException {
+		IProject p= project.getProject();
+		try {
+			String property= p.getPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, ADDITIONAL_LOCATIONS_PROPERTY));
+			if (property == null)
+				return null;
+			return decodeSourceLocations(property);
+		} catch (CoreException e) {
+			throw new JavaModelException(e);
+		} catch (IOException e) {
+			throw new JavaModelException(e, IJavaModelStatusConstants.IO_EXCEPTION);
+		}
+	}	
 		
 	/**
 	 * Sets a array of <code>IJavaProject</code> to be used in debugger source
@@ -231,6 +213,29 @@ public class ProjectSourceLocator implements ISourceLocator {
 		}
 	}
 	
+	/**
+	 * Sets an array of <code>IJavaSourceLocation</code> to be used in debugger source
+	 * lookup for the given project
+	 * @param project The project to set the search path for
+	 * @param locations The locations that will be searched for source files.
+	 * @throws JavaModelException	When access to the underlying <code>IProject</code>
+	 *  fails, or an exception occurrs persisting the property
+	 */
+	public static void setPersistedSourceLocations(IJavaProject project, IJavaSourceLocation[] locations) throws JavaModelException {
+		fgCustomSearchPathChanged= true;
+		IProject p= project.getProject();
+		String property= null;
+		try {
+			if (locations != null)
+				property= encodeSourceLocations(locations);
+			p.setPersistentProperty(new QualifiedName(LaunchingPlugin.PLUGIN_ID, ADDITIONAL_LOCATIONS_PROPERTY), property);
+		} catch (CoreException e) {
+			throw new JavaModelException(e);
+		} catch (IOException e) {
+			throw new JavaModelException(e, IJavaModelStatusConstants.IO_EXCEPTION);
+		}
+	}	
+	
 	private static IJavaProject[] decodeProjects(String property) throws IOException {
 		BufferedReader reader= new BufferedReader(new StringReader(property));
 		ArrayList jprojects= new ArrayList();
@@ -251,5 +256,85 @@ public class ProjectSourceLocator implements ISourceLocator {
 			buf.append('\n');
 		}
 		return buf.toString();
+	}
+	
+	private static IJavaSourceLocation[] decodeSourceLocations(String property) throws IOException {
+		BufferedReader reader= new BufferedReader(new StringReader(property));
+		ArrayList locations= new ArrayList();
+		String line= reader.readLine();
+		while (line != null && line.length() > 0) {
+			IJavaSourceLocation location = null;
+			if (line.equals(JavaProjectSourceLocation.class.getName())) {
+				// next line is a project name
+				line = reader.readLine();
+				IJavaProject proj = (IJavaProject)JavaCore.create(line);
+				if (proj != null) {
+					location = new JavaProjectSourceLocation(proj);
+				}
+			} else if (line.equals(DirectorySourceLocation.class.getName())) {
+				// next line is directory name
+				line = reader.readLine();
+				File file = new File(line);
+				if (file.exists() && file.isDirectory()) {
+					location = new DirectorySourceLocation(file);
+				}
+			} else if (line.equals(ArchiveSourceLocation.class.getName())) {
+				// next two lines are zip file and source root
+				line = reader.readLine();
+				ZipFile zip = new ZipFile(line);
+				line = reader.readLine();
+				IPath sourceRoot = null;
+				if (line.trim().length() > 0) {
+					sourceRoot = new Path(line);
+				}
+				location = new ArchiveSourceLocation(zip, sourceRoot);
+			}
+			if (location != null)
+				locations.add(location);
+			line= reader.readLine();
+		}
+		return (IJavaSourceLocation[]) locations.toArray(new IJavaSourceLocation[locations.size()]);
+	}	
+	
+	private static String encodeSourceLocations(IJavaSourceLocation[] locations) throws IOException {
+		StringBuffer buf= new StringBuffer();
+		for (int i= 0; i < locations.length; i++) {
+			buf.append(locations[i].getClass().getName());
+			buf.append('\n');
+			if (locations[i] instanceof JavaProjectSourceLocation) {
+				JavaProjectSourceLocation location = (JavaProjectSourceLocation)locations[i];
+				buf.append(location.getJavaProject().getHandleIdentifier());
+			} else if (locations[i] instanceof DirectorySourceLocation) {
+				DirectorySourceLocation location = (DirectorySourceLocation)locations[i];
+				buf.append(location.getDirectory().getCanonicalPath());
+			} else if (locations[i] instanceof ArchiveSourceLocation) {
+				ArchiveSourceLocation location = (ArchiveSourceLocation)locations[i];
+				buf.append(location.getArchive().getName());
+				buf.append('\n');
+				IPath root = location.getRootPath();
+				if (root == null) {
+					buf.append(" ");
+				} else {
+					buf.append(root.toString());
+				}
+			}
+			buf.append('\n');
+		}
+		return buf.toString();		
+	}	
+	
+	/**
+	 *@see ISourceLocator#getSourceElement
+	 */
+	public Object getSourceElement(IStackFrame stackFrame) {	
+		if (fCustomSearchPathProject != null) {
+			try {
+				updateCustomSearchPath(fCustomSearchPathProject);
+			} catch (JavaModelException e) {
+				LaunchingPlugin.log(e);
+			}
+		}
+		return super.getSourceElement(stackFrame);
+		
 	}
 }

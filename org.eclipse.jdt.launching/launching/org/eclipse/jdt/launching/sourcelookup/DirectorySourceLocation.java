@@ -11,6 +11,7 @@ import java.io.IOException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.JavaModelException;
  
@@ -28,7 +29,7 @@ import org.eclipse.jdt.core.JavaModelException;
  * </p>
  * @see IJavaSourceLocation
  */
-public class DirectorySourceLocation implements IJavaSourceLocation {
+public class DirectorySourceLocation extends PlatformObject implements IJavaSourceLocation {
 
 	/**
 	 * The directory associated with this source location
@@ -89,4 +90,19 @@ public class DirectorySourceLocation implements IJavaSourceLocation {
 	public File getDirectory() {
 		return fDirectory;
 	}
+	
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {		
+		return object instanceof DirectorySourceLocation &&
+			 getDirectory().equals(((DirectorySourceLocation)object).getDirectory());
+	}
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getDirectory().hashCode();
+	}	
 }

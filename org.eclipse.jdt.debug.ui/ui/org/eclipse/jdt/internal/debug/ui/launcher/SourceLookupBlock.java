@@ -5,10 +5,15 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
  
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import java.util.zip.ZipFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -19,14 +24,26 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
+import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.jdt.internal.ui.wizards.swt.MGridData;
 import org.eclipse.jdt.internal.ui.wizards.swt.MGridLayout;
 import org.eclipse.jdt.launching.ProjectSourceLocator;
+import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
+import org.eclipse.jdt.launching.sourcelookup.DirectorySourceLocation;
+import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
+import org.eclipse.jdt.launching.sourcelookup.JavaProjectSourceLocation;
+import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class SourceLookupBlock {
 	
@@ -35,14 +52,49 @@ public class SourceLookupBlock {
 	private SelectionButtonDialogField fUseDefaultRadioButton;
 	private SelectionButtonDialogField fUseDefinedRadioButton;
 	private CheckedListDialogField fProjectList;
+	private StringDialogField fZipSourceRootField;
 	
 	private Control fSWTControl;
 
 	private class SourceLookupAdapter implements IListAdapter, IDialogFieldListener {
 		public void customButtonPressed(DialogField field, int index) {
+			if (index == 6) {
+				addDirectoryPressed();
+			} else if (index == 7) {
+				addZipPressed();
+			}
 		}
 
 		public void selectionChanged(DialogField field) {
+			List selection = ((ListDialogField)field).getSelectedElements();
+			
+			// update remove button - can only remove directories
+			// and zips
+			boolean enabled = false;
+			Iterator iter = selection.iterator();
+			while (iter.hasNext()) {
+				Object selected = iter.next();
+				if (selected instanceof JavaProjectSourceLocation) {
+					enabled = false;
+					break;
+				}
+				enabled = true;
+			}
+			((ListDialogField)field).enableButton(8, enabled);
+			
+			// enable & update source root field
+			if (selection.size() == 1 && selection.get(0) instanceof ArchiveSourceLocation) {
+				ArchiveSourceLocation location = (ArchiveSourceLocation)selection.get(0);
+				fZipSourceRootField.setEnabled(true);
+				IPath path = location.getRootPath();
+				String name = ""; //$NON-NLS-1$
+				if (path != null) {
+					name = path.toString();
+				}
+				fZipSourceRootField.setText(name);
+			} else {
+				fZipSourceRootField.setEnabled(false);
+			}
 		}
 
 		public void dialogFieldChanged(DialogField field) {
@@ -69,6 +121,10 @@ public class SourceLookupBlock {
 			/* 2 */ null,
 			/* 3 */ LauncherMessages.getString("SourceLookupBlock.projects.up"), //$NON-NLS-1$
 			/* 4 */ LauncherMessages.getString("SourceLookupBlock.projects.down"), //$NON-NLS-1$
+			/* 5 */ null,
+			/* 6 */ LauncherMessages.getString("SourceLookupBlock.Add_Directory"), //$NON-NLS-1$
+			/* 7 */ LauncherMessages.getString("SourceLookupBlock.Add_Zip"), //$NON-NLS-1$
+			/* 8 */ LauncherMessages.getString("SourceLookupBlock.Remove") //$NON-NLS-1$
 		};
 		
 		fProjectList= new CheckedListDialogField(adapter, buttonLabels, new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_BASICS));
@@ -77,39 +133,51 @@ public class SourceLookupBlock {
 		fProjectList.setUncheckAllButtonIndex(1);
 		fProjectList.setUpButtonIndex(3);
 		fProjectList.setDownButtonIndex(4);
+		fProjectList.setRemoveButtonIndex(8);
+		
+		fZipSourceRootField = new StringDialogField();
+		fZipSourceRootField.setLabelText(LauncherMessages.getString("SourceLookupBlock.Source_root")); //$NON-NLS-1$
 		
 		initializeFields();
 	}
 
 	public void initializeFields() {
-		ArrayList projects= new ArrayList();
+		ArrayList allLocations = new ArrayList();
 		ArrayList checked= new ArrayList();
 		boolean useClasspath= true;
-	
+		
 		try {
-			IJavaProject[] customLookup= ProjectSourceLocator.getSourceLookupPath(fJavaProject);
-			if (customLookup != null) {
-				projects.addAll(Arrays.asList(customLookup));
-				checked.addAll(Arrays.asList(customLookup));
+			IJavaSourceLocation[] locations = ProjectSourceLocator.getPersistedSourceLocations(fJavaProject);
+			if (locations != null) {
+				allLocations.addAll(Arrays.asList(locations));
 				useClasspath= false;
 			} else {
-				getProjectsFromClaspath(fJavaProject, projects);
+				IJavaProject[] projects = ProjectSourceLocator.getSourceLookupPath(fJavaProject);
+				if (projects == null) {
+					allLocations.addAll(Arrays.asList(JavaSourceLocator.getDefaultSourceLocations(fJavaProject)));
+				} else {
+					for (int i = 0; i < projects.length; i++) {
+						allLocations.add(new JavaProjectSourceLocation(projects[i]));
+					}
+				}
 			}
-			checked= new ArrayList(projects);
+			checked= new ArrayList(allLocations);
 			IJavaProject[] allProjects= fJavaProject.getJavaModel().getJavaProjects();
 			for (int i= 0; i < allProjects.length; i++) {
-				IJavaProject curr= allProjects[i];
-				if (!projects.contains(curr)) {
-					projects.add(curr);
+				IJavaSourceLocation curr= new JavaProjectSourceLocation(allProjects[i]);
+				if (!allLocations.contains(curr)) {
+					allLocations.add(curr);
 				}
 			}
 		} catch (JavaModelException e) {
 			JDIDebugUIPlugin.log(e);
 		}
+		
 		fUseDefaultRadioButton.setSelection(useClasspath);
 		fUseDefinedRadioButton.setSelection(!useClasspath);
-		fProjectList.setElements(projects);
+		fProjectList.setElements(allLocations);
 		fProjectList.setCheckedElements(checked);
+		fZipSourceRootField.setEnabled(false);
 	}
 
 	/*
@@ -129,6 +197,17 @@ public class SourceLookupBlock {
 		
 		fProjectList.doFillIntoGrid(composite, 3);
 		LayoutUtil.setHorizontalSpan(fProjectList.getLabelControl(null), 2);
+		
+		Composite c2 = new Composite(composite, SWT.NONE);
+		layout = new MGridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.numColumns= 2;
+		c2.setLayout(layout);
+		MGridData gd = new MGridData(MGridData.FILL_HORIZONTAL);
+		c2.setLayoutData(gd);
+				
+		fZipSourceRootField.doFillIntoGrid(c2, 2);
 		
 		fSWTControl= composite;
 		return composite;
@@ -171,11 +250,38 @@ public class SourceLookupBlock {
 		if (fUseDefaultRadioButton.isSelected()) {
 			ProjectSourceLocator.setSourceLookupPath(fJavaProject, null);
 		} else {
-			List projects= fProjectList.getCheckedElements();
-			ProjectSourceLocator.setSourceLookupPath(fJavaProject, (IJavaProject[]) projects.toArray(new IJavaProject[projects.size()]));
+			List locations= fProjectList.getCheckedElements();
+			ProjectSourceLocator.setPersistedSourceLocations(fJavaProject, (IJavaSourceLocation[]) locations.toArray(new IJavaSourceLocation[locations.size()]));
 		}	
 	}
 	
+	protected void addDirectoryPressed() {
+		DirectoryDialog dialog= new DirectoryDialog(getShell());
+		dialog.setText(LauncherMessages.getString("SourceLookupBlock.Choose_a_root_directoy_containing_source_packages")); //$NON-NLS-1$
+		//dialog.setFilterPath(lastUsedPath);
+		String res= dialog.open();
+		if (res != null) {
+			DirectorySourceLocation location = new DirectorySourceLocation(new File(res));
+			fProjectList.addElement(location);
+			fProjectList.setChecked(location, true);
+		}		
+	}
+	
+	protected void addZipPressed() {
+		FileDialog dialog= new FileDialog(getShell());
+		dialog.setText(LauncherMessages.getString("SourceLookupBlock.Choose_source_zip")); //$NON-NLS-1$
+		//dialog.setFilterPath(lastUsedPath);
+		String res= dialog.open();
+		if (res != null) {
+			try {
+				ArchiveSourceLocation location = new ArchiveSourceLocation(new ZipFile(res), null);
+				fProjectList.addElement(location);
+				fProjectList.setChecked(location, true);
+			} catch (IOException e) {
+				JDIDebugUIPlugin.log(e);
+			}
+		}		
+	}	
 
 }
 

@@ -1,11 +1,12 @@
 package org.eclipse.jdt.launching.sourcelookup;
 
-import org.eclipse.core.runtime.CoreException;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
  
 /**
  * A source location defines the location of a repository
@@ -25,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
  * (repeatedly) as the API evolves.
  * </p>
  */
-public interface IJavaSourceLocation {
+public interface IJavaSourceLocation extends IAdaptable {
 	
 	/**
 	 * Returns an object representing the source code

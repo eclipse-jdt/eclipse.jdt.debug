@@ -7,6 +7,7 @@ package org.eclipse.jdt.launching.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
  
@@ -25,7 +26,7 @@ import org.eclipse.jdt.core.IJavaProject;
  * </p>
  * @see IJavaSourceLocation
  */
-public class JavaProjectSourceLocation implements IJavaSourceLocation {
+public class JavaProjectSourceLocation extends PlatformObject implements IJavaSourceLocation {
 
 	/**
 	 * The project associated with this source location
@@ -78,4 +79,19 @@ public class JavaProjectSourceLocation implements IJavaSourceLocation {
 	public IJavaProject getJavaProject() {
 		return fProject;
 	}
+	
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {		
+		return object instanceof JavaProjectSourceLocation &&
+			 getJavaProject().equals(((JavaProjectSourceLocation)object).getJavaProject());
+	}
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getJavaProject().hashCode();
+	}		
 }

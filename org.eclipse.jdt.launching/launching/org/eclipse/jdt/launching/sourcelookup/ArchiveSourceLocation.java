@@ -11,6 +11,7 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PlatformObject;
  
 /**
  * Locates source elements in an acrhive (zip) in the local
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.Path;
  * </p>
  * @see IJavaSourceLocation
  */
-public class ArchiveSourceLocation implements IJavaSourceLocation {
+public class ArchiveSourceLocation extends PlatformObject implements IJavaSourceLocation {
 
 	/**
 	 * The archive associated with this source location
@@ -64,8 +65,11 @@ public class ArchiveSourceLocation implements IJavaSourceLocation {
 			pathStr = pathStr.substring(0, dollarIndex);
 		}		
 		pathStr += ".java"; //$NON-NLS-1$
-		IPath root = getRootPath().append(new Path(pathStr));
-		ZipEntry entry = getArchive().getEntry(root.toString());
+		IPath path = new Path(pathStr); 
+		if (getRootPath() != null) {
+			path = getRootPath().append(path);
+		}
+		ZipEntry entry = getArchive().getEntry(path.toString());
 		if (entry != null) {
 			return new ZipEntryStorage(getArchive(), entry);
 		}
@@ -102,7 +106,11 @@ public class ArchiveSourceLocation implements IJavaSourceLocation {
 	 * folder is the root of the arhcive
 	 */
 	private void setRootPath(IPath path) {
-		fRootPath = path;
+		if (path == null || path.isEmpty()) {
+			fRootPath = null;
+		} else {
+			fRootPath = path;
+		}
 	}
 	
 	/**
@@ -116,5 +124,20 @@ public class ArchiveSourceLocation implements IJavaSourceLocation {
 	 */
 	public IPath getRootPath() {
 		return fRootPath;
+	}	
+	
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object object) {		
+		return object instanceof ArchiveSourceLocation &&
+			 getArchive().equals(((ArchiveSourceLocation)object).getArchive());
+	}
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getArchive().hashCode();
 	}	
 }
