@@ -2227,19 +2227,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		return null;
 	}
-	
-	
-	/**
-	 * @see org.eclipse.jdt.debug.core.IJavaThread#hasContendedMonitors()
-	 */
-	public boolean hasContendedMonitors() throws DebugException {
-		return isSuspended() && (getCurrentContendedMonitor() != null);
-	}
 
 	/**
-	 * @see org.eclipse.jdt.debug.core.IJavaThread#getCurrentContendedMonitor()
+	 * @see org.eclipse.jdt.debug.core.IJavaThread#getContendedMonitor()
 	 */
-	public IJavaObject getCurrentContendedMonitor() throws DebugException {
+	public IJavaObject getContendedMonitor() throws DebugException {
 		try {
 			ObjectReference monitor= getUnderlyingThread().currentContendedMonitor();
 			if (monitor != null) {

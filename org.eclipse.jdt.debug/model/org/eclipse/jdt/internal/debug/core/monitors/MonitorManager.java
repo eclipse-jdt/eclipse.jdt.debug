@@ -209,13 +209,14 @@ public class MonitorManager implements IMonitorManager {
 			suspend(threads);
 			
 			IJavaObject[] ownedMonitors;
-			IJavaObject currentContendedMonitors, monitor;
+			IJavaObject currentContendedMonitor;
+			IJavaObject monitor;
 			//updating data on 
 			//owning threads / owned monitors and contending threads / contended monitors
 			for (int i = 0; i < threads.length; i++) {
 				thread = threads[i];
 				ownedMonitors = thread.getOwnedMonitors();
-				currentContendedMonitors = thread.getCurrentContendedMonitor();
+				currentContendedMonitor = thread.getContendedMonitor();
 				// owning threads / owned monitors
 				if(thread.hasOwnedMonitors()){
 					addThreadWithOwnedMonitors(thread, ownedMonitors);
@@ -226,9 +227,9 @@ public class MonitorManager implements IMonitorManager {
 					}
 				}
 				// contending threads / contended monitors
-				if(thread.hasContendedMonitors()){
-					addThreadWithContendedMonitor(thread, currentContendedMonitors);
-					addMonitorWithContendedThread(currentContendedMonitors, thread);
+				if(currentContendedMonitor != null){
+					addThreadWithContendedMonitor(thread, currentContendedMonitor);
+					addMonitorWithContendedThread(currentContendedMonitor, thread);
 				}
 			}
 			
@@ -270,11 +271,12 @@ public class MonitorManager implements IMonitorManager {
 			IJavaThread[] threads= (IJavaThread[]) threadsList.toArray(new IJavaThread[threadsList.size()]);
 			
 			IJavaObject[] ownedMonitors;
-			IJavaObject currentContendedMonitors, monitor;		
+			IJavaObject currentContendedMonitor;
+			IJavaObject monitor;		
 			for (int i = 0; i < threads.length; i++) {
 				thread = threads[i];
 				ownedMonitors = thread.getOwnedMonitors();
-				currentContendedMonitors = thread.getCurrentContendedMonitor();
+				currentContendedMonitor = thread.getContendedMonitor();
 				
 				// owning threads / owned monitors
 				if(thread.hasOwnedMonitors()){
@@ -286,9 +288,9 @@ public class MonitorManager implements IMonitorManager {
 					}
 				}
 				// contending threads / contended monitors
-				if(thread.hasContendedMonitors()){
-					addThreadWithContendedMonitor(thread, currentContendedMonitors);
-					addMonitorWithContendedThread(currentContendedMonitors, thread);
+				if(currentContendedMonitor != null){
+					addThreadWithContendedMonitor(thread, currentContendedMonitor);
+					addMonitorWithContendedThread(currentContendedMonitor, thread);
 				}
 			}
 			

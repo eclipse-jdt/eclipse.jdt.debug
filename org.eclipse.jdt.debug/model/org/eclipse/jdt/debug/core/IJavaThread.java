@@ -179,8 +179,8 @@ public interface IJavaThread extends IThread {
 	public boolean canTerminateEvaluation();
 	
 	/**
-	 * Returns a Java object for the monitor, if any, for
-	 * which this thread is currently waiting. 
+	 * Returns a Java object for the monitor for
+	 * which this thread is currently waiting or <code>null</code>. 
 	 *
 	 * @return IJavaObject the contended monitor object or <code>null</code> if this
 	 * thread is not waiting on a monitor.
@@ -188,17 +188,7 @@ public interface IJavaThread extends IThread {
 	 * retrieving the contended monitor.
 	 * @since 2.1
 	 */
-	public IJavaObject getCurrentContendedMonitor() throws DebugException;
-	
-	/**
-	 * Returns whether thread is in contention for at least one monitor.
-	 * 
-	 * @return boolean whether this thread is in contention for at least one monitor
-	 * @exception DebugException if an exception occurs determining
-	 * if there are contented monitors.
-	 * @since 2.1
-	 */
-	public boolean hasContendedMonitors() throws DebugException;
+	public IJavaObject getContendedMonitor() throws DebugException;
 	
 	/**
 	 * Returns the monitors owned by this thread or <code>null</code>
