@@ -380,10 +380,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		ASTNode parent= node;
 		do {
 			parent= parent.getParent();
-		} while (!(parent instanceof TypeDeclaration || parent instanceof AnonymousClassDeclaration));
+		} while (!(parent instanceof TypeDeclaration || parent instanceof EnumDeclaration || parent instanceof AnonymousClassDeclaration));
 		ITypeBinding parentBinding;
 		if (parent instanceof TypeDeclaration) {
 			parentBinding= ((TypeDeclaration)parent).resolveBinding();
+		} else if (parent instanceof EnumDeclaration) {
+			parentBinding= ((EnumDeclaration)parent).resolveBinding();
 		} else {
 			parentBinding= ((AnonymousClassDeclaration)parent).resolveBinding();
 		}
@@ -2543,7 +2545,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	private int parseIntValue(String token) {
 		int tokenLength= token.length();
 		if (tokenLength < 10) {
-			// Integer.decode can handle tokens with less than 18 digits
+			// Integer.decode can handle tokens with less than 10 digits
 			return Integer.decode(token).intValue();
 		} 
 		switch (getBase(token)) {
@@ -2567,7 +2569,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	private long parseLongValue(String token) {
 		int tokenLength= token.length();
 		if (tokenLength < 18) {
-			// Long.decode can handle tokens with less than 10 digits
+			// Long.decode can handle tokens with less than 18 digits
 			return Long.decode(token).longValue();
 		} 
 		switch (getBase(token)) {

@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -150,6 +151,12 @@ public class EvaluationSourceGenerator {
 	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber, boolean createInAStaticMethod, int apiLevel) throws DebugException {
 		ASTParser parser = ASTParser.newParser(apiLevel);
 		parser.setSource(source.toCharArray());
+		if (apiLevel == 3) {
+			Map options=JavaCore.getDefaultOptions();
+			options.put(JavaCore.COMPILER_COMPLIANCE, "1.5"); //$NON-NLS-1$
+			options.put(JavaCore.COMPILER_SOURCE, "1.5"); //$NON-NLS-1$
+			parser.setCompilerOptions(options);
+		}
 		CompilationUnit unit= (CompilationUnit)parser.createAST(null);
 		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
 		unit.accept(visitor);

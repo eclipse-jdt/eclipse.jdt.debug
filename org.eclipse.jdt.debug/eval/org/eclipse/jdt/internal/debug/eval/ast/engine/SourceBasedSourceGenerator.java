@@ -18,6 +18,9 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayCreation;
@@ -26,6 +29,7 @@ import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.AssertStatement;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BlockComment;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.BreakStatement;
@@ -39,6 +43,9 @@ import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -47,11 +54,20 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.Initializer;
+import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.LabeledStatement;
+import org.eclipse.jdt.core.dom.LineComment;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
+import org.eclipse.jdt.core.dom.MemberRef;
+import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.MethodRef;
+import org.eclipse.jdt.core.dom.MethodRefParameter;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
@@ -65,6 +81,7 @@ import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
@@ -73,6 +90,8 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
+import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
@@ -246,6 +265,53 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		StringBuffer source = new StringBuffer();
 		
 		source.append('{').append('\n');
+		
+		if (buffer != null) {
+			fSnippetStartPosition+= source.length();
+		}
+		
+		source.append(buildBody(buffer, list));
+		source.append('}').append('\n');
+		
+		return source;
+	}
+	
+	private StringBuffer buildEnumBody(StringBuffer buffer, List constantDeclarations, List bodyDeclarations) {
+		StringBuffer source = new StringBuffer();
+		
+		source.append('{').append('\n');
+		if (constantDeclarations.isEmpty()) {
+			source.append(';').append('\n');
+		} else {
+			for (Iterator iter= constantDeclarations.iterator(); iter.hasNext();) {
+				source.append(((EnumConstantDeclaration) iter.next()).getName().getIdentifier());
+				if (iter.hasNext()) {
+					source.append(',');
+				} else {
+					source.append(';');
+				}
+				source.append('\n');
+			}
+		}
+		
+		if (buffer != null) {
+			fSnippetStartPosition+= source.length();
+		}
+		
+		source.append(buildBody(buffer, bodyDeclarations));
+		source.append('}').append('\n');
+		
+		return source;
+		
+	}
+
+	/**
+	 * @param buffer
+	 * @param list
+	 * @param source
+	 */
+	private StringBuffer buildBody(StringBuffer buffer, List list) {
+		StringBuffer source= new StringBuffer();
 		if (buffer != null) {
 			fSnippetStartPosition += source.length();
 			source.append(buffer.toString());
@@ -259,12 +325,15 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			} else if (bodyDeclaration instanceof TypeDeclaration) {
 				TypeDeclaration typeDeclaration = (TypeDeclaration) bodyDeclaration;
 				if (!typeDeclaration.getName().getIdentifier().equals(fLastTypeName)) {
-					source.append(buildTypeDeclaration(null, (TypeDeclaration) bodyDeclaration));
+					source.append(buildTypeDeclaration(null, typeDeclaration));
+				}
+			} else if (bodyDeclaration instanceof EnumDeclaration) {
+				EnumDeclaration enumDeclaration= (EnumDeclaration) bodyDeclaration;
+				if (!enumDeclaration.getName().getIdentifier().equals(fLastTypeName)) {
+					source.append(buildEnumDeclaration(null, enumDeclaration));
 				}
 			}
 		}
-		source.append('}').append('\n');
-		
 		return source;
 	}
 	
@@ -366,7 +435,33 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			}
 		}
 	}
-	
+
+	private StringBuffer buildEnumDeclaration(StringBuffer buffer, EnumDeclaration enumDeclaration) {
+		StringBuffer source = new StringBuffer();
+		source.append(Flags.toString(enumDeclaration.getModifiers()));
+		source.append(" enum "); //$NON-NLS-1$
+		
+		source.append(enumDeclaration.getName().getIdentifier());
+		
+		Iterator iterator= enumDeclaration.superInterfaceTypes().iterator();
+		if (iterator.hasNext()) {
+			source.append(" implements "); //$NON-NLS-1$
+			source.append(getTypeName((Type) iterator.next()));
+			while (iterator.hasNext()) {
+				source.append(',');
+				source.append(getTypeName((Type) iterator.next()));
+			}
+		}
+
+		if (buffer != null) {
+			fSnippetStartPosition+= source.length();
+		}
+		source.append(buildEnumBody(buffer, enumDeclaration.enumConstants(), enumDeclaration.bodyDeclarations()));
+		
+		return source;
+	}
+		
+
 	private StringBuffer buildTypeDeclaration(StringBuffer buffer, TypeDeclaration typeDeclaration) {
 		
 		StringBuffer source = new StringBuffer();
@@ -489,12 +584,16 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		source.append(buffer);
 		
 		for (Iterator iterator = compilationUnit.types().iterator(); iterator.hasNext();) {
-			TypeDeclaration typeDeclaration = (TypeDeclaration) iterator.next();
+			AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) iterator.next();
 			if (Flags.isPublic(typeDeclaration.getModifiers())) {
 				fCompilationUnitName = typeDeclaration.getName().getIdentifier();
 			}
 			if (!fLastTypeName.equals(typeDeclaration.getName().getIdentifier())) {
-				source.append(buildTypeDeclaration(null,typeDeclaration));
+				if (typeDeclaration instanceof TypeDeclaration) {
+					source.append(buildTypeDeclaration(null, (TypeDeclaration)typeDeclaration));
+				} else if (typeDeclaration instanceof EnumDeclaration) {
+					source.append(buildEnumDeclaration(null, (EnumDeclaration)typeDeclaration));
+				}
 			}
 		}
 		if (fCompilationUnitName == null) {		
@@ -722,6 +821,59 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		fSource = buildCompilationUnit(fSource, node);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.EnumDeclaration)
+	 */
+	public void endVisit(EnumDeclaration node) {
+		
+		if (hasError()) {
+			return;
+		}
+		
+		if (!rightTypeFound() && containsLine(node)) {
+			setRightTypeFound(true);
+			
+			fSource= buildRunMethod(node.bodyDeclarations());
+			fEvaluateNextEndTypeDeclaration = true;
+		}
+		
+		if (!fEvaluateNextEndTypeDeclaration) {
+			fEvaluateNextEndTypeDeclaration = true;
+			return;
+		}
+		
+		if (rightTypeFound()) {
+			
+			StringBuffer source = buildEnumDeclaration(fSource, node);
+			
+			if (node.isLocalTypeDeclaration()) {
+				// enclose in a method if nessecary
+				
+				ASTNode parent = node.getParent();
+				while (!(parent instanceof MethodDeclaration)) {
+					parent= parent.getParent();
+				}
+				MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
+				
+				fSource = new StringBuffer();
+				
+				if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
+					fSource.append("static "); //$NON-NLS-1$
+				}
+				
+				fSource.append("void ___eval() {\n"); //$NON-NLS-1$
+				fSnippetStartPosition+= fSource.length();
+				fSource.append(source);
+				fSource.append("}\n"); //$NON-NLS-1$
+				
+				fLastTypeName = ""; //$NON-NLS-1$
+			} else {
+				fSource = source;
+				fLastTypeName = node.getName().getIdentifier();
+			}
+		}
+	}
+
 	/**
 	 * @see ASTVisitor#endVisit(TypeDeclaration)
 	 */
@@ -775,6 +927,20 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
+	 */
+	public boolean visit(AnnotationTypeDeclaration node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration)
+	 */
+	public boolean visit(AnnotationTypeMemberDeclaration node) {
+		return false;
+	}
+	
 	/**
 	 * @see ASTVisitor#visit(AnonymousClassDeclaration)
 	 */
@@ -855,6 +1021,13 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.BlockComment)
+	 */
+	public boolean visit(BlockComment node) {
+		return false;
+	}
+
 	/**
 	 * @see ASTVisitor#visit(BooleanLiteral)
 	 */
@@ -918,7 +1091,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	/**
 	 * @see ASTVisitor#visit(CompilationUnit)
 	 */
-	public boolean visit(CompilationUnit node) {
+ 	public boolean visit(CompilationUnit node) {
 		if (rightTypeFound()) {
 			return false;
 		}
@@ -975,6 +1148,36 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnhancedForStatement)
+	 */
+	public boolean visit(EnhancedForStatement node) {
+		if (rightTypeFound()) {
+			return false;
+		}
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumConstantDeclaration)
+	 */
+	public boolean visit(EnumConstantDeclaration node) {
+		if (rightTypeFound()) {
+			return false;
+		}
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
+	 */
+	public boolean visit(EnumDeclaration node) {
+		if (rightTypeFound()) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * @see ASTVisitor#visit(ExpressionStatement)
 	 */
@@ -1055,6 +1258,15 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.InstanceofExpression)
+	 */
+	public boolean visit(InstanceofExpression node) {
+		if (rightTypeFound()) {
+			return false;
+		}
+		return true;
+	}
 	/**
 	 * @see ASTVisitor#visit(Javadoc)
 	 */
@@ -1075,6 +1287,33 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.LineComment)
+	 */
+	public boolean visit(LineComment node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MarkerAnnotation)
+	 */
+	public boolean visit(MarkerAnnotation node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MemberRef)
+	 */
+	public boolean visit(MemberRef node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MemberValuePair)
+	 */
+	public boolean visit(MemberValuePair node) {
+		return false;
+	}
 	/**
 	 * @see ASTVisitor#visit(MethodDeclaration)
 	 */
@@ -1095,6 +1334,34 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodRef)
+	 */
+	public boolean visit(MethodRef node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodRefParameter)
+	 */
+	public boolean visit(MethodRefParameter node) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Modifier)
+	 */
+	public boolean visit(Modifier node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.NormalAnnotation)
+	 */
+	public boolean visit(NormalAnnotation node) {
+		return false;
+	}
+	
 	/**
 	 * @see ASTVisitor#visit(NullLiteral)
 	 */
@@ -1119,6 +1386,16 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * @see ASTVisitor#visit(PackageDeclaration)
 	 */
 	public boolean visit(PackageDeclaration node) {
+		if (rightTypeFound()) {
+			return false;
+		}
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.ParameterizedType)
+	 */
+	public boolean visit(ParameterizedType node) {
 		if (rightTypeFound()) {
 			return false;
 		}
@@ -1175,6 +1452,12 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.QualifiedType)
+	 */
+	public boolean visit(QualifiedType node) {
+		return false;
+	}
 	/**
 	 * @see ASTVisitor#visit(ReturnStatement)
 	 */
@@ -1205,6 +1488,13 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.SingleMemberAnnotation)
+	 */
+	public boolean visit(SingleMemberAnnotation node) {
+		return false;
+	}
+	
 	/**
 	 * @see ASTVisitor#visit(SingleVariableDeclaration)
 	 */
@@ -1285,6 +1575,20 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TagElement)
+	 */
+	public boolean visit(TagElement node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TextElement)
+	 */
+	public boolean visit(TextElement node) {
+		return false;
+	}
+
 	/**
 	 * @see ASTVisitor#visit(ThisExpression)
 	 */
@@ -1346,6 +1650,13 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeParameter)
+	 */
+	public boolean visit(TypeParameter node) {
+		return false;
+	}
+
 	/**
 	 * @see ASTVisitor#visit(VariableDeclarationExpression)
 	 */
@@ -1385,4 +1696,12 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.WildcardType)
+	 */
+	public boolean visit(WildcardType node) {
+		return false;
+	}
+
 }
