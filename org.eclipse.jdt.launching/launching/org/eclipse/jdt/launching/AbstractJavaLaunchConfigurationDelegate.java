@@ -273,7 +273,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 		if (jreContainerFound) {
 			List bootEntriesAppend= new ArrayList();
 			for (; index < entries.length; index ++) {
-				IRuntimeClasspathEntry entry= entries[index++];
+				IRuntimeClasspathEntry entry= entries[index];
 				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) {
 						bootEntriesAppend.add(entry);
 				}
