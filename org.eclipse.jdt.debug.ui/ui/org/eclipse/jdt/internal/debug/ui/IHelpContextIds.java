@@ -5,7 +5,7 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jdt.debug.ui.JavaDebugUI;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 
 /**
  * Help context ids for the Java Debug UI.
@@ -16,7 +16,7 @@ import org.eclipse.jdt.debug.ui.JavaDebugUI;
  * 
  */
 public interface IHelpContextIds {
-	public static final String PREFIX= JavaDebugUI.PLUGIN_ID + '.';
+	public static final String PREFIX= IJavaDebugUIConstants.PLUGIN_ID + '.';
 
 	// Actions
 	public static final String MANAGE_METHODBREAKPOINT_ACTION= PREFIX + "manage_methodbreakpoint_action_context"; //$NON-NLS-1$

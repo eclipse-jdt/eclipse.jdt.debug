@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,7 +21,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.ILaunch;
@@ -40,11 +38,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.debug.ui.JavaDebugUI;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
@@ -61,7 +58,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 public class ScrapbookLauncher implements IDebugEventListener {
 	
-	public static final String SCRAPBOOK_LAUNCH = JavaDebugUI.PLUGIN_ID + ".scrapbook_launch";
+	public static final String SCRAPBOOK_LAUNCH = IJavaDebugUIConstants.PLUGIN_ID + ".scrapbook_launch";
 	
 	private IJavaLineBreakpoint fMagicBreakpoint;
 	
@@ -113,12 +110,12 @@ public class ScrapbookLauncher implements IDebugEventListener {
 			jarURL = Platform.asLocalURL(jarURL);
 		} catch (MalformedURLException e) {
 			JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.",
-			 new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), JavaDebugUI.INTERNAL_ERROR, e.getMessage(), e));
+			 new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, e.getMessage(), e));
 			JDIDebugUIPlugin.log(e);
 			return null;
 		} catch (IOException e) {
 			JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.",
-			 new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), JavaDebugUI.INTERNAL_ERROR, e.getMessage(), e));
+			 new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, e.getMessage(), e));
 			JDIDebugUIPlugin.log(e);
 			return null;
 		}
@@ -144,7 +141,7 @@ public class ScrapbookLauncher implements IDebugEventListener {
 				u = f.toURL();
 			} catch (MalformedURLException e) {
 				JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.",
-			 		new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), JavaDebugUI.INTERNAL_ERROR, e.getMessage(), e));				
+			 		new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, e.getMessage(), e));				
 			 	JDIDebugUIPlugin.log(e);
 				return null;
 			}
@@ -157,7 +154,7 @@ public class ScrapbookLauncher implements IDebugEventListener {
 					urls[i + 1] = f.toURL().toExternalForm();
 				} catch (MalformedURLException e) {
 					JDIDebugUIPlugin.errorDialog("Exception occurred launching scrapbook.",
-				 		new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), JavaDebugUI.INTERNAL_ERROR, e.getMessage(), e));				
+				 		new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, e.getMessage(), e));				
 				 	JDIDebugUIPlugin.log(e);
 				 	return null;
 				}

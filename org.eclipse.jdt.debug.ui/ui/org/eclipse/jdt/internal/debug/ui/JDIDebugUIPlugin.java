@@ -16,7 +16,7 @@ import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
-import org.eclipse.jdt.debug.ui.JavaDebugUI;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.core.IJavaConditionalBreakpointListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -107,7 +107,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param message the error message to log
 	 */
 	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getPluginId(), JavaDebugUI.INTERNAL_ERROR, message, null));
+		log(new Status(IStatus.ERROR, getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, message, null));
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param e the exception to be logged
 	 */	
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getPluginId(), JavaDebugUI.INTERNAL_ERROR, DebugUIMessages.getString("JDIDebugUIPlugin.Internal_Error_1"), e));  //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, DebugUIMessages.getString("JDIDebugUIPlugin.Internal_Error_1"), e));  //$NON-NLS-1$
 	}
 	
 	/**
@@ -159,7 +159,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getPluginId(), JavaDebugUI.INTERNAL_ERROR, "Internal error logged from JDT Debug UI: ", e));  //$NON-NLS-1$		
+			log(new Status(IStatus.ERROR, getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal error logged from JDT Debug UI: ", e));  //$NON-NLS-1$		
 		}
 	}
 	
