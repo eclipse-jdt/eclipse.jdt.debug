@@ -11,12 +11,11 @@
 package org.eclipse.jdt.internal.launching.macosx;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
 public class MacOSXLaunchingPlugin extends Plugin {
@@ -78,17 +77,18 @@ public class MacOSXLaunchingPlugin extends Plugin {
 	 * Returns path to executable.
 	 */
 	static String[] createSWTlauncher(Class clazz, String[] cmdLine, String vmVersion) {
-				
+		
 		// the following property is defined if Eclipse is started via java_swt
 		String java_swt= System.getProperty("org.eclipse.swtlauncher");	//$NON-NLS-1$
 		if (java_swt == null) {
-			// if not defined try to guess...
-			URL url= BootLoader.getInstallURL();
-			java_swt= url.getPath() + "Eclipse.app/Contents/MacOS/java_swt"; //$NON-NLS-1$
+			String[] newCmdLine= new String[cmdLine.length+1];
+			int argCount= 0;
+			newCmdLine[argCount++]= cmdLine[0];
+			newCmdLine[argCount++]= "-XstartOnFirstThread"; //$NON-NLS-1$
+			for (int i= 1; i < cmdLine.length; i++)
+				newCmdLine[argCount++]= cmdLine[i];
+			return newCmdLine;
 		}
-		
-		if (java_swt == null)
-			return cmdLine;		// give up
 		
 		try {
 			// copy java_swt to /tmp in order to get the app name right
