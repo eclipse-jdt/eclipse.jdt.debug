@@ -11,22 +11,13 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
  
-import java.util.Iterator;
-
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.PopupInformationControl;
-import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
-import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
-import org.eclipse.jdt.internal.ui.text.JavaWordFinder;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.BadLocationException;
@@ -35,27 +26,36 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 
 
-public class PopupInspectAction extends EvaluateAction implements IInformationProvider {
-	private TextViewer viewer;
+public class PopupInspectAction extends InspectAction implements IInformationProvider {
+	private ITextViewer viewer;
 	
 	/**
 	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
-	protected void displayResult(final IEvaluationResult result) {
-				
+	protected void displayResult(IEvaluationResult result) {
+		IWorkbenchPart part = getTargetPart();
+		viewer = (ITextViewer) part.getAdapter(ITextViewer.class);
+		if (viewer == null) {
+			if (part instanceof JavaEditor) {
+				viewer = ((JavaEditor)part).getViewer();
+			}
+		}
+		if (viewer == null) {
+			super.displayResult(result);
+		} else {
+			showPopup(result);
+		}		
+	}
+	
+	protected void showPopup(final IEvaluationResult result) {
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
 				final JavaInspectExpression expression = new JavaInspectExpression(result);
@@ -101,70 +101,8 @@ public class PopupInspectAction extends EvaluateAction implements IInformationPr
 		});
 	}
 	
-	/**
-	 * Make the expression view visible or open one
-	 * if required.
-	 */
-	protected void showExpressionView() {
-		if (getTargetPart().getSite().getId().equals(IDebugUIConstants.ID_EXPRESSION_VIEW)) {
-			return;
-		}
-		IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
-		if (page != null) {
-			IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-			if (part == null) {
-				try {
-					page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-				} catch (PartInitException e) {
-					reportError(e.getStatus().getMessage());
-				}
-			} else {
-				page.bringToTop(part);
-			}
-		}
-	}
-	
-	protected void run() {
-		IWorkbenchPart part= getTargetPart();
-		if (part instanceof JavaSnippetEditor) {
-			((JavaSnippetEditor)part).evalSelection(JavaSnippetEditor.RESULT_INSPECT);
-			return;
-		}
-		
-		Object selection= getSelectedObject();
-		if (!(selection instanceof IStructuredSelection)) {
-			if (part instanceof JavaEditor) {
-				JavaEditor editor = (JavaEditor)part;
-				viewer = (TextViewer)editor.getViewer();
-			}
-			super.run();
-			return;
-		}
-		
-		//inspecting from the context of the variables view
-		Iterator variables = ((IStructuredSelection)selection).iterator();
-		while (variables.hasNext()) {
-			IJavaVariable var = (IJavaVariable)variables.next();
-			try {
-				JavaInspectExpression expr = new JavaInspectExpression(var.getName(), (IJavaValue)var.getValue());
-				DebugPlugin.getDefault().getExpressionManager().addExpression(expr);
-			} catch (DebugException e) {
-				JDIDebugUIPlugin.errorDialog(ActionMessages.getString("InspectAction.Exception_occurred_inspecting_variable"), e); //$NON-NLS-1$
-			}
-		}
-	
-		showExpressionView();
-	}
-	
-	protected IDataDisplay getDataDisplay() {
-		return getDirectDataDisplay();
-	}
-
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
-		StyledText textWidget = viewer.getTextWidget();				
-		Point selectedRange = textWidget.getSelectionRange();
-		IRegion region = JavaWordFinder.findWord(viewer.getDocument(), selectedRange.x);
-		return region;
+		return getRegion();
 	}
 
 	public String getInformation(ITextViewer textViewer, IRegion subject) {

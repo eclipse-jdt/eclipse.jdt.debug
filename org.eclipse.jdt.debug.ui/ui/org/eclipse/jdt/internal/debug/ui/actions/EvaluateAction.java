@@ -51,8 +51,10 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.ISnippetStateChangedListe
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -86,6 +88,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	private IWorkbenchPart fTargetPart;
 	private IWorkbenchWindow fWindow;
 	private Object fSelection;
+	private IRegion fRegion;
 	
 	/**
 	 * Is the action waiting for an evaluation.
@@ -284,11 +287,14 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 */
 	protected void resolveSelectedObject() {
 		Object selectedObject= null;
+		fRegion = null;
 		ISelection selection= getTargetSelection();
 		if (selection instanceof ITextSelection) {
-			String text= ((ITextSelection)selection).getText();
+			ITextSelection ts = (ITextSelection)selection;
+			String text= ts.getText();
 			if (textHasContent(text)) {
 				selectedObject= text;
+				fRegion = new Region(ts.getOffset(), ts.getLength());
 			}
 		} else if (selection instanceof IStructuredSelection) {
 			if (!selection.isEmpty()) {
@@ -720,5 +726,14 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 
 	protected void setEvaluating(boolean evaluating) {
 		fEvaluating = evaluating;
+	}
+	
+	/**
+	 * Returns the selected text region, or <code>null</code> if none.
+	 * 
+	 * @return
+	 */
+	protected IRegion getRegion() {
+		return fRegion;
 	}
 }

@@ -239,7 +239,7 @@
          <action
                id="org.eclipse.jdt.debug.ui.Display"
                hoverIcon="icons/full/ctool16/disp_sbook.gif"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                definitionId="org.eclipse.jdt.debug.ui.Display"
                disabledIcon="icons/full/dtool16/disp_sbook.gif"
                enablesFor="+"
@@ -268,7 +268,7 @@
          <action
                id="org.eclipse.jdt.debug.ui.Inspect"
                hoverIcon="icons/full/ctool16/insp_sbook.gif"
-               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                definitionId="org.eclipse.jdt.debug.ui.Inspect"
                disabledIcon="icons/full/dtool16/insp_sbook.gif"
                enablesFor="+"
@@ -617,7 +617,7 @@
                label="%Display.label"
                icon="icons/full/ctool16/disp_sbook.gif"
                helpContextId="display_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                menubarPath="variableGroup"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display">
@@ -629,7 +629,7 @@
                label="%Inspect.label"
                icon="icons/full/ctool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="variableGroup"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.variablesViewDetail.Inspect">
@@ -677,7 +677,7 @@
                label="%Display.label"
                icon="icons/full/ctool16/disp_sbook.gif"
                helpContextId="display_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                menubarPath="evaluationGroup"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.displayView.Display">
@@ -703,7 +703,7 @@
                label="%Inspect.label"
                icon="icons/full/ctool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="evaluationGroup"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.displayView.Inspect">
@@ -938,7 +938,7 @@
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.displayViewToolbar.Display"
                hoverIcon="icons/full/ctool16/disp_sbook.gif"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                disabledIcon="icons/full/dtool16/disp_sbook.gif"
                enablesFor="+"
                icon="icons/full/etool16/disp_sbook.gif"
@@ -967,7 +967,7 @@
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.displayViewToolbar.Inspect"
                hoverIcon="icons/full/ctool16/insp_sbook.gif"
-               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                disabledIcon="icons/full/dtool16/insp_sbook.gif"
                enablesFor="+"
                icon="icons/full/etool16/insp_sbook.gif"
@@ -1292,7 +1292,7 @@
                label="%Inspect.label"
                icon="icons/full/ctool16/insp_sbook.gif"
                helpContextId="variable_inspect_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="openOnGroup"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.actions.VariableInspectAction">
@@ -1317,7 +1317,7 @@
                label="%Display.label"
                icon="icons/full/ctool16/disp_sbook.gif"
                helpContextId="display_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.Display">
@@ -1329,7 +1329,7 @@
                label="%Inspect.label"
                icon="icons/full/ctool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.Inspect">
@@ -1464,7 +1464,7 @@
                label="%Display.label"
                icon="icons/full/ctool16/disp_sbook.gif"
                helpContextId="display_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cuPopup.Display">
@@ -1484,7 +1484,7 @@
                label="%Inspect.label"
                icon="icons/full/ctool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cuPopup.Inspect">
@@ -1597,7 +1597,7 @@
                label="%Display.label"
                icon="icons/full/ctool16/disp_sbook.gif"
                helpContextId="display_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cfPopup.Display">
@@ -1617,7 +1617,7 @@
                label="%Inspect.label"
                icon="icons/full/ctool16/insp_sbook.gif"
                helpContextId="inspect_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                menubarPath="additions"
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.cfPopup.Inspect">
@@ -1756,7 +1756,7 @@
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.SnippetDisplay"
                hoverIcon="icons/full/ctool16/disp_sbook.gif"
-               class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction"
                disabledIcon="icons/full/dtool16/disp_sbook.gif"
                enablesFor="+"
                icon="icons/full/etool16/disp_sbook.gif"
@@ -1771,7 +1771,7 @@
                toolbarPath="evaluationGroup"
                id="org.eclipse.jdt.debug.ui.SnippetInspect"
                hoverIcon="icons/full/ctool16/insp_sbook.gif"
-               class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+               class="org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction"
                disabledIcon="icons/full/dtool16/insp_sbook.gif"
                enablesFor="+"
                icon="icons/full/etool16/insp_sbook.gif"

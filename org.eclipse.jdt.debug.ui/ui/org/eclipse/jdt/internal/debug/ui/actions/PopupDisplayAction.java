@@ -11,19 +11,10 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import java.text.MessageFormat;
-
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
 import org.eclipse.debug.ui.actions.PopupInformationControl;
-import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
-import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.internal.ui.text.JavaWordFinder;
 import org.eclipse.jface.action.Action;
@@ -34,7 +25,6 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.swt.SWT;
@@ -47,72 +37,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 
 
-public class PopupDisplayAction extends EvaluateAction implements IInformationProvider {
+public class PopupDisplayAction extends DisplayAction implements IInformationProvider {
 	
-	private TextViewer viewer;
+	private ITextViewer viewer;
 	private String snippet;
 	private String resultString;
-
-	protected void displayResult(final IEvaluationResult evaluationResult) {
-		if (evaluationResult.hasErrors()) {
-			final Display display = JDIDebugUIPlugin.getStandardDisplay();
-			display.asyncExec(new Runnable() {
-				public void run() {					
-					if (display.isDisposed()) {
-						return;
-					}
-					reportErrors(evaluationResult);
-					evaluationCleanup();
-				}
-			});
-			return;
-		} 		
-		
-		
-		snippet= evaluationResult.getSnippet();
-		IJavaValue resultValue= evaluationResult.getValue();
-		try {
-			String sig= null;
-			IJavaType type= resultValue.getJavaType();
-			if (type != null) {
-				sig= type.getSignature();
-			}
-			if ("V".equals(sig)) { //$NON-NLS-1$
-				resultString = ActionMessages.getString("DisplayAction.no_result_value"); //$NON-NLS-1$
-			} else {
-				if (sig != null) {
-					resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.type_name_pattern"), new Object[] { resultValue.getReferenceTypeName() }); //$NON-NLS-1$
-				} else {
-					resultString= ""; //$NON-NLS-1$
-				}
-
-				getDebugModelPresentation().computeDetail(resultValue, new IValueDetailListener() {
-					public void detailComputed(IValue value, String result) {
-						resultString = MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, result}); //$NON-NLS-1$;
-						showPopup();
-					}
-				});
-
-			}
-		} catch (DebugException x) {
-			resultString = getExceptionMessage(x);
-			showPopup();
-		}
-	}
 
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		return snippet + " - " +resultString; //$NON-NLS-1$
 	}
 
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
-		StyledText textWidget = viewer.getTextWidget();				
-		Point selectedRange = textWidget.getSelectionRange();
-		IRegion region = JavaWordFinder.findWord(viewer.getDocument(), selectedRange.x);
-		return region;
+		return getRegion();
 	}
 	
-	
-	private void showPopup() {
+	private void showPopup() {		
 		final IAction action = new Action() {
 			public void run() {
 				moveToViewer();
@@ -145,20 +84,6 @@ public class PopupDisplayAction extends EvaluateAction implements IInformationPr
 		});	
 		
 		
-	}
-	
-	protected void run() {
-		IWorkbenchPart part= getTargetPart();
-		if (part instanceof JavaSnippetEditor) {
-			((JavaSnippetEditor) part).evalSelection(JavaSnippetEditor.RESULT_DISPLAY);
-			return;
-		}
-		
-		if (part instanceof JavaEditor) {
-			JavaEditor editor = (JavaEditor)part;
-			viewer = (TextViewer)editor.getViewer();
-		}
-		super.run();
 	}
 
 	public void moveToViewer() {
@@ -194,7 +119,7 @@ public class PopupDisplayAction extends EvaluateAction implements IInformationPr
 		public  Composite createInformationComposite(Shell parent) {			
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			text = new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL );
-			text.setFont(parent.getFont());
+			text.setFont(viewer.getTextWidget().getFont());
 //			gd.widthHint = 300;
 //			gd.heightHint = 175;
 			text.setLayoutData(gd);
@@ -213,5 +138,21 @@ public class PopupDisplayAction extends EvaluateAction implements IInformationPr
 				text.setText(information);
 		}
 	}
-	
+
+	protected void displayStringResult(final String snippet,final String resultString) {
+		IWorkbenchPart part = getTargetPart();
+		viewer = (ITextViewer) part.getAdapter(ITextViewer.class);
+		if (viewer == null) {
+			if (part instanceof JavaEditor) {
+				viewer = ((JavaEditor)part).getViewer();
+			}
+		}
+		if (viewer == null) {
+			super.displayStringResult(snippet, resultString);
+		} else {
+			this.snippet = snippet;
+			this.resultString = resultString;
+			showPopup();
+		}
+	}
 }
