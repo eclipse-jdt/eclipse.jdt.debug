@@ -83,7 +83,7 @@ public abstract class EventRequestImpl extends MirrorImpl implements EventReques
 	/** RequestId of EventRequest, assigned by the reply data of the JDWP Event Reuqest Set command, null if request had not yet been enabled. */
 	protected RequestID fRequestID = null;
 	/** Determines the threads to suspend when the requested event occurs in the target VM. */
-	private byte fSuspendPolicy = SUSPEND_ALL;	// Default is as specified bu JDI spec.
+	private byte fSuspendPolicy = SUSPEND_ALL;	// Default is as specified by JDI spec.
 	
 	/**
 	 * Modifiers.
