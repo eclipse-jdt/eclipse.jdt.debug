@@ -465,7 +465,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 			}
 			fNewTableItem.setText(trimmedValue);
 			fNewStepFilter.setName(trimmedValue);
-			fFilterViewer.update(fNewStepFilter, new String[]{IBasicPropertyConstants.P_IMAGE});
+			fFilterViewer.refresh();
 		}
 		cleanupEditor();
 	}

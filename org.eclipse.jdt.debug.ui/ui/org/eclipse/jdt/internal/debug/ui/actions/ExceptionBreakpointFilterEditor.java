@@ -443,7 +443,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 			}
 			fNewTableItem.setText(trimmedValue);
 			fNewFilter.setName(trimmedValue);
-			fFilterViewer.update(fNewFilter, new String[]{IBasicPropertyConstants.P_IMAGE});
+			fFilterViewer.refresh();
 		}
 		cleanupEditor();
 	}
