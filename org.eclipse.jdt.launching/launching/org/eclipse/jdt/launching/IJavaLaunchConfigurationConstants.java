@@ -31,6 +31,12 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ID_REMOTE_JAVA_APPLICATION = LaunchingPlugin.getUniqueIdentifier() + ".remoteJavaApplication"; //$NON-NLS-1$	
 
 	/**
+	 * Identifier for the Java Applet launch configuration type
+	 * (value <code>org.eclipse.jdt.launching.javaApplet"</code>).
+	 */
+	public static final String ID_JAVA_APPLET = LaunchingPlugin.getUniqueIdentifier() + ".javaApplet"; //$NON-NLS-1$	
+
+	/**
 	 * Identifier for the standard Socket Attaching VM connector
 	 * (value <code>org.eclipse.jdt.launching.socketAttachConnector"</code>).
 	 */
@@ -193,6 +199,30 @@ public interface IJavaLaunchConfigurationConstants {
 	public static final String ATTR_CONNECT_MAP = LaunchingPlugin.getUniqueIdentifier() + ".CONNECT_MAP";	 //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute key. The value is an integer
+	 * indicating the width of the applet viewing area.	 */
+	public static final String ATTR_APPLET_WIDTH = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_WIDTH";	 //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is an integer
+	 * indicating the height of the applet viewing area.
+	 */
+	public static final String ATTR_APPLET_HEIGHT = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_HEIGHT";	 //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is an String
+	 * indicating the HTML name of the applet.
+	 */
+	public static final String ATTR_APPLET_NAME = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_NAME";	 //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is an Map.
+	 * Keys in the map represent applet parameter names and the
+	 * values in the map are the corresponding parameter values
+	 */
+	public static final String ATTR_APPLET_PARAMETERS = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_PARAMETERS";	 //$NON-NLS-1$
+
+	/**
 	 * Status code indicating a launch configuration does not
 	 * specify a project when a project is required.
 	 */
@@ -330,6 +360,12 @@ public interface IJavaLaunchConfigurationConstants {
 	 * to the VM.
 	 */
 	public static final int ERR_CONNECTION_FAILED = 120;		
+
+	/**
+	 * Status code indicating that the applet launcher was asked to
+	 * launch a resource that did not extend <code>java.applet.Applet</code>.
+	 */
+	public static final int ERR_NOT_AN_APPLET = 121;		
 
 	/**
 	 * Status code indicating an unexpected internal error.

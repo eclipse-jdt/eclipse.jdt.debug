@@ -55,6 +55,12 @@
 	   delegate="org.eclipse.jdt.internal.launching.JavaRemoteApplicationLaunchConfigurationDelegate"
 	   modes= "debug">
    </launchConfigurationType>
+   <launchConfigurationType
+       id="org.eclipse.jdt.launching.javaApplet"
+       name="%appletLabel"
+       delegate="org.eclipse.jdt.internal.launching.JavaAppletLaunchConfigurationDelegate"
+       modes="run, debug">
+   </launchConfigurationType>
 </extension>
 
 <extension point = "org.eclipse.debug.core.sourceLocators">

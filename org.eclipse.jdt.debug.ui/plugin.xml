@@ -1144,6 +1144,11 @@
 		configTypeID="org.eclipse.jdt.launching.remoteJavaApplication"
 		icon="icons/full/ctool16/java_attach.gif">
 	</launchConfigurationTypeImage>	
+    <launchConfigurationTypeImage
+        id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.javaApplet"
+        configTypeID="org.eclipse.jdt.launching.javaApplet"
+        icon="icons/full/ctool16/java_applet.gif">
+    </launchConfigurationTypeImage>
 </extension>
 
 <extension point = "org.eclipse.debug.ui.launchConfigurationTabGroups">
@@ -1157,6 +1162,11 @@
 		type ="org.eclipse.jdt.launching.remoteJavaApplication"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.RemoteJavaApplicationTabGroup">
 	</launchConfigurationTabGroup>
+    <launchConfigurationTabGroup
+        id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.javaApplet"
+        type="org.eclipse.jdt.launching.javaApplet"
+        class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletTabGroup">
+    </launchConfigurationTabGroup>
 </extension>
 
 <extension point = "org.eclipse.debug.core.statusHandlers">
@@ -1247,6 +1257,17 @@
 		<perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
 		<perspective id="org.eclipse.debug.ui.DebugPerspective"/>
 	</shortcut>
+    <shortcut
+        id="org.eclipse.jdt.debug.ui.javaAppletShortcut"
+        class="org.eclipse.jdt.internal.debug.ui.launcher.JavaAppletLaunchShortcut"
+        label="%AppletShortcut.label"
+        icon="icons/full/ctool16/java_applet.gif"
+        modes="run, debug">
+        <perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
+        <perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
+        <perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
+        <perspective id="org.eclipse.debug.ui.DebugPerspective"/>
+    </shortcut>
 </extension>
 
 <extension point = "org.eclipse.jdt.ui.classpathContainerPage">

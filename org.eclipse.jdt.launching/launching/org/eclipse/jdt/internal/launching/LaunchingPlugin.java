@@ -8,7 +8,9 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +30,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -39,9 +42,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -81,6 +82,20 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		fgLaunchingPlugin= this;
 	}
 	
+	/**
+	 * Return a <code>java.io.File</code> object that corresponds to the specified
+	 * <code>IPath</code> in the plugin directory.	 */
+	public static File getFileInPlugin(IPath path) {
+		try {
+			URL installURL =
+				new URL(getDefault().getDescriptor().getInstallURL(), path.toString());
+			URL localURL = Platform.asLocalURL(installURL);
+			return new File(localURL.getFile());
+		} catch (IOException ioe) {
+			return null;
+		}
+	}
+		
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
