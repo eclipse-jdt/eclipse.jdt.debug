@@ -728,7 +728,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 				((config.getType().getIdentifier().equals(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION))
 				|| (config.getType().getIdentifier().equals(IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION)))) {
 					ISourceLocator sl = launch.getSourceLocator();
-					if (sl != null && sl instanceof JavaSourceLocator) {
+					if (sl == null || sl instanceof JavaSourceLocator) {
 						IJavaProject jp = JavaLaunchConfigurationUtils.getJavaProject(config);
 						if (jp != null) {
 							
