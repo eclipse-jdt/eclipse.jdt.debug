@@ -1,5 +1,10 @@
 package org.eclipse.jdt.internal.debug.core.hcr;
 
+/*
+ * (c) Copyright IBM Corp. 2002.
+ * All Rights Reserved.
+ */
+ 
 import java.util.Date;
 import java.util.Map;
 
@@ -9,7 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class ProjectBuildWatcher extends IncrementalProjectBuilder {
 	
-	public static String BUILDER_ID= "org.eclipse.jdt.debug.hcrbuilder";
+	public static String BUILDER_ID= "org.eclipse.jdt.debug.hcrbuilder"; //$NON-NLS-1$
 	
 	long fLastBuildTime= new Date().getTime();
 	long fCurrentBuildTime= new Date().getTime();
