@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -53,14 +52,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
@@ -77,7 +76,7 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class DisplayView extends ViewPart implements ITextInputListener, IPartListener2 {
+public class DisplayView extends ViewPart implements ITextInputListener, IPerspectiveListener2 {
 		
 	class DataDisplay implements IDataDisplay {
 		/**
@@ -179,13 +178,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 		
 		getSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
 		WorkbenchHelp.setHelp(fSourceViewer.getTextWidget(), IJavaDebugHelpContextIds.DISPLAY_VIEW);
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				page.addPartListener(this);
-			}
-		}
+		getSite().getWorkbenchWindow().addPerspectiveListener(this);
 	}
 
 	protected IDocument getRestoredDocument() {
@@ -439,13 +432,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				page.removePartListener(this);
-			}
-		}
+		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		if (fSourceViewer != null) {
 			fSourceViewer.dispose();
 		}
@@ -458,69 +445,29 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+	 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
 	 */
-	public void partHidden(IWorkbenchPartReference partRef) {
-		if (partRef instanceof IViewReference) {
+	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
+		if (partRef instanceof IViewReference && changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
 			String id = ((IViewReference) partRef).getId();
-			// partHidden is sent whenever the view is made not
-			// visible. To tell that the view has been "closed",
-			// try to find it.
 			if (id.equals(getViewSite().getId())) {
-				// TODO: Uncomment when Bug 60039 is fixed -
-//				IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-//				if (window != null) {
-//					IWorkbenchPage activePage = window.getActivePage();
-//					if (activePage != null && activePage.findView(id) == null) {
-						// Display view closed
-						tempMemento= XMLMemento.createWriteRoot("DisplayViewMemento"); //$NON-NLS-1$
-						saveState(tempMemento);
-//					}
-//				}				
+				// Display view closed. Persist contents.
+				tempMemento= XMLMemento.createWriteRoot("DisplayViewMemento"); //$NON-NLS-1$
+				saveState(tempMemento);
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
-	public void partActivated(IWorkbenchPartReference partRef) {
+	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
 	 */
-	public void partBroughtToTop(IWorkbenchPartReference partRef) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partClosed(IWorkbenchPartReference partRef) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partDeactivated(IWorkbenchPartReference partRef) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partOpened(IWorkbenchPartReference partRef) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partVisible(IWorkbenchPartReference partRef) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-	 */
-	public void partInputChanged(IWorkbenchPartReference partRef) {
+	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 	}
 
 }
