@@ -172,7 +172,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			try {
 				synchronized (fLock) {
 					//should be notified out of #setThread(IJavaThread)
-					fLock.wait(20000);	
+					fLock.wait(10000);	
 				}
 			} catch (InterruptedException e) {
 			} finally {
@@ -437,15 +437,21 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 
 	public void fireEvalStateChanged() {
 		Runnable r= new Runnable() {
-			public void run() {			
-				List v= new ArrayList(fSnippetStateListeners);
-				for (int i= 0; i < v.size(); i++) {
-					ISnippetStateChangedListener l= (ISnippetStateChangedListener) v.get(i);
-					l.snippetStateChanged(JavaSnippetEditor.this);
+			public void run() {
+				Shell shell= getShell();
+				if (shell != null && !shell.isDisposed()) {
+					List v= new ArrayList(fSnippetStateListeners);
+					for (int i= 0; i < v.size(); i++) {
+						ISnippetStateChangedListener l= (ISnippetStateChangedListener) v.get(i);
+						l.snippetStateChanged(JavaSnippetEditor.this);
+					}
 				}
 			}
 		};
-		getShell().getDisplay().asyncExec(r);
+		Shell shell= getShell();
+		if (shell != null) {
+			getShell().getDisplay().asyncExec(r);
+		}
 	}
 	
 	protected void evaluate(String snippet) {
@@ -643,7 +649,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		fPresentation.computeDetail(value, this);
 		if (fResult == null) {
 			try {
-				wait(20000);
+				wait(10000);
 			} catch (InterruptedException e) {
 				return SnippetMessages.getString("SnippetEditor.error.interrupted"); //$NON-NLS-1$
 			}
@@ -862,7 +868,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 							IJavaStackFrame f= (IJavaStackFrame)jt.getTopStackFrame();
 							if (f != null) {
 								IBreakpoint[] bps = jt.getBreakpoints();
-								if (e.getDetail() == DebugEvent.STEP_END && f.getLineNumber() == 14 && f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1")) { //$NON-NLS-1$
+								if (e.getDetail() == DebugEvent.STEP_END && f.getLineNumber() == 14 
+									&& f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1")
+									&& jt.getDebugTarget() == fVM) { //$NON-NLS-1$
 									setThread(jt);
 								} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bps.length > 0 && bps[0].equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
 									// locate the 'eval' method and step over
