@@ -15,6 +15,7 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 		
 	protected static final String ERROR_NO_TYPE = ERROR+ "no_type";
 	protected static final String ERROR_BINARY_TYPE = ERROR+ "binary_type";
+	protected static final String ERROR_INNER_TYPE = ERROR+ "inner_type";
 	
 	/**
 	 * The stack frame context
@@ -71,6 +72,10 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 		
 		if (type == null) {
 			fModelFrame.requestFailed(ERROR_NO_TYPE, null);
+		}
+		
+		if (type.getParent() instanceof IType) {
+			fModelFrame.requestFailed(ERROR_INNER_TYPE, null);
 		}
 		
 		try {
