@@ -480,23 +480,31 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected void terminateAndRemove(IJavaThread thread) {
 		if (thread != null) {
-				ILaunch launch = thread.getLaunch();
-				try {
-					thread.getDebugTarget().terminate();
-				} catch (CoreException e) {
-				} finally {
-					getLaunchManager().removeLaunch(launch);
-				}
+			terminateAndRemove((IJavaDebugTarget)thread.getDebugTarget());
 		}
 	}
 	
 	/**
-	 * Terminates the given debug target and removes its launch
+	 * Terminates the given debug target and removes its launch.
+	 * 
+	 * NOTE: all breakpoints are removed, all threads are resumed, and then
+	 * the target is terminated. This avoids defunct processes on linux.
 	 */
 	protected void terminateAndRemove(IJavaDebugTarget debugTarget) {
 		if (debugTarget != null) {
 			ILaunch launch = debugTarget.getLaunch();
 			try {
+				removeAllBreakpoints();
+				IThread[] threads = debugTarget.getThreads();
+				for (int i = 0; i < threads.length; i++) {
+					IThread thread = threads[i];
+					try {
+						if (thread.isSuspended()) {
+							thread.resume();
+						}
+					} catch (CoreException e) {
+					}
+				}
 				debugTarget.getDebugTarget().terminate();
 			} catch (CoreException e) {
 			} finally {
