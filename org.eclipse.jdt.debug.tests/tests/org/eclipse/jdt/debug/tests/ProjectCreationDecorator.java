@@ -121,6 +121,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("org.eclipse.debug.tests.targets.StepIntoSelectionClass");
 		createLaunchConfiguration("WatchItemTests");
 		createLaunchConfiguration("ArrayTests");
+		createLaunchConfiguration("PerfLoop");
 	}
 	
 	/**
