@@ -18,7 +18,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.WatchExpression;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -50,7 +50,7 @@ public class WatchAction extends InspectAction {
 	}
 
 	private void createWatchExpression(String snippet) {
-		WatchExpression expression= new WatchExpression(snippet);
+		IWatchExpression expression= DebugPlugin.getDefault().getExpressionManager().newWatchExpression(snippet);
 		DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
 		IAdaptable object = DebugUITools.getDebugContext();
 		IDebugElement context= null;

@@ -35,8 +35,6 @@ public interface IJavaDebugHelpContextIds {
 	public static final String PRIMITIVE_DISPLAY_OPTIONS_DIALOG= PREFIX + "primitive_options_dialog_context"; //$NON-NLS-1$
 	public static final String EDIT_DETAIL_FORMATTER_DIALOG= PREFIX + "edit_detail_formatter_dialog_context"; //$NON-NLS-1$
 	public static final String INSTANCE_BREAKPOINT_SELECTION_DIALOG= PREFIX + "instance_breakpoint_selection_dialog_context"; //$NON-NLS-1$
-	public static final String ADD_WATCH_EXPRESSION_DIALOG= PREFIX + "add_watch_expression_dialog_context"; //$NON-NLS-1$
-	public static final String EDIT_WATCH_EXPRESSION_DIALOG= PREFIX + "edit_watch_expression_dialog_context"; //$NON-NLS-1$
 	public static final String SNIPPET_IMPORTS_DIALOG= PREFIX + "snippet_imports_dialog_context"; //$NON-NLS-1$
 
 	// Preference/Property pages
