@@ -49,9 +49,9 @@ public class JavaStackTraceConsoleFactory implements IConsoleFactory {
     public void openConsole() {
         if (fConsole == null) {
             fConsole = new JavaStackTraceConsole(); //$NON-NLS-1$
+            fConsole.initializeDocument();
 	        fConsoleManager.addConsoles(new IConsole[]{fConsole});
         }
-        fConsole.initializeDocument();
         fConsoleManager.showConsoleView(fConsole);
     }
 }
