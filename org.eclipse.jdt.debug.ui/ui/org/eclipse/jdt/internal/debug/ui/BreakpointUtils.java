@@ -74,7 +74,7 @@ public class BreakpointUtils {
 		if (cu != null && cu.isWorkingCopy()) {
 			member = (IMember)cu.getOriginal(member);
 		}
-		IResource res = member.getUnderlyingResource();
+		IResource res = member.getResource();
 		if (res == null) {
 			res = member.getJavaProject().getProject();
 		}
