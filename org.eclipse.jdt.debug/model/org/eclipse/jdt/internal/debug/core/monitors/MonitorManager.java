@@ -19,13 +19,14 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IMonitorManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 /**
  * Handles all the data for the Threads and Monitors view.
  */
 
-public class MonitorManager {
+public class MonitorManager implements IMonitorManager {
 	
 	/**
 	 * Table containing the references to the monitors owned by the threads
@@ -79,7 +80,7 @@ public class MonitorManager {
 	 * @param thread The thread
 	 * @param monitors The list of monitors owned by the thread
 	 */
-	public void addThreadWithOwnedMonitors(IJavaThread thread, List monitors) {
+	protected void addThreadWithOwnedMonitors(IJavaThread thread, List monitors) {
 		if (monitors == null) {
 			fThreadToOwnedMonitors.remove(thread);
 		} else {
@@ -93,7 +94,7 @@ public class MonitorManager {
 	 * @param thread The thread
 	 * @param monitor The monitor contended by the thread
 	 */
-	public void addThreadWithContendedMonitor(IJavaThread thread, IJavaObject monitor) {
+	protected void addThreadWithContendedMonitor(IJavaThread thread, IJavaObject monitor) {
 		if (monitor == null) {
 			fThreadToContendedMonitor.remove(thread);
 		} else {
@@ -107,7 +108,7 @@ public class MonitorManager {
 	 * @param monitor The monitor
 	 * @param thread The thread owning the monitor
 	 */
-	public void addMonitorWithOwningThread(IJavaObject monitor, IJavaThread thread) {
+	protected void addMonitorWithOwningThread(IJavaObject monitor, IJavaThread thread) {
 		if (monitor == null) {
 			fMonitorToOwningThread.remove(monitor);
 		} else {
@@ -121,7 +122,7 @@ public class MonitorManager {
 	 * @param monitor The monitor
 	 * @param thread The thread waiting for the monitor
 	 */
-	public void addMonitorWithContendedThread(IJavaObject monitor, IJavaThread thread) {
+	protected void addMonitorWithContendedThread(IJavaObject monitor, IJavaThread thread) {
 		if (monitor == null) {
 			fMonitorToContendingThreads.remove(monitor);
 		} else {
@@ -134,46 +135,42 @@ public class MonitorManager {
 		}
 	}
 		
+	
 	/**
-	 * Returns the list of monitors owned by the given thread, or null
-	 * @param thread The thread from which we want the owned monitors
-	 * @return The list of monitors owned by the given thread
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getOwnedMonitors(org.eclipse.jdt.debug.core.IJavaThread)
 	 */
 	public List getOwnedMonitors(IJavaThread thread) {
 		return (List)fThreadToOwnedMonitors.get(thread);
 	}
 	
+
 	/**
-	 * Returns the monitor contended by the given thread, or null
-	 * @param thread The thread from which we want the contended monitor
-	 * @return The monitor contended by the given thread
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getContendedMonitor(org.eclipse.jdt.debug.core.IJavaThread)
 	 */
 	public IJavaObject getContendedMonitor(IJavaThread thread) {
 		return (IJavaObject)fThreadToContendedMonitor.get(thread);
 	}
 	
+	
 	/**
-	 * Returns the thread owning the given monitor, or null
-	 * @param monitor The monitor from which we want the owning thread
-	 * @return The thread owning the given monitor
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getOwningThread(org.eclipse.jdt.debug.core.IJavaObject)
 	 */
 	public IJavaThread getOwningThread(IJavaObject monitor) {
 		return (IJavaThread)fMonitorToOwningThread.get(monitor);
 	}
 	
+	
 	/**
-	 * Returns the list of threads awaiting the given monitor, or null
-	 * @param monitor The monitor from which we want the owning thread
-	 * @return The thread owning the given monitor
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getContendingThreads(org.eclipse.jdt.debug.core.IJavaObject)
 	 */
 	public List getContendingThreads(IJavaObject monitor) {
 		Object obj = fMonitorToContendingThreads.get(monitor);
 		return (List)obj;
 	}
 	
+	
 	/**
-	 * Returns all the threads owning or waiting, or <code>null</code>
-	 * @return The set of all the threads (owning or waiting)
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getThreads()
 	 */
 	public Set getThreads() {
 		Set all= new HashSet();
@@ -182,9 +179,9 @@ public class MonitorManager {
 		return all;
 	}
 	
+	
 	/**
-	 * Returns all the monitors owned or contended, or <code>null</code>
-	 * @return The set of all the monitors (owned or waited)
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getMonitors()
 	 */
 	public Set getMonitors() {
 		Set all= new HashSet();
@@ -194,8 +191,7 @@ public class MonitorManager {
 	}	
 	
 	/**
-	 * Updates the data on threads, monitors and deadlocks
-	 * @param target The debug target
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#update(org.eclipse.jdt.debug.core.IJavaDebugTarget)
 	 */
 	public void update(IJavaDebugTarget target){
 
@@ -260,10 +256,9 @@ public class MonitorManager {
 		}
 	}
 	
+	
 	/**
-	 * Updates the data on threads, monitors and deadlocks
-	 * for the suspended threads only
-	 * @see update(IJavaDebugTarget target)
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#updatePartial(org.eclipse.jdt.debug.core.IJavaDebugTarget)
 	 */
 	public void updatePartial(IJavaDebugTarget target){
 
@@ -271,7 +266,7 @@ public class MonitorManager {
 			removeMonitorInformation(target);
 			
 			IThread[] threadResult= target.getThreads();
-			List threadsList = new ArrayList();
+			List threadsList = new ArrayList(threadResult.length);
 			IJavaThread thread;
 			for (int i = 0; i < threadResult.length; i++) {
 				thread = (IJavaThread)threadResult[i];
@@ -343,39 +338,10 @@ public class MonitorManager {
 			JDIDebugPlugin.log(e);
 		}
 	}
-
-
+	
 	
 	/**
-	 * Resume all the non-system threads
-	 * @param The target containing the threads to resume
-	 */
-	public void resume(IJavaDebugTarget target){		
-		try {
-			IThread[] threads= target.getThreads();
-			
-			for (int i = 0; i < threads.length; i++) {
-				IJavaThread thread = (IJavaThread)threads[i];
-				if(!thread.isSystemThread()){
-					if (thread.isSuspended()) {
-						thread.resume();
-						while (thread.isSuspended()) {
-							Thread.sleep(100);
-						}
-					}
-				}
-			}
-		}
-		catch (DebugException e) {
-			JDIDebugPlugin.log(e);
-		}
-		catch (InterruptedException e){
-			JDIDebugPlugin.log(e);
-		}
-	}
-	
-	/**
-	 * Clears all the data tables and lists
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#removeMonitorInformation(org.eclipse.jdt.debug.core.IJavaDebugTarget)
 	 */
 	public void removeMonitorInformation(IJavaDebugTarget target) {
 		fThreadToOwnedMonitors.clear();
@@ -446,18 +412,17 @@ public class MonitorManager {
 		return null;
 	}
 	
+	
 	/**
-	 * Returns the dead lock lists.
-	 * @return List
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getDeadLockLists()
 	 */
 	public List getDeadLockLists() {
 		return deadLockLists;
 	}
 	
+	
 	/**
-	 * Returns whether the given thread is caught in a deadlock
-	 * @param thread The thread we want the info on
-	 * @return <code>true<code> if the thread is in a deadlock, <code>false<code> otherwise.
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#isCaughtInDeadLock(org.eclipse.jdt.debug.core.IJavaThread)
 	 */
 	public boolean isCaughtInDeadLock(IJavaThread thread){
 		for (int i = 0; i < deadLockLists.size(); i++) {

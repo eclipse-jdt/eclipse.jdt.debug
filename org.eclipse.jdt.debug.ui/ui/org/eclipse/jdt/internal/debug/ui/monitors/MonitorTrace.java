@@ -11,7 +11,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.internal.debug.core.monitors.MonitorManager;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,7 +34,7 @@ public class MonitorTrace implements IViewActionDelegate {
 		if (target == null) {
 			return;
 		}
-		MonitorManager.getDefault().update(target);
+		JDIDebugModel.getMonitorManager().update(target);
 		IDebugView debugView= (IDebugView)fView.getAdapter(IDebugView.class);
 		if (debugView != null) {
 			debugView.getViewer().refresh();

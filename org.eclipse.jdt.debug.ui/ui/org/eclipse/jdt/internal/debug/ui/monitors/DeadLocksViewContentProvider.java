@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.internal.debug.core.monitors.MonitorManager;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.monitors.ThreadWrapper;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -215,7 +215,7 @@ public class DeadLocksViewContentProvider implements ITreeContentProvider {
 	 */
 	public Object[] getElements(Object inputElement) {
 
-		List deadLockLists= MonitorManager.getDefault().getDeadLockLists();
+		List deadLockLists= JDIDebugModel.getMonitorManager().getDeadLockLists();
 		//the list of roots elements
 		Object[] roots= new Object[deadLockLists.size()];
 		

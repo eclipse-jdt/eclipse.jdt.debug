@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.internal.debug.core.monitors.MonitorManager;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -55,10 +55,10 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 			IJavaThread thread= (IJavaThread)((ThreadWrapper)parentElement).thread;
 			
 			//owned monitors
-			List ownedMonitors= MonitorManager.getDefault().getOwnedMonitors(thread);
+			List ownedMonitors= JDIDebugModel.getMonitorManager().getOwnedMonitors(thread);
 			
 			//contended monitor
-			IJavaObject contendedMonitor= MonitorManager.getDefault().getContendedMonitor(thread);
+			IJavaObject contendedMonitor= JDIDebugModel.getMonitorManager().getContendedMonitor(thread);
 			if (ownedMonitors == null && contendedMonitor == null) {
 				return null;
 			} 
@@ -101,10 +101,9 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 	public Object getParent(Object element) {	
 		
 		if (element instanceof IJavaThread) {
-			return MonitorManager.getDefault().getOwnedMonitors((IJavaThread)element);
-		}
-		else if (element instanceof IJavaObject) {
-			return MonitorManager.getDefault().getOwningThread((IJavaObject)element);
+			return JDIDebugModel.getMonitorManager().getOwnedMonitors((IJavaThread)element);
+		} else if (element instanceof IJavaObject) {
+			return JDIDebugModel.getMonitorManager().getOwningThread((IJavaObject)element);
 		}		
 		return null;
 	}
@@ -116,12 +115,11 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 			
 		if (element instanceof IJavaThread) {
 			IJavaThread thread= (IJavaThread)element;
-			List ownedMonitors= MonitorManager.getDefault().getOwnedMonitors(thread);
-			IJavaObject contendedMonitor= MonitorManager.getDefault().getContendedMonitor(thread);
+			List ownedMonitors= JDIDebugModel.getMonitorManager().getOwnedMonitors(thread);
+			IJavaObject contendedMonitor= JDIDebugModel.getMonitorManager().getContendedMonitor(thread);
 			if (ownedMonitors == null && contendedMonitor == null) {
 				return false;
-			} 
-			else{
+			} else{
 				return true;
 			}
 		}
@@ -134,12 +132,12 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		
 		//the root elements are ThreadWrapper
-		Set allThreads= MonitorManager.getDefault().getThreads();
+		Set allThreads= JDIDebugModel.getMonitorManager().getThreads();
 		Object[] res = allThreads.toArray(new Object[allThreads.size()]);
 		for (int i = 0; i < res.length; i++) {
 			ThreadWrapper tw = new ThreadWrapper();
 			tw.thread = (IJavaThread) res[i];
-			if(MonitorManager.getDefault().isCaughtInDeadLock((IJavaThread)res[i])) {
+			if(JDIDebugModel.getMonitorManager().isCaughtInDeadLock((IJavaThread)res[i])) {
 				tw.isCaughtInDeadlock = true;
 			} else {
 				tw.isCaughtInDeadlock = false;

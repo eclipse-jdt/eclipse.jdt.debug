@@ -11,7 +11,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.internal.debug.core.monitors.MonitorManager;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 /**
  * Listen to certain events in the debug view
@@ -35,22 +35,22 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 			//if a thread is suspended in the debug view
 			if(event.getKind() == DebugEvent.SUSPEND) {
 				if (source instanceof IJavaDebugTarget) {
-					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)source);
+					JDIDebugModel.getMonitorManager().updatePartial((IJavaDebugTarget)source);
 					refreshView();
 				} else if (source instanceof IJavaThread) {
-					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
+					JDIDebugModel.getMonitorManager().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
 					refreshView();
 				}
 			} else if(event.getKind() == DebugEvent.RESUME) { 			
 				if (source instanceof IJavaDebugTarget) {
-					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)source);
+					JDIDebugModel.getMonitorManager().updatePartial((IJavaDebugTarget)source);
 					refreshView();
 				} else if (source instanceof IJavaThread) {
-					MonitorManager.getDefault().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
+					JDIDebugModel.getMonitorManager().updatePartial((IJavaDebugTarget)(((IJavaThread)source).getDebugTarget()));
 					refreshView();
 				}
 			} else if(event.getKind() == DebugEvent.TERMINATE && source instanceof IJavaDebugTarget) {
-				MonitorManager.getDefault().removeMonitorInformation((IJavaDebugTarget)source);
+				JDIDebugModel.getMonitorManager().removeMonitorInformation((IJavaDebugTarget)source);
 				refreshView();
 			}
 		}

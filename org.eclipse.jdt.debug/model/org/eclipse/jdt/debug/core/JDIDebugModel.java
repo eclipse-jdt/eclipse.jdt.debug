@@ -29,6 +29,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaTargetPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
+import org.eclipse.jdt.internal.debug.core.monitors.MonitorManager;
 
 import com.sun.jdi.VirtualMachine;
 
@@ -532,5 +533,13 @@ public class JDIDebugModel {
 	 */
 	public static void savePreferences() {
 		JDIDebugPlugin.getDefault().savePluginPreferences();
+	}
+	
+	/**
+	 * Returns the monitor manager for this plugin.
+	 * 	 * @return IMonitorManager the monitor manager for this plug-in
+	 * @since 2.1	 */
+	public static IMonitorManager getMonitorManager() {
+		return MonitorManager.getDefault();
 	}
 }

@@ -7,10 +7,13 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.internal.debug.core.monitors.MonitorManager;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,7 +33,27 @@ public class MonitorQuit implements IViewActionDelegate {
 	 */
 	public void run(IAction action) {	
 		IJavaDebugTarget target= getDebugTarget();
-		MonitorManager.getDefault().resume(target);
+		try {
+			IThread[] threads= target.getThreads();
+			
+			for (int i = 0; i < threads.length; i++) {
+				IJavaThread thread = (IJavaThread)threads[i];
+				if(!thread.isSystemThread()){
+					if (thread.isSuspended()) {
+						thread.resume();
+						while (thread.isSuspended()) {
+							Thread.sleep(100);
+						}
+					}
+				}
+			}
+		}
+		catch (DebugException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		catch (InterruptedException e){
+			JDIDebugUIPlugin.log(e);
+		}
 	}
 	
 	/**
