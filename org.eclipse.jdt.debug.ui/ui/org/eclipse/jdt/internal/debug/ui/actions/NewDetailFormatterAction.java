@@ -54,7 +54,7 @@ public class NewDetailFormatterAction extends ObjectActionDelegate {
 		}
 		JavaDetailFormattersManager detailFormattersManager= JavaDetailFormattersManager.getDefault();
 		DetailFormatter detailFormatter= new DetailFormatter(typeName, "", true); //$NON-NLS-1$
-		if (new DetailFormatterDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), detailFormatter, null, false, true).open() == Window.OK) {
+		if (new DetailFormatterDialog(JDIDebugUIPlugin.getActivePage().getWorkbenchWindow().getShell(), detailFormatter, null, true, false).open() == Window.OK) {
 			detailFormattersManager.setAssociatedDetailFormatter(detailFormatter);
 		}
 	}
