@@ -2471,11 +2471,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		
 		private Vector fRunnables;
 		
-		private JDIThread fThread;
+		private JDIThread fJDIThread;
 		
 		public ThreadJob(JDIThread thread, String threadName) {
 			super(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.39"), new Object[] {threadName})); //$NON-NLS-1$
-			fThread= thread;
+			fJDIThread= thread;
 			fRunnables= new Vector(5);
 			setRule(this);
 		}
@@ -2493,13 +2493,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public IStatus run(IProgressMonitor monitor) {
-			fThread.fRunningAsyncJob= this;
+			fJDIThread.fRunningAsyncJob= this;
 			synchronized (this) {
-				fThread.fAsyncJob= null;
+				fJDIThread.fAsyncJob= null;
 			}
 
 			monitor.beginTask(this.getName(), fRunnables.size()); //$NON-NLS-1$
-			for (Iterator iter= fRunnables.iterator(); iter.hasNext() && !fThread.isTerminated() || monitor.isCanceled();) {
+			for (Iterator iter= fRunnables.iterator(); iter.hasNext() && !fJDIThread.isTerminated() || monitor.isCanceled();) {
 				try {
 					((Runnable)iter.next()).run();
 				} catch (Throwable t) {
@@ -2507,7 +2507,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				}
 				monitor.worked(1);
 			}
-			fThread.fRunningAsyncJob= null;
+			fJDIThread.fRunningAsyncJob= null;
 			return Status.OK_STATUS;
 			
 		}
@@ -2516,21 +2516,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 		 */
 		public boolean shouldRun() {
-			return !fThread.isTerminated();
+			return !fJDIThread.isTerminated();
 		}
 
 		/*
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
 		public boolean contains(ISchedulingRule rule) {
-			return (rule instanceof ThreadJob) && fThread == ((ThreadJob)rule).fThread;
+			return (rule instanceof ThreadJob) && fJDIThread == ((ThreadJob)rule).fJDIThread;
 		}
 
 		/*
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
 		public boolean isConflicting(ISchedulingRule rule) {
-			return (rule instanceof ThreadJob) && fThread == ((ThreadJob)rule).fThread;
+			return (rule instanceof ThreadJob) && fJDIThread == ((ThreadJob)rule).fJDIThread;
 		}
 
 	}
