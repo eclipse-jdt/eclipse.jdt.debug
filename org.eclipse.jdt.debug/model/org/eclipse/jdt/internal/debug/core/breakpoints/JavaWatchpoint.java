@@ -362,7 +362,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 * thread text when asked (assumes thread text is requested after
 	 * the event is passed to this breakpoint.
 	 * 
-	 * Also, @see JavaBreakpoint#handleEvent(Event)
+	 * Also, @see JavaBreakpoint#handleEvent(Event, JDIDebugTarget)
 	 */
 	public boolean handleEvent(Event event, JDIDebugTarget target)  {
 		if (event instanceof AccessWatchpointEvent) {

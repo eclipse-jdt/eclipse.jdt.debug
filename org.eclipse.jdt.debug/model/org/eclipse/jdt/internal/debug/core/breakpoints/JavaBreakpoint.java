@@ -222,7 +222,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 
 	/**
-	 * @see IJDIEventListener#handleEvent(Event)
+	 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
 	 */
 	public boolean handleEvent(Event event, JDIDebugTarget target) {
 		if (event instanceof ClassPrepareEvent) {
