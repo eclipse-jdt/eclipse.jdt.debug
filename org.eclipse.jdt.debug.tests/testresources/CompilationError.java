@@ -6,13 +6,14 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 
 Contributors:
-    IBM Corporation - Initial implementation
+	IBM Corporation - Initial implementation
 **********************************************************************/
 
-public class CompileError {
+public class CompilationError {
 
-	// This is a place-holder file.  The tests will programmatically change the 
-	// content of this file to contain a compilation error
+	// this class contains a compilation error, so it is stored in a resources
+	// folder off of the classpath, and is imported into the tests project
 	public static void main(String[] args) {
+		String foo = "foo" + bar;
 	}
 }

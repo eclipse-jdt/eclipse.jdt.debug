@@ -50,7 +50,8 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
  */
 public class JavaProjectHelper {
 	
-	public static final IPath TEST_SRC_DIR= new Path("testprograms");	
+	public static final IPath TEST_SRC_DIR= new Path("testprograms");
+	public static final IPath TEST_COMPILE_ERROR = new Path("testresources/CompilationError.java");	
 
 	/**
 	 * Creates a IJavaProject.
@@ -260,6 +261,19 @@ public class JavaProjectHelper {
 			// should not happen
 		}
 	}	
+	
+	public static void importFile(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		
+		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
+		List files = new ArrayList(1);
+		files.add(file);
+		try {
+			ImportOperation op= new ImportOperation(destPath, file.getParentFile(), structureProvider, new ImportOverwriteQuery(), files);
+			op.setCreateContainerStructure(false);
+			op.run(monitor);
+		} catch (InterruptedException e) {
+			// should not happen
+		}
+	}
 	
 	private static void addJavaFiles(File dir, List collection) throws IOException {
 		File[] files = dir.listFiles();

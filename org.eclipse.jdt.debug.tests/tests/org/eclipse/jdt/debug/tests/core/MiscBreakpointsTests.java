@@ -11,10 +11,6 @@ Contributors:
     IBM Corporation - Initial implementation
 *********************************************************************/
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IBuffer;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -62,16 +58,10 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	 * preference being TRUE.
 	 */
 	public void testSuspendOnCompilationErrors() throws Exception {
-		String typeName = "CompileError";
+		String typeName = "CompilationError";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);		
-		
-		IType type = fJavaProject.findType(typeName);
-		ICompilationUnit cu = type.getCompilationUnit();
-		IBuffer buffer = cu.getBuffer();
-		buffer.setContents(COMPILE_ERROR_CONTENTS);
-		cu.save(new NullProgressMonitor(), true);
-		
+				
 		IJavaThread thread = null;
 		try {
 			thread= launchAndSuspend(typeName);
@@ -79,7 +69,7 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 			assertTrue("suspendee was not an IJavaThread", thread instanceof IJavaThread);
 			IJavaThread javaThread = (IJavaThread) thread;
 			int stackLine = javaThread.getTopStackFrame().getLineNumber();
-			assertTrue("line number should be '3', but was " + stackLine, stackLine == 3);
+			assertTrue("line number should be '17', but was " + stackLine, stackLine == 17);
 		
 		} finally {
 			terminateAndRemove(thread);
@@ -88,16 +78,10 @@ public class MiscBreakpointsTests extends AbstractDebugTest {
 	}
 
 	public void testDontSuspendOnCompilationErrors() throws Exception {
-		String typeName = "CompileError";
+		String typeName = "CompilationError";
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS, false);
 		getPrefStore().setValue(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, false);		
-		
-		IType type = fJavaProject.findType(typeName);
-		ICompilationUnit cu = type.getCompilationUnit();
-		IBuffer buffer = cu.getBuffer();
-		buffer.setContents(COMPILE_ERROR_CONTENTS);
-		cu.save(new NullProgressMonitor(), true);
-		
+				
 		IJavaDebugTarget debugTarget = null;
 		try {
 			debugTarget= launchAndTerminate(typeName);
