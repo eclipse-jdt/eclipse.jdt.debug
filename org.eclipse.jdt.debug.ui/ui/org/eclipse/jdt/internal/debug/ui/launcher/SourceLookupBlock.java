@@ -275,6 +275,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		boolean useDefault = true;
+		setErrorMessage(null);
 		try {
 			useDefault = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
 		} catch (CoreException e) {
@@ -295,10 +296,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 			IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedSourceLookupPath(config);
 			fPathViewer.setEntries(entries);
 		} catch (CoreException e) {
-			if (e.getStatus().getCode() != IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT) {
-				// do not log error for non-existant project
-				JDIDebugUIPlugin.log(e);
-			}
+			setErrorMessage(e.getMessage());
 		}
 		fPathViewer.setEnabled(!useDefault);
 		fPathViewer.setLaunchConfiguration(config);
