@@ -108,10 +108,10 @@ public class LaunchConfigurationProjectNameChange extends Change {
 			if (fOldProjectName.equals(projectName)) {
 				return new RefactoringStatus();
 			} else {
-				return RefactoringStatus.createWarningStatus(MessageFormat.format("The project for the launch configuration \"{0}\" is no more \"{1}\".", new String[] {fLaunchConfiguration.getName(), fOldProjectName}));
+				return RefactoringStatus.createWarningStatus(MessageFormat.format(RefactoringMessages.getString("LaunchConfigurationMainTypeNameChange.5"), new String[] {fLaunchConfiguration.getName(), fOldProjectName})); //$NON-NLS-1$
 			}
 		} else {
-			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format("The launch configuration \"{0}\" no more exists", new String[] {fLaunchConfiguration.getName()}));
+			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format(RefactoringMessages.getString("LaunchConfigurationMainTypeNameChange.6"), new String[] {fLaunchConfiguration.getName()})); //$NON-NLS-1$
 		}
 	}
 }
