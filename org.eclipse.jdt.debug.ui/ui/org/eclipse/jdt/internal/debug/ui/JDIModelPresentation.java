@@ -1175,7 +1175,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @return whether or not details should be shown in the label
 	 *  of the given variable
 	 */
-	private boolean isShowLabelDetails(IJavaValue value) {
+	protected boolean isShowLabelDetails(IJavaValue value) {
 		boolean showDetails= false;
 		String details= (String) fAttributes.get(SHOW_DETAILS);
 		if (details != null) {
