@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ======================================================================= -->
+<!-- Java Launching Plugin                                                   -->
+<!-- ======================================================================= -->
+<plugin
+	name= "%pluginName"
+	id= "org.eclipse.jdt.launching"
+	version= "1.0"
+	provider-name= "Object Technology International, Inc."
+	class= "org.eclipse.jdt.internal.launching.LaunchingPlugin">
+
+<requires>
+  <import plugin="org.eclipse.core.resources"/>
+  <import plugin="org.eclipse.jdt.core"/>
+  <import plugin="org.eclipse.debug.core"/>
+  <import plugin="org.eclipse.jdt.debug"/>
+  <import plugin="org.apache.xerces"/>
+</requires>
+
+<runtime>
+	<library name="launching.jar" >
+		<export name = "*"/>
+	</library>
+</runtime>
+
+
+<!-- Search extension point definitions -->
+
+<extension-point name="%vmInstallTypes" id="vmInstallTypes"/>
+
+<!-- Extensions -->
+</plugin>
