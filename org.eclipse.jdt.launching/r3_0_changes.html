@@ -1,0 +1,21 @@
+<html>
+<head>
+<title>3.0 JDT Launching Change Notes</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<h1>3.0 JDT Launching Change Notes</h1>
+<p>This document describes important changes in the 3.0 JDT launching support, relative 
+  to the 2.1 release.</p>
+<h2>API Changes</h2>
+<h3>VMRunnerConfiguration contains environment</h3>
+<p>Two methods have been added to the <code>VMRunnerConfiguration</code> type
+  to support the setting and retrieving of environment variables.
+<p>Implementors of <code>IVMRunner</code> should call
+  VMRunnerConfiguration#getEnvironment() and pass that environment into
+  the executed VM. Clients who use DebugPlugin#exec(String[] cmdLine, File workingDirectory)
+  can do this by calling DebugPlugin#exec(String[] cmdLine, File workingDirectory, String[] envp)
+  instead. Simply passing in the result from getEnvironment() is sufficient.</p>
+</body>
+</html>
