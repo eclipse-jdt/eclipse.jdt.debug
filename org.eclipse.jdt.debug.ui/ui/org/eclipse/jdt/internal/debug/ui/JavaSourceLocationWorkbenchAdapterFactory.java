@@ -28,6 +28,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * UI adapter factory for JDI Debug
+ * 
+ * @deprecated
  */
 /*package*/ class JavaSourceLocationWorkbenchAdapterFactory implements IAdapterFactory {
 

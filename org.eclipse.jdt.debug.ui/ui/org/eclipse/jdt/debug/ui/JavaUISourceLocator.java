@@ -44,6 +44,28 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
  * intended to be subclassed.
  * </p>
  * @since 2.0
+ * @deprecated In 3.0, the debug platform provides source lookup facilities that
+ *  should be used in place of the Java source lookup support provided in 2.0.
+ *  The new facilities provide a source lookup director that coordinates source
+ *  lookup among a set of participants, searching a set of source containers.
+ *  See the following packages: <code>org.eclipse.debug.core.sourcelookup</code>
+ *  and <code>org.eclipse.debug.core.sourcelookup.containers</code>. This class
+ *  has been replaced by a Java source lookup director and Java source lookup
+ *  participant. To migrate to the new source lookup support clients should
+ *  add two new attributes to their launch configuration type extensions:<ul>
+ *  <li>sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"</li>
+ *  <li>sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer"</li>
+ *  </ul>
+ *  The source locator id attribute specifies to use the Java source lookup director
+ *  for launch configurations of the associated type, and the source path computer id
+ *  attribute specifies the class to use when computing a default source lookup
+ *  path for a launch configuration. The path computer referenced/provided (by the
+ *  above id), computes a default source lookup path based on the support provided in
+ *  the 2.0 release - i.e. a configuration's <code>ATTR_SOURCE_PATH_PROVIDER</code>
+ *  attribute (if present), or a default source lookup path based on a configuration's
+ *  runtime classpath. This class has been replaced by the Java source lookup
+ *  director which is an internal class, but can be used via the
+ *  <code>sourceLocatorId</code> attribute on a launch configuration type extension.
  */
 
 public class JavaUISourceLocator implements IPersistableSourceLocator {
