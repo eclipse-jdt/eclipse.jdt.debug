@@ -124,6 +124,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * The types are stored by their fully qualified names.
 	 */
 	private List fOutOfSynchTypes;
+	/**
+	 * Whether or not this target has performed a hot code replace.
+	 */
+	private boolean fHasHCROccurred;
 	 
 	/**
 	 * The instance of <code>java.lang.ThreadDeath</code> used to
@@ -197,6 +201,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		setBreakpoints(new ArrayList(5));
 		setThreadList(new ArrayList(5));
 		setOutOfSynchTypes(new ArrayList(2));
+		setHCROccurred(false);
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
@@ -573,6 +578,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private void setVM(VirtualMachine vm) {
 		fVirtualMachine = vm;
 	}
+	
+	/**
+	 * Sets whether this debug target has performed a hot
+	 * code replace.
+	 */
+	private void setHCROccurred(boolean occurred) {
+		fHasHCROccurred= occurred;
+	}
 
 	public void typesHaveChanged(List resources, List qualifiedNames) throws DebugException {
 		if (supportsJDKHotCodeReplace()) {
@@ -602,6 +615,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	private void typesHaveChangedJ9(List resources, List qualifiedNames) throws DebugException {
 		String[] typeNames = (String[]) qualifiedNames.toArray(new String[qualifiedNames.size()]);					
 		if (supportsJ9HotCodeReplace()) {
+			setHCROccurred(true);
 			org.eclipse.jdi.hcr.VirtualMachine vm= (org.eclipse.jdi.hcr.VirtualMachine) getVM();
 			int result= org.eclipse.jdi.hcr.VirtualMachine.RELOAD_FAILURE;
 			try {
@@ -634,6 +648,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	private void typesHaveChangedJDK(List resources, List qualifiedNames) throws DebugException {
 		if (supportsJDKHotCodeReplace()) {
+			setHCROccurred(true);
 			Map typesToBytes= getTypesToBytes(resources, qualifiedNames);
 			try {
 				getVM().redefineClasses(typesToBytes);
@@ -686,7 +701,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * target.
 	 */
 	public boolean isOutOfSynch(String qualifiedName) {
-		if (fOutOfSynchTypes == null) {
+		if (fOutOfSynchTypes == null || fOutOfSynchTypes.isEmpty()) {
 			return false;
 		}
 		return fOutOfSynchTypes.contains(qualifiedName);
@@ -727,8 +742,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * 
 	 * HCR has failed if there are any out of synch types
 	 */
-	protected boolean hasHCRFailed() {
+	public boolean hasHCRFailed() {
 		return fOutOfSynchTypes != null && !fOutOfSynchTypes.isEmpty();
+	}
+	
+	/**
+	 * Returns whether or not this debug target has performed
+	 * a hot code replace
+	 */
+	public boolean hasHCROccurred() {
+		return fHasHCROccurred;
 	}
 	
 	private String getString(String key) {
