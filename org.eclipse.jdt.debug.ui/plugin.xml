@@ -2602,7 +2602,6 @@ M4 = Platform-specific fourth key
       <consoleFactory
             label="Java Stack Trace Console"
             class="org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory">
-         <enablement/>
       </consoleFactory>
    </extension>
    
