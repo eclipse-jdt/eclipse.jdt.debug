@@ -22,6 +22,7 @@ import org.eclipse.jdi.internal.connect.SocketLaunchingConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketListeningConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketRawLaunchingConnectorImpl;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.VirtualMachineManager;
 import com.sun.jdi.connect.LaunchingConnector;
@@ -119,7 +120,12 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 * NOTE: This is not in compliance with the Sun's JDI.
 	 */
 	public int getGlobalRequestTimeout() {
-		return JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
+		if (JDIDebugPlugin.getDefault() == null) {
+			// JDI plug-in is not loaded
+			return JDIDebugModel.DEF_REQUEST_TIMEOUT;
+		} else {
+			return JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
+		}
 	}
 	
 	/**
