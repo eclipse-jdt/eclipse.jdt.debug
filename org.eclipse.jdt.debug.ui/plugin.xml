@@ -1926,7 +1926,8 @@
                <count value="1"/>
                <iterate>
                  <or>
-                   <instanceof value="org.eclipse.core.resources.IResource"/>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
                    <instanceof value="org.eclipse.jdt.core.IJavaElement"/>
                  </or>
                  <test property="org.eclipse.jdt.debug.ui.hasMainType"/>
@@ -1960,7 +1961,8 @@
                <count value="1"/>
                <iterate>
                  <or>
-                   <instanceof value="org.eclipse.core.resources.IResource"/>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
 				   <instanceof value="org.eclipse.jdt.core.IJavaElement"/>
                  </or>
                  <test property="org.eclipse.jdt.debug.ui.isApplet"/>
