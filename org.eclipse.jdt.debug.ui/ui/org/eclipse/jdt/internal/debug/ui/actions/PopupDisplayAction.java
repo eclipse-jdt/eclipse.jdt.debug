@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
+import java.util.Map;
 import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
 import org.eclipse.debug.ui.actions.PopupInformationControl;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -56,7 +57,7 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 	
 	private void showPopup() {		
 		final IHandler handler = new AbstractHandler() {
-			public void execute(Object parameter) throws ExecutionException {
+			public Object execute(Map parameter) throws ExecutionException {
 				IDataDisplay directDisplay= getDirectDataDisplay();
 				Display display= JDIDebugUIPlugin.getStandardDisplay();
 				
@@ -70,6 +71,7 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 					}
 				}
 				evaluationCleanup();
+				return null;
 			}			
 		};
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {

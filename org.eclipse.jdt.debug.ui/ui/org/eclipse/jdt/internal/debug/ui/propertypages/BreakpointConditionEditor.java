@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.propertypages;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClassFile;
@@ -154,8 +155,9 @@ public class BreakpointConditionEditor {
 		
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 		IHandler handler = new AbstractHandler() {
-			public void execute(Object parameter) throws ExecutionException {
+			public Object execute(Map parameter) throws ExecutionException {
 				fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+				return null;
 			}
 		};
 		submissions = Collections.singletonList(new HandlerSubmission(null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, 4, null)); //$NON-NLS-1$

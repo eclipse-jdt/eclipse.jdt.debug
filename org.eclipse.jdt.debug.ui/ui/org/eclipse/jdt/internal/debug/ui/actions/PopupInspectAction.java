@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
+import java.util.Map;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
@@ -70,9 +71,10 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
 				IHandler handler = new AbstractHandler() {
-					public void execute(Object parameter) throws ExecutionException {
+					public Object execute(Map parameter) throws ExecutionException {
 						DebugPlugin.getDefault().getExpressionManager().addExpression(expression);	
 						showExpressionView();
+						return null;
 					}				
 				};
 				

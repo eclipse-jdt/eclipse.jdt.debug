@@ -17,6 +17,7 @@ import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -79,6 +80,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -721,12 +723,13 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		final String resultStringText = resultString.toString();
 		
 		final IHandler actionHandler = new AbstractHandler() {
-			public void execute(Object parameter) throws ExecutionException {
+			public Object execute(Map parameter) throws ExecutionException {
 				try {
 					document.replace(fSnippetEnd, 0, resultStringText);
 				} catch (BadLocationException e) {
 				}
 				selectAndReveal(fSnippetEnd, resultStringText.length());
+				return null;
 			}
 		};
 			
@@ -777,13 +780,14 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 		
 		IHandler handler = new AbstractHandler() {
-			public void execute(Object parameter) throws ExecutionException {
+			public Object execute(Map parameter) throws ExecutionException {
 				int insertionPoint = fSnippetStart;
 				try {
 					document.replace(insertionPoint, 0, errorString.toString());
 				} catch (BadLocationException e) {
 				}
-				selectAndReveal(insertionPoint, errorString.length());				
+				selectAndReveal(insertionPoint, errorString.length());
+				return null;
 			}
 		};
 		
@@ -830,9 +834,10 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		Runnable r = new Runnable() {
 			public void run() {
 				final IHandler handler = new AbstractHandler() {
-					public void execute(Object parameter) throws ExecutionException {
+					public Object execute(Map parameter) throws ExecutionException {
 						DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
 						showExpressionView();
+						return null;
 					}
 				};
 
@@ -886,12 +891,13 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		final IDocument document = getSourceViewer().getDocument();
 		
 		final IHandler handler = new AbstractHandler() {
-			public void execute(Object parameter) throws ExecutionException {
+			public Object execute(Map parameter) throws ExecutionException {
 				try {
 					document.replace(fSnippetEnd, 0, exceptionText);
 				} catch (BadLocationException e) {
 				}
 				selectAndReveal(fSnippetEnd, exceptionText.length());
+				return null;
 			}
 			
 		};
@@ -911,12 +917,13 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			
 			final IDocument document = getSourceViewer().getDocument();
 			final IHandler handler = new AbstractHandler() {
-				public void execute(Object parameter) throws ExecutionException {
+				public Object execute(Map parameter) throws ExecutionException {
 					try {
 						document.replace(fSnippetEnd, 0, message);
 					} catch (BadLocationException e) {
 					}
-					selectAndReveal(fSnippetEnd, message.length());	
+					selectAndReveal(fSnippetEnd, message.length());
+					return null;
 				}
 			};
 			
