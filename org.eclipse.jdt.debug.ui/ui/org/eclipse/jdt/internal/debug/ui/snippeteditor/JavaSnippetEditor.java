@@ -777,7 +777,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				changed = true;
 			}
 		}
-		if (changed) {
+		if (changed && fVM != null) {
 			MessageDialog.openWarning(getShell(), SnippetMessages.getString("SnippetEditor.Warning_1"), SnippetMessages.getString("SnippetEditor.The_working_directory_has_changed._Restarting_the_evaluation_context._2")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return changed;
