@@ -306,9 +306,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			case CONTAINER:
 				return null;
 			default:
-				IPath path = getPath();
-				IPath rootPath = root.getLocation();
-				return root.findMember(path);
+				return root.findMember(getPath());
 		}
 	}
 
