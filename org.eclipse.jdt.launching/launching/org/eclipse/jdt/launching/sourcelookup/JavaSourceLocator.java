@@ -309,9 +309,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				case IRuntimeClasspathEntry.VARIABLE:
 					try {
 						String source = entry.getSourceAttachmentLocation();
-						String root = entry.getSourceAttachmentRootLocation();
 						if (source != null) {
-							location = new ArchiveSourceLocation(entry.getSourceAttachmentLocation(), entry.getSourceAttachmentRootLocation());
+							location = new ArchiveSourceLocation(source, entry.getSourceAttachmentRootLocation());
 						}
 					} catch (IOException e) {
 						LaunchingPlugin.log(e);

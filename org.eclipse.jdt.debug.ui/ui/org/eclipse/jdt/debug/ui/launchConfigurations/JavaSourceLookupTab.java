@@ -42,8 +42,6 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
 		comp.setLayout(topLayout);		
-		GridData gd;
-		
 		
 		createVerticalSpacer(comp, 1);
 		
