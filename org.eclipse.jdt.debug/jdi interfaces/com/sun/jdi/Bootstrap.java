@@ -12,7 +12,7 @@ package com.sun.jdi;
 
 
 public class Bootstrap {
-	public VirtualMachineManager virtualMachineManager() {
+	static public VirtualMachineManager virtualMachineManager() {
 		return null;
 	}
 }
