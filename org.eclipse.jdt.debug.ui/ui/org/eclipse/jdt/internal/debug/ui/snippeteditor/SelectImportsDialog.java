@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -113,21 +112,21 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			fViewer.remove(imports);
 		}
 		
-		/**
-		 * @see IStructuredContentProvider#getElements(Object)
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
 			return fImportNames.toArray();
 		}
 		
-		/**
-		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 		
-		/**
-		 * @see IContentProvider#dispose()
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
 		}		
@@ -282,8 +281,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		}		
 	}
 	
-	/**
-	 * @see Dialog#createDialogArea(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
@@ -343,8 +342,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		return outer;
 	}
 
-	/**
-	 * @see Dialog#okPressed()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
 		String[] imports= null;
