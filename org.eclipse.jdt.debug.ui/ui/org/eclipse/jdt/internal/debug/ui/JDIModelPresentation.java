@@ -1240,10 +1240,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					} else if (thread instanceof IJavaThread) {
 						IJavaThread javaThread = (IJavaThread) thread;
 						if (javaThread.isSuspended()) {
-							if (fValue instanceof IJavaObject) {
-								appendObjectDetail((IJavaObject)fValue, javaThread);
-							} else if (fValue instanceof IJavaArray) {
+							if (fValue instanceof IJavaArray) {
 								appendArrayDetail((IJavaArray)fValue, javaThread);
+							} else if (fValue instanceof IJavaObject) {
+								appendObjectDetail((IJavaObject)fValue, javaThread);
 							} else {
 								appendJDIValueString(fValue);															
 							}
