@@ -11,7 +11,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -337,26 +337,30 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		/**
 		 * Set the defaults value of this fields which can't be set in doFillIntoGrid().		 */
 		public void setDefaults() {
+			// we can only do code assist if there is an associated type
+			IType type = null;
 			try {
-				getCompletionProcessor().setType(BreakpointUtils.getType(fBreakpoint));
+				BreakpointUtils.getType(fBreakpoint);
 			} catch (CoreException e) {
 			}
-			
-			String source= null;
-			try {
-				source= BreakpointUtils.getType(fBreakpoint).getSource();
-			} catch (JavaModelException e) {
-			} catch (CoreException e) {
-			}
-			int lineNumber= fBreakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
-			int position= -1;
-			if (source != null && lineNumber != -1) {
+			if (type != null) {
 				try {
-					position= new Document(source).getLineOffset(lineNumber);
-				} catch (BadLocationException e) {
+					getCompletionProcessor().setType(type);			
+					String source= null;
+					source= type.getSource();
+					int lineNumber= fBreakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
+					int position= -1;
+					if (source != null && lineNumber != -1) {
+						try {
+							position= new Document(source).getLineOffset(lineNumber);
+						} catch (BadLocationException e) {
+						}
+					}
+					getCompletionProcessor().setPosition(position);
+				} catch (CoreException e) {
 				}
 			}
-			getCompletionProcessor().setPosition(position);
+			
 			GridData gd= (GridData)fViewer.getControl().getLayoutData();
 			gd.heightHint= convertHeightInCharsToPixels(10);
 			gd.widthHint= convertWidthInCharsToPixels(40);			
@@ -700,7 +704,18 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	}
 
 	protected void createConditionEditor(Composite parent) {
-		fConditionEnabler= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CONDITION_ENABLED, ActionMessages.getString("JavaBreakpointPreferencePage.Enable_condition_1"), parent); //$NON-NLS-1$
+		IType type = null;
+		try {
+			type = BreakpointUtils.getType(fBreakpoint);
+		} catch (CoreException e) {
+		}
+		String label = null;
+		if (type == null) {
+			label = ActionMessages.getString("JavaBreakpointPreferencePage.Enable_Condition_(code_assist_not_available)_1"); //$NON-NLS-1$
+		} else {
+			label = ActionMessages.getString("JavaBreakpointPreferencePage.Enable_condition_1"); //$NON-NLS-1$
+		}
+		fConditionEnabler= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CONDITION_ENABLED, label, parent);
 		addField(fConditionEnabler);
 
 		fCondition =
