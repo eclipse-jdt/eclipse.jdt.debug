@@ -139,7 +139,7 @@ public final class JavaRuntime {
 	/**
 	 * Preference key for launch/connect timeout. VM Runners should honor this timeout
 	 * value when attempting to launch and connect to a debuggable VM. The value is
-	 * an int, indicating a number of millieseconds.
+	 * an int, indicating a number of milliseconds.
 	 * 
 	 * @since 2.0
 	 */
@@ -668,7 +668,7 @@ public final class JavaRuntime {
 	 * resolvers are consulted. If the entry is of kind <code>PROJECT</code>,
 	 * and the associated Java project specifies non-default output locations,
 	 * the corresponding output locations are returned. Otherwise, the given
-	 * entry is returnred.
+	 * entry is returned.
 	 * <p>
 	 * If the given entry is a variable entry, and a resolver is not registered,
 	 * the entry itself is returned. If the given entry is a container, and a
@@ -784,7 +784,7 @@ public final class JavaRuntime {
 	 * resolvers are consulted. If the entry is of kind <code>PROJECT</code>,
 	 * and the associated Java project specifies non-default output locations,
 	 * the corresponding output locations are returned. Otherwise, the given
-	 * entry is returnred.
+	 * entry is returned.
 	 * <p>
 	 * If the given entry is a variable entry, and a resolver is not registered,
 	 * the entry itself is returned. If the given entry is a container, and a
