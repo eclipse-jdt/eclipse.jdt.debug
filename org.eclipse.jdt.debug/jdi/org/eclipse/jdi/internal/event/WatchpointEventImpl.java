@@ -5,17 +5,22 @@ package org.eclipse.jdi.internal.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.request.*;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import org.eclipse.jdi.internal.FieldImpl;
+import org.eclipse.jdi.internal.MirrorImpl;
+import org.eclipse.jdi.internal.ObjectReferenceImpl;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.request.RequestID;
+
+import com.sun.jdi.Field;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Value;
+import com.sun.jdi.event.WatchpointEvent;
 
 /**
- * this class implements the corresponding interfaces
+ * This class implements the corresponding interfaces
  * declared by the JDI specification. See the com.sun.jdi package
  * for more information.
  *
@@ -37,7 +42,6 @@ public abstract class WatchpointEventImpl extends LocatableEventImpl implements 
 	 * @return Creates, reads and returns new EventImpl, of which requestID has already been read.
 	 */
 	public void readWatchpointEventFields(MirrorImpl target, DataInputStream dataInStream) throws IOException {
-		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		readThreadAndLocation(target, dataInStream);
 		fField = FieldImpl.readWithReferenceTypeWithTag(target, dataInStream);
 		fObjectReference = ObjectReferenceImpl.readObjectRefWithTag(target, dataInStream);

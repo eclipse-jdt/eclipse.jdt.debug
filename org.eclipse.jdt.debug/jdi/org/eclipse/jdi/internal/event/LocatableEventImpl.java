@@ -5,17 +5,20 @@ package org.eclipse.jdi.internal.event;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.connect.*;
-import com.sun.jdi.request.*;
-import org.eclipse.jdi.internal.*;
-import org.eclipse.jdi.internal.jdwp.*;
-import org.eclipse.jdi.internal.request.*;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import org.eclipse.jdi.internal.LocationImpl;
+import org.eclipse.jdi.internal.MirrorImpl;
+import org.eclipse.jdi.internal.ThreadReferenceImpl;
+import org.eclipse.jdi.internal.VirtualMachineImpl;
+import org.eclipse.jdi.internal.request.RequestID;
+
+import com.sun.jdi.Locatable;
+import com.sun.jdi.Location;
 
 /**
- * this class implements the corresponding interfaces
+ * This class implements the corresponding interfaces
  * declared by the JDI specification. See the com.sun.jdi package
  * for more information.
  *
@@ -35,7 +38,6 @@ public abstract class LocatableEventImpl extends EventImpl implements Locatable 
 	 * Reads Thread and Location.
 	 */
 	public void readThreadAndLocation(MirrorImpl target, DataInputStream dataInStream) throws IOException {
-		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		fThreadRef = ThreadReferenceImpl.read(target, dataInStream);
 		fLocation = LocationImpl.read(target, dataInStream);
    	}

@@ -234,7 +234,6 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			//readInt("thread status", threadStatusMap(), replyData);
 			int suspendStatus = readInt("suspend status", suspendStatusVector(), replyData);
 			boolean result = suspendStatus == SUSPEND_STATUS_SUSPENDED;
 			return result;
