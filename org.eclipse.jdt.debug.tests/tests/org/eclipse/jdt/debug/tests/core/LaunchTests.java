@@ -13,14 +13,14 @@ package org.eclipse.jdt.debug.tests.core;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchListener2;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
  * Tests launch notification.
  */
-public class LaunchTests extends AbstractDebugTest implements ILaunchListener2 {
+public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 	
 	private boolean added = false;
 	private boolean removed = false;
@@ -67,14 +67,6 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchListener2 {
 			}
 		}
 		assertTrue("Launch should have been removed", removed);		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchListener2#launchTerminated(org.eclipse.debug.core.ILaunch)
-	 */
-	public synchronized void launchTerminated(ILaunch launch) {
-		terminated = true;
-		notifyAll();
 	}
 
 	/* (non-Javadoc)
