@@ -701,7 +701,8 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		SelectionDialog dialog= null;
 		try {
 			dialog= JavaUI.createTypeDialog(shell, PlatformUI.getWorkbench().getProgressService(),
-				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
+				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES | IJavaElementSearchConstants.CONSIDER_INTERFACES,
+                false);
 		} catch (JavaModelException jme) {
 			String title= DebugUIMessages.getString("DetailFormatterDialog.Select_type_6"); //$NON-NLS-1$
 			String message= DebugUIMessages.getString("DetailFormatterDialog.Could_not_open_type_selection_dialog_for_detail_formatters_7"); //$NON-NLS-1$
