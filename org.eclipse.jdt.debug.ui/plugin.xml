@@ -2350,7 +2350,8 @@
       </contextViewBinding>
       <contextViewBinding
             viewId="org.eclipse.jdt.debug.ui.MonitorsView"
-            contextId="org.eclipse.jdt.debug.ui.debugging">
+            contextId="org.eclipse.jdt.debug.ui.debugging"
+            autoOpen="false">
       </contextViewBinding>
    </extension>
    
