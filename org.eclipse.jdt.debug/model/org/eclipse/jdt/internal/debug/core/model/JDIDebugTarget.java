@@ -273,7 +273,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * 
 	 * @return list of threads
 	 */
-	protected ArrayList getThreadList() {
+	private ArrayList getThreadList() {
 		return fThreads;
 	}
 	
@@ -284,7 +284,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * used instead of getThreadList().iterator()
 	 * @return an iterator over the collection of threads
 	 */
-	protected Iterator getThreadIterator() {
+	private Iterator getThreadIterator() {
 		List threadList= (List) getThreadList().clone();
 		Iterator threads = threadList.iterator();
 		return threads;
