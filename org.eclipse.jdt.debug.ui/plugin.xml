@@ -605,6 +605,9 @@
 	   <fileExtension
 	   		extension="java"
 	   		default="true"/>
+	   <fileExtension
+	   		extension="class"
+	   		default="true"/>
    </launchConfigurationType>
 </extension>
 

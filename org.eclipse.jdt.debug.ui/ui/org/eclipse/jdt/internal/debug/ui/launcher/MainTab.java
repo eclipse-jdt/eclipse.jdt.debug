@@ -29,7 +29,6 @@ import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -49,6 +48,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabItem;
@@ -134,12 +134,19 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		
 		Composite comp = new Composite(tabItem.getParent(), SWT.NONE);
 		GridLayout topLayout = new GridLayout();
+		topLayout.marginHeight = 0;
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
-		createVerticalSpacer(comp);
+		//createVerticalSpacer(comp);
 		
-		Composite projComp = new Composite(comp, SWT.NONE);
+		Group firstGroup = new Group(comp, SWT.NONE);
+		GridLayout firstGroupLayout = new GridLayout();
+		firstGroup.setLayout(firstGroupLayout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		firstGroup.setLayoutData(gd);
+			
+		Composite projComp = new Composite(firstGroup, SWT.NONE);
 		GridLayout projLayout = new GridLayout();
 		projLayout.numColumns = 2;
 		projLayout.marginHeight = 0;
@@ -171,7 +178,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 			}
 		});
 		
-		Composite mainComp = new Composite(comp, SWT.NONE);
+		Composite mainComp = new Composite(firstGroup, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
 		mainLayout.numColumns = 3;
 		mainLayout.marginHeight = 0;
@@ -207,13 +214,20 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		fSearchExternalJarsCheckButton.setText("Ext. jars");
 		fSearchExternalJarsCheckButton.setToolTipText("Include external jars when searching for a main class");
 				
-		createVerticalSpacer(comp);
+		//createVerticalSpacer(comp);
 		
-		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
+		Group secondGroup = new Group(comp, SWT.NONE);
+		GridLayout secondGroupLayout = new GridLayout();
+		secondGroup.setLayout(secondGroupLayout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		secondGroup.setLayoutData(gd);
+		
+		fPrgmArgumentsLabel = new Label(secondGroup, SWT.NONE);
 		fPrgmArgumentsLabel.setText("Program arguments");
 						
-		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH);
+		fPrgmArgumentsText = new Text(secondGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 30;
 		fPrgmArgumentsText.setLayoutData(gd);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
@@ -221,7 +235,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 			}
 		});
 		
-		Composite workingDirComp = new Composite(comp, SWT.NONE);
+		Composite workingDirComp = new Composite(secondGroup, SWT.NONE);
 		GridLayout workingDirLayout = new GridLayout();
 		workingDirLayout.numColumns = 2;
 		workingDirLayout.marginHeight = 0;
@@ -253,9 +267,15 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 			}
 		});
 						
-		createVerticalSpacer(comp);
+		//createVerticalSpacer(comp);
 				
-		Composite jreComp = new Composite(comp, SWT.NONE);
+		Group thirdGroup = new Group(comp, SWT.NONE);
+		GridLayout thirdGroupLayout = new GridLayout();
+		thirdGroup.setLayout(thirdGroupLayout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		thirdGroup.setLayoutData(gd);
+		
+		Composite jreComp = new Composite(thirdGroup, SWT.NONE);
 		GridLayout jreLayout = new GridLayout();
 		jreLayout.numColumns = 2;
 		jreLayout.marginHeight = 0;
@@ -288,11 +308,12 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 			}
 		});
 		
-		fVMArgumentsLabel = new Label(comp, SWT.NONE);
+		fVMArgumentsLabel = new Label(thirdGroup, SWT.NONE);
 		fVMArgumentsLabel.setText("VM arguments");
 		
-		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH);
+		fVMArgumentsText = new Text(thirdGroup, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = 30;
 		fVMArgumentsText.setLayoutData(gd);	
 		fVMArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {

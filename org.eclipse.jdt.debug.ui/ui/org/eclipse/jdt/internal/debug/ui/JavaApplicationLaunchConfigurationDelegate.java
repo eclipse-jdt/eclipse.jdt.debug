@@ -9,18 +9,22 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -41,12 +45,12 @@ import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jdt.launching.VMRunnerResult;
+import org.eclipse.ui.IEditorInput;
 
 /**
  * Launch configuration delegate for a local Java application.
  */
-public class JavaApplicationLaunchConfigurationDelegate
-	implements ILaunchConfigurationDelegate {
+public class JavaApplicationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 
 	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
@@ -66,18 +70,24 @@ public class JavaApplicationLaunchConfigurationDelegate
 	 * @see ILaunchConfigurationDelegate#initializeDefaults(ILaunchConfigurationWorkingCopy, Object)
 	 */
 	public void initializeDefaults(ILaunchConfigurationWorkingCopy configuration, Object object) {
-		if (object instanceof ICompilationUnit) {
-			initializeCompilationUnitDefaults(configuration, (ICompilationUnit)object);
+		if ((object instanceof ICompilationUnit) || (object instanceof IClassFile)) {
+			initializeDefaults(configuration, (IJavaElement)object);
+		} else if (object instanceof IFile) {
+			IJavaElement javaElement = JavaCore.create((IFile)object);
+			initializeDefaults(configuration, javaElement);			
+		} else if (object instanceof IEditorInput) {
+			IJavaElement javaElement = (IJavaElement) ((IEditorInput)object).getAdapter(IJavaElement.class);
+			initializeDefaults(configuration, javaElement);
 		}
 	}
 	
 	/**
-	 * Initialize working copy defaults for an ICompilationUnit
+	 * Initialize defaults in the specified working copy for ICompilationUnits & IClassFiles
 	 */
-	protected void initializeCompilationUnitDefaults(ILaunchConfigurationWorkingCopy workingCopy, ICompilationUnit compilationUnit) {
+	protected void initializeDefaults(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
 		
 		// Java project
-		IJavaProject javaProject = compilationUnit.getJavaProject();
+		IJavaProject javaProject = javaElement.getJavaProject();
 		if ((javaProject == null) || !javaProject.exists()) {
 			return;
 		}
@@ -86,7 +96,7 @@ public class JavaApplicationLaunchConfigurationDelegate
 		// Main type
 		String name = "";
 		try {
-			IType[] types = MainMethodFinder.findTargets(new BusyIndicatorRunnableContext(), new Object[] {compilationUnit});
+			IType[] types = MainMethodFinder.findTargets(new BusyIndicatorRunnableContext(), new Object[] {javaElement});
 			if ((types == null) || (types.length < 1)) {
 				return;
 			}
@@ -97,7 +107,7 @@ public class JavaApplicationLaunchConfigurationDelegate
 		}	
 		
 		// Name
-		//workingCopy.rename(name);	
+		workingCopy.rename(generateUniqueNameFrom(name));	
 		
 		// VM install type
 		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
@@ -109,6 +119,13 @@ public class JavaApplicationLaunchConfigurationDelegate
 		String vmInstallID = vmInstall.getId();
 		workingCopy.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, vmInstallID);
 		
+		// Local/shared
+		workingCopy.setContainer(null);
+		
+		// Perspectives 
+		String debugPerspID = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
+		workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, debugPerspID);
+		workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, debugPerspID);
 	}
 	
 	/**
@@ -253,7 +270,34 @@ public class JavaApplicationLaunchConfigurationDelegate
 	}
 	
 	/**
-	 * Convenience method to get access to the java model.
+	 * Construct a new config name using the name of the given config as a starting point.
+	 * The new name is guaranteed not to collide with any existing config name.
+	 */
+	protected String generateUniqueNameFrom(String startingName) {
+		String newName = startingName;
+		int index = 1;
+		while (getLaunchManager().isExistingLaunchConfigurationName(newName)) {
+			StringBuffer buffer = new StringBuffer(startingName);
+			buffer.append(" (#");
+			buffer.append(String.valueOf(index));
+			buffer.append(')');	
+			index++;
+			newName = buffer.toString();		
+		}		
+		return newName;
+	}
+	
+	/**
+	 * Convenience method to return the launch manager.
+	 * 
+	 * @return the launch manager
+	 */
+	protected ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+
+	/**
+	 * Convenience method to get the java model.
 	 */
 	private IJavaModel getJavaModel() {
 		return JavaCore.create(getWorkspaceRoot());
