@@ -30,6 +30,7 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.jdi.TimeoutException;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
@@ -2422,6 +2423,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			return javaOwnedMonitors;
 		} catch (IncompatibleThreadStateException e) {
 		} catch (VMDisconnectedException e) {
+		} catch (TimeoutException e) {
 		}
 		return null;
 	}
@@ -2436,6 +2438,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				return new JDIObjectValue((JDIDebugTarget)getDebugTarget(), monitor);
 			}
 		} catch (IncompatibleThreadStateException e) {
+		} catch (VMDisconnectedException e) {
+		} catch (TimeoutException e) {
 		}
 		
 		return null;
