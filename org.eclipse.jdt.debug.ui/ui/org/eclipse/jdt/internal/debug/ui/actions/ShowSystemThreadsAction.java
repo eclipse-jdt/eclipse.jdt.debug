@@ -17,6 +17,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
 
@@ -75,19 +76,19 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 			switch (event.getKind()) {
 				case DebugEvent.SUSPEND:
 					if (event.getDetail() == DebugEvent.BREAKPOINT) {
-						refresh(event.getSource());
+						refresh(event.getSource(), true);
 					}
 					break;
 				case DebugEvent.RESUME:
 					if (event.getDetail() == DebugEvent.CLIENT_REQUEST) {
-						refresh(event.getSource());
+						refresh(event.getSource(), false);
 					}
 					break;
 			}
 		}
 	}
 	
-	private void refresh(Object source) {
+	private void refresh(Object source, final boolean select) {
 		if (source instanceof IJavaThread) {
 			final IJavaThread thread = (IJavaThread)source;
 			try {
@@ -95,6 +96,14 @@ public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugE
 					Runnable r = new Runnable() {
 						public void run() {
 							getStructuredViewer().refresh();
+							if (select) {
+								Object tos;
+								try {
+									tos = thread.getTopStackFrame();
+									getStructuredViewer().setSelection(new StructuredSelection(tos));
+								} catch (DebugException e) {
+								}								
+							}
 						}
 					};
 					JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
