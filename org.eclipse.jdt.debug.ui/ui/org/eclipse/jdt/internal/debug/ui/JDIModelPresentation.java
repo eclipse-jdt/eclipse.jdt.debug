@@ -1193,19 +1193,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * Returns the detail value for the given variable or <code>null</code>
 	 * if none can be computed.
-	 * @param variable
-	 * @return
-	 * @throws DebugException
+	 * @param variable the varible to compute the detail for
+	 * @return the detail value for the variable
 	 */
 	private String getVariableDetail(IJavaVariable variable) {
-		IJavaType javaType;
-		try {
-			javaType = variable.getJavaType();
-		} catch (DebugException e) {
-			return null;
-		}
-		JavaDetailFormattersManager manager = JavaDetailFormattersManager.getDefault();
-    	DetailFormatter detailFormatter = manager.getAssociatedDetailFormatter(javaType);
 		final String[] detail= new String[1];
 		final Object lock= new Object();
 		try {
