@@ -31,6 +31,7 @@ import com.sun.jdi.InvocationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadGroupReference;
 import com.sun.jdi.ThreadReference;
@@ -1580,12 +1581,26 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		
 		/**
-		 * If step filters are currently switched on, set all active filters on the step request.
+		 * If step filters are currently switched on and the current location is not a filtered
+		 * location, set all active filters on the step request.
 		 */
 		protected void attachFiltersToStepRequest(StepRequest request) {
+			
 			if (applyStepFilters() && JDIDebugModel.useStepFilters()) {
+				Location currentLocation= getOriginalStepLocation();
+				//check if the user has already stopped in a filtered location
+				//is so do not filter @see bug 5587
+				ReferenceType type= currentLocation.declaringType();
+				String typeName= type.name();
 				List activeFilters = JDIDebugModel.getActiveStepFilters();
 				Iterator iterator = activeFilters.iterator();
+				while (iterator.hasNext()) {
+					StringMatcher matcher = new StringMatcher((String)iterator.next(), false, false);
+					if (matcher.match(typeName)) {
+						return;
+					}
+				}
+				iterator = activeFilters.iterator();
 				while (iterator.hasNext()) {
 					String filter = (String)iterator.next();
 					request.addClassExclusionFilter(filter);
@@ -1617,12 +1632,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		public boolean handleEvent(Event event, JDIDebugTarget target) {
 			try {
 				StepEvent stepEvent = (StepEvent) event;
-				Location location = stepEvent.location();
-				Method method = location.method();				
+				Location currentLocation = stepEvent.location();
 
-				// if the ending step location is filtered, or if we're back where
+				// if the ending step location is filtered and we did not start from
+				// a filtered location, or if we're back where
 				// we started on a step into, do another step of the same kind
-				if (locationIsFiltered(method) || shouldDoExtraStepInto(location)) {
+				if (locationShouldBeFiltered(currentLocation) || shouldDoExtraStepInto(currentLocation)) {
 					setRunning(true);
 					deleteStepRequest();
 					createSecondaryStepRequest();			
@@ -1640,24 +1655,35 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		
 		/**
-		 * Returns true if the StepEvent's Location is a Method that the 
+		 * Returns <code>true</code> if the StepEvent's Location is a Method that the 
 		 * user has indicated (via the step filter preferences) should be 
-		 * filtered.  Return false otherwise.
+		 * filtered and the step was not initiated from a filtered location.
+		 * Returns <code>false</code> otherwise.
+		 */
+		protected boolean locationShouldBeFiltered(Location location) throws DebugException {
+			if (applyStepFilters()) {
+				Location origLocation= getOriginalStepLocation();
+				return !locationIsFiltered(origLocation.method()) && locationIsFiltered(location.method());
+			}
+			return false;
+		}
+		/**
+		 * Returns <code>true</code> if the StepEvent's Location is a Method that the 
+		 * user has indicated (via the step filter preferences) should be 
+		 * filtered.  Returns <code>false</code> otherwise.
 		 */
 		protected boolean locationIsFiltered(Method method) {
-			if (applyStepFilters()) {
-				boolean filterStatics = JDIDebugModel.filterStatics();
-				boolean filterSynthetics = JDIDebugModel.filterSynthetics();
-				boolean filterConstructors = JDIDebugModel.filterConstructors();
-				if (!(filterStatics || filterSynthetics  || filterConstructors)) {
-					return false;
-				}			
+			boolean filterStatics = JDIDebugModel.filterStatics();
+			boolean filterSynthetics = JDIDebugModel.filterSynthetics();
+			boolean filterConstructors = JDIDebugModel.filterConstructors();
+			if (!(filterStatics || filterSynthetics || filterConstructors)) {
+				return false;
+			}			
 			
-				if ((filterStatics && method.isStaticInitializer()) ||
-					(filterSynthetics && method.isSynthetic()) ||
-					(filterConstructors && method.isConstructor()) ) {
-					return true;	
-				}
+			if ((filterStatics && method.isStaticInitializer()) ||
+				(filterSynthetics && method.isSynthetic()) ||
+				(filterConstructors && method.isConstructor()) ) {
+				return true;	
 			}
 			
 			return false;
@@ -1712,7 +1738,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				setPendingStepHandler(null);
 			}
 		}
-	}
+}
 	
 	/**
 	 * Handler for step over requests.
