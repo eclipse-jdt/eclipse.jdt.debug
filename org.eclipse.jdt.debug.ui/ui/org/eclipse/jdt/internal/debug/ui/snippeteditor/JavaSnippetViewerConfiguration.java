@@ -19,6 +19,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
@@ -54,5 +55,12 @@ public class JavaSnippetViewerConfiguration extends JavaSourceViewerConfiguratio
 			getInformationControlCreator(sourceViewer));
 
 		return assistant;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		return null;
 	}
 }
