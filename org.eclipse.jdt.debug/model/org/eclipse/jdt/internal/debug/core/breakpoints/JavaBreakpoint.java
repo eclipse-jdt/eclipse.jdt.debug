@@ -874,16 +874,19 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			return;
 		}
 		JDIDebugTarget target= (JDIDebugTarget)thread.getDebugTarget();
-		fFilteredThreadsByTarget.put(target, thread);
-		// Other breakpoints set attributes on the underlying
-		// marker and the marker changes are eventually
-		// propagated to the target. The target then asks the
-		// breakpoint to update its request. Since thread filters
-		// are transient properties, they are not set on
-		// the marker. Thus we must update the request
-		// here.
-		recreate(target);
-		fireChanged();
+		if (thread != fFilteredThreadsByTarget.put(target, thread) ) {
+			// recreate the breakpoint only if it is not the same thread
+			
+			// Other breakpoints set attributes on the underlying
+			// marker and the marker changes are eventually
+			// propagated to the target. The target then asks the
+			// breakpoint to update its request. Since thread filters
+			// are transient properties, they are not set on
+			// the marker. Thus we must update the request
+			// here.
+			recreate(target);
+			fireChanged();
+		}
 	}
 	
 	/**
@@ -965,9 +968,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			return;
 		}
 		JDIDebugTarget target= (JDIDebugTarget)javaTarget;
-		fFilteredThreadsByTarget.remove(target);
-		recreate(target);
-		fireChanged();
+		if (fFilteredThreadsByTarget.remove(target) != null) {
+			recreate(target);
+			fireChanged();
+		}
 	}
 	
 	/**
