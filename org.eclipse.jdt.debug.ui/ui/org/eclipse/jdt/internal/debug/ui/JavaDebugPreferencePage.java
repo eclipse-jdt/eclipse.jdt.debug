@@ -12,9 +12,7 @@ package org.eclipse.jdt.internal.debug.ui;
 
  
 import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.preference.FieldEditor;
@@ -76,9 +74,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fSuspendButton;
 	private Button fSuspendOnCompilationErrors;
 	private Button fSuspendDuringEvaluations;
-	// Cancel launch because compile error radio buttons
-	private Button fPromptContinueWithErrors;
-	private Button fAlwaysContinueWithErrors;
 	
 	private Button fPromptUnableToInstallBreakpoint;
 	
@@ -124,15 +119,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fSuspendDuringEvaluations= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.14")); //$NON-NLS-1$
 		
 		createSpacer(composite, 1);
-		
-		comp = createGroupComposite(composite, 3, DebugUIMessages.getString("JavaDebugPreferencePage.15"));  //$NON-NLS-1$
-		fAlwaysContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
-		fAlwaysContinueWithErrors.setText(DebugUIMessages.getString("JavaDebugPreferencePage.16")); //$NON-NLS-1$
-		fPromptContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
-		fPromptContinueWithErrors.setText(DebugUIMessages.getString("JavaDebugPreferencePage.18")); //$NON-NLS-1$
-
-		createSpacer(composite, 1);
-		
+				
 		comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Hot_Code_Replace_2")); //$NON-NLS-1$
 		fAlertHCRButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_fails_1")); //$NON-NLS-1$
 		fAlertHCRNotSupportedButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Alert_me_when_hot_code_replace_is_not_supported_1")); //$NON-NLS-1$
@@ -286,13 +273,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fTimeoutText.setStringValue(new Integer(coreStore.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(runtimeStore.getInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
 		fPromptUnableToInstallBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
-		
-		String pref = store.getString(IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
-		if(pref.equals(AlwaysNeverDialog.ALWAYS)) {
-			fAlwaysContinueWithErrors.setSelection(true);
-		} else {
-			fPromptContinueWithErrors.setSelection(true);
-		}
 	}
 	
 	/**
@@ -314,12 +294,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		coreStore.setValue(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 		runtimeStore.setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
 		store.setValue(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, fPromptUnableToInstallBreakpoint.getSelection());
-		
-		String value = AlwaysNeverDialog.PROMPT;
-		if (fAlwaysContinueWithErrors.getSelection()) {
-			value = AlwaysNeverDialog.ALWAYS;
-		} 
-		store.setValue(IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, value);
 	}
 	
 	protected void createSpacer(Composite composite, int columnSpan) {

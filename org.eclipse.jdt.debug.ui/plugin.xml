@@ -1875,12 +1875,6 @@
             class="org.eclipse.jdt.internal.debug.ui.EvaluationContextStatusHandler"
             id="org.eclipse.jdt.debug.ui.statusHandler.evaluationContextStatusHandler">
       </statusHandler>        
-      <statusHandler
-            plugin="org.eclipse.jdt.debug"
-            code="202"
-            class="org.eclipse.jdt.internal.debug.ui.launcher.CompileErrorPromptStatusHandler"
-            id="org.eclipse.jdt.debug.ui.statusHandler.compileErrorPromptStatusHandler">
-      </statusHandler> 
    </extension>
    <extension
          point="org.eclipse.debug.core.sourceLocators">

@@ -170,13 +170,7 @@ public interface IJDIPreferencesConstants {
 	public static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 	public static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$	
 
-	/**
-	 * Preference specifying that launches should continue when compile errors exist.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String PREF_CONTINUE_WITH_COMPILE_ERROR = IJavaDebugUIConstants.PLUGIN_ID + ".cancel_launch_with_compile_errors"; //$NON-NLS-1$	
-	
+
 	/**
 	 * Boolean preference controlling whether to alert
 	 * with a dialog when unable to install a breakpoint
