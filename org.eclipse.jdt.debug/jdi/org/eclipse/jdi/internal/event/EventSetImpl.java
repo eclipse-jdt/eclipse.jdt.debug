@@ -108,7 +108,12 @@ public class EventSetImpl extends MirrorImpl implements EventSet {
 		if (fEvents.size() == 1) {
 			// Most event sets have only one event.
 			// Avoid expensive object creation.
-			((EventImpl)fEvents.get(0)).thread().resume();
+			ThreadReference ref= ((EventImpl)fEvents.get(0)).thread();
+			if (ref != null) {
+				ref.resume();
+			} else {
+				((EventImpl)fEvents.get(0)).virtualMachine().resume();
+			}
 			return;
 		}
 		Iterator iter = fEvents.iterator();
