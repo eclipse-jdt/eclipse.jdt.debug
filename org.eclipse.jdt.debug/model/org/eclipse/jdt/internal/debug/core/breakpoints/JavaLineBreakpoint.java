@@ -234,17 +234,22 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#newRequest(org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, com.sun.jdi.ReferenceType)
 	 */
-	protected EventRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
-		Location location= null;
-		int lineNumber= getLineNumber();			
-		location= determineLocation(lineNumber, type);
-		if (location == null) {
+	protected EventRequest[] newRequests(JDIDebugTarget target, ReferenceType type) throws CoreException {
+		int lineNumber = getLineNumber();			
+		List locations = determineLocations(lineNumber, type);
+		if (locations == null || locations.isEmpty()) {
 			// could be an inner type not yet loaded, or line information not available
 			return null;
 		}
-		
-		EventRequest request = createLineBreakpointRequest(location, target);	
-		return request;		
+		EventRequest[] requests = new EventRequest[locations.size()];
+		int i = 0;
+	    Iterator iterator = locations.iterator();
+	    while (iterator.hasNext()) {
+	        Location location = (Location) iterator.next();
+	        requests[i] = createLineBreakpointRequest(location, target);
+	        i++;
+	    }
+	    return requests;
 	}	
 
 	/**
@@ -280,10 +285,10 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 		
 	/**
-	 * Returns a location for the line number in the given type.
-	 * Returns <code>null</code> if a location cannot be determined.
+	 * Returns a list of locations of the given line number in the given type.
+	 * Returns <code>null</code> if locations cannot be determined.
 	 */
-	protected Location determineLocation(int lineNumber, ReferenceType type) {
+	protected List determineLocations(int lineNumber, ReferenceType type) {
 		List locations= null;
 		try {
 			locations= type.locationsOfLine(lineNumber);
@@ -312,12 +317,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			JDIDebugPlugin.log(e);
 			return null;
 		}
-		
-		if (locations != null && locations.size() > 0) {
-			return (Location) locations.get(0);
-		} 
-		
-		return null;
+		return locations;
 	}
 	
 	/**

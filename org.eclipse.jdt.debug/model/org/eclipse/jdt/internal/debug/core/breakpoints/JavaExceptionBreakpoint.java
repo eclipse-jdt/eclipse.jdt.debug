@@ -146,7 +146,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * type is thrown. The request is returned installed, configured, and enabled
 	 * as appropriate for this breakpoint.
 	 */
-	protected EventRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+	protected EventRequest[] newRequests(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		if (!isCaught() && !isUncaught()) {
 			return null;
 		}
@@ -168,7 +168,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			JDIDebugPlugin.log(e);
 			return null;
 		}	
-		return request;
+		return new EventRequest[]{request};
 	}
 
 	/**

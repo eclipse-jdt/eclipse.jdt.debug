@@ -136,9 +136,9 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 	}
 		
 	/**
-	 * @see JavaBreakpoint#newRequest(JDIDebugTarget, ReferenceType)
+	 * @see JavaBreakpoint#newRequests(JDIDebugTarget, ReferenceType)
 	 */
-	protected EventRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+	protected EventRequest[] newRequests(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		try {
 			if (type instanceof ClassType) {
 				ClassType clazz = (ClassType)type;
@@ -152,7 +152,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				}
 				BreakpointRequest req = type.virtualMachine().eventRequestManager().createBreakpointRequest(location);
 				configureRequest(req, target);
-				return req;
+				return new EventRequest[]{req};
 			}
 			return null;
 		} catch (RuntimeException e) {

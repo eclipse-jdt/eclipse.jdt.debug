@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
@@ -259,10 +260,10 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 	}
 
 	/**
-	 * Returns a location for the line number in the given type.
+	 * Returns a list of locations for the given line number in the given type.
 	 * Returns <code>null</code> if a location cannot be determined.
 	 */
-	protected Location determineLocation(int lineNumber, ReferenceType type) {
+	protected List determineLocations(int lineNumber, ReferenceType type) {
 		List locations;
 		String sourcePath;
 		try {
@@ -300,18 +301,21 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		
 		if (sourcePath == null) {
 			if (locations.size() > 0) {
-				return (Location)locations.get(0);
+				return locations;
 			}
 		} else {
-			for (Iterator iter = locations.iterator(); iter.hasNext();) {
+			for (ListIterator iter = locations.listIterator(); iter.hasNext();) {
 				Location location = (Location) iter.next();
 				try {
-					if (sourcePath.equals(location.sourcePath())) {
-						return location;
+					if (!sourcePath.equals(location.sourcePath())) {
+						iter.remove();
 					}
 				} catch (AbsentInformationException e1) {
 					// nothing to do;
 				}
+			}
+			if (locations.size() > 0) {
+			    return locations;
 			}
 		}
 		

@@ -146,7 +146,7 @@ public class JavaClassPrepareBreakpoint extends JavaBreakpoint implements IJavaC
 	 * 
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#newRequest(org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget, com.sun.jdi.ReferenceType)
 	 */
-	protected EventRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
+	protected EventRequest[] newRequests(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		return null;
 	}
 	/* (non-Javadoc)

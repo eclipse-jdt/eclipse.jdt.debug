@@ -383,12 +383,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (shouldSkipBreakpoint()) {
 			return false;
 		}
-		EventRequest request= newRequest(target, type);
-		if (request == null) {
+		EventRequest[] requests= newRequests(target, type);
+		if (requests == null) {
 			return false;
 		}
 		fInstalledTypeName = type.name();
-		registerRequest(request, target);
+		for (int i = 0; i < requests.length; i++) {
+            EventRequest request = requests[i];
+            registerRequest(request, target);    
+        }
 		return true;
 	}
 	
@@ -457,14 +460,12 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}	
 	
 	/**
-	 * Creates and returns a breakpoint request for this breakpoint which
-	 * has been installed in the given reference type and registered
-	 * in the given target.
+	 * Creates, installs, and returns all event requests for this breakpoint
+	 * in the given reference type and and target.
 	 * 
-	 * @return the event request which was created or <code>null</code> if
-	 *  the request creation failed
+	 * @return the event requests created or <code>null</code> if creation failed
 	 */
-	protected abstract EventRequest newRequest(JDIDebugTarget target, ReferenceType type) throws CoreException;
+	protected abstract EventRequest[] newRequests(JDIDebugTarget target, ReferenceType type) throws CoreException;
 	
 	/**
 	 * Add this breakpoint to the given target. After it has been
