@@ -62,6 +62,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	// Dynamic JRE UI widgets
 	protected ILaunchConfigurationTab fDynamicTab;
 	protected Composite fDynamicTabHolder;
+	protected boolean fUseDynamicArea = true;
 	
 	protected ILaunchConfigurationWorkingCopy fWorkingCopy;
 	protected ILaunchConfiguration fLaunchConfiguration;
@@ -410,16 +411,18 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			children[i].dispose();
 		}
 		
-		// Retrieve the dynamic UI for the current JRE 
-		setDynamicTab(getTabForCurrentJRE());
-		if (getDynamicTab() == null) {
-			return;
+		if (isUseDynamicJREArea()) {
+			// Retrieve the dynamic UI for the current JRE 
+			setDynamicTab(getTabForCurrentJRE());
+			if (getDynamicTab() == null) {
+				return;
+			}
+			
+			// Ask the dynamic UI to create its Control
+			getDynamicTab().setLaunchConfigurationDialog(getLaunchConfigurationDialog());
+			getDynamicTab().createControl(getDynamicTabHolder());
+			getDynamicTabHolder().layout();	
 		}
-		
-		// Ask the dynamic UI to create its Control
-		getDynamicTab().setLaunchConfigurationDialog(getLaunchConfigurationDialog());
-		getDynamicTab().createControl(getDynamicTabHolder());
-		getDynamicTabHolder().layout();	
 			
 	}
 
@@ -451,5 +454,20 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 
 	protected void setLaunchConfiguration(ILaunchConfiguration launchConfiguration) {
 		fLaunchConfiguration = launchConfiguration;
+	}
+	
+	/**
+	 * Sets whether this tab will display the VM specific arguments area
+	 * if a JRE supports VM specific arguments.
+	 * 
+	 * @param visible whether this tab will display the VM specific arguments area
+	 * 	if a JRE supports VM specific arguments
+	 */
+	public void setVMSpecificArgumentsVisible(boolean visible) {
+		fUseDynamicArea = visible;
+	}
+	
+	protected boolean isUseDynamicJREArea() {
+		return fUseDynamicArea;
 	}
 }

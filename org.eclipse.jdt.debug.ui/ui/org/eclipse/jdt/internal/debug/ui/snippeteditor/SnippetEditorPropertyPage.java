@@ -144,6 +144,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		fWorkingDirBlock.createControl(comp);		
 		
 		fJRETab.setLaunchConfigurationDialog(fProxy);
+		fJRETab.setVMSpecificArgumentsVisible(false);
 		fJRETab.createControl(comp);
 		
 		fWorkingDirBlock.initializeFrom(fConfig);

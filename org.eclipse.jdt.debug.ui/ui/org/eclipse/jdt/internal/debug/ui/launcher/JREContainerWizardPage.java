@@ -122,6 +122,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 */
 	public void createControl(Composite parent) {
 		fJRETab = new JavaJRETab();
+		fJRETab.setVMSpecificArgumentsVisible(false);
 		fJRETab.createControl(parent);
 		setControl(fJRETab.getControl());
 		setTitle(LauncherMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
