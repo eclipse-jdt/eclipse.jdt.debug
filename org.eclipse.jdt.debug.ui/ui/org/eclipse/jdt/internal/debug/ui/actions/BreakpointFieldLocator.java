@@ -83,7 +83,7 @@ public class BreakpointFieldLocator extends ASTVisitor {
 		if (containsPosition(node)) {
 			// visit only the variable declaration fragments
 			List fragments = node.fragments();
-			if (fragments.size() == 1 && containsPosition(node)) {
+			if (fragments.size() == 1) {
 				fFieldName= ((VariableDeclarationFragment)fragments.get(0)).getName().getIdentifier();
 				fTypeName= ValidBreakpointLocationLocator.computeTypeName(node);
 				fFound= true;
