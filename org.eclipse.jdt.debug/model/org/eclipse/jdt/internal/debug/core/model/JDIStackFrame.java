@@ -36,6 +36,7 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;
+import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Method;
 import com.sun.jdi.NativeMethodException;
@@ -566,6 +567,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 			return false;
 		} catch (DebugException e) {
+			if (e.getStatus().getException() instanceof IncompatibleThreadStateException) {
+				// if the thread has since resumed, drop is not supported
+				return false;
+			}
 			logError(e);
 		} catch (UnsupportedOperationException e) {
 			// drop to frame not supported - this is an expected
