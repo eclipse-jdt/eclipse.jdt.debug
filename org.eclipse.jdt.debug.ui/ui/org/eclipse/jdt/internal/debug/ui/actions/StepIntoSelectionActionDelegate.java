@@ -20,7 +20,9 @@ import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICodeAssist;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -72,13 +74,14 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		}
 		ITextSelection textSelection= getTextSelection();
 		IMethod method= getMethod();
-		if (method == null) {
+		IType callingType= getCallingType();
+		if (method == null || callingType == null) {
 			return;
 		}
 		try {
 			int lineNumber = frame.getLineNumber();
 			// debug line numbers are 1 based, document line numbers are 0 based
-			if (textSelection.getStartLine() == (lineNumber - 1)) {
+			if (textSelection.getStartLine() == (lineNumber - 1) && callingType.getFullyQualifiedName().equals(frame.getReceivingTypeName())) {
 				doStepIn(frame, method);
 			} else {
 				// not on current line
@@ -112,9 +115,9 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * the currently executing one, first perform a "run to line" to get to
 	 * the desired location, then perform a "step into selection."
 	 */
-	private void runToLineBeforeStepIn(ITextSelection textSelection, final IJavaStackFrame startFrame, final IMethod method) throws DebugException {
+	private void runToLineBeforeStepIn(ITextSelection textSelection, final IJavaStackFrame startFrame, final IMethod method) {
 		IRunToLineTarget runToLineAction = new RunToLineAdapter();
-		runToLineType= startFrame.getReceivingTypeName();
+		runToLineType= getCallingType().getFullyQualifiedName();
 		runToLineLine= textSelection.getStartLine() + 1;
 		if (runToLineType == null || runToLineLine == -1) {
 			return;
@@ -246,6 +249,19 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		}
 		return method;
 	}
+	
+	protected IType getCallingType() {
+		IMember member= ActionDelegateHelper.getDefault().getCurrentMember(getTextSelection());
+		IType type= null;
+		if (member instanceof IType) {
+			type = (IType)member;
+		} else if (member != null) {
+			type= member.getDeclaringType();
+		}
+		return type;
+	}	
+	
+
 
 	/**
 	 * Displays an error message in the status area
