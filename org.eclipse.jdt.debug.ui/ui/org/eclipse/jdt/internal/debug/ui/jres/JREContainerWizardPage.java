@@ -61,7 +61,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
 		if (!fJREBlock.isDefaultJRE()) {
 			IVMInstall vm = fJREBlock.getJRE();
-			if (vm != null && !vm.equals(JavaRuntime.getDefaultVMInstall())) {
+			if (vm != null) {
 				path = path.append(vm.getVMInstallType().getId());
 				path = path.append(vm.getName());
 			}
