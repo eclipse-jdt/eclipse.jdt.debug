@@ -1002,10 +1002,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			if (suspend) {
 				if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
 					((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint);
-				} else {
-					abortStep();
-					fireSuspendEvent(DebugEvent.BREAKPOINT);
-				}				
+				}
+				abortStep();
+				fireSuspendEvent(DebugEvent.BREAKPOINT);
 			} else {
 				if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
 					((JDIDebugTarget)getDebugTarget()).cancelSuspendByBreakpoint(breakpoint);
