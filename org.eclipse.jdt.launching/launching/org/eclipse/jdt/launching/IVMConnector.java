@@ -5,6 +5,7 @@ package org.eclipse.jdt.launching;
  * All Rights Reserved.
  */
  
+import java.util.List;
 import java.util.Map;
 
 import com.sun.jdi.VirtualMachine;
@@ -84,4 +85,15 @@ public interface IVMConnector {
 	 * @exception CoreException if unable to retrieve a default argument map
 	 */
 	public Map getDefaultArguments() throws CoreException;
+	
+	/**
+	 * Returns a list of argument names found in this connector's
+	 * default argument map, defining the order in which arguments
+	 * should be presented to the user. Since a map is not ordered,
+	 * this provides control on how arguments will be presented to 
+	 * the user.
+	 * 
+	 * @return list of argument names
+	 */
+	public List getArgumentOrder();	
 }

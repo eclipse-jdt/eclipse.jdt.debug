@@ -215,7 +215,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		fFieldEditorMap.clear();
 		PreferenceStore store = new PreferenceStore();
 		// create editors
-		Iterator keys = fArgumentMap.keySet().iterator();
+		Iterator keys = vm.getArgumentOrder().iterator();
 		while (keys.hasNext()) {
 			String key = (String)keys.next();
 			Connector.Argument arg = (Connector.Argument)fArgumentMap.get(key);

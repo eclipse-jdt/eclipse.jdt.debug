@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -119,6 +121,16 @@ public class SocketAttachConnector implements IVMConnector {
 		Connector.IntegerArgument arg = (Connector.IntegerArgument)def.get("port"); //$NON-NLS-1$
 		arg.setValue(8000);
 		return def;
+	}
+
+	/**
+	 * @see IVMConnector#getArgumentOrder()
+	 */
+	public List getArgumentOrder() {
+		List list = new ArrayList(2);
+		list.add("hostname"); //$NON-NLS-1$
+		list.add("port"); //$NON-NLS-1$
+		return list;
 	}
 
 }
