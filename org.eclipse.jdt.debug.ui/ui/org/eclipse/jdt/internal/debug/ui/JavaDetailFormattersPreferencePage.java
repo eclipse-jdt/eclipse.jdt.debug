@@ -142,7 +142,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		});
 		fFormatterListViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				editType();
+				if (!event.getSelection().isEmpty()) {
+					editType();
+				}
 			}
 		}); 
 		table.addKeyListener(new KeyAdapter() {
