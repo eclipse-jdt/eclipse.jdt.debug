@@ -130,12 +130,17 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 	
 	protected void setEnabledState(ITextEditor editor) {
 		if (getAction() != null && getPage() != null) {
-			if (getPage().getActivePart() == getPage().getActiveEditor()) {
-				IClassFile classFile= (IClassFile)getPage().getActiveEditor().getEditorInput().getAdapter(IClassFile.class);
-				getAction().setEnabled(classFile != null);
+			IWorkbenchPart part = getPage().getActivePart();
+			if (part == null) {
+				getAction().setEnabled(false);
 			} else {
-				ISelectionProvider sp= getPage().getActivePart().getSite().getSelectionProvider();
-				getAction().setEnabled(sp != null && enableForMember(getMember(sp.getSelection())));
+				if (part == getPage().getActiveEditor()) {
+					IClassFile classFile= (IClassFile)getPage().getActiveEditor().getEditorInput().getAdapter(IClassFile.class);
+					getAction().setEnabled(classFile != null);
+				} else {
+					ISelectionProvider sp= part.getSite().getSelectionProvider();
+					getAction().setEnabled(sp != null && enableForMember(getMember(sp.getSelection())));
+				}
 			}
 		}	
 	}

@@ -46,6 +46,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActionDelegate {
@@ -275,8 +276,11 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	
 	protected void setEnabledState(ITextEditor editor) {
 		if (getAction() != null && getPage() != null) {
-			if (getPage().getActivePart() != getPage().getActiveEditor()) {
-				ISelectionProvider sp= getPage().getActivePart().getSite().getSelectionProvider();
+			IWorkbenchPart part = getPage().getActivePart();
+			if (part == null) {
+				getAction().setEnabled(false);
+			} else if (part != getPage().getActiveEditor()) {
+				ISelectionProvider sp= part.getSite().getSelectionProvider();
 				getAction().setEnabled(sp != null && enableForMember(getMember(sp.getSelection())));
 			}
 		}	
