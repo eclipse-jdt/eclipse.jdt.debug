@@ -107,44 +107,53 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
-	 * Fire a debug event marking the creation of this element.
+	 * Fires a debug event marking the creation of this element.
 	 */
 	protected void fireCreationEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.CREATE));
 	}
 
 	/**
-	 * Fire a debug event
+	 * Fires a debug event
+	 * 
+	 * @param event The debug event to be fired to the listeners
+	 * @see org.eclipse.debug.core.DebugEvent
 	 */
 	protected void fireEvent(DebugEvent event) {
 		DebugPlugin.getDefault().fireDebugEvent(event);
 	}
 
 	/**
-	 * Fire a debug event marking the RESUME of this element with
+	 * Fires a debug event marking the RESUME of this element with
 	 * the associated detail.
+	 * 
+	 * @param detail The int detail of the event
+	 * @see org.eclipse.debug.core.DebugEvent
 	 */
 	protected void fireResumeEvent(int detail) {
 		fireEvent(new DebugEvent(this, DebugEvent.RESUME, detail));
 	}
 
 	/**
-	 * Fire a debug event marking the SUSPEND of this element with
+	 * Fires a debug event marking the SUSPEND of this element with
 	 * the associated detail.
+	 * 
+	 * @param detail The int detail of the event
+	 * @see org.eclipse.debug.core.DebugEvent
 	 */
 	protected void fireSuspendEvent(int detail) {
 		fireEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
 	}
 	
 	/**
-	 * Fire a debug event marking the termination of this element.
+	 * Fires a debug event marking the termination of this element.
 	 */
 	protected void fireTerminateEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.TERMINATE));
 	}
 
 	/**
-	 * Fire a debug event marking the CHANGE of this element.
+	 * Fires a debug event marking the CHANGE of this element.
 	 */
 	protected void fireChangeEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.CHANGE));
@@ -152,7 +161,10 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	
 	/**
 	 * Throws a new debug exception with a status code of <code>REQUEST_FAILED</code>.
-	 * A lower level exception is optional.
+	 * 
+	 * @param message Failure message
+	 * @param e Exception that has occurred (<code>can be null</code>)
+	 * @throws DebugException The exception with a status code of <code>REQUEST_FAILED</code>
 	 */
 	protected void requestFailed(String message,  Exception e) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
@@ -161,6 +173,10 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	
 	/**
 	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>.
+	 * 
+	 * @param message Failure message
+	 * @param e Runtime exception that has occurred
+	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	protected void targetRequestFailed(String message, RuntimeException e) throws DebugException {
 		if (e == null || fgJDIExceptions.contains(e.getClass())) {
@@ -173,6 +189,10 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	
 	/**
 	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>.
+	 * 
+	 * @param message Failure message
+	 * @param e Throwable that has occurred
+	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	protected void targetRequestFailed(String message, Throwable e) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
@@ -181,15 +201,20 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	
 	/**
 	 * Throws a new debug exception with a status code of <code>NOT_SUPPORTED</code>.
+	 * 
+	 * @param message Failure message
+	 * @throws DebugException The exception with a status code of <code>NOT_SUPPORTED</code>.
 	 */
 	protected void notSupported(String message) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 			IDebugStatusConstants.NOT_SUPPORTED, message, null));
 	}
 	
-	
 	/**
-	 * Logs the given exception if it is a JDI exception, otherwise throws the exception
+	 * Logs the given exception if it is a JDI exception, otherwise throws the 
+	 * runtime exception.
+	 * 
+	 * @param e The internal runtime exception
 	 */
 	protected void internalError(RuntimeException e) {
 		if (fgJDIExceptions.contains(e.getClass())) {
@@ -202,6 +227,8 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	/**
 	 * Logs a debug exception with the given message,
 	 * with a status code of <code>INTERNAL_ERROR</code>.
+	 * 
+	 * @param message The internal error message
 	 */
 	protected void internalError(String message) {
 		logError(new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
@@ -209,9 +236,12 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 
 	/**
-	 * Returns the common "<unknown>" message
+	 * Returns the common "<unknown>" message.
+	 * 
+	 * @return the unknown String
 	 */
 	protected String getUnknownMessage() {
+		//FIXME: NLS
 		return "<unknown>";
 	}
 	
@@ -232,10 +262,6 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	protected VirtualMachine getVM() {
 		return ((JDIDebugTarget)getDebugTarget()).getVM();
 	}
-	
-	/*protected EventRequestManager getEventRequestManager() {
-		return getVM().eventRequestManager();
-	}*/
 	
 	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement
