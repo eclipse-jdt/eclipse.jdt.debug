@@ -170,11 +170,13 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		container.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		container.setLayoutData(gd);
 		
 		// use filters checkbox
 		fUseFiltersCheckbox = new Button(container, SWT.CHECK);
 		fUseFiltersCheckbox.setText(DebugUIMessages.getString("JavaStepFilterPreferencePage.Use_&step_filters_7")); //$NON-NLS-1$
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fUseFiltersCheckbox.setLayoutData(gd);	
 		fUseFiltersCheckbox.addSelectionListener(new SelectionListener() {
@@ -213,8 +215,6 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		// input just needs to be non-null
 		fFilterViewer.setInput(this);
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-		gd.heightHint = 150;
-		gd.widthHint = 300;
 		fFilterViewer.getTable().setLayoutData(gd);
 		fFilterViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {

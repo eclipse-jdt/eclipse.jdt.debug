@@ -126,7 +126,15 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		createSpacer(composite, 1);
 		
 		comp = createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Communication_1")); //$NON-NLS-1$
-		fTimeoutText = new IntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.Debugger_&timeout__2"), comp); //$NON-NLS-1$
+		//Add in an intermediate composite to allow for spacing
+		Composite spacingComposite = new Composite(comp, SWT.NONE);
+		layout = new GridLayout();
+		spacingComposite.setLayout(layout);
+		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		spacingComposite.setLayoutData(data);
+		
+		fTimeoutText = new IntegerFieldEditor(JDIDebugModel.PREF_REQUEST_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.Debugger_&timeout__2"), spacingComposite); //$NON-NLS-1$
 		fTimeoutText.setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
 		fTimeoutText.setPreferencePage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
@@ -139,7 +147,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 					setValid(fTimeoutText.isValid());
 			}
 		});
-		fConnectionTimeoutText = new IntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.&Launch_timeout_(ms)__1"), comp); //$NON-NLS-1$
+		fConnectionTimeoutText = new IntegerFieldEditor(JavaRuntime.PREF_CONNECT_TIMEOUT, DebugUIMessages.getString("JavaDebugPreferencePage.&Launch_timeout_(ms)__1"), spacingComposite); //$NON-NLS-1$
 		fConnectionTimeoutText.setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
 		fConnectionTimeoutText.setPreferencePage(this);
 		fConnectionTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
