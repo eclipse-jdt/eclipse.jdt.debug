@@ -302,7 +302,11 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		String[] items = listWidget.getItems();
 		java.util.List listDataStructure = createListFromArray(items);
 		String attributeID = (String) listWidget.getData();
-		config.setAttribute(attributeID, listDataStructure);			
+		if (listDataStructure.isEmpty()) {
+			config.setAttribute(attributeID, (java.util.List )null);			
+		} else {
+			config.setAttribute(attributeID, listDataStructure);
+		}
 	}
 	
 	protected java.util.List createListFromArray(Object[] array) {

@@ -98,7 +98,7 @@ public abstract class JavaLaunchConfigurationTab implements ILaunchConfiguration
 	}
 
 	/**
-	 * Be default, do nothing.
+	 * By default, do nothing.
 	 * 
 	 * @see ILaunchConfigurationTab#launched(ILaunch)
 	 */
