@@ -163,7 +163,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 				launch.terminate();
 			} catch (CoreException e) {
 				e.printStackTrace();
-				fail("Program did not susupend, and unable to terminate launch.");
+				fail("Program did not suspend, and unable to terminate launch.");
 			}
 		}
 		setEventSet(waiter.getEventSet());
