@@ -22,13 +22,15 @@ public class FilterViewerSorter extends WorkbenchViewerSorter {
 		if (name2 == null) {
 			name2 = ""; //$NON-NLS-1$
 		}
-		char char1 = name1.charAt(name1.length() - 1);
-		char char2 = name2.charAt(name2.length() - 1);
-		if (char1 == '*' && char1 != char2) {
-			return -1;
-		}
-		if (char2 == '*' && char2 != char1) {
-			return 1;
+		if (name1.length() > 0 && name2.length() > 0) {
+			char char1 = name1.charAt(name1.length() - 1);
+			char char2 = name2.charAt(name2.length() - 1);
+			if (char1 == '*' && char1 != char2) {
+				return -1;
+			}
+			if (char2 == '*' && char2 != char1) {
+				return 1;
+			}
 		}
 		return name1.compareTo(name2);
 	}
