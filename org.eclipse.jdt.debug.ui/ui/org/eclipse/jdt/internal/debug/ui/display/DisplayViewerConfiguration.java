@@ -16,6 +16,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
@@ -24,6 +25,8 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 /**
  *  The source viewer configuration for the Display view
@@ -31,7 +34,9 @@ import org.eclipse.jface.text.source.ISourceViewer;
 public class DisplayViewerConfiguration extends JavaSourceViewerConfiguration {
 		
 	public DisplayViewerConfiguration() {
-		super(JavaPlugin.getDefault().getJavaTextTools().getColorManager(), PreferenceConstants.getPreferenceStore(), null, null);
+		super(JavaPlugin.getDefault().getJavaTextTools().getColorManager(), 
+				new ChainedPreferenceStore(new IPreferenceStore[] {PreferenceConstants.getPreferenceStore(), EditorsUI.getPreferenceStore()}),
+				null, null);
 	}
 
 	public IContentAssistProcessor getContentAssistantProcessor() {
