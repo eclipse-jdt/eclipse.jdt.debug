@@ -146,7 +146,21 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	private ThreadStartHandler fThreadStartHandler= null;
 	
+	/**
+	 * A "hidden" breakpoint used to suspend this VM when 
+	 * any uncaught is thrown. Controled by user preference.
+	 */
 	private IJavaExceptionBreakpoint fSuspendOnUncaughtExceptionBreakpoint= null;
+	
+	/**
+	 * Whether this VM is suspended.
+	 */
+	private boolean fSuspended = true;
+	
+	/**
+	 * Whether the VM should be resumed on startup
+	 */
+	private boolean fResumeOnStartup = false; 
 	 
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
@@ -161,9 +175,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @param process the system process associated with the
 	 * 	underlying VM, or <code>null</code> if no system process
 	 *  is available (for example, a remote VM)
+	 * @param resume whether the VM should be resumed on startup.
+	 *  Has no effect if the VM is already resumed/running when
+	 *  the connection is made.  
 	 */
-	public JDIDebugTarget(VirtualMachine jvm, String name, boolean supportTerminate, boolean supportDisconnect, IProcess process) {
+	public JDIDebugTarget(VirtualMachine jvm, String name, boolean supportTerminate, boolean supportDisconnect, IProcess process, boolean resume) {
 		super(null);
+		setResumeOnStartup(resume);
 		setDebugTarget(this);
 		setSupportsTerminate(supportTerminate);
 		setSupportsDisconnect(supportDisconnect);
@@ -249,34 +267,18 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * This is the first event received from the VM.
 	 * The VM is resumed. This event is not generated when
 	 * an attach is made to a VM that is already running
-	 * (has already started up).
-	 * <p>
-	 * When a debug target is first created, we query the target
-	 * VM for threads and their state. It is possible that we query 
-	 * the state at a point in time where the threads in the VM
-	 * are suspeneded. When the VM is resumed, we update any threads
-	 * that were suspened, to be running, and fire resume events
-	 * for them such that the UI updates.
-	 * </p>
+	 * (has already started up). The VM is resumed as specified
+	 * on creation.
 	 * 
 	 * @param event VM start event
 	 */
 	public void handleVMStart(VMStartEvent event) {
-		try {
-			List threads = getThreadList();
-			for (int i= 0; i < threads.size(); i++) {
-				JDIThread thread = (JDIThread) threads.get(i);
-				if (thread.isSuspended()) {
-					thread.setRunning(true);
-					thread.fireResumeEvent(DebugEvent.UNSPECIFIED);
-				}
+		if (isResumeOnStartup()) {
+			try {
+				resume();
+			} catch (DebugException e) {
+				logError(e);
 			}
-			getVM().resume();
-			// fire a change event on the debug target - it's label
-			// may need to be updated
-			fireChangeEvent();
-		} catch (RuntimeException e) {
-			internalError(e);
 		}
 	}
 	 
@@ -312,6 +314,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			while (initialThreads.hasNext()) {
 				createThread((ThreadReference) initialThreads.next());
 			}
+		}
+		
+		if (isResumeOnStartup()) {
+			setSuspended(false);
 		}
 	}
 	 
@@ -408,13 +414,23 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return false;
+		return isSuspended() && !isTerminated() && !isDisconnected();
 	}
 
 	/**
 	 * @see ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
+		if (!isSuspended() && !isTerminated() && !isDisconnected()) {
+			// only allow suspend if no threads are currently suspended
+			Iterator threads = getThreadList().iterator();
+			while (threads.hasNext()) {
+				if (((JDIThread)threads.next()).isSuspended()) {
+					return false;
+				}	
+			}
+			return true;
+		}
 		return false;
 	}
 
@@ -882,7 +898,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
-		return false;
+		return fSuspended;
+	}
+	
+	/**
+	 * Sets whether this VM is suspended.
+	 * 
+	 * @param suspended whether this VM is suspended
+	 */
+	private void setSuspended(boolean suspended) {
+		fSuspended = suspended;
 	}
 
 	/**
@@ -963,7 +988,25 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
-		notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_resume")); //$NON-NLS-1$
+		if (!isSuspended()) {
+			return;
+		}
+		try {
+			setSuspended(false);
+			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+			getVM().resume();
+			Iterator threads = getThreadList().iterator();
+			while (threads.hasNext()) {
+				((JDIThread)threads.next()).resumedByVM();
+			}
+		} catch (VMDisconnectedException e) {
+			disconnected();
+			return;
+		} catch (RuntimeException e) {
+			setSuspended(true);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_resume"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		}	
 	}
 
 	/**
@@ -1037,11 +1080,24 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 
 	/**
 	 * @see ISuspendResume
-	 *
-	 * Not supported
 	 */
 	public void suspend() throws DebugException {
-		notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_suspend")); //$NON-NLS-1$
+		if (isSuspended()) {
+			return;
+		}
+		try {
+			setSuspended(true);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			getVM().suspend();
+		} catch (RuntimeException e) {
+			setSuspended(false);
+			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_suspend"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+		Iterator threads = getThreadList().iterator();
+		while (threads.hasNext()) {
+			((JDIThread)threads.next()).suspendedByVM();
+		}
 	}
 
 	/**
@@ -1741,5 +1797,24 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public void launchChanged(ILaunch launch) {
 	}	
 
+	/**
+	 * Sets whether the VM should be resumed on startup.
+	 * Has no effect if the VM is already running when
+	 * this target is created.
+	 * 
+	 * @param resume whether the VM should be resumed on startup
+	 */
+	private void setResumeOnStartup(boolean resume) {
+		fResumeOnStartup = resume;
+	}
+	
+	/**
+	 * Returns whether this VM should be resumed on startup.
+	 * 
+	 * @return whether this VM should be resumed on startup
+	 */
+	protected boolean isResumeOnStartup() {
+		return fResumeOnStartup;
+	}
 }
 

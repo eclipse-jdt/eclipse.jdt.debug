@@ -246,7 +246,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return isSuspended();
+		return isSuspended() && !getDebugTarget().isSuspended();
 	}
 
 	/**
@@ -1180,6 +1180,22 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			setRunning(true);
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_suspending"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
+	}
+
+	/**
+	 * Notifies this thread that it has been suspended due
+	 * to a VM suspend.
+	 */	
+	protected void suspendedByVM() {
+		setRunning(false);
+	}
+
+	/**
+	 * Notifies this thread that is has been resumed due
+	 * to a VM resume.
+	 */
+	protected void resumedByVM() {
+		setRunning(true);
 	}
 
 	/**

@@ -126,7 +126,8 @@ public class JDIDebugModel {
 	 * the debug target will support termination (<code>ITerminate</code>).
 	 * The allow disconnect flag specifies whether the debug target will
 	 * support disconnection (<code>IDisconnect</code>). Launching the actual
-	 * VM is a client responsibility.
+	 * VM is a client responsibility. By default, the target VM will be
+	 * resumed on startup.
 	 *
 	 * @param vm the VM to create a debug target for
 	 * @param name the name to associate with the VM, which will be 
@@ -140,11 +141,42 @@ public class JDIDebugModel {
 	 * @see org.eclipse.debug.core.model.ITerminate
 	 * @see org.eclipse.debug.core.model.IDisconnect
 	 */
-	public static IDebugTarget newDebugTarget(final VirtualMachine vm, final String name, final IProcess process, final boolean allowTerminate, final boolean allowDisconnect) {
+	public static IDebugTarget newDebugTarget(VirtualMachine vm, String name, IProcess process, boolean allowTerminate, boolean allowDisconnect) {
+		return newDebugTarget(vm, name, process, allowTerminate, allowDisconnect, true);
+	}
+
+	/**
+	 * Creates and returns a debug target for the given VM, with
+	 * the specified name, and associates the debug target with the
+	 * given process for console I/O. The allow terminate flag specifies whether
+	 * the debug target will support termination (<code>ITerminate</code>).
+	 * The allow disconnect flag specifies whether the debug target will
+	 * support disconnection (<code>IDisconnect</code>). The resume
+	 * flag specifies if the target VM should be resumed on startup (has
+	 * no effect if the VM was already running when the connection to the
+	 * VM was esatbished). Launching the actual VM is a client responsibility.
+	 *
+	 * @param vm the VM to create a debug target for
+	 * @param name the name to associate with the VM, which will be 
+	 *   returned from <code>IDebugTarget.getName</code>. If <code>null</code>
+	 *   the name will be retrieved from the underlying VM.
+	 * @param process the process to associate with the debug target,
+	 *   which will be returned from <code>IDebugTarget.getProcess</code>
+	 * @param allowTerminate whether the target will support termianation
+	 * @param allowDisconnect whether the target will support disconnection
+	 * @param resume whether the target is to be resumed on startup. Has
+	 *   no effect if the target was already running when the connection
+	 *   to the VM was established.
+	 * @return a debug target
+	 * @see org.eclipse.debug.core.model.ITerminate
+	 * @see org.eclipse.debug.core.model.IDisconnect
+	 * @since 2.0
+	 */
+	public static IDebugTarget newDebugTarget(final VirtualMachine vm, final String name, final IProcess process, final boolean allowTerminate, final boolean allowDisconnect, final boolean resume) {
 		final IJavaDebugTarget[] target = new IJavaDebugTarget[1];
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor m) {
-				target[0]= new JDIDebugTarget(vm, name, allowTerminate, allowDisconnect, process);
+				target[0]= new JDIDebugTarget(vm, name, allowTerminate, allowDisconnect, process, resume);
 			}
 		};
 		try {
@@ -154,7 +186,7 @@ public class JDIDebugModel {
 		}
 		return target[0];
 	}
-
+	
 	/**
 	 * Returns the identifier for the JDI debug model plugin
 	 *

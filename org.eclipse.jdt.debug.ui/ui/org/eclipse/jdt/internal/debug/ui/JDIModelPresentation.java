@@ -485,6 +485,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				labelString= labelString.substring(index + 1);
 			}
 		}
+		if (debugTarget.isSuspended()) {
+			labelString += DebugUIMessages.getString("JDIModelPresentation.target_suspended"); //$NON-NLS-1$
+		}
 		return labelString;
 	}
 
