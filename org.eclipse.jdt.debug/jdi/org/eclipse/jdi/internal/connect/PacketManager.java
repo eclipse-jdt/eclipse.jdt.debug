@@ -1,17 +1,19 @@
 package org.eclipse.jdi.internal.connect;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
+import org.eclipse.jdi.internal.VirtualMachineImpl;
 
 /**
  * This class implements threads that receive/send packets from/to the Virtual Machine.
  *
  */
 public abstract class PacketManager implements Runnable {
-	/** Flag that indicates that the VM is disconnected. */
-	private boolean fDisconnectedVM = false;
 	/** Connector that performs IO to Virtual Machine. */
 	private ConnectorImpl fConnector;
 	/** Thread that handles the communication the other way (e.g. if we are sending, the receiving thread). */
@@ -28,11 +30,13 @@ public abstract class PacketManager implements Runnable {
 	 * Used to indicate that an IO exception occurred, closes connection to Virtual Machine.
 	 */
 	public synchronized void disconnectVM() {
-		if (fDisconnectedVM) {
+		VirtualMachineImpl vm = fConnector.virtualMachine();
+		if (vm.isDisconnected()) {
 			return;
 		}
 
-		fDisconnectedVM = true;
+
+		vm.setDisconnected(true);
 		fConnector.close();
 		// Notify any waiting threads.
 		notifyAll();
@@ -44,7 +48,7 @@ public abstract class PacketManager implements Runnable {
 	 * @return Returns whether an IO exception has occurred.
 	 */
 	public boolean VMIsDisconnected() {
-		return fDisconnectedVM;
+		return fConnector.virtualMachine().isDisconnected();
 	}
 	
 	/**

@@ -1,9 +1,11 @@
 package org.eclipse.jdi.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -116,6 +118,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean fCanRequestVMDeathEvent;
 	private boolean fCanSetDefaultStratum;
 	private boolean[] fHcrCapabilities = null;
+	
+	/**
+	 * Disconnected flag	 */
+	private boolean fIsDisconnected = false;
 	
 	/** 
 	 * Creates a new Virtual Machine.
@@ -1141,6 +1147,22 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	private boolean canSetDefaultStratum() {
 		getCapabilities();
 		return fCanSetDefaultStratum;
+	}
+	
+	/**
+	 * Returns whether this VM is disconnected.
+	 * 	 * @return whether this VM is disconnected	 */
+	public boolean isDisconnected() {
+		return fIsDisconnected;
+	}
+
+	/**
+	 * Sets whether this VM is disconnected.
+	 * 
+	 * @param disconected whether this VM is disconnected
+	 */
+	public synchronized void setDisconnected(boolean disconnected) {
+		fIsDisconnected = disconnected;
 	}
 
 }
