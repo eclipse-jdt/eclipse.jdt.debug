@@ -366,11 +366,11 @@ public class JDIDebugModel {
 	 * the underlying exception responsible for the failure.</li></ul>
 	 * @since 2.0
 	 */
-	public static IJavaMethodBreakpoint createMethodBreakpoint(IResource resource, String typeName, String methodName, String methodSignature, boolean entry, boolean exit, boolean nativeOnly, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+	public static IJavaMethodBreakpoint createMethodBreakpoint(IResource resource, String typePattern, String methodName, String methodSignature, boolean entry, boolean exit, boolean nativeOnly, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
 		if (attributes == null) {
 			attributes = new HashMap(10);
 		}
-		return new JavaMethodBreakpoint(resource, typeName, methodName, methodSignature, entry, exit, nativeOnly, lineNumber, charStart, charEnd, hitCount, register, attributes);
+		return new JavaMethodBreakpoint(resource, typePattern, methodName, methodSignature, entry, exit, nativeOnly, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
 		
 	/**
