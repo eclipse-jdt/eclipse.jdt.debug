@@ -160,7 +160,7 @@ public class LocationImpl extends MirrorImpl implements Location {
 	/*
 	 * @see Location#lineNumber(String)
 	 */
-	public int lineNumber(String stratum) throws AbsentInformationException {
+	public int lineNumber(String stratum) {
 		return 0;
 	}
 

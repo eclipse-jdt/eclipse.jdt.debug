@@ -17,7 +17,7 @@ public interface Location extends com.sun.jdi.Mirror , java.lang.Comparable {
 	public int lineNumber();
 	public com.sun.jdi.Method method();
    	public String sourceName() throws AbsentInformationException;
-   	public int lineNumber(String stratum) throws AbsentInformationException;
+   	public int lineNumber(String stratum);
    	public String sourceName(String stratum) throws AbsentInformationException;
    	public String sourcePath(String stratum) throws AbsentInformationException;
    	public String sourcePath() throws AbsentInformationException;

@@ -391,6 +391,14 @@ public class EventRequestManagerImpl extends MirrorImpl implements EventRequestM
 	public List threadStartRequests() {
 		return new ArrayList(fRequests[THREAD_START_INDEX]);
 	}
+	
+	/**
+	 * @return Returns list of VMDeathRequests.
+	 * For changes, the appropriate EventRequestManager methods should be used.
+	 */
+	public List vmDeathRequests() {
+		return new ArrayList(fRequests[VM_DEATH_INDEX]);
+	}
 
 	/**
 	 * Maps a reuqest ID to requests.

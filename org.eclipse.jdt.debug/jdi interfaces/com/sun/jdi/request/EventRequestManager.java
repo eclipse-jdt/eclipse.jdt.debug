@@ -36,4 +36,5 @@ public interface EventRequestManager extends com.sun.jdi.Mirror {
 	public java.util.List threadDeathRequests();
 	public java.util.List threadStartRequests();
 	public VMDeathRequest createVMDeathRequest();
+	public java.util.List vmDeathRequests();
 }
