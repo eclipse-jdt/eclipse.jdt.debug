@@ -943,6 +943,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 					if (e.getKind() == DebugEvent.SUSPEND) {
 						IJavaThread jt = (IJavaThread)de;
 						try {
+							if (jt.equals(getThread()) && e.getDetail() == DebugEvent.EVALUATION) {
+								return null;
+							}
 							IJavaStackFrame f= (IJavaStackFrame)jt.getTopStackFrame();
 							if (f != null) {
 								IBreakpoint[] bps = jt.getBreakpoints();
