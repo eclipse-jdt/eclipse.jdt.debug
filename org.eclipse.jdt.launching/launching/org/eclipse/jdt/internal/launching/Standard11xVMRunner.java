@@ -56,7 +56,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 				
 		// VM args are the first thing after the java program so that users can specify
 		// options like '-client' & '-server' which are required to be the first option
-		String[] vmArgs= config.getVMArguments();
+		String[] vmArgs= combineVmArgs(config, fVMInstance);
 		addArguments(vmArgs, arguments);
 				
 		String[] bootCP= config.getBootClassPath();		
@@ -86,7 +86,6 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			arguments.add("-classpath"); //$NON-NLS-1$
 			arguments.add(convertClassPath(combinedPath));
 		}
-		arguments.add(config.getClassToLaunch());
 		
 		String[] programArgs= config.getProgramArguments();
 		addArguments(programArgs, arguments);

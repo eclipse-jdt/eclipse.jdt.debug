@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	private File fInstallLocation;
 	private LibraryLocation[] fSystemLibraryDescriptions;
 	private URL fJavadocLocation;
+	private String[] fVMArgs;
 	// whether change events should be fired
 	private boolean fNotify = true;
 	
@@ -218,4 +219,20 @@ public abstract class AbstractVMInstall implements IVMInstall {
 	public int hashCode() {
 		return getVMInstallType().hashCode() + getId().hashCode();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstall#getDefaultVMArguments()
+	 * @since 3.0
+	 */
+	public String[] getVMArguments() {
+		return fVMArgs;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.IVMInstall#setDefaultVMArguments(java.lang.String[])
+	 * @since 3.0
+	 */
+	public void setVMArguments(String[] vmArgs) {
+		fVMArgs = vmArgs;
+	}	
 }

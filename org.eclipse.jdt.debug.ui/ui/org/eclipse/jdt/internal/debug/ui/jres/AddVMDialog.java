@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
+import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.VMStandin;
@@ -64,6 +65,8 @@ public class AddVMDialog extends StatusDialog {
 	
 	private StringButtonDialogField fJRERoot;
 	private StringDialogField fVMName;
+	
+	private StringDialogField fVMArgs;
 
 	private StringButtonDialogField fJavadocURL;
 	private boolean fAutoDetectJavadocLocation = false;
@@ -119,6 +122,9 @@ public class AddVMDialog extends StatusDialog {
 		});
 		fJavadocURL.setLabelText(JREMessages.getString("AddVMDialog.Java&doc_URL__1")); //$NON-NLS-1$
 		fJavadocURL.setButtonLabel(JREMessages.getString("AddVMDialog.Bro&wse..._2")); //$NON-NLS-1$
+		
+		fVMArgs= new StringDialogField();
+		fVMArgs.setLabelText(JREMessages.getString("AddVMDialog.23")); //$NON-NLS-1$
 	}
 	
 	protected void createFieldListeners() {
@@ -172,6 +178,8 @@ public class AddVMDialog extends StatusDialog {
 		fJRERoot.doFillIntoGrid(parent, 3);
 		
 		fJavadocURL.doFillIntoGrid(parent, 3);
+		
+		fVMArgs.doFillIntoGrid(parent, 3);
 		
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(JREMessages.getString("AddVMDialog.JRE_system_libraries__1")); //$NON-NLS-1$
@@ -246,6 +254,7 @@ public class AddVMDialog extends StatusDialog {
 			fJRERoot.setText(""); //$NON-NLS-1$
 			fJavadocURL.setText(""); //$NON-NLS-1$
 			fLibraryBlock.initializeFrom(null, fSelectedVMType);
+			fVMArgs.setText(""); //$NON-NLS-1$
 		} else {
 			fVMTypeCombo.setEnabled(false);
 			fVMName.setText(fEditedVM.getName());
@@ -255,6 +264,15 @@ public class AddVMDialog extends StatusDialog {
 				fJavadocURL.setText(""); //$NON-NLS-1$
 			} else {
 				fJavadocURL.setText(url.toExternalForm());
+			}
+			
+			String[] vmArgs = fEditedVM.getVMArguments();
+			if (vmArgs != null) {
+				StringBuffer buffer = new StringBuffer();
+				for (int i = 0; i < vmArgs.length; i++) {
+					buffer.append(vmArgs[i] + " "); //$NON-NLS-1$
+				}
+				fVMArgs.setText(buffer.toString());
 			}
 		}
 		setVMNameStatus(validateVMName());
@@ -430,6 +448,15 @@ public class AddVMDialog extends StatusDialog {
 		vm.setInstallLocation(new File(fJRERoot.getText()).getAbsoluteFile());
 		vm.setName(fVMName.getText());
 		vm.setJavadocLocation(getURL());
+		
+		String argString = fVMArgs.getText();
+		if (argString != null && argString.length() >0) {
+			ExecutionArguments exArgs = new ExecutionArguments(argString, ""); //$NON-NLS-1$
+			vm.setVMArguments(exArgs.getVMArgumentsArray());			
+		} else {
+			vm.setVMArguments(null);
+		}
+
 		fLibraryBlock.performApply(vm);
 	}
 	

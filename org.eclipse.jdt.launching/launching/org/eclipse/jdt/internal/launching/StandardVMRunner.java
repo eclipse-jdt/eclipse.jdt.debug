@@ -208,8 +208,8 @@ public class StandardVMRunner extends AbstractVMRunner {
 				
 		// VM args are the first thing after the java program so that users can specify
 		// options like '-client' & '-server' which are required to be the first option
-		String[] vmArgs= config.getVMArguments();
-		addArguments(vmArgs, arguments);
+		String[] allVMArgs = combineVmArgs(config, fVMInstance);
+		addArguments(allVMArgs, arguments);
 		
 		addBootClassPathArguments(arguments, config);
 		

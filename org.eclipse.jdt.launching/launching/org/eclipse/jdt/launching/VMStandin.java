@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ public class VMStandin extends AbstractVMInstall {
 		setInstallLocation(realVM.getInstallLocation());
 		setLibraryLocations(realVM.getLibraryLocations());
 		setJavadocLocation(realVM.getJavadocLocation());
+		setVMArguments(realVM.getVMArguments());
 	}
 	
 	/**
@@ -81,6 +82,8 @@ public class VMStandin extends AbstractVMInstall {
 		realVM.setInstallLocation(getInstallLocation());
 		realVM.setLibraryLocations(getLibraryLocations());
 		realVM.setJavadocLocation(getJavadocLocation());
+		realVM.setVMArguments(getVMArguments());
+		
 		if (realVM instanceof AbstractVMInstall) {
 			 ((AbstractVMInstall)realVM).setNotify(true);
 		}		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -314,6 +315,15 @@ public class VMDefinitionsContainer {
 			element.setAttribute("javadocURL", url.toExternalForm()); //$NON-NLS-1$
 		}
 		
+		String[] vmArgs = vm.getVMArguments();
+		if (vmArgs != null && vmArgs.length > 0) {
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < vmArgs.length; i++) {
+				buffer.append(vmArgs[i] + " "); //$NON-NLS-1$
+			}
+			element.setAttribute("vmargs", buffer.toString()); //$NON-NLS-1$
+		}
+		
 		return element;
 	}
 	
@@ -482,6 +492,13 @@ public class VMDefinitionsContainer {
 				} catch (MalformedURLException e) {
 					LaunchingPlugin.log(e);
 				}
+			}
+			
+			// vm Arguments
+			String vmArgs = vmElement.getAttribute("vmargs"); //$NON-NLS-1$
+			if (vmArgs != null && vmArgs.length() >0) {
+				ExecutionArguments exArgs = new ExecutionArguments(vmArgs, ""); //$NON-NLS-1$
+				vmStandin.setVMArguments(exArgs.getVMArgumentsArray());
 			}
 		} else {
 			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.VM_element_specified_with_no_id_attribute_2")); //$NON-NLS-1$

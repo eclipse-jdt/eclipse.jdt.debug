@@ -144,8 +144,8 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		// VM args are the first thing after the java program so that users can specify
 		// options like '-client' & '-server' which are required to be the first options
-		addArguments(config.getVMArguments(), arguments);
-
+		String[] allVMArgs = combineVmArgs(config, fVMInstance);
+		addArguments(allVMArgs, arguments);
 		addBootClassPathArguments(arguments, config);
 		
 		String[] cp= config.getClassPath();

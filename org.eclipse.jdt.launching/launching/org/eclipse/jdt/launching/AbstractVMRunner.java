@@ -114,4 +114,26 @@ public abstract class AbstractVMRunner implements IVMRunner {
 		}
 		return process;
 	}
+	
+	/**
+	 * Combines and returns VM arguments specified by the runner configuration,
+	 * with those specified by the VM install, if any.
+	 * 
+	 * @param configuration runner configuration
+	 * @param vmInstall vm install
+	 * @return combined VM arguments specified by the runner confiugration
+	 *  and VM install
+	 * @since 3.0
+	 */
+	protected String[] combineVmArgs(VMRunnerConfiguration configuration, IVMInstall vmInstall) {
+		String[] launchVMArgs= configuration.getVMArguments();
+		String[] vmVMArgs = vmInstall.getVMArguments();
+		if (vmVMArgs == null || vmVMArgs.length == 0) {
+			return launchVMArgs;
+		}
+		String[] allVMArgs = new String[launchVMArgs.length + vmVMArgs.length];
+		System.arraycopy(launchVMArgs, 0, allVMArgs, 0, launchVMArgs.length);
+		System.arraycopy(vmVMArgs, 0, allVMArgs, launchVMArgs.length, vmVMArgs.length);
+		return allVMArgs;
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,5 +120,25 @@ public interface IVMInstall {
 	 * 	this VM install, or <code>null</code> if none
 	 * @since 2.0
 	 */
-	public URL getJavadocLocation();	
+	public URL getJavadocLocation();
+	
+	/**
+	 * Returns VM arguments to be used with this vm install whenever this
+	 * VM is launched, or <code>null</code> if none.
+	 * 
+	 * @return VM arguments to be used with this vm install whenever this
+	 * VM is launched, or <code>null</code> if none
+	 * @since 3.0
+	 */
+	public String[] getVMArguments();
+	
+	/**
+	 * Sets VM arguments to be used with this vm install whenever this
+	 * VM is launched, possibly <code>null</code>.
+	 * 
+	 * @param vmArgs VM arguments to be used with this vm install whenever this
+	 * VM is launched, possibly <code>null</code>
+	 * @since 3.0
+	 */
+	public void setVMArguments(String[] vmArgs);
 }
