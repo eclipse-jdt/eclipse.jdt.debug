@@ -446,8 +446,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see IDebugTarget#getThreads()
 	 */
 	public IThread[] getThreads() {
-		List threads = getThreadList();
-		return (IThread[])threads.toArray(new IThread[threads.size()]);
+		return (IThread[])getThreadList().toArray(new IThread[0]);
 	}
 	
 	/**
