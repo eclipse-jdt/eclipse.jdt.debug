@@ -15,7 +15,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.IStatusHandler;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 
 import com.sun.jdi.ReferenceType;
@@ -27,13 +27,21 @@ public class NoLineNumberAttributesStatusHandler implements IStatusHandler {
 	 */
 	public Object handleStatus(IStatus status, Object source) {
 		ReferenceType type= (ReferenceType) source;
-		final ErrorDialog dialog= new ErrorDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.Java_Breakpoint_1"), MessageFormat.format(DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.Attempting_to_install_a_breakpoint_in_the_type_{0}_that_has_no_line_number_attributes.__The_breakpoint_cannot_be_installed.__Class_files_must_be_generated_with_the_line_number_attributes._2"), new String[] {type.name()}), status, IStatus.WARNING | IStatus.ERROR | IStatus.INFO); //$NON-NLS-1$ //$NON-NLS-2$
-		Display display= JDIDebugUIPlugin.getStandardDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				dialog.open();
-			}
-		});
+		IPreferenceStore preferenceStore= JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		if (preferenceStore.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT)) {
+			final ErrorDialogWithToggle dialog= new ErrorDialogWithToggle(JDIDebugUIPlugin.getActiveWorkbenchShell(),
+					DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.Java_Breakpoint_1"), //$NON-NLS-1$
+					MessageFormat.format(DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.Attempting_to_install_a_breakpoint_in_the_type_{0}_that_has_no_line_number_attributes.__The_breakpoint_cannot_be_installed.__Class_files_must_be_generated_with_the_line_number_attributes._2"), new String[] {type.name()}), //$NON-NLS-1$
+					status, IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT,
+					DebugUIMessages.getString("NoLineNumberAttributesStatusHandler.2"), //$NON-NLS-1$
+					preferenceStore);
+			Display display= JDIDebugUIPlugin.getStandardDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					dialog.open();
+				}
+			});
+		}
 		return null;
 	}
 

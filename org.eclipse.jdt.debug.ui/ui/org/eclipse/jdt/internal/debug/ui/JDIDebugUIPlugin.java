@@ -298,6 +298,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, true);
 		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, true);
+		store.setDefault(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, true);
 
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_QUALIFIED_NAMES, false);
 		

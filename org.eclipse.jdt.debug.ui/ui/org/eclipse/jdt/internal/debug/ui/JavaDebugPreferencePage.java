@@ -80,6 +80,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	private Button fPromptContinueWithErrors;
 	private Button fAlwaysContinueWithErrors;
 	
+	private Button fPromptUnableToInstallBreakpoint;
+	
 	// Hot code replace preference widgets
 	private Button fAlertHCRButton;
 	private Button fAlertHCRNotSupportedButton;
@@ -138,7 +140,11 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPerformHCRWithCompilationErrors= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Replace_classfiles_containing_compilation_errors_1")); //$NON-NLS-1$
 		
 		createSpacer(composite, 1);
+
+		fPromptUnableToInstallBreakpoint= createCheckButton(composite, DebugUIMessages.getString("JavaDebugPreferencePage.19")); //$NON-NLS-1$
 		
+		createSpacer(composite, 1);
+
 		comp = createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Communication_1")); //$NON-NLS-1$
 		//Add in an intermediate composite to allow for spacing
 		Composite spacingComposite = new Composite(comp, SWT.NONE);
@@ -218,7 +224,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPerformHCRWithCompilationErrors.setSelection(coreStore.getDefaultBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS));
 		fTimeoutText.setStringValue(new Integer(coreStore.getDefaultInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(runtimeStore.getDefaultInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
-		
+		fPromptUnableToInstallBreakpoint.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
 		
 	}
 	
@@ -279,6 +285,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fPerformHCRWithCompilationErrors.setSelection(coreStore.getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS));
 		fTimeoutText.setStringValue(new Integer(coreStore.getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT)).toString());
 		fConnectionTimeoutText.setStringValue(new Integer(runtimeStore.getInt(JavaRuntime.PREF_CONNECT_TIMEOUT)).toString());
+		fPromptUnableToInstallBreakpoint.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT));
 		
 		String pref = store.getString(IJDIPreferencesConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
 		if(pref.equals(AlwaysNeverDialog.ALWAYS)) {
@@ -306,6 +313,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		coreStore.setValue(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS, fPerformHCRWithCompilationErrors.getSelection());
 		coreStore.setValue(JDIDebugModel.PREF_REQUEST_TIMEOUT, fTimeoutText.getIntValue());
 		runtimeStore.setValue(JavaRuntime.PREF_CONNECT_TIMEOUT, fConnectionTimeoutText.getIntValue());
+		store.setValue(IJDIPreferencesConstants.PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT, fPromptUnableToInstallBreakpoint.getSelection());
 		
 		String value = AlwaysNeverDialog.PROMPT;
 		if (fAlwaysContinueWithErrors.getSelection()) {

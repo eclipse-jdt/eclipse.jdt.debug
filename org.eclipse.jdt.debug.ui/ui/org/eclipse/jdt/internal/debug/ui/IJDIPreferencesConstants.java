@@ -176,4 +176,11 @@ public interface IJDIPreferencesConstants {
 	 * @since 3.0
 	 */
 	public static final String PREF_CONTINUE_WITH_COMPILE_ERROR = IJavaDebugUIConstants.PLUGIN_ID + ".cancel_launch_with_compile_errors"; //$NON-NLS-1$	
+	
+	/**
+	 * Boolean preference controlling whether to alert
+	 * with a dialog when unable to install a breakpoint
+	 * (line info not available, ...)
+	 */	
+	public static final String PREF_ALERT_UNABLE_TO_INSTALL_BREAKPOINT = IJavaDebugUIConstants.PLUGIN_ID + ".prompt_unable_to_install_breakpoint"; //$NON-NLS-1$
 }
