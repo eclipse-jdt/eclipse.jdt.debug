@@ -26,7 +26,7 @@ import org.eclipse.jdt.core.IJavaProject;
  * (repeatedly) as the API evolves.
  * </p>
  * @see org.eclipse.debug.core.model.IThread
- * @see IAdaptable 
+ * @see org.eclipse.core.runtime.IAdaptable 
  */
 public interface IJavaThread extends IThread, IJavaEvaluate {
 	

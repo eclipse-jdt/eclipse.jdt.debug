@@ -23,7 +23,7 @@ import org.eclipse.debug.core.model.IVariable;
  * (repeatedly) as the API evolves.
  * </p>
  * @see org.eclipse.debug.core.model.IVariable
- * @see IAdaptable
+ * @see org.eclipse.core.runtime.IAdaptable
  */
 public interface IJavaVariable extends IVariable, IJavaModifiers {
 	

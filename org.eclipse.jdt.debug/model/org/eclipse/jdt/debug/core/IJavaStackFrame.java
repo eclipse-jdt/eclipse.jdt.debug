@@ -26,7 +26,7 @@ import java.util.List;
  * (repeatedly) as the API evolves.
  * </p>
  * @see org.eclipse.debug.core.model.IStackFrame
- * @see IAdaptable 
+ * @see org.eclipse.core.runtime.IAdaptable 
  */
 
 public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvaluate {

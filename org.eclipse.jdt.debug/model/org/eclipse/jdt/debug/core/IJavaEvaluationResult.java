@@ -64,7 +64,7 @@ public interface IJavaEvaluationResult {
 	 * 
 	 * @param a problem marker returned by <code>getProblems</code>
 	 * @return a source fragment for the problem
-	 * @see ICodeSnippetRequestor
+	 * @see org.eclipse.jdt.core.eval.ICodeSnippetRequestor
 	 */
 	String getSourceFragment(IMarker problem);
 

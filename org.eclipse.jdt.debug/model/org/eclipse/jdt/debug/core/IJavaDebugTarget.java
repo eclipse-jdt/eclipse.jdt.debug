@@ -24,7 +24,7 @@ import org.eclipse.debug.core.model.IVariable;
  * (repeatedly) as the API evolves.
  * </p>
  * @see IDebugTarget
- * @see IAdaptable 
+ * @see org.eclipse.core.runtime.IAdaptable 
  */
 
 public interface IJavaDebugTarget extends IDebugTarget {

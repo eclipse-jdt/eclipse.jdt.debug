@@ -23,7 +23,7 @@ import org.eclipse.debug.core.model.IValue;
  * (repeatedly) as the API evolves.
  * </p>
  * @see org.eclipse.debug.core.model.IValue
- * @see IAdaptable
+ * @see org.eclipse.core.runtime.IAdaptable
  */
 public interface IJavaValue extends IValue {
 	/**
