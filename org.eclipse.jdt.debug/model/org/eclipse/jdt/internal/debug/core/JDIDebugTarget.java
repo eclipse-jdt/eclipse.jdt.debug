@@ -1178,6 +1178,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		plugin.getLaunchManager().removeLaunchListener(this);
 		removeAllBreakpoints();
 		cleanupTempFiles();
+		fOutOfSynchTypes.clear();
 		if (fEvaluationContexts != null) {
 			fEvaluationContexts.clear();
 		}
