@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.core;
  
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -85,7 +86,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}	
 	
 	/**
-	 * @see org.eclipse.debug.core.model.IStackFrame#getThread()
+	 * @see IStackFrame#getThread()
 	 */
 	public IThread getThread() {
 		return fThread;
@@ -180,6 +181,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					allFields= method.declaringType().allFields();
 				} catch (RuntimeException e) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_fields"),new String[] {e.toString()}), e); //$NON-NLS-1$
+					return Collections.EMPTY_LIST;
 				}
 				if (allFields != null) {
 					Iterator fields= allFields.iterator();
@@ -384,6 +386,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			locals= new ArrayList(0);
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables"),new String[] {e.toString()}), e); //$NON-NLS-1$
+			return;
 		}
 		int localIndex= -1;
 		while (index < fVariables.size()) {
@@ -501,6 +504,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		} catch (NativeMethodException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables_2"),new String[] {e.toString()}), e); //$NON-NLS-1$
+			return Collections.EMPTY_LIST;
 		}
 
 		return variables;
@@ -522,7 +526,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	}
 	
 	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 * @see IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IJavaStackFrame.class || adapter == IJavaModifiers.class) {
@@ -742,6 +746,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	/**
 	 * Sets the underlying JDI StackFrame. Called by a thread
 	 * when incrementally updating after a step has completed.
+	 * 
+	 * @param frame The underlying stack frame
 	 */
 	protected void setUnderlyingStackFrame(StackFrame frame) {
 		fStackFrame = frame;
