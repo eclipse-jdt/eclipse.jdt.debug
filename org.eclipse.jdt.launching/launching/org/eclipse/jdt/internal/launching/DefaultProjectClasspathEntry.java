@@ -122,47 +122,6 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries()
 	 */
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries() throws CoreException {
-//		IJavaProject javaProject = getJavaProject();
-//		IClasspathEntry[] classpathEntries = javaProject.getRawClasspath();
-//		List entries = new ArrayList(classpathEntries.length);
-//		IPath defOutput = javaProject.getOutputLocation();
-//		entries.add(JavaRuntime.newArchiveRuntimeClasspathEntry(defOutput));
-//		for (int i = 0; i < classpathEntries.length; i++) {
-//			IClasspathEntry entry = classpathEntries[i];
-//			switch (entry.getEntryKind()) {
-//				case IClasspathEntry.CPE_PROJECT:
-//					IPath path = entry.getPath();
-//					IJavaProject jp = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment()));
-//					entries.add(new ProjectClasspathEntry(jp));
-//					break;
-//				case IClasspathEntry.CPE_SOURCE:
-//					path = entry.getOutputLocation();
-//					if (path != null) {
-//						if (!path.equals(defOutput)) {
-//							entries.add(JavaRuntime.newArchiveRuntimeClasspathEntry(path));
-//						}
-//					}
-//					break;
-//				case IClasspathEntry.CPE_LIBRARY:
-//					path = entry.getPath();
-//					entries.add(JavaRuntime.newArchiveRuntimeClasspathEntry(path));
-//					break;
-//				case IClasspathEntry.CPE_CONTAINER:
-//					path = entry.getPath();
-//					if (!JavaRuntime.JRE_CONTAINER.equals(path.segment(0))) {
-//						entries.add(JavaRuntime.newRuntimeContainerClasspathEntry(path, IRuntimeClasspathEntry.USER_CLASSES));
-//					}
-//					break;
-//				case IClasspathEntry.CPE_VARIABLE:
-//					path = entry.getPath();
-//					if (!JavaRuntime.JRELIB_VARIABLE.equals(path.segment(0))) {
-//						entries.add(JavaRuntime.newVariableRuntimeClasspathEntry(path));
-//					}
-//					break;
-//			}
-//		}
-//		return (IRuntimeClasspathEntry[]) entries.toArray(new IRuntimeClasspathEntry[entries.size()]);
-		
 		IClasspathEntry entry = JavaCore.newProjectEntry(getJavaProject().getProject().getFullPath());
 		List classpathEntries = new ArrayList(5);
 		List expanding = new ArrayList(5);
