@@ -67,7 +67,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		fPrgmArgumentsLabel.setText(LauncherMessages.getString("JavaArgumentsTab.&Program_arguments__5")); //$NON-NLS-1$
 						
 		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		fPrgmArgumentsText.setLayoutData(gd);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
@@ -80,7 +80,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		fVMArgumentsLabel.setText(LauncherMessages.getString("JavaArgumentsTab.VM_ar&guments__6")); //$NON-NLS-1$
 		
 		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
 		fVMArgumentsText.setLayoutData(gd);	
 		fVMArgumentsText.addModifyListener(new ModifyListener() {
