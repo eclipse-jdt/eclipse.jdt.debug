@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.runtime.IStatus;
@@ -22,12 +33,10 @@ import org.eclipse.swt.widgets.Text;
 public class CreateStepFilterDialog extends StatusDialog {
 
 	private static final String DEFAULT_NEW_FILTER_TEXT = ""; //$NON-NLS-1$
-	private static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(425,125);
 	
 	private Text text;
 	private Filter filter;
 	private Button okButton;
-	private Button cancelButton;
 
 	private boolean filterValid;
 	private boolean okClicked;
@@ -52,14 +61,10 @@ public class CreateStepFilterDialog extends StatusDialog {
 		return createStepFilterDialog.filter;		
 	}
 	
-	boolean isValidFilter() {
-		return filterValid;
-	}
-	
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton= createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		okButton.setEnabled(false);		
-		cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 	
 	protected Control createDialogArea(Composite parent) {
@@ -121,10 +126,6 @@ public class CreateStepFilterDialog extends StatusDialog {
 		}
 	}
 	
-	/**
-	 * @param trimmedValue
-	 * @return
-	 */
 	private boolean isDuplicateFilter(String trimmedValue) {
 		for (int i=0; i<existingFilters.length; i++)
 			if(existingFilters[i].getName().equals(trimmedValue))
@@ -181,7 +182,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 		return IDebugUIConstants.PLUGIN_ID + ".CREATE_STEP_FILTER_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 	
-	protected void persistShellGeometry() {
+	private void persistShellGeometry() {
 		Point shellLocation = getShell().getLocation();
 		Point shellSize = getShell().getSize();
 		IDialogSettings settings = getDialogSettings();
@@ -192,8 +193,8 @@ public class CreateStepFilterDialog extends StatusDialog {
 	}	
 
 
-	/**
-	 * @see Window#getInitialLocation(Point)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
 	protected Point getInitialLocation(Point initialSize) {
 		IDialogSettings settings = getDialogSettings();
@@ -207,8 +208,8 @@ public class CreateStepFilterDialog extends StatusDialog {
 		return super.getInitialLocation(initialSize);
 	}
 
-	/**
-	 * @see Window#getInitialSize()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
 	protected Point getInitialSize() {
 		Point size = super.getInitialSize();
@@ -241,5 +242,4 @@ public class CreateStepFilterDialog extends StatusDialog {
 		okClicked = true;
 		super.okPressed();
 	}
-
 }
