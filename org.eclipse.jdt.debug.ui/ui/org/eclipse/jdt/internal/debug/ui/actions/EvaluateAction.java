@@ -216,6 +216,13 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			return;
 		}
 		
+		// check for nested evaluation
+		IJavaThread thread = (IJavaThread)stackFrame.getThread();
+		if (thread.isPerformingEvaluation()) {
+			reportError(ActionMessages.getString("EvaluateAction.Cannot_perform_nested_evaluations._1")); //$NON-NLS-1$
+			return;
+		}
+		
 		setNewTargetPart(getTargetPart());
 		if (stackFrame.isSuspended()) {
 			IJavaElement javaElement= getJavaElement(stackFrame);
