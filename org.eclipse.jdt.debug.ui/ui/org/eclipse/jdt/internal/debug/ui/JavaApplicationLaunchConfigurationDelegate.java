@@ -79,15 +79,19 @@ public class JavaApplicationLaunchConfigurationDelegate
 		}
 		IType mainType = (IType)JavaCore.create(memento);
 		if (mainType == null) {
-			abort("Main type does not exist.", null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
+			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_does_not_exist"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}			
 		
 		String installTypeId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, null);
 		if (installTypeId == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_Type_not_specified._2"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL_TYPE); //$NON-NLS-1$
 		}
+		
 		IVMInstallType type = JavaRuntime.getVMInstallType(installTypeId);
-				
+		if (type == null) {
+			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.VM_Install_type_does_not_exist"), new String[] {installTypeId}), null, JavaDebugUI.VM_INSTALL_TYPE_DOES_NOT_EXIST); //$NON-NLS-1$
+		}
+		
 		String installId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, null);
 		if (installId == null) {
 			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_not_specified._3"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL); //$NON-NLS-1$

@@ -93,7 +93,7 @@ public class JavaDebugUI {
 
 	/**
 	 * Status code indicating a launch configuration's VM install
-	 * could not be found.
+	 * type could not be found.
 	 */
 	public static final int VM_INSTALL_TYPE_DOES_NOT_EXIST = 103;
 		
