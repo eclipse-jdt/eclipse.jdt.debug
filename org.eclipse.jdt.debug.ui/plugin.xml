@@ -1615,4 +1615,35 @@
   </consoleLineTracker>  
 </extension>
 
+<!-- Adds the launch and java debug actions whenever a java relevant part is open -->
+
+<extension point="org.eclipse.ui.actionSetPartAssociations">
+	<actionSetPartAssociation 
+		targetID="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
+		<part id="org.eclipse.jdt.ui.PackageExplorer"/>
+		<part id="org.eclipse.jdt.ui.TypeHierarchy" />
+		<part id="org.eclipse.jdt.ui.CompilationUnitEditor"/>
+		<part id="org.eclipse.jdt.ui.ClassFileEditor"/>
+		<part id="org.eclipse.jdt.ui.ProjectsView"/>
+		<part id="org.eclipse.jdt.ui.PackagesView"/>
+		<part id="org.eclipse.jdt.ui.TypesView"/>
+		<part id="org.eclipse.jdt.ui.MembersView"/>
+	</actionSetPartAssociation>
+</extension>
+
+<extension point="org.eclipse.ui.actionSetPartAssociations">
+	<actionSetPartAssociation 
+		targetID="org.eclipse.debug.ui.launchActionSet">
+		<part id="org.eclipse.jdt.ui.PackageExplorer"/>
+		<part id="org.eclipse.jdt.ui.TypeHierarchy" />
+		<part id="org.eclipse.jdt.ui.CompilationUnitEditor"/>
+		<part id="org.eclipse.jdt.ui.ClassFileEditor"/>
+		<part id="org.eclipse.jdt.ui.ProjectsView"/>
+		<part id="org.eclipse.jdt.ui.PackagesView"/>
+		<part id="org.eclipse.jdt.ui.TypesView"/>
+		<part id="org.eclipse.jdt.ui.MembersView"/>
+	</actionSetPartAssociation>
+</extension>
+
+
 </plugin>
