@@ -18,18 +18,17 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
+import org.eclipse.jdt.internal.debug.ui.PixelConverter;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.jdt.internal.ui.util.PixelConverter;
 import org.eclipse.jdt.internal.ui.wizards.IStatusChangeListener;
 import org.eclipse.jdt.internal.ui.wizards.TypedElementSelectionValidator;
 import org.eclipse.jdt.internal.ui.wizards.buildpaths.VariablePathDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
-import org.eclipse.jdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -198,7 +197,6 @@ public class SourceAttachmentBlock {
 		
 		int widthHint= converter.convertWidthInCharsToPixels(fIsVariableEntry ? 50 : 60);
 		
-		
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 4;
 		
@@ -218,8 +216,11 @@ public class SourceAttachmentBlock {
 		}
 		// archive name field
 		fFileNameField.doFillIntoGrid(composite, 4);
-		LayoutUtil.setWidthHint(fFileNameField.getTextControl(null), widthHint);
-		LayoutUtil.setHorizontalGrabbing(fFileNameField.getTextControl(null));
+		setWidthHint(fFileNameField.getTextControl(null), widthHint);
+		Object ld= fFileNameField.getTextControl(null).getLayoutData();
+		if (ld instanceof GridData) {
+			((GridData)ld).grabExcessHorizontalSpace= true;
+		}
 		
 		if (!fIsVariableEntry) {
 			// aditional 'browse workspace' button for normal jars
@@ -246,7 +247,7 @@ public class SourceAttachmentBlock {
 		
 		// root path field	
 		fPrefixField.doFillIntoGrid(composite, 4);
-		LayoutUtil.setWidthHint(fPrefixField.getTextControl(null), widthHint);
+		setWidthHint(fPrefixField.getTextControl(null), widthHint);
 		
 		if (fIsVariableEntry) {
 			// label that shows the resolved path for variable jars
@@ -259,10 +260,16 @@ public class SourceAttachmentBlock {
 		
 		fFileNameField.postSetFocusOnDialogField(parent.getDisplay());
 				
-		WorkbenchHelp.setHelp(composite, IJavaHelpContextIds.SOURCE_ATTACHMENT_BLOCK);
+		WorkbenchHelp.setHelp(composite, IJavaDebugHelpContextIds.SOURCE_ATTACHMENT_BLOCK);
 		return composite;
 	}
 	
+	protected void setWidthHint(Control control, int widthHint) {
+		Object ld= control.getLayoutData();
+		if (ld instanceof GridData) {
+			((GridData)ld).widthHint= widthHint;
+		}
+	}
 		
 	private class SourceAttachmentAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		

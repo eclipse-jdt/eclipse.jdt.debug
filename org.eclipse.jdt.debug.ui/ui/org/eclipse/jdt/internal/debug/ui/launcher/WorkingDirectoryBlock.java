@@ -54,7 +54,8 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	protected Button fWorkspaceDirBrowseButton;
 		
 	// use default button
-	protected Button fUseDefaultWorkingDirButton;	
+	protected Button fUseDefaultWorkingDirButton;
+	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */

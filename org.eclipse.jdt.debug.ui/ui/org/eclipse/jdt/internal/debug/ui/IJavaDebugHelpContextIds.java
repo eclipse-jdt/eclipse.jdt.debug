@@ -31,4 +31,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String JAVA_DEBUG_PREFERENCE_PAGE= PREFIX + "java_debug_preference_page_context"; //$NON-NLS-1$
 	public static final String JAVA_DEBUG_APPEARANCE_PREFERENCE_PAGE= PREFIX + "java_debug_appearance_preference_page_context"; //$NON-NLS-1$	
 	public static final String JAVA_STEP_FILTER_PREFERENCE_PAGE= PREFIX + "java_step_filter_preference_page_context"; //$NON-NLS-1$
+	
+	// reused ui-blocks
+	public static final String SOURCE_ATTACHMENT_BLOCK= PREFIX + "source_attachment_context";
 }
