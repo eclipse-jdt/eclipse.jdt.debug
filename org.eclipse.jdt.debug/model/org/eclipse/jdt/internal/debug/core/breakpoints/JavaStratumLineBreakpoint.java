@@ -141,53 +141,6 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 			attributes.put(EXPIRED, Boolean.FALSE);
 		}
 	}
-
-	/**
-	 * Creates the event requests to:<ul>
-	 * <li>Listen to class loads related to the breakpoint</li>
-	 * <li>Respond to the breakpoint being hit</li>
-	 * </ul>
-	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#addToTarget(org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
-	 */
-	public void addToTarget(JDIDebugTarget target) throws CoreException {
-		
-		// pre-notification
-		fireAdding(target);
-				
-		String referenceTypeName;
-		try {
-			referenceTypeName = getPattern();
-		} catch (CoreException e) {
-			JDIDebugPlugin.log(e);
-			return;
-		}
-		
-		String classPrepareTypeName= referenceTypeName;
-		// create request to listen to class loads
-		//name may only be partially resolved
-		registerRequest(target.createClassPrepareRequest(classPrepareTypeName), target);
-		
-		// create breakpoint requests for each class currently loaded
-		VirtualMachine vm = target.getVM();
-		if (vm == null) {
-			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.Unable_to_add_breakpoint_-_VM_disconnected._1"), null); //$NON-NLS-1$
-		}
-		List classes = null;
-		try {
-			classes= vm.allClasses();
-		} catch (RuntimeException e) {
-			target.targetRequestFailed(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.0"), e); //$NON-NLS-1$
-		}
-		if (classes != null) {
-			Iterator iter = classes.iterator();
-			while (iter.hasNext()) {
-				ReferenceType type= (ReferenceType)iter.next();
-				if (installableReferenceType(type, target)) {
-					createRequest(target, type);
-				}
-			}
-		}
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#installableReferenceType(com.sun.jdi.ReferenceType, org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
@@ -349,4 +302,45 @@ public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJa
 		return (String) ensureMarker().getAttribute(SOURCE_PATH);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#createRequests(org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget)
+	 */
+	protected void createRequests(JDIDebugTarget target) throws CoreException {
+		if (target.isTerminated() || shouldSkipBreakpoint()) {
+			return;
+		}
+		String referenceTypeName;
+		try {
+			referenceTypeName = getPattern();
+		} catch (CoreException e) {
+			JDIDebugPlugin.log(e);
+			return;
+		}
+		
+		String classPrepareTypeName= referenceTypeName;
+		// create request to listen to class loads
+		//name may only be partially resolved
+		registerRequest(target.createClassPrepareRequest(classPrepareTypeName), target);
+		
+		// create breakpoint requests for each class currently loaded
+		VirtualMachine vm = target.getVM();
+		if (vm == null) {
+			target.requestFailed(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.Unable_to_add_breakpoint_-_VM_disconnected._1"), null); //$NON-NLS-1$
+		}
+		List classes = null;
+		try {
+			classes= vm.allClasses();
+		} catch (RuntimeException e) {
+			target.targetRequestFailed(JDIDebugBreakpointMessages.getString("JavaPatternBreakpoint.0"), e); //$NON-NLS-1$
+		}
+		if (classes != null) {
+			Iterator iter = classes.iterator();
+			while (iter.hasNext()) {
+				ReferenceType type= (ReferenceType)iter.next();
+				if (installableReferenceType(type, target)) {
+					createRequest(target, type);
+				}
+			}
+		}
+	}
 }
