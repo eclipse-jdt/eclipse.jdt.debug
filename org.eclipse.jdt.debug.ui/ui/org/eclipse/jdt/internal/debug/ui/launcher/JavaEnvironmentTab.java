@@ -18,7 +18,9 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -88,6 +90,9 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	
 	// Listener for list selection events
 	private SelectionAdapter fListSelectionAdapter;
+	
+	// Java project context
+	private IJavaProject fJavaProject;
 	
 	private static final String EMPTY_STRING = "";
 
@@ -637,17 +642,11 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	}
 	
 	/**
-	 * Returns the Java project for this tab - retrieves
-	 * it from the main tab.
+	 * Returns the Java project from the last time this tab
+	 * was entered.
 	 */
 	protected IJavaProject getJavaProject() {
-		ILaunchConfigurationTab[] tabs = getLaunchConfigurationDialog().getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			if (tabs[i] instanceof JavaMainTab) {
-				return ((JavaMainTab)tabs[i]).getJavaProject();
-			}
-		}
-		return null;
+		return fJavaProject;
 	}
 	
 	/**
@@ -854,11 +853,20 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		setProjectFrom(configuration);
 		updateBootPathFromConfig(configuration);
 		updateClassPathFromConfig(configuration);
 		updateEnvVarsFromConfig(configuration);
 		updateExtensionPathFromConfig(configuration);
 		updateJREFromConfig(configuration);
+	}
+	
+	protected void setProjectFrom(ILaunchConfiguration config) {
+		try {
+			fJavaProject = JavaLaunchConfigurationUtils.getJavaProject(config);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e.getStatus());
+		}
 	}
 
 	/**
