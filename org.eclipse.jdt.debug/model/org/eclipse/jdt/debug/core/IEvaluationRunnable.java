@@ -21,7 +21,7 @@ import org.eclipse.debug.core.DebugException;
  * Clients are intended to imlpement this interface.
  * </p>
  * 
- * @see org.eclipse.jdt.debug.core.IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)
+ * @see org.eclipse.jdt.debug.core.IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int, boolean)
  * @since 2.0
  */ 
 public interface IEvaluationRunnable {
