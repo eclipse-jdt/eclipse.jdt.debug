@@ -5,15 +5,14 @@ package org.eclipse.jdt.launching.sourcelookup;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
@@ -29,6 +28,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.w3c.dom.Document;
@@ -151,7 +151,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		try {
 			serializer.asDOMSerializer().serialize(node);
 		} catch (IOException e) {
-			abort(MessageFormat.format("Unable to create memento for Java project source location {0}", new String[] {getJavaProject().getElementName()}), e);
+			abort(MessageFormat.format(LaunchingMessages.getString("JavaProjectSourceLocation.Unable_to_create_memento_for_Java_project_source_location_{0}_1"), new String[] {getJavaProject().getElementName()}), e); //$NON-NLS-1$
 		}
 		return writer.toString();
 	}
@@ -169,9 +169,9 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
 												
-			String name = root.getAttribute("name");
+			String name = root.getAttribute("name"); //$NON-NLS-1$
 			if (isEmpty(name)) {
-				abort("Unable to initialize source location - missing project name", null);
+				abort(LaunchingMessages.getString("JavaProjectSourceLocation.Unable_to_initialize_source_location_-_missing_project_name_3"), null); //$NON-NLS-1$
 			} else {
 				IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 				setJavaProject(JavaCore.create(proj));
@@ -184,7 +184,7 @@ public class JavaProjectSourceLocation extends PlatformObject implements IJavaSo
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort("Exception occurred initializing source location.", ex);
+		abort(LaunchingMessages.getString("JavaProjectSourceLocation.Exception_occurred_initializing_source_location._4"), ex); //$NON-NLS-1$
 	}
 
 	private boolean isEmpty(String string) {

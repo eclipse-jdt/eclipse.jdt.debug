@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.w3c.dom.Document;
@@ -156,7 +157,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 		try {
 			serializer.asDOMSerializer().serialize(node);
 		} catch (IOException e) {
-			abort(MessageFormat.format("Unable to create memento for directory source location {0}", new String[] {getDirectory().getAbsolutePath()}), e);
+			abort(MessageFormat.format(LaunchingMessages.getString("DirectorySourceLocation.Unable_to_create_memento_for_directory_source_location_{0}_1"), new String[] {getDirectory().getAbsolutePath()}), e); //$NON-NLS-1$
 		}
 		return writer.toString();
 	}
@@ -174,15 +175,15 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
 												
-			String path = root.getAttribute("path");
+			String path = root.getAttribute("path"); //$NON-NLS-1$
 			if (isEmpty(path)) {
-				abort("Unable to initialize source location - missing directory path", null);
+				abort(LaunchingMessages.getString("DirectorySourceLocation.Unable_to_initialize_source_location_-_missing_directory_path_3"), null); //$NON-NLS-1$
 			} else {
 				File dir = new File(path);
 				if (dir.exists() && dir.isDirectory()) {
 					setDirectory(dir);
 				} else {
-					abort(MessageFormat.format("Unable to initialize source location - directory does not exist: {0}", new String[] {path}), null);
+					abort(MessageFormat.format(LaunchingMessages.getString("DirectorySourceLocation.Unable_to_initialize_source_location_-_directory_does_not_exist__{0}_4"), new String[] {path}), null); //$NON-NLS-1$
 				}
 			}
 			return;
@@ -193,7 +194,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort("Exception occurred initializing source location.", ex);		
+		abort(LaunchingMessages.getString("DirectorySourceLocation.Exception_occurred_initializing_source_location._5"), ex);		 //$NON-NLS-1$
 	}
 
 	private boolean isEmpty(String string) {

@@ -272,9 +272,9 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		
 		IJavaSourceLocation[] locations = getSourceLocations();
 		for (int i = 0; i < locations.length; i++) {
-			Element child = doc.createElement("javaSourceLocation");
-			child.setAttribute("class", locations[i].getClass().getName());
-			child.setAttribute("memento", locations[i].getMemento());
+			Element child = doc.createElement("javaSourceLocation"); //$NON-NLS-1$
+			child.setAttribute("class", locations[i].getClass().getName()); //$NON-NLS-1$
+			child.setAttribute("memento", locations[i].getMemento()); //$NON-NLS-1$
 			node.appendChild(child);
 		}
 		
@@ -290,7 +290,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		try {
 			serializer.asDOMSerializer().serialize(node);
 		} catch (IOException e) {
-			abort("Unable to create memento for Java source locator.", e);
+			abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_create_memento_for_Java_source_locator._4"), e); //$NON-NLS-1$
 		}
 		return writer.toString();
 	}
@@ -317,8 +317,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
 												
-			if (!root.getNodeName().equalsIgnoreCase("javaSourceLocator")) { 
-				abort("Unable to restore Java source locator - invalid format.", null);
+			if (!root.getNodeName().equalsIgnoreCase("javaSourceLocator")) {  //$NON-NLS-1$
+				abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_Java_source_locator_-_invalid_format._6"), null); //$NON-NLS-1$
 			}
 	
 			List sourceLocations = new ArrayList();
@@ -331,31 +331,31 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 				short type = node.getNodeType();
 				if (type == Node.ELEMENT_NODE) {
 					Element entry = (Element) node;
-					if (entry.getNodeName().equalsIgnoreCase("javaSourceLocation")) {
-						String className = entry.getAttribute("class");
-						String data = entry.getAttribute("memento");
+					if (entry.getNodeName().equalsIgnoreCase("javaSourceLocation")) { //$NON-NLS-1$
+						String className = entry.getAttribute("class"); //$NON-NLS-1$
+						String data = entry.getAttribute("memento"); //$NON-NLS-1$
 						if (isEmpty(className)) {
-							abort("Unable to restore Java source locator - invalid format.", null);
+							abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_Java_source_locator_-_invalid_format._10"), null); //$NON-NLS-1$
 						}
 						Class clazz  = null;
 						try {
 							clazz = classLoader.loadClass(className);
 						} catch (ClassNotFoundException e) {
-							abort(MessageFormat.format("Unable to restore source location - class not found: {0}", new String[] {className}), e);
+							abort(MessageFormat.format(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_source_location_-_class_not_found__{0}_11"), new String[] {className}), e); //$NON-NLS-1$
 						}
 						
 						IJavaSourceLocation location = null;
 						try {
 							location = (IJavaSourceLocation)clazz.newInstance();
 						} catch (IllegalAccessException e) {
-							abort("Unable to restore source location.", e);
+							abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_source_location._12"), e); //$NON-NLS-1$
 						} catch (InstantiationException e) {
-							abort("Unable to restore source location.", e);
+							abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_source_location._13"), e); //$NON-NLS-1$
 						}
 						location.initializeFrom(data);
 						sourceLocations.add(location);
 					} else {
-						abort("Unable to restore Java source locator - invalid format.", null);
+						abort(LaunchingMessages.getString("JavaSourceLocator.Unable_to_restore_Java_source_locator_-_invalid_format._14"), null); //$NON-NLS-1$
 					}
 				}
 			}
@@ -368,7 +368,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort("Exception occurred initializing source locator.", ex);
+		abort(LaunchingMessages.getString("JavaSourceLocator.Exception_occurred_initializing_source_locator._15"), ex); //$NON-NLS-1$
 	}
 	
 	/**

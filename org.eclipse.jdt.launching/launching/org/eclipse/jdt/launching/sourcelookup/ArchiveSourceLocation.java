@@ -5,7 +5,6 @@ package org.eclipse.jdt.launching.sourcelookup;
  * All Rights Reserved.
  */
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -29,6 +28,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.w3c.dom.Document;
@@ -132,6 +132,10 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * @see IJavaSourceLocation#findSourceElement(String)
 	 */
 	public Object findSourceElement(String name) throws CoreException {
+		if (getArchive() == null) {
+			return null;
+		}
+		
 		// guess at source name if an inner type
 		String pathStr= name.replace('.', '/');
 		int dotIndex= pathStr.lastIndexOf('/');
@@ -239,7 +243,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		try {
 			serializer.asDOMSerializer().serialize(node);
 		} catch (IOException e) {
-			abort(MessageFormat.format("Unable to create memento for archive source location {0}", new String[] {getArchive().getName()}), e);
+			abort(MessageFormat.format(LaunchingMessages.getString("ArchiveSourceLocation.Unable_to_create_memento_for_archive_source_location_{0}_1"), new String[] {getArchive().getName()}), e); //$NON-NLS-1$
 		}
 		return writer.toString();
 	}
@@ -257,11 +261,11 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
 												
-			String path = root.getAttribute("archivePath");
+			String path = root.getAttribute("archivePath"); //$NON-NLS-1$
 			if (isEmpty(path)) {
-				abort("Unable to initialize source location - missing archive path.", null);
+				abort(LaunchingMessages.getString("ArchiveSourceLocation.Unable_to_initialize_source_location_-_missing_archive_path._3"), null); //$NON-NLS-1$
 			}
-			String rootPath = root.getAttribute("rootPath");
+			String rootPath = root.getAttribute("rootPath"); //$NON-NLS-1$
 			
 			ZipFile zip = getZipFile(path);
 			setArchive(zip);
@@ -274,7 +278,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 		} catch (IOException e) {
 			ex = e;
 		}
-		abort("Exception occurred initializing source location.", ex);		
+		abort(LaunchingMessages.getString("ArchiveSourceLocation.Exception_occurred_initializing_source_location._5"), ex);		 //$NON-NLS-1$
 	}
 
 	private boolean isEmpty(String string) {
