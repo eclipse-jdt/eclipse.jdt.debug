@@ -33,8 +33,6 @@ public interface IJavaStackFrame extends IStackFrame, IJavaModifiers, IJavaEvalu
 	/**
 	 * Drops to this stack frame by popping stack frames in this stack
 	 * frame's owning thread until this stack frame is the top stack frame.
-	 * This effectively resumes this stack frame's thread which may result
-	 * in an exception or breakpoint suspending execution.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
