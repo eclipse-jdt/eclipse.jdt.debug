@@ -658,16 +658,18 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#isConditionSuspendOnTrue()
 	 */
 	public boolean isConditionSuspendOnTrue() throws DebugException {
-		return ensureMarker().getAttribute(CONDITION_SUSPEND_ON_TRUE, false);
+		return ensureMarker().getAttribute(CONDITION_SUSPEND_ON_TRUE, true);
 	}
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setConditionSuspendOnTrue(boolean)
 	 */
 	public void setConditionSuspendOnTrue(boolean suspendOnTrue) throws CoreException {
-		setAttributes(new String[]{CONDITION_SUSPEND_ON_TRUE}, new Object[]{new Boolean(suspendOnTrue)});
-		fConditionValues.clear();
-		recreate();
+		if (isConditionSuspendOnTrue() != suspendOnTrue) {
+			setAttributes(new String[]{CONDITION_SUSPEND_ON_TRUE}, new Object[]{new Boolean(suspendOnTrue)});
+			fConditionValues.clear();
+			recreate();
+		}
 	}
 
 }
