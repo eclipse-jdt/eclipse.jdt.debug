@@ -22,6 +22,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
@@ -40,6 +41,11 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 		
 	// Java project
 	private IJavaProject fProject;
+	// Source folders
+	private ISourceContainer[] fSourceFolders;
+	// Generic project container
+	private ISourceContainer[] fOthers;
+	
 	/**
 	 * Unique identifier for Java project source container type
 	 * (value <code>org.eclipse.jdt.launching.sourceContainer.javaProject</code>).
@@ -97,6 +103,11 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 				}
 			}
 		}
+		// cache the Java source folders to search for ".java" files in
+		fSourceFolders = (ISourceContainer[]) containers.toArray(new ISourceContainer[containers.size()]);
+		ISourceContainer theProject = new ProjectSourceContainer(fProject.getProject(), false);
+		fOthers = new ISourceContainer[] {theProject};
+		containers.add(theProject);
 		return (ISourceContainer[]) containers.toArray(new ISourceContainer[containers.size()]);
 	}
 	/* (non-Javadoc)
@@ -118,25 +129,39 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
-		Object[] objects = super.findSourceElements(name);
-		List filtered = null;
-		for (int i = 0; i < objects.length; i++) {
-			Object object = objects[i];
-			if (object instanceof IResource) {
-				if (!getJavaProject().isOnClasspath((IResource)object)) {
-					if (filtered == null) {
-						filtered = new ArrayList(objects.length);
-						for (int j = 0; j < objects.length; j++) {
-							filtered.add(objects[j]);
+		// force container initialzation
+		getSourceContainers();
+		
+		if (name.endsWith(".java")) { //$NON-NLS-1$
+			// only look in source folders
+			Object[] objects = findSourceElements(name, fSourceFolders);
+			List filtered = null;
+			for (int i = 0; i < objects.length; i++) {
+				Object object = objects[i];
+				if (object instanceof IResource) {
+					if (!getJavaProject().isOnClasspath((IResource)object)) {
+						if (filtered == null) {
+							filtered = new ArrayList(objects.length);
+							for (int j = 0; j < objects.length; j++) {
+								filtered.add(objects[j]);
+							}
 						}
+						filtered.remove(object);
 					}
-					filtered.remove(object);
 				}
 			}
+			if (filtered == null) {
+				return objects;
+			}
+			return filtered.toArray();			
+		} else {
+			// look elsewhere if non a ".java" file
+			return findSourceElements(name, fOthers);
 		}
-		if (filtered == null) {
-			return objects;
-		}
-		return filtered.toArray();
+	}
+	public void dispose() {
+		fSourceFolders = null;
+		fOthers = null;
+		super.dispose();
 	}
 }

@@ -38,6 +38,7 @@ import org.eclipse.jdt.debug.tests.core.HitCountBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.InstanceFilterTests;
 import org.eclipse.jdt.debug.tests.core.InstanceVariableTests;
 import org.eclipse.jdt.debug.tests.core.JavaBreakpointListenerTests;
+import org.eclipse.jdt.debug.tests.core.JavaProjectSourceContainerTests;
 import org.eclipse.jdt.debug.tests.core.LaunchConfigurationArgumentTests;
 import org.eclipse.jdt.debug.tests.core.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.core.LaunchDelegateTests;
@@ -141,6 +142,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(DirectorySourceLookupTests.class));
 		addTest(new TestSuite(ExternalArchiveSourceContainerTests.class));
 		addTest(new TestSuite(ArchiveSourceLookupTests.class));
+		addTest(new TestSuite(JavaProjectSourceContainerTests.class));
 		addTest(new TestSuite(MiscBreakpointsTests.class));
 		// removed for M5 - see bug 46991
 		//addTest(new TestSuite(WorkingDirectoryTests.class));
