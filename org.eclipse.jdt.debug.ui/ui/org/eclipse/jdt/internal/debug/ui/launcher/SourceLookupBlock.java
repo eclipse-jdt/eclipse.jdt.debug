@@ -14,7 +14,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.SWTUtil;
 import org.eclipse.jdt.internal.debug.ui.actions.AddAdvancedAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
@@ -31,11 +30,14 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -108,33 +110,38 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		
 		List advancedActions = new ArrayList(5);
 		
+		GC gc = new GC(parent);
+		gc.setFont(parent.getFont());
+		FontMetrics fontMetrics= gc.getFontMetrics();
+		gc.dispose();
+				
 		RuntimeClasspathAction action = new MoveUpAction(null);								
-		Button button  = createPushButton(pathButtonComp, action.getText(), null);
+		Button button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
 		addAction(action);
 		
 		action = new MoveDownAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
+		button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
 		addAction(action);		
 
 		action = new RemoveAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
+		button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
 		addAction(action);		
 		
 		action = new AddProjectAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
+		button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
 		addAction(action);		
 
 		action = new AddJarAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
+		button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
 		addAction(action);		
 
 		action = new AddExternalJarAction(null, DIALOG_SETTINGS_PREFIX);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
+		button  = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
 		addAction(action);		
 
@@ -152,7 +159,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 									
 		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);
 		action = new AddAdvancedAction(null, adv);
-		button = createPushButton(pathButtonComp, action.getText(), null);
+		button = createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
 		addAction(action);
 																
@@ -191,14 +198,25 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	 * 
 	 * @param parent parent widget
 	 * @param label label
-	 * @param image image
 	 * @return Button
 	 */
-	protected Button createPushButton(
-		Composite parent,
-		String label,
-		Image image) {
-		return SWTUtil.createPushButton(parent, label, image);
+	protected Button createPushButton(Composite parent, String label, FontMetrics fontMetrics) {
+		Button button = new Button(parent, SWT.PUSH);
+		button.setFont(parent.getFont());
+		button.setText(label);
+		GridData gd= getButtonGridData(button, fontMetrics);
+		button.setLayoutData(gd);
+		return button;	
+	}
+	
+	private GridData getButtonGridData(Button button, FontMetrics fontMetrics) {
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+
+		int widthHint= Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_WIDTH);
+		gd.widthHint= Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	
+		gd.heightHint= Dialog.convertVerticalDLUsToPixels(fontMetrics, IDialogConstants.BUTTON_HEIGHT);
+		return gd;
 	}
 	
 	/**
