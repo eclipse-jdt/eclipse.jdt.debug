@@ -376,6 +376,11 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 				case JdwpReplyPacket.NOT_IMPLEMENTED:
 					// Workaround for problem in J2ME WTK (wireless toolkit)
 					// @see Bug 12966
+					try {
+						referenceType();
+					} catch (ObjectCollectedException e) {
+						return true;
+					}
 					return false;
 				default:
 					defaultReplyErrorHandler(replyPacket.errorCode());
