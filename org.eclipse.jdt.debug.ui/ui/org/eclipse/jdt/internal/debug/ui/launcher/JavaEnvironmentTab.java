@@ -253,7 +253,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		createVerticalSpacer(comp, 2);
 		
 		fEnvLabel = new Label(comp, SWT.NONE);
-		fEnvLabel.setText("Environment &Variables:");
+		fEnvLabel.setText("Environment Variable&s:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fEnvLabel.setLayoutData(gd);
