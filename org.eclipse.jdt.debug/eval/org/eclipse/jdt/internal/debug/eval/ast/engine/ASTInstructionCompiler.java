@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1739,7 +1739,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return true;
 		}
 		setHasError(true);
-		addErrorMessage("Enum declaration cannot be used in an evaluation expression");
+		addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.0")); //$NON-NLS-1$
 		return false;
 	}
 
