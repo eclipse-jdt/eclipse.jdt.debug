@@ -448,7 +448,16 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		
 		EvaluationListener listener= new EvaluationListener();
 
-		thread.handleSuspendForBreakpointQuiet(this);
+		int suspendPolicy= SUSPEND_THREAD;
+		try {
+			suspendPolicy= getSuspendPolicy();
+		} catch (CoreException e) {
+		}
+		if (suspendPolicy == SUSPEND_VM) {
+			((JDIDebugTarget)thread.getDebugTarget()).prepareToSuspendByBreakpoint(this);
+		} else {
+			thread.handleSuspendForBreakpointQuiet(this);
+		}
 		JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
 		ICompiledExpression expression= (ICompiledExpression)fCompiledExpressions.get(thread);
 		if (expression == null) {
@@ -506,7 +515,16 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 						return;
 					}
 				}
-				thread.resumeQuiet();
+				int suspendPolicy= SUSPEND_THREAD;
+				try {
+					suspendPolicy= getSuspendPolicy();
+				} catch (CoreException e) {
+				}
+				if (suspendPolicy == SUSPEND_VM) {
+					((JDIDebugTarget)thread.getDebugTarget()).resumeQuiet();
+				} else {
+					thread.resumeQuiet();
+				}
 				return;
 			} catch (DebugException e) {
 				JDIDebugPlugin.log(e);

@@ -1036,6 +1036,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		resumeThread(false);
 	}
 	
+	/**
+	 * @see ISuspendResume#resume()
+	 * 
+	 * Updates the state of this thread, but only fires
+	 * notification to listeners if <code>fireNotification</code>
+	 * is <code>true</code>.
+	 */
 	private void resumeThread(boolean fireNotification) throws DebugException {
 		if (!isSuspended()) {
 			return;

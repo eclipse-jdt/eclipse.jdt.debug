@@ -912,6 +912,27 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
+		resume(true);
+	}
+	
+	/**
+	 * @see ISuspendResume#resume()
+	 * 
+	 * Updates the state of this debug target to resumed,
+	 * but does not fire notification of the resumption.
+	 */
+	public void resumeQuiet() throws DebugException {
+		resume(false);
+	}
+	
+	/**
+	 * @see ISuspendResume#resume()
+	 * 
+	 * Updates the state of this debug target, but only fires
+	 * notification to listeners if <code>fireNotification</code>
+	 * is <code>true</code>.
+	 */
+	public void resume(boolean fireNotification) throws DebugException {
 		if (!isSuspended()) {
 			return;
 		}
@@ -919,7 +940,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			setSuspended(false);
 			getVM().resume();
 			resumeThreads();
-			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+			if (fireNotification) {
+				fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+			}
 		} catch (VMDisconnectedException e) {
 			disconnected();
 			return;
@@ -1057,7 +1080,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @param breakpoint the breakpoint that caused the
 	 *  suspension
 	 */
-	protected void prepareToSuspendByBreakpoint(JavaBreakpoint breakpoint) {
+	public void prepareToSuspendByBreakpoint(JavaBreakpoint breakpoint) {
 		setSuspended(true);
 		suspendThreads();
 	}
