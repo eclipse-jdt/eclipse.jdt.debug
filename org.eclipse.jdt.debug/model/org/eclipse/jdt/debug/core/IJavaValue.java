@@ -40,7 +40,7 @@ public interface IJavaValue extends IValue {
 	
 	/**
 	 * Returns the length of this array, if this value is associated
-	 * with an array type, or -1 if it is not.
+	 * with an array type, or -1 otherwise.
 	 *
 	 * @return arrayLength, or -1 if this value is not an array
 	 * @exception DebugException if this method fails.  Reasons include:

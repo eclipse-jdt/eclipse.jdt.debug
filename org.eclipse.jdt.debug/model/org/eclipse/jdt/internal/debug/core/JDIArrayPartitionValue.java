@@ -48,12 +48,8 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 		return getValueString();
 	}
 		
-	public boolean hasChildren() {
-		return true;
-	}
-	
 	/**
-	 * @see IValue
+	 * @see IValue#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
 		List list = getVariables0();
@@ -69,7 +65,7 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	}
 	
 	/**
-	 * @see IDebugElement
+	 * @see JDIDebugElement#getDebugTarget()
 	 */
 	public IDebugTarget getDebugTarget() {
 		return fPartition.getDebugTarget();
@@ -88,14 +84,14 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 	}
 	
 	/**
-	 * @see IJavaValue
+	 * @see IJavaValue#getArrayLength()
 	 */
 	public int getArrayLength() {
 		return -1;
 	}
 
 	/**
-	 * @see IJavaValue
+	 * @see IJavaValue#getSignature()
 	 */
 	public String getSignature() {
 		return null;
