@@ -37,6 +37,9 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	
 	private String fResourceName= null;
 	
+	public JavaPatternBreakpoint() {
+	}
+	
 	/**
 	 * @see JDIDebugModel#createPatternBreakpoint(IResource, String, int, int, int, int, boolean, Map)
 	 */	
