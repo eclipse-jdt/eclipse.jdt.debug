@@ -47,9 +47,10 @@ public class JavaStackTraceConsole extends TextConsole {
                 getDocument().set(new String(b));
                 fin.close();
             } catch (IOException e) {
-                // bummer.
             }
-        }
+        } else {
+			getDocument().set(ConsoleMessages.getString("JavaStackTraceConsole.0")); //$NON-NLS-1$
+		}
     }
 
     /*
@@ -77,7 +78,6 @@ public class JavaStackTraceConsole extends TextConsole {
                 }
             }
         } catch (IOException e) {
-            // :-(
         }
     }
 
