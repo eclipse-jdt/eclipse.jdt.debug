@@ -16,9 +16,11 @@ public class RemoteJavaApplicationTabGroup extends AbstractLaunchConfigurationTa
 	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog, String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[2];
-		tabs[0] = new JavaConnectTab();
-		tabs[1] = new CommonTab();
+		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
+			new JavaConnectTab(),
+			new JavaSourceLookupTab(),
+			new CommonTab(),
+		};
 		setTabs(tabs);
 	}
 

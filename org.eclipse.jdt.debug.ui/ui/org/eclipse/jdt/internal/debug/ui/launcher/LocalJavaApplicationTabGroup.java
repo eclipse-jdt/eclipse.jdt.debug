@@ -16,13 +16,14 @@ public class LocalJavaApplicationTabGroup extends AbstractLaunchConfigurationTab
 	 * @see ILaunchConfigurationTabGroup#createTabs(ILaunchConfigurationDialog, String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[6];
-		tabs[0] = new JavaMainTab();
-		tabs[1] = new JavaArgumentsTab();
-		tabs[2] = new JavaClasspathTab();
-		tabs[3] = new JavaJRETab();
-		tabs[4] = new JavaSourceLookupTab();
-		tabs[5] = new CommonTab();
+		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
+			new JavaMainTab(),
+			new JavaArgumentsTab(),
+			new JavaClasspathTab(),
+			new JavaJRETab(),
+			new JavaSourceLookupTab(),
+			new CommonTab()
+		};
 		setTabs(tabs);
 	}
 
