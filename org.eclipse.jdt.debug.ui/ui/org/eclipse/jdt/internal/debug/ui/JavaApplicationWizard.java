@@ -33,7 +33,7 @@ public class JavaApplicationWizard extends Wizard implements ILaunchWizard {
 	}
 
 	/**
-	 * @see Wizard#addPages
+	 * @see Wizard#addPages()
 	 */
 	public void addPages() {
 		addPage(new JavaApplicationWizardPage(fLauncheables, getLauncher(), fMode));
@@ -67,7 +67,7 @@ public class JavaApplicationWizard extends Wizard implements ILaunchWizard {
 	}
 
 	/**
-	 * @see ILaunchWizard
+	 * @see ILaunchWizard#init(ILauncher, String, IStructuredSelection)
 	 */
 	 public void init(ILauncher launcher, String mode, IStructuredSelection selection) {
 		fMode= mode;
@@ -79,6 +79,6 @@ public class JavaApplicationWizard extends Wizard implements ILaunchWizard {
 			fLauncheables= new Object[0];
 		}
 		setNeedsProgressMonitor(true);
-		setWindowTitle(DebugUIUtils.getResourceString("java_application_wizard.title"));
+		setWindowTitle(DebugUIMessages.getString("JavaApplicationWizard.Java_Application_1")); //$NON-NLS-1$
 	}
 }

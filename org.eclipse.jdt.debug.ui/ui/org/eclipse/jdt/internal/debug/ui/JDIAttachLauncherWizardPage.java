@@ -32,16 +32,6 @@ import com.sun.jdi.connect.Connector;
  */
 public class JDIAttachLauncherWizardPage extends WizardPage implements Listener {
 
-	private static final String PREFIX= "jdi_attach_launcher_wizard_page.";
-
-	private static final String PORT= PREFIX + "port";
-	private static final String HOST= PREFIX + "host";
-	private static final String ALLOW_TERMINATE= PREFIX + "allowTerminate";
-	private static final String ERROR= PREFIX + "error.";
-	private static final String PORT_ERROR= ERROR + "port";
-	private static final String HOST_ERROR= ERROR + "host";
-
-	
 	private String fInitialHost;
 	private String fInitialPort;
 	private boolean fAllowTerminate;
@@ -60,16 +50,16 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 	 * Constructs the page.
 	 */
 	public JDIAttachLauncherWizardPage() {
-		super(DebugUIUtils.getResourceString(PREFIX + "title"));
+		super(DebugUIMessages.getString("JDIAttachLauncherWizardPage.Configure_1")); //$NON-NLS-1$
 		setImageDescriptor(JavaDebugImages.DESC_WIZBAN_JAVA_ATTACH);
-		setDescription(DebugUIUtils.getResourceString(PREFIX + "description"));
+		setDescription(DebugUIMessages.getString("JDIAttachLauncherWizardPage.Specify_the_attach_launch_arguments_2")); //$NON-NLS-1$
 		
 		AttachingConnector connector= JDIAttachLauncher.getAttachingConnector();
 		
 		if (connector != null) {
 			Map map= connector.defaultArguments();
-			fHostParam= (Connector.Argument) map.get("hostname");
-			fPortParam= (Connector.Argument) map.get("port");
+			fHostParam= (Connector.Argument) map.get("hostname"); //$NON-NLS-1$
+			fPortParam= (Connector.Argument) map.get("port"); //$NON-NLS-1$
 		}
 	}
 
@@ -132,7 +122,7 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 					return;
 				}
 				fHostField.setFocus();
-				setTitle(DebugUIUtils.getResourceString(PREFIX + "title"));
+				setTitle(DebugUIMessages.getString("JDIAttachLauncherWizardPage.Configure_3")); //$NON-NLS-1$
 				setPageComplete(true);
 			}
 		};
@@ -161,7 +151,7 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 	protected void createHostGroup(Composite parent) {
 		// new host label
 		Label hostLabel= new Label(parent, SWT.NONE);
-		hostLabel.setText(DebugUIUtils.getResourceString(HOST));
+		hostLabel.setText(DebugUIMessages.getString("JDIAttachLauncherWizardPage.&Host__4")); //$NON-NLS-1$
 
 		// new host entry field
 		fHostField= new Text(parent, SWT.BORDER);
@@ -184,7 +174,7 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 	protected void createPortGroup(Composite parent) {
 		// new port label
 		Label portLabel= new Label(parent, SWT.NONE);
-		portLabel.setText(DebugUIUtils.getResourceString(PORT));
+		portLabel.setText(DebugUIMessages.getString("JDIAttachLauncherWizardPage.&Port__5")); //$NON-NLS-1$
 
 		// new port entry field
 		fPortField= new Text(parent, SWT.BORDER);
@@ -209,7 +199,7 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 		
 		// add terminate check box
 		fAllowTerminateButton= new Button(parent, SWT.CHECK);
-		fAllowTerminateButton.setText(DebugUIUtils.getResourceString(ALLOW_TERMINATE));
+		fAllowTerminateButton.setText(DebugUIMessages.getString("JDIAttachLauncherWizardPage.&Allow_termination_of_remote_VM_6")); //$NON-NLS-1$
 		fAllowTerminateButton.setSelection(fAllowTerminate);
 	}
 	
@@ -238,13 +228,13 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 	 */
 	protected boolean validatePortGroup() {
 		String portFieldContents= fPortField.getText();
-		if (portFieldContents.equals("")) {
-			setErrorMessage(DebugUIUtils.getResourceString(PORT_ERROR));
+		if (portFieldContents.equals("")) { //$NON-NLS-1$
+			setErrorMessage(DebugUIMessages.getString("JDIAttachLauncherWizardPage.Invalid_port_7")); //$NON-NLS-1$
 			return false;
 		}
 		if (fPortParam != null) {
 			if (!fPortParam.isValid(portFieldContents)) {
-				setErrorMessage(DebugUIUtils.getResourceString(PORT_ERROR));
+				setErrorMessage(DebugUIMessages.getString("JDIAttachLauncherWizardPage.Invalid_port_7")); //$NON-NLS-1$
 				return false;
 			}
 			return true;
@@ -253,7 +243,7 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 		try {
 			Integer.parseInt(portFieldContents);
 		} catch (NumberFormatException nfe) {
-			setErrorMessage(DebugUIUtils.getResourceString(PORT_ERROR));
+			setErrorMessage(DebugUIMessages.getString("JDIAttachLauncherWizardPage.Invalid_port_7")); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -267,7 +257,7 @@ public class JDIAttachLauncherWizardPage extends WizardPage implements Listener 
 		String host= fHostField.getText();
 		if (fHostParam != null) {
 			if (!fHostParam.isValid(host)) {
-				setErrorMessage(DebugUIUtils.getResourceString(HOST_ERROR));
+				setErrorMessage(DebugUIMessages.getString("JDIAttachLauncherWizardPage.Invalid_host_10")); //$NON-NLS-1$
 			}
 		}
 		return true;

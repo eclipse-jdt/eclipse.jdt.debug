@@ -30,11 +30,11 @@ public class JavaExceptionBreakpointPropertySource extends JavaBreakpointPropert
 	private static IPropertyDescriptor[] fAllJavaExceptionDescriptors;
 
 	// Property Values
-	protected static final String P_ID_CAUGHT = "caught";
-	protected static final String P_ID_UNCAUGHT = "uncaught";
+	protected static final String P_ID_CAUGHT = "caught"; //$NON-NLS-1$
+	protected static final String P_ID_UNCAUGHT = "uncaught"; //$NON-NLS-1$
 	
-	private static final String P_CAUGHT = "caught";
-	private static final String P_UNCAUGHT = "uncaught";
+	private static final String P_CAUGHT = "caught"; //$NON-NLS-1$
+	private static final String P_UNCAUGHT = "uncaught"; //$NON-NLS-1$
 	
 	static {
 		fLocalJavaExceptionDescriptors = new IPropertyDescriptor[2];
@@ -105,6 +105,4 @@ public class JavaExceptionBreakpointPropertySource extends JavaBreakpointPropert
 			super.setPropertyValue(id, value);
 		}
 	}
-
 }
-

@@ -42,14 +42,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class JavaApplicationWizardPage extends WizardPage {
 
-	private static final String PREFIX= "java_application_wizard_page.";
-	private static final String DEBUG= PREFIX + "debug.description";
-	private static final String RUN= PREFIX + "run.description";
-	private static final String LAUNCHER= PREFIX + "launcher";
-	private static final String SELECT_ELEMENTS= PREFIX + "select_elements";
-	private static final String SELECT_ERROR_ELEMENTS= PREFIX + "select_error_elements";
-	private static final String PATTERN_LABEL= PREFIX + "pattern_label";
-
 	/**
 	 * Viewer for the elements to launch
 	 */
@@ -80,7 +72,7 @@ public class JavaApplicationWizardPage extends WizardPage {
 	class ElementsContentProvider implements IStructuredContentProvider {
 
 		/**
-		 * @see IContentProvider#inputChanged
+		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
@@ -97,7 +89,7 @@ public class JavaApplicationWizardPage extends WizardPage {
 		protected StringMatcher fMatcher= null;
 
 		/**
-		 * @see ViewerFilter
+		 * @see ViewerFilter#select(Viewer, Object, Object)
 		 */
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (fMatcher == null) {
@@ -108,13 +100,13 @@ public class JavaApplicationWizardPage extends WizardPage {
 		}
 
 		public void setPattern(String pattern) {
-			fMatcher= new StringMatcher(pattern + "*", true, false);
+			fMatcher= new StringMatcher(pattern + "*", true, false); //$NON-NLS-1$
 		}
 
 		/**
 		 * Cache the filtered elements so we can single-select.
 		 *
-		 * @see ViewerFilter
+		 * @see ViewerFilter#filter(Viewer, Object, Object[])
 		 */
 		public Object[] filter(Viewer viewer, Object parent, Object[] input) {
 			fFilteredElements= super.filter(viewer, parent, input);
@@ -136,7 +128,7 @@ public class JavaApplicationWizardPage extends WizardPage {
 	 * Constructs a <code>JavaApplicationWizardPage</code> with the given launcher and pre-computed children
 	 */
 	public JavaApplicationWizardPage(Object[] elements, JavaApplicationLauncherDelegate launcher, String mode) {
-		super(DebugUIUtils.getResourceString(PREFIX + "title"));
+		super(DebugUIMessages.getString("JavaApplicationWizardPage.Select_Target_2")); //$NON-NLS-1$
 		setImageDescriptor(JavaDebugImages.DESC_WIZBAN_JAVA_LAUNCH);
 		fElements= elements;
 		fMode= mode;
@@ -158,20 +150,20 @@ public class JavaApplicationWizardPage extends WizardPage {
 
 		//determine description
 		if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-			setDescription(DebugUIUtils.getResourceString(DEBUG));
+			setDescription(DebugUIMessages.getString("JavaApplicationWizardPage.Debug..._3")); //$NON-NLS-1$
 		} else {
-			setDescription(DebugUIUtils.getResourceString(RUN));
+			setDescription(DebugUIMessages.getString("JavaApplicationWizardPage.Run..._4")); //$NON-NLS-1$
 		}
 
 		setPageComplete(false);
-		setTitle(DebugUIUtils.getResourceString(PREFIX + "title"));
+		setTitle(DebugUIMessages.getString("JavaApplicationWizardPage.Select_Target_5")); //$NON-NLS-1$
 		setControl(root);
 		WorkbenchHelp.setHelp(root, new DialogPageContextComputer(this, IHelpContextIds.JAVA_APPLICATION_WIZARD_PAGE));				
 	}
 
 	public void createElementsGroup(Composite root) {
 		Label elementsLabel= new Label(root, SWT.NONE);
-		elementsLabel.setText(DebugUIUtils.getResourceString(PATTERN_LABEL));
+		elementsLabel.setText(DebugUIMessages.getString("JavaApplicationWizardPage.&Enter_a_pattern_to_select_a_range_of_elements__6")); //$NON-NLS-1$
 
 		fPatternText= new Text(root, SWT.BORDER);
 		fPatternText.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
@@ -207,11 +199,11 @@ public class JavaApplicationWizardPage extends WizardPage {
 				fElementsList.refresh();
 				if (fFilteredElements.length >= 1) {
 					fElementsList.setSelection(new StructuredSelection(fFilteredElements[0]), true);
-					setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENTS));					
+					setMessage(DebugUIMessages.getString("JavaApplicationWizardPage._Select_element(s)_to_launch._7"));					 //$NON-NLS-1$
 					setPageComplete(true);
 					return;
 				} else {
-					setMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENTS));
+					setMessage(DebugUIMessages.getString("JavaApplicationWizardPage.No_elements_available._8")); //$NON-NLS-1$
 					setPageComplete(false);
 				}
 			}
@@ -281,11 +273,11 @@ public class JavaApplicationWizardPage extends WizardPage {
 				}
 				if (fElements.length >= 1) {
 					fElementsList.setSelection(new StructuredSelection(fElements[0]), true);
-					setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENTS));
+					setMessage(DebugUIMessages.getString("JavaApplicationWizardPage._Select_element(s)_to_launch._9")); //$NON-NLS-1$
 					setPageComplete(true);				
 				} else {										
 					// no elements to select
-					setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENTS));
+					setErrorMessage(DebugUIMessages.getString("JavaApplicationWizardPage.No_elements_available._10")); //$NON-NLS-1$
 					setPageComplete(false);	
 								
 				}

@@ -78,31 +78,31 @@ public class JavaApplicationLaunchConfigurationDelegate
 	protected ILaunch verifyAndLaunch(ILaunchConfiguration configuration, String mode, boolean doLaunch) throws CoreException {
 		String mainType = configuration.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, null);
 		if (mainType == null) {
-			abort("Main type not specified.", null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE);
+			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Main_type_not_specified._1"), null, JavaDebugUI.UNSPECIFIED_MAIN_TYPE); //$NON-NLS-1$
 		}
 		String installTypeId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, null);
 		if (installTypeId == null) {
-			abort("JRE Type not specified.", null, JavaDebugUI.UNSPECIFIED_VM_INSTALL_TYPE);
+			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_Type_not_specified._2"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL_TYPE); //$NON-NLS-1$
 		}
 		IVMInstallType type = JavaRuntime.getVMInstallType(installTypeId);
 				
 		String installId = configuration.getAttribute(JavaDebugUI.VM_INSTALL_ATTR, null);
 		if (installId == null) {
-			abort("JRE not specified.", null, JavaDebugUI.UNSPECIFIED_VM_INSTALL);
+			abort(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_not_specified._3"), null, JavaDebugUI.UNSPECIFIED_VM_INSTALL); //$NON-NLS-1$
 		}
 		IVMInstall install = type.findVMInstall(installId);
 		if (install == null) {
-			abort(MessageFormat.format("JRE {0} does not exist.", new String[]{installId}), null, JavaDebugUI.VM_INSTALL_DOES_NOT_EXIST);
+			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.JRE_{0}_does_not_exist._4"), new String[]{installId}), null, JavaDebugUI.VM_INSTALL_DOES_NOT_EXIST); //$NON-NLS-1$
 		}		
 		IVMRunner runner = install.getVMRunner(mode);
 		if (runner == null) {
-			abort(MessageFormat.format("Internal error: JRE {0} does not specify a VM Runner.", new String[]{installId}), null, JavaDebugUI.VM_RUNNER_DOES_NOT_EXIST);
+			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Internal_error__JRE_{0}_does_not_specify_a_VM_Runner._5"), new String[]{installId}), null, JavaDebugUI.VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
 		}
 		
 		IProject project = configuration.getProject();
 		IJavaProject javaProject = JavaCore.create(project);
 		if (project == null) {
-			abort(MessageFormat.format("Project {0} is not a Java project.", new String[]{project.getName()}), null, JavaDebugUI.NOT_A_JAVA_PROJECT);
+			abort(MessageFormat.format(DebugUIMessages.getString("JavaApplicationLaunchConfigurationDelegate.Project_{0}_is_not_a_Java_project._6"), new String[]{project.getName()}), null, JavaDebugUI.NOT_A_JAVA_PROJECT); //$NON-NLS-1$
 		}
 		
 		if (!doLaunch) {
@@ -111,8 +111,8 @@ public class JavaApplicationLaunchConfigurationDelegate
 		}
 		
 		ExecutionArguments args = new ExecutionArguments(
-			configuration.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, ""),
-			configuration.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, ""));
+			configuration.getAttribute(JavaDebugUI.VM_ARGUMENTS_ATTR, ""), //$NON-NLS-1$
+			configuration.getAttribute(JavaDebugUI.PROGRAM_ARGUMENTS_ATTR, "")); //$NON-NLS-1$
 			
 		String[] classpath = JavaRuntime.computeDefaultRuntimeClassPath(javaProject);
 		String bootpath = configuration.getAttribute(JavaDebugUI.BOOTPATH_ATTR, null);

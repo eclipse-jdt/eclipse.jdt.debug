@@ -21,13 +21,11 @@ import org.eclipse.jface.wizard.Wizard;
 public class JDIAttachLauncherWizard extends Wizard implements ILaunchWizard {
 
 	protected IStructuredSelection fSelection;
-
 	protected ILauncher fLauncher;
-	
 	protected boolean fLastLaunchSuccessful;
 
 	/**
-	 * @see Wizard#addPages
+	 * @see Wizard#addPages()
 	 */
 	public void addPages() {
 		setNeedsProgressMonitor(true);
@@ -67,11 +65,11 @@ public class JDIAttachLauncherWizard extends Wizard implements ILaunchWizard {
 	}
 
 	/**
-	 * @see ILaunchWizard
+	 * @see ILaunchWizard#init(ILauncher, String, IStructuredSelection)
 	 */
 	public void init(ILauncher launcher, String mode, IStructuredSelection selection) {
 		fSelection= selection;
 		fLauncher= launcher;
-		setWindowTitle(DebugUIUtils.getResourceString("jdi_attach_launcher_wizard.title"));
+		setWindowTitle(DebugUIMessages.getString("JDIAttachLauncherWizard.Remote_Java_Application_1")); //$NON-NLS-1$
 	}
 }

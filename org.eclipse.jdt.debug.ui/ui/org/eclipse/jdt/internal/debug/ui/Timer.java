@@ -66,7 +66,7 @@ public class Timer {
 				}
 			}
 		};
-		setThread(new Thread(r, JDIDebugModel.getPluginIdentifier() + "Debug Timer")); 
+		setThread(new Thread(r, JDIDebugModel.getPluginIdentifier() + DebugUIMessages.getString("Timer.Debug_Timer_1")));  //$NON-NLS-1$
 		getThread().setDaemon(true);
 		getThread().start();
 	}
@@ -84,7 +84,7 @@ public class Timer {
 	 */
 	public void start(ITimeoutListener listener, int ms) {
 		if (isStarted()) {
-			throw new IllegalStateException("Debug timer already started"); 
+			throw new IllegalStateException(DebugUIMessages.getString("Timer.Debug_timer_already_started_2"));  //$NON-NLS-1$
 		}
 		setListener(listener);
 		setTimeout(ms);

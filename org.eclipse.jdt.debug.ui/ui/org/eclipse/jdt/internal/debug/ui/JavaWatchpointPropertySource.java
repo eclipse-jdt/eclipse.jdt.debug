@@ -27,11 +27,11 @@ public class JavaWatchpointPropertySource extends JavaBreakpointPropertySource {
 	private static IPropertyDescriptor[] fAllJavaWatchpointDescriptors;
 
 	// Property Values
-	protected static final String P_ID_ACCESS = "access";
-	protected static final String P_ID_MODIFICATION = "modification";
+	protected static final String P_ID_ACCESS = "access"; //$NON-NLS-1$
+	protected static final String P_ID_MODIFICATION = "modification"; //$NON-NLS-1$
 	
-	private static final String P_ACCESS = "access";
-	private static final String P_MODIFICATION = "modification";
+	private static final String P_ACCESS = "access"; //$NON-NLS-1$
+	private static final String P_MODIFICATION = "modification"; //$NON-NLS-1$
 	
 	static {
 		fLocalJavaWatchpointDescriptors = new IPropertyDescriptor[2];
@@ -102,6 +102,4 @@ public class JavaWatchpointPropertySource extends JavaBreakpointPropertySource {
 			super.setPropertyValue(id, value);
 		}
 	}
-
 }
-

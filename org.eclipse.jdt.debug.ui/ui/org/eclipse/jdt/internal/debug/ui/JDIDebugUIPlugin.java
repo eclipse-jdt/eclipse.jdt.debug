@@ -89,7 +89,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 * @param e the exception to be logged
 	 */	
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, getPluginId(), JavaDebugUI.INTERNAL_ERROR, "Internal Error", e)); 
+		log(new Status(IStatus.ERROR, getPluginId(), JavaDebugUI.INTERNAL_ERROR, DebugUIMessages.getString("JDIDebugUIPlugin.Internal_Error_1"), e));  //$NON-NLS-1$
 	}
 	
 	/**

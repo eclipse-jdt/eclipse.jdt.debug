@@ -37,11 +37,11 @@ public class JavaBreakpointPropertySource extends BreakpointPropertySource {
 	protected static JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 
 	// Property Values
-	protected static final String P_ID_HIT_COUNT = "hitCount";
-	protected static final String P_ID_LOCATION = "location";
+	protected static final String P_ID_HIT_COUNT = "hitCount"; //$NON-NLS-1$
+	protected static final String P_ID_LOCATION = "location"; //$NON-NLS-1$
 	
-	private static final String P_HIT_COUNT = "hit count";
-	private static final String P_LOCATION = "location";
+	private static final String P_HIT_COUNT = "hit count"; //$NON-NLS-1$
+	private static final String P_LOCATION = "location"; //$NON-NLS-1$
 	
 	private static final int DEFAULT_HIT_COUNT_VALUE = 0;
 	
@@ -56,7 +56,7 @@ public class JavaBreakpointPropertySource extends BreakpointPropertySource {
 				} catch (NumberFormatException nfe) {
 				}
 			}
-			return "Invalid value";
+			return DebugUIMessages.getString("JavaBreakpointPropertySource.Invalid_value_1"); //$NON-NLS-1$
 		}
 	}
 	
@@ -97,15 +97,15 @@ public class JavaBreakpointPropertySource extends BreakpointPropertySource {
 					IJavaLineBreakpoint jlbp = (IJavaLineBreakpoint) bp;
 					int lineNumber = jlbp.getLineNumber();
 					if (lineNumber > 0) {
-						buffer.append(" [");
-						buffer.append(DebugUIUtils.getResourceString("jdi_model_presentation.line"));
+						buffer.append(" ["); //$NON-NLS-1$
+						buffer.append(DebugUIMessages.getString("JDIModelPresentation.line__65")); //$NON-NLS-1$
 						buffer.append(' ');
 						buffer.append(lineNumber);
 						buffer.append(']');
 					}
 					IMember member = jlbp.getMember();
 					if (member != null) {
-						buffer.append(" - ");
+						buffer.append(" - "); //$NON-NLS-1$
 						buffer.append(fJavaLabelProvider.getText(member));							
 					}
 				}
@@ -160,6 +160,4 @@ public class JavaBreakpointPropertySource extends BreakpointPropertySource {
 		}
 		return buffer;
 	}
-
 }
-

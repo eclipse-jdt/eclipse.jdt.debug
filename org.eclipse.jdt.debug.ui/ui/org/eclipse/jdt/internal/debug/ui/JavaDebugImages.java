@@ -96,7 +96,7 @@ public class JavaDebugImages {
 	 * are retrieved from the *tool16 folders.
 	 */
 	public static void setToolImageDescriptors(IAction action, String iconName) {
-		setImageDescriptors(action, "tool16", iconName);
+		setImageDescriptors(action, "tool16", iconName); //$NON-NLS-1$
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class JavaDebugImages {
 	 * are retrieved from the *lcl16 folders.
 	 */
 	public static void setLocalImageDescriptors(IAction action, String iconName) {
-		setImageDescriptors(action, "lcl16", iconName);
+		setImageDescriptors(action, "lcl16", iconName); //$NON-NLS-1$
 	}
 	
 	/*

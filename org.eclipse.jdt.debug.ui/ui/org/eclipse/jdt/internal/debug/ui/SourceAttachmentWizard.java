@@ -15,9 +15,6 @@ import org.eclipse.jface.wizard.Wizard;
  * Wizard to allow source attachment at debug time.
  */
 public class SourceAttachmentWizard extends Wizard {
-
-	private static final String PREFIX = "source_attachment_wizard.";
-	private static final String TITLE = PREFIX + "title";
 	
 	protected IPackageFragmentRoot fJar;
 	protected SourceAttachmentWizardPage fPage;
@@ -26,19 +23,20 @@ public class SourceAttachmentWizard extends Wizard {
 
 	public SourceAttachmentWizard(IPackageFragmentRoot jar) {
 		fJar = jar;
-		setWindowTitle(DebugUIUtils.getResourceString(TITLE));
+		setWindowTitle(DebugUIMessages.getString("SourceAttachmentWizard.Source_Attachment_1")); //$NON-NLS-1$
 	}
 
-
-
 	/**
-	 * @see Wizard#addPages
+	 * @see Wizard#addPages()
 	 */
 	public void addPages() {
 		fPage = new SourceAttachmentWizardPage(fJar);
 		addPage(fPage);
 	}
 
+	/**
+	 * @see Wizard#performFinish()
+	 */
 	public boolean performFinish() {
 		if (fPage.isNoSource()) {
 			fgNoPrompt.put(fJar, Boolean.FALSE);

@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.ProjectSourceLocator;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -39,15 +40,9 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 
 public class JDIAttachLauncher implements ILauncherDelegate {
 
-	private static final String PREFIX= "jdi_attach_launcher.";
-	private static final String LABEL= PREFIX + "label";
-	private static final String ERROR= PREFIX + "error.";
-	private static final String NO_CONNECTOR= ERROR + "no_connector.";
-	private static final String CONNECTION_REFUSED= ERROR + "connection_refused.";
-
-	protected String fPort;
-	protected String fHost;
-	protected boolean fAllowTerminate;
+	private String fPort;
+	private String fHost;
+	private boolean fAllowTerminate;
 
 	/**
 	 * Perform the attach launch.
@@ -70,32 +65,35 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 
 		if (connector != null) {
 			Map map= connector.defaultArguments();
-			Connector.Argument param= (Connector.Argument) map.get("hostname");
-			param.setValue(fHost);
-			param= (Connector.Argument) map.get("port");
-			param.setValue(fPort);
+			Connector.Argument param= (Connector.Argument) map.get("hostname"); //$NON-NLS-1$
+			param.setValue(getHost());
+			param= (Connector.Argument) map.get("port"); //$NON-NLS-1$
+			param.setValue(getPort());
 			try {
 				VirtualMachine vm= connector.attach(map);
 				StringBuffer vmLabel= new StringBuffer(vm.name());
 				vmLabel.append('[');
-				vmLabel.append(fHost);
+				vmLabel.append(getHost());
 				vmLabel.append(':');
-				vmLabel.append(fPort);
+				vmLabel.append(getPort());
 				vmLabel.append(']');
-				IDebugTarget target= JDIDebugModel.newDebugTarget(vm, vmLabel.toString(), null, fAllowTerminate, true);
+				IDebugTarget target= 
+					JDIDebugModel.newDebugTarget(vm, vmLabel.toString(), null, allowTermination(), true);
 				IJavaProject javaProject= JavaCore.create((IProject)element);
 				ISourceLocator sl= new ProjectSourceLocator(javaProject);
 				ILaunch launch= new Launch(launcher, ILaunchManager.DEBUG_MODE, element, sl, null, target);
 				DebugPlugin.getDefault().getLaunchManager().registerLaunch(launch);
 				return true;
 			} catch (IOException e) {
-				errorDialog(CONNECTION_REFUSED, IJDIStatusConstants.CODE_CONNECTION_FAILED, e);
+				errorDialog(DebugUIMessages.getString("JDIAttachLauncher.Unable_to_connect_to_specified_address_1"), //$NON-NLS-1$
+				 		IJDIStatusConstants.CODE_CONNECTION_FAILED, e);
 			} catch (IllegalConnectorArgumentsException e) {
 				DebugUIUtils.logError(e);
 			}
 
 		} else {
-			errorDialog(NO_CONNECTOR, IJDIStatusConstants.CODE_CONNECTION_FAILED, null);
+			errorDialog(DebugUIMessages.getString("JDIAttachLauncher.JDI_Shared_Memory_Attaching_Connector_not_available_2"), //$NON-NLS-1$
+					 IJDIStatusConstants.CODE_CONNECTION_FAILED, null);
 		}
 
 		return false;
@@ -116,22 +114,71 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 	protected void setPort(String port) {
 		fPort= port;
 	}
+	
+	protected String getPort() {
+		return fPort;
+	}
 
 	protected void setHost(String host) {
 		fHost= host;
 	}
 	
-	protected void setAllowTerminate(boolean allow) {
-		fAllowTerminate = allow;
+	protected String getHost() {
+		return fHost;
+	}
+	
+	/**
+	 * Sets whether to allow termination of the remote target
+	 * 
+	 * @param allowTerminate The allowTerminate to set
+	 */
+	public void setAllowTerminate(boolean allowTerminate) {
+		fAllowTerminate = allowTerminate;
 	}
 
-	protected void errorDialog(String prefix, int code, Throwable exception) {
-		Status s= new Status(IStatus.ERROR, "org.eclipse.jdt.ui", IJDIStatusConstants.CODE_CONNECTION_FAILED, DebugUIUtils.getResourceString(prefix + "message"), exception);
-		DebugUIUtils.errorDialog(JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell(), prefix, s);
+	protected void errorDialog(String message, int code, Throwable exception) {
+		Status s= new Status(IStatus.ERROR, "org.eclipse.jdt.ui", IJDIStatusConstants.CODE_CONNECTION_FAILED, message, exception); //$NON-NLS-1$
+		String title= DebugUIMessages.getString("JDIAttachLauncher.Remote_Java_Application_3"); //$NON-NLS-1$
+		ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell(), title, message, s);
+	}
+	
+	protected static AttachingConnector getAttachingConnector() {
+		AttachingConnector connector= null;
+		Iterator iter= Bootstrap.virtualMachineManager().attachingConnectors().iterator();
+		while (iter.hasNext()) {
+			AttachingConnector lc= (AttachingConnector) iter.next();
+			if (lc.name().equals("com.sun.jdi.SocketAttach")) { //$NON-NLS-1$
+				connector= lc;
+				break;
+			}
+		}
+		return connector;
 	}
 
 	/**
-	 * @see ILauncher#launch
+	 * @see ILauncherDelegate#getLaunchMemento(Object)
+	 */
+	public String getLaunchMemento(Object element) {
+		if (element instanceof IJavaElement) {
+			return ((IJavaElement)element).getHandleIdentifier();
+		}
+		return null;
+	}
+	
+	/**
+	 * @see ILauncherDelegate#getLaunchObject(String)
+	 */
+	public Object getLaunchObject(String memento) {
+		IJavaElement e = JavaCore.create(memento);
+		if (e.exists()) {
+			return e;
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * @see ILauncherDelegate#launch(Object[], String, ILauncher)
 	 */
 	public boolean launch(Object[] objects, String mode, ILauncher launcher) {
 		Object element= null;
@@ -141,32 +188,7 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 		return doLaunchUsingWizard(element, launcher);
 	}
 	
-	protected static AttachingConnector getAttachingConnector() {
-		AttachingConnector connector= null;
-		Iterator iter= Bootstrap.virtualMachineManager().attachingConnectors().iterator();
-		while (iter.hasNext()) {
-			AttachingConnector lc= (AttachingConnector) iter.next();
-			if (lc.name().equals("com.sun.jdi.SocketAttach")) {
-				connector= lc;
-				break;
-			}
-		}
-		return connector;
-	}
-
-	public String getLaunchMemento(Object element) {
-		if (element instanceof IJavaElement) {
-			return ((IJavaElement)element).getHandleIdentifier();
-		}
-		return null;
-	}
-	
-	public Object getLaunchObject(String memento) {
-		IJavaElement e = JavaCore.create(memento);
-		if (e.exists()) {
-			return e;
-		} else {
-			return null;
-		}
+	protected boolean allowTermination() {
+		return fAllowTerminate;
 	}
 }
