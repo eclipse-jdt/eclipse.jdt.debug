@@ -1,11 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
-
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.File;
 import java.io.IOException;
@@ -67,15 +70,15 @@ public abstract class AbstractJDITest extends TestCase {
 	static int TIMEOUT = 10000; //ms
 	static protected int fBackEndPort = 9900;
 	// We want subsequent connections to use different ports.
-	protected String fVMLauncherName;
-	protected String fTargetAddress;
-	protected String fClassPath;
-	protected String fBootPath;
-	protected String fVMType;
+	protected static String fVMLauncherName;
+	protected static String fTargetAddress;
+	protected static String fClassPath;
+	protected static String fBootPath;
+	protected static String fVMType;
 	protected com.sun.jdi.VirtualMachine fVM;
 	protected Process fLaunchedProxy;
 	protected Process fLaunchedVM;
-	protected int fVMTraceFlags = com.sun.jdi.VirtualMachine.TRACE_NONE;
+	protected static int fVMTraceFlags = com.sun.jdi.VirtualMachine.TRACE_NONE;
 	protected EventReader fEventReader;
 	protected AbstractReader fConsoleReader;
 	protected AbstractReader fConsoleErrorReader;
@@ -83,13 +86,13 @@ public abstract class AbstractJDITest extends TestCase {
 	protected AbstractReader fProxyErrorReader;
 	protected boolean fInControl = true;
 	// Whether this test should control the VM (ie. starting it and shutting it down)
-	protected boolean fVerbose;
-	protected String fStdoutFile;
-	protected String fStderrFile;
-	protected String fProxyoutFile;
-	protected String fProxyerrFile;
-	protected String fVmCmd;
-	protected String fProxyCmd;
+	protected static boolean fVerbose;
+	protected static String fStdoutFile;
+	protected static String fStderrFile;
+	protected static String fProxyoutFile;
+	protected static String fProxyerrFile;
+	protected static String fVmCmd;
+	protected static String fProxyCmd;
 
 	// Stack offset to the MainClass.run() method
 	protected static final int RUN_FRAME_OFFSET = 1;
@@ -771,6 +774,7 @@ public abstract class AbstractJDITest extends TestCase {
 	protected void connectToVM() {
 		// Start the console reader if possible so that the VM doesn't block when the stdout is full
 		startConsoleReaders();
+		
 
 		// Contact the VM (try 10 times)
 		for (int i = 0; i < 10; i++) {
@@ -790,10 +794,12 @@ public abstract class AbstractJDITest extends TestCase {
 				break;
 			} catch (IllegalConnectorArgumentsException e) {
 			} catch (IOException e) {
-				System.out.println("Got exception: " + e.getMessage());
+//				System.out.println("Got exception: " + e.getMessage());
 				try {
-					System.out.println(
-						"Could not contact the VM at localhost" + ":" + fBackEndPort + ". Retrying...");
+					if (i == 9) {
+						System.out.println(
+							"Could not contact the VM at localhost" + ":" + fBackEndPort + ".");
+					}
 					Thread.sleep(200);
 				} catch (InterruptedException e2) {
 				}
@@ -837,7 +843,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * fields.
 	 * Returns whether the parsing was successfull.
 	 */
-	protected boolean parseArgs(String[] args) {
+	protected static boolean parseArgs(String[] args) {
 		// Default values
 		String vmVendor = System.getProperty("java.vm.vendor");
 		String vmVersion = System.getProperty("java.vm.version");
@@ -916,7 +922,7 @@ public abstract class AbstractJDITest extends TestCase {
 	/**
 	 * Prints the various options to pass to the constructor.
 	 */
-	protected void printUsage() {
+	protected static void printUsage() {
 		System.out.println("Possible options:");
 		System.out.println("-launcher <Name of the launcher class>");
 		System.out.println("-address <Address of the target VM>");
@@ -993,7 +999,7 @@ public abstract class AbstractJDITest extends TestCase {
 	 * Init tests
 	 */
 	protected void setUp() {
-		if (fVM == null && fInControl) {
+		if (fVM == null || fInControl) {
 			launchTargetAndStartProgram();
 		}
 		try {
@@ -1164,18 +1170,18 @@ public abstract class AbstractJDITest extends TestCase {
 		Event event = (ClassPrepareEvent) waitForEvent(waiter, 3 * TIMEOUT);
 		fEventReader.removeEventListener(waiter);
 		if (event == null) {
-			try {
+//			try {
 				System.out.println(
 					"\nThe program doesn't seem to have started after " + (3 * TIMEOUT) + "ms");
-				InputStream errorStream = fLaunchedVM.getErrorStream();
-				int read;
-				do {
-					read = errorStream.read();
-					if (read != -1)
-						System.out.print((char) read);
-				} while (read != -1);
-			} catch (IOException e) {
-			}
+//				InputStream errorStream = fLaunchedVM.getErrorStream();
+//				int read;
+//				do {
+//					read = errorStream.read();
+//					if (read != -1)
+//						System.out.print((char) read);
+//				} while (read != -1);
+//			} catch (IOException e) {
+//			}
 		}
 
 		// Stop class prepare events

@@ -32,7 +32,8 @@ public class Bootstrap
 			if (clazz != null) {
 				fVirtualMachineManager = (com.sun.jdi.VirtualMachineManager)clazz.newInstance();
 			}
-		} catch (Exception exception) { // fall through
+		} catch (Throwable exception) { // fall through
+			// ClassNotFoundException, NoClassDefFoundError
 		}
 		if (fVirtualMachineManager == null) {
 			// If any exceptions occurred, we'll end up here

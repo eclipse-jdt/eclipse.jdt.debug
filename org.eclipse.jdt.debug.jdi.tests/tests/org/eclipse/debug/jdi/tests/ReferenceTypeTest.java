@@ -1,11 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
-
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -192,7 +195,7 @@ public class ReferenceTypeTest extends AbstractJDITest {
 				staticFields.add(field);
 		}
 		Map values = type.getValues(staticFields);
-		assertEquals("1." + type.name(), 8, values.size());
+		assertEquals("1." + type.name(), 24, values.size());
 
 		// Get value of field fInt in MainClass
 		Field field = (Field) staticFields.get(0);

@@ -1,11 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.jdi.tests;
-
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.util.List;
 
@@ -166,8 +169,8 @@ public class ThreadReferenceTest extends AbstractJDITest {
 				false);
 		ThreadReference thread = event.thread();
 
-		// Create a java.lang.ThreadDeath instance in 
-		java.util.List classes = fVM.classesByName("java.lang.ThreadDeath");
+		// Create a java.lang.Throwable instance in 
+		java.util.List classes = fVM.classesByName("java.lang.Throwable");
 		assertTrue("1", classes.size() != 0);
 		ClassType threadDeathClass = (ClassType) classes.get(0);
 		Method constructor =
