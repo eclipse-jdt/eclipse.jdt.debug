@@ -9,20 +9,11 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * A Java variable is an extension of a regular variable,
- * providing support specific to the JDI debug model.
- * A Java variable is also available as an adapter from
- * variables originating for the JDI debug model.
+ * A local variable, field slot, or receiver (this) in a Java virtual machine.
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see org.eclipse.debug.core.model.IVariable
- * @see org.eclipse.core.runtime.IAdaptable
  */
 public interface IJavaVariable extends IVariable, IJavaModifiers {
 	
@@ -70,6 +61,7 @@ public interface IJavaVariable extends IVariable, IJavaModifiers {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 * <li>The type associated with the signature is not yet loaded</li></ul>
+	 * @since 2.0
 	 */
 	public IJavaType getJavaType() throws DebugException;	
 	
