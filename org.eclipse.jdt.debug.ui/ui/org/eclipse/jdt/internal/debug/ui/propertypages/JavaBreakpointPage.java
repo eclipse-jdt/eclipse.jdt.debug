@@ -15,11 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -33,11 +40,57 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Property page for configuring IJavaBreakpoints.
  */
 public abstract class JavaBreakpointPage extends PropertyPage {
+	
+	static {
+		Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
+			public Object getAdapter(Object adaptableObject, Class adapterType) {
+				if (adapterType != IWorkbenchAdapter.class || !(adaptableObject instanceof IJavaBreakpoint)) {
+					return null;
+				}
+				return new IWorkbenchAdapter() {
+					public Object[] getChildren(Object o) {
+						return null;
+					}
+
+					public ImageDescriptor getImageDescriptor(Object object) {
+						return null;
+					}
+
+					public String getLabel(Object o) {
+						if (!(o instanceof IJavaBreakpoint)) {
+							return null;
+						}
+						IJavaBreakpoint breakpoint= (IJavaBreakpoint) o;
+						String label= "Java Breakpoint";
+						if (breakpoint instanceof IJavaWatchpoint) {
+							label= "Java Watchpoint";
+						} else if (breakpoint instanceof IJavaMethodBreakpoint) {
+							label= "Java Method Breakpoint";
+						} else if (breakpoint instanceof IJavaLineBreakpoint) {
+							label= "Java Line Breakpoint";
+						} else if (breakpoint instanceof IJavaExceptionBreakpoint) {
+							label= "Java Exception Breakpoint";
+						}
+						return label;
+					}
+
+					public Object getParent(Object o) {
+						return null;
+					}
+				};
+			}
+
+			public Class[] getAdapterList() {
+				return new Class[] {IWorkbenchAdapter.class};
+			}
+		}, IJavaBreakpoint.class);
+	}
 	
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	protected Button fEnabledButton;
