@@ -21,7 +21,7 @@ public class BreakpointLocationVerifier {
 	 */
 	public int getValidBreakpointLocation(IDocument doc, int lineNumber) {
 
-		IScanner scanner = ToolFactory.createScanner(false, false, false);
+		IScanner scanner = ToolFactory.createScanner(false, false, false, false);
 		boolean found = false;
 		int start = 0, length = 0, token = 0, lastToken = 0;
 

@@ -7,9 +7,10 @@ package org.eclipse.jdt.internal.debug.core.hcr;
 
 import java.util.ArrayList;
 
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.compiler.IScanner;
+import org.eclipse.jdt.core.compiler.ITerminalSymbols;
 import org.eclipse.jdt.core.compiler.InvalidInputException;
-import org.eclipse.jdt.internal.compiler.parser.Scanner;
-import org.eclipse.jdt.internal.compiler.parser.TerminalSymbols;
 import org.eclipse.jdt.internal.core.JavaElement;
 
 /**
@@ -65,8 +66,9 @@ class JavaNode {
 	 */
 	JavaNode(JavaNode parent, int type, String name, int start, int length) {
 		this(type, buildID(type, name), parent.fBuffer, start, length);
-		if (parent != null)
+		if (parent != null) {
 			parent.addChild(this);
+		}
 	}	
 	
 	/**
@@ -167,8 +169,9 @@ class JavaNode {
 	 * @param node the node to add as a child
 	 */
 	public void addChild(JavaNode node) {
-		if (fChildren == null)
+		if (fChildren == null) {
 			fChildren= new ArrayList();
+		}
 		fChildren.add(node);
 	}
 
@@ -176,8 +179,9 @@ class JavaNode {
 	 * see IStructureComparator.getChildren
 	 */
 	public Object[] getChildren() {
-		if (fChildren != null)
+		if (fChildren != null) {
 			return fChildren.toArray(); 
+		}
 		return null;
 	}
 
@@ -227,23 +231,23 @@ class JavaNode {
 			
 			// to avoid the trouble when dealing with Unicode
 			// we use the Java scanner to extract non-whitespace and non-comment tokens
-			Scanner scanner= new Scanner(true, true);      // however we request Whitespace and Comments
-			scanner.setSourceBuffer(b);
+			IScanner scanner= ToolFactory.createScanner(true, true, false, false);  // however we request Whitespace and Comments
+			scanner.setSource(b);
 			try {
 				int token;
-				while ((token= scanner.getNextToken()) != TerminalSymbols.TokenNameEOF) {
+				while ((token= scanner.getNextToken()) != ITerminalSymbols.TokenNameEOF) {
 					switch (token) {
-						case Scanner.TokenNameWHITESPACE:
-						case Scanner.TokenNameCOMMENT_BLOCK:
-						case Scanner.TokenNameCOMMENT_JAVADOC:
-						case Scanner.TokenNameCOMMENT_LINE:
+						case ITerminalSymbols.TokenNameWHITESPACE:
+						case ITerminalSymbols.TokenNameCOMMENT_BLOCK:
+						case ITerminalSymbols.TokenNameCOMMENT_JAVADOC:
+						case ITerminalSymbols.TokenNameCOMMENT_LINE:
 							int l= buf.length();
 							if (l > 0 && buf.charAt(l-1) != ' ') {
 								buf.append(' ');
 							}
 							break;
 						default:
-							buf.append(b, scanner.startPosition, scanner.currentPosition - scanner.startPosition);
+							buf.append(b, scanner.getCurrentTokenStartPosition(), (scanner.getCurrentTokenEndPosition() + 1) - scanner.getCurrentTokenStartPosition());
 							buf.append(' ');
 							break;
 					}
@@ -254,6 +258,5 @@ class JavaNode {
 		}
 		return new String(b);      // return original source
 	}
-	
 }
 
