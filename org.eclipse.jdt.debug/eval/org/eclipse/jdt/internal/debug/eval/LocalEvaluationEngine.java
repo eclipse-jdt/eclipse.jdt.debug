@@ -36,7 +36,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
-import org.eclipse.jdt.debug.eval.model.ICompiledExpression;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;
@@ -49,6 +48,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
+import org.eclipse.jdt.debug.eval.model.ICompiledExpression;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
@@ -1252,7 +1252,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * @exception DebugException if:<ul>
 	 * <li>the resolved type is an inner type</li>
 	 * <li>unable to resolve a type</li>
-	 * <li>a lower level java exception occurs</li>
+	 * <li>a lower level Java exception occurs</li>
 	 * </ul>
 	 */
 	private IType getType(String typeName) throws DebugException {
@@ -1304,7 +1304,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * @param typeName fully qualified type name
 	 * @return array of nested type names
 	 */
-	protected String[] getNestedTypeNames(String typeName) throws DebugException {
+	protected String[] getNestedTypeNames(String typeName) {
 		int index = typeName.lastIndexOf('.');
 		if (index >= 0) {
 			typeName= typeName.substring(index + 1);

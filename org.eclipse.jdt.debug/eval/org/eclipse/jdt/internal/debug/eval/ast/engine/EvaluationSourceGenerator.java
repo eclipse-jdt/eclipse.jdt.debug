@@ -196,7 +196,7 @@ public class EvaluationSourceGenerator {
 	 * @exception DebugException if:<ul>
 	 * <li>the resolved type is an inner type</li>
 	 * <li>unable to resolve a type</li>
-	 * <li>a lower level java exception occurs</li>
+	 * <li>a lower level Java exception occurs</li>
 	 * </ul>
 	 */
 	private IType getTypeFromProject(String typeName, IJavaProject javaProject) throws DebugException {
@@ -234,7 +234,7 @@ public class EvaluationSourceGenerator {
 	 * @param typeName fully qualified type name
 	 * @return array of nested type names
 	 */
-	protected String[] getNestedTypeNames(String typeName) throws DebugException {
+	protected String[] getNestedTypeNames(String typeName) {
 		int index = typeName.lastIndexOf('.');
 		if (index >= 0) {
 			typeName= typeName.substring(index + 1);

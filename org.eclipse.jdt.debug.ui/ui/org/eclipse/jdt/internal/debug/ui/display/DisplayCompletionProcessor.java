@@ -211,7 +211,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 	 * @param typeName fully qualified type name
 	 * @return array of nested type names
 	 */
-	protected String[] getNestedTypeNames(String typeName) throws DebugException {
+	protected String[] getNestedTypeNames(String typeName) {
 		int index = typeName.lastIndexOf('.');
 		if (index >= 0) {
 			typeName= typeName.substring(index + 1);
