@@ -22,13 +22,7 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 	private FinalFilter fFinalFilter;
 
 	class FinalFilter extends ViewerFilter {
-
-		/**
-		 * @see ViewerFilter#isFilterProperty(Object, String)
-		 */
-		public boolean isFilterProperty(Object p1, Object p2) {
-			return false;
-		}
+		
 		/**
 		 * @see ViewerFilter#select(Viewer, Object, Object)
 		 */

@@ -22,13 +22,6 @@ public class ShowStaticFieldsAction extends ToggleFilterAction {
 	private StaticFilter fStaticFilter;
 
 	class StaticFilter extends ViewerFilter {
-
-		/**
-		 * @see ViewerFilter#isFilterProperty(Object, String)
-		 */
-		public boolean isFilterProperty(Object p1, Object p2) {
-			return false;
-		}
 		
 		/**
 		 * @see ViewerFilter#select(Viewer, Object, Object)
