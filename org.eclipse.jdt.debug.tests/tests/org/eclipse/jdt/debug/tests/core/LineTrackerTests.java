@@ -44,6 +44,8 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 	
 	protected IConsole fConsole = null;
 	
+	protected List fExceptions = new ArrayList();
+	
 	public LineTrackerTests(String name) {
 		super(name);
 	}
@@ -118,6 +120,13 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 			int attempts = 0;
 			while (!fStopped) {
 				if (attempts == 480) {
+					if (!fExceptions.isEmpty()) {
+						StringBuffer message= new StringBuffer();
+						message.append(fExceptions.size()).append(" BadLocationExceptions occurred after ");
+						message.append(fLinesRead.size()).append(" lines read. First exception: ");
+						message.append(fExceptions.get(0));
+						assertTrue(message.toString(), false);
+					}
 					assertTrue("did not get output within 8 minutes. " + fLinesRead.size() + " lines read.", false);
 				}
 				attempts++;
@@ -161,7 +170,7 @@ public class LineTrackerTests extends AbstractDebugTest implements IConsoleLineT
 				String text = fConsole.getDocument().get(line.getOffset(), line.getLength());
 				fLinesRead.add(text);
 			} catch (BadLocationException e) {
-				assertTrue("BadLocationException occurred: " + e.toString(), false);
+				fExceptions.add(e);
 			}
 		}
 	}
