@@ -34,8 +34,9 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.ui.*;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
-import org.eclipse.jdt.internal.debug.ui.launcher.JavaUISourceLocator;
+import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.ui.IEditorInput;
 
 import com.sun.jdi.VirtualMachine;

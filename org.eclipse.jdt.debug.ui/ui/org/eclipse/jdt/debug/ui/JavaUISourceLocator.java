@@ -1,10 +1,11 @@
-package org.eclipse.jdt.internal.debug.ui.launcher;
+package org.eclipse.jdt.debug.ui;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
  
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -12,7 +13,9 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.launching.ProjectSourceLocator;
+import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
+import org.eclipse.jdt.internal.debug.ui.launcher.SourceLookupBlock;
+import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -25,15 +28,47 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * A source locator for a Java project that prompts the user
+ * for source when source cannot be found on the project's
+ * build path.
+ * <p>
+ * This class is intended to be instantiated. This class is not
+ * intended to be subclassed.
+ * </p>
+ */
+
 public class JavaUISourceLocator implements ISourceLocator {
 
+	/**
+	 * The project being debugged.
+	 */
 	private IJavaProject fJavaProject; 
-	private ProjectSourceLocator fProjectSourceLocator;
+	
+	/**
+	 * Underlying source locator.
+	 */
+	private JavaSourceLocator fSourceLocator;
+	
+	/**
+	 * Whether the user should be prompted for source.
+	 * Initially true, until the user checks the 'do not
+	 * ask again' box.
+	 */
 	private boolean fAllowedToAsk;
 	
-	public JavaUISourceLocator(IJavaProject project) {
+	/**
+	 * Constructs a source locator that searches for source
+	 * in the given Java project, and all of its required projects,
+	 * as specified by its build path.
+	 * 
+	 * @param project Java project
+	 * @exception CoreException if unable to read the project's
+	 * 	 build path
+	 */
+	public JavaUISourceLocator(IJavaProject project) throws CoreException {
 		fJavaProject= project;
-		fProjectSourceLocator= new ProjectSourceLocator(project);
+		fSourceLocator= new JavaSourceLocator(project);
 		fAllowedToAsk= true;
 	}
 
@@ -41,13 +76,13 @@ public class JavaUISourceLocator implements ISourceLocator {
 	 * @see ISourceLocator#getSourceElement(IStackFrame)
 	 */
 	public Object getSourceElement(IStackFrame stackFrame) {
-		Object res= fProjectSourceLocator.getSourceElement(stackFrame);
+		Object res= fSourceLocator.getSourceElement(stackFrame);
 		if (res == null && fAllowedToAsk) {
 			IJavaStackFrame frame= (IJavaStackFrame)stackFrame.getAdapter(IJavaStackFrame.class);
 			if (frame != null) {
 				try {
 					showDebugSourcePage(frame.getDeclaringTypeName());
-					res= fProjectSourceLocator.getSourceElement(stackFrame);
+					res= fSourceLocator.getSourceElement(stackFrame);
 				} catch (DebugException e) {
 					JDIDebugUIPlugin.log(e); 											
 				}
@@ -56,12 +91,21 @@ public class JavaUISourceLocator implements ISourceLocator {
 		return res;
 	}
 	
+	/**
+	 * Prompts to locate the source of the given type.
+	 * 
+	 * @param typeName the name of the type for which source
+	 *  could not be located
+	 */
 	private void showDebugSourcePage(String typeName) {
 		SourceLookupDialog dialog= new SourceLookupDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), fJavaProject, typeName);
 		dialog.open();
 		fAllowedToAsk= !dialog.isNotAskAgain();
 	}
 	
+	/**
+	 * Dialog that prompts for source.
+	 */
 	private static class SourceLookupDialog extends Dialog {
 		
 		private SourceLookupBlock fSourceLookupBlock;

@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -29,7 +30,8 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.debug.ui.launcher.JavaUISourceLocator;
+import org.eclipse.jdt.debug.ui.*;
+import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -98,6 +100,8 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 				errorDialog(DebugUIMessages.getString("JDIAttachLauncher.Unable_to_connect_to_specified_address_1"), //$NON-NLS-1$
 				 		IJDIStatusConstants.CODE_CONNECTION_FAILED, e);
 			} catch (IllegalConnectorArgumentsException e) {
+				JDIDebugUIPlugin.logError(e);
+			} catch (CoreException e) {
 				JDIDebugUIPlugin.logError(e);
 			}
 
