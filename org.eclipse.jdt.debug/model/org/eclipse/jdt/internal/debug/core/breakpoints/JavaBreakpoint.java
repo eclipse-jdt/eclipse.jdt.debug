@@ -491,8 +491,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			while (iter.hasNext()) {
 				req = (EventRequest)iter.next();
 				if (!(req instanceof ClassPrepareRequest)) {
-					if(updateRequest(req, target)) {
-						iter.set(req);
+					EventRequest newRequest= updateRequest(req, target);
+					if (newRequest != req) {
+						iter.set(newRequest);
 					}
 				}
 			}
@@ -501,19 +502,18 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 
 	/**
 	 * Update the given request in the given target to reflect
-	 * the current state of this breakpoint.  Returns whether
-	 * a new request was generated as a result of the required changes.
+	 * the current state of this breakpoint.  Returns the updated
+	 * request
 	 */
-	protected boolean updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
+	protected EventRequest updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		updateEnabledState(request);
 		updateSuspendPolicy(request, target);
 		EventRequest newRequest = updateHitCount(request, target);
 		if (newRequest != request) {
 			replaceRequest(target, request, newRequest);
-			request= newRequest;
-			return true;
+			return newRequest;
 		}
-		return false;
+		return request;
 	}
 	
 	/**

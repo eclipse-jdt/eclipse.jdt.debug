@@ -211,16 +211,15 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	/**
 	 * @see JavaBreakpoint#updateRequest(EventRequest, JDIDebugTarget)
 	 */
-	protected boolean updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
+	protected EventRequest updateRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		updateEnabledState(request);
 		EventRequest newRequest = updateHitCount(request, target);
 		newRequest= updateCaughtState(newRequest,target);
 		if (newRequest != null && newRequest != request) {
 			replaceRequest(target, request, newRequest);
-			request = newRequest;
-			return true;
+			return newRequest;
 		}
-		return false;
+		return request;
 	}
 	
 	/**
