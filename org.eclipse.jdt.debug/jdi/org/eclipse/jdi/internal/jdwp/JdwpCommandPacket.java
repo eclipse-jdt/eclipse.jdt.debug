@@ -19,8 +19,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jdi.internal.spy.VerboseWriter;
-
 /**
  * This class implements the corresponding Java Debug Wire Protocol (JDWP) packet
  * declared by the JDWP specification.
@@ -250,7 +248,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 					continue;
 				}
 				int value = field.getInt(null);
-				setNames.put(new Integer(value), VerboseWriter.removePrefix(name));
+				setNames.put(new Integer(value), removePrefix(name));
 			} catch (IllegalAccessException e) {
 				// Will not occur for own class.
 			} catch (IllegalArgumentException e) {
@@ -279,7 +277,7 @@ public class JdwpCommandPacket extends JdwpPacket {
 				int value = val.intValue();	
 				int set = value >>> 8;
 				String setName = (String)setNames.get(new Integer(set));
-				String entryName = setName + " - " + VerboseWriter.removePrefix(name); //$NON-NLS-1$
+				String entryName = setName + " - " + removePrefix(name); //$NON-NLS-1$
 				
 				fgCommandMap.put(val, entryName);
 				
@@ -295,5 +293,17 @@ public class JdwpCommandPacket extends JdwpPacket {
 	public static Map commandMap() {
 		getConstantMaps();
 		return fgCommandMap;
+	}
+	
+	/**
+	 * @return Returns string without XXX_ prefix.
+	 */
+	public static String removePrefix(String str) {
+		int i = str.indexOf('_');
+		if (i < 0) {
+			return str;
+		} else {
+			return str.substring(i + 1);
+		}
 	}
 }

@@ -15,11 +15,11 @@ Contributors:
  * Exception throws when the spy have not enough information form correctly
  * parse the data.
  */
-public class UnableToParseData extends Exception {
+public class UnableToParseDataException extends Exception {
 
 	private byte[] fRemainingData;
 
-	public UnableToParseData(String message, byte[] remainingData) {
+	public UnableToParseDataException(String message, byte[] remainingData) {
 		super(message);
 		fRemainingData= remainingData;
 	}

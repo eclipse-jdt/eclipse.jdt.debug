@@ -1,15 +1,22 @@
-package org.eclipse.jdi.internal.spy;
+package org.eclipse.jdi.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2001, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+*********************************************************************/
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
-public class VerboseWriter extends BufWriter {
+public class VerboseWriter {
 	/** Length of verbose description. */
 	public static final int VERBOSE_DESCRIPTION_LENGTH = 21;
 	/** Number of hexadecimal verbose bytes per line. */
@@ -20,11 +27,24 @@ public class VerboseWriter extends BufWriter {
 	/** Number extra verbose lines. These are caused by hex dumps that span more than one line. */
 	int fExtraVerboseLines = 0;
 	
+	/** PrintWriter that is written to. */
+	private PrintWriter fOutput;
+	/** Buffer for output: one StringBuffer entry per line. */
+	private List fLineBuffer;
+	/** Position from where buffer is written to. */
+	private int fPosition;
+	/** True if the current line has not yet been written to. */
+	private boolean fNewLine = true;
+
 	/**
-	 * Creates new VerboseWriter.
+	 * Creates new VerboseWriter that writes to the given PrintWriter.
+	 * Output is buffered and previous entries in the buffer can be rewritten.
 	 */
 	public VerboseWriter(PrintWriter out) {
-		super(out);
+		fOutput = out;
+		fLineBuffer = new ArrayList();
+		fPosition = 0;
+		fLineBuffer.add(new StringBuffer());
 	}
 	
 	/**
@@ -35,10 +55,10 @@ public class VerboseWriter extends BufWriter {
 	public void println() {
 		while (fExtraVerboseLines > 0) {
 			fExtraVerboseLines--;
-			super.println();
+			markLn();
 		}
 		
-		super.println();
+		markLn();
 	}
 
 	/**
@@ -110,7 +130,7 @@ public class VerboseWriter extends BufWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, byte value, Vector bitNames) {
+	public void println(String description, byte value, String[] bitNames) {
 		printDescription(description);
 		printHex(value);
 		printValue(value, bitNames);
@@ -120,7 +140,7 @@ public class VerboseWriter extends BufWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, short value, Vector bitNames) {
+	public void println(String description, short value, String[] bitNames) {
 		printDescription(description);
 		printHex(value);
 		printValue(value, bitNames);
@@ -130,7 +150,7 @@ public class VerboseWriter extends BufWriter {
 	/**
 	 * Prints verbose line.
 	 */
-	public void println(String description, int value, Vector bitNames) {
+	public void println(String description, int value, String[] bitNames) {
 		printDescription(description);
 		printHex(value);
 		printValue(value, bitNames);
@@ -203,8 +223,9 @@ public class VerboseWriter extends BufWriter {
 		print(str);
 		int spaces = width - str.length();
 		if (spaces > 0) {
-			for (int i = 0; i < spaces; i++)
+			for (int i = 0; i < spaces; i++) {
 				print(' ');
+			}
 		}
 	}
 	
@@ -234,10 +255,11 @@ public class VerboseWriter extends BufWriter {
 		buffer[abspos] = ' ';
 		do {
 			int t = b & 15;
-			if (t > 9)
+			if (t > 9) {
 				t = t - 10 + (int) 'a';
-			else
+			} else {
 				t += (int) '0';
+			}
 			buffer[count-- + abspos] = (char) t;
 			b >>>= 4;
 		} while (count > 0);
@@ -351,22 +373,25 @@ public class VerboseWriter extends BufWriter {
 		for (int i = 0; i < bytes.length; i++) {
 			if (byteOnLine == VERBOSE_HEX_BYTES_PER_LINE) {
 				appendHexSpaces(linebuf, VERBOSE_HEX_BYTES_PER_LINE);
-				if (extraLines++ > 0)
+				if (extraLines++ > 0) {
 					printDescription(""); //$NON-NLS-1$
+				}
 				print(linebuf);
-				super.println();
+				markLn();
 				byteOnLine = 0;
 			}
 			appendHexByte(bytes[i], linebuf, byteOnLine++);
 		}
 		appendHexSpaces(linebuf, byteOnLine);
-		if (extraLines > 0)
+		if (extraLines > 0) {
 			printDescription(""); //$NON-NLS-1$
+		}
 			
 		fExtraVerboseLines += extraLines;
 		print(linebuf);
-		if (extraLines > 0)
+		if (extraLines > 0) {
 			gotoPosition(startPosition);
+		}
 	}
 
 	/**
@@ -374,49 +399,54 @@ public class VerboseWriter extends BufWriter {
 	 */
 	public void printValue(int value, Map valueToString) {
 		Integer val = new Integer(value);
-		if (valueToString == null)
+		if (valueToString == null) {
 			print(val.toString());
+		}
 
 		String result = (String)valueToString.get(val);
-		if (result == null)
-			print(val.toString() + TcpIpSpyMessages.getString("VerboseWriter._<unknown_value>_1")); //$NON-NLS-1$
-		else
+		if (result == null) {
+			print(val.toString() + JDIMessages.getString("VerboseWriter._<unknown_value>_1")); //$NON-NLS-1$
+		} else {
 			print(result);
+		}
 	}
 	
 	/**
 	 * Prints string representation of a value given a Vector with the names of the bits.
 	 */
-	public void printValue(byte value, Vector bitNames) {
+	public void printValue(byte value, String[] bitNames) {
 		printValue(value & 0xff, bitNames);
 	}
 
 	/**
 	 * Prints string representation of a value given a Vector with the names of the bits.
 	 */
-	public void printValue(short value, Vector bitNames) {
+	public void printValue(short value, String[] bitNames) {
 		printValue(value & 0xffff, bitNames);
 	}
 
 	/**
 	 * Prints string representation of a value given a Vector with the names of the bits.
 	 */
-	public void printValue(int value, Vector bitNames) {
+	public void printValue(int value, String[] bitNames) {
 		Integer val = new Integer(value);
-		if (bitNames == null)
+		if (bitNames == null) {
 			print(val.toString());
+		}
 			
 		boolean bitsSet = false;
 			
-		for (int i = 0; i < bitNames.size(); i++) {
+		for (int i = 0; i < bitNames.length; i++) {
 			// Test if bit is set in value.
-			if ((1 << i & value) == 0)
+			if ((1 << i & value) == 0) {
 				continue;
+			}
 
 			// See if we have a desciption for the bit.
-			String bitString = (String)bitNames.elementAt(i);
-			if (bitString == null)
-				bitString = TcpIpSpyMessages.getString("VerboseWriter.<unknown_bit>_2"); //$NON-NLS-1$
+			String bitString = bitNames[i];
+			if (bitString == null) {
+				bitString = JDIMessages.getString("VerboseWriter.<unknown_bit>_2"); //$NON-NLS-1$
+			}
 
 			if (!bitsSet) {
 				print(bitString);
@@ -427,18 +457,115 @@ public class VerboseWriter extends BufWriter {
 			bitsSet = true;
 		}
 
-		if (!bitsSet)
-			print(TcpIpSpyMessages.getString("VerboseWriter.<none>_4")); //$NON-NLS-1$
+		if (!bitsSet) {
+			print(JDIMessages.getString("VerboseWriter.<none>_4")); //$NON-NLS-1$
+		}
 	}
 	
 	/**
-	 * @return Returns string without XXX_ prefix.
+	 * Checks if a new line is written to. If so, first erase any data on that line.
+	 * Line is marked 'not new' after this command.
 	 */
-	public static String removePrefix(String str) {
-		int i = str.indexOf('_');
-		if (i < 0)
-			return str;
-		else
-			return str.substring(i + 1);
+	private void checkForNewLine() {
+		if (fNewLine) {
+			((StringBuffer)(fLineBuffer.get(fPosition))).setLength(0);
+			fNewLine = false;
+		}
+	}
+	
+	/**
+	 * Print a String.
+	 */
+	public void print(String str) {
+		checkForNewLine();
+		((StringBuffer)(fLineBuffer.get(fPosition))).append(str);
+	}
+
+	/**
+	 * Print a Character.
+	 */
+	public void print(char c) {
+		checkForNewLine();
+		((StringBuffer)(fLineBuffer.get(fPosition))).append(c);
+	}
+
+	/**
+	 * Print array of Characters.
+	 */
+	public void print(char[] c) {
+		checkForNewLine();
+		((StringBuffer)(fLineBuffer.get(fPosition))).append(c);
+	}
+
+	/**
+	 * Print a String and then terminate the line.
+	 */
+	public void println(String str) {
+		print(str);
+		println();
+	}
+
+	/**
+	 * Flush buffer.
+	 * If autoflush is off, this method is synchronized on the PrintWriter given in the constructor.
+	 */
+	public void flush() {
+		synchronized(fOutput) {
+			int bufSize = fLineBuffer.size();
+				
+			for (int i = 0; i < bufSize - 1; i++)
+				fOutput.println(new String((StringBuffer)fLineBuffer.get(i)));
+	
+			// The last line should be printed without an extra newline
+			StringBuffer lastLine = (StringBuffer)fLineBuffer.get(bufSize - 1);
+			if (lastLine.length() > 0)
+				fOutput.print(new String(lastLine));
+	
+			fOutput.flush();
+			fLineBuffer.clear();
+			fPosition = 0;
+			fLineBuffer.add(new StringBuffer());
+		}
+	}
+	
+	/**
+	 * Go to the given position in the buffer.
+	 * If the given position is smaller than the current position,
+	 * subsequent print commands overwrite existing lines in the buffer.
+	 * Else, new lines are added to the buffer.
+	 */
+	public void gotoPosition(int pos) {
+		int delta = pos - fPosition;
+		if (delta < 0) {
+			fPosition = pos;
+		} else {
+			while (delta-- > 0)
+				println();
+		}
+	}
+
+	/**
+	 * Prints given number of lines.
+	 */
+	public void printLines(int lines) {
+		gotoPosition(fPosition + lines);
+	}
+
+	/**
+	 * @return Returns current position in buffer.
+	 */
+	public int position() {
+		return fPosition;
+	}
+	
+	/**
+	 * Terminate the current line by writing the line separator string, start at end of next line.
+	 */
+	public void markLn() {
+		if (++fPosition == fLineBuffer.size()) {
+			fLineBuffer.add(new StringBuffer());
+		}
+			
+		fNewLine = true;
 	}
 }
