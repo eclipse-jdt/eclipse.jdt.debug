@@ -24,7 +24,7 @@ public class Jump extends SimpleInstruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return "jump";
+		return EvalMessages.getString("Jump.jump_1"); //$NON-NLS-1$
 	}
 
 }

@@ -60,7 +60,7 @@ public class AndOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return "'&' operator";
+		return EvalMessages.getString("AndOperator_&___operator_1"); //$NON-NLS-1$
 	}
 
 }

@@ -11,7 +11,7 @@ public class RightShiftAssignmentOperator extends RightShiftOperator {
 	}
 
 	public String toString() {
-		return "'>>=' operator";
+		return EvalMessages.getString("RightShiftAssignmentOperator._>>=___operator_1"); //$NON-NLS-1$
 	}
 
 }

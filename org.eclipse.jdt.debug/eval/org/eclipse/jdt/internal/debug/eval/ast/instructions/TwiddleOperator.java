@@ -32,7 +32,7 @@ public class TwiddleOperator extends UnaryOperator {
 	}
 
 	public String toString() {
-		return "'~' operator";
+		return EvalMessages.getString("TwiddleOperator._~___operator_1"); //$NON-NLS-1$
 	}
 
 }

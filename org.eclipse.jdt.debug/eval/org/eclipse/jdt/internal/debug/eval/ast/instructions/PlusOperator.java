@@ -12,7 +12,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 
 public class PlusOperator extends BinaryOperator {
 
-	public static final String NULL= "null";
+	public static final String NULL= "null"; //$NON-NLS-1$
 
 	public PlusOperator(int resultId, int leftTypeId, int rightTypeId, int start) {
 		this(resultId, leftTypeId, rightTypeId, false, start);
@@ -103,7 +103,7 @@ public class PlusOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return "'+' operator";
+		return EvalMessages.getString("PlusOperator._+___operator_2"); //$NON-NLS-1$
 	}
 
 }

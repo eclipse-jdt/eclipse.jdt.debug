@@ -25,7 +25,7 @@ public class PushFieldVariable extends CompoundInstruction {
 	
 	private int  fSuperClassLevel;
 	
-	public static final String LENGTH= "length";
+	public static final String LENGTH= "length"; //$NON-NLS-1$
 	
 	public PushFieldVariable(String name, int superClassLevel, int start) {
 		super(start);
@@ -60,15 +60,14 @@ public class PushFieldVariable extends CompoundInstruction {
 			}
 		}
 		if (field == null) {
-			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Cannot find the field " + fName + " for the object " + receiver, null));
+			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, EvalMessages.getString("PushFieldVariable.Cannot_find_the_field__2") + fName + EvalMessages.getString("PushFieldVariable._for_the_object__3") + receiver, null)); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			push(field);
 		}
 	}
 	
 	public String toString() {
-		return "push field " + fName;
+		return EvalMessages.getString("PushFieldVariable.push_field__4") + fName; //$NON-NLS-1$
 	}
-
 }
 

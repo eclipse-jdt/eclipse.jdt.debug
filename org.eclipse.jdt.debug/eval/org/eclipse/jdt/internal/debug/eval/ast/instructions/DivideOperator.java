@@ -46,7 +46,7 @@ public class DivideOperator extends BinaryOperator {
 	protected int getIntResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		int divisor= ((IJavaPrimitiveValue) rightOperand).getIntValue();
 		if (divisor == 0) {
-			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Divide by zero", null));
+			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, EvalMessages.getString("DivideOperator.Divide_by_zero_1"), null)); //$NON-NLS-1$
 		}
 		return ((IJavaPrimitiveValue) leftOperand).getIntValue() / divisor;
 	}
@@ -57,7 +57,7 @@ public class DivideOperator extends BinaryOperator {
 	protected long getLongResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		long divisor= ((IJavaPrimitiveValue) rightOperand).getLongValue();
 		if (divisor == 0) {
-			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Divide by zero", null));
+			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, EvalMessages.getString("DivideOperator.Divide_by_zero_2"), null)); //$NON-NLS-1$
 		}
 		return ((IJavaPrimitiveValue) leftOperand).getLongValue() / divisor;
 	}
@@ -70,7 +70,7 @@ public class DivideOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return "'/' operator";
+		return EvalMessages.getString("DivideOperator._/___operator_3"); //$NON-NLS-1$
 	}
 
 }

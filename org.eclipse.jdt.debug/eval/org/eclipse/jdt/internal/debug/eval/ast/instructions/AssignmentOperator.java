@@ -63,7 +63,7 @@ public class AssignmentOperator extends CompoundInstruction {
 	}
 
 	public String toString() {
-		return "'=' operator";
+		return EvalMessages.getString("AssignmentOperator._=___operator_1"); //$NON-NLS-1$
 	}
 
 

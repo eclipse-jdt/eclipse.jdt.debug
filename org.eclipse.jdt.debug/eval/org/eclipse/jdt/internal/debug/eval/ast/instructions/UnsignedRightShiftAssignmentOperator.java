@@ -11,7 +11,7 @@ public class UnsignedRightShiftAssignmentOperator extends UnsignedRightShiftOper
 	}
 
 	public String toString() {
-		return "'>>>=' operator";
+		return EvalMessages.getString("UnsignedRightShiftAssignmentOperator._>>>=___operator_1"); //$NON-NLS-1$
 	}
 
 }

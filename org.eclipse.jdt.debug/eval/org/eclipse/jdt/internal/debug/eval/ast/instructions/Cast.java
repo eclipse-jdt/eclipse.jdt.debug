@@ -12,8 +12,8 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 
 public class Cast extends CompoundInstruction {
 
-	public static final String IS_INSTANCE= "isInstance";
-	public static final String IS_INSTANCE_SIGNATURE= "(Ljava/lang/Object;)Z";
+	public static final String IS_INSTANCE= "isInstance"; //$NON-NLS-1$
+	public static final String IS_INSTANCE_SIGNATURE= "(Ljava/lang/Object;)Z"; //$NON-NLS-1$
 
 	private int fTypeTypeId;
 	
@@ -85,7 +85,7 @@ public class Cast extends CompoundInstruction {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		return "cast";
+		return EvalMessages.getString("Cast.cast_3"); //$NON-NLS-1$
 	}
 
 }

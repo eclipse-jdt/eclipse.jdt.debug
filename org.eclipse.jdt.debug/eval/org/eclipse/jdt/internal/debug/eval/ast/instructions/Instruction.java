@@ -245,12 +245,12 @@ public abstract class Instruction {
 /* null */		{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_String, T_undefined},
 	};
 
-	public static final String CLASS= "java.lang.Class";
+	public static final String CLASS= "java.lang.Class"; //$NON-NLS-1$
 	
-	public static final String FOR_NAME= "forName";
+	public static final String FOR_NAME= "forName"; //$NON-NLS-1$
 
 
-	public static final String FOR_NAME_SIGNATURE= "(Ljava/lang/String;)Ljava/lang/Class;";
+	public static final String FOR_NAME_SIGNATURE= "(Ljava/lang/String;)Ljava/lang/Class;"; //$NON-NLS-1$
 
 }
 

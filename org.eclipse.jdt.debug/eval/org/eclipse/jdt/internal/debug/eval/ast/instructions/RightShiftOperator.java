@@ -86,7 +86,7 @@ public class RightShiftOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return "'>>' operator";
+		return EvalMessages.getString("RightShiftOperator._>>___operator_1"); //$NON-NLS-1$
 	}
 
 }

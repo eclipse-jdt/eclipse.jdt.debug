@@ -9,8 +9,8 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaType;
 
 public class InstanceOfOperator extends CompoundInstruction {
-	public static final String IS_INSTANCE= "isInstance";
-	public static final String IS_INSTANCE_SIGNATURE= "(Ljava/lang/Object;)Z";
+	public static final String IS_INSTANCE= "isInstance"; //$NON-NLS-1$
+	public static final String IS_INSTANCE_SIGNATURE= "(Ljava/lang/Object;)Z"; //$NON-NLS-1$
 	
 	public InstanceOfOperator(int start) {
 		super(start);
@@ -36,7 +36,7 @@ public class InstanceOfOperator extends CompoundInstruction {
 	}
 	
 	public String toString() {
-		return "'instanceof' operator";
+		return EvalMessages.getString("InstanceOfOperator._instanceof___operator_3"); //$NON-NLS-1$
 	}
 
 }

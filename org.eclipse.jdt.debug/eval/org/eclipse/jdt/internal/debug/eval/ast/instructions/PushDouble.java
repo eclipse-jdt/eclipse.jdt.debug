@@ -21,7 +21,7 @@ public class PushDouble extends SimpleInstruction {
 	}
 	
 	public String toString() {
-		return "push " + fValue;
+		return EvalMessages.getString("PushDouble.push__1") + fValue; //$NON-NLS-1$
 	}
 
 }

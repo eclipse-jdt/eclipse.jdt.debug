@@ -11,7 +11,7 @@ public class RemainderAssignmentOperator extends RemainderOperator {
 	}
 
 	public String toString() {
-		return "'%=' operator";
+		return EvalMessages.getString("RemainderAssignmentOperator._%=___operator_1"); //$NON-NLS-1$
 	}
 
 }

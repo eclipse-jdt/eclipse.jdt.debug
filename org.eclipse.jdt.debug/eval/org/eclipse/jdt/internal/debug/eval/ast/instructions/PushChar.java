@@ -21,7 +21,7 @@ public class PushChar extends SimpleInstruction {
 	}
 	
 	public String toString() {
-		return "push " + fValue;
+		return EvalMessages.getString("PushChar.push__1") + fValue; //$NON-NLS-1$
 	}
 
 }

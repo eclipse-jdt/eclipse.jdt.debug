@@ -38,7 +38,7 @@ public class UnaryPlusOperator extends UnaryOperator {
 	}
 
 	public String toString() {
-		return "unary plus operator";
+		return EvalMessages.getString("UnaryPlusOperator.unary_plus_operator_1"); //$NON-NLS-1$
 	}
 
 }

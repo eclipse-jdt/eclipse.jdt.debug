@@ -86,7 +86,7 @@ public class LeftShiftOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return "'<<' operator";
+		return EvalMessages.getString("LeftShiftOperator._<<___operator_1"); //$NON-NLS-1$
 	}
 
 }

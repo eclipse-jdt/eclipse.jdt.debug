@@ -11,7 +11,7 @@ public class OrAssignmentOperator extends OrOperator {
 	}
 
 	public String toString() {
-		return "'|=' operator";
+		return EvalMessages.getString("OrAssignmentOperator._|=___operator_1"); //$NON-NLS-1$
 	}
 
 }

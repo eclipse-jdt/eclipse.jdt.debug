@@ -20,10 +20,10 @@ public abstract class ArrayInstruction extends CompoundInstruction {
 
 	protected IJavaArrayType getType(String sign, int dimension) throws CoreException {
 		String qualifiedName = Signature.toString(sign);
-		String braces = "";
+		String braces = ""; //$NON-NLS-1$
 		for (int i = 0; i < dimension; i++) {
-			qualifiedName += "[]";
-			braces += "[";
+			qualifiedName += "[]"; //$NON-NLS-1$
+			braces += "["; //$NON-NLS-1$
 		}
 		String signature = braces + sign;
 		// Force the class to be loaded, and record the class reference

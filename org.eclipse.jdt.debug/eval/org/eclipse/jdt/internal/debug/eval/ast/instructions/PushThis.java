@@ -36,7 +36,7 @@ public class PushThis extends SimpleInstruction {
 	}
 
 	public String toString() {
-		return "push 'this'";
+		return EvalMessages.getString("PushThis.push___this__1"); //$NON-NLS-1$
 	}
 }
 

@@ -11,7 +11,7 @@ public class MultiplyAssignmentOperator extends MultiplyOperator {
 	}
 
 	public String toString() {
-		return "'*=' operator";
+		return EvalMessages.getString("MultiplyAssignmentOperator._*=___operator_1"); //$NON-NLS-1$
 	}
 
 }

@@ -48,7 +48,7 @@ public class SendStaticMessage extends CompoundInstruction {
 			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Cannot send a static message to a not class type object.", null));
 		}
 		
-		if (!fSignature.endsWith(")V")) {
+		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$
 			// only push the result if not a void method
 			push(result);
 		}

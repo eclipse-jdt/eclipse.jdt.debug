@@ -50,7 +50,7 @@ public class SendMessage extends CompoundInstruction {
 		} else {
 			throw new CoreException(new Status(Status.ERROR, DebugPlugin.PLUGIN_ID, Status.OK, "Try to send an message to an not object value", null));
 		}
-		if (!fSignature.endsWith(")V")) {
+		if (!fSignature.endsWith(")V")) { //$NON-NLS-1$
 			// only push the result if not a void method
 			push(result);
 		}

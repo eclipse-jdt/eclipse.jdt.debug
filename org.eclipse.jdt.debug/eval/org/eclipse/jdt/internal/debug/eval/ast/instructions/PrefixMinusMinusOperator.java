@@ -48,7 +48,7 @@ public class PrefixMinusMinusOperator extends XfixOperator {
 	}
 
 	public String toString() {
-		return "prefix '--' operator";
+		return EvalMessages.getString("PrefixMinusMinusOperator.prefix___--___operator_1"); //$NON-NLS-1$
 	}
 
 }

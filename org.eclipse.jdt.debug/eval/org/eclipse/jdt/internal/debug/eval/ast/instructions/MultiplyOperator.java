@@ -59,7 +59,7 @@ public class MultiplyOperator extends BinaryOperator {
 	}
 
 	public String toString() {
-		return "'*' operator";
+		return EvalMessages.getString("MultiplyOperator._*___operator_1"); //$NON-NLS-1$
 	}
 
 }

@@ -65,7 +65,7 @@ public class LessEqualOperator extends BinaryOperator {
 		return null;
 	}
 	public String toString() {
-		return "'<=' operator";
+		return EvalMessages.getString("LessEqualOperator._<=___operator_1"); //$NON-NLS-1$
 	}
 
 }

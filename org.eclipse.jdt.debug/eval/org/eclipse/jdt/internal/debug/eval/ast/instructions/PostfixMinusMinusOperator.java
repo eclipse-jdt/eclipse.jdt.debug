@@ -47,7 +47,7 @@ public class PostfixMinusMinusOperator extends XfixOperator {
 	}
 
 	public String toString() {
-		return "postfix '--' operator";
+		return EvalMessages.getString("PostfixMinusMinusOperator.postfix___--___operator_1"); //$NON-NLS-1$
 	}
 
 }

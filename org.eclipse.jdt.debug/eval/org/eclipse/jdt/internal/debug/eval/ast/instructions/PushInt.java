@@ -21,7 +21,7 @@ public class PushInt extends SimpleInstruction {
 	}
 	
 	public String toString() {
-		return "push " + fValue;
+		return EvalMessages.getString("PushInt.push__1") + fValue; //$NON-NLS-1$
 	}
 
 }
