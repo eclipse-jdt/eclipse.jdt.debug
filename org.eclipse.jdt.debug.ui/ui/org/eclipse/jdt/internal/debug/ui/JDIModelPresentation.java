@@ -747,13 +747,17 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected Image getExceptionBreakpointImage(IJavaExceptionBreakpoint exception) throws CoreException {
-		if (!exception.isEnabled()) {
-			return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED);
+		int flags= computeBreakpointAdornmentFlags(exception);
+		JDIImageDescriptor descriptor= null;
+		boolean enabled= (flags & JDIImageDescriptor.ENABLED) != 0;
+		if (!enabled) {
+			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
 		} else if (exception.isChecked()) {
-			return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_EXCEPTION);
+			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_EXCEPTION, flags);
 		} else {
-			return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_ERROR);
+			descriptor= new JDIImageDescriptor(JavaDebugImages.DESC_OBJS_ERROR, flags);
 		}
+		return fDebugImageRegistry.get(descriptor);
 	}
 
 	protected Image getJavaBreakpointImage(IJavaBreakpoint breakpoint) throws CoreException {
