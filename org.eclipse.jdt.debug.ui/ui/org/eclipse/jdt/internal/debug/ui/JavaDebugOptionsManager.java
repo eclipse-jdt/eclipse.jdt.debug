@@ -45,6 +45,8 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -709,7 +711,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		} else {
 			status= exception.getStatus();
 		}
-		openConditionErrorDialog(breakpoint, DebugUIMessages.getString("JavaDebugOptionsManager.Conditional_breakpoint_evaluation_failed_3"), DebugUIMessages.getString("JavaDebugOptionsManager.An_exception_occurred_while_evaluating_the_condition_for_breakpoint__{0}__4"), status); //$NON-NLS-1$ //$NON-NLS-2$
+		openConditionErrorDialog(breakpoint, DebugUIMessages.getString("JavaDebugOptionsManager.Conditional_breakpoint_encountered_runtime_exception._1"), status); //$NON-NLS-1$
 	}
 
 	/**
@@ -724,10 +726,10 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 			message.append("\n "); //$NON-NLS-1$
 		}
 		IStatus status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message.toString(), null);
-		openConditionErrorDialog(breakpoint, DebugUIMessages.getString("JavaDebugOptionsManager.Conditional_breakpoint_compilation_failed_6"), DebugUIMessages.getString("JavaDebugOptionsManager.Errors_detected_compiling_the_condition_for_breakpoint_{0}_7"), status); //$NON-NLS-1$ //$NON-NLS-2$
+		openConditionErrorDialog(breakpoint, DebugUIMessages.getString("JavaDebugOptionsManager.Conditional_breakpoint_has_compilation_error(s)._2"), status); //$NON-NLS-1$
 	}
 	
-	private void openConditionErrorDialog(final IJavaLineBreakpoint breakpoint, final String title, final String errorMessage, final IStatus status) {
+	private void openConditionErrorDialog(final IJavaLineBreakpoint breakpoint, final String errorMessage, final IStatus status) {
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
 		if (display.isDisposed()) {
 			return;
@@ -739,8 +741,12 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 					return;
 				}
 				Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
-				ConditionalBreakpointErrorDialog dialog= new ConditionalBreakpointErrorDialog(shell, title, message, status, breakpoint);
-				dialog.open();
+				ConditionalBreakpointErrorDialog dialog= new ConditionalBreakpointErrorDialog(shell, message, status);
+				int result = dialog.open();
+				if (result == Dialog.OK) {
+					JavaBreakpointPropertiesDialog breakpointPropertiesDialog = new JavaBreakpointPropertiesDialog(shell, breakpoint);
+					breakpointPropertiesDialog.open();
+				}
 			}
 		});
 	}

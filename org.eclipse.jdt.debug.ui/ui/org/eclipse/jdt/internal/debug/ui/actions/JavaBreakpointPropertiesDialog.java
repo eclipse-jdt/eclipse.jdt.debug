@@ -130,7 +130,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	 */
 	private JavaBreakpointPreferenceStore fJavaBreakpointPreferenceStore;
 	
-	protected JavaBreakpointPropertiesDialog(Shell parentShell, IJavaBreakpoint breakpoint) {
+	public JavaBreakpointPropertiesDialog(Shell parentShell, IJavaBreakpoint breakpoint) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		setBreakpoint(breakpoint);
