@@ -1518,7 +1518,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected void appendThreadFilter(IJavaBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
 		if (breakpoint.getThreadFilters().length != 0) {
 			buffer.append(' ');
-			buffer.append("[filtered]");
+			buffer.append(DebugUIMessages.getString("JDIModelPresentation.thread_filtered")); //$NON-NLS-1$
 		}
 	}
 }
