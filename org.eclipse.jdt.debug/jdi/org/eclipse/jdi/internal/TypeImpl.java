@@ -155,7 +155,19 @@ public abstract class TypeImpl extends AccessibleImpl implements Type {
 	 */
 	public static String classNameToSignature(String name) {
 		// L<classname>;  : fully-qualified-class
-		return 'L' + name.replace('.','/') + ';';
+		StringBuffer signature= new StringBuffer();
+		int length= name.length();
+		if (name.charAt(length - 1) == ']') {
+			// Array type
+			signature.append('[').append('L');
+			signature.append(name.substring(0, length-2).replace('.','/'));
+			signature.append(';');
+		} else {
+			signature.append('L');
+			signature.append(name.replace('.','/'));
+			signature.append(';');
+		}
+		return signature.toString();
 	}
 
 	/**
