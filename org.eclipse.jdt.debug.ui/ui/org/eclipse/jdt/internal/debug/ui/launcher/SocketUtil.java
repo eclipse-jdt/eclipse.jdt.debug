@@ -6,9 +6,11 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  */
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Random;
+
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 public class SocketUtil {
 	private static final Random fgRandom= new Random(System.currentTimeMillis());
@@ -18,7 +20,8 @@ public class SocketUtil {
 			int port= getRandomPort(searchFrom, searchTo);
 			try {
 				new Socket(host, port);
-			} catch (SocketException e) {
+			} catch (ConnectException e) {
+				JDIDebugUIPlugin.logError(e);
 				return port;
 			} catch (IOException e) {
 			}
@@ -29,5 +32,4 @@ public class SocketUtil {
 	private static int getRandomPort(int low, int high) {
 		return (int)(fgRandom.nextFloat()*(high-low))+low;
 	}
-
 }
