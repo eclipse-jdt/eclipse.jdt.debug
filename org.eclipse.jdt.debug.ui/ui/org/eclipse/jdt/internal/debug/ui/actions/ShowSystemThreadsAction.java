@@ -10,16 +10,21 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IViewPart;
 
 /**
  * An action delegate that toggles the state of its viewer to
  * show/hide System Threads.
  */
-public class ShowSystemThreadsAction extends ViewFilterAction {
+public class ShowSystemThreadsAction extends ViewFilterAction implements IDebugEventSetListener {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.ui.actions.ThreadFilterAction#getPreferenceKey()
@@ -41,5 +46,62 @@ public class ShowSystemThreadsAction extends ViewFilterAction {
 			}
 		}
 		return true;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+	 */
+	public void init(IViewPart view) {
+		super.init(view);
+		DebugPlugin.getDefault().addDebugEventListener(this);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		DebugPlugin.getDefault().removeDebugEventListener(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+	 */
+	public void handleDebugEvents(DebugEvent[] events) {
+		if (getValue()) {
+			// if showing system threads, no need to worry about displaying/hinding
+			return;
+		}
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			switch (event.getKind()) {
+				case DebugEvent.SUSPEND:
+					if (event.getDetail() == DebugEvent.BREAKPOINT) {
+						refresh(event.getSource());
+					}
+					break;
+				case DebugEvent.RESUME:
+					if (event.getDetail() == DebugEvent.CLIENT_REQUEST) {
+						refresh(event.getSource());
+					}
+					break;
+			}
+		}
+	}
+	
+	private void refresh(Object source) {
+		if (source instanceof IJavaThread) {
+			final IJavaThread thread = (IJavaThread)source;
+			try {
+				if (thread.isSystemThread()) {
+					Runnable r = new Runnable() {
+						public void run() {
+							getStructuredViewer().refresh();
+						}
+					};
+					JDIDebugUIPlugin.getStandardDisplay().asyncExec(r);
+					return;
+				}
+			} catch (DebugException e) {
+			}
+		}		
 	}
 }
