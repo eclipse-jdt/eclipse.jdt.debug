@@ -83,7 +83,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 
 	private IAction fAction;
 	private IWorkbenchPart fTargetPart;
-	private IEditorPart fTargetEditor;
 	private IWorkbenchWindow fWindow;
 	private Object fSelection;
 	
