@@ -18,11 +18,14 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -38,9 +41,13 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     private TextViewer fTextViewer;
     private Button fTextButton;
     private Button fEvaluationButton;
+    private Button fWrapText;
+    private Group fTextGroup;
     
     private boolean fUseLiteralValue= true;
-    private static final String PREF_USE_EVALUATION = "STRING_VALUE_DIALOG.USE_EVALUATION"; //$NON-NLS-1$
+    private static final String PREF_PREFIX = "STRING_VALUE_DIALOG"; //$NON-NLS-1$
+    private static final String PREF_USE_EVALUATION = PREF_PREFIX + ".USE_EVALUATION"; //$NON-NLS-1$
+    private static final String PREF_WRAP_TEXT = PREF_PREFIX + "STRING_VALUE"; //$NON-NLS-1$
 
     /**
      * @param parentShell
@@ -80,12 +87,15 @@ public class StringValueInputDialog extends ExpressionInputDialog {
      * value.
      */
     private void createTextViewer() {
-        Composite parent= fInputArea;
-        
-        fTextLabel= new Label(parent, SWT.WRAP);
+        fTextLabel= new Label(fInputArea, SWT.WRAP);
         fTextLabel.setText(ActionMessages.getString("StringValueInputDialog.0")); //$NON-NLS-1$
         
-        fTextViewer= new TextViewer(parent, SWT.MULTI | SWT.WRAP | SWT.BORDER);
+        fTextGroup= new Group(fInputArea, SWT.NONE);
+        fTextGroup.setLayout(new GridLayout());
+        fTextGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        Composite parent= fTextGroup; 
+        
+        fTextViewer= new TextViewer(parent, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fTextViewer.setDocument(new Document());
         GridData gridData = new GridData(GridData.FILL_BOTH);
         gridData.widthHint= 300;
@@ -97,6 +107,19 @@ public class StringValueInputDialog extends ExpressionInputDialog {
         } catch (DebugException e) {
             DebugUIPlugin.log(e);
         }
+        fWrapText= new Button(parent, SWT.CHECK);
+        fWrapText.setText(ActionMessages.getString("StringValueInputDialog.4")); //$NON-NLS-1$
+        fWrapText.setSelection(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_WRAP_TEXT));
+        updateWordWrap();
+        fWrapText.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                updateWordWrap();
+            }
+        });
+    }
+    
+    private void updateWordWrap() {
+        fTextViewer.getTextWidget().setWordWrap(fWrapText.getSelection());
     }
 
     /**
@@ -133,16 +156,27 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     }
     
     /**
-     * Disposes of the text viewer and associated label.
+     * Disposes of the text viewer and associated widgets.
      */
     protected void disposeTextViewer() {
+        if (fTextGroup != null) {
+            fTextGroup.dispose();
+            fTextGroup= null;
+        }
         if (fTextLabel != null) {
 		    fTextLabel.dispose();
 		    fTextLabel= null;
         }
         if (fTextViewer != null) {
-            fTextViewer.getTextWidget().dispose();
+            StyledText textWidget = fTextViewer.getTextWidget();
+            if (textWidget != null) {
+                textWidget.dispose();
+            }
             fTextViewer= null;
+        }
+        if (fWrapText != null) {
+            fWrapText.dispose();
+            fWrapText= null;
         }
     }
     
@@ -170,6 +204,7 @@ public class StringValueInputDialog extends ExpressionInputDialog {
     protected void okPressed() {
         IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
         store.setValue(PREF_USE_EVALUATION, fEvaluationButton.getSelection());
+        store.setValue(PREF_WRAP_TEXT, fWrapText.getSelection());
         super.okPressed();
     }
     
