@@ -137,8 +137,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * invocations cannot be performed.
 	 */
 	protected boolean fInEvaluation = false;
-	
-	protected boolean fInvokeToStringFailed= false;
 
 	/**
 	 * Creates a new thread on the underlying thread reference.
@@ -510,14 +508,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * Invoking #toString in the underlying thread has failed.
-	 */
-	protected void invokeToStringFailed() {
-		fInEvaluation = false;
-		fInvokeToStringFailed= true;
-	}
-	
-	/**
 	 * Returns the timeout interval for jdi requests in millieseconds,
 	 * or -1 if not supported
 	 */
@@ -717,7 +707,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		if (!isSuspended()) {
 			return;
 		}
-		resumeIfToStringFailed();
 		try {
 			setRunning(true);
 			fThread.resume();
@@ -787,7 +776,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	
 	protected void step(int type) throws DebugException {
 		try {
-			resumeIfToStringFailed();
 			setRunning(true, DebugEvent.STEP_START);
 			enableStepRequest(type);			
 			fThread.resume();
@@ -798,15 +786,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 	}
 	
-	private void resumeIfToStringFailed() throws DebugException {
-		if (fInvokeToStringFailed) {
-			fInvokeToStringFailed= false;
-			if (fCurrentBreakpoint != null) {
-			//at a breakpoint hit during a toString()
-				resume();
-			} 
-		}
-	}
 	/**
 	 * A step has timed out. Children are disposed.
 	 */
