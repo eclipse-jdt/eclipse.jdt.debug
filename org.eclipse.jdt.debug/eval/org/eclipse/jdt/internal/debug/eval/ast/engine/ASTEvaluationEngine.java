@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
+import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -28,6 +29,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
+import org.eclipse.jdt.internal.compiler.CompilationResult;
 import org.eclipse.jdt.internal.compiler.problem.DefaultProblemFactory;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
@@ -305,6 +307,10 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaObject, IJavaThread)
 	 */
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext) {
+		if (thisContext instanceof IJavaArray) {
+			InstructionSequence errorExpression= new InstructionSequence(snippet);
+			errorExpression.addError(new Message(EvaluationEngineMessages.getString("Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1"), 0)); //$NON-NLS-1$
+		}
 		IJavaProject javaProject = getJavaProject();
 
 		EvaluationSourceGenerator mapper = null;
