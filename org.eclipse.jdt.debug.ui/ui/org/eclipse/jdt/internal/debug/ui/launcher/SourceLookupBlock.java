@@ -52,6 +52,8 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	protected Button fDefaultButton;
 	protected List fActions = new ArrayList(10);
 	
+	protected static final String DIALOG_SETTINGS_PREFIX = "SourceLookupBlock"; //$NON-NLS-1$
+	
 	/**
 	 * Creates and returns the source lookup control.
 	 * 
@@ -124,7 +126,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		action.setButton(button);
 		addAction(action);		
 
-		action = new AddExternalJarAction(null);								
+		action = new AddExternalJarAction(null, DIALOG_SETTINGS_PREFIX);								
 		button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
 		addAction(action);		
@@ -132,7 +134,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		action = new AddFolderAction(null);								
 		advancedActions.add(action);
 
-		action = new AddExternalFolderAction(null);								
+		action = new AddExternalFolderAction(null, DIALOG_SETTINGS_PREFIX);								
 		advancedActions.add(action);		
 
 		action = new AddVariableAction(null);								

@@ -67,6 +67,8 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	protected List fActions = new ArrayList(10);
 	protected Image fImage = null;
 
+	protected static final String DIALOG_SETTINGS_PREFIX = "JavaClasspathTab"; //$NON-NLS-1$
+	
 	/**
 	 * The last launch config this tab was initialized from
 	 */
@@ -167,7 +169,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		action.setButton(button);
 		addAction(action);		
 
-		action = new AddExternalJarAction(null);								
+		action = new AddExternalJarAction(null, DIALOG_SETTINGS_PREFIX);								
 		button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
 		addAction(action);		
@@ -175,7 +177,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		action = new AddFolderAction(null);								
 		advancedActions.add(action);
 
-		action = new AddExternalFolderAction(null);								
+		action = new AddExternalFolderAction(null, DIALOG_SETTINGS_PREFIX);								
 		advancedActions.add(action);		
 
 		action = new AddVariableAction(null);								

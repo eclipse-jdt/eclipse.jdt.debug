@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -17,10 +19,10 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 /**
  * Adds an external folder to the runtime class path.
  */
-public class AddExternalFolderAction extends RuntimeClasspathAction {
+public class AddExternalFolderAction extends OpenDialogAction {
 
-	public AddExternalFolderAction(RuntimeClasspathViewer viewer) {
-		super(ActionMessages.getString("AddExternalFolderAction.Add_External_Folder_1"), viewer); //$NON-NLS-1$
+	public AddExternalFolderAction(RuntimeClasspathViewer viewer, String dialogSettingsPrefix) {
+		super(ActionMessages.getString("AddExternalFolderAction.Add_External_Folder_1"), viewer, dialogSettingsPrefix); //$NON-NLS-1$
 	}	
 
 	/**
@@ -30,7 +32,7 @@ public class AddExternalFolderAction extends RuntimeClasspathAction {
 	 */	
 	public void run() {
 							
-		String lastUsedPath= ""; //$NON-NLS-1$
+		String lastUsedPath= getDialogSetting(LAST_PATH_SETTING);
 		if (lastUsedPath == null) {
 			lastUsedPath= ""; //$NON-NLS-1$
 		}
@@ -47,7 +49,7 @@ public class AddExternalFolderAction extends RuntimeClasspathAction {
 		IPath path= filterPath.append(res).makeAbsolute();	
 		elems[0]= JavaRuntime.newArchiveRuntimeClasspathEntry(path);
 
-		//fDialogSettings.put(IUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
+		setDialogSetting(LAST_PATH_SETTING, filterPath.toOSString());
 		
 		getViewer().addEntries(elems);
 	}

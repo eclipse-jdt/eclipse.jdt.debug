@@ -17,10 +17,10 @@ import org.eclipse.swt.widgets.FileDialog;
 /**
  * Adds an external jar to the runtime class path.
  */
-public class AddExternalJarAction extends RuntimeClasspathAction {
+public class AddExternalJarAction extends OpenDialogAction {
 
-	public AddExternalJarAction(RuntimeClasspathViewer viewer) {
-		super(ActionMessages.getString("AddExternalJar.Add_E&xternal_JARs_1"), viewer); //$NON-NLS-1$
+	public AddExternalJarAction(RuntimeClasspathViewer viewer, String dialogSettingsPrefix) {
+		super(ActionMessages.getString("AddExternalJar.Add_E&xternal_JARs_1"), viewer, dialogSettingsPrefix); //$NON-NLS-1$
 	}	
 
 	/**
@@ -30,7 +30,7 @@ public class AddExternalJarAction extends RuntimeClasspathAction {
 	 */	
 	public void run() {
 							
-		String lastUsedPath= ""; //$NON-NLS-1$
+		String lastUsedPath= getDialogSetting(LAST_PATH_SETTING);
 		if (lastUsedPath == null) {
 			lastUsedPath= ""; //$NON-NLS-1$
 		}
@@ -51,7 +51,7 @@ public class AddExternalJarAction extends RuntimeClasspathAction {
 			IPath path= filterPath.append(fileNames[i]).makeAbsolute();	
 			elems[i]= JavaRuntime.newArchiveRuntimeClasspathEntry(path);
 		}
-		//fDialogSettings.put(IUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
+		setDialogSetting(LAST_PATH_SETTING, filterPath.toOSString());
 		
 		getViewer().addEntries(elems);
 	}

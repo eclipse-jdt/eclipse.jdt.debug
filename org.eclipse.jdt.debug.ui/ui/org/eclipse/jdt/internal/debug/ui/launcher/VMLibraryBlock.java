@@ -58,6 +58,8 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 	protected AddVMDialog fDialog = null;
 	protected boolean fInCallback = false;
 	
+	protected static final String DIALOG_SETTINGS_PREFIX = "VMLibraryBlock"; //$NON-NLS-1$
+	
 	/**
 	 * Constructor for VMLibraryBlock.
 	 */
@@ -119,7 +121,7 @@ public class VMLibraryBlock implements IEntriesChangedListener {
 		action.setButton(button);
 		addAction(action);		
 		
-		action = new AddExternalJarAction(null);								
+		action = new AddExternalJarAction(null, DIALOG_SETTINGS_PREFIX);								
 		button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
 		addAction(action);		
