@@ -175,15 +175,11 @@ public class ScrapbookLauncherDelegate extends JavaApplicationLauncherDelegate i
 	/**
 	 * Creates an "invisible" line breakpoint. 
 	 */
-	IBreakpoint createMagicBreakpoint(String typeName) {
-		try {
-			fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, 49, -1, -1, 0, false, null);
-			fMagicBreakpoint.setPersisted(false);
-			return fMagicBreakpoint;
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		return null;
+	IBreakpoint createMagicBreakpoint(String typeName) throws CoreException{
+	
+		fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, 49, -1, -1, 0, false, null);
+		fMagicBreakpoint.setPersisted(false);
+		return fMagicBreakpoint;
 	}
 		
 	/**
