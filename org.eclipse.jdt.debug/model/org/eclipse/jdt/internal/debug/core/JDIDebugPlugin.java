@@ -25,6 +25,10 @@ public class JDIDebugPlugin extends Plugin {
 	
 	protected JavaHotCodeReplaceManager fJavaHCRMgr;
 	
+	/**
+	 * Return the singleton instance of the JDI Debug Model plug-in.  
+	 * @return the singleton instance of JDIDebugPlugin
+	 */
 	public static JDIDebugPlugin getDefault() {
 		return fgPlugin;
 	}
