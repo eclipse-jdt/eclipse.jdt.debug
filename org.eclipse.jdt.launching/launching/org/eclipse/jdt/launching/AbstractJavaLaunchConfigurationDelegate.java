@@ -899,4 +899,36 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
          }
          return breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
      }
+	
+	/**
+	 * Returns the VM runner for the given launch mode to use when launching the
+	 * given configuration.
+	 *  
+	 * @param configuration launch configuration
+	 * @param mode launch node
+	 * @return VM runner to use when launching the given configuration in the given mode
+	 * @throws CoreException if a VM runner cannot be determined
+	 * @since 3.1
+	 */
+	public IVMRunner getVMRunner(ILaunchConfiguration configuration, String mode) throws CoreException {
+		IVMInstall vm = verifyVMInstall(configuration);
+		IVMRunner runner = vm.getVMRunner(mode);
+		if (runner == null) {
+			abort(MessageFormat.format(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.0"), new String[]{vm.getName(), mode}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST); //$NON-NLS-1$
+		}
+		return runner;
+	}
+	
+	/** 
+	 * Returns an array of environment variables to be used when
+	 * launching the given configuration or <code>null</code> if unspecified.
+	 * 
+	 * @param configuration launch configuration
+	 * @throws CoreException if unable to access associated attribute or if
+	 * unable to resolve a variable in an environment variable's value
+	 * @since 3.1
+	 */	
+	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
+		return DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
+	}
 }

@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
@@ -36,7 +36,7 @@ public class BootpathTests extends AbstractDebugTest {
 	public void testDefaultBootpath() throws Exception {
 		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		
-		JavaLocalApplicationLaunchConfigurationDelegate delegate = new JavaLocalApplicationLaunchConfigurationDelegate();
+		JavaLaunchDelegate delegate = new JavaLaunchDelegate();
 		String[] path = delegate.getBootpath(config);
 		assertNull("Default bootpath should be null", path);
 		String[][] pathInfo= delegate.getBootpathExt(config);
@@ -53,7 +53,7 @@ public class BootpathTests extends AbstractDebugTest {
 		
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 		
-		JavaLocalApplicationLaunchConfigurationDelegate delegate = new JavaLocalApplicationLaunchConfigurationDelegate();
+		JavaLaunchDelegate delegate = new JavaLaunchDelegate();
 		String[] path = delegate.getBootpath(wc);
 		assertNotNull("Empty bootpath should be empty array", path);
 		assertEquals("bootpath should be empty", 0, path.length);
@@ -84,7 +84,7 @@ public class BootpathTests extends AbstractDebugTest {
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
 		
-		JavaLocalApplicationLaunchConfigurationDelegate delegate = new JavaLocalApplicationLaunchConfigurationDelegate();
+		JavaLaunchDelegate delegate = new JavaLaunchDelegate();
 		Map map = delegate.getVMSpecificAttributesMap(wc);
 		assertNotNull("Missing VM specific attributes map", map);
 		String[] prepath = (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND);

@@ -36,19 +36,13 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
-import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.VMRunnerConfiguration;
 
-public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate
-													implements IDebugEventSetListener {
+public class JavaAppletLaunchConfigurationDelegate extends JavaLaunchDelegate implements IDebugEventSetListener {
 		
 	/**
 	 * Mapping of ILaunch objects to File objects that represent the .html file
@@ -57,91 +51,23 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 	 */
 	private static Map fgLaunchToFileMap = new HashMap();
 	
+	/**
+	 * Used to map temp file to launch obejct.
+	 */
+	private ILaunch fLaunch;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-			
-		if (configuration == null) {
-			abort(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.No_launch_configuration_specified_1"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_LAUNCH_CONFIG); //$NON-NLS-1$
-		}
-		
-		monitor.beginTask(MessageFormat.format(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Starting_Applet_{0}..._1"), new String[]{configuration.getName()}), 3); //$NON-NLS-1$
-		monitor.subTask(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Verifying_launch_attributes..._1")); //$NON-NLS-1$
-		
-		verifyMainTypeName(configuration);
-
-		IVMInstall vm = verifyVMInstall(configuration);
-
-		IVMRunner runner = vm.getVMRunner(mode);
-		if (runner == null) {
-			if (mode == ILaunchManager.DEBUG_MODE) {
-				abort(MessageFormat.format(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.0"), new String[]{vm.getName()}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST);  //$NON-NLS-1$
-			} else {
-				abort(MessageFormat.format(LaunchingMessages.getString("JavaLocalApplicationLaunchConfigurationDelegate.1"), new String[]{vm.getName()}), null, IJavaLaunchConfigurationConstants.ERR_VM_RUNNER_DOES_NOT_EXIST);  //$NON-NLS-1$
-			}
-		}
-
-		File workingDir = verifyWorkingDirectory(configuration);
-		String workingDirName = workingDir.getAbsolutePath();
-		
-		// Program & VM args
-		String javaPolicy = getJavaPolicyFile(workingDir);
-		ExecutionArguments execArgs = new ExecutionArguments(getVMArguments(configuration), ""); //$NON-NLS-1$
-		// Classpath
-		String[] classpath = getClasspath(configuration);
-		
-		// Create VM config
-		String appletViewerClassName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
-		VMRunnerConfiguration runConfig = new VMRunnerConfiguration(appletViewerClassName, classpath);
-		
-		// Construct the HTML file and set its name as a program argument
-		File htmlFile = buildHTMLFile(configuration, workingDir);
-		if (htmlFile == null) {
-			abort(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Could_not_build_HTML_file_for_applet_launch_1"), null, IJavaLaunchConfigurationConstants.ERR_COULD_NOT_BUILD_HTML); //$NON-NLS-1$
-		}			
-		runConfig.setProgramArguments(new String[] {htmlFile.getName()});
-		
-		// Retrieve & set the VM arguments
-		String[] vmArgs = execArgs.getVMArgumentsArray();
-		String[] realArgs = new String[vmArgs.length+1];
-		System.arraycopy(vmArgs, 0, realArgs, 1, vmArgs.length);
-		realArgs[0] = javaPolicy;
-		runConfig.setVMArguments(realArgs);
-		
-		runConfig.setWorkingDirectory(workingDirName);
-
-		// Bootpath
-		runConfig.setBootClassPath(getBootpath(configuration));
-		
-		// VM-specific attributes
-		Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
-		runConfig.setVMSpecificAttributesMap(vmAttributesMap);
-		
-		monitor.worked(1);
-		
-		// Add a debug listener if necessary 
-		if (fgLaunchToFileMap.isEmpty()) {
-			DebugPlugin.getDefault().addDebugEventListener(this);
-		}
-		
-		// Add a mapping of the launch to the html file 
-		fgLaunchToFileMap.put(launch, htmlFile);
-		
-		monitor.subTask(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Creating_source_locator..._2")); //$NON-NLS-1$
-		// Set default source locator if none specified
-		setDefaultSourceLocator(launch, configuration);
-		monitor.worked(1);		
-
-		// Launch the configuration
+	public synchronized void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		try {
-			runner.run(runConfig, launch, monitor);		
-		} catch (CoreException ce) {
-			htmlFile.delete();
-			throw ce;
+			fLaunch = launch;
+			super.launch(configuration, mode, launch, monitor);
+		} catch (CoreException e) {
+			cleanup(launch);
+			throw e;
 		}
-		
-		monitor.done();
+		fLaunch = null;
 	}
 
 	/**
@@ -184,7 +110,7 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		FileWriter writer = null;
 		File tempFile = null;
 		try {
-			String name = getMainTypeName(configuration);
+			String name = getAppletMainTypeName(configuration);
 			tempFile = new File(dir, name + System.currentTimeMillis() + ".html"); //$NON-NLS-1$ //$NON-NLS-2$
 			writer = new FileWriter(tempFile);
 			writer.write("<html>\n"); //$NON-NLS-1$
@@ -257,21 +183,32 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 							IDebugTarget debugTarget = (IDebugTarget) eventSource;
 							launch = debugTarget.getLaunch();
 						}
-						File temp = (File) fgLaunchToFileMap.get(launch);
-						if (temp != null) {
-							try {
-								fgLaunchToFileMap.remove(launch);
-								temp.delete();
-							} finally {
-								if (fgLaunchToFileMap.isEmpty()) {
-									DebugPlugin.getDefault().removeDebugEventListener(this);
-								}
-							}
+						if (launch != null) {
+							cleanup(launch);
 						}
 					}
 					break;
 			}
 		}
+	}
+	
+	/**
+	 * Cleans up event listener and temp file for the launch.
+	 * 
+	 * @param launch
+	 */
+	private void cleanup(ILaunch launch) {
+		File temp = (File) fgLaunchToFileMap.get(launch);
+		if (temp != null) {
+			try {
+				fgLaunchToFileMap.remove(launch);
+				temp.delete();
+			} finally {
+				if (fgLaunchToFileMap.isEmpty()) {
+					DebugPlugin.getDefault().removeDebugEventListener(this);
+				}
+			}
+		}		
 	}
 
 	/**
@@ -389,4 +326,52 @@ public class JavaAppletLaunchConfigurationDelegate extends AbstractJavaLaunchCon
 		return null;		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
+		File workingDir = verifyWorkingDirectory(configuration);
+		// Construct the HTML file and set its name as a program argument
+		File htmlFile = buildHTMLFile(configuration, workingDir);
+		if (htmlFile == null) {
+			abort(LaunchingMessages.getString("JavaAppletLaunchConfigurationDelegate.Could_not_build_HTML_file_for_applet_launch_1"), null, IJavaLaunchConfigurationConstants.ERR_COULD_NOT_BUILD_HTML); //$NON-NLS-1$
+		}			
+		// Add a debug listener if necessary 
+		if (fgLaunchToFileMap.isEmpty()) {
+			DebugPlugin.getDefault().addDebugEventListener(this);
+		}
+		// Add a mapping of the launch to the html file 
+		fgLaunchToFileMap.put(fLaunch, htmlFile);		
+		return htmlFile.getName();		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getVMArguments(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public String getVMArguments(ILaunchConfiguration configuration) throws CoreException {
+		StringBuffer arguments = new StringBuffer(super.getVMArguments(configuration));
+		File workingDir = verifyWorkingDirectory(configuration);
+		String javaPolicyFile = getJavaPolicyFile(workingDir);
+		arguments.append(" "); //$NON-NLS-1$
+		arguments.append(javaPolicyFile);
+		return arguments.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getMainTypeName(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public String getMainTypeName(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, IJavaLaunchConfigurationConstants.DEFAULT_APPLETVIEWER_CLASS);
+	}
+
+	/**
+	 * Returns the applet's main type name.
+	 * 
+	 * @param configuration
+	 * @return
+	 * @throws CoreException
+	 */
+	protected String getAppletMainTypeName(ILaunchConfiguration configuration) throws CoreException {
+		return super.getMainTypeName(configuration);
+	}
 }

@@ -45,7 +45,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             name="%localJavaApplication"
-            delegate="org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate"
+            delegate="org.eclipse.jdt.launching.JavaLaunchDelegate"
             modes="run, debug"
             id="org.eclipse.jdt.launching.localJavaApplication"
             sourceLocatorId="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"

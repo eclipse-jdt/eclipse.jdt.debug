@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -27,8 +28,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.JavaLaunchDelegate;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -652,7 +653,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "${resource_name}");
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, "${project_loc}");
 		
-		JavaLocalApplicationLaunchConfigurationDelegate delegate = new JavaLocalApplicationLaunchConfigurationDelegate();
+		JavaLaunchDelegate delegate = new JavaLaunchDelegate();
 		
 		assertEquals(resource.getProject().getName(), delegate.getProgramArguments(wc));
 		assertEquals(resource.getName(), delegate.getVMArguments(wc));
