@@ -33,6 +33,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	 */
 	public static void setDelegate(IConsoleLineTrackerExtension tracker) {
 		fDelegate = tracker;
+		fConsole = null;
 	}
 
 	/**
@@ -42,6 +43,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 		if (fDelegate != null) {
 			fDelegate.dispose();
 		}
+		fConsole = null;
 	}
 
 	/**
@@ -71,7 +73,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#streamClosed()
 	 */
 	public void consoleClosed() {
-		if (fDelegate != null) {
+		if (fDelegate != null && fConsole != null) {
 			fDelegate.consoleClosed();
 		}		
 	}
