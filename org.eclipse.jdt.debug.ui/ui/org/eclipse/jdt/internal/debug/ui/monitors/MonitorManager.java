@@ -266,9 +266,7 @@ public class MonitorManager {
 			IJavaThread thread;
 			for (int i = 0; i < threadResult.length; i++) {
 				thread = (IJavaThread)threadResult[i];
-				if(!thread.isSystemThread()){
-					threadsList.add(thread);
-				}
+				threadsList.add(thread);
 			}
 			IJavaThread[] threads= (IJavaThread[]) threadsList.toArray(new IJavaThread[threadsList.size()]);
 			

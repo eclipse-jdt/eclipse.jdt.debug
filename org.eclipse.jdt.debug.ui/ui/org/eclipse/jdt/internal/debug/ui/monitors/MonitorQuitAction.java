@@ -37,12 +37,10 @@ public class MonitorQuitAction extends MonitorAction {
 			
 			for (int i = 0; i < threads.length; i++) {
 				IJavaThread thread = (IJavaThread)threads[i];
-				if(!thread.isSystemThread()){
-					if (thread.isSuspended()) {
-						thread.resume();
-						while (thread.isSuspended()) {
-							Thread.sleep(100);
-						}
+				if (thread.isSuspended()) {
+					thread.resume();
+					while (thread.isSuspended()) {
+						Thread.sleep(100);
 					}
 				}
 			}
