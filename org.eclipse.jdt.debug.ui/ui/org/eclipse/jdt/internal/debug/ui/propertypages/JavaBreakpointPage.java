@@ -321,7 +321,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 		layout.marginWidth= 0;
 		layout.marginHeight= 0;
 		composit.setLayout(layout);
-		composit.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composit.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return composit;
 	}
 
