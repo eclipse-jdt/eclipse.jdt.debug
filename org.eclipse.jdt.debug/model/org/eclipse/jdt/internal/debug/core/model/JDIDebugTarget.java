@@ -234,7 +234,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		setSupportsDisconnect(supportDisconnect);
 		setVM(jvm);
 		jvm.setDebugTraceMode(VirtualMachine.TRACE_NONE);
-		jvm.setDefaultStratum("Java");
+		jvm.setDefaultStratum("Java"); //$NON-NLS-1$
 		setProcess(process);
 		setTerminated(false);
 		setTerminating(false);

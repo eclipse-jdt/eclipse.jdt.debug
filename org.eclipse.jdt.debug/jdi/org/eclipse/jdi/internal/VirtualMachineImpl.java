@@ -1171,7 +1171,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			return;
 		}
 		if (stratum == null) {
-			stratum= "";
+			stratum= ""; //$NON-NLS-1$
 		}
 		initJdwpRequest();
 		try {

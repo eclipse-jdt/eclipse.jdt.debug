@@ -84,7 +84,7 @@ public class DirectorySourceLocation extends PlatformObject implements IJavaSour
 			boolean possibleInnerType = false;
 			String typeName = pathStr;
 			do {
-				IPath filePath = root.append(new Path(typeName + ".java"));
+				IPath filePath = root.append(new Path(typeName + ".java")); //$NON-NLS-1$
 				File file = filePath.toFile();
 				if (file.exists()) {
 					return new LocalFileStorage(file);

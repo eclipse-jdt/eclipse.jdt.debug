@@ -148,7 +148,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			int lastSlash = pathStr.lastIndexOf('/');
 			String typeName = pathStr;
 			do {
-				IPath entryPath = new Path(typeName + ".java");
+				IPath entryPath = new Path(typeName + ".java"); //$NON-NLS-1$
 				autoDetectRoot(entryPath);
 				if (getRootPath() != null) {
 					entryPath = getRootPath().append(entryPath);

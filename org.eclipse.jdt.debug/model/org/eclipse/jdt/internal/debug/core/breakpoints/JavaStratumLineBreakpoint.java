@@ -41,10 +41,10 @@ import com.sun.jdi.VirtualMachine;
  */
 // TODO: review the javadoc
 public class JavaStratumLineBreakpoint extends JavaLineBreakpoint implements IJavaStratumLineBreakpoint {
-	private static final String PATTERN= "org.eclipse.jdt.debug.pattern";
-	private static final String STRATUM= "org.eclipse.jdt.debug.stratum";
-	private static final String SOURCE_PATH= "org.eclipse.jdt.debug.source_path";
-	private static final String STRATUM_BREAKPOINT= "org.eclipse.jdt.debug.javaStratumLineBreakpointMarker";
+	private static final String PATTERN= "org.eclipse.jdt.debug.pattern"; //$NON-NLS-1$
+	private static final String STRATUM= "org.eclipse.jdt.debug.stratum"; //$NON-NLS-1$
+	private static final String SOURCE_PATH= "org.eclipse.jdt.debug.source_path"; //$NON-NLS-1$
+	private static final String STRATUM_BREAKPOINT= "org.eclipse.jdt.debug.javaStratumLineBreakpointMarker"; //$NON-NLS-1$
 
 	public JavaStratumLineBreakpoint() {
 	}
