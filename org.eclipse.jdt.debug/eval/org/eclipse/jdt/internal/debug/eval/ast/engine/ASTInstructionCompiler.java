@@ -140,6 +140,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushThis;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushType;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RemainderAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RemainderOperator;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.ReturnInstruction;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RightShiftAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RightShiftOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.SendMessage;
@@ -782,7 +783,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(ReturnStatement)
 	 */
 	public void endVisit(ReturnStatement node) {
-
+		if (!isActive() || hasErrors())
+			return;
+		storeInstruction();	
 	}
 
 	/**
@@ -2004,6 +2007,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
+		push(new ReturnInstruction(fCounter));
 		return true;
 	}
 

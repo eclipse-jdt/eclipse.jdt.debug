@@ -34,6 +34,10 @@ public abstract class Instruction {
 		fInterpreter.setLastValue(value);
 	}
 	
+	public void stop() {
+		fInterpreter.stop();
+	}
+	
 	public static int getBinaryPromotionType(int left, int right) {
 		return fTypeTable[left][right];
 	}	
