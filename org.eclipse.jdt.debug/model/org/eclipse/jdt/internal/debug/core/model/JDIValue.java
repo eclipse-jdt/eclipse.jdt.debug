@@ -200,7 +200,11 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				fVariables= new ArrayList();
 				if (isArray()) {
 					int length= getArrayLength();
-					fVariables= JDIArrayPartition.splitArray((JDIDebugTarget)getDebugTarget(), (ArrayReference)object, 0, length - 1);
+					ArrayList list = new ArrayList(length);
+					for (int i = 0; i < length; i++) {
+						list.add(new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), i));
+					}
+					fVariables= list;
 				} else {		
 					List fields= null;
 					try {

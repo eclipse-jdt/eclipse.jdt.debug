@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.ui.DefaultObjectBrowser;
+import org.eclipse.debug.internal.ui.views.variables.DefaultObjectBrowser;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaInterfaceType;
 import org.eclipse.jdt.debug.core.IJavaType;

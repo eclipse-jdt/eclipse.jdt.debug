@@ -12,6 +12,7 @@ package org.eclipse.jdt.debug.core;
 
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IIndexedValue;
 
 /**
  * A value referencing an array on a target VM.
@@ -22,7 +23,7 @@ import org.eclipse.debug.core.DebugException;
  * @since 2.0
  */
 
-public interface IJavaArray extends IJavaObject {
+public interface IJavaArray extends IJavaObject, IIndexedValue {
 	
 	/**
 	 * Returns the values contained in this array.

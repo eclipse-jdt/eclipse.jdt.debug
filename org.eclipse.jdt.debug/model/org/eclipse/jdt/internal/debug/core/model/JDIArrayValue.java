@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IIndexedValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
@@ -24,7 +26,7 @@ import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.Value;
 
-public class JDIArrayValue extends JDIObjectValue implements IJavaArray {
+public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexedValue{
 
 	/**
 	 * Constructs a value which is a reference to an array.
@@ -145,6 +147,20 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray {
 		// an exception will be thrown
 		return null;
 	}	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IIndexedValue#getSize()
+	 */
+	public int getSize() throws DebugException {
+		return getLength();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariable(int)
+	 */
+	public IVariable getVariable(int offset) throws DebugException {
+		return new JDIArrayEntryVariable(getJavaDebugTarget(), getArrayReference(), offset);
+	}
 
 }
 
