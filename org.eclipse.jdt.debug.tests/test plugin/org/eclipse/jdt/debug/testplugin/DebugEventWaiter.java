@@ -19,8 +19,8 @@ import org.eclipse.debug.core.IDebugEventSetListener;
  * to wait for a specific kind of debug event.
  * <p>
  * When a <code>DebugEventWaiter</code> is created, it
- * registers itself with the <code>IDebugModelManager</code> as
- * a <code>IDebugModelEventListener</code>.
+ * registers itself with the <code>DebugPlugin</code> as
+ * a <code>IDebugEventSetListener</code>.
  * <p>
  * NOTE: <code>DebugEventWaiter</code> objects are intended for
  * one time use only!
