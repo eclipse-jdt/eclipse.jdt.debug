@@ -50,7 +50,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 	public static final int VIEW_ID_MONITOR = 2;
 	public static final int VIEW_ID_DEADLOCK = 3;
 	
-	private int fViewId;
+	private int fViewId = VIEW_ID_MONITOR;
 	
 	private Viewer fDeadLocksViewer;
 	private Viewer fMonitorsViewer;
@@ -342,7 +342,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 				page.setRedraw(true);				
 				break;
 		}
-		if (showPage | changeFromShowMessagePage) {
+		if ((showPage | changeFromShowMessagePage) && page != null) {
 			getPageBook().showPage(page);
 		}
 		updateObjects();
