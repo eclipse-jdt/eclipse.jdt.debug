@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.monitors;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.ui.JavaDebugUtils;
-import org.eclipse.ui.progress.IElementCollector;
 
 /**
  * Generates monitor information as well as stack frames
@@ -68,34 +66,6 @@ public class DeferredJavaThread extends DeferredMonitorElement {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
-        IJavaThread thread = (IJavaThread) object;
-        if (thread.isSuspended()) {
-            if (isDisplayMonitors()) {
-            	if (((IJavaDebugTarget) thread.getDebugTarget()).supportsMonitorInformation()) {
-    				IDebugElement[] ownedMonitors= JavaDebugUtils.getOwnedMonitors(thread);
-    				if (ownedMonitors.length > 0) {
-    				    collector.add(ownedMonitors, monitor);
-    				}
-    				IDebugElement contendedMonitor= JavaDebugUtils.getContendedMonitor(thread);
-    				if (contendedMonitor != null) {
-    				    collector.add(contendedMonitor, monitor);
-    				}
-            	} else {
-            		collector.add(new NoMonitorInformationElement(thread.getDebugTarget()), monitor);
-            	}
-            }
-    		try {
-                collector.add(thread.getStackFrames(), monitor);
-            } catch (DebugException e) {
-            }
-        }
-        collector.done();
-    }
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
