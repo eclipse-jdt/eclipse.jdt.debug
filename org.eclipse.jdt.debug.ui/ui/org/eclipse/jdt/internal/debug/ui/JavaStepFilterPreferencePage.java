@@ -96,6 +96,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	public JavaStepFilterPreferencePage() {
 		super();
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
+		setDescription(DebugUIMessages.getString("JavaStepFilterPreferencePage.description"));
 	}
 
 	protected Control createContents(Composite parent) {
@@ -165,10 +166,8 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 	 * Create a group to contain the step filter related widgetry
 	 */
 	private void createStepFilterPreferences(Composite parent) {
-		Composite comp = createLabelledComposite(parent, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Step_filters_6")); //$NON-NLS-1$
-		
 		// top level container
-		Composite container = new Composite(comp, SWT.NONE);
+		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 0;

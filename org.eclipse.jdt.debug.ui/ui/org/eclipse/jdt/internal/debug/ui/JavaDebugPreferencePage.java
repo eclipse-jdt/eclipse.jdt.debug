@@ -101,6 +101,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		super();
 		setPreferenceStore(JDIDebugUIPlugin.getDefault().getPreferenceStore());
 		getPreferenceStore().addPropertyChangeListener(getPropertyChangeListener());
+		setDescription(DebugUIMessages.getString("JavaDebugPreferencePage.description"));
 	}
 	
 	/**
