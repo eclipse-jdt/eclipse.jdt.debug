@@ -216,6 +216,10 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			for (int i = 0; i < problems.length; i++) {
 				IProblem problem= problems[i];
 				int errorOffset= problem.getSourceStart();
+				if (problem.getID() == IProblem.IsClassPathCorrect) {
+					errorSequence.addError(problem.getMessage());
+					snippetError = true;
+				}
 				if (problem.isError() && problem.getID() != IProblem.VoidMethodReturnsValue) {
 					if (codeSnippetStart <= errorOffset && errorOffset <= codeSnippetEnd) {
 						errorSequence.addError(problem.getMessage());
