@@ -59,7 +59,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	public JDIDebugUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		setDefault(this);
-		fImageDescriptorRegistry= new ImageDescriptorRegistry();
 	}
 	
 	/**
@@ -191,6 +190,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);		
+		
+		getStandardDisplay().getDefault().asyncExec(
+			new Runnable() {
+				public void run() {
+					createImageRegistry();
+				}
+			});		
 	}
 	
 	public void shutdown() throws CoreException {
@@ -280,6 +286,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	 * Returns the image descriptor registry used for this plugin.
 	 */
 	public static ImageDescriptorRegistry getImageDescriptorRegistry() {
+		if (getDefault().fImageDescriptorRegistry == null) {
+			getDefault().fImageDescriptorRegistry = new ImageDescriptorRegistry();
+		}
 		return getDefault().fImageDescriptorRegistry;
 	}
 	
