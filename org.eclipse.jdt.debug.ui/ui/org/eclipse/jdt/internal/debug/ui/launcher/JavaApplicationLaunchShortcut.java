@@ -31,10 +31,12 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -186,19 +188,33 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 	 */
 	protected ILaunchConfiguration createConfiguration(IType type) {
 		ILaunchConfiguration config = null;
+		ILaunchConfigurationWorkingCopy wc = null;
 		try {
 			ILaunchConfigurationType configType = getJavaLaunchConfigType();
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(type.getElementName())); 
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
-			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
-			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
-			wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
+			wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(type.getElementName()));
+		} catch (CoreException exception) {
+			reportCreatingConfiguration(exception);
+			return null;		
+		} 
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
+		wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
+		wc.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
+		wc.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
+		try {
 			config = wc.doSave();		
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);			
+		} catch (CoreException exception) {
+			reportCreatingConfiguration(exception);			
 		}
 		return config;
+	}
+	
+	protected void reportCreatingConfiguration(final CoreException exception) {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				ErrorDialog.openError(getShell(), "Error Launching", "An exception occurred attempting to create launch configuration", exception.getStatus()); //new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, exception.getMessage(), exception));
+			}
+		});
 	}
 	
 	/**
