@@ -88,7 +88,6 @@ public class JavaDebugImages {
 	private static final String T_EVIEW= "eview16"; 	//$NON-NLS-1$
 	private static final String T_DTOOL= "dtool16"; 	//$NON-NLS-1$
 	private static final String T_ETOOL= "etool16"; 	//$NON-NLS-1$
-	private static final String T_ELCL= "elcl16"; //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION= createManaged(T_OBJ, IMG_OBJS_EXCEPTION);
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION_DISABLED= createManaged(T_OBJ, IMG_OBJS_EXCEPTION_DISABLED);
