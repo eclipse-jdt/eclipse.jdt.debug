@@ -97,11 +97,6 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	}
 	
 	/**
-	 * @return Returns modifier bits.
-	 */
-	public abstract int modifiers();
-
-	/**
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
