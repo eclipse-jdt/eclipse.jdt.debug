@@ -177,30 +177,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 	
 	/**
-	 * Returns the "toString" of the given value
-	 * 
-	 * @see IDebugModelPresentation#getDetail(IValue)
-	 */
-	/*
-	public String getDetail(IValue v) {
-		if (v instanceof IJavaValue) {
-			// get a thread for an evaluation
-			IJavaValue value = (IJavaValue)v;
-			IJavaThread thread = getEvaluationThread((IJavaDebugTarget)value.getDebugTarget());
-			if (thread != null) {
-				try {
-					return evaluateToString(value, thread);
-				} catch (DebugException e) {
-					// return the exception's message
-					return e.getStatus().getMessage();
-				}
-			}
-		}
-		return null;
-	}
-	*/
-	
-	/**
 	 * Returns a thread from the specified VM that can be
 	 * used for an evaluationm or <code>null</code> if
 	 * none.
@@ -225,67 +201,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		return null;
 	}
-	
-	/**
-	 * Returns the result of sending 'toString' to the given
-	 * value (unless the value is null or is a primitive). If the
-	 * evaluation takes > 3 seconds, this method returns.
-	 * 
-	 * @param value the value to send the message 'toString'
-	 * @param thread the thread in which to perform the message
-	 *  send
-	 * @return the result of sending 'toString', as a String
-	 * @exception DebugException if thrown by a model element
-	 */
-	/*
-	protected synchronized String evaluateToString(final IJavaValue value, final IJavaThread thread) throws DebugException {
-		if (value == null) {
-			return "null";
-		}
-		final IJavaObject object;
-		if (value instanceof IJavaObject) {
-			object = (IJavaObject)value;
-		} else {
-			object = null;
-		}
-		if (object == null || !thread.isSuspended()) {
-			// primitive or thread is no longer suspended
-			return value.getValueString();
-		}
-		
-		final IJavaValue[] toString = new IJavaValue[1];
-		final DebugException[] ex = new DebugException[1];
-		Runnable eval= new Runnable() {
-			public void run() {
-				try {
-					toString[0] = object.sendMessage(JDIModelPresentation.fgToString, JDIModelPresentation.fgToStringSignature, null, thread, false);
-				} catch (DebugException e) {
-					ex[0]= e;
-				}					
-				synchronized (JDIModelPresentation.this) {
-					JDIModelPresentation.this.notifyAll();
-				}
-			}
-		};
-		
-		Thread evalThread = new Thread(eval);
-		evalThread.start();
-		try {
-			wait(3000);
-		} catch (InterruptedException e) {
-		}
-		
-		if (ex[0] != null) {
-			throw ex[0];
-		}
-		
-		if (toString[0] != null) {
-			return toString[0].getValueString();
-		}	
-		
-		return "Error: timeout evaluating #toString()";
-	}
-	*/
 			
 	/**
 	 * @see IDebugModelPresentation#getText(Object)
@@ -349,6 +264,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e.getStatus());
 			return DebugUIMessages.getString("JDIModelPresentation.<not_responding>_6"); //$NON-NLS-1$
 		}
 		return null;
@@ -743,6 +659,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getDebugElementImage(item);
 			}
 		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e.getStatus());
 		}
 		return null;
 	}
@@ -883,7 +800,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					return JDIImageDescriptor.MAY_BE_OUT_OF_SYNCH;
 				}
 			}
-		} catch (DebugException exception) {
+		} catch (DebugException e) {
+			JDIDebugUIPlugin.log(e.getStatus());
 		}
 		return 0;
 	}
@@ -928,6 +846,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				if (javaVariable.isPrivate())
 					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PRIVATE);
 			} catch (DebugException e) {
+				JDIDebugUIPlugin.logError(e);
 			}
 		}
 		return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_DEFAULT);
@@ -946,6 +865,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		} catch(DebugException e) {
+			JDIDebugUIPlugin.logError(e);
 			// fall through
 		}
 		return flags;
@@ -970,6 +890,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			return EditorUtility.getEditorInput(item);
 		} catch (CoreException e) {
+			JDIDebugUIPlugin.logError(e);
 			return null;
 		}
 	}
@@ -1475,6 +1396,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				String result= value.getValueString();
 				fResultBuffer.append(result);
 			} catch (DebugException de) {
+				JDIDebugUIPlugin.logError(de);
 				fResultBuffer.append(de.getStatus().getMessage());
 			}
 		}
@@ -1488,6 +1410,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					appendJDIValueString(toStringValue);
 				}
 			} catch (DebugException de) {
+				JDIDebugUIPlugin.logError(de);
 				fResultBuffer.append(de.getStatus().getMessage());
 			}
 		}
@@ -1498,6 +1421,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			try {
 				arrayValues = arrayValue.getValues();
 			} catch (DebugException de) {
+				JDIDebugUIPlugin.logError(de);
 				fResultBuffer.append(de.getStatus().getMessage());
 				return;
 			}
