@@ -8,8 +8,8 @@ import org.eclipse.jdt.core.IJavaProject;
  */
 
 /**
- * A VM install changed listener is notified when the VM install attribute 
- * changes, or when the workspace default VM install changes.
+ * A VM install changed listener is notified 
+ * the workspace default VM install changes.
  * Listeners register with <code>JavaRuntime</code>.
  * <p>
  * Clients may implement this interface.

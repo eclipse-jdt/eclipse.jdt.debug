@@ -1527,11 +1527,4 @@ public final class JavaRuntime {
 		}
 	}
 	
-	private static void notifyProjectVMChanged(IJavaProject project, IVMInstall previous, IVMInstall current) {
-		Object[] listeners = fgVMListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
-			listener.projectVMInstallChanged(project, previous, current);
-		}
-	}	
 }
