@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -125,20 +124,20 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 				SubElement subElement= (SubElement) element;
 				StringBuffer text= new StringBuffer();
 				if (subElement.getType() == SubElement.SOURCE_PATH) {
-					text.append("Source attachment: ");
+					text.append(JREMessages.getString("VMLibraryBlock.0")); //$NON-NLS-1$
 					IPath systemLibrarySourcePath= subElement.getParent().getSystemLibrarySourcePath();
 					if (systemLibrarySourcePath != null && !Path.EMPTY.equals(systemLibrarySourcePath)) {
 						text.append(systemLibrarySourcePath.toOSString());
 					} else {
-						text.append("(none)");
+						text.append(JREMessages.getString("VMLibraryBlock.1")); //$NON-NLS-1$
 					}
 				} else {
-					text.append("Javadoc location: ");
+					text.append(JREMessages.getString("VMLibraryBlock.2")); //$NON-NLS-1$
 					URL javadocLocation= subElement.getParent().getJavadocLocation();
 					if (javadocLocation != null) {
 						text.append(javadocLocation.toExternalForm());
 					} else {
-						text.append("(none)");
+						text.append(JREMessages.getString("VMLibraryBlock.1")); //$NON-NLS-1$
 					}
 				}
 				return text.toString();
@@ -431,19 +430,19 @@ public class VMLibraryBlock implements SelectionListener, ISelectionChangedListe
 		pathButtonComp.setLayoutData(gd);
 		pathButtonComp.setFont(font);
 		
-		fUpButton= createPushButton(pathButtonComp, "U&p");
+		fUpButton= createPushButton(pathButtonComp, JREMessages.getString("VMLibraryBlock.4")); //$NON-NLS-1$
 		fUpButton.addSelectionListener(this);
 		
-		fDownButton= createPushButton(pathButtonComp, "&Down");
+		fDownButton= createPushButton(pathButtonComp, JREMessages.getString("VMLibraryBlock.5")); //$NON-NLS-1$
 		fDownButton.addSelectionListener(this);
 
-		fRemoveButton= createPushButton(pathButtonComp, "Re&move");
+		fRemoveButton= createPushButton(pathButtonComp, JREMessages.getString("VMLibraryBlock.6")); //$NON-NLS-1$
 		fRemoveButton.addSelectionListener(this);
 
-		fAddButton= createPushButton(pathButtonComp, "Add E&xternal JARs...");
+		fAddButton= createPushButton(pathButtonComp, JREMessages.getString("VMLibraryBlock.7")); //$NON-NLS-1$
 		fAddButton.addSelectionListener(this);
 		
-		fEditButton= createPushButton(pathButtonComp, "Ed&it");
+		fEditButton= createPushButton(pathButtonComp, JREMessages.getString("VMLibraryBlock.8")); //$NON-NLS-1$
 		fEditButton.addSelectionListener(this);
 
 		return comp;
