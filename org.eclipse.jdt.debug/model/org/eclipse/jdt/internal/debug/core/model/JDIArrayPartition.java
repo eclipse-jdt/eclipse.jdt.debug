@@ -90,11 +90,11 @@ public class JDIArrayPartition extends JDIVariable {
 		return children;
 	}
 	
-	protected int getStart() {
+	public int getStart() {
 		return fStart;
 	}
 	
-	protected int getEnd() {
+	public int getEnd() {
 		return fEnd;
 	}	
 
