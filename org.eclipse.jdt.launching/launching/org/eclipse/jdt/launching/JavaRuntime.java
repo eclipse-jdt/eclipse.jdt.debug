@@ -689,12 +689,19 @@ public final class JavaRuntime {
 				IResource resource = entry.getResource();
 				if (resource instanceof IProject) {
 					IJavaProject project = JavaCore.create((IProject)resource);
-					if (project.exists() && project.isOpen()) {
-						IRuntimeClasspathEntry[] entries = resolveOutputLocations(project);
-						if (entries != null) {
-							return entries;
-						}
+					if (project == null || !project.exists()) { 
+						abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_project__{0}_1"), new String[]{entry.getPath().lastSegment()}), null); //$NON-NLS-1$
 					}
+					if (!project.isOpen()) {
+						abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_closed_project__{0}_2"), new String[]{entry.getPath().lastSegment()}), null); //$NON-NLS-1$
+					}
+					IRuntimeClasspathEntry[] entries = resolveOutputLocations(project);
+					if (entries != null) {
+						return entries;
+					}
+				} else {
+					// could not resolve project
+					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_project__{0}_3"), new String[]{entry.getPath().lastSegment()}), null); //$NON-NLS-1$
 				}
 				break;
 			case IRuntimeClasspathEntry.VARIABLE:
@@ -712,6 +719,17 @@ public final class JavaRuntime {
 				} else {
 					return resolver.resolveRuntimeClasspathEntry(entry, configuration);
 				}
+			case IRuntimeClasspathEntry.ARCHIVE:
+				// verify the archive exists
+				String location = entry.getLocation();
+				if (location == null) {
+					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_archive__{0}_4"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
+				}
+				File file = new File(location);
+				if (!file.exists()) {
+					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Classpath_references_non-existant_archive__{0}_5"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
+				}
+				break;
 			default:
 				break;
 		}
@@ -1012,12 +1030,17 @@ public final class JavaRuntime {
 		IPath projectPath = projectEntry.getPath();
 		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(projectPath.lastSegment());
 		if (res == null) {
+			// add project entry and return
+			expandedPath.add(projectEntry);
 			return;
 		}
 		IJavaProject project = (IJavaProject)JavaCore.create(res);
-		if (project == null) {
+		if (project == null || !project.exists() || !project.isOpen()) {
+			// add project entry and return
+			expandedPath.add(projectEntry);
 			return;
 		}
+		
 		IClasspathEntry[] buildPath = project.getRawClasspath();
 		List unexpandedPath = new ArrayList(buildPath.length);
 		boolean projectAdded = false;

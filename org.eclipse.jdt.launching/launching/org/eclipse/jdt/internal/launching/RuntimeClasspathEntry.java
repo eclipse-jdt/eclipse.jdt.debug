@@ -167,11 +167,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 						if (isEmpty(path)) {
 							abort(LaunchingMessages.getString("RuntimeClasspathEntry.Unable_to_recover_runtime_class_path_entry_-_missing_archive_path_5"), null); //$NON-NLS-1$
 						} else {
-							IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(path));
-							if (res == null) {
-								abort(LaunchingMessages.getString("RuntimeClasspathEntry.Internal_archive_no_longer_exists___1") + path, null); //$NON-NLS-1$
-							}
-							setClasspathEntry(JavaCore.newLibraryEntry(res.getFullPath(), sourcePath, rootPath));
+							setClasspathEntry(JavaCore.newLibraryEntry(new Path(path), sourcePath, rootPath));
 						}
 					} else {
 						// external
