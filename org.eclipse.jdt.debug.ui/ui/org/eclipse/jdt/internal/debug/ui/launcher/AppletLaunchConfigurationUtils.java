@@ -109,14 +109,13 @@ public class AppletLaunchConfigurationUtils {
 	 */
 	public static Set collectAppletTypesInProject(IProgressMonitor monitor, IJavaProject project) {
 		IType[] types;
-		HashSet result = null;
+		HashSet result = new HashSet(5);
 		try {
 			IType javaLangApplet = AppletLaunchConfigurationUtils.getMainType("java.applet.Applet", project); //$NON-NLS-1$
 			ITypeHierarchy hierarchy = javaLangApplet.newTypeHierarchy(project, new SubProgressMonitor(monitor, 1));
 			types = hierarchy.getAllSubtypes(javaLangApplet);
 			int length = types.length;
 			if (length != 0) {
-				result = new HashSet(length);
 				for (int i = 0; i < length; i++) {
 					if (!types[i].isBinary()) {
 						result.add(types[i]);
