@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.ui.JavaDebugUtils;
 import org.eclipse.ui.progress.IElementCollector;
@@ -28,31 +29,35 @@ public class DeferredJavaThread extends DeferredMonitorElement {
      */
     public Object[] getChildren(Object parent) {
         IJavaThread thread = (IJavaThread) parent;
-        IDebugElement[] ownedMonitors = null;
-        IDebugElement contendedMonitor = null;
-        if (isDisplayMonitors()) {
-			ownedMonitors= JavaDebugUtils.getOwnedMonitors(thread);
-			contendedMonitor= JavaDebugUtils.getContendedMonitor(thread);
-        }
-		try {
+        try {
             IStackFrame[] frames = thread.getStackFrames();
+            if (!isDisplayMonitors()) {
+                return frames;
+            }
+            IDebugElement[] ownedMonitors = JavaDebugUtils.getOwnedMonitors(thread);
+            IDebugElement contendedMonitor = JavaDebugUtils.getContendedMonitor(thread);
+            Object[] children;
             int length = frames.length;
-            if (ownedMonitors != null) {
-                length+=ownedMonitors.length;
+            if (((IJavaDebugTarget) thread.getDebugTarget()).supportsMonitorInformation()) {
+                if (ownedMonitors != null) {
+                    length+=ownedMonitors.length;
+                }
+                if (contendedMonitor != null) {
+                    length++;
+                }
+                children = new Object[length];
+                if (ownedMonitors != null && ownedMonitors.length > 0) {
+                    System.arraycopy(ownedMonitors, 0, children, 0, ownedMonitors.length);
+                }
+                if (contendedMonitor != null) {
+                    // Insert the contended monitor after the owned monitors
+                    children[ownedMonitors.length] = contendedMonitor;
+                }
+            } else {
+                children= new Object[length + 1];
+                children[0]= new NoMonitorInformationElement(thread.getDebugTarget());
             }
-            if (contendedMonitor != null) {
-                length++;
-            }
-            Object[] children = new Object[length];
-            int offset = 0;
-            if (ownedMonitors != null && ownedMonitors.length > 0) {
-                System.arraycopy(ownedMonitors, 0, children, 0, ownedMonitors.length);
-                offset = ownedMonitors.length;
-            }
-            if (contendedMonitor != null) {
-                children[offset] = contendedMonitor;
-                offset++;
-            }
+            int offset= children.length - frames.length;
             System.arraycopy(frames, 0, children, offset, frames.length);
             return children;
         } catch (DebugException e) {

@@ -68,6 +68,7 @@ import org.eclipse.jdt.internal.debug.ui.monitors.JavaContendedMonitor;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaOwnedMonitor;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaOwningThread;
 import org.eclipse.jdt.internal.debug.ui.monitors.JavaWaitingThread;
+import org.eclipse.jdt.internal.debug.ui.monitors.NoMonitorInformationElement;
 import org.eclipse.jdt.internal.debug.ui.monitors.ThreadMonitorManager;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
@@ -241,7 +242,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return getJavaOwningTreadText((JavaOwningThread)item);
 			} else if (item instanceof JavaWaitingThread) {
 				return getJavaWaitingTreadText((JavaWaitingThread)item);
-			} else {
+			} else if (item instanceof NoMonitorInformationElement) {
+                return DebugUIMessages.getString("JDIModelPresentation.5"); //$NON-NLS-1$
+            } else {
 				StringBuffer label= new StringBuffer();
 				if (item instanceof IJavaThread) {
 					label.append(getThreadText((IJavaThread) item, showQualified));
@@ -675,6 +678,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			if (item instanceof JavaWaitingThread) {
 				return getJavaWaitingThreadImage((JavaWaitingThread)item);
 			}
+            if (item instanceof NoMonitorInformationElement) {
+                return fDebugImageRegistry.get(new JDIImageDescriptor(JavaDebugImages.DESC_OBJ_MONITOR, 0));
+            }
 		} catch (CoreException e) {
 		    // no need to log errors - elements may no longer exist by the time we render them
 		}
