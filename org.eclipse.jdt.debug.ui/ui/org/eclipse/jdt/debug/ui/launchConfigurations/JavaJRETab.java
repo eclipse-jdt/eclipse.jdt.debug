@@ -5,9 +5,10 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
  * All Rights Reserved.
  */
  
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -55,7 +56,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 
 	// Collections used to populate the JRE Combo box
 	protected IVMInstallType[] fVMTypes;
-	protected java.util.List fVMStandins;	
+	protected List fVMStandins;	
 	
 	// Dynamic JRE UI widgets
 	protected ILaunchConfigurationTab fDynamicTab;
