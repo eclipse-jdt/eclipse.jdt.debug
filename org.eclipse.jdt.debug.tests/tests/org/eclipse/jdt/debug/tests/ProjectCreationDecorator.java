@@ -139,8 +139,8 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		}
 		// create project with two src folders and output locations
 		IJavaProject project = JavaProjectHelper.createJavaProject("MultiOutput");
-		IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(project, "src1", "bin1");
-		IPackageFragmentRoot src2 = JavaProjectHelper.addSourceContainer(project, "src2", "bin2");
+		JavaProjectHelper.addSourceContainer(project, "src1", "bin1");
+		JavaProjectHelper.addSourceContainer(project, "src2", "bin2");
 		
 		// add rt.jar
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
