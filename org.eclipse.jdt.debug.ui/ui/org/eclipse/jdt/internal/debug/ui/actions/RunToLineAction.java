@@ -73,6 +73,7 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 					try {
 						thread.resume();
 					} catch (DebugException de) {
+						JDIDebugUIPlugin.log(de.getStatus());
 					}
 					break;
 				}

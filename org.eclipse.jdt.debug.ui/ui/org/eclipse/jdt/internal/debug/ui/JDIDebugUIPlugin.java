@@ -169,9 +169,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	
 	public static void errorDialog(String message, IStatus status) {
 		Shell shell = getActiveWorkbenchShell();
-		if (shell == null) {
-			log(status);
-		} else {
+		log(status);
+		if (shell != null) {
 			ErrorDialog.openError(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Error_1"), message, status); //$NON-NLS-1$
 		}
 	}

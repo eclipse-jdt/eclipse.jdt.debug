@@ -104,6 +104,7 @@ public class InspectAction extends EvaluateAction {
 				JavaInspectExpression expr = new JavaInspectExpression(var.getName(), (IJavaValue)var.getValue());
 				DebugPlugin.getDefault().getExpressionManager().addExpression(expr);
 			} catch (DebugException e) {
+				JDIDebugUIPlugin.log(e.getStatus());
 				JDIDebugUIPlugin.errorDialog(ActionMessages.getString("InspectAction.Exception_occurred_inspecting_variable"), e.getStatus()); //$NON-NLS-1$
 			}
 		}

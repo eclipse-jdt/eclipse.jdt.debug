@@ -116,7 +116,6 @@ public class ExecutionArgsPropertyPage extends PropertyPage {
 			ICompilationUnit cu= (ICompilationUnit) element;
 			String name= cu.getElementName();
 			if (name.endsWith(".java")) { //$NON-NLS-1$
-				//fix for 1GF5ZBA: ITPJUI:WINNT - assertion failed after rightclick on a compilation unit with strange name
 				name= name.substring(0, name.indexOf(".")); //$NON-NLS-1$
 				IType t= cu.getType(name);
 				if (t.exists())
@@ -130,6 +129,7 @@ public class ExecutionArgsPropertyPage extends PropertyPage {
 						}
 					} catch (JavaModelException e) {
 						// ignore, can't set args.
+						JDIDebugUIPlugin.logError(e);
 					}
 				}
 			}
@@ -138,6 +138,7 @@ public class ExecutionArgsPropertyPage extends PropertyPage {
 			try {
 				element= ((IClassFile) element).getType();
 			} catch (JavaModelException e) {
+				JDIDebugUIPlugin.logError(e);
 			}
 		}
 		if (element instanceof IType) {

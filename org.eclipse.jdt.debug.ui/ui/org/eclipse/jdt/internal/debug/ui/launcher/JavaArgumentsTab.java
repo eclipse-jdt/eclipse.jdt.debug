@@ -10,6 +10,7 @@ import java.io.File;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -147,7 +148,8 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 				pgmArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, EMPTY_STRING);
 			}
 			fPrgmArgumentsText.setText(pgmArgs);
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());			
 		}
 	}
 	
@@ -158,7 +160,8 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 				vmArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, EMPTY_STRING);
 			}
 			fVMArgumentsText.setText(vmArgs);
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());		
 		}
 	}
 	
@@ -169,7 +172,8 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 				workingDir = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, EMPTY_STRING);
 			}
 			fWorkingDirText.setText(workingDir);
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());					
 		}		
 	}
 	
@@ -280,6 +284,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			handleUseDefaultWorkingDirButtonSelected();
 		} catch (CoreException e) {
 			setErrorMessage("Exception occurred reading configuration: " + e.getStatus().getMessage());
+			JDIDebugUIPlugin.log(e.getStatus());
 		}
 	}
 

@@ -92,9 +92,11 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 				Map attributes = new HashMap(10);
 				BreakpointUtils.addJavaBreakpointAttributes(attributes, element);
 				setBreakpoint(JDIDebugModel.createWatchpoint(BreakpointUtils.getBreakpointResource(type),type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes));
-			} catch (JavaModelException exception) {
+			} catch (JavaModelException e) {
+				JDIDebugUIPlugin.log(e.getStatus());
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), "The selected field is not visible in the currently selected debug context. A stack frame or suspended thread which contains the declaring type of this field must be selected."); //$NON-NLS-1$
 			} catch (CoreException x) {
+				JDIDebugUIPlugin.log(x.getStatus());
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), x.getMessage()); //$NON-NLS-1$
 			}
 		} else {
@@ -103,6 +105,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 				IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 				breakpointManager.removeBreakpoint(getBreakpoint(), true);
 			} catch (CoreException x) {
+				JDIDebugUIPlugin.log(x.getStatus());
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_removing_watchpoint_8"), x.getMessage()); //$NON-NLS-1$
 			}
 		}
@@ -119,6 +122,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 					if (equalFields(selectedField, (IJavaWatchpoint)breakpoint))
 						return (IJavaBreakpoint)breakpoint;
 				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e.getStatus());
 				}
 			}
 		}
@@ -163,7 +167,8 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 		while (iter.hasNext()) {
 			try {
 				field= ((IType)iter.next()).getField(variable.getName());
-			} catch (DebugException exception) {
+			} catch (DebugException x) {
+				JDIDebugUIPlugin.log(x.getStatus());
 			}
 			if (field != null) {
 				// Return the first java model field that is found which
@@ -204,6 +209,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 					javaProject= JavaCore.create(workspace.getRoot().getProject(projectName));
 				}
 			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e.getStatus());
 			}
 		}
 		if (javaProject == null) {
@@ -215,7 +221,8 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 		String declaringType= null;
 		try {
 			declaringType= variable.getDeclaringType().getName();
-		} catch (DebugException exception) {
+		} catch (DebugException x) {
+			JDIDebugUIPlugin.log(x.getStatus());
 			return types;
 		}
 		ArrayList typeRefsFound= new ArrayList(3);
@@ -231,7 +238,8 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 				requestor, 
 				IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
 				null);
-		} catch (JavaModelException e) {
+		} catch (JavaModelException x) {
+			JDIDebugUIPlugin.log(x.getStatus());
 			return types;
 		}
 		Iterator iter= typeRefsFound.iterator();
@@ -241,6 +249,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 			try {
 				types.add(typeInfo.resolveType(scope));
 			} catch (JavaModelException jme) {
+				JDIDebugUIPlugin.log(jme.getStatus());
 			}
 		}
 		return types;

@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -60,7 +61,6 @@ public class RunInPackageAction extends SnippetAction {
 				dialog.setInitialSelections(new Object[] {packageFragment});
 			}
 
-			//fix for 1G472LK: ITPJUI:WIN2000 - Package selection dialog must qualify package names regarding source folders
 			dialog.setTitle(SnippetMessages.getString("RunInPackage.dialog.title")); //$NON-NLS-1$
 			dialog.setMessage(SnippetMessages.getString("RunInPackage.dialog.message")); //$NON-NLS-1$			
 			dialog.open();		
@@ -68,6 +68,7 @@ public class RunInPackageAction extends SnippetAction {
 			if (res != null && res.length > 0) 
 				return (IPackageFragment)res[0];
 		} catch (JavaModelException e) {
+			JDIDebugUIPlugin.log(e.getStatus());
 		}
 		return null;
 	}

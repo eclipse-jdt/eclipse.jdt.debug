@@ -47,9 +47,4 @@ public class SourceLookupPropertyPage extends JavaProjectPropertyPage {
 		}
 		return false;
 	}
-	
-	
-	
-	
-	
 }

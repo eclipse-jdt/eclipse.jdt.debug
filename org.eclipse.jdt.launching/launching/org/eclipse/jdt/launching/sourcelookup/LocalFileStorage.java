@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -69,6 +70,7 @@ public class LocalFileStorage extends PlatformObject implements IStorage {
 		try {
 			return new Path(getFile().getCanonicalPath());
 		} catch (IOException e) {
+			LaunchingPlugin.log(e);
 			return null;
 		}
 	}

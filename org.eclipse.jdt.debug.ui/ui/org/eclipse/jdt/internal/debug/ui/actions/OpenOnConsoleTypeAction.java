@@ -325,7 +325,6 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 					try {
 						setLineNumber(Integer.parseInt(buffer.toString()));
 					} catch (NumberFormatException nfe) {
-						
 					}
 				}
 			}

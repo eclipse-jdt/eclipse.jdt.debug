@@ -23,8 +23,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.internal.ui.util.BusyIndicatorRunnableContext;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -162,6 +162,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		try {
 			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
 		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());
 		}
 		fProjText.setText(projectName);
 	}
@@ -170,7 +171,8 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		String mainTypeName = "";
 		try {
 			mainTypeName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, EMPTY_STRING);
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());	
 		}	
 		fMainText.setText(mainTypeName);	
 	}
@@ -263,7 +265,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		try {
 			projects= JavaCore.create(getWorkspaceRoot()).getJavaProjects();
 		} catch (JavaModelException e) {
-			JavaPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e.getStatus());
 			projects= new IJavaProject[0];
 		}
 		

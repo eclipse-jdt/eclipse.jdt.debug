@@ -16,7 +16,7 @@ import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -156,6 +156,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		try {
 			projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, EMPTY_STRING);	
 		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());
 		}
 		fProjText.setText(projectName);
 	}
@@ -164,7 +165,8 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		String hostName = "";
 		try {
 			hostName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_HOSTNAME, EMPTY_STRING);
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());			
 		}		
 		fHostText.setText(hostName);
 	}
@@ -173,7 +175,8 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		int portNumber = 8000;
 		try {
 			portNumber = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, 8000);
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());
 		}	
 		fPortText.setText(String.valueOf(portNumber));	
 	}
@@ -182,7 +185,8 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		boolean allowTerminate = false;
 		try {
 			allowTerminate = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, false);	
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());		
 		}
 		fAllowTerminateButton.setSelection(allowTerminate);	
 	}
@@ -192,8 +196,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 	 */
 	public void dispose() {
 	}
-	
-	
+		
 	/**
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
@@ -234,7 +237,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		try {
 			projects= JavaCore.create(getWorkspaceRoot()).getJavaProjects();
 		} catch (JavaModelException e) {
-			JavaPlugin.log(e.getStatus());
+			JDIDebugUIPlugin.log(e.getStatus());
 			projects= new IJavaProject[0];
 		}
 		
@@ -316,6 +319,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 			}
 			name = getLaunchConfigurationDialog().generateName(name);				
 		} catch (JavaModelException jme) {
+			JDIDebugUIPlugin.log(jme.getStatus());
 		}
 		config.rename(name);
 	}

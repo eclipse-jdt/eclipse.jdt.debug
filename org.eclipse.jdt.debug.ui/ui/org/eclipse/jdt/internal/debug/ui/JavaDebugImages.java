@@ -30,6 +30,7 @@ public class JavaDebugImages {
 			fgIconBaseURL= new URL(JDIDebugUIPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
 		} catch (MalformedURLException e) {
 			// do nothing
+			JDIDebugUIPlugin.logError(e);
 		}
 	}
 	
@@ -151,6 +152,7 @@ public class JavaDebugImages {
 			if (id != null)
 				action.setDisabledImageDescriptor(id);
 		} catch (MalformedURLException e) {
+			JDIDebugUIPlugin.logError(e);
 		}
 	
 		try {
@@ -158,6 +160,7 @@ public class JavaDebugImages {
 			if (id != null)
 				action.setHoverImageDescriptor(id);
 		} catch (MalformedURLException e) {
+			JDIDebugUIPlugin.logError(e);
 		}
 	
 		action.setImageDescriptor(create("e" + type, relPath)); //$NON-NLS-1$
@@ -169,6 +172,7 @@ public class JavaDebugImages {
 			IMAGE_REGISTRY.put(name, result);
 			return result;
 		} catch (MalformedURLException e) {
+			JDIDebugUIPlugin.logError(e);
 			return ImageDescriptor.getMissingImageDescriptor();
 		}
 	}
@@ -177,6 +181,7 @@ public class JavaDebugImages {
 		try {
 			return ImageDescriptor.createFromURL(makeIconFileURL(prefix, name));
 		} catch (MalformedURLException e) {
+			JDIDebugUIPlugin.logError(e);
 			return ImageDescriptor.getMissingImageDescriptor();
 		}
 	}

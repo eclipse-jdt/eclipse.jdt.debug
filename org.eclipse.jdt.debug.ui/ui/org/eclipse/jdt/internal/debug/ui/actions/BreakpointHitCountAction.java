@@ -161,6 +161,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 		try {
 			currentHitCount = breakpoint.getHitCount();
 		} catch (CoreException e) {
+			JDIDebugUIPlugin.logError(e);
 		}
 		String initialValue;
 		if (currentHitCount > 0) {

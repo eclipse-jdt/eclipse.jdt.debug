@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.actions.AbstractOpenJavaElementAction;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
@@ -64,7 +65,9 @@ public class SnippetOpenOnSelectionAction extends AbstractOpenJavaElementAction 
 				}
 			}
 		} catch (JavaModelException x) {
+			JDIDebugUIPlugin.log(x.getStatus());
 		} catch (PartInitException x) {
+			JDIDebugUIPlugin.log(x.getStatus());
 		}
 		
 		getShell().getDisplay().beep();		

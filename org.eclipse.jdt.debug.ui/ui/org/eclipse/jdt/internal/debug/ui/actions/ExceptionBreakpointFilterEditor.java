@@ -614,6 +614,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		try {
 			fBreakpoint.setFilters(stringFilters, true);
 		} catch (CoreException ce) {
+			JDIDebugUIPlugin.logError(ce);
 		}
 	}
 

@@ -172,7 +172,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				addField(createLabelEditor(getFieldEditorParent(), ActionMessages.getString("JavaBreakpointPreferencePage.Type___4"), typeName)); //$NON-NLS-1$
 			}
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.logError(ce);
+			JDIDebugUIPlugin.log(ce.getStatus());
 		}
 
 		if (breakpoint instanceof ILineBreakpoint) {
@@ -184,7 +184,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 					lineNumber.append(lNumber);
 				}
 			} catch (CoreException ce) {
-				JDIDebugUIPlugin.logError(ce);
+				JDIDebugUIPlugin.log(ce.getStatus());
 			}
 			if (lineNumber.length() > 0) {
 				addField(
@@ -300,6 +300,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		try {
 			fHitCountTextControl.setEnabled(getBreakpoint().getHitCount() > 0);
 		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());
 		}
 		addField(fHitCount);
 	}

@@ -10,6 +10,7 @@ import java.util.Comparator;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.corext.template.ContextType;
 import org.eclipse.jdt.internal.corext.template.ContextTypeRegistry;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
 import org.eclipse.jdt.internal.ui.text.template.TemplateEngine;
@@ -92,6 +93,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 		} catch (JavaModelException x) {
 			Shell shell= viewer.getTextWidget().getShell();
 			ErrorDialog.openError(shell, SnippetMessages.getString("CompletionProcessor.errorTitle"), SnippetMessages.getString("CompletionProcessor.errorMessage"), x.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
+			JDIDebugUIPlugin.log(x.getStatus());
 		}
 		
 		ICompletionProposal[] results= fCollector.getResults();
@@ -101,6 +103,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 				fTemplateEngine.reset();
 				fTemplateEngine.complete(viewer, position, null);
 			} catch (JavaModelException x) {
+				JDIDebugUIPlugin.log(x.getStatus());
 				Shell shell= viewer.getTextWidget().getShell();
 				ErrorDialog.openError(shell, SnippetMessages.getString("CompletionProcessor.errorTitle"), SnippetMessages.getString("CompletionProcessor.errorMessage"), x.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
 			}			

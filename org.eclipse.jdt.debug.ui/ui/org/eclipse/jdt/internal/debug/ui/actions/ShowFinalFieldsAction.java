@@ -38,6 +38,7 @@ public class ShowFinalFieldsAction extends ToggleFilterAction {
 					try {
 						return !var.isFinal();
 					} catch (DebugException e) {
+						JDIDebugUIPlugin.log(e.getStatus());
 						return true;
 					}
 				}

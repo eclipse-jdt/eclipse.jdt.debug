@@ -18,6 +18,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -408,7 +409,8 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			} else {
 				updatePathList(classpath, fClassPathList);
 			}
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());		
 		}
 	}
 	
@@ -419,7 +421,8 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 				extpath = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_EXTPATH, (java.util.List)null);
 			}
 			updatePathList(extpath, fExtensionPathList);
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());
 		}
 	}
 	
@@ -431,6 +434,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 			}
 			updateTable(envVars, fEnvTable);
 		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());
 		}
 	}
 	
@@ -604,7 +608,8 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 					defaultClassPath = removeRtJarFromClasspath(defaultClassPath);
 				}
 				fClassPathList.setItems(defaultClassPath);
-			} catch (CoreException ce) {			
+			} catch (CoreException ce) {
+				JDIDebugUIPlugin.log(ce.getStatus());			
 			}
 		}
 		setPathButtonsEnableState();
@@ -929,6 +934,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		try {
 			JavaRuntime.saveVMConfiguration();
 		} catch(CoreException e) {
+			JDIDebugUIPlugin.log(e.getStatus());
 		}
 		fVMStandins.add(vm);
 		populateJREComboBox();
@@ -996,7 +1002,8 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IA
 		String vmID = null;
 		try {
 			vmID = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, EMPTY_STRING);
-		} catch (CoreException ce) {			
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce.getStatus());			
 		}
 		if (vmID == null) {
 			clearJREComboBoxEntry();

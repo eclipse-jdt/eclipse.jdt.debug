@@ -190,7 +190,7 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 			}
 			return true;
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
+			JDIDebugUIPlugin.log(e.getStatus());
 		}
 		return false;
 	}

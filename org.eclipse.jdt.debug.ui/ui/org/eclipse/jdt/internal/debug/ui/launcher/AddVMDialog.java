@@ -448,7 +448,8 @@ public class AddVMDialog extends StatusDialog {
 				try { 
 					zip.close();
 				} catch (IOException e) {
-				};
+					JDIDebugUIPlugin.logError(e);
+				}
 			}
 		}
 		return null;

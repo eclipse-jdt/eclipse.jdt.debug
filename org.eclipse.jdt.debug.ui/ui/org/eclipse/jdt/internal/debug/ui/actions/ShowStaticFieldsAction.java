@@ -38,6 +38,7 @@ public class ShowStaticFieldsAction extends ToggleFilterAction {
 					try {
 						return !var.isStatic();
 					} catch (DebugException e) {
+						JDIDebugUIPlugin.log(e.getStatus());
 						return true;
 					}
 				}

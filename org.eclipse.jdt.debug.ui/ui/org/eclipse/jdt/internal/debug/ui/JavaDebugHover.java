@@ -78,6 +78,7 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 								appendVariable(buffer, variable);
 							}
 						} catch (DebugException x) {
+							JDIDebugUIPlugin.log(x.getStatus());
 						}
 					}
 				}
@@ -86,6 +87,7 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 					return buffer.toString();
 			
 			} catch (BadLocationException x) {
+				JDIDebugUIPlugin.logError(x);
 			}
 		}
 

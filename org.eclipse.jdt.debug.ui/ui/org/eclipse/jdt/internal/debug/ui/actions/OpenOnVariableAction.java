@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 
 
 public class OpenOnVariableAction extends OpenTypeAction {
@@ -52,6 +53,7 @@ public class OpenOnVariableAction extends OpenTypeAction {
 				return getTypeNameToOpen(element) != null;
 			}
 		} catch(DebugException e) {
+			JDIDebugUIPlugin.log(e.getStatus());
 			// fall through
 		}	
 		return false;

@@ -216,8 +216,6 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 		};
 		fork(wr);
 		
-
-		
 		// note compilation errors
 		IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
 		if (problems != null) {
@@ -704,16 +702,15 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 		}
 
 	}
-	/*
+	/**
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
 	public void launchChanged(ILaunch launch) {
 	}
 
-	/*
+	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public void launchRemoved(ILaunch launch) {
 	}
-
 }
