@@ -31,7 +31,6 @@ import org.eclipse.jdt.launching.VMRunnerResult;
 
 /**
  * Launch configuration delegate for a local Java application.
- * [Issue: Accesses internal classes from JDT-UI]
  */
 public class JavaApplicationLaunchConfigurationDelegate
 	implements ILaunchConfigurationDelegate {
