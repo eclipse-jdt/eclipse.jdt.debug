@@ -49,6 +49,7 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.ITypeNameRequestor;
@@ -170,13 +171,26 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 				}
 			
 				String typeName= null;
-				IResource resource;
-//				IJavaLineBreakpoint breakpoint= null;
+				IResource resource = null;
+				Map attributes = new HashMap(10);
 				if (type == null) {
 					if (editorInput instanceof IFileEditorInput) {
 						resource= ((IFileEditorInput)editorInput).getFile();
 					} else {
 						resource= ResourcesPlugin.getWorkspace().getRoot();
+					}
+					if (editorPart instanceof ITextEditor) {
+						CompilationUnit unit = parseCompilationUnit((ITextEditor)editorPart);
+						Iterator types = unit.types().iterator();
+						while (types.hasNext()) {
+							TypeDeclaration declaration = (TypeDeclaration) types.next();
+							int begin = declaration.getStartPosition();
+							int end = begin + declaration.getLength();
+							if (offset >= begin && offset <= end && !declaration.isInterface()) {
+								typeName = ValidBreakpointLocationLocator.computeTypeName(declaration);
+								break;
+							}
+						}
 					}
 				} else {
 					typeName= type.getFullyQualifiedName();
@@ -185,14 +199,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 						typeName= typeName.substring(0, index);
 					}
 					resource= BreakpointUtils.getBreakpointResource(type);
-					final IJavaLineBreakpoint existingBreakpoint= JDIDebugModel.lineBreakpointExists(resource, typeName, lineNumber);
-					if (existingBreakpoint != null) {
-                        scheduleBreakpointRemoval(existingBreakpoint, true);
-						
-						return;
-					}
-					resource= BreakpointUtils.getBreakpointResource(type);
-					Map attributes = new HashMap(10);
 					try {
 						IRegion line= document.getLineInformation(lineNumber - 1);
 						int start= line.getOffset();
@@ -201,7 +207,14 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					} catch (BadLocationException ble) {
 						JDIDebugUIPlugin.log(ble);
 					}
-                    scheduleLineBreakpointCreation(resource, typeName, lineNumber, -1, -1, 0, true, attributes, document, bestMatch, type, editorPart);
+				}
+				if (typeName != null && resource != null) {
+					IJavaLineBreakpoint existingBreakpoint= JDIDebugModel.lineBreakpointExists(resource, typeName, lineNumber);
+					if (existingBreakpoint != null) {
+	                    scheduleBreakpointRemoval(existingBreakpoint, true);						
+						return;
+					}
+					scheduleLineBreakpointCreation(resource, typeName, lineNumber, -1, -1, 0, true, attributes, document, bestMatch, type, editorPart);
 				}
 			} catch (CoreException ce) {
                 ExceptionHandler.handle(ce, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
