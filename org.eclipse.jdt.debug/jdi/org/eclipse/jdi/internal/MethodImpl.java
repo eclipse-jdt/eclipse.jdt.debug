@@ -504,9 +504,9 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			JdwpReplyPacket replyPacket = requestVM(jdwpCommand, outBytes);
 			switch (replyPacket.errorCode()) {
 				case JdwpReplyPacket.ABSENT_INFORMATION:
-					inferArguments();
-					break;
+					return inferArguments();
 			}
+			
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			
 			DataInputStream replyData = replyPacket.dataInStream();
