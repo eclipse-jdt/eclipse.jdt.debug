@@ -44,10 +44,10 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	 * Returns this variable's current <code>Value</code>.
 	 */
 	protected Value retrieveValue() {
-		if (fField.isStatic()) {
-			return (fField.declaringType().getValue(fField));
+		if (getField().isStatic()) {
+			return (getField().declaringType().getValue(getField()));
 		} else {
-			return fObject.getValue(fField);
+			return getObjectReference().getValue(getField());
 		}			
 	}
 
@@ -56,7 +56,7 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	 */
 	public String getName() throws DebugException {
 		try {
-			return fField.name();
+			return getField().name();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_retrieving_field_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
@@ -66,9 +66,9 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	protected void setValue(Value value) throws DebugException {
 		try {
 			if (isStatic()) { 
-				((ClassType)fField.declaringType()).setValue(fField, value);
+				((ClassType)getField().declaringType()).setValue(getField(), value);
 			} else {
-				fObject.setValue(fField, value);
+				getObjectReference().setValue(getField(), value);
 			}
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_modifying_value_1"), new String[] {e.toString()}), e); //$NON-NLS-1$
@@ -84,70 +84,70 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	 * @see IJavaVariable#isVolatile()
 	 */
 	public boolean isVolatile() {
-		return fField.isVolatile();
+		return getField().isVolatile();
 	}
 	
 	/**
 	 * @see IJavaVariable#isTransient()
 	 */
 	public boolean isTransient() {
-		return fField.isTransient();
+		return getField().isTransient();
 	}
 	
 	/**
 	 * @see IJavaModifiers#isSynthetic()
 	 */
 	public boolean isSynthetic() {
-		return fField.isSynthetic();
+		return getField().isSynthetic();
 	}
 	
 	/**
 	 * @see IJavaModifiers#isPublic()
 	 */
 	public boolean isPublic() {
-		return fField.isPublic();
+		return getField().isPublic();
 	}
 	
 	/**
 	 * @see IJavaModifiers#isPrivate()
 	 */
 	public boolean isPrivate() {
-		return fField.isPrivate();
+		return getField().isPrivate();
 	}
 	
 	/**
 	 * @see IJavaModifiers#isProtected()
 	 */
 	public boolean isProtected() {
-		return fField.isProtected();
+		return getField().isProtected();
 	}
 	
 	/**
 	 * @see IJavaModifiers#isPackagePrivate()
 	 */
 	public boolean isPackagePrivate() {
-		return fField.isPackagePrivate();
+		return getField().isPackagePrivate();
 	}
 	
 	/**
 	 * @see IJavaModifiers#isStatic()
 	 */
 	public boolean isStatic() {
-		return fField.isStatic();
+		return getField().isStatic();
 	}
 	
 	/**
 	 * @see IJavaModifiers#isFinal()
 	 */
 	public boolean isFinal() {
-		return fField.isFinal();
+		return getField().isFinal();
 	}
 
 	/**
 	 * @see IVariable#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() {
-		return fField.typeName();
+		return getField().typeName();
 	}
 	
 	/**
@@ -155,22 +155,23 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	 */
 	public String getSignature() throws DebugException {
 		try {
-			return fField.signature();
+			return getField().signature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_retrieving_field_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} 
 		return getUnknownMessage();
 	}
 
-	/**
-	 * Returns this variables underlying JDI field
-	 */
 	protected Field getField() {
 		return fField;
 	}
 	
+	protected ObjectReference getObjectReference() {
+		return fObject;
+	}
+	
 	public boolean supportsValueModification() {
-		if (fField.declaringType()instanceof InterfaceType) {
+		if (getField().declaringType()instanceof InterfaceType) {
 			return false;
 		}
 		return super.supportsValueModification();
