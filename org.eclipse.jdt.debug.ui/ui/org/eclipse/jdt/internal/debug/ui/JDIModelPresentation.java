@@ -1496,7 +1496,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 						}
 						if (prettyPrinterResult != null) {
 							if (prettyPrinterResult instanceof IJavaPrimitiveValue) {
-								appendJDIPrimitiveValueString(fValue);
+								appendJDIPrimitiveValueString(prettyPrinterResult);
 								if (requestedValue == fRequestedValues.remove(fListener)) {
 									notifyListener();
 								}
