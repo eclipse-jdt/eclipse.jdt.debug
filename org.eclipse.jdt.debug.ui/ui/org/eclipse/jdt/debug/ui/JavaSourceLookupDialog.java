@@ -50,8 +50,12 @@ public class JavaSourceLookupDialog extends Dialog {
 	 * <code>IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH</code>. If the user
 	 * changes the source lookup path and presses "ok", the launch configuration
 	 * is updated with the new source lookup path. 
-	 * 	 * @param shell the shell to open the dialog on	 * @param message the message to display in the dialog	 * @param configuration the launch configuration from which the source lookup
-	 *  path is retrieved and (possibly) updated	 */
+	 * 
+	 * @param shell the shell to open the dialog on
+	 * @param message the message to display in the dialog
+	 * @param configuration the launch configuration from which the source lookup
+	 *  path is retrieved and (possibly) updated
+	 */
 	public JavaSourceLookupDialog(Shell shell, String message, ILaunchConfiguration configuration) {
 		super(shell);
 		fSourceLookupBlock= new SourceLookupBlock();
@@ -63,12 +67,16 @@ public class JavaSourceLookupDialog extends Dialog {
 	
 	/**
 	 * Returns whether the "do not ask again" check box is selected in the dialog.
-	 * 	 * @return whether the "do not ask again" check box is selected in the dialog	 */
+	 * 
+	 * @return whether the "do not ask again" check box is selected in the dialog
+	 */
 	public boolean isNotAskAgain() {
 		return fNotAskAgain;
 	}
 			
-	/**	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)	 */
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
+	 */
 	protected Control createDialogArea(Composite parent) {
 		getShell().setText(LauncherMessages.getString("JavaUISourceLocator.selectprojects.title")); //$NON-NLS-1$
 		
@@ -105,7 +113,9 @@ public class JavaSourceLookupDialog extends Dialog {
 		return Dialog.convertWidthInCharsToPixels(fontMetrics, chars);
 	}	
 
-	/**	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()	 */
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
 	protected void okPressed() {
 		try {
 			if (fAskAgainCheckBox != null) {
