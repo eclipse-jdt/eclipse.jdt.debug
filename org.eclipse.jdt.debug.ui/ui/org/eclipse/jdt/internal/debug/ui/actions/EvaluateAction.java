@@ -236,7 +236,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			jFrame = (IJavaStackFrame) stackFrame.getAdapter(IJavaStackFrame.class);
 		}
 
-		if (jFrame != null) {
+		setNewTargetPart(getTargetPart());
+		if (jFrame == null) {
+			reportError(ActionMessages.getString("Evaluate.error.message.eval_adapter")); //$NON-NLS-1$
+		} else if (jFrame.isSuspended()) {
 			IJavaElement javaElement= getJavaElement(stackFrame);
 			if (javaElement != null) {
 				IJavaProject project = javaElement.getJavaProject();
@@ -255,25 +258,23 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					
 					engine = JDIDebugUIPlugin.getDefault().getEvaluationEngine(project, (IJavaDebugTarget)jFrame.getDebugTarget());
 					setEvaluating(true);
-					setNewTargetPart(getTargetPart());
 					if (object == null) {
 						engine.evaluate(expression, jFrame, this, DebugEvent.EVALUATION, true);
 					} else {
 						engine.evaluate(expression, object, (IJavaThread)jFrame.getThread(), this, DebugEvent.EVALUATION, true);
 					}
-					
+					return;
 				} catch (CoreException e) {
 					reportError(getExceptionMessage(e));
-					evaluationCleanup();
 				}
 			} else {
 				reportError(ActionMessages.getString("Evaluate.error.message.src_context")); //$NON-NLS-1$
-				evaluationCleanup();
 			}
 		} else {
-			reportError(ActionMessages.getString("Evaluate.error.message.eval_adapter")); //$NON-NLS-1$
-			evaluationCleanup();
+			// thread not suspended
+			reportError(ActionMessages.getString("EvaluateAction.Thread_not_suspended_-_unable_to_perform_evaluation._1")); //$NON-NLS-1$
 		}
+		evaluationCleanup();
 	}
 		
 	protected IJavaElement getJavaElement(IStackFrame stackFrame) {
@@ -513,10 +514,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		StringBuffer result= new StringBuffer();
 		int index= 0, pos;
 		while ((pos= message.indexOf('\n', index)) != -1) {
-			result.append("\t\t").append(message.substring(index, index= pos + 1));
+			result.append("\t\t").append(message.substring(index, index= pos + 1)); //$NON-NLS-1$
 		}
 		if (index < message.length()) {
-			result.append("\t\t").append(message.substring(index));
+			result.append("\t\t").append(message.substring(index)); //$NON-NLS-1$
 		}
 		return result.toString();
 	}
