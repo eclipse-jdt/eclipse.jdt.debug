@@ -11,11 +11,11 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
 
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
+import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.launching.sourcelookup.LocalFileStorage;
-import org.eclipse.jdt.launching.sourcelookup.ZipEntryStorage;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;

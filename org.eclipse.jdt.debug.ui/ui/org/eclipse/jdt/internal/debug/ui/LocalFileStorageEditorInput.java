@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
- 
-import org.eclipse.jdt.launching.sourcelookup.LocalFileStorage;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
+import org.eclipse.ui.IEditorInput;
 
 public class LocalFileStorageEditorInput extends StorageEditorInput {
 

@@ -13,16 +13,15 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 
 import java.io.File;
 import java.util.zip.ZipFile;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
+import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.sourcelookup.LocalFileStorage;
-import org.eclipse.jdt.launching.sourcelookup.ZipEntryStorage;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui;
 
- 
-import org.eclipse.jdt.launching.sourcelookup.ZipEntryStorage;
+import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
+import org.eclipse.ui.IEditorInput;
 
 public class ZipEntryStorageEditorInput extends StorageEditorInput {
 	
