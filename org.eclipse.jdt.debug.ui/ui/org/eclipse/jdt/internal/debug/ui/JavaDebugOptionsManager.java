@@ -270,16 +270,11 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 				fLocationMap.put(l, problem);
 				fProblemMap.put(problem, l);
 				if (autoEnable) {
-					IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
-						public void run(IProgressMonitor monitor) {
-							try {
-								getSuspendOnCompilationErrorBreakpoint().setEnabled(isSuspendOnCompilationErrors());
-							} catch (CoreException e) {
-								JDIDebugUIPlugin.log(e);
-							}
-						}
-					};
-					fork(wRunnable);
+					try {
+						getSuspendOnCompilationErrorBreakpoint().setEnabled(isSuspendOnCompilationErrors());
+					} catch (CoreException e) {
+						JDIDebugUIPlugin.log(e);
+					}
 				}
 			}
 		}
@@ -296,16 +291,11 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 			fLocationMap.remove(location);
 		}
 		if (fProblemMap.isEmpty()) {
-			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) {
-					try {
-						getSuspendOnCompilationErrorBreakpoint().setEnabled(false);
-					} catch (CoreException e) {
-						JDIDebugUIPlugin.log(e);
-					}
-				}
-			};
-			fork(wRunnable);
+			try {
+				getSuspendOnCompilationErrorBreakpoint().setEnabled(false);
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.log(e);
+			}
 		}
 	}
 				
@@ -666,20 +656,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 			JDIDebugUIPlugin.log(e);
 		}
 		return null;
-	}
-	
-	protected void fork(final IWorkspaceRunnable wRunnable) {
-		Runnable runnable= new Runnable() {
-			public void run() {
-				try {
-					ResourcesPlugin.getWorkspace().run(wRunnable, null);
-				} catch (CoreException ce) {
-					JDIDebugUIPlugin.log(ce);
-				}
-			}
-		};
-		new Thread(runnable).start();
-	}		
+	}	
 	
 	/**
 	 * @see IJavaConditionalBreakpointListener#breakpointHasRuntimeException(IJavaLineBreakpoint, Throwable)
@@ -746,7 +723,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		initializeProblemHandling();
 		notifyTargetsOfFilters();
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_AUTO_BUILD);
 		JDIDebugModel.addJavaBreakpointListener(this);
 	}	
 
