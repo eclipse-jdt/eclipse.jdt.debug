@@ -5,7 +5,6 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
  
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -13,11 +12,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.IMember;
@@ -33,8 +30,8 @@ import com.sun.jdi.Location;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.VMDisconnectedException;
-import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.EventRequest;
 
 public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreakpoint {
 
@@ -170,8 +167,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 		
 	/**
-	 * Returns a location for the line number in the given type, or any of its
-	 * nested types. Returns <code>null</code> if a location cannot be determined.
+	 * Returns a location for the line number in the given type.
+	 * Returns <code>null</code> if a location cannot be determined.
 	 */
 	protected Location determineLocation(int lineNumber, ReferenceType type) {
 		List locations= null;
@@ -182,7 +179,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		} catch (NativeMethodException e) {
 			return null;
 		} catch (InvalidLineNumberException e) {
-			//possible in a nested type, fall through and traverse nested types
+			//possibly in a nested type, will be handled when that class is loaded
+			return null;
 		} catch (VMDisconnectedException e) {
 			return null;
 		} catch (ClassNotPreparedException e) {
@@ -196,24 +194,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		
 		if (locations != null && locations.size() > 0) {
 			return (Location) locations.get(0);
-		} else {
-			Iterator nestedTypes= null;
-			try {
-				nestedTypes= type.nestedTypes().iterator();
-			} catch (RuntimeException e) {
-				// not able to retrieve line info
-				JDIDebugPlugin.logError(e);
-				return null;
-			}
-			while (nestedTypes.hasNext()) {
-				ReferenceType nestedType= (ReferenceType) nestedTypes.next();
-				Location innerLocation= determineLocation(lineNumber, nestedType);
-				if (innerLocation != null) {
-					return innerLocation;
-				}
-			}
-		}
-
+		} 
+		
 		return null;
 	}
 	
