@@ -86,7 +86,7 @@
      </menu>
         <action id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
   			label="%manageWatchpointAction.label"
-  			icon="icons/full/obj16/brkpi_obj.gif"
+  			icon="icons/full/obj16/readwrite_obj.gif"
   			helpContextId="manage_watchpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
   			menubarPath="org.eclipse.ui.run/breakpointGroup">
