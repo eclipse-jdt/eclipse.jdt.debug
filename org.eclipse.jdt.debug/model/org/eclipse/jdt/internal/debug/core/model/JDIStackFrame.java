@@ -540,10 +540,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						return false;
 					}
 				}
-				Iterator iter= frames.iterator();
+				int index = 0;
 				JDIStackFrame frame= null;
-				while (iter.hasNext()) {
-					frame= (JDIStackFrame) iter.next();
+				while (index < frames.size()) {
+					frame= (JDIStackFrame) frames.get(index);
+					index++;
 					if (frame.isNative()) {
 						return false;
 					}
@@ -551,7 +552,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 						if (jdkSupport) {
 							// JDK 1.4 VMs are currently unable to pop the
 							// frame directly above a native frame
-							if (iter.hasNext() && ((JDIStackFrame)iter.next()).isNative()) {
+							if (index < frames.size() && ((JDIStackFrame)frames.get(index)).isNative()) {
 								return false;
 							}
 						}
