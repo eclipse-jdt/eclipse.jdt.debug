@@ -34,6 +34,7 @@ import org.eclipse.jdt.debug.tests.core.ProcessTests;
 import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
 import org.eclipse.jdt.debug.tests.core.SourceLocationTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
+import org.eclipse.jdt.debug.tests.core.StepFilterTests;
 import org.eclipse.jdt.debug.tests.core.SuspendVMBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.ThreadFilterBreakpointsTests;
@@ -76,6 +77,13 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(HitCountBreakpointsTests.class));
 		addTest(new TestSuite(ThreadFilterBreakpointsTests.class));
 		addTest(new TestSuite(SuspendVMBreakpointsTests.class));
+
+		// This test suite is commented out because it references preferences
+		// in a UI plugin.  This causes the UI plugin to get loaded as soon
+		// as this class is created, resulting in random timing-related
+		// failures in other tests.  
+		//addTest(new TestSuite(StepFilterTests.class));
+
 		addTest(new TestSuite(InstanceVariableTests.class));
 		addTest(new TestSuite(LocalVariableTests.class));
 		addTest(new TestSuite(StaticVariableTests.class));
