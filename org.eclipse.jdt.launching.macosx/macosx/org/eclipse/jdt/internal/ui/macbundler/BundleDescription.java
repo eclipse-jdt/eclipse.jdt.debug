@@ -44,7 +44,7 @@ class BundleDescription implements BundleAttributes {
 		fResources.clear();
 		fProperties2.clear();
 		fProperties.put(SIGNATURE, "????"); //$NON-NLS-1$
-		fProperties.put(ICONFILE, "/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/Resources/GenericApp.icns"); //$NON-NLS-1$
+		fProperties.put(ICONFILE, "/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Resources/GenericApp.icns"); //$NON-NLS-1$
 	}
 	
 	void addResource(ResourceInfo ri, boolean onClasspath) {
