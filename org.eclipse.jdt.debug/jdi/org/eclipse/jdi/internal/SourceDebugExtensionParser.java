@@ -65,7 +65,7 @@ public class SourceDebugExtensionParser {
 		 */
 		public int nextLexem() throws AbsentInformationException {
 			if (fEOF) {
-				throw new AbsentInformationException("SMAP parsing: Unexpected end of file");
+				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.0")); //$NON-NLS-1$
 			} else {
 				startWith();
 			}
@@ -167,7 +167,7 @@ public class SourceDebugExtensionParser {
 		private void startWithAsterisk() throws AbsentInformationException {
 			nextChar();
 			if (fEOF) {
-				throw new AbsentInformationException("SMAP parsing: Unexpected end of file");
+				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.1")); //$NON-NLS-1$
 			}
 			switch (fChar) {
 				case 'C':
@@ -277,7 +277,7 @@ public class SourceDebugExtensionParser {
 		parseHeader(lexer);
 		parseSections(lexer);
 		if (!fDefinedStrata.contains(fReferenceType.defaultStratum())) {
-			throw new AbsentInformationException("SMAP parsing: The default stratum is not defined in a stratum section.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.2")); //$NON-NLS-1$
 		}
 	}
 
@@ -287,17 +287,17 @@ public class SourceDebugExtensionParser {
 	private void parseHeader(Lexer lexer) throws AbsentInformationException {
 		int lexemType= lexer.nextLexem();
 		if (lexemType != Lexer.SMAP) {
-			throw new AbsentInformationException("SMAP parsing: Invalid ID.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.3")); //$NON-NLS-1$
 		}
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException("SMAP parsing: Carriage return expected.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.4")); //$NON-NLS-1$
 		}
 		if (isAsteriskLexem(lexer.nextLexem())) {
-			throw new AbsentInformationException("SMAP parsing: Invalid output file name.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.5")); //$NON-NLS-1$
 		}
 		fReferenceType.setOutputFileName(getNonAsteriskString(lexer));
 		if (isAsteriskLexem(lexer.lexemType())) {
-			throw new AbsentInformationException("SMAP parsing: Invalid default stratum id.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.6")); //$NON-NLS-1$
 		}
 		fReferenceType.setDefaultStratumId(getNonAsteriskString(lexer));
 	}
@@ -316,14 +316,14 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseStratumSection(Lexer lexer) throws AbsentInformationException {
 		if (lexer.lexemType() != Lexer.ASTERISK_S) {
-			throw new AbsentInformationException("SMAP parsing: Stratum section expected.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.7")); //$NON-NLS-1$
 		}
 		if (isAsteriskLexem(lexer.nextLexem())) {
-			throw new AbsentInformationException("SMAP parsing: Invalid stratum id.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.8")); //$NON-NLS-1$
 		}
 		String stratumId= getNonAsteriskString(lexer);
 		if (fDefinedStrata.contains(stratumId)) {
-			throw new AbsentInformationException(MessageFormat.format("SMAP parsing: Stratum '{0}' already defined.", new String[] {stratumId}));
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.9"), new String[] {stratumId})); //$NON-NLS-1$
 		}
 		fCurrentStratum= new ReferenceTypeImpl.Stratum(stratumId);
 		fFileSectionDefinedForCurrentStratum= false;
@@ -333,14 +333,14 @@ public class SourceDebugExtensionParser {
 			switch (lexemType) {
 				case Lexer.ASTERISK_F:
 					if (fFileSectionDefinedForCurrentStratum) {
-						throw new AbsentInformationException(MessageFormat.format("SMAP parsing: File section already defined for stratum '{0}'.", new String[] {stratumId}));
+						throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.10"), new String[] {stratumId})); //$NON-NLS-1$
 					}
 					parseFileSection(lexer);
 					fFileSectionDefinedForCurrentStratum= true;
 					break;
 				case Lexer.ASTERISK_L:
 					if (fLineSectionDefinedForCurrentStratum) {
-						throw new AbsentInformationException(MessageFormat.format("SMAP parsing: Line section already defined for stratum '{0}'.", new String[] {stratumId}));
+						throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.11"), new String[] {stratumId})); //$NON-NLS-1$
 					}
 					parseLineSection(lexer);
 					fLineSectionDefinedForCurrentStratum= true;
@@ -352,15 +352,15 @@ public class SourceDebugExtensionParser {
 					parseFutureSection(lexer);
 					break;
 				default:
-					throw new AbsentInformationException(MessageFormat.format("SMAP parsing: Unexpected token '{0}'.", new String[] {new String(lexer.lexem())}));
+					throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.12"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 			}
 			lexemType= lexer.lexemType();
 		}
 		if (!fFileSectionDefinedForCurrentStratum) {
-			throw new AbsentInformationException(MessageFormat.format("SMAP parsing: No file section defined for stratum '{0}'.", new String[] {stratumId}));
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.13"), new String[] {stratumId})); //$NON-NLS-1$
 		}
 		if (!fLineSectionDefinedForCurrentStratum) {
-			throw new AbsentInformationException(MessageFormat.format("SMAP parsing: No line section defined for stratum '{0}'.", new String[] {stratumId}));
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.14"), new String[] {stratumId})); //$NON-NLS-1$
 		}
 		fDefinedStrata.add(stratumId);
 		fReferenceType.addStratum(fCurrentStratum);
@@ -371,7 +371,7 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseFileSection(Lexer lexer) throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format("SMAP parsing: Unexpected token '{0}'.", new String[] {new String(lexer.lexem())}));
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.15"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {
@@ -387,24 +387,24 @@ public class SourceDebugExtensionParser {
 		if (lexemType == Lexer.NUMBER) {
 			int fileId= integerValue(lexer.lexem());
 			if (isAsteriskLexem(lexer.nextLexem())) {
-				throw new AbsentInformationException("SMAP parsing: File name expected.");
+				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.16")); //$NON-NLS-1$
 			}
 			fCurrentStratum.addFileInfo(fileId, getNonAsteriskString(lexer));
 		} else if (lexemType == Lexer.PLUS) {
 			if (lexer.nextLexem() != Lexer.NUMBER) {
-				throw new AbsentInformationException("SMAP parsing: File id expected.");
+				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.17")); //$NON-NLS-1$
 			}
 			int fileId= integerValue(lexer.lexem());
 			if (isAsteriskLexem(lexer.nextLexem())) {
-				throw new AbsentInformationException("SMAP parsing: File name expected.");
+				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.18")); //$NON-NLS-1$
 			}
 			String fileName= getNonAsteriskString(lexer);
 			if (isAsteriskLexem(lexer.nextLexem())) {
-				throw new AbsentInformationException("SMAP parsing: Absolute file name expected.");
+				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.19")); //$NON-NLS-1$
 			}
 			fCurrentStratum.addFileInfo(fileId, fileName, getNonAsteriskString(lexer));
 		} else {
-			throw new AbsentInformationException(MessageFormat.format("SMAP parsing: Unexpected token '{0}'.", new String[] {new String(lexer.lexem())}));
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.20"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 		}
 	}
 
@@ -414,7 +414,7 @@ public class SourceDebugExtensionParser {
 	private void parseLineSection(Lexer lexer) throws AbsentInformationException {
 		fCurrentLineFileId= 0;
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format("SMAP parsing: Unexpected token '{0}'.", new String[] {new String(lexer.lexem())}));
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.21"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {
@@ -427,13 +427,13 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseLineInfo(Lexer lexer) throws AbsentInformationException {
 		if (lexer.lexemType() != Lexer.NUMBER) {
-			throw new AbsentInformationException("SMAP parsing: Input start line expected.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.22")); //$NON-NLS-1$
 		}
 		int inputStartLine= integerValue(lexer.lexem());
 		int lexemType= lexer.nextLexem();
 		if (lexemType == Lexer.SHARP) {
 			if (lexer.nextLexem() != Lexer.NUMBER) {
-				throw new AbsentInformationException("SMAP parsing: Line file id expected.");
+				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.23")); //$NON-NLS-1$
 			}
 			fCurrentLineFileId= integerValue(lexer.lexem());
 			lexemType= lexer.nextLexem();
@@ -441,7 +441,7 @@ public class SourceDebugExtensionParser {
 		int repeatCount;
 		if (lexemType == Lexer.COMMA) {
 			if (lexer.nextLexem() != Lexer.NUMBER) {
-				throw new AbsentInformationException("SMAP parsing: Repeat count expected.");
+				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.24")); //$NON-NLS-1$
 			}
 			repeatCount= integerValue(lexer.lexem());
 			lexemType= lexer.nextLexem();
@@ -449,17 +449,17 @@ public class SourceDebugExtensionParser {
 			repeatCount= 1;
 		}
 		if (lexemType != Lexer.COLON) {
-			throw new AbsentInformationException("SMAP parsing: ':' expected.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.25")); //$NON-NLS-1$
 		}
 		if (lexer.nextLexem() != Lexer.NUMBER) {
-			throw new AbsentInformationException("SMAP parsing: Output start line expected.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.26")); //$NON-NLS-1$
 		}
 		int outputStartLine= integerValue(lexer.lexem());
 		lexemType= lexer.nextLexem();
 		int outputLineIncrement;
 		if (lexemType == Lexer.COMMA) {
 			if (lexer.nextLexem() != Lexer.NUMBER) {
-				throw new AbsentInformationException("SMAP parsing: Output line increment expected.");
+				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.27")); //$NON-NLS-1$
 			}
 			outputLineIncrement= integerValue(lexer.lexem());
 			lexemType= lexer.nextLexem();
@@ -467,7 +467,7 @@ public class SourceDebugExtensionParser {
 			outputLineIncrement= 1;
 		}
 		if (lexemType != Lexer.CR) {
-			throw new AbsentInformationException("SMAP parsing: Carriage return expected.");
+			throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.28")); //$NON-NLS-1$
 		}
 		lexer.nextLexem();
 		fCurrentStratum.addLineInfo(inputStartLine, fCurrentLineFileId, repeatCount, outputStartLine, outputLineIncrement);
@@ -478,7 +478,7 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseVendorSection(Lexer lexer) throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format("SMAP parsing: Unexpected token '{0}'.", new String[] {new String(lexer.lexem())}));
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.29"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {
@@ -492,7 +492,7 @@ public class SourceDebugExtensionParser {
 	 */
 	private void parseFutureSection(Lexer lexer) throws AbsentInformationException {
 		if (lexer.nextLexem() != Lexer.CR) {
-			throw new AbsentInformationException(MessageFormat.format("SMAP parsing: Unexpected token '{0}'.", new String[] {new String(lexer.lexem())}));
+			throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("SourceDebugExtensionParser.30"), new String[] {new String(lexer.lexem())})); //$NON-NLS-1$
 		}
 		lexer.nextLexem();
 		while (!isAsteriskLexem(lexer.lexemType())) {

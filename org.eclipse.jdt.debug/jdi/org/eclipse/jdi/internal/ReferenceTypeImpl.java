@@ -217,7 +217,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			}
 			FileInfo fileInfo= new FileInfo(fileId, fileName, absoluteFileName);
 			if (fFileInfos.contains(fileInfo)) {
-				throw new AbsentInformationException(MessageFormat.format("SMAP parsing: {0} already used as file id in {1}", new String[] {Integer.toString(fileId), fId}));
+				throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("ReferenceTypeImpl.28"), new String[] {Integer.toString(fileId), fId})); //$NON-NLS-1$
 			}
 			fFileInfos.add(fileInfo);
 		}
@@ -242,7 +242,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				}
 			}
 			if (fileInfo == null) {
-				throw new AbsentInformationException(MessageFormat.format("SMAP parsing: {0} is not a valid lineFileId.", new String[] {Integer.toString(lineFileId)}));
+				throw new AbsentInformationException(MessageFormat.format(JDIMessages.getString("ReferenceTypeImpl.29"), new String[] {Integer.toString(lineFileId)})); //$NON-NLS-1$
 			}
 			// add the data to the different hash maps.
 			for (int i= 0; i < repeatCount; i++, inputStartLine++) {
@@ -1316,7 +1316,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			// return the source names defined for this stratum in the Smap.
 			List fileInfos= stratum.fFileInfos;
 			if (fileInfos.isEmpty()) {
-				throw new AbsentInformationException("No source names for this stratum.");
+				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.30")); //$NON-NLS-1$
 			}
 			for (Iterator iter = stratum.fFileInfos.iterator(); iter.hasNext();) {
 				list.add(((FileInfo) iter.next()).fFileName);
@@ -1495,11 +1495,11 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		try {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_SOURCE_DEBUG_EXTENSION, this);
 			if (replyPacket.errorCode() == JdwpReplyPacket.ABSENT_INFORMATION) {
-				throw new AbsentInformationException("Source Debug Extension not defined");
+				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.31")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			fSmap= readString("source debug extension", replyData);
+			fSmap= readString(JDIMessages.getString("ReferenceTypeImpl.32"), replyData); //$NON-NLS-1$
 		} catch (IOException e) {
 			defaultIOExceptionHandler(e);
 		} finally {
@@ -1509,7 +1509,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		// Workaround to a J9SC bug. It returns an empty string instead of a ABSENT_INFORMATION
 		// error if the source debug extension is not available.
 		if ("".equals(fSmap)) { //$NON-NLS-1$
-			throw new AbsentInformationException("Source Debug Extension not defined");
+			throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.33")); //$NON-NLS-1$
 		}
 		// parse the source map.
 		fStrata= new HashMap();
@@ -1754,7 +1754,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				}
 			}
 			if (sourceName != null && !found) {
-				throw new AbsentInformationException("No information for the specified sourceName.");
+				throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.34")); //$NON-NLS-1$
 			}
 		} else {   // Java stratum
 			javaLines.add(new Integer(lineNumber));
@@ -1795,7 +1795,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			} else { // sourceName != null
 				FileInfo fileInfo= stratum.getFileInfo(sourceName);
 				if (fileInfo == null) {
-					throw new AbsentInformationException("No information for the specified sourceName.");
+					throw new AbsentInformationException(JDIMessages.getString("ReferenceTypeImpl.35")); //$NON-NLS-1$
 				}
 				int fileId= fileInfo.fFileId;
 				int lastIndex= 0;
