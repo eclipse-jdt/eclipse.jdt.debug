@@ -57,6 +57,36 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	}
 	
 	/**
+	 * Creates the event requests to:<ul>
+	 * <li>Listen to class loads related to the breakpoint</li>
+	 * <li>Respond to the breakpoint being hti</li>
+	 * </ul>
+	 */
+	protected void addToTarget(JDIDebugTarget target) throws CoreException {
+		
+		String referenceTypeName= getReferenceTypeName();
+		
+		// create request to listen to class loads
+		registerRequest(target.createClassPrepareRequest(referenceTypeName), target);
+		
+		// create breakpoint requests for each class currently loaded
+		List classes= target.getVM().allClasses();
+		if (classes != null) {
+			Iterator iter = classes.iterator();
+			String typeName= null;
+			String sourceName= null;
+			ReferenceType type= null;
+			while (iter.hasNext()) {
+				type= (ReferenceType) iter.next();
+				typeName= type.name();
+				if (typeName != null && typeName.startsWith(referenceTypeName)) {
+					createRequest(target, type);
+				}
+			}
+		}
+	}	
+	
+	/**
 	 * @see JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
 	 */
 	protected void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
