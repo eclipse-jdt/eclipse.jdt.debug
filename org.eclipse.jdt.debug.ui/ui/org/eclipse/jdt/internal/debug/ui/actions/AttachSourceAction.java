@@ -7,7 +7,6 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
@@ -39,7 +38,7 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 		public SourceAttachmentDialog(Shell parent, IRuntimeClasspathEntry entry) {
 			super(parent);
 			setTitle(MessageFormat.format(ActionMessages.getString("AttachSourceAction.Attachments_For_____{0}_____1"),new String[] {entry.getPath().toString()})); //$NON-NLS-1$
-			fSourceAttachmentBlock= new SourceAttachmentBlock(ResourcesPlugin.getWorkspace().getRoot(), this, entry.getClasspathEntry());
+			fSourceAttachmentBlock= new SourceAttachmentBlock(this, entry.getClasspathEntry(), null, null);
 		}
 		
 		/*
