@@ -164,4 +164,19 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#getDescription(org.eclipse.core.runtime.IPath)
+	 */
+	public String getDescription(IPath containerPath) {
+		if (containerPath.segmentCount() == 3) {
+			StringBuffer desc = new StringBuffer(LaunchingMessages.getString("JREContainer.JRE_System_Library_1")); //$NON-NLS-1$
+			desc.append(" ["); //$NON-NLS-1$
+			desc.append(containerPath.segment(2));
+			desc.append("]"); //$NON-NLS-1$
+			return desc.toString();
+		} else {
+			return LaunchingMessages.getString("JREContainerInitializer.Default_System_Library_1"); //$NON-NLS-1$
+		}
+	}
+
 }
