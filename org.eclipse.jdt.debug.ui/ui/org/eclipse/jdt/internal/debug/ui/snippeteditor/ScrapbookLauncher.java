@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -39,6 +41,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
@@ -108,12 +111,12 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			return null;
 		}
 		
-		String[] classPath = new String[] {jarURL.getFile()};
+		IRuntimeClasspathEntry[] classPath = new IRuntimeClasspathEntry[] {JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(jarURL.getFile()))};
 		
 		return doLaunch(javaProject, page, classPath);
 	}
 
-	private ILaunch doLaunch(IJavaProject p, IFile page, String[] classPath) {
+	private ILaunch doLaunch(IJavaProject p, IFile page, IRuntimeClasspathEntry[] classPath) {
 		try {
 			ILaunchConfigurationType lcType = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 			String name = page.getName() + "-Scrapbook-" + System.currentTimeMillis(); //$NON-NLS-1$
@@ -142,8 +145,13 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				}
 			}
 			
-			List classpathList= Arrays.asList(classPath);
+			// convert to mementos 
+			List classpathList= new ArrayList(classPath.length);
+			for (int i = 0; i < classPath.length; i++) {
+				classpathList.add(classPath[i].getMemento());
+			}
 			
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpathList);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, p.getElementName());
