@@ -507,6 +507,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			// execution will not reach this line, as
 			// #targetRequestFailed will thrown an exception			
 			return null;
+		} catch (InternalError e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;
 		}
 	}
 
@@ -1250,14 +1255,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		VirtualMachine vm= getVM();
 		if (vm.canPopFrames()) {
 			// JDK 1.4 support
-			List frames = computeStackFrames();
-			Object lastFrame = frames.get(frames.size() - 1);
-			boolean last = frame.equals(lastFrame);
 			try {
 				// Pop the drop frame and all frames above it
 				StackFrame jdiFrame = ((JDIStackFrame) frame).getUnderlyingStackFrame();
-				preserveStackFrames();
+				List frames = computeStackFrames();
+				Object lastFrame = frames.get(frames.size() - 1);
+				boolean last = frame.equals(lastFrame);	
 				fThread.popFrames(jdiFrame);
+				disposeStackFrames();
 				computeStackFrames();
 				if (last) {
 					fireSuspendEvent(DebugEvent.STEP_END);
