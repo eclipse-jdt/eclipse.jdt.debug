@@ -48,6 +48,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * lazily on first access.
 	 */
 	protected Method fMethod= null;
+	
+	/**
+	 * Whether the variables need refreshing
+	 */
+	protected boolean fRefreshVariables= true;
 
 	/**
 	 * Creates a new stack frame in the given thread.
@@ -191,7 +196,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				LocalVariable var= (LocalVariable) variables.next();
 				fChildren.add(new JDILocalVariable(this, var));
 			}
+		} else if (fRefreshVariables) {
+			updateVariables();
 		}
+		fRefreshVariables = false;
 		return fChildren;
 	}
 
@@ -308,6 +316,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		getThread().suspend();
 	}
 
+	/**
+	 * Notes that variables will need to be updated on
+	 * the next access.
+	 */
+	protected void invalidateVariables() {
+		fRefreshVariables = true;
+	}
+	
 	/**
 	 * Update my variables incrementally.
 	 */

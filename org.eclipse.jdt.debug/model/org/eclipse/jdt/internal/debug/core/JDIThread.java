@@ -684,6 +684,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 					fStepCount++;
 					fStepping = true;
 					if (fStepCount == 1) {
+						invalidateStackFrames();
 						startStepTimer();
 					}
 				} else {
@@ -698,8 +699,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				}
 				if (fStepCount == 0) {
 					stopStepTimer();
-					fireSuspendEvent(detail);
+					// update underlying stack frames
+					try {
+						getChildren0();
+					} catch (DebugException e) {
+						internalError(e);
+					}
 					fStepping= false;
+					fireSuspendEvent(detail);
 				}
 			}
 		}
@@ -709,6 +716,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		setRunning(running, -1);
 	}
 
+	protected void invalidateStackFrames() {
+		if (fChildren != null) {
+			Iterator frames = fChildren.iterator();
+			while (frames.hasNext()) {
+				((JDIStackFrame)frames.next()).invalidateVariables();
+			}
+		}
+	}
+	
 	protected void step(int type) throws DebugException {
 		try {
 			setRunning(true, DebugEvent.STEP_START);
@@ -774,6 +790,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				}
 			}
 			fThread.suspend();
+			abortDropAndStep();
 			setRunning(false, DebugEvent.CLIENT_REQUEST);
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
@@ -815,7 +832,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		for (int i= 0; i < length; i++) {
 			JDIStackFrame frame= (JDIStackFrame) oldFrames.get(offset);
 			frame.setUnderlyingStackFrame((StackFrame) newFrames.get(offset));
-			frame.updateVariables();
 			offset++;
 		}
 	}
