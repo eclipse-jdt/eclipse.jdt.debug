@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.util.Iterator;
 
@@ -59,8 +61,7 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 		}
 		if (selection instanceof IStructuredSelection) {
 			setStructuredSelection((IStructuredSelection)selection);
-			boolean enabled= getStructuredSelection().size() == 1 
-				&& isEnabledFor(getStructuredSelection().getFirstElement());
+			boolean enabled= isEnabledFor(getStructuredSelection());
 			action.setEnabled(enabled);
 			if (enabled) {
 				IBreakpoint breakpoint= (IBreakpoint)getStructuredSelection().getFirstElement();
@@ -96,7 +97,7 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 		fSelection= selection;
 	}
 	
-	public abstract boolean isEnabledFor(Object element);
+	public abstract boolean isEnabledFor(IStructuredSelection selection);
 
 	/**
 	 * Get the breakpoint manager for the debug plugin
