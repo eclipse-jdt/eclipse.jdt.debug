@@ -64,7 +64,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		}
 		VirtualMachine vm = null;
 		try {
-			// momentarily place the launch config handle into the connect map (bug 19379)
+			// temporarily place the launch config handle into the connect map (bug 19329)
 			argMap.put(IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION, configuration.getMemento());		
 			vm= connector.connect(argMap, monitor);
 		} finally {

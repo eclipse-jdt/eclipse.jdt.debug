@@ -8,10 +8,10 @@ package org.eclipse.jdt.launching;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.jdi.VirtualMachine;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import com.sun.jdi.VirtualMachine;
 
 /**
  * A VM connector establishes a JDI connection with a debuggable
@@ -51,7 +51,7 @@ public interface IVMConnector {
 	 * remote Java application launch configuration delegate, the map
 	 * contains an attribute which is the memento for the launch configuration
 	 * associated with this connection. This provides a connector with extra
-	 * information it may require. The launch configuration menento is keyed
+	 * information it may require. The launch configuration memento is keyed
 	 * by <code>IJavaLaunchConfigurationConstants.ID_REMOTE_JAVA_APPLICATION</code>.
 	 * </p>
 	 * 
@@ -80,7 +80,7 @@ public interface IVMConnector {
 	 * Returns a map of default arguments used by this connector. 
 	 * The keys of the map are names of arguments used by this
 	 * connector, and the values are of type
-	 * <code>com.sun.jdt.Connect.Connector.Argument</code>.
+	 * <code>com.sun.jdi.connect.Connector.Argument</code>.
 	 * 
 	 * @return argument map with default values
 	 * @exception CoreException if unable to retrieve a default argument map
