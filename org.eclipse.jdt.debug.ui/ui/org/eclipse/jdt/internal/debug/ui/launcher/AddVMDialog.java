@@ -37,6 +37,7 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -260,7 +261,18 @@ public class AddVMDialog extends StatusDialog {
 			if (!file.exists()) {
 				s = new StatusInfo(IStatus.ERROR, LauncherMessages.getString("addVMDialog.locationNotExists")); //$NON-NLS-1$
 			} else {
-				s = getVMType().validateInstallLocation(file);
+				final IStatus[] temp = new IStatus[1];
+				final File tempFile = file; 
+				Runnable r = new Runnable() {
+					/**
+					 * @see java.lang.Runnable#run()
+					 */
+					public void run() {
+						temp[0] = getVMType().validateInstallLocation(tempFile);
+					}
+				};
+				BusyIndicator.showWhile(getShell().getDisplay(), r);
+				s = temp[0];
 			}
 		}
 		if (s.isOK()) {
