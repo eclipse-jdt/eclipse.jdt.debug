@@ -64,7 +64,8 @@ public class PerfConsoleTests extends AbstractDebugPerformanceTest implements IC
     }
 
     public void testProcessConsoleWrappedOutput10000Lines() throws Exception {
-        runVariableLength(2500, 10); // 4 lines * 2500 repeats = 100 lines
+        tagAsSummary("Process Console 10,000 lines: wrapped output", Dimension.CPU_TIME);
+        runVariableLength(2500, 10); // 4 lines * 2500 repeats = 10000 lines
     }
 
     protected void setUp() throws Exception {
