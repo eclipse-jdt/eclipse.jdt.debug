@@ -16,6 +16,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
@@ -34,6 +35,8 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	private WorkingDirectoryBlock fWorkingDirBlock = new WorkingDirectoryBlock();
 	
 	private JavaJRETab fJRETab = new JavaJRETab();
+	
+	private VMArgumentsBlock fVMArgumentsBlock = new VMArgumentsBlock();
 	
 	// launch config template for this scrapbook file
 	private ILaunchConfiguration fConfig;
@@ -141,12 +144,15 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		fWorkingDirBlock.createControl(comp);		
 		fWorkingDirBlock.initializeFrom(fConfig);
 		
+		fVMArgumentsBlock.setLaunchConfigurationDialog(fProxy);
+		fVMArgumentsBlock.createControl(comp);
+		fVMArgumentsBlock.initializeFrom(fConfig);		
+		
 		fJRETab.setLaunchConfigurationDialog(fProxy);
 		fJRETab.setVMSpecificArgumentsVisible(false);
 		fJRETab.createControl(comp);
-		
-		fWorkingDirBlock.initializeFrom(fConfig);
 		fJRETab.initializeFrom(fConfig);
+		
 		
 		return comp;
 	}
@@ -165,8 +171,10 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		super.performDefaults();
 		fWorkingDirBlock.setDefaults(fWorkingCopy);
 		fJRETab.setDefaults(fWorkingCopy);
+		fVMArgumentsBlock.setDefaults(fWorkingCopy);
 		fWorkingDirBlock.initializeFrom(fWorkingCopy);
 		fJRETab.initializeFrom(fWorkingCopy);
+		fVMArgumentsBlock.initializeFrom(fWorkingCopy);
 	}
 	
 	/**
@@ -204,6 +212,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 	public boolean performOk() {
 		fWorkingDirBlock.performApply(fWorkingCopy);
 		fJRETab.performApply(fWorkingCopy);
+		fVMArgumentsBlock.performApply(fWorkingCopy);
 		try {
 			if (!fWorkingCopy.contentsEqual(fConfig)) {
 				fConfig = fWorkingCopy.doSave();

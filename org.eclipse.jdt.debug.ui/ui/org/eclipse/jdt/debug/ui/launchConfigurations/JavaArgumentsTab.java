@@ -14,6 +14,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
+import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
@@ -23,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -42,8 +44,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	protected Text fPrgmArgumentsText;
 
 	// VM arguments widgets
-	protected Label fVMArgumentsLabel;
-	protected Text fVMArgumentsText;
+	protected VMArgumentsBlock fVMArgumentsBlock = new VMArgumentsBlock();
 	
 	// Working directory
 	protected WorkingDirectoryBlock fWorkingDirectoryBlock = new WorkingDirectoryBlock();
@@ -77,19 +78,8 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		fVMArgumentsLabel = new Label(comp, SWT.NONE);
-		fVMArgumentsLabel.setText(LauncherMessages.getString("JavaArgumentsTab.VM_ar&guments__6")); //$NON-NLS-1$
-		
-		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 40;
-		fVMArgumentsText.setLayoutData(gd);	
-		fVMArgumentsText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});	
-		
+		fVMArgumentsBlock.createControl(comp);
+				
 		createVerticalSpacer(comp, 1);
 						
 		fWorkingDirectoryBlock.createControl(comp);
@@ -116,7 +106,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
+		fVMArgumentsBlock.setDefaults(config);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
 	}
 
@@ -126,7 +116,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			fPrgmArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
-			fVMArgumentsText.setText(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "")); //$NON-NLS-1$
+			fVMArgumentsBlock.initializeFrom(configuration);
 			fWorkingDirectoryBlock.initializeFrom(configuration);
 		} catch (CoreException e) {
 			setErrorMessage(LauncherMessages.getString("JavaArgumentsTab.Exception_occurred_reading_configuration___15") + e.getStatus().getMessage()); //$NON-NLS-1$
@@ -139,7 +129,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getAttributeValueFrom(fPrgmArgumentsText));
-		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getAttributeValueFrom(fVMArgumentsText));
+		fVMArgumentsBlock.performApply(configuration);
 		fWorkingDirectoryBlock.performApply(configuration);
 	}
 
@@ -169,6 +159,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		super.setLaunchConfigurationDialog(dialog);
 		fWorkingDirectoryBlock.setLaunchConfigurationDialog(dialog);
+		fVMArgumentsBlock.setLaunchConfigurationDialog(dialog);
 	}	
 	/**
 	 * @see ILaunchConfigurationTab#getErrorMessage()
