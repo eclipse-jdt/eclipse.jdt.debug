@@ -186,6 +186,7 @@ public class AddVMDialog extends StatusDialog {
 			fSelectedVMType= fVMTypes[selIndex];
 		}
 		setJRELocationStatus(validateJRELocation());
+		fLibraryBlock.initializeFrom(fEditedVM, fSelectedVMType);
 		updateStatusLine();
 	}	
 	
