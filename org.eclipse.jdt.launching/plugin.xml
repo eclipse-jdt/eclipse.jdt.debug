@@ -77,4 +77,15 @@
 		class="org.eclipse.jdt.internal.launching.SocketAttachConnector"/>
 </extension>
 
+<extension point = "org.eclipse.jdt.core.classpathVariableInitializer">
+	<classpathVariableInitializer
+		variable="JRE_LIB"
+		class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer"/>
+	<classpathVariableInitializer
+		variable="JRE_SRC"
+		class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer"/>
+	<classpathVariableInitializer
+		variable="JRE_SRCROOT"
+		class="org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer"/>
+</extension>		
 </plugin>

@@ -30,8 +30,6 @@ import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -51,6 +49,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
+import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
@@ -242,7 +241,7 @@ public final class JavaRuntime {
 	 */
 	public static void setDefaultVMInstall(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		fgDefaultVMId= getIdFromVM(vm);
-		initializeJREVariables(monitor);
+		updateJREVariables(monitor);
 		saveVMConfiguration();
 	}	
 	
@@ -257,6 +256,10 @@ public final class JavaRuntime {
 		saveVMConfiguration();
 	}		
 	
+	private static void updateJREVariables(IProgressMonitor monitor) throws CoreException {
+		JavaClasspathVariablesInitializer updater= new JavaClasspathVariablesInitializer();
+		updater.updateJREVariables(monitor);
+	}
 	/**
 	 * Return the default VM set with <code>setDefaultVM()</code>.
 	 * @return	Returns the default VM. May return null when no default
@@ -616,39 +619,11 @@ public final class JavaRuntime {
 			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.Library_location_element_incorrectly_specified_3")); //$NON-NLS-1$
 		}
 	}
-	
-	public static synchronized void initializeJREVariables(IProgressMonitor monitor) throws CoreException {
-		IVMInstall vmInstall= JavaRuntime.getDefaultVMInstall();
-		if (vmInstall != null) {
-			IWorkspace workspace= ResourcesPlugin.getWorkspace();
-			boolean wasAutobuild= setAutobuild(workspace, false);
-			try {
-				LibraryLocation desc= getLibraryLocation(vmInstall);
-				IPath library= desc.getSystemLibraryPath();
-				IPath source= desc.getSystemLibrarySourcePath();
-				IPath pkgRoot= desc.getPackageRootPath();				
-
-				setJREVariables(library, source, pkgRoot, monitor);
-			} finally {
-				setAutobuild(workspace, wasAutobuild);
-			}
-		}
-	}
-	
-	private static boolean setAutobuild(IWorkspace ws, boolean newState) throws CoreException {
-		IWorkspaceDescription wsDescription= ws.getDescription();
-		boolean oldState= wsDescription.isAutoBuilding();
-		if (oldState != newState) {
-			wsDescription.setAutoBuilding(newState);
-			ws.setDescription(wsDescription);
-		}
-		return oldState;
-	}
-	
+		
 	/**
 	 * Evaluates a library location for a IVMInstall. If no library location is set on the install, a default
 	 * location is evaluated and checked if it exists.
-	 * @return Returns a library location with paths that exist or ar empty
+	 * @return Returns a library location with paths that exist or are empty
 	 */
 	public static LibraryLocation getLibraryLocation(IVMInstall defaultVM)  {
 		IPath libraryPath;
@@ -702,6 +677,12 @@ public final class JavaRuntime {
 		}
 	}
 	
+	/**
+	 * Creates and returns a classpath entry describing
+	 * the JRE_LIB classpath variable.
+	 * 
+	 * @return a new IClasspathEntry that describes the JRE_LIB classpath variable
+	 */
 	public static IClasspathEntry getJREVariableEntry() {
 		return JavaCore.newVariableEntry(
 			new Path(JRELIB_VARIABLE),
