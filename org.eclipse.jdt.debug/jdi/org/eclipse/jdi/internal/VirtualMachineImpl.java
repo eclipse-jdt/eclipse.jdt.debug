@@ -1163,7 +1163,6 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 	 * @see VirtualMachine#setDefaultStratum(String)
 	 */
 	public void setDefaultStratum(String stratum) {
-		// see next todo
 		fDefaultStratum= stratum;
 		
 		if (!canSetDefaultStratum()) {
@@ -1188,7 +1187,7 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 			handledJdwpRequest();
 		}
 	}
-
+	
 	/*
 	 * @see VirtualMachine#getDefaultStratum()
 	 */
