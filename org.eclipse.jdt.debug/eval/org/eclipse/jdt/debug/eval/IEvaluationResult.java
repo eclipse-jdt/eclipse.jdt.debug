@@ -16,11 +16,6 @@ import org.eclipse.jdt.debug.core.IJavaValue;
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
  * @see IJavaValue
  * @since 2.0
  */
@@ -29,19 +24,18 @@ public interface IEvaluationResult {
 	
 	/**
 	 * Returns the value representing the result of the
-	 * evaluation. Returns <code>null</code> if the
-	 * associated evaluation failed, or if the result
-	 * of the evaluation was <code>null</code>. If
+	 * evaluation, or <code>null</code> if the
+	 * associated evaluation failed. If
 	 * the associated evaluation failed, there will
 	 * be problems, or an exception in this result.
 	 *
 	 * @return the resulting value, possibly
 	 * <code>null</code>
 	 */
-	IJavaValue getValue();
+	public IJavaValue getValue();
 	
 	/**
-	 * Returns whether this evaluation had any problems
+	 * Returns whether the evaluation had any problems
 	 * or if an exception occurred while performing the
 	 * evaluation.
 	 *
@@ -49,7 +43,7 @@ public interface IEvaluationResult {
 	 * @see #getErrors()
 	 * @see #getException()
 	 */
-	boolean hasErrors();
+	public boolean hasErrors();
 	
 	/**
 	 * Returns an array of problem messages. Each message describes a problem that
@@ -57,20 +51,14 @@ public interface IEvaluationResult {
 	 *
 	 * @return compilation error messages, or an empty array if no errors occurred
 	 */
-	Message[] getErrors();
-	
-	/**
-	 * Adds the given error to the collection of compilation errors
-	 * associated with this result.
-	 */
-	void addError(Message error);
-	
+	public Message[] getErrors();
+		
 	/**
 	 * Returns the snippet that was evaluated.
 	 *
 	 * @return The string code snippet.
 	 */
-	String getSnippet();
+	public String getSnippet();
 	
 	/**
 	 * Returns any exception that occurred while performing the evaluation
@@ -83,21 +71,21 @@ public interface IEvaluationResult {
 	 * @see com.sun.jdi.InvocationException
 	 * @see org.eclipse.debug.core.DebugException
 	 */
-	DebugException getException();
+	public DebugException getException();
 	
 	/**
 	 * Returns the thread in which the evaluation was performed.
 	 * 
-	 * @return The thread in which the evaluation was performed
+	 * @return the thread in which the evaluation was performed
 	 */
-	IJavaThread getThread();
+	public IJavaThread getThread();
 	
 	/**
 	 * Returns the evaluation engine used to evaluate the original
 	 * snippet.
 	 * 
-	 * @return The evaluation engine used to evaluate the
+	 * @return the evaluation engine used to evaluate the
 	 *  original snippet
 	 */
-	IEvaluationEngine getEvaluationEngine();	
+	public IEvaluationEngine getEvaluationEngine();	
 }

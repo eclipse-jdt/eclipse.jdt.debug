@@ -63,7 +63,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener)
 	 */
 	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException {
-		ICompiledExpression expression= getCompiledExpression(snippet, thisContext, thread);
+		ICompiledExpression expression= getCompiledExpression(snippet, thisContext);
 		evaluateExpression(expression, thisContext, thread, listener);
 	}
 	
@@ -292,7 +292,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	/**
 	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaObject, IJavaThread)
 	 */
-	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext, IJavaThread thread) {
+	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext) {
 		snippet= getCompleteSnippet(snippet);
 		IJavaProject javaProject = getJavaProject();
 

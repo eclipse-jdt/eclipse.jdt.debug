@@ -10,7 +10,7 @@ import org.eclipse.jdt.core.dom.Message;
 
 /**
  * A compiled expression can be compiled once and evaluated multiple times
- * in a given runtime context.
+ * in a runtime context.
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
@@ -22,17 +22,23 @@ import org.eclipse.jdt.core.dom.Message;
 public interface ICompiledExpression {
 	
 	/**
-	 * Returns the source snippet from which this compiled expression was created
+	 * Returns the source snippet from which this compiled expression was created.
+	 * 
+	 * @return the source snippet from which this compiled expression was created
 	 */
 	public String getSnippet();
 	
 	/**
-	 * Returns whether this compiled expression has any compilation errors
+	 * Returns whether this compiled expression has any compilation errors.
+	 * 
+	 * @return whether this compiled expression has any compilation errors
 	 */
 	public boolean hasErrors();
 	
 	/**
 	 * Returns any errors which occurred while creating this compiled expression.
+	 * 
+	 * @return any errors which occurred while creating this compiled expression
 	 */
 	public Message[] getErrors();
 	

@@ -17,7 +17,9 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  * iterpretting abstract syntax trees. An AST evalutaion engine
  * is capable of creating compiled expressions that can be
  * evaluated multiple times in a given runtime context.
- * 
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 2.0
  */ 
 public interface IAstEvaluationEngine extends IEvaluationEngine {
@@ -25,15 +27,12 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	/**
 	 * Asynchronously evaluates the given expression in the context of
 	 * the specified stack frame, reporting the result back to the given listener.
-	 * The expression is evaluated in the context of the Java
-	 * project this evaluation engine was created on. If the
-	 * expression is determined to have no errors, the expression
-	 * is evaluated in the thread associated with the given
-	 * stack frame. The thread is resumed from the location at which it
-	 * is currently suspended. When the evaluation completes, the thread
-	 * will be suspened at this original location.
+	 * The thread is resumed from the location at which it
+	 * is currently suspended to perform the evaluation. When the evaluation
+	 * completes, the thread will be suspened at this original location.
+	 * Compilation and runtime errors are reported in the evaluation result.
 	 * 
-	 * @param snippet code snippet to evaluate
+	 * @param expression expression to evaluate
 	 * @param frame the stack frame context in which to run the
 	 *   evaluation.
 	 * @param listener the listener that will receive notification
@@ -50,7 +49,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException;
+	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException;
 
 	/**
 	 * Asynchronously evaluates the given expression in the context of
@@ -61,6 +60,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * is evaluated in the thread associated with the given
 	 * stack frame. When the evaluation completes, the thread
 	 * will be suspened at this original location.
+	 * Compilation and runtime errors are reported in the evaluation result.
 	 * 
 	 * @param expression the expression to evaluate
 	 * @param thisContext the 'this' context for the evaluation
@@ -80,20 +80,45 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 *  to perform nested evaluations</li>
 	 * </ul>
 	 */
-	void evaluateExpression(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener) throws DebugException;
+	public void evaluateExpression(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener) throws DebugException;
 
 	/**
-	 * Synchronously generates a compiled expression from the given snippet
+	 * Synchronously generates a compiled expression from the given expression
 	 * in the context of the specified stack frame. The generated expression
 	 * can be stored and evaluated later in a valid runtime context.
+	 * Compilation errors are reported in the returned compiled expression.
+	 * 
+	 * @param expression expression to compile
+	 * @param frame the context in which to compile the expression
+	 * @exception DebugException if this method fails. Reasons include:<ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>The associated thread is not currently suspended</li>
+	 * <li>The stack frame is not contained in the debug target
+	 *   associated with this evaluation engine</li>
+	 * </ul>
 	 */
-	ICompiledExpression getCompiledExpression(String snippet, IJavaStackFrame frame) throws DebugException;
+	public ICompiledExpression getCompiledExpression(String expression, IJavaStackFrame frame) throws DebugException;
+	
 	/**
-	 * Synchronously generates a compiled expression from the given snippet
-	 * in the context of the specified stack frame. The generated expression
+	 * Synchronously generates a compiled expression from the given expression
+	 * in the context of the specified object. The generated expression
 	 * can be stored and evaluated later in a valid runtime context.
+	 * Compilation errors are reported in the returned compiled expression.
+	 * 
+	 * @param expression expression to compile
+	 * @param object the context in which to compile the expression
+	 * @exception DebugException if this method fails. Reasons include:<ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>The associated thread is not currently suspended</li>
+	 * <li>The stack frame is not contained in the debug target
+	 *   associated with this evaluation engine</li>
+	 * </ul>
 	 */
-	ICompiledExpression getCompiledExpression(String snippet, IJavaObject object, IJavaThread thread) throws DebugException;
+	public ICompiledExpression getCompiledExpression(String expression, IJavaObject object) throws DebugException;
 
 	
 }

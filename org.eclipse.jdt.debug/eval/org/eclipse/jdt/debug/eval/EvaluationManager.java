@@ -40,22 +40,28 @@ public class EvaluationManager {
 	 * performs evaluations for local Java applications
 	 * by deploying class files.
 	 * 
-	 * @param project the java project in which snippets
+	 * @param project the Java project in which expressions
 	 *  are to be compiled
-	 * @param vm the java debug target in which snippets
+	 * @param target the Java debug target in which expressions
 	 *  are to be evaluated
 	 * @param directory the directory where support class files
 	 *  are deployed to assist in the evaluation. The directory
 	 *  must exist.
+	 * @return an evaluation engine
 	 */
-	public static IClassFileEvaluationEngine newClassFileEvaluationEngine(IJavaProject project, IJavaDebugTarget vm, File directory) {
-		return new LocalEvaluationEngine(project, vm, directory);
+	public static IClassFileEvaluationEngine newClassFileEvaluationEngine(IJavaProject project, IJavaDebugTarget target, File directory) {
+		return new LocalEvaluationEngine(project, target, directory);
 	}
 	 
 	/**
-	 * Creates and returns a new evaluation engine that performs
-	 * evaluations by creating an abstract syntax tree (AST) represention
-	 * of an expression.
+	 * Creates and returns a new evaluation engine that performs evaluations by
+	 * compiling expressions into abstract syntax trees (ASTs), and interpreting
+	 * the AST over a JDI connection. This type of evaluation engine is capable of
+	 * performing remote evalautions.
+	 * 
+	 * @param project the Java project in which expressions are to be compiled
+	 * @param target the Java debug target in which expressions are to be evaluated
+	 * @return an evaluation engine
 	 */
 	public static ASTEvaluationEngine newAstEvaluationEngine(IJavaProject project, IJavaDebugTarget target) {
 		return new ASTEvaluationEngine(project, target);
