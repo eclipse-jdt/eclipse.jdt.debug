@@ -467,15 +467,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	private void setVM(VirtualMachine vm) {
 		fVirtualMachine = vm;
 	}
-	
-	/**
-	 * Returns the underlying VM's event request manager.
-	 * 
-	 * @return event request manager
-	 */
-	protected EventRequestManager getEventRequestManager() {
-		return getVM().eventRequestManager();
-	}
 
 	/**
 	 * Notifies this target that the specified types have been changed and
@@ -1029,31 +1020,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			}
 		}
 		return null;
-	}
-	
-	/**
-	 * Adds the given listener to this target's event dispatcher's
-	 * table of listeners for the specified event request. The listener
-	 * will be notified each time the event occurrs.
-	 * 
-	 * @param listener the listener to register
-	 * @param request the event request
-	 */
-	protected void addJDIEventListener(IJDIEventListener listener, EventRequest request) {
-		getEventDispatcher().addJDIEventListener(listener, request);
-	}
-	
-	/**
-	 * Removes the given listener from this target's event dispatcher's
-	 * table of listeners for the specifed event request. The listener
-	 * will no longer be notified when the event occurrs. Listeners
-	 * are responsible for deleting the event request if desired.
-	 * 
-	 * @param listener the listener to remove
-	 * @param request the event request
-	 */
-	protected void removeJDIEventListener(IJDIEventListener listener, EventRequest request) {
-		getEventDispatcher().removeJDIEventListener(listener, request);
 	}
 	
 	/**

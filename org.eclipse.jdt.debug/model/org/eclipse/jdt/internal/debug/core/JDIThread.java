@@ -6,23 +6,47 @@ package org.eclipse.jdt.internal.debug.core;
  */
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
-import org.eclipse.jdt.debug.core.*;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaEvaluationListener;
+import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 
-import com.sun.jdi.*;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.ClassType;
+import com.sun.jdi.Field;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.IntegerValue;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.InvocationException;
+import com.sun.jdi.Method;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
+import com.sun.jdi.ThreadGroupReference;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.Value;
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.event.Event;
 import com.sun.jdi.event.StepEvent;
-import com.sun.jdi.request.*;
+import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.EventRequestManager;
+import com.sun.jdi.request.StepRequest;
 
 /** 
  * Proxy to a thread reference on the target.
  */
-public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutListener {
+public class JDIThread extends JDIDebugElement implements IJavaThread {
 	
 	protected static final String MAIN_THREAD_GROUP = "main"; //$NON-NLS-1$
 
@@ -46,21 +70,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * to true after a step has started.
 	 */
 	protected boolean fRefreshChildren = true;
-
+	
 	/**
-	 * Step request used to step in this thread (only one is allowed per
-	 * thread).
+	 * Currently pending step handler, <code>null</code>
+	 * when not performing a step.
 	 */
-	protected StepRequest fStepRequest= null;
+	private StepHandler fStepHandler= null;
+	
 	/**
 	 * Whether running.
 	 */
-	protected boolean fRunning;
-	/**
-	 * Whether stepping.
-	 */
-	protected boolean fStepping;
-	protected int fStepCount= 0;
+	private boolean fRunning;
 		
 	/**
 	 * Whether suspended by an event in the VM such as a
@@ -68,18 +88,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * request to suspend.
 	 */
 	protected boolean fEventSuspend = false;
-	
-	/**
-	 * The destination stack frame when stepping
-	 * in the non-top stack frame, or <code>null</code>
-	 * when stepping in the top stack frame.
-	 */
-	protected IStackFrame fDestinationFrame;
 
 	/**
 	 * Step timer. During a long running step, children are disposed.
 	 */
-	protected Timer fTimer;
+	private Timer fTimer;
 
 	/**
 	 * Whether terminated.
@@ -100,21 +113,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * The cached named of the underlying thread.
 	 */
 	protected String fName= null;
-
-	/**
-	 * Whether this thread is doing a "drop to frame".
-	 */
-	protected boolean fDropping= false;
-
-	/**
-	 * Whether this thread is doing a "reenter top frame"
-	 */
-	protected boolean fReentering= false;
-
-	/**
-	 * A count of the number of frames remaining to drop
-	 */
-	protected int fFramesToDrop= 0;
 	
 	/**
 	 * Whether this thread is currently performing
@@ -146,7 +144,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 
 		// state
 		fTerminated= false;
-		fStepping= false;
 		try {
 			fRunning= !getUnderlyingThread().isSuspended();
 		} catch (VMDisconnectedException e) {
@@ -167,13 +164,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	public int getElementType() {
 		return THREAD;
-	}
-
-	/**
-	 * @see IDebugElement
-	 */
-	public IThread getThread() {
-		return this;
 	}
 
 	/**
@@ -255,43 +245,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 	}
 
-	protected void enableStepRequest(int type) throws DebugException {
-		EventRequestManager erm= getVM().eventRequestManager();
-		try {
-			if (fStepRequest != null)
-				erm.deleteEventRequest(fStepRequest);
-			fStepRequest= erm.createStepRequest(fThread, StepRequest.STEP_LINE, type);
-			fStepRequest.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-			fStepRequest.addCountFilter(1);
-			attachFiltersToStepRequest(fStepRequest);
-			fStepRequest.enable();
-		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_creating_step_request"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			return;
-		}
-	}
-	
-	/**
-	 * If step filters are currently switched on, set all active filters on the step request.
-	 */
-	protected void attachFiltersToStepRequest(StepRequest stepRequest) {
-		if (!JDIDebugModel.useStepFilters()) {
-			return;
-		}
-		List activeFilters = JDIDebugModel.getActiveStepFilters();
-		Iterator iterator = activeFilters.iterator();
-		while (iterator.hasNext()) {
-			String filter = (String)iterator.next();
-			fStepRequest.addClassExclusionFilter(filter);
-		}
-	}
-
 	/**
 	 * @see IThread
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException {
 		List list = getStackFrames0();
 		return (IStackFrame[])list.toArray(new IStackFrame[list.size()]);
+	}
+	
+	/**
+	 * Sets the stack frames for this thread.
+	 * 
+	 * @param frames a list of stack frames
+	 */
+	protected void setStackFrames(List frames) {
+		fStackFrames = frames;
 	}
 	
 	/**
@@ -412,6 +380,31 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		return method;
 	}
 
+	/**
+	 * Returns the number of frames on the stack from the
+	 * underlying thread.
+	 * 
+	 * @return number of frames on the stack
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This thread is not suspended</li>
+	 * </ul>
+	 */
+	protected int getUnderlyingFrameCount() throws DebugException {
+		try {
+			return getUnderlyingThread().frameCount();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred retrieving frame count.", new String[] {e.toString()}), e);
+		} catch (IncompatibleThreadStateException e) {
+			targetRequestFailed(MessageFormat.format("{0} occurred retrieving frame count.", new String[] {e.toString()}), e);
+		}
+		// execution will not reach here - try block will either
+		// return or exception will be thrown
+		return -1;
+	}
 
 	/**
 	 * Invokes a method in this thread, and returns the result. Only one receiver may
@@ -428,6 +421,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			setRequestTimeout(Integer.MAX_VALUE);
 			setRunning(true);
 			fInEvaluation = true;
+			disposeStackFrames();
 			if (receiverClass == null) {
 				result= receiverObject.invokeMethod(fThread, method, args, ClassType.INVOKE_SINGLE_THREADED);
 			} else {
@@ -596,69 +590,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * send notification of the change. Otherwise, do not.
 	 */
 	protected void handleSuspendForBreakpoint(JavaBreakpoint breakpoint) {
-		abortDropAndStep();
+		abortStep();
 		fCurrentBreakpoint= breakpoint;
-		setRunning(false, DebugEvent.BREAKPOINT);
-	}
-
-	protected void handleStep(StepEvent event) {
-		fRunning = false;
-		if (fDestinationFrame != null) {
-			try {
-				if (getTopStackFrame().equals(fDestinationFrame)) {
-					fDestinationFrame = null;
-				} else if (getStackFrames0().indexOf(fDestinationFrame) == -1) {
-					fDestinationFrame = null;
-				} else {
-					if (hasPendingEvents()) {
-						fDestinationFrame = null;
-					} else {
-						stepReturn0();
-						fRunning = true;
-						decrementStepCount();
-						return;
-					}
-				}
-			} catch (DebugException e) {
-				abortDropAndStep();
-				logError(e);
-			}
-		} else if (fDropping) {
-			fFramesToDrop--;
-			fDropping= fFramesToDrop > 0;
-			if (fDropping) {
-				try {
-					dropTopFrame();
-				} catch (DebugException e) {
-					abortDropAndStep();
-					logError(e);
-				}
-			} else {
-				try {
-					reenterTopFrame();
-				} catch (DebugException e) {
-					abortDropAndStep();
-					logError(e);
-				}
-			}
-		} else if (fReentering) {
-			fReentering= false;
-			try {
-				stepInto0();
-			} catch (DebugException e) {
-				abortDropAndStep();
-				logError(e);
-			}
-		} 
-		fRunning = true;
-		setRunning(false, DebugEvent.STEP_END);
+		setRunning(false);
+		fireSuspendEvent(DebugEvent.BREAKPOINT);
 	}
 
 	/**
 	 * @see IStep
 	 */
 	public boolean isStepping() {
-		return fStepping;
+		return getPendingStepHandler() != null;
 	}
 
 	/**
@@ -707,89 +649,55 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 		try {
 			setRunning(true);
+			disposeStackFrames();
+			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 			fThread.resume();
 		} catch (RuntimeException e) {
 			setRunning(false);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_resuming"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+	}
+		
+	/**
+	 * Sets whether this thread is currently executing.
+	 * When set to <code>true</code>, this thread's current
+	 * breakpoint is cleared.
+	 * 
+	 * @param running whether this thread is executing
+	 */
+	protected void setRunning(boolean running) {
+		fRunning = running;
+		if (running) {
+			fCurrentBreakpoint = null;
 		}
 	}
 
 	/**
-	 * Sets the running state for this thread. Invalidates
-	 * children on a step start, or clears them on a resume.
-	 * Fires resume/suspend events. Starts/stops step timer.
+	 * Preserves stack frames to be used on the next suspend event.
+	 * Iterates through all current stack frames, setting their
+	 * state as invalid. This is done when this thread is resumed,
+	 * but we want to re-use stack frames when it later suspends.
 	 */
-	void setRunning(boolean running, int detail) {
-		if (fRunning != running) {
-			fRunning= running;
-			if (fRunning) {
-				fCurrentBreakpoint= null;
-				fRefreshChildren = true;
-				if (detail == DebugEvent.STEP_START) {
-					fStepCount++;
-					fStepping = true;
-					if (fStepCount == 1) {
-						invalidateStackFrames();
-						startStepTimer();
-					}
-				} else {
-					fStackFrames = null;
-				}
-				if (!fStepping || fStepCount == 1) {
-					fireResumeEvent(detail);
-				}
-			} else {
-				if (detail == DebugEvent.STEP_END) {
-					decrementStepCount();
-				}
-				if (fStepCount == 0) {
-					stopStepTimer();
-					// update underlying stack frames
-					try {
-						getStackFrames0();
-					} catch (DebugException e) {
-						logError(e);
-					}
-					fStepping= false;
-					fireSuspendEvent(detail);
-				}
-				fEventSuspend = detail != DebugEvent.CLIENT_REQUEST;
-			}
-		}
-	}
-
-	void setRunning(boolean running) {
-		setRunning(running, -1);
-	}
-
-	protected void invalidateStackFrames() {
+	protected void preserveStackFrames() {
 		if (fStackFrames != null) {
+			fRefreshChildren = true;
 			Iterator frames = fStackFrames.iterator();
 			while (frames.hasNext()) {
 				((JDIStackFrame)frames.next()).invalidateVariables();
 			}
 		}
 	}
-	
-	protected void step(int type) throws DebugException {
-		try {
-			setRunning(true, DebugEvent.STEP_START);
-			enableStepRequest(type);			
-			fThread.resume();
-		} catch (RuntimeException e) {
-			setRunning(false, DebugEvent.STEP_END);
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_stepping"), new String[] {e.toString()}), e); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * A step has timed out. Children are disposed.
-	 */
-	public void timeout() {
-		fStackFrames = Collections.EMPTY_LIST;
-		fireChangeEvent();
-	}
 
+	/**
+	 * Disposes stack frames, to be completely re-computed on
+	 * the next suspend event.
+	 */
+	protected void disposeStackFrames() {
+		setStackFrames(Collections.EMPTY_LIST);
+		fRefreshChildren = true;
+	}
+	
 	/**
 	 * @see IStep
 	 */
@@ -797,11 +705,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		if (!canStepInto()) {
 			return;
 		}
-		stepInto0();
-	}
-	
-	private void stepInto0() throws DebugException {
-		step(StepRequest.STEP_INTO);
+		StepHandler handler = new StepIntoHandler();
+		handler.step();
 	}
 
 	/**
@@ -811,7 +716,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		if (!canStepOver()) {
 			return;
 		}
-		step(StepRequest.STEP_OVER);
+		StepHandler handler = new StepOverHandler();
+		handler.step();
 	}
 
 	/**
@@ -821,30 +727,20 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		if (!canStepReturn()) {
 			return;
 		}
-		stepReturn0();
+		StepHandler handler = new StepReturnHandler();
+		handler.step();
 	}
 	
-	private void stepReturn0() throws DebugException {
-		step(StepRequest.STEP_OUT);
-	}
-
 	/**
 	 * @see ISuspendResume
 	 */
 	public void suspend() throws DebugException {
 		try {
-			// remove any pending step request
-			if (fStepRequest != null) {
-				try {
-					getVM().eventRequestManager().deleteEventRequest(fStepRequest);
-				} catch (RuntimeException e) {
-					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_deleting_step_request"), new String[] {e.toString()}), e); //$NON-NLS-1$
-					return;
-				}
-			}
+			// Abort any pending step request
+			abortStep();
 			fThread.suspend();
-			abortDropAndStep();
-			setRunning(false, DebugEvent.CLIENT_REQUEST);
+			setRunning(false);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
 		} catch (RuntimeException e) {
 			setRunning(true);
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_suspending"), new String[] {e.toString()}), e); //$NON-NLS-1$
@@ -892,109 +788,25 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * Drops to the given stack frame
 	 */
 	protected void dropToFrame(IStackFrame frame) throws DebugException {
-
-		fFramesToDrop= getStackFrames0().indexOf(frame);
-		fDropping= fFramesToDrop > 0;
-		if (fDropping) {
-			dropTopFrame();
-		} else {
-			reenterTopFrame();
-		}
-
+		StepHandler handler = new DropToFrameHandler(frame);
+		handler.step();
 	}
 
-	/**
-	 * Drops the top frame, sending a step start event
-	 */
-	protected void dropTopFrame() throws DebugException {
-		try {
-			enableStepRequest(StepRequest.STEP_OUT);
-			setRunning(true, DebugEvent.STEP_START);
-			// Resume with a do return
-			org.eclipse.jdi.hcr.ThreadReference hcrThread= (org.eclipse.jdi.hcr.ThreadReference) fThread;
-			hcrThread.doReturn(null, true);
-		} catch (RuntimeException e) {
-			setRunning(false);
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_popping"), new String[] {e.toString()}), e); //$NON-NLS-1$
-		}
-	}
-	
 	protected void stepToFrame(IStackFrame frame) throws DebugException {
 		if (!canStepReturn()) {
 			return;
 		}
-		fDestinationFrame = frame;
-		stepReturn();
+		StepHandler handler = new StepToFrameHanlder(frame);
+		handler.step();
 	}
-	
+		
 	/**
-	 * Reenters the top frame
-	 *
-	 * @exception DebugException on failure
-	 */
-	private void reenterTopFrame() throws DebugException {
-		try {
-			fReentering= true;
-			EventRequestManager erm= getVM().eventRequestManager();
-			if (fStepRequest != null) {
-				erm.deleteEventRequest(fStepRequest);
-			}
-			fStepRequest= ((org.eclipse.jdi.hcr.EventRequestManager) erm).createReenterStepRequest(fThread);
-			fStepRequest.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-			fStepRequest.addCountFilter(1);
-			fStepRequest.enable();
-			// Resume with a do return
-			org.eclipse.jdi.hcr.ThreadReference hcrThread= (org.eclipse.jdi.hcr.ThreadReference) fThread;
-			hcrThread.doReturn(null, true);
-			setRunning(true, DebugEvent.STEP_START);
-		} catch (RuntimeException e) {
-			fReentering= false;
-			setRunning(false);
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_re-entering"), new String[] {e.toString()}), e); //$NON-NLS-1$
-		}
-	}
-
-	protected void abortDropAndStep() {
-		fStepCount = 0;
-		abortDrop();
-		abortStep();
-	}
-	
-	/**
-	 * Decrements the step count, ensuring it does not
-	 * go negative.
-	 */
-	protected void decrementStepCount() {
-		if (fStepCount > 0) {
-			fStepCount--;
-		}
-	}
-	
-	/**
-	 * Aborts the drop
-	 */
-	protected void abortDrop() {
-		fDropping= false;
-		fFramesToDrop= 0;
-	}
-	
-	/**
-	 * Aborts the current step
+	 * Aborts the current step, if any.
 	 */
 	protected void abortStep() {
-		fDestinationFrame = null;
-		EventRequestManager erm= getVM().eventRequestManager();
-		try {
-			if (fStepRequest != null) {
-				erm.deleteEventRequest(fStepRequest);
-			}
-			fStepRequest = null;
-		} catch (VMDisconnectedException e) {
-			if (!(getDebugTarget().isTerminated() || getDebugTarget().isDisconnected())) {
-				internalError(e);
-			}
-		} catch (RuntimeException e) {
-			internalError(e);
+		StepHandler handler = getPendingStepHandler();
+		if (handler != null) {
+			handler.abort();
 		}
 	}
 
@@ -1061,6 +873,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
+	 * When a suspend event is fired, a thread keeps track of the
+	 * cause of the suspend. If the suspend is due to a an event
+	 * request in the underlying VM, evaluations may be performed,
+	 * otherwise evaluations are disallowed.
+	 * 
+	 * @see JDIDebugElement#fireSuspendEvent(int)
+	 */
+	protected void fireSuspendEvent(int detail) {
+		fEventSuspend = (detail != DebugEvent.CLIENT_REQUEST);
+		super.fireSuspendEvent(detail);
+	}
+	
+	/**
 	 * Notification this thread has terminated - update state
 	 */
 	protected void terminated() {
@@ -1095,24 +920,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * Starts the step timer.
+	 * Returns this thread's step timer.
 	 */
-	protected void startStepTimer() {
+	protected Timer getStepTimer() {
 		if (fTimer == null) {
 			fTimer = new Timer();
 		}
-		fTimer.start(this, 3000);
+		return fTimer;
 	}
-		 
-	/**
-	 * Stops the step timer.
-	 */
-	protected void stopStepTimer() {
-		if (fTimer != null) {
-			fTimer.stop();
-		}
-	}
-	
+		 	
 	/**
 	 * Returns whether this thread is currently performing
 	 * an evaluation.
@@ -1122,5 +938,553 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	protected boolean isPerformingEvaluation() {
 		return fInEvaluation;
+	}
+	
+	/**
+	 * Sets the step handler currently handling a step
+	 * request.
+	 * 
+	 * @param handler the current step handler, or <code>null</code>
+	 * 	if none
+	 */
+	protected void setPendingStepHandler(StepHandler handler) {
+		fStepHandler = handler;
+	}
+	
+	/**
+	 * Returns the step handler currently handling a step
+	 * request, or <code>null</code> if none.
+	 * 
+	 * @return step handler, or <code>null</code> if none
+	 */
+	protected StepHandler getPendingStepHandler() {
+		return fStepHandler;
+	}
+	
+	
+	/**
+	 * Helper class to perform stepping an a thread.
+	 */
+	abstract class StepHandler implements IJDIEventListener, ITimeoutListener {
+		/**
+		 * Request for stepping in the underlying VM
+		 */
+		private StepRequest fStepRequest;
+		
+		/**
+		 * Initiates a step in the underlying VM by creating a step
+		 * request of the appropriate kind (over, into, return),
+		 * and resuming this thread. When a step is initiated it
+		 * is registered with its thread as a pending step. A pending
+		 * step could be cancelled if a breakpoint suspends execution
+		 * during the step.
+		 * <p>
+		 * This thread's state is set to running and stepping, and
+		 * stack frames are invalidated (but preserved to be re-used
+		 * when the step completes). A resume event with a step detail
+		 * is fired for this thread. A step timer is started. If the timer
+		 * expires, stack frames are cleared and not re-used on the
+		 * eventual suspend.
+		 * </p>
+		 * 
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */
+		protected void step() throws DebugException {
+			setStepRequest(createStepRequest());
+			setPendingStepHandler(this);
+			addJDIEventListener(this, getStepRequest());
+			setRunning(true);
+			preserveStackFrames();
+			fireResumeEvent(DebugEvent.STEP_START);
+			getStepTimer().start(this, 3000);
+			invokeThread();
+		}
+		
+		/**
+		 * Resumes the underlying thread to initiate the step.
+		 * By default the thread is resumed. Step handlers that
+		 * require other actions can override this method.
+		 * 
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */
+		protected void invokeThread() throws DebugException {
+			try {
+				getUnderlyingThread().resume();
+			} catch (RuntimeException e) {
+				stepEnd();
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_stepping"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			}
+		}
+		
+		/**
+		 * Creates and returns a step request specific to this step
+		 * handler. Subclasses must override <code>getStepKind()</code>
+		 * to return the kind of step it implements.
+		 * 
+		 * @return step request
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */
+		protected StepRequest createStepRequest() throws DebugException {
+			try {
+				StepRequest request = getEventRequestManager().createStepRequest(getUnderlyingThread(), StepRequest.STEP_LINE, getStepKind());
+				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+				request.addCountFilter(1);
+				attachFiltersToStepRequest(request);
+				request.enable();
+				return request;
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_creating_step_request"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			}			
+			// this line will never be executed, as the try block
+			// will either return, or the catch block with throw 
+			// an exception
+			return null;
+		}
+		
+		/**
+		 * Returns the kind of step this handler implements.
+		 * 
+		 * @return one of <code>StepRequest.STEP_INTO</code>,
+		 * 	<code>StepRequest.STEP_OVER</code>, <code>StepRequest.STEP_OUT</code>
+		 */
+		protected abstract int getStepKind();
+		
+		/**
+		 * Sets the step request created by this handler in
+		 * the underlying VM. Set to <code>null<code> when
+		 * this handler deletes its request.
+		 * 
+		 * @param request step request
+		 */
+		protected void setStepRequest(StepRequest request) {
+			fStepRequest = request;
+		}
+		
+		/**
+		 * Returns the step request created by this handler in
+		 * the underlying VM.
+		 * 
+		 * @return step request
+		 */
+		protected StepRequest getStepRequest() {
+			return fStepRequest;
+		}
+		
+		/**
+		 * Deletes this handler's step request from the underlying VM
+		 * and removes this handler as an event listener.
+		 */
+		protected void deleteStepRequest() {
+			removeJDIEventListener(this, getStepRequest());
+			try {
+				getEventRequestManager().deleteEventRequest(getStepRequest());
+				setStepRequest(null);
+			} catch (RuntimeException e) {
+				logError(e);
+			}
+		}
+		
+		/**
+		 * If step filters are currently switched on, set all active filters on the step request.
+		 */
+		protected void attachFiltersToStepRequest(StepRequest request) {
+			if (applyStepFilters() && JDIDebugModel.useStepFilters()) {
+				List activeFilters = JDIDebugModel.getActiveStepFilters();
+				Iterator iterator = activeFilters.iterator();
+				while (iterator.hasNext()) {
+					String filter = (String)iterator.next();
+					request.addClassExclusionFilter(filter);
+				}
+			}
+		}
+		
+		/**
+		 * Returns whether this step handler should use step
+		 * filters when creating its step request. By default,
+		 * step filters are used. Subclasses must override 
+		 * if/when required.
+		 * 
+		 * @return whether this step handler should use step
+		 * filters when creating its step request
+		 */
+		protected boolean applyStepFilters() {
+			return true;
+		}
+		
+		/**
+		 * Notification that the step has completed.
+		 * 
+		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
+		 */
+		public boolean handleEvent(Event event, JDIDebugTarget target) {
+			stepEnd();
+			return false;
+		}
+		
+		/**
+		 * Cleans up when a step completes.<ul>
+		 * <li>Stops the step timer</code>
+		 * <li>Thread state is set to suspended.</li>
+		 * <li>Stepping state is set to false</li>
+		 * <li>Stack frames and variables are incrementally updated</li>
+		 * <li>The step request is deleted and removed as
+		 * 		and event listener</li>
+		 * <li>A suspend event is fired</li>
+		 * </ul>
+		 */
+		protected void stepEnd() {
+			getStepTimer().stop();
+			setRunning(false);
+			deleteStepRequest();
+			setPendingStepHandler(null);
+			fireSuspendEvent(DebugEvent.STEP_END);
+		}
+
+		/**
+		 * A step has timed out. Dispose stack frames.
+		 */
+		public void timeout() {
+			disposeStackFrames();
+			fireChangeEvent();
+		}
+		
+		/**
+		 * Aborts this step request if active. The step timer is
+		 * stopped, and the step event request is deleted
+		 * from the underlying VM.
+		 */
+		protected void abort() {
+			if (getStepRequest() != null) {
+				getStepTimer().stop();
+				deleteStepRequest();
+				setPendingStepHandler(null);
+			}
+		}
+		
+	}
+	
+	/**
+	 * Handler for step over requests.
+	 */
+	class StepOverHandler extends StepHandler {
+		/**
+		 * @see StepHandler#getStepKind()
+		 */
+		protected int getStepKind() {
+			return StepRequest.STEP_OVER;
+		}	
+	}
+	
+	/**
+	 * Handler for step into requests.
+	 */
+	class StepIntoHandler extends StepHandler {
+		/**
+		 * @see StepHandler#getStepKind()
+		 */
+		protected int getStepKind() {
+			return StepRequest.STEP_INTO;
+		}	
+	}
+	
+	/**
+	 * Handler for step return requests.
+	 */
+	class StepReturnHandler extends StepHandler {
+		/**
+		 * @see StepHandler#getStepKind()
+		 */
+		protected int getStepKind() {
+			return StepRequest.STEP_OUT;
+		}	
+	}
+	
+	/**
+	 * Handler for stepping to a specific stack frame
+	 * (stepping in the non-top stack frame). Step returns
+	 * are performed until a specified stack frame is reached
+	 * or the thread is suspended (explicitly, or by a
+	 * breakpoint).
+	 */
+	class StepToFrameHanlder extends StepReturnHandler {
+		
+		/**
+		 * The number of frames that should be left on the stack
+		 */
+		private int fRemainingFrames;
+		
+		/**
+		 * Constructs a step handler to step until the specified
+		 * stack frame is reached.
+		 * 
+		 * @param frame the stack frame to step to
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */
+		protected StepToFrameHanlder(IStackFrame frame) throws DebugException {
+			List frames = getStackFrames0();
+			setRemainingFrames(frames.size() - getStackFrames0().indexOf(frame));
+		}
+		
+		/**
+		 * Sets the number of frames that should be
+		 * remaining on the stack when done.
+		 * 
+		 * @param num number of remaining frames
+		 */
+		protected void setRemainingFrames(int num) {
+			fRemainingFrames = num;
+		}
+		
+		/**
+		 * Returns number of frames that should be
+		 * remaining on the stack when done
+		 * 
+		 * @return number of frames that should be left
+		 */
+		protected int getRemainingFrames() {
+			return fRemainingFrames;
+		}
+		
+		/**
+		 * Notification the step request has completed.
+		 * If in the desired frame, complete the step
+		 * request nomally. If not in the desired frame,
+		 * another step request is created and this thread
+		 * is resumed.
+		 * 
+		 * @see IJDIDebugEventListener#handleEvent(Event, JDIDebugTarget)
+		 */
+		public boolean handleEvent(Event event, JDIDebugTarget target) {
+			try {
+				int numFrames = getUnderlyingFrameCount();
+				// tos should not be null
+				if (numFrames <= getRemainingFrames()) {
+					stepEnd();
+					return false;
+				} else {
+					// reset running state and keep going
+					setRunning(true);
+					deleteStepRequest();
+					createSecondaryStepRequest();
+					return true;
+				}
+			} catch (DebugException e) {
+				logError(e);
+				stepEnd();
+				return false;
+			}
+		}
+
+		/**
+		 * Creates another step request in the underlying of the
+		 * appropriate kind (over, into, return). This thread will
+		 * be resumed by the event dispatcher as this event handler
+		 * will vote to resume suspended threads. When a step is
+		 * initiated it is registered with its thread as a pending
+		 * step. A pending step could be cancelled if a breakpoint
+		 * suspends execution during the step.
+		 * 
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */
+		protected void createSecondaryStepRequest() throws DebugException {
+			setStepRequest(createStepRequest());
+			setPendingStepHandler(this);
+			addJDIEventListener(this, getStepRequest());
+		}	
+		
+		/**
+		 * Returns <code>false</code>. To step to a particular frame,
+		 * step filters are not used.
+		 * 
+		 * @see StepHandler#applyStepFilters()
+		 */
+		protected boolean applyStepFilters() {
+			return false;
+		}
+				
+	}
+	
+	/**
+	 * Handles dropping to a specified frame.
+	 */
+	class DropToFrameHandler extends StepReturnHandler {
+		
+		/**
+		 * The number of frames to drop off the
+		 * stack.
+		 */
+		private int fFramesToDrop;
+		
+		/**
+		 * Constructs a handler to drop to the the specified
+		 * stack frame.
+		 * 
+		 * @param frame the stack frame to drop to
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */		
+		protected DropToFrameHandler(IStackFrame frame) throws DebugException {
+			List frames = getStackFrames0();
+			setFramesToDrop(frames.indexOf(frame));
+		}
+		
+		/**
+		 * Sets the number of frames to pop off the stack.
+		 * 
+		 * @param num number of frames to pop
+		 */
+		protected void setFramesToDrop(int num) {
+			fFramesToDrop = num;
+		}
+		
+		/**
+		 * Returns the number of frames to pop off the stack.
+		 * 
+		 * @return remaining number of frames to pop
+		 */
+		protected int getFramesToDrop() {
+			return fFramesToDrop;
+		}		
+		
+		/**
+		 * To drop a frame or re-enter, the underlying thread is instructed
+		 * to do a return. When the frame count is less than zero, the
+		 * step being performed is a "step return", so a regular invocation
+		 * is performed. 
+		 * 
+		 * @see StepHandler#invokeThread()
+		 */
+		protected void invokeThread() throws DebugException {
+			if (getFramesToDrop() < 0) {
+				super.invokeThread();
+			} else {
+				try {
+					org.eclipse.jdi.hcr.ThreadReference hcrThread= (org.eclipse.jdi.hcr.ThreadReference) getUnderlyingThread();
+					hcrThread.doReturn(null, true);
+				} catch (RuntimeException e) {
+					stepEnd();
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("{0} occurred while popping stack frame."), new String[] {e.toString()}), e);
+				}
+			}
+		}
+		
+		/**
+		 * Notification that the pop has completed. If there are
+		 * more frames to pop, keep going, otherwise re-enter the 
+		 * top frame. Returns false, as this handler will resume this
+		 * thread with a special invocation (<code>doReturn</code>).
+		 * 
+		 * @see IJDIEventListener#handleEvent(Event, JDIDebugTarget)
+		 * @see #invokeThread()
+		 */		
+		public boolean handleEvent(Event event, JDIDebugTarget target) {
+			// pop is complete, update number of frames to drop
+			setFramesToDrop(getFramesToDrop() - 1);
+			try {
+				if (getFramesToDrop() >= -1) {
+					deleteStepRequest();
+					doSecondaryStep();
+				} else {
+					stepEnd();
+				}
+			} catch (DebugException e) {
+				stepEnd();
+				logError(e);
+			}
+			return false;
+		}
+		
+		/**
+		 * Pops a secondary frame off the stack, does a re-enter,
+		 * or a step-into.
+		 * 
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */
+		protected void doSecondaryStep() throws DebugException {
+			setStepRequest(createStepRequest());
+			setPendingStepHandler(this);
+			addJDIEventListener(this, getStepRequest());
+			invokeThread();
+		}		
+
+		/**
+		 * Creates and returns a step request. If there
+		 * are no more frames to drop, a re-enter request
+		 * is made. If the re-enter is complete, a step-into
+		 * request is created.
+		 * 
+		 * @return step request
+		 * @exception DebugException if this method fails.  Reasons include:
+		 * <ul>
+		 * <li>Failure communicating with the VM.  The DebugException's
+		 * status code contains the underlying exception responsible for
+		 * the failure.</li>
+		 * </ul>
+		 */
+		protected StepRequest createStepRequest() throws DebugException {
+			int num = getFramesToDrop();
+			if (num > 0) {
+				return super.createStepRequest();
+			} else if (num == 0) {
+				try {
+					EventRequestManager erm= getEventRequestManager();
+					StepRequest request = ((org.eclipse.jdi.hcr.EventRequestManager) erm).createReenterStepRequest(getUnderlyingThread());
+					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+					request.addCountFilter(1);
+					request.enable();
+					return request;
+				} catch (RuntimeException e) {
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_creating_step_request"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				}			
+			} else if (num == -1) {
+				try {
+					StepRequest request = getEventRequestManager().createStepRequest(getUnderlyingThread(), StepRequest.STEP_LINE, StepRequest.STEP_INTO);
+					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
+					request.addCountFilter(1);
+					request.enable();
+					return request;
+				} catch (RuntimeException e) {
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_creating_step_request"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				}					
+			}
+			// this line will never be executed, as the try block
+			// will either return, or the catch block with throw 
+			// an exception
+			return null;
+		}
 	}
 }

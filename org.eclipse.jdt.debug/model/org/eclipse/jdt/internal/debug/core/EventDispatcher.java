@@ -13,13 +13,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.Event;
 import com.sun.jdi.event.EventIterator;
 import com.sun.jdi.event.EventQueue;
 import com.sun.jdi.event.EventSet;
-import com.sun.jdi.event.StepEvent;
 import com.sun.jdi.event.VMDeathEvent;
 import com.sun.jdi.event.VMDisconnectEvent;
 import com.sun.jdi.event.VMStartEvent;
@@ -62,11 +60,6 @@ class EventDispatcher implements Runnable {
 	private EventSet fEventSet;
 	
 	/**
-	 * An iterator on the current event set
-	 */
-	private EventIterator fIterator;
-	
-	/**
 	 * Table of event listeners. Table is
 	 * a mapping of <code>EventRequest</code>
 	 * to <code>IJDIEventListener</code>.
@@ -95,14 +88,14 @@ class EventDispatcher implements Runnable {
 		if (isShutdown()) {
 			return;
 		}
-		fIterator= eventSet.eventIterator();
+		EventIterator iter= eventSet.eventIterator();
 		boolean vote = false; 
 		boolean resume = true;
-		while (fIterator.hasNext()) {
+		while (iter.hasNext()) {
 			if (isShutdown()) {
 				return;
 			}
-			Event event= fIterator.nextEvent();
+			Event event= iter.nextEvent();
 			if (event == null) {
 				continue;
 			}
@@ -117,49 +110,22 @@ class EventDispatcher implements Runnable {
 				continue;
 			}
 			
-			if (event instanceof StepEvent) {
-				dispatchStepEvent((StepEvent)event);
+			if (event instanceof VMDeathEvent) {
+				fTarget.handleVMDeath((VMDeathEvent) event);
+				shutdown(); // stop listening for events
 			} else
-				if (event instanceof VMDeathEvent) {
-					fTarget.handleVMDeath((VMDeathEvent) event);
+				if (event instanceof VMDisconnectEvent) {
+					fTarget.handleVMDisconnect((VMDisconnectEvent) event);
 					shutdown(); // stop listening for events
-				} else
-					if (event instanceof VMDisconnectEvent) {
-						fTarget.handleVMDisconnect((VMDisconnectEvent) event);
-						shutdown(); // stop listening for events
-					} else if (event instanceof VMStartEvent) {
-						fTarget.handleVMStart((VMStartEvent)event);
-					} else {
-						// Unhandled Event
-					}
+				} else if (event instanceof VMStartEvent) {
+					fTarget.handleVMStart((VMStartEvent)event);
+				} else {
+					// Unhandled Event
+				}
 		}
 		if (vote && resume) {
 			eventSet.resume();
 		}
-	}
-	
-	/**
-	 * @deprecated - to be removed
-	 */
-	protected void dispatchStepEvent(StepEvent event) {
-		ThreadReference threadRef= event.thread();
-		JDIThread thread= findThread(threadRef);
-		if (thread == null) {
-			fTarget.resume(threadRef);
-			return;
-		} else {
-			thread.handleStep(event);
-		}
-	}
-
-	/**
-	 * Convenience method for finding the model thread for 
-	 * an underlying thread reference.
-	 * 
-	 * @deprecated to be removed
-	 */
-	protected JDIThread findThread(ThreadReference threadReference) {
-		return fTarget.findThread(threadReference);
 	}
 
 	/**
@@ -222,18 +188,6 @@ class EventDispatcher implements Runnable {
 	 */
 	protected boolean isShutdown() {
 		return fShutdown;
-	}
-	
-	/**
-	 * Returns whether there are more events in the current
-	 * event set to be dispatched.
-	 * 
-	 * @return whether there are more events in the current
-	 * event set to be dispatched
-	 * @deprecated this method is to be deleted
-	 */
-	protected boolean hasPendingEvents() {
-		return fIterator.hasNext();
 	}
 	
 	/**

@@ -8,14 +8,12 @@ package org.eclipse.jdt.internal.debug.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
@@ -38,6 +36,7 @@ import com.sun.jdi.VMMismatchException;
 import com.sun.jdi.VMOutOfMemoryException;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.request.DuplicateRequestException;
+import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.InvalidRequestStateException;
 
@@ -254,13 +253,6 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
-	 * @deprecated Intended to be removed after thread rework
-	 */
-	protected boolean hasPendingEvents() {
-		return ((JDIDebugTarget)getDebugTarget()).getEventDispatcher().hasPendingEvents();
-	}
-	
-	/**
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	public IDebugTarget getDebugTarget() {
@@ -269,6 +261,40 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 
 	protected VirtualMachine getVM() {
 		return ((JDIDebugTarget)getDebugTarget()).getVM();
+	}
+	
+	/**
+	 * Returns the underlying VM's event request manager.
+	 * 
+	 * @return event request manager
+	 */
+	protected EventRequestManager getEventRequestManager() {
+		return getVM().eventRequestManager();
+	}
+	
+	/**
+	 * Adds the given listener to this target's event dispatcher's
+	 * table of listeners for the specified event request. The listener
+	 * will be notified each time the event occurrs.
+	 * 
+	 * @param listener the listener to register
+	 * @param request the event request
+	 */
+	protected void addJDIEventListener(IJDIEventListener listener, EventRequest request) {
+		((JDIDebugTarget)getDebugTarget()).getEventDispatcher().addJDIEventListener(listener, request);
+	}
+	
+	/**
+	 * Removes the given listener from this target's event dispatcher's
+	 * table of listeners for the specifed event request. The listener
+	 * will no longer be notified when the event occurrs. Listeners
+	 * are responsible for deleting the event request if desired.
+	 * 
+	 * @param listener the listener to remove
+	 * @param request the event request
+	 */
+	protected void removeJDIEventListener(IJDIEventListener listener, EventRequest request) {
+		((JDIDebugTarget)getDebugTarget()).getEventDispatcher().removeJDIEventListener(listener, request);
 	}
 	
 	/**
