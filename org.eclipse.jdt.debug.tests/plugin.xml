@@ -193,21 +193,21 @@
    </extension>
 
    <extension point="org.eclipse.debug.ui.memoryRenderings">
-      <memoryRenderingType
+      <renderingType
             id="rendering_type_1"
             name="Rendering One"
             class="org.eclipse.jdt.debug.testplugin.RenderingTypeDelegate">
-      </memoryRenderingType>
-      <memoryRenderingType
+      </renderingType>
+      <renderingType
             id="rendering_type_2"
             name="Rendering Two"
             class="org.eclipse.jdt.debug.testplugin.RenderingTypeDelegate">
-      </memoryRenderingType>
-      <memoryRenderingType
+      </renderingType>
+      <renderingType
             id="rendering_type_3"
             name="Rendering Default"
             class="org.eclipse.jdt.debug.testplugin.RenderingTypeDelegate">
-      </memoryRenderingType>      
+      </renderingType>      
       <renderingBindings
       		primaryId="rendering_type_1">
       		<enablement>
