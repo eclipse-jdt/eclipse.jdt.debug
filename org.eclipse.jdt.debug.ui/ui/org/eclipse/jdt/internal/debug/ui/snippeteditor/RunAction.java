@@ -58,10 +58,10 @@ public class RunAction extends SnippetAction implements IWorkbenchWindowActionDe
 		if (page != null) {
 			if (page.getActiveEditor() instanceof JavaSnippetEditor) {
 				setEditor((JavaSnippetEditor)page.getActiveEditor());
+				update();
 			}
 		}
 		window.getPartService().addPartListener(this);
-		update();
 	}
 
 	/**
@@ -109,6 +109,8 @@ public class RunAction extends SnippetAction implements IWorkbenchWindowActionDe
 	public void partActivated(IWorkbenchPart part) {
 		if (part instanceof JavaSnippetEditor) {
 			setEditor((JavaSnippetEditor)part);
+		} else {
+			setEditor(null);
 		}
 	}
 

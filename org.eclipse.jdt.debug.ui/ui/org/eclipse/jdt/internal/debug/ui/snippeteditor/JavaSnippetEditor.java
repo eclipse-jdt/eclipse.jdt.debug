@@ -259,7 +259,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return fVM != null;
 	}
 	
-	protected boolean isEvaluating() {
+	public boolean isEvaluating() {
 		return fEvaluating;
 	}
 	

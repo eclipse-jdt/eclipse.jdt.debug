@@ -58,13 +58,17 @@ public abstract class SnippetAction extends Action implements ISnippetStateChang
 	 * Updates the enabled state based on the current text selection.
 	 */
 	protected void update() {
-		ITextSelection selection= (ITextSelection)fEditor.getSelectionProvider().getSelection();
-		String text= selection.getText();
-		boolean enabled= false;
-		if (text != null) {
-			enabled= textHasContent(text);
-		} 
-		setEnabled(enabled);
+		if (fEditor != null) {
+			ITextSelection selection= (ITextSelection)fEditor.getSelectionProvider().getSelection();
+			String text= selection.getText();
+			boolean enabled= false;
+			if (text != null) {
+				enabled= textHasContent(text);
+			} 
+			setEnabled(enabled);
+		} else {
+			setEnabled(false);
+		}
 	}
 	
 	protected JavaSnippetEditor getEditor() {
