@@ -13,14 +13,14 @@ package org.eclipse.jdt.debug.tests.core;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 
 /**
  * Tests launch notification.
  */
-public class LaunchTests extends AbstractDebugTest implements ILaunchesListener2 {
+public class LaunchTests extends AbstractDebugTest implements ILaunchListener {
 	
 	private boolean added = false;
 	private boolean removed = false;
@@ -47,9 +47,13 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchesListener2
 		assertTrue("Launch should have been added", added);
 
 		synchronized (this) {
-			if (!terminated) {
+			for (int i= 0; i < 300; i++) {
+				if (launch.isTerminated()) {
+					terminated= true;
+					break;
+				}
 				try {
-					wait(30000);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 				}
 			}
@@ -70,41 +74,26 @@ public class LaunchTests extends AbstractDebugTest implements ILaunchesListener2
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
-	public void launchesTerminated(ILaunch[] launches) {
-		synchronized (this) {
-			terminated = true;
-			notifyAll();
-		}
+	public synchronized void launchRemoved(ILaunch launch) {
+		removed = true;
+		notifyAll();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
+	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
-	public void launchesRemoved(ILaunch[] launches) {
-		synchronized (this) {
-			removed = true;
-			notifyAll();
-		}
+	public synchronized void launchAdded(ILaunch launch) {
+		added = true;
+		notifyAll();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
+	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
-	public void launchesAdded(ILaunch[] launches) {
-		synchronized (this) {
-			added = true;
-			notifyAll();
-		}
-	}
+	public synchronized void launchChanged(ILaunch launch) {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
-	 */
-	public void launchesChanged(ILaunch[] launches) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
