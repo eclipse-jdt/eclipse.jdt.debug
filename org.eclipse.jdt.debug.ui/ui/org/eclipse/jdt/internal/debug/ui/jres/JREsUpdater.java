@@ -121,6 +121,13 @@ public class JREsUpdater {
 				
 			}
 		};
+		try {
+			JDIDebugUIPlugin.getDefault().getWorkbench().getProgressService().busyCursorWhile(runnable);
+		} catch (InvocationTargetException e) {
+			JDIDebugUIPlugin.log(e);
+		} catch (InterruptedException e) {
+			JDIDebugUIPlugin.log(e);
+		}
 	}	
 	
 	private Shell getShell() {
