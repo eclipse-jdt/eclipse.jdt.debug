@@ -21,7 +21,7 @@ public class InstanceOfOperator extends CompoundInstruction {
 	 */
 	public void execute() throws CoreException {
 		IJavaType type= (IJavaType)pop();
-		IJavaObject object= (IJavaObject)pop();
+		IJavaObject object= (IJavaObject)popValue();
 
 		IJavaObject classObject= getClassObject(type);
 		if (classObject == null) {
