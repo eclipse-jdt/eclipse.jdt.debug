@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -29,6 +28,11 @@ import org.eclipse.jdt.launching.JavaRuntime;
 public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
 	
 	private IPath fVariable;
+	/**
+	 * Unique identifier for Java project source container type
+	 * (value <code>org.eclipse.jdt.launching.sourceContainer.classpathVariable</code>).
+	 */
+	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.classpathVariable";   //$NON-NLS-1$
 	
 	/**
 	 * Constructs a new source container on the given variable and suffix.
@@ -77,6 +81,6 @@ public class ClasspathVariableSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(ClasspathVariableSourceContainerTypeDelegate.TYPE_ID);
+		return getSourceContainerType(TYPE_ID);
 	}
 }

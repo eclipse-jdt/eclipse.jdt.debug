@@ -12,7 +12,6 @@ package org.eclipse.jdt.internal.launching;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -23,7 +22,6 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -37,6 +35,11 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 		
 	// Java project
 	private IJavaProject fProject;
+	/**
+	 * Unique identifier for Java project source container type
+	 * (value <code>org.eclipse.jdt.launching.sourceContainer.javaProject</code>).
+	 */
+	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.javaProject";   //$NON-NLS-1$
 	
 	/**
 	 * Constructs a source container on the given Java project.
@@ -57,7 +60,7 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(JavaProjectSourceContainerTypeDelegate.TYPE_ID);
+		return getSourceContainerType(TYPE_ID);
 	}
 	
 	/**

@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -29,6 +28,11 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 public class PackageFragmentRootSourceContainer extends AbstractSourceContainer {
 	
 	private IPackageFragmentRoot fRoot;
+	/**
+	 * Unique identifier for Java project source container type
+	 * (value <code>org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot</code>).
+	 */
+	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.packageFragmentRoot";   //$NON-NLS-1$
 	
 	/**
 	 * Constructs a new package fragment root source container on the
@@ -78,7 +82,7 @@ public class PackageFragmentRootSourceContainer extends AbstractSourceContainer 
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(PackageFragmentRootSourceContainerTypeDelegate.TYPE_ID);
+		return getSourceContainerType(TYPE_ID);
 	}
 	
 	/* (non-Javadoc)

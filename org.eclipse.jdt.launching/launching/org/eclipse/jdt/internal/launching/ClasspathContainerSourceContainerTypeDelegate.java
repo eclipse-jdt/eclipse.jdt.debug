@@ -13,8 +13,7 @@ package org.eclipse.jdt.internal.launching;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.debug.internal.core.sourcelookup.containers.AbstractSourceContainerTypeDelegate;
+import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTypeDelegate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,17 +25,11 @@ import org.w3c.dom.Node;
  */
 public class ClasspathContainerSourceContainerTypeDelegate extends AbstractSourceContainerTypeDelegate {
 	
-	/**
-	 * Unique identifier for Java project source container type
-	 * (value <code>org.eclipse.jdt.launching.sourceContainer.classpathContainer</code>).
-	 */
-	public static final String TYPE_ID = LaunchingPlugin.getUniqueIdentifier() + ".sourceContainer.classpathContainer";   //$NON-NLS-1$
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate#createSourceContainer(java.lang.String)
 	 */
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
-		Node node = SourceLookupUtils.parseDocument(memento);
+		Node node = parseDocument(memento);
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)node;
 			if ("classpathContainer".equals(element.getNodeName())) { //$NON-NLS-1$
@@ -57,10 +50,10 @@ public class ClasspathContainerSourceContainerTypeDelegate extends AbstractSourc
 	 */
 	public String getMemento(ISourceContainer container) throws CoreException {
 		ClasspathContainerSourceContainer var =  (ClasspathContainerSourceContainer) container;
-		Document document = SourceLookupUtils.newDocument();
+		Document document = newDocument();
 		Element element = document.createElement("classpathContainer"); //$NON-NLS-1$
 		element.setAttribute("path", var.getClasspathContainer().getPath().toString()); //$NON-NLS-1$
 		document.appendChild(element);
-		return SourceLookupUtils.serializeDocument(document);
+		return serializeDocument(document);
 	}
 }

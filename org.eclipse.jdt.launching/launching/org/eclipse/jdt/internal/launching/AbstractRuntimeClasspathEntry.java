@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.launching;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -82,15 +80,14 @@ public abstract class AbstractRuntimeClasspathEntry implements IRuntimeClasspath
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getMemento()
 	 */
 	public String getMemento() throws CoreException {
-		DocumentBuilder docBuilder = LaunchingPlugin.getParser();
-		Document doc= docBuilder.newDocument();
+		Document doc= DebugPlugin.newDocument();
 		Element root = doc.createElement("runtimeClasspathEntry"); //$NON-NLS-1$
 		doc.appendChild(root);
 		root.setAttribute("id", getTypeId()); //$NON-NLS-1$
 		Element memento = doc.createElement("memento"); //$NON-NLS-1$
 		root.appendChild(memento);
 		buildMemento(doc, memento);
-		return SourceLookupUtils.serializeDocument(doc);
+		return DebugPlugin.serializeDocument(doc);
 	}
 	
 	/**

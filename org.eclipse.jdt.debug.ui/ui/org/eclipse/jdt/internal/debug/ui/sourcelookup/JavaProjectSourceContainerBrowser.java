@@ -13,7 +13,6 @@ package org.eclipse.jdt.internal.debug.ui.sourcelookup;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -35,7 +34,6 @@ import org.eclipse.jdt.internal.debug.ui.actions.ProjectSelectionDialog;
 import org.eclipse.jdt.internal.launching.ClasspathContainerSourceContainer;
 import org.eclipse.jdt.internal.launching.ClasspathVariableSourceContainer;
 import org.eclipse.jdt.internal.launching.JavaProjectSourceContainer;
-import org.eclipse.jdt.internal.launching.JavaProjectSourceContainerTypeDelegate;
 import org.eclipse.jdt.internal.launching.PackageFragmentRootSourceContainer;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -153,7 +151,7 @@ public class JavaProjectSourceContainerBrowser implements ISourceContainerBrowse
 		ISourceContainer[] containers = director.getSourceContainers();
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];
-			if (container.getType().getId().equals(JavaProjectSourceContainerTypeDelegate.TYPE_ID)) {
+			if (container.getType().getId().equals(JavaProjectSourceContainer.TYPE_ID)) {
 				alreadySelected.add(((JavaProjectSourceContainer)container).getJavaProject());
 			}
 		}
