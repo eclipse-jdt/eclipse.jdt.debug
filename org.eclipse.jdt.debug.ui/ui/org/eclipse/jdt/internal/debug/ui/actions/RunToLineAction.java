@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -20,14 +21,12 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
-import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -36,18 +35,14 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Action to support run to line (i.e. where the cursor is in the active editor)
  */
-public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWindowActionDelegate, IPartListener {
-	
+public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWindowActionDelegate {
+
 	private IWorkbenchWindow fWorkbenchWindow= null;
-	public RunToLineAction() {
-		setText(ActionMessages.getString("RunToLine.label")); //$NON-NLS-1$
-		setToolTipText(ActionMessages.getString("RunToLine.tooltip")); //$NON-NLS-1$
-		setDescription(ActionMessages.getString("RunToLine.description")); //$NON-NLS-1$
-		update();
-		setHelpContextId(IHelpContextIds.RUN_TO_LINE_ACTION );					
+	
+	public RunToLineAction() {			
 	}
 	
-	public void run() {
+	protected void run() {
 		try {
 			IDebugTarget target= getContext();
 			if (target == null) {
@@ -156,27 +151,22 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	 * this action is the delegate for.
 	 */
 	public void update() {
-		try {
-			IDebugTarget target= getContext();
-			setEnabled(target != null 
-				&& !(target.isDisconnected() || target.isTerminated())
-				&& getTextEditor() != null);
-		} catch (DebugException de) {
-			setEnabled(false);
-			JDIDebugUIPlugin.logError(de);
-		}
-		updateAction();
-	}
-	
-	public void updateAction() {
 		IAction action= getPluginAction();
 		if (action != null) {
-			action.setEnabled(isEnabled());
+			try {
+				IDebugTarget target= getContext();
+				action.setEnabled(target != null 
+					&& !(target.isDisconnected() || target.isTerminated())
+					&& getTextEditor() != null);
+			} catch (DebugException de) {
+				action.setEnabled(false);
+				JDIDebugUIPlugin.logError(de);
+			}
 		}
 	}
-	
+		
 	/**
-	 * Resolves a stack frame context from the model
+	 * Resolves a stack frame context from the model.
 	 */
 	protected IDebugTarget getContextFromDebugTarget(IDebugTarget dt) throws DebugException {
 		if (dt.isTerminated() || dt.isDisconnected()) {
@@ -213,7 +203,7 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		setWorkbenchWindow(window);
 		IEditorPart part= window.getActivePage().getActiveEditor();
 		if (part instanceof ITextEditor) {
-			setEditor((ITextEditor)part);
+			setTextEditor((ITextEditor)part);
 		}
 		window.getPartService().addPartListener(this);
 	}
@@ -231,26 +221,10 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof ITextEditor) {
-			setEditor((ITextEditor)targetEditor);
+			setTextEditor((ITextEditor)targetEditor);
 		}
 		setPluginAction(action);
 		update();
-	}
-	
-	/**
-	 * @see IPartListener#partActivated(IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart part) {
-		if (part instanceof ITextEditor) {
-			setEditor((ITextEditor)part);
-			update();
-		}
-	}
-	
-	/**
-	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-	 */
-	public void partBroughtToTop(IWorkbenchPart part) {
 	}
 	
 	/**
@@ -258,20 +232,30 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 	 */
 	public void partClosed(IWorkbenchPart part) {
 		if (part == getTextEditor()) {
-			setEditor(null);
+			setTextEditor(null);
 			update();
 		}
 	}
 	
 	/**
-	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
-	public void partDeactivated(IWorkbenchPart part) {
+	public void partActivated(IWorkbenchPart part) {
+		if (part instanceof ITextEditor) {
+			setTextEditor((ITextEditor)part);
+			update();
+		}
 	}
 	
 	/**
 	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
 	public void partOpened(IWorkbenchPart part) {
+		if (part instanceof ITextEditor) {
+			if (getTextEditor() == null) {
+				setTextEditor((ITextEditor)part);
+				update();
+			}
+		}
 	}
 }
