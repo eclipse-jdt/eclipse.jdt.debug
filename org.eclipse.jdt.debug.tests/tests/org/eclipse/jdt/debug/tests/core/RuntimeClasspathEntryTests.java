@@ -53,7 +53,7 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 			}
 		}
 		assertNotNull("Did not find a variable entry", cpe);
-		IRuntimeClasspathEntry entry = JavaRuntime.newVariableRuntimeClasspathEntry(JavaRuntime.JRELIB_VARIABLE);
+		IRuntimeClasspathEntry entry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(JavaRuntime.JRELIB_VARIABLE));
 		entry.setSourceAttachmentPath(cpe.getSourceAttachmentPath());
 		entry.setSourceAttachmentRootPath(cpe.getSourceAttachmentRootPath());
 	

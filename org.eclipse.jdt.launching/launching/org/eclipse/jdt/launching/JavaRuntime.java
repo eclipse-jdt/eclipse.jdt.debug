@@ -485,14 +485,15 @@ public final class JavaRuntime {
 
 	/**
 	 * Returns a new runtime classpath entry for the classpath
-	 * variable with the given name.
+	 * variable with the given path.
 	 * 
-	 * @param name class path variable name
+	 * @param path variable path; first segment is the name of the variable; 
+	 * 	trailing segments are appended to the resolved variable value
 	 * @return runtime classpath entry
 	 * @since 2.0
 	 */
-	public static IRuntimeClasspathEntry newVariableRuntimeClasspathEntry(String name) {
-		IClasspathEntry cpe = JavaCore.newVariableEntry(new Path(name), null, null);
+	public static IRuntimeClasspathEntry newVariableRuntimeClasspathEntry(IPath path) {
+		IClasspathEntry cpe = JavaCore.newVariableEntry(path, null, null);
 		return newRuntimeClasspathEntry(cpe);
 	}
 
@@ -1005,7 +1006,7 @@ public final class JavaRuntime {
 						break;
 					case IClasspathEntry.CPE_VARIABLE:
 						if (entry.getPath().segment(0).equals(JRELIB_VARIABLE)) {
-							r = newVariableRuntimeClasspathEntry(JRELIB_VARIABLE);
+							r = newVariableRuntimeClasspathEntry(entry.getPath());
 							r.setSourceAttachmentPath(entry.getSourceAttachmentPath());
 							r.setSourceAttachmentRootPath(entry.getSourceAttachmentRootPath());
 							r.setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);

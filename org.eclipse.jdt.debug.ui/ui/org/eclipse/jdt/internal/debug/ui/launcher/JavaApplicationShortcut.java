@@ -52,12 +52,12 @@ public class JavaApplicationShortcut implements ILaunchShortcut {
 			} catch (InterruptedException e) {
 				return;
 			} catch (InvocationTargetException e) {
-				MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), e.getMessage());
+				MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), e.getMessage()); //$NON-NLS-1$
 				return;
 			}
 			IType type = null;
 			if (types.length == 0) {
-				MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1"));
+				MessageDialog.openError(getShell(), LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1")); //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (types.length > 1) {
 				type = chooseType(types, mode);
 			} else {

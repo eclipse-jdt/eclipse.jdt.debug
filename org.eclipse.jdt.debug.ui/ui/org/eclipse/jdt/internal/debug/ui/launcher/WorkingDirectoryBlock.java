@@ -268,7 +268,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		} catch (CoreException ce) {
 		}
 		
-		fWorkingDirText.setText(System.getProperty("user.dir"));
+		fWorkingDirText.setText(System.getProperty("user.dir")); //$NON-NLS-1$
 		fLocalDirButton.setSelection(true);
 		fWorkspaceDirButton.setSelection(false);		
 	}
