@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class JavaDetailFormattersPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
@@ -72,7 +73,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
-//		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_STEP_FILTER_PREFERENCE_PAGE);
+		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DETAIL_FORMATTER_PREFERENCE_PAGE);
 		return createDetailFormatsPreferences(parent);	
 	}
 
