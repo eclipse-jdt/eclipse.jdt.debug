@@ -25,6 +25,7 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -2314,6 +2315,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	public Object getAdapter(Class adapter) {
 		if (adapter == IJavaThread.class) {
 			return this;
+		} 
+		if (adapter == IJavaStackFrame.class) {
+			try {
+				return (IJavaStackFrame)getTopStackFrame();
+			} catch (DebugException e) {
+				// do nothing if not able to get frame
+			} 
 		}
 		return super.getAdapter(adapter);
 	}	
