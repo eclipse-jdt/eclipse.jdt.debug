@@ -292,8 +292,12 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * of method name and signature.
 	 */
 	private void addMethodNameAndSignature(Map attributes, String methodName, String methodSignature) {
-		attributes.put(METHOD_NAME, methodName);
-		attributes.put(METHOD_SIGNATURE, methodSignature);
+		if (methodName != null) {		
+			attributes.put(METHOD_NAME, methodName);
+		}
+		if (methodSignature != null) {
+			attributes.put(METHOD_SIGNATURE, methodSignature);
+		}
 		fMethodName= methodName;
 		fMethodSignature= methodSignature;
 	}
