@@ -90,22 +90,7 @@ public class RuntimeClasspathViewer extends TreeViewer implements IClasspathView
 	 * @see org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer#getEntries()
 	 */
 	public IRuntimeClasspathEntry[] getEntries() {
-		resolveCurrentParent(getSelection());
-		if (fCurrentParent == null) {
-			return new IRuntimeClasspathEntry[0];
-		}
-		
-		IClasspathEntry[] entries= fCurrentParent.getEntries();
-		List runtimeEntries= new ArrayList(entries.length * 2);
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry entry = entries[i];
-			if (entry.hasEntries()) {
-				runtimeEntries.addAll(Arrays.asList(entry.getEntries()));
-			} else {
-				runtimeEntries.add(entry);
-			}
-		}
-		return (IRuntimeClasspathEntry[])runtimeEntries.toArray(new IRuntimeClasspathEntry[runtimeEntries.size()]);
+		return getClasspathContentProvider().getModel().getAllEntries();
 	}
 	
 	/* (non-Javadoc)

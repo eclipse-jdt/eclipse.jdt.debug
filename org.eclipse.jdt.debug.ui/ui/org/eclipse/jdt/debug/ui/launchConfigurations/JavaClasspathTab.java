@@ -37,7 +37,9 @@ import org.eclipse.jdt.internal.debug.ui.actions.AttachSourceAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
+import org.eclipse.jdt.internal.debug.ui.actions.RestoreDefaultEntriesAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
+import org.eclipse.jdt.internal.debug.ui.classpath.BootpathFilter;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathContentProvider;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathLabelProvider;
@@ -51,8 +53,6 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -101,6 +101,9 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		fClasspathViewer.getControl().setFont(font);
 		fClasspathViewer.setLabelProvider(new ClasspathLabelProvider());
 		fClasspathViewer.setContentProvider(new ClasspathContentProvider(this));
+		if (!isShowBootpath()) {
+			fClasspathViewer.addFilter(new BootpathFilter());
+		}
 	
 		Composite pathButtonComp = new Composite(comp, SWT.NONE);
 		GridLayout pathButtonLayout = new GridLayout();
@@ -113,35 +116,28 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		
 		createVerticalSpacer(pathButtonComp, 1);
 		
+		createPathButtons(pathButtonComp);
+	}
+	
+	/**
+	 * Creates the buttons to manipulate the classpath.
+	 * 
+	 * @param pathButtonComp composite buttons are contained in
+	 * @since 3.0
+	 */
+	protected void createPathButtons(Composite pathButtonComp) {
 		List advancedActions = new ArrayList(5);
 		
-		RuntimeClasspathAction action = new MoveUpAction(fClasspathViewer);								
-		Button button  = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);
-		
-		action = new MoveDownAction(fClasspathViewer);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);
+		createButton(pathButtonComp, new MoveUpAction(fClasspathViewer));
+		createButton(pathButtonComp, new MoveDownAction(fClasspathViewer));
+		createButton(pathButtonComp, new RemoveAction(fClasspathViewer));
+		createButton(pathButtonComp, new AddProjectAction(fClasspathViewer));
+		createButton(pathButtonComp, new AddJarAction(fClasspathViewer));
+		createButton(pathButtonComp, new AddExternalJarAction(fClasspathViewer, DIALOG_SETTINGS_PREFIX));
 
-		action = new RemoveAction(fClasspathViewer);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);
-		
-		action = new AddProjectAction(fClasspathViewer);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);
-
-		action = new AddJarAction(fClasspathViewer);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);	
-
-		action = new AddExternalJarAction(fClasspathViewer, DIALOG_SETTINGS_PREFIX);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);
-
-		action = new AddFolderAction(null);								
+		IAction action = new AddFolderAction(null);								
 		advancedActions.add(action);
-
+		
 		action = new AddExternalFolderAction(null, DIALOG_SETTINGS_PREFIX);								
 		advancedActions.add(action);		
 
@@ -152,47 +148,20 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		advancedActions.add(action);
 		
 		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);
-		action = new AddAdvancedAction(fClasspathViewer, adv);
-		button = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);
-		
-		button= createPushButton(pathButtonComp, LauncherMessages.getString("JavaClasspathTab.3"), null); //$NON-NLS-1$
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				restoreDefaultEntries();
-			}
-		});
+		createButton(pathButtonComp, new AddAdvancedAction(fClasspathViewer, adv));
+
+		createButton(pathButtonComp, new RestoreDefaultEntriesAction(fClasspathViewer, this));
 	}
-	
-	private void restoreDefaultEntries() {
-		IRuntimeClasspathEntry[] entries= null;
-		try {
-			ILaunchConfigurationWorkingCopy copy= getLaunchConfiguration().getWorkingCopy();
-			copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
-			entries= JavaRuntime.computeUnresolvedRuntimeClasspath(copy);
-		} catch (CoreException e) {
-			//TODO set error message
-			return;
-		}
-					
-		List bootEntries= new ArrayList(entries.length);
-		for (int j = 0; j < entries.length; j++) {
-			if (entries[j].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
-				bootEntries.add(entries[j]);
-			}
-		}
-		model.setBootstrapEntries((IRuntimeClasspathEntry[])bootEntries.toArray(new IRuntimeClasspathEntry[bootEntries.size()]));
-		
-		List userEntries= new ArrayList(entries.length);
-		for (int j = 0; j < entries.length; j++) {
-			if (entries[j].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				userEntries.add(entries[j]);
-			}
-		}
-		model.setUserEntries((IRuntimeClasspathEntry[])userEntries.toArray(new IRuntimeClasspathEntry[userEntries.size()]));
-		
-		fClasspathViewer.refresh();	
-		entriesChanged(fClasspathViewer);
+
+	/**
+	 * Creates a button for the given action.
+	 * 
+	 * @param pathButtonComp parent composite for the button
+	 * @param action the action triggered by the button
+	 */
+	protected void createButton(Composite pathButtonComp, RuntimeClasspathAction action) {
+		Button button  = createPushButton(pathButtonComp, action.getText(), null);
+		action.setButton(button);
 	}
 
 	/* (non-Javadoc)
@@ -452,6 +421,16 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 				return false;
 			}
 		}
+		return true;
+	}
+	
+	/**
+	 * Returns whether the bootpath should be displayed.
+	 * 
+	 * @return whether the bootpath should be displayed
+	 * @since 3.0
+	 */
+	public boolean isShowBootpath() {
 		return true;
 	}
 	

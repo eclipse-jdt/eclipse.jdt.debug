@@ -208,6 +208,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 	}
 
 	public void setEntries(IRuntimeClasspathEntry[] entries) {
+		model.removeAll();
 		IRuntimeClasspathEntry entry;
 		for (int i = 0; i < entries.length; i++) {
 			entry= entries[i];

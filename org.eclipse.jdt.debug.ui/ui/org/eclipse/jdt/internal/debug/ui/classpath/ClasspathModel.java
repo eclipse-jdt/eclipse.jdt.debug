@@ -105,6 +105,19 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		return new IClasspathEntry[0];
 	}
 	
+	public IRuntimeClasspathEntry[] getAllEntries() {
+		IClasspathEntry[] boot = getEntries(BOOTSTRAP);
+		IClasspathEntry[] user = getEntries(USER);
+		IRuntimeClasspathEntry[] all = new IRuntimeClasspathEntry[boot.length + user.length];
+		if (boot.length > 0) {
+			System.arraycopy(boot, 0, all, 0, boot.length);
+		}
+		if (user.length > 0) {
+			System.arraycopy(user, 0, all, boot.length, user.length);
+		}
+		return all;
+	}
+	
 	public void remove(Object entry) {
 		childEntries.remove(entry);
 	}
