@@ -139,21 +139,25 @@
    		<sourceContainerType
    			id="org.eclipse.jdt.launching.sourceContainer.javaProject"
    			name="%javaProjectSourceContainerType.name"
+   			description="%javaProjectSourceContainerType.description"
    			class="org.eclipse.jdt.internal.launching.JavaProjectSourceContainerTypeDelegate">
    		</sourceContainerType> 
    		<sourceContainerType
    			id="org.eclipse.jdt.launching.sourceContainer.packageFragmentRoot"
    			name="%packageFragmentRootSourceContainerType.name"
+   			description="%packageFragmentRootSourceContainerType.description"
    			class="org.eclipse.jdt.internal.launching.PackageFragmentRootSourceContainerTypeDelegate">
    		</sourceContainerType>    		
    		<sourceContainerType
    			id="org.eclipse.jdt.launching.sourceContainer.classpathVariable"
    			name="%classpathVariableSourceContainerType.name"
+   			description="%classpathVariableSourceContainerType.description"
    			class="org.eclipse.jdt.internal.launching.ClasspathVariableSourceContainerTypeDelegate">
    		</sourceContainerType>   		
    		<sourceContainerType
    			id="org.eclipse.jdt.launching.sourceContainer.classpathContainer"
    			name="%classpathContainerSourceContainerType.name"
+   			description="%classpathContainerSourceContainerType.description"
    			class="org.eclipse.jdt.internal.launching.ClasspathContainerSourceContainerTypeDelegate">
    		</sourceContainerType>    		
    </extension>
