@@ -24,15 +24,22 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.internal.ui.text.HTMLTextPresenter;
 import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 
 
-public class JavaDebugHover implements IJavaEditorTextHover {
+public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension {
 		
 	
 	protected IEditorPart fEditor;
@@ -161,4 +168,16 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 		return value.getReferenceTypeName();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextHoverExtension#getInformationControlCreator()
+	 */
+	public IInformationControlCreator getInformationControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+	  			return new DefaultInformationControl(parent, SWT.NONE, 
+	  				new HTMLTextPresenter(true),
+				   	DebugUIMessages.getString("JavaDebugHover.16")); //$NON-NLS-1$
+			 }
+  		};
+	}
 }
