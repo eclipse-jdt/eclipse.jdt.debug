@@ -211,6 +211,8 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			assertFalse("i should still be the same", i.hasValueChanged());
 			
 			stepOver(frame);
+			// re-retrieve frame to force frames to update indicies
+			frame = (IJavaStackFrame)thread.getTopStackFrame();
 			
 			// now count should be the same, and i should have changed
 			count.getValue();
