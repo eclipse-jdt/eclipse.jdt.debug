@@ -15,6 +15,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
@@ -163,12 +164,12 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	}
 	
 	public void startup() throws CoreException {
-		JDIDebugPlugin.getDefault().addHotCodeReplaceListener(this);
+		JDIDebugModel.addHotCodeReplaceListener(this);
 		super.startup();
 	}
 	
 	public void shutdown() throws CoreException {
-		JDIDebugPlugin.getDefault().removeHotCodeReplaceListener(this);
+		JDIDebugModel.removeHotCodeReplaceListener(this);
 		super.shutdown();
 	}
 	/**

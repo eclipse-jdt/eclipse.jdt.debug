@@ -168,6 +168,22 @@ public class JDIDebugModel {
 	}
 	
 	/**
+	 * Adds the given hot code replace listener to the JDI debug model.
+	 * Added listeners will receive hot code replace notifications.
+	 */
+	public static void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
+		JDIDebugPlugin.getDefault().addHotCodeReplaceListener(listener);
+	}
+	
+	/**
+	 * Removes the given hot code replace listener to the JDI debug model.
+	 * Removed listeners will not receive hot code replace notifications.
+	 */
+	public static void removeHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
+		JDIDebugPlugin.getDefault().removeHotCodeReplaceListener(listener);
+	}
+	
+	/**
 	 * Creates and returns a line breakpoint in the
 	 * given type, at the given line number. If a character range within the
 	 * line is known, it may be specified by charStart/charEnd.
