@@ -110,6 +110,9 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		return null;
 	}
 	
+	/**
+	 * @see Action#run()
+	 */
 	public void run() {
 		
 		fExpression= null;
@@ -191,7 +194,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	}
 	
 	/**
-	 * @see IUpdate
+	 * @see IUpdate#update()
 	 */
 	public void update() {
 		boolean enabled = false;
@@ -253,11 +256,13 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	}	
 	
 	protected boolean textHasContent(String text) {
-		int length= text.length();
-		if (length > 0) {
-			for (int i= 0; i < length; i++) {
-				if (Character.isLetterOrDigit(text.charAt(i))) {
-					return true;
+		if (text != null) {
+			int length= text.length();
+			if (length > 0) {
+				for (int i= 0; i < length; i++) {
+					if (Character.isLetterOrDigit(text.charAt(i))) {
+						return true;
+					}
 				}
 			}
 		}
@@ -346,7 +351,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		return fUsedInEditor;
 	}
 	
-	/*
+	/**
 	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
@@ -355,14 +360,14 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		action.setEnabled(isEnabled());
 	}
 
-	/*
+	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
 		run();
 	}
 
-	/*
+	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
