@@ -659,7 +659,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		
 		fRequestsByTarget.remove(target);
 		fFilteredThreadsByTarget.remove(target);
-		if (getInstallCount() == 0) {
+		boolean markerExists = markerExists();
+		if (!markerExists || (markerExists && getInstallCount() == 0)) {
 			fInstalledTypeName = null;
 		}
 		
@@ -1107,9 +1108,13 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Change notification when there are no marker changes	 */
+	 * Change notification when there are no marker changes. If the marker
+	 * does not exist, do not fire a change notificaiton (the marker may not
+	 * exist if the associated project was closed).	 */
 	protected void fireChanged() {
-		DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);					
+		if (markerExists()) {	
+			DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged(this);
+		}					
 	}
 
 	/**
@@ -1153,5 +1158,5 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			}
 		}
 	}
-	
+
 }
