@@ -789,6 +789,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
  	 * @see #newInstance(ClassType, Method, List)
 	 */
 	protected void invokeComplete(int restoreTimeout) {
+		abortStep();
 		setRunning(false);
 		setInvokingMethod(false);
 		setRequestTimeout(restoreTimeout);
