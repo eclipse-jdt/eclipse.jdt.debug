@@ -45,7 +45,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * A launcher for running java main classes. 
+ * A launcher for running Java main classes. 
  */
 public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 				
@@ -77,7 +77,7 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 	}
 	
 	/**
-	 *	@see ILauncherDelegate#launch
+	 *	@see ILauncherDelegate#launch(Object[], String, ILauncher)
 	 */
 	public boolean launch(Object[] objects, String mode, ILauncher launcher) {
 		IStructuredSelection selection= new StructuredSelection(objects);
@@ -230,8 +230,8 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 		return new Object[0];
 	}
 
-	/*
-	 * @see ILauncherDelegate#getLaunchMemento
+	/**
+	 * @see ILauncherDelegate#getLaunchMemento(Object)
 	 */
 	public String getLaunchMemento(Object element) {
 		if (element instanceof IJavaElement) {
@@ -240,8 +240,8 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 		return null;
 	}
 
-	/*
-	 * @see ILauncherDelegate#getLaunchObject
+	/**
+	 * @see ILauncherDelegate#getLaunchObject(String)
 	 */	
 	public Object getLaunchObject(String memento) {
 		IJavaElement e = JavaCore.create(memento);
@@ -251,5 +251,4 @@ public class JavaApplicationLauncherDelegate implements ILauncherDelegate {
 			return null;
 		}
 	}
-	
 }

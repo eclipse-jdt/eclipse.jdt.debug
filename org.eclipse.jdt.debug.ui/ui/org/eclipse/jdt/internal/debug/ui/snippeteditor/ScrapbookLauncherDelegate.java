@@ -1,8 +1,9 @@
+package org.eclipse.jdt.internal.debug.ui.snippeteditor;
+ 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  
 import java.io.File;
 import java.io.IOException;
@@ -196,8 +197,8 @@ public class ScrapbookLauncherDelegate extends JavaApplicationLauncherDelegate i
 		return null;
 	}
 		
-	/*
-	 * @see JavaApplictionLauncher#getLaunchableElements
+	/**
+	 * @see JavaApplicationLauncherDelegate#getLaunchableElements(IStructuredSelection, String)
 	 */
 	public Object[] getLaunchableElements(IStructuredSelection selection, String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
@@ -216,6 +217,9 @@ public class ScrapbookLauncherDelegate extends JavaApplicationLauncherDelegate i
 		return new Object[0];
 	}
 
+	/**
+	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 */
 	public void handleDebugEvent(DebugEvent event) {
 		if (event.getSource() instanceof IDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
 			cleanup((IDebugTarget)event.getSource());
