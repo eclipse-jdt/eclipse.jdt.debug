@@ -54,8 +54,8 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		super(JREMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see IClasspathContainerPage#finish()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.ui.wizards.IClasspathContainerPage#finish()
 	 */
 	public boolean finish() {
 		IPath path = new Path(JavaRuntime.JRE_CONTAINER);
@@ -70,15 +70,15 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		return true;
 	}
 
-	/**
-	 * @see IClasspathContainerPage#getSelection()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.ui.wizards.IClasspathContainerPage#getSelection()
 	 */
 	public IClasspathEntry getSelection() {
 		return fSelection;
 	}
 
-	/**
-	 * @see IClasspathContainerPage#setSelection(IClasspathEntry)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.ui.wizards.IClasspathContainerPage#setSelection(org.eclipse.jdt.core.IClasspathEntry)
 	 */
 	public void setSelection(IClasspathEntry containerEntry) {
 		fSelection = containerEntry;
@@ -120,8 +120,8 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		}
 	}
 	
-	/**
-	 * @see IDialogPage#createControl(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -133,6 +133,8 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		fJREBlock.setDefaultJREDescriptor(new BuildJREDescriptor());
 		fJREBlock.setTitle(JREMessages.getString("JREContainerWizardPage.3")); //$NON-NLS-1$
 		fJREBlock.createControl(composite);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fJREBlock.getControl().setLayoutData(gd);
 		setControl(composite);	
 		
 		setTitle(JREMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
@@ -141,8 +143,8 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		initializeFromSelection();
 	}
 
-	/**
-	 * @see IDialogPage#getImage()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 	 */
 	public Image getImage() {
 		if (fImage == null) {
@@ -152,7 +154,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	}
 
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
@@ -161,6 +163,4 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 			fImage.dispose();
 		}
 	}
-
-
 }
