@@ -11,9 +11,6 @@
 
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -73,16 +70,18 @@ public class JavaElementPropertyTester extends PropertyTester {
 	 * <code>false</code> otherwise.
 	 */
 	private boolean isApplet(IJavaElement element) {
-		try {
-			Set result= new HashSet();
-			AppletLaunchConfigurationUtils.collectTypes(element, new NullProgressMonitor(), result);
-			if (result.size() > 0) {
-				return true;
-			}
-		} catch (JavaModelException e) {
-			return false;
-		}
-		return false;
+        try {
+            IType type = getType(element);
+            IType[] allSuperTypes = JavaModelUtil.getAllSuperTypes(type, new NullProgressMonitor());
+            for (int i = 0; i < allSuperTypes.length; i++) {
+                IType superType = allSuperTypes[i];
+                if (superType.getFullyQualifiedName().equals("java.applet.Applet")) { //$NON-NLS-1$
+                    return true;
+                }
+            }
+        } catch (JavaModelException e) {
+        }
+        return false;
 	}
 	
 	/**
@@ -92,17 +91,7 @@ public class JavaElementPropertyTester extends PropertyTester {
 	 */
 	private boolean hasMain(IJavaElement element) {
 		try {
-			IType mainType = null;
-			if (element instanceof ICompilationUnit) {
-				ICompilationUnit cu = (ICompilationUnit) element;
-				mainType= cu.getType(Signature.getQualifier(cu.getElementName()));
-			} else if (element instanceof IClassFile) {
-					mainType = ((IClassFile)element).getType();
-			} else if (element instanceof IType) {
-				mainType = (IType) element;
-			} else if (element instanceof IMember) {
-				mainType = ((IMember)element).getDeclaringType();
-			}
+            IType mainType = getType(element);
 			if (mainType != null && mainType.exists() && JavaModelUtil.hasMainMethod(mainType)) {
 				return true;
 			}
@@ -110,4 +99,19 @@ public class JavaElementPropertyTester extends PropertyTester {
 		}
 		return false;
 	}
+    
+    private IType getType(IJavaElement element) throws JavaModelException {
+        IType type = null;
+        if (element instanceof ICompilationUnit) {
+            ICompilationUnit cu = (ICompilationUnit) element;
+            type= cu.getType(Signature.getQualifier(cu.getElementName()));
+        } else if (element instanceof IClassFile) {
+                type = ((IClassFile)element).getType();
+        } else if (element instanceof IType) {
+            type = (IType) element;
+        } else if (element instanceof IMember) {
+            type = ((IMember)element).getDeclaringType();
+        }
+        return type;
+    }
 }
