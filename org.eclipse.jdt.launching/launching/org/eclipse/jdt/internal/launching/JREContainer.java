@@ -74,7 +74,7 @@ public class JREContainer implements IClasspathContainer {
 	 * @see IClasspathContainer#getKind()
 	 */
 	public int getKind() {
-		return IClasspathContainer.K_SYSTEM;
+		return IClasspathContainer.K_DEFAULT_SYSTEM;
 	}
 
 	/**
