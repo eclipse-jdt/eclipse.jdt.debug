@@ -19,6 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointConditionCompletionProcessor;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaTextTools;
@@ -31,7 +32,6 @@ import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Control;
  */
 public class BreakpointConditionEditor {
 	
-	private SourceViewer fViewer;
+	private JDISourceViewer fViewer;
 	private BreakpointConditionCompletionProcessor fCompletionProcessor;
 		
 	private boolean fIsValid;
@@ -59,7 +59,6 @@ public class BreakpointConditionEditor {
 	private IJavaLineBreakpoint fBreakpoint;
 		
 	public BreakpointConditionEditor(Composite parent, JavaLineBreakpointPage page) {
-		
 		fPage= page;
 		fBreakpoint= (IJavaLineBreakpoint) fPage.getBreakpoint();
 		String condition;
@@ -73,7 +72,7 @@ public class BreakpointConditionEditor {
 		fOldValue= ""; //$NON-NLS-1$
 			
 		// the source viewer
-		fViewer= new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		fViewer= new JDISourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		fViewer.setInput(parent);
 		
 		JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
@@ -213,14 +212,13 @@ public class BreakpointConditionEditor {
 	 */
 	public void setEnabled(boolean enabled) {
 		fViewer.setEditable(enabled);
-		Color color= null;
 		if (enabled) {
-			color= fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+			fViewer.updateViewerColors();
 			fViewer.getTextWidget().setFocus();
 		} else {
-			color= fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+			Color color= fViewer.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+			fViewer.getTextWidget().setBackground(color);
 		}
-		fViewer.getTextWidget().setBackground(color);
 		valueChanged();
 	}
 
@@ -238,5 +236,9 @@ public class BreakpointConditionEditor {
 		if (!newValue.equals(fOldValue)) {
 			fOldValue = newValue;
 		}
+	}
+	
+	public void dispose() {
+		fViewer.dispose();
 	}
 }

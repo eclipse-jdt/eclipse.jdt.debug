@@ -242,6 +242,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		shutDownVM();
 		fPresentation.dispose();
 		fSnippetStateListeners= null;
+		((JDISourceViewer) getSourceViewer()).dispose();
 		super.dispose();
 	}
 	

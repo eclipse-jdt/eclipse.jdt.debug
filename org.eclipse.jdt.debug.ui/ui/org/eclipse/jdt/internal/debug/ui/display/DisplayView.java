@@ -18,16 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
-import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -35,9 +32,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -48,24 +42,13 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
@@ -74,13 +57,11 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class DisplayView extends ViewPart implements IPropertyChangeListener, ITextInputListener {
+public class DisplayView extends ViewPart implements ITextInputListener {
 		
 	class DataDisplay implements IDataDisplay {
 		/**
@@ -143,10 +124,6 @@ public class DisplayView extends ViewPart implements IPropertyChangeListener, IT
 
 	protected String fRestoredContents= null;
 	
-	private Font fFont= null;
-	private Color fForegroundColor= null;
-	private Color fBackgroundColor= null;
-	
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
 	 */
@@ -156,10 +133,7 @@ public class DisplayView extends ViewPart implements IPropertyChangeListener, IT
 		fSourceViewer= new JDISourceViewer(parent, null, styles);
 		fSourceViewer.configure(new DisplayViewerConfiguration());
 		fSourceViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
-		getPreferenceStore().addPropertyChangeListener(this);
 		IDocument doc= getRestoredDocument();
-		setViewerFont(fSourceViewer);
-		setViewerColors(fSourceViewer);
 		fSourceViewer.setDocument(doc);
 		fSourceViewer.addTextInputListener(this);
 		fRestoredContents= null;
@@ -394,179 +368,6 @@ public class DisplayView extends ViewPart implements IPropertyChangeListener, IT
 	 */
 	protected String getContents() {
 		return fSourceViewer.getDocument().get();
-	}	
-	
-	/**
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		IContentAssistant assistant= fSourceViewer.getContentAssistant();
-		if (assistant instanceof ContentAssistant) {
-			JDIContentAssistPreference.changeConfiguration((ContentAssistant) assistant, event);
-		}
-		String property= event.getProperty();
-		
-		if (JFaceResources.TEXT_FONT.equals(property)) {
-			setViewerFont(fSourceViewer);
-		}
-		if (AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND.equals(property) || AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||
-			AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND.equals(property) ||	AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)) {
-			setViewerColors(fSourceViewer);
-		}
-		if (affectsTextPresentation(event)) {
-			fSourceViewer.invalidateTextPresentation();
-		}
-	}
-
-	/**
-	 * @see WorkbenchPart#dispose()
-	 */	
-	public void dispose() {
-		if (getFont() != null) {
-			getFont().dispose();
-			setFont(null);
-		}
-		if (getBackgroundColor() != null) {
-			getBackgroundColor().dispose();
-			setBackgroundColor(null);
-		}
-		if (getForegroundColor() != null) {
-			getForegroundColor().dispose();
-			setForegroundColor(null);
-		}
-		getPreferenceStore().removePropertyChangeListener(this);
-		super.dispose();
-	}
-	
-	protected IPreferenceStore getPreferenceStore() {
-		AbstractUIPlugin p= (AbstractUIPlugin)Platform.getPlugin(JavaUI.ID_PLUGIN);
-		return p.getPreferenceStore();
-	}
-	
-	private void setViewerFont(ISourceViewer viewer) {
-		IPreferenceStore store= getPreferenceStore();
-		if (store != null) {
-			FontData data= null;
-			
-			if (store.contains(JFaceResources.TEXT_FONT) && !store.isDefault(JFaceResources.TEXT_FONT)) {
-				data= PreferenceConverter.getFontData(store, JFaceResources.TEXT_FONT);
-			} else {
-				data= PreferenceConverter.getDefaultFontData(store, JFaceResources.TEXT_FONT);
-			}
-			
-			if (data != null) {
-				
-				Font font= new Font(viewer.getTextWidget().getDisplay(), data);
-				setFont(viewer, font);
-				
-				if (getFont() != null) {
-					getFont().dispose();
-				}
-				setFont(font);
-				return;
-			}
-		}
-		
-		// if all the preferences failed
-		setFont(viewer, JFaceResources.getTextFont());
-	}
-	
-	/**
-	 * Initializes the given viewer's colors.
-	 * 
-	 * @param viewer the viewer to be initialized
-	 */
-	private void setViewerColors(ISourceViewer viewer) {
-		IPreferenceStore store= getPreferenceStore();
-		if (store != null) {
-			
-			StyledText styledText= viewer.getTextWidget();
-			Color color= store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT)
-				? null
-				: createColor(store, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
-			styledText.setForeground(color);
-				
-			if (getForegroundColor() != null) {
-				getForegroundColor().dispose();
-			}
-			
-			setForegroundColor(color);
-			
-			color= store.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
-				? null
-				: createColor(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
-			styledText.setBackground(color);
-				
-			if (getBackgroundColor() != null) {
-				getBackgroundColor().dispose();
-			}
-				
-			setBackgroundColor(color);
-		}
-	}
-	
-	/**
-	 * Creates a color from the information stored in the given preference store.
-	 * Returns <code>null</code> if there is no such information available.
-	 */
-	private Color createColor(IPreferenceStore store, String key, Display display) {
-	
-		RGB rgb= null;		
-		
-		if (store.contains(key)) {
-			
-			if (store.isDefault(key)) {
-				rgb= PreferenceConverter.getDefaultColor(store, key);
-			} else {
-				rgb= PreferenceConverter.getColor(store, key);
-			}
-			if (rgb != null) {
-				return new Color(display, rgb);
-			}
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Sets the font for the given viewer sustaining selection and scroll position.
-	 * 
-	 * @param sourceViewer the source viewer
-	 * @param font the font
-	 */
-	private void setFont(ISourceViewer sourceViewer, Font font) {
-		IDocument doc= sourceViewer.getDocument();
-		if (doc != null && doc.getLength() > 0) {
-			Point selection= sourceViewer.getSelectedRange();
-			int topIndex= sourceViewer.getTopIndex();
-			
-			StyledText styledText= sourceViewer.getTextWidget();
-			styledText.setRedraw(false);
-			
-			styledText.setFont(font);
-			sourceViewer.setSelectedRange(selection.x , selection.y);
-			sourceViewer.setTopIndex(topIndex);
-			
-			styledText.setRedraw(true);
-		} else {
-			sourceViewer.getTextWidget().setFont(font);
-		}	
-	}
-	
-	protected Font getFont() {
-		return fFont;
-	}
-	
-	protected void setFont(Font font) {
-		fFont = font;
-	}
-	
-	/**
-	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
-	 */
-	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		JavaTextTools textTools= JavaPlugin.getDefault().getJavaTextTools();
-		return textTools.affectsBehavior(event);
 	}
 	
 	protected final ISelectionChangedListener getSelectionChangedListener() {
@@ -590,21 +391,6 @@ public class DisplayView extends ViewPart implements IPropertyChangeListener, IT
 			((IUpdate) action).update();
 		}
 	}
-	protected Color getBackgroundColor() {
-		return fBackgroundColor;
-	}
-
-	protected void setBackgroundColor(Color backgroundColor) {
-		fBackgroundColor = backgroundColor;
-	}
-
-	protected Color getForegroundColor() {
-		return fForegroundColor;
-	}
-
-	protected void setForegroundColor(Color foregroundColor) {
-		fForegroundColor = foregroundColor;
-	}
 	/**
 	 * @see ITextInputListener#inputDocumentAboutToBeChanged(IDocument, IDocument)
 	 */
@@ -617,4 +403,14 @@ public class DisplayView extends ViewPart implements IPropertyChangeListener, IT
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		oldInput.removeDocumentListener(fDocumentListener);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		if (fSourceViewer != null) {
+			fSourceViewer.dispose();
+		}
+		super.dispose();
+	}
+
 }

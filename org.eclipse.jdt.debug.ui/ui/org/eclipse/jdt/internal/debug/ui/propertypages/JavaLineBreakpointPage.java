@@ -263,4 +263,14 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		return super.convertWidthInCharsToPixels(chars);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		if (fConditionEditor != null) {
+			fConditionEditor.dispose();
+		}
+		super.dispose();
+	}
+
 }

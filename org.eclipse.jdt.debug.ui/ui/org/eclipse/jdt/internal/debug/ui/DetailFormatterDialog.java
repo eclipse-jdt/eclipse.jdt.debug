@@ -32,7 +32,6 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -200,8 +199,6 @@ public class DetailFormatterDialog extends StatusDialog {
 		});
 		fSnippetViewer.setEditable(true);
 		fSnippetViewer.setDocument(document);
-	
-		fSnippetViewer.getTextWidget().setFont(JFaceResources.getTextFont());
 		
 		Control control= fSnippetViewer.getControl();
 		gd= new GridData(GridData.FILL_BOTH);
@@ -354,6 +351,14 @@ public class DetailFormatterDialog extends StatusDialog {
 			findCorrespondingType();
 		}
 		return fType;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		fSnippetViewer.dispose();
+		return super.close();
 	}
 
 }
