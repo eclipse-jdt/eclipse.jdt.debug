@@ -293,8 +293,10 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	protected void setRequestThreadFilter(EventRequest request, ThreadReference thread) {
 		if (request instanceof MethodEntryRequest) {
 			((MethodEntryRequest)request).addThreadFilter(thread);
-		} else {
+		} else if (request instanceof MethodExitRequest){
 			((MethodExitRequest)request).addThreadFilter(thread);
+		} else if (request instanceof BreakpointRequest) {
+			((BreakpointRequest)request).addThreadFilter(thread);
 		}
 	}
 
