@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -27,6 +29,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventFilter;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -62,6 +65,7 @@ import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.IContextMenuConstants;
@@ -274,6 +278,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		if (isEvaluating()) {
 			return;
 		}
+		
+		checkCurrentProject();
+		
 		evaluationStarts();
 
 		fResultMode= resultMode;
@@ -291,6 +298,30 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		fSnippetEnd= fSnippetStart + selection.getLength();
 		
 		evaluate(snippet);			
+	}
+	
+	/**
+	 * Checks if the page has been copied/moved to a different project or the project has been renamed.
+	 * Updates the launch configuration template if a copy/move/rename has occurred.
+	 */
+	protected void checkCurrentProject() {
+		try {
+			ILaunchConfiguration config = ScrapbookLauncher.getLaunchConfigurationTemplate(getPage());
+			if (config != null) {
+				String projectName = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+				IJavaProject pro = JavaCore.create(getPage().getProject());
+				if (!pro.getElementName().equals(projectName)) {
+					//the page has been moved to a "different" project
+					ScrapbookLauncher.setLaunchConfigMemento(getPage(), null);
+				}
+			}
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce);
+			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.evaluating"), null, ce.getStatus()); //$NON-NLS-1$
+			evaluationEnds();
+			return;
+			
+		}
 	}	
 	
 	protected void buildAndLaunch() {
@@ -323,17 +354,17 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				return;
 			}
 		}
-
-		boolean cpChange= classPathHasChanged();
-		if (!cpChange) {
-			cpChange = workingDirHasChanged();
+		
+		boolean changed= classPathHasChanged();
+		if (!changed) {
+			changed = workingDirHasChanged();
 		}
-		if (!cpChange) {
-			cpChange = vmHasChanged();
+		if (!changed) {
+			changed = vmHasChanged();
 		}
-		boolean launch= fVM == null || cpChange;
+		boolean launch= fVM == null || changed;
 
-		if (cpChange) {
+		if (changed) {
 			shutDownVM();
 		}
 	
@@ -566,10 +597,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 		
 	protected void codeComplete(ICompletionRequestor requestor) throws JavaModelException {
-		IDocument d= getSourceViewer().getDocument();
 		ITextSelection selection= (ITextSelection)getSelectionProvider().getSelection();
 		int start= selection.getOffset();
-		String snippet= d.get();	
+		String snippet= getSourceViewer().getDocument().get();	
 		IEvaluationContext e= getEvaluationContext();
 		if (e != null) {
 			e.codeComplete(snippet, start, requestor);
@@ -581,12 +611,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		if (viewer == null) {
 			return null;
 		}
-		IDocument d= viewer.getDocument();
 		ITextSelection selection= (ITextSelection) getSelectionProvider().getSelection();
 		int start= selection.getOffset();
 		int len= selection.getLength();
 		
-		String snippet= d.get();	
+		String snippet= viewer.getDocument().get();	
 		IEvaluationContext e= getEvaluationContext();
 		if (e != null) {
 			return e.codeSelect(snippet, start, len);
@@ -1002,10 +1031,28 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	* @see WorkbenchPart#setTitle
  	*/
 	protected void setTitle(String title) {
+		cleanupOnRenameOrMove();
+		super.setTitle(title);
+	}
+	
+	/**
+	 * If the launch configuration has been copied, moved or
+	 * renamed, shut down any running VM and clear the relevant cached information.
+	 */
+	protected void cleanupOnRenameOrMove() {
 		if(isVMLaunched()) {
 			shutDownVM();
+		} else {
+			fThread= null;
+			fEvaluationContext= null;
+			fLaunchedClassPath= null;
+			
+			if (fEngine != null) {
+				fEngine.dispose();
+				fEngine= null;
+			}	
 		}
-		super.setTitle(title);
+		fJavaProject= null;
 	}
 	
 	/**
