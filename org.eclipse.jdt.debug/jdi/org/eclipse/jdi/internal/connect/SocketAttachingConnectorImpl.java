@@ -43,7 +43,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		arguments.put(strArg.name(), strArg);
 		
 		// Port
-		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", "Port number to which to attach for VM connections.", "Port", true, 0, Integer.MAX_VALUE);
+		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", "Port number to which to attach for VM connections.", "Port", true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR);
 		arguments.put(intArg.name(), intArg);
 		
 		return arguments;
@@ -88,7 +88,14 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 	 */
 	public VirtualMachine attach(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
-		((SocketTransportImpl)fTransport).attach(fHostname, fPort);
+		try {
+			((SocketTransportImpl)fTransport).attach(fHostname, fPort);
+		} catch (IllegalArgumentException e) {
+			Vector args = new Vector();
+			args.add("hostname");
+			args.add("port");
+			throw new IllegalConnectorArgumentsException(e.getMessage(), args);
+		}
 		return establishedConnection();
 	}
 }

@@ -214,6 +214,8 @@ public abstract class ConnectorImpl implements Connector {
 
 	 	protected IntegerArgumentImpl(String name, String description, String label, boolean mustSpecify, int min, int max) {
 	 		super(name, description, label, mustSpecify);
+	 		fMin = min;
+	 		fMax = max;
 	 	}
 	 	
 		public String value() {
@@ -255,7 +257,7 @@ public abstract class ConnectorImpl implements Connector {
 		}
 		
 		public boolean isValid(int value) {
-			return fMin <= fValue.intValue() && fValue.intValue() <= fMax;
+			return fMin <= value && value <= fMax;
 		}
 
 		public String stringValueOf(int value) {

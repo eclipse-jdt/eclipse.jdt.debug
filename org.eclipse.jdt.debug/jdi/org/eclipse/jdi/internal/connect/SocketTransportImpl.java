@@ -14,6 +14,9 @@ import java.util.*;
 import java.io.*;
 
 public class SocketTransportImpl extends TransportImpl {
+	public static final int MIN_PORTNR = 0;
+	public static final int MAX_PORTNR = 65535;
+	
 	/** Handshake bytes used just after connecting VM. */
 	private static final byte[] handshakeBytes = "JDWP-Handshake".getBytes();
 	/** Socket on which VM is connected. */

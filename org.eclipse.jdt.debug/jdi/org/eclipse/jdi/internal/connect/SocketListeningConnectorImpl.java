@@ -40,7 +40,7 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 		HashMap arguments = new HashMap(1);
 		
 		// Port
-		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", "Port number at which to listen for VM connections", "Port", true, 0, Integer.MAX_VALUE);
+		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", "Port number at which to listen for VM connections", "Port", true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR);
 		arguments.put(intArg.name(), intArg);
 		
 		// Timeout
@@ -92,7 +92,11 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	public String startListening(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
 		getConnectionArguments(connectionArgs);
 		String result = "ListeningConnector Socket Port=" + fPort;
-		((SocketTransportImpl)fTransport).listen(fPort);
+		try {
+			((SocketTransportImpl)fTransport).listen(fPort);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalConnectorArgumentsException(e.getMessage(), "port");
+		}
 		return result;
 	}
 	

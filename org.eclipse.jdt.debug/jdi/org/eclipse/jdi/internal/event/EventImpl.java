@@ -97,6 +97,8 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 		// Create, read and return Event of eventKind.
 		EventImpl result;
 		switch(eventKind) {
+			case 0:
+				return null;
 			case AccessWatchpointEventImpl.EVENT_KIND:
 				result = AccessWatchpointEventImpl.read(target, requestID, dataInStream);
 				break;
