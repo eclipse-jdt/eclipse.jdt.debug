@@ -28,10 +28,12 @@ import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.IncompatibleThreadStateException;
 import com.sun.jdi.IntegerValue;
+import com.sun.jdi.InvalidStackFrameException;
 import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.Location;
 import com.sun.jdi.Method;
+import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadGroupReference;
@@ -40,7 +42,6 @@ import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.event.Event;
-import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.event.StepEvent;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
@@ -1175,11 +1176,30 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		VirtualMachine vm= getVM();
 		if (vm.canPopFrames()) {
 			// JDK 1.4 support
+			boolean poppingToTop= false;
+			IStackFrame topFrame= (getStackFrames())[0];
+			if (frame.equals(frame)) {
+				poppingToTop= true;
+			}
 			try {
+				// Pop the drop frame and all frames above it
 				fThread.popFrames(((JDIStackFrame) frame).getUnderlyingStackFrame());
-			} catch (IncompatibleThreadStateException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {e.toString()}),e);
-			} finally {
+				if (!poppingToTop) {
+					// Step into the drop frame
+					stepInto();				
+				}
+			} catch (UnsupportedOperationException exception) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
+			} catch (IncompatibleThreadStateException exception) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
+			} catch (IllegalArgumentException exception) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
+			} catch (NativeMethodException exception) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
+			} catch (InvalidStackFrameException exception) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception);
+			}
+			finally {
 				disposeStackFrames();
 				computeStackFrames();
 				fireSuspendEvent(DebugEvent.CLIENT_REQUEST);							
