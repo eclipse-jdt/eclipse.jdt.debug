@@ -187,19 +187,16 @@ public class MacOSXVMInstallType extends AbstractVMInstallType {
 		}
 		if (doc == null) {
 			// now try in a standard place on the web
-			String version= id;
-			if (version != null) {
-				try {
-					if (version.startsWith("1.4.1"))	//$NON-NLS-1$
-						return new URL("http://java.sun.com/j2se/1.4.1/docs/api"); //$NON-NLS-1$
-					if (version.startsWith("1.4.0"))	//$NON-NLS-1$
-						return new URL("http://java.sun.com/j2se/1.4/docs/api"); //$NON-NLS-1$
-					if (version.startsWith("1.3"))	//$NON-NLS-1$
-						return new URL("http://java.sun.com/j2se/1.3/docs/api"); //$NON-NLS-1$
-					if (version.startsWith("1.2"))	//$NON-NLS-1$
-						return new URL("http://java.sun.com/products/jdk/1.2/docs/api"); //$NON-NLS-1$
-				} catch (MalformedURLException e) {
-				}
+			try {
+				if (id.startsWith("1.4.1"))	//$NON-NLS-1$
+					return new URL("http://java.sun.com/j2se/1.4.1/docs/api"); //$NON-NLS-1$
+				if (id.startsWith("1.4.0"))	//$NON-NLS-1$
+					return new URL("http://java.sun.com/j2se/1.4/docs/api"); //$NON-NLS-1$
+				if (id.startsWith("1.3"))	//$NON-NLS-1$
+					return new URL("http://java.sun.com/j2se/1.3/docs/api"); //$NON-NLS-1$
+				if (id.startsWith("1.2"))	//$NON-NLS-1$
+					return new URL("http://java.sun.com/products/jdk/1.2/docs/api"); //$NON-NLS-1$
+			} catch (MalformedURLException e) {
 			}
 		}
 		return doc;
