@@ -111,7 +111,12 @@ public class JDIImageDescriptor extends CompositeImageDescriptor {
 			if ((flags & INSTALLED) != 0) {
 				int x= 0;
 				int y= getSize().y;
-				data= JavaDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED.getImageData();
+				if ((flags & ENABLED) !=0) {
+					data= JavaDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED.getImageData();
+				} else {
+					data= JavaDebugImages.DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED.getImageData();
+				}
+				
 				y -= data.height;
 				drawImage(data, x, y);
 			}

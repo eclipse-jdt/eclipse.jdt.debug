@@ -43,6 +43,7 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_EXCEPTION_DISABLED= NAME_PREFIX + "exception_obj_disabled.gif";			//$NON-NLS-1$
 	public static final String IMG_OBJS_ERROR= NAME_PREFIX + "jrtexception_obj.gif";			//$NON-NLS-1$	
 	public static final String IMG_OBJS_BREAKPOINT_INSTALLED= NAME_PREFIX + "installed_ovr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED= NAME_PREFIX + "installed_ovr_disabled.gif";	//$NON-NLS-1$
 	
 	public static final String IMG_OBJS_ACCESS_WATCHPOINT_ENABLED= NAME_PREFIX + "read_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_ACCESS_WATCHPOINT_DISABLED= NAME_PREFIX + "read_obj_disabled.gif";	//$NON-NLS-1$
@@ -73,6 +74,7 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION= createManaged(T_OBJ, IMG_OBJS_EXCEPTION);
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION_DISABLED= createManaged(T_OBJ, IMG_OBJS_EXCEPTION_DISABLED);
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED= createManaged(T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED);
+	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED_DISABLED= createManaged(T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED_DISABLED);
 	
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED= createManaged(T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED);
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED= createManaged(T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED);
