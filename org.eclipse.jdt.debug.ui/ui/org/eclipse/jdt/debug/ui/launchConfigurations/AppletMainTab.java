@@ -157,7 +157,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		createVerticalSpacer(projComp, 2);
 		
 		fAppletViewerClassLabel= new Label(projComp, SWT.NONE);
-		fAppletViewerClassLabel.setText(LauncherMessages.getString("AppletMainTab.Name_of_appletviewer_class__1")); //$NON-NLS-1$
+		fAppletViewerClassLabel.setText(LauncherMessages.getString("AppletMainTab.1")); //$NON-NLS-1$
 		gd= new GridData();
 		gd.horizontalSpan= 2;
 		fAppletViewerClassLabel.setLayoutData(gd);		
@@ -170,7 +170,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		fAppletViewerClassText.setFont(font);
 		fAppletViewerClassText.addModifyListener(fModifyListener);
 		
-		fAppletViewerClassDefaultButton= createCheckButton(projComp, LauncherMessages.getString("AppletMainTab.Use_default_appletviewer_class_2")); //$NON-NLS-1$
+		fAppletViewerClassDefaultButton= createCheckButton(projComp, LauncherMessages.getString("AppletMainTab.2")); //$NON-NLS-1$
 		gd= new GridData();
 		gd.horizontalSpan= 2;
 		fAppletViewerClassDefaultButton.setLayoutData(gd);
@@ -410,7 +410,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		// Verify appletviewer class
 		name= fAppletViewerClassText.getText().trim();
 		if (name.length() == 0) {
-			setErrorMessage(LauncherMessages.getString("AppletMainTab.Appletviewer_class_must_be_specified_3"));  //$NON-NLS-1$
+			setErrorMessage(LauncherMessages.getString("AppletMainTab.3"));  //$NON-NLS-1$
 			return false;			
 		}
 		
