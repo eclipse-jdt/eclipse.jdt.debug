@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.ui.DetailFormatter;
@@ -36,15 +37,18 @@ public class NewDetailFormatterAction extends ObjectActionDelegate {
 		Object element= selection.getFirstElement();
 		String typeName;
 		try {
-			IJavaValue value;
+			IJavaType type;
 			if (element instanceof IJavaVariable) {
-				value = ((IJavaValue)((IJavaVariable) element).getValue());
+				type = ((IJavaValue)((IJavaVariable) element).getValue()).getJavaType();
 			} else if (element instanceof JavaInspectExpression) {
-				value = ((IJavaValue)((JavaInspectExpression) element).getValue());
+				type = ((IJavaValue)((JavaInspectExpression) element).getValue()).getJavaType();
 			} else {
 				return;
 			}
-			typeName= value.getJavaType().getName();
+			if (type == null) {
+				return;
+			}
+			typeName= type.getName();
 		} catch (DebugException e) {
 			return;
 		}
