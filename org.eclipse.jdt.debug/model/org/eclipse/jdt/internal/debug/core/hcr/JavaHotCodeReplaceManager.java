@@ -77,6 +77,13 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	private static final String CLASS_FILE_EXTENSION= "class"; //$NON-NLS-1$
 	
 	/**
+	 * Name of obsolete "project build watcher". Maintained here
+	 * to enable project cleanup (references to this builder must
+	 * be removed from old projects).
+	 */
+	public static String BUILDER_ID= "org.eclipse.jdt.debug.hcrbuilder"; //$NON-NLS-1$
+	
+	/**
 	 * The list of <code>IJavaHotCodeReplaceListeners</code> which this hot code replace 
 	 * manager will notify about hot code replace attempts.
 	 */
@@ -89,31 +96,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	private List fNoHotSwapTargets= new ArrayList(1);
 	
 	/**
-	 * The time that the last build occurred.
-	 * Calculated by tracking the time between classfile changes.
-	 */
-	private long fLastBuildTime= new Date().getTime();
-	/**
-	 * The time that the last classfile change notification was received
-	 */
-	private long fLastChangeTime= new Date().getTime();
-	
-	/**
-	 * Map of projects to their builders
-	 */
-	private Map fProjectToBuilder= new HashMap();
-	
-	/**
 	 * Visitor for resource deltas.
 	 */
 	protected ChangedClassFilesVisitor fVisitor = new ChangedClassFilesVisitor();
-	
-	/**
-	 * Registers a build watcher for the given project
-	 */
-	public void registerBuilder(ProjectBuildWatcher watcher, IProject project) {
-		fProjectToBuilder.put(project, watcher);
-	}
 	
 	/**
 	 * Creates a new HCR manager
@@ -140,7 +125,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		// Register build watchers with each project
 		IProject[] projects= getWorkspace().getRoot().getProjects();
 		for (int i= 0, numProjects= projects.length;  i < numProjects; i++) {
-			registerBuildWatcherForProject(projects[i]);
+			unregisterBuildWatcherForProject(projects[i]);
 		}
 	}
 	
@@ -155,17 +140,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		getWorkspace().removeResourceChangeListener(this);
 		fHotCodeReplaceListeners.removeAll();
 		clearHotSwapTargets();
-		clearProjectBuildWatchers();
 	}
 	/**
 	 * Returns the workspace.
 	 */
 	protected IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
-	}
-	
-	private void clearProjectBuildWatchers() {
-		fProjectToBuilder= null;
 	}
 	
 	/**
@@ -178,7 +158,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-		handleNewProjects(event);
 		final List resources= getChangedClassFiles(event.getDelta());
 		if (resources.isEmpty()) {
 			return;
@@ -204,25 +183,14 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		}
 	}
 	
-	private void handleNewProjects(IResourceChangeEvent event) {
-		IResourceDelta delta= event.getDelta();
-		IResource resource= delta.getResource();
-		if (resource.getType() == (IResource.PROJECT) && delta.getKind() == IResourceDelta.ADDED) {
-			// A new project has been created
-			registerBuildWatcherForProject((IProject)resource);
-		}
-	}
-	
-	private void registerBuildWatcherForProject(IProject project) {
+	private void unregisterBuildWatcherForProject(IProject project) {
 		try {
 			IProjectDescription description = project.getDescription();
 			ICommand buildWatcherCommand = getBuildWatcherCommand(description);
 	
-			if (buildWatcherCommand == null) {
-				// Add a Java command to the build spec
-				ICommand command = description.newCommand();
-				command.setBuilderName(ProjectBuildWatcher.BUILDER_ID);
-				setBuildWatcherCommand(project, command);
+			if (buildWatcherCommand != null) {
+				// Remove the obsolete hcr builder from the build spec
+				removeCommand(project, buildWatcherCommand);
 			}
 		} catch (CoreException exception) {
 			JDIDebugPlugin.logError(exception);
@@ -237,7 +205,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(ProjectBuildWatcher.BUILDER_ID)) {
+			if (commands[i].getBuilderName().equals(BUILDER_ID)) {
 				return commands[i];
 			}
 		}
@@ -245,34 +213,30 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	}
 	
 	/**
-	 * Update the build watcher command in the build spec (replace existing one if present,
+	 * Update the build watcher command in the build spec (removing it if present,
 	 * add one first if none).
 	 */
-	private void setBuildWatcherCommand(IProject project, ICommand newCommand) throws CoreException {
-
-		IProjectDescription description= project.getDescription();
+	private void removeCommand(IProject project, ICommand oldCommand) throws CoreException {
+		IProjectDescription description = project.getDescription();
 		ICommand[] oldCommands = description.getBuildSpec();
-		ICommand oldBuildWatcherCommand = getBuildWatcherCommand(description);
-		ICommand[] newCommands;
-
-		if (oldBuildWatcherCommand == null) {
-			// Add a build watcher spec to the project
-			newCommands = new ICommand[oldCommands.length + 1];
-			System.arraycopy(oldCommands, 0, newCommands, 0, oldCommands.length);
-			newCommands[oldCommands.length] = newCommand;
-		} else {
-			for (int i = 0, max = oldCommands.length; i < max; i++) {
-				if (oldCommands[i] == oldBuildWatcherCommand) {
-					oldCommands[i] = newCommand;
-					break;
+		for (int i = 0, numCommands = oldCommands.length; i < numCommands; i++) {
+			if (oldCommands[i] == oldCommand) {
+				// Remove the old command, preserving ordering.
+				ICommand[] newCommands= new ICommand[numCommands - 1];
+				if (i != 0) {
+					// No need to copy zero elements
+					System.arraycopy(oldCommands, 0, newCommands, 0, i);
 				}
+				if (i != numCommands - 1) {
+					// The removed command was at the end. No more to copy.
+					System.arraycopy(oldCommands, i+1, newCommands, i, numCommands - i);
+				}
+				// Commit the spec change into the project
+				description.setBuildSpec(newCommands);
+				project.setDescription(description, null);
+				break;
 			}
-			newCommands = oldCommands;
 		}
-
-		// Commit the spec change into the project
-		description.setBuildSpec(newCommands);
-		project.setDescription(description, null);
 	}
 	
 	/**
@@ -412,19 +376,19 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				for (int j= frames.size() - 1; j >= 0; j--) {
 					JDIStackFrame frame= (JDIStackFrame) frames.get(j);
 					if (replacedClassNames.contains(frame.getDeclaringTypeName())) {
-						// smart drop to frame support
-						ICompilationUnit compilationUnit= getCompilationUnit(frame);
-						try {
-							IMethod method= getMethod(frame, resources);
-							if (method != null) {
-								CompilationUnitDelta delta= new CompilationUnitDelta(compilationUnit, fLastBuildTime);
-								if (!delta.hasChanged(method)) {
-									continue;
-								}
-							}
-						} catch (CoreException exception) {
-							// If smart drop to frame fails, just do type-based drop	
-						}				
+//						// smart drop to frame support
+//						ICompilationUnit compilationUnit= getCompilationUnit(frame);
+//						try {
+//							IMethod method= getMethod(frame, resources);
+//							if (method != null) {
+//								CompilationUnitDelta delta= new CompilationUnitDelta(compilationUnit, fLastBuildTime);
+//								if (!delta.hasChanged(method)) {
+//									continue;
+//								}
+//							}
+//						} catch (CoreException exception) {
+//							// If smart drop to frame fails, just do type-based drop	
+//						}				
 						dropFrame = frame;
 						break;
 					}
@@ -534,29 +498,29 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		List frames= thread.computeStackFrames();
 		JDIStackFrame dropFrame= null;
 		JDIStackFrame frame= null;
-		ICompilationUnit compilationUnit= null;
-		IMethod method= null;
-		CompilationUnitDelta delta= null;
-		IProject project= null;
-		ProjectBuildWatcher builder= null;
+//		ICompilationUnit compilationUnit= null;
+//		IMethod method= null;
+//		CompilationUnitDelta delta= null;
+//		IProject project= null;
 		for (int j= frames.size() - 1; j >= 0; j--) {
 			frame= (JDIStackFrame) frames.get(j);
 			if (replacedClassNames.contains(frame.getDeclaringTypeName())) {
-				// smart drop to frame support
-				compilationUnit= getCompilationUnit(frame);
-				try {
-					project= compilationUnit.getCorrespondingResource().getProject();
-					method= getMethod(frame, resources);
-					builder= (ProjectBuildWatcher)fProjectToBuilder.get(project);
-					if (method != null && builder != null) {
-						delta= new CompilationUnitDelta(compilationUnit, builder.getLastBuildTime());
-						if (!delta.hasChanged(method)) {
-							continue;
-						}
-					}
-				} catch (CoreException exception) {
-					// If smart drop to frame fails, just do type-based drop	
-				}
+//				// smart drop to frame support
+//				compilationUnit= getCompilationUnit(frame);
+//				try {
+//					project= compilationUnit.getCorrespondingResource().getProject();
+//					method= getMethod(frame, resources);
+//					builder= (ProjectBuildWatcher)fProjectToBuilder.get(project);
+//					if (method != null && builder != null) {
+//						delta= new CompilationUnitDelta(compilationUnit, builder.getLastBuildTime());
+//						if (!delta.hasChanged(method)) {
+//							continue;
+//						}
+//					}
+//				} catch (CoreException exception) {
+//					// If smart drop to frame fails, just do type-based drop	
+//				}
+//				
 				if (frame.supportsDropToFrame()) {
 					dropFrame= frame;
 				} else {
