@@ -80,7 +80,7 @@ public class AddBreakpointAction extends TextEditorAction implements IEditorActi
 		setType(type);
 		if (type != null) {
 			try {
-				return !JDIDebugModel.lineBreakpointExists(type, getLineNumber());
+				return !JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(), getLineNumber());
 			} catch (CoreException ce) {
 				JDIDebugUIPlugin.logError(ce);
 			}

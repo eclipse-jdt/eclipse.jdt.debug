@@ -371,17 +371,17 @@ public class JDIDebugModel {
 	}
 	
 	/**
-	 * Returns whether a line breakpoint already exists on the given line number in the
-	 * given type.
+	 * Returns whether a line breakpoint already exists on the given line number in a
+	 * type with the specified fully qualified name.
 	 * 
-	 * @param containingType the type in which to check for a line breakpoint
+	 * @param typeName the fully qualified name of the type in which to check for a line breakpoint
 	 * @param lineNumber the line number on which to check for a line breakpoint
 	 * @return whether a line breakpoint already exists on the given line number in
 	 *   the given type.
 	 * @exception CoreException if unable to retrieve the associated marker
 	 * 	attributes (line number).
 	 */
-	public static boolean lineBreakpointExists(IType containingType, int lineNumber) throws CoreException {
+	public static boolean lineBreakpointExists(String typeName, int lineNumber) throws CoreException {
 		String modelId= getPluginIdentifier();
 		String markerType= JavaLineBreakpoint.getMarkerType();
 		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
@@ -392,7 +392,7 @@ public class JDIDebugModel {
 			}
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) breakpoints[i];
 			if (breakpoint.getMarker().getType().equals(markerType)) {
-				if (breakpoint.getTypeName().equals(containingType)) {
+				if (breakpoint.getTypeName().equals(typeName)) {
 					if (breakpoint.getLineNumber() == lineNumber) {
 						return true;
 					}
