@@ -24,6 +24,7 @@ import org.eclipse.jdt.debug.eval.ast.model.IValue;
 import org.eclipse.jdt.debug.eval.ast.model.IVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTAPIVisitor;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.InstructionSequence;
+import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 
 
@@ -115,12 +116,19 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 					public void run() {
 						while (!fEvaluationComplete && !fEvaluationCancelled) {
 							try {
-								Thread.currentThread().sleep(3000); // 3 second timeout for now
+								Thread.currentThread().sleep(10000); // 10 second timeout for now
 							} catch(InterruptedException e) {
 							}
 							if (!fEvaluationComplete) {
-								if (!listener.evaluationTimedOut(thread)) {
-									fEvaluationCancelled= true;
+								try {
+									thread.suspend();
+									if (!listener.evaluationTimedOut(thread)) {
+										fEvaluationCancelled= true;
+									} else {
+										// Keep waiting
+										thread.resume();
+									}
+								} catch(DebugException e) {
 								}
 							}
 						}
