@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -57,7 +56,6 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperFieldAccess;
@@ -81,6 +79,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private static final String RUN_METHOD_NAME= "___run"; //$NON-NLS-1$
 	private static final String EVAL_METHOD_NAME= "___eval"; //$NON-NLS-1$
+	private static final String EVAL_FIELD_NAME= "___field"; //$NON-NLS-1$
 	
 	private int[] fLocalModifiers;
 	private String[] fLocalTypesNames;
@@ -411,6 +410,31 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return methodName;
 	}
 	
+	/**
+	 * Returns a field name that will be unique in the generated source.
+	 * The generated name is baseName plus as many '_' characters as necessary
+	 * to not duplicate an existing method name.
+	 */
+	private String getUniqueFieldName(String fieldName, List bodyDeclarations) {
+		Iterator iter= bodyDeclarations.iterator();
+		BodyDeclaration bodyDeclaration;
+		FieldDeclaration fieldDeclaration;
+		String foundName;
+		while (iter.hasNext()) {
+			bodyDeclaration= (BodyDeclaration) iter.next();
+			if (bodyDeclaration instanceof FieldDeclaration) {
+				fieldDeclaration= (FieldDeclaration)bodyDeclaration;
+				for (Iterator iterator= fieldDeclaration.fragments().iterator(); iterator.hasNext();) {
+					foundName= ((VariableDeclarationFragment) iterator.next()).getName().getIdentifier();
+					if (foundName.startsWith(fieldName)) {
+						fieldName= foundName + '_';
+					}
+				}
+			}
+		}
+		return fieldName;
+	}
+	
 	private String getQualifiedIdentifier(Name name) {
 		String typeName= ""; //$NON-NLS-1$
 		while (name.isQualifiedName()) {
@@ -487,28 +511,54 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			StringBuffer source = buildTypeBody(fSource, bodyDeclarations);
 			
 			ASTNode parent = node.getParent();
-			while (!(parent instanceof MethodDeclaration)) {
+			while (!(parent instanceof MethodDeclaration || parent instanceof FieldDeclaration)) {
 				parent= parent.getParent();
 			}
-			MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
 			
 			fSource= new StringBuffer();
-			
-			if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
-				fSource.append("static "); //$NON-NLS-1$
-			}
 				
-			fSource.append("void "); //$NON-NLS-1$
-			fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
-			fSource.append("() {\n"); //$NON-NLS-1$
-			fSource.append("new "); //$NON-NLS-1$
-			fSource.append(getQualifiedIdentifier(node.getName()));
-			fSource.append("()"); //$NON-NLS-1$
-			
-			fStartPosOffset+= fSource.length();
-			fSource.append(source);
-			fSource.append(";}\n"); //$NON-NLS-1$
-			
+			if (parent instanceof MethodDeclaration) {
+				MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
+				
+				if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
+					fSource.append("static "); //$NON-NLS-1$
+				}
+					
+				fSource.append("void "); //$NON-NLS-1$
+				fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
+				fSource.append("() {\n"); //$NON-NLS-1$
+				fSource.append("new "); //$NON-NLS-1$
+				fSource.append(getQualifiedIdentifier(node.getName()));
+				fSource.append("()"); //$NON-NLS-1$
+				
+				fStartPosOffset+= fSource.length();
+				fSource.append(source);
+				fSource.append(";}\n"); //$NON-NLS-1$
+				
+			} else if (parent instanceof FieldDeclaration) {
+				FieldDeclaration enclosingFieldDeclaration = (FieldDeclaration) parent;
+				
+				if (Flags.isStatic(enclosingFieldDeclaration.getModifiers())) {
+					fSource.append("static "); //$NON-NLS-1$
+				}
+				
+				Type type= enclosingFieldDeclaration.getType();
+				while (type instanceof ArrayType) {
+					type= ((ArrayType)type).getComponentType();
+				}
+				
+				fSource.append(getQualifiedIdentifier(((SimpleType)type).getName()));
+				fSource.append(' ');
+				fSource.append(getUniqueFieldName(EVAL_FIELD_NAME, bodyDeclarations));
+				fSource.append(" = new "); //$NON-NLS-1$
+				fSource.append(getQualifiedIdentifier(node.getName()));
+				fSource.append("()"); //$NON-NLS-1$
+				
+				fStartPosOffset+= fSource.length();
+				fSource.append(source);
+				fSource.append(";\n"); //$NON-NLS-1$
+				
+			}
 			fLastTypeName= ""; //$NON-NLS-1$
 			
 		}		

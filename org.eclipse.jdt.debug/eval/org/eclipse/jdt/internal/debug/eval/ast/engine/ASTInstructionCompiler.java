@@ -9,12 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import  org.eclipse.jdt.core.dom.ITypeBinding;
-
-import  org.eclipse.jdt.core.dom.ITypeBinding;
-
-import  org.eclipse.jdt.core.dom.ClassInstanceCreation;
-
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -135,13 +129,13 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushDouble;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushFieldVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushFloat;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushInt;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushLocalVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushLong;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushNull;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushStaticFieldVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushString;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushThis;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushType;
-import org.eclipse.jdt.internal.debug.eval.ast.instructions.PushLocalVariable;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RemainderAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RemainderOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.RightShiftAssignmentOperator;
@@ -1392,7 +1386,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#visit(FieldDeclaration)
 	 */
 	public boolean visit(FieldDeclaration node) {
-		return false;
+		return true;
 	}
 
 	/**
@@ -2296,11 +2290,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#visit(VariableDeclarationFragment)
 	 */
 	public boolean visit(VariableDeclarationFragment node) {
-		if (!isActive()) {
-			return false;
-		}
-		// Don't add error here. A variable declaration fragment is always contained in a 
-		// variable declaraction expression or statement. These will add the appropriate error.
+		// Don't add error here. A variable declaration fragment is contained in a 
+		// variable declaraction expression or statement, or in a field declaration.
+		// The appropriate error is already added inthe first case, no error should
+		// be added in the second case.
 		return true;
 	}
 
