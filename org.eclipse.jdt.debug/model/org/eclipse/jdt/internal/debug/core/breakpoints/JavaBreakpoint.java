@@ -438,6 +438,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Creates event requests for the given target
 	 */
 	protected void createRequests(JDIDebugTarget target) throws CoreException {
+		if (target.isTerminated()) {
+			return;
+		}
 		String referenceTypeName= getTypeName();
 		String enclosingTypeName= getEnclosingReferenceTypeName();
 		if (referenceTypeName == null || enclosingTypeName == null) {
