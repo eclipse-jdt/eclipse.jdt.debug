@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.display;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -52,6 +53,8 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.swt.widgets.Shell;
+
+import com.sun.jdi.ClassNotLoadedException;
 
 /**
  * Display snippet completion processor.
@@ -132,9 +135,9 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 					return new ICompletionProposal[0];
 				}
 				IVariable[] variables= stackFrame.getLocalVariables();
-				char[][] localVariableNames= new char[variables.length][];
-				char[][] localVariableTypeNames= new char[variables.length][];
-				resolveLocalVariables(variables, localVariableNames, localVariableTypeNames);
+				char[][][] res= resolveLocalVariables(variables);
+				char[][] localVariableNames= res[0];
+				char[][] localVariableTypeNames= res[1];
 				
 				ITextSelection selection= (ITextSelection)viewer.getSelectionProvider().getSelection();
 				configureResultCollector(project, selection);	
@@ -227,12 +230,33 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		JDIDebugUIPlugin.log(x);
 	}
 	
-	protected void resolveLocalVariables(IVariable[] variables, char[][] localVariableNames, char[][] localVariableTypeNames) throws DebugException {
+	protected char[][][] resolveLocalVariables(IVariable[] variables) throws DebugException {
+		List localVariableNames= new ArrayList();
+		List localVariableTypeNames= new ArrayList();
 		for (int i = 0; i < variables.length; i++) {
 			IVariable variable = variables[i];
-			localVariableNames[i]= variable.getName().toCharArray();
-			localVariableTypeNames[i]= getTranslatedTypeName(variable.getReferenceTypeName()).toCharArray();
+			try {
+				localVariableTypeNames.add(getTranslatedTypeName(variable.getReferenceTypeName()).toCharArray());
+				localVariableNames.add(variable.getName().toCharArray());
+			} catch (DebugException e) {
+				// do not throw ClassNotLoadedException
+				// nothing we can do, just ignore this local variable
+				if (!(e.getStatus().getException() instanceof ClassNotLoadedException)) {
+					throw e;
+				}
+			}
 		}
+		char[][] names= new char[localVariableNames.size()][];
+		int i= 0;
+		for (Iterator iter= localVariableNames.iterator(); iter.hasNext();) {
+			names[i++]= (char[]) iter.next();
+		}
+		char[][] typeNames= new char[localVariableNames.size()][];
+		i= 0;
+		for (Iterator iter= localVariableTypeNames.iterator(); iter.hasNext();) {
+			typeNames[i++]= (char[]) iter.next();
+		}
+		return new char[][][] {names, typeNames};
 	}
 	
 	/**

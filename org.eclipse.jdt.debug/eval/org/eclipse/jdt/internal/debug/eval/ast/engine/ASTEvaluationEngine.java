@@ -46,6 +46,8 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
+
+import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -135,8 +137,16 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			IJavaVariable[] locals= new IJavaVariable[numLocalsVar];
 			int numLocals= 0;
 			for (int i = 0; i < numLocalsVar; i++) {
-				if (!isLocalType(localsVar[i].getReferenceTypeName())) {
-					locals[numLocals++]= localsVar[i];
+				try {
+					if (!isLocalType(localsVar[i].getReferenceTypeName())) {
+						locals[numLocals++]= localsVar[i];
+					}
+				} catch (DebugException e) {
+					// do not throw ClassNotLoadedException
+					// nothing we can do, just ignore this local variable
+					if (!(e.getStatus().getException() instanceof ClassNotLoadedException)) {
+						throw e;
+					}
 				}
 			}
 			// to solve and remove
