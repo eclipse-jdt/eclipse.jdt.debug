@@ -59,6 +59,7 @@ import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.internal.launching.ListenerList;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
@@ -161,8 +162,13 @@ public final class JavaRuntime {
 	/**
 	 * Resolvers keyed by variable name and container id.
 	 */
-	private static Map fVariableResolvers = null;
-	private static Map fContainerResolvers = null;
+	private static Map fgVariableResolvers = null;
+	private static Map fgContainerResolvers = null;
+	
+	/**
+	 * VM change listeners
+	 */
+	private static ListenerList fgVMListeners = new ListenerList(5);
 	
 	/**
 	 * Not intended to be instantiated.
@@ -274,35 +280,37 @@ public final class JavaRuntime {
 	 * 							the underlying project.
 	 */
 	public static void setVM(IJavaProject project, IVMInstall javaRuntime) throws CoreException {
+		IVMInstall previous = getVMInstall(project);
 		String idString= getIdFromVM(javaRuntime);
 		project.getProject().setPersistentProperty(new QualifiedName(LaunchingPlugin.getUniqueIdentifier(), PROPERTY_BUILD_VM), idString);
-	}
-	
-	/**
-	 * Sets a VM as the system-wide default VM. This setting is persisted when
-	 * saveVMConfiguration is called. 
-	 * @param	vm	The vm to make the default. May be null to clear 
-	 * 				the default.
-	 * @deprecated Use setDefaultVMInstall(IVMInstall, IProgressMonitor) instead
-	 */
-	public static void setDefaultVMInstall(IVMInstall vm) {
-		try {
-			setDefaultVMInstall(vm, null);
-		} catch (CoreException e) {
-			LaunchingPlugin.getDefault().getLog().log(e.getStatus());
+		if (previous != javaRuntime) {
+			notifyProjectVMChanged(project, previous, javaRuntime);
 		}
 	}
 	
 	/**
-	 * Sets a VM as the system-wide default VM. This setting is persisted when
-	 * saveVMConfiguration is called. 
+	 * Sets a VM as the system-wide default VM, and notifies registered VM install
+	 * change listeners of the change.
+	 * 
 	 * @param	vm	The vm to make the default. May be null to clear 
 	 * 				the default.
+	 * @param monitor progress monitor or <code>null</code>
 	 */
 	public static void setDefaultVMInstall(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
+		IVMInstall previous = null;
+		if (fgDefaultVMId != null) {
+			previous = getVMFromId(fgDefaultVMId);
+		}
 		fgDefaultVMId= getIdFromVM(vm);
 		updateJREVariables(monitor);
 		saveVMConfiguration();
+		IVMInstall current = null;
+		if (fgDefaultVMId != null) {
+			current = getVMFromId(fgDefaultVMId);
+		}
+		if (previous != current) {
+			notifyDefaultVMChanged(previous, current);
+		}
 	}	
 	
 	/**
@@ -1096,8 +1104,12 @@ public final class JavaRuntime {
 				detected.setName(vmTypes[i].getName()+LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
 				detected.setInstallLocation(detectedLocation);
 				if (detected != null && !defaultSet) {
-					setDefaultVMInstall(detected);
-					defaultSet= true;
+					try {
+						setDefaultVMInstall(detected, null);
+						defaultSet= true;
+					} catch (CoreException e) {
+						LaunchingPlugin.log(e);
+					}
 				}
 			}
 		}
@@ -1342,36 +1354,36 @@ public final class JavaRuntime {
 	 * Returns all registered variable resolvers.
 	 */
 	private static Map getVariableResolvers() {
-		if (fVariableResolvers == null) {
+		if (fgVariableResolvers == null) {
 			initializeResolvers();
 		}
-		return fVariableResolvers;
+		return fgVariableResolvers;
 	}
 	
 	/**
 	 * Returns all registered container resolvers.
 	 */
 	private static Map getContainerResolvers() {
-		if (fContainerResolvers == null) {
+		if (fgContainerResolvers == null) {
 			initializeResolvers();
 		}
-		return fContainerResolvers;
+		return fgContainerResolvers;
 	}
 	
 	private static void initializeResolvers() {
 		IExtensionPoint point = LaunchingPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_RUNTIME_CLASSPATH_ENTRY_RESOLVERS);
 		IConfigurationElement[] extensions = point.getConfigurationElements();
-		fVariableResolvers = new HashMap(extensions.length);
-		fContainerResolvers = new HashMap(extensions.length);
+		fgVariableResolvers = new HashMap(extensions.length);
+		fgContainerResolvers = new HashMap(extensions.length);
 		for (int i = 0; i < extensions.length; i++) {
 			RuntimeClasspathEntryResolver res = new RuntimeClasspathEntryResolver(extensions[i]);
 			String variable = res.getVariableName();
 			String container = res.getContainerId();
 			if (variable != null) {
-				fVariableResolvers.put(variable, res);
+				fgVariableResolvers.put(variable, res);
 			}
 			if (container != null) {
-				fContainerResolvers.put(container, res);
+				fgContainerResolvers.put(container, res);
 			}
 		}		
 	}
@@ -1396,5 +1408,41 @@ public final class JavaRuntime {
 	 */	
 	private static IRuntimeClasspathEntryResolver getContainerResolver(String containerId) {
 		return (IRuntimeClasspathEntryResolver)getContainerResolvers().get(containerId);
+	}	
+	
+	/**
+	 * Adds the given listener to the list of registered VM install changed
+	 * listeners. Has no effect if an identical listener is already registered.
+	 * 
+	 * @param listener the listener to add
+	 */
+	public static void addVMInstallChangedListener(IVMInstallChangedListener listener) {
+		fgVMListeners.add(listener);
+	}
+	
+	/**
+	 * Removes the given listener from the list of registered VM install changed
+	 * listeners. Has no effect if an identical listener is not already registered.
+	 * 
+	 * @param listener the listener to remove
+	 */
+	public static void removeVMInstallChangedListener(IVMInstallChangedListener listener) {
+		fgVMListeners.remove(listener);
+	}	
+	
+	private static void notifyDefaultVMChanged(IVMInstall previous, IVMInstall current) {
+		Object[] listeners = fgVMListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
+			listener.defaultVMInstallChanged(previous, current);
+		}
+	}
+	
+	private static void notifyProjectVMChanged(IJavaProject project, IVMInstall previous, IVMInstall current) {
+		Object[] listeners = fgVMListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IVMInstallChangedListener listener = (IVMInstallChangedListener)listeners[i];
+			listener.projectVMInstallChanged(project, previous, current);
+		}
 	}	
 }
