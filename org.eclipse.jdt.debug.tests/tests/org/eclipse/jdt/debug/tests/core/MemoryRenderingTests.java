@@ -12,8 +12,10 @@ package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
+import org.eclipse.jdt.debug.testplugin.DynamicRenderingBindings;
 import org.eclipse.jdt.debug.testplugin.MemoryBlockDynamic;
 import org.eclipse.jdt.debug.testplugin.MemoryBlockOne;
 import org.eclipse.jdt.debug.testplugin.MemoryBlockThree;
@@ -116,6 +118,33 @@ public class MemoryRenderingTests extends AbstractDebugTest {
         IMemoryRenderingType type = manager.getPrimaryRenderingType(block);
         assertEquals("Wrong bindings", manager.getRenderingType("rendering_type_1"), type);
     }
+	
+	public void testBindingChangeNotification() {
+		final boolean[] changed = new boolean[1];
+		IMemoryRenderingBindingsListener listener = new IMemoryRenderingBindingsListener() {
+			public void memoryRenderingBindingsChanged() {
+				changed[0] = true;
+			}		
+			public boolean hasChanged() {
+				return changed[0];
+			}
+		};
+		IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+		try {
+			manager.addListener(listener);
+			assertFalse("Renderings should not have changed yet", changed[0]);
+			DynamicRenderingBindings.setBinding("rendering_type_2");
+			assertTrue("Renderings should have changed", changed[0]);
+			IMemoryBlock block = new MemoryBlockDynamic();
+	        IMemoryRenderingType[] types = manager.getRenderingTypes(block);
+			assertEquals("Wrong number of bindings", 1, types.length);
+	        assertEquals("Wrong binding", "rendering_type_2", types[0].getId());
+		} finally {
+			// restore original bindings
+			DynamicRenderingBindings.setBinding("rendering_type_1");
+			manager.removeListener(listener);
+		}
+	}
     
 	protected int indexOf(Object thing, Object[] list) {
 		for (int i = 0; i < list.length; i++) {

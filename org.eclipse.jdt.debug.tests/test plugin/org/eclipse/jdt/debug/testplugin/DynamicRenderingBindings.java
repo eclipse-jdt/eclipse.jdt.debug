@@ -12,16 +12,25 @@ package org.eclipse.jdt.debug.testplugin;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
-import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider;
+import org.eclipse.debug.ui.memory.AbstractMemoryRenderingBindingsProvider;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 
 /**
  * Contributed dynamic rendernig bindings.
  * @since 3.1
  */
-public class DynamicRenderingBindings implements IMemoryRenderingBindingsProvider {
+public class DynamicRenderingBindings extends AbstractMemoryRenderingBindingsProvider {
+	
+	//
+	private static DynamicRenderingBindings fgSingleton = null;
+	
+	// id of rendering type bound by this provider
+	private String fId = "rendering_type_1";
 
+	public DynamicRenderingBindings() {
+		fgSingleton = this;
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getRenderingTypes(org.eclipse.debug.core.model.IMemoryBlock)
      */
@@ -40,13 +49,18 @@ public class DynamicRenderingBindings implements IMemoryRenderingBindingsProvide
      * @see org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider#getPrimaryRenderingType(org.eclipse.debug.core.model.IMemoryBlock)
      */
     public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block) {
-        return DebugUITools.getMemoryRenderingManager().getRenderingType("rendering_type_1");
+        return DebugUITools.getMemoryRenderingManager().getRenderingType(fId);
     }
-
-	public void addListener(IMemoryRenderingBindingsListener listener) {
-	}
-
-	public void removeListener(IMemoryRenderingBindingsListener listener) {
+	
+	/**
+	 * Sets the current rendering bound to this provider, and notifies
+	 * listeners of the change.
+	 * 
+	 * @param id rendering id
+	 */
+	public static void setBinding(String id) {
+		fgSingleton.fId = id;
+		fgSingleton.fireBindingsChanged();
 	}
 
 }
