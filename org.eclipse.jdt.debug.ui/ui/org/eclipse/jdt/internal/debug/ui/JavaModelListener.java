@@ -43,8 +43,11 @@ class JavaModelListener implements IElementChangedListener {
 		}
 		List removedElements= new ArrayList();
 		getRemovedElements(e.getDelta(), removedElements);
+		if (removedElements.isEmpty()) {
+			return;
+		}
+				
 		final List breakpointsToRemove= new ArrayList();
-		
 		IBreakpoint[] breakpoints= DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugPlugin.getUniqueIdentifier());
 		IJavaBreakpoint breakpoint= null;
 		for (int i= 0, numBreakpoints= breakpoints.length; i < numBreakpoints; i++) {
