@@ -213,7 +213,8 @@ public class BreakpointConditionEditor {
 	 * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean, org.eclipse.swt.widgets.Composite)
 	 */
 	public void setEnabled(boolean enabled) {
-		fViewer.setEditable(enabled);
+	    fViewer.setEditable(enabled);
+		fViewer.getTextWidget().setEnabled(enabled);
 		if (enabled) {
 			fViewer.updateViewerColors();
 			fViewer.getTextWidget().setFocus();
