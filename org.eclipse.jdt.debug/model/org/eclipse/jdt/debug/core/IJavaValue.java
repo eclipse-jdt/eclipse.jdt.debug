@@ -27,13 +27,14 @@ import org.eclipse.debug.core.model.IValue;
 public interface IJavaValue extends IValue {
 	/**
 	 * Returns the JNI-style signature for the type of this
-	 * value, or <code>null</code> if the type associated with the
-	 * signature is not yet loaded in the target VM, or the value
-	 * is <code>null</code>.
+	 * value, or <code>null</code> if the value is <code>null</code>.
 	 *
-	 * @return signature, or <code>null</code> if not accessible
-	 * @exception DebugException if unable to retrive this
-	 *   value's signature on the target 
+	 * @return signature, or <code>null</code> if signature is <code>null</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>The type associated with the signature is not yet loaded</li></ul>
 	 */
 	public String getSignature() throws DebugException;
 	
@@ -42,8 +43,10 @@ public interface IJavaValue extends IValue {
 	 * with an array type, or -1 if it is not.
 	 *
 	 * @return arrayLength, or -1 if this value is not an array
-	 * @exception DebugException if unable to determine the length
-	 *   of this value's associatd array
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li></ul>
 	 */
 	public int getArrayLength() throws DebugException;
 	
@@ -56,8 +59,10 @@ public interface IJavaValue extends IValue {
 	 * If the thread is not suspended, an exception is thrown.
 	 *
 	 * @param thread the thread used to perform the evaluation
-	 * @exception DebugException if unable to perform the evaluation,
-	 * 	or if an exception occurrs while performing the evaluation
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li></ul>
 	 */
 	public String evaluateToString(IJavaThread thread) throws DebugException;
 }
