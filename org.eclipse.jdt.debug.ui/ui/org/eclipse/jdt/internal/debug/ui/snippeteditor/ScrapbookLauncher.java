@@ -9,9 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -118,13 +120,13 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			ILaunchConfigurationWorkingCopy wc = lcType.newInstance(null, name);
 			wc.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
 						
-			IJavaSourceLocation[] locations = JavaSourceLocator.getDefaultSourceLocations(p);
-			ISourceLocator sl= new JavaSourceLocator(locations);
+			//IJavaSourceLocation[] locations = JavaSourceLocator.getDefaultSourceLocations(p);
+			//ISourceLocator sl= new JavaSourceLocator(locations);
 			IPath outputLocation =	p.getProject().getPluginWorkingLocation(JDIDebugUIPlugin.getDefault().getDescriptor());
 			File f = outputLocation.toFile();
 			URL u = null;
 			try {
-				u = f.toURL();
+				u = getEncodedURL(f);
 			} catch (MalformedURLException e) {
 				JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"),e); //$NON-NLS-1$
 				return null;
@@ -135,7 +137,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			for (int i = 0; i < defaultClasspath.length; i++) {
 				f = new File(defaultClasspath[i]);
 				try {
-					urls[i + 1] = f.toURL().toExternalForm();
+					urls[i + 1] = getEncodedURL(f).toExternalForm();
 				} catch (MalformedURLException e) {
 					JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("ScrapbookLauncher.Exception_occurred_launching_scrapbook_1"), e);				 //$NON-NLS-1$
 				 	return null;
@@ -156,11 +158,12 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vm.getVMInstallType().getId());
 			}
 			
-			String urlsString = ""; //$NON-NLS-1$
+			StringBuffer urlsString = new StringBuffer();
 			for (int i = 0; i < urls.length; i++) {
-				urlsString += " " + urls[i]; //$NON-NLS-1$
+				urlsString.append(' ');
+				urlsString.append(urls[i]);
 			}
-			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, urlsString);
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, urlsString.toString());
 			ILaunchConfiguration config = wc.doSave();
 			
 			ILaunch launch = config.launch(ILaunchManager.DEBUG_MODE, null);
@@ -185,7 +188,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 	 */
 	IBreakpoint createMagicBreakpoint(String typeName) throws CoreException{
 	
-		fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, 49, -1, -1, 0, false, null);
+		fMagicBreakpoint= JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName, 51, -1, -1, 0, false, null);
 		fMagicBreakpoint.setPersisted(false);
 		return fMagicBreakpoint;
 	}
@@ -251,5 +254,28 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 				DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
 			}
 		}
+	}
+	
+	protected URL getEncodedURL(File file) throws MalformedURLException {
+		//looking at File.toURL the delimiter is always '/' 
+		// NOT File.separatorChar
+		String urlDelimiter= "/";
+		String unencoded= file.toURL().toExternalForm();
+		StringBuffer encoded= new StringBuffer();
+		StringTokenizer tokenizer= new StringTokenizer(unencoded, urlDelimiter);
+		
+		encoded.append(tokenizer.nextToken()); //file:
+		encoded.append(urlDelimiter);
+		encoded.append(tokenizer.nextToken()); //drive letter and ':'
+		
+		while (tokenizer.hasMoreElements()) {
+			encoded.append(urlDelimiter);
+			String token= tokenizer.nextToken();
+			encoded.append(URLEncoder.encode(token));
+		}
+		if (file.isDirectory()) {
+			encoded.append(urlDelimiter);
+		}
+		return new URL(encoded.toString());
 	}
 }
