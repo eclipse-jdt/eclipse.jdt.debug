@@ -15,10 +15,15 @@
 		<mkdir dir="${destdir}" />
 		<delete dir="${dest}" />
 		<mkdir dir="${dest}" />
+		<!-- Create the binary jar -->
 		<jar 
 			jarfile="${dest}/jdimodel.jar"
 			basedir="bin"
 		/>
+		<!-- Create the source jar -->
+		<jar jarfile="${dest}/jdimodelsrc.jar">
+			<fileset dir="Eclipse Java Core Debug"/>
+		</jar>
 		<copy file="plugin.xml" todir="${dest}"/>
 		<copy file="plugin.jars" todir="${dest}"/>
 		<copy file="jdi.jar" todir="${dest}"/>
