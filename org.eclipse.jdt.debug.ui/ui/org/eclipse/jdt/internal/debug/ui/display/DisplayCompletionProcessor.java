@@ -31,14 +31,12 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.internal.corext.template.ContextType;
-import org.eclipse.jdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.internal.ui.text.java.JavaCompletionProposalComparator;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
-import org.eclipse.jdt.internal.ui.text.template.TemplateEngine;
+import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
+import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -49,7 +47,10 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.jface.text.templates.ContextType;
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.texteditor.templates.TemplateProposal;
 
 /**
  * Display snippet completion processor.
@@ -152,7 +153,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 					try {
 						fTemplateEngine.reset();
 						fTemplateEngine.complete(viewer, documentOffset, null);
-						IJavaCompletionProposal[] templateResults= fTemplateEngine.getResults();
+						TemplateProposal[] templateResults= fTemplateEngine.getResults();
 
 						// concatenate arrays
 						IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];

@@ -14,11 +14,12 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.display.DisplayCompletionProcessor;
+import org.eclipse.jdt.internal.ui.text.template.contentassist.TemplateEngine;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
-import org.eclipse.jdt.internal.ui.text.template.TemplateEngine;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.ui.texteditor.templates.TemplateProposal;
 
 public class DetailFormatterCompletionProcessor extends DisplayCompletionProcessor {
 
@@ -58,7 +59,7 @@ public class DetailFormatterCompletionProcessor extends DisplayCompletionProcess
 				try {
 					templateEngine.reset();
 					templateEngine.complete(viewer, documentOffset, null);
-					IJavaCompletionProposal[] templateResults= templateEngine.getResults();
+					TemplateProposal[] templateResults= templateEngine.getResults();
 
 					// concatenate arrays
 					IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
