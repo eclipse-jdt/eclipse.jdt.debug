@@ -79,6 +79,24 @@ public class JavaDebugUI {
 	public static final String BOOTPATH_ATTR = PLUGIN_ID + "BOOTPATH";	 //$NON-NLS-1$
 	
 	/**
+	 * Host name launch configuration attribute name.
+	 * This attribute is used for attach launching.
+	 */
+	public static final String HOSTNAME_ATTR = PLUGIN_ID + "HOSTNAME";	 //$NON-NLS-1$
+
+	/**
+	 * Allow termination launch configuration attribute name.
+	 * This attribute is used for attach launching.
+	 */
+	public static final String ALLOW_TERMINATE_ATTR = PLUGIN_ID + "ALLOW_TERMINATE";	 //$NON-NLS-1$
+
+	/**
+	 * Port # launch configuration attribute name.
+	 * This attribute is used for attach launching.
+	 */
+	public static final String PORT_ATTR = PLUGIN_ID + "PORT";	 //$NON-NLS-1$
+
+	/**
 	 * Status code indicating a launch configuration does not
 	 * specify a project that contains the main class to launch.
 	 */
@@ -133,9 +151,45 @@ public class JavaDebugUI {
 	public static final int WORKING_DIRECTORY_DOES_NOT_EXIST = 108;	
 		
 	/**
+	 * Status code indicating a launch configuration does not
+	 * specify a host name value
+	 */
+	public static final int UNSPECIFIED_HOSTNAME = 109;
+
+	/**
+	 * Status code indicating a launch configuration has
+	 * specified an invalid host name attribute
+	 */
+	public static final int INVALID_HOSTNAME = 110;
+
+	/**
+	 * Status code indicating a launch configuration does not
+	 * specify a port number value
+	 */
+	public static final int UNSPECIFIED_PORT = 111;
+
+	/**
+	 * Status code indicating a launch configuration has
+	 * specified an invalid port number attribute
+	 */
+	public static final int INVALID_PORT = 112;
+
+	/**
+	 * Status code indicating an attempt to connect to a remote VM
+	 * has failed.
+	 */
+	public static final int REMOTE_VM_CONNECTION_FAILED = 113;
+
+	/**
+	 * Status code indicating that the shared memory attach connector
+	 * could not be found.
+	 */
+	public static final int SHARED_MEMORY_CONNECTOR_UNAVAILABLE = 114;
+
+	/**
 	 * Status code indicating an unexpected internal error.
 	 */
-	public static final int INTERNAL_ERROR = 120;			
+	public static final int INTERNAL_ERROR = 150;			
 
 }
 

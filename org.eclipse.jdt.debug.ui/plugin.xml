@@ -594,8 +594,8 @@
 <extension point = "org.eclipse.debug.core.launchConfigurationTypes">
    <launchConfigurationType
    	   id="org.eclipse.jdt.debug.ui.localJavaApplication"
-	   name="%javaApplication"
-	   delegate="org.eclipse.jdt.internal.debug.ui.JavaApplicationLaunchConfigurationDelegate"
+	   name="%localJavaApplication"
+	   delegate="org.eclipse.jdt.internal.debug.ui.JavaLocalApplicationLaunchConfigurationDelegate"
 	   modes= "run, debug">
 	   <fileExtension
 	   		extension="java"
@@ -603,6 +603,18 @@
 	   <fileExtension
 	   		extension="class"
 	   		default="true"/>
+   </launchConfigurationType>
+   <launchConfigurationType
+   	   id="org.eclipse.jdt.debug.ui.remoteJavaApplication"
+	   name="%remoteJavaApplication"
+	   delegate="org.eclipse.jdt.internal.debug.ui.JavaRemoteApplicationLaunchConfigurationDelegate"
+	   modes= "debug">
+	   <fileExtension
+	   		extension="java"
+	   		default="false"/>
+	   <fileExtension
+	   		extension="class"
+	   		default="false"/>
    </launchConfigurationType>
 </extension>
 
@@ -612,6 +624,11 @@
 		configTypeID="org.eclipse.jdt.debug.ui.localJavaApplication"
 		icon="icons/full/obj16/lcl_java_app.gif">
 	</launchConfigurationTypeImage>	
+	<launchConfigurationTypeImage
+		id="org.eclipse.jdt.debug.ui.launchConfigurationTypeImage.remoteJavaApplication"
+		configTypeID="org.eclipse.jdt.debug.ui.remoteJavaApplication"
+		icon="icons/full/obj16/rmt_java_app.gif">
+	</launchConfigurationTypeImage>	
 </extension>
 
 <extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
@@ -620,6 +637,12 @@
 		type ="org.eclipse.jdt.debug.ui.localJavaApplication"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.MainTab"
 		name="Main">
+	</launchConfigurationTab>
+	<launchConfigurationTab
+		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.Connect"
+		type ="org.eclipse.jdt.debug.ui.remoteJavaApplication"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.ConnectTab"
+		name="Connect">
 	</launchConfigurationTab>
 </extension>
 </plugin>

@@ -58,7 +58,7 @@ import org.eclipse.ui.IEditorInput;
 /**
  * Launch configuration delegate for a local Java application.
  */
-public class JavaApplicationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
+public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 
 	// QualifiedName constants used in writing and retrieving persisted default attribute values
 	private static final QualifiedName fgQualNameContainer = new QualifiedName(IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.ATTR_CONTAINER);
@@ -107,8 +107,9 @@ public class JavaApplicationLaunchConfigurationDelegate implements ILaunchConfig
 	 * Attempt to initialize default attribute values on the specified working copy by
 	 * retrieving the values from persistent storage on the resource associated with the
 	 * specified IJavaElement.  If any of the required attributes cannot be found in
-	 * persistent storage, this is taken to mean that there is no persisted defaults for 
-	 * the IResource, and the working copy is initialized entirely from the IJavaElement.
+	 * persistent storage, this is taken to mean that there are no persisted defaults for 
+	 * the IResource, and the working copy is initialized entirely from context and
+	 * hard-coded defaults.
 	 */
 	protected void initializeDefaults(ILaunchConfigurationWorkingCopy workingCopy, IJavaElement javaElement) {
 		

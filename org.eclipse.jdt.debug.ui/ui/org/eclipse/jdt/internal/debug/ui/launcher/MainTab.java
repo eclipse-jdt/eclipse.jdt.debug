@@ -134,7 +134,6 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		
 		Composite comp = new Composite(tabItem.getParent(), SWT.NONE);
 		GridLayout topLayout = new GridLayout();
-		topLayout.marginHeight = 0;
 		comp.setLayout(topLayout);		
 		GridData gd;
 		
