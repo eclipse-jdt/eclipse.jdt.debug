@@ -204,7 +204,7 @@ public class GenericSignature {
 					case C_ARRAY:
 						break;
 					default:
-						return 1;
+						return i - startPos + 1;
 				}
 			} else {
 				switch (signature.charAt(i)) {
