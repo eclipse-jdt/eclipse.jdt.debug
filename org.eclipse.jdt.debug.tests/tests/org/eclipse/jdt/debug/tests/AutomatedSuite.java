@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests;
 
+import java.util.Enumeration;
 import junit.framework.Test;
+import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import org.eclipse.jdt.debug.tests.core.ArchiveSourceLookupTests;
 import org.eclipse.jdt.debug.tests.core.ArrayTests;
@@ -67,12 +69,18 @@ import org.eclipse.jdt.debug.tests.core.TypeTests;
 import org.eclipse.jdt.debug.tests.core.WatchExpressionTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
 import org.eclipse.jdt.debug.tests.core.WorkspaceSourceContainerTests;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Tests for integration and nightly builds.
  */
-public class AutomatedSuite extends DebugSuite {
+public class AutomatedSuite extends TestSuite {
 	
+	/**
+	 * Flag that indicates test are in progress
+	 */
+	protected boolean fTesting = true;
+
 	/**
 	 * Returns the suite.  This is required to
 	 * use the JUnit Launcher.
@@ -151,5 +159,43 @@ public class AutomatedSuite extends DebugSuite {
 		
 		
 	}
+	
+	/**
+	 * Runs the tests and collects their result in a TestResult.
+	 * The debug tests cannot be run in the UI thread or the event
+	 * waiter blocks the UI when a resource changes.
+	 */
+	public void run(final TestResult result) {
+		final Display display = Display.getCurrent();
+		Thread thread = null;
+		try {
+			Runnable r = new Runnable() {
+				public void run() {
+					for (Enumeration e= tests(); e.hasMoreElements(); ) {
+				  		if (result.shouldStop() )
+				  			break;
+						Test test= (Test)e.nextElement();
+						runTest(test, result);
+					}					
+					fTesting = false;
+					display.wake();
+				}
+			};
+			thread = new Thread(r);
+			thread.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+				
+		while (fTesting) {
+			try {
+				if (!display.readAndDispatch())
+					display.sleep();
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}			
+		}		
+	}
+
 }
 
