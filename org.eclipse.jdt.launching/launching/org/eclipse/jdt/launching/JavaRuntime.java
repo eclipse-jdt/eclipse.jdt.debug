@@ -339,7 +339,7 @@ public final class JavaRuntime {
 	 * @return runtime classpath entry
 	 */
 	public static IRuntimeClasspathEntry newProjectRuntimeClasspathEntry(IJavaProject project) {
-		IClasspathEntry cpe = JavaCore.newProjectEntry(project.getProject().getLocation());
+		IClasspathEntry cpe = JavaCore.newProjectEntry(project.getProject().getFullPath());
 		return newRuntimeClasspathEntry(cpe);
 	}
 	
@@ -422,7 +422,7 @@ public final class JavaRuntime {
 	 * [XXX: fix for libraries
 	 */
 	public static IRuntimeClasspathEntry[] computeRuntimeClasspath(IJavaProject project) throws CoreException {
-		IClasspathEntry entry = JavaCore.newProjectEntry(project.getProject().getLocation());
+		IClasspathEntry entry = JavaCore.newProjectEntry(project.getProject().getFullPath());
 		List classpathEntries = expandProject(entry);
 		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries == null ? 0 : classpathEntries.size()];
 		for (int i = 0; i < runtimeEntries.length; i++) {

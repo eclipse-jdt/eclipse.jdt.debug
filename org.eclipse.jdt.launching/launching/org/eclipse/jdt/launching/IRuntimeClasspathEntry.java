@@ -97,8 +97,8 @@ public interface IRuntimeClasspathEntry {
 	 * Returns the path associated with this entry. The format of the
 	 * path returned depends on this entry's type:
 	 * <ul>
-	 * <li><code>PROJECT</code> - the absolute path of the associated
-	 * 		project resource.</li>
+	 * <li><code>PROJECT</code> - a workspace relative path to the associated
+	 * 		project.</li>
 	 * <li><code>ARCHIVE</code> - the absolute path of the assoicated archive,
 	 * 		which may or may not be in the workspace.</li>
 	 * <li><code>FOLDER</code> - the absolute path of the assoicated folder,

@@ -301,15 +301,20 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	 * @see IRuntimeClasspathEntry#getResource()
 	 */
 	public IResource getResource() {
-		IPath path = getPath();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IPath rootPath = root.getLocation();
-		int match = rootPath.matchingFirstSegments(path);
-		if (match == rootPath.segmentCount()) {
-			path = path.removeFirstSegments(match);
-			return root.findMember(path);
-		} else {
-			return null;
+		switch (getType()) {
+			case PROJECT:
+				return root.findMember(getPath());
+			default:
+				IPath path = getPath();
+				IPath rootPath = root.getLocation();
+				int match = rootPath.matchingFirstSegments(path);
+				if (match == rootPath.segmentCount()) {
+					path = path.removeFirstSegments(match);
+					return root.findMember(path);
+				} else {
+					return null;
+				}
 		}
 	}
 
