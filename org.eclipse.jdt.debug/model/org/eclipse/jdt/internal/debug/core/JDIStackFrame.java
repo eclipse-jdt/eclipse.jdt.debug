@@ -181,6 +181,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					allFields= method.declaringType().allFields();
 				} catch (RuntimeException e) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_fields"),new String[] {e.toString()}), e); //$NON-NLS-1$
+					// execution will not reach this line, as 
+					// #targetRequestFailed will throw an exception					
 					return Collections.EMPTY_LIST;
 				}
 				if (allFields != null) {
@@ -239,7 +241,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return getUnderlyingMethod().argumentTypeNames();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_argument_type_names"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			return Collections.EMPTY_LIST;
+			// execution will never reach this line, as
+			// #targetRequestFailed will throw an exception			
+			return null;
 		}
 	}
 
@@ -386,6 +390,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			locals= new ArrayList(0);
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables"),new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as 
+			// #targetRequestFailed will throw an exception			
 			return;
 		}
 		int localIndex= -1;
@@ -512,7 +518,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		} catch (NativeMethodException e) {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_visible_variables_2"),new String[] {e.toString()}), e); //$NON-NLS-1$
-			return Collections.EMPTY_LIST;
 		}
 
 		return variables;
@@ -529,6 +534,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return getUnderlyingStackFrame().thisObject();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_this"),new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as 
+			// #targetRequestFailed will throw an exception			
 			return null;
 		}
 	}
@@ -576,6 +583,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return getUnderlyingMethod().signature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as 
+			// #targetRequestFailed will throw an exception			
 			return null;
 		}
 	}
@@ -588,6 +597,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return getUnderlyingMethod().declaringType().name();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_declaring_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as 
+			// #targetRequestFailed will throw an exception			
 			return null;
 		}
 	}
@@ -605,6 +616,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_receiving_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as 
+			// #targetRequestFailed will throw an exception			
 			return null;
 		}
 	}
@@ -617,6 +630,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			return getUnderlyingMethod().name();	
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_method_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as 
+			// #targetRequestFailed will throw an exception			
 			return null;
 		}
 	}

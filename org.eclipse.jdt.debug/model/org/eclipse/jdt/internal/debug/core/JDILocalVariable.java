@@ -52,8 +52,10 @@ public class JDILocalVariable extends JDIModificationVariable {
 			return getLocal().name();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception
+			return null;			
 		}
-		return getUnknownMessage();
 	}
 
 	/**
@@ -79,8 +81,10 @@ public class JDILocalVariable extends JDIModificationVariable {
 			return getLocal().typeName();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;
 		}
-		return getUnknownMessage();
 	}
 	
 	/**
@@ -91,8 +95,10 @@ public class JDILocalVariable extends JDIModificationVariable {
 			return getLocal().signature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception
+			return null;			
 		}
-		return getUnknownMessage();
 	}
 	
 	/** 

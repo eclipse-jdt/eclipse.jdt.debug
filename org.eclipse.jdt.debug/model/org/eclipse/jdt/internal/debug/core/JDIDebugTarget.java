@@ -441,9 +441,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 
 		try {
 			getVM().dispose();
+		} catch (VMDisconnectedException e) {
+			// if the VM diconnects while disconnecting, perform
+			// normal termination handling
+			terminate0();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_disconnecting"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			terminate0();
 		}
 
 	}
@@ -537,7 +540,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				setName(getVM().name());
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_retrieving_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
-				return getUnknownMessage();
+				// execution will not reach this line, as 
+				// #targetRequestFailed will throw an exception				
+				return null;
 			}
 		}
 		return fName;
@@ -762,9 +767,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 		try {
 			getVM().exit(1);
+		} catch (VMDisconnectedException e) {
+			// if the VM diconnects while exiting, perform 
+			// normal termination processing
+			terminate0();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_terminating"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			terminate0();
 		}
 	}
 
@@ -1014,6 +1022,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 						}
 					} catch (RuntimeException e) {
 						targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIDebugTarget.exception_retrieving_version_information"), new String[] {e.toString(), type.name()}), e); //$NON-NLS-1$
+						// execution will never reach this line, as
+						// #targetRequestFailed will throw an exception						
 						return null;
 					}
 				}

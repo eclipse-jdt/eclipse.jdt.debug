@@ -174,18 +174,14 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	
 	/**
 	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>
-	 * if the exception is not expected.
+	 * with the given underlying exception. If the underlyign exception is not a JDI
+	 * exception, the original exception is thrown.
 	 * 
 	 * @param message Failure message
-	 * @param e Runtime exception that has occurred
+	 * @param e underlying exception that has occurred
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	protected void targetRequestFailed(String message, RuntimeException e) throws DebugException {
-		if (e instanceof VMDisconnectedException) {
-			if (getDebugTarget().isTerminated() || getDebugTarget().isDisconnected()) {
-				return;
-			}
-		}
 		if (e == null || fgJDIExceptions.contains(e.getClass())) {
 			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 				IDebugStatusConstants.TARGET_REQUEST_FAILED, message, e));

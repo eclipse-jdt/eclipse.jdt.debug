@@ -87,8 +87,10 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 			return stripBrackets(getArrayReference().referenceType().name());
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_reference_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception
+			return null;
 		}
-		return getUnknownMessage();
 	}
 	
 	/**
@@ -113,8 +115,10 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 			return getArrayReference().type().signature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;
 		}
-		return getUnknownMessage();
 	}
 	
 }

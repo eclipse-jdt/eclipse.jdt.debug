@@ -62,7 +62,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				return ((StringReference) fValue).value();
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
-				return "";
+				// execution will not reach this line, as
+				// #targetRequestFailed will thrown an exception							
+				return null;
 			}
 		}
 		if (fValue instanceof ObjectReference) {
@@ -79,7 +81,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 				name.append(((ObjectReference)fValue).uniqueID());
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_unique_id"), new String[] {e.toString()}), e); //$NON-NLS-1$
-				return "";
+				// execution will not reach this line, as
+				// #targetRequestFailed will thrown an exception							
+				return null;
 			}
 			name.append(')'); //$NON-NLS-1$
 			return name.toString();
@@ -99,8 +103,10 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			return fValue.type().name();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_reference_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;			
 		}
-		return getUnknownMessage();
 	}
 
 	/**
@@ -163,7 +169,9 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 						fields= refType.allFields();
 					} catch (RuntimeException e) {
 						targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_fields"), new String[] {e.toString()}), e); //$NON-NLS-1$
-						return Collections.EMPTY_LIST;
+						// execution will not reach this line, as
+						// #targetRequestFailed will thrown an exception			
+						return null;
 					}
 					Iterator list= fields.iterator();
 					while (list.hasNext()) {
@@ -233,9 +241,13 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			if (fValue instanceof ObjectReference) {
 				try {
 					fAllocated = !((ObjectReference)fValue).isCollected();
+				} catch (VMDisconnectedException e) {
+					// if the VM disconnects, this value is not allocated
+					fAllocated = false;
 				} catch (RuntimeException e) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_is_collected"), new String[] {e.toString()}), e); //$NON-NLS-1$
-					fAllocated = false;
+					// execution will fall through, as
+					// #targetRequestFailed will thrown an exception			
 				}
 			} else {
 				IDebugTarget dt = getDebugTarget();
@@ -257,8 +269,10 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;			
 		}
-		return null;
 	}
 
 	/**
@@ -337,7 +351,6 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	
 	
 	protected String evaluateToString0(JDIThread thread) throws DebugException {
-		String toString = null;
 		try {
 			ObjectReference object = (ObjectReference)fValue;
 			ReferenceType type = object.referenceType();
@@ -347,12 +360,12 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 			}
 			Method method = (Method)methods.get(0);
 			StringReference string = (StringReference)thread.invokeMethod(null, object, method, Collections.EMPTY_LIST);
-			toString = string.value();
+			return string.value();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_evaluating_toString()"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			toString = getUnknownMessage();
+			// exection will never reach this line as
+			// #targetRequestFailed will throw an exception			
+			return null;
 		}
-		
-		return toString;		
 	} 
 }

@@ -141,6 +141,8 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 			return null;
 		} catch (RuntimeException e) {
 			target.targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JavaPatternBreakpoint.exception_source_name"),new String[] {e.toString(), type.name()}) ,e); //$NON-NLS-1$
+			// execution will not reach this line, as 
+			// #targetRequestFailed will throw an exception			
 			return null;
 		}
 		

@@ -58,8 +58,10 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 			return retrieveValue();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIVariable.exception_retrieving"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will throw an exception			
+			return null;
 		}
-		return null;
 	}
 	
 	/**

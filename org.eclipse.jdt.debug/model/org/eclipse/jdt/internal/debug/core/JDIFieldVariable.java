@@ -59,8 +59,10 @@ public class JDIFieldVariable extends JDIModificationVariable {
 			return getField().name();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_retrieving_field_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception
+			return null;
 		}
-		return getUnknownMessage();
 	}
 
 	protected void setValue(Value value) throws DebugException {
@@ -158,8 +160,10 @@ public class JDIFieldVariable extends JDIModificationVariable {
 			return getField().signature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_retrieving_field_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;
 		} 
-		return getUnknownMessage();
 	}
 
 	protected Field getField() {

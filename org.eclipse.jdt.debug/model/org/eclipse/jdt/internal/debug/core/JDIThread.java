@@ -286,6 +286,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				break;
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_determining_if_system_thread"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				// execution will not reach this line, as
+				// #targetRequestFailed will will throw an exception				
 				return;
 			}
 			if (tgn != null && tgn.equals(MAIN_THREAD_GROUP)) {
@@ -422,18 +424,19 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * </ul>
 	 */
 	protected List getUnderlyingFrames() throws DebugException {
-		List frames= null;
 		try {
-			frames= getUnderlyingThread().frames();
+			return getUnderlyingThread().frames();
 		} catch (IncompatibleThreadStateException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// this code will never be executed as the try block will
-			// succeed or this catch block will throw an exception
-			return Collections.EMPTY_LIST;
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;
 		}
-		return frames;
 	}
 
 	/**
@@ -449,13 +452,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * </ul>
 	 */
 	protected Method getUnderlyingMethod(StackFrame frame) throws DebugException {
-		Method method= null;
 		try {
-			method= frame.location().method();
+			return frame.location().method();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_method"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;			
 		}
-		return method;
 	}
 
 	/**
@@ -792,7 +796,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				fName = getUnderlyingThread().name();
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
-				fName = getUnknownMessage();
+				// execution will not fall through, as
+				// #targetRequestFailed will thrown an exception
 			}
 		}
 		return fName;
@@ -817,8 +822,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_priority"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			return -1;
 		}
+		// execution will not fall through to this line, as
+		// #targetRequestFailed or #requestFailed will thrown
+		// an exception		
 		return -1;
 	}
 
@@ -874,15 +881,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	public String getThreadGroupName() throws DebugException {
 		ThreadGroupReference tgr= getUnderlyingThreadGroup();
-		if (tgr != null) {
-			try {
-				return fThreadGroup.name();
-			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_group_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
-				return getUnknownMessage();
-			}
+		try {
+			return fThreadGroup.name();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_group_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception
+			return null;
 		}
-		return getUnknownMessage();
 	}
 
 	/**
@@ -1029,9 +1035,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_terminating"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_terminating_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				// execution will not reach this line, as
+				// #targetRequestFailed will thrown an exception							
 				return;
 			}
-
 			// Resume the thread so that stop will work
 			resume();
 		} else {
@@ -1225,7 +1232,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/** 
-	 * Returns this thread's underlying thread group
+	 * Returns this thread's underlying thread group.
 	 * 
 	 * @return thread group
 	 * @exception DebugException if this method fails.  Reasons include:
@@ -1233,6 +1240,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * <li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * <li>Retrieving the underlying thread group is not supported
+	 * on the underlying VM</li>
 	 * </ul>
 	 */
 	protected ThreadGroupReference getUnderlyingThreadGroup() throws DebugException {
@@ -1240,9 +1249,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			try {
 				fThreadGroup = getUnderlyingThread().threadGroup();
 			} catch (UnsupportedOperationException e) {
+				requestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_group"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				// execution will not reach this line, as
+				// #requestFailed will thrown an exception				
 				return null;
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_group"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				// execution will not reach this line, as
+				// #targetRequestFailed will thrown an exception				
 				return null;
 			}
 		}

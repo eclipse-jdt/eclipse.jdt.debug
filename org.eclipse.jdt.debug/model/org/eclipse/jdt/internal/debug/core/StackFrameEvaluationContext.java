@@ -23,6 +23,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 
+import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration;
+import org.eclipse.jdt.internal.compiler.lookup.CompilationUnitScope;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassObjectReference;
@@ -333,5 +335,10 @@ public class StackFrameEvaluationContext extends ThreadEvaluationContext {
 
 	protected void setLocalVariableTypeNames(String[] localVariableTypeNames) {
 		fLocalVariableTypeNames = localVariableTypeNames;
+	}
+	
+	public void acceptAst(CompilationUnitDeclaration ast, CompilationUnitScope scope) {
+		EvaluationVisitor visitor = new EvaluationVisitor(this);
+		ast.traverse(visitor, scope);
 	}
 }

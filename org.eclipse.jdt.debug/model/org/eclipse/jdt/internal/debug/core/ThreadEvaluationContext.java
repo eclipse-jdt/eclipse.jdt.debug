@@ -25,6 +25,8 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 
+import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration;
+import org.eclipse.jdt.internal.compiler.lookup.CompilationUnitScope;
 import com.sun.jdi.ClassObjectReference;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
@@ -178,6 +180,8 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 						setValue(new JDIValue((JDIDebugTarget)getModelThread().getDebugTarget(), v));
 					} catch (RuntimeException e) {
 						getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_retreiving_evaluation_result"), new String[] {e.toString()}), e); //$NON-NLS-1$
+						// execution will not reach this line, as
+						// #targetRequestFailed will will throw an exception
 						return;
 					}
 				}
@@ -204,13 +208,14 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 	}
 	
 	protected String getReflectedTypeSignature() throws DebugException {
-		String sig = "";
 		try {
-			sig= getResultType().reflectedType().signature();
+			return getResultType().reflectedType().signature();
 		} catch (RuntimeException e) {
 			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_retreiving_evaluation_result_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;			
 		}
-		return sig;
 	}
 	
 	/**
@@ -230,7 +235,8 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_locating_result_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_locating_result_value"), new String[] {""}), null); //$NON-NLS-1$
-		//cannot be reached
+		// execution will not reach this line, as
+		// #targetRequestFailed will thrown an exception			
 		return null;
 	}
 	
@@ -299,6 +305,8 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			throw e;
 		} catch (RuntimeException e) {
 			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_performing_evaluation"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception						
 			return;
 		}
 	}
@@ -376,6 +384,8 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 			return loadedClass;
 		} catch (RuntimeException e) {
 			getModelThread().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("ThreadEvaluationContext.exception_attempting_to_load_class"), new String[] {e.toString(), className}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will will throw an exception
 			return null;
 		}
 	}
@@ -542,5 +552,8 @@ public class ThreadEvaluationContext implements ICodeSnippetRequestor, Runnable,
 
 	protected void setValue(IJavaValue value) {
 		fValue = value;
+	}
+	
+	public void acceptAst(CompilationUnitDeclaration ast, CompilationUnitScope scope) {
 	}
 }

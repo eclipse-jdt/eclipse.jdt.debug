@@ -79,8 +79,11 @@ public class JDIArrayPartitionValue extends JDIDebugElement implements IJavaValu
 			return !getArrayReference().isCollected();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartitionValue.exception_is_garbage_collected"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception
+			return false;
 		}
-		return false;
+		
 	}
 	
 	/**

@@ -54,8 +54,10 @@ public class JDIThisVariable extends JDIVariable {
 			return retrieveValue().type().signature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariableexception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception
+			return null;			
 		}
-		return getUnknownMessage();
 	}
 
 	/**
@@ -66,7 +68,9 @@ public class JDIThisVariable extends JDIVariable {
 			return getValue().getReferenceTypeName();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThisVariableexception_retrieving_reference_type_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception
+			return null;			
 		}
-		return getUnknownMessage();
 	}
 }

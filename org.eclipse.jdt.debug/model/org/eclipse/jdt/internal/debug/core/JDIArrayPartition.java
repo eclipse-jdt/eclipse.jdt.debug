@@ -110,8 +110,10 @@ public class JDIArrayPartition extends JDIVariable {
 			return getArrayReference().referenceType().name();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartition.exception_retrieving_reference_type"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;
 		}
-		return getUnknownMessage();
 	}
 
 	/**
@@ -122,8 +124,10 @@ public class JDIArrayPartition extends JDIVariable {
 			return getArrayReference().type().signature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayPartition.exception_retrieving_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception
+			return null;			
 		}
-		return getUnknownMessage();
 	}
 }
 
