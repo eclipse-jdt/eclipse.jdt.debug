@@ -44,7 +44,6 @@ public class ThrowInstruction extends CompoundInstruction {
 				}
 			}
 		});
-		setLastValue(exception);
 		stop();
 	}
 
