@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -47,32 +48,24 @@ public class JavaVariableActionFilter implements IActionFilter {
 	public boolean testAttribute(Object target, String name, String value) {
 		if (target instanceof IJavaVariable) {
 			IJavaVariable var = (IJavaVariable) target;
-			if (name.equals("PrimitiveVariableActionFilter")) { //$NON-NLS-1$ //$NON-NLS-2$
-				if (value.equals("isPrimitive")) { //$NON-NLS-1$
-					return isPrimitiveType(var);
-				} else if (value.equals("isValuePrimitive")) { //$NON-NLS-1$
-					return isValuePrimitiveType(var);
-				}
-			} else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
-				try {
+			IValue varValue;
+			try {
+				varValue= var.getValue();
+				if (name.equals("PrimitiveVariableActionFilter")) { //$NON-NLS-1$ //$NON-NLS-2$
+					if (value.equals("isPrimitive")) { //$NON-NLS-1$
+						return isPrimitiveType(var);
+					} else if (value.equals("isValuePrimitive")) { //$NON-NLS-1$
+						return isValuePrimitiveType(var);
+					}
+				} else if (name.equals("ConcreteVariableActionFilter") && value.equals("isConcrete")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return isDeclaredSameAsConcrete(var);
-				} catch (DebugException de) {
-					JDIDebugUIPlugin.log(de);
-				}
-			} else if (name.equals("JavaVariableActionFilter") && value.equals("instanceFilter")) { //$NON-NLS-1$ //$NON-NLS-2$
-				try {
-					return !var.isStatic() && (var.getValue() instanceof IJavaObject) && ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceBreakpoints();
-				} catch (DebugException exception) {
-					JDIDebugUIPlugin.log(exception);
-				}
-			} else if (name.equals("DetailFormatterFilter") && value.equals("isDefined")) { //$NON-NLS-1$ //$NON-NLS-2$
-				IValue varValue;
-				try {
-					varValue= var.getValue();
+				} else if (name.equals("JavaVariableActionFilter") && value.equals("instanceFilter")) { //$NON-NLS-1$ //$NON-NLS-2$
+					return !var.isStatic() && (varValue instanceof IJavaObject) && (((IJavaObject)varValue).getJavaType() instanceof IJavaClassType) && ((IJavaDebugTarget)var.getDebugTarget()).supportsInstanceBreakpoints();
+				} else if (name.equals("DetailFormatterFilter") && value.equals("isDefined")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return (varValue instanceof IJavaObject) && (JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(((IJavaObject)varValue).getJavaType()));
-				} catch (DebugException exception) {
-					JDIDebugUIPlugin.log(exception);
 				}
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.log(e);
 			}
 		}
 
