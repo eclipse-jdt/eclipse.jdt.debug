@@ -475,6 +475,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				deregisterRequest(req, target);
 			}
 		}
+		fRequestsByTarget.remove(target);
 	}		
 	
 	/**
