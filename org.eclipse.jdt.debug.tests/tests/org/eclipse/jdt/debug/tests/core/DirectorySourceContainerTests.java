@@ -13,11 +13,11 @@ package org.eclipse.jdt.debug.tests.core;
 import java.io.File;
 
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
-import org.eclipse.jdt.internal.launching.JavaSourceLookupParticipant;
 
 /**
  * Tests directory source containers
@@ -32,9 +32,9 @@ public class DirectorySourceContainerTests extends AbstractDebugTest {
 	 * Returns a directory source container.
 	 */
 	protected DirectorySourceContainer getContainer(boolean subfolders, boolean duplicates) throws Exception {
-		JavaSourceLookupDirector director = new JavaSourceLookupDirector();
+		ISourceLookupDirector director = new JavaSourceLookupDirector();
+		director.initializeParticipants();
 		director.setFindDuplicates(duplicates);
-		director.addSourceLookupParticipant(new JavaSourceLookupParticipant());
 		File folder = getJavaProject().getProject().getFolder("src").getLocation().toFile();
 		DirectorySourceContainer container = new DirectorySourceContainer(folder, subfolders);
 		director.setSourceContainers(new ISourceContainer[]{container});

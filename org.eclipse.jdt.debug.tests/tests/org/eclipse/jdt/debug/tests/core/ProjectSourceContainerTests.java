@@ -12,10 +12,10 @@ package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
-import org.eclipse.jdt.internal.launching.JavaSourceLookupParticipant;
 
 /**
  * Tests project source containers
@@ -30,9 +30,9 @@ public class ProjectSourceContainerTests extends AbstractDebugTest {
 	 * Returns a project source container.
 	 */
 	protected ProjectSourceContainer getContainer(boolean referenced, boolean duplicates) throws Exception {
-		JavaSourceLookupDirector director = new JavaSourceLookupDirector();
+		ISourceLookupDirector director = new JavaSourceLookupDirector();
+		director.initializeParticipants();
 		director.setFindDuplicates(duplicates);
-		director.addSourceLookupParticipant(new JavaSourceLookupParticipant());
 		IProject project = getJavaProject().getProject();
 		ProjectSourceContainer container = new ProjectSourceContainer(project, referenced);		
 		director.setSourceContainers(new ISourceContainer[]{container});

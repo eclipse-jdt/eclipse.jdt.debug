@@ -12,11 +12,11 @@ package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
-import org.eclipse.jdt.internal.launching.JavaSourceLookupParticipant;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 
@@ -36,9 +36,9 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 	 * @throws Exception
 	 */
 	protected ExternalArchiveSourceContainer getContainer(boolean detect, boolean duplicates) throws Exception {
-		JavaSourceLookupDirector director = new JavaSourceLookupDirector();
+		ISourceLookupDirector director = new JavaSourceLookupDirector();
+		director.initializeParticipants();
 		director.setFindDuplicates(duplicates);
-		director.addSourceLookupParticipant(new JavaSourceLookupParticipant());
 		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(JavaRuntime.getDefaultVMInstall());
 		for (int i = 0; i < locations.length; i++) {
 			LibraryLocation location = locations[i];

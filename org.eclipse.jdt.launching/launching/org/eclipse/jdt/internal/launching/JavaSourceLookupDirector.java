@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.containers.WorkspaceSourceContainerType;
 
@@ -39,7 +40,7 @@ public class JavaSourceLookupDirector extends AbstractSourceLookupDirector {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
 	 */
 	public void initializeParticipants() {
-		addSourceLookupParticipant(new JavaSourceLookupParticipant());
+		addParticipants(new ISourceLookupParticipant[] {new JavaSourceLookupParticipant()});
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType)
