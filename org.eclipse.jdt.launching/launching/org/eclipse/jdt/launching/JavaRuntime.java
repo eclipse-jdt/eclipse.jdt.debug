@@ -259,6 +259,12 @@ public final class JavaRuntime {
 				install.getVMInstallType().disposeVMInstall(install.getId());
 			}
 			fgDefaultVMId = null;
+			try {
+				//get rid of bad values on disk
+				saveVMConfiguration();
+			} catch(CoreException e) {
+				LaunchingPlugin.log(e);
+			}
 			detectVMConfiguration();
 			return getVMFromId(getDefaultVMId());
 		}

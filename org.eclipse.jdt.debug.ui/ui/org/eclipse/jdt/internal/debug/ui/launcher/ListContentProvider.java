@@ -13,7 +13,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 /** 
- * A specialized content provider to show a list of editor parts.
+ * A specialized content provider to show a list of vm installs
  */ 
 public class ListContentProvider implements IStructuredContentProvider {
 	StructuredViewer fViewer;
@@ -30,6 +30,7 @@ public class ListContentProvider implements IStructuredContentProvider {
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		fInput= (List)newInput;
 	}
 
 	public void dispose() {
@@ -40,5 +41,4 @@ public class ListContentProvider implements IStructuredContentProvider {
 	public boolean isDeleted(Object o) {
 		return fInput.contains(o);
 	}
-	
 }
