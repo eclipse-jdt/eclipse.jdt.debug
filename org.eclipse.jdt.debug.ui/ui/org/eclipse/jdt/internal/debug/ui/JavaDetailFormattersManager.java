@@ -10,8 +10,11 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import com.sun.jdi.InvocationException;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -84,7 +87,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		for (int i= 0, length= detailFormattersList.length; i < length;) {
 			String typeName= detailFormattersList[i++];
 			String snippet= detailFormattersList[i++].replace('\u0000', ',');
-			boolean enabled= ! "0".equals(detailFormattersList[i++]); //$NON-NLS-1$
+			boolean enabled= ! JavaDetailFormattersPreferencePage.DETAIL_FORMATTER_IS_DISABLED.equals(detailFormattersList[i++]);
 			if (enabled) {
 				fDetailFormattersMap.put(typeName, snippet);
 			}
@@ -113,18 +116,23 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				if (!result.hasErrors()) {
 					fToStringValue= result.getValue();
 				} else {
-					String error;
+					StringBuffer error= new StringBuffer(DebugUIMessages.getString("JavaDetailFormattersManager.Detail_formatter_error___1")); //$NON-NLS-1$
 					DebugException exception= result.getException();
 					if (exception != null) {
-						error= exception.getMessage();
+						Throwable throwable= exception.getStatus().getException();
+						error.append("\n\t\t"); //$NON-NLS-1$
+						if (throwable instanceof InvocationException) {
+							error.append(MessageFormat.format(DebugUIMessages.getString("JavaDetailFormattersManager.An_exception_occurred__{0}_3"), new String[] {((InvocationException) throwable).exception().referenceType().name()})); //$NON-NLS-1$
+						} else {
+							error.append(exception.getStatus().getMessage());
+						}
 					} else {
 						Message[] errors= result.getErrors();
-						error= ""; //$NON-NLS-1$
 						for (int i= 0, length= errors.length; i < length; i++) {
-							error+= errors[i].getMessage() + '\n';
+							error.append("\n\t\t").append(errors[i].getMessage()); //$NON-NLS-1$
 						}
 					}
-					fToStringValue= ((IJavaDebugTarget)thread.getDebugTarget()).newValue(error);
+					fToStringValue= ((IJavaDebugTarget)thread.getDebugTarget()).newValue(error.toString());
 				}
 				synchronized(this) {
 					notify();
