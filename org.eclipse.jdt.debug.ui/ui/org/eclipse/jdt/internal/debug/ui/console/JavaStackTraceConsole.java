@@ -45,6 +45,7 @@ public class JavaStackTraceConsole extends TextConsole {
          * @see org.eclipse.ui.console.IConsoleDocumentPartitioner#clearBuffer()
          */
         public void clearBuffer() {
+            getDocument().set(""); //$NON-NLS-1$
         }
 
         /* (non-Javadoc)
