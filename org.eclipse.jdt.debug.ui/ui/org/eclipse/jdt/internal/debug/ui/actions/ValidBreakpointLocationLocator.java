@@ -380,18 +380,20 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 */
 	public boolean visit(Assignment node) {
 		if (visit(node, false)) {
-			Expression leftHandSide= node.getLeftHandSide();
-			// if the left hand side represent a local variable, or a static field
-			// and the breakpoint was requested on a line before the line where
-			// starts the assigment, set the location to be the first executable
-			// instruction of the right hand side, as it will be the first part of
-			// this assigment to be executed
-			if (leftHandSide instanceof Name) {
-				IVariableBinding binding= (IVariableBinding)((Name)leftHandSide).resolveBinding();
-				if (!binding.isField() || Modifier.isStatic(binding.getModifiers()))  {
-					int startLine = fCompilationUnit.lineNumber(node.getStartPosition());
-					if (fLineNumber < startLine) {
-						node.getRightHandSide().accept(this);
+			if (fBindingsResolved) {
+				Expression leftHandSide= node.getLeftHandSide();
+				// if the left hand side represent a local variable, or a static field
+				// and the breakpoint was requested on a line before the line where
+				// starts the assigment, set the location to be the first executable
+				// instruction of the right hand side, as it will be the first part of
+				// this assigment to be executed
+				if (leftHandSide instanceof Name) {
+					IVariableBinding binding= (IVariableBinding)((Name)leftHandSide).resolveBinding();
+					if (!binding.isField() || Modifier.isStatic(binding.getModifiers()))  {
+						int startLine = fCompilationUnit.lineNumber(node.getStartPosition());
+						if (fLineNumber < startLine) {
+							node.getRightHandSide().accept(this);
+						}
 					}
 				}
 			}
