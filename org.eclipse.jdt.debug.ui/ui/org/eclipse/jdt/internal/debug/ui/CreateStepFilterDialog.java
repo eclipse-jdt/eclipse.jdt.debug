@@ -12,9 +12,8 @@
 package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -167,7 +166,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 
 	
 	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
 		if (section == null) {
 			section = settings.addNewSection(getDialogSettingsSectionName());
@@ -181,7 +180,7 @@ public class CreateStepFilterDialog extends StatusDialog {
 	 * @return String
 	 */
 	protected String getDialogSettingsSectionName() {
-		return IDebugUIConstants.PLUGIN_ID + ".CREATE_STEP_FILTER_DIALOG_SECTION"; //$NON-NLS-1$
+		return IJavaDebugUIConstants.PLUGIN_ID + ".CREATE_STEP_FILTER_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 	
 	private void persistShellGeometry() {
