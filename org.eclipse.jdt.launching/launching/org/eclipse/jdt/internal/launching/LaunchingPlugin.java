@@ -205,11 +205,11 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		
 		protected void doit(IProgressMonitor monitor) throws CoreException {
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor1) throws CoreException {
 					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
-					monitor.beginTask(LaunchingMessages.getString("LaunchingPlugin.0"), projects.length + 1); //$NON-NLS-1$
-					rebind(monitor, projects);
-					monitor.done();
+					monitor1.beginTask(LaunchingMessages.getString("LaunchingPlugin.0"), projects.length + 1); //$NON-NLS-1$
+					rebind(monitor1, projects);
+					monitor1.done();
 				}
 			};
 			JavaCore.run(runnable, null, monitor);
