@@ -151,5 +151,28 @@ public interface IJavaThread extends IThread {
 	 * @since 2.0
 	 */
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail, boolean hitBreakpoints) throws DebugException; 
-
+	
+	/**
+	 * Attempts to terminate the currently executing <code>IEvaluationRunnable</code>
+	 * in this thread, if any. 
+	 * 
+	 * Evaluations may be composed of a series of instructions.
+	 * Terminating an evaluation means stopping the evaluation after
+	 * the current instruction completes. A single instruction (such as a method invocation)
+	 * cannot be interrupted.
+	 * 
+	 * @exception DebugException if an exception occurs while
+	 *  terminating the evaluation.
+	 * @since 2.1
+	 */
+	public void terminateEvaluation() throws DebugException;
+	/**
+	 * Returns whether the currently executing <code>IEvaluationRunnable</code>
+	 * supports termination. An IEvaluationRunnable supports termination
+	 * if it implements <code>ITerminate</code>
+	 * 
+	 * @return whether the current evaluation supports termination
+	 * @since 2.1
+	 */
+	public boolean canTerminateEvaluation();
 }

@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
@@ -243,6 +244,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(new JDIDebugUIAdapterFactory(), IJavaSourceLocation.class);
 		manager.registerAdapters(new MethodAdapterFactory(), IMethod.class);
 		manager.registerAdapters(new JavaStackFrameAdapterFactory(), IJavaStackFrame.class);
+		manager.registerAdapters(new JavaThreadAdapterFactory(), IJavaThread.class);
 		
 		fEvaluationEngineManager= new JavaEvaluationEngineManager();
 		fJavaModelListener= new JavaModelListener();

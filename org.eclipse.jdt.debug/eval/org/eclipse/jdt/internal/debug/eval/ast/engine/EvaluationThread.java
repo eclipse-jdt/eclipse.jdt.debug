@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -141,8 +142,8 @@ class EvaluationThread {
 			return;
 		}
 		fInterpreter = new Interpreter((InstructionSequence) fExpression, fContext);
-
-		IEvaluationRunnable er = new IEvaluationRunnable() {
+		
+		class EvaluationRunnable implements IEvaluationRunnable, ITerminate {
 			public void run(IJavaThread jt, IProgressMonitor pm) {
 				try {
 					fInterpreter.execute();
@@ -153,7 +154,18 @@ class EvaluationThread {
 					fException = new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), IStatus.ERROR, InstructionsEvaluationMessages.getString("InstructionSequence.Runtime_exception_occurred_during_evaluation._See_log_for_details_1"), exception)); //$NON-NLS-1$
 				}
 			}
-		};
+			public void terminate() {
+				fInterpreter.stop();
+			}
+			public boolean canTerminate() {
+				return true;
+			}
+			public boolean isTerminated() {
+				return false;
+			}
+		}
+
+		IEvaluationRunnable er = new EvaluationRunnable();
 		CoreException exception = null;
 		try {
 			fThread.runEvaluation(er, null, fEvaluationDetail, fHitBreakpoints);

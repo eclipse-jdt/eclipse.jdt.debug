@@ -324,6 +324,20 @@
 		</action>
 	</objectContribution>
 	<objectContribution
+		id="org.eclipse.jdt.debug.TerminateEvaluationActions"
+		objectClass="org.eclipse.jdt.debug.core.IJavaThread">
+		<filter name="TerminateEvaluationActionFilter" value="supportsTerminateEvaluation"/>
+		<action
+			id="org.eclipse.jdt.ui.actions.TerminateEvaluation"
+			label="%terminateEvaluationAction.label"
+			tooltip="%terminateEvaluationAction.tooltip"
+			menubarPath="emptyThreadGroup"
+			helpContextId="terminate_evaluation_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.TerminateEvaluationAction"
+			enablesFor="1">
+		</action>
+	</objectContribution>
+	<objectContribution
 		id="org.eclipse.jdt.debug.DropToFrameActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
 		<filter name="DropToFrameActionFilter" value="supportsDropToFrame"/>

@@ -21,6 +21,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
@@ -119,6 +120,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * of method invocations.
 	 */
 	private boolean fIsPerformingEvaluation= false;
+	private IEvaluationRunnable fEvaluationRunnable;
 	/**
 	 * Whether this thread is currently invoking a method.
 	 * Nested method invocations cannot be performed.
@@ -552,6 +554,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		
 		fIsPerformingEvaluation = true;
+		fEvaluationRunnable= evaluation;
 		fHonorBreakpoints= hitBreakpoints;
 		fireResumeEvent(evaluationDetail);
 		try {
@@ -560,10 +563,27 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			throw e;
 		} finally {
 			fIsPerformingEvaluation = false;
+			fEvaluationRunnable= null;
 			fHonorBreakpoints= true;
 			fireSuspendEvent(evaluationDetail);
 		}
-	}	
+	}
+	
+	/**
+	 * @see IJavaThread#terminateEvaluation()
+	 */
+	public void terminateEvaluation() throws DebugException {
+		if (canTerminateEvaluation()) {
+			((ITerminate) fEvaluationRunnable).terminate();
+		}
+	}
+	
+	/**
+	 * @see IJavaThread#canTerminateEvaluation()
+	 */
+	public boolean canTerminateEvaluation() {
+		return fEvaluationRunnable instanceof ITerminate;
+	}
 
 	/**
 	 * Invokes a method on the target, in this thread, and returns the result. Only
