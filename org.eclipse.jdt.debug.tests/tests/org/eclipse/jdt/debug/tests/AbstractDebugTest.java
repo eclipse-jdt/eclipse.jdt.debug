@@ -312,10 +312,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	
 	/**
 	 * Resumes the given thread, and waits for another breakpoint-caused suspend event.
-	 * Returns the thread in which the suspend event occurrs.
+	 * Returns the thread in which the suspend event occurs.
 	 * 
 	 * @param thread thread to resume
-	 * @return thread in which the first suspend event occurrs
+	 * @return thread in which the first suspend event occurs
 	 */
 	protected IJavaThread resume(IJavaThread thread) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
@@ -331,10 +331,10 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	
 	/**
 	 * Resumes the given thread, and waits for a suspend event caused by the specified
-	 * line breakpoint.  Returns the thread in which the suspend event occurrs.
+	 * line breakpoint.  Returns the thread in which the suspend event occurs.
 	 * 
 	 * @param thread thread to resume
-	 * @return thread in which the first suspend event occurrs
+	 * @return thread in which the first suspend event occurs
 	 */
 	protected IJavaThread resumeToLineBreakpoint(IJavaThread resumeThread, ILineBreakpoint bp) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
