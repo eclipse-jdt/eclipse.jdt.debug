@@ -150,14 +150,16 @@ public class MethodSearchVisitor extends ASTVisitor {
             IMethodBinding methodBinding = node.resolveBinding();
             if (methodBinding != null) {
 	            ITypeBinding[] typeBindings = methodBinding.getParameterTypes();
-	            for (int i = 0; i < typeBindings.length; i++) {
-	                ITypeBinding typeBinding = typeBindings[i];
-	                String typeSignature = Signature.createTypeSignature(typeBinding.getQualifiedName(), true);
-	                if (!fParameterTypes[i].equals(typeSignature)) {
-	                    return true;
-	                }
+	            if (typeBindings.length == fParameterTypes.length) {
+		            for (int i = 0; i < typeBindings.length; i++) {
+		                ITypeBinding typeBinding = typeBindings[i];
+		                String typeSignature = Signature.createTypeSignature(typeBinding.getQualifiedName(), true);
+		                if (!fParameterTypes[i].equals(typeSignature)) {
+		                    return true;
+		                }
+		            }
+		            fMatch = node;
 	            }
-	            fMatch = node;
             }
         }
         return isSearching();
