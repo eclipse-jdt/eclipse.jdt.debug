@@ -64,21 +64,21 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 	
 	/**
-	 * @see ILineBreakpoint
+	 * @see ILineBreakpoint#getLineNumber()
 	 */
 	public int getLineNumber() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 	}
 
 	/**
-	 * @see ILineBreakpoint
+	 * @see ILineBreakpoint#getCharStart()
 	 */
 	public int getCharStart() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.CHAR_START, -1);
 	}
 
 	/**
-	 * @see ILineBreakpoint
+	 * @see ILineBreakpoint#getCharEnd()
 	 */
 	public int getCharEnd() throws CoreException {
 		return ensureMarker().getAttribute(IMarker.CHAR_END, -1);
