@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
@@ -58,7 +58,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * <li>Step filters</li>
  * </ul>
  */
-public class JavaDebugOptionsManager implements ILaunchListener, IResourceChangeListener, IDebugEventListener, IPropertyChangeListener, IJavaBreakpointListener {
+public class JavaDebugOptionsManager implements ILaunchListener, IResourceChangeListener, IDebugEventSetListener, IPropertyChangeListener, IJavaBreakpointListener {
 	
 	/**
 	 * Singleton options manager
@@ -558,22 +558,25 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 	 * When a Java debug target is created, install options in
 	 * the target.
 	 * 
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventListener#handleDebugEvents(DebugEvent[])
 	 */
-	public void handleDebugEvent(DebugEvent event) {
-		if (event.getKind() == DebugEvent.CREATE) {
-			Object source = event.getSource();
-			if (source instanceof IJavaDebugTarget) {
-				IJavaDebugTarget javaTarget = (IJavaDebugTarget)source;
-				
-				// compilation breakpoints				
-				notifyTarget(javaTarget, getSuspendOnCompilationErrorBreakpoint(), ADDED);
-				
-				// uncaught exception breakpoint
-				notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
-				
-				// step filters
-				notifyTargetOfFilters(javaTarget);
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getKind() == DebugEvent.CREATE) {
+				Object source = event.getSource();
+				if (source instanceof IJavaDebugTarget) {
+					IJavaDebugTarget javaTarget = (IJavaDebugTarget)source;
+					
+					// compilation breakpoints				
+					notifyTarget(javaTarget, getSuspendOnCompilationErrorBreakpoint(), ADDED);
+					
+					// uncaught exception breakpoint
+					notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
+					
+					// step filters
+					notifyTargetOfFilters(javaTarget);
+				}
 			}
 		}
 	}

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -41,7 +41,7 @@ import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.request.ClassPrepareRequest;
 import com.sun.jdi.request.EventRequest;
 
-public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener, IDebugEventListener {
+public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener, IDebugEventSetListener {
 
 	/**
 	 * Breakpoint attribute storing the expired value (value <code>"org.eclipse.jdt.debug.core.expired"</code>).
@@ -865,29 +865,32 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 * 
 	 * Remove thread filters for terminated threads
 	 */
-	public void handleDebugEvent(DebugEvent event) {
-		if (event.getKind() == DebugEvent.TERMINATE) {
-			Object source= event.getSource();
-			if (!(source instanceof JDIThread)) {
-				return;
-			}
-			JDIThread thread= (JDIThread)source;
-			JDIDebugTarget target= (JDIDebugTarget)thread.getDebugTarget();
-			try {
-				if (thread == getThreadFilter(target)) {
-					removeThreadFilter(target);
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getKind() == DebugEvent.TERMINATE) {
+				Object source= event.getSource();
+				if (!(source instanceof JDIThread)) {
+					return;
 				}
-			} catch (VMDisconnectedException exception) {
-				// Thread death often occurs at shutdown.
-				// A VMDisconnectedException trying to 
-				// update the breakpoint request is
-				// acceptable.
-			} catch (CoreException exception) {
-				JDIDebugPlugin.log(exception.getStatus());
+				JDIThread thread= (JDIThread)source;
+				JDIDebugTarget target= (JDIDebugTarget)thread.getDebugTarget();
+				try {
+					if (thread == getThreadFilter(target)) {
+						removeThreadFilter(target);
+					}
+				} catch (VMDisconnectedException exception) {
+					// Thread death often occurs at shutdown.
+					// A VMDisconnectedException trying to 
+					// update the breakpoint request is
+					// acceptable.
+				} catch (CoreException exception) {
+					JDIDebugPlugin.log(exception.getStatus());
+				}
 			}
 		}
 	}

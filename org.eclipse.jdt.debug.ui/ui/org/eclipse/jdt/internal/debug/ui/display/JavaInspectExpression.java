@@ -8,12 +8,11 @@ package org.eclipse.jdt.internal.debug.ui.display;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaValue;
 
 /**
@@ -22,7 +21,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
  * itself from the expression manager when its debug
  * target terminates.
  */
-public class JavaInspectExpression extends PlatformObject implements IExpression, IDebugEventListener {
+public class JavaInspectExpression extends PlatformObject implements IExpression, IDebugEventSetListener {
 	
 	/**
 	 * The value of this expression
@@ -86,11 +85,14 @@ public class JavaInspectExpression extends PlatformObject implements IExpression
 	}
 
 	/**
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventListener#handleDebugEvents(DebugEvent[])
 	 */
-	public void handleDebugEvent(DebugEvent event) {
-		if (event.getKind() == DebugEvent.TERMINATE && event.getSource().equals(getDebugTarget())) {
-			DebugPlugin.getDefault().getExpressionManager().removeExpression(this);
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getKind() == DebugEvent.TERMINATE && event.getSource().equals(getDebugTarget())) {
+				DebugPlugin.getDefault().getExpressionManager().removeExpression(this);
+			}
 		}
 	}
 

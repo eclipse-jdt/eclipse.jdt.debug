@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
@@ -64,7 +64,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIThread;
  * <p>
  * Currently, replacing .jar files has no effect on running targets.
  */
-public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaunchListener, IDebugEventListener {
+public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaunchListener, IDebugEventSetListener {
 	/**
 	 * Singleton 
 	 */
@@ -965,10 +965,16 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		launchAdded(launch);
 	}	
 	
-	public void handleDebugEvent(DebugEvent event) {
-		if (event.getSource() instanceof JDIDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
-			deregisterTarget((JDIDebugTarget) event.getSource());
-		}	
+	/**
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
+	 */
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getSource() instanceof JDIDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
+				deregisterTarget((JDIDebugTarget) event.getSource());
+			}	
+		}
 	}
 	
 	protected void deregisterTarget(JDIDebugTarget target) {

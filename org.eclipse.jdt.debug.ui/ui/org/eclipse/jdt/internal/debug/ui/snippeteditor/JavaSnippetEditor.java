@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -27,7 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -84,7 +83,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewPart;
@@ -105,7 +103,7 @@ import com.sun.jdi.ObjectReference;
 /**
  * An editor for Java snippets.
  */
-public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEventListener, IEvaluationListener, IValueDetailListener {			
+public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEventSetListener, IEvaluationListener, IValueDetailListener {			
 	public static final String IMPORTS_CONTEXT = "SnippetEditor.imports"; //$NON-NLS-1$
 	
 	public final static int RESULT_DISPLAY= 1;
@@ -756,44 +754,47 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return getSite().getShell();
 	}
 	
-	public void handleDebugEvent(DebugEvent e) {
-		Object source = e.getSource();
-		if (source instanceof IDebugElement) {
-			IDebugElement de = (IDebugElement)source;
-			if (de instanceof IDebugTarget) {
-				if (de.getDebugTarget().equals(fVM)) {
-					if (e.getKind() == DebugEvent.TERMINATE) {
-						Runnable r = new Runnable() {
-							public void run() {
-								vmTerminated();
-							}
-						};
-						getShell().getDisplay().asyncExec(r);
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent e = events[i];
+			Object source = e.getSource();
+			if (source instanceof IDebugElement) {
+				IDebugElement de = (IDebugElement)source;
+				if (de instanceof IDebugTarget) {
+					if (de.getDebugTarget().equals(fVM)) {
+						if (e.getKind() == DebugEvent.TERMINATE) {
+							Runnable r = new Runnable() {
+								public void run() {
+									vmTerminated();
+								}
+							};
+							getShell().getDisplay().asyncExec(r);
+						}
 					}
-				}
-			} else if (de instanceof IJavaThread) {
-				if (e.getKind() == DebugEvent.SUSPEND) {
-					IJavaThread jt = (IJavaThread)de;
-					try {
-						IJavaStackFrame f= (IJavaStackFrame)jt.getTopStackFrame();
-						if (f != null) {
-							IBreakpoint bp = jt.getBreakpoint();
-							if (e.getDetail() == DebugEvent.STEP_END && f.getLineNumber() == 14 && f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1")) { //$NON-NLS-1$
-								fThread = jt;
-							} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bp != null && bp.equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
-								// locate the 'eval' method and step over
-								IStackFrame[] frames = jt.getStackFrames();
-								for (int i = 0; i < frames.length; i++) {
-									IJavaStackFrame frame = (IJavaStackFrame)frames[i];
-									if (frame.getReceivingTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") && frame.getName().equals("eval")) { //$NON-NLS-1$ //$NON-NLS-2$
-										frame.stepOver();
-										break;
+				} else if (de instanceof IJavaThread) {
+					if (e.getKind() == DebugEvent.SUSPEND) {
+						IJavaThread jt = (IJavaThread)de;
+						try {
+							IJavaStackFrame f= (IJavaStackFrame)jt.getTopStackFrame();
+							if (f != null) {
+								IBreakpoint bp = jt.getBreakpoint();
+								if (e.getDetail() == DebugEvent.STEP_END && f.getLineNumber() == 14 && f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1")) { //$NON-NLS-1$
+									fThread = jt;
+								} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bp != null && bp.equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
+									// locate the 'eval' method and step over
+									IStackFrame[] frames = jt.getStackFrames();
+									for (int j = 0; j < frames.length; j++) {
+										IJavaStackFrame frame = (IJavaStackFrame)frames[j];
+										if (frame.getReceivingTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") && frame.getName().equals("eval")) { //$NON-NLS-1$ //$NON-NLS-2$
+											frame.stepOver();
+											break;
+										}
 									}
 								}
 							}
+						} catch (DebugException ex) {
+							JDIDebugUIPlugin.log(ex);
 						}
-					} catch (DebugException ex) {
-						JDIDebugUIPlugin.log(ex);
 					}
 				}
 			}

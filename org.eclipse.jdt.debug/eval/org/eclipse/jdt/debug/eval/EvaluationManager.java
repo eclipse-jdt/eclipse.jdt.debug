@@ -15,11 +15,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.internal.debug.eval.ast.ASTAPIEvaluationEngine;
 import org.eclipse.jdt.internal.debug.eval.LocalEvaluationEngine;
+import org.eclipse.jdt.internal.debug.eval.ast.ASTAPIEvaluationEngine;
 
 /**
  * The evaluation manager provides factory methods for
@@ -149,18 +149,21 @@ public class EvaluationManager {
 	 * of VMs. When a VM terminates, its evaluation engine
 	 * is disposed.
 	 */
-	class VMMonitor implements IDebugEventListener {
+	class VMMonitor implements IDebugEventSetListener {
 		/**
 		 * Disposes any evaluation engines for targets that
 		 * terminate.
 		 * 
-		 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+		 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 		 */
-		public void handleDebugEvent(DebugEvent event) {
-			if (event.getSource() instanceof IJavaDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
-				IEvaluationEngine engine = EvaluationManager.this.getEvaluationEngine((IJavaDebugTarget)event.getSource());
-				if (engine != null) {
-					disposeEvaluationEngine(engine);
+		public void handleDebugEvents(DebugEvent[] events) {
+			for (int i = 0; i < events.length; i++) {
+				DebugEvent event = events[i];
+				if (event.getSource() instanceof IJavaDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
+					IEvaluationEngine engine = EvaluationManager.this.getEvaluationEngine((IJavaDebugTarget)event.getSource());
+					if (engine != null) {
+						disposeEvaluationEngine(engine);
+					}
 				}
 			}
 		}

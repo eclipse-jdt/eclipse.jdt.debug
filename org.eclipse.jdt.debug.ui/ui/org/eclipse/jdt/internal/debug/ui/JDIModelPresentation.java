@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
@@ -33,7 +33,6 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -71,7 +70,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * @see IDebugModelPresentation
  */
-public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation, IDebugEventListener {
+public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation, IDebugEventSetListener {
 
 	/**
 	 * Qualified names presentation property (value <code>"org.eclipse.debug.ui.displayQualifiedNames"</code>).
@@ -1301,24 +1300,27 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * When a thread suspends, add it to the thread pool for that
 	 * VM. When a thread resumes, remove it from the thread pool.
 	 * 
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
-	public void handleDebugEvent(DebugEvent event) {
-		if (event.getSource() instanceof IJavaThread) {
-			IJavaThread thread = (IJavaThread)event.getSource();
-			if (event.getKind() == DebugEvent.RESUME) {
-				List threads = (List)fThreadPool.get(thread.getDebugTarget());
-				if (threads != null) {
-					threads.remove(thread);
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getSource() instanceof IJavaThread) {
+				IJavaThread thread = (IJavaThread)event.getSource();
+				if (event.getKind() == DebugEvent.RESUME) {
+					List threads = (List)fThreadPool.get(thread.getDebugTarget());
+					if (threads != null) {
+						threads.remove(thread);
+					}
+				} else if (event.getKind() == DebugEvent.SUSPEND) {
+					IDebugTarget target = thread.getDebugTarget();
+					List threads = (List)fThreadPool.get(target);
+					if (threads == null) {
+						threads = new ArrayList();
+						fThreadPool.put(target, threads);
+					}
+					threads.add(thread);	
 				}
-			} else if (event.getKind() == DebugEvent.SUSPEND) {
-				IDebugTarget target = thread.getDebugTarget();
-				List threads = (List)fThreadPool.get(target);
-				if (threads == null) {
-					threads = new ArrayList();
-					fThreadPool.put(target, threads);
-				}
-				threads.add(thread);	
 			}
 		}
 	}

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -56,7 +56,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * exist in the workspace, which is not true for the scrapbook.
  */
 
-public class ScrapbookLauncher implements IDebugEventListener {
+public class ScrapbookLauncher implements IDebugEventSetListener {
 	
 	public static final String SCRAPBOOK_LAUNCH = IJavaDebugUIConstants.PLUGIN_ID + ".scrapbook_launch";
 	
@@ -215,11 +215,14 @@ public class ScrapbookLauncher implements IDebugEventListener {
 	}
 
 	/**
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
-	public void handleDebugEvent(DebugEvent event) {
-		if (event.getSource() instanceof IDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
-			cleanup((IDebugTarget)event.getSource());
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getSource() instanceof IDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
+				cleanup((IDebugTarget)event.getSource());
+			}
 		}
 	}
 	
