@@ -29,6 +29,8 @@ import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.PrimitiveType;
+import com.sun.jdi.PrimitiveValue;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Type;
@@ -283,7 +285,44 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			throw new IllegalArgumentException(JDIMessages.getString("ObjectReferenceImpl.Method_is_constructor_or_intitializer_4")); //$NON-NLS-1$
 		if ((options & INVOKE_NONVIRTUAL) != 0 && method.isAbstract())
 			throw new IllegalArgumentException(JDIMessages.getString("ObjectReferenceImpl.Method_is_abstract_and_can_therefore_not_be_invoked_nonvirtual_5")); //$NON-NLS-1$
-		
+
+		List argumentTypes= method.argumentTypes();
+		Type argumentType;
+		String typeSignature;
+		Value argument;
+		PrimitiveValue primitiveValue;
+		for (int i= 0, numArgs= arguments.size(); i < numArgs; i++) {
+			argumentType= (Type)argumentTypes.get(i);
+			argument= (Value)arguments.get(i);
+			typeSignature= argumentType.signature();
+			if (argumentType instanceof PrimitiveType && !typeSignature.equals(argument.type().signature())) {
+				// Convert primitive value parameters to the type that matches the method signature
+				primitiveValue= (PrimitiveValue)argument;
+				switch (typeSignature.charAt(0)) {
+				case 'B':
+					arguments.set(i, new ByteValueImpl(virtualMachineImpl(), new Byte(primitiveValue.byteValue())));
+					break;
+				case 'C':
+					arguments.set(i, new CharValueImpl(virtualMachineImpl(), new Character(primitiveValue.charValue())));
+					break;
+				case 'S':
+					arguments.set(i, new ShortValueImpl(virtualMachineImpl(), new Short(primitiveValue.shortValue())));
+					break;
+				case 'I':
+					arguments.set(i, new IntegerValueImpl(virtualMachineImpl(), new Integer(primitiveValue.intValue())));
+					break;
+				case 'J':
+					arguments.set(i, new LongValueImpl(virtualMachineImpl(), new Long(primitiveValue.longValue())));
+					break;
+				case 'F':
+					arguments.set(i, new FloatValueImpl(virtualMachineImpl(), new Float(primitiveValue.floatValue())));
+					break;
+				case 'D':
+					arguments.set(i, new DoubleValueImpl(virtualMachineImpl(), new Double(primitiveValue.doubleValue())));
+					break;
+				}
+			}
+		}
 
 		initJdwpRequest();
 		try {
