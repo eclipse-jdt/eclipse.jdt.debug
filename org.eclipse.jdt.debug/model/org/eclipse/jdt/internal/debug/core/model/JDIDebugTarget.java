@@ -31,6 +31,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
@@ -231,7 +232,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		super(null);
 		setLaunch(launch);
 		setResumeOnStartup(resume);
-		setDebugTarget(this);
 		setSupportsTerminate(supportTerminate);
 		setSupportsDisconnect(supportDisconnect);
 		setVM(jvm);
@@ -2172,5 +2172,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
             }
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
+     */
+    public IDebugTarget getDebugTarget() {
+        return this;
+    }
 }
-

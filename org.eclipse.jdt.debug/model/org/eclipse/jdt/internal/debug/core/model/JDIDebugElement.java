@@ -9,16 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.core.model;
-
  
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugElement;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
@@ -34,12 +31,7 @@ import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 
-public abstract class JDIDebugElement extends PlatformObject implements IDebugElement, IDisconnect {
-	
-	/**
-	 * Debug target associated with this element
-	 */
-	private JDIDebugTarget fDebugTarget;
+public abstract class JDIDebugElement extends DebugElement implements IDisconnect {
 	
 	/**
 	 * Creates a JDI debug element associated with the
@@ -48,7 +40,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @param target The associated debug target
 	 */
 	public JDIDebugElement(JDIDebugTarget target) {
-		setDebugTarget(target);
+        super(target);
 	}
 
 	/**
@@ -88,23 +80,6 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	public String getModelIdentifier() {
 		return JDIDebugModel.getPluginIdentifier();
 	}
-	
-	/**
-	 * Fires a debug event marking the creation of this element.
-	 */
-	protected void fireCreationEvent() {
-		fireEvent(new DebugEvent(this, DebugEvent.CREATE));
-	}
-
-	/**
-	 * Fires a debug event
-	 * 
-	 * @param event The debug event to be fired to the listeners
-	 * @see org.eclipse.debug.core.DebugEvent
-	 */
-	protected void fireEvent(DebugEvent event) {
-		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
-	}
 
 	/**
 	 * Queues a debug event with the event dispatcher to be fired
@@ -118,17 +93,6 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 			dispatcher.queue(event);
 		}
 	}
-	
-	/**
-	 * Fires a debug event marking the RESUME of this element with
-	 * the associated detail.
-	 * 
-	 * @param detail The int detail of the event
-	 * @see org.eclipse.debug.core.DebugEvent
-	 */
-	public void fireResumeEvent(int detail) {
-		fireEvent(new DebugEvent(this, DebugEvent.RESUME, detail));
-	}
 
 	/**
 	 * Fires a debug event marking the SUSPEND of this element with
@@ -139,7 +103,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	public void fireSuspendEvent(int detail) {
 	    getJavaDebugTarget().incrementSuspendCount(detail);
-		fireEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
+		super.fireSuspendEvent(detail);
 	}
 	
 	/**
@@ -152,23 +116,6 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	public void queueSuspendEvent(int detail) {
 	    getJavaDebugTarget().incrementSuspendCount(detail);
 		queueEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
-	}
-			
-	/**
-	 * Fires a debug event marking the termination of this element.
-	 */
-	protected void fireTerminateEvent() {
-		fireEvent(new DebugEvent(this, DebugEvent.TERMINATE));
-	}
-
-	/**
-	 * Fires a debug event marking the CHANGE of this element
-	 * with the specifed detail code.
-	 * 
-	 * @param detail one of <code>STATE</code> or <code>CONTENT</code>
-	 */
-	public void fireChangeEvent(int detail) {
-		fireEvent(new DebugEvent(this, DebugEvent.CHANGE, detail));
 	}
 	
 	/**
@@ -287,14 +234,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	protected String getUnknownMessage() {
 		return JDIDebugModelMessages.getString("JDIDebugElement.unknown"); //$NON-NLS-1$
 	}
-	
-	/**
-	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
-	 */
-	public IDebugTarget getDebugTarget() {
-		return fDebugTarget;
-	}
-	
+		
 	/**
 	 * Returns this elements debug target as its implementation
 	 * class.
@@ -302,7 +242,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @return Java debug target
 	 */
 	protected JDIDebugTarget getJavaDebugTarget() {
-		return fDebugTarget;
+		return (JDIDebugTarget)getDebugTarget();
 	}
 
 	/**
@@ -361,22 +301,11 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
-	 * @see IDebugElement#getLaunch()
-	 */
-	public ILaunch getLaunch() {
-		return getDebugTarget().getLaunch();
-	}
-	
-	protected void setDebugTarget(JDIDebugTarget debugTarget) {
-		fDebugTarget = debugTarget;
-	}
-
-	/**
 	 * The VM has disconnected. Notify the target.
 	 */
 	protected void disconnected() {
-		if (fDebugTarget != null) {
-			fDebugTarget.disconnected();
+		if (getDebugTarget() != null) {
+			getJavaDebugTarget().disconnected();
 		}
 	}
 	
