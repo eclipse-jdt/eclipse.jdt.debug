@@ -50,7 +50,7 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 				// find the last space in the line
 				index = text.lastIndexOf(' ');
 			} else if (fNativeMatcher.match(text)) {
-				// find the last space in the line
+				// find the second last space in the line
 				index = text.lastIndexOf(' ', text.length() - 15);
 			}
 			if (index >= 0) {
