@@ -257,8 +257,25 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	}
 	
 	public void removeTypes() {
+		Object[] all = fFormatViewerContentProvider.getElements(null);
 		IStructuredSelection selection= (IStructuredSelection)fFormatterListViewer.getSelection();
+		Object first = selection.getFirstElement();
+		int index = -1;
+		for (int i = 0; i < all.length; i++) {
+			Object object = all[i];
+			if (object.equals(first)) {
+				index = i;
+				break;
+			}
+		}
 		fFormatViewerContentProvider.removeDetailFormatters(selection.toArray());
+		all = fFormatViewerContentProvider.getElements(null);
+		if (index > all.length - 1) {
+			index = all.length - 1;
+		}
+		if (index >= 0) {
+			fFormatterListViewer.setSelection(new StructuredSelection(all[index]));
+		}
 	}
 	
 	public void editType() {
