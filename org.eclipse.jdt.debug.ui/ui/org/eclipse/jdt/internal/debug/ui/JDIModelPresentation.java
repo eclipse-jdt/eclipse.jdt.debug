@@ -12,14 +12,21 @@ package org.eclipse.jdt.internal.debug.ui;
 
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -30,8 +37,9 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILazyDebugModelPresentation;
+import org.eclipse.debug.ui.ILazyLabelListener;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IType;
@@ -81,7 +89,7 @@ import com.sun.jdi.VMDisconnectedException;
 /**
  * @see IDebugModelPresentation
  */
-public class JDIModelPresentation extends LabelProvider implements IDebugModelPresentation {
+public class JDIModelPresentation extends LabelProvider implements ILazyDebugModelPresentation {
 
 	/**
 	 * Qualified names presentation property (value <code>"DISPLAY_QUALIFIED_NAMES"</code>).
@@ -136,6 +144,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected static final String fgStringName= "java.lang.String"; //$NON-NLS-1$
 	
 	private JavaElementLabelProvider fJavaLabelProvider;
+	
+	static private LazyStackFrameTextLabelJob fLazyStackFrameTextLabelJob;
 	
 	public JDIModelPresentation() {
 		super();
@@ -1557,4 +1567,187 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		return fJavaLabelProvider;
 	}
+
+	/*
+	 * @see org.eclipse.debug.ui.ILazyDebugModelPresentation#getLazyImage(java.lang.Object, org.eclipse.debug.ui.ILazyLabelListener)
+	 */
+	public Image getLazyImage(Object element, ILazyLabelListener listener) {
+		return getImage(element);
+	}
+
+	/*
+	 * @see org.eclipse.debug.ui.ILazyDebugModelPresentation#getLazyText(java.lang.Object, org.eclipse.debug.ui.ILazyLabelListener)
+	 */
+	public String getLazyText(Object element, ILazyLabelListener listener) {
+		if (element instanceof IStackFrame) {
+			return getLazyStackFrameText((IJavaStackFrame)((IStackFrame) element).getAdapter(IJavaStackFrame.class), listener);
+		} else {
+			return getText(element);
+		}
+	}
+	
+	protected String getLazyStackFrameText(IJavaStackFrame stackFrame, ILazyLabelListener listener) {
+		addLazyStackFrameTextLabelRequest(stackFrame, listener);
+		return "pending...";
+	}
+	
+	private void addLazyStackFrameTextLabelRequest(IJavaStackFrame stackFrame, ILazyLabelListener listener) {
+		if (fLazyStackFrameTextLabelJob == null) {
+			fLazyStackFrameTextLabelJob= new LazyStackFrameTextLabelJob();
+			fLazyStackFrameTextLabelJob.addRequest(stackFrame, listener);
+		} else {
+			synchronized (fLazyStackFrameTextLabelJob) {
+				if (fLazyStackFrameTextLabelJob == null) {
+					fLazyStackFrameTextLabelJob= new LazyStackFrameTextLabelJob();
+				}
+				fLazyStackFrameTextLabelJob.addRequest(stackFrame, listener);
+			}
+		}
+	}
+
+	/**
+	 * Job used to compute stack frame text label in background.
+	 */
+	class LazyStackFrameTextLabelJob extends Job implements ISchedulingRule {
+		
+		/**
+		 * Store the data of a request
+		 */
+		final class LazyStackFrameTextLabelRequest {
+			public IJavaStackFrame fStackFrame;
+			public ILazyLabelListener fListener;
+			public String fTextLabel;
+			
+			public LazyStackFrameTextLabelRequest(IJavaStackFrame stackFrame, ILazyLabelListener listener) {
+				fStackFrame= stackFrame;
+				fListener= listener;
+			}
+		}
+
+		private List fRequests;
+		
+		public LazyStackFrameTextLabelJob() {
+			super("Java model presentation");
+			fRequests= new ArrayList();
+			setRule(this);
+		}
+		
+		public void addRequest(IJavaStackFrame stackFrame, ILazyLabelListener listener) {
+			fRequests.add(new LazyStackFrameTextLabelRequest(stackFrame, listener));
+			schedule();
+		}
+		
+		/*
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public IStatus run(IProgressMonitor monitor) {
+			synchronized (this) {
+				fLazyStackFrameTextLabelJob= null;
+			}
+
+			monitor.beginTask("Lazy Java stackframe labels", fRequests.size());
+			Map requestsToReschedule= new HashMap();
+			LazyStackFrameTextLabelRequest[] computedRequests= new LazyStackFrameTextLabelRequest[5];
+			int pos= 0;
+			Iterator iter= fRequests.iterator();
+			// try to compute the labels.
+			if (iter.hasNext()) {
+				LazyStackFrameTextLabelRequest request= (LazyStackFrameTextLabelRequest)iter.next();
+				ILazyLabelListener listener= request.fListener;
+				pos= computeLazyLabel(request, computedRequests, requestsToReschedule, pos);
+				monitor.worked(1);
+				while (iter.hasNext()) {
+					request= (LazyStackFrameTextLabelRequest)iter.next();
+					if (listener != request.fListener || pos == 5) {
+						// the listener is notify if the next listener is different, or
+						// if there are already 5 result waiting to be sent
+						notifyListener(computedRequests, pos);
+						pos= 0;
+						listener= request.fListener;
+					}
+					pos= computeLazyLabel(request, computedRequests, requestsToReschedule, pos);
+					monitor.worked(1);
+				}
+				if (pos > 0) {
+					notifyListener(computedRequests, pos);
+				}
+			}
+			
+			rescheduleRequests(requestsToReschedule);
+
+			return Status.OK_STATUS;
+		}
+		
+		/**
+		 * Compute the label. If the label cannot be computed (thread resumed), the request is discarded or added to list of
+		 * label to re-compute later.
+		 */
+		private int computeLazyLabel(LazyStackFrameTextLabelRequest request, LazyStackFrameTextLabelRequest[] computedRequests, Map requestsToReschedule, int pos) {
+			IJavaStackFrame stackFrame= request.fStackFrame;
+			IJavaThread thread= (IJavaThread)stackFrame.getThread();
+			if (!thread.isTerminated()) {
+				if (thread.isSuspended()) {
+					request.fTextLabel= getText(stackFrame);
+					computedRequests[pos++]= request;
+					return pos;
+				} else {
+					if (thread.isPerformingEvaluation()) {
+						List requests= (List)requestsToReschedule.get(thread);
+						if (requests == null) {
+							requests= new ArrayList();
+							requestsToReschedule.put(thread, requests);
+						}
+						requests.add(request);
+					}
+				}
+			}
+			return pos;
+		}
+
+		/**
+		 * Reschedule the given requests.
+		 */
+		private void rescheduleRequests(Map requestsToReschedule) {
+			requestsToReschedule.entrySet();
+			for (Iterator iter= requestsToReschedule.entrySet().iterator(); iter.hasNext();) {
+				final Map.Entry entry= (Map.Entry)iter.next();
+				// a runnable is added to the thread queue, the runnable
+				// will request the computation of the label
+				((IJavaThread)entry.getKey()).queueRunnable(new Runnable() {
+					public void run() {
+						for (Iterator iterator= ((List)entry.getValue()).iterator(); iterator.hasNext();) {
+							LazyStackFrameTextLabelRequest request= (LazyStackFrameTextLabelRequest)iterator.next();
+							addLazyStackFrameTextLabelRequest(request.fStackFrame, request.fListener);
+						}
+					}
+				});
+			}
+		}
+
+		private void notifyListener(LazyStackFrameTextLabelRequest[] requests, int pos) {
+			ILazyLabelListener listener= requests[0].fListener;
+			String[] texts= new String[pos];
+			IJavaStackFrame[] stackFrames= new IJavaStackFrame[pos];
+			for (int i= 0; i < pos; i++) {
+				texts[i]= requests[i].fTextLabel;
+				stackFrames[i]= requests[i].fStackFrame;
+			}
+			listener.lazyTextsComputed(stackFrames, texts);
+		}
+
+		/*
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean contains(ISchedulingRule rule) {
+			return rule instanceof LazyStackFrameTextLabelJob;
+		}
+
+		/*
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule instanceof LazyStackFrameTextLabelJob;
+		}
+	}
+
 }
