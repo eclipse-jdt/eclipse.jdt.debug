@@ -143,7 +143,11 @@ public class EvaluationSourceGenerator {
 		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
 		unit.accept(visitor);
 		
-		setSource(visitor.getSource());
+		String sourceRes= visitor.getSource();
+		if (sourceRes == null) {
+			return;
+		}
+		setSource(sourceRes);
 		setCompilationUnitName(visitor.getCompilationUnitName());
 		setSnippetStart(visitor.getSnippetStart());
 		setRunMethodStart(visitor.getRunMethodStart());
@@ -178,7 +182,8 @@ public class EvaluationSourceGenerator {
 				int lineNumber= frame.getLineNumber();
 				if (baseSource != null && lineNumber != -1) {
 					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true);
-				} else {
+				} 
+				if (fSource == null) {
 					JDIObjectValue object= (JDIObjectValue)frame.getThis();
 					BinaryBasedSourceGenerator mapper;
 					if (object != null) {
@@ -201,11 +206,12 @@ public class EvaluationSourceGenerator {
 		if (fSource == null) {
 				String baseSource= getTypeSourceFromProject(thisObject.getJavaType().getName(), javaProject);
 				int lineNumber= getLineNumber((JDIObjectValue) thisObject);
-				if (baseSource == null || lineNumber == -1) {
+				if (baseSource != null && lineNumber != -1) {
+					createEvaluationSourceFromSource(baseSource, lineNumber, true);
+				}
+				if (fSource == null) {
 					BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIObjectValue) thisObject, false);
 					createEvaluationSourceFromJDIObject(mapper);
-				} else {
-					createEvaluationSourceFromSource(baseSource, lineNumber, true);
 				}
 		}
 		return fSource;

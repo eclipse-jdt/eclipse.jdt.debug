@@ -118,7 +118,13 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		fIsLineNumber= isLineNumber;
 	}
 	
+	/**
+	 * return the generated source or <code>null</code> if no source can be generated.
+	 */
 	public String getSource() {
+		if (fSource == null) {
+			return null;
+		}
 		return fSource.toString();
 	}
 	
@@ -577,6 +583,10 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * @see ASTVisitor#endVisit(CompilationUnit)
 	 */
 	public void endVisit(CompilationUnit node) {
+		if (!rightTypeFound()) { // if the right type hasn't been found
+			fSource= null;
+			return;
+		}
 		fSource = buildCompilationUnit(fSource, node);
 	}
 
