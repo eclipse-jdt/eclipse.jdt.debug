@@ -182,7 +182,7 @@ public class JavaApplicationShortcut implements ILaunchShortcut {
 		ILaunchConfiguration config = null;
 		try {
 			ILaunchConfigurationType configType = getJavaLaunchConfigType();
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, type.getElementName() + " [" + type.getJavaProject().getElementName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, type.getElementName()); 
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, type.getFullyQualifiedName());
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, type.getJavaProject().getElementName());
 			wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_DEFAULT);
