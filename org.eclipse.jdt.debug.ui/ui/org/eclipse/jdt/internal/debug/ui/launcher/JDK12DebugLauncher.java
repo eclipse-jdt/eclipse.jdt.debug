@@ -95,7 +95,7 @@ public class JDK12DebugLauncher extends JDK12Launcher {
 		arguments.add("-Xdebug"); //$NON-NLS-1$
 		arguments.add("-Xnoagent"); //$NON-NLS-1$
 		arguments.add("-Djava.compiler=NONE"); //$NON-NLS-1$
-		arguments.add("-Xrunjdwp:transport=dt_socket,address=127.0.0.1:" + port); //$NON-NLS-1$
+		arguments.add("-Xrunjdwp:transport=dt_socket,address=localhost:" + port); //$NON-NLS-1$
 
 		arguments.add(config.getClassToLaunch());
 		addArguments(config.getProgramArguments(), arguments);
