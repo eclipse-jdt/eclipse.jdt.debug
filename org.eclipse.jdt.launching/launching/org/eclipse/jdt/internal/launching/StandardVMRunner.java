@@ -68,10 +68,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 			}
 			if (containsSpace) {
 				buf.append('\"');
-				buf.append(command);
+				buf.append(command.toString());
 				buf.append('\"');
 			} else {
-				buf.append(command);
+				buf.append(command.toString());
 			}
 		}	
 		return buf.toString();
