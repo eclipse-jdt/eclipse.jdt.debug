@@ -42,6 +42,7 @@ import org.eclipse.jdt.debug.tests.core.LaunchConfigurationArgumentTests;
 import org.eclipse.jdt.debug.tests.core.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.core.LaunchModeTests;
 import org.eclipse.jdt.debug.tests.core.LaunchTests;
+import org.eclipse.jdt.debug.tests.core.LaunchesTests;
 import org.eclipse.jdt.debug.tests.core.LineTrackerTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.MethodBreakpointTests;
@@ -94,6 +95,7 @@ public class AutomatedSuite extends TestSuite {
 		
 		addTest(new TestSuite(LaunchModeTests.class));
 		addTest(new TestSuite(LaunchTests.class));
+		addTest(new TestSuite(LaunchesTests.class));
 		addTest(new TestSuite(ClasspathVariableTests.class));
 		addTest(new TestSuite(DebugEventTests.class));
 		addTest(new TestSuite(ClasspathContainerTests.class));
