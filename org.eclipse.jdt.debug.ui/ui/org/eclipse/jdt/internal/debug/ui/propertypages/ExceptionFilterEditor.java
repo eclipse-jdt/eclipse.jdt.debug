@@ -470,7 +470,7 @@ public class ExceptionFilterEditor {
 			return;
 		}
 
-		dialog.setTitle(PropertyPageMessages.getString("ExceptionFilterEditor.21")); //$NON-NLS-1$
+		dialog.setTitle(PropertyPageMessages.getString("ExceptionFilterEditor.19")); //$NON-NLS-1$
 		dialog.setMessage(PropertyPageMessages.getString("ExceptionFilterEditor.22")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
