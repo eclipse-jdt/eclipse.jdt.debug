@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import java.text.MessageFormat;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -35,17 +36,21 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class AttachSourceAction extends RuntimeClasspathAction {
 	
-	private IRuntimeClasspathEntry fEntry;
+	private IRuntimeClasspathEntry[] fEntries;
 
 	// a dialog to set the source attachment properties
 	private class SourceAttachmentDialog extends StatusDialog implements IStatusChangeListener {
 		
 		private SourceAttachmentBlock fSourceAttachmentBlock;
 				
-		public SourceAttachmentDialog(Shell parent, IRuntimeClasspathEntry entry) {
+		public SourceAttachmentDialog(Shell parent, IRuntimeClasspathEntry[] entries) {
 			super(parent);
-			setTitle(MessageFormat.format(ActionMessages.getString("AttachSourceAction.Attachments_For_____{0}_____1"),new String[] {entry.getPath().toString()})); //$NON-NLS-1$
-			fSourceAttachmentBlock= new SourceAttachmentBlock(this, entry.getClasspathEntry(), null, null);
+			if (entries.length > 1) {
+				setTitle(ActionMessages.getString("AttachSourceAction.4")); //$NON-NLS-1$
+			} else {
+				setTitle(MessageFormat.format(ActionMessages.getString("AttachSourceAction.Attachments_For_____{0}_____1"),new String[] {entries[0].getPath().toString()})); //$NON-NLS-1$
+			}
+			fSourceAttachmentBlock= new SourceAttachmentBlock(this, entries[0].getClasspathEntry(), null, null);
 		}
 		
 		/* (non-Javadoc)
@@ -93,13 +98,16 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	 * 
 	 * @see IAction#run()
 	 */	
-	public void run() {
-		SourceAttachmentDialog dialog = new SourceAttachmentDialog(getShell(), fEntry);
+	public void run() { 
+		SourceAttachmentDialog dialog = new SourceAttachmentDialog(getShell(), fEntries);
 		int res = dialog.open();
 		if (res == Window.OK) {
-			fEntry.setSourceAttachmentPath(dialog.getSourceAttachmentPath());
-			fEntry.setSourceAttachmentRootPath(dialog.getSourceAttachmentRootPath());
-			getViewer().refresh(fEntry);
+			for (int i = 0; i < fEntries.length; i++) {
+				IRuntimeClasspathEntry entry = fEntries[i];
+				entry.setSourceAttachmentPath(dialog.getSourceAttachmentPath());
+				entry.setSourceAttachmentRootPath(dialog.getSourceAttachmentRootPath());
+				getViewer().refresh(entry);
+			}
 			getViewer().notifyChanged();
 		}
 	}
@@ -108,15 +116,27 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		if (selection.size() == 1) {
-			Object selected= selection.getFirstElement();
+		fEntries = new IRuntimeClasspathEntry[selection.size()];
+		Iterator iterator = selection.iterator();
+		int i = 0;
+		while (iterator.hasNext()) {
+			Object selected= iterator.next();
 			if (selected instanceof IRuntimeClasspathEntry) {
-				fEntry = (IRuntimeClasspathEntry)selected;
-				int type = fEntry.getType();
-				return type == IRuntimeClasspathEntry.VARIABLE || type == IRuntimeClasspathEntry.ARCHIVE;
+				IRuntimeClasspathEntry entry = (IRuntimeClasspathEntry)selected;
+				int type = entry.getType();
+				switch (type) {
+					case IRuntimeClasspathEntry.VARIABLE:
+					case IRuntimeClasspathEntry.ARCHIVE:
+						fEntries[i] = entry;
+						i++;
+						break;
+					default:
+						return false;
+				}
+			} else {
+				return false;
 			}
 		}
-		
-		return false;
+		return selection.size() > 0;
 	}
 }
