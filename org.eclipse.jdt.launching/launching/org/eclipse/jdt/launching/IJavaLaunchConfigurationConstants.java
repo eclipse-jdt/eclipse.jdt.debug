@@ -413,6 +413,14 @@ public interface IJavaLaunchConfigurationConstants {
 	 * @since 2.1
 	 */
 	public static final int ERR_COULD_NOT_BUILD_HTML = 123;		
+	
+	/**
+	 * Status code indicating that the project referenced by a launch configuration
+	 * is closed.
+	 * 
+	 * @since 3.0
+	 */
+	public static final int ERR_PROJECT_CLOSED = 124;			
 
 	/**
 	 * Status code indicating an unexpected internal error.

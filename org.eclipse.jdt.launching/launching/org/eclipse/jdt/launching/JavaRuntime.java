@@ -993,7 +993,10 @@ public final class JavaRuntime {
 		if ((projectName == null) || (projectName.trim().length() < 1)) {
 			return null;
 		}			
-		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);		
+		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);
+		if (javaProject != null && !javaProject.getProject().isOpen()) {
+			abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.28"), new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_PROJECT_CLOSED, null); //$NON-NLS-1$
+		}
 		if ((javaProject == null) || !javaProject.exists()) {
 			abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Launch_configuration_{0}_references_non-existing_project_{1}._1"), new String[] {configuration.getName(), projectName}), IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT, null); //$NON-NLS-1$
 		}
