@@ -100,7 +100,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
 	/**
-	 * @see ILaunchConfigurationTab#createControl(Composite)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -289,7 +289,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
@@ -354,13 +354,13 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#dispose()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
 	}
 		
 	/**
-	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText().trim());
@@ -472,7 +472,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		IJavaElement javaElement = getContext();
@@ -516,7 +516,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
 		
@@ -550,14 +550,14 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#getName()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return LauncherMessages.getString("JavaConnectTab.Conn&ect_20"); //$NON-NLS-1$
 	}			
 	
 	/**
-	 * @see ILaunchConfigurationTab#getImage()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
 		return DebugUITools.getImage(IDebugUIConstants.IMG_LCL_DISCONNECT);
@@ -570,7 +570,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		return fConnector;
 	}
 	/**
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		updateLaunchConfigurationDialog();

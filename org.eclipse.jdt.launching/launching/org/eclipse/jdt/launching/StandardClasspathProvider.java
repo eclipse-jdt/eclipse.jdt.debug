@@ -21,7 +21,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
 
 /**
- * Default implementation for classpath provider
+ * Default implementation for classpath provider.
  * <p>
  * This class may be subclassed.
  * </p>

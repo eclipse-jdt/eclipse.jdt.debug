@@ -44,7 +44,7 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 	protected SourceLookupBlock fSourceLookupBlock;
 	
 	/**
-	 * @see ILaunchConfigurationTab#createControl(Composite)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -66,7 +66,7 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// be default, use a prompting source locator
@@ -76,14 +76,14 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fSourceLookupBlock.initializeFrom(configuration);
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, JavaUISourceLocator.ID_PROMPTING_JAVA_SOURCE_LOCATOR);
@@ -91,14 +91,14 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#getName()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return LauncherMessages.getString("JavaSourceLookupTab.Source_1"); //$NON-NLS-1$
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#getImage()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
