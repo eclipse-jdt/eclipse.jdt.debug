@@ -66,6 +66,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -181,6 +182,13 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		fControl = parent;	
 		
 		GridData data;
+		
+		Label tableLabel = new Label(parent, SWT.NONE);
+		tableLabel.setText(JREMessages.getString("InstalledJREsBlock.15")); //$NON-NLS-1$
+		data = new GridData();
+		data.horizontalSpan = 2;
+		tableLabel.setLayoutData(data);
+		tableLabel.setFont(font);
 				
 		Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		
@@ -794,5 +802,23 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 			return 1/3F;
 		}
 
+	}
+	
+	/**
+	 * Populates the JRE table with existing JREs defined in the workspace.
+	 */
+	public void fillWithWorkspaceJREs() {
+		// fill with JREs
+		List standins = new ArrayList();
+		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
+		for (int i = 0; i < types.length; i++) {
+			IVMInstallType type = types[i];
+			IVMInstall[] installs = type.getVMInstalls();
+			for (int j = 0; j < installs.length; j++) {
+				IVMInstall install = installs[j];
+				standins.add(new VMStandin(install));
+			}
+		}
+		setJREs((IVMInstall[])standins.toArray(new IVMInstall[standins.size()]));	
 	}
 }

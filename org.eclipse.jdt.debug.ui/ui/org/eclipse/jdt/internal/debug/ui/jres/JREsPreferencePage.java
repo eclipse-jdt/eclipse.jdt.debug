@@ -12,8 +12,6 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -24,10 +22,8 @@ import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
-import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.PreferencePage;
@@ -37,7 +33,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -74,18 +69,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		// force auto-dection to occurr before populating the VM list.
 		JavaRuntime.getDefaultVMInstall();
 		
-		// Retrieve all known VM installs from each vm install type
-		List vms = new ArrayList();
-		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-		for (int i= 0; i < types.length; i++) {
-			IVMInstall[] vmInstalls= types[i].getVMInstalls();
-			for (int j = 0; j < vmInstalls.length; j++) {
-				vms.add(new VMStandin(vmInstalls[j]));
-			}
-		}
-		
-		// Set the input of the main list control
-		fJREBlock.setJREs((IVMInstall[])vms.toArray(new IVMInstall[vms.size()]));
+		fJREBlock.fillWithWorkspaceJREs();
 		
 		// Set up the default VM
 		initDefaultVM();
@@ -125,13 +109,7 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		parent.setLayout(layout);		
 		
 		GridData data;
-				
-		Label tableLabel = new Label(parent, SWT.NONE);
-		tableLabel.setText(JREMessages.getString("JREsPreferencePage.3")); //$NON-NLS-1$
-		data = new GridData();
-		tableLabel.setLayoutData(data);
-		tableLabel.setFont(font);
-		
+					
 		fJREBlock = new InstalledJREsBlock();
 		fJREBlock.createControl(parent);
 		Control control = fJREBlock.getControl();

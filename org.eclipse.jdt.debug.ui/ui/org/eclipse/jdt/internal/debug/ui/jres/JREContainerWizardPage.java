@@ -11,9 +11,6 @@
 package org.eclipse.jdt.internal.debug.ui.jres;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -23,7 +20,6 @@ import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.ui.wizards.IClasspathContainerPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.graphics.Image;
@@ -137,19 +133,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		fJREBlock.createControl(parent);
 		setControl(fJREBlock.getControl());
 		fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), getClass().getName());
-		
-		// fill with JREs
-		List standins = new ArrayList();
-		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-		for (int i = 0; i < types.length; i++) {
-			IVMInstallType type = types[i];
-			IVMInstall[] installs = type.getVMInstalls();
-			for (int j = 0; j < installs.length; j++) {
-				IVMInstall install = installs[j];
-				standins.add(new VMStandin(install));
-			}
-		}
-		fJREBlock.setJREs((IVMInstall[])standins.toArray(new IVMInstall[standins.size()]));
+		fJREBlock.fillWithWorkspaceJREs();		
 		
 		setTitle(JREMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
 		setMessage(JREMessages.getString("JREContainerWizardPage.Select_the_JRE_used_to_build_this_project._4")); //$NON-NLS-1$
