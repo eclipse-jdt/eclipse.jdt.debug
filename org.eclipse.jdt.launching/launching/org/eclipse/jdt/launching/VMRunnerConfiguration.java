@@ -34,15 +34,16 @@ public class VMRunnerConfiguration {
 	 * Creates a new configuration for launching a VM to run the given main class
 	 * using the given class path.
 	 *
-	 * @param classToLaunch The fully qualified name of the class to launch. My not be null.
-	 * @param classPath 	The classpath. May not be null;
+	 * @param classToLaunch The fully qualified name of the class to launch. May not be null.
+	 * @param classPath 	The classpath. May not be null.
 	 */
 	public VMRunnerConfiguration(String classToLaunch, String[] classPath) {
 		if (classToLaunch == null)
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.classNotNull")); //$NON-NLS-1$
 		if (classPath == null)
 			throw new IllegalArgumentException(LaunchingMessages.getString("vmRunnerConfig.assert.classPathNotNull")); //$NON-NLS-1$
-		fClassToLaunch= classToLaunch;
+		//see bug 7178
+		fClassToLaunch= classToLaunch.replace('.','$');
 		fClassPath= classPath;
 	}
 	
@@ -50,7 +51,7 @@ public class VMRunnerConfiguration {
 	 * Sets the custom VM arguments. These arguments will be appended to the list of 
 	 * VM arguments that a IVMRunner uses when launching a VM. Typically, these VM arguments
 	 * are set by the user.
-	 * These arguments will no be interpreted by the IVMRunner, the client is responsible for
+	 * These arguments will not be interpreted by the IVMRunner, the client is responsible for
 	 * passing arguments compatible with a particular IVMRunner.
 	 *
 	 * @param args the list of VM arguments
@@ -65,7 +66,7 @@ public class VMRunnerConfiguration {
 	 * Sets the custom program arguments. These arguments will be appended to the list of 
 	 * program arguments that a IVMRunner uses when launching a VM (in general: none). 
 	 * Typically, these VM arguments are set by the user.
-	 * These arguments will no be interpreted by the IVMRunner, the client is responsible for
+	 * These arguments will not be interpreted by the IVMRunner, the client is responsible for
 	 * passing arguments compatible with a particular IVMRunner.
 	 *
 	 * @param args the list of arguments	
@@ -156,7 +157,7 @@ public class VMRunnerConfiguration {
 	}
 	
 	/**
-	 * Returns the working of a launched VM.
+	 * Returns the working directory of a launched VM.
 	 * 
 	 * @return the absolute path to the working directory
 	 *  of a launched VM, or <code>null</code> if the working
