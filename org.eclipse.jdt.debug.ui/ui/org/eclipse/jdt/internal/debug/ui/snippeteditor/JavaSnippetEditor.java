@@ -105,7 +105,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -873,10 +872,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	}
 	
 	protected IJavaProject findJavaProject() throws JavaModelException {
-		Object input= getEditorInput();
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput file= (IFileEditorInput)input;
-			IProject p= file.getFile().getProject();
+		IFile file = getFile();
+		if (file != null) {
+			IProject p= file.getProject();
 			try {
 				if (p.getNature(JavaCore.NATURE_ID) != null) {
 					return JavaCore.create(p);
@@ -1156,10 +1154,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
      */
 	public IFile getFile() {
 		IEditorInput input= getEditorInput();
-		if (input instanceof IFileEditorInput) {
-			return ((IFileEditorInput)input).getFile();
-		}
-		return null;
+		return (IFile) input.getAdapter(IFile.class);
 	}
 	
 	/* (non-Javadoc)
@@ -1218,10 +1213,9 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 	 */
 	protected void reportNotInJavaProjectError() {
 		String projectName= null;
-		Object input= getEditorInput();
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput file= (IFileEditorInput)input;
-			IProject p= file.getFile().getProject();
+		IFile file= getFile();
+		if (file != null) {
+			IProject p= file.getProject();
 			projectName= p.getName();
 		}
 		String message= ""; //$NON-NLS-1$

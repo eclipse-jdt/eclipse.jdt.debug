@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -79,7 +80,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -173,11 +173,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 				IResource resource = null;
 				Map attributes = new HashMap(10);
 				if (type == null) {
-					if (editorInput instanceof IFileEditorInput) {
-						resource= ((IFileEditorInput)editorInput).getFile();
-					} else {
-						resource= ResourcesPlugin.getWorkspace().getRoot();
-					}
+					resource = getResource(editorPart);
 					if (editorPart instanceof ITextEditor) {
 						CompilationUnit unit = parseCompilationUnit((ITextEditor)editorPart);
 						Iterator types = unit.types().iterator();
@@ -542,11 +538,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTargetExtensio
 	}	
 	
 	protected static IResource getResource(IEditorPart editor) {
-		IResource resource;
 		IEditorInput editorInput = editor.getEditorInput();
-		if (editorInput instanceof IFileEditorInput) {
-			resource= ((IFileEditorInput)editorInput).getFile();
-		} else {
+		IResource resource = (IResource) editorInput.getAdapter(IFile.class);
+		if (resource == null) {
 			resource= ResourcesPlugin.getWorkspace().getRoot();
 		}
 		return resource;

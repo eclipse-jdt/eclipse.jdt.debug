@@ -19,8 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -40,7 +42,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.ui.IFileEditorInput;
 
 public class AppletLaunchConfigurationUtils {
 	
@@ -183,8 +184,8 @@ public class AppletLaunchConfigurationUtils {
 	}
 	
 	private static Object computeScope(Object element) {
-		if (element instanceof IFileEditorInput) {
-			element= ((IFileEditorInput)element).getFile();
+		if (element instanceof IAdaptable) {
+			element= ((IAdaptable)element).getAdapter(IFile.class);
 		}
 		if (element instanceof IResource) {
 			IJavaElement javaElement = JavaCore.create((IResource)element);
