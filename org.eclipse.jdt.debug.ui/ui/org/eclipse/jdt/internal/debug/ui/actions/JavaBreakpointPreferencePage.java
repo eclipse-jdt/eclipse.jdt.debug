@@ -237,14 +237,14 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		fHitCountEnabler =
 			new BooleanFieldEditor(
 				JavaBreakpointPreferenceStore.HIT_COUNT_ENABLED,
-				"Enable Hit Count",
+				"Enable &Hit Count",
 				parent);
 		addField(fHitCountEnabler);
 
 		IntegerFieldEditor ife =
 			new IntegerFieldEditor(
 				JavaBreakpointPreferenceStore.HIT_COUNT,
-				"Hit Count:",
+				"H&it Count:",
 				parent);
 		ife.setValidRange(1, Integer.MAX_VALUE);
 		fHitCountTextControl = ife.getTextControl(parent);
@@ -269,12 +269,12 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		fBreakpoint = breakpoint;
 	}
 		protected FieldEditor createCaughtEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CAUGHT, "Caught", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CAUGHT, "&Caught", parent);
 		return bfe;
 	}
 
 	protected FieldEditor createEnabledEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.ENABLED, "Enabled",parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.ENABLED, "&Enabled",parent);
 		return bfe;
 	}
 
@@ -285,22 +285,22 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	}
 
 	protected FieldEditor createMethodEntryEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.METHOD_ENTRY, "Entry", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.METHOD_ENTRY, "E&ntry", parent);
 		return bfe;
 	}
 
 	protected FieldEditor createMethodExitEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.METHOD_EXIT, "Exit", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.METHOD_EXIT, "E&xit", parent);
 		return bfe;
 	}
 
 	protected FieldEditor createModificationEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.MODIFICATION, "Modification", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.MODIFICATION, "&Modification", parent);
 		return bfe;
 	}
 
 	protected FieldEditor createPersistedEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.PERSISTED, "Persisted",parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.PERSISTED, "&Persisted",parent);
 		return bfe;
 	}
 
@@ -308,8 +308,8 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		RadioGroupFieldEditor editor= new RadioGroupFieldEditor(
  			JavaBreakpointPreferenceStore.SUSPEND_POLICY, "Suspend Policy", 1,
  			new String[][] {
- 				{"Suspend Thread", THREAD_SUSPEND_POLICY},
- 				{"Suspend VM", VM_SUSPEND_POLICY}
+ 				{"Suspend &Thread", THREAD_SUSPEND_POLICY},
+ 				{"Suspend &VM", VM_SUSPEND_POLICY}
  			},
            parent);	
 
@@ -317,7 +317,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	}
 
 	protected FieldEditor createUncaughtEditor(Composite parent) {	
-		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.UNCAUGHT, "Uncaught", parent);
+		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.UNCAUGHT, "&Uncaught", parent);
 		return bfe;
 	}
 }
