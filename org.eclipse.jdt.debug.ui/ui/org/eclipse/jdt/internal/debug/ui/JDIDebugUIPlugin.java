@@ -116,6 +116,15 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 															"normal", //$NON-NLS-1$
 															"synthetic"}; //$NON-NLS-1$
 
+	/**
+	 * Same mode modifiers as defined in <code>fgModeModifierNames</code>, with
+	 * the addition of mnemonics for keyboard shortcut accessibility.
+	 */
+	public static final String[] fgAccessibleModeModifierNames = new String[] {"&static", //$NON-NLS-1$
+															"&final", //$NON-NLS-1$
+															"&normal", //$NON-NLS-1$
+															"s&ynthetic"}; //$NON-NLS-1$
+
 	public static final String DEFAULT_VARIABLES_FILTER_PREFIX = getUniqueIdentifier() + ".default_variables_filters"; //$NON-NLS-1$
 	public static final String VARIABLES_VIEW_FILTER_PREFIX = getUniqueIdentifier() + ".variables_view_filters"; //$NON-NLS-1$
 	public static final String EXPRESSIONS_VIEW_FILTER_PREFIX = getUniqueIdentifier() + ".expressions_view_filters"; //$NON-NLS-1$

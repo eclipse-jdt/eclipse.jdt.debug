@@ -228,7 +228,7 @@ public class JavaVariablesFilterPreferencePage extends PreferencePage implements
 			
 			// Create the row label
 			label = new Label(rowComp, SWT.NONE);
-			label.setText(JDIDebugUIPlugin.fgModeModifierNames[i]);
+			label.setText(JDIDebugUIPlugin.fgAccessibleModeModifierNames[i]);
 			label.setFont(rowComp.getFont());
 			
 			// Create the +/- buttons
