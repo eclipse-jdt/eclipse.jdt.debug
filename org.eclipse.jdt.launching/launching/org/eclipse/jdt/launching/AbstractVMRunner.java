@@ -6,11 +6,14 @@ package org.eclipse.jdt.launching;
  */
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IProcess;
 
 /**
  * Abstract implementation of a VM runner.
@@ -57,6 +60,17 @@ public abstract class AbstractVMRunner implements IVMRunner {
 			buff.append(' ');	
 		} 
 		return buff.toString().trim();
+	}
+	
+	/**
+	 * Returns the default process attribute map for java processes.
+	 * 
+	 * @return defatult process attribute map for java processes
+	 */
+	protected Map getDefaultProcessMap() {
+		Map map = new HashMap();
+		map.put(IProcess.ATTR_PROCESS_TYPE, IJavaLaunchConfigurationConstants.ID_JAVA_PROCESS_TYPE);
+		return map;
 	}
 			
 }

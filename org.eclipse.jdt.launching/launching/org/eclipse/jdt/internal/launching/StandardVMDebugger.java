@@ -182,7 +182,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 					return;
 				}				
 				
-				IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine));
+				IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine), getDefaultProcessMap());
 				process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
 				
 				boolean retry= false;

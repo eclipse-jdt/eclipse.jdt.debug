@@ -41,6 +41,14 @@ public interface IJavaLaunchConfigurationConstants {
 	 * (value <code>org.eclipse.jdt.launching.socketAttachConnector"</code>).
 	 */
 	public static final String ID_SOCKET_ATTACH_VM_CONNECTOR = LaunchingPlugin.getUniqueIdentifier() + ".socketAttachConnector"; //$NON-NLS-1$	
+	
+	/**
+	 * Identifier for the java process type, which is annotated on processes created
+	 * by the local java application launch delegate.
+	 * 
+	 * (value <code>"java"</code>).
+	 */
+	public static final String ID_JAVA_PROCESS_TYPE = "java"; //$NON-NLS-1$ 
 			
 	/**
 	 * Launch configuration attribute key. The value is a name of
