@@ -35,6 +35,9 @@ import org.eclipse.ui.IWorkbenchPart;
 
 
 public class PopupInspectAction extends InspectAction implements IInformationProvider {
+	
+	public static final String ACTION_DEFININIITION_ID = "org.eclipse.jdt.debug.ui.commands.Inspect"; //$NON-NLS-1$
+	
 	private ITextViewer viewer;
 	private JavaInspectExpression expression;
 	
@@ -65,6 +68,7 @@ public class PopupInspectAction extends InspectAction implements IInformationPro
 			public IInformationControl createInformationControl(Shell parent) {
 				IAction action = new MoveResultToViewerAction(new MoveToViewerRunnable());
 				action.setText(ActionMessages.getString("PopupInspectAction.3")); //$NON-NLS-1$
+				action.setActionDefinitionId(ACTION_DEFININIITION_ID);
 				IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
 				expression = new JavaInspectExpression(result);
 				return new PopupInformationControl(parent, DebugUITools.newExpressionInformationControlAdapter(page, expression), action);

@@ -34,10 +34,5 @@ public class MoveResultToViewerAction extends Action {
 	public void run() {
 		Display.getDefault().asyncExec(runnable);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#getActionDefinitionId()
-	 */
-	public String getActionDefinitionId() {
-		return "org.eclipse.debug.ui.commands.defaultDebugPopupClose"; //$NON-NLS-1$
-	}
+
 }

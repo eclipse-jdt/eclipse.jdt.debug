@@ -38,6 +38,8 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class PopupDisplayAction extends DisplayAction implements IInformationProvider {
 	
+	public static final String ACTION_DEFINITION_ID = "org.eclipse.jdt.debug.ui.commands.Display"; //$NON-NLS-1$
+	
 	private ITextViewer viewer;
 	private String snippet;
 	private String resultString;
@@ -53,6 +55,7 @@ public class PopupDisplayAction extends DisplayAction implements IInformationPro
 	private void showPopup() {		
 		final IAction action = new MoveResultToViewerAction(new MoveToDisplayViewerRunnable());
 		action.setText(ActionMessages.getString("PopupDisplayAction.2")); //$NON-NLS-1$
+		action.setActionDefinitionId(ACTION_DEFINITION_ID);
 				
 		final InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {

@@ -69,6 +69,8 @@ import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugOptionsManager;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveResultToViewerAction;
+import org.eclipse.jdt.internal.debug.ui.actions.PopupDisplayAction;
+import org.eclipse.jdt.internal.debug.ui.actions.PopupInspectAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -731,6 +733,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		});
 
 		action.setText(SnippetMessages.getString("JavaSnippetEditor.46"));  //$NON-NLS-1$
+		
+		//FIXME: Is there a better way to get the action definition id????
+		action.setActionDefinitionId(PopupDisplayAction.ACTION_DEFINITION_ID);
 
 		DisplayPopupAdapter adapter = new DisplayPopupAdapter();
 		adapter.setInformation(resultStringText);
@@ -789,6 +794,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			}
 		});
 		action.setText(SnippetMessages.getString("JavaSnippetEditor.49"));  //$NON-NLS-1$
+		action.setActionDefinitionId(PopupDisplayAction.ACTION_DEFINITION_ID);
 		
 		ErrorPopupAdapter adapter = new ErrorPopupAdapter();
 		adapter.setInformation(errorString.toString());
@@ -838,6 +844,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 					}
 				});
 				action.setText(SnippetMessages.getString("JavaSnippetEditor.50")); //$NON-NLS-1$
+				//FIX-ME: Is there a better way to get the action definition id???
+				action.setActionDefinitionId(PopupInspectAction.ACTION_DEFININIITION_ID);
 				
 				InformationPresenter infoPresenter = new InformationPresenter(new IInformationControlCreator() {
 					public IInformationControl createInformationControl(Shell parent) {
@@ -898,6 +906,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			}
 		});
 		action.setText(SnippetMessages.getString("JavaSnippetEditor.51")); //$NON-NLS-1$
+		action.setActionDefinitionId(PopupDisplayAction.ACTION_DEFINITION_ID);
 		
 		ExceptionPopupAdapter adapter = new ExceptionPopupAdapter();
 		adapter.setInformation(exceptionText);
@@ -923,6 +932,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				}
 			});			
 			action.setText(SnippetMessages.getString("JavaSnippetEditor.51")); //$NON-NLS-1$
+			action.setActionDefinitionId(PopupDisplayAction.ACTION_DEFINITION_ID);
+			
 			ExceptionPopupAdapter adapter = new ExceptionPopupAdapter();
 			adapter.setInformation(message);
 			
