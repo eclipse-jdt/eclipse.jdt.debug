@@ -422,7 +422,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 
 			Iterator iter= typeDeclaration.superInterfaceTypes().iterator();
 			if (iter.hasNext()) {
-				source.append(" implements "); //$NON-NLS-1$
+				if (typeDeclaration.isInterface()) {
+					source.append(" extends "); //$NON-NLS-1$
+				} else {
+					source.append(" implements "); //$NON-NLS-1$
+				}
 				source.append(getTypeName((Type) iter.next()));
 				while (iter.hasNext()) {
 					source.append(',');
@@ -441,7 +445,11 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 				Name name = (Name) iterator.next();
 				if (first) {
 					first = false;
-					source.append(" implements "); //$NON-NLS-1$
+					if (typeDeclaration.isInterface()) {
+						source.append(" extends "); //$NON-NLS-1$
+					} else {
+						source.append(" implements "); //$NON-NLS-1$
+					}
 				} else {
 					source.append(',');
 				}
