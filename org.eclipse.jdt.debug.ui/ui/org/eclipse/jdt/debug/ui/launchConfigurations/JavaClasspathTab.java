@@ -11,10 +11,15 @@
 package org.eclipse.jdt.debug.ui.launchConfigurations;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
@@ -376,5 +381,34 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 */
 	public Image getImage() {
 		return getClasspathImage();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration launchConfig) {
+		setErrorMessage(null);
+		setMessage(null);
+		String projectName= null;
+		try {
+			projectName= launchConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
+		} catch (CoreException e) {
+			return false;
+		}
+		if (projectName.length() == 0) {
+			return false;
+		}
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IStatus status = workspace.validateName(projectName, IResource.PROJECT);
+		if (status.isOK()) {
+			if (!ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).exists()) {
+				setErrorMessage(LauncherMessages.getString("JavaMainTab.Project_does_not_exist_15")); //$NON-NLS-1$
+				return false;
+			}
+		} else {
+			setErrorMessage(MessageFormat.format(LauncherMessages.getString("JavaMainTab.19"), new String[]{status.getMessage()})); //$NON-NLS-1$
+			return false;
+		}
+		return true;
 	}
 }
