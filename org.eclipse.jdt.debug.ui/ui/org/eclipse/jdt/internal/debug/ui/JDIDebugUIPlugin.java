@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -199,8 +198,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		return null;
 	}	
 	
-	/* (non - Javadoc)
-	 * Method declared in AbstractUIPlugin
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
 	 */
 	protected ImageRegistry createImageRegistry() {
 		return JavaDebugImages.getImageRegistry();
@@ -282,8 +281,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 	}	
 	
-	/**
-	 * @see AbstractUIPlugin#initializeDefaultPreferences
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeDefaultPreferences(org.eclipse.jface.preference.IPreferenceStore)
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		if(isShuttingDown()) {
@@ -313,8 +312,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IJDIPreferencesConstants.PREF_SHOW_SYSTEM_THREADS, false);
 	}
 	
-	/**
-	 * @see AbstractUIPlugin#startup()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#startup()
 	 */
 	public void startup() throws CoreException {
 		super.startup();
@@ -337,8 +336,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		JDIDebugModel.addHotCodeReplaceListener(fHCRListener);
 	}
 	
-	/**
-	 * @see AbstractUIPlugin#shutdown()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
 		setShuttingDown(true);
