@@ -17,11 +17,11 @@ import org.eclipse.debug.core.DebugException;
  */
 
 public interface IJavaArrayType extends IJavaType {
-	
+
 	/**
 	 * Returns a new instance of an array of this type,
 	 * with the specified length.
-	 * 
+	 *
 	 * @param size the length of the new array
 	 * @return a new array of the specified length
 	 * @exception DebugException if this method fails. Reasons include:<ul>
@@ -31,10 +31,10 @@ public interface IJavaArrayType extends IJavaType {
 	 * </ul>
 	 */
 	public IJavaArray newInstance(int size) throws DebugException;
-	
+
 	/**
 	 * Returns the type of the elements in this array.
-	 * 
+	 *
 	 * @return type
 	 * @exception DebugException if this method fails. Reasons include:<ul>
 	 * <li>Failure communicating with the VM. The exception's
@@ -42,7 +42,18 @@ public interface IJavaArrayType extends IJavaType {
 	 * the failure.</li>
 	 * </ul>
 	 */
-	public IJavaType getComponentType() throws DebugException;		
+	public IJavaType getComponentType() throws DebugException;
 
+	/**
+	 * Returns the class object associated with this array type.
+	 *
+	 * @return the class object associated with this array type
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
+	 */
+	public IJavaClassObject getClassObject() throws DebugException;
 }
 

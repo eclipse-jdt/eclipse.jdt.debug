@@ -8,7 +8,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 
 Contributors:
-    IBM Corporation - Initial implementation
+	IBM Corporation - Initial implementation
 **********************************************************************/
 
 import java.text.MessageFormat;
@@ -29,7 +29,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.engine.IRuntimeContext;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.Interpreter;
 
 import com.sun.jdi.InvocationException;
- 
+
 /**
  * Common behavior for instructions.
  */
@@ -38,51 +38,51 @@ public abstract class Instruction {
 	private Interpreter fInterpreter;
 
 	public abstract int getSize();
-	
+
 	public void setInterpreter(Interpreter interpreter) {
 		fInterpreter= interpreter;
 	}
-	
+
 	public void setLastValue(IJavaValue value) {
 		fInterpreter.setLastValue(value);
 	}
-	
+
 	public void stop() {
 		fInterpreter.stop();
 	}
-	
+
 	public static int getBinaryPromotionType(int left, int right) {
 		return fTypeTable[left][right];
-	}	
+	}
 	public abstract void execute() throws CoreException;
-	
+
 	protected IRuntimeContext getContext() {
 		return fInterpreter.getContext();
 	}
-	
+
 	protected IJavaDebugTarget getVM() {
 		return getContext().getVM();
 	}
-	
+
 	/**
 	 * Return the internal variable with the given name.
-	 * 
+	 *
 	 * @see Interpreter#getInternalVariable(String)
 	 */
 	protected IVariable getInternalVariable(String name) {
 		return fInterpreter.getInternalVariable(name);
 	}
-	
+
 	/**
 	 * Create and return a new internal variable with the given name
 	 * and the given type.
-	 * 
+	 *
 	 * @see Interpreter#createInternalVariable(String, String)
 	 */
 	protected IVariable createInternalVariable(String name, IJavaType referencType) throws CoreException {
 		return fInterpreter.createInternalVariable(name, referencType);
 	}
-	
+
 
 	/**
 	 * Answers the instance of Class that the given type represents.
@@ -94,29 +94,32 @@ public abstract class Instruction {
 		if (type instanceof IJavaInterfaceType) {
 			return ((IJavaInterfaceType)type).getClassObject();
 		}
+		if (type instanceof IJavaArrayType) {
+			return ((IJavaArrayType)type).getClassObject();
+		}
 		return null;
 	}
 
 	protected void jump(int offset) {
 		fInterpreter.jump(offset);
 	}
-	
+
 	protected void push(Object object) {
 		fInterpreter.push(object);
 	}
-	
+
 	protected Object pop() {
 		return fInterpreter.pop();
 	}
-	
+
 	protected IJavaValue popValue() throws CoreException {
 		Object element = fInterpreter.pop();
 		if (element instanceof IJavaVariable) {
 			return (IJavaValue)((IJavaVariable)element).getValue();
 		}
 		return (IJavaValue)element;
-	}	
-	
+	}
+
 	protected void pushNewValue(boolean value) {
 		fInterpreter.push(newValue(value));
 	}
@@ -268,7 +271,7 @@ public abstract class Instruction {
 			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format("could not resolved type: {0}", new String[]{qualifiedName}), null));
 		}
 	}
-	
+
 	protected IJavaObject classForName(String qualifiedName) throws CoreException {
 		IJavaType[] types= getVM().getJavaTypes(CLASS);
 		checkTypes(types, qualifiedName);
@@ -311,7 +314,7 @@ public abstract class Instruction {
 	static public final int T_int =10;
 	static public final int T_String =11;
 	static public final int T_null =12;
-	
+
 	private static final int[][] fTypeTable= {
 /* undefined */	{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined},
 /* object */	{T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_undefined, T_String, T_undefined},
@@ -329,7 +332,7 @@ public abstract class Instruction {
 	};
 
 	public static final String CLASS= "java.lang.Class"; //$NON-NLS-1$
-	
+
 	public static final String FOR_NAME= "forName"; //$NON-NLS-1$
 
 

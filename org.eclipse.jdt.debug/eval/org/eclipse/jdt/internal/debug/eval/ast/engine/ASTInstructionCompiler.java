@@ -167,12 +167,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * Represent a break or a continue instruction.
 	 * These instructions needs are stored and managed later by their
 	 * related statement.
-	 */	
+	 */
 	class CompleteInstruction {
 		Jump fInstruction;
 		String fLabel;
 		boolean fIsBreak;
-		
+
 		public CompleteInstruction(Jump instruction, String label, boolean isBreak) {
 			fInstruction= instruction;
 			fLabel= label;
@@ -184,24 +184,24 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * Whether to print debug messages to the console
 	 */
 	private static boolean VERBOSE = false;
-	
+
 	private InstructionSequence fInstructions;
-	
+
 	/**
 	 * The list of pending break and continue instruction.
 	 */
 	private List fCompleteInstructions;
-	
+
 	private int fStartPosition;
-	
+
 	private boolean fActive;
-	
+
 	private boolean fHasErrors;
-	
+
 	private Stack fStack;
-	
+
 	private int fCounter;
-	
+
 
 	/**
 	 * Create a new AST instruction compiler
@@ -212,7 +212,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		fStack = new Stack();
 		fCompleteInstructions= new ArrayList();
 	}
-	
+
 	/**
 	 * Returns the instruction sequence generated
 	 * by this AST instruction compiler
@@ -220,7 +220,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public InstructionSequence getInstructions() {
 		return fInstructions;
 	}
-	
+
 	/**
 	 * Returns whether the generated instruction sequence
 	 * has errors.
@@ -235,11 +235,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public boolean hasErrors() {
 		return fHasErrors;
 	}
-	
+
 	private void setHasError(boolean value) {
 		fHasErrors= value;
 	}
-	
+
 	private void addErrorMessage(Message message) {
 		fInstructions.addError(message);
 	}
@@ -247,20 +247,20 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	private boolean isActive() {
 		return fActive;
 	}
-	
+
 	private void setActive(boolean active) {
 		fActive = active;
 	}
 
-	
+
 	private void push(Instruction i) {
 		fStack.push(i);
 	}
-	
+
 	private Instruction pop() {
 		return (Instruction)fStack.pop();
 	}
-	
+
 	private void storeInstruction() {
 		Instruction instruction= pop();
 		fCounter++;
@@ -270,12 +270,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		fInstructions.add(instruction);
 		verbose("Add " + instruction.toString()); //$NON-NLS-1$
 	}
-	
-	
+
+
 	/**
 	 * Prints the given message to the console if verbose
 	 * mode is on.
-	 * 
+	 *
 	 * @param message the message to display
 	 */
 	private void verbose(String message) {
@@ -283,7 +283,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			System.out.println(message);
 		}
 	}
-	
+
 
 	private String getQualifiedIdentifier(Name name) {
 		String typeName = ""; //$NON-NLS-1$
@@ -299,7 +299,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		return typeName;
 	}
-	
+
 	private String getTypeName(ITypeBinding typeBinding) {
 		StringBuffer name;
 		if (typeBinding.isArray()) {
@@ -309,7 +309,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				name.append("[]"); //$NON-NLS-1$
 			}
 			return name.toString();
-		} 
+		}
 		name= new StringBuffer(typeBinding.getName());
 		IPackageBinding packageBinding= typeBinding.getPackage();
 		typeBinding= typeBinding.getDeclaringClass();
@@ -322,7 +322,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		return name.toString();
 	}
-	
+
 	private String getTypeSignature(ITypeBinding typeBinding) {
 		return Signature.createTypeSignature(getTypeName(typeBinding), true).replace('.', '/');
 	}
@@ -336,7 +336,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		return false;
 	}
-	
+
 	private boolean containsALocalType(IMethodBinding methodBinding) {
 		ITypeBinding[] typeBindings= methodBinding.getParameterTypes();
 		for (int i= 0, length= typeBindings.length; i < length; i++) {
@@ -346,7 +346,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		return false;
 	}
-	
+
 	private int getEnclosingLevel(ASTNode node, ITypeBinding referenceTypeBinding) {
 		ASTNode parent= node;
 		do {
@@ -386,10 +386,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return isInstanceOf(current.getSuperclass(), reference);
 		}
 	}
-	
+
 	/**
 	 * Return the label associated with the given statement.
-	 * 
+	 *
 	 * @param statement the statement.
 	 * @return the associated label, or <code>null</code> if there is none.
 	 */
@@ -406,12 +406,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * A pop instruction is added when the expression has a return value,
 	 * i.e. all expressions expect method invocation expressions which
 	 * have <code>void</code> as return type and variable declaration expression.
-	 * 
+	 *
 	 * @param expression the expressien to test.
 	 */
 	private void addPopInstructionIfNeeded(Expression expression) {
 		boolean pop= true;
-		
+
 		if (expression instanceof MethodInvocation) {
 			IMethodBinding methodBinding= (IMethodBinding)((MethodInvocation)expression).getName().resolveBinding();
 			if ("void".equals(methodBinding.getReturnType().getName())) { //$NON-NLS-1$
@@ -425,23 +425,23 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		} else if (expression instanceof VariableDeclarationExpression) {
 			pop= false;
 		}
-		
+
 		if (pop) {
 			push(new Pop());
-			storeInstruction();			
+			storeInstruction();
 		}
 	}
 
 	/**
 	 * End visit methods
-	 * 
+	 *
 	 * There are two paths to ending a visit to a node:
 	 * <ol>
 	 * <li>For control statements, the necessary control
 	 *  instructions (jump, conditional jump) are inserted
 	 *  into the instruction sequence</li>
 	 * <li>For other cases, we simply remove the node's
-	 *  instruction from the stack and add it to the 
+	 *  instruction from the stack and add it to the
 	 *  instruction sequence.</li>
 	 * </ol>
 	 */
@@ -450,7 +450,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	 * @see ASTVisitor#endVisit(AnonymousClassDeclaration)
 	 */
 	public void endVisit(AnonymousClassDeclaration node) {
-		
+
 	}
 
 	/**
@@ -511,7 +511,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(Block node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -520,7 +520,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(BooleanLiteral node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -529,7 +529,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(BreakStatement node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -538,7 +538,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(CastExpression node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -554,7 +554,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(CharacterLiteral node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -563,7 +563,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(ClassInstanceCreation node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -580,7 +580,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive() || hasErrors())
 			return;
 
-		// Get the instructions			
+		// Get the instructions
 		int ifFalseAddress= fInstructions.getEnd();
 		Instruction ifFalse= fInstructions.get(ifFalseAddress);
 		int ifTrueAddress= ifFalseAddress - ifFalse.getSize();
@@ -590,19 +590,19 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		// Insert the conditional jump
 		ConditionalJump conditionalJump= new ConditionalJump(false);
 		fInstructions.insert(conditionalJump, conditionalAddress + 1);
-		
+
 		// Insert the jump
 		int jumpAddress= ifTrueAddress + 2;
 		Jump jump= new Jump();
 		fInstructions.insert(jump, jumpAddress);
-		
+
 		// Set the jump offsets
 		conditionalJump.setOffset(ifTrue.getSize() + 1);
 		jump.setOffset(ifFalse.getSize() + 1);
-		
+
 		fCounter += 2;
 		storeInstruction();
-		
+
 	}
 
 	/**
@@ -618,7 +618,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(ContinueStatement node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -627,9 +627,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(DoStatement node) {
 		if (!isActive() || hasErrors())
 			return;
-			
+
 		/* The structure of generated instructions is :
-		 * 
+		 *
 		 * --
 		 * | body
 		 * --
@@ -637,25 +637,25 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		 * |condition
 		 * --
 		 * - jump to the first instruction of the body if the condition is true.
-		 * 
+		 *
 		 */
-		
+
 		String label= getLabel(node);
-		
+
 		// get adress of each part
 		int conditionAddress= fInstructions.getEnd();
 		Instruction condition= fInstructions.getInstruction(conditionAddress);
 		int bodyAddress= conditionAddress - condition.getSize();
 		Instruction body= fInstructions.getInstruction(bodyAddress);
-		
+
 		// add the conditionnalJump
 		ConditionalJump conditionalJump= new ConditionalJump(true);
 		fInstructions.add(conditionalJump);
 		fCounter++;
-		
+
 		// set jump offsets
 		conditionalJump.setOffset(-(condition.getSize() + body.getSize() + 1));
-		
+
 		// for each pending break or continue instruction which are related to
 		// this loop, set the offset of the corresponding jump.
 		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
@@ -673,7 +673,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				}
 			}
 		}
-		
+
 		storeInstruction();
 	}
 
@@ -690,7 +690,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(ExpressionStatement node) {
 		if (!isActive() || hasErrors())
 			return;
-			
+
 		addPopInstructionIfNeeded(node.getExpression());
 	}
 
@@ -700,7 +700,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(FieldAccess node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -716,9 +716,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(ForStatement node) {
 		if (!isActive() || hasErrors())
 			return;
-		
+
 		/* The structure of generated instructions is :
-		 * 
+		 *
 		 * --
 		 * |initialization
 		 * --
@@ -733,9 +733,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		 * | updaters
 		 * --
 		 * - jump to the first instruction of the condition.
-		 * 
+		 *
 		 */
-		
+
 		String label= getLabel(node);
 		boolean hasCondition= node.getExpression() != null;
 
@@ -745,9 +745,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		int bodyAddress= updatersAddress - updaters.getSize();
 		Instruction body= fInstructions.getInstruction(bodyAddress);
 
-		int conditionAddress;		
+		int conditionAddress;
 		Instruction condition;
-		
+
 		if (hasCondition) {
 			conditionAddress= bodyAddress - body.getSize();
 			condition= fInstructions.getInstruction(conditionAddress);
@@ -760,7 +760,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Jump jump= new Jump();
 		fInstructions.add(jump);
 		fCounter++;
-		
+
 		if (hasCondition) {
 			// add conditionnal jump
 			ConditionalJump condJump= new ConditionalJump(false);
@@ -771,10 +771,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			// conditionnal set jump offset
 			condJump.setOffset(body.getSize() + updaters.getSize() + 1);
 		}
-		
+
 		// set jump offset
 		jump.setOffset(-((hasCondition ? condition.getSize() : 0) + body.getSize() + updaters.getSize() + 2));
-		
+
 		// for each pending break or continue instruction which are related to
 		// this loop, set the offset of the corresponding jump.
 		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
@@ -802,16 +802,16 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(IfStatement node) {
 		if (!isActive() || hasErrors())
 			return;
-			
+
 		boolean hasElseStatement= node.getElseStatement() != null;
 
-		// Get the instructions			
+		// Get the instructions
 
 		int ifFalseAddress= 0;
 		Instruction ifFalse= null;
 		int ifTrueAddress= 0;
 		Instruction ifTrue= null;
-		
+
 		if (hasElseStatement) {
 			ifFalseAddress= fInstructions.getEnd();
 			ifFalse= fInstructions.get(ifFalseAddress);
@@ -840,9 +840,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			jump.setOffset(ifFalse.getSize() + 1);
 			fCounter++;
 		}
-		
+
 		storeInstruction();
-		
+
 	}
 
 	/**
@@ -864,7 +864,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(Initializer node) {
 
 	}
-	
+
 	/**
 	 * @see ASTVisitor#endVisit(InstanceofExpression)
 	 */
@@ -887,9 +887,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(LabeledStatement node) {
 		if (!isActive() || hasErrors())
 			return;
-			
+
 		String label= node.getLabel().getIdentifier();
-		
+
 		// for each pending continue instruction which are related to
 		// this statement, set the offset of the corresponding jump.
 		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
@@ -919,7 +919,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(MethodInvocation node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -928,7 +928,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(NullLiteral node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -937,7 +937,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(NumberLiteral node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -960,7 +960,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(PostfixExpression node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -969,7 +969,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(PrefixExpression node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -990,7 +990,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(ReturnStatement node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();	
+		storeInstruction();
 	}
 
 	/**
@@ -999,7 +999,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(SimpleName node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -1008,7 +1008,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(SimpleType node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -1017,7 +1017,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(SingleVariableDeclaration node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -1026,7 +1026,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(StringLiteral node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -1042,7 +1042,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(SuperFieldAccess node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -1079,7 +1079,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(ThisExpression node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -1116,7 +1116,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(TypeLiteral node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -1132,7 +1132,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(VariableDeclarationFragment node) {
 		if (!isActive() || hasErrors())
 			return;
-		storeInstruction();			
+		storeInstruction();
 	}
 
 	/**
@@ -1148,9 +1148,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(WhileStatement node) {
 		if (!isActive() || hasErrors())
 			return;
-		
+
 		/* The structure of generated instructions is :
-		 * 
+		 *
 		 * --
 		 * |condition
 		 * --
@@ -1159,29 +1159,29 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		 * | body
 		 * --
 		 * - jump to the first instruction of the condition.
-		 * 
+		 *
 		 */
-		
+
 		String label= getLabel(node);
-		
+
 		// get adress of each part
 		int bodyAddress= fInstructions.getEnd();
 		Instruction body= fInstructions.getInstruction(bodyAddress);
 		int conditionAddress= bodyAddress - body.getSize();
 		Instruction condition= fInstructions.getInstruction(conditionAddress);
-		
+
 		// add the conditionnalJump
 		ConditionalJump conditionalJump= new ConditionalJump(false);
 		fInstructions.insert(conditionalJump, conditionAddress + 1);
-		
+
 		// add the jump
 		Jump jump= new Jump();
 		fInstructions.add(jump);
-		
+
 		// set jump offsets
 		conditionalJump.setOffset(body.getSize() + 1);
 		jump.setOffset(-(condition.getSize() + body.getSize() + 2));
-		
+
 		// for each pending break or continue instruction which are related to
 		// this loop, set the offset of the corresponding jump.
 		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
@@ -1199,14 +1199,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				}
 			}
 		}
-		
+
 		fCounter+= 2;
 		storeInstruction();
 	}
 
 	/**
 	 * Visit methods
-	 * 
+	 *
 	 * There are two variations of node visiting:
 	 * <ol>
 	 * <li>Push the instruction corresponding to the node
@@ -1238,9 +1238,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		push(new org.eclipse.jdt.internal.debug.eval.ast.instructions.ArrayAccess(fCounter));
-		
+
 		return true;
 	}
 
@@ -1251,17 +1251,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		ArrayType arrayType= node.getType();
-		
+
 		if (isALocalType(arrayType.resolveBinding().getElementType())) {
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Local_type_array_instance_creation_cannot_be_used_in_an_evaluation_expression_29"), node.getStartPosition())); //$NON-NLS-1$
 			setHasError(true);
 			return true;
 		}
-		
+
 		push(new ArrayAllocation(arrayType.getDimensions(), node.dimensions().size(), node.getInitializer() != null, fCounter));
-		
+
 		return true;
 	}
 
@@ -1272,13 +1272,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		ITypeBinding typeBinding= node.resolveTypeBinding();
 		int dimension= typeBinding.getDimensions();
 		String signature= getTypeSignature(typeBinding.getElementType());
-		
+
 		push(new ArrayInitializerInstruction(signature, node.expressions().size(), dimension, fCounter));
-		
+
 		return true;
 	}
 
@@ -1294,7 +1294,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		String signature= getTypeSignature(arrayTypeBinding.getElementType());
 
 		push(new PushArrayType(signature, dimension, fCounter));
-		
+
 		return false;
 	}
 
@@ -1319,7 +1319,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		int variableTypeId = getTypeId(node.getLeftHandSide());
 		int valueTypeId = getTypeId(node.getRightHandSide());
-		
+
 		String opToken = node.getOperator().toString();
 		int opTokenLength = opToken.length();
 		char char0 = opToken.charAt(0);
@@ -1329,7 +1329,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		boolean unrecognized = false;
-		
+
 		switch (char0) {
 			case '=': // equal
 				push(new AssignmentOperator(variableTypeId, valueTypeId, fCounter));
@@ -1378,12 +1378,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				unrecognized = true;
 				break;
 		}
-		
+
 		if (unrecognized) {
 			setHasError(true);
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_assignment_operator____4") + opToken, node.getStartPosition())); //$NON-NLS-1$
 		}
-		
+
 		return true;
 	}
 
@@ -1398,9 +1398,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return true;
 		}
-		
+
 		push(new NoOp(fCounter));
-		
+
 		return true;
 	}
 
@@ -1411,9 +1411,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		push(new PushBoolean(node.booleanValue()));
-		
+
 		return true;
 	}
 
@@ -1435,7 +1435,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		push(instruction);
 		fCompleteInstructions.add(new CompleteInstruction(instruction, label, true));
-		
+
 		return false;
 	}
 
@@ -1446,13 +1446,24 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
+
+		Type type= node.getType();
+		int typeId= getTypeId(type);
+		ITypeBinding typeBinding= type.resolveBinding();
+
+		String baseTypeSignature;
+		int dimension= typeBinding.getDimensions();
+
+		if (typeBinding.isArray()) {
+			typeBinding= typeBinding.getElementType();
+		}
 		
-		int typeId = getTypeId(node.getType());
-		
-		push(new Cast(typeId, getTypeName(node.getType().resolveBinding()), fCounter));
-		
+		baseTypeSignature= getTypeName(typeBinding);
+
+		push(new Cast(typeId, baseTypeSignature, dimension, fCounter));
+
 		node.getExpression().accept(this);
-		
+
 		return false;
 	}
 
@@ -1475,9 +1486,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		push(new PushChar(node.charValue()));
-		
+
 		return true;
 	}
 
@@ -1489,7 +1500,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return true;
 		}
-		
+
 		if (node.getAnonymousClassDeclaration() != null) {
 			setHasError(true);
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Anonymous_type_declaration_cannot_be_used_in_an_evaluation_expression_7"), node.getStartPosition())); //$NON-NLS-1$
@@ -1498,26 +1509,26 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		IMethodBinding methodBinding= node.resolveConstructorBinding();
 		ITypeBinding typeBinding= methodBinding.getDeclaringClass();
 		ITypeBinding enclosingTypeBinding= typeBinding.getDeclaringClass();
-		
+
 		boolean isInstanceMemberType= typeBinding.isMember() && ! Modifier.isStatic(typeBinding.getModifiers());
 
 		if (isALocalType(typeBinding)) {
 			setHasError(true);
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Constructor_of_a_local_type_cannot_be_used_in_an_evaluation_expression_8"), node.getStartPosition())); //$NON-NLS-1$
 		}
-		
+
 		if (containsALocalType(methodBinding)) {
 			setHasError(true);
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Constructor_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_30"), node.getStartPosition())); //$NON-NLS-1$
 		}
-		
-		
+
+
 		if (hasErrors()) {
 			return true;
 		}
-		
+
 		int argCount= methodBinding.getParameterTypes().length;
-		
+
 		String enclosingTypeSignature= null;
 		if (isInstanceMemberType) {
 			enclosingTypeSignature= getTypeSignature(enclosingTypeBinding);
@@ -1527,7 +1538,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		String signature= getMethodSignature(methodBinding, enclosingTypeSignature).replace('.','/');
 
 		push(new Constructor(signature, argCount, fCounter));
- 		
+
 		push(new PushType(getTypeName(typeBinding)));
 		storeInstruction();
 
@@ -1546,7 +1557,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 					addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Must_explicitly_qualify_the_allocation_with_an_instance_of_the_enclosing_type_33"), node.getStartPosition())); //$NON-NLS-1$
 					return true;
 				}
-				
+
 				push(new PushThis(getEnclosingLevel(node, enclosingTypeBinding)));
 				storeInstruction();
 			}
@@ -1556,7 +1567,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		while (iterator.hasNext()) {
 			((Expression) iterator.next()).accept(this);
 		}
-		
+
 		return false;
 	}
 
@@ -1574,9 +1585,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return true;
 		}
-		
+
 		push(new NoOp(fCounter));
-		
+
 		return true;
 	}
 
@@ -1610,7 +1621,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		push(instruction);
 		fCompleteInstructions.add(new CompleteInstruction(instruction, label, false));
-		
+
 		return false;
 	}
 
@@ -1621,7 +1632,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		push(new NoOp(fCounter));
 		return true;
 	}
@@ -1649,20 +1660,20 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * return false, visit expression, don't visit name
-	 * 
+	 *
 	 * @see ASTVisitor#visit(FieldAccess)
 	 */
 	public boolean visit(FieldAccess node) {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		SimpleName fieldName= node.getName();
 		IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
 		ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
 		Expression expression = node.getExpression();
 		String fieldId = fieldName.getIdentifier();
-		
+
 		if (Modifier.isStatic(fieldBinding.getModifiers())) {
 			push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
 			expression.accept(this);
@@ -1681,7 +1692,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 			expression.accept(this);
 		}
-		
+
 		return false;
 	}
 
@@ -1702,9 +1713,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		push(new NoOp(fCounter));
-		
+
 		push(new NoOp(fCounter));
 		for (Iterator iter= node.initializers().iterator(); iter.hasNext();) {
 			Expression expr= (Expression) iter.next();
@@ -1712,14 +1723,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			addPopInstructionIfNeeded(expr);
 		}
 		storeInstruction();
-		
+
 		Expression condition= node.getExpression();
 		if (condition != null) {
 			condition.accept(this);
 		}
-		
+
 		node.getBody().accept(this);
-		
+
 		push(new NoOp(fCounter));
 		for (Iterator iter= node.updaters().iterator(); iter.hasNext();) {
 			Expression expr= (Expression) iter.next();
@@ -1727,7 +1738,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			addPopInstructionIfNeeded(expr);
 		}
 		storeInstruction();
-		
+
 		return false;
 	}
 
@@ -1738,9 +1749,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		push(new NoOp(fCounter));
-		
+
 		return true;
 	}
 
@@ -1753,14 +1764,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * return <code>false</code>, don't use the standart accept order.
-	 * 
+	 *
 	 * @see ASTVisitor#visit(InfixExpression)
 	 */
 	public boolean visit(InfixExpression node) {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		String opToken = node.getOperator().toString();
 		int opTokenLength = opToken.length();
 		char char0 = opToken.charAt(0);
@@ -1772,11 +1783,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				char2 = opToken.charAt(2);
 			}
 		}
-		
+
 		List extendedOperands = node.extendedOperands();
-		
+
 		int operatorNumber=extendedOperands.size() + 1;
-		
+
 		int[][] types = new int[operatorNumber][3];
 
 		Iterator iterator = extendedOperands.iterator();
@@ -1784,11 +1795,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		int leftTypeId = getTypeId(node.getLeftOperand());
 		int rightTypeId = getTypeId(node.getRightOperand());
 		int resultTypeId = Instruction.getBinaryPromotionType(leftTypeId, rightTypeId);
-		
+
 		types[0][0] = resultTypeId;
 		types[0][1] = leftTypeId;
 		types[0][2] = rightTypeId;
-		
+
 		for (int i = 1; i < operatorNumber; i++) {
 			Expression operand = (Expression) iterator.next();
 			leftTypeId = resultTypeId;
@@ -1798,9 +1809,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			types[i][1] = leftTypeId;
 			types[i][2] = rightTypeId;
 		}
-		
+
 		boolean unrecognized= false;
-		
+
 		switch (char0) {
 			case '*': // multiply
 				for (int i = operatorNumber - 1; i >= 0; i--) {
@@ -1933,35 +1944,35 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				unrecognized= true;
 				break;
 		}
-		
+
 		if (unrecognized) {
 			setHasError(true);
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_infix_operator____13") + opToken, node.getStartPosition())); //$NON-NLS-1$
 		}
-		
+
 		if (hasErrors()) {
 			return true;
 		}
-		
+
 		iterator = extendedOperands.iterator();
-		
+
 		if ((char0 == '&' && char1 == '&') || (char0 == '|' && char1 == '|')) { // and and operator
-			
+
 			boolean isOrOr= char0 == '|';
-			
+
 			ConditionalJump[] conditionalJumps= new ConditionalJump[operatorNumber];
 			int[] conditionalJumpAddresses = new int[operatorNumber];
-			
+
 			node.getLeftOperand().accept(this);
-			
+
 			ConditionalJump conditionalJump= new ConditionalJump(isOrOr);
 			conditionalJumps[0]= conditionalJump;
 			conditionalJumpAddresses[0] = fCounter;
 			push(conditionalJump);
 			storeInstruction();
-			
+
 			node.getRightOperand().accept(this);
-			
+
 			for (int i= 1; i < operatorNumber; i ++) {
 				conditionalJump= new ConditionalJump(isOrOr);
 				conditionalJumps[i]= conditionalJump;
@@ -1970,36 +1981,36 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				storeInstruction();
 				((Expression) iterator.next()).accept(this);
 			}
-			
+
 			Jump jump = new Jump();
 			jump.setOffset(1);
 			push(jump);
 			storeInstruction();
-			
+
 			for (int i= 0; i < operatorNumber; i ++) {
 				conditionalJumps[i].setOffset(fCounter - conditionalJumpAddresses[i] - 1);
 			}
-			
+
 			push(new PushBoolean(isOrOr));
 			storeInstruction();
-			
+
 			// store the noop
 			storeInstruction();
-			
+
 		} else { // other operatos
-			
+
 			node.getLeftOperand().accept(this);
 			node.getRightOperand().accept(this);
-		
+
 			storeInstruction();
 			for (int i= 1; i < operatorNumber; i ++) {
 				((Expression) iterator.next()).accept(this);
 				storeInstruction();
 			}
 		}
-		
-		
-		
+
+
+
 		return false;
 	}
 
@@ -2051,33 +2062,33 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * return false, don't visit name, visit expression & arguments
-	 * 
+	 *
 	 * @see ASTVisitor#visit(MethodInvocation)
 	 */
 	public boolean visit(MethodInvocation node) {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		IMethodBinding methodBinding= (IMethodBinding) node.getName().resolveBinding();
-		
+
 		if (containsALocalType(methodBinding)) {
 			setHasError(true);
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32"), node.getStartPosition())); //$NON-NLS-1$
 		}
-		
+
 		if (hasErrors()) {
 			return true;
 		}
-		
+
 		int argCount= methodBinding.getParameterTypes().length;
 		String selector= methodBinding.getName();
 
 		String signature= getMethodSignature(methodBinding, null).replace('.','/');
-		
+
 		boolean isStatic= Flags.isStatic(methodBinding.getModifiers());
 		Expression expression= node.getExpression();
-		
+
 		if (isStatic) {
 			String typeName= getTypeName(methodBinding.getDeclaringClass());
 			push(new SendStaticMessage(typeName, selector, signature, argCount, fCounter));
@@ -2090,7 +2101,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(new SendMessage(selector, signature, argCount, null, fCounter));
 			if (expression == null) {
 				push(new PushThis(getEnclosingLevel(node, methodBinding.getDeclaringClass())));
-				storeInstruction();	
+				storeInstruction();
 			} else {
 				node.getExpression().accept(this);
 			}
@@ -2100,7 +2111,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		while (iterator.hasNext()) {
 			((Expression) iterator.next()).accept(this);
 		}
-		
+
 		return false;
 	}
 
@@ -2111,9 +2122,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		push(new PushNull());
-		
+
 		return true;
 	}
 
@@ -2124,14 +2135,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		int literalType= getTypeId(node);
 		String token= node.getToken();
 		int tokenLastCharOffset= token.length() - 1;
 		char lastChar= token.charAt(tokenLastCharOffset);
 		String subToken= token.substring(0, tokenLastCharOffset);
-		
-		
+
+
 		switch (literalType) {
 			case Instruction.T_int:
 				push(new PushInt(parseIntValue(token)));
@@ -2150,7 +2161,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				}
 				break;
 		}
-		
+
 		return true;
 	}
 
@@ -2178,7 +2189,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 	}
 
-	
+
 	/**
 	 * Method parseLongValue.
 	 * @param token
@@ -2202,10 +2213,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the numeric base for the given token
-	 * according to the Java specification. Returns 
+	 * according to the Java specification. Returns
 	 * 8, 10, or 16.
 	 */
 	private int getBase(String token) {
@@ -2249,7 +2260,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		String opToken = node.getOperator().toString();
 		char char0 = opToken.charAt(0);
-		
+
 		switch (char0) {
 			case '+': // plus plus or unary plus
 				push(new PostfixPlusPlusOperator(expressionTypeId, fCounter));
@@ -2273,7 +2284,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		int expressionTypeId = getTypeId(node.getOperand());
 
 		String opToken = node.getOperator().toString();
@@ -2283,9 +2294,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (opTokenLength > 1) {
 			char1 = opToken.charAt(1);
 		}
-		
+
 		boolean unrecognized = false;
-		
+
 		switch (char0) {
 			case '+': // plus plus or unary plus
 				switch (char1) {
@@ -2329,7 +2340,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			setHasError(true);
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.unrecognized_prefix_operator____16") + opToken, node.getStartPosition())); //$NON-NLS-1$
 		}
-		
+
 		return true;
 	}
 
@@ -2340,22 +2351,22 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		return true;
 	}
 
-	/** 
+	/**
 	 * @see ASTVisitor#visit(QualifiedName)
 	 */
 	public boolean visit(QualifiedName node) {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		if (hasErrors()) {
 			return true;
 		}
-		
+
 		IBinding binding = node.resolveBinding();
 		switch (binding.getKind()) {
 			case IBinding.TYPE:
@@ -2366,7 +2377,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
 				ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
 				String fieldId = fieldName.getIdentifier();
-				
+
 				if (Modifier.isStatic(fieldBinding.getModifiers())) {
 					push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
 				} else {
@@ -2380,7 +2391,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				storeInstruction();
 				break;
 		}
-		
+
 		return false;
 	}
 
@@ -2402,20 +2413,20 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		if (hasErrors()) {
 			return true;
 		}
-		
+
 		IBinding binding = node.resolveBinding();
-		
+
 		String variableId = node.getIdentifier();
 		if (binding == null) {
 			setHasError(true);
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.binding_null_for__17") + variableId, node.getStartPosition())); //$NON-NLS-1$
 			return true;
 		}
-		
+
 		switch (binding.getKind()) {
 			case IBinding.TYPE:
 				ITypeBinding typeBinding= (ITypeBinding) binding;
@@ -2442,17 +2453,17 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * return false, don't visit child
-	 * 
+	 *
 	 * @see ASTVisitor#visit(SimpleType)
 	 */
 	public boolean visit(SimpleType node) {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		ITypeBinding typeBinding  = node.resolveBinding();
 		push(new PushType(getTypeName(typeBinding)));
-		
+
 		return false;
 	}
 
@@ -2464,21 +2475,21 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		Expression initializer= node.getInitializer();
 		boolean hasInitializer= initializer != null;
-		
+
 		ITypeBinding typeBinding= node.getType().resolveBinding();
 		int typeDimension= typeBinding.getDimensions();
 		if (typeDimension != 0) {
 			typeBinding= typeBinding.getElementType();
 		}
-		
+
 		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, hasInitializer, fCounter));
 		if (hasInitializer) {
 			initializer.accept(this);
 		}
-		
+
 		return false;
 	}
 
@@ -2489,9 +2500,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		push(new PushString(node.getLiteralValue()));
-		
+
 		return true;
 	}
 
@@ -2514,12 +2525,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		SimpleName fieldName= node.getName();
 		IVariableBinding fieldBinding= (IVariableBinding) fieldName.resolveBinding();
 		ITypeBinding declaringTypeBinding= fieldBinding.getDeclaringClass();
 		String fieldId = fieldName.getIdentifier();
-		
+
 		if (Modifier.isStatic(fieldBinding.getModifiers())) {
 			push(new PushStaticFieldVariable(fieldId, getTypeName(declaringTypeBinding), fCounter));
 		} else {
@@ -2540,25 +2551,25 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	/**
 	 * return false, don't visit name, visit arguments
-	 * 
+	 *
 	 * @see ASTVisitor#visit(SuperMethodInvocation)
 	 */
 	public boolean visit(SuperMethodInvocation node) {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		IMethodBinding methodBinding = (IMethodBinding) node.getName().resolveBinding();
-		
+
 		if (containsALocalType(methodBinding)) {
 			setHasError(true);
 			addErrorMessage(new Message(EvaluationEngineMessages.getString("ASTInstructionCompiler.Method_which_contains_a_local_type_as_parameter_cannot_be_used_in_an_evaluation_expression_32"), node.getStartPosition())); //$NON-NLS-1$
 		}
-		
+
 		if (hasErrors()) {
 			return true;
 		}
-		
+
 		ITypeBinding[] parameterTypes = methodBinding.getParameterTypes();
 		int argCount = parameterTypes.length;
 		String selector = methodBinding.getName();
@@ -2576,12 +2587,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(new PushThis(enclosingLevel));
 			storeInstruction();
 		}
-		
+
 		Iterator iterator = node.arguments().iterator();
 		while (iterator.hasNext()) {
 			((Expression) iterator.next()).accept(this);
 		}
-		
+
 		return false;
 	}
 
@@ -2626,14 +2637,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		Name qualifier= node.getQualifier();
 		int enclosingLevel= 0;
 		if (qualifier != null) {
 			enclosingLevel= getEnclosingLevel(node, (ITypeBinding)qualifier.resolveBinding());
 		}
 		push(new PushThis(enclosingLevel));
-		
+
 		return false;
 	}
 
@@ -2692,9 +2703,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		push(new PushClassLiteralValue(fCounter));
-		
+
 		return true;
 	}
 
@@ -2742,13 +2753,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		Expression initializer= node.getInitializer();
 		boolean hasInitializer= initializer != null;
-		
+
 		push(new LocalVariableCreation(node.getName().getIdentifier(), getTypeSignature(typeBinding), typeDimension, hasInitializer, fCounter));
-		
+
 		if (hasInitializer) {
 			initializer.accept(this);
 		}
-		
+
 		return false;
 	}
 
@@ -2773,13 +2784,13 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		
+
 		push(new NoOp(fCounter));
 		return true;
 	}
-	
+
 	//--------------------------
-	
+
 	private int getTypeId(Expression expression) {
 		ITypeBinding typeBinding = expression.resolveTypeBinding();
 		String typeName = typeBinding.getName();
@@ -2791,7 +2802,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return Instruction.T_Object;
 		}
 	}
-	
+
 	private int getTypeId(Type type) {
 		if (type.isPrimitiveType()) {
 			return getPrimitiveTypeId(((PrimitiveType)type).getPrimitiveTypeCode().toString());
@@ -2807,7 +2818,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		} else {
 			return Instruction.T_undefined;
 		}
-		
+
 	}
 
 	private String getMethodSignature(IMethodBinding methodBinding, String enclosingTypeSignature) {
@@ -2861,7 +2872,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 		return Instruction.T_undefined;
 	}
-	
+
 	private String getPrimitiveTypeSignature(String typeName) {
 		switch (getPrimitiveTypeId(typeName)) {
 			case Instruction.T_byte:

@@ -8,6 +8,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -20,12 +21,24 @@ public class Cast extends CompoundInstruction {
 
 	private int fTypeTypeId;
 	
-	private String fTypeName;
+	private String fBaseTypeName;
 	
-	public Cast(int typeTypeId, String typeName, int start) {
+	private int fDimension;
+	
+	/**
+	 * Cast intruction constructor.
+	 * 
+	 * @param typeTypeId the id of the type to cast into.
+	 * @param baseTypeName the base type name of the type (the type name if the
+	 * type is not an array type.
+	 * @param dimension the dimension of the array type, 0 if the type is not an
+	 * array type.
+	 */
+	public Cast(int typeTypeId, String baseTypeName, int dimension, int start) {
 		super(start);
 		fTypeTypeId= typeTypeId;
-		fTypeName= typeName;
+		fBaseTypeName= baseTypeName;
+		fDimension= dimension;
 	}
 
 	/*
@@ -61,19 +74,30 @@ public class Cast extends CompoundInstruction {
 			}
 			
 		} else {
-			IJavaObject classObject= getClassObject(getType(fTypeName));
-			IJavaObject objectValue= (IJavaObject)value;
+			IJavaObject classObject;
+			if (fDimension == 0) {
+				classObject= getClassObject(getType(fBaseTypeName));
+			} else {
+				classObject= getClassObject(getArrayType(Signature.createTypeSignature(fBaseTypeName, true), fDimension));
+			}
 			if (classObject == null) {
-				throw new CoreException(null);
-			} else {				
-				IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {objectValue}, getContext().getThread(), false);
-				if (!resultValue.getBooleanValue()) {
-					throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Cast.ClassCastException__Cannot_cast_{0}_as_{1}__1"), new String[]{objectValue.toString(), fTypeName}), null)); //$NON-NLS-1$
-				}
+				throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format("could not get the class object for {0}", new String[]{typeName()}), null));
+			}
+			IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {value}, getContext().getThread(), false);
+			if (!resultValue.getBooleanValue()) {
+				throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Cast.ClassCastException__Cannot_cast_{0}_as_{1}__1"), new String[]{value.toString(), typeName()}), null)); //$NON-NLS-1$
 			}
 			
 			push(value);
 		}
+	}
+	
+	private String typeName() {
+		String result= fBaseTypeName;
+		for (int i= 0; i < fDimension; i++) {
+			result+= "[]";
+		}
+		return result;
 	}
 
 	/*
