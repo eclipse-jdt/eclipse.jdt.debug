@@ -328,7 +328,7 @@ public class JDIDebugModel {
 			}
 			IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) breakpoints[i];
 			if (breakpoint.getMarker().getType().equals(markerType)) {
-				if (breakpoint.getMarker().getType().equals(containingType)) {
+				if (breakpoint.getType().equals(containingType)) {
 					if (breakpoint.getLineNumber() == lineNumber) {
 						return true;
 					}
