@@ -53,6 +53,6 @@ public class EventIteratorImpl implements EventIterator {
 	 * @exception UnsupportedOperationException always thrown since EventSets are unmodifiable.
 	 */
 	public void remove() {
-		throw new UnsupportedOperationException("EventSets are unmodifiable");
+		throw new UnsupportedOperationException(EventMessages.getString("EventIteratorImpl.EventSets_are_unmodifiable_1")); //$NON-NLS-1$
 	}
 }

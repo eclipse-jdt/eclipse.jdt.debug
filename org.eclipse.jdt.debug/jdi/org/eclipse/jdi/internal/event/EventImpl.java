@@ -145,7 +145,7 @@ public abstract class EventImpl extends MirrorImpl implements Event {
 				result = VMStartEventImpl.read(target, requestID, dataInStream);
 				break;
 			default:
-				throw new IOException("Read invalid EventKind: " + eventKind);
+				throw new IOException(EventMessages.getString("EventImpl.Read_invalid_EventKind___1") + eventKind); //$NON-NLS-1$
 		}
 
 		// Find and store original request.
