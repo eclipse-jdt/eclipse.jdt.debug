@@ -264,7 +264,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
-		return !isSuspended() || isSuspendedQuiet() || isPerformingEvaluation();
+		return !isSuspended() || isSuspendedQuiet() || (isPerformingEvaluation() && !isInvokingMethod());
 	}
 
 	/**
