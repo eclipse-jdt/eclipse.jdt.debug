@@ -114,10 +114,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private List fCurrentBreakpoints = new ArrayList(2);
 	/**
-	 * The cached named of the underlying thread.
-	 */
-	private String fName= null;
-	/**
 	 * Whether this thread is currently performing
 	 * an evaluation. An evaluation may involve a series
 	 * of method invocations.
@@ -809,16 +805,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IThread#getName()
 	 */
 	public String getName() throws DebugException {
-		if (fName == null) {
-			try {
-				fName = getUnderlyingThread().name();
-			} catch (RuntimeException e) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
-				// execution will not fall through, as
-				// #targetRequestFailed will thrown an exception
-			}
+		try {
+			return getUnderlyingThread().name();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not fall through, as
+			// #targetRequestFailed will thrown an exception
 		}
-		return fName;
+		return null;
 	}
 
 	/**
