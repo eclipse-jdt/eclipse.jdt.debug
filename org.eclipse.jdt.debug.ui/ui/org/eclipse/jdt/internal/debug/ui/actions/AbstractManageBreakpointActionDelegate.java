@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -50,21 +49,7 @@ public abstract class AbstractManageBreakpointActionDelegate extends ManageBreak
 		if (page != null) {
 			ISelection selection= page.getSelection();
 			if (selection instanceof ITextSelection) {
-				member= getMember();
-				if (member != null) {
-					try {
-						ISourceRange sourceRange= member.getSourceRange();
-						ITextSelection textSelection= (ITextSelection)selection;
-						if (textSelection.getOffset() >= sourceRange.getOffset() && textSelection.getOffset() <= (sourceRange.getOffset() + sourceRange.getLength() - 1)) {
-							update();
-							return;
-						}
-					} catch(JavaModelException e) {
-						JDIDebugUIPlugin.log(e);
-					}	
-				}
 				member= ActionDelegateHelper.getDefault().getCurrentMember(selection);
-				
 			} else {
 				member= getMember(selection);
 				try {

@@ -60,6 +60,9 @@ import com.sun.jdi.ObjectReference;
  * <li>Suspend on compilation errors</li>
  * <li>Ssuspend on uncaught exceptions</li>
  * <li>Step filters</li>
+ * <li>Sets a system property that the Java debugger is active if
+ * there are launches that contain running debug targets. Used for Java
+ * debug action visibility.
  * </ul>
  */
 public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventSetListener, IPropertyChangeListener, IJavaBreakpointListener, ILaunchListener {
@@ -108,6 +111,11 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * Local cache of active step filters.
 	 */
 	private String[] fActiveStepFilters = null;
+	
+	/**
+	 * Count of running Java debug targets
+	 */
+	private int fJavaDebugTargetsCount= 0;
 	
 	/**
 	 * Helper class that describes a location in a stack
@@ -201,6 +209,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		JDIDebugModel.removeJavaBreakpointListener(this);
 		fProblemMap.clear();
 		fLocationMap.clear();
+		System.getProperties().remove(JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"); //$NON-NLS-1$
 	}	
 
 	/**
@@ -548,7 +557,9 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	
 	/**
 	 * When a Java debug target is created, install options in
-	 * the target.
+	 * the target and set that the Java debugger is active.
+	 * When all Java debug targets are terminated set that that Java debugger is
+	 * no longer active.
 	 * 
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
@@ -568,6 +579,19 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 					
 					// step filters
 					notifyTargetOfFilters(javaTarget);
+					
+					if (fJavaDebugTargetsCount == 0) {
+						System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					fJavaDebugTargetsCount++;
+				}
+			} else if (event.getKind() == DebugEvent.TERMINATE) {
+				Object source = event.getSource();
+				if (source instanceof IJavaDebugTarget) {
+					fJavaDebugTargetsCount--;
+					if (fJavaDebugTargetsCount == 0) {
+						System.getProperties().remove(JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"); //$NON-NLS-1$
+					}
 				}
 			}
 		}
