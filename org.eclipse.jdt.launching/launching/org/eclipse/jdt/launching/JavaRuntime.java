@@ -1732,12 +1732,12 @@ public final class JavaRuntime {
 	}
 	
 	/**
-	 * Return the String representation of the output dir of the launch config's
-	 * project or <code>null</code> if there is no config, no project or some
-	 * sort of problem.
+	 * Return the String representation of the default output directory of the
+	 * launch config's project or <code>null</code> if there is no config, no
+	 * project or some sort of problem.
 	 * 
-	 * @return the output directory for the specified launch configuration's
-	 * project
+	 * @return the default output directory for the specified launch
+	 * configuration's project
 	 * @since 2.1
 	 */
 	public static String getProjectOutputDirectory(ILaunchConfiguration config) {
