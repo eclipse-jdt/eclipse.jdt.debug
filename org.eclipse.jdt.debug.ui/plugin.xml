@@ -391,13 +391,21 @@
 	<viewerContribution
 		id="org.eclipse.jdt.debug.BreakpointViewPopupActions"
 		targetID="org.eclipse.debug.ui.BreakpointView">
-		<action id="org.eclipse.jdt.ui.debugViewPopupActions.ShowQualified"
+		<action id="org.eclipse.jdt.ui.breakpointViewPopupActions.ShowQualified"
 			label="%showQualifiedAction.label"
 			tooltip="%showQualifiedAction.tooltip"
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+		</action>
+		<action id="org.eclipse.jdt.debug.ui.breakpointViewPopupActions.AddException"
+			label="%exceptionAction.accel.label"
+			menubarPath="emptyBreakpointGroup"
+			icon="icons/full/clcl16/exc_catch.gif"
+			tooltip="%exceptionAction.tooltip"
+			helpContextId="add_exception_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction">
 		</action>
 	</viewerContribution>
 	<viewerContribution
@@ -1001,9 +1009,8 @@
 
 <extension point = "org.eclipse.jdt.ui.classpathContainerPage">
 	<classpathContainerPage
-		id = "org.eclipse.jdt.debug.ui.jreContainerPage"
-		name = "JRE System Library"
-		class = "org.eclipse.jdt.internal.debug.ui.launcher.JREContainerWizardPage"/>
+		id= "org.eclipse.jdt.debug.ui.jreContainerPage"
+		name= "%jreSystemLibrary.name"
+		class= "org.eclipse.jdt.internal.debug.ui.launcher.JREContainerWizardPage"/>
 </extension>
-
 </plugin>
