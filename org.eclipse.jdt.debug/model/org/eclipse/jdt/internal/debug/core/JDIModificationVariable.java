@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 
+import org.eclipse.debug.core.model.IValue;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
@@ -173,6 +175,14 @@ public abstract class JDIModificationVariable extends JDIVariable {
 			return false;
 		}
 	}
+	
+	/**
+	 * @see IValueModification#verifyValue(IValue)
+	 */
+	public boolean verifyValue(IValue value) {
+		return value instanceof IJavaValue &&
+			value.getDebugTarget().equals(getDebugTarget());
+	}	
 	
 	/**
 	 * @see IValueModification#setValue(String)

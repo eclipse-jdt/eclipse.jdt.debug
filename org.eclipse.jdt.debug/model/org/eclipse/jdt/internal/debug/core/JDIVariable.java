@@ -107,13 +107,27 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	public void setValue(String expression) throws DebugException {
 		notSupported(JDIDebugModelMessages.getString("JDIVariable.does_not_support_value_modification")); //$NON-NLS-1$
 	}
+	
+	/**
+	 * @see IValueModification#setValue(IValue)
+	 */
+	public void setValue(IValue value) throws DebugException {
+		notSupported(JDIDebugModelMessages.getString("JDIVariable.does_not_support_value_modification")); //$NON-NLS-1$
+	}	
 
 	/**
 	 * @see IValueModification#verifyValue(String)
 	 */
 	public boolean verifyValue(String expression) {
 		return false;
-	}	
+	}
+	
+	/**
+	 * @see IValueModification#verifyValue(IValue)
+	 */
+	public boolean verifyValue(IValue value) {
+		return false;
+	}		
 	 
 	/**
 	 * @see IJavaVariable#isVolatile()

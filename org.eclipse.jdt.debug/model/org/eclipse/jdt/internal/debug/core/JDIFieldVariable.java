@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 
+import org.eclipse.debug.core.model.IValue;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
@@ -186,6 +187,24 @@ public class JDIFieldVariable extends JDIModificationVariable {
 	 */
 	public String toString() {
 		return getField().toString();
-	}		
+	}
+	
+	/**
+	 * @see IValueModification#setValue(IValue)
+	 */
+	public	void setValue(IValue v) throws DebugException {
+		if (verifyValue(v)) {
+			JDIValue value = (JDIValue)v;
+			try {
+				getObjectReference().setValue(getField(), value.getUnderlyingValue());
+			} catch (InvalidTypeException e) {
+				targetRequestFailed(MessageFormat.format("{0} occurred while attempting to set value of field.", new String[]{e.toString()}), e);
+			} catch (ClassNotLoadedException e) {
+				targetRequestFailed(MessageFormat.format("{0} occurred while attempting to set value of field.", new String[]{e.toString()}), e);
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format("{0} occurred while attempting to set value of field.", new String[]{e.toString()}), e);
+			}
+		}
+	}
 }
 

@@ -143,6 +143,7 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 				try {
 					codeSnippetInstance = newInstance(codeSnippetClassName);
 					codeSnippetInstance.sendMessage(RUN_METHOD, "()V", null, getThread(), false);
+					// now retrieve the description of the result
 					IVariable[] fields = codeSnippetInstance.getVariables();
 					IJavaVariable resultValue = null;
 					IJavaVariable resultType = null;
@@ -599,7 +600,28 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 	}
 	
 	/**
+	 * Interpretts and returns the result of the running the snippet
+	 * class file. The type of the result is described by an instance of
+	 * <code>java.lang.Class</code>, and the value is an instance of
+	 * <code>java.lang.Object</code>. The value is interpretted based
+	 * on the result type.
+	 * <p>
+	 * Objects as well as primitve data types (boolean, int, etc.),
+	 * have class objects, which are created by the VM. If the class object
+	 * represents a primitive data type, then the associated value
+	 * is stored in an instance of its "object" class. For example, when 
+	 * the result type is the class object for <code>int</code>, the result
+	 * object is an instance of <code>java.lang.Integer</code>, and the
+	 * actual <code>int</code> is stored in the </code>intValue()</code>.
+	 * When the result type is the class object for <code>java.lang.Integer</code>
+	 * the result object is an instance of <code>java.lang.Integer</code>,
+	 * to be interpretted as a <ocde>java.lang.Integer</code>.
+	 * </p>
 	 * 
+	 * @param resultType the class of the result
+	 * @param resultValue the value of ther result, to be interpretted
+	 *  based on resultType
+	 * @return the result of running the code snipped class file
 	 */
 	protected IJavaValue convertResult(IJavaClassObject resultType, IJavaObject resultObject) throws DebugException {
 		if (resultType == null) {

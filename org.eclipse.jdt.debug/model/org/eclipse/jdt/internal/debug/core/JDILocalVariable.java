@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 
+import org.eclipse.debug.core.model.IValue;
 import com.sun.jdi.*;
 
 /**
@@ -122,6 +123,24 @@ public class JDILocalVariable extends JDIModificationVariable {
 	 */
 	public String toString() {
 		return getLocal().toString();
-	}		
+	}
+	
+	/**
+	 * @see IValueModification#setValue(IValue)
+	 */
+	public	void setValue(IValue v) throws DebugException {
+		if (verifyValue(v)) {
+			JDIValue value = (JDIValue)v;
+			try {
+				getStackFrame().getUnderlyingStackFrame().setValue(getLocal(), value.getUnderlyingValue());
+			} catch (InvalidTypeException e) {
+				targetRequestFailed(MessageFormat.format("{0} occurred while attempting to set value of local variable.", new String[]{e.toString()}), e);
+			} catch (ClassNotLoadedException e) {
+				targetRequestFailed(MessageFormat.format("{0} occurred while attempting to set value of local variable.", new String[]{e.toString()}), e);
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format("{0} occurred while attempting to set value of local variable.", new String[]{e.toString()}), e);
+			}
+		}
+	}
 }
 
