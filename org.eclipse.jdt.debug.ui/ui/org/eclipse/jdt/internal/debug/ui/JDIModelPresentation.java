@@ -1139,12 +1139,16 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 		StringBuffer buff= new StringBuffer();
 		long longValue;
+		char sigValue = sig.charAt(0);
 		try {
-			longValue= Long.parseLong(value.getValueString());
+			if (sigValue == 'C') 
+				longValue = value.getValueString().charAt(0);
+			else
+				longValue= Long.parseLong(value.getValueString());
 		} catch (NumberFormatException e) {
 			return null;
 		}
-		switch (sig.charAt(0)) {
+		switch (sigValue) {
 			case 'B' :
 				buff.append("0x"); //$NON-NLS-1$
 				// keep only the relevant bits for byte
@@ -1169,7 +1173,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				break;
 			case 'C' :
 				buff.append("\\u"); //$NON-NLS-1$
-				String hexString= Integer.toHexString(value.getValueString().charAt(0));
+				String hexString= Long.toHexString(longValue);
 				int length= hexString.length();
 				while (length < 4) {
 					buff.append('0');
