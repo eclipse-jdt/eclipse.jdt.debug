@@ -225,7 +225,13 @@
       		<enablement>
       			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockThree"/>
       		</enablement>
-      </renderingBindings>            
+      </renderingBindings>  
+      <renderingBindings
+      		class="org.eclipse.jdt.debug.testplugin.DynamicRenderingBindings">
+      		<enablement>
+      			<instanceof value="org.eclipse.jdt.debug.testplugin.MemoryBlockDynamic"/>
+      		</enablement>
+      </renderingBindings>                  
    </extension>
 
 </plugin>

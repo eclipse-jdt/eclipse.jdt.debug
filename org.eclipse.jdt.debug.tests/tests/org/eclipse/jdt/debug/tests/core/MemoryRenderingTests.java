@@ -14,6 +14,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
+import org.eclipse.jdt.debug.testplugin.MemoryBlockDynamic;
 import org.eclipse.jdt.debug.testplugin.MemoryBlockOne;
 import org.eclipse.jdt.debug.testplugin.MemoryBlockThree;
 import org.eclipse.jdt.debug.testplugin.MemoryBlockTwo;
@@ -97,6 +98,19 @@ public class MemoryRenderingTests extends AbstractDebugTest {
         IMemoryRenderingType[] types = manager.getDefaultRenderingTypes(block);
         assertEquals("Wrong number of bindings", 1, types.length);
         assertEquals("Wrong binding", "rendering_type_3", types[0].getId());
+    }
+    
+    public void testDynamicBinding() {
+        IMemoryRenderingManager manager = DebugUITools.getMemoryRenderingManager();
+        IMemoryBlock block = new MemoryBlockDynamic();
+        IMemoryRenderingType[] types = manager.getRenderingTypes(block);
+        assertEquals("Wrong number of bindings", 1, types.length);
+        assertEquals("Wrong binding", "rendering_type_1", types[0].getId());
+        types = manager.getDefaultRenderingTypes(block);
+        assertEquals("Wrong number of bindings", 1, types.length);
+        assertEquals("Wrong binding", "rendering_type_1", types[0].getId());
+        IMemoryRenderingType type = manager.getPrimaryRenderingType(block);
+        assertEquals("Wrong bindings", manager.getRenderingType("rendering_type_1"), type);
     }
     
 	protected int indexOf(Object thing, Object[] list) {
