@@ -344,8 +344,6 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		String name = page.getName() + "-Scrapbook-" + System.currentTimeMillis(); //$NON-NLS-1$
 		ILaunchConfigurationWorkingCopy wc = lcType.newInstance(null, name);
 		wc.setAttribute(IDebugUIConstants.ATTR_PRIVATE, true);
-		wc.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);		
-		wc.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);		
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$			
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, page.getProject().getName());
 		wc.setAttribute(SCRAPBOOK_LAUNCH, SCRAPBOOK_LAUNCH);
