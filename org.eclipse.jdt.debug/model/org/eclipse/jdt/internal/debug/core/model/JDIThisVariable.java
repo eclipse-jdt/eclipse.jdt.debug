@@ -1,17 +1,20 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+
 
 /**
  * Represents the receiver in a stack frame.
@@ -86,4 +89,26 @@ public class JDIThisVariable extends JDIVariable {
 		// will be throw in type retrieval fails
 		return null;
 	}	
+	
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPrivate()
+	 */
+	public boolean isPrivate() throws DebugException {
+		return ((ReferenceType)getUnderlyingType()).isPrivate();
+	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isProtected()
+	 */
+	public boolean isProtected() throws DebugException {
+		return ((ReferenceType)getUnderlyingType()).isProtected();
+	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaModifiers#isPublic()
+	 */
+	public boolean isPublic() throws DebugException {
+		return ((ReferenceType)getUnderlyingType()).isPublic();
+	}
+
 }
