@@ -435,30 +435,15 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		String[] iFilters= getInclusionClassFilters();
 		String[] eFilters= getExclusionClassFilters();
 		
-		/*if (iFilters.length > 0) {
-			getInclusionGreatestCommonPatternFilter(iFilters);
-		} 
-		if (eFilters.length > 0) {
-			getExclusionGreatestCommonPatternFilter(eFilters);
-		}*/
 		ExceptionRequest request= (ExceptionRequest)eRequest;
 		
-		/*if (fInclusionCommonPattern != null) {
-			if (fExclusionCommonPattern != null) {
-				//no filters added do the work ourselves
-			} else {
-				request.addClassFilter(fInclusionCommonPattern);
-			}
-		} else {
-			request.addClassExclusionFilter(fExclusionCommonPattern);
-		}*/
 		if (iFilters.length == 1) {
 			if (eFilters.length ==0) {
 				request.addClassFilter(iFilters[0]);
 			}
 		} else if (eFilters.length == 1) {
 			if (iFilters.length == 0) {
-				request.addClassExclusionFilter(iFilters[0]);
+				request.addClassExclusionFilter(eFilters[0]);
 			}
 		}
 		
