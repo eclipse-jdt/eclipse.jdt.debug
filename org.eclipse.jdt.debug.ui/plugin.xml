@@ -278,13 +278,6 @@
             class="org.eclipse.jdt.internal.debug.ui.display.DisplayView"
             id="org.eclipse.jdt.debug.ui.DisplayView">
       </view>
-      <view
-            name="%MonitorsView.name"
-            icon="icons/full/eview16/thread_and_monitor_view.gif"
-            category="org.eclipse.debug.ui"
-            class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorsView"
-            id="org.eclipse.jdt.debug.ui.MonitorsView">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -333,12 +326,6 @@
                relative="org.eclipse.debug.ui.DebugView"
                visible="false"
                relationship="stack"
-               id="org.eclipse.jdt.debug.ui.MonitorsView">
-         </view>
-         <view
-               relative="org.eclipse.debug.ui.DebugView"
-               visible="false"
-               relationship="stack"
                id="org.eclipse.jdt.ui.PackageExplorer">
          </view>
          <view
@@ -355,9 +342,6 @@
          </view>
          <viewShortcut
                id="org.eclipse.jdt.debug.ui.DisplayView">
-         </viewShortcut>
-         <viewShortcut
-               id="org.eclipse.jdt.debug.ui.MonitorsView">
          </viewShortcut>
       </perspectiveExtension>
    </extension>
@@ -675,28 +659,6 @@
             </enablement>
          </action>
       </viewerContribution>
-      <viewerContribution
-            targetID="org.eclipse.jdt.debug.ui.MonitorsView"
-            id="org.eclipse.jdt.debug.MonitorsViewPopupActions">
-         <action
-               label="%MonitorTraceAction.label"
-               icon="icons/full/elcl16/suspend_co.gif"
-               helpContextId="monitor_trace_action_context"
-               tooltip="%MonitorTraceAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
-               menubarPath="vmGroup"
-               id="org.eclipse.jdt.debug.ui.actions.MonitorTraceAction">
-         </action>
-         <action
-               label="%MonitorQuitAction.label"
-               icon="icons/full/elcl16/resume_co.gif"
-               helpContextId="monitor_quit_action_context"
-               tooltip="%MonitorQuitAction.tooltip"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
-               menubarPath="vmGroup"
-               id="org.eclipse.jdt.debug.ui.actions.MonitorQuitAction">
-         </action>
-      </viewerContribution>
        <viewerContribution
              targetID="javaStackTraceConsole.#TextConsole"
              id="org.eclipse.jdt.debug.ui.javaStackTraceConsoleContextMenu">
@@ -977,68 +939,6 @@
                   </objectClass>
                </and>
             </enablement>
-         </action>
-      </viewContribution>
-      <viewContribution
-            targetID="org.eclipse.jdt.debug.ui.MonitorsView"
-            id="org.eclipse.jdt.debug.MonitorsActions">
-         <action
-               id="org.eclipse.jdt.debug.ui.actions.MonitorTraceAction"
-               toolbarPath="vmGroup"
-               hoverIcon="icons/full/elcl16/suspend_co.gif"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTraceAction"
-               disabledIcon="icons/full/dlcl16/suspend_co.gif"
-               icon="icons/full/elcl16/suspend_co.gif"
-               helpContextId="monitor_trace_action_context"
-               label="%MonitorTraceAction.label"
-               tooltip="%MonitorTraceAction.tooltip">
-         </action>
-         <action
-               id="org.eclipse.jdt.debug.ui.actions.MonitorQuitAction"
-               toolbarPath="vmGroup"
-               hoverIcon="icons/full/elcl16/resume_co.gif"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuitAction"
-               disabledIcon="icons/full/dlcl16/resume_co.gif"
-               icon="icons/full/elcl16/resume_co.gif"
-               helpContextId="monitor_quit_action_context"
-               label="%MonitorQuitAction.label"
-               tooltip="%MonitorQuitAction.tooltip">
-         </action>
-         <action
-               state="false"
-               toolbarPath="vmGroup"
-               id="org.eclipse.jdt.debug.ui.actions.DeadlockView"
-               hoverIcon="icons/full/elcl16/deadlock_view.gif"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleDeadLocksViewAction"
-               disabledIcon="icons/full/dlcl16/deadlock_view.gif"
-               icon="icons/full/elcl16/deadlock_view.gif"
-               helpContextId="deadlock_view_action_context"
-               label="%DeadlockView.label"
-               tooltip="%DeadlockView.tooltip">
-         </action>
-         <action
-               state="false"
-               toolbarPath="vmGroup"
-               id="org.eclipse.jdt.debug.ui.actions.ThreadView"
-               hoverIcon="icons/full/elcl16/thread_view.gif"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleThreadsViewAction"
-               disabledIcon="icons/full/dlcl16/thread_view.gif"
-               icon="icons/full/elcl16/thread_view.gif"
-               helpContextId="thread_view_action_context"
-               label="%ThreadView.label"
-               tooltip="%ThreadView.tooltip">
-         </action>
-         <action
-               state="true"
-               toolbarPath="vmGroup"
-               id="org.eclipse.jdt.debug.ui.actions.MonitorView"
-               hoverIcon="icons/full/elcl16/monitor_view.gif"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleMonitorsViewAction"
-               disabledIcon="icons/full/dlcl16/monitor_view.gif"
-               icon="icons/full/elcl16/monitor_view.gif"
-               helpContextId="monitor_view_action_context"
-               label="%MonitorView.label"
-               tooltip="%MonitorView.tooltip">
          </action>
       </viewContribution>
    </extension>
@@ -2113,18 +2013,6 @@ M4 = Platform-specific fourth key
             commandId="org.eclipse.jdt.debug.ui.DisplayView"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
-      <command
-            name="%ViewCommand.monitorsView.name"
-            description="%ViewCommand.monitorsView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.jdt.debug.ui.MonitorsView">
-      </command>
-      <keyBinding
-            keySequence=""
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.jdt.debug.ui.MonitorsView"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
 <!-- launch shortcuts -->
       <command
             name="%JavaApplicationShortcut.description.debug"
@@ -2483,14 +2371,9 @@ M4 = Platform-specific fourth key
             contextId="org.eclipse.jdt.debug.ui.debugging"
             autoOpen="false">
       </contextViewBinding>
-      <contextViewBinding
-            viewId="org.eclipse.jdt.debug.ui.MonitorsView"
-            contextId="org.eclipse.jdt.debug.ui.debugging"
-            autoOpen="false">
-      </contextViewBinding>
    </extension>
    
-   <!-- Source Lookup (in progress) -->
+   <!-- Source Lookup -->
    <extension
          point="org.eclipse.debug.ui.sourceContainerPresentations">
       <sourceContainerPresentation
