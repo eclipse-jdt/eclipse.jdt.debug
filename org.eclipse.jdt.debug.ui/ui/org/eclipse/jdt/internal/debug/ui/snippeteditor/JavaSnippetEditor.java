@@ -752,7 +752,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	protected boolean classPathHasChanged() {
 		String[] classpath= getClassPath(getJavaProject());
 		if (fLaunchedClassPath != null && !classPathsEqual(fLaunchedClassPath, classpath)) {
-			MessageDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.warning"), SnippetMessages.getString("SnippetEditor.warning.cpchange")); //$NON-NLS-2$ //$NON-NLS-1$
+			MessageDialog.openWarning(getShell(), SnippetMessages.getString("SnippetEditor.warning"), SnippetMessages.getString("SnippetEditor.warning.cpchange")); //$NON-NLS-2$ //$NON-NLS-1$
 			return true;
 		}
 		return false;
