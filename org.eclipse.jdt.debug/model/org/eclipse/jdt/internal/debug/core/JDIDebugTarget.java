@@ -480,7 +480,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		return supportsTerimate() && !isTerminated();
+		return supportsTerminate() && !isTerminated();
 	}
 
 	/**
@@ -515,7 +515,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * 
 	 * @return whether this debug target supports termination
 	 */
-	protected boolean supportsTerimate() {
+	protected boolean supportsTerminate() {
 		return fSupportsTerminate;
 	}
 	
@@ -1376,7 +1376,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	protected void shutdown() {
 		getEventDispatcher().shutdown();
 		try {
-			if (supportsTerimate()) {
+			if (supportsTerminate()) {
 				terminate();
 			} else if (supportsDisconnect()) {
 				disconnect();
