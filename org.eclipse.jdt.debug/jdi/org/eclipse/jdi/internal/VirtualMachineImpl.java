@@ -1032,12 +1032,17 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 				case JdwpReplyPacket.NAMES_DONT_MATCH:
 					throw new NoClassDefFoundError();
 				case JdwpReplyPacket.ADD_METHOD_NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.getString("VirtualMachineImpl.Add_method_not_implemented_1")); //$NON-NLS-1$
 				case JdwpReplyPacket.SCHEMA_CHANGE_NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.getString("VirtualMachineImpl.Scheme_change_not_implemented_2")); //$NON-NLS-1$
 				case JdwpReplyPacket.HIERARCHY_CHANGE_NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.getString("VirtualMachineImpl.Hierarchy_change_not_implemented_3")); //$NON-NLS-1$
 				case JdwpReplyPacket.DELETE_METHOD_NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.getString("VirtualMachineImpl.Delete_method_not_implemented_4")); //$NON-NLS-1$
 				case JdwpReplyPacket.CLASS_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
+					throw new UnsupportedOperationException(JDIMessages.getString("VirtualMachineImpl.Class_modifiers_change_not_implemented_5")); //$NON-NLS-1$
 				case JdwpReplyPacket.METHOD_MODIFIERS_CHANGE_NOT_IMPLEMENTED:
-					throw new UnsupportedOperationException();
+					throw new UnsupportedOperationException(JDIMessages.getString("VirtualMachineImpl.Method_modifiers_change_not_implemented_6")); //$NON-NLS-1$
 				default:
 					defaultReplyErrorHandler(reply.errorCode());
 			}
