@@ -345,8 +345,20 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @return thread in which the first suspend event occurs
 	 */
 	protected IJavaThread resume(IJavaThread thread) throws Exception {
+	    return resume(thread, DEFAULT_TIMEOUT);
+	}	
+	
+	/**
+	 * Resumes the given thread, and waits for another breakpoint-caused suspend event.
+	 * Returns the thread in which the suspend event occurs.
+	 * 
+	 * @param thread thread to resume
+	 * @param timeout timeout in ms
+	 * @return thread in which the first suspend event occurs
+	 */
+	protected IJavaThread resume(IJavaThread thread, int timeout) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
-		waiter.setTimeout(DEFAULT_TIMEOUT);
+		waiter.setTimeout(timeout);
 		
 		thread.resume();
 
