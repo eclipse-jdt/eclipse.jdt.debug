@@ -571,7 +571,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		}
 
 		if (thisVariable != null) {
-			Iterator thisChildren = ((JDIValue)thisVariable.getValue()).getVariables0().iterator();
+			Iterator thisChildren = ((JDIValue)thisVariable.getValue()).getVariablesList().iterator();
 			while (thisChildren.hasNext()) {
 				IJavaVariable var= (IJavaVariable) thisChildren.next();
 				if (var.getName().equals(varName)) {

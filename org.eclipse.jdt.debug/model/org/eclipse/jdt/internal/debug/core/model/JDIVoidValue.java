@@ -21,7 +21,7 @@ public class JDIVoidValue extends JDIValue {
 		super(target, null);
 	}
 
-	protected List getVariables0() {
+	protected List getVariablesList() {
 		return Collections.EMPTY_LIST;
 	}
 	

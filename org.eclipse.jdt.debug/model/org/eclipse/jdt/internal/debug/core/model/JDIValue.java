@@ -180,11 +180,11 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	 * @see IValue#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
-		List list = getVariables0();
+		List list = getVariablesList();
 		return (IVariable[])list.toArray(new IVariable[list.size()]);
 	}
 	
-	protected List getVariables0() throws DebugException {
+	protected List getVariablesList() throws DebugException {
 		if (!isAllocated()) {
 			return Collections.EMPTY_LIST;
 		}
@@ -368,7 +368,7 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 	 * @see IValue#hasVariables()
 	 */
 	public boolean hasVariables() throws DebugException {
-		return getVariables0().size() > 0;
+		return getVariablesList().size() > 0;
 	}
 
 }
