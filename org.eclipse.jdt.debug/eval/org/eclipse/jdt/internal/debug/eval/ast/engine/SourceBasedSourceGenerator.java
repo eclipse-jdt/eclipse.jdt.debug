@@ -1,8 +1,11 @@
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
+
+/**********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.Iterator;
 import java.util.List;
@@ -119,7 +122,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	}
 	
 	/**
-	 * return the generated source or <code>null</code> if no source can be generated.
+	 * Returns the generated source or <code>null</code> if no source can be generated.
 	 */
 	public String getSource() {
 		if (fSource == null) {
@@ -507,7 +510,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 
 	//----------------------
 
-	/*
+	/**
 	 * @see ASTVisitor#endVisit(ClassInstanceCreation)
 	 */
 	public void endVisit(ClassInstanceCreation node) {
@@ -519,7 +522,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			fEvaluateNextEndTypeDeclaration = true;
 		}
 		
-		if (rightTypeFound()) {
+		if (anonymousClassDeclaration != null && rightTypeFound()) {
 			
 			List bodyDeclarations= anonymousClassDeclaration.bodyDeclarations();
 			
@@ -579,7 +582,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}		
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#endVisit(CompilationUnit)
 	 */
 	public void endVisit(CompilationUnit node) {
@@ -590,7 +593,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		fSource = buildCompilationUnit(fSource, node);
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#endVisit(Initializer)
 	 */
 	public void endVisit(Initializer node) {
@@ -599,7 +602,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#endVisit(MethodDeclaration)
 	 */
 	public void endVisit(MethodDeclaration node) {
@@ -608,7 +611,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#endVisit(TypeDeclaration)
 	 */
 	public void endVisit(TypeDeclaration node) {
@@ -657,7 +660,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(AnonymousClassDeclaration)
 	 */
 	public boolean visit(AnonymousClassDeclaration node) {
@@ -667,7 +670,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ArrayAccess)
 	 */
 	public boolean visit(ArrayAccess node) {
@@ -677,7 +680,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ArrayCreation)
 	 */
 	public boolean visit(ArrayCreation node) {
@@ -687,7 +690,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ArrayInitializer)
 	 */
 	public boolean visit(ArrayInitializer node) {
@@ -697,7 +700,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ArrayType)
 	 */
 	public boolean visit(ArrayType node) {
@@ -707,7 +710,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(AssertStatement)
 	 */
 	public boolean visit(AssertStatement node) {
@@ -717,7 +720,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(Assignment)
 	 */
 	public boolean visit(Assignment node) {
@@ -727,7 +730,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(Block)
 	 */
 	public boolean visit(Block node) {
@@ -737,7 +740,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(BooleanLiteral)
 	 */
 	public boolean visit(BooleanLiteral node) {
@@ -747,7 +750,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(BreakStatement)
 	 */
 	public boolean visit(BreakStatement node) {
@@ -757,7 +760,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(CastExpression)
 	 */
 	public boolean visit(CastExpression node) {
@@ -767,7 +770,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(CatchClause)
 	 */
 	public boolean visit(CatchClause node) {
@@ -777,7 +780,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(CharacterLiteral)
 	 */
 	public boolean visit(CharacterLiteral node) {
@@ -787,7 +790,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ClassInstanceCreation)
 	 */
 	public boolean visit(ClassInstanceCreation node) {
@@ -797,7 +800,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(CompilationUnit)
 	 */
 	public boolean visit(CompilationUnit node) {
@@ -807,7 +810,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ConditionalExpression)
 	 */
 	public boolean visit(ConditionalExpression node) {
@@ -817,7 +820,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ConstructorInvocation)
 	 */
 	public boolean visit(ConstructorInvocation node) {
@@ -827,7 +830,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ContinueStatement)
 	 */
 	public boolean visit(ContinueStatement node) {
@@ -837,7 +840,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(DoStatement)
 	 */
 	public boolean visit(DoStatement node) {
@@ -847,7 +850,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(EmptyStatement)
 	 */
 	public boolean visit(EmptyStatement node) {
@@ -857,7 +860,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ExpressionStatement)
 	 */
 	public boolean visit(ExpressionStatement node) {
@@ -867,7 +870,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(FieldAccess)
 	 */
 	public boolean visit(FieldAccess node) {
@@ -877,7 +880,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(FieldDeclaration)
 	 */
 	public boolean visit(FieldDeclaration node) {
@@ -887,7 +890,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ForStatement)
 	 */
 	public boolean visit(ForStatement node) {
@@ -897,7 +900,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(IfStatement)
 	 */
 	public boolean visit(IfStatement node) {
@@ -907,7 +910,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ImportDeclaration)
 	 */
 	public boolean visit(ImportDeclaration node) {
@@ -917,7 +920,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(InfixExpression)
 	 */
 	public boolean visit(InfixExpression node) {
@@ -927,7 +930,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(Initializer)
 	 */
 	public boolean visit(Initializer node) {
@@ -937,7 +940,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(Javadoc)
 	 */
 	public boolean visit(Javadoc node) {
@@ -947,7 +950,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(LabeledStatement)
 	 */
 	public boolean visit(LabeledStatement node) {
@@ -957,7 +960,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(MethodDeclaration)
 	 */
 	public boolean visit(MethodDeclaration node) {
@@ -967,7 +970,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(MethodInvocation)
 	 */
 	public boolean visit(MethodInvocation node) {
@@ -977,7 +980,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(NullLiteral)
 	 */
 	public boolean visit(NullLiteral node) {
@@ -987,7 +990,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(NumberLiteral)
 	 */
 	public boolean visit(NumberLiteral node) {
@@ -997,7 +1000,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(PackageDeclaration)
 	 */
 	public boolean visit(PackageDeclaration node) {
@@ -1007,7 +1010,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ParenthesizedExpression)
 	 */
 	public boolean visit(ParenthesizedExpression node) {
@@ -1017,7 +1020,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(PostfixExpression)
 	 */
 	public boolean visit(PostfixExpression node) {
@@ -1027,7 +1030,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(PrefixExpression)
 	 */
 	public boolean visit(PrefixExpression node) {
@@ -1037,7 +1040,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(PrimitiveType)
 	 */
 	public boolean visit(PrimitiveType node) {
@@ -1047,7 +1050,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(QualifiedName)
 	 */
 	public boolean visit(QualifiedName node) {
@@ -1057,7 +1060,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ReturnStatement)
 	 */
 	public boolean visit(ReturnStatement node) {
@@ -1067,7 +1070,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(SimpleName)
 	 */
 	public boolean visit(SimpleName node) {
@@ -1077,7 +1080,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(SimpleType)
 	 */
 	public boolean visit(SimpleType node) {
@@ -1087,7 +1090,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(SingleVariableDeclaration)
 	 */
 	public boolean visit(SingleVariableDeclaration node) {
@@ -1097,7 +1100,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(StringLiteral)
 	 */
 	public boolean visit(StringLiteral node) {
@@ -1107,7 +1110,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(SuperConstructorInvocation)
 	 */
 	public boolean visit(SuperConstructorInvocation node) {
@@ -1117,7 +1120,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(SuperFieldAccess)
 	 */
 	public boolean visit(SuperFieldAccess node) {
@@ -1127,7 +1130,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(SuperMethodInvocation)
 	 */
 	public boolean visit(SuperMethodInvocation node) {
@@ -1137,7 +1140,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(SwitchCase)
 	 */
 	public boolean visit(SwitchCase node) {
@@ -1147,7 +1150,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(SwitchStatement)
 	 */
 	public boolean visit(SwitchStatement node) {
@@ -1157,7 +1160,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(SynchronizedStatement)
 	 */
 	public boolean visit(SynchronizedStatement node) {
@@ -1167,7 +1170,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ThisExpression)
 	 */
 	public boolean visit(ThisExpression node) {
@@ -1177,7 +1180,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(ThrowStatement)
 	 */
 	public boolean visit(ThrowStatement node) {
@@ -1187,7 +1190,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(TryStatement)
 	 */
 	public boolean visit(TryStatement node) {
@@ -1197,7 +1200,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(TypeDeclaration)
 	 */
 	public boolean visit(TypeDeclaration node) {
@@ -1208,7 +1211,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(TypeDeclarationStatement)
 	 */
 	public boolean visit(TypeDeclarationStatement node) {
@@ -1218,7 +1221,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(TypeLiteral)
 	 */
 	public boolean visit(TypeLiteral node) {
@@ -1228,7 +1231,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(VariableDeclarationExpression)
 	 */
 	public boolean visit(VariableDeclarationExpression node) {
@@ -1238,7 +1241,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(VariableDeclarationFragment)
 	 */
 	public boolean visit(VariableDeclarationFragment node) {
@@ -1248,7 +1251,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(VariableDeclarationStatement)
 	 */
 	public boolean visit(VariableDeclarationStatement node) {
@@ -1258,7 +1261,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return true;
 	}
 
-	/*
+	/**
 	 * @see ASTVisitor#visit(WhileStatement)
 	 */
 	public boolean visit(WhileStatement node) {
@@ -1267,5 +1270,4 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		}
 		return true;
 	}
-
 }
