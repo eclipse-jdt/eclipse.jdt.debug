@@ -76,7 +76,7 @@ public class RuntimeClasspathAdvancedDialog extends TitleAreaDialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		inner.setLayoutData(gd);
 		
-		Label l = new org.eclipse.swt.widgets.Label(inner, SWT.NONE);
+		new Label(inner, SWT.NONE);
 		
 		fButtons = new Button[fActions.length];
 		for (int i = 0; i < fActions.length; i++) {
@@ -103,7 +103,7 @@ public class RuntimeClasspathAdvancedDialog extends TitleAreaDialog {
 		fContainerCombo.setItems(names);
 		fContainerCombo.select(0);
 		
-		l = new org.eclipse.swt.widgets.Label(inner, SWT.NONE);
+		new Label(inner, SWT.NONE);
 		
 		setTitle(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Add_Classpath_Entry_1")); //$NON-NLS-1$
 		setMessage(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Select_the_type_of_entry_to_add_2")); //$NON-NLS-1$
