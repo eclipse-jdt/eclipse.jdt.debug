@@ -63,4 +63,11 @@
    </launchConfigurationType>
 </extension>
 
+<extension point = "org.eclipse.debug.core.sourceLocators">
+	<sourceLocator
+		id = "org.eclipse.jdt.launching.javaSourceLocator"
+	   	class="org.eclipse.jdt.launching.JavaSourceLocator"
+	   	name="Basic Java Source Locator"/>
+</extension>
+
 </plugin>

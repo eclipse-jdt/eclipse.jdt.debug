@@ -19,7 +19,6 @@ import org.eclipse.jdt.internal.launching.LaunchingMessages;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
- * @deprecated replaced with launch configuration
  */
 public class VMRunnerConfiguration {
 	private String fClassToLaunch;

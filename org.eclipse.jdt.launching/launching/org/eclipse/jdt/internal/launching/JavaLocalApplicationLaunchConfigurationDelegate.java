@@ -64,8 +64,14 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		if (result == null) {
 			return null;
 		}
-		// Create & return Launch
-		ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
+		
+		// Create & return Launch:
+		//  - set default source locator if none specified
+		ISourceLocator sourceLocator = null;
+		String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
+		if (id == null) {
+			sourceLocator = new JavaSourceLocator(javaProject);
+		}
 		Launch launch = new Launch(configuration, mode, sourceLocator, result.getProcesses(), result.getDebugTarget());
 		return launch;
 	}	

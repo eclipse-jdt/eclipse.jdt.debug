@@ -11,6 +11,10 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -19,7 +23,9 @@ import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationHelper;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
@@ -40,13 +46,26 @@ import org.eclipse.jdt.launching.LibraryLocation;
  *
  * @see org.eclipse.debug.core.model.ISourceLocator
  */
-public class JavaSourceLocator implements ISourceLocator {
+public class JavaSourceLocator implements IPersistableSourceLocator {
+	
+	/**
+	 * Identifier for the 'Java Source Locator' extension
+	 * (value <code>"org.eclipse.jdt.launching.javaSourceLocator"</code>).
+	 */
+	public static final String ID_JAVA_SOURCE_LOCATOR = LaunchingPlugin.PLUGIN_ID + ".javaSourceLocator";
 
 	/**
 	 * A collection of the source locations to search
 	 */
 	private IJavaSourceLocation[] fLocations;
 
+	/**
+	 * Constructs a new empty JavaSourceLocator.
+	 */
+	public JavaSourceLocator() {
+		setSourceLocations(new IJavaSourceLocation[0]);
+	}
+	
 	/**
 	 * Constructs a new JavaSourceLocator that searches the
 	 * specified set of source locations for source elements.
@@ -215,4 +234,42 @@ public class JavaSourceLocator implements ISourceLocator {
 		}
 		return locations;
 	}
+	
+	/**
+	 * @see IPersistableSourceLocator#getMemento()
+	 */
+	public String getMemento() throws CoreException {
+		try {
+			return JavaLaunchConfigurationHelper.encodeSourceLocations(getSourceLocations());
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
+			"An exception occurred while creating a source locator memento for 'JavaSourceLocator'.", e));
+		}
+
+	}
+
+	/**
+	 * @see IPersistableSourceLocator#initializeDefaults(ILaunchConfiguration)
+	 */
+	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
+		IJavaProject jp = JavaLaunchConfigurationHelper.getJavaProject(configuration);
+		if (jp != null) {
+			setSourceLocations(getDefaultSourceLocations(jp));
+		}
+	}
+
+	/**
+	 * @see IPersistableSourceLocator#initiatlizeFromMemento(String)
+	 */
+	public void initiatlizeFromMemento(String memento) throws CoreException {
+		IJavaSourceLocation[] locations = null;
+		try {
+			locations = JavaLaunchConfigurationHelper.decodeSourceLocations(memento);
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
+			"An exception occurred while restoring 'JavaSourceLocator' from a memento.", e));
+		}
+		setSourceLocations(locations);
+	}
+
 }

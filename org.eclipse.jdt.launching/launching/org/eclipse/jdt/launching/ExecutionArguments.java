@@ -40,7 +40,6 @@ import org.eclipse.jdt.internal.launching.*;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
- * @deprecated replaced by launch configuration
  */
 public class ExecutionArguments {
 	private String fVMArgs;
@@ -71,6 +70,8 @@ public class ExecutionArguments {
 	 * @return the execution arguments stored for this type, or <code>null</code> if none 
 	 * @throws JavaModelException if an error occurred while finding a resource to read
 	 *    the property
+	 * @deprecated to be removed, arguments are stored in launch 
+	 *  configurations
 	 */
 	public static ExecutionArguments getArguments(IType type) throws JavaModelException {
 		IJavaElement relativeRoot= getPropertyHolder(type);
@@ -93,6 +94,8 @@ public class ExecutionArguments {
 	 * @param args the execution arguments for this type, or <code>null</code> to clear
 	 * @throws JavaModelException if an error occurred while finding a resource to read
 	 *    the property
+	 * @deprecated to be removed, arguments are stored in launch 
+	 *  configurations
 	 */
 	public static void setArguments(IType type, ExecutionArguments args) throws JavaModelException {
 		IJavaElement relativeRoot= getPropertyHolder(type);
