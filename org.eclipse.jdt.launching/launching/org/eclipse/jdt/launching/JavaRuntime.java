@@ -902,7 +902,7 @@ public final class JavaRuntime {
 	 * Performs default resolution for a container entry.
 	 * Delegates to the Java model.
 	 */
-	public static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, ILaunchConfiguration config) throws CoreException {
+	private static IRuntimeClasspathEntry[] computeDefaultContainerEntries(IRuntimeClasspathEntry entry, ILaunchConfiguration config) throws CoreException {
 		return computeDefaultContainerEntries(entry, getJavaProject(config));
 	}
 	
