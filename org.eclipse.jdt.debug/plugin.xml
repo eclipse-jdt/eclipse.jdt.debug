@@ -268,6 +268,12 @@
             description="%descriptionMapEntry"
             class="org.eclipse.jdt.internal.debug.core.logicalstructures.MapEntryStructureType"
             id="java.util.MapEntry">
-      </logicalStructureType>      
+      </logicalStructureType>
+      <logicalStructureType
+            modelIdentifier="org.eclipse.jdt.debug"
+            description="%descriptionSWTComposite"
+            class="org.eclipse.jdt.internal.debug.core.logicalstructures.CompositeStructureType"
+            id="org.eclipse.swt.widgets.Composite">
+      </logicalStructureType>           
    </extension>
 </plugin>

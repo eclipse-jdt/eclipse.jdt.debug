@@ -17,9 +17,9 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
 /**
- * MapStructureType
+ * Logical strucuture type for maps.
  */
-public class MapStructureType extends LogicalObjectStructureType {
+public class MapStructureType extends LogicalObjectStructureInterfaceType {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.logicalstructures.LogicalObjectStructureType#getEvaluation()

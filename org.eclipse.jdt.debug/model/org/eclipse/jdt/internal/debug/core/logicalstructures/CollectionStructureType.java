@@ -16,9 +16,9 @@ import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
 /**
- * MapStructureType
+ * Logical structure type for collections.
  */
-public class CollectionStructureType extends LogicalObjectStructureType {
+public class CollectionStructureType extends LogicalObjectStructureInterfaceType {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.logicalstructures.LogicalObjectStructureType#getEvaluation()

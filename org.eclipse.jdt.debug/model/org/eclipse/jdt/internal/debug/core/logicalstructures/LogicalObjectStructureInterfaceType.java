@@ -31,9 +31,9 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 /**
- * Common facilities for logical structure types.
+ * Common facilities for logical structure types for instances of an interface
  */
-public abstract class LogicalObjectStructureType implements ILogicalStructureTypeDelegate {
+public abstract class LogicalObjectStructureInterfaceType implements ILogicalStructureTypeDelegate {
 	
 	private IJavaObject fObject; // the map to provide structure for
 	

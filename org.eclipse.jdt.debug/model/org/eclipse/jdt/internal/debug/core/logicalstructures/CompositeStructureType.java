@@ -14,13 +14,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.debug.core.IJavaVariable;
 
 /**
- * Logical structure type for map entries
+ * Logical structure type for SWT composites.
  */
-public class MapEntryStructureType extends LogicalObjectStructureInterfaceType {
+public class CompositeStructureType extends LogicalObjectStructureClassType {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.debug.core.logicalstructures.LogicalObjectStructureType#getEvaluation()
@@ -31,23 +29,17 @@ public class MapEntryStructureType extends LogicalObjectStructureInterfaceType {
 			 * @see org.eclipse.jdt.debug.core.IEvaluationRunnable#run(org.eclipse.jdt.debug.core.IJavaThread, org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public void run(IJavaThread thread, IProgressMonitor monitor) throws DebugException {
-				IJavaValue key = getObject().sendMessage("getKey", "()Ljava/lang/Object;", null, thread, false); //$NON-NLS-1$ //$NON-NLS-2$
-				IJavaValue value = getObject().sendMessage("getValue", "()Ljava/lang/Object;", null, thread, false); //$NON-NLS-1$ //$NON-NLS-2$
-				IJavaVariable[] javaVars = new IJavaVariable[2];
-				javaVars[0] = new JDIPlaceholderVariable("key", key); //$NON-NLS-1$
-				javaVars[1] = new JDIPlaceholderVariable("value", value); //$NON-NLS-1$
-				LogicalObjectStructureValue structure = new LogicalObjectStructureValue(getObject(), javaVars);
-				setLogicalStructure(structure);
+				setLogicalStructure(getObject().sendMessage("getChildren", "()[Lorg/eclipse/swt/widgets/Control;", null, thread, false)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 		};
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.core.logicalstructures.LogicalObjectStructureType#getTargetInterfaceName()
+	 * @see org.eclipse.jdt.internal.debug.core.logicalstructures.LogicalObjectStructureClassType#getTargetClassName()
 	 */
-	protected String getTargetInterfaceName() {
-		return "java.util.Map$Entry"; //$NON-NLS-1$
+	protected String getTargetClassName() {
+		return "org.eclipse.swt.widgets.Composite"; //$NON-NLS-1$
 	}
 
 }
