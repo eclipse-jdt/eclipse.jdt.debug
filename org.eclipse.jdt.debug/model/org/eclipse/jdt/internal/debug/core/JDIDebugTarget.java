@@ -261,6 +261,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Installs all breakpoints that currently exist in the breakpoint manager
 	 */
 	protected void initializeBreakpoints() {
+		getBreakpointManager().addBreakpointListener(this);
 		IBreakpoint[] bps = (IBreakpoint[]) getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
 		for (int i = 0; i < bps.length; i++) {
 			if (bps[i] instanceof IJavaBreakpoint) {
@@ -712,7 +713,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			return;
 		}
 		if (breakpoint instanceof JavaBreakpoint) {
-			((JavaBreakpoint)breakpoint).addToTarget(this);
+			try {
+				((JavaBreakpoint)breakpoint).addToTarget(this);
+			} catch (CoreException e) {
+				logError(e);
+			}
 		}
 	}
 
@@ -724,7 +729,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			return;
 		}		
 		if (breakpoint instanceof JavaBreakpoint) {		
-			((JavaBreakpoint)breakpoint).changeForTarget(this);
+			try {
+				((JavaBreakpoint)breakpoint).changeForTarget(this);
+			} catch (CoreException e) {
+				logError(e);
+			}
 		}
 	}
 	
@@ -736,7 +745,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			return;
 		}		
 		if (breakpoint instanceof JavaBreakpoint) {		
-			((JavaBreakpoint)breakpoint).removeFromTarget(this);
+			try {
+				((JavaBreakpoint)breakpoint).removeFromTarget(this);
+			} catch (CoreException e) {
+				logError(e);
+			}
 		}
 	}
 	
@@ -860,6 +873,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		if (!fTerminated) {
 			fTerminated= true;
 			removeAllChildren();
+			getBreakpointManager().removeBreakpointListener(this);
 			uninstallAllBreakpoints();
 			cleanupTempFiles();
 			if (fEvaluationContexts != null) {
@@ -904,7 +918,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			Iterator itr= ((ArrayList) markers.clone()).iterator();
 			while (itr.hasNext()) {
 				JavaBreakpoint breakpoint= (JavaBreakpoint) itr.next();
-				breakpoint.addToTarget(this);
+				breakpointAdded(breakpoint);
 			}			
 		}
 	}
@@ -948,7 +962,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 					EventRequest req = (EventRequest)fInstalledBreakpoints.remove(breakpoint);
 					getEventRequestManager().deleteEventRequest(req);
 				}
-				breakpoint.addToTarget(this);
+				breakpointAdded(breakpoint);
 			}
 		}
 	}

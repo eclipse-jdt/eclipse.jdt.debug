@@ -19,6 +19,11 @@ import org.eclipse.jdt.debug.core.IJavaDebugConstants;
 
 public class JDIDebugPlugin extends Plugin {
 	
+	/**
+	 * Propery identifier for a breakpoint object on an event request
+	 */
+	public static final String JAVA_BREAKPOINT_PROPERTY = "org.eclipse.jdt.debug.breakpoint";
+	
 	protected static JDIDebugPlugin fgPlugin;
 	
 	protected JavaHotCodeReplaceManager fJavaHCRMgr;

@@ -4,12 +4,10 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugConstants;
@@ -70,15 +68,16 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				// create the marker
 				fMarker= resource.createMarker(fMarkerType);
 				// configure the standard attributes
-				configure(getPluginIdentifier(), true);
+				setEnabled(true);
 				// configure caught, uncaught, checked, and the type attributes
 				setDefaultCaughtAndUncaught();
 				configureExceptionBreakpoint(checked, exception);
 
 				// configure the marker as a Java marker
-				Map attributes= getAttributes();
+				IMarker marker = ensureMarker();
+				Map attributes= marker.getAttributes();
 				JavaCore.addJavaElementMarkerAttributes(attributes, exception);
-				setAttributes(attributes);
+				marker.setAttributes(attributes);
 				
 				// Lastly, add the breakpoint manager
 				addToBreakpointManager();				
@@ -95,30 +94,26 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	public void configureExceptionBreakpoint(boolean checked, IType exception) throws CoreException {
 		String handle = exception.getHandleIdentifier();
 		Object[] values= new Object[]{new Boolean(checked), handle};
-		setAttributes(fgExceptionBreakpointAttributes, values);
+		ensureMarker().setAttributes(fgExceptionBreakpointAttributes, values);
 	}	
 	
-	public void setDefaultCaughtAndUncaught() {
+	public void setDefaultCaughtAndUncaught() throws CoreException {
 		Object[] values= new Object[]{Boolean.TRUE, Boolean.TRUE};
 		String[] attributes= new String[]{IJavaDebugConstants.CAUGHT, IJavaDebugConstants.UNCAUGHT};
-		try {
-			setAttributes(attributes, values);
-		} catch (CoreException ce) {
-			logError(ce);
-		}		
+		ensureMarker().setAttributes(attributes, values);
 	}
 	
 	/**
 	 * @see JavaBreakpoint#installIn(JDIDebugTarget)
 	 */
-	public void addToTarget(JDIDebugTarget target) {
+	public void addToTarget(JDIDebugTarget target) throws CoreException {
 		changeForTarget(target);
 	}	
 	
 	/**
 	 * An exception breakpoint has changed
 	 */
-	public void changeForTarget(JDIDebugTarget target) {
+	public void changeForTarget(JDIDebugTarget target) throws CoreException {
 
 		boolean caught= isCaught();
 		boolean uncaught= isUncaught();
@@ -151,7 +146,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				try {
 					request= target.getEventRequestManager().createExceptionRequest(exClass, caught, uncaught);
 					request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-					request.putProperty(IDebugConstants.BREAKPOINT, this);
+					request.putProperty(JDIDebugPlugin.JAVA_BREAKPOINT_PROPERTY, this);
 				} catch (VMDisconnectedException e) {
 					return;
 				} catch (RuntimeException e) {
@@ -169,7 +164,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	/**
 	 * An exception breakpoint has been removed
 	 */
-	public void removeFromTarget(JDIDebugTarget target) {
+	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
 		IType type = getType();
 		if (type == null) {
 //			internalError(ERROR_BREAKPOINT_NO_TYPE);
@@ -240,8 +235,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	/**
 	 * @see IJavaExceptionBreakpoint#isCaught()
 	 */
-	public boolean isCaught() {
-		return getBooleanAttribute(IJavaDebugConstants.CAUGHT);
+	public boolean isCaught() throws CoreException {
+		return ensureMarker().getAttribute(IJavaDebugConstants.CAUGHT, false);
 	}
 	
 	/**
@@ -251,23 +246,19 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		if (caught == isCaught()) {
 			return;
 		}
-		try {
-			setBooleanAttribute(IJavaDebugConstants.CAUGHT, caught);
-			if (caught && !isEnabled()) {
-				setEnabled(true);
-			} else if (!(caught || isUncaught())) {
-				setEnabled(false);
-			}
-		} catch (CoreException ce) {
-			logError(ce);
-		}			
+		ensureMarker().setAttribute(IJavaDebugConstants.CAUGHT, caught);
+		if (caught && !isEnabled()) {
+			setEnabled(true);
+		} else if (!(caught || isUncaught())) {
+			setEnabled(false);
+		}
 	}
 	
 	/**
 	 * @see IJavaExceptionBreakpoint#isUncaught()
 	 */
-	public boolean isUncaught() {
-		return getBooleanAttribute(IJavaDebugConstants.UNCAUGHT);
+	public boolean isUncaught() throws CoreException {
+		return ensureMarker().getAttribute(IJavaDebugConstants.UNCAUGHT, false);
 	}	
 	
 	/**
@@ -278,37 +269,15 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		if (uncaught == isUncaught()) {
 			return;
 		}
-		try {
-			setBooleanAttribute(IJavaDebugConstants.UNCAUGHT, uncaught);
-			if (uncaught && !isEnabled()) {
-				setEnabled(true);
-			} else if (!(uncaught || isCaught())) {
-				setEnabled(false);
-			}
-		} catch (CoreException ce) {
-			logError(ce);
-		}			
-	}
-	
-	/**
-	 * @see IJavaExceptionBreakpoint#isChecked()
-	 */
-	public boolean isChecked() {
-		return getBooleanAttribute(IJavaDebugConstants.CHECKED);
-	}
-	
-	/**
-	 * @see IJavaExceptionBreakpoint#setChecked(boolean)
-	 */
-	public void setChecked(boolean checked) throws CoreException {
-		if (checked != isChecked()) {
-			setBooleanAttribute(IJavaDebugConstants.CHECKED, checked);	
+		ensureMarker().setAttribute(IJavaDebugConstants.UNCAUGHT, uncaught);
+		if (uncaught && !isEnabled()) {
+			setEnabled(true);
+		} else if (!(uncaught || isCaught())) {
+			setEnabled(false);
 		}
-	}	
-	
-	/**
-	 * @see JavaBreakpoint
-	 */	
+	}
+		
+	/*
 	public String getFormattedThreadText(String threadName, String typeName, boolean systemThread) {
 		if (systemThread) {
 			return getFormattedString(EXCEPTION_SYS, new String[] {threadName, typeName});
@@ -316,8 +285,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		return getFormattedString(EXCEPTION_USR, new String[] {threadName, typeName});		
 	}
 	
-	/**
-	 */
 	public String getMarkerText(boolean showQualified) {
 		String name;
 		if (showQualified) {
@@ -346,6 +313,13 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 		}
 		return label;	
 	}
+	*/
 
+	/**
+	 * @see IJavaExceptionBreakpoint#isChecked()
+	 */
+	public boolean isChecked() throws CoreException {
+		return ensureMarker().getAttribute(IJavaDebugConstants.CHECKED, false);
+	}
 }
 

@@ -7,16 +7,12 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * Returns the <code>CAUGHT</code> attribute of this breakpoint
 	 * or <code>false</code> if the attribute is not set.
 	 */
-	public boolean isCaught();
+	public boolean isCaught() throws CoreException;
 	/**
 	 * Returns the <code>UNCAUGHT</code> attribute of this breakpoint
 	 * or <code>false</code> if the attribute is not set.
 	 */
-	public boolean isUncaught();		
-	/**
-	 * Returns whether this breakpoint breaks on checked exceptions.
-	 */
-	public boolean isChecked();
+	public boolean isUncaught() throws CoreException;		
 	/**
 	 * Set the <code>CAUGHT</code> attribute of this breakpoint
 	 */
@@ -26,13 +22,8 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 */	
 	public void setUncaught(boolean uncaught) throws CoreException;
 	/**
-	 * Set the <code>CHECKED</code> attribute of this breakpoint
-	 */	
-	public void setChecked(boolean checked) throws CoreException;
-	/**
-	 * Returns the text that should be displayed for the marker
-	 * associated with this breakpoint.
+	 * Returns whether this breakpoint breaks on checked exceptions.
 	 */
-	public String getMarkerText(boolean qualified);	
+	public boolean isChecked() throws CoreException;
 }
 

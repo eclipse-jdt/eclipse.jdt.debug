@@ -32,7 +32,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * Sets of attributes used to configure a line breakpoint
 	 */
 	protected static final String[] fgTypeAndHitCountAttributes= new String[]{IJavaDebugConstants.TYPE_HANDLE, IJavaDebugConstants.HIT_COUNT, IJavaDebugConstants.EXPIRED};	
-	protected static final String[] fgLineBreakpointAttributes= new String[]{IDebugConstants.MODEL_IDENTIFIER, IDebugConstants.ENABLED, IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};
+	protected static final String[] fgLineBreakpointAttributes= new String[]{IDebugConstants.ENABLED, IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};
 	
 	public JavaLineBreakpoint() {
 	}
@@ -55,9 +55,10 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				setTypeAndHitCount(type, hitCount);
 	
 				// configure the marker as a Java marker
-				Map attributes= getAttributes();
+				IMarker marker = ensureMarker();
+				Map attributes= marker.getAttributes();
 				JavaCore.addJavaElementMarkerAttributes(attributes, type);
-				setAttributes(attributes);
+				marker.setAttributes(attributes);
 				
 				// Lastly, add the breakpoint manager
 				addToBreakpointManager();
@@ -73,37 +74,33 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	/**
 	 * @see ILineBreakpoint
 	 */
-	public int getLineNumber() {
-		return getAttribute(IMarker.LINE_NUMBER, -1);
+	public int getLineNumber() throws CoreException {
+		return ensureMarker().getAttribute(IMarker.LINE_NUMBER, -1);
 	}
 
 	/**
 	 * @see ILineBreakpoint
 	 */
-	public int getCharStart() {
-		return getAttribute(IMarker.CHAR_START, -1);
+	public int getCharStart() throws CoreException {
+		return ensureMarker().getAttribute(IMarker.CHAR_START, -1);
 	}
 
 	/**
 	 * @see ILineBreakpoint
 	 */
-	public int getCharEnd() {
-		return getAttribute(IMarker.CHAR_END, -1);
+	public int getCharEnd() throws CoreException {
+		return ensureMarker().getAttribute(IMarker.CHAR_END, -1);
 	}		
 	
 	/**
 	 * Get the resource associated with the given type. This is
 	 * used to set the breakpoint's resource during initialization.
 	 */
-	protected IResource getResource(IType type) {
+	protected IResource getResource(IType type) throws CoreException {
 		IResource resource= null;
-		try {
-			resource= type.getUnderlyingResource();
-			if (resource == null) {
-				resource= type.getJavaProject().getProject();
-			}
-		} catch (JavaModelException jme) {
-			logError(jme);
+		resource= type.getUnderlyingResource();
+		if (resource == null) {
+			resource= type.getJavaProject().getProject();
 		}
 		return resource;
 	}
@@ -111,7 +108,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	/**
 	 * @see JavaBreakpoint#installIn(JDIDebugTarget)
 	 */
-	public void addToTarget(JDIDebugTarget target) {
+	public void addToTarget(JDIDebugTarget target) throws CoreException {
 		String topLevelName= getTopLevelTypeName();
 		if (topLevelName == null) {
 //			internalError(ERROR_BREAKPOINT_NO_TYPE);
@@ -136,7 +133,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	/**
 	 * Installs a line breakpoint in the given type, returning whether successful.
 	 */
-	protected boolean installLineBreakpoint(JDIDebugTarget target, ReferenceType type) {
+	protected boolean installLineBreakpoint(JDIDebugTarget target, ReferenceType type) throws CoreException {
 		Location location= null;
 		int lineNumber= getLineNumber();			
 		location= determineLocation(lineNumber, type);
@@ -165,7 +162,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * Creates, installs, and returns a line breakpoint request at
 	 * the given location for the given breakpoint.
 	 */
-	protected BreakpointRequest createLineBreakpointRequest(Location location, JDIDebugTarget target) {
+	protected BreakpointRequest createLineBreakpointRequest(Location location, JDIDebugTarget target) throws CoreException {
 		BreakpointRequest request = null;
 		try {
 			request= target.getEventRequestManager().createBreakpointRequest(location);
@@ -231,7 +228,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		return null;
 	}	
 	
-	public void changeForTarget(JDIDebugTarget target) {
+	public void changeForTarget(JDIDebugTarget target) throws CoreException {
 		BreakpointRequest request= (BreakpointRequest) target.getRequest(this);
 		if (request != null) {
 			// already installed - could be a change in the enabled state or hit count
@@ -248,11 +245,11 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * Update the hit count of an <code>EventRequest</code>. Return a new request with
 	 * the appropriate settings.
 	 */
-	protected BreakpointRequest updateHitCount(BreakpointRequest request, JDIDebugTarget target) {		
+	protected BreakpointRequest updateHitCount(BreakpointRequest request, JDIDebugTarget target) throws CoreException {		
 		
 		// if the hit count has changed, or the request has expired and is being re-enabled,
 		// create a new request
-		if (hasHitCountChanged(request) || (isExpired(request) && this.isEnabled())) {
+		if (hasHitCountChanged(request) || (isExpired(request) && isEnabled())) {
 			try {
 				Location location = ((BreakpointRequest) request).location();				
 				// delete old request
@@ -273,7 +270,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * Returns whether the hitCount of this breakpoint is equal to the hitCount of
 	 * the associated request.
 	 */
-	protected boolean hasHitCountChanged(EventRequest request) {
+	protected boolean hasHitCountChanged(EventRequest request) throws CoreException {
 		int hitCount= getHitCount();
 		Integer requestCount= (Integer) request.getProperty(IJavaDebugConstants.HIT_COUNT);
 		int oldCount = -1;
@@ -295,9 +292,9 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * and sets the suspend policy of the request to suspend 
 	 * the event thread.
 	 */
-	protected void configureRequest(EventRequest request) {
+	protected void configureRequest(EventRequest request) throws CoreException {
 		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		request.putProperty(IDebugConstants.BREAKPOINT, this);								
+		request.putProperty(JDIDebugPlugin.JAVA_BREAKPOINT_PROPERTY, this);								
 		int hitCount= getHitCount();
 		if (hitCount > 0) {
 			request.addCountFilter(hitCount);
@@ -324,7 +321,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	/**
 	 * @see IJavaBreakpoint#handleEvent(Event)
 	 */
-	public void handleEvent(Event event, JDIDebugTarget target) {
+	public void handleEvent(Event event, JDIDebugTarget target) throws CoreException {
 		if (!(event instanceof LocatableEvent)) {
 			return;
 		}
@@ -360,7 +357,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	/**
 	 * @see JavaBreakpoint#removeFromTarget(JDIDebugTarget)
 	 */
-	public void removeFromTarget(JDIDebugTarget target) {		
+	public void removeFromTarget(JDIDebugTarget target) throws CoreException {		
 		BreakpointRequest request= (BreakpointRequest) target.getRequest(this);
 		if (request == null) {
 			//deferred breakpoint
@@ -395,21 +392,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				logError(e);
 			}
 		}
-	}	
-
-	/**
-	 * @see IJavaLineBreakpoint#getHitCount()
-	 */
-	public int getHitCount() {
-		return getAttribute(IJavaDebugConstants.HIT_COUNT, -1);
-	}
-	
-	/**
-	 * @see IJavaLineBreakpoint#setHitCount(int)
-	 */
-	public void setHitCount(int count) throws CoreException {
-		setAttributes(new String[]{IJavaDebugConstants.HIT_COUNT, IJavaDebugConstants.EXPIRED},
-						new Object[]{new Integer(count), Boolean.FALSE});
 	}		
 	
 	/**
@@ -418,35 +400,6 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	public boolean isSupportedBy(VirtualMachine vm) {
 		return true;
 	}
-	
-	/**
-	 * Returns whether the given breakpoint has expired.
-	 */
-	public boolean isExpired() {
-		return getBooleanAttribute( IJavaDebugConstants.EXPIRED);
-	}	
-	
-	/**
-	 * Sets the <code>EXPIRED</code> attribute of the given breakpoint.
-	 */
-	public void setExpired(boolean expired) throws CoreException {
-		setBooleanAttribute(IJavaDebugConstants.EXPIRED, expired);	
-	}	
-	
-	/**
-	 * @see IJavaLineBreakpoint#getMethod()		
-	 */
-	public IMethod getMethod() {
-		try {
-			String handle = getMethodHandleIdentifier();
-			if (handle != null) {
-				return (IMethod)JavaCore.create(handle);
-			}
-		} catch (CoreException e) {
-			logError(e);
-		}
-		return null;
-	}	
 	
 	/**
 	 * Set standard attributes of a line breakpoint.
@@ -460,8 +413,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * <li>IJavaDebugConstants.CONDITION</li>		
 	 */	
 	public void setLineBreakpointAttributes(String modelIdentifier, boolean enabled, int lineNumber, int charStart, int charEnd) throws CoreException {
-		Object[] values= new Object[]{getPluginIdentifier(), new Boolean(true), new Integer(lineNumber), new Integer(charStart), new Integer(charEnd)};
-		setAttributes(fgLineBreakpointAttributes, values);			
+		Object[] values= new Object[]{new Boolean(true), new Integer(lineNumber), new Integer(charStart), new Integer(charEnd)};
+		ensureMarker().setAttributes(fgLineBreakpointAttributes, values);			
 	}
 	
 	/**
@@ -479,20 +432,20 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 		String handle = type.getHandleIdentifier();
 		Object[] values= new Object[]{handle, new Integer(hitCount), Boolean.FALSE};
-		setAttributes(fgTypeAndHitCountAttributes, values);
+		ensureMarker().setAttributes(fgTypeAndHitCountAttributes, values);
 	}		
 	
 	/**
 	 * Returns the <code>METHOD_HANDLE</code> attribute of the given breakpoint.
 	 */
 	public String getMethodHandleIdentifier() throws CoreException {
-		return (String)getAttribute(IJavaDebugConstants.METHOD_HANDLE);
+		return (String) ensureMarker().getAttribute(IJavaDebugConstants.METHOD_HANDLE);
 	}	
 	
 	/**
 	 * @see IJavaLineBreakpoint#getMember()
 	 */
-	public IMember getMember() {
+	public IMember getMember() throws CoreException {
 		int start = getCharStart();
 		int end = getCharEnd();
 		IType type = getType();
@@ -565,10 +518,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 		return null;
 	}
-	
-	/**
-	 * @see JavaBreakpoint
-	 */	
+/*
 	public String getFormattedThreadText(String threadName, String typeName, boolean systemThread) {
 		int lineNumber= getAttribute(IMarker.LINE_NUMBER, -1);
 		if (lineNumber > -1) {
@@ -615,6 +565,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 		return "";		
 	}
+	*/
 
 }
 

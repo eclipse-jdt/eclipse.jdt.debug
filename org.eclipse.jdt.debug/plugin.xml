@@ -26,6 +26,34 @@
 
 <!-- Extensions -->
 
+<extension point="org.eclipse.debug.core.breakpoints">
+	<breakpoint
+		id="javaLineBreakpoint"
+		markerType="org.eclipse.jdt.debug.javaLineBreakpointMarker"
+		class="org.eclipse.jdt.internal.debug.core.JavaLineBreakpoint">
+	</breakpoint>
+	<breakpoint
+		id="javaRunToLineBreakpoint"
+		markerType="org.eclipse.jdt.debug.javaRunToLineBreakpointMarker"
+		class="org.eclipse.jdt.internal.debug.core.JavaRunToLineBreakpoint">
+	</breakpoint>
+	<breakpoint
+		id="javaExceptionBreakpoint"
+		markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker"
+		class="org.eclipse.jdt.internal.debug.core.JavaExceptionBreakpoint">
+	</breakpoint>
+	<breakpoint
+		id="javaWatchpoint"
+		markerType="org.eclipse.jdt.debug.javaWatchpointMarker"
+		class="org.eclipse.jdt.internal.debug.core.JavaWatchpoint">
+	</breakpoint>
+	<breakpoint
+		id="javaMethodEntryBreakpoint"
+		markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"
+		class="org.eclipse.jdt.internal.debug.core.JavaMethodEntryBreakpoint">
+	</breakpoint>
+</extension>
+
 <extension
 	id="javaBreakpointMarker"
 	point="org.eclipse.core.resources.markers">
@@ -60,12 +88,6 @@
 </extension>
 
 <extension
-	id="javaLineBreakpoint"
-	point="org.eclipse.debug.core.breakpoints">
-	markerType="org.eclipse.jdt.debug.javaLineBreakpointMarker">
-</extension>
-
-<extension
       id="javaRunToLineBreakpointMarker"
       point="org.eclipse.core.resources.markers">
    <super
@@ -74,12 +96,6 @@
    <persistent
          value="false">
    </persistent>
-</extension>
-
-<extension
-	id="javaRunToLineBreakpoint"
-	point="org.eclipse.debug.core.breakpoints">
-	markerType="org.eclipse.jdt.debug.javaRunToLineBreakpointMarker">
 </extension>
 
 <extension
@@ -106,12 +122,6 @@
 </extension>
 
 <extension
-	id="javaExceptionBreakpoint"
-	point="org.eclipse.debug.core.breakpoints">
-	markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker">
-</extension>
-
-<extension
 	id="javaWatchpointMarker"
 	point="org.eclipse.core.resources.markers">
 	<super
@@ -132,12 +142,6 @@
 	<attribute
 		name="auto_disabled">
 	</attribute>
-</extension>
-
-<extension
-	id="javaWatchpoint"
-	point="org.eclipse.debug.core.breakpoints">
-	markerType="org.eclipse.jdt.debug.javaWatchpointMarker">
 </extension>
 
 <extension
@@ -162,12 +166,6 @@
 	<persistent 
 		value="false">
 	</persistent>
-</extension>
-
-<extension
-	id="javaMethodEntryBreakpoint"
-	point="org.eclipse.debug.core.breakpoints">
-	markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker">
 </extension>
 
 </plugin>

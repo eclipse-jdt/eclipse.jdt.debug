@@ -42,10 +42,7 @@ public class JavaRunToLineBreakpoint extends JavaLineBreakpoint implements IJava
 		super(type, lineNumber, charStart, charEnd, 1, fMarkerType);
 	}
 
-	/**
-	 * @see JavaBreakpoint
-	 */	
-	public String getFormattedThreadText(String threadName, String typeName, boolean systemThread) {
+/*	public String getFormattedThreadText(String threadName, String typeName, boolean systemThread) {
 		int lineNumber= getAttribute(IMarker.LINE_NUMBER, -1);
 		if (lineNumber > -1) {
 			if (systemThread) {
@@ -56,6 +53,7 @@ public class JavaRunToLineBreakpoint extends JavaLineBreakpoint implements IJava
 		}
 		return "";
 	}
+	*/
 	
 	/**
 	 * Run to line breakpoints should not be added to the breakpoint

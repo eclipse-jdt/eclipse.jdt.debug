@@ -97,8 +97,12 @@ class EventDispatcher implements Runnable {
 		if (!fKeepReading) {
 			return;
 		}
-		JavaBreakpoint breakpoint= (JavaBreakpoint)event.request().getProperty(IDebugConstants.BREAKPOINT);
-		breakpoint.handleEvent(event, fTarget);		
+		JavaBreakpoint breakpoint= (JavaBreakpoint)event.request().getProperty(JDIDebugPlugin.JAVA_BREAKPOINT_PROPERTY);
+		try {
+			breakpoint.handleEvent(event, fTarget);		
+		} catch (CoreException e) {
+			breakpoint.logError(e);
+		}
 	}
 
 	protected void dispatchStepEvent(StepEvent event) {

@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.internal.core.Breakpoint;
+import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaDebugConstants;
+import org.eclipse.jdt.debug.core.*;
 
 import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.event.Event;
@@ -20,12 +18,14 @@ import com.sun.jdi.request.MethodEntryRequest;
 
 public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint {
 
-	// Thread and marker label resource String keys
+
+// Thread and marker label resource String keys
 	protected static final String THREAD_PREFIX= "jdi_thread.";
 	protected static final String MARKER_PREFIX= "jdi_marker.";
 	protected static final String LABEL= "label.";	
 	protected static final String THREAD_LABEL= THREAD_PREFIX + LABEL;
 	protected static final String MARKER_LABEL= MARKER_PREFIX + LABEL;
+	protected static final String NO_MARKER="java_breakpoint.error.no_marker";
 	/**
 	 * JavaBreakpoint attributes
 	 */	
@@ -34,59 +34,39 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public JavaBreakpoint() {
 	}	
 	
-	public JavaBreakpoint(IMarker marker) {
-		super(marker);
-		setMarker(marker);
+	public String getModelIdentifier() {
+		return JDIDebugModel.getPluginIdentifier();
 	}
 
-	public void setMarker(IMarker marker) {
+	public void setMarker(IMarker marker) throws CoreException {
 		super.setMarker(marker);
 		configureAtStartup();
 	}
-
-	/**
-	 * @see Breakpoint#addToTarget(IDebugTarget)
-	 */
-	public void addToTarget(IDebugTarget target) {
-		if (target instanceof JDIDebugTarget) {
-			addToTarget((JDIDebugTarget) target);
-		}
-	}	
-
-	/**
-	 * @see Breakpoint#changeForTarget
-	 */
-	public void changeForTarget(IDebugTarget target) {
-		if (target instanceof JDIDebugTarget) {
-			changeForTarget((JDIDebugTarget) target);
-		}
-	}
 	
-	/**
-	 * @see Breakpoint#removeFromTarget(IDebugTarget)
-	 */
-	public void removeFromTarget(IDebugTarget target) {
-		if (target instanceof JDIDebugTarget) {
-			removeFromTarget((JDIDebugTarget) target);
+	protected IMarker ensureMarker() throws DebugException {
+		IMarker m = getMarker();
+		if (m == null) {
+			throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), IDebugStatusConstants.REQUEST_FAILED,
+				DebugJavaUtils.getResourceString(NO_MARKER),null));
 		}
+		return m;
 	}
-	
 	/**
 	 * Handles the given event in the given target.
 	 */
-	protected abstract void handleEvent(Event event, JDIDebugTarget target);
+	protected abstract void handleEvent(Event event, JDIDebugTarget target) throws CoreException;
 
-	protected abstract void addToTarget(JDIDebugTarget target);
-	protected abstract void changeForTarget(JDIDebugTarget target);
-	protected abstract void removeFromTarget(JDIDebugTarget target);
+	protected abstract void addToTarget(JDIDebugTarget target) throws CoreException;
+	protected abstract void changeForTarget(JDIDebugTarget target) throws CoreException;
+	protected abstract void removeFromTarget(JDIDebugTarget target) throws CoreException;
 	
 	/**
 	 * Update the enabled state of the given request, which is associated
 	 * with this breakpoint. Set the enabled state of the request
 	 * to the enabled state of this breakpoint.
 	 */
-	protected void updateEnabledState(EventRequest request)  {
-		updateEnabledState(request, this.isEnabled());
+	protected void updateEnabledState(EventRequest request) throws CoreException  {
+		updateEnabledState(request, isEnabled());
 	}
 
 	/**
@@ -111,22 +91,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Return whether this breakpoint is enabled
-	 */
-	public boolean isEnabled() {
-		try {
-			return super.isEnabled();
-		} catch (CoreException ce) {
-			logError(ce);
-			return false;
-		}
-	}
-	
-	/**
 	 * Returns whether this breakpoint has expired.
 	 */
-	public boolean isExpired() {
-		return getBooleanAttribute(IJavaDebugConstants.EXPIRED);
+	public boolean isExpired() throws CoreException {
+		return ensureMarker().getAttribute(IJavaDebugConstants.EXPIRED, false);
 	}	
 	
 	/**
@@ -143,8 +111,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * @see IJavaBreakpoint#isInstalled()
 	 */
-	public boolean isInstalled() {
-		return getAttribute(IJavaDebugConstants.INSTALL_COUNT, 0) > 0;
+	public boolean isInstalled() throws CoreException {
+		return ensureMarker().getAttribute(IJavaDebugConstants.INSTALL_COUNT, 0) > 0;
 	}	
 	
 	/**
@@ -152,15 +120,15 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void incrementInstallCount() throws CoreException {
 		int count = getInstallCount();
-		setAttribute(IJavaDebugConstants.INSTALL_COUNT, count + 1);
+		ensureMarker().setAttribute(IJavaDebugConstants.INSTALL_COUNT, count + 1);
 	}	
 	
 	/**
 	 * Returns the <code>INSTALL_COUNT</code> attribute of this breakpoint
 	 * or 0 if the attribute is not set.
 	 */
-	public int getInstallCount() {
-		return getAttribute(IJavaDebugConstants.INSTALL_COUNT, 0);
+	public int getInstallCount() throws CoreException {
+		return ensureMarker().getAttribute(IJavaDebugConstants.INSTALL_COUNT, 0);
 	}	
 
 	/**
@@ -169,12 +137,12 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public void decrementInstallCount() throws CoreException {
 		int count= getInstallCount();
 		if (count > 0) {
-			setAttribute(IJavaDebugConstants.INSTALL_COUNT, count - 1);	
+			ensureMarker().setAttribute(IJavaDebugConstants.INSTALL_COUNT, count - 1);	
 		}
 		if (count == 1) {
 			if (isExpired()) {
 				// if breakpoint was auto-disabled, re-enable it
-				setAttributes(fgExpiredEnabledAttributes,
+				ensureMarker().setAttributes(fgExpiredEnabledAttributes,
 						new Object[]{Boolean.FALSE, Boolean.TRUE});
 			}
 		}
@@ -193,20 +161,16 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Sets the <code>TYPE_HANDLE</code> attribute of the given breakpoint.
 	 */
 	public void setTypeHandleIdentifier(String identifier) throws CoreException {
-		setAttribute(IJavaDebugConstants.TYPE_HANDLE, identifier);
+		ensureMarker().setAttribute(IJavaDebugConstants.TYPE_HANDLE, identifier);
 	}
 	
 	/**
 	 * @see IJavaBreakpoint#getType()
 	 */
-	public IType getType() {
-		try {
-			String handle = getTypeHandleIdentifier();
-			if (handle != null) {
-				return (IType)JavaCore.create(handle);
-			}
-		} catch (CoreException e) {
-			logError(e);
+	public IType getType() throws CoreException {
+		String handle = getTypeHandleIdentifier();
+		if (handle != null) {
+			return (IType)JavaCore.create(handle);
 		}
 		return null;
 	}	
@@ -215,14 +179,14 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Returns the <code>TYPE_HANDLE</code> attribute of the given breakpoint.
 	 */
 	public String getTypeHandleIdentifier() throws CoreException {
-		return (String)getAttribute(IJavaDebugConstants.TYPE_HANDLE);
+		return (String) ensureMarker().getAttribute(IJavaDebugConstants.TYPE_HANDLE);
 	}	
 	
 	/**
 	 * Returns the top-level type name associated with the type 
 	 * the given breakpoint is associated with, or <code>null</code>.
 	 */
-	public String getTopLevelTypeName() {
+	public String getTopLevelTypeName() throws CoreException {
 		IType type = getType();
 		if (type != null) {
 			while (type.getDeclaringType() != null) {
@@ -232,32 +196,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		return null;
 	}
-	
-	/**
-	 * @see IJavaBreakpoint
-	 */
-	public String getThreadText(String threadName, boolean qualified, boolean systemThread) {
-		String typeName= getBreakpointTypeName(qualified);
-		return getFormattedThreadText(threadName, typeName, systemThread);			
-	}
-	
-	/**
-	 * @see IJavaBreakpoint#getThreadText
-	 */
-	protected abstract String getFormattedThreadText(String threadName, String typeName, boolean systemThread);
-	
-	public String getBreakpointTypeName(boolean qualified) {
-		String typeName= "";
-		typeName= getType().getFullyQualifiedName();
-		if (!qualified) {
-			int index= typeName.lastIndexOf('.');
-			if (index != -1) {
-				typeName= typeName.substring(index + 1);
-			}
-		}
-		return typeName;
-	}		
-	
+		
 	/**
 	 * Returns the identifier for this JDI debug model plug-in
 	 *
@@ -266,20 +205,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public static String getPluginIdentifier() {
 		return JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier();
 	}	
-
-	/**
-	 * Plug in the single argument to the resource String for the key to get a formatted resource String
-	 */
-	public static String getFormattedString(String key, String arg) {
-		return getFormattedString(key, new String[] {arg});
-	}
-
-	/**
-	 * Plug in the arguments to the resource String for the key to get a formatted resource String
-	 */
-	public static String getFormattedString(String key, String[] args) {
-		return DebugJavaUtils.getFormattedString(key, args);
-	}
 	
 	/**
 	 * Convenience method to log internal errors
@@ -303,7 +228,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * If a workbench crashes, the attributes could have been persisted
 	 * in an incorrect state.
 	 */
-	private void configureAtStartup() {
+	private void configureAtStartup() throws CoreException {
 		List attributes= new ArrayList(3);
 		List values= new ArrayList(3);
 		if (isInstalled()) {
@@ -319,11 +244,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		if (!attributes.isEmpty()) {
 			String[] strAttributes= new String[attributes.size()];
-			try {
-				setAttributes((String[])attributes.toArray(strAttributes), values.toArray());
-			} catch (CoreException ce) {
-				logError(ce);
-			}
+			ensureMarker().setAttributes((String[])attributes.toArray(strAttributes), values.toArray());
 		}
 	}	
 
@@ -340,6 +261,28 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected IBreakpointManager getBreakpointManager() {
 		return DebugPlugin.getDefault().getBreakpointManager();
 	}
+
+	/**
+	 * @see IJavaBreakpoint#getHitCount()
+	 */
+	public int getHitCount() throws CoreException {
+		return ensureMarker().getAttribute(IJavaDebugConstants.HIT_COUNT, -1);
+	}
+	
+	/**
+	 * @see IJavaBreakpoint#setHitCount(int)
+	 */
+	public void setHitCount(int count) throws CoreException {
+		ensureMarker().setAttributes(new String[]{IJavaDebugConstants.HIT_COUNT, IJavaDebugConstants.EXPIRED},
+						new Object[]{new Integer(count), Boolean.FALSE});
+	}	
+	
+	/**
+	 * Sets the <code>EXPIRED</code> attribute of the given breakpoint.
+	 */
+	public void setExpired(boolean expired) throws CoreException {
+		ensureMarker().setAttribute(IJavaDebugConstants.EXPIRED, expired);	
+	}	
 
 }
 
