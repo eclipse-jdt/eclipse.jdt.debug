@@ -1130,7 +1130,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		if (getOriginalStepKind() != StepRequest.STEP_INTO) {
 			return false;
 		}
-		if (getOriginalStepStackDepth() != getUnderlyingFrames().size()) {
+		if (getOriginalStepStackDepth() != getUnderlyingFrameCount()) {
 			return false;
 		}
 		Location origLocation = getOriginalStepLocation();
@@ -1500,7 +1500,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		protected void step() throws DebugException {
 			setOriginalStepKind(getStepKind());
 			setOriginalStepLocation(((JDIStackFrame)getTopStackFrame()).getUnderlyingStackFrame().location());
-			setOriginalStepStackDepth(getUnderlyingFrames().size());
+			setOriginalStepStackDepth(computeStackFrames().size());
 			setStepRequest(createStepRequest());
 			setPendingStepHandler(this);
 			addJDIEventListener(this, getStepRequest());
