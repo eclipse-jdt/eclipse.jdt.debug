@@ -110,6 +110,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 */
 	private Map fProjectBuildTimes= new HashMap();
 	private static Date fStartupDate= new Date();
+	
+	/**
+	 * Cache of compilation unit deltas renewed on each HCR attempt.
+	 */
+	private Map fDeltaCache = new HashMap();
+	
 	/**
 	 * Utility object used for tracking build times of projects.
 	 * The HCR manager receives notification of builds AFTER
@@ -417,6 +423,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (!ms.isOK()) {
 			JDIDebugPlugin.log(ms);
 		}
+		fDeltaCache.clear();
 	}
 
 	/**
@@ -705,7 +712,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		JDIStackFrame affectedFrame= null;
 		JDIStackFrame frame= null;
 		ICompilationUnit compilationUnit= null;
-		IMethod method= null;
 		CompilationUnitDelta delta= null;
 		IProject project= null;
 		for (int j= frames.size() - 1; j >= 0; j--) {
@@ -717,12 +723,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				if (compilationUnit != null) {
 					try {
 						project= compilationUnit.getCorrespondingResource().getProject();
-						method= getMethod(frame, compilationUnit);
-						if (method != null) {
-							delta= new CompilationUnitDelta(compilationUnit, getLastProjectBuildTime(project));
-							if (!delta.hasChanged(method)) {
-								continue;
-							}
+					    delta = getDelta(compilationUnit, getLastProjectBuildTime(project));
+						if (!delta.hasChanged(frame.getName(), frame.getSignature())) {
+							continue;
 						}
 					} catch (CoreException exception) {
 						// If smart drop to frame fails, just do type-based drop	
@@ -748,6 +751,22 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			}
 		}
 		return affectedFrame;
+	}
+	
+	/**
+	 * Returns the delta object for the given compilation unit
+	 * 
+	 * @param cu compilation unit
+	 * @param time time to compare to (i.e. compare to first version before this time)
+	 * @return delta object
+	 */
+	private CompilationUnitDelta getDelta(ICompilationUnit cu, long time) throws CoreException {
+	    CompilationUnitDelta delta = (CompilationUnitDelta) fDeltaCache.get(cu);
+	    if (delta == null) {
+	    	delta= new CompilationUnitDelta(cu, time);
+	    	fDeltaCache.put(cu, delta);
+	    }
+	    return delta;
 	}
 	
 	/**
