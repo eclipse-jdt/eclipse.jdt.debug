@@ -5,16 +5,11 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
 
-import java.io.File;
 import java.text.MessageFormat;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
@@ -33,6 +28,7 @@ import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
@@ -52,6 +48,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
@@ -83,6 +80,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	private IEditorPart fTargetEditor;
 	private IWorkbenchWindow fWindow;
 	private Object fSelection;
+	/**
+	 * Used in evaluationTimedOut
+	 */
+	private boolean fKeepWaiting;
 	
 	/**
 	 * Used to resolve editor input for selected stack frame
@@ -156,6 +157,57 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		return null;
 	}
 	
+	/**
+	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
+	 */
+	public void evaluationComplete(final IEvaluationResult result) {
+		final IJavaValue value= result.getValue();
+		if (result.hasErrors() || value != null) {
+			final Display display= JDIDebugUIPlugin.getStandardDisplay();
+			if (display.isDisposed()) {
+				return;
+			}
+			display.asyncExec(new Runnable() {
+				public void run() {
+					if (display.isDisposed()) {
+						return;
+					}
+					if (result.hasErrors()) {
+						reportErrors(result);
+					}
+					if (value != null) {
+						displayResult(result);
+					}
+				}
+			});
+		}
+	}
+	
+	/**
+	 * @see IEvaluationListener#evaluationTimedOut(IJavaThread)
+	 */
+	public boolean evaluationTimedOut(final IJavaThread thread) {
+		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+			public void run() {
+				boolean answer= MessageDialog.openQuestion(getShell(), "Evaluation timed out", "Do you want to suspend the evaluation? Answer no to keep waiting");
+				if (answer) {
+					try {
+						thread.suspend();
+					} catch (DebugException exception) {
+					}
+					fKeepWaiting= false;
+				} else {
+					fKeepWaiting= true; // Keep waiting
+				}
+			}
+		});
+		return fKeepWaiting;
+	}
+	
+	/**
+	 * Display the given evaluation result.
+	 */
+	abstract protected void displayResult(IEvaluationResult result);	
 	
 	protected void run() {		
 		// eval in context of object or stack frame

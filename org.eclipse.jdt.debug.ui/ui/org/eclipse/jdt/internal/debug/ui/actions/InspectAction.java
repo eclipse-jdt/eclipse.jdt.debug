@@ -31,36 +31,13 @@ import org.eclipse.ui.PartInitException;
 public class InspectAction extends EvaluateAction {
 	
 	/**
-	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
+	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
-	public void evaluationComplete(final IEvaluationResult res) {
-		final IJavaValue value= res.getValue();
-		if (res.hasErrors() || value != null) {
-			Display display= Display.getDefault();
-			if (display.isDisposed()) {
-				return;
-			}
-			display.asyncExec(new Runnable() {
-				public void run() {
-					if (res.hasErrors()) {
-						reportErrors(res);
-					} 
-					if (value != null) {
-						// make expression view visible
-						showExpressionView();
-						JavaInspectExpression exp = new JavaInspectExpression(res.getSnippet().trim(), value);
-						DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
-					}
-				}
-			});
-		}
-	}
-	
-	/**
-	 * @see IEvaluationListener#evaluationTimedOut(IJavaThread)
-	 */
-	public boolean evaluationTimedOut(IJavaThread thread) {
-		return true; // Keep waiting
+	protected void displayResult(IEvaluationResult result) {
+		IJavaValue value= result.getValue();
+		showExpressionView();
+		JavaInspectExpression exp = new JavaInspectExpression(result.getSnippet().trim(), value);
+		DebugPlugin.getDefault().getExpressionManager().addExpression(exp);
 	}
 	
 	/**

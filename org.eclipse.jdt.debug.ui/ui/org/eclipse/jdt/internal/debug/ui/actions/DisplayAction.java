@@ -32,11 +32,6 @@ import org.eclipse.ui.IWorkbenchPart;
 public class DisplayAction extends EvaluateAction implements IValueDetailListener {
 	
 	/**
-	 * Used in evaluationTimedOut
-	 */
-	private boolean fKeepWaiting;
-	
-	/**
 	 * The debug model presentation used for computing toString
 	 */
 	private IDebugModelPresentation fPresentation= DebugUITools.newDebugModelPresentation(JDIDebugModel.getPluginIdentifier());
@@ -45,68 +40,28 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	 * debug model.
 	 */
 	private String fResult;
-		
-	/**
-	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
-	 */
-	public void evaluationComplete(final IEvaluationResult result) {
-		
-		final IJavaValue value= result.getValue();
-		
-		if (result.hasErrors() || value != null) {
-			final Display display= JDIDebugUIPlugin.getStandardDisplay();
-			if (display.isDisposed()) {
-				return;
+	
+	protected boolean reportErrors(IEvaluationResult result) {
+		boolean severeProblems= reportErrors(result);
+		if (severeProblems) {
+			IDataDisplay dataDisplay= getDataDisplay();
+			if (dataDisplay != null) {
+				dataDisplay.displayExpressionValue(ActionMessages.getString("DisplayAction.(evaluation_failed)_1")); //$NON-NLS-1$
 			}
-			display.asyncExec(new Runnable() {
-				public void run() {
-					if (display.isDisposed()) {
-						return;
-					}
-					if (result.hasErrors()) {
-						boolean severeProblems= reportErrors(result);
-						if (severeProblems) {
-							IDataDisplay dataDisplay= getDataDisplay();
-							if (dataDisplay != null) {
-								dataDisplay.displayExpressionValue(ActionMessages.getString("DisplayAction.(evaluation_failed)_1")); //$NON-NLS-1$
-							}
-						}
-					}
-					if (value != null) {
-						insertResult(value, result.getThread());
-					}
-				}
-			});
 		}
+		return severeProblems;
 	}
 	
 	/**
-	 * @see IEvaluationListener#evaluationTimedOut(IJavaThread)
+	 * @see EvaluateAction#displayResult(IEvaluationResult)
 	 */
-	public boolean evaluationTimedOut(final IJavaThread thread) {
-		JDIDebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
-			public void run() {
-				boolean answer= MessageDialog.openQuestion(getShell(), "Evaluation timed out", "Do you want to suspend the evaluation? Answer no to keep waiting");
-				if (answer) {
-					try {
-						thread.suspend();
-					} catch (DebugException exception) {
-					}
-					fKeepWaiting= false;
-				} else {
-					fKeepWaiting= true; // Keep waiting
-				}
-			}
-		});
-		return fKeepWaiting;
-	}
-	
-	protected void insertResult(IJavaValue result, IJavaThread thread) {
-		
+	protected void displayResult(IEvaluationResult result) {
+		IJavaValue value= result.getValue();
+		IJavaThread thread= result.getThread();
 		String resultString= " "; //$NON-NLS-1$
 		try {
 			String sig= null;
-			IJavaType type= result.getJavaType();
+			IJavaType type= value.getJavaType();
 			if (type != null) {
 				sig= type.getSignature();
 			}
@@ -114,9 +69,9 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 				resultString= ActionMessages.getString("DisplayAction.no_result_value"); //$NON-NLS-1$
 			} else {
 				if (sig != null) {
-					resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.type_name_pattern"), new Object[] { result.getReferenceTypeName() }); //$NON-NLS-1$
+					resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.type_name_pattern"), new Object[] { value.getReferenceTypeName() }); //$NON-NLS-1$
 				}
-				resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, evaluateToString(result, thread) }); //$NON-NLS-1$
+				resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, evaluateToString(value, thread) }); //$NON-NLS-1$
 			}
 		} catch(DebugException x) {
 			reportError(x);
