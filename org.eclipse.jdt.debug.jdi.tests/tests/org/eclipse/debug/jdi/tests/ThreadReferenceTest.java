@@ -17,7 +17,6 @@ import com.sun.jdi.InvocationException;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
-import com.sun.jdi.ThreadGroupReference;
 import com.sun.jdi.ThreadReference;
 import com.sun.jdi.event.ThreadStartEvent;
 
