@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.IJavaProject;
@@ -62,7 +61,7 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 			//  set default source locator if none specified
 			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 			if (id == null) {
-				IJavaProject javaProject = JavaLaunchConfigurationUtils.getJavaProject(configuration);
+				IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
 				if (javaProject != null) {
 					ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
 					launch.setSourceLocator(sourceLocator);

@@ -20,6 +20,7 @@ import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
@@ -77,7 +78,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJav
 		if (launch.getSourceLocator() == null) {
 			String id = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 			if (id == null) {
-				IJavaProject javaProject = JavaLaunchConfigurationUtils.getJavaProject(configuration);
+				IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
 				if (javaProject != null) {
 					ISourceLocator sourceLocator = new JavaSourceLocator(javaProject);
 					launch.setSourceLocator(sourceLocator);					

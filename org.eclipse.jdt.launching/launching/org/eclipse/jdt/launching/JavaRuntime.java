@@ -48,14 +48,12 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
-import org.eclipse.jdt.internal.launching.JREContainer;
 import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
@@ -588,7 +586,7 @@ public final class JavaRuntime {
 	public static IRuntimeClasspathEntry[] computeRuntimeClasspath(ILaunchConfiguration configuration) throws CoreException {
 		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
 		if (useDefault) {
-			IJavaProject proj = JavaLaunchConfigurationUtils.getJavaProject(configuration);
+			IJavaProject proj = getJavaProject(configuration);
 			if (proj == null) {
 				// no project - use JRE's libraries by default
 				IVMInstall vm = computeVMInstall(configuration);
@@ -612,6 +610,32 @@ public final class JavaRuntime {
 			return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
 		}
 	}
+	
+	/**
+	 * Return the <code>IJavaProject</code> referenced in the specified configuration or
+	 * <code>null</code> if none.
+	 *
+	 * @exception CoreException if the referenced Java project does not exist
+	 */
+	public static IJavaProject getJavaProject(ILaunchConfiguration configuration) throws CoreException {
+		String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+		if ((projectName == null) || (projectName.trim().length() < 1)) {
+			return null;
+		}			
+		IJavaProject javaProject = getJavaModel().getJavaProject(projectName);		
+		if ((javaProject == null) || !javaProject.exists()) {
+			abort(LaunchingMessages.getString("JavaLaunchConfigurationUtils.Invalid_project_specified_2"), IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT, null); //$NON-NLS-1$
+		}
+		return javaProject;
+	}
+				
+	/**
+	 * Convenience method to get the java model.
+	 */
+	private static IJavaModel getJavaModel() {
+		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+	}
+	
 	
 	/**
 	 * Returns a collection of runtime classpath entries that are defined in the
@@ -657,7 +681,7 @@ public final class JavaRuntime {
 	public static IVMInstall computeVMInstall(ILaunchConfiguration configuration) throws CoreException {
 		String type = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 		if (type == null) {
-			IJavaProject proj = JavaLaunchConfigurationUtils.getJavaProject(configuration);
+			IJavaProject proj = getJavaProject(configuration);
 			if (proj != null) {
 				IVMInstall vm = getVMInstall(proj);
 				if (vm != null) {
@@ -718,9 +742,23 @@ public final class JavaRuntime {
 	 *  error, or <code>null</code> if none
 	 */
 	private static void abort(String message, Throwable exception) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, exception));
+		abort(message, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, exception);
 	}	
-				
+		
+		
+	/**
+	 * Throws a core exception with an internal error status.
+	 * 
+	 * @param message the status message
+	 * @param code status code
+	 * @param exception lower level exception associated with the
+	 * 
+	 *  error, or <code>null</code> if none
+	 */
+	private static void abort(String message, int code, Throwable exception) throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), code, message, exception));
+	}	
+					
 	/**
 	 * Returns the transitive closure of classpath entries for the
 	 * given project entry.

@@ -70,6 +70,7 @@ public class JavaLaunchConfigurationUtils {
 	 * <code>null</code> if none.
 	 *
 	 * @exception CoreException if the referenced Java project does not exist
+	 * @deprecated use JavaRutime#getJavaProject(ILaunchConfiguration)
 	 */
 	public static IJavaProject getJavaProject(ILaunchConfiguration configuration) throws CoreException {
 		String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);

@@ -24,7 +24,6 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -278,7 +277,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 */
 	protected void setProjectFrom(ILaunchConfiguration config) {
 		try {
-			fJavaProject = JavaLaunchConfigurationUtils.getJavaProject(config);
+			fJavaProject = JavaRuntime.getJavaProject(config);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}

@@ -12,16 +12,13 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaModelStatusConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -34,7 +31,6 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.LibraryLocation;
 
 
 /**
@@ -254,7 +250,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	 * @see IPersistableSourceLocator#initializeDefaults(ILaunchConfiguration)
 	 */
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
-		IJavaProject jp = JavaLaunchConfigurationUtils.getJavaProject(configuration);
+		IJavaProject jp = JavaRuntime.getJavaProject(configuration);
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeSourceLookupPath(configuration);
 		if (entries == null || entries.length == 0) {
 			if (jp != null) {
@@ -363,7 +359,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					boolean include = false;
 					String name = entry.getVariableName();
 					if (name.equals(JavaRuntime.JRELIB_VARIABLE) || name.equals(JavaRuntime.JRE_CONTAINER)) {
-						IJavaProject pro = JavaLaunchConfigurationUtils.getJavaProject(configuration);
+						IJavaProject pro = JavaRuntime.getJavaProject(configuration);
 						include = pro == null;
 						// omit from path unless JRE_LIB resolves to a library different
 						// than the config's project's JRE, or there is no project						

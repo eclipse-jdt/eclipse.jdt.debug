@@ -25,7 +25,6 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -206,7 +205,7 @@ public class SourceLookupBlock {
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			setLaunchConfiguration(config);
-			IJavaProject project = JavaLaunchConfigurationUtils.getJavaProject(config);
+			IJavaProject project = JavaRuntime.getJavaProject(config);
 			setProject(project);
 			boolean useDefault = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
 			fDefaultButton.setSelection(useDefault);
