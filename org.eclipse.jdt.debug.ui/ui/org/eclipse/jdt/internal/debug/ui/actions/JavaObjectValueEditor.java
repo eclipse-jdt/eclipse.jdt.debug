@@ -54,7 +54,6 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     public boolean editVariable(IVariable variable, Shell shell) {
         try {
             ExpressionInputDialog dialog= new ExpressionInputDialog(shell, (IJavaVariable) variable);
-            //InputDialog dialog= new InputDialog(shell, "Change Object Value", MessageFormat.format("To assign a new value to {0}, enter a single expression or a series of statements that return a value:", new String[] { name }), initialValue, new ExpressionValidator());
             if (dialog.open() == Window.OK) {
                 String result = dialog.getResult();
                 IValue newValue = evaluate(shell, result);
