@@ -15,6 +15,8 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayAccess;
 import org.eclipse.jdt.core.dom.ArrayCreation;
@@ -23,6 +25,7 @@ import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.AssertStatement;
 import org.eclipse.jdt.core.dom.Assignment;
 import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BlockComment;
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.BreakStatement;
@@ -36,6 +39,9 @@ import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.FieldAccess;
@@ -50,20 +56,31 @@ import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.InstanceofExpression;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.LabeledStatement;
+import org.eclipse.jdt.core.dom.LineComment;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
+import org.eclipse.jdt.core.dom.MemberRef;
+import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.MethodRef;
+import org.eclipse.jdt.core.dom.MethodRefParameter;
+import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.ParenthesizedExpression;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
@@ -72,16 +89,20 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
+import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextElement;
 import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.TypeLiteral;
+import org.eclipse.jdt.core.dom.TypeParameter;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
+import org.eclipse.jdt.core.dom.WildcardType;
 import org.eclipse.jdt.core.dom.PrefixExpression.Operator;
 
 /**
@@ -284,6 +305,20 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return node.resolveFieldBinding().getConstantValue() != null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
+	 */
+	public boolean visit(AnnotationTypeDeclaration node) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration)
+	 */
+	public boolean visit(AnnotationTypeMemberDeclaration node) {
+		return false;
+	}
+
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnonymousClassDeclaration)
 	 */
@@ -351,6 +386,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.BlockComment)
+	 */
+	public boolean visit(BlockComment node) {
+		return false;
+	}
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.BooleanLiteral)
 	 */
@@ -435,6 +477,53 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnhancedForStatement)
+	 */
+	public boolean visit(EnhancedForStatement node) {
+		if (visit(node, false)) {
+			node.getExpression().accept(this);
+			node.getBody().accept(this);
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumConstantDeclaration)
+	 */
+	public boolean visit(EnumConstantDeclaration node) {
+		// TODO: test when the compiler correctly manage Enums
+		if (visit(node, false)) {
+			List arguments= node.arguments();
+			for (Iterator iter= arguments.iterator(); iter.hasNext();) {
+				((Expression)iter.next()).accept(this);
+			}
+			List bodyDeclaration= node.bodyDeclarations();
+			for (Iterator iter= bodyDeclaration.iterator(); iter.hasNext();) {
+				((BodyDeclaration)iter.next()).accept(this);
+			}
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
+	 */
+	public boolean visit(EnumDeclaration node) {
+		// TODO: test when the compiler correctly manage Enums
+		if (visit(node, false)) {
+			EnumConstantDeclaration[] enumConstants= node.getEnumConstants();
+			for (int i= 0; i < enumConstants.length; i++) {
+				enumConstants[i].accept(this);
+			}
+			List bodyDeclaration= node.bodyDeclarations();
+			for (Iterator iter= bodyDeclaration.iterator(); iter.hasNext();) {
+				((BodyDeclaration)iter.next()).accept(this);
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.ExpressionStatement)
 	 */
@@ -585,6 +674,34 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return visit(node, false);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.LineComment)
+	 */
+	public boolean visit(LineComment node) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MarkerAnnotation)
+	 */
+	public boolean visit(MarkerAnnotation node) {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MemberRef)
+	 */
+	public boolean visit(MemberRef node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MemberValuePair)
+	 */
+	public boolean visit(MemberValuePair node) {
+		return false;
+	}
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodDeclaration)
 	 */
@@ -616,6 +733,34 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return visit(node, true);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodRef)
+	 */
+	public boolean visit(MethodRef node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodRefParameter)
+	 */
+	public boolean visit(MethodRefParameter node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Modifier)
+	 */
+	public boolean visit(Modifier node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.NormalAnnotation)
+	 */
+	public boolean visit(NormalAnnotation node) {
+		return false;
+	}
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.NullLiteral)
 	 */
@@ -637,6 +782,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.ParameterizedType)
+	 */
+	public boolean visit(ParameterizedType node) {
+		return false;
+	}
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.ParenthesizedExpression)
 	 */
@@ -683,6 +835,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.QualifiedType)
+	 */
+	public boolean visit(QualifiedType node) {
+		return false;
+	}
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.ReturnStatement)
 	 */
@@ -704,6 +863,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.SingleMemberAnnotation)
+	 */
+	public boolean visit(SingleMemberAnnotation node) {
+		return false;
+	}
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.SingleVariableDeclaration)
 	 */
@@ -760,6 +926,20 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return visit(node, false);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TagElement)
+	 */
+	public boolean visit(TagElement node) {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TextElement)
+	 */
+	public boolean visit(TextElement node) {
+		return false;
+	}
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.ThisExpression)
 	 */
@@ -802,6 +982,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return visit(node, false);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeParameter)
+	 */
+	public boolean visit(TypeParameter node) {
+		return false;
+	}
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeLiteral)
 	 */
@@ -828,6 +1015,13 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.WildcardType)
+	 */
+	public boolean visit(WildcardType node) {
+		return false;
+	}
+	
 	/**
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.VariableDeclarationStatement)
 	 */
