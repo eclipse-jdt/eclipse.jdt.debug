@@ -59,6 +59,8 @@ public class ClassTypeImpl extends ReferenceTypeImpl implements ClassType {
 	/** The following are the stored results of JDWP calls. */
 	private ClassTypeImpl fSuperclass = null;
 	
+	private List fAllInterfaces = null;
+	
 	/**
 	 * Creates new ClassTypeImpl.
 	 */

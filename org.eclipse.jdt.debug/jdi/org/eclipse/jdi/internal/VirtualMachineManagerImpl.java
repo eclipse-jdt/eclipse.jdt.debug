@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.connect.SocketAttachingConnectorImpl;
 import org.eclipse.jdi.internal.connect.SocketLaunchingConnectorImpl;
@@ -42,7 +41,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	/** PrintWriter where verbose info is written to, null if no verbose must be given. */
 	private PrintWriter fVerbosePrintWriter = null;
 	/** List of all VMs that are currently connected. */
-	Vector fConnectedVMs = new Vector();
+	List fConnectedVMs = new ArrayList();
 	/** True if in verbose mode. */
 	private boolean fVerbose = false;
 	/** Name of verbose file. */
@@ -92,8 +91,9 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	private void getPreferences() {
 		// Get jdi.ini info.
 		URL url = getClass().getResource("/jdi.ini"); //$NON-NLS-1$
-		if (url == null)
+		if (url == null) {
 			return;
+		}
 			
 		try {
 			InputStream stream = url.openStream();
@@ -153,7 +153,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 * @return Returns all connectors.
 	 */
 	public List allConnectors() {
-		Vector result = new Vector(attachingConnectors());
+		List result = new ArrayList(attachingConnectors());
 		result.addAll(launchingConnectors());
 		result.addAll(listeningConnectors());
 		return result;
@@ -182,7 +182,7 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 * @return Returns listening connectors.
 	 */
 	public List listeningConnectors() {
-		ArrayList list = new ArrayList(2);
+		ArrayList list = new ArrayList(1);
 		list.add(new SocketListeningConnectorImpl(this));
 		return list;
 	}

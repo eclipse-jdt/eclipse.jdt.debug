@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
@@ -47,6 +48,7 @@ import com.sun.jdi.Value;
  *
  */
 public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceType, org.eclipse.jdi.hcr.ReferenceType {
+
 	/** ClassStatus Constants. */
 	public static final int JDWP_CLASS_STATUS_VERIFIED = 1;
 	public static final int JDWP_CLASS_STATUS_PREPARED = 2;
@@ -54,7 +56,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	public static final int JDWP_CLASS_STATUS_ERROR = 8;
 
 	/** Mapping of command codes to strings. */
-	private static Vector fClassStatusVector = null;
+	private static Vector fgClassStatusVector = null;
 	
 	/** ReferenceTypeID that corresponds to this reference. */
 	private JdwpReferenceTypeID fReferenceTypeID;
@@ -145,6 +147,43 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		fSourcename = null;
 	}
 	
+	/** 
+	 * @return Returns the interfaces declared as implemented by this class. Interfaces indirectly implemented (extended by the implemented interface or implemented by a superclass) are not included.
+	 */
+	public List allInterfaces() {
+		if (fAllInterfaces != null) {
+			return fAllInterfaces;
+		}
+	
+		/* Recursion:
+		 * The interfaces that it directly implements;
+		 * All interfaces that are implemented by its interfaces;
+		 * If it is a class, all interfaces that are implemented by its superclass.
+		 */
+		// The interfaces are maintained in a set, to avoid duplicates.
+		// The interfaces of its own (own interfaces() command) are first inserted.
+		HashSet allInterfacesSet = new HashSet(interfaces());
+		
+		// All interfaces of the interfaces it implements.
+		Iterator interfaces = interfaces().iterator();
+		InterfaceTypeImpl inter;
+		while (interfaces.hasNext()) {
+			inter = (InterfaceTypeImpl)interfaces.next();
+			allInterfacesSet.addAll(inter.allInterfaces());
+		}
+		
+		// If it is a class, all interfaces of it's superclass.
+		if (this instanceof ClassType) {
+			ClassType superclass = ((ClassType)this).superclass();
+			if (superclass != null) {
+				allInterfacesSet.addAll(superclass.allInterfaces());
+			}
+		}
+				
+		fAllInterfaces = new ArrayList(allInterfacesSet);
+		return fAllInterfaces;
+	}
+	
 	/**
 	 * @return Returns Jdwp Reference ID.
 	 */
@@ -177,7 +216,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	/** 
 	 * Add methods to a set of methods if they are not overriden, add new names+signature combinations to set of names+signature combinations.
 	 */
-	private void addVisibleMethods(List inheritedMethods, HashSet nameAndSignatures, Vector resultMethods) {
+	private void addVisibleMethods(List inheritedMethods, Set nameAndSignatures, List resultMethods) {
 		Iterator iter = inheritedMethods.iterator();
 		MethodImpl inheritedMethod;
 		while (iter.hasNext()) {
@@ -201,8 +240,8 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		 * If it is a class, all methods of it's superclass.
 		 */
 		// The name+signature combinations of methods are maintained in a set, to avoid including methods that have been overriden.
-		HashSet namesAndSignatures = new HashSet();
-		Vector visibleMethods= new Vector();
+		Set namesAndSignatures = new HashSet();
+		List visibleMethods= new ArrayList();
 		
 		// The methods of its own (own methods() command).
 		for (Iterator iter= methods().iterator(); iter.hasNext();) {
@@ -271,8 +310,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns the interfaces declared as implemented by this class. Interfaces indirectly implemented (extended by the implemented interface or implemented by a superclass) are not included.
 	 */
 	public List interfaces() {
-		if (fInterfaces != null)
+		if (fInterfaces != null) {
 			return fInterfaces;
+		}
 			
 		initJdwpRequest();
 		try {
@@ -286,12 +326,13 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 					defaultReplyErrorHandler(replyPacket.errorCode());
 			}
 			DataInputStream replyData = replyPacket.dataInStream();
-			Vector elements = new Vector();
+			List elements = new ArrayList();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				InterfaceTypeImpl ref = InterfaceTypeImpl.read(this, replyData);
-				if (ref == null)
+				if (ref == null) {
 					continue;
+				}
 				elements.add(ref);
 			}
 			fInterfaces = elements;
@@ -305,45 +346,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	}
 			
 	/** 
-	 * @return Returns the interfaces declared as implemented by this class. Interfaces indirectly implemented (extended by the implemented interface or implemented by a superclass) are not included.
-	 */
-	public List allInterfaces() {
-		if (fAllInterfaces != null)
-			return fAllInterfaces;
-
-		/* Recursion:
-		 * The interfaces that it directly implements;
-		 * All interfaces that are implemented by its interfaces;
-		 * If it is a class, all interfaces that are implemented by its superclass.
-		 */
-		// The interfaces are maintained in a set, to avoid duplicates.
-		// The interfaces of its own (own interfaces() command) are first inserted.
-		HashSet allInterfacesSet = new HashSet(interfaces());
-		
-		// All interfaces of the interfaces it implements.
-		Iterator interfaces = interfaces().iterator();
-		InterfaceTypeImpl inter;
-		while (interfaces.hasNext()) {
-			inter = (InterfaceTypeImpl)interfaces.next();
-			allInterfacesSet.addAll(inter.allInterfaces());
-		}
-		
-		// If it is a class, all interfaces of it's superclass.
-		if (this instanceof ClassType) {
-			ClassType superclass = ((ClassType)this).superclass();
-			if (superclass != null)
-				allInterfacesSet.addAll(superclass.allInterfaces());
-		}
-				
-		fAllInterfaces = new ArrayList(allInterfacesSet);
-		return fAllInterfaces;
-	}
-
-
-	/** 
 	 * Add fields to a set of fields if they are not overriden, add new fieldnames to set of fieldnames.
 	 */
-	private void addVisibleFields(List newFields, HashSet names, Vector resultFields) {
+	private void addVisibleFields(List newFields, Set names, List resultFields) {
 		Iterator iter = newFields.iterator();
 		FieldImpl field;
 		while (iter.hasNext()) {
@@ -372,7 +377,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		HashSet fieldNames = new HashSet();
 		
 		// The fields of its own (own fields() command).
-		Vector visibleFields = new Vector();
+		List visibleFields = new ArrayList();
 		addVisibleFields(fields(), fieldNames, visibleFields);
 		
 		// All fields of the interfaces it implements.
@@ -540,8 +545,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns a list containing each Field declared in this type. 
 	 */
 	public List fields() {
-		if (fFields != null)
+		if (fFields != null) {
 			return fFields;
+		}
 		
 		// Note: Fields are returned in the order they occur in the class file, therefore their
 		// order in this list can be used for comparisons.
@@ -550,12 +556,13 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_FIELDS, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			Vector elements = new Vector();
+			List elements = new ArrayList();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				FieldImpl elt = FieldImpl.readWithNameSignatureModifiers(this, this, replyData);
-				if (elt == null)
+				if (elt == null) {
 					continue;
+				}
 				elements.add(elt);
 			}
 			fFields = elements;
@@ -731,12 +738,13 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.RT_METHODS, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			Vector elements = new Vector();
+			List elements = new ArrayList();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
 			for (int i = 0; i < nrOfElements; i++) {
 				MethodImpl elt = MethodImpl.readWithNameSignatureModifiers(this, this, replyData);
-				if (elt == null)
+				if (elt == null) {
 					continue;
+				}
 				elements.add(elt);
 			}
 			fMethods = elements;
@@ -753,12 +761,13 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns a List containing each visible Method that has the given name.
 	 */
 	public List methodsByName(String name) {
-		Vector elements = new Vector();
+		List elements = new ArrayList();
 		Iterator iter = visibleMethods().iterator();
 		while (iter.hasNext()) {
 			MethodImpl method = (MethodImpl)iter.next();
-			if (method.name().equals(name))
+			if (method.name().equals(name)){
 				elements.add(method);
+			}
 		}
 		return elements;
 	}
@@ -767,12 +776,13 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns a List containing each visible Method that has the given name and signature.
 	 */
 	public List methodsByName(String name, String signature) {
-		Vector elements = new Vector();
+		List elements = new ArrayList();
 		Iterator iter = visibleMethods().iterator();
 		while (iter.hasNext()) {
 			MethodImpl method = (MethodImpl)iter.next();
-			if (method.name().equals(name) && method.signature().equals(signature))
+			if (method.name().equals(name) && method.signature().equals(signature)) {
 				elements.add(method);
+			}
 		}
 		return elements;
 	}
@@ -816,14 +826,15 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	public List nestedTypes() {
 		// Note that the VM gives an empty reply on RT_NESTED_TYPES, therefore we search for the
 		// nested types in the loaded types.
-		Vector result = new Vector();
+		List result = new ArrayList();
 		Enumeration enum = virtualMachineImpl().allRefTypesEnum();
 		while (enum.hasMoreElements()) {
 			try {
 				ReferenceTypeImpl refType = (ReferenceTypeImpl)enum.nextElement();
 				String refName = refType.name();
-				if (refName.length() > name().length() && refName.startsWith(name()) && refName.charAt(name().length()) == '$')
+				if (refName.length() > name().length() && refName.startsWith(name()) && refName.charAt(name().length()) == '$') {
 					result.add(refType);
+				}
 			} catch (ClassNotPreparedException e) {
 				continue;
 			}
@@ -835,8 +846,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns an identifing name for the source corresponding to the declaration of this type.
 	 */
 	public String sourceName() throws AbsentInformationException {
-		if (fSourcename != null)
+		if (fSourcename != null) {
 			return fSourcename;
+		}
 
 		initJdwpRequest();
 		try {
@@ -949,13 +961,17 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * @return Returns the Location objects for each executable source line in this reference type.
 	 */
 	public List allLineLocations() throws AbsentInformationException {
-		if (fAllLineLocations != null)
+		if (fAllLineLocations != null) {
 			return fAllLineLocations;
+		}
 
 		Iterator allMethods = methods().iterator();
-		Vector locations = new Vector();
+		List locations = new ArrayList();
 		while (allMethods.hasNext()) {
 			MethodImpl method = (MethodImpl)allMethods.next();
+			if (method.isAbstract() || method.isNative()) {
+				continue;
+			}
 			locations.addAll(method.allLineLocations());
 		}
 		fAllLineLocations = locations;
@@ -1031,12 +1047,12 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fClassStatusVector != null)
+		if (fgClassStatusVector != null)
 			return;
 		
 		java.lang.reflect.Field[] fields = ReferenceTypeImpl.class.getDeclaredFields();
-		fClassStatusVector = new Vector();
-		fClassStatusVector.setSize(32);	// Integer
+		fgClassStatusVector = new Vector();
+		fgClassStatusVector.setSize(32);	// Integer
 		
 		for (int i = 0; i < fields.length; i++) {
 			java.lang.reflect.Field field = fields[i];
@@ -1052,9 +1068,9 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			try {
 				int value = field.getInt(null);
 				
-				for (int j = 0; j < fClassStatusVector.size(); j++) {
+				for (int j = 0; j < fgClassStatusVector.size(); j++) {
 					if ((1 << j & value) != 0) {
-						fClassStatusVector.set(j, name);
+						fgClassStatusVector.set(j, name);
 						break;
 					}
 				}
@@ -1073,7 +1089,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	 public static Vector classStatusVector() {
 	 	getConstantMaps();
-	 	return fClassStatusVector;
+	 	return fgClassStatusVector;
 	 }
 	 
 	/**

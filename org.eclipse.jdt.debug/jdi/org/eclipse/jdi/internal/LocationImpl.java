@@ -151,32 +151,34 @@ public class LocationImpl extends MirrorImpl implements Location {
 		// Notice that Locations are not stored or cached because they don't 'remember' any information.
 		MethodImpl method = MethodImpl.readWithReferenceTypeWithTag(target, in);
 		long index = target.readLong("index", in); //$NON-NLS-1$
-		if (method == null)
+		if (method == null) {
 			return null;
+		}
 		return new LocationImpl(vmImpl, method, index);
 	}
-	/*
+	
+	/**
 	 * @see Location#lineNumber(String)
 	 */
 	public int lineNumber(String stratum) {
 		return 0;
 	}
 
-	/*
+	/**
 	 * @see Location#sourceName(String)
 	 */
 	public String sourceName(String stratum) throws AbsentInformationException {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see Location#sourcePath(String)
 	 */
 	public String sourcePath(String stratum) throws AbsentInformationException {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see Location#sourcePath()
 	 */
 	public String sourcePath() throws AbsentInformationException {

@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpFrameID;
@@ -30,6 +29,7 @@ import com.sun.jdi.Locatable;
 import com.sun.jdi.Location;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VMMismatchException;
 import com.sun.jdi.Value;
 
@@ -71,7 +71,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	 */
 	public Map getValues(List variables) throws IllegalArgumentException, InvalidStackFrameException, VMMismatchException {
 		// Note that this information should not be cached.
-		HashMap map = new HashMap();
+		Map map = new HashMap(variables.size());
 		// if the variable list is empty, nothing to do
 		if (variables.isEmpty()) {
 			return map;
@@ -86,22 +86,25 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		for (int i = 0; i < sizeAll; i++) {
 			LocalVariableImpl var = (LocalVariableImpl)variables.get(i);
 			isThisValue[i] = var.isThis();
-			if (isThisValue[i])
+			if (isThisValue[i]) {
 				sizeThis++;
+			}
 		}
 		int sizeNotThis = sizeAll - sizeThis;
 		
 		if (sizeThis > 0) {
 			Value thisValue = thisObject();
 			for (int i = 0; i < sizeAll; i++) {
-				if (isThisValue[i])
+				if (isThisValue[i]) {
 					map.put(variables.get(i), thisValue);
+				}
 			}
 		}
 		
 		// If only 'this' was requested, we're finished.
-		if (sizeNotThis == 0)
+		if (sizeNotThis == 0) {
 			return map;
+		}
 			
 		// Request values for local variables other than 'this'.
 		initJdwpRequest();
@@ -208,7 +211,7 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	/**
 	 * @return Returns the thread under which this frame's method is running.
 	 */
-	public com.sun.jdi.ThreadReference thread() {
+	public ThreadReference thread() {
 		return fThread;
 	}
 	
@@ -219,8 +222,9 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		Iterator iter = visibleVariables().iterator();
 		while (iter.hasNext()) {
 			LocalVariableImpl var = (LocalVariableImpl)iter.next();
-			if (var.name().equals(name))
+			if (var.name().equals(name)) {
 				return var;
+			}
 		}
 		
 		return null;
@@ -230,13 +234,15 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	 * @return Returns the values of multiple local variables in this frame. 
 	 */
 	public List visibleVariables() throws AbsentInformationException {
-		Iterator iter = fLocation.method().variables().iterator();
-		Vector visibleVars = new Vector();
+		List variables= fLocation.method().variables();
+		Iterator iter = variables.iterator();
+		List visibleVars = new ArrayList(variables.size());
 		while (iter.hasNext()) {
 			LocalVariableImpl var = (LocalVariableImpl)iter.next();
 			// Only return local variables other than the this pointer.
-			if (var.isVisible(this) && !var.isThis())
+			if (var.isVisible(this) && !var.isThis()) {
 				visibleVars.add(var);
+			}
 		}
 		return visibleVars;
 	}
@@ -261,8 +267,9 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 	 */
 	public void write(MirrorImpl target, DataOutputStream out) throws IOException {
 		fFrameID.write(out);
-		if (target.fVerboseWriter != null)
+		if (target.fVerboseWriter != null) {
 			target.fVerboseWriter.println("stackFrame", fFrameID.value()); //$NON-NLS-1$
+		}
 	}
 	
 	/**
@@ -280,14 +287,17 @@ public class StackFrameImpl extends MirrorImpl implements StackFrame, Locatable 
 		VirtualMachineImpl vmImpl = target.virtualMachineImpl();
 		JdwpFrameID ID = new JdwpFrameID(vmImpl);
 		ID.read(in);
-		if (target.fVerboseWriter != null)
+		if (target.fVerboseWriter != null) {
 			target.fVerboseWriter.println("stackFrame", ID.value()); //$NON-NLS-1$
+		}
 
-		if (ID.isNull())
+		if (ID.isNull()) {
 			return null;
+		}
 		LocationImpl location = LocationImpl.read(target, in);
-		if (location == null)
+		if (location == null) {
 			return null;
+		}
 
 		return new StackFrameImpl(vmImpl, ID, thread, location);
 	}

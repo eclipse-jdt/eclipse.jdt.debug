@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpID;
@@ -199,10 +198,10 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 			
 			/*
 			 * Distinguish static fields from non-static fields:
-			 * For static fields ReferencTypeImpl.getValues() must be used.
+			 * For static fields ReferenceTypeImpl.getValues() must be used.
 			 */
-			Vector staticFields = new Vector();
-			Vector nonStaticFields = new Vector();
+			List staticFields = new ArrayList();
+			List nonStaticFields = new ArrayList();
 	
 			// Separate static and non-static fields.
 			int allFieldsSize = allFields.size();

@@ -7,9 +7,9 @@ package org.eclipse.jdi.internal;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.jdwp.JdwpClassLoaderID;
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
@@ -49,8 +49,9 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 	 */
 	public List definedClasses() {
 		// Note that this information should not be cached.
-		Vector result = new Vector();
-		Iterator iter = visibleClasses().iterator();
+		List visibleClasses= visibleClasses();
+		List result = new ArrayList(visibleClasses.size());
+		Iterator iter = visibleClasses.iterator();
 		while (iter.hasNext()) {
 			try {
 				ReferenceType type = (ReferenceType)iter.next();
@@ -74,8 +75,8 @@ public class ClassLoaderReferenceImpl extends ObjectReferenceImpl implements Cla
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.CLR_VISIBLE_CLASSES, this);
 			defaultReplyErrorHandler(replyPacket.errorCode());
 			DataInputStream replyData = replyPacket.dataInStream();
-			Vector elements = new Vector();
 			int nrOfElements = readInt("elements", replyData); //$NON-NLS-1$
+			List elements = new ArrayList(nrOfElements);
 			for (int i = 0; i < nrOfElements; i++) {
 				ReferenceTypeImpl elt = ReferenceTypeImpl.readWithTypeTag(this, replyData);
 				if (elt == null)

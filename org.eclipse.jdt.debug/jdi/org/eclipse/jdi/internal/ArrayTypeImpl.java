@@ -1,9 +1,11 @@
 package org.eclipse.jdi.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -20,10 +22,12 @@ import org.eclipse.jdi.internal.jdwp.JdwpID;
 import org.eclipse.jdi.internal.jdwp.JdwpObjectID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
 
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassLoaderReference;
 import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.Field;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
@@ -173,8 +177,9 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 * @return a Map of the requested static Field objects with their Value.
 	 */
 	public Map getValues(List fields) {
-		if (fields.isEmpty())
+		if (fields.isEmpty()) {
 			return new HashMap();
+		}
 			
 		throw new IllegalArgumentException(JDIMessages.getString("ArrayTypeImpl.getValues_not_allowed_on_array_1")); //$NON-NLS-1$
 	}
@@ -191,13 +196,6 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 	 */
 	protected int status() { 
 		return ReferenceTypeImpl.JDWP_CLASS_STATUS_INITIALIZED | ReferenceTypeImpl.JDWP_CLASS_STATUS_PREPARED | ReferenceTypeImpl.JDWP_CLASS_STATUS_VERIFIED;
-	}
-
-	/** 
-	 * @return Returns the interfaces declared as implemented by this class. Interfaces indirectly implemented (extended by the implemented interface or implemented by a superclass) are not included.
-	 */
-	public List interfaces() {
-		return Collections.EMPTY_LIST;
 	}
 		
 	/**
@@ -222,4 +220,63 @@ public class ArrayTypeImpl extends ReferenceTypeImpl implements ArrayType {
 		mirror.setSignature(signature);
 		return mirror;
 	 }
+	 
+	/**
+	 * @see com.sun.jdi.ReferenceType#allLineLocations()
+	 */
+	public List allLineLocations() throws AbsentInformationException {
+		// If this reference type is an ArrayType, the returned list is always empty. 
+		return Collections.EMPTY_LIST;
+	}
+	/**
+	 * @see com.sun.jdi.ReferenceType#allMethods()
+	 */
+	public List allMethods() {
+		return Collections.EMPTY_LIST;
+	}
+	/**
+	 * @see com.sun.jdi.ReferenceType#allFields()
+	 */
+	public List allFields() {
+		return Collections.EMPTY_LIST;
+	}
+	
+	/** 
+	 * @return Returns an identifing name for the source corresponding to the declaration of this type.
+	 */
+	public String sourceName() throws AbsentInformationException {
+		throw new AbsentInformationException("No source name for Arrays");
+	}
+	/**
+	 * @see com.sun.jdi.ReferenceType#visibleFields()
+	 */
+	public List visibleFields() {
+		return Collections.EMPTY_LIST;
+	}
+
+	/**
+	 * @see com.sun.jdi.ReferenceType#visibleMethods()
+	 */
+	public List visibleMethods() {
+		return Collections.EMPTY_LIST;
+	}
+	/**
+	 * @see com.sun.jdi.ReferenceType#fieldByName(String)
+	 */
+	public Field fieldByName(String arg1) {
+		return null;
+	}
+	/**
+	 * @see com.sun.jdi.ReferenceType#methodsByName(String)
+	 */
+	public List methodsByName(String arg1) {
+		return Collections.EMPTY_LIST;
+	}
+
+	/**
+	 * @see com.sun.jdi.ReferenceType#methodsByName(String, String)
+	 */
+	public List methodsByName(String arg1, String arg2) {
+		return Collections.EMPTY_LIST;
+	}
 }

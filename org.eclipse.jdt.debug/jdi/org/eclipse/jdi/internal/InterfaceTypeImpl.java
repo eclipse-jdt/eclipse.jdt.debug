@@ -7,9 +7,9 @@ package org.eclipse.jdi.internal;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.jdwp.JdwpClassObjectID;
 import org.eclipse.jdi.internal.jdwp.JdwpID;
@@ -79,7 +79,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 	 */
 	public List implementors() {
 		// Note that this information should not be cached.
-		Vector implementors = new Vector();
+		List implementors = new ArrayList();
 		Enumeration enum = virtualMachineImpl().allRefTypesEnum();
 		while (enum.hasMoreElements()) {
 			ReferenceTypeImpl refType = (ReferenceTypeImpl)enum.nextElement();
@@ -102,7 +102,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 	 */
 	public List subinterfaces() {
 		// Note that this information should not be cached.
-		Vector implementors = new Vector();
+		List implementors = new ArrayList();
 		Enumeration enum = virtualMachineImpl().allRefTypesEnum();
 		while (enum.hasMoreElements()) {
 			try {
@@ -111,7 +111,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 					InterfaceTypeImpl interFaceType = (InterfaceTypeImpl)refType;
 					List interfaces = interFaceType.superinterfaces();
 					if (interfaces.contains(this))
-						implementors .add(interFaceType);
+						implementors.add(interFaceType);
 				}
 			} catch (ClassNotPreparedException e) {
 				continue;
@@ -120,7 +120,7 @@ public class InterfaceTypeImpl extends ReferenceTypeImpl implements InterfaceTyp
 		return implementors;
 	}
 	
-	/*
+	/**
 	 * @return Returns the interfaces directly extended by this interface. 
 	 */
 	public List superinterfaces() {

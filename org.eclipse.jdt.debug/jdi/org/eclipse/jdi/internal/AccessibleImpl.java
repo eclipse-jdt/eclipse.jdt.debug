@@ -1,10 +1,14 @@
 package org.eclipse.jdi.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Vector;
 
 import com.sun.jdi.Accessible;
@@ -86,16 +90,17 @@ public abstract class AccessibleImpl extends MirrorImpl implements Accessible {
 	 * Retrieves constant mappings.
 	 */
 	public static void getConstantMaps() {
-		if (fModifierVector != null)
+		if (fModifierVector != null) {
 			return;
+		}
 		
-		java.lang.reflect.Field[] fields = AccessibleImpl.class.getDeclaredFields();
+		Field[] fields = AccessibleImpl.class.getDeclaredFields();
 		fModifierVector = new Vector();
 		fModifierVector.setSize(32);	// Integer
 		
 		for (int i = 0; i < fields.length; i++) {
 			java.lang.reflect.Field field = fields[i];
-			if ((field.getModifiers() & java.lang.reflect.Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.FINAL) == 0)
+			if ((field.getModifiers() & Modifier.PUBLIC) == 0 || (field.getModifiers() & java.lang.reflect.Modifier.STATIC) == 0 || (field.getModifiers() & Modifier.FINAL) == 0)
 				continue;
 				
 			String name = field.getName();
