@@ -33,17 +33,15 @@ public class IOConsoleEchoActionDelegate implements IActionDelegate2, IWorkbench
     }
 
     public void run(IAction action) {
+        final IOConsole console = new IOConsole("IO Test Console", DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
         new Thread(new Runnable() {
             public void run() {
-                runTest();
+                runTest(console);
             }
         }, "IOConsole Test Thread").start(); //$NON-NLS-1$
     }
     
-    public void runTest() {
-        final IOConsole console = new IOConsole("IO Test Console", DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN)); //$NON-NLS-1$
-        console.setWordWrap(true);
-        
+    public void runTest(IOConsole console) {
         final Display display = Display.getDefault();
         
         final IOConsoleInputStream in = console.getInputStream();
