@@ -46,7 +46,6 @@ public abstract class JDIModificationVariable extends JDIVariable {
 			}
 		} catch (DebugException e) {
 			logError(e);
-		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
 			logError(e);
 		}
@@ -154,7 +153,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	}
 	
 	/**
-	 * @see IValueModification
+	 * @see IValueModification#verifyValue(String)
 	 */
 	public boolean verifyValue(String expression) {
 		try {
@@ -167,7 +166,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	}
 	
 	/**
-	 * @see IValueModification
+	 * @see IValueModification#setValue(String)
 	 */
 	public final void setValue(String expression) throws DebugException {
 	 	Value value= generateVMValue(expression);
@@ -181,7 +180,7 @@ public abstract class JDIModificationVariable extends JDIVariable {
 	}
 
 	/**
-	 * Set my value to the given value
+	 * Set this variable's value to the given value
 	 */
 	protected abstract void setValue(Value value) throws DebugException;
 	
