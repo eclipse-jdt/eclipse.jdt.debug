@@ -35,6 +35,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -56,6 +57,7 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -589,7 +591,17 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 					
 					// uncaught exception breakpoint
 					if (isSuspendOnUncaughtExceptions()) {
-						notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
+						ILaunchConfiguration launchConfiguration = javaTarget.getLaunch().getLaunchConfiguration();
+						boolean isSnippetEditor = false;
+						
+						try {
+							isSnippetEditor = (launchConfiguration.getAttribute(ScrapbookLauncher.SCRAPBOOK_LAUNCH, (String)null) != null);
+						} catch (CoreException e) {
+						}
+						
+						if (!isSnippetEditor) { 
+							notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
+						}
 					}
 					
 					// step filters
