@@ -35,7 +35,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Tests deferred breakpoints.
+ * Tests run to line debug functionality
  */
 public class RunToLineTests extends AbstractDebugTest {
 	
