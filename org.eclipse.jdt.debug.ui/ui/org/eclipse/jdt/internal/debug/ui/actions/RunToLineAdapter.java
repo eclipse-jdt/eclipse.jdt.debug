@@ -34,6 +34,7 @@ import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
@@ -166,7 +167,11 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
-		return target instanceof IDebugElement &&
-		 ((IDebugElement)target).getModelIdentifier().equals(JDIDebugModel.getPluginIdentifier());
+	    if (target instanceof IDebugElement) {
+            IDebugElement element = (IDebugElement) target;
+            IJavaDebugTarget adapter = (IJavaDebugTarget) element.getDebugTarget().getAdapter(IJavaDebugTarget.class);
+            return adapter != null;
+        }
+		return false;
 	}
 }
