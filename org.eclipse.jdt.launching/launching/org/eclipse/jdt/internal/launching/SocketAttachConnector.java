@@ -6,6 +6,9 @@ package org.eclipse.jdt.internal.launching;
  */
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -42,10 +45,14 @@ public class SocketAttachConnector implements IVMConnector {
 			param.setValue(portNumberString);
 			try {
 				return connector.attach(map);
+			} catch (UnknownHostException e) {
+				abort(MessageFormat.format(LaunchingMessages.getString("SocketAttachConnector.Failed_to_connect_to_remote_VM_because_of_unknown_host___{0}__1"), new String[]{host}), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
+			} catch (ConnectException e) {
+				abort(LaunchingMessages.getString("SocketAttachConnector.Failed_to_connect_to_remote_VM_as_connection_was_refused_2"), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
 			} catch (IOException e) {
 				abort(LaunchingMessages.getString("SocketAttachConnector.Failed_to_connect_to_remote_VM_1"), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
 			} catch (IllegalConnectorArgumentsException e) {
-				abort(LaunchingMessages.getString("SocketAttachConnector.Failed_to_connect_to_remote_VM_2"), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
+				abort(LaunchingMessages.getString("SocketAttachConnector.Failed_to_connect_to_remote_VM_1"), e, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED); //$NON-NLS-1$
 			}
 		} else {
 			abort(LaunchingMessages.getString("SocketAttachConnector.Socket_attaching_connector_not_available_3"), null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE); //$NON-NLS-1$
