@@ -97,7 +97,7 @@
       id="patternBreakpoint"
       point="org.eclipse.core.resources.markers">
    <super
-         type="org.eclipse.debug.core.lineBreakpoint">
+         type="org.eclipse.jdt.debug.javaLineBreakpoint">
    </super>
    <persistent
          value="true">
