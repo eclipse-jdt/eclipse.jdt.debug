@@ -35,13 +35,13 @@ public class ManageWatchpointAction extends Action implements IObjectActionDeleg
 	
 	public ManageWatchpointAction() {
 		super();
-		fAddText= "Add &Watchpoint";
-		fAddDescription= "Add a watchpoint";
-		fAddToolTip= "Add Watchpoint";
+		fAddText= ActionMessages.getString("ManagerWatchPointAction.Add_&Watchpoint_1"); //$NON-NLS-1$
+		fAddDescription= ActionMessages.getString("ManagerWatchPointAction.Add_a_watchpoint_2"); //$NON-NLS-1$
+		fAddToolTip= ActionMessages.getString("ManagerWatchPointAction.Add_Watchpoint_3"); //$NON-NLS-1$
 		
-		fRemoveText= "Remove &Watchpoint";
-		fRemoveDescription= "Remove a field watchpoint";
-		fRemoveToolTip= "Remove Watchpoint";
+		fRemoveText= ActionMessages.getString("ManagerWatchPointAction.Remove_&Watchpoint_4"); //$NON-NLS-1$
+		fRemoveDescription= ActionMessages.getString("ManagerWatchPointAction.Remove_a_field_watchpoint_5"); //$NON-NLS-1$
+		fRemoveToolTip= ActionMessages.getString("ManagerWatchPointAction.Remove_Watchpoint_6"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.MANAGE_WATCHPOINT_ACTION });
 	}
 
@@ -53,7 +53,7 @@ public class ManageWatchpointAction extends Action implements IObjectActionDeleg
 			try {
 				setBreakpoint(JDIDebugModel.createWatchpoint(getField(), 0));
 			} catch (DebugException x) {
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), "Problems adding watchpoint", x.getMessage());
+				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManagerWatchPointAction.Problems_adding_watchpoint_7"), x.getMessage()); //$NON-NLS-1$
 			}
 		} else {
 			// remove breakpoint
@@ -61,7 +61,7 @@ public class ManageWatchpointAction extends Action implements IObjectActionDeleg
 				IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 				breakpointManager.removeBreakpoint(getBreakpoint(), true);
 			} catch (CoreException x) {
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), "Problems removing watchpoint", x.getMessage());
+				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManagerWatchPointAction.Problems_removing_watchpoint_8"), x.getMessage()); //$NON-NLS-1$
 			}
 		}
 		update();

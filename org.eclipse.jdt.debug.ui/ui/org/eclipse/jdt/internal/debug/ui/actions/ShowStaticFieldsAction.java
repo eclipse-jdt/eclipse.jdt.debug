@@ -49,7 +49,7 @@ public class ShowStaticFieldsAction extends ToggleFilterAction {
 
 	public ShowStaticFieldsAction() {
 		setViewerFilter(new StaticFilter());
-		setId(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowStaticFieldsAction");
+		setId(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ActionMessages.getString(".ShowStaticFieldsAction_1")); //$NON-NLS-1$
 	}
 
 	/**

@@ -47,7 +47,7 @@ public class RunInPackageAction extends SnippetAction {
 		try {
 			IJavaProject p= fEditor.getJavaProject();
 			String pkgHandle= fEditor.getPackage();
-			String filter = "";
+			String filter = ""; //$NON-NLS-1$
 			IPackageFragment packageFragment = null;
 			if (pkgHandle != null) {
 				packageFragment = (IPackageFragment)JavaCore.create(pkgHandle);

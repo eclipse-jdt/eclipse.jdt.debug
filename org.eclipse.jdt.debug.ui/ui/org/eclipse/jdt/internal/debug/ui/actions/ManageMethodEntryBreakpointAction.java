@@ -39,13 +39,13 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 	public ManageMethodEntryBreakpointAction() {
 		super();
 		
-		fAddText= "&Add Entry Breakpoint";
-		fAddDescription= "Add a method entry breakpoint";
-		fAddToolTip= "Add Entry Breakpoint";
+		fAddText= ActionMessages.getString("ManageMethodEntryBreakpointAction.&Add_Entry_Breakpoint_1"); //$NON-NLS-1$
+		fAddDescription= ActionMessages.getString("ManageMethodEntryBreakpointAction.Add_a_method_entry_breakpoint_2"); //$NON-NLS-1$
+		fAddToolTip= ActionMessages.getString("ManageMethodEntryBreakpointAction.Add_Entry_Breakpoint_3"); //$NON-NLS-1$
 		
-		fRemoveText= "Remove &Entry Breakpoint";
-		fRemoveDescription= "Remove a method entry breakpoint";
-		fRemoveToolTip= "Remove Entry Breakpoint";
+		fRemoveText= ActionMessages.getString("ManageMethodEntryBreakpointAction.Remove_&Entry_Breakpoint_4"); //$NON-NLS-1$
+		fRemoveDescription= ActionMessages.getString("ManageMethodEntryBreakpointAction.Remove_a_method_entry_breakpoint_5"); //$NON-NLS-1$
+		fRemoveToolTip= ActionMessages.getString("ManageMethodEntryBreakpointAction.Remove_Entry_Breakpoint_6"); //$NON-NLS-1$
 		setText(fAddText);
 		setDescription(fAddDescription);
 		setToolTipText(fAddToolTip);
@@ -61,7 +61,7 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 			try {
 				setBreakpoint(JDIDebugModel.createMethodEntryBreakpoint(getMethod(), 0));
 			} catch (DebugException x) {
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), "Problems creating breakpoint", x.getMessage());
+				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodEntryBreakpointAction.Problems_creating_breakpoint_7"), x.getMessage()); //$NON-NLS-1$
 			}
 		} else {
 			// remove breakpoint
@@ -69,7 +69,7 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 				IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 				breakpointManager.removeBreakpoint(getBreakpoint(), true);
 			} catch (CoreException x) {
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), "Problems removing breakpoint", x.getMessage());
+				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodEntryBreakpointAction.Problems_removing_breakpoint_8"), x.getMessage()); //$NON-NLS-1$
 			}
 		}
 		update();

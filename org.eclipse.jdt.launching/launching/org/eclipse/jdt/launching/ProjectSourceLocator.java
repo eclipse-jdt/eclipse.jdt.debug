@@ -148,7 +148,7 @@ public class ProjectSourceLocator implements ISourceLocator {
 					if (index >= 0) {
 						name = declName.substring(0, index + 1);
 					} else {
-						name = "";
+						name = ""; //$NON-NLS-1$
 					}
 					index = sourceName.lastIndexOf('.');
 					if (index >= 0) {

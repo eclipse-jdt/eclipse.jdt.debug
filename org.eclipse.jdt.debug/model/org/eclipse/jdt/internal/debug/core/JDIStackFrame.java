@@ -777,9 +777,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 					fSourceName = l.sourceName();
 				}
 			} catch (AbsentInformationException e) {
-				fSourceName = "";
+				fSourceName = ""; //$NON-NLS-1$
 			} catch (NativeMethodException e) {
-				fSourceName = "";
+				fSourceName = ""; //$NON-NLS-1$
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
