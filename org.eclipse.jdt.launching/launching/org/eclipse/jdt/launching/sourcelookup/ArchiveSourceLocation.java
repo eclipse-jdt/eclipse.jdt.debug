@@ -144,7 +144,7 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 			return null;
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, 
-				MessageFormat.format("Unable to locate source element in archive {0}", new String[] {getName()}), e));
+				MessageFormat.format(LaunchingMessages.getString("ArchiveSourceLocation.Unable_to_locate_source_element_in_archive_{0}_1"), new String[] {getName()}), e)); //$NON-NLS-1$
 		}
 	}
 	
