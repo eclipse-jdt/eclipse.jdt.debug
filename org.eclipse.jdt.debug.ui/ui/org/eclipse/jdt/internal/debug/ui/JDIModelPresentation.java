@@ -1396,6 +1396,11 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			// Should never get here
 			return ""; //$NON-NLS-1$
 	    } catch (CoreException e) {
+	    	// if the breakpoint has been deleted, don't log exception
+	    	IMarker marker = breakpoint.getMarker();
+			if (marker == null || !marker.exists()) {
+	    		return DebugUIMessages.getString("JDIModelPresentation.6"); //$NON-NLS-1$
+	    	}
 	        JDIDebugUIPlugin.log(e);
 	        return DebugUIMessages.getString("JDIModelPresentation.4"); //$NON-NLS-1$
 	    }
