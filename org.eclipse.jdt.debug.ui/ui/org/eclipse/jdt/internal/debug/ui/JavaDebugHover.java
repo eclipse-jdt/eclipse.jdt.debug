@@ -13,13 +13,13 @@ package org.eclipse.jdt.internal.debug.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.core.IJavaType;
-import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.ui.actions.AbstractDisplayOptionsAction;
 import org.eclipse.jdt.internal.ui.text.HTMLTextPresenter;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jdt.ui.text.java.hover.IJavaEditorTextHover;
@@ -108,42 +108,12 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 * Append HTML for the given variable to the given buffer
 	 */
 	private static void appendVariable(StringBuffer buffer, IVariable variable) throws DebugException {
-
-		buffer.append("<p>"); //$NON-NLS-1$
-		buffer.append("<pre>").append(variable.getName()).append("</pre>"); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append(" ="); //$NON-NLS-1$
-		
-		String type= getTypeName(variable);
-		String value= "<b><pre>" + variable.getValue().getValueString() + "</pre></b>"; //$NON-NLS-1$ //$NON-NLS-2$
-		
-		if (type == null) {
-			buffer.append(" null"); //$NON-NLS-1$
-		} else if (type.equals("java.lang.String")) { //$NON-NLS-1$
-			buffer.append(" \""); //$NON-NLS-1$
-			buffer.append(value);
-			buffer.append('"');
-		} else if (type.equals("boolean")) { //$NON-NLS-1$
-			buffer.append(' ');
-			buffer.append(value);
-		} else {
-			buffer.append(" ("); //$NON-NLS-1$
-			buffer.append("<pre>").append(type).append("</pre>"); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append(") "); //$NON-NLS-1$
-			buffer.append(value);			
-		}		
-		buffer.append("</p>"); //$NON-NLS-1$
-	}
-
-	private static String getTypeName(IVariable variable) throws DebugException {
-		IValue value= variable.getValue();
-		if (value instanceof IJavaValue) {
-			IJavaType type= ((IJavaValue) value).getJavaType();
-			if (type == null) {
-				return null;
-			}			
-			return type.getName();
-		}
-		return value.getReferenceTypeName();
+		String preferenceValue = AbstractDisplayOptionsAction.getStringPreferenceValue(IDebugUIConstants.ID_VARIABLE_VIEW, IJDIPreferencesConstants.PREF_SHOW_DETAILS);
+		JDIModelPresentation modelPresentation = new JDIModelPresentation();
+		modelPresentation.setAttribute(JDIModelPresentation.SHOW_DETAILS, preferenceValue);
+		buffer.append("<p><pre>"); //$NON-NLS-1$
+		buffer.append(modelPresentation.getVariableText((IJavaVariable) variable));
+		buffer.append("</pre></p>"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
