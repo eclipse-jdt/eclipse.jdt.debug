@@ -959,7 +959,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * is <code>true</code>.
 	 */
 	public void resume(boolean fireNotification) throws DebugException {
-		if (!isSuspended()) {
+		if (!isSuspended() || !isAvailable()) {
 			return;
 		}
 		try {
