@@ -126,6 +126,11 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	private String[] fActiveStepFilters = null;
 	
 	/**
+	 * Whether the manager has been activated
+	 */
+	private boolean fActivated = false;
+	
+	/**
 	 * Helper class that describes a location in a stack
 	 * frame. A location consists of a package name, source
 	 * file name, and a line number.
@@ -235,16 +240,11 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 				// compilation error breakpoint
 				IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Error", true, true, false, false, null); //$NON-NLS-1$
 				bp.setPersisted(false);
-				bp.setRegistered(false);
-				// disabled until there are errors
-				bp.setEnabled(false);
 				setSuspendOnCompilationErrorsBreakpoint(bp);
 				
 				// uncaught exception breakpoint
 				bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
 				bp.setPersisted(false);
-				bp.setRegistered(false);
-				bp.setEnabled(isSuspendOnUncaughtExceptions());
 				setSuspendOnUncaughtExceptionBreakpoint(bp);
 				
 				// note existing compilation errors
@@ -389,12 +389,20 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS)) {
 			IBreakpoint breakpoint = getSuspendOnCompilationErrorBreakpoint();
 			if (breakpoint != null) {
-				setEnabled(breakpoint, JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
+				int kind = REMOVED;
+				if (isSuspendOnCompilationErrors()) {
+					kind = ADDED;
+				}
+				notifyTargets(breakpoint, kind);
 			}
 		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS)) {
 			IBreakpoint breakpoint = getSuspendOnUncaughtExceptionBreakpoint();
 			if (breakpoint != null) {
-				setEnabled(breakpoint, JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
+				int kind = REMOVED;
+				if (isSuspendOnUncaughtExceptions()) {
+					kind = ADDED;
+				}			
+				notifyTargets(breakpoint, kind);
 			}
 		} else if (isUseFilterProperty(event.getProperty())) {
 			notifyTargetsOfFilters();
@@ -574,11 +582,15 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 				if (source instanceof IJavaDebugTarget) {
 					IJavaDebugTarget javaTarget = (IJavaDebugTarget)source;
 					
-					// compilation breakpoints				
-					notifyTarget(javaTarget, getSuspendOnCompilationErrorBreakpoint(), ADDED);
+					// compilation breakpoints	
+					if (isSuspendOnCompilationErrors()) {
+						notifyTarget(javaTarget, getSuspendOnCompilationErrorBreakpoint(), ADDED);
+					}
 					
 					// uncaught exception breakpoint
-					notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
+					if (isSuspendOnUncaughtExceptions()) {
+						notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
+					}
 					
 					// step filters
 					notifyTargetOfFilters(javaTarget);
@@ -750,6 +762,10 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * there is a running debug target.
 	 */
 	private void activate() {
+		if (fActivated) {
+			return;
+		}
+		fActivated = true;
 		initializeProblemHandling();
 		notifyTargetsOfFilters();
 		DebugPlugin.getDefault().addDebugEventListener(this);

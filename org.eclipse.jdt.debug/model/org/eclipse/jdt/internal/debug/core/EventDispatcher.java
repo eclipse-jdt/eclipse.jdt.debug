@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -183,6 +184,12 @@ public class EventDispatcher implements Runnable {
 			try {
 				eventSet.resume();
 			} catch (VMDisconnectedException e) {
+			} catch (RuntimeException e) {
+				try {
+					fTarget.targetRequestFailed("Exception occurred while resuming event set after event dispatch.", e);
+				} catch (DebugException de) {
+					JDIDebugPlugin.log(de);
+				}
 			}
 		}
 	}

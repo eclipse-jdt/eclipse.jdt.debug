@@ -364,6 +364,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 					return THREAD_STATUS_MONITOR;
 				case JDWP_THREAD_STATUS_WAIT:
 					return THREAD_STATUS_WAIT;
+				case -1: // see bug 30816
+					return THREAD_STATUS_UNKNOWN;
 			}
 			throw new InternalException(JDIMessages.getString("ThreadReferenceImpl.Unknown_thread_status_received___6") + threadStatus); //$NON-NLS-1$
 		} catch (IOException e) {

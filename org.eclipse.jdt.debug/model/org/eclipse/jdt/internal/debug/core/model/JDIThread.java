@@ -234,6 +234,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		setTerminated(false);
 		setRunning(false);
 		try {
+			// see bug 30816
+			if (getUnderlyingThread().status() == ThreadReference.THREAD_STATUS_UNKNOWN) {
+				setRunning(true);
+				return;
+			}
+		} catch (VMDisconnectedException e) {
+			disconnected();
+			return;
+		} catch (ObjectCollectedException e){
+			throw e;
+		} catch (RuntimeException e) {
+			logError(e);
+		} 
+		
+		try {
 			setRunning(!getUnderlyingThread().isSuspended());
 		} catch (VMDisconnectedException e) {
 			disconnected();
