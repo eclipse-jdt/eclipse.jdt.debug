@@ -32,12 +32,9 @@ public interface IVMRunner {
 	 * given launch.
 	 *
 	 * @param configuration the configuration settings for this run
-	 * @param launch the lanuch to contribute to
+	 * @param launch the launch to contribute to
 	 * @param monitor progress monitor or <code>null</code>
-	 * @return a result object containing the create processes and 
-	 *   debug target if the launch was successful, and <code>null</code>
-	 *   otherwise if cancelled
-	 * @exception CoreException if an exception occurrs while launching
+	 * @exception CoreException if an exception occurs while launching
 	 */
 	public void run(VMRunnerConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException;	
 	

@@ -122,7 +122,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 					try {
 						VirtualMachine vm= connector.accept(map);
 						setTimeout(vm);
-						IDebugTarget debugTarget= JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
+						JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
 						return;
 					} catch (InterruptedIOException e) {
 						String errorMessage= process.getStreamsProxy().getErrorStreamMonitor().getContents();

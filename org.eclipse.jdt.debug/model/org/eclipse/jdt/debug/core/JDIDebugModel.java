@@ -67,7 +67,6 @@ public class JDIDebugModel {
 		super();
 	}
 	
-	//XXX Fix all hit count comments after Bug#1740 is addressed
 	/**
 	 * Creates and returns a debug target for the given VM, with
 	 * the specified name, and associates the debug target with the
@@ -79,7 +78,7 @@ public class JDIDebugModel {
 	 * resumed on startup.
 	 * The debug target is added to the given launch.
 	 *
-	 * @param lanuch the launch the new debug target will be contained in
+	 * @param launch the launch the new debug target will be contained in
 	 * @param vm the VM to create a debug target for
 	 * @param name the name to associate with the VM, which will be 
 	 *   returned from <code>IDebugTarget.getName</code>. If <code>null</code>
