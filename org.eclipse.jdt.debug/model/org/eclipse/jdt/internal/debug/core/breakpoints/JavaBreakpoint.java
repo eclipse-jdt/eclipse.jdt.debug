@@ -3,7 +3,7 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
- */
+ */ 
  
 import java.util.ArrayList;
 import java.util.HashMap;
