@@ -73,6 +73,12 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * This attribute is a <code>boolean</code>.
 	 */
 	private static final String NATIVE = "org.eclipse.jdt.debug.core.native"; //$NON-NLS-1$
+	
+	/**
+	 * Method request property storing the type in which the
+	 * request is installed
+	 */
+	private static final String TYPE = "org.eclipse.jdt.debug.core.type"; //$NON-NLS-1$
 			
 	/**
 	 * Cache of method name attribute
@@ -155,6 +161,29 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		registerRequest(entryRequest, target);
 		registerRequest(exitRequest, target);
 		return true;
+	}	
+	
+	/**
+	 * @see JavaBreakpoint#recreateRequest(EventRequest, JDIDebugTarget)
+	 */
+	protected EventRequest recreateRequest(EventRequest request, JDIDebugTarget target)	throws CoreException {
+		ReferenceType type= (ReferenceType) request.getProperty(TYPE);
+		EventRequest newRequest= null;
+		try {
+			if (request instanceof MethodEntryRequest) {
+				newRequest= createMethodEntryRequest(target, type);
+			} else {
+				newRequest= createMethodExitRequest(target, type);
+			}
+		} catch (VMDisconnectedException e) {
+			if (!target.isAvailable()) {
+				return request;
+			}
+			JDIDebugPlugin.logError(e);
+		} catch (RuntimeException e) {
+			JDIDebugPlugin.logError(e);
+		}
+		return newRequest;
 	}
 	
 	
@@ -203,7 +232,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				request= target.getEventRequestManager().createMethodExitRequest();
 				((MethodExitRequest)request).addClassFilter(type);
 			}
-			configureRequest(request, target);
+			configureRequest(request, target, type);
 		} catch (VMDisconnectedException e) {
 			if (!target.isAvailable()) {
 				return null;
@@ -224,6 +253,15 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		} else {
 			((MethodExitRequest)request).addThreadFilter(thread);
 		}
+	}
+
+	/**
+	 * Adds the type in which this method is installed to the request as a property.
+	 * This type corresponds to the class filter that is placed on the request.
+	 */
+	protected void configureRequest(EventRequest request, JDIDebugTarget target, ReferenceType type) throws CoreException {
+		request.putProperty(TYPE, type);
+		configureRequest(request, target);
 	}
 	
 	/**
@@ -541,5 +579,5 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				setEntry(true);
 			}
 		}
-	}	
+	}
 }
