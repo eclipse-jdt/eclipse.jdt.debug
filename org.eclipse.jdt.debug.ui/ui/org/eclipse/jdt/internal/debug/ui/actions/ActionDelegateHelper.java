@@ -78,7 +78,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	 */
 	public void partClosed(IWorkbenchPart part) {
 		if (part == getTextEditor()) {
-			setTextEditor(null);
+			cleanup();
 		}
 	}
 
@@ -105,7 +105,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	protected void checkToSetTextEditor(IWorkbenchPart part) {
 		if (part instanceof ITextEditor) {
 			if (part instanceof JavaSnippetEditor) {
-				setTextEditor(null);
+				cleanup();
 			} else {
 				setTextEditor((ITextEditor)part);
 			}	
@@ -179,6 +179,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	public void windowActivated(IWorkbenchWindow window) {
 		if (fCurrentWindow != null) {
 			fCurrentWindow.getPartService().removePartListener(this);
+			cleanup();
 		}
 		fCurrentWindow= window;
 		fCurrentWindow.getPartService().addPartListener(this);
@@ -194,6 +195,7 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	public void windowClosed(IWorkbenchWindow window) {
 		if (fCurrentWindow == window) {
 			fCurrentWindow= null;
+			cleanup();
 		}
 	}
 
@@ -207,5 +209,11 @@ public class ActionDelegateHelper implements IPartListener, IWindowListener {
 	 * @see IWindowListener#windowOpened(IWorkbenchWindow)
 	 */
 	public void windowOpened(IWorkbenchWindow window) {
+	}
+	
+	protected void cleanup() {
+		setTextEditor(null);
+		setCurrentSelection(null);
+		setMember(null);
 	}
 }
