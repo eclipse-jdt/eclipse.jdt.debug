@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -108,8 +107,8 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	
 	private WidgetListener fListener= new WidgetListener();
 	
-	/**
-	 * @see ILaunchConfigurationTab#createControl(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -168,8 +167,8 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 				
 	}
 					
-	/**
-	 * @see ILaunchConfigurationTab#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
 	}
@@ -328,8 +327,8 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		fWorkspaceDirButton.setSelection(false);		
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
 		
@@ -376,14 +375,14 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	/**
 	 * Defaults are empty.
 	 * 
-	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
@@ -413,8 +412,8 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		}
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String wd = null;
@@ -443,8 +442,8 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		return null;
 	}
 	
-	/**
-	 * @see ILaunchConfigurationTab#getName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return LauncherMessages.getString("WorkingDirectoryBlock.Working_Directory_8"); //$NON-NLS-1$

@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.ControlAccessibleListener;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -116,15 +115,15 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		return "javaw";  //$NON-NLS-1$
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#getName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return JREMessages.getString("AbstractJavaCommandTab.3"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		String javaCommand= null;
@@ -149,8 +148,8 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		handleSelection();
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fDefaultButton.getSelection()) {
@@ -163,15 +162,15 @@ public class StandardVMCommandTab extends AbstractLaunchConfigurationTab {
 		}		 
 	}
 	
-	/**
-	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
 	}	
 
-	/**
-	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		boolean valid= fDefaultButton.getSelection() || fJavaCommandText.getText().length() != 0;
