@@ -131,7 +131,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fTimeoutText.setPreferencePage(this);
 		fTimeoutText.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		fTimeoutText.setValidRange(50, Integer.MAX_VALUE);
-		fTimeoutText.setErrorMessage("Value must be a valid integer greater than 50 ms");
+		fTimeoutText.setErrorMessage(DebugUIMessages.getString("JavaDebugPreferencePage.Value_must_be_a_valid_integer_greater_than_50_ms_1")); //$NON-NLS-1$
 		fTimeoutText.load();
 		fTimeoutText.setPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
