@@ -30,8 +30,6 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	
 	private IViewPart fView;
 	
-	protected String fId= ""; //$NON-NLS-1$
-	
 	private IAction fAction;
 	private boolean fNeedsInitialization= true;
 
@@ -46,7 +44,6 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	 */
 	public void init(IViewPart view) {
 		setView(view);
-		initActionId();
 		IDebugView adapter= (IDebugView) view.getAdapter(IDebugView.class);
 		if (adapter != null && adapter.getViewer() instanceof StructuredViewer) {
 			setViewer((StructuredViewer)adapter.getViewer());
@@ -54,8 +51,6 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 		view.getViewSite().getPage().addPartListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
-
-	protected abstract void initActionId();
 
 	/**
 	 * @see IActionDelegate#run(IAction)
@@ -68,10 +63,6 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	}
 	
 	protected abstract void valueChanged(boolean on);
-	
-	protected String getActionId() {
-		return fId;
-	}
 	
 	protected StructuredViewer getViewer() {
 		return fViewer;
@@ -87,7 +78,6 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (fNeedsInitialization) {
 			setAction(action);
-			action.setId(getActionId());
 			fNeedsInitialization= false;
 		}
 	}
@@ -105,10 +95,10 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(getActionId())) {
-			getAction().setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(getActionId()));
+		if (event.getProperty().equals(getAction().getId())) {
+			getAction().setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(getAction().getId()));
 		} else if (event.getProperty().equals(IAction.CHECKED)) {
-			JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(getActionId(), getAction().isChecked());
+			JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(getAction().getId(), getAction().isChecked());
 			valueChanged(getAction().isChecked());
 		}
 	}

@@ -34,13 +34,7 @@ public class ShowQualifiedAction extends ToggleDelegateAction {
 			});
 		}
 	}
-	
-	/**
-	 * @see ToggleDelegateAction#initActionId()
-	 */
-	protected void initActionId() {
-		fId= JDIDebugUIPlugin.getUniqueIdentifier() + getView().getSite().getId() + ".ShowQualifiedAction"; //$NON-NLS-1$
-	}
+
 	
 	protected void setAction(IAction action) {
 		super.setAction(action);

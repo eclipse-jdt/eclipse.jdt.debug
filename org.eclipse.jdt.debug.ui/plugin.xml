@@ -457,7 +457,8 @@
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			state="false">
 		</action>
 	</viewerContribution>
 	<viewerContribution
@@ -469,7 +470,8 @@
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			state="false">
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.breakpointViewPopupActions.AddException"
 			label="%exceptionAction.accel.label"
@@ -489,7 +491,8 @@
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			state="false">
 		</action>
 	</viewerContribution>
 	<viewerContribution
@@ -501,7 +504,8 @@
 			menubarPath="renderGroup"
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			state="false">
 		</action>	
          <action
                label="%addWatchExpressionAction.label"
@@ -589,7 +593,8 @@
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			state="false">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewActions.FilterPreferences"
 			label="%filterPreferencesAction.label"
@@ -609,7 +614,8 @@
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			state="false">
 		</action>
 		<action id="org.eclipse.jdt.ui.expressionViewActions.FilterPreferences"
 			label="%filterPreferencesAction.label"
@@ -639,7 +645,8 @@
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			state="false">
 		</action>
 	</viewContribution>
 	<viewContribution
@@ -651,7 +658,8 @@
 			icon="../org.eclipse.jdt.ui/icons/full/obj16/package_obj.gif"
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
+			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			state="false">
 		</action>
 	</viewContribution>
 	<viewContribution
