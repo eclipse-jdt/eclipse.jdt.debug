@@ -36,7 +36,7 @@ public class JavaWatchpointFieldNameChange extends Change {
 	private String fNewName;
 	private String fOldName;
 	private IType fDeclaringType;
-	private IBreakpointsListener fBreakpointlistener;
+	private IBreakpointsListener fBreakpointsListener;
 
 	public static Change createChange(IField field, String newName) throws CoreException {
 		String typeName= field.getDeclaringType().getFullyQualifiedName();
@@ -73,7 +73,7 @@ public class JavaWatchpointFieldNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
-		fBreakpointlistener= new IBreakpointsListener() {
+		fBreakpointsListener= new IBreakpointsListener() {
 			public void breakpointsAdded(IBreakpoint[] breakpoints) {
 			}
 			public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
@@ -87,7 +87,7 @@ public class JavaWatchpointFieldNameChange extends Change {
 			public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 			}
 		};
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(fBreakpointlistener);
+		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(fBreakpointsListener);
 	}
 	
 	/* (non-Javadoc)
@@ -95,7 +95,7 @@ public class JavaWatchpointFieldNameChange extends Change {
 	 */
 	public void dispose() {
 		super.dispose();
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(fBreakpointlistener);
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(fBreakpointsListener);
 	}
 
 	/* (non-Javadoc)
