@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.debug.core.monitors;
+package org.eclipse.jdt.internal.debug.ui.monitors;
 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.

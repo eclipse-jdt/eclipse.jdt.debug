@@ -10,7 +10,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -150,7 +149,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		StructuredViewer threadViewer = new TreeViewer(parent, SWT.MULTI);
 		threadViewer.setContentProvider(new ThreadsViewContentProvider());
 		threadViewer.setLabelProvider(new MonitorModelPresentation());
-		threadViewer.setInput(JDIDebugModel.getMonitorManager());	
+		threadViewer.setInput(MonitorManager.getDefault());	
 		return threadViewer;
 	}
 
@@ -158,7 +157,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		StructuredViewer monitorsViewer = new TreeViewer(parent, SWT.MULTI);
 		monitorsViewer.setContentProvider(new MonitorsViewContentProvider());
 		monitorsViewer.setLabelProvider(new MonitorModelPresentation());
-		monitorsViewer.setInput(JDIDebugModel.getMonitorManager());	
+		monitorsViewer.setInput(MonitorManager.getDefault());	
 		return monitorsViewer;
 	}
 
@@ -194,7 +193,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		};
 		deadLocksViewer.setContentProvider(new DeadLocksViewContentProvider());
 		deadLocksViewer.setLabelProvider(new MonitorModelPresentation());
-		deadLocksViewer.setInput(JDIDebugModel.getMonitorManager());	
+		deadLocksViewer.setInput(MonitorManager.getDefault());	
 		return deadLocksViewer;
 	}
 
@@ -282,7 +281,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		if (getPageBook().isDisposed()) {
 			return;
 		}
-		if(JDIDebugModel.getMonitorManager().getNumberOfDeadlocks() == 0){
+		if(MonitorManager.getDefault().getNumberOfDeadlocks() == 0){
 			showMessage(MonitorMessages.getString("MonitorsView.No_deadlock_detected_3")); //$NON-NLS-1$
 		} else{
 			getPageBook().showPage(getDeadLocksViewer().getControl());

@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jface.action.IAction;
 
 /**
@@ -26,7 +25,7 @@ public class MonitorTraceAction extends MonitorAction {
 		if (target == null) {
 			return;
 		}
-		JDIDebugModel.getMonitorManager().update(target);
+		MonitorManager.getDefault().update(target);
 		IDebugView debugView= (IDebugView)fView.getAdapter(IDebugView.class);
 		if (debugView != null) {
 			debugView.getViewer().refresh();
