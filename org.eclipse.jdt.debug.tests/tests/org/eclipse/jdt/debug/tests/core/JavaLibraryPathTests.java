@@ -172,8 +172,9 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		variable.setValue(rootPath.toPortableString());
 		manager.addVariables(new IValueVariable[]{variable});
 		try {
-			String path = "${a-path}\\A.jar";
-			IClasspathAttribute attribute = JavaCore.newClasspathAttribute(JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, path);
+			String path = "${a-path}" + File.separator +"A.jar";
+			IPath thePath = new Path(path);
+			IClasspathAttribute attribute = JavaCore.newClasspathAttribute(JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, thePath.toPortableString());
 			IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(jar.getAbsolutePath()), null, null, new IPath[0], new IPath[0], new IClasspathAttribute[]{attribute}, false);
 			addToClasspath(getJavaProject("PathTests1"), entry);
 		
