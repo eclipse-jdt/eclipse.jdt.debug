@@ -102,6 +102,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	private float fWeight1 = 1/3F;
 	private float fWeight2 = 1/3F;
 	private float fWeight3 = 1/3F;
+	// ignore column re-sizing when the table is being resized
+	private boolean fResizingTable = false; 
 	
 	// index of column used for sorting
 	private int fSortColumn = 0;
@@ -375,6 +377,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	protected void configureTableResizing(final Composite parent, final Composite buttons, final Table table, final TableColumn column1, final TableColumn column2, final TableColumn column3) {
 		parent.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
+				fResizingTable = true;
 				Rectangle area = parent.getClientArea();
 				Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				int width = area.width - 2 * table.getBorderWidth();
@@ -403,25 +406,26 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 					column2.setWidth(Math.round(width * fWeight2));
 					column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
 				 }
+				 fResizingTable = false;
 			}
 		}); 
 		column1.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
-				if (column1.getWidth() > 0) {
+				if (column1.getWidth() > 0 && !fResizingTable) {
 					fWeight1 = getColumnWeight(0);
 				}
 			}
 		});
 		column2.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
-				if (column2.getWidth() > 0) {
+				if (column2.getWidth() > 0 && !fResizingTable) {
 					fWeight2 = getColumnWeight(1);
 				}
 			}
 		});
 		column3.addControlListener(new ControlAdapter() {
 		public void controlResized(ControlEvent e) {
-			if (column3.getWidth() > 0) {
+			if (column3.getWidth() > 0 && !fResizingTable) {
 				fWeight3 = getColumnWeight(2);
 			}
 		}
