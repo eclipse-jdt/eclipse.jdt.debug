@@ -973,7 +973,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	}
 
 	/**
-	 * Remvoes all threads from this target's collection
+	 * Removes all threads from this target's collection
 	 * of threads, firing a terminate event for each.
 	 */
 	protected void removeAllThreads() {
