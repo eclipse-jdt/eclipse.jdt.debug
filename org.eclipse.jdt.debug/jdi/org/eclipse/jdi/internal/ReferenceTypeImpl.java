@@ -713,6 +713,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	public List locationsOfLine(int line) throws AbsentInformationException {
 		Iterator allMethods = methods().iterator();
+		AbsentInformationException absentInformationException = null;
 		while (allMethods.hasNext()) {
 			MethodImpl method = (MethodImpl)allMethods.next();
 			if (method.isAbstract() || method.isNative()) {
@@ -722,7 +723,12 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 				return method.locationsOfLine(line);
 			} catch (InvalidLineNumberException e) {
 				continue;
+			} catch (AbsentInformationException e) {
+				absentInformationException = e;
 			}
+		}
+		if (absentInformationException != null) {
+			throw absentInformationException;
 		}
 		throw new InvalidLineNumberException(JDIMessages.getString("ReferenceTypeImpl.No_executable_code_at_line__5") + line  + JDIMessages.getString("ReferenceTypeImpl._6")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
