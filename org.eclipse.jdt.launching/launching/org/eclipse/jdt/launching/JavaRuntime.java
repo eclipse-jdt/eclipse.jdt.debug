@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -1266,9 +1267,17 @@ public final class JavaRuntime {
 	 * Write out the specified String as the new value of the VM definitions preference
 	 * and save all preferences.
 	 */
-	private static void saveVMDefinitions(String vmDefXML) {
-		LaunchingPlugin.getDefault().getPluginPreferences().setValue(PREF_VM_XML, vmDefXML);
-		LaunchingPlugin.getDefault().savePluginPreferences();		
+	private static void saveVMDefinitions(final String vmDefXML) {
+		Job prefJob = new Job(LaunchingMessages.getString("JavaRuntime.0")) { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				LaunchingPlugin.getDefault().getPluginPreferences().setValue(PREF_VM_XML, vmDefXML);
+				LaunchingPlugin.getDefault().savePluginPreferences();
+				return Status.OK_STATUS;
+			}
+		};
+		prefJob.setSystem(true);
+		prefJob.schedule();
+
 	}
 
 	private static String getVMsAsXML() throws IOException, ParserConfigurationException, TransformerException {
