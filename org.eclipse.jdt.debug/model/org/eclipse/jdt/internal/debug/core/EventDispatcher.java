@@ -7,10 +7,13 @@ package org.eclipse.jdt.internal.debug.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.VMDisconnectedException;
@@ -89,6 +92,7 @@ public class EventDispatcher implements Runnable {
 			return;
 		}
 		EventIterator iter= eventSet.eventIterator();
+		List deferredEvents= new ArrayList();
 		boolean vote = false; 
 		boolean resume = true;
 		while (iter.hasNext()) {
@@ -99,10 +103,21 @@ public class EventDispatcher implements Runnable {
 			if (event == null) {
 				continue;
 			}
-			
 			// Dispatch events to registered listeners, if any
 			IJDIEventListener listener = (IJDIEventListener)fEventHandlers.get(event.request());
 			if (listener != null) {
+				if (listener instanceof IJavaLineBreakpoint) {
+					// Event dispatch to conditional breakpoints is deferred until after
+					// other listeners vote.
+					try {
+						if (((IJavaLineBreakpoint)listener).isConditionEnabled()) {
+							deferredEvents.add(event);
+							continue;
+						}
+					} catch (CoreException exception) {
+						JDIDebugPlugin.log(exception);
+					}
+				}
 				vote = true;
 				resume = listener.handleEvent(event, fTarget) && resume;
 				continue;
@@ -112,15 +127,34 @@ public class EventDispatcher implements Runnable {
 			if (event instanceof VMDeathEvent) {
 				fTarget.handleVMDeath((VMDeathEvent) event);
 				shutdown(); // stop listening for events
-			} else
-				if (event instanceof VMDisconnectEvent) {
-					fTarget.handleVMDisconnect((VMDisconnectEvent) event);
-					shutdown(); // stop listening for events
-				} else if (event instanceof VMStartEvent) {
-					fTarget.handleVMStart((VMStartEvent)event);
-				} else {
-					// Unhandled Event
+			} else if (event instanceof VMDisconnectEvent) {
+				fTarget.handleVMDisconnect((VMDisconnectEvent) event);
+				shutdown(); // stop listening for events
+			} else if (event instanceof VMStartEvent) {
+				fTarget.handleVMStart((VMStartEvent)event);
+			} else {
+				// Unhandled Event
+			}
+		}
+		
+		if (resume) {
+			Iterator deferredIter= deferredEvents.iterator();
+			while (deferredIter.hasNext()) {
+				if (isShutdown()) {
+					return;
 				}
+				Event event= (Event)deferredIter.next();
+				if (event == null) {
+					continue;
+				}
+				// Dispatch events to registered listeners, if any
+				IJDIEventListener listener = (IJDIEventListener)fEventHandlers.get(event.request());
+				if (listener != null) {
+					vote = true;
+					resume = listener.handleEvent(event, fTarget) && resume;
+					continue;
+				}
+			}
 		}
 		
 		fireEvents();
@@ -128,6 +162,9 @@ public class EventDispatcher implements Runnable {
 		if (vote && resume) {
 			eventSet.resume();
 		}
+	}
+	
+	protected void dispatchEvent(Event event, IJDIEventListener listener) {
 	}
 
 	/**
