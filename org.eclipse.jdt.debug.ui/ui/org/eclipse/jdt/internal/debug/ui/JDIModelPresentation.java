@@ -1755,8 +1755,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 */
 	private String getSimpleName(String qualifiedName) {
 		int index = qualifiedName.lastIndexOf('.');
-		if (index >= 0) {
-			return qualifiedName.substring(index + 1);
+		while (index >= 0) {
+			String name = qualifiedName.substring(index + 1);
+			try {
+				Integer.parseInt(name);
+				index = qualifiedName.lastIndexOf('.', index - 1);
+			} catch (NumberFormatException e) {
+				return name;
+			}
 		}
 		return qualifiedName;
 	}
