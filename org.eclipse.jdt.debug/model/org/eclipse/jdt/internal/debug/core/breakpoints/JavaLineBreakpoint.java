@@ -30,15 +30,15 @@ import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
-import org.eclipse.jdt.debug.eval.ast.model.ICompiledExpression;
-import org.eclipse.jdt.debug.eval.ast.model.IPrimitiveValue;
+import org.eclipse.jdt.debug.eval.model.ICompiledExpression;
+import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 import org.eclipse.jdt.internal.core.JavaModel;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
-import org.eclipse.jdt.internal.debug.eval.ast.ASTEvaluationEngine;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassNotPreparedException;
