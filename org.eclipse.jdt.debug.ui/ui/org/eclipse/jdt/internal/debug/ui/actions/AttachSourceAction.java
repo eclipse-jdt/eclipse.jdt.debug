@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,25 +11,15 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import java.text.MessageFormat;
 import java.util.Iterator;
-
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
-import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
-import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
-import org.eclipse.jdt.internal.ui.wizards.IStatusChangeListener;
-import org.eclipse.jdt.internal.ui.wizards.buildpaths.SourceAttachmentBlock;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Attach source to an archive or variable.
@@ -37,51 +27,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class AttachSourceAction extends RuntimeClasspathAction {
 	
 	private IRuntimeClasspathEntry[] fEntries;
-
-	// a dialog to set the source attachment properties
-	private class SourceAttachmentDialog extends StatusDialog implements IStatusChangeListener {
-		
-		private SourceAttachmentBlock fSourceAttachmentBlock;
-				
-		public SourceAttachmentDialog(Shell parent, IRuntimeClasspathEntry[] entries) {
-			super(parent);
-			if (entries.length > 1) {
-				setTitle(ActionMessages.getString("AttachSourceAction.4")); //$NON-NLS-1$
-			} else {
-				setTitle(MessageFormat.format(ActionMessages.getString("AttachSourceAction.Attachments_For_____{0}_____1"),new String[] {entries[0].getPath().toString()})); //$NON-NLS-1$
-			}
-			fSourceAttachmentBlock= new SourceAttachmentBlock(this, entries[0].getClasspathEntry(), null, null);
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-		 */
-		protected void configureShell(Shell newShell) {
-			super.configureShell(newShell);
-			WorkbenchHelp.setHelp(newShell, IJavaHelpContextIds.SOURCE_ATTACHMENT_DIALOG);
-		}		
-				
-		protected Control createDialogArea(Composite parent) {
-			Composite composite= (Composite)super.createDialogArea(parent);
-						
-			Control inner= fSourceAttachmentBlock.createControl(composite);
-			inner.setLayoutData(new GridData(GridData.FILL_BOTH));
-			return composite;
-		}
-		
-		public void statusChanged(IStatus status) {
-			updateStatus(status);
-		}
-		
-		public IPath getSourceAttachmentPath() {
-			return fSourceAttachmentBlock.getSourceAttachmentPath();
-		}
-		
-		public IPath getSourceAttachmentRootPath() {
-			return fSourceAttachmentBlock.getSourceAttachmentRootPath();
-		}
-				
-	}
 	
 	/**
 	 * Creates an action to open a source attachment dialog.
@@ -99,13 +44,12 @@ public class AttachSourceAction extends RuntimeClasspathAction {
 	 * @see IAction#run()
 	 */	
 	public void run() { 
-		SourceAttachmentDialog dialog = new SourceAttachmentDialog(getShell(), fEntries);
-		int res = dialog.open();
-		if (res == Window.OK) {
+		IClasspathEntry classpathEntry = BuildPathDialogAccess.configureSourceAttachment(getShell(), fEntries[0].getClasspathEntry()); 
+		if (classpathEntry != null) {
 			for (int i = 0; i < fEntries.length; i++) {
 				IRuntimeClasspathEntry entry = fEntries[i];
-				entry.setSourceAttachmentPath(dialog.getSourceAttachmentPath());
-				entry.setSourceAttachmentRootPath(dialog.getSourceAttachmentRootPath());
+				entry.setSourceAttachmentPath(classpathEntry.getSourceAttachmentPath());
+				entry.setSourceAttachmentRootPath(classpathEntry.getSourceAttachmentRootPath());
 				getViewer().refresh(entry);
 			}
 			getViewer().notifyChanged();
