@@ -300,6 +300,9 @@
             targetID="org.eclipse.jdt.ui.JavaPerspective">
 		 <actionSet
                id="org.eclipse.debug.ui.breakpointActionSet">
+         </actionSet>           
+         <actionSet
+               id="org.eclipse.jdt.debug.ui.JavaDebugElementCreationActionSet">
          </actionSet>                     
          <actionSet
                id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
@@ -313,6 +316,9 @@
          <actionSet
                id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
          </actionSet>
+		<actionSet
+               id="org.eclipse.jdt.debug.ui.JavaDebugElementCreationActionSet">
+         </actionSet> 
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
@@ -322,6 +328,9 @@
          <actionSet
                id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
          </actionSet>
+		<actionSet
+               id="org.eclipse.jdt.debug.ui.JavaDebugElementCreationActionSet">
+         </actionSet> 
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.debug.ui.DebugPerspective">
@@ -2410,4 +2419,40 @@
          </factory>                  
       </extension>     	
       
+	<extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="%newWizardCategoryName"
+            parentCategory="org.eclipse.jdt.ui.java"
+            id="org.eclipse.jdt.debug.ui.java">
+      </category>
+      <wizard
+            name="%NewJavaScrapbookPage.label"
+            icon="icons/full/ctool16/newsbook_wiz.gif"
+            category="org.eclipse.jdt.ui.java/org.eclipse.jdt.debug.ui.java"
+            class="org.eclipse.jdt.internal.debug.ui.snippeteditor.NewSnippetFileCreationWizard"
+            id="org.eclipse.jdt.debug.ui.snippetEditor.NewSnippetFileCreationWizard">
+         <description>
+            %NewJavaScrapbookPage.description
+         </description>
+      </wizard>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%JavaDebugElementCreationActionSet.label"
+            description="%JavaDebugElementCreationActionSet.description"
+            visible="false"
+            id="org.eclipse.jdt.debug.ui.JavaDebugElementCreationActionSet">
+         <action
+               label="%OpenSnippetWizardAction.label"
+               icon="icons/full/ctool16/newsbook_wiz.gif"
+               tooltip="%OpenSnippetWizardAction.tooltip"
+               class="org.eclipse.jdt.internal.debug.ui.snippeteditor.OpenSnippetWizardAction"
+               toolbarPath="org.eclipse.jdt.ui.JavaElementCreationActionSet/JavaWizards"
+               id="org.eclipse.jdt.debug.ui.actions.OpenSnippetWizard">
+         </action>
+      </actionSet>
+   </extension>
 </plugin>
