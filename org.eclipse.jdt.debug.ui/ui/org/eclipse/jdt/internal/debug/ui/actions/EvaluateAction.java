@@ -36,6 +36,7 @@ import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.DataDisplay;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
@@ -240,10 +241,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					}
 					
 					IEvaluationEngine engine = getEvaluationEngine((IJavaDebugTarget)jFrame.getDebugTarget(), project);
+					int timeout= JDIDebugUIPlugin.getDefault().getPreferenceStore().getInt(IJDIPreferencesConstants.PREF_EVALUATION_TIMEOUT) * 1000;
 					if (object == null) {
-						engine.evaluate(expression, jFrame, this);
+						engine.evaluate(expression, jFrame, this, timeout); // TO DO: Use preference
 					} else {
-						engine.evaluate(expression, object, (IJavaThread)jFrame.getThread(), this);
+						engine.evaluate(expression, object, (IJavaThread)jFrame.getThread(), this, timeout); // TO DO: Use preference
 					}
 					
 				} catch (CoreException e) {

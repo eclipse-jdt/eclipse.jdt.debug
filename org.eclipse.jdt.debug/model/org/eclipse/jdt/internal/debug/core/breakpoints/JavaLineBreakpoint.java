@@ -406,7 +406,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 		fEvaluatingTargets.add(target);
 		fSuspendEvents.put(thread, event);
-		engine.evaluate(fCompiledExpression, frame, listener);
+		engine.evaluateExpression(fCompiledExpression, frame, listener, 10000); // 10 second timeout for now
 
 		// Do not resume. When the evaluation returns, the evaluation listener
 		// will resume the thread if necessary or update for suspension.

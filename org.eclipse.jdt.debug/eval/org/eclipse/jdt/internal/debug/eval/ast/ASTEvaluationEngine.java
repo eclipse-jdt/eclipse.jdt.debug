@@ -7,7 +7,6 @@ package org.eclipse.jdt.internal.debug.eval.ast;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Message;
@@ -22,16 +21,10 @@ import org.eclipse.jdt.debug.eval.ast.model.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.ast.model.IRuntimeContext;
 import org.eclipse.jdt.debug.eval.ast.model.IValue;
 import org.eclipse.jdt.debug.eval.ast.model.IVariable;
+import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTAPIVisitor;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.InstructionSequence;
-import org.eclipse.jdt.internal.debug.core.model.JDIThread;
-import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 
-
-/**
- * @version 	1.0
- * @author
- */
 public class ASTEvaluationEngine implements IEvaluationEngine {
 
 	private IJavaProject fProject;
@@ -54,48 +47,50 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 		fDebugTarget = debugTarget;
 	}
 
-	/*
+	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaThread, IEvaluationListener)
-	*/ 
-	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	 * 
+	 * Not yet implemented
+	 */
+	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener, long timeout) {
 	}
 
 	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener)
 	 */
-	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener) throws DebugException {
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, long timeout) {
 		ICompiledExpression expression= getCompiledExpression(snippet, frame);
-		evaluate(expression, frame, listener);
+		evaluateExpression(expression, frame, listener, timeout);
+	}
+	
+	/**
+	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener)
+	 */
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, long timeout) {
+		ICompiledExpression expression= getCompiledExpression(snippet, thisContext, thread);
+		evaluateExpression(expression, thisContext, thread, listener, timeout);
 	}
 	
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaStackFrame, IEvaluationListener)
 	 */
-	public void evaluate(final ICompiledExpression expression, final IJavaStackFrame frame, final IEvaluationListener listener) {
+	public void evaluateExpression(final ICompiledExpression expression, final IJavaStackFrame frame, final IEvaluationListener listener, long timeout) {
 		RuntimeContext context = new RuntimeContext(getJavaProject(), frame);
-		evaluate(expression, context, (IJavaThread)frame.getThread(), listener);
-	}
-
-	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaObject, IJavaThread, IEvaluationListener)
-	 */
-	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener) throws DebugException {
-		ICompiledExpression expression= getCompiledExpression(snippet, thisContext, thread);
-		evaluate(expression, thisContext, thread, listener);
+		doEvaluation(expression, context, (IJavaThread)frame.getThread(), listener, timeout);
 	}
 
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(final ICompiledExpression expression, final IJavaObject thisContext, final IJavaThread thread, final IEvaluationListener listener) {
+	public void evaluateExpression(final ICompiledExpression expression, final IJavaObject thisContext, final IJavaThread thread, final IEvaluationListener listener, long timeout) {
 		IRuntimeContext context = new JavaObjectRuntimeContext(thisContext, getJavaProject(), thread);
-		evaluate(expression, context, thread, listener);
+		doEvaluation(expression, context, thread, listener, timeout);
 	}
 	
 	/**
-	 * Performs the evaluation.
+	 * Evaluates the given expression in the given thread and the given runtime context.
 	 */
-	public void evaluate(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener) {
+	private void doEvaluation(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener, final long timeout) {
 		Thread evaluationThread= new Thread(new Runnable() {
 			public void run() {
 				fEvaluationCancelled= false;
@@ -116,7 +111,7 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 					public void run() {
 						while (!fEvaluationComplete && !fEvaluationCancelled) {
 							try {
-								Thread.currentThread().sleep(3000); // 10 second timeout for now
+								Thread.currentThread().sleep(timeout);
 							} catch(InterruptedException e) {
 							}
 							if (!fEvaluationComplete && !listener.evaluationTimedOut(thread)) {
@@ -145,18 +140,16 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 		evaluationThread.start();
 	}
 
-	/*
+	/**
 	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaStackFrame)
 	 */
-	public ICompiledExpression getCompiledExpression(String snippet, IJavaStackFrame frame) throws DebugException {
+	public ICompiledExpression getCompiledExpression(String snippet, IJavaStackFrame frame) {
 		IJavaProject javaProject = getJavaProject();
 		RuntimeContext context = new RuntimeContext(javaProject, frame);
 
 		ASTCodeSnippetToCuMapper mapper = null;
 		CompilationUnit unit = null;
-
 		try {
-			
 			IVariable[] locals = context.getLocals();
 			int numLocals= locals.length;
 			int[] localModifiers = new int[locals.length];
@@ -167,37 +160,46 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 				localTypesNames[i] = ((EvaluationValue)locals[i].getValue()).getJavaValue().getReferenceTypeName();
 				localModifiers[i]= 0;
 			}
-			
 			mapper = new ASTCodeSnippetToCuMapper(new String[0], localModifiers, localTypesNames, localVariables, snippet);
-
 			unit = AST.parseCompilationUnit(mapper.getSource(frame).toCharArray(), mapper.getCompilationUnitName(), javaProject);
-		} catch (JavaModelException e) {
-			throw new DebugException(e.getStatus());
 		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
+			InstructionSequence expression= new InstructionSequence(snippet);
+			expression.addError(new Message(e.getStatus().getMessage(), 1));
+			return expression;
 		}
 		
-		return genExpressionFromAST(snippet, mapper, unit);
+		return createExpressionFromAST(snippet, mapper, unit);
 	}
 
-	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext, IJavaThread thread) throws DebugException {
+	/**
+	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaObject, IJavaThread)
+	 */
+	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext, IJavaThread thread) {
 		IJavaProject javaProject = getJavaProject();
 
 		ASTCodeSnippetToCuMapper mapper = null;
 		CompilationUnit unit = null;
 
-		try {
-			mapper = new ASTCodeSnippetToCuMapper(new String[0], new int[0], new String[0], new String[0], snippet);
+		mapper = new ASTCodeSnippetToCuMapper(new String[0], new int[0], new String[0], new String[0], snippet);
 
+		try {
 			unit = AST.parseCompilationUnit(mapper.getSource(thisContext, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
 		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
+			InstructionSequence expression= new InstructionSequence(snippet);
+			expression.addError(new Message(e.getStatus().getMessage(), 1));
+			return expression;
 		}
-		
-		return genExpressionFromAST(snippet, mapper, unit);
+		return createExpressionFromAST(snippet, mapper, unit);
 	}
 
-	private ICompiledExpression genExpressionFromAST(String snippet, ASTCodeSnippetToCuMapper mapper, CompilationUnit unit) {
+	/**
+	 * Creates a compiled expression for the given snippet using the given mapper and 
+	 * compiliation unit (AST).
+	 * @param snippet the code snippet to be compiled
+	 * @param mapper the object which will be used to create the expression
+	 * @param unit the compilation unit (AST) generated for the snippet
+	 */
+	private ICompiledExpression createExpressionFromAST(String snippet, ASTCodeSnippetToCuMapper mapper, CompilationUnit unit) {
 		Message[] messages= unit.getMessages();
 		if (messages.length != 0) {
 			boolean error= false;
@@ -247,7 +249,7 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener, long timeout) throws DebugException {
 	}
 
 	/**

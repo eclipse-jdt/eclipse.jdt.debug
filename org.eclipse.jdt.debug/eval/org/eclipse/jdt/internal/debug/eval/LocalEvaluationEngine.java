@@ -395,11 +395,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(
-		String snippet,
-		IJavaThread thread,
-		IEvaluationListener listener)
-		throws DebugException {
+	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener, long timeout) throws DebugException {
 			checkDisposed();
 			checkEvaluating();
 			try {
@@ -439,11 +435,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * @see IEvaluationEngine#evaluate(String, IJavaStackFrame, IEvaluationListener)
 	 */
-	public void evaluate(
-		String snippet,
-		IJavaStackFrame frame,
-		IEvaluationListener listener)
-		throws DebugException {
+	public void evaluate(String snippet, IJavaStackFrame frame, IEvaluationListener listener, long timeout) throws DebugException {
 			checkDisposed();
 			checkEvaluating();
 			try {
@@ -513,12 +505,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * @see IEvaluationEngine#evaluate(String, String, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(
-		String snippet,
-		IJavaObject thisContext,
-		IJavaThread thread,
-		IEvaluationListener listener)
-		throws DebugException {
+	public void evaluate(String snippet, IJavaObject thisContext, IJavaThread thread, IEvaluationListener listener, long timeout) throws DebugException {
 			checkDisposed();
 			checkEvaluating();
 			try {
@@ -1378,7 +1365,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/*
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaStackFrame, IEvaluationListener)
 	 */
-	public void evaluate(ICompiledExpression expression, IJavaStackFrame frame,	IEvaluationListener listener) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame,	IEvaluationListener listener, long timeout) throws DebugException {
 	}
 
 	/*
@@ -1391,13 +1378,13 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener, long timeout) throws DebugException {
 	}
 
 	/**
 	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaThread, IEvaluationListener)
 	 */
-	public void evaluate(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener) throws DebugException {
+	public void evaluateExpression(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener, long timeout) throws DebugException {
 	}
 
 	/**

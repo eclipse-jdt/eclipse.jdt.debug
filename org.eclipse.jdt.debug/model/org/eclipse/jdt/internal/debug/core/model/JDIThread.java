@@ -1154,35 +1154,17 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
-		suspendThread(true);
-	}
-	
-	/**
-	 * @see ISuspendResume#suspend()
-	 * 
-	 * Updates the state of this thread to suspended,
-	 * but does not fire notification of the suspention.
-	 */
-	public void suspendQuiet() throws DebugException {
-		suspendThread(false);
-	}
-	
-	private void suspendThread(boolean fireNotification) throws DebugException {
 		try {
 			// Abort any pending step request
 			abortStep();
 			getUnderlyingThread().suspend();
 			setRunning(false);
-			if (fireNotification) {
-				fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
-			}
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
 		} catch (RuntimeException e) {
 			setRunning(true);
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_suspending"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 	}
-	
-
 
 	/**
 	 * Notifies this thread that it has been suspended due

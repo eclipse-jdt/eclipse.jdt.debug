@@ -200,6 +200,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS, true);
 		
 		JavaDebugPreferencePage.initDefaults(store);
+		JavaDebugWorkInProgressPreferencePage.initDefaults(store);
 		JavaStepFilterPreferencePage.initDefaults(store);
 	}
 	
