@@ -58,7 +58,7 @@ public class JavaLogicalStructures implements ILogicalStructureProvider {
 	 * Get the logical structure from the extension point and the preference store,
 	 * and initialize the map.
 	 */
-    {
+    static {
 		initPluginContributedJavaLogicalStructure();
 		initUserDefinedJavaLogicalStructures();
 		initJavaLogicalStructureMap();
