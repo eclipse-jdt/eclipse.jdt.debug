@@ -186,7 +186,7 @@ public class EventDispatcher implements Runnable {
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
 				try {
-					fTarget.targetRequestFailed("Exception occurred while resuming event set after event dispatch.", e);
+					fTarget.targetRequestFailed(JDIDebugMessages.getString("EventDispatcher.0"), e); //$NON-NLS-1$
 				} catch (DebugException de) {
 					JDIDebugPlugin.log(de);
 				}
