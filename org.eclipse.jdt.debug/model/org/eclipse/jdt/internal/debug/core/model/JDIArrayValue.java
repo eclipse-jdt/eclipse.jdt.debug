@@ -184,5 +184,12 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray, IIndexe
 		return variables;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IIndexedValue#getInitialOffset()
+	 */
+	public int getInitialOffset() {
+		return 0;
+	}
+
 }
 
