@@ -16,10 +16,10 @@
 
 	<target name="snippetsupport.jar" depends="init" description="Creates the snippetsupport.jar">
 		<property name="destdir" value="${temp.folder}/snippetsupport.jar.bin"/>
-		<delete dir="${temp.folder}/snippetsupport.jar.bin"/>
-		<mkdir dir="${temp.folder}/snippetsupport.jar.bin"/>
+		<delete dir="${destdir}"/>
+		<mkdir dir="${destdir}"/>
 		<!-- compile the source code -->
-		<javac target="1.3" source="1.3" destdir="${temp.folder}/snippetsupport.jar.bin"
+		<javac target="1.3" source="1.3" destdir="${destdir}"
 			failonerror="true"
 			verbose="false"
 			debug="on"
@@ -29,7 +29,7 @@
 			<src path="Snippet Support/"/>
 		</javac>
 		<mkdir dir="${build.result.folder}"/>
-		<jar destfile="${build.result.folder}/snippetsupport.jar" basedir="${temp.folder}/snippetsupport.jar.bin"/>
+		<jar destfile="${build.result.folder}/snippetsupport.jar" basedir="${destdir}"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
