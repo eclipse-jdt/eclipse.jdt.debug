@@ -55,7 +55,7 @@ import com.sun.jdi.request.StepRequest;
 public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutListener {
 	
 	/**
-	 * Constant for the nane of the main thread group.
+	 * Constant for the name of the main thread group.
 	 */
 	private static final String MAIN_THREAD_GROUP = "main"; //$NON-NLS-1$
 	
@@ -145,7 +145,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * may decide to abort the evaluation, in which
 	 * case this flag gets set to <code>true</code>.
 	 * When an evaluation is aborted, before it completes,
-	 * the evaluation thread is evenutally (automatically)
+	 * the evaluation thread is eventually (automatically)
 	 * resumed when the evaluation completes. When 
 	 * an evaluation is not aborted, the evaluation thread
 	 * remains suspended when on completion of the
@@ -163,7 +163,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	
 	/**
 	 * The kind of step that was originally requested.  Zero or
-	 * more 'secondary steps' may be performed programtically after
+	 * more 'secondary steps' may be performed programmatically after
 	 * the original user-requested step, and this field tracks the
 	 * type (step into, over, return) of the original step.
 	 */
@@ -319,7 +319,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_determining_if_system_thread"), new String[] {e.toString()}), e); //$NON-NLS-1$
 				// execution will not reach this line, as
-				// #targetRequestFailed will will throw an exception				
+				// #targetRequestFailed will throw an exception				
 				return;
 			}
 			if (tgn != null && tgn.equals(MAIN_THREAD_GROUP)) {
@@ -537,8 +537,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * </p>
 	 * <p>
 	 * Stack frames are preserved during method invocations, unless
-	 * a timeout occurrs. Athough this thread's state is updated to
-	 * running while performing an evalutaion, no debug events are
+	 * a timeout occurs. Although this thread's state is updated to
+	 * running while performing an evaluation, no debug events are
 	 * fired unless this invocation is interrupted by a breakpoint,
 	 * or the invocation times out.
 	 * </p>
@@ -609,7 +609,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	/**
 	 * Called when this thread suspends. If this thread is performing
 	 * a method invocation, a not is made that the invocation was
-	 * interruped. When an invocation is interrupted, a suspend
+	 * interrupted. When an invocation is interrupted, a suspend
 	 * event must be fired when/if the invocation eventually completes.
 	 * 
 	 * @see #invokeMethod(ClassType, ObjectReference, Method, List)
@@ -685,8 +685,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * </p>
 	 * <p>
 	 * Stack frames are preserved during method invocations, unless
-	 * a timeout occurrs. Athough this thread's state is updated to
-	 * running while performing an evalutaion, no debug events are
+	 * a timeout occurs. Although this thread's state is updated to
+	 * running while performing an evaluation, no debug events are
 	 * fired unless this invocation is interrupted by a breakpoint,
 	 * or the invocation times out.
 	 * </p>
@@ -815,7 +815,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	/**
-	 * Returns the timeout interval for jdi requests in millieseconds,
+	 * Returns the timeout interval for JDI requests in milliseconds,
 	 * or -1 if not supported
 	 * 
 	 * @return timeout value, in milliseconds, or -1 if not supported
@@ -865,7 +865,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_priority"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not fall through to this line, as
-		// #targetRequestFailed or #requestFailed will thrown
+		// #targetRequestFailed or #requestFailed will throw
 		// an exception		
 		return -1;
 	}
@@ -1329,7 +1329,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	
 	/**
 	 * Notification this thread has terminated - update state
-	 * and fire a termiante event.
+	 * and fire a terminate event.
 	 */
 	protected void terminated() {
 		setTerminated(true);
@@ -1841,7 +1841,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		/**
 		 * Notification the step request has completed.
 		 * If in the desired frame, complete the step
-		 * request nomally. If not in the desired frame,
+		 * request normally. If not in the desired frame,
 		 * another step request is created and this thread
 		 * is resumed.
 		 * 
@@ -1892,7 +1892,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		private int fFramesToDrop;
 		
 		/**
-		 * Constructs a handler to drop to the the specified
+		 * Constructs a handler to drop to the specified
 		 * stack frame.
 		 * 
 		 * @param frame the stack frame to drop to
