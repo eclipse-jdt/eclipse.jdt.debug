@@ -64,7 +64,7 @@ public class LaunchConfigurationProjectNameChange extends Change {
 		} else if (nbChanges == 1) {
 			return (IChange) changes.get(0);
 		} else {
-			return new CompositeChange("Launch configuration updates", (IChange[])changes.toArray(new IChange[changes.size()]));
+			return new CompositeChange(RefractoringMessages.getString("LaunchConfigurationProjectNameChange.0"), (IChange[])changes.toArray(new IChange[changes.size()])); //$NON-NLS-1$
 		}
 	}
 	
@@ -106,6 +106,6 @@ public class LaunchConfigurationProjectNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.IChange#getName()
 	 */
 	public String getName() {
-		return MessageFormat.format("Update project of launch configuration \"{0}\"", new String[] {fLaunchConfiguration.getName()});
+		return MessageFormat.format(RefractoringMessages.getString("LaunchConfigurationProjectNameChange.1"), new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
 	}
 }

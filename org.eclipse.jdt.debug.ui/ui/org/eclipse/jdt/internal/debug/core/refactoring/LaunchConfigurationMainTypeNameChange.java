@@ -51,7 +51,7 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 		} else if (nbChanges == 1) {
 			return (IChange) changes.get(0);
 		} else {
-			return new CompositeChange("Launch configuration updates", (IChange[])changes.toArray(new IChange[changes.size()]));
+			return new CompositeChange(RefractoringMessages.getString("LaunchConfigurationMainTypeNameChange.1"), (IChange[])changes.toArray(new IChange[changes.size()])); //$NON-NLS-1$
 		}
 	}
 	
@@ -134,9 +134,9 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 	 */
 	public String getName() {
 		if (fNewLaunchConfigurationName != null) {
-			return MessageFormat.format("Rename launch configuration \"{0}\" to \"{1}\", update main type", new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName});
+			return MessageFormat.format(RefractoringMessages.getString("LaunchConfigurationMainTypeNameChange.2"), new String[] {fLaunchConfiguration.getName(), fNewLaunchConfigurationName}); //$NON-NLS-1$
 		} else {
-			return MessageFormat.format("Update main type of launch configuration \"{0}\"", new String[] {fLaunchConfiguration.getName()});
+			return MessageFormat.format(RefractoringMessages.getString("LaunchConfigurationMainTypeNameChange.3"), new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
 		}
 	}
 	/* (non-Javadoc)
