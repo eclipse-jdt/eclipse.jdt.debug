@@ -90,7 +90,6 @@ public class EvaluationSourceGenerator {
 	protected boolean isExpression(String codeSnippet) {
 		boolean inString= false;
 		byte[] chars= codeSnippet.getBytes();
-		char ch;
 		for (int i= 0, numChars= chars.length; i < numChars; i++) {
 			switch (chars[i]) {
 				case '\\':
