@@ -13,7 +13,7 @@ public class PerfDebugBaselineTest extends PerformanceTestCase {
         tagAsSummary("Baseline Test", Dimension.CPU_TIME);
         Performance perf = Performance.getDefault();
         StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000; i++) {
             buffer.append("at org.eclipse.jdt.internal.debug.core.model.JDILocalVariable.retrieveValue(JDILocalVariable.java:56\n");
         }
         String text = buffer.toString();
@@ -24,7 +24,7 @@ public class PerfDebugBaselineTest extends PerformanceTestCase {
         }
         
         try {
-            for (int i= 0; i < 20; i++) {
+            for (int i= 0; i < 10; i++) {
                 fPerformanceMeter.start();
                 int matches = findMatches(text);
                 fPerformanceMeter.stop();
