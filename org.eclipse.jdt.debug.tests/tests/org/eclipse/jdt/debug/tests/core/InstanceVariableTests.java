@@ -90,7 +90,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 	public void testValueHasChanged() throws Exception {
 		String typeName = "VariableChanges";
 		
-		ILineBreakpoint bp = createLineBreakpoint(17, typeName);		
+		ILineBreakpoint bp = createLineBreakpoint(21, typeName);		
 		
 		IJavaThread thread= null;
 		try {

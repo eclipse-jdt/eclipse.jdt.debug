@@ -73,7 +73,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 * Answers true if the <code>DebugEvent</code> is acceptable.
 	 */
 	public boolean accept(DebugEvent event) {
-		return event.getKind() == fEventType;
+		return event.getKind() == fEventType && event.getDetail() != DebugEvent.EVALUATION_IMPLICIT;
 	}
 	/**
 	 * Answers the event name associated with the given flag.

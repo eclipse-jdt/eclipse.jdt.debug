@@ -111,8 +111,8 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 
 	public void testConditionalStepReturn() throws Exception {
 		String typeName = "ConditionalStepReturn";
-		IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(15, typeName);
-		createConditionalLineBreakpoint(15, typeName, "!bool", true);
+		IJavaLineBreakpoint lineBreakpoint = createLineBreakpoint(17, typeName);
+		createConditionalLineBreakpoint(18, typeName, "!bool", true);
 		
 		IJavaThread thread= null;
 		try {
