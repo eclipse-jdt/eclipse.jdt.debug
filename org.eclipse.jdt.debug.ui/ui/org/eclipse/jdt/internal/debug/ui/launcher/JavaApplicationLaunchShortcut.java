@@ -98,15 +98,10 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut {
 	 * Launches a configuration for the given type
 	 */
 	protected void launch(IType type, String mode) {
-		try { 
-			ILaunchConfiguration config = findLaunchConfiguration(type, mode);
-			if (config != null) {
-				DebugUITools.saveAndBuildBeforeLaunch();
-				config.launch(mode, null);
-			}			
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed_7"), e.getStatus()); //$NON-NLS-1$
-		}
+		ILaunchConfiguration config = findLaunchConfiguration(type, mode);
+		if (config != null) {
+			DebugUITools.launch(config, mode);
+		}			
 	}
 	
 	/**
