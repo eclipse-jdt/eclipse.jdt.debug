@@ -65,6 +65,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String PRIMITIVE_DISPLAY_OPTIONS_ACTION = PREFIX + "primitive_options_action_context"; //$NON-NLS-1$
 	public static final String SHOW_STATICS_ACTION = PREFIX + "show_static_action_context"; //$NON-NLS-1$
 	public static final String SHOW_CONSTANTS_ACTION = PREFIX + "show_constants_action_context"; //$NON-NLS-1$
+	public static final String CLEAR_DISPLAY_VIEW_ACTION = PREFIX + "clear_display_view_action_context"; //$NON-NLS-1$
 	
 	
 }
