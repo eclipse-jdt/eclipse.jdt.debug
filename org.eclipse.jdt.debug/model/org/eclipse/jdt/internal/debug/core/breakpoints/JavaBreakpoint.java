@@ -624,19 +624,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * value, also taking into account instance filters.
 	 */
 	protected void internalUpdateEnabledState(EventRequest request, boolean enabled, JDIDebugTarget target) {
-		// check for instance filters in this target, and only enable
-		// in this target if there are applicable instance filters		
-		if (fInstanceFilters != null && !fInstanceFilters.isEmpty() && enabled) {
-			enabled = false;
-			Iterator iter = fInstanceFilters.iterator();
-			while (iter.hasNext()) {
-				IJavaObject obj = (IJavaObject)iter.next();
-				if (obj.getDebugTarget().equals(target)) {
-					enabled = true;
-					break;
-				}
-			}
-		}		
 		if (request.isEnabled() != enabled) {
 			// change the enabled state
 			try {
