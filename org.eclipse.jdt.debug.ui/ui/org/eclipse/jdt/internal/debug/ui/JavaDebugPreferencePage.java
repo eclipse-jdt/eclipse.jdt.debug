@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,15 +124,14 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		createSpacer(composite, 1);
 		
-		comp = createGroupComposite(composite, 3, "Continue Launch if Project Contains Compile Errors"); 
+		comp = createGroupComposite(composite, 3, DebugUIMessages.getString("JavaDebugPreferencePage.15"));  //$NON-NLS-1$
 		fAlwaysContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
-		fAlwaysContinueWithErrors.setText("Always");
+		fAlwaysContinueWithErrors.setText(DebugUIMessages.getString("JavaDebugPreferencePage.16")); //$NON-NLS-1$
 		fNeverContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
-		fNeverContinueWithErrors.setText("Never");
+		fNeverContinueWithErrors.setText(DebugUIMessages.getString("JavaDebugPreferencePage.17")); //$NON-NLS-1$
 		fPromptContinueWithErrors = new Button(comp, SWT.RADIO | SWT.LEFT);
-		fPromptContinueWithErrors.setText("Prompt");
+		fPromptContinueWithErrors.setText(DebugUIMessages.getString("JavaDebugPreferencePage.18")); //$NON-NLS-1$
 
-		
 		createSpacer(composite, 1);
 		
 		comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Hot_Code_Replace_2")); //$NON-NLS-1$
@@ -177,6 +176,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		// cannot set preference store, as it is a core preference
 		
 		setValues();
+		applyDialogFont(composite);
 		return composite;		
 	}
 		
