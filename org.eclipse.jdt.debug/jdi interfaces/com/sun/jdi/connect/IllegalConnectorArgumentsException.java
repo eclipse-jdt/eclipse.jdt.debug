@@ -15,6 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IllegalConnectorArgumentsException extends Exception {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	List fNames;
 	
 	public IllegalConnectorArgumentsException(String message, List argNames) {

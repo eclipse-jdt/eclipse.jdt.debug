@@ -12,6 +12,12 @@ package com.sun.jdi.connect;
 
 
 public class VMStartException extends Exception {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	Process fProcess;
 	
 	public VMStartException(Process proc) {

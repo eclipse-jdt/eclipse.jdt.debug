@@ -23,6 +23,11 @@ import java.util.EventObject;
  * @since 2.0
  */
 public class PropertyChangeEvent extends EventObject {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
 
 	/**
 	 * The name of the changed property.

@@ -12,6 +12,12 @@ package com.sun.jdi;
 
 
 public class ClassNotLoadedException extends Exception {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	public ClassNotLoadedException(String className) {
 		name = className;
 	}

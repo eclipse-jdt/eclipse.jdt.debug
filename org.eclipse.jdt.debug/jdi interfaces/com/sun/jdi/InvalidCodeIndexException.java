@@ -14,6 +14,12 @@ package com.sun.jdi;
  * @deprecated This exception is no longer thrown.
  */
 public class InvalidCodeIndexException extends RuntimeException {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	/**
 	 * @deprecated
 	 */

@@ -15,6 +15,12 @@ package org.eclipse.jdi.hcr;
  * Thrown to indicate that the target VM refused to perform an operation.
  */
 public class OperationRefusedException extends RuntimeException {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	public OperationRefusedException() {
 	}
 	

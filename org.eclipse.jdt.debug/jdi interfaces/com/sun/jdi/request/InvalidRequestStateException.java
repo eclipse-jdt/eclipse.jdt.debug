@@ -12,6 +12,12 @@ package com.sun.jdi.request;
 
 
 public class InvalidRequestStateException extends RuntimeException {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	public InvalidRequestStateException() {
 	}
 	

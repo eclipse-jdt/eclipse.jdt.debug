@@ -13,6 +13,12 @@ package com.sun.jdi.connect;
 import java.io.IOException;
 
 public class TransportTimeoutException extends IOException {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	public TransportTimeoutException() {
 	}
 	public TransportTimeoutException(String arg1) {

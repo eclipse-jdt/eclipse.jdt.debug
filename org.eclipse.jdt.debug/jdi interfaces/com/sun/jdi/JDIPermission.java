@@ -13,6 +13,11 @@ package com.sun.jdi;
 import java.security.BasicPermission;
 
 public class JDIPermission extends  BasicPermission {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
 	
 	public JDIPermission(String arg1) {
 		super(arg1);

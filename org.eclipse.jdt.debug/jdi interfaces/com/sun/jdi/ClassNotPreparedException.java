@@ -12,6 +12,12 @@ package com.sun.jdi;
 
 
 public class ClassNotPreparedException extends RuntimeException {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	public ClassNotPreparedException() { }
 	public ClassNotPreparedException(String arg1) {
 		super(arg1);

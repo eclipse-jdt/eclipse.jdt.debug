@@ -12,6 +12,12 @@ package com.sun.jdi;
 
 
 public class VMMismatchException extends RuntimeException {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	public VMMismatchException() { }
 	public VMMismatchException(String arg1) {
 	   	super(arg1);

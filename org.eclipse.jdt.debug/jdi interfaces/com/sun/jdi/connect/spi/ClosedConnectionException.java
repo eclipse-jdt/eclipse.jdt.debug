@@ -13,6 +13,12 @@ package com.sun.jdi.connect.spi;
 import java.io.IOException;
 
 public class ClosedConnectionException extends IOException {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	public ClosedConnectionException() {
 	}
 	public ClosedConnectionException(String arg1) {

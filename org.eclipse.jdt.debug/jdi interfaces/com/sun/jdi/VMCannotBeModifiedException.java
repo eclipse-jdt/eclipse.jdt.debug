@@ -11,6 +11,12 @@
 package com.sun.jdi;
 
 public class VMCannotBeModifiedException extends UnsupportedOperationException {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	public VMCannotBeModifiedException() {
 	}
 	public VMCannotBeModifiedException(String arg1) {

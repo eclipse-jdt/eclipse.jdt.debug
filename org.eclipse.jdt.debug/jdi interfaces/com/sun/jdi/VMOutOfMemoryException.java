@@ -12,6 +12,12 @@ package com.sun.jdi;
 
 
 public class VMOutOfMemoryException extends RuntimeException {
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	public VMOutOfMemoryException() { }
 	public VMOutOfMemoryException(String s) {
 	   	super(s);
