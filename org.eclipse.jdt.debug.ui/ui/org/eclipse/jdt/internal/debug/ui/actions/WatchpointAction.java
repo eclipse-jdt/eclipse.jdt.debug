@@ -8,13 +8,11 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.internal.ui.views.BreakpointsView;
+import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
@@ -22,11 +20,11 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.texteditor.IUpdate;
 
-public abstract class WatchpointAction extends Action implements IViewActionDelegate, IBreakpointListener {
+public abstract class WatchpointAction extends Action implements IViewActionDelegate, IUpdate {
 	
 	private IStructuredSelection fCurrentSelection;
 	private IAction fAction;
@@ -46,9 +44,12 @@ public abstract class WatchpointAction extends Action implements IViewActionDele
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart viewPart) {
-		if (viewPart instanceof BreakpointsView) {
-			((BreakpointsView)viewPart).addBreakpointListenerAction(this);
-		}
+		IDebugViewAdapter debugView = (IDebugViewAdapter)viewPart.getAdapter(IDebugViewAdapter.class);
+		if (debugView != null) {
+			// add myself to the debug view, such that my update method
+			// will be called when a breakpoint changes
+			debugView.setAction(getClass().getName(), this);
+		}		
 	}
 
 	/**
@@ -115,32 +116,12 @@ public abstract class WatchpointAction extends Action implements IViewActionDele
 	}
 	
 	/** 
-	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
+	 * @see IUpdate#update()
 	 */
-	public void breakpointAdded(IBreakpoint breakpoint) {
-	}
-
-	/** 
-	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
-	 */
-	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-	}
-
-	/** 
-	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
-	 */
-	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
-		final Display display= Display.getDefault();
-		if (display.isDisposed()) {
-			return;
+	public void update() {
+		if (fAction != null && fCurrentSelection != null) {
+			selectionChanged(fAction, fCurrentSelection);
 		}
-		display.asyncExec(new Runnable() {
-			public void run() {
-				if (fAction != null && fCurrentSelection != null) {
-					selectionChanged(fAction, fCurrentSelection);
-				}
-			}
-		});
 	}	
 
 	/**
