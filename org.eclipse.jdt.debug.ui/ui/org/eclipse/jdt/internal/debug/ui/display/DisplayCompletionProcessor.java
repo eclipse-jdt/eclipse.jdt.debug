@@ -339,6 +339,8 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 					type = ((IClassFile)result).getType();
 				} else if (result instanceof ICompilationUnit) {
 					type = ((ICompilationUnit)result).getType(typeNames[0]);
+				} else if (result instanceof IType) {
+					type = (IType)result;
 				}
 			}
 			for (int i = 1; i < typeNames.length; i++) {
