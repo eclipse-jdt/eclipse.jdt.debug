@@ -9,9 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -52,16 +50,11 @@ public abstract class AbstractManageBreakpointActionDelegate extends ManageBreak
 				member= ActionDelegateHelper.getDefault().getCurrentMember(selection);
 			} else {
 				member= getMember(selection);
-				try {
-					if (member != null) {
-						IJavaProject project= member.getJavaProject();
-						if (!member.exists() || (project == null || !project.isOnClasspath(member))) {
-							member= null;
-						}
+				if (member != null) {
+					IJavaProject project= member.getJavaProject();
+					if (!member.exists() || (project == null || !project.isOnClasspath(member))) {
+						member= null;
 					}
-				} catch (JavaModelException e) {
-					JDIDebugUIPlugin.log(e);
-					member= null;
 				}
 			}
 		}
