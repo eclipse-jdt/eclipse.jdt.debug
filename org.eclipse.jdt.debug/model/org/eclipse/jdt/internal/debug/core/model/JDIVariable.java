@@ -204,9 +204,9 @@ public abstract class JDIVariable extends JDIDebugElement implements IJavaVariab
 	}
 	
 	/**
-	 * Returns the undlerying type of this variable
+	 * Returns the underlying type of this variable
 	 * 
-	 * @return the undlerying type of this variable
+	 * @return the underlying type of this variable
 	 * 
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
