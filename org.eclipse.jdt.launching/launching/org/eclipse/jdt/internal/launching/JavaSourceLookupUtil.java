@@ -12,10 +12,10 @@ package org.eclipse.jdt.internal.launching;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
@@ -43,9 +43,8 @@ public class JavaSourceLookupUtil {
 	 * @param entries entries to translate
 	 * @param considerSourceAttachments whether to consider source attachments
 	 *  when comparing against existing packagr fragment roots
-	 * @exception CoreException if unable to expand the path
 	 */
-	public static ISourceContainer[] translate(IRuntimeClasspathEntry[] entries, boolean considerSourceAttachments) throws CoreException {
+	public static ISourceContainer[] translate(IRuntimeClasspathEntry[] entries, boolean considerSourceAttachments) {
 		List containers = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];
