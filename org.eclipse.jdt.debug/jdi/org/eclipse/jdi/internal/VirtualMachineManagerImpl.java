@@ -120,12 +120,18 @@ public class VirtualMachineManagerImpl implements VirtualMachineManager {
 	 * NOTE: This is not in compliance with the Sun's JDI.
 	 */
 	public int getGlobalRequestTimeout() {
-		if (JDIDebugModel.getPreferences() != null) {
-			return JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
-		} else {
-			// JDI plug-in is not loaded
-			return JDIDebugModel.DEF_REQUEST_TIMEOUT;
+		try {
+			if (JDIDebugModel.getPreferences() != null) {
+				return JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
+			} else {
+				// JDI plug-in is not loaded
+				return JDIDebugModel.DEF_REQUEST_TIMEOUT;
+			}
+		} catch (Exception e) {
+			// ClassNotFoundException
 		}
+		// return the hard coded preference if the jdi debug plug-in does not exist
+		return 3000;
 	}
 	
 	/**
