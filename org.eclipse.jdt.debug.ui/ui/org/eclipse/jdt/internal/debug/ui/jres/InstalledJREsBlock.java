@@ -761,6 +761,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor, ISelectionProv
 		}
 
 		String[] names = directory.list();
+		if (names == null) {
+			return;
+		}
 		List subDirs = new ArrayList();
 		for (int i = 0; i < names.length; i++) {
 			if (monitor.isCanceled()) {
