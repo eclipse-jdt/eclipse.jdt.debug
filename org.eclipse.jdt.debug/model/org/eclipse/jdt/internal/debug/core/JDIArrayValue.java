@@ -58,7 +58,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray {
 		try {
 			return getArrayReference().length();
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving array length.", new String[] {e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayValue.exception_while_retrieving_array_length"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		// exectution will not reach this line as an
 		// exception will be thrown
@@ -74,11 +74,11 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray {
 		} catch (IndexOutOfBoundsException e) {
 			throw e;
 		} catch (InvalidTypeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while setting value in array.", new String[] {e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayValue.exception_while_setting_value_in_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (ClassNotLoadedException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while setting value in array.", new String[] {e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayValue.exception_while_setting_value_in_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while setting value in array.", new String[] {e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayValue.exception_while_setting_value_in_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 	}
 
@@ -110,7 +110,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray {
 		} catch (IndexOutOfBoundsException e) {
 			throw e;
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving value from array.", new String[] {e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayValue.exception_while_retrieving_value_from_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach this line as
 		// an exception will be thrown
@@ -134,7 +134,7 @@ public class JDIArrayValue extends JDIObjectValue implements IJavaArray {
 		} catch (IndexOutOfBoundsException e) {
 			return Collections.EMPTY_LIST;
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving values from array.", new String[] {e.toString()}), e);
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayValue.exception_while_retrieving_values_from_array"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
 		// execution will not reach this line as
 		// an exception will be thrown

@@ -47,19 +47,19 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 			List arguments = convertArguments(args);
 			Method method = null;			
 			try {
-				List methods = clazz.methodsByName("<init>", signature);
+				List methods = clazz.methodsByName("<init>", signature); //$NON-NLS-1$
 				if (methods.isEmpty()) {
-					getDebugTarget().requestFailed(MessageFormat.format("Type does not implement cosntructor with signature {0}", new String[]{signature}), null);
+					getDebugTarget().requestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.Type_does_not_implement_cosntructor"), new String[]{signature}), null); //$NON-NLS-1$
 				} else {
 					method = (Method)methods.get(0);
 				}
 			} catch (RuntimeException e) {
-				getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while performing method lookup for constructor with signature {1}", new String[] {e.toString(), signature}), e);
+				getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_performing_method_lookup_for_constructor"), new String[] {e.toString(), signature}), e); //$NON-NLS-1$
 			}
 			ObjectReference result = javaThread.newInstance(clazz, method, arguments);
 			return (IJavaObject)JDIValue.createValue(getDebugTarget(), result);
 		} else {
-			getDebugTarget().requestFailed("Type is not a class type.", null);
+			getDebugTarget().requestFailed(JDIDebugModelMessages.getString("JDIClassType.Type_is_not_a_class_type"), null); //$NON-NLS-1$
 		}
 		// execution will not fall through to here,
 		// as #requestFailed will throw an exception
@@ -78,17 +78,17 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 			try {
 				List methods = clazz.methodsByName(selector, signature);
 				if (methods.isEmpty()) {
-					getDebugTarget().requestFailed(MessageFormat.format("Type does not implement selector {0} and signature {1}", new String[] {selector, signature}), null);
+					getDebugTarget().requestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.Type_does_not_implement_selector"), new String[] {selector, signature}), null); //$NON-NLS-1$
 				} else {
 					method = (Method)methods.get(0);
 				}
 			} catch (RuntimeException e) {
-				getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while performing method lookup for selector {1} and signature {2}", new String[] {e.toString(), selector, signature}), e);
+				getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 			}
 			Value result = javaThread.invokeMethod(clazz, null, method, arguments);
 			return JDIValue.createValue(getDebugTarget(), result);
 		} else {
-			getDebugTarget().requestFailed("Type is not a class type.", null);
+			getDebugTarget().requestFailed(JDIDebugModelMessages.getString("JDIClassType.Type_is_not_a_class_type"), null); //$NON-NLS-1$
 		}
 		// execution will not fall through to here,
 		// as #requestFailed will throw an exception
@@ -125,7 +125,7 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, null);
 			}			
 		} catch (RuntimeException e) {
-			getDebugTarget().targetRequestFailed(MessageFormat.format("{0} occurred while retrieving field {1}", new String[] {e.toString(), name}), e);
+			getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_retrieving_field"), new String[] {e.toString(), name}), e); //$NON-NLS-1$
 		}
 		// it is possible to return null		
 		return null;
