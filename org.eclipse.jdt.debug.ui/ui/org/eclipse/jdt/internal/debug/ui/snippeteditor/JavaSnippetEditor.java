@@ -749,6 +749,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 									IJavaStackFrame frame = (IJavaStackFrame)frames[i];
 									if (frame.getReceivingTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1") && frame.getName().equals("eval")) { //$NON-NLS-1$ //$NON-NLS-2$
 										frame.stepOver();
+										break;
 									}
 								}
 							}
