@@ -121,13 +121,13 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 		IClasspathContainer container = getClasspathContainer();
 		switch (container.getKind()) {
 			case IClasspathContainer.K_APPLICATION:
-				setType(IRuntimeClasspathEntry.USER_CLASSES);
+				setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
 				break;
 			case IClasspathContainer.K_DEFAULT_SYSTEM:
-				setType(IRuntimeClasspathEntry.STANDARD_CLASSES);
+				setClasspathProperty(IRuntimeClasspathEntry.STANDARD_CLASSES);
 				break;
 			case IClasspathContainer.K_SYSTEM:
-				setType(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+				setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
 				break;
 		}
 	}

@@ -420,7 +420,7 @@ public final class JavaRuntime {
 	 * @exception CoreException if unable to construct a runtime classpath entry
 	 */
 	public static IRuntimeClasspathEntry newRuntimeContainerClasspathEntry(IPath path, String name) throws CoreException {
-		IClasspathEntry cpe = JavaCore.newContainerEntry(new Path(name));
+		IClasspathEntry cpe = JavaCore.newContainerEntry(path);
 		return new RuntimeClasspathEntry(cpe, name);
 	}
 		
