@@ -332,14 +332,23 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}
 	
 	/**
-	 * Called when a breakpoint event is encountered
+	 * Called when a breakpoint event is encountered. Expires the
+	 * hit count in the event's request and updates the marker.
+	 * @param event the event whose request should have its hit count
+	 * expired or <code>null</code> to only update the breakpoint marker.
 	 */
 	protected void expireHitCount(Event event) {
-		EventRequest request= event.request();
-		Integer requestCount= (Integer) request.getProperty(HIT_COUNT);
+		Integer requestCount= null;
+		EventRequest request= null;
+		if (event != null) {
+			request= event.request();
+			requestCount= (Integer) request.getProperty(HIT_COUNT);
+		}
 		if (requestCount != null) {
-			try {
+			if (request != null) {
 				request.putProperty(EXPIRED, Boolean.TRUE);
+			}
+			try {
 				setAttributes(fgExpiredEnabledAttributes, new Object[]{Boolean.TRUE, Boolean.FALSE});
 				// make a note that we auto-disabled this breakpoint.
 			} catch (CoreException ce) {
