@@ -84,6 +84,16 @@ class EvaluationThread {
 			fLock.notify();
 		}
 	}
+	
+	/**
+	 * Forcibly kills the underlying evaluation thread.
+	 * This method will cause any current evaluations to
+	 * be terminated with an InterruptedException.
+	 */
+	public void kill() {
+		fStopped= true;
+		fEvaluationThread.interrupt();
+	}
 
 	/**
 	 * Perform an evaluation. If an underlying thread already exists, the
@@ -130,7 +140,7 @@ class EvaluationThread {
 	 * is intended to be called from within the underlying
 	 * evaluation thread.
 	 */
-	private synchronized void doEvaluation() {
+	private void doEvaluation() {
 		fEvaluating = true;
 		EvaluationResult result = new EvaluationResult(fEngine, fExpression.getSnippet(), fThread);
 		if (fExpression.hasErrors()) {

@@ -291,10 +291,10 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	 * @see IEvaluationEngine#dispose()
 	 */
 	public void dispose() {
-		// Stop all evaluation threads.
+		// Kill evaluation threads.
 		Iterator iter= fEvaluationThreads.iterator();
 		while (iter.hasNext()) {
-			((EvaluationThread)iter.next()).stop();
+			((EvaluationThread)iter.next()).kill();
 		}
 	}
 	
