@@ -104,7 +104,9 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 		setLineNumber(-1);
 		determineSearchParameters();
 		if (getTypeName() == null) {
-			beep();
+			if (!initiatedFromDoubleClick()) {
+				beep();
+			}
 			return;
 		}
 		
@@ -144,7 +146,9 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 		// choose the appropriate result             
 		TypeInfo typeInfo = selectTypeInfo(typeRefsFound);			                          		
 		if (typeInfo == null) {
-			beep();
+			if (!initiatedFromDoubleClick()) {
+				beep();
+			}
 			return;
 		}
 		
@@ -439,6 +443,10 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 	 * @return array of nested type names
 	 */
 	protected String[] parseTypeNames(String typeName) {
+		int spaceIndex= typeName.indexOf(' ');
+		if (spaceIndex >= 0) {
+			typeName= typeName.substring(0, spaceIndex);
+		}
 		int index = typeName.lastIndexOf('.');
 		if (index >= 0) {
 			setPkgName(typeName.substring(0, index));
