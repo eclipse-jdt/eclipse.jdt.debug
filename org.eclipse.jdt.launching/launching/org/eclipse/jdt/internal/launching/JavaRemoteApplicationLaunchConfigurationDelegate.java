@@ -12,6 +12,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -39,9 +40,9 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 public class JavaRemoteApplicationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
 
 	/**
-	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
+	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, IProgressMonitor)
 	 */
-	public ILaunch launch(ILaunchConfiguration configuration, String mode) throws CoreException {
+	public ILaunch launch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		
 		// Java project
 		String projectName = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);

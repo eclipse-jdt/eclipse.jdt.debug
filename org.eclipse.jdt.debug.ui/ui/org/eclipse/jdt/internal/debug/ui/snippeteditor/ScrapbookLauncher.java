@@ -186,7 +186,7 @@ public class ScrapbookLauncher implements IDebugEventListener {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, urlsString);
 			ILaunchConfiguration config = wc.doSave();
 			
-			ILaunch launch = config.launch(ILaunchManager.DEBUG_MODE);
+			ILaunch launch = config.launch(ILaunchManager.DEBUG_MODE, null);
 			if (launch != null) {
 				IDebugTarget dt = launch.getDebugTarget();
 				IBreakpoint magicBreakpoint = createMagicBreakpoint("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$

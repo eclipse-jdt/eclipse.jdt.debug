@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -44,9 +45,9 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 	}
 
 	/**
-	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String)
+	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, IProgressMonitor)
 	 */
-	public ILaunch launch(ILaunchConfiguration configuration, String mode) throws CoreException {
+	public ILaunch launch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		
 		IJavaProject javaProject = JavaLaunchConfigurationHelper.getJavaProject(configuration);
 								
