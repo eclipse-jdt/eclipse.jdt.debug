@@ -6,9 +6,10 @@ package org.eclipse.jdi.internal.connect;
  */
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.jdi.internal.VirtualMachineManagerImpl;
 
@@ -94,7 +95,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		try {
 			((SocketTransportImpl)fTransport).attach(fHostname, fPort);
 		} catch (IllegalArgumentException e) {
-			Vector args = new Vector();
+			List args = new ArrayList();
 			args.add("hostname"); //$NON-NLS-1$
 			args.add("port"); //$NON-NLS-1$
 			throw new IllegalConnectorArgumentsException(e.getMessage(), args);
