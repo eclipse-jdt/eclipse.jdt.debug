@@ -1167,7 +1167,15 @@ public final class JavaRuntime {
 					unique++;
 				}
 				IVMInstall detected= vmTypes[i].createVMInstall(String.valueOf(unique));
-				detected.setName(LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
+				StringBuffer nameBuffer = new StringBuffer(LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
+				nameBuffer.append(" ("); //$NON-NLS-1$
+				try {
+					nameBuffer.append(detectedLocation.getCanonicalPath());
+				} catch (IOException ioe) {
+					nameBuffer.append(LaunchingMessages.getString("JavaRuntime.Unknown_location_1")); //$NON-NLS-1$
+				}
+				nameBuffer.append(')');
+				detected.setName(nameBuffer.toString());
 				detected.setInstallLocation(detectedLocation);
 				if (detected != null && !defaultSet) {
 					try {
