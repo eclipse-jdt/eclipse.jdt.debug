@@ -2136,6 +2136,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * requests from the VM. When it enables, reinstall them.
 	 */
 	public void breakpointManagerEnablementChanged(boolean enabled) {
+		if (!isAvailable()) {
+			return;
+		}
 		Iterator breakpoints= ((ArrayList)((ArrayList)getBreakpoints()).clone()).iterator();
 		while (breakpoints.hasNext()) {
 			JavaBreakpoint breakpoint= (JavaBreakpoint) breakpoints.next();
