@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
+import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -96,7 +97,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		// add required project with one java library path entry
 		IPath path = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		IClasspathAttribute attribute = JavaCore.newClasspathAttribute(JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, path.toPortableString());
-		IClasspathEntry entry = JavaCore.newProjectEntry(new Path("PathTests3").makeAbsolute(), new IPath[0], new IPath[0], new IClasspathAttribute[]{attribute}, false);
+		IClasspathEntry entry = JavaCore.newProjectEntry(new Path("PathTests3").makeAbsolute(), new IAccessRule[0], false, new IClasspathAttribute[]{attribute}, false);
 		addToClasspath(getJavaProject("PathTests2"), entry);
 		entry = JavaCore.newProjectEntry(new Path("PathTests2").makeAbsolute());
 		addToClasspath(getJavaProject("PathTests1"), entry);
@@ -110,7 +111,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		// add required project with one java library path entry
 		IPath path = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		IClasspathAttribute attribute = JavaCore.newClasspathAttribute(JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, path.toPortableString());
-		IClasspathEntry entry = JavaCore.newProjectEntry(new Path("PathTests3").makeAbsolute(), new IPath[0], new IPath[0], new IClasspathAttribute[]{attribute}, false);
+		IClasspathEntry entry = JavaCore.newProjectEntry(new Path("PathTests3").makeAbsolute(), new IAccessRule[0], false, new IClasspathAttribute[]{attribute}, false);
 		addToClasspath(getJavaProject("PathTests2"), entry);
 		entry = JavaCore.newProjectEntry(new Path("PathTests2").makeAbsolute());
 		addToClasspath(getJavaProject("PathTests1"), entry);
@@ -133,7 +134,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		IPath path2 = ResourcesPlugin.getWorkspace().getRoot().getProject("PathTests1").getLocation();
 		IClasspathAttribute attribute1 = JavaCore.newClasspathAttribute(JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, path.toPortableString());
 		IClasspathAttribute attribute2 = JavaCore.newClasspathAttribute(JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, path2.toPortableString());
-		IClasspathEntry entry = JavaCore.newProjectEntry(new Path("PathTests3").makeAbsolute(), new IPath[0], new IPath[0], new IClasspathAttribute[]{attribute1, attribute2}, false);
+		IClasspathEntry entry = JavaCore.newProjectEntry(new Path("PathTests3").makeAbsolute(), new IAccessRule[0], false, new IClasspathAttribute[]{attribute1, attribute2}, false);
 		addToClasspath(getJavaProject("PathTests2"), entry);
 		entry = JavaCore.newProjectEntry(new Path("PathTests2").makeAbsolute());
 		addToClasspath(getJavaProject("PathTests1"), entry);
@@ -154,7 +155,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 		// add required project with one java library path entry
 		IPath path = ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		IClasspathAttribute attribute = JavaCore.newClasspathAttribute(JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, path.toPortableString());
-		IClasspathEntry entry = JavaCore.newProjectEntry(new Path("PathTests3").makeAbsolute(), new IPath[0], new IPath[0], new IClasspathAttribute[]{attribute}, false);
+		IClasspathEntry entry = JavaCore.newProjectEntry(new Path("PathTests3").makeAbsolute(), new IAccessRule[0], false, new IClasspathAttribute[]{attribute}, false);
 		addToClasspath(getJavaProject("PathTests2"), entry);
 		entry = JavaCore.newProjectEntry(new Path("PathTests2").makeAbsolute());
 		addToClasspath(getJavaProject("PathTests1"), entry);
@@ -175,7 +176,7 @@ public class JavaLibraryPathTests extends AbstractDebugTest {
 			String path = "${a-path}" + File.separator +"A.jar";
 			IPath thePath = new Path(path);
 			IClasspathAttribute attribute = JavaCore.newClasspathAttribute(JavaRuntime.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY, thePath.toPortableString());
-			IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(jar.getAbsolutePath()), null, null, new IPath[0], new IPath[0], new IClasspathAttribute[]{attribute}, false);
+			IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(jar.getAbsolutePath()), null, null, new IAccessRule[0], new IClasspathAttribute[]{attribute}, false);
 			addToClasspath(getJavaProject("PathTests1"), entry);
 		
 			String[] strings = JavaRuntime.computeJavaLibraryPath(getJavaProject("PathTests1"), false);
