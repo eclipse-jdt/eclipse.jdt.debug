@@ -137,7 +137,7 @@ public class ThreadsViewContentProvider implements ITreeContentProvider {
 		for (int i = 0; i < res.length; i++) {
 			ThreadWrapper tw = new ThreadWrapper();
 			tw.thread = (IJavaThread) res[i];
-			if(JDIDebugModel.getMonitorManager().isCaughtInDeadLock((IJavaThread)res[i])) {
+			if(JDIDebugModel.getMonitorManager().isCaughtInDeadlock((IJavaThread)res[i])) {
 				tw.isCaughtInDeadlock = true;
 			} else {
 				tw.isCaughtInDeadlock = false;

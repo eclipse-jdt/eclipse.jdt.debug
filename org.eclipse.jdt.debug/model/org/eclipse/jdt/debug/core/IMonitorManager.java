@@ -39,31 +39,53 @@ public interface IMonitorManager {
 	public List getContendingThreads(IJavaObject monitor);
 
 	/**
-	 * Returns the dead lock lists.
+	 * Returns the number of determined deadlocks
 	 * 
 	 * @return List a list of all of the listings of current deadlocks
 	 */
-	public List getDeadLockLists();
+	public int getNumberOfDeadlocks();
+	
+	/**
+	 * Returns the deadlock list at the specified index or <code>null</code>
+	 * if the index is greater than the number of detected deadlocks.
+	 * 
+	 * @return List a list of all of the listings of current deadlocks
+	 * @see getNumberOfDeadlocks();
+	 */
+	public List getDeadlockList(int index);
 
 	/**
-	 * Returns all the monitors owned or contended, or <code>null</code>
+	 * Returns the thread that is at the root of the deadlock at the specified
+	 * index or <code>null</code> if the index is greater than the number of 
+	 * detected deadlocks.
+	 * 
+	 * @return IJavaThread the thread at the root of the deadlock
+	 * @see getNumberOfDeadlocks();
+	 */
+	public IJavaThread getStartThread(int index);
+
+	/**
+	 * Returns all the monitors owned or contended, or <code>null</code> if
+	 * no monitors are owned or in contention.
 	 * 
 	 * @return The set of all the monitors (owned or in contention)
 	 */
 	public Set getMonitors();
 
 	/**
-	 * Returns the list of monitors owned by the given thread, or null
+	 * Returns the list of monitors owned by the given thread, or <code>null</code>
+	 * if the thread does not own any monitors.
 	 * 
-	 * @param thread The thread from which we want the owned monitors
+	 * @param thread The thread owning the monitors
 	 * @return The list of monitors owned by the given thread
 	 */
 	public List getOwnedMonitors(IJavaThread thread);
 	
 	/**
-	 * Returns the thread owning the given monitor, or null
+	 * Returns the thread owning the given monitor, or <code>null</code>
+	 * if no thread owns the specified monitor.
 	 * 
-	 * @param monitor The monitor from which we want the owning thread
+	 * @param monitor The monitor from to determine the owning thread
 	 * @return The thread owning the given monitor
 	 */
 	public IJavaThread getOwningThread(IJavaObject monitor);
@@ -78,10 +100,10 @@ public interface IMonitorManager {
 	/**
 	 * Returns whether the given thread is caught in a deadlock
 	 * 
-	 * @param thread The thread we want the info on
+	 * @param thread The thread to check if in deadlock
 	 * @return <code>true<code> if the thread is in a deadlock, <code>false<code> otherwise.
 	 */
-	public boolean isCaughtInDeadLock(IJavaThread thread);
+	public boolean isCaughtInDeadlock(IJavaThread thread);
 	
 	/**
 	 * Clears all the cached monitor information for the specified target.

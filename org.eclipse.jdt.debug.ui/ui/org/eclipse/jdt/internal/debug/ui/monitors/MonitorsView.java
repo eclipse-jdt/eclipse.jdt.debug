@@ -282,7 +282,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		if (getPageBook().isDisposed()) {
 			return;
 		}
-		if(JDIDebugModel.getMonitorManager().getDeadLockLists().isEmpty()){
+		if(JDIDebugModel.getMonitorManager().getNumberOfDeadlocks() == 0){
 			showMessage("No deadlock detected");
 		} else{
 			getPageBook().showPage(getDeadLocksViewer().getControl());

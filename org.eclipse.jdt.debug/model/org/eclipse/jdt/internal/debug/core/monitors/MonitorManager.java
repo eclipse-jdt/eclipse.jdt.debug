@@ -53,7 +53,7 @@ public class MonitorManager implements IMonitorManager {
 	/**
 	 * List containing the lists of the different deadlocks
 	 */
-	private List deadLockLists;
+	private List fDeadLockLists;
 
 	/**
 	 * Constructor
@@ -64,7 +64,7 @@ public class MonitorManager implements IMonitorManager {
 		fThreadToContendedMonitor= new Hashtable(4);
 		fMonitorToOwningThread= new Hashtable();
 		fMonitorToContendingThreads= new Hashtable();
-		deadLockLists = new ArrayList();
+		fDeadLockLists = new ArrayList();
 	}
 
 	public static MonitorManager getDefault() {
@@ -135,14 +135,12 @@ public class MonitorManager implements IMonitorManager {
 		}
 	}
 		
-	
 	/**
 	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getOwnedMonitors(org.eclipse.jdt.debug.core.IJavaThread)
 	 */
 	public List getOwnedMonitors(IJavaThread thread) {
 		return (List)fThreadToOwnedMonitors.get(thread);
 	}
-	
 
 	/**
 	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getContendedMonitor(org.eclipse.jdt.debug.core.IJavaThread)
@@ -151,14 +149,12 @@ public class MonitorManager implements IMonitorManager {
 		return (IJavaObject)fThreadToContendedMonitor.get(thread);
 	}
 	
-	
 	/**
 	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getOwningThread(org.eclipse.jdt.debug.core.IJavaObject)
 	 */
 	public IJavaThread getOwningThread(IJavaObject monitor) {
 		return (IJavaThread)fMonitorToOwningThread.get(monitor);
 	}
-	
 	
 	/**
 	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getContendingThreads(org.eclipse.jdt.debug.core.IJavaObject)
@@ -167,7 +163,6 @@ public class MonitorManager implements IMonitorManager {
 		Object obj = fMonitorToContendingThreads.get(monitor);
 		return (List)obj;
 	}
-	
 	
 	/**
 	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getThreads()
@@ -178,7 +173,6 @@ public class MonitorManager implements IMonitorManager {
 		all.addAll(fThreadToOwnedMonitors.keySet());
 		return all;
 	}
-	
 	
 	/**
 	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getMonitors()
@@ -248,15 +242,14 @@ public class MonitorManager implements IMonitorManager {
 				if(l != null){
 					ThreadWrapper tw = new ThreadWrapper(thread, l);
 					// adding this deadlock list
-					deadLockLists.add(tw);
+					fDeadLockLists.add(tw);
 				}
 			}
 		} catch(DebugException e){
 			JDIDebugPlugin.log(e);
 		}
 	}
-	
-	
+		
 	/**
 	 * @see org.eclipse.jdt.debug.core.IMonitorManager#updatePartial(org.eclipse.jdt.debug.core.IJavaDebugTarget)
 	 */
@@ -307,7 +300,7 @@ public class MonitorManager implements IMonitorManager {
 				// if thread is in a deadlock
 				if(l != null){
 					ThreadWrapper tw = new ThreadWrapper(thread, l);
-					deadLockLists.add(tw);
+					fDeadLockLists.add(tw);
 				}
 			}
 		} catch(DebugException e){
@@ -339,7 +332,6 @@ public class MonitorManager implements IMonitorManager {
 		}
 	}
 	
-	
 	/**
 	 * @see org.eclipse.jdt.debug.core.IMonitorManager#removeMonitorInformation(org.eclipse.jdt.debug.core.IJavaDebugTarget)
 	 */
@@ -348,7 +340,7 @@ public class MonitorManager implements IMonitorManager {
 		fThreadToContendedMonitor.clear();
 		fMonitorToOwningThread.clear();
 		fMonitorToContendingThreads.clear();
-		deadLockLists.clear();
+		fDeadLockLists.clear();
 	}
 	
 	/**
@@ -412,21 +404,39 @@ public class MonitorManager implements IMonitorManager {
 		return null;
 	}
 	
-	
 	/**
-	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getDeadLockLists()
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getNumberOfDeadlocks())
 	 */
-	public List getDeadLockLists() {
-		return deadLockLists;
+	public int getNumberOfDeadlocks() {
+		return fDeadLockLists.size();
 	}
 	
+	/**
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getDeadlockList(int)
+	 */
+	public List getDeadlockList(int index) {
+		if (index >= fDeadLockLists.size()) {
+			return null;
+		}
+		return ((ThreadWrapper)fDeadLockLists.get(index)).getDeadLockList();
+	}
 	
 	/**
-	 * @see org.eclipse.jdt.debug.core.IMonitorManager#isCaughtInDeadLock(org.eclipse.jdt.debug.core.IJavaThread)
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#getStartThread(int)
 	 */
-	public boolean isCaughtInDeadLock(IJavaThread thread){
-		for (int i = 0; i < deadLockLists.size(); i++) {
-			if(((ThreadWrapper)deadLockLists.get(i)).getStartThread().equals(thread)){
+	public IJavaThread getStartThread(int index) {
+		if (index >= fDeadLockLists.size()) {
+			return null;
+		}
+		return ((ThreadWrapper)fDeadLockLists.get(index)).getStartThread();
+	}
+	
+	/**
+	 * @see org.eclipse.jdt.debug.core.IMonitorManager#isCaughtInDeadlock(org.eclipse.jdt.debug.core.IJavaThread)
+	 */
+	public boolean isCaughtInDeadlock(IJavaThread thread){
+		for (int i = 0; i < fDeadLockLists.size(); i++) {
+			if(((ThreadWrapper)fDeadLockLists.get(i)).getStartThread().equals(thread)){
 				return true;				
 			}	
 		}
