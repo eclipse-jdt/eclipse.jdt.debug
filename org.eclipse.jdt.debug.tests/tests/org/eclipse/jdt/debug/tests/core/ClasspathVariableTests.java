@@ -81,5 +81,25 @@ public class ClasspathVariableTests extends AbstractDebugTest {
 		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
 		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
 		assertNull("Should be null source attachment", resolved[0].getSourceAttachmentPath());
-	}		
+	}	
+	
+	/**
+	 * Test that a variable set to the location of an archive via variable
+	 * extension resolves properly, with a source attachment rooted with a null
+	 * variable with an extension.
+	 */
+	public void testVariableExtensionWithNullSourceAttachmentWithExtension() throws Exception {
+		IResource archive = getJavaProject().getProject().getFolder("src").getFile("A.jar");
+		IProject root = getJavaProject().getProject();
+		String varName = "RELATIVE_ARCHIVE";
+		JavaCore.setClasspathVariable(varName, root.getFullPath(), null);
+
+		IRuntimeClasspathEntry runtimeClasspathEntry = JavaRuntime.newVariableRuntimeClasspathEntry(new Path(varName).append(new Path("src")).append(new Path("A.jar")));
+		runtimeClasspathEntry.setSourceAttachmentPath(new Path("NULL_VARIABLE").append("one").append("two"));
+		IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(runtimeClasspathEntry, getJavaProject());
+		assertEquals("Should be one resolved entry", 1, resolved.length);
+		assertEquals("Resolved path not correct", archive.getFullPath(), resolved[0].getPath());
+		assertEquals("Resolved path not correct", archive.getLocation(), new Path(resolved[0].getLocation()));
+		assertNull("Should be null source attachment", resolved[0].getSourceAttachmentPath());
+	}	
 }
