@@ -32,7 +32,17 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 	private String fName;
 	/** The variable type's JNI signature. */
 	private String fSignature;
-	/** Unsigned value used in conjunction with codeIndex. The variable can be get or set only when the current codeIndex <= current frame code index < code index + length. */
+	/**
+	 * Unsigned value used in conjunction with codeIndex.
+	 * The variable can be get or set only when the current
+	 * codeIndex <= current frame code index < code index + length.
+	 * <p>
+	 * The length is set to -1 when this variable represents an
+	 * inferred argument (when local var info is unavailable).
+	 * We assume that such arguments are visible for the entire
+	 * method.
+	 * </p>
+	 * */
 	private int fLength;
 	/** The local variable's index in its frame. */
 	private int fSlot;
@@ -114,6 +124,10 @@ public class LocalVariableImpl extends MirrorImpl implements LocalVariable {
 		if (!fMethod.equals(frameImpl.location().method()))
 			throw new IllegalArgumentException(JDIMessages.getString("LocalVariableImpl.The_stack_frame__s_method_does_not_match_this_variable__s_method_3")); //$NON-NLS-1$
 
+		if (fLength == -1) {
+			// inferred argument - assume visible for entire method
+			return true;
+		}
 		long currentIndex = frameImpl.location().codeIndex();
 		
 		// Code indexes must be treated as unsigned. This matters if you have to compare them.

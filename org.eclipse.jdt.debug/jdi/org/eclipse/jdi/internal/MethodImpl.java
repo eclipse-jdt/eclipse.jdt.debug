@@ -32,6 +32,7 @@ import java.util.TreeSet;
 import org.eclipse.jdi.internal.jdwp.JdwpCommandPacket;
 import org.eclipse.jdi.internal.jdwp.JdwpMethodID;
 import org.eclipse.jdi.internal.jdwp.JdwpReplyPacket;
+import org.eclipse.jdt.core.Signature;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.ClassLoaderReference;
@@ -507,6 +508,24 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			JdwpReplyPacket replyPacket = requestVM(JdwpCommandPacket.M_VARIABLE_TABLE, outBytes);
 			switch (replyPacket.errorCode()) {
 				case JdwpReplyPacket.ABSENT_INFORMATION:
+					// infer arguments, if possible
+					String[] signatures = Signature.getParameterTypes(signature());
+					int slot = 0;
+					if (!isStatic()) {
+						slot++;
+					}
+					if (signatures.length >0) {
+						fArgumentSlotsCount = signatures.length;
+						fVariables = new ArrayList(fArgumentSlotsCount);
+						for (int i = 0; i < signatures.length; i++) {
+							String signature = signatures[i];
+							String name = "arg" + i;
+							LocalVariableImpl localVar = new LocalVariableImpl(virtualMachineImpl(), this, 0, name, signature, -1, slot, true);
+							fVariables.add(localVar);
+							slot++;
+						}
+						return fVariables;
+					}
 					throw new AbsentInformationException(JDIMessages.getString("MethodImpl.No_local_variable_information_available_9")); //$NON-NLS-1$
 			}
 			defaultReplyErrorHandler(replyPacket.errorCode());
