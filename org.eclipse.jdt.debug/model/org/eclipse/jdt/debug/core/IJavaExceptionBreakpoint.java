@@ -79,5 +79,33 @@ public interface IJavaExceptionBreakpoint extends IJavaBreakpoint {
 	 * @return fully qualified exception name or <code>null</code>
 	 */
 	public String getExceptionTypeName();
+	
+	/**
+	 * Sets the filters that will define the scope for associated exception.
+	 * 
+	 * @param filters the array of filters to apply
+	 * @param inclusive whether or not to apply the filters as inclusive or exclusive
+	 * @exception CoreException if a <code>CoreException</code> is 
+	 * thrown accessing this breakpoint's underlying marker
+	 */
+	public void setFilters(String[] filters, boolean inclusive) throws CoreException;
+	
+	/**
+	 * Returns the filters that define the scope for associated exception.
+	 * 
+	 * @return the array of defined filters
+	 * @exception CoreException if a <code>CoreException</code> is 
+	 * thrown accessing this breakpoint's underlying marker
+	 */
+	public String[] getFilters() throws CoreException;
+	
+	/**
+	 * Returns whether or not to apply any filters are applied
+	 * as inclusive or exclusive.
+	 * @return <code>true<code> if the filters are applied as inclusive
+	 * @exception CoreException if a <code>CoreException</code> is 
+	 * thrown accessing this breakpoint's underlying marker
+	 */
+	public boolean isInclusiveFiltered() throws CoreException;
 }
 
