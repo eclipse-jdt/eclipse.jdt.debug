@@ -1,6 +1,6 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-import org.eclipse.jdt.core.compiler.CharOperation;
+import org.eclipse.jdt.internal.compiler.util.CharOperation;
 
 /**
  * Copy of org.eclipse.jdt.core.Signature. The class is copied here
