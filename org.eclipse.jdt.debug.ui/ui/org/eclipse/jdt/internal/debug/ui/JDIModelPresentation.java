@@ -1350,7 +1350,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					try {
 						thread.runEvaluation(er, null, DebugEvent.EVALUATION_IMPLICIT, false);
 					} catch (DebugException e) {
-						JDIDebugUIPlugin.log(e);
+						handleDebugException(e, (IJavaValue)value);
 					}
 					if (value == fRequestedValues.remove(fListener)) {
 						// If another evaluation occurs before this one finished,

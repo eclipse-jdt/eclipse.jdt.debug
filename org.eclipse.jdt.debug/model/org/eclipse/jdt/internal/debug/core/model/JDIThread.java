@@ -538,6 +538,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)
 	 */ 
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
+		if (isPerformingEvaluation()) {
+			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); //$NON-NLS-1$			
+		}
+		
 		fIsPerformingEvaluation = true;
 		fHonorBreakpoints= hitBreakpoints;
 		fireResumeEvent(evaluationDetail);
