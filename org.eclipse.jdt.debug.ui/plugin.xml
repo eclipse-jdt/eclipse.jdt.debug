@@ -2602,7 +2602,7 @@ M4 = Platform-specific fourth key
          point="org.eclipse.ui.console.consolePatternMatchListeners">
       <consolePatternMatchListener
             class="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
-            regex="\w\S*\(.*\.java:.*\)"
+            regex="\w\S*\(\S*\.java:\S*\)"
             qualifier="java:"
             id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
          <enablement>
