@@ -374,6 +374,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 					internalError(e);
 				} catch (IncompatibleThreadStateException e) {
 					internalError(e);
+				} catch (RuntimeException e) {
+					internalError(e);
 				}
 				if (fThreadDeath != null) {
 					try {
