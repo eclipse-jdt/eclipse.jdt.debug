@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,6 +123,8 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.ConditionalJump;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.Constructor;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.DivideAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.DivideOperator;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.Dup;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.DupX1;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.EqualEqualOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.GreaterEqualOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.GreaterOperator;
@@ -179,6 +181,7 @@ import org.eclipse.jdt.internal.debug.eval.ast.instructions.UnaryMinusOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.UnaryPlusOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.UnsignedRightShiftAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.UnsignedRightShiftOperator;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.Value;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.XorAssignmentOperator;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.XorOperator;
 
@@ -472,6 +475,84 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		Instruction lastInstruction= fInstructions.getInstruction(fInstructions.getEnd());
 		push(new Pop(lastInstruction.getSize() + 1));
 		storeInstruction();
+	}
+	
+	/**
+	 * Check the current type of a value and the requested type to decide if boxing/unboxing is required.
+	 * If needed, the correct instruction is added to the stack
+	 * Returns true if a storeInstruction() is needed after visiting the expression
+	 */
+	private boolean checkAutoBoxing(ITypeBinding valueBinding, ITypeBinding requestedBinding) {
+		if ((valueBinding.isPrimitive() || valueBinding.isNullType() || "java.lang.String".equals(valueBinding.getQualifiedName())) == (requestedBinding.isPrimitive() || valueBinding.isNullType() || "java.lang.String".equals(requestedBinding.getQualifiedName()))) { //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
+		}
+		if (requestedBinding.isPrimitive()) {
+			unBoxing(valueBinding);
+		} else {
+			boxing(requestedBinding);
+		}
+		return true;
+	}
+
+	/**
+	 * Check the value requires unboxing to be used like a primitive.
+	 * If needed, the correct instruction is added to the stack
+	 * Returns true if a storeInstruction() is needed after visiting the expression
+	 */
+	private boolean checkUnBoxing(ITypeBinding valueBinding) {
+		if (valueBinding.isPrimitive() || valueBinding.isNullType() || "java.lang.String".equals(valueBinding.getQualifiedName())) { //$NON-NLS-1$
+			return false;
+		}
+		unBoxing(valueBinding);
+		return true;
+	}
+
+	/**
+	 * Add to the stack the instruction to box a primitive value.
+	 */
+	private void boxing(ITypeBinding requestedBinding) {
+		String requestedTypeName= requestedBinding.getQualifiedName();
+		if ("java.lang.Integer".equals(requestedTypeName)) { //$NON-NLS-1$
+			push(new SendStaticMessage(requestedTypeName, "valueOf", "(I)Ljava/lang/Integer;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Character".equals(requestedTypeName)) { //$NON-NLS-1$
+			push(new SendStaticMessage(requestedTypeName, "valueOf", "(C)Ljava/lang/Character;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Byte".equals(requestedTypeName)) { //$NON-NLS-1$
+			push(new SendStaticMessage(requestedTypeName, "valueOf", "(B)Ljava/lang/Byte;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Short".equals(requestedTypeName)) { //$NON-NLS-1$
+			push(new SendStaticMessage(requestedTypeName, "valueOf", "(S)Ljava/lang/Short;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Long".equals(requestedTypeName)) { //$NON-NLS-1$
+			push(new SendStaticMessage(requestedTypeName, "valueOf", "(J)Ljava/lang/Long;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Float".equals(requestedTypeName)) { //$NON-NLS-1$
+			push(new SendStaticMessage(requestedTypeName, "valueOf", "(F)Ljava/lang/Float;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Double".equals(requestedTypeName)) { //$NON-NLS-1$
+			push(new SendStaticMessage(requestedTypeName, "valueOf", "(D)Ljava/lang/Double;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Boolean".equals(requestedTypeName)) { //$NON-NLS-1$
+			push(new SendStaticMessage(requestedTypeName, "valueOf", "(Z)Ljava/lang/Boolean;", 1, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	/**
+	 * Add the instruction to unbox a non-primitive value.
+	 */
+	private void unBoxing(ITypeBinding valueBinding) {
+		String valueTypeName= valueBinding.getQualifiedName();
+		if ("java.lang.Integer".equals(valueTypeName)) { //$NON-NLS-1$
+			push(new SendMessage("intValue", "()I", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Character".equals(valueTypeName)) { //$NON-NLS-1$
+			push(new SendMessage("charValue", "()C", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Byte".equals(valueTypeName)) { //$NON-NLS-1$
+			push(new SendMessage("byteValue", "()B", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Short".equals(valueTypeName)) { //$NON-NLS-1$
+			push(new SendMessage("shortValue", "()S", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Long".equals(valueTypeName)) { //$NON-NLS-1$
+			push(new SendMessage("longValue", "()J", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Float".equals(valueTypeName)) { //$NON-NLS-1$
+			push(new SendMessage("floatValue", "()F", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Double".equals(valueTypeName)) { //$NON-NLS-1$
+			push(new SendMessage("doubleValue", "()D", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.Boolean".equals(valueTypeName)) { //$NON-NLS-1$
+			push(new SendMessage("booleanValue", "()Z", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	/**
@@ -1486,8 +1567,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		if (!isActive()) {
 			return false;
 		}
-		int variableTypeId = getTypeId(node.getLeftHandSide());
-		int valueTypeId = getTypeId(node.getRightHandSide());
+		Expression leftHandSide= node.getLeftHandSide();
+		Expression rightHandSide= node.getRightHandSide();
+		int variableTypeId = getTypeId(leftHandSide);
+		int valueTypeId = getTypeId(rightHandSide);
 
 		String opToken = node.getOperator().toString();
 		int opTokenLength = opToken.length();
@@ -1497,63 +1580,177 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			char2 = opToken.charAt(2);
 		}
 
-		boolean unrecognized = false;
+		if (variableTypeId == Instruction.T_Object) {
+			// If the variable is an object, the value may need to be boxed for
+			// the simple assigment.
+			// For the compound assigment operators, the value of the variable
+			// have to be unboxed before the operation is done, then re-boxed to
+			// to be stored in the variable.
+	
+			int unboxedVariableTypeId= getUnBoxedTypeId(leftHandSide);
+			int unboxedValueTypeId= getUnBoxedTypeId(rightHandSide);
+			int unboxedResultTypeId= Instruction.getBinaryPromotionType(unboxedVariableTypeId, unboxedValueTypeId);
 
-		switch (char0) {
-			case '=': // equal
-				push(new AssignmentOperator(variableTypeId, valueTypeId, fCounter));
-				break;
-			case '+': // plus equal
-				push(new PlusAssignmentOperator(variableTypeId, valueTypeId, fCounter));
-				break;
-			case '-': // minus equal
-				push(new MinusAssignmentOperator(variableTypeId, valueTypeId, fCounter));
-				break;
-			case '*': // multiply equal
-				push(new MultiplyAssignmentOperator(variableTypeId, valueTypeId, fCounter));
-				break;
-			case '/': // divide equal
-				push(new DivideAssignmentOperator(variableTypeId, valueTypeId, fCounter));
-				break;
-			case '%': // remainder equal
-				push(new RemainderAssignmentOperator(variableTypeId, valueTypeId, fCounter));
-				break;
-			case '^': // xor equal
-				push(new XorAssignmentOperator(variableTypeId, valueTypeId, fCounter));
-				break;
-			case '|': // or equal
-				push(new OrAssignmentOperator(variableTypeId, valueTypeId, fCounter));
-				break;
-			case '&': // and equal
-				push(new AndAssignmentOperator(variableTypeId, valueTypeId, fCounter));
-				break;
-			case '<': // left shift equal
-				push(new LeftShiftAssignmentOperator(variableTypeId, valueTypeId, fCounter));
-				break;
-			case '>': // right shift equal or unsigned right shift equal
-				switch (char2) {
-					case '=': // right shift equal
-						push(new RightShiftAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+			push(new AssignmentOperator(variableTypeId, variableTypeId, fCounter));
+			
+			leftHandSide.accept(this);
+			
+			if (char0 == '=') {
+				
+				boolean storeRequired= false;
+				if (rightHandSide.resolveTypeBinding().isPrimitive()) {
+					boxing(leftHandSide.resolveTypeBinding());
+					storeRequired= true;
+				}
+				rightHandSide.accept(this);
+				if (storeRequired) {
+					storeInstruction(); // boxing
+				}
+				
+			} else {
+				boolean unrecognized = false;
+				
+				
+				boxing(leftHandSide.resolveTypeBinding());
+				
+				switch (char0) {
+					case '=': // equal
 						break;
-					case '>': // unsigned right shift equal
-						push(new UnsignedRightShiftAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					case '+': // plus equal
+						push(new PlusOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+						break;
+					case '-': // minus equal
+						push(new MinusOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+						break;
+					case '*': // multiply equal
+						push(new MultiplyOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+						break;
+					case '/': // divide equal
+						push(new DivideOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+						break;
+					case '%': // remainder equal
+						push(new RemainderOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+						break;
+					case '^': // xor equal
+						push(new XorOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+						break;
+					case '|': // or equal
+						push(new OrOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+						break;
+					case '&': // and equal
+						push(new AndOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+						break;
+					case '<': // left shift equal
+						push(new LeftShiftOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+						break;
+					case '>': // right shift equal or unsigned right shift equal
+						switch (char2) {
+							case '=': // right shift equal
+								push(new RightShiftOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+								break;
+							case '>': // unsigned right shift equal
+								push(new UnsignedRightShiftOperator(unboxedVariableTypeId, unboxedValueTypeId, unboxedResultTypeId, fCounter));
+								break;
+							default:
+								unrecognized = true;
+								break;
+						}
 						break;
 					default:
 						unrecognized = true;
 						break;
 				}
-				break;
-			default:
-				unrecognized = true;
-				break;
-		}
 
-		if (unrecognized) {
-			setHasError(true);
-			addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_assignment_operator____4") + opToken); //$NON-NLS-1$
-		}
+				if (unrecognized) {
+					setHasError(true);
+					addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_assignment_operator____4") + opToken); //$NON-NLS-1$
+					return false;
+				}
 
-		return true;
+				unBoxing(leftHandSide.resolveTypeBinding());
+				push(new Dup());
+				storeInstruction(); // dup
+				storeInstruction(); // unboxing
+			
+				boolean storeRequired= checkUnBoxing(rightHandSide.resolveTypeBinding());
+				rightHandSide.accept(this);
+				if (storeRequired) {
+					storeInstruction(); // unboxing
+				}
+				
+				storeInstruction(); // operation
+				storeInstruction(); // boxing
+				
+			}
+			
+		} else {
+			boolean unrecognized = false;
+			
+			switch (char0) {
+				case '=': // equal
+					push(new AssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					break;
+				case '+': // plus equal
+					push(new PlusAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					break;
+				case '-': // minus equal
+					push(new MinusAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					break;
+				case '*': // multiply equal
+					push(new MultiplyAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					break;
+				case '/': // divide equal
+					push(new DivideAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					break;
+				case '%': // remainder equal
+					push(new RemainderAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					break;
+				case '^': // xor equal
+					push(new XorAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					break;
+				case '|': // or equal
+					push(new OrAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					break;
+				case '&': // and equal
+					push(new AndAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					break;
+				case '<': // left shift equal
+					push(new LeftShiftAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+					break;
+				case '>': // right shift equal or unsigned right shift equal
+					switch (char2) {
+						case '=': // right shift equal
+							push(new RightShiftAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+							break;
+						case '>': // unsigned right shift equal
+							push(new UnsignedRightShiftAssignmentOperator(variableTypeId, valueTypeId, fCounter));
+							break;
+						default:
+							unrecognized = true;
+							break;
+					}
+					break;
+				default:
+					unrecognized = true;
+					break;
+			}
+	
+			if (unrecognized) {
+				setHasError(true);
+				addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.Unrecognized_assignment_operator____4") + opToken); //$NON-NLS-1$
+				return false;
+			}
+			
+			leftHandSide.accept(this);
+			boolean storeRequired= checkUnBoxing(rightHandSide.resolveTypeBinding());
+			rightHandSide.accept(this);
+			if (storeRequired) {
+				storeInstruction();
+			}
+		}
+	
+		return false;
+			
 	}
 
 	/**
@@ -2089,8 +2286,19 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		Iterator iterator = extendedOperands.iterator();
 
-		int leftTypeId = getTypeId(node.getLeftOperand());
-		int rightTypeId = getTypeId(node.getRightOperand());
+		Expression leftOperand= node.getLeftOperand();
+		Expression rightOperand= node.getRightOperand();
+		int leftTypeId;
+		int rightTypeId;
+		// == case, do not unbox, if the two operands are objects
+		boolean unbox= char0 != '=' || leftOperand.resolveTypeBinding().isPrimitive() || rightOperand.resolveTypeBinding().isPrimitive();
+		if (unbox) {
+			leftTypeId= getUnBoxedTypeId(leftOperand);
+			rightTypeId = getUnBoxedTypeId(rightOperand);
+		} else {
+			leftTypeId= getTypeId(leftOperand);
+			rightTypeId = getTypeId(rightOperand);
+		}
 		int resultTypeId = Instruction.getBinaryPromotionType(leftTypeId, rightTypeId);
 
 		types[0][0] = resultTypeId;
@@ -2100,7 +2308,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		for (int i = 1; i < operatorNumber; i++) {
 			Expression operand = (Expression) iterator.next();
 			leftTypeId = resultTypeId;
-			rightTypeId = getTypeId(operand);
+			rightTypeId = getUnBoxedTypeId(operand);
 			resultTypeId = Instruction.getBinaryPromotionType(leftTypeId, rightTypeId);
 			types[i][0] = resultTypeId;
 			types[i][1] = leftTypeId;
@@ -2260,7 +2468,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			ConditionalJump[] conditionalJumps= new ConditionalJump[operatorNumber];
 			int[] conditionalJumpAddresses = new int[operatorNumber];
 
-			node.getLeftOperand().accept(this);
+			boolean storeRequired= checkUnBoxing(leftOperand.resolveTypeBinding());
+			leftOperand.accept(this);
+			if (storeRequired) {
+				storeInstruction();
+			}
 
 			ConditionalJump conditionalJump= new ConditionalJump(isOrOr);
 			conditionalJumps[0]= conditionalJump;
@@ -2268,7 +2480,11 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			push(conditionalJump);
 			storeInstruction();
 
-			node.getRightOperand().accept(this);
+			storeRequired= checkUnBoxing(rightOperand.resolveTypeBinding());
+			rightOperand.accept(this);
+			if (storeRequired) {
+				storeInstruction();
+			}
 
 			for (int i= 1; i < operatorNumber; i ++) {
 				conditionalJump= new ConditionalJump(isOrOr);
@@ -2276,7 +2492,12 @@ public class ASTInstructionCompiler extends ASTVisitor {
 				conditionalJumpAddresses[i] = fCounter;
 				push(conditionalJump);
 				storeInstruction();
-				((Expression) iterator.next()).accept(this);
+				Expression operand= (Expression) iterator.next();
+				storeRequired= checkUnBoxing(operand.resolveTypeBinding());
+				operand.accept(this);
+				if (storeRequired) {
+					storeInstruction();
+				}
 			}
 
 			Jump jump = new Jump();
@@ -2294,14 +2515,34 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			// store the noop
 			storeInstruction();
 
-		} else { // other operatos
+		} else { // other operators
 
-			node.getLeftOperand().accept(this);
-			node.getRightOperand().accept(this);
+			boolean storeRequired= false;
+			if (unbox) {
+				storeRequired= checkUnBoxing(leftOperand.resolveTypeBinding());
+			}
+			leftOperand.accept(this);
+			if (storeRequired) {
+				storeInstruction();
+			}
+			if (unbox) {
+				storeRequired= checkUnBoxing(rightOperand.resolveTypeBinding());
+			}
+			rightOperand.accept(this);
+			if (storeRequired) {
+				storeInstruction();
+			}
 
 			storeInstruction();
 			for (int i= 1; i < operatorNumber; i ++) {
-				((Expression) iterator.next()).accept(this);
+				Expression operand= (Expression) iterator.next();
+				if (unbox) {
+					storeRequired= checkUnBoxing(operand.resolveTypeBinding());
+				}
+				operand.accept(this);
+				if (storeRequired) {
+					storeInstruction();
+				}
 				storeInstruction();
 			}
 		}
@@ -2452,14 +2693,20 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			storeInstruction();
 		} else {
 			Iterator iterator= arguments.iterator();
+			int i= 0;
 			while (iterator.hasNext()) {
-				((Expression) iterator.next()).accept(this);
+				Expression argument= (Expression) iterator.next();
+				boolean storeRequired= checkAutoBoxing(argument.resolveTypeBinding(), parameterTypes[i++]);
+				argument.accept(this);
+				if (storeRequired) {
+					storeInstruction();
+				}
 			}
 		} 
 
 		return false;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodRef)
 	 */
@@ -2637,10 +2884,50 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 
-		int expressionTypeId = getTypeId(node.getOperand());
+		Expression operand= node.getOperand();
+		int expressionTypeId = getTypeId(operand);
 
 		String opToken = node.getOperator().toString();
 		char char0 = opToken.charAt(0);
+		
+		if (expressionTypeId == Instruction.T_Object) {
+
+			int expressionUnBoxedTypeId= getUnBoxedTypeId(operand);
+			
+			AssignmentOperator assignmentInstruction= new AssignmentOperator(Instruction.T_Object, Instruction.T_Object, fCounter);
+			push(assignmentInstruction);
+			operand.accept(this);
+			switch (char0) {
+				case '+': // plus plus
+					push(new PlusOperator(expressionUnBoxedTypeId, expressionUnBoxedTypeId, expressionUnBoxedTypeId, fCounter));
+					break;
+				case '-': // minus minus
+					push(new MinusOperator(expressionUnBoxedTypeId, expressionUnBoxedTypeId, expressionUnBoxedTypeId, fCounter));
+					break;
+				default:
+					setHasError(true);
+					addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.unrecognized_postfix_operator____15") + opToken); //$NON-NLS-1$
+					break;
+			}
+			push(new Value(fCounter));
+			push(new Dup());
+			storeInstruction(); // dup
+			storeInstruction(); // value
+			push(new DupX1());
+			storeInstruction(); // dup_x1
+			unBoxing(operand.resolveTypeBinding());
+			storeInstruction(); // unboxing
+			push(new PushInt(1));
+			storeInstruction(); // push 1
+			storeInstruction(); // operator
+			boxing(operand.resolveTypeBinding());
+			storeInstruction(); // boxing
+			storeInstruction(); // assigment
+			push(new Pop(assignmentInstruction.getSize() + 1));
+			
+			
+			return false;
+		}
 
 		switch (char0) {
 			case '+': // plus plus
@@ -2666,7 +2953,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			return false;
 		}
 
-		int expressionTypeId = getTypeId(node.getOperand());
+		Expression operand= node.getOperand();
+		int expressionTypeId = getTypeId(operand);
 
 		String opToken = node.getOperator().toString();
 		int opTokenLength = opToken.length();
@@ -2677,7 +2965,72 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		}
 
 		boolean unrecognized = false;
-
+		
+		if (expressionTypeId == Instruction.T_Object) {
+			
+			int expressionUnBoxedTypeId= getUnBoxedTypeId(operand);
+			
+			if (char1 == '\0') {
+				switch (char0) {
+					case '+': // unary plus
+						push(new UnaryPlusOperator(expressionUnBoxedTypeId, fCounter));
+						break;
+					case '-': // unary minus
+						push(new UnaryMinusOperator(expressionUnBoxedTypeId, fCounter));
+						break;
+					case '~': // twiddle
+						push(new TwiddleOperator(expressionUnBoxedTypeId, fCounter));
+						break;
+					case '!': // not
+						push(new NotOperator(expressionUnBoxedTypeId, fCounter));
+						break;
+					default:
+						setHasError(true);
+						addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.unrecognized_prefix_operator____16") + opToken); //$NON-NLS-1$
+						break;
+				}
+	
+				unBoxing(operand.resolveTypeBinding());
+				operand.accept(this);
+				storeInstruction(); // unboxing
+				
+			} else {
+				// plus plus and minus minus operators
+				
+				push(new AssignmentOperator(Instruction.T_Object, Instruction.T_Object, fCounter));
+				
+				operand.accept(this);
+				
+				boxing(operand.resolveTypeBinding());
+				
+				switch (char1) {
+					case '+':
+						push(new PlusOperator(expressionUnBoxedTypeId, expressionUnBoxedTypeId, expressionUnBoxedTypeId, fCounter));
+						break;
+					case '-':
+						push(new MinusOperator(expressionUnBoxedTypeId, expressionUnBoxedTypeId, expressionUnBoxedTypeId, fCounter));
+						break;
+					default:
+						setHasError(true);
+						addErrorMessage(EvaluationEngineMessages.getString("ASTInstructionCompiler.unrecognized_prefix_operator____16") + opToken); //$NON-NLS-1$
+						break;
+				}
+				
+				unBoxing(operand.resolveTypeBinding());
+				push(new Dup());
+				storeInstruction(); // dup
+				storeInstruction(); // unboxing
+				push(new PushInt(1));
+				storeInstruction(); // push 1
+				
+				storeInstruction(); // operator
+				storeInstruction(); // boxing
+				
+			}
+			
+			return false;
+		}
+		
 		switch (char0) {
 			case '+': // plus plus or unary plus
 				switch (char1) {
@@ -3012,8 +3365,14 @@ public class ASTInstructionCompiler extends ASTVisitor {
 			storeInstruction();
 		} else {
 			Iterator iterator= arguments.iterator();
+			int i= 0;
 			while (iterator.hasNext()) {
-				((Expression) iterator.next()).accept(this);
+				Expression argument= (Expression) iterator.next();
+				boolean storeRequired= checkAutoBoxing(argument.resolveTypeBinding(), parameterTypes[i++]);
+				argument.accept(this);
+				if (storeRequired) {
+					storeInstruction();
+				}
 			}
 		} 
 
@@ -3257,12 +3616,42 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 	private int getTypeId(Expression expression) {
 		ITypeBinding typeBinding = expression.resolveTypeBinding();
-		String typeName = typeBinding.getName();
+		String typeName = typeBinding.getQualifiedName();
 		if (typeBinding.isPrimitive()) {
 			return getPrimitiveTypeId(typeName);
-		} else if ("String".equals(typeName) && "java.lang".equals(typeBinding.getPackage().getName())){ //$NON-NLS-1$ //$NON-NLS-2$
+		} else if ("java.lang.String".equals(typeName)){ //$NON-NLS-1$
 			return Instruction.T_String;
 		} else {
+			return Instruction.T_Object;
+		}
+	}
+
+	private int getUnBoxedTypeId(Expression expression) {
+		ITypeBinding typeBinding = expression.resolveTypeBinding();
+		String typeName = typeBinding.getQualifiedName();
+		if (typeBinding.isPrimitive()) {
+			return getPrimitiveTypeId(typeName);
+		} else if ("java.lang.String".equals(typeName)){ //$NON-NLS-1$
+			return Instruction.T_String;
+		} else {
+			// unboxing
+			if ("java.lang.Integer".equals(typeName)) { //$NON-NLS-1$
+				return Instruction.T_int;
+			} else if ("java.lang.Character".equals(typeName)) { //$NON-NLS-1$
+				return Instruction.T_char;
+			} else if ("java.lang.Byte".equals(typeName)) { //$NON-NLS-1$
+				return Instruction.T_byte;
+			} else if ("java.lang.Short".equals(typeName)) { //$NON-NLS-1$
+				return Instruction.T_short;
+			} else if ("java.lang.Long".equals(typeName)) { //$NON-NLS-1$
+				return Instruction.T_long;
+			} else if ("java.lang.Float".equals(typeName)) { //$NON-NLS-1$
+				return Instruction.T_float;
+			} else if ("java.lang.Double".equals(typeName)) { //$NON-NLS-1$
+				return Instruction.T_double;
+			} else if ("java.lang.Boolean".equals(typeName)) { //$NON-NLS-1$
+				return Instruction.T_boolean;
+			}
 			return Instruction.T_Object;
 		}
 	}
