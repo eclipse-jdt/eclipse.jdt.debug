@@ -18,12 +18,15 @@
 <runtime>
    <library name="jdi.jar">
       <export name="*"/>
+      <packages prefixes="com.sun.jdi"/>
    </library>
    <library name="jdimodel.jar">
       <export name="*"/>
+      <packages prefixes="org.eclipse.jdi,org.eclipse.jdt.debug,org.eclipse.jdt.internal.debug"/>
    </library>
    <library name="tools.jar">
    	  <export name="*"/>
+   	  <packages prefixes="com.sun.jdi"/>
    </library>
 </runtime>
 

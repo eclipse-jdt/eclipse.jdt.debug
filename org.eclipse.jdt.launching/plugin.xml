@@ -20,6 +20,7 @@
 <runtime>
 	<library name="launching.jar" >
 		<export name = "*"/>
+		<packages prefixes="org.eclipse.jdt.launching,org.eclipse.jdt.internal.launching"/>
 	</library>
 </runtime>
 
