@@ -27,7 +27,7 @@ public class AddExceptionAction implements IViewActionDelegate, IWorkbenchWindow
 	public void run(IAction action) {		
 		Shell shell= JDIDebugUIPlugin.getActiveWorkbenchShell();
 		AddExceptionDialog dialog= new AddExceptionDialog(shell);
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == AddExceptionDialog.OK) {
 			IType type= dialog.getType();
 			boolean checked= dialog.getExceptionType() == AddExceptionDialog.CHECKED_EXCEPTION;
 			boolean caught= dialog.isCaughtSelected();

@@ -414,7 +414,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		if (javaProject != null) {
 			dialog.setInitialSelections(new Object[] { javaProject });
 		}
-		if (dialog.open() == dialog.OK) {			
+		if (dialog.open() == ElementListSelectionDialog.OK) {			
 			return (IJavaProject) dialog.getFirstResult();
 		}			
 		return null;		

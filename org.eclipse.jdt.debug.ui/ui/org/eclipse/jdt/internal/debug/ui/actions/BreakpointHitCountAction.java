@@ -167,7 +167,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 		}
 		Shell activeShell= JDIDebugUIPlugin.getActiveWorkbenchShell();
 		HitCountDialog dialog= new HitCountDialog(activeShell, title, message, initialValue, validator);
-		if (dialog.open() != dialog.OK) {
+		if (dialog.open() != HitCountDialog.OK) {
 			return -1;
 		}
 		if (dialog.isHitCountEnabled()) {

@@ -43,7 +43,7 @@ public class JavaSnippetViewerConfiguration extends JavaSourceViewerConfiguratio
 
 		JDIContentAssistPreference.configure(assistant, getColorManager());
 
-		assistant.setContextInformationPopupOrientation(assistant.CONTEXT_INFO_ABOVE);
+		assistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_ABOVE);
 		assistant.setInformationControlCreator(
 			getInformationControlCreator(sourceViewer));
 

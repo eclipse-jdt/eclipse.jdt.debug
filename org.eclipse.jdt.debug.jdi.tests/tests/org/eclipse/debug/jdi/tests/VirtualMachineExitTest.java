@@ -57,7 +57,7 @@ public class VirtualMachineExitTest extends AbstractJDITest {
 		}
 
 		try {
-			Thread.currentThread().sleep(200);
+			Thread.sleep(200);
 			assertTrue("2", !vmIsRunning());
 			fVM.allThreads();
 			assertTrue("3", false);

@@ -78,7 +78,7 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		dialog.setMessage(message);
 		dialog.setElements(elements.toArray());
 		
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == ElementListSelectionDialog.OK) {
 			Object[] selection= dialog.getResult();
 			if (selection != null && selection.length > 0) {
 				nResults= selection.length;

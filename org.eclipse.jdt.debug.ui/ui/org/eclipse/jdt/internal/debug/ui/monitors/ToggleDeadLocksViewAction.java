@@ -16,7 +16,7 @@ public class ToggleDeadLocksViewAction extends ToggleViewAction {
 	 * @see org.eclipse.jdt.internal.debug.ui.monitors.ToggleViewAction#getViewId()
 	 */
 	protected int getViewId() {
-		return fMonitorsView.VIEW_ID_DEADLOCK;
+		return MonitorsView.VIEW_ID_DEADLOCK;
 	}
 
 }

@@ -17,6 +17,6 @@ public class ToggleMonitorsViewAction extends ToggleViewAction {
 	 * @see org.eclipse.jdt.internal.debug.ui.monitors.ToggleViewAction#getViewId()
 	 */
 	protected int getViewId() {
-		return fMonitorsView.VIEW_ID_MONITOR;
+		return MonitorsView.VIEW_ID_MONITOR;
 	}
 }

@@ -38,7 +38,7 @@ class JavaModelListener implements IElementChangedListener {
 	 * @see IElementChangedListener#elementChanged(ElementChangedEvent)
 	 */
 	public void elementChanged(ElementChangedEvent e) {
-		if (e.getType() != e.POST_CHANGE) {
+		if (e.getType() != ElementChangedEvent.POST_CHANGE) {
 			return;
 		}
 		List removedElements= new ArrayList();

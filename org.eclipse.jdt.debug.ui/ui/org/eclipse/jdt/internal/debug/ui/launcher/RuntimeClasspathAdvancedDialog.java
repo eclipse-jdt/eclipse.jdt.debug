@@ -154,7 +154,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		dialog.setMinimumPageSize(converter.convertWidthInCharsToPixels(40), converter.convertHeightInCharsToPixels(20));
 		dialog.create();
 		dialog.getShell().setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Select_Container_2")); //$NON-NLS-1$
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == WizardDialog.OK) {
 			IClasspathEntry created= wizard.getNewEntry();
 			if (created != null) {
 				// XXX: kind needs to be resolved

@@ -80,8 +80,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 					}
 					dialog.setInitialSelections(existing.toArray());
 					
-					int res = dialog.open();
-					if (res == dialog.OK) {
+					if (dialog.open() == ListSelectionDialog.OK) {
 						Object[] selectedBreakpoints = dialog.getResult();
 						if (selectedBreakpoints != null) {
 							// add

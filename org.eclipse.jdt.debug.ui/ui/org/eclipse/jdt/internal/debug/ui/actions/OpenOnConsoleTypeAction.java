@@ -198,7 +198,7 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 		dialog.setTitle(ActionMessages.getString("OpenOnConsoleTypeAction.Open_Type_3")); //$NON-NLS-1$
 		dialog.setMessage(ActionMessages.getString("OpenOnConsoleTypeAction.Choose_a_type_to_open_4"));  //$NON-NLS-1$
 		dialog.setElements(typeInfoList.toArray(new TypeInfo[typeInfoList.size()]));
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == ElementListSelectionDialog.OK) {
 			return (TypeInfo) dialog.getFirstResult();
 		}
 		return null;		

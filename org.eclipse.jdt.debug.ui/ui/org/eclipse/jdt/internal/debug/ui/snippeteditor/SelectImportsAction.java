@@ -16,7 +16,7 @@ public class SelectImportsAction extends SnippetAction {
 		setToolTipText(SnippetMessages.getString("SelectImports.tooltip")); //$NON-NLS-1$
 		setDescription(SnippetMessages.getString("SelectImports.description")); //$NON-NLS-1$
 		ISharedImages sharedImages= JavaUI.getSharedImages();
-		setImageDescriptor(sharedImages.getImageDescriptor(sharedImages.IMG_OBJS_IMPCONT));
+		setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_OBJS_IMPCONT));
 	}
 	
 	/**

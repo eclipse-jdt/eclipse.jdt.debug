@@ -116,7 +116,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 * @return Java object or <code>null</code>
 	 */
 	protected IJavaObject getObjectContext() {
-		IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
+		IWorkbenchPage page= JDIDebugUIPlugin.getActivePage();
 		if (page != null) {
 			IWorkbenchPart activePart= page.getActivePart();
 			if (activePart != null) {
@@ -410,7 +410,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (display != null) {
 			return display;
 		}
-		IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
+		IWorkbenchPage page= JDIDebugUIPlugin.getActivePage();
 		if (page != null) {
 			IWorkbenchPart activePart= page.getActivePart();
 			if (activePart != null) {
@@ -445,7 +445,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				}
 			}
 			if (display != null) {
-				IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
+				IWorkbenchPage page= JDIDebugUIPlugin.getActivePage();
 				if (page != null) {
 					IWorkbenchPart activePart= page.getActivePart();
 					if (activePart != null) {
@@ -457,7 +457,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				return display;
 			}
 		}
-		IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
+		IWorkbenchPage page= JDIDebugUIPlugin.getActivePage();
 		if (page != null) {
 			IWorkbenchPart activePart= page.getActivePart();
 			if (activePart != null) {

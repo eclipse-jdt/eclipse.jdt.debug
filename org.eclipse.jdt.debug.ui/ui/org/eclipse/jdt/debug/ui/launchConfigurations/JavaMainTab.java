@@ -257,7 +257,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 															 fMainText.getText()); 
 		dialog.setTitle(LauncherMessages.getString("JavaMainTab.Choose_Main_Type_11")); //$NON-NLS-1$
 		dialog.setMessage(LauncherMessages.getString("JavaMainTab.Choose_a_main_&type_to_launch__12")); //$NON-NLS-1$
-		if (dialog.open() == dialog.CANCEL) {
+		if (dialog.open() == SelectionDialog.CANCEL) {
 			return;
 		}
 		
@@ -311,7 +311,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		if (javaProject != null) {
 			dialog.setInitialSelections(new Object[] { javaProject });
 		}
-		if (dialog.open() == dialog.OK) {			
+		if (dialog.open() == ElementListSelectionDialog.OK) {			
 			return (IJavaProject) dialog.getFirstResult();
 		}			
 		return null;		

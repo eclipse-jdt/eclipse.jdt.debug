@@ -30,7 +30,7 @@ public class AddVariableAction extends RuntimeClasspathAction {
 		
 		NewVariableEntryDialog dialog = new NewVariableEntryDialog(getShell(), ActionMessages.getString("AddVariableAction.Variable_Selection_1"), null); //$NON-NLS-1$
 		
-		if (dialog.open() == dialog.OK) {			
+		if (dialog.open() == NewVariableEntryDialog.OK) {			
 			IPath[] paths = dialog.getResult();
 			IRuntimeClasspathEntry[] entries = new IRuntimeClasspathEntry[paths.length];
 			for (int i = 0; i < paths.length; i++) {

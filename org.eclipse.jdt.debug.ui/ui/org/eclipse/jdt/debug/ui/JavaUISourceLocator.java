@@ -130,7 +130,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 					ILaunchConfiguration configuration = frame.getLaunch().getLaunchConfiguration();
 					JavaSourceLookupDialog dialog= new JavaSourceLookupDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), message, configuration);
 					int result = dialog.open();
-					if (result == dialog.OK) {
+					if (result == JavaSourceLookupDialog.OK) {
 						fAllowedToAsk= !dialog.isNotAskAgain();
 						JavaUISourceLocator.this.initializeDefaults(configuration);
 					}

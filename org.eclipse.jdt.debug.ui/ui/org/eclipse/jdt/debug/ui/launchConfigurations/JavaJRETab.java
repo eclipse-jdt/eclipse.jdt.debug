@@ -361,7 +361,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	protected void handleJREAddButtonSelected() {
 		AddVMDialog dialog= new AddVMDialog(this, getShell(), fVMTypes, null);
 		dialog.setTitle(LauncherMessages.getString("vmPreferencePage.addJRE.title")); //$NON-NLS-1$
-		if (dialog.open() != dialog.OK) {
+		if (dialog.open() != AddVMDialog.OK) {
 			return;
 		}
 	}	

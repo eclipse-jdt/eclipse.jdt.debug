@@ -596,7 +596,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	protected void showExpressionView() {
 		Runnable r = new Runnable() {
 			public void run() {
-				IWorkbenchPage page = JDIDebugUIPlugin.getDefault().getActivePage();
+				IWorkbenchPage page = JDIDebugUIPlugin.getActivePage();
 				if (page != null) {
 					IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
 					if (part == null) {

@@ -109,7 +109,7 @@ public class MainClass extends Date implements Runnable, Printable {
 		// Prevent this thread from dying
 		while (true)
 			try {
-				Thread.currentThread().sleep(1000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			}
 	}
@@ -142,7 +142,7 @@ public class MainClass extends Date implements Runnable, Printable {
 				triggerEvent();
 				useLocalVars(t, o);
 				try {
-					t.sleep(1000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 				}
 			}

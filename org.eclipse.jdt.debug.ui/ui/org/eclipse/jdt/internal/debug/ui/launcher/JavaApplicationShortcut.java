@@ -88,7 +88,7 @@ public class JavaApplicationShortcut implements ILaunchShortcut {
 			dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Type_Selection_Run")); //$NON-NLS-1$
 		}
 		dialog.setMultipleSelection(false);
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == MainTypeSelectionDialog.OK) {
 			return (IType)dialog.getFirstResult();
 		}
 		return null;
@@ -172,7 +172,7 @@ public class JavaApplicationShortcut implements ILaunchShortcut {
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
-		if (result == dialog.OK) {
+		if (result == MainTypeSelectionDialog.OK) {
 			return (ILaunchConfiguration) dialog.getFirstResult();
 		}
 		return null;		

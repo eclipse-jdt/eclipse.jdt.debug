@@ -142,7 +142,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
-		config.launch(getLaunchManager().DEBUG_MODE, null);
+		config.launch(ILaunchManager.DEBUG_MODE, null);
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
@@ -176,7 +176,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
-		config.launch(getLaunchManager().DEBUG_MODE, null);
+		config.launch(ILaunchManager.DEBUG_MODE, null);
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
@@ -213,7 +213,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.TERMINATE, IJavaDebugTarget.class);
 		waiter.setTimeout(timeout);
 		
-		config.launch(getLaunchManager().DEBUG_MODE, null);
+		config.launch(ILaunchManager.DEBUG_MODE, null);
 
 		Object terminatee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
@@ -252,7 +252,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
 		
-		config.launch(getLaunchManager().DEBUG_MODE, null);
+		config.launch(ILaunchManager.DEBUG_MODE, null);
 
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());

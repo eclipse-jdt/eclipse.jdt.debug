@@ -87,7 +87,7 @@ public class AddProjectAction extends RuntimeClasspathAction {
 		dialog.setTitle(ActionMessages.getString("AddProjectAction.Project_Selection_2")); //$NON-NLS-1$
 		MultiStatus status = new MultiStatus(JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.getString("AddProjectAction.One_or_more_exceptions_occurred_while_adding_projects._1"), null); //$NON-NLS-1$
 				
-		if (dialog.open() == dialog.OK) {			
+		if (dialog.open() == ProjectSelectionDialog.OK) {			
 			Object[] selections = dialog.getResult();
 			
 			List additions = new ArrayList(selections.length);

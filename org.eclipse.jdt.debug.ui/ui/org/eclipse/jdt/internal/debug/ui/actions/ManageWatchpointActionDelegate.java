@@ -212,7 +212,7 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 		}
 
 		SearchEngine engine= new SearchEngine();
-		IJavaSearchScope scope= engine.createJavaSearchScope(javaProjects, true);
+		IJavaSearchScope scope= SearchEngine.createJavaSearchScope(javaProjects, true);
 		String declaringType= null;
 		try {
 			declaringType= variable.getDeclaringType().getName();

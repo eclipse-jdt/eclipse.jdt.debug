@@ -794,7 +794,7 @@ public abstract class AbstractJDITest extends TestCase {
 				try {
 					System.out.println(
 						"Could not contact the VM at localhost" + ":" + fBackEndPort + ". Retrying...");
-					Thread.currentThread().sleep(200);
+					Thread.sleep(200);
 				} catch (InterruptedException e2) {
 				}
 			}

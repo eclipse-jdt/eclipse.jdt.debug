@@ -107,7 +107,7 @@ public class Standard11xVMRunner extends StandardVMRunner {
 			return;
 		}		
 		
-		IProcess process= DebugPlugin.getDefault().newProcess(launch, p, renderProcessLabel(cmdLine));
+		IProcess process= DebugPlugin.newProcess(launch, p, renderProcessLabel(cmdLine));
 		process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
 	}
 }

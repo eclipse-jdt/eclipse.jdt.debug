@@ -170,7 +170,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		int result =
 			vm.classesHaveChanged(
 				new String[] { "org.eclipse.debug.jdi.tests.program.MainClass" });
-		assertEquals("reloadClasses.1", vm.RELOAD_SUCCESS, result);
+		assertEquals("reloadClasses.1", org.eclipse.jdi.hcr.VirtualMachine.RELOAD_SUCCESS, result);
 
 		// Wait for the class unload event to come in
 		ClassUnloadEvent unloadEvent =

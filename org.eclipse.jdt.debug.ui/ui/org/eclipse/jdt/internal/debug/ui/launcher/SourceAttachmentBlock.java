@@ -537,7 +537,7 @@ public class SourceAttachmentBlock {
 		dialog.setMessage(LauncherMessages.getString("SourceAttachmentBlock.&Select_JAR/ZIP_file_containing_the_source__28")); //$NON-NLS-1$
 		dialog.setInput(fRoot);
 		dialog.setInitialSelection(initSel);
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == ElementTreeSelectionDialog.OK) {
 			IFile file= (IFile) dialog.getFirstResult();
 			return file.getFullPath();
 		}
@@ -569,7 +569,7 @@ public class SourceAttachmentBlock {
 				dialog.setMessage(LauncherMessages.getString("SourceAttachmentBlock.Package_Structure_Root_Selection_29")); //$NON-NLS-1$
 				dialog.setInput(zipFile);
 				dialog.setInitialSelection(contentProvider.getSelectedNode(initSelection));
-				if (dialog.open() == dialog.OK) {
+				if (dialog.open() == ElementTreeSelectionDialog.OK) {
 					Object obj= dialog.getFirstResult();
 					IPath path= new Path(obj.toString());
 					if (fIsVariableEntry) {

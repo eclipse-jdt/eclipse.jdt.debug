@@ -75,7 +75,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 		dialog.addFilter(filter);
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
 
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == ElementTreeSelectionDialog.OK) {
 			Object[] elements= dialog.getResult();
 			IRuntimeClasspathEntry[] res= new IRuntimeClasspathEntry[elements.length];
 			for (int i= 0; i < res.length; i++) {
