@@ -5,6 +5,9 @@ package org.eclipse.jdt.launching.sourcelookup;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -12,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  
 /**
  * Locates source elements in an acrhive (zip) in the local
@@ -28,7 +32,48 @@ import org.eclipse.core.runtime.PlatformObject;
  * @see IJavaSourceLocation
  */
 public class ArchiveSourceLocation extends PlatformObject implements IJavaSourceLocation {
+	
+	/**
+	 * Cache of shared zip files. Zip files are closed
+	 * when the launching plug-in is shutdown.
+	 */
+	private static HashMap fZipFileCache = new HashMap(5);
 
+	/**
+	 * Returns a zip file with the given name
+	 * 
+	 * @param name zip file name
+	 * @exception IOException if unable to create the specified zip
+	 * 	file
+	 */
+	private static ZipFile getZipFile(String name) throws IOException {
+		ZipFile zip = (ZipFile)fZipFileCache.get(name);
+		if (zip == null) {
+			zip = new ZipFile(name);
+			fZipFileCache.put(name, zip);
+		}
+		return zip;
+	}
+	
+	/**
+	 * Closes all zip files that have been opened,
+	 * and removes them from the zip file cache.
+	 * This method is only to be called by the launching
+	 * plug-in on shutdown.
+	 */
+	public static void shutdown() {
+		Iterator iter = fZipFileCache.values().iterator();
+		while (iter.hasNext()) {
+			ZipFile file = (ZipFile)iter.next();
+			try {
+				file.close();
+			} catch (IOException e) {
+				LaunchingPlugin.log(e);
+			}
+		}
+		fZipFileCache.clear();
+	}
+	
 	/**
 	 * The archive associated with this source location
 	 */
@@ -41,18 +86,21 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	
 	/**
 	 * Constructs a new source location that will retrieve source
-	 * elements from the given zip file.
+	 * elements from the zip file with the given name.
 	 * 
 	 * @param archive zip file
 	 * @param sourceRoot a path to the root source folder in the
 	 *  specified archive, or <code>null</code> if the root source folder
 	 *  is the root of the archive
+	 * @exception IOException if unable to access the zip file
 	 */
-	public ArchiveSourceLocation(ZipFile archive, IPath sourceRoot) {
-		setArchive(archive);
+	public ArchiveSourceLocation(String archiveName, String sourceRoot) throws IOException {
+		super();
+		ZipFile zip = getZipFile(archiveName);
+		setArchive(zip);
 		setRootPath(sourceRoot);
 	}
-	
+		
 	/**
 	 * @see IJavaSourceLocation#findSourceElement(String)
 	 */
@@ -105,11 +153,11 @@ public class ArchiveSourceLocation extends PlatformObject implements IJavaSource
 	 * the archive, or <code>null</code> if the root source
 	 * folder is the root of the arhcive
 	 */
-	private void setRootPath(IPath path) {
-		if (path == null || path.isEmpty()) {
+	public void setRootPath(String path) {
+		if (path == null || path.trim().length() == 0) {
 			fRootPath = null;
 		} else {
-			fRootPath = path;
+			fRootPath = new Path(path);
 		}
 	}
 	

@@ -280,14 +280,9 @@ public class ProjectSourceLocator extends JavaSourceLocator {
 				}
 			} else if (line.equals(ArchiveSourceLocation.class.getName())) {
 				// next two lines are zip file and source root
-				line = reader.readLine();
-				ZipFile zip = new ZipFile(line);
-				line = reader.readLine();
-				IPath sourceRoot = null;
-				if (line.trim().length() > 0) {
-					sourceRoot = new Path(line);
-				}
-				location = new ArchiveSourceLocation(zip, sourceRoot);
+				String zipName = reader.readLine();
+				String root = reader.readLine();
+				location = new ArchiveSourceLocation(zipName, root);
 			}
 			if (location != null)
 				locations.add(location);

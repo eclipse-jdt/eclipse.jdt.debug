@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,6 +54,12 @@ public class SourceLookupBlock {
 	private SelectionButtonDialogField fUseDefinedRadioButton;
 	private CheckedListDialogField fProjectList;
 	private StringDialogField fZipSourceRootField;
+	
+	/**
+	 * Cache of source roots for zip files. Kept in 
+	 * a cache so the user may cancel.
+	 */
+	private HashMap fSourceRoots = new HashMap(3);
 	
 	private Control fSWTControl;
 
@@ -99,6 +106,7 @@ public class SourceLookupBlock {
 
 		public void dialogFieldChanged(DialogField field) {
 			buttonPressed();
+			updateSourceRoot();
 		}
 	}
 	
@@ -137,6 +145,7 @@ public class SourceLookupBlock {
 		
 		fZipSourceRootField = new StringDialogField();
 		fZipSourceRootField.setLabelText(LauncherMessages.getString("SourceLookupBlock.Source_root")); //$NON-NLS-1$
+		fZipSourceRootField.setDialogFieldListener(adapter);
 		
 		initializeFields();
 	}
@@ -250,8 +259,19 @@ public class SourceLookupBlock {
 		if (fUseDefaultRadioButton.isSelected()) {
 			ProjectSourceLocator.setSourceLookupPath(fJavaProject, null);
 		} else {
-			List locations= fProjectList.getCheckedElements();
-			ProjectSourceLocator.setPersistedSourceLocations(fJavaProject, (IJavaSourceLocation[]) locations.toArray(new IJavaSourceLocation[locations.size()]));
+			Iterator allLocations = fProjectList.getElements().iterator();
+			List orderedLocations = new ArrayList();
+			while (allLocations.hasNext()) {
+				Object location = allLocations.next();
+				if (fProjectList.isChecked(location)) {
+					orderedLocations.add(location);
+					String root = (String)fSourceRoots.get(location);
+					if (root != null) {
+						((ArchiveSourceLocation)location).setRootPath(root);
+					}
+				}
+			}
+			ProjectSourceLocator.setPersistedSourceLocations(fJavaProject, (IJavaSourceLocation[]) orderedLocations.toArray(new IJavaSourceLocation[orderedLocations.size()]));
 		}	
 	}
 	
@@ -274,7 +294,7 @@ public class SourceLookupBlock {
 		String res= dialog.open();
 		if (res != null) {
 			try {
-				ArchiveSourceLocation location = new ArchiveSourceLocation(new ZipFile(res), null);
+				ArchiveSourceLocation location = new ArchiveSourceLocation(res, null);
 				fProjectList.addElement(location);
 				fProjectList.setChecked(location, true);
 			} catch (IOException e) {
@@ -283,5 +303,14 @@ public class SourceLookupBlock {
 		}		
 	}	
 
+	protected void updateSourceRoot() {
+		if (fZipSourceRootField.isEnabled()) {
+			List list = fProjectList.getSelectedElements();
+			if (list.size() == 1 && list.get(0) instanceof ArchiveSourceLocation) {
+				ArchiveSourceLocation location = (ArchiveSourceLocation)list.get(0);
+				fSourceRoots.put(location, fZipSourceRootField.getText());
+			}
+		}
+	}
 }
 

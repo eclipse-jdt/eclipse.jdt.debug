@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 
 public class LaunchingPlugin extends Plugin {
 	
@@ -35,5 +36,14 @@ public class LaunchingPlugin extends Plugin {
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
 	}	
+	
+	/**
+	 * Clears zip file cache
+	 * 
+	 * @see Plugin#shutdown()
+	 */
+	public void shutdown() {
+		ArchiveSourceLocation.shutdown();
+	}
 		
 }
