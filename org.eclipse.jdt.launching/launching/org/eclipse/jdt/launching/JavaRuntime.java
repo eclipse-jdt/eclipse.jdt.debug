@@ -1183,7 +1183,7 @@ public final class JavaRuntime {
 	 */
 	public static void saveVMConfiguration() throws CoreException {
 		if (fgVMTypes == null) {
-			// if the VM types have not been instaniated, there can be no changes.
+			// if the VM types have not been instantiated, there can be no changes.
 			return;
 		}
 		try {
