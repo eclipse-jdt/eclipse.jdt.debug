@@ -46,4 +46,16 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
         return null;
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsolePageParticipant#activated()
+	 */
+	public void activated() {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsolePageParticipant#deactivated()
+	 */
+	public void deactivated() {
+	}
+
 }
