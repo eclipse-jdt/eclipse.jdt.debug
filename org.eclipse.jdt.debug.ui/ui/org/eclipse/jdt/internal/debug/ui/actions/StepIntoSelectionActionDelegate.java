@@ -18,6 +18,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.jdt.core.IClassFile;
@@ -105,7 +106,11 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 */
 	private void doStepIn(IJavaStackFrame frame, IMethod method) throws DebugException {
 		// ensure top stack frame
-		if (!frame.getThread().getTopStackFrame().equals(frame)) {
+		IStackFrame tos = frame.getThread().getTopStackFrame();
+		if (tos == null) {
+			return; 
+		}		
+		if (!tos.equals(frame)) {
 			showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.Step_into_selection_only_available_in_top_stack_frame._3")); //$NON-NLS-1$
 			return;
 		}
