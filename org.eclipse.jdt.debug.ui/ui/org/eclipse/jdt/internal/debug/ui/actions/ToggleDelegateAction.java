@@ -5,7 +5,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -30,7 +30,7 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate {
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {
-		IDebugViewAdapter adapter= (IDebugViewAdapter) view.getAdapter(IDebugViewAdapter.class);
+		IDebugView adapter= (IDebugView) view.getAdapter(IDebugView.class);
 		if (adapter != null && adapter.getViewer() instanceof StructuredViewer) {
 			setViewer((StructuredViewer)adapter.getViewer());
 		}

@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
@@ -249,7 +249,7 @@ public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 	}
 	
 	protected IDocument getConsoleDocument() {
-		IDebugViewAdapter dv = (IDebugViewAdapter)getViewPart().getAdapter(IDebugViewAdapter.class);
+		IDebugView dv = (IDebugView)getViewPart().getAdapter(IDebugView.class);
 		if (dv != null) {
 			Viewer v = dv.getViewer();
 			if (v instanceof TextViewer) {

@@ -25,7 +25,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -106,7 +106,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		if (page != null) {
 			IWorkbenchPart activePart= page.getActivePart();
 			if (activePart != null) {
-				IDebugViewAdapter a = (IDebugViewAdapter)activePart.getAdapter(IDebugViewAdapter.class);
+				IDebugView a = (IDebugView)activePart.getAdapter(IDebugView.class);
 				if (a != null) {
 					if (a.getViewer() != null) {
 						ISelection s = a.getViewer().getSelection();

@@ -6,7 +6,7 @@ package org.eclipse.jdt.internal.debug.ui;
  */
  
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -80,7 +80,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		private void refreshViews(IWorkbenchPage page, String viewID) {
 			IViewPart part= page.findView(viewID);
 			if (part != null) {
-				IDebugViewAdapter adapter= (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
+				IDebugView adapter= (IDebugView)part.getAdapter(IDebugView.class);
 				if (adapter != null) {
 					Viewer viewer= adapter.getViewer();
 					if (viewer instanceof StructuredViewer) {
