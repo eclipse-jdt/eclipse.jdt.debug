@@ -52,6 +52,8 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_SOURCE_TAB);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
+		topLayout.marginHeight= 0;
+		topLayout.marginWidth= 0;
 		comp.setLayout(topLayout);
 		comp.setFont(parent.getFont());	
 		
