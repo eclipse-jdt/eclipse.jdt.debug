@@ -53,7 +53,6 @@ public class TcpipSpy extends Thread {
 
 	private static VerbosePacketStream out= new VerbosePacketStream(System.out);
 	private static Map fPackets= new HashMap();
-	private static Map fFieldsType= new HashMap();
 
 	private static int fFieldIDSize;
 	private static int fMethodIDSize;

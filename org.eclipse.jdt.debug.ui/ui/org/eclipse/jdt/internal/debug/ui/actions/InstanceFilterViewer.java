@@ -38,8 +38,6 @@ public class InstanceFilterViewer extends FieldEditor {
 	private InstanceFilterContentProvider fContentProvider;
 	private CheckHandler fCheckHandler;
 	
-	private static String MAIN= "main"; //$NON-NLS-1$
-	
 	public InstanceFilterViewer(Composite parent, IJavaBreakpoint breakpoint) {
 		fBreakpoint= breakpoint;
 		fContentProvider= new InstanceFilterContentProvider();
