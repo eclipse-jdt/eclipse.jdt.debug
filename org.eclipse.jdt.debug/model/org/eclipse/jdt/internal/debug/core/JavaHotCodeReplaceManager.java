@@ -19,6 +19,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -30,6 +33,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 
 /**
  * The hot code replace manager listens for changes to
@@ -209,6 +213,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 */
 	private void notify(List targets, List resources, List typeNames, boolean jdk) {
 		String[] qNames = (String[]) typeNames.toArray(new String[typeNames.size()]);		
+		MultiStatus ms= new MultiStatus(JDIDebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, JDIDebugModelMessages.getString("JavaHotCodeReplaceManager.drop_to_frame_failed"), null); //$NON-NLS-1$
 		Iterator iter= targets.iterator();
 		while (iter.hasNext()) {
 			JDIDebugTarget target= (JDIDebugTarget) iter.next();
@@ -220,13 +225,20 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					// J9 HCR support
 					target.typesHaveChanged(qNames);
 				}
-				attemptDropToFrame(target, typeNames);
+				try {
+					attemptDropToFrame(target, typeNames);
+				} catch (DebugException de) {
+					ms.merge(de.getStatus());
+				}
 				fireHCRSucceeded();
 			} catch (DebugException de) {
 				// target update failed
 				JDIDebugPlugin.logError(de);
 				fireHCRFailed(de);
 			}
+		}
+		if (!ms.isOK()) {
+			JDIDebugPlugin.logError(new DebugException(ms));
 		}
 	}
 	
@@ -257,6 +269,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	 */
 	protected void attemptDropToFrame(IDebugTarget target, List replacedClassNames) throws DebugException {
 		IThread[] threads= target.getThreads();
+		List dropFrames= new ArrayList(1);
 		for (int i = 0; i < threads.length; i++) {
 			IThread thread= (IThread) threads[i];
 			if (thread.isSuspended()) {
@@ -269,9 +282,28 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 						break;
 					}
 				}
-				if (null != dropFrame && dropFrame.supportsDropToFrame()) {
-					dropFrame.dropToFrame();
+				if (dropFrame == null) {
+					// No frame to drop to in this thread
+					continue;
 				}
+				if (dropFrame.supportsDropToFrame()) {
+					dropFrames.add(dropFrame);
+				} else {
+					// if any thread that should drop does not support the drop,
+					// do not drop in any threads.
+					throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
+						DebugException.NOT_SUPPORTED, JDIDebugModelMessages.getString("JDIStackFrame.Drop_to_frame_not_supported"), null)); //$NON-NLS-1$
+				}
+			}
+		}
+		
+		// All threads that want to drop to frame are able. Proceed with the drop
+		Iterator iter= dropFrames.iterator();
+		while (iter.hasNext()) {
+			try {
+				((IJavaStackFrame)iter.next()).dropToFrame();
+			} catch (DebugException de) {
+				continue;
 			}
 		}
 	}
