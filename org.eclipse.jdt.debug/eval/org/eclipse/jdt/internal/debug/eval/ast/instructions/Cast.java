@@ -81,7 +81,7 @@ public class Cast extends CompoundInstruction {
 				classObject= getClassObject(getArrayType(Signature.createTypeSignature(fBaseTypeName, true), fDimension));
 			}
 			if (classObject == null) {
-				throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format("could not get the class object for {0}", new String[]{typeName()}), null));
+				throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("Cast.No_class_object"), new String[]{typeName()}), null)); //$NON-NLS-1$
 			}
 			IJavaPrimitiveValue resultValue = (IJavaPrimitiveValue)classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {value}, getContext().getThread(), false);
 			if (!resultValue.getBooleanValue()) {

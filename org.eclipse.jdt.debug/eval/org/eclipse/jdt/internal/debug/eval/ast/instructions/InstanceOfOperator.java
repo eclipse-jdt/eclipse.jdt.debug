@@ -36,7 +36,7 @@ public class InstanceOfOperator extends CompoundInstruction {
 
 		IJavaObject classObject= getClassObject(type);
 		if (classObject == null) {
-			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format("could not get the class object for {0}", new String[]{type.getName()}), null));
+			throw new CoreException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, MessageFormat.format(InstructionsEvaluationMessages.getString("InstanceOfOperator.No_class_object"), new String[]{type.getName()}), null)); //$NON-NLS-1$
 		} else {
 			push(classObject.sendMessage(IS_INSTANCE, IS_INSTANCE_SIGNATURE, new IJavaValue[] {object}, getContext().getThread(), false));
 		}
