@@ -385,7 +385,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * 	disconnection, otherwise <code>false</code>
 	 */
 	private void setSupportsDisconnect(boolean supported) {
-		fSupportsTerminate = supported;
+		fSupportsDisconnect = supported;
 	}
 	
 	/**
