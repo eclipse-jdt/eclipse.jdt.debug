@@ -34,6 +34,17 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 			int iValue = value.getIntValue();
 			assertTrue("value of 'i' should be '2', but was " + iValue, iValue == 2);
 			
+			bp.setHitCount(2);
+			IJavaThread thread2 = resumeToLineBreakpoint(thread, bp);
+			assertTrue("second suspended thread not the same as first", thread == thread2);			
+			
+			value = (IJavaPrimitiveValue)var.getValue();
+			assertNotNull("variable 'i' has no value", value);
+			iValue = value.getIntValue();
+			assertTrue("value of 'i' should be '4', but was " + iValue, iValue == 4);
+			
+			exit(thread2);
+			
 			bp.delete();
 		} finally {
 			terminateAndRemove(thread);

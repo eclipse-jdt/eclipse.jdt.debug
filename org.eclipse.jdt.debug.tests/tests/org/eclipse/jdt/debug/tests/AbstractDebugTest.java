@@ -148,6 +148,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * event occurred.
 	 * 
 	 * @param mainTypeName the program to launch
+	 * @param bp the breakpoint that should cause a suspend event
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected IJavaThread launchToLineBreakpoint(String mainTypeName, ILineBreakpoint bp) throws Exception {
@@ -162,6 +163,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * event occurred.
 	 * 
 	 * @param config the configuration to launch
+	 * @param bp the breakpoint that should cause a suspend event
 	 * @return thread in which the first suspend event occurred
 	 */	
 	protected IJavaThread launchToLineBreakpoint(ILaunchConfiguration config, ILineBreakpoint bp) throws Exception {
@@ -204,6 +206,36 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		Object suspendee= waiter.waitForEvent();
 		setEventSet(waiter.getEventSet());
 		assertNotNull("Program did not suspend.", suspendee);
+		return (IJavaThread)suspendee;
+	}	
+	
+	/**
+	 * Resumes the given thread, and waits for a suspend event caused by the specified
+	 * line breakpoint.  Returns the thread in which the suspend event occurrs.
+	 * 
+	 * @param thread thread to resume
+	 * @return thread in which the first suspend event occurrs
+	 */
+	protected IJavaThread resumeToLineBreakpoint(IJavaThread resumeThread, ILineBreakpoint bp) throws Exception {
+		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
+		waiter.setTimeout(DEFAULT_TIMEOUT);
+		
+		resumeThread.resume();
+
+		Object suspendee= waiter.waitForEvent();
+		setEventSet(waiter.getEventSet());
+		assertNotNull("Program did not suspend.", suspendee);
+		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread);
+		IJavaThread thread = (IJavaThread) suspendee;
+		IBreakpoint hit = getBreakpoint(thread);
+		assertNotNull("suspended, but not by breakpoint", hit);
+		assertTrue("hit un-registered breakpoint", bp.equals(hit));
+		assertTrue("suspended, but not by line breakpoint", hit instanceof ILineBreakpoint);
+		ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
+		int lineNumber = breakpoint.getLineNumber();
+		int stackLine = thread.getTopStackFrame().getLineNumber();
+		assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+		
 		return (IJavaThread)suspendee;
 	}	
 	
