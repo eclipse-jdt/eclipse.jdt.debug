@@ -211,7 +211,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 						dataDisplay.displayExpression(fExpression);
 					}
 					
-					IEvaluationEngine engine = getEvauationEngine((IJavaDebugTarget)jFrame.getDebugTarget(), project);
+					IEvaluationEngine engine = getEvaluationEngine((IJavaDebugTarget)jFrame.getDebugTarget(), project);
 					if (object == null) {
 						engine.evaluate(fExpression, jFrame, this);
 					} else {
@@ -240,7 +240,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 * @exception CoreException if creation of a new evaluation
 	 *  engine is required and fails 
 	 */
-	protected IEvaluationEngine getEvauationEngine(IJavaDebugTarget vm, IJavaProject project) throws CoreException {
+	protected IEvaluationEngine getEvaluationEngine(IJavaDebugTarget vm, IJavaProject project) throws CoreException {
 		IEvaluationEngine engine = EvaluationManager.getEvaluationEngine(vm);
 		if (engine == null) {
 			IPath outputLocation = project.getOutputLocation();
