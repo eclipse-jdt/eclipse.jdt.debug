@@ -970,7 +970,21 @@ public final class JavaRuntime {
 								break;
 						}
 						IRuntimeClasspathEntry r = newRuntimeContainerClasspathEntry(entry.getPath(), property);
-						if (!expandedPath.contains(r)) {
+						// only add a container once 
+						boolean duplicate = false;
+						for (int i = 0; i < expandedPath.size(); i++) {
+							Object o = expandedPath.get(i);
+							if (o instanceof IRuntimeClasspathEntry) {
+								IRuntimeClasspathEntry re = (IRuntimeClasspathEntry)o;
+								if (re.getType() == IRuntimeClasspathEntry.CONTAINER) {
+									if (re.getVariableName().equals(r.getVariableName())) {
+										duplicate = true;
+										break;
+									}
+								}
+							}
+						}
+						if (!duplicate) {
 							expandedPath.add(r);
 						}	
 						break;
