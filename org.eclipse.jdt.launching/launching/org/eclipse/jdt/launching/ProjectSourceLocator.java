@@ -134,7 +134,27 @@ public class ProjectSourceLocator implements ISourceLocator {
 				if (fCustomSearchPathProject != null) {
 					updateCustomSearchPath(fCustomSearchPathProject, fProjects);
 				}
-				String name= frame.getDeclaringTypeName();
+				String name = null;
+				String sourceName = frame.getSourceName();
+				if (sourceName == null) {
+					// no debug attributes, guess at source name
+					name = frame.getDeclaringTypeName();
+				} else {
+					// build source name from debug attributes using
+					// the source file name and the package of the declaring
+					// type
+					String declName= frame.getDeclaringTypeName();
+					int index = declName.lastIndexOf('.');
+					if (index >= 0) {
+						name = declName.substring(0, index + 1);
+					} else {
+						name = "";
+					}
+					index = sourceName.lastIndexOf('.');
+					if (index >= 0) {
+						name += sourceName.substring(0, index) ;
+					}					
+				}
 				for (int i= 0; i < fProjects.size(); i++) {
 					IJavaProject curr= (IJavaProject) fProjects.get(i);
 					IJavaElement openable= findOpenable(curr, name);
