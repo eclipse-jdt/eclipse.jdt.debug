@@ -137,7 +137,7 @@ public interface IJavaBreakpointListener {
 	 * expression.
 	 * 
 	 * @param breakpoint the breakpoint
-	 * @param errors the runtime errors that occurred evaluating the breakpoint's
+	 * @param exception the debug exception that occurred evaluating the breakpoint's
 	 *  condition
 	 */
 	public void breakpointHasRuntimeException(IJavaLineBreakpoint breakpoint, DebugException exception);

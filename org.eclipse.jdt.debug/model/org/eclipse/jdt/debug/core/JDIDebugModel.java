@@ -312,7 +312,7 @@ public class JDIDebugModel {
 	 *  set, or <code>null</code>. When specified, the pattern breakpoint will
 	 *  install itself in classes that have a source file path in the specified stratum
 	 *  that matches this value, and satisfies the class name pattern.
-	 * @param pattern the class name pattern in which the pattern breakpoint should
+	 * @param classNamePattern the class name pattern in which the pattern breakpoint should
 	 *   be installed. The pattern breakpoint will install itself in each class that
 	 *   matches this class name pattern, with a satisfying source name and source path.
 	 * @param lineNumber the lineNumber on which the breakpoint is set - line
@@ -585,7 +585,6 @@ public class JDIDebugModel {
 	/**
 	 * Saves the preference store for this plug-in.
 	 * 
-	 * @return the preference store for this plug-in
 	 * @since 2.0
 	 */
 	public static void savePreferences() {
