@@ -13,7 +13,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IDebugViewAdapter;
-import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -24,12 +24,12 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public abstract class WatchpointAction extends Action implements IViewActionDelegate, IUpdate {
+public abstract class BreakpointToggleAction extends Action implements IViewActionDelegate, IUpdate {
 	
 	private IStructuredSelection fCurrentSelection;
 	private IAction fAction;
 	
-	public WatchpointAction() {
+	public BreakpointToggleAction() {
 		setEnabled(false);
 	}
 
@@ -61,7 +61,7 @@ public abstract class WatchpointAction extends Action implements IViewActionDele
 		Iterator enum= selection.iterator();
 		while (enum.hasNext()) {
 			try {
-				IJavaWatchpoint breakpoint= (IJavaWatchpoint) enum.next();
+				IJavaBreakpoint breakpoint= (IJavaBreakpoint) enum.next();
 				doAction(breakpoint);
 			} catch (CoreException e) {
 				String title= ActionMessages.getString("WatchPointAction.Watchpoint_configuration_1"); //$NON-NLS-1$
@@ -84,9 +84,9 @@ public abstract class WatchpointAction extends Action implements IViewActionDele
 			action.setEnabled(enabled);
 			if (enabled) {
 				IBreakpoint breakpoint= (IBreakpoint)fCurrentSelection.getFirstElement();
-				if (breakpoint instanceof IJavaWatchpoint) {
+				if (breakpoint instanceof IJavaBreakpoint) {
 					try {
-						action.setChecked(getToggleState((IJavaWatchpoint) breakpoint));
+						action.setChecked(getToggleState((IJavaBreakpoint) breakpoint));
 					} catch (CoreException e) {
 					}
 				}
@@ -97,12 +97,12 @@ public abstract class WatchpointAction extends Action implements IViewActionDele
 	/**
 	 * Toggle the state of this action
 	 */
-	public abstract void doAction(IJavaWatchpoint watchpoint) throws CoreException;
+	public abstract void doAction(IJavaBreakpoint breakpoint) throws CoreException;
 	
 	/**
 	 * Returns whether this action is currently toggled on
 	 */
-	protected abstract boolean getToggleState(IJavaWatchpoint watchpoint) throws CoreException;
+	protected abstract boolean getToggleState(IJavaBreakpoint breakpoint) throws CoreException;
 	
 	/**
 	 * Get the current selection
@@ -111,9 +111,7 @@ public abstract class WatchpointAction extends Action implements IViewActionDele
 		return fCurrentSelection;
 	}
 	
-	public boolean isEnabledFor(Object element) {
-		return element instanceof IJavaWatchpoint;
-	}
+	public abstract boolean isEnabledFor(Object element);
 	
 	/** 
 	 * @see IUpdate#update()

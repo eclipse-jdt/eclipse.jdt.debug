@@ -20,7 +20,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
  
 /**
@@ -97,8 +97,8 @@ public class BreakpointUtils {
 	 *  the breakpoint
 	 */
 	public static IMember getMember(IJavaLineBreakpoint breakpoint) throws CoreException {
-		if (breakpoint instanceof IJavaMethodEntryBreakpoint) {
-			return getMethod((IJavaMethodEntryBreakpoint)breakpoint);
+		if (breakpoint instanceof IJavaMethodBreakpoint) {
+			return getMethod((IJavaMethodBreakpoint)breakpoint);
 		}
 		if (breakpoint instanceof IJavaWatchpoint) {
 			return getField((IJavaWatchpoint)breakpoint);
@@ -216,7 +216,7 @@ public class BreakpointUtils {
 	 * @exception CoreException if an exception occurrs accessing
 	 *  the breakpoint
 	 */
-	public static IMethod getMethod(IJavaMethodEntryBreakpoint breakpoint) throws CoreException {	
+	public static IMethod getMethod(IJavaMethodBreakpoint breakpoint) throws CoreException {	
 		String handle = breakpoint.getMarker().getAttribute(HANDLE_ID, null);
 		if (handle != null) {
 			IJavaElement je = JavaCore.create(handle);

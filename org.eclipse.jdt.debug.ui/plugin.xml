@@ -140,6 +140,26 @@
 		</action>
 	</objectContribution>
 	<objectContribution
+		id="org.eclipse.jdt.debug.MethodBreakpointToggleActions"
+		objectClass="org.eclipse.jdt.debug.core.IJavaMethodBreakpoint">
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.EntryToggle"
+			label="%entryAction.label"
+			menubarPath="emptyBreakpointGroup"
+			state="false"
+			class="org.eclipse.jdt.internal.debug.ui.actions.EntryToggleAction"
+			enablesFor="+">
+		</action>
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.ExitToggle"
+			label="%exitAction.label"
+			menubarPath="emptyBreakpointGroup"
+			state="false"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ExitToggleAction"
+			enablesFor="+">
+		</action>		
+	</objectContribution>
+	<objectContribution
 		id="org.eclipse.jdt.debug.BreakpointHitCountActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaBreakpoint">
 		<action
@@ -330,8 +350,8 @@
 			class="org.eclipse.jdt.internal.debug.ui.JavaBreakpointPropertySource">
 		</breakpointPropertyAdapter>
 		<breakpointPropertyAdapter
-			id="org.eclipse.jdt.debug.javaMethodEntryBreakpointPropertyAdapter"
-			markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"
+			id="org.eclipse.jdt.debug.javaMethodBreakpointPropertyAdapter"
+			markerType="org.eclipse.jdt.debug.javaMethodBreakpointMarker"
 			class="org.eclipse.jdt.internal.debug.ui.JavaBreakpointPropertySource">
 		</breakpointPropertyAdapter>
 		<breakpointPropertyAdapter

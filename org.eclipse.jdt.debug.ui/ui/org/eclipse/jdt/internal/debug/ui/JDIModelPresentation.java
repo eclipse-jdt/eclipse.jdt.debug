@@ -31,16 +31,14 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaModifiers;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
@@ -60,8 +58,6 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -432,13 +428,21 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					}
 				}
 			}
-			if (breakpoint instanceof IJavaMethodEntryBreakpoint) {
-				IJavaMethodEntryBreakpoint me= (IJavaMethodEntryBreakpoint)breakpoint;
+			if (breakpoint instanceof IJavaMethodBreakpoint) {
+				IJavaMethodBreakpoint me= (IJavaMethodBreakpoint)breakpoint;
 				String methodName= me.getMethodName();
-				if (thread.isSystemThread()) {
-					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(entry_into_method_{1}_in_{2}))_21"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
+				if (me.isEntrySuspend(thread.getDebugTarget())) {
+					if (thread.isSystemThread()) {
+						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(entry_into_method_{1}_in_{2}))_21"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
+					} else {
+						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(entry_into_method_{1}_in_{2}))_22"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
+					}
 				} else {
-					return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(entry_into_method_{1}_in_{2}))_22"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
+					if (thread.isSystemThread()) {
+						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.System_Thread_[{0}]_(Suspended_(exit_of_method_{1}_in_{2}))_21"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
+					} else {
+						return getFormattedString(DebugUIMessages.getString("JDIModelPresentation.Thread_[{0}]_(Suspended_(exit_of_method_{1}_in_{2}))_22"), new String[] {thread.getName(), methodName, typeName}); //$NON-NLS-1$
+					}					
 				}
 			}
 			if (breakpoint instanceof IJavaLineBreakpoint) {
@@ -1131,10 +1135,25 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				label.append(hitCount);
 				label.append(']');
 			}
+			
+			if (breakpoint instanceof IJavaMethodBreakpoint) {
+				IJavaMethodBreakpoint mbp = (IJavaMethodBreakpoint)breakpoint;
+				boolean entry = mbp.isEntry();
+				boolean exit = mbp.isExit();
+				if (mbp.isEntry() && mbp.isExit()) {
+					label.append(DebugUIMessages.getString("JDIModelPresentation.entry_and_exit")); //$NON-NLS-1$
+				} else if (mbp.isEntry()) {
+					label.append(DebugUIMessages.getString("JDIModelPresentation.entry")); //$NON-NLS-1$
+				} else if (mbp.isExit()) {
+					label.append(DebugUIMessages.getString("JDIModelPresentation.exit")); //$NON-NLS-1$
+				}
+			}
+						
 			if (member != null) {
 				label.append(" - "); //$NON-NLS-1$
 				label.append(fJavaLabelProvider.getText(member));
 			}
+			
 			return label.toString();
 		}
 		return ""; //$NON-NLS-1$

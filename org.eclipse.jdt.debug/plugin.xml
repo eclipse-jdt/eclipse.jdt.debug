@@ -48,10 +48,10 @@
 		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint">
 	</breakpoint>
 	<breakpoint
-		id="javaMethodEntryBreakpoint"
-		markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint">
-	</breakpoint>
+		id="javaMethodBreakpoint"
+		markerType="org.eclipse.jdt.debug.javaMethodBreakpointMarker"
+		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint">
+	</breakpoint>	
 </extension>
 
 <extension id="javaBreakpointMarker" point="org.eclipse.core.resources.markers">
@@ -96,11 +96,14 @@
 	<attribute name="org.eclipse.jdt.debug.core.auto_disabled"/>
 </extension>
 
-<extension id="javaMethodEntryBreakpointMarker" point="org.eclipse.core.resources.markers">
+<extension id="javaMethodBreakpointMarker" point="org.eclipse.core.resources.markers">
    <super type="org.eclipse.jdt.debug.javaLineBreakpointMarker"/>
    <persistent value="true"/>
    <attribute name="org.eclipse.jdt.debug.core.methodName"/>
    <attribute name="org.eclipse.jdt.debug.core.methodSignature"/>
+   <attribute name="org.eclipse.jdt.debug.core.entry"/>
+   <attribute name="org.eclipse.jdt.debug.core.exit"/>   
+   <attribute name="org.eclipse.jdt.debug.core.native"/>
 </extension>
 
 <extension 

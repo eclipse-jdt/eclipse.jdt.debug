@@ -15,7 +15,7 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaMethodEntryBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
@@ -74,7 +74,11 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 				}
 				Map attributes = new HashMap(10);
 				BreakpointUtils.addJavaBreakpointAttributes(attributes, method);
-				setBreakpoint(JDIDebugModel.createMethodEntryBreakpoint(BreakpointUtils.getBreakpointResource(method),method.getDeclaringType().getFullyQualifiedName(), getMethod().getElementName(), getMethod().getSignature(), -1, start, end, 0, true, attributes));
+				String methodName = method.getElementName();
+				if (method.isConstructor()) {
+					methodName = "<init>";
+				}
+				setBreakpoint(JDIDebugModel.createMethodBreakpoint(BreakpointUtils.getBreakpointResource(method),method.getDeclaringType().getFullyQualifiedName(), methodName, getMethod().getSignature(), true, false, false, -1, start, end, 0, true, attributes));
 			} catch (CoreException x) {
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageMethodEntryBreakpointAction.Problems_creating_breakpoint_7"), x.getMessage()); //$NON-NLS-1$
 			}
@@ -114,10 +118,10 @@ public class ManageMethodEntryBreakpointAction extends Action implements IObject
 		IBreakpoint[] breakpoints= breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
 		for (int i= 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint= breakpoints[i];
-			if (breakpoint instanceof IJavaMethodEntryBreakpoint) {
+			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IMember container = null;
 				try {
-					container= BreakpointUtils.getMember((IJavaMethodEntryBreakpoint) breakpoint);
+					container= BreakpointUtils.getMember((IJavaMethodBreakpoint) breakpoint);
 				} catch (CoreException e) {
 					return null;
 				}

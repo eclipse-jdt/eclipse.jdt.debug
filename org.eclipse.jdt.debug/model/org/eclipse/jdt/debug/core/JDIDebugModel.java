@@ -32,7 +32,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
-import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint;
+import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -328,24 +328,31 @@ public class JDIDebugModel {
 		}		
 		return new JavaWatchpoint(resource, typeName, fieldName, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
-
+	
 	/**
-	 * Creates and returns a method entry breakpoint in a
-	 * binary method with the given name in a type with the given name.
-	 * The marker associated with the breakpoint will be created on the specified resource.
-	 * If hitCount is > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times.
+	 * Creates and returns a method breakpoint with the specified
+	 * criteria.
 	 *
 	 * @param resource the resource on which to create the associated
 	 *  breakpoint marker
-	 * @param typeName the fully qualified name of the type in which
-	 *  the method is contained
-	 * @param methodName the name of the method in which to suspend on entry
-	 * @param methodSignature the signature of the method in which to suspsend
-	 *  on entry
-	 * @param lineNumber the lineNumber with which the breakpoint is asscoiated,
-	 *   or -1 is unspecfied. Line numbers are 1 based, associated with the compilation
-	 *   unit in which the type is defined
+	 * @param typePattern the pattern specifying the fully qualified name of type(s)
+	 *  this breakpoint suspends execution in. Patterns are limited to exact
+	 *  matches and patterns that begin or end with '*'.
+	 * @param methodName the name of the method(s) this breakpoint suspends
+	 *  execution in, or <code>null</code> if this breakpoint does
+	 *  not suspend execution based on method name
+	 * @param methodSignature the signature of the method(s) this breakpoint suspends
+	 *  execution in, or <code>null</code> if this breakpoint does not
+	 *  suspend exectution based on method signature
+	 * @param entry whether this breakpoint causes execution to suspend
+	 *  on entry of methods
+	 * @param exit whether this breakpoint causes execution to suspend
+	 *  on exit of methods
+	 * @param nativeOnly whether this breakpoint causes execution to suspend
+	 *  on entry/exit of native methods only
+	 * @param lineNumber the lineNumber on which the breakpoint is created - line
+	 *   numbers are 1 based, associated with the compilation unit in which
+	 *   the type is defined
 	 * @param charStart the first character index associated with the breakpoint,
 	 *   or -1 if unspecified
  	 * @param charEnd the last character index associated with the breakpoint,
@@ -355,19 +362,19 @@ public class JDIDebugModel {
 	 * @param register whether to add this breakpoint to the breakpoint manager
 	 * @param attributes a map of client defined attributes that should be assigned
  	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
-	 * @return a method entry breakpoint
+	 * @return a method breakpoint
 	 * @exception CoreException If this method fails. Reasons include:<ul> 
 	 *<li>Failure creating underlying marker.  The exception's status contains
 	 * the underlying exception responsible for the failure.</li></ul>
 	 * @since 2.0
 	 */
-	public static IJavaMethodEntryBreakpoint createMethodEntryBreakpoint(IResource resource, String typeName, String methodName, String methodSignature, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
+	public static IJavaMethodBreakpoint createMethodBreakpoint(IResource resource, String typeName, String methodName, String methodSignature, boolean entry, boolean exit, boolean nativeOnly, int lineNumber, int charStart, int charEnd, int hitCount, boolean register, Map attributes) throws CoreException {
 		if (attributes == null) {
 			attributes = new HashMap(10);
 		}
-		return new JavaMethodEntryBreakpoint(resource, typeName, methodName, methodSignature, lineNumber, charStart, charEnd, hitCount, register, attributes);
+		return new JavaMethodBreakpoint(resource, typeName, methodName, methodSignature, entry, exit, nativeOnly, lineNumber, charStart, charEnd, hitCount, register, attributes);
 	}
-	
+		
 	/**
 	 * Returns whether a line breakpoint already exists on the given line number in a
 	 * type with the specified fully qualified name.

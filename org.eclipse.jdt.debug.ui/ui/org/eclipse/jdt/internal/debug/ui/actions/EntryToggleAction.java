@@ -7,29 +7,30 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 
-public class ModificationWatchpointToggleAction extends BreakpointToggleAction {
+public class EntryToggleAction extends BreakpointToggleAction {
 
 	/**
 	 * @see BreakpointToggleAction#getToggleState(IJavaBreakpoint)
 	 */
-	protected boolean getToggleState(IJavaBreakpoint watchpoint) throws CoreException {
-		return ((IJavaWatchpoint)watchpoint).isModification();
+	protected boolean getToggleState(IJavaBreakpoint breakpoint) throws CoreException {
+		return ((IJavaMethodBreakpoint)breakpoint).isEntry();
 	}
 
 	/**
 	 * @see BreakpointToggleAction#doAction(IJavaBreakpoint)
 	 */
-	public void doAction(IJavaBreakpoint watchpoint) throws CoreException {
-		((IJavaWatchpoint)watchpoint).setModification(!((IJavaWatchpoint)watchpoint).isModification());
+	public void doAction(IJavaBreakpoint breakpoint) throws CoreException {
+		((IJavaMethodBreakpoint)breakpoint).setEntry(!((IJavaMethodBreakpoint)breakpoint).isEntry());
 	}
 
 	/**
 	 * @see BreakpointToggleAction#isEnabledFor(Object)
 	 */
 	public boolean isEnabledFor(Object element) {
-		return element instanceof IJavaWatchpoint;
+		return element instanceof IJavaMethodBreakpoint;
 	}
+
 }
 

@@ -6,22 +6,30 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
  
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 
-public class AccessWatchpointToggleAction extends WatchpointAction {
+public class AccessWatchpointToggleAction extends BreakpointToggleAction {
 
 	/**
-	 * @see WatchpointAction#getToggleState(IMarker)
+	 * @see BreakpointToggleAction#getToggleState(IJavaBreakpoint)
 	 */
-	protected boolean getToggleState(IJavaWatchpoint watchpoint) throws CoreException {
-		return watchpoint.isAccess();
+	protected boolean getToggleState(IJavaBreakpoint watchpoint) throws CoreException {
+		return ((IJavaWatchpoint)watchpoint).isAccess();
 	}
 
 	/**
-	 * @see WatchpointAction#doAction(IMarker)
+	 * @see BreakpointToggleAction#doAction(IJavaBreakpoint)
 	 */
-	public void doAction(IJavaWatchpoint watchpoint) throws CoreException {
-		watchpoint.setAccess(!watchpoint.isAccess());
+	public void doAction(IJavaBreakpoint watchpoint) throws CoreException {
+		((IJavaWatchpoint)watchpoint).setAccess(!((IJavaWatchpoint)watchpoint).isAccess());
+	}
+
+	/**
+	 * @see BreakpointToggleAction#isEnabledFor(Object)
+	 */
+	public boolean isEnabledFor(Object element) {
+		return element instanceof IJavaWatchpoint;
 	}
 
 }
