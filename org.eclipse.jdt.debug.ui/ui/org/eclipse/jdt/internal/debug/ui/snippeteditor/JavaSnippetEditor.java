@@ -198,7 +198,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		/**
 		 * Processes events.
 		 */
-		public void block() {
+		protected void block() {
 			if (fDisplay == Display.getCurrent()) {
 				while (fContinueEventDispatching) {
 					if (!fDisplay.readAndDispatch())
@@ -375,7 +375,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return fEvaluationContext;
 	}
 	
-	public IJavaProject getJavaProject() {
+	protected IJavaProject getJavaProject() {
 		if (fJavaProject == null) {
 			try {
 				fJavaProject = findJavaProject();
@@ -439,7 +439,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}
 
-	public void fireEvalStateChanged() {
+	protected void fireEvalStateChanged() {
 		Runnable r= new Runnable() {
 			public void run() {
 				Shell shell= getShell();
@@ -544,13 +544,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	/**
-	 * @see IEvaluationListener#evaluationTimedOut(IJavaThread)
-	 */
-	public boolean evaluationTimedOut(IJavaThread thread) {
-		return true; // Keep waiting
-	}
-	
-	/**
 	 * Make the expression view visible or open one
 	 * if required.
 	 */
@@ -571,7 +564,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}
 		
-	public void codeComplete(ICompletionRequestor requestor) throws JavaModelException {
+	protected void codeComplete(ICompletionRequestor requestor) throws JavaModelException {
 		IDocument d= getSourceViewer().getDocument();
 		ITextSelection selection= (ITextSelection)getSelectionProvider().getSelection();
 		int start= selection.getOffset();
@@ -582,7 +575,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 	}
 		 
-	public IJavaElement[] codeResolve() throws JavaModelException {
+	protected IJavaElement[] codeResolve() throws JavaModelException {
 		ISourceViewer viewer= getSourceViewer();
 		if (viewer == null) {
 			return null;
@@ -599,7 +592,8 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		}
 		return null;
 	}	
-	public void showError(IStatus status) {
+	
+	protected void showError(IStatus status) {
 		evaluationEnds();
 		if (!status.isOK()) {
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.evaluating2"), null, status); //$NON-NLS-1$
