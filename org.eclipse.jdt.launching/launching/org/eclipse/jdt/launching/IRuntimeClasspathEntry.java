@@ -77,7 +77,6 @@ public interface IRuntimeClasspathEntry {
 	 * <ul>
 	 * <li><code>PROJECT</code></li>
 	 * <li><code>ARCHIVE</code></li>
-	 * <li><code>FOLDER</code></li>
 	 * <li><code>VARIABLE</code></li>
 	 * <li><code>LIBRARY</code></li>
 	 * </ul>
