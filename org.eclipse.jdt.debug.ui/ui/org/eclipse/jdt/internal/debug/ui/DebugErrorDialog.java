@@ -1,5 +1,10 @@
 package org.eclipse.jdt.internal.debug.ui;
 
+/*
+ * (c) Copyright IBM Corp. 2001.
+ * All Rights Reserved.
+ */
+ 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -12,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class DebugErrorDialog extends ErrorDialog {
 
-	Button fShowHCR= null;
+	private Button fShowHCR= null;
 
 	public DebugErrorDialog(Shell parentShell, String dialogTitle, String message, IStatus status, int displayMask) {
 		super(parentShell, dialogTitle, message, status, displayMask);
@@ -20,8 +25,8 @@ public class DebugErrorDialog extends ErrorDialog {
 
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogArea= (Composite) super.createDialogArea(parent);
-		fShowHCR= createCheckButton(dialogArea, DebugUIMessages.getString("Always_alert_me_of_hot_code_replace_failure_1")); //$NON-NLS-1$
-		fShowHCR.setSelection(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
+		setShowHCRButton(createCheckButton(dialogArea, DebugUIMessages.getString("DebugErrorDialog.Always_alert_me_of_hot_code_replace_failure_1"))); //$NON-NLS-1$
+		getShowHCRButton().setSelection(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
 		
 		return dialogArea;
 	}
@@ -51,7 +56,14 @@ public class DebugErrorDialog extends ErrorDialog {
 	}
 	
 	private void storePreference() {
-		JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.ALERT_HCR_FAILED, fShowHCR.getSelection());
+		JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.ALERT_HCR_FAILED, getShowHCRButton().getSelection());
 	}
 
+	protected Button getShowHCRButton() {
+		return fShowHCR;
+	}
+
+	protected void setShowHCRButton(Button showHCR) {
+		fShowHCR = showHCR;
+	}
 }
