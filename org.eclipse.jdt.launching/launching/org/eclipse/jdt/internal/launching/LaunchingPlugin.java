@@ -236,8 +236,9 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 									IPath renamed = (IPath)fRenamedContainerIds.get(reference);
 									if (renamed != null) {
 										if (!defRef) {
-											// re-bind to new name if not a default reference
-											newBinding = renamed;
+											// The JRE was re-named. This changes the identifier of
+											// the container entry, so we must re-build.
+											buildList.add(project);
 										}
 									}
 									JREContainerInitializer initializer = new JREContainerInitializer();
