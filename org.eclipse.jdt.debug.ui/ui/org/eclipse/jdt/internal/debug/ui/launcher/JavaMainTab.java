@@ -352,9 +352,9 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 	 * given Java element.
 	 */
 	protected void initializeDefaults(IJavaElement javaElement, ILaunchConfigurationWorkingCopy config) {
+		initializeHardCodedDefaults(config);
 		initializeJavaProject(javaElement, config);
 		initializeMainTypeAndName(javaElement, config);
-		initializeHardCodedDefaults(config);
 	}
 
 	/**
@@ -364,6 +364,14 @@ public class JavaMainTab extends JavaLaunchConfigurationTab {
 		IJavaElement je = getContext();
 		if (je == null) {
 			initializeHardCodedDefaults(config);
+			
+			// We set empty attributes for project & main type so that when one config is
+			// compared to another, the existence of empty attributes doesn't cause an
+			// incorrect result (the performApply() method can result in empty values
+			// for these attributes being set on a config if there is nothing in the
+			// corresponding text boxes)
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "");
+			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, "");
 		} else {
 			initializeDefaults(je, config);
 		}
