@@ -14,7 +14,9 @@ import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
@@ -68,6 +70,19 @@ public class JavaMethodBreakpointTypeChange extends JavaLineBreakpointTypeChange
 			parameterTypes[i]= parameterTypes[i].replace('/', '.');
 		}
 		IMethod method= newType.getMethod(fMethodName, parameterTypes);
+		IMethod[] methods= newType.findMethods(method);
+		int lineNumber= getLineNumber();
+		int start = getCharStart();
+		int end = getCharEnd();
+		if (methods.length == 1) {
+			method= methods[0];
+			ISourceRange range = method.getNameRange();
+			if (range != null) {
+				start = range.getOffset();
+				end = start + range.getLength();
+				lineNumber= -1;
+			}
+		}
 		Map attributes= getAttributes();
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, method);
 		IJavaMethodBreakpoint newMethodBreakpoint= JDIDebugModel.createMethodBreakpoint(
@@ -78,9 +93,9 @@ public class JavaMethodBreakpointTypeChange extends JavaLineBreakpointTypeChange
 				fIsEntry,
 				fIsExit,
 				fIsNativeOnly,
-				getLineNumber(),
-				getCharStart(),
-				getCharEnd(),
+				lineNumber,
+				start,
+				end,
 				getHitCount(),
 				true,
 				attributes);

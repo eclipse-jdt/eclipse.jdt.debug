@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -57,6 +58,13 @@ public class JavaWatchpointTypeChange extends JavaLineBreakpointTypeChange {
 	 */
 	public Change performChange(IType newType, Object undoChangedElement, Object undoArgument, int changeType) throws CoreException {
 		IField newField= newType.getField(fFieldName);
+		int start = -1;
+		int end = -1;
+		ISourceRange range = newField.getNameRange();
+		if (range != null) {
+			start = range.getOffset();
+			end = start + range.getLength();
+		}
 		Map attributes= getAttributes();
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, newField);
 		// create the new breakpoint
@@ -64,9 +72,9 @@ public class JavaWatchpointTypeChange extends JavaLineBreakpointTypeChange {
 				newType.getResource(),
 				newType.getFullyQualifiedName(),
 				fFieldName,
-				getLineNumber(),
-				getCharStart(),
-				getCharEnd(),
+				-1,
+				start,
+				end,
 				getHitCount(),
 				true,
 				attributes);
