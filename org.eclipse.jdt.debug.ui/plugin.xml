@@ -2361,11 +2361,13 @@
       <sourceContainerPresentation
             containerTypeID="org.eclipse.jdt.launching.sourceContainer.classpathVariable"
             browserClass="org.eclipse.jdt.internal.debug.ui.sourcelookup.ClasspathVariableSourceContainerBrowser"
+            icon="icons/full/obj16/envvar_obj.gif"
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.classpathVariable">
       </sourceContainerPresentation>
       <sourceContainerPresentation
             browserClass="org.eclipse.jdt.internal.debug.ui.sourcelookup.ClasspathContainerSourceContainerBrowser"
             containerTypeID="org.eclipse.jdt.launching.sourceContainer.classpathContainer"
+            icon="icons/full/obj16/library_obj.gif"
             id="org.eclipse.jdt.debug.ui.sourceContainerPresentation.classpathContainer">
       </sourceContainerPresentation>
    </extension>
