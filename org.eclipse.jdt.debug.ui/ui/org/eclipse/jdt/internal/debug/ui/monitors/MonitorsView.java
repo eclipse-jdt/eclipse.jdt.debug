@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.Page;
 
 /**
@@ -73,23 +72,23 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 	 */
 	class MonitorsViewerPage extends Page {
 		
-		/**
-		 * @see IPage#createControl(Composite)
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 		 */
 		public void createControl(Composite parent) {
 			Viewer viewer = createMonitorsViewer(parent);
 			setMonitorsViewer(viewer);			
 		}
 
-		/**
-		 * @see IPage#getControl()
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.part.IPage#getControl()
 		 */
 		public Control getControl() {
 			return getMonitorsViewer().getControl();
 		}
 
-		/**
-		 * @see IPage#setFocus()
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.part.IPage#setFocus()
 		 */
 		public void setFocus() {
 			Viewer viewer= getMonitorsViewer();
@@ -108,23 +107,23 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 	 */
 	class DeadLocksViewerPage extends Page {
 		
-		/**
-		 * @see IPage#createControl(Composite)
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 		 */
 		public void createControl(Composite parent) {
 			Viewer viewer = createDeadLocksViewer(parent);
 			setDeadLocksViewer(viewer);			
 		}
 
-		/**
-		 * @see IPage#getControl()
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.part.IPage#getControl()
 		 */
 		public Control getControl() {
 			return getDeadLocksViewer().getControl();
 		}
 
-		/**
-		 * @see IPage#setFocus()
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.part.IPage#setFocus()
 		 */
 		public void setFocus() {
 			Viewer viewer= getDeadLocksViewer();
@@ -135,7 +134,6 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 				}
 			}
 		}
-
 	}
 	
 	public MonitorsView(){		
@@ -158,8 +156,8 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 		return fViewId;
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
 		StructuredViewer threadViewer = new TreeViewer(parent, SWT.MULTI);
@@ -216,8 +214,8 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 		return deadLocksViewer;
 	}
 
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -240,30 +238,30 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 		getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
 		
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
 	 */
 	protected String getHelpContextId() {
 		return IJavaDebugHelpContextIds.MONITORS_VIEW;
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(IMenuManager)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(new Separator("vmGroup")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(IToolBarManager)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator("vmGroup")); //$NON-NLS-1$
@@ -332,9 +330,8 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 					showMessage(MonitorMessages.getString("MonitorsView.3")); //$NON-NLS-1$
 					showPage= false;
 					break;
-				} else {
-					changeFromShowMessagePage= true;
-				}
+				} 
+				changeFromShowMessagePage= true;
 				page= getDeadLocksViewer().getControl();
 				page.setRedraw(false);
 				getDeadLocksViewer().refresh();
@@ -355,7 +352,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView implements ISele
 		updateObjects();
 	}
 
-	/** 
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
