@@ -31,10 +31,6 @@ public abstract class PacketManager implements Runnable {
 	 */
 	public synchronized void disconnectVM() {
 		VirtualMachineImpl vm = fConnector.virtualMachine();
-		if (vm.isDisconnected()) {
-			return;
-		}
-
 
 		vm.setDisconnected(true);
 		fConnector.close();

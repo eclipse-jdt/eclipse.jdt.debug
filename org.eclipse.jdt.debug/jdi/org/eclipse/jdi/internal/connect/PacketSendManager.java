@@ -1,9 +1,11 @@
 package org.eclipse.jdi.internal.connect;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -42,16 +44,14 @@ public class PacketSendManager extends PacketManager {
 	 * Thread's run method.
 	 */
 	public void run() {
-		try {
-			while(true) {
+		while (!VMIsDisconnected()) {
+			try {
 				sendAvailablePackets();
+			} catch (InterruptedException e) {
+			} catch (InterruptedIOException e) {
+			} catch (IOException e) {
+				disconnectVM();
 			}
-		} catch (InterruptedException e) {
-			// Stop running.
-		} catch (InterruptedIOException e) {
-			// Stop running.
-		} catch (IOException e) {
-			disconnectVM();
 		}
 	}
 	
