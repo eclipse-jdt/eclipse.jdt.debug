@@ -1,9 +1,10 @@
+package org.eclipse.jdt.internal.debug.ui.snippeteditor;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.jdt.internal.debug.ui.snippeteditor;
-
+ 
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -44,7 +45,7 @@ public class JavaSnippetCompletionProcessor implements IContentAssistProcessor {
 	};
 		
 	public JavaSnippetCompletionProcessor(JavaSnippetEditor editor) {
-		fCollector= new JavaSnippetResultCollector();
+		fCollector= new ResultCollector();
 		fEditor= editor;
 		ContextType contextType= ContextTypeRegistry.getInstance().getContextType("java"); //$NON-NLS-1$
 		if (contextType != null) {
