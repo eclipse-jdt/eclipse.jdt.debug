@@ -226,11 +226,11 @@ public class ExceptionFilterEditor {
 	/**
 	 * Creates a fully configured push button with the given label and tooltip.
 	 */
-	public Button createPushButton(Composite parent, String text, String tooltipText) {
+	private Button createPushButton(Composite parent, String text, String tooltipText) {
 		Button button = new Button(parent, SWT.PUSH);
 		button.setFont(parent.getFont());
 		button.setText(text);
-		button.setToolTipText(text);
+		button.setToolTipText(tooltipText);
 		GridData gd = getButtonGridData(button);
 		button.setLayoutData(gd);
 		button.addSelectionListener(fSelectionListener);
