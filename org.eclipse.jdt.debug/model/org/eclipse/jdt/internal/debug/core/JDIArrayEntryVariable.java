@@ -42,7 +42,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	protected Value retrieveValue() {
 		ArrayReference ar= getArrayReference();
 		if (ar != null) {
-			return ar.getValue(fIndex);
+			return ar.getValue(getIndex());
 		}
 		return null;
 	}
@@ -51,7 +51,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	 * @see IVariable#getName()
 	 */
 	public String getName() {
-		return "[" + fIndex + "]"; //$NON-NLS-2$ //$NON-NLS-1$
+		return "[" + getIndex() + "]"; //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
 	public void setValue(Value value) throws DebugException {
@@ -60,7 +60,7 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 			requestFailed(JDIDebugModelMessages.getString("JDIArrayEntryVariable.value_modification_failed"), null); //$NON-NLS-1$
 		}
 		try {
-			ar.setValue(fIndex, value);
+			ar.setValue(getIndex(), value);
 		} catch (ClassNotLoadedException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_modifying_variable_value"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		} catch (InvalidTypeException e) {
@@ -73,6 +73,10 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 
 	protected ArrayReference getArrayReference() {
 		return fArray;
+	}
+	
+	protected int getIndex() {
+		return fIndex;
 	}
 	
 	/**
