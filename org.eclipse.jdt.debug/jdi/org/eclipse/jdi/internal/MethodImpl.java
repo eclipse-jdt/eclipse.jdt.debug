@@ -648,11 +648,14 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 	 * The JDK 1.4.0 specification states that obsolete methods
 	 * are given an ID of zero. It also states that when a method
 	 * is redefined, the new method gets the ID of the old method.
-	 * Thus, the JDWP query for isObsolete will never return true
-	 * for a non-zero method ID. The query is therefore not needed.
+	 * Thus, the JDWP query for isObsolete on JDK 1.4 will never return true
+	 * for a non-zero method ID. The query is therefore not needed
 	 */
 	public boolean isObsolete() {
-		return (fMethodID.value() == 0);
+		if (virtualMachineImpl().isJdwpVersionGreaterOrEqual(1, 4)) {
+			return fMethodID.value() == 0;
+		}
+		return false;
 	}
 
 	/*
