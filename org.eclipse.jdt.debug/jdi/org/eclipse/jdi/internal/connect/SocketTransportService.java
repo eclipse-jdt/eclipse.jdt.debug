@@ -20,6 +20,8 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
 
+import org.eclipse.jdi.TimeoutException;
+
 import com.sun.jdi.connect.TransportTimeoutException;
 import com.sun.jdi.connect.spi.ClosedConnectionException;
 import com.sun.jdi.connect.spi.Connection;
@@ -118,26 +120,46 @@ public class SocketTransportService extends TransportService {
         return attach(host, port, attachTimeout, handshakeTimeout);
     }
 
-    public Connection attach(String host, int port, long attachTimeout, long handshakeTimeout) throws IOException {
+    public Connection attach(final String host, final int port, long attachTimeout, final long handshakeTimeout) throws IOException {
         if (attachTimeout > 0){
             if (attachTimeout > Integer.MAX_VALUE) {
                 attachTimeout = Integer.MAX_VALUE;  //approx 25 days!
             }
-            fSocket.setSoTimeout((int) attachTimeout);
         }
+        
+        final IOException[] ex = new IOException[1];
+        Thread attachThread = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    fSocket = new Socket(host, port);
+                    fInput = fSocket.getInputStream();
+                    fOutput = fSocket.getOutputStream();
+                    performHandshake(fInput, fOutput, handshakeTimeout);
+                } catch (IOException e) {
+                    ex[0] = e;
+                }                
+            }
+        }, ConnectMessages.getString("SocketTransportService.0")); //$NON-NLS-1$
+        
+        attachThread.start();
         try {
-            fSocket = new Socket(host, port);
-        } catch (SocketTimeoutException e) {
-            throw new TransportTimeoutException();
+            attachThread.join(attachTimeout);
+            if (attachThread.isAlive()) {
+                attachThread.interrupt();
+                throw new TimeoutException();
+            }
+        } catch (InterruptedException e) {
         }
-        fInput = fSocket.getInputStream();
-        fOutput = fSocket.getOutputStream();
-        performHandshake(fInput, fOutput, handshakeTimeout);
+        
+        if (ex[0] != null) {
+            throw ex[0];
+        }
+
+        
         return new SocketConnection(this);
     }
 
     void performHandshake(final InputStream in, final OutputStream out, final long timeout) throws IOException {
-        final Object lock = new Object();
         final IOException[] ex = new IOException[1];
         final boolean[] handshakeCompleted = new boolean[1];
         
@@ -146,37 +168,31 @@ public class SocketTransportService extends TransportService {
                 try {
                     writeHandshake(out);
                     readHandshake(in);
-                    synchronized(lock) {
-                        handshakeCompleted[0] = true;
-                        lock.notify();
-                    }
+                    handshakeCompleted[0] = true;
                 } catch (IOException e) {
                     ex[0] = e;
                 }
             }
-        });
+        }, ConnectMessages.getString("SocketTransportService.1")); //$NON-NLS-1$
         
         t.start();
-        synchronized(lock) {
-            try {
-	            if (!handshakeCompleted[0]) 
-	                lock.wait(timeout);
-            } catch (InterruptedException e) {
-            }
+        try {
+            t.join(timeout);
+        } catch (InterruptedException e1) {
         }
-        
+                
         if (handshakeCompleted[0])
             return;
-        
-        if (ex[0] != null)
-            throw ex[0];
-        
+
         try {
-	        in.close();
-	        out.close();
+            in.close();
+            out.close();
         } catch (IOException e) {
         }
         
+        if (ex[0] != null)
+            throw ex[0];
+
         throw new TransportTimeoutException();
     }
     

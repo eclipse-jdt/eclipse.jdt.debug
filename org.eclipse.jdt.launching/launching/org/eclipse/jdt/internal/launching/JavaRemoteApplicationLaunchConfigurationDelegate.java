@@ -59,6 +59,9 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		}
 		
 		Map argMap = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CONNECT_MAP, (Map)null);
+        
+        int connectTimeout = JavaRuntime.getPreferences().getInt(JavaRuntime.PREF_CONNECT_TIMEOUT);
+        argMap.put("timeout", ""+connectTimeout);  //$NON-NLS-1$//$NON-NLS-2$
 
 		// check for cancellation
 		if (monitor.isCanceled()) {

@@ -116,10 +116,18 @@ public class SocketAttachConnector implements IVMConnector {
 			abort(LaunchingMessages.getString("SocketAttachConnector.Hostname_unspecified_for_remote_connection._4"), null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_HOSTNAME); //$NON-NLS-1$
 		}
 		Map map= connector.defaultArguments();
-		Connector.Argument param= (Connector.Argument) map.get("hostname"); //$NON-NLS-1$
+		
+        Connector.Argument param= (Connector.Argument) map.get("hostname"); //$NON-NLS-1$
 		param.setValue(host);
 		param= (Connector.Argument) map.get("port"); //$NON-NLS-1$
 		param.setValue(portNumberString);
+        
+        String timeoutString = (String)arguments.get("timeout"); //$NON-NLS-1$
+        if (timeoutString != null) {
+            param= (Connector.Argument) map.get("timeout"); //$NON-NLS-1$
+            param.setValue(timeoutString);
+        }
+        
 		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
 		boolean allowTerminate = false;
 		if (configuration != null) {

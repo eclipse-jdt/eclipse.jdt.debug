@@ -30,6 +30,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 	private String fHostname;
 	/** Port to which is attached. */
 	private int fPort;
+    private int fTimeout;
 	
 	/**
 	 * Creates new SocketAttachingConnectorImpl.
@@ -57,6 +58,10 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		IntegerArgumentImpl intArg = new IntegerArgumentImpl("port", ConnectMessages.getString("SocketAttachingConnectorImpl.Port_number_to_which_to_attach_for_VM_connections_3"), ConnectMessages.getString("SocketAttachingConnectorImpl.Port_4"), true, SocketTransportImpl.MIN_PORTNR, SocketTransportImpl.MAX_PORTNR); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		arguments.put(intArg.name(), intArg);
 		
+        // Timeout
+        IntegerArgumentImpl timeoutArg = new IntegerArgumentImpl("timeout", ConnectMessages.getString("SocketAttachingConnectorImpl.1"), ConnectMessages.getString("SocketAttachingConnectorImpl.2"), false, 0, Integer.MAX_VALUE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        arguments.put(timeoutArg.name(), timeoutArg);
+        
 		return arguments;
 	}
 	
@@ -84,7 +89,14 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		 	fHostname = ((Connector.StringArgument)connectionArgs.get(attribute)).value();
 		 	attribute = "port"; //$NON-NLS-1$
 		 	fPort = ((Connector.IntegerArgument)connectionArgs.get(attribute)).intValue();
-		 	// TODO: new timeout attribute ?
+		 	attribute = "timeout"; //$NON-NLS-1$
+		 	Object object = connectionArgs.get(attribute);
+		 	if (object != null) {
+               Connector.IntegerArgument timeoutArg = (IntegerArgument) object;
+               if (timeoutArg.value() != null) {
+		 	    fTimeout = timeoutArg.intValue();
+               }
+		 	} 
 		} catch (ClassCastException e) {
 			throw new IllegalConnectorArgumentsException(ConnectMessages.getString("SocketAttachingConnectorImpl.Connection_argument_is_not_of_the_right_type_6"), attribute); //$NON-NLS-1$
 		} catch (NullPointerException e) {
@@ -102,7 +114,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		getConnectionArguments(connectionArgs);
 		Connection connection = null;
 		try {
-			connection = ((SocketTransportImpl)fTransport).attach(fHostname, fPort);
+			connection = ((SocketTransportImpl)fTransport).attach(fHostname, fPort, fTimeout, 0);
 		} catch (IllegalArgumentException e) {
 			List args = new ArrayList();
 			args.add("hostname"); //$NON-NLS-1$

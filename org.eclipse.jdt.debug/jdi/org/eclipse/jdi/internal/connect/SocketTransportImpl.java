@@ -39,8 +39,8 @@ public class SocketTransportImpl implements Transport {
         return TRANSPORT_NAME;
     }
 
-    public Connection attach(String hostname, int port) throws IOException {
-        return service.attach(hostname, port, 0, 0);
+    public Connection attach(String hostname, int port, long attachTimeout, long handshakeTimeout) throws IOException {
+        return service.attach(hostname, port, attachTimeout, handshakeTimeout);
     }
 
     public String startListening(int port) throws IOException {
