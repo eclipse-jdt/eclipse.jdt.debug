@@ -82,6 +82,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -121,7 +122,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	private boolean fEvaluating;
 	private IJavaThread fThread;
-	private int fAttempts= 0;
 	
 	private int fSnippetStart;
 	private int fSnippetEnd;
@@ -140,6 +140,70 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * debug model.
 	 */
 	private String fResult;
+	
+	/**
+	 * A thread that waits to have a 
+	 * thread to perform an evaluation in.
+	 */
+	private static class WaitThread extends Thread {
+		/**
+		 * The display used for event dispatching.
+		 */
+		private Display fDisplay;
+		
+		/**
+		 * Indicates whether to continue event queue dispatching.
+		 */
+		private volatile boolean fContinueEventDispatching = true;
+		
+		private Object fLock;
+		/**
+		 * Creates a eval thread
+		 * 
+		 * @param display the display to be used to read and dispatch events
+		 * @param lock the monitor to wait on
+		 */
+		private WaitThread(Display display, Object lock) {
+			super("Snippet Wait Thread"); //$NON-NLS-1$
+			fDisplay = display;
+			fLock= lock;
+		}
+		public void run() {
+			try {
+				synchronized (fLock) {
+					//should be notified out of #setThread(IJavaThread)
+					fLock.wait(20000);	
+				}
+			} catch (InterruptedException e) {
+			} finally {
+				// Make sure that all events in the asynchronous event queue
+				// are dispatched.
+				fDisplay.syncExec(new Runnable() {
+					public void run() {
+						// do nothing
+					}
+				});
+				
+				// Stop event dispatching
+				fContinueEventDispatching= false;
+				
+				// Force the event loop to return from sleep () so that
+				// it stops event dispatching.
+				fDisplay.asyncExec(null);
+			}	
+		}
+		/**
+		 * Processes events.
+		 */
+		public void block() {
+			if (fDisplay == Display.getCurrent()) {
+				while (fContinueEventDispatching) {
+					if (!fDisplay.readAndDispatch())
+						fDisplay.sleep();
+				}
+			}
+		}		
+	}
 	
 	public JavaSnippetEditor() {
 		super();
@@ -277,7 +341,10 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	protected void setImports(String[] imports) {
 		fImports= imports;
-		String serialized= JavaDebugOptionsManager.serializeList(imports);
+		String serialized= null;
+		if (imports != null) {
+			serialized= JavaDebugOptionsManager.serializeList(imports);
+		}
 		// persist
 		try {
 			getPage().setPersistentProperty(new QualifiedName(JDIDebugUIPlugin.getPluginId(), IMPORTS_CONTEXT), serialized);
@@ -357,13 +424,15 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	public void addSnippetStateChangedListener(ISnippetStateChangedListener listener) {
-		if (!fSnippetStateListeners.contains(listener))
+		if (!fSnippetStateListeners.contains(listener)) {
 			fSnippetStateListeners.add(listener);
+		}
 	}
 	
 	public void removeSnippetStateChangedListener(ISnippetStateChangedListener listener) {
-		if (fSnippetStateListeners != null)
+		if (fSnippetStateListeners != null) {
 			fSnippetStateListeners.remove(listener);
+		}
 	}
 
 	public void fireEvalStateChanged() {
@@ -379,21 +448,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		getShell().getDisplay().asyncExec(r);
 	}
 	
-	protected void evaluate(final String snippet) {
-		if (fAttempts < 200 && getThread() == null) {
-			// wait for our main thread to suspend
-			fAttempts++;
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-			}
-			Runnable r = new Runnable() {
-				public void run() {
-					evaluate(snippet);
-				}
-			};
-			getShell().getDisplay().asyncExec(r);
-			return;
+	protected void evaluate(String snippet) {
+		if (getThread() == null) {
+			WaitThread eThread= new WaitThread(Display.getCurrent(), this);
+			eThread.start();
+			eThread.block();
 		}
 		if (getThread() == null) {
 			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, 
@@ -582,11 +641,14 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 */
 	protected synchronized String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
 		fPresentation.computeDetail(value, this);
-		try {
-			wait(20000);
-		} catch (InterruptedException e) {
-			return SnippetMessages.getString("SnippetEditor.error.interrupted"); //$NON-NLS-1$
+		if (fResult == null) {
+			try {
+				wait(20000);
+			} catch (InterruptedException e) {
+				return SnippetMessages.getString("SnippetEditor.error.interrupted"); //$NON-NLS-1$
+			}
 		}
+	
 		return fResult;
 	}
 	
@@ -721,7 +783,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			}
 		}		
 		fEvaluating = true;
-		fAttempts = 0;
 		setTitleImage();
 		fireEvalStateChanged();
 		showStatus(SnippetMessages.getString("SnippetEditor.evaluating")); //$NON-NLS-1$
@@ -785,6 +846,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 				if (de instanceof IDebugTarget) {
 					if (de.getDebugTarget().equals(fVM)) {
 						if (e.getKind() == DebugEvent.TERMINATE) {
+							setThread(null);
 							Runnable r = new Runnable() {
 								public void run() {
 									vmTerminated();
@@ -801,7 +863,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 							if (f != null) {
 								IBreakpoint[] bps = jt.getBreakpoints();
 								if (e.getDetail() == DebugEvent.STEP_END && f.getLineNumber() == 14 && f.getDeclaringTypeName().equals("org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain1")) { //$NON-NLS-1$
-									fThread = jt;
+									setThread(jt);
 								} else if (e.getDetail() == DebugEvent.BREAKPOINT &&  bps.length > 0 && bps[0].equals(ScrapbookLauncher.getDefault().getMagicBreakpoint(jt.getDebugTarget()))) {
 									// locate the 'eval' method and step over
 									IStackFrame[] frames = jt.getStackFrames();
@@ -849,6 +911,16 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	
 	protected IJavaThread getThread() {
 		return fThread;
+	}
+	
+	/**
+	 * Sets the thread to perform any evaluations in.
+	 * Notifies the WaitThread waiting on getting an evaluation thread
+	 * to perform an evaluation.
+	 */
+	protected synchronized void setThread(IJavaThread thread) {
+		fThread= thread;
+		notifyAll();
 	}
 	
 	protected void launchVM() {
