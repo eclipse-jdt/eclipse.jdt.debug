@@ -1550,6 +1550,13 @@
   <fileTypes extension="jpage" type="text"/>
 </extension>
 
+<extension point="org.eclipse.ui.perspectiveExtensions">   
+	<perspectiveExtension
+		targetID="org.eclipse.debug.ui.DebugPerspective">
+		<showInPart id="org.eclipse.jdt.ui.PackageExplorer"/>
+	</perspectiveExtension>
+</extension>
+
 <extension point="org.eclipse.debug.ui.consoleLineTrackers">
   <consoleLineTracker
     id = "org.eclipse.jdt.debug.ui.JavaConsoleTracker"
