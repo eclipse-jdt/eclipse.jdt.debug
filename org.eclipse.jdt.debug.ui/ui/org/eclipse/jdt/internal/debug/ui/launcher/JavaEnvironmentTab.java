@@ -403,6 +403,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 	}
 	
 	protected void updateTable(Map map, Table tableWidget) {
+		tableWidget.removeAll();
 		if (map == null) {
 			return;
 		}
