@@ -63,6 +63,7 @@ public class JavaStackTracePageParticipant implements IConsolePageParticipant {
      * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
      */
     public void dispose() {
+        deactivated();
     }
 
     /* (non-Javadoc)
