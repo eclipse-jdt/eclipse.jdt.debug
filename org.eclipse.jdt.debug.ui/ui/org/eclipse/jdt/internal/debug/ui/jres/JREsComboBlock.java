@@ -258,6 +258,7 @@ public class JREsComboBlock implements ISelectionProvider {
 						// select the first JRE
 						fCombo.select(0);
 					}
+					setJRE(getJRE());
 				}
 			}
 		});
