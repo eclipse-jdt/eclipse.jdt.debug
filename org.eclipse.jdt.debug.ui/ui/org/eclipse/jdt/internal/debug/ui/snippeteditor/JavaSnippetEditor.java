@@ -392,7 +392,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	public void evaluationComplete(final IEvaluationResult result) {
 		Runnable r = new Runnable() {
 			public void run() {
-				boolean severeProblems= true;
+				boolean severeProblems= false;
 				if (result.hasProblems()) {
 					IMarker[] problems = result.getProblems();
 					int count= problems.length;
@@ -402,7 +402,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 						severeProblems= showAllProblems(problems);
 						if (!severeProblems) {
 							//warnings only..check for exception
-							showException(result.getException());
+							if (result.getException() != null) {
+								showException(result.getException());
+							}
 						}
 					}
 				} 
