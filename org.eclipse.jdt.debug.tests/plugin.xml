@@ -14,6 +14,7 @@
    <requires>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.variables"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jdt.ui"/>
@@ -77,7 +78,7 @@
       </launchConfigurationTabGroup>
    </extension>   
    <extension
-         point="org.eclipse.debug.core.valueVariables">
+         point="org.eclipse.core.variables.valueVariables">
       <variable
             name="VALUE_VAR_WITH_INITIALIZER"
             initializerClass="org.eclipse.jdt.debug.testplugin.ValueVariableInitializer"
@@ -90,7 +91,7 @@
       </variable>      
    </extension>   
    <extension
-         point="org.eclipse.debug.core.dynamicVariables">
+         point="org.eclipse.core.variables.dynamicVariables">
       <variable
             name="SAMPLE_DYNAMIC_VAR"
             resolver="org.eclipse.jdt.debug.testplugin.SampleDynamicVariableResolver"

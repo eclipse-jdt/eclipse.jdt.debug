@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.testplugin;
 
-import org.eclipse.debug.internal.core.stringsubstitution.IValueVariable;
-import org.eclipse.debug.internal.core.stringsubstitution.IValueVariableInitializer;
+import org.eclipse.core.variables.IValueVariable;
+import org.eclipse.core.variables.IValueVariableInitializer;
 
 /**
  * ValueVariableInitializer

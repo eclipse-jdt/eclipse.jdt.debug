@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.testplugin;
 
-import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
-import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariableResolver;
+import org.eclipse.core.variables.IDynamicVariable;
+import org.eclipse.core.variables.IDynamicVariableResolver;
 
 /**
  * SampleContextVariableResolver

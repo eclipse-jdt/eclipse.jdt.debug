@@ -13,14 +13,15 @@ package org.eclipse.jdt.debug.tests.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.core.stringsubstitution.IDynamicVariable;
-import org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager;
-import org.eclipse.debug.internal.core.stringsubstitution.IValueVariable;
-import org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener;
-import org.eclipse.debug.internal.core.stringsubstitution.StringVariableManager;
+import org.eclipse.core.variables.IDynamicVariable;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.IValueVariable;
+import org.eclipse.core.variables.IValueVariableListener;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -51,7 +52,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * if none
 	 */
 	protected IValueVariable getValueVariable(String name) {
-		return StringVariableManager.getDefault().getValueVariable(name);
+		return VariablesPlugin.getDefault().getStringVariableManager().getValueVariable(name);
 	}
 	
 	/**
@@ -63,7 +64,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * if none
 	 */
 	protected IDynamicVariable getContextVariable(String name) {
-		return StringVariableManager.getDefault().getDynamicVariable(name);
+		return VariablesPlugin.getDefault().getStringVariableManager().getDynamicVariable(name);
 	}	
 	
 	/**
@@ -177,7 +178,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * Test recursive resolution
 	 */
 	public void testRecursiveReferences() throws CoreException {
-		IStringVariableManager manager = StringVariableManager.getDefault();
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		IValueVariable variable = manager.newValueVariable("my_var", null);
 		try {
 			manager.addVariables(new IValueVariable[]{variable});
@@ -206,7 +207,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * @throws CoreException
 	 */
 	public void testAddNotificaiton() throws CoreException {
-		IStringVariableManager manager = StringVariableManager.getDefault();
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		List vars = new ArrayList();
 		IValueVariable one = manager.newValueVariable("var_one", null);
 		IValueVariable two = manager.newValueVariable("var_two", null);
@@ -230,7 +231,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * @throws CoreException
 	 */
 	public void testChangeNotificaiton() throws CoreException {
-		IStringVariableManager manager = StringVariableManager.getDefault();
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		IValueVariable one = manager.newValueVariable("var_one", null);
 		IValueVariable two = manager.newValueVariable("var_two", null);
 		try {
@@ -254,7 +255,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 * @throws CoreException
 	 */
 	public void testRemoveNotificaiton() throws CoreException {
-		IStringVariableManager manager = StringVariableManager.getDefault();
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		List vars = new ArrayList();
 		IValueVariable one = manager.newValueVariable("var_one", null);
 		IValueVariable two = manager.newValueVariable("var_two", null);
@@ -280,7 +281,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		fAdded = null;
 		fChanged = null;
 		fRemoved = null;
-		IStringVariableManager manager = StringVariableManager.getDefault();
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		manager.addValueVariableListener(this);
 	}
 
@@ -289,7 +290,7 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		IStringVariableManager manager = StringVariableManager.getDefault();
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 		manager.removeValueVariableListener(this);
 		fAdded = null;
 		fChanged = null;
