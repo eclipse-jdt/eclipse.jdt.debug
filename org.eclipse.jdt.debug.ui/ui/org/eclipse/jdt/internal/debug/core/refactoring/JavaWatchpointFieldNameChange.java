@@ -97,7 +97,16 @@ public class JavaWatchpointFieldNameChange extends Change {
 		boolean isModification= fWatchpoint.isModification();
 		boolean isEnable= fWatchpoint.isEnabled();
 		BreakpointUtils.addJavaBreakpointAttributes(attributes, newField);
-		IJavaWatchpoint newWatchpoint= JDIDebugModel.createWatchpoint(fWatchpoint.getMarker().getResource(), fWatchpoint.getTypeName(), fNewName, fWatchpoint.getLineNumber(), fWatchpoint.getCharStart(), fWatchpoint.getCharEnd(), fWatchpoint.getHitCount(), true, attributes);
+		IJavaWatchpoint newWatchpoint= JDIDebugModel.createWatchpoint(
+				fWatchpoint.getMarker().getResource(),
+				fWatchpoint.getTypeName(),
+				fNewName,
+				fWatchpoint.getLineNumber(),
+				fWatchpoint.getCharStart(),
+				fWatchpoint.getCharEnd(),
+				fWatchpoint.getHitCount(),
+				true,
+				attributes);
 		newWatchpoint.setAccess(isAccess);
 		newWatchpoint.setModification(isModification);
 		newWatchpoint.setEnabled(isEnable);
