@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui;
 
-/*
- * (c) Copyright IBM Corp. 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -52,7 +54,6 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		Composite dialogArea= (Composite) super.createDialogArea(parent);
 		setToggleButton(createCheckButton(dialogArea, fToggleMessage));
 		getToggleButton().setSelection(fStore.getBoolean(fPreferenceKey));
-		
 		return dialogArea;
 	}
 	
@@ -90,5 +91,13 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 
 	protected void setToggleButton(Button button) {
 		fToggleButton = button;
+	}
+	
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		getButton(IDialogConstants.OK_ID).setFocus();
 	}
 }
