@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.debug.core.model.Breakpoint;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -79,7 +79,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * JavaBreakpoint attributes
 	 */	
-	protected static final String[] fgExpiredEnabledAttributes= new String[]{EXPIRED, IDebugConstants.ENABLED};
+	protected static final String[] fgExpiredEnabledAttributes= new String[]{EXPIRED, ENABLED};
 	
 	/**
 	 * Returns the identifier for this JDI debug model plug-in
@@ -549,7 +549,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			// if breakpoint was auto-disabled, re-enable it
 			attributes.add(EXPIRED);
 			values.add(Boolean.FALSE);
-			attributes.add(IDebugConstants.ENABLED);
+			attributes.add(ENABLED);
 			values.add(Boolean.TRUE);
 		}
 		if (!attributes.isEmpty()) {
@@ -577,7 +577,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	public void setHitCount(int count) throws CoreException {	
 		if (!isEnabled() && count > -1) {
-			ensureMarker().setAttributes(new String []{HIT_COUNT, EXPIRED, IDebugConstants.ENABLED},
+			ensureMarker().setAttributes(new String []{HIT_COUNT, EXPIRED, ENABLED},
 				new Object[]{new Integer(count), Boolean.FALSE, Boolean.TRUE});
 		} else {
 			ensureMarker().setAttributes(new String[]{HIT_COUNT, EXPIRED},

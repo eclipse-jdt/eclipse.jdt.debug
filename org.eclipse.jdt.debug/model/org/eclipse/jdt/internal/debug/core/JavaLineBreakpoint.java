@@ -14,7 +14,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.core.IDebugConstants;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IClassFile;
@@ -49,7 +48,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	/**
 	 * Sets of attributes used to configure a line breakpoint
 	 */
-	protected static final String[] fgLineBreakpointAttributes= new String[]{IDebugConstants.ENABLED, IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};
+	protected static final String[] fgLineBreakpointAttributes= new String[]{ENABLED, IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};
 		
 	public JavaLineBreakpoint() {
 	}
