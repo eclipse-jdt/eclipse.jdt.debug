@@ -54,6 +54,14 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Test all areas of the UI.
+ * 
+ * To run this test suite:
+ * <ol>
+ * <li>Create a new Run-time Workbench launch configuration</li>
+ * <li>Append "org.eclipse.jdt.debug.tests.AutomatedSuite" to the Program Arguments</li>
+ * <li>Set the Application Name to "org.eclipse.jdt.debug.tests.app"</li>
+ * <li>Run the launch configuration. Output from the tests will be written to the debug console</li>
+ * </ol>
  */
 public class AutomatedSuite extends TestSuite {
 	
