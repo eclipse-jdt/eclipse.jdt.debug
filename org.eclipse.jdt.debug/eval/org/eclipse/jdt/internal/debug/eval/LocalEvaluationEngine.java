@@ -270,7 +270,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		if (locals != null) {
 			for (int i = 0; i < locals.length; i++) {
 				IJavaVariable local = locals[i];
-				IJavaVariable field = object.getField(LOCAL_VAR_PREFIX + local.getName());
+				IJavaVariable field = object.getField(LOCAL_VAR_PREFIX + local.getName(), false);
 				// internal error if field is not found
 				if (field == null) {
 					throw new DebugException(
@@ -283,7 +283,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 			}
 		}
 		if (thisObject != null) {
-			IJavaVariable field = object.getField(DELEGATE_THIS);
+			IJavaVariable field = object.getField(DELEGATE_THIS, false);
 			// internal error if field is not found
 			if (field == null) {
 				throw new DebugException(
@@ -314,7 +314,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		if (locals != null) {
 			for (int i = 0; i < locals.length; i++) {
 				IJavaVariable local = locals[i];
-				IJavaVariable field = object.getField(LOCAL_VAR_PREFIX + local.getName());
+				IJavaVariable field = object.getField(LOCAL_VAR_PREFIX + local.getName(), false);
 				// internal error if field is not found
 				if (field == null) {
 					throw new DebugException(

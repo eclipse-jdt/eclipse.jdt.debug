@@ -21,6 +21,7 @@ import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
 /**
@@ -117,9 +118,14 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 	/*
 	 * @see IJavaClassType#getField(String)
 	 */
-	public IJavaVariable getField(String name) throws DebugException {
+	public IJavaVariable getField(String name, boolean superField) throws DebugException {
+		Type type = getUnderlyingType();
 		try {
-			Field field = ((ClassType)getUnderlyingType()).fieldByName(name);
+			if (superField) {
+				// begin lookup in superclass
+				type = ((ClassType)type).superclass();
+			}
+			Field field = ((ClassType)type).fieldByName(name);
 			if (field != null) {
 				return new JDIFieldVariable(getDebugTarget(), field, null);
 			}			

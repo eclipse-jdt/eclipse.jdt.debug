@@ -84,9 +84,13 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	/**
 	 * @see IJavaObject#getField(String)
 	 */
-	public IJavaFieldVariable getField(String name) throws DebugException {
+	public IJavaFieldVariable getField(String name, boolean superField) throws DebugException {
 		ReferenceType ref = getUnderlyingReferenceType();
 		try {
+			if (superField) {
+				// begin lookup in superclass
+				ref = ((ClassType)ref).superclass();
+			}
 			Field field = ref.fieldByName(name);
 			if (field != null) {
 				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());

@@ -54,13 +54,15 @@ public interface IJavaObject extends IJavaValue {
 	 * field with the given name, or the name is ambiguous.
 	 * 
 	 * @param name field name
+	 * @param superField whether or not to get the field in the superclass
+	 *  of this objects.
 	 * @return the variable representing the field, or <code>null</code>
 	 * @exception DebugException if this method fails.  Reasons include:
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	public IJavaFieldVariable getField(String name) throws DebugException;
+	public IJavaFieldVariable getField(String name, boolean superField) throws DebugException;
 	
 }
 
