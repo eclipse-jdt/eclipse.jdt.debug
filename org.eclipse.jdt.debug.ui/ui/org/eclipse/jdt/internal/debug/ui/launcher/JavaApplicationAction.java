@@ -29,8 +29,10 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -80,9 +82,9 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 		
 		if (search != null) {
 			try {
-				types = MainMethodFinder.findTargets(fWindow, search);
+				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+				types = MainMethodFinder.findTargets(dialog, search);
 			} catch (InterruptedException e) {
-				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1"), e); //$NON-NLS-1$
 				return;
 			} catch (InvocationTargetException e) {
 				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1"), e); //$NON-NLS-1$
@@ -145,7 +147,7 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 	 * @return the selected type or <code>null</code> if none.
 	 */
 	protected IType chooseType(IType[] types) {
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(fWindow.getShell(), new JavaElementLabelProvider());
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), new JavaElementLabelProvider());
 		dialog.setElements(types);
 		dialog.setTitle(LauncherMessages.getString("JavaApplicationAction.Type_Selection_4")); //$NON-NLS-1$
 		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
@@ -270,6 +272,13 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 	protected ILaunchConfigurationType getJavaLaunchConfigType() {
 		ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
 		return lm.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);		
+	}
+	
+	/**
+	 * Convenience method to get the window that owns this action's Shell.
+	 */
+	protected Shell getShell() {
+		return fWindow.getShell();
 	}
 	
 	/**
