@@ -399,7 +399,7 @@ public class SourceDebugExtensionParser {
 				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.18")); //$NON-NLS-1$
 			}
 			String fileName= getNonAsteriskString(lexer);
-			if (isAsteriskLexem(lexer.nextLexem())) {
+			if (isAsteriskLexem(lexer.lexemType())) {
 				throw new AbsentInformationException(JDIMessages.getString("SourceDebugExtensionParser.19")); //$NON-NLS-1$
 			}
 			fCurrentStratum.addFileInfo(fileId, fileName, getNonAsteriskString(lexer));
