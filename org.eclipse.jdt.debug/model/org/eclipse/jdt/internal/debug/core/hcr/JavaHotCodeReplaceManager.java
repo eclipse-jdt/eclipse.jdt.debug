@@ -43,7 +43,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.core.ListenerList;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
@@ -204,9 +203,13 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (!projects.isEmpty()) {
 			updateProjectBuildTime(projects);
 		}
-		List resources= getChangedClassFiles(event);
-		if (!resources.isEmpty()) {
-			notifyTargets(resources);
+		ChangedClassFilesVisitor visitor = getChangedClassFiles(event);
+		if (visitor != null) {
+			List resources = visitor.getChangedClassFiles();
+			List names = visitor.getQualifiedNamesList();
+			if (!resources.isEmpty()) {
+				notifyTargets(resources, names);
+			}
 		}
 	}
 	
@@ -267,10 +270,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	/**
 	 * Notifies the targets of the changed types
 	 */
-	private void notifyTargets(final List resources) {
+	private void notifyTargets(final List resources, final List qualifiedNames) {
 		final List hotSwapTargets= getHotSwapTargets();
 		final List noHotSwapTargets= getNoHotSwapTargets();
-		final List qualifiedNames= getQualifiedNames(resources);
 		if (!hotSwapTargets.isEmpty()) {
 			IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) {
@@ -836,21 +838,24 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		}
 	}
 	/**
-	 * Returns the changed class files in the delta or <code>null</code> if none.
+	 * Returns the class file visitor after visiting the resource change.
+	 * The visitor contains the changed class files and qualified type names.
+	 * Returns <code>null</code> if the visitor encounters an exception,
+	 * or the detlta is not a POST_CHANGE.
 	 */
-	protected List getChangedClassFiles(IResourceChangeEvent event) {
+	protected ChangedClassFilesVisitor getChangedClassFiles(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
 		if (event.getType() != IResourceChangeEvent.POST_CHANGE || delta == null) {
-			return Collections.EMPTY_LIST;
+			return null;
 		}
 		fClassfileVisitor.reset();
 		try {
 			delta.accept(fClassfileVisitor);
 		} catch (CoreException e) {
 			JDIDebugPlugin.log(e);
-			return Collections.EMPTY_LIST; // quiet failure
+			return null; // quiet failure
 		}
-		return fClassfileVisitor.getChangedClassFiles();
+		return fClassfileVisitor;
 	}
 	
 	/**
@@ -861,6 +866,12 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		 * The collection of changed class files.
 		 */
 		protected List fFiles= null;
+		
+		/**
+		 * Collection of qualified type names, corresponding to class files.
+		 */
+		protected List fNames= null;
+		
 		/**
 		 * Answers whether children should be visited.
 		 * <p>
@@ -878,28 +889,46 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 						if (0 == (delta.getFlags() & IResourceDelta.CONTENT))
 							return false;
 						if (CLASS_FILE_EXTENSION.equals(resource.getFullPath().getFileExtension())) {
-							IMarker[] problemMarkers= null;
-							boolean hasBlockingErrors= false;
-							try {
-								if (!JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS)) {
-									// If the user doesn't want to replace classfiles containing
-									// compilation errors, get the source file associated with 
-									// the class file and query it for compilation errors
-									IResource sourceFile= getSourceFile(resource);
-									if (sourceFile != null) {
-										problemMarkers= sourceFile.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-										for (int i= 0; i < problemMarkers.length; i++) {
-											if (problemMarkers[i].getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
-												hasBlockingErrors= true;
+							IPath localLocation = resource.getLocation();
+							if (localLocation != null) {
+								String path = localLocation.toOSString();  
+								IClassFileReader reader = ToolFactory.createDefaultClassFileReader(path, IClassFileReader.CLASSFILE_ATTRIBUTES);
+								if (reader != null) {
+									// this name is slash-delimited 
+									String qualifiedName = new String(reader.getClassName());
+									boolean hasBlockingErrors= false;
+									try {
+										if (!JDIDebugModel.getPreferences().getBoolean(JDIDebugModel.PREF_HCR_WITH_COMPILATION_ERRORS)) {
+											// If the user doesn't want to replace classfiles containing
+											// compilation errors, get the source file associated with 
+											// the class file and query it for compilation errors
+											IJavaProject pro = JavaCore.create(resource.getProject());
+											ISourceAttribute sourceAttribute = reader.getSourceFileAttribute();
+											String sourceName = null; 
+											if (sourceAttribute != null) {
+												sourceName = new String(sourceAttribute.getSourceFileName());
+											}
+											IResource sourceFile= getSourceFile(pro, qualifiedName, sourceName);
+											if (sourceFile != null) {
+												IMarker[] problemMarkers= null;
+												problemMarkers= sourceFile.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+												for (int i= 0; i < problemMarkers.length; i++) {
+													if (problemMarkers[i].getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) {
+														hasBlockingErrors= true;
+														break;
+													}
+												}
 											}
 										}
+									} catch (CoreException e) {
+										JDIDebugPlugin.log(e);
+									}
+									if (!hasBlockingErrors) {
+										fFiles.add(resource);
+										// dot-delimit the name
+										fNames.add(qualifiedName.replace('/','.'));
 									}
 								}
-							} catch (CoreException e) {
-								JDIDebugPlugin.log(e);
-							}
-							if (!hasBlockingErrors) {
-								fFiles.add(resource);
 							}
 						}
 						return false;
@@ -915,6 +944,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		 */
 		public void reset() {
 			fFiles = new ArrayList();
+			fNames = new ArrayList();
 		}
 		
 		/**
@@ -925,31 +955,43 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		}
 		
 		/**
-		 * Returns the source file associated with the given class file
-		 * or <code>null</code> if no source file could be found.
+		 * Returns a collection of qualified type names corresponding to the
+		 * changed class files.
 		 * 
-		 * Searches for a .java file which matches the name of the
-		 * given .class file. If none is found, reads the sourcefile
-		 * attribute from the classfile and tries to find that file.
+		 * @return List
 		 */
-		private IResource getSourceFile(IResource file) {
-			IJavaProject project= JavaCore.create(file.getProject());
-			IClassFile classFile= (IClassFile)JavaCore.create(file);
-			if (project == null || classFile == null) {
-				return null;
+		public List getQualifiedNamesList() {
+			return fNames;
+		}
+		
+		/**
+		 * Returns the source file associated with the given type, or
+		 * <code>null</code> if no source file could be found.
+		 * 
+		 * @param project the java project containing the classfile
+		 * @param qualifiedName fully qualified name of the type, slash
+		 * delimited
+		 * @param sourceAttribute debug source attribute, or <code>null</code>
+		 * if none
+		 */
+		private IResource getSourceFile(IJavaProject project, String qualifiedName, String sourceAttribute) {
+			String name = null;
+			if (sourceAttribute == null) { 
+				int nestedIndex= qualifiedName.indexOf('$');
+				if (nestedIndex != -1) {
+					// Trim nested type suffix
+					name= qualifiedName.substring(0, nestedIndex);
+				}
+				name= name + ".java"; //$NON-NLS-1$
+			} else {
+				int i = qualifiedName.lastIndexOf('/');
+				if (i > 0) {
+					name = qualifiedName.substring(0, i + 1);
+					name = name + sourceAttribute;
+				} else {
+					name = sourceAttribute;
+				}
 			}
-			String name;
-			try {
-				name= classFile.getType().getFullyQualifiedName();
-			} catch (JavaModelException exception) {
-				return null;
-			}
-			int nestedIndex= name.lastIndexOf('$');
-			if (nestedIndex != -1) {
-				// Trim nested type suffix
-				name= name.substring(0, nestedIndex);
-			}
-			name= name + ".java"; //$NON-NLS-1$
 			ICompilationUnit unit= null;
 			try {
 				unit= (ICompilationUnit)project.findElement(new Path(name));
@@ -957,18 +999,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					try {
 						return unit.getCorrespondingResource();
 					} catch (JavaModelException e) {
-					}
-				} else {
-					// Read the source file attribute from the classfile.
-					IClassFileReader reader= ToolFactory.createDefaultClassFileReader(classFile, IClassFileReader.CLASSFILE_ATTRIBUTES);
-					if (reader != null) {
-						ISourceAttribute source= reader.getSourceFileAttribute();
-						if (source != null) { 
-							unit= (ICompilationUnit)project.findElement(new Path(new String(source.getSourceFileName())));
-							if (unit != null) {
-								return unit.getCorrespondingResource();
-							}
-						}
 					}
 				}
 			} catch (JavaModelException exception) {
@@ -1140,44 +1170,6 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		if (!fNoHotSwapTargets.contains(target)) {
 			fNoHotSwapTargets.add(target);
 		}
-	}
-	
-	/**
-	 * Returns a collection of <code>String</code>s representing
-	 * the qualified type names of the given resources. The qualified
-	 * names are returned dot separated.
-	 * <p>
-	 * This method takes into account the output directory of 
-	 * Java projects.
-	 */
-	public static List getQualifiedNames(List resources) {
-		List qualifiedNames= new ArrayList(resources.size());
-		Iterator itr= resources.iterator();
-		IProject project = null;
-		IPath outputPath = null;
-		IJavaProject javaProject = null;
-		while (itr.hasNext()) {
-			IResource resource= (IResource) itr.next();
-			if (project == null || !resource.getProject().equals(project)) {
-				project= resource.getProject();
-				javaProject= JavaCore.create(project);
-				try {
-					outputPath= javaProject.getOutputLocation();
-				} catch (JavaModelException e) {
-					JDIDebugPlugin.log(e);
-					project = null;
-					continue;
-				}
-			}
-			IPath resourcePath= resource.getFullPath();
-			int count= resourcePath.matchingFirstSegments(outputPath);
-			resourcePath= resourcePath.removeFirstSegments(count);
-			String pathString= resourcePath.toString();
-			// get rid of ".class" then switch to dot separated
-			pathString= pathString.substring(0, pathString.length() - 6).replace(IPath.SEPARATOR, '.');
-			qualifiedNames.add(pathString);
-		}
-		return qualifiedNames;
 	}
 
 }
