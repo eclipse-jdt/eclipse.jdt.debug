@@ -14,17 +14,16 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 public class ExceptionUncaughtToggleAction extends ExceptionAction {
 
 	/**
-	 * @see ExceptionException
+	 * @see ExceptionAction#doAction(IJavaExceptionBreakpoint)
 	 */
 	public void doAction(IJavaExceptionBreakpoint exception) throws CoreException {
 		exception.setUncaught(!exception.isUncaught());
 	}
 
 	/**
-	 * @see ExceptionException
+	 * @see ExceptionAction#getToggleState(IJavaExceptionBreakpoint)
 	 */
 	protected boolean getToggleState(IJavaExceptionBreakpoint exception) throws CoreException {
 		return exception.isUncaught();
 	}
-
 }

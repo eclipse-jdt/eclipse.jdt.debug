@@ -14,17 +14,16 @@ import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 public class ExceptionCaughtToggleAction extends ExceptionAction {
 
 	/**
-	 * @see ExceptionAction
+	 * @see ExceptionAction#getToggleState(IJavaExceptionBreakpoint)
 	 */
 	protected boolean getToggleState(IJavaExceptionBreakpoint exception) throws CoreException {
 		return exception.isCaught();
 	}
 
 	/**
-	 * @see ExceptionAction
+	 * @see ExceptionAction#doAction(IJavaExceptionBreakpoint)
 	 */
 	public void doAction(IJavaExceptionBreakpoint exception) throws CoreException {
 		exception.setCaught(!exception.isCaught());
 	}
-
 }
