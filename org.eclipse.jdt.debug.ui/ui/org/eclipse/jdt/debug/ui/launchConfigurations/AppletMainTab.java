@@ -110,14 +110,12 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 		
 		fProjLabel= new Label(projComp, SWT.NONE);
 		fProjLabel.setText(LauncherMessages.getString("appletlauncher.maintab.projectlabel.name")); //$NON-NLS-1$
-		gd= new GridData();
-		gd.horizontalSpan= 3;
+		gd= new GridData(GridData.BEGINNING);
 		fProjLabel.setLayoutData(gd);
 		fProjLabel.setFont(font);
 		
 		fProjText= new Text(projComp, SWT.SINGLE | SWT.BORDER);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan= 2;
 		fProjText.setLayoutData(gd);
 		fProjText.setFont(font);
 		this.fProjText.addModifyListener(new ModifyListener() {
@@ -133,21 +131,14 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		Label spacer= createVerticalSpacer(projComp);
-		gd= new GridData();
-		gd.horizontalSpan= 3;
-		spacer.setLayoutData(gd);
-		
 		fMainLabel= new Label(projComp, SWT.NONE);
 		fMainLabel.setText(LauncherMessages.getString("appletlauncher.maintab.mainclasslabel.name")); //$NON-NLS-1$
-		gd= new GridData();
-		gd.horizontalSpan= 3;
+		gd= new GridData(GridData.BEGINNING);
 		fMainLabel.setLayoutData(gd);
 		fMainLabel.setFont(font);
 
 		fMainText= new Text(projComp, SWT.SINGLE | SWT.BORDER);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan= 2;
 		fMainText.setLayoutData(gd);
 		fMainText.setFont(font);
 		this.fMainText.addModifyListener(new ModifyListener() {
@@ -163,13 +154,13 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		createVerticalSpacer(projComp);
-		
-		fAppletViewerClassLabel= new Label(comp, SWT.NONE);
+		fAppletViewerClassLabel= new Label(projComp, SWT.NONE);
 		fAppletViewerClassLabel.setText(LauncherMessages.getString("AppletMainTab.Name_of_appletviewer_class__1")); //$NON-NLS-1$
+		gd= new GridData(GridData.BEGINNING);
+		fAppletViewerClassLabel.setLayoutData(gd);		
 		fAppletViewerClassLabel.setFont(font);
 		
-		fAppletViewerClassText= new Text(comp, SWT.SINGLE | SWT.BORDER);
+		fAppletViewerClassText= new Text(projComp, SWT.SINGLE | SWT.BORDER);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fAppletViewerClassText.setLayoutData(gd);
 		fAppletViewerClassText.setFont(font);
@@ -178,8 +169,10 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+		createVerticalSpacer(projComp, 1);
 		
-		fAppletViewerClassDefaultButton= new Button(comp, SWT.CHECK);
+		createVerticalSpacer(projComp, 1);
+		fAppletViewerClassDefaultButton= new Button(projComp, SWT.CHECK);
 		fAppletViewerClassDefaultButton.setFont(font);
 		fAppletViewerClassDefaultButton.setText(LauncherMessages.getString("AppletMainTab.Use_default_appletviewer_class_2")); //$NON-NLS-1$
 		fAppletViewerClassDefaultButton.addSelectionListener(new SelectionAdapter() {
