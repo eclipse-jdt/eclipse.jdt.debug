@@ -278,21 +278,36 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IStep#canStepInto()
 	 */
 	public boolean canStepInto() {
-		return isSuspended() && !isStepping();
+		return canStep();
 	}
 
 	/**
 	 * @see IStep#canStepOver()
 	 */
 	public boolean canStepOver() {
-		return isSuspended() && !isStepping();
+		return canStep();
 	}
 
 	/**
 	 * @see IStep#canStepReturn()
 	 */
 	public boolean canStepReturn() {
-		return isSuspended() && !isStepping();
+		return canStep();
+	}
+
+	/**
+	 * Returns whether this thread is in a valid state to
+	 * step.
+	 * 
+	 * @return whether this thread is in a valid state to
+	 * step
+	 */
+	protected boolean canStep() {
+		try {
+			return isSuspended() && !isStepping() && getTopStackFrame() != null;
+		} catch (DebugException e) {
+			return false;
+		}
 	}
 
 	/**
