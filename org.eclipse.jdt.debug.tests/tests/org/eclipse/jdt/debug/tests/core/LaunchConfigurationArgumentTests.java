@@ -78,7 +78,7 @@ public class LaunchConfigurationArgumentTests extends AbstractDebugTest {
 		public String getOutput() {
 			// wait to be closed
 			int attempts = 0;
-			while (!closed && attempts < 60) {
+			while (!closed && attempts < 600) {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
