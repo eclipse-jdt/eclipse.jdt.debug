@@ -21,7 +21,7 @@ public interface IJavaDebugUIConstants {
 	public static final String PLUGIN_ID = JDIDebugUIPlugin.getUniqueIdentifier();
 
 	/**
-	 * Extension point identifier for contributions of a UI page that corresponds to a VMInstallType.
+	 * Extension point identifier for contributions of a UI page that corresponds to a VMInstallType (value <code>"vmInstallTypePage"</code>).
 	 */
 	public static final String EXTENSION_POINT_VM_INSTALL_TYPE_PAGE = "vmInstallTypePage"; //$NON-NLS-1$
 
@@ -51,7 +51,7 @@ public interface IJavaDebugUIConstants {
 	public static final String EVALUATION_GROUP= "evaluationGroup"; //$NON-NLS-1$
 	
 	/**
-	 * Status code indicating an unexpected internal error.
+	 * Status code indicating an unexpected internal error (value <code>150</code>).
 	 */
 	public static final int INTERNAL_ERROR = 150;
 }
