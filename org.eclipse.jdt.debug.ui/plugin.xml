@@ -1603,10 +1603,11 @@
       <objectContribution
             objectClass="org.eclipse.jdt.core.IMethod"
             id="org.eclipse.jdt.debug.ui.MethodBreakpointActions">
-         <filter
-               name="MethodActionFilter"
-               value="isNotAbstract">
-         </filter>
+         <visibility>
+         	<not>
+               <objectState name="MethodActionFilter" value="isAbstract"/>
+            </not>
+         </visibility>
          <action
                label="%manageMethodBreakpointAction.label"
                helpContextId="manage_method_breakpoint_action_context"

@@ -23,11 +23,11 @@ public class MethodActionFilter implements IActionFilter {
 	 */
 	public boolean testAttribute(Object target, String name, String value) {
 		if (name.equals("MethodActionFilter") //$NON-NLS-1$
-			&& value.equals("isNotAbstract")) { //$NON-NLS-1$
+			&& value.equals("isAbstract")) { //$NON-NLS-1$
 			if (target instanceof IMethod) {
 				IMethod method = (IMethod) target;
 				try {
-					return !Flags.isAbstract(method.getFlags());
+					return Flags.isAbstract(method.getFlags());
 				} catch (JavaModelException e) {
 					JDIDebugUIPlugin.log(e);
 				}
