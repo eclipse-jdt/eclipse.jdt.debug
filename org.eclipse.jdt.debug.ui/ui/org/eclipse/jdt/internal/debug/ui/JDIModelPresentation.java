@@ -229,7 +229,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 						label.append(DebugUIMessages.getString("JDIModelPresentation._(may_be_out_of_synch)_2")); //$NON-NLS-1$
 					}
 				} else if (item instanceof IJavaDebugTarget) {
-					label.append(getDebugTargetText((IJavaDebugTarget) item, showQualified));
+					label.append(getDebugTargetText((IJavaDebugTarget) item));
 					if (((IJavaDebugTarget)item).isOutOfSynch()) {
 						label.append(DebugUIMessages.getString("JDIModelPresentation._(out_of_synch)_1")); //$NON-NLS-1$
 					} else if (((IJavaDebugTarget)item).mayBeOutOfSynch()) {
@@ -406,7 +406,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	/**
 	 * Build the text for an IJavaDebugTarget.
 	 */
-	protected String getDebugTargetText(IJavaDebugTarget debugTarget, boolean qualified) throws DebugException {
+	protected String getDebugTargetText(IJavaDebugTarget debugTarget) throws DebugException {
 		String labelString= debugTarget.getName();
 		if (debugTarget.isSuspended()) {
 			labelString += DebugUIMessages.getString("JDIModelPresentation.target_suspended"); //$NON-NLS-1$

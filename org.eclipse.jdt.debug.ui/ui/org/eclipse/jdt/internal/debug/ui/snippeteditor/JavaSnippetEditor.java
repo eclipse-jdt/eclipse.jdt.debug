@@ -567,7 +567,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		if (value != null && !severeErrors) {
 			switch (fResultMode) {
 			case RESULT_DISPLAY:
-				displayResult(value, result.getThread());
+				displayResult(value);
 				break;
 			case RESULT_INSPECT:
 				String snippet= result.getSnippet().trim();
@@ -656,7 +656,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		showError(status);
 	}
 	
-	protected void displayResult(IJavaValue result, IJavaThread thread) {
+	protected void displayResult(IJavaValue result) {
 		StringBuffer resultString= new StringBuffer();
 		try {
 			IJavaType type = result.getJavaType();
@@ -670,7 +670,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 					} else {
 						resultString.append(" "); //$NON-NLS-1$
 					}   
-					resultString.append(evaluateToString(result, thread));
+					resultString.append(evaluateToString(result));
 				}
 			} else {
 				resultString.append(result.getValueString());
@@ -689,12 +689,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 * 
 	 * @param value object or primitive data type the 'toString'
 	 *  is required for
-	 * @param thread the thread in which to evaluate 'toString'
 	 * @return the result of evaluating toString
 	 * @exception DebugException if an exception occurs during the
 	 *  evaluation.
 	 */
-	protected synchronized String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
+	protected synchronized String evaluateToString(IJavaValue value) throws DebugException {
 		fResult= null;
 		fPresentation.computeDetail(value, this);
 		if (fResult == null) {

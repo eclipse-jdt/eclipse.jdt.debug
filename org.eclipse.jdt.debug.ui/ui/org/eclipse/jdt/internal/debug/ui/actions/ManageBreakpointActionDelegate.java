@@ -102,8 +102,8 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	/**
 	 * Determines if a breakpoint exists on the line of the current selection.
 	 */
-	protected boolean breakpointExists(IEditorInput editorInput) {
-		IType type= getType(editorInput);
+	protected boolean breakpointExists() {
+		IType type= retrieveType();
 		if (type != null) {
 			try {
 				return JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(), getLineNumber()) == null;
@@ -115,7 +115,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 		return false;
 	}
 	
-	protected IType getType(IEditorInput editorInput) {
+	protected IType retrieveType() {
 		IType type= null;
 		ISelectionProvider sp= getTextEditor().getSelectionProvider();
 		if (sp != null) {
@@ -134,13 +134,13 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 						JDIDebugUIPlugin.log(e);
 					}	
 				}
-				type= getType0(selection, editorInput);
+				type= getType0(selection);
 			}
 		}
 		return type;
 	}
 	
-	protected IType getType0(ITextSelection selection, IEditorInput editorInput) {
+	protected IType getType0(ITextSelection selection) {
 		IMember member= ActionDelegateHelper.getDefault().getCurrentMember(selection);
 		IType type= null;
 		if (member instanceof IType) {
@@ -192,7 +192,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 		IAction action= getAction();
 		if (action != null) {
 			if (getTextEditor() != null) {
-				breakpointExists(getTextEditor().getEditorInput());
+				breakpointExists();
 			}
 		}
 	}

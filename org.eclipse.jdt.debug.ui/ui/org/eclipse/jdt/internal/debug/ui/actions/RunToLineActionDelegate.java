@@ -58,7 +58,7 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 			
 			ITextSelection selection= (ITextSelection)getTextEditor().getSelectionProvider().getSelection();
 			setLineNumber(selection.getStartLine() + 1);
-			IType type= getType(getTextEditor().getEditorInput());
+			IType type= retrieveType();
 			if (type == null) {
 				return;
 			}
