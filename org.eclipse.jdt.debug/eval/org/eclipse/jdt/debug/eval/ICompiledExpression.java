@@ -38,7 +38,7 @@ public interface ICompiledExpression {
 	 * Returns any errors which occurred while creating this compiled expression.
 	 * 
 	 * @return any errors which occurred while creating this compiled expression
-	 * @deprecated
+	 * @deprecated use getErrorMessages()
 	 */
 	public Message[] getErrors();
 	
@@ -47,6 +47,7 @@ public interface ICompiledExpression {
 	 * occurred while while creating this compiled expression.
 	 *
 	 * @return error messages, or an empty array if no errors occurred
+	 * @since 2.1
 	 */
 	public String[] getErrorMessages();
 	

@@ -50,7 +50,7 @@ public interface IEvaluationResult {
 	 * occurred while compiling the snippet.
 	 *
 	 * @return compilation error messages, or an empty array if no errors occurred
-	 * @deprecated
+	 * @deprecated use getErrorMessages()
 	 */
 	public Message[] getErrors();
 		
@@ -59,6 +59,7 @@ public interface IEvaluationResult {
 	 * occurred while compiling the snippet.
 	 *
 	 * @return compilation error messages, or an empty array if no errors occurred
+	 * @since 2.1
 	 */
 	public String[] getErrorMessages();
 		
