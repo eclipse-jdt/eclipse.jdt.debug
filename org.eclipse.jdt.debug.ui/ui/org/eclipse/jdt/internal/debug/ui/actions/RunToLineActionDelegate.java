@@ -27,7 +27,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -41,9 +40,9 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	}
 	
 	/**
-	 * @see IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)(IAction)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
-	public void runWithEvent(IAction action, Event event) {
+	public void run(IAction action) {
 		try {
 			IDebugTarget target= getContext();
 			if (target == null) {
@@ -184,6 +183,10 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 		setAction(action);
 		if (targetEditor instanceof ITextEditor) {
 			setTextEditor((ITextEditor)targetEditor);
+		}
+		if (!action.isEnabled()) {
+			//the xml specified enabler has set the action to be disabled
+			return;
 		}
 		setEnabledState(getTextEditor());
 	}
