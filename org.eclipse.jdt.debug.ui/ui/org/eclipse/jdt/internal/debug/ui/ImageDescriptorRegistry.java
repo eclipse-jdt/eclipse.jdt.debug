@@ -1,17 +1,17 @@
+package org.eclipse.jdt.internal.debug.ui;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.jdt.internal.debug.ui;
-
+ 
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * A registry that maps <code>ImageDescriptors</code> to <code>Image</code>.
@@ -42,7 +42,7 @@ public class ImageDescriptorRegistry {
 	}
 	
 	/**
-	 * Returns the image assiciated with the given image descriptor.
+	 * Returns the image associated with the given image descriptor.
 	 * 
 	 * @param descriptor the image descriptor for which the registry manages an image
 	 * @return the image associated with the image descriptor or <code>null</code>
@@ -56,7 +56,7 @@ public class ImageDescriptorRegistry {
 		if (result != null)
 			return result;
 	
-		Assert.isTrue(fDisplay == JDIDebugUIPlugin.getStandardDisplay(), "Allocating image for wrong display.");
+		Assert.isTrue(fDisplay == JDIDebugUIPlugin.getStandardDisplay(), DebugUIMessages.getString("ImageDescriptorRegistry.Allocating_image_for_wrong_display_1")); //$NON-NLS-1$
 		result= descriptor.createImage();
 		if (result != null)
 			fRegistry.put(descriptor, result);

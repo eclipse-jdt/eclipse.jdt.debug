@@ -20,11 +20,11 @@ public interface IJavaDebugUIConstants {
 	 */
 	public static final String ID_DISPLAY_VIEW= "org.eclipse.jdt.debug.ui.DisplayView"; //$NON-NLS-1$
 	
-	public static final String EVALUATION_GROUP= "evaluationGroup";
+	public static final String EVALUATION_GROUP= "evaluationGroup"; //$NON-NLS-1$
 	
-	public static final String ID_JAVA_SNIPPET_EDITOR= "org.eclipse.jdt.debug.ui.SnippetEditor";
+	public static final String ID_JAVA_SNIPPET_EDITOR= "org.eclipse.jdt.debug.ui.SnippetEditor"; //$NON-NLS-1$
 	
-	public static final String JAVA_SNIPPET_EDITOR_CONTEXT_MENU= "#JavaSnippetEditorContext";
+	public static final String JAVA_SNIPPET_EDITOR_CONTEXT_MENU= "#JavaSnippetEditorContext"; //$NON-NLS-1$
 	
-	public static final String JAVA_SNIPPET_EDITOR_RULER_MENU= "#JavaSnippetRulerContext";
+	public static final String JAVA_SNIPPET_EDITOR_RULER_MENU= "#JavaSnippetRulerContext"; //$NON-NLS-1$
 }

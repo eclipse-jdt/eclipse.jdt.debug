@@ -609,7 +609,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 			String packageName = frame.getDeclaringType().getName();
 			int index = packageName.lastIndexOf('.');
 			if (index == -1) {
-				packageName = "";
+				packageName = ""; //$NON-NLS-1$
 			} else {
 				packageName = packageName.substring(0,index);
 			}

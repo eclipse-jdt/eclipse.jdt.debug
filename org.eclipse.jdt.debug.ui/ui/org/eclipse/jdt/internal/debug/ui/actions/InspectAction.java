@@ -104,11 +104,11 @@ public class InspectAction extends EvaluateAction {
 				JavaInspectExpression expr = new JavaInspectExpression(var.getName(), (IJavaValue)var.getValue());
 				DebugPlugin.getDefault().getExpressionManager().addExpression(expr);
 			} catch (DebugException e) {
-				JDIDebugUIPlugin.errorDialog(ActionMessages.getString("InspectAction.Exception_occurred_inspecting_variable"), e.getStatus());
+				JDIDebugUIPlugin.errorDialog(ActionMessages.getString("InspectAction.Exception_occurred_inspecting_variable"), e.getStatus()); //$NON-NLS-1$
 			}
 		}
 	
-		if (part.getSite().getId().equals("IDebugUIConstants.ID_EXPRESSION_VIEW")) {
+		if (part.getSite().getId().equals("IDebugUIConstants.ID_EXPRESSION_VIEW")) { //$NON-NLS-1$
 			return;
 		}
 		IWorkbenchPage page = part.getSite().getPage();
