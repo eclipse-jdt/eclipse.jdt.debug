@@ -83,6 +83,12 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 */
 	protected String[] fClassFilters= null;
 	
+	/**
+	 * The current common pattern generated from the set of filters
+	 * May be null.
+	 */
+	protected String fCommonPattern;
+	
 	public JavaExceptionBreakpoint() {
 	}
 	
@@ -352,7 +358,6 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * @see IJavaExceptionBreakpoint#setFilters(String[], boolean)
 	 */
 	public void setFilters(String[] filters, boolean inclusive) throws CoreException {
-		setClassFilters(filters);
 		String serializedFilters= serializeList(filters);
 		if (inclusive == ensureMarker().getAttribute(INCLUSIVE_FILTERS, false)) {
 			if (serializedFilters.equals(ensureMarker().getAttribute(FILTERS, ""))) { //$NON-NLS-1$
@@ -360,6 +365,8 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				return;
 			}
 		}
+		setClassFilters(filters);
+		fCommonPattern= null;
 		if (inclusive) {
 			setAttribute(INCLUSIVE_FILTERS, true);
 		} else {
@@ -397,30 +404,101 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	 * Adds the filtering to the exception request
 	 */
 	protected void configureRequest(EventRequest eRequest, JDIDebugTarget target) throws CoreException {
-		ExceptionRequest request= (ExceptionRequest)eRequest;
 		String[] filters= getClassFilters();
-		boolean inclusive= ensureMarker().getAttribute(INCLUSIVE_FILTERS, true);
-		if (filters.length == 1) {
+		if (filters.length > 0 ) {
+			boolean inclusive= ensureMarker().getAttribute(INCLUSIVE_FILTERS, true);
+			String pattern= "";
 			//JDI / JDWP can only handle a single class / class exclusion filter
 			//emulated for more than one class filter
-			if (inclusive) {
-				request.addClassFilter(filters[0]);
+			if (filters.length == 1) {	
+				pattern= filters[0];
 			} else {
-				request.addClassExclusionFilter(filters[0]);
+				pattern= getGreatestCommonPatternFilter();
 			}
-		} else {
-			//XXX to do
-			//String commonPattern= generateGreatestCommonPatternFilter();
+			if (pattern.length() > 0) {
+				ExceptionRequest request= (ExceptionRequest)eRequest;
+				if (inclusive) {
+					request.addClassFilter(pattern);
+				} else {
+					request.addClassExclusionFilter(pattern);
+				}
+			}
 		}
-		super.configureRequest(request, target);
+		super.configureRequest(eRequest, target);
 	}
 	
 	/**
 	 * Returns the longest common pattern from the class filters specified
 	 * for this breakpoint.
 	 */
-	protected String generateGreatestCommonPatternFilter() {
-		return ""; //$NON-NLS-1$
+	protected String getGreatestCommonPatternFilter() {
+		if (fCommonPattern != null) {
+			return fCommonPattern;
+		}
+		String[] filters= null;
+		StringBuffer buff= new StringBuffer();
+		try {
+			filters= parseList(ensureMarker().getAttribute(FILTERS, ""));
+		} catch(DebugException e) {
+			return buff.toString();
+		}
+		int max=0;
+		int longest= 0;
+		for (int i= 0;i < filters.length; i++) {
+			String filter = filters[i];
+			int length= filter.length();
+			if (length > max) {
+				max= length;
+				longest= i;
+			}
+		}
+		int index= 0;
+		String longestFilter= filters[longest];
+		filters[longest]= null;
+		char current= longestFilter.charAt(index);
+		boolean common= true;
+		if (current != '*') {
+			while (common) {
+				for (int i = 0; i < filters.length; i++) {
+					String filter = filters[i];
+					if (filter == null) {
+						//filter ended with a '*'
+						continue;
+					}
+					if (filter.length() <= index) {
+						common= false;
+						break;
+					}
+					char other= filter.charAt(index);
+					if (other == '*') {
+						if (index == 0) {
+							common= false;
+							break;
+						} else if (index == filter.length() - 1) {
+							filters[i] = null;
+						}
+					} else if (other != current) {
+						common= false;
+						break;
+					}
+				}
+				if (common) {
+					buff.append(current);
+					index++;
+					if (index == max) {
+						break;
+					}
+					current= longestFilter.charAt(index);
+				}
+			}
+		}
+		if (buff.length() > 0) {
+			if (buff.charAt(buff.length() - 1) != '*') {
+				buff.append('*');
+			}
+		}
+		fCommonPattern= buff.toString();
+		return fCommonPattern;
 	}
 	/**
 	 * Serializes the array of strings into one comma
