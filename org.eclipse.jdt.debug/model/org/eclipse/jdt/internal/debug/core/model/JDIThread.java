@@ -630,7 +630,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			return isSuspended()
 				&& !(isPerformingEvaluation() || isInvokingMethod())
-				&& !isStepping()
+				&& (!isStepping() || isSuspendedQuiet())
 				&& getTopStackFrame() != null
 				&& !getJavaDebugTarget().isPerformingHotCodeReplace();
 		} catch (DebugException e) {
