@@ -26,7 +26,7 @@
 			<fileset dir="../eval"/>
 		</zip>
 		<copy file="../plugin.xml" todir="${dest}"/>
-		<copy file="../plugin.jars" todir="${dest}"/>
+		<copy file="../plugin.properties" todir="${dest}"/>
 		<copy file="../jdi.jar" todir="${dest}"/>
 		<copy file="../.classpath" todir="${dest}"/>
 		<copy file="../.options" todir="${dest}"/>
