@@ -91,7 +91,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}		
 	
 	public JavaBreakpoint() {
-		fRequestsByTarget = new HashMap(2);
+		fRequestsByTarget = new HashMap(1);
 	}	
 	
 	/**
@@ -129,7 +129,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		List reqs = getRequests(target);
 		if (reqs.isEmpty()) {
-			reqs = new ArrayList(1);
 			fRequestsByTarget.put(target, reqs);
 		}
 		reqs.add(request);
@@ -188,7 +187,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected ArrayList getRequests(JDIDebugTarget target) {
 		ArrayList list= (ArrayList)fRequestsByTarget.get(target);
 		if (list == null) {
-			list= new ArrayList(0);
+			list= new ArrayList(2);
 		}
 		return list;
 	}
