@@ -23,6 +23,8 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
@@ -146,22 +148,29 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 	public void testSetPreferences() {
 		// Turn of suspend on  uncaught exceptions
 		setSuspendOnUncaughtExceptionsPreference(false);
-		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore debugUIPreferences = DebugUIPlugin.getDefault().getPreferenceStore();
 		// Don't prompt for perspective switching
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, MessageDialogWithToggle.ALWAYS);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, MessageDialogWithToggle.ALWAYS);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.NEVER);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, MessageDialogWithToggle.ALWAYS);
-		preferenceStore.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
+		debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND, MessageDialogWithToggle.ALWAYS);
+		debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, MessageDialogWithToggle.ALWAYS);
+		debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, MessageDialogWithToggle.NEVER);
+		debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, MessageDialogWithToggle.ALWAYS);
+		debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.ALWAYS);
 		
-		preferenceStore = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		String property = System.getProperty("debug.workbenchActivation");
+		if (property != null && property.equals("off")) {
+		    debugUIPreferences.setValue(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, false);
+		    debugUIPreferences.setValue(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, false);
+		    debugUIPreferences.setValue(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, false);
+		    debugUIPreferences.setValue(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, false);
+		}
+		
+		IPreferenceStore jdiUIPreferences = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		// Don't warn about HCR failures
-		preferenceStore.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, false);
-		preferenceStore.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, false);
-		preferenceStore.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, false);
+		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_FAILED, false);
+		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_ALERT_HCR_NOT_SUPPORTED, false);
+		jdiUIPreferences.setValue(IJDIPreferencesConstants.PREF_ALERT_OBSOLETE_METHODS, false);
 		// Set the timeout preference to a high value, to avoid timeouts while testing
 		JDIDebugModel.getPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, 10000);
-		
 	}
 	
 	/**

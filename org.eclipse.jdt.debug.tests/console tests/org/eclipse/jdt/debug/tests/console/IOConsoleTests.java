@@ -33,7 +33,7 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
     public void testPatternMatchListener() throws Exception {
         MessageConsole console = new MessageConsole("Test console", null);
         fMatchCount = 0;
-        console.addPatternMatchHandler(this);
+        console.addPatternMatchListener(this);
         IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
         consoleManager.addConsoles(new IConsole[]{console});
         try {
