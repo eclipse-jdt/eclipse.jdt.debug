@@ -135,9 +135,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 		File javaw= new File(program + "w"); //$NON-NLS-1$
 		
 		if (javawexe.isFile()) {
-			program= javaw.getAbsolutePath();
-		} else if (javaw.isFile()) {
 			program= javawexe.getAbsolutePath();
+		} else if (javaw.isFile()) {
+			program= javaw.getAbsolutePath();
 		}
 		
 		List arguments= new ArrayList();
@@ -187,9 +187,9 @@ public class StandardVMRunner extends AbstractVMRunner {
 		File javaw= new File(program + "w"); //$NON-NLS-1$
 		
 		if (javawexe.isFile()) {
-			program= javaw.getAbsolutePath();
-		} else if (javaw.isFile()) {
 			program= javawexe.getAbsolutePath();
+		} else if (javaw.isFile()) {
+			program= javaw.getAbsolutePath();
 		}
 		
 		List arguments= new ArrayList();
