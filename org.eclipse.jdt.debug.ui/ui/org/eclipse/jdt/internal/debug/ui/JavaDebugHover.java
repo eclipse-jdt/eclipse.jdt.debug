@@ -29,7 +29,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
-import org.eclipse.jdt.internal.debug.ui.actions.AbstractDisplayOptionsAction;
+import org.eclipse.jdt.internal.debug.ui.actions.PrimitiveOptionsAction;
 import org.eclipse.jdt.internal.ui.text.HTMLTextPresenter;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
@@ -258,15 +258,15 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	 */
 	private static JDIModelPresentation getModelPresentation() {
 		JDIModelPresentation presentation = new JDIModelPresentation();
-		String viewId= IDebugUIConstants.ID_VARIABLE_VIEW;
-		String showDetails = AbstractDisplayOptionsAction.getStringPreferenceValue(viewId, IJDIPreferencesConstants.PREF_SHOW_DETAILS);
+		String showDetails = JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_SHOW_DETAILS);
 		presentation.setAttribute(JDIModelPresentation.SHOW_DETAILS, showDetails);
 		
 		String[][] booleanPrefs= {{IJDIPreferencesConstants.PREF_SHOW_HEX, JDIModelPresentation.SHOW_HEX_VALUES},
         {IJDIPreferencesConstants.PREF_SHOW_CHAR, JDIModelPresentation.SHOW_CHAR_VALUES},
         {IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, JDIModelPresentation.SHOW_UNSIGNED_VALUES}};
+        String viewId= IDebugUIConstants.ID_VARIABLE_VIEW;
         for (int i = 0; i < booleanPrefs.length; i++) {
-        	boolean preferenceValue = AbstractDisplayOptionsAction.getBooleanPreferenceValue(viewId, booleanPrefs[i][0]);
+        	boolean preferenceValue = PrimitiveOptionsAction.getBooleanPreferenceValue(viewId, booleanPrefs[i][0]);
     		presentation.setAttribute(booleanPrefs[i][1], (preferenceValue ? Boolean.TRUE : Boolean.FALSE));
 		}
 		return presentation;

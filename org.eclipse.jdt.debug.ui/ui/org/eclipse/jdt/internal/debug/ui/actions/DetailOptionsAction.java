@@ -10,40 +10,53 @@
  *******************************************************************************/
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
-import org.eclipse.jdt.internal.debug.ui.JDIModelPresentation;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.ui.IViewSite;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.JavaDetailFormattersPreferencePage;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.IViewActionDelegate;
+import org.eclipse.ui.IViewPart;
 
 /**
- * 
+ * Action which opens the Java Detail Formatters preference page.
  */
-public class DetailOptionsAction extends AbstractDisplayOptionsAction {
-    
-    public DetailOptionsAction() {
+public class DetailOptionsAction implements IViewActionDelegate {
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+     */
+    public void init(IViewPart view) {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.jdt.internal.debug.ui.actions.AbstractDisplayOptionsAction#getPreferenceInfo()
+     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    protected String[][] getPreferenceInfo() {
-        return new String[][] {
-                {IJDIPreferencesConstants.PREF_SHOW_DETAILS, JDIModelPresentation.SHOW_DETAILS}
-        };
+    public void run(IAction action) {
+        final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.jdt.debug.ui.JavaDetailFormattersPreferencePage", new JavaDetailFormattersPreferencePage()); //$NON-NLS-1$
+        
+        PreferenceManager manager = new PreferenceManager();
+        manager.addToRoot(targetNode);
+        final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
+        final boolean [] result = new boolean[] { false };
+        BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+            public void run() {
+                dialog.create();
+                dialog.setMessage(targetNode.getLabelText());
+                result[0]= (dialog.open() == Window.OK);
+            }
+        }); 
     }
-    
-	protected void applyPreference(String preference, String attribute, IDebugModelPresentation presentation) {
-		String string = getStringPreferenceValue(getView().getSite().getId(), preference);
-		presentation.setAttribute(attribute, string);
-	}
 
     /* (non-Javadoc)
-     * @see org.eclipse.jdt.internal.debug.ui.actions.AbstractDisplayOptionsAction#getDialog()
+     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
-    protected Dialog getDialog() {
-        IViewSite viewSite = getView().getViewSite();
-        return new DetailOptionsDialog(viewSite.getShell(), viewSite.getId());
+    public void selectionChanged(IAction action, ISelection selection) {
     }
     
 }

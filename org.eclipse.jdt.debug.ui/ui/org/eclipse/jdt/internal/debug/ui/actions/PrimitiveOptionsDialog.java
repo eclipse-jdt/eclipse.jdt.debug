@@ -54,13 +54,13 @@ public class PrimitiveOptionsDialog extends Dialog {
 		// Create the 3 primitive display checkboxes
 		fHexButton = new Button(composite, SWT.CHECK);
 		fHexButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_&hexadecimal_values_(byte,_short,_char,_int,_long)_3")); //$NON-NLS-1$
-		fHexButton.setSelection(AbstractDisplayOptionsAction.getBooleanPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_HEX));
+		fHexButton.setSelection(getBooleanPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_HEX));
 		fCharButton = new Button(composite, SWT.CHECK);
 		fCharButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_ASCII_&character_values_(byte,_short,_int,_long)_4")); //$NON-NLS-1$
-		fCharButton.setSelection(AbstractDisplayOptionsAction.getBooleanPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_CHAR));
+		fCharButton.setSelection(getBooleanPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_CHAR));
 		fUnsignedButton = new Button(composite, SWT.CHECK);
 		fUnsignedButton.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Display_&unsigned_values_(byte)_5")); //$NON-NLS-1$
-		fUnsignedButton.setSelection(AbstractDisplayOptionsAction.getBooleanPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_UNSIGNED));
+		fUnsignedButton.setSelection(getBooleanPreferenceValue(fPrefix, IJDIPreferencesConstants.PREF_SHOW_UNSIGNED));
 		applyDialogFont(composite);
 		return composite;
 	}
@@ -74,5 +74,24 @@ public class PrimitiveOptionsDialog extends Dialog {
 		store.setValue(fPrefix + "." + IJDIPreferencesConstants.PREF_SHOW_CHAR, fCharButton.getSelection()); //$NON-NLS-1$
 		store.setValue(fPrefix + "." + IJDIPreferencesConstants.PREF_SHOW_UNSIGNED, fUnsignedButton.getSelection()); //$NON-NLS-1$
 		super.okPressed();
-	}	
+	}
+    
+    /**
+     * Returns the value of this filters preference (on/off) for the given
+     * view.
+     * 
+     * @param part
+     * @return boolean
+     */
+    public static boolean getBooleanPreferenceValue(String id, String preference) {
+        String compositeKey = id + "." + preference; //$NON-NLS-1$
+        IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+        boolean value = false;
+        if (store.contains(compositeKey)) {
+            value = store.getBoolean(compositeKey);
+        } else {
+            value = store.getBoolean(preference);
+        }
+        return value;       
+    }
 }

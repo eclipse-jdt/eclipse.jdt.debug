@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
@@ -68,6 +69,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	private Label fTableLabel;
 	
 	private FormatterListViewerContentProvider fFormatViewerContentProvider;
+    private Button fInlineFormattersButton;
+    private Button fInlineAllButton;
 	
 	public JavaDetailFormattersPreferencePage() {
 		super();
@@ -79,7 +82,24 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	protected Control createContents(Composite parent) {
 		noDefaultAndApplyButton();
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DETAIL_FORMATTER_PREFERENCE_PAGE);
-		return createDetailFormatsPreferences(parent);	
+        Font font = parent.getFont();
+        initializeDialogUnits(parent);
+        
+        // top level container
+        Composite container = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        container.setLayout(layout);
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        container.setLayoutData(gd);
+        container.setFont(font);
+        
+		createDetailFormatsPreferences(container);	
+        createLabelPreferences(container);
+        
+        return container;
 	}
 
 	/**
@@ -87,37 +107,49 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	 */
 	public void init(IWorkbench workbench) {
 	}
+    
+    private void createLabelPreferences(Composite parent) {
+        Group group= new Group(parent, SWT.NONE);
+        GridData gridData= new GridData(GridData.FILL_HORIZONTAL);
+        gridData.horizontalSpan= 2;
+        group.setLayoutData(gridData);
+        group.setLayout(new GridLayout());
+        group.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.1")); //$NON-NLS-1$
+        
+        String preference= getPreferenceStore().getString(IJDIPreferencesConstants.PREF_SHOW_DETAILS);
+        
+        // Create the 3 detail option radio buttons
+        fInlineFormattersButton = new Button(group, SWT.RADIO);
+        fInlineFormattersButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.2")); //$NON-NLS-1$
+        fInlineFormattersButton.setSelection(preference.equals(IJDIPreferencesConstants.INLINE_FORMATTERS));
+        
+        fInlineAllButton = new Button(group, SWT.RADIO);
+        fInlineAllButton.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.3")); //$NON-NLS-1$
+        fInlineAllButton.setSelection(preference.equals(IJDIPreferencesConstants.INLINE_ALL));
+        
+        Button detailPane = new Button(group, SWT.RADIO);
+        detailPane.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.4")); //$NON-NLS-1$
+        detailPane.setSelection(preference.equals(IJDIPreferencesConstants.DETAIL_PANE));
+    }
 	
 	/**
 	 * Create a group to contain the detail formatters related widgetry
 	 */
 	private Control createDetailFormatsPreferences(Composite parent) {
-		Font font = parent.getFont();
-		initializeDialogUnits(parent);
-		
-		// top level container
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		container.setLayoutData(gd);
-		container.setFont(font);
+        Font font= parent.getFont();
 		
 		//table label
-		fTableLabel= new Label(container, SWT.NONE);
+		fTableLabel= new Label(parent, SWT.NONE);
 		fTableLabel.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.&Types_with_detail_formatters__2")); //$NON-NLS-1$
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fTableLabel.setLayoutData(gd);
 		fTableLabel.setFont(font);
 
-		fFormatterListViewer= CheckboxTableViewer.newCheckList(container, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
+		fFormatterListViewer= CheckboxTableViewer.newCheckList(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = (Table)fFormatterListViewer.getControl();
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint= convertHeightInCharsToPixels(10);
+		//gd.heightHint= convertHeightInCharsToPixels(5);
 		gd.widthHint= convertWidthInCharsToPixels(10);
 		table.setLayoutData(gd);
 		table.setFont(font);
@@ -157,15 +189,18 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		});	
 		fFormatterListViewer.setInput(this);
 
-		createDetailFormatsButtons(container);
+		createDetailFormatsButtons(parent);
 
-		Label label = new Label(container, SWT.NONE);
+		Label label = new Label(parent, SWT.NONE);
 		label.setText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Detail_formatter_code_snippet_defined_for_selected_type__3")); //$NON-NLS-1$
 		label.setFont(font);
-		createSourceViewer(container);
+        gd= new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan= 2;
+        label.setLayoutData(gd);
+		createSourceViewer(parent);
 		
 		fFormatViewerContentProvider.refreshViewer();
-		return container;
+		return parent;
 	}
 	
 
@@ -238,9 +273,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fCodeViewer.getTextWidget().setFont(JFaceResources.getTextFont());
 		
 		Control control= fCodeViewer.getControl();
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		GridData gd= new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan= 2;
-		gd.heightHint= convertHeightInCharsToPixels(10);
+		//gd.heightHint= convertHeightInCharsToPixels(5);
 		control.setLayoutData(gd);
 	}
 
@@ -298,6 +333,15 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	
 	public boolean performOk() {
 		fFormatViewerContentProvider.saveDetailFormatters();
+
+        String value= IJDIPreferencesConstants.DETAIL_PANE;
+        if (fInlineAllButton.getSelection()) {
+            value= IJDIPreferencesConstants.INLINE_ALL;
+        } else if (fInlineFormattersButton.getSelection()) {
+            value= IJDIPreferencesConstants.INLINE_FORMATTERS;
+        }
+        JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_SHOW_DETAILS, value);
+        
 		JDIDebugUIPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
