@@ -22,7 +22,7 @@ public class BreakpointLocationVerifier {
 
 		Scanner scanner= new Scanner();
 		boolean found= false;
-		int start= 0, length= 0, token= 0;
+		int start= 0, length= 0, token= 0, lastToken= 0;
 
 		while (!found) {
 			try {
@@ -31,19 +31,34 @@ public class BreakpointLocationVerifier {
 				char[] txt= doc.get(start, length).toCharArray();
 				scanner.setSourceBuffer(txt);
 				token= scanner.getNextToken();
+				lastToken= 0;
 
 				while (token != TerminalSymbols.TokenNameEOF) {
-					if (token == TerminalSymbols.TokenNamebreak ||
-						token == TerminalSymbols.TokenNamecontinue ||
-						token == TerminalSymbols.TokenNameIdentifier ||
-						token == TerminalSymbols.TokenNamereturn ||
-						token == TerminalSymbols.TokenNamethis ||
-						token == TerminalSymbols.TokenNamesuper) {
+					if (isNonIdentifierValidToken(token)) {
 						found= true;
 						break;
-					} else {
-						token= scanner.getNextToken();
-					}
+					} else if (token == TerminalSymbols.TokenNameIdentifier) {
+						if (lastToken == TerminalSymbols.TokenNameIdentifier || isPrimitiveTypeToken(lastToken)
+						|| lastToken == TerminalSymbols.TokenNameRBRACKET) {
+							//var declaration..is there initialization
+							lastToken= token;
+							token= scanner.getNextToken();
+							if (token == TerminalSymbols.TokenNameSEMICOLON) {
+								//no init
+								break;
+							} else {
+								found= true;
+								break;
+							}
+						}
+					} else if (lastToken == TerminalSymbols.TokenNameIdentifier 
+								&& token != TerminalSymbols.TokenNameLBRACKET) {
+						found= true;
+						break;
+					} 
+						
+					lastToken= token;
+					token= scanner.getNextToken();
 				}
 				if (!found) {
 					lineNumber++;
@@ -56,5 +71,25 @@ public class BreakpointLocationVerifier {
 		}
 		// add 1 to the line number - Document is 0 based, JDI is 1 based
 		return lineNumber + 1;
+	}
+	
+	
+	protected boolean isPrimitiveTypeToken(int token) {
+		return token == TerminalSymbols.TokenNameboolean ||
+			token == TerminalSymbols.TokenNameint ||
+			token == TerminalSymbols.TokenNamechar ||
+			token == TerminalSymbols.TokenNamebyte ||
+			token == TerminalSymbols.TokenNamefloat ||
+			token == TerminalSymbols.TokenNamedouble ||
+			token == TerminalSymbols.TokenNamelong ||
+			token == TerminalSymbols.TokenNameshort;
+	}
+	
+	protected boolean isNonIdentifierValidToken(int token) {
+		return token == TerminalSymbols.TokenNamebreak ||
+				token == TerminalSymbols.TokenNamecontinue ||
+				token == TerminalSymbols.TokenNamereturn ||
+				token == TerminalSymbols.TokenNamethis ||
+				token == TerminalSymbols.TokenNamesuper;
 	}
 }
