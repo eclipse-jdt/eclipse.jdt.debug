@@ -12,10 +12,10 @@ package org.eclipse.jdt.internal.debug.core.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -28,7 +28,7 @@ import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 	
 	private IType fType;
-	private IPackageFragment fPackageDestination;
+	private IJavaElement fDestination;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
@@ -48,8 +48,8 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 			JDIDebugUIPlugin.log(e);
 		}
 		Object destination= getArguments().getDestination();
-		if (destination instanceof IPackageFragment) {
-			fPackageDestination= (IPackageFragment)destination;
+		if (destination instanceof IPackageFragment || destination instanceof IType) {
+			fDestination= (IJavaElement) destination;
 			return true;
 		}
 		return false;
@@ -73,7 +73,7 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
 	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		return LaunchConfigurationMainTypeNameChange.createChangesFor(fType, fPackageDestination.getElementName() + '.' + Signature.getSimpleName(fType.getFullyQualifiedName()));
+		return LaunchConfigurationProjectMainTypeChange.createChangesForTypeMove(fType, fDestination);
 	}
 
 }

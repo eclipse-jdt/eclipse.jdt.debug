@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2003 International Business Machines Corp. and others.
  * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v0.5 
+ * are made available under the terms of the Common Public License v1.0 
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -12,10 +12,7 @@ package org.eclipse.jdt.internal.debug.core.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.Signature;
-
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
@@ -28,28 +25,32 @@ public class LaunchConfigurationITypeRenameParticipant extends RenameParticipant
 
 	private IType fType;
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
+	 */
 	protected boolean initialize(Object element) {
 		fType= (IType) element;
-		
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
+	 */
 	public String getName() {
 		return RefactoringMessages.getString("LaunchConfigurationITypeRenameParticipant.0"); //$NON-NLS-1$
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
+	 */
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) {
 		return new RefactoringStatus();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		String packageName= Signature.getQualifier(fType.getFullyQualifiedName());
-		String newFullyQualifiedName;
-		if (packageName.length() == 0) {
-			newFullyQualifiedName= getArguments().getNewName();
-		} else {
-			newFullyQualifiedName= packageName + '.' + getArguments().getNewName();
-		}
-		return LaunchConfigurationMainTypeNameChange.createChangesFor(fType, newFullyQualifiedName);
+		return LaunchConfigurationProjectMainTypeChange.createChangesForTypeRename(fType, getArguments().getNewName());
 	}
 }

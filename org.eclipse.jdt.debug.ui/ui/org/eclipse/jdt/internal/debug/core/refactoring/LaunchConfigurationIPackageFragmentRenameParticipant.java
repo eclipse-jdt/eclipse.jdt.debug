@@ -24,28 +24,32 @@ public class LaunchConfigurationIPackageFragmentRenameParticipant extends Rename
 	
 	private IPackageFragment fPackageFragment;
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
+	 */
 	protected boolean initialize(Object element) {
 		fPackageFragment= (IPackageFragment)element;
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
+	 */
 	public String getName() {
 		return RefactoringMessages.getString("LaunchConfigurationIPackageFragmentRenameParticipant.0"); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#checkActivation()
+	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
 	 */
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) {
 		return new RefactoringStatus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.IRefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		return LaunchConfigurationMainTypeNameChange.createChangesFor(fPackageFragment, getArguments().getNewName());
+		return LaunchConfigurationProjectMainTypeChange.createChangesForPackageRename(fPackageFragment, getArguments().getNewName());
 	}
 }
