@@ -1,0 +1,56 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+   <title>Workbench Extension Points</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Java Runtime Classpath Entry Resolvers</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.jdt.launching.runtimeClasspathEntryResolvers
+<p><b><i>Description: </i></b>
+	This extension point allows clients to dynamically resolve entries used on
+	the runtime classpath and source lookup path, for corresponding 
+	classpath variables and classpath containers.</p>
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT runtimeClasspathEntryResolver EMPTY&gt;</tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST runtimeClasspathEntryResolver</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; variable&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; container&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>id</b> - a unique identifier that can be used to reference this resolver</li>
+<li>
+<b>class</b> - the class that implements this resolver. The class
+must implement IRuntimeClasspathEntryResolver.</li>
+<li>
+<b>variable</b> - the name of the classpath variable this resolver is registered for.</li>
+<li><b>container</b> - the identifier of the classpath container this resolver is registered for.</li>
+</ul>
+<p>At least one of variable or container must be specified, and at most one resolver can
+be registered for a variable or container.</p>
+<b><i>Examples:</i></b>
+<br>The following is an example of a resolver:
+<p>&lt;extension
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point="org.eclipse.jdt.launching.runtimeClasspathEntryResolvers">
+<br>&nbsp;&nbsp; &lt;runtimeClasspathEntryResolver
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="com.example.ResolverImplementation"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="com.example.ResolverId">
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; variable="CLASSPATH_VARIABLE">
+<br>&nbsp;&nbsp; &lt;/runtimeClasspathEntryResolver>
+<br>&lt;/extension>
+<p><b><i>Supplied Implementation:</i></b>
+<br>An implementation of a standard socket attach connector is provided.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>
