@@ -45,6 +45,8 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	
 	private Map fContextsByPage = null;
 	
+	private IWorkbenchWindow fActiveWindow;
+	
 	private EvaluationContextManager() {
 	}
 	
@@ -59,6 +61,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 						fgManager.windowOpened(windows[i]);	
 					}
 					workbench.addWindowListener(fgManager);
+					fgManager.fActiveWindow = workbench.getActiveWorkbenchWindow();
 				}				
 			}
 		};
@@ -69,6 +72,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
+		fActiveWindow = window;
 		windowOpened(window);
 	}
 
@@ -222,13 +226,17 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 * <li>stack frame in a page of another window</li>
 	 * </ol>
 	 * 
-	 * @param window the window that the evaluation action was invoked from
+	 * @param window the window that the evaluation action was invoked from, or
+	 *  <code>null</code> if the current window should be consulted
 	 * @return the stack frame that supplies an evaluation context, or <code>null</code>
 	 *   if none
 	 * @return IJavaStackFrame
 	 */
 	public static IJavaStackFrame getEvaluationContext(IWorkbenchWindow window) {
 		List alreadyVisited= new ArrayList();
+		if (window == null) {
+			window = fgManager.fActiveWindow;
+		}
 		return getEvaluationContext(window, alreadyVisited);
 	}
 	

@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
@@ -38,6 +40,9 @@ public abstract class LogicalObjectStructureType implements ILogicalStructureTyp
 	private IValue fResult; // the resulting structure
 	
 	private boolean fDone = false; // done the evaluation
+	
+	private static IStatus fgNeedThread = new Status(IStatus.INFO, JDIDebugPlugin.getUniqueIdentifier(), IJavaThread.INFO_EVALUATION_THREAD, "Provides thread context for an evaluation", null); //$NON-NLS-1$
+	private static IStatusHandler fgThreadProvider;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#providesLogicalStructure(org.eclipse.debug.core.model.IValue)
@@ -89,7 +94,7 @@ public abstract class LogicalObjectStructureType implements ILogicalStructureTyp
 		final IJavaThread thread = getThread(value);
 		if (thread == null) {
 			// can't do it
-			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "No thread available for logical structure copmutation.", null));
+			throw new CoreException(new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, LogicalStructuresMessages.getString("LogicalObjectStructureType.1"), null)); //$NON-NLS-1$
 		}
 		setObject((IJavaObject)value);
 		final IEvaluationRunnable evaluation = getEvaluation();
@@ -120,8 +125,14 @@ public abstract class LogicalObjectStructureType implements ILogicalStructureTyp
 		return fResult;
 	}
 
-	private IJavaThread getThread(IValue value) throws DebugException {
-		// TODO: retrieve thread via status handler
+	private IJavaThread getThread(IValue value) throws CoreException {
+		IStatusHandler handler = getThreadProvider();
+		if (handler != null) {
+			IJavaThread thread = (IJavaThread)handler.handleStatus(fgNeedThread, value);
+			if (thread != null) {
+				return thread;
+			}
+		}
 		IDebugTarget target = value.getDebugTarget();
 		IJavaDebugTarget javaTarget = (IJavaDebugTarget) target.getAdapter(IJavaDebugTarget.class);
 		if (javaTarget != null) {
@@ -134,6 +145,13 @@ public abstract class LogicalObjectStructureType implements ILogicalStructureTyp
 			}
 		}
 		return null;
+	}
+	
+	private static IStatusHandler getThreadProvider() {
+		if (fgThreadProvider == null) {
+			fgThreadProvider = DebugPlugin.getDefault().getStatusHandler(fgNeedThread);
+		}
+		return fgThreadProvider;
 	}
 
 	/**

@@ -1873,6 +1873,12 @@
             class="org.eclipse.jdt.internal.debug.ui.NoLineNumberAttributesStatusHandler"
             id="org.eclipse.jdt.debug.ui.statusHandler.noLineNumberAttributes">
       </statusHandler>
+      <statusHandler
+            plugin="org.eclipse.jdt.debug"
+            code="110"
+            class="org.eclipse.jdt.internal.debug.ui.EvaluationContextStatusHandler"
+            id="org.eclipse.jdt.debug.ui.statusHandler.evaluationContextStatusHandler">
+      </statusHandler>      
    </extension>
    <extension
          point="org.eclipse.debug.core.sourceLocators">

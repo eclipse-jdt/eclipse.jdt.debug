@@ -53,6 +53,15 @@ public interface IJavaThread extends IThread, IFilteredStep {
 	 * @see IJavaClassType#newInstance(String, IJavaValue[], IJavaThread)
 	 */
 	public static final int ERR_INCOMPATIBLE_THREAD_STATE = 102;
+	
+	/**
+	 * Status code used by the debug model to retrieve a thread to use
+	 * for evalutaions, via a status handler. A status handler is contributed by
+	 * the Java debug UI. When not present, the debug model uses any suspended thread.
+	 * 
+	 * @since 3.0 
+	 */
+	public static final int INFO_EVALUATION_THREAD = 110;	
 		
 	/**
 	 * Returns whether this thread is a system thread.
