@@ -86,15 +86,14 @@ public class JavaDebugImages {
 	
 	public static final String IMG_OBJS_PLUS_SIGN = NAME_PREFIX + "plus_sign.gif";  //$NON-NLS-1$
 	public static final String IMG_OBJS_MINUS_SIGN = NAME_PREFIX + "minus_sign.gif";  //$NON-NLS-1$
-	public static final String IMG_OBJS_CLASSPATH = NAME_PREFIX + "cp_order_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_CLASSPATH = NAME_PREFIX + "classpath_obj.gif"; //$NON-NLS-1$
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
 	private static final String T_OBJ= "obj16"; 		//$NON-NLS-1$
 	private static final String T_OVR= "ovr16"; 		//$NON-NLS-1$
 	private static final String T_WIZBAN= "wizban"; 	//$NON-NLS-1$
-	private static final String T_CTOOL= "ctool16"; 	//$NON-NLS-1$
-	private static final String T_CVIEW= "cview16"; 	//$NON-NLS-1$
+	private static final String T_EVIEW= "eview16"; 	//$NON-NLS-1$
 	private static final String T_DTOOL= "dtool16"; 	//$NON-NLS-1$
 	private static final String T_ETOOL= "etool16"; 	//$NON-NLS-1$
 	
@@ -131,7 +130,7 @@ public class JavaDebugImages {
 	
 	public static final ImageDescriptor DESC_OBJS_SNIPPET_EVALUATING= createManaged(T_OBJ, IMG_OBJS_SNIPPET_EVALUATING);
 	
-	public static final ImageDescriptor DESC_VIEW_ARGUMENTS_TAB = createManaged(T_CVIEW, IMG_VIEW_ARGUMENTS_TAB);
+	public static final ImageDescriptor DESC_VIEW_ARGUMENTS_TAB = createManaged(T_EVIEW, IMG_VIEW_ARGUMENTS_TAB);
 
 	public static final ImageDescriptor DESC_OBJ_MONITOR = createManaged(T_OBJ, IMG_OBJS_MONITOR);
 	
@@ -149,11 +148,11 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_WIZBAN_LIBRARY= create(T_WIZBAN, "library_wiz.gif"); 	//$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET= create(T_ETOOL, "run_sbook.gif"); 			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET_HOVER= create(T_CTOOL, "run_sbook.gif"); 	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET_HOVER= create(T_ETOOL, "run_sbook.gif"); 	//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET_DISABLED= create(T_DTOOL, "run_sbook.gif"); //$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET= create(T_ETOOL, "term_sbook.gif"); 			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_HOVER= create(T_CTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_HOVER= create(T_ETOOL, "term_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_DISABLED= create(T_DTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_OBJS_PLUS_SIGN= createManaged(T_OBJ, IMG_OBJS_PLUS_SIGN);
