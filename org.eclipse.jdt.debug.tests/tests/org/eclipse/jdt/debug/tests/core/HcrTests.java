@@ -43,7 +43,7 @@ public class HcrTests extends AbstractDebugTest {
 
 				// look at the value of 'x' - it should be "One"
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-				IJavaVariable variable = frame.findVariable("x");
+				IJavaVariable variable = findVariable(frame, "x");
 				assertNotNull("Could not find 'x'", variable);
 				assertEquals("value of 'x' should be 'One'", "One", variable.getValue().getValueString());
 				removeAllBreakpoints();
@@ -78,7 +78,7 @@ public class HcrTests extends AbstractDebugTest {
 				
 				// value of 'x' should now be "Two"
 				frame = (IJavaStackFrame)thread.getTopStackFrame();
-				variable = frame.findVariable("x");
+				variable = findVariable(frame, "x");
 				assertNotNull("Could not find 'x'", variable);
 				assertEquals("value of 'x' should be 'Two'", "Two", variable.getValue().getValueString());
 			} else {

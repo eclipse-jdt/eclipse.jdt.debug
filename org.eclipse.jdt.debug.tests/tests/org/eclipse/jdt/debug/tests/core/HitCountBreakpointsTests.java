@@ -36,7 +36,7 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable var = frame.findVariable("i");
+			IVariable var = findVariable(frame, "i");
 			assertNotNull("Could not find variable 'i'", var);
 			
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
@@ -49,7 +49,7 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 			assertTrue("second suspended thread not the same as first", thread == thread2);			
 			
 			frame = (IJavaStackFrame)thread2.getTopStackFrame();
-			var = frame.findVariable("i");
+			var = findVariable(frame, "i");
 			value = (IJavaPrimitiveValue)var.getValue();
 			assertNotNull("variable 'i' has no value", value);
 			iValue = value.getIntValue();
@@ -74,7 +74,7 @@ public class HitCountBreakpointsTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable var = frame.findVariable("i");
+			IVariable var = findVariable(frame, "i");
 			assertNotNull("Could not find variable 'i'", var);
 			
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();

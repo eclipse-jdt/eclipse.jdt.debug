@@ -37,7 +37,7 @@ public class ArrayTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertNotNull(frame);
-			IJavaVariable variable = frame.findVariable("array");
+			IJavaVariable variable = findVariable(frame, "array");
 			assertNotNull(variable);
 			IJavaArray array = (IJavaArray) variable.getValue();
 			assertEquals("Array has wrong size", 100, array.getSize());
@@ -57,7 +57,7 @@ public class ArrayTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertNotNull(frame);
-			IJavaVariable v = frame.findVariable("array");
+			IJavaVariable v = findVariable(frame, "array");
 			assertNotNull(v);
 			IJavaArray array = (IJavaArray) v.getValue();
 			assertNotNull(array);
@@ -79,7 +79,7 @@ public class ArrayTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 			IJavaStackFrame frame = (IJavaStackFrame) thread.getTopStackFrame();
 			assertNotNull(frame);
-			IJavaVariable v = frame.findVariable("array");
+			IJavaVariable v = findVariable(frame, "array");
 			assertNotNull(v);
 			IJavaArray array = (IJavaArray) v.getValue();
 			assertNotNull(array);

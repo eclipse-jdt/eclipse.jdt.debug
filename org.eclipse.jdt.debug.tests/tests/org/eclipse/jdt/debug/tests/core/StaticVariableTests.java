@@ -33,7 +33,7 @@ public class StaticVariableTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable pubStr = frame.findVariable("pubStr");
+			IVariable pubStr = findVariable(frame, "pubStr");
 			assertNotNull("Could not find variable 'pubStr'", pubStr);
 			
 			assertEquals("Value should be 'public'","public", pubStr.getValue().getValueString());

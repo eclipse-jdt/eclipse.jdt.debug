@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
@@ -32,7 +33,10 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -47,6 +51,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
@@ -868,5 +873,28 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		} catch (InterruptedException e) {
 		}
 	}	
+    
+    protected IJavaVariable findVariable(IJavaStackFrame frame, String name) throws DebugException {
+        IJavaVariable variable = frame.findVariable(name);
+        if (variable == null) {
+            // dump visible variables
+            IDebugModelPresentation presentation = DebugUIPlugin.getModelPresentation();
+            System.out.println("Could not find variable '" + name + "' in frame: " + presentation.getText(frame));
+            System.out.println("Visible variables are:");
+            IVariable[] variables = frame.getVariables();
+            for (int i = 0; i < variables.length; i++) {
+                IVariable variable2 = variables[i];
+                System.out.println("\t" + presentation.getText(variable2));
+            }
+            if (!frame.isStatic()) {
+                variables = frame.getThis().getVariables();
+                for (int i = 0; i < variables.length; i++) {
+                    IVariable variable2 = variables[i];
+                    System.out.println("\t" + presentation.getText(variable2));
+                }
+            }
+        }
+        return variable;
+    }
 }
 

@@ -73,11 +73,11 @@ public class LocalVariableTests extends AbstractDebugTest {
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 			IJavaDebugTarget target = (IJavaDebugTarget)frame.getDebugTarget();
-			IVariable i1 = frame.findVariable("i1");
+			IVariable i1 = findVariable(frame, "i1");
 			assertNotNull("Could not find variable 'i1'", i1);
 			assertEquals("'i1' value should be '0'", target.newValue(0), i1.getValue());
 			
-			IVariable i2 = frame.findVariable("i2");
+			IVariable i2 = findVariable(frame, "i2");
 			assertNotNull("Could not find variable 'i2'", i2);
 			assertEquals("'i2' value should be '1'", target.newValue(1), i2.getValue());
 						

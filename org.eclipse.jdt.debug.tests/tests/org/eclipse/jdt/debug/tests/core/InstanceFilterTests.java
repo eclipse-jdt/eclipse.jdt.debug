@@ -61,8 +61,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				// restrict breakpoint in simpleMethod to object 1
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
-				IJavaVariable var1 = frame.findVariable("object1");
-				IJavaVariable var2 = frame.findVariable("object2");
+				IJavaVariable var1 = findVariable(frame, "object1");
+				IJavaVariable var2 = findVariable(frame, "object2");
 				assertNotNull(var1);
 				assertNotNull(var2);
 				IJavaObject object1 = (IJavaObject)var1.getValue();
@@ -115,8 +115,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				// restrict breakpoint in simpleMethod to object 1
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
-				IJavaVariable var1 = frame.findVariable("object1");
-				IJavaVariable var2 = frame.findVariable("object2");
+				IJavaVariable var1 = findVariable(frame, "object1");
+				IJavaVariable var2 = findVariable(frame, "object2");
 				assertNotNull(var1);
 				assertNotNull(var2);
 				IJavaObject object1 = (IJavaObject)var1.getValue();
@@ -174,8 +174,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				// restrict breakpoint in simpleMethod to object 1
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
-				IJavaVariable var1 = frame.findVariable("object1");
-				IJavaVariable var2 = frame.findVariable("object2");
+				IJavaVariable var1 = findVariable(frame, "object1");
+				IJavaVariable var2 = findVariable(frame, "object2");
 				assertNotNull(var1);
 				assertNotNull(var2);
 				IJavaObject object1 = (IJavaObject)var1.getValue();
@@ -233,8 +233,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				// restrict breakpoint in simpleMethod to object 1
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
-				IJavaVariable var1 = frame.findVariable("object1");
-				IJavaVariable var2 = frame.findVariable("object2");
+				IJavaVariable var1 = findVariable(frame, "object1");
+				IJavaVariable var2 = findVariable(frame, "object2");
 				assertNotNull(var1);
 				assertNotNull(var2);
 				IJavaObject object1 = (IJavaObject)var1.getValue();
@@ -287,8 +287,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				// restrict breakpoint in simpleMethod to object 1
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
-				IJavaVariable var1 = frame.findVariable("object1");
-				IJavaVariable var2 = frame.findVariable("object2");
+				IJavaVariable var1 = findVariable(frame, "object1");
+				IJavaVariable var2 = findVariable(frame, "object2");
 				assertNotNull(var1);
 				assertNotNull(var2);
 				IJavaObject object1 = (IJavaObject)var1.getValue();
@@ -346,8 +346,8 @@ public class InstanceFilterTests extends AbstractDebugTest {
 				// restrict breakpoint in simpleMethod to object 1
 				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
 				assertNotNull(frame);
-				IJavaVariable var1 = frame.findVariable("object1");
-				IJavaVariable var2 = frame.findVariable("object2");
+				IJavaVariable var1 = findVariable(frame, "object1");
+				IJavaVariable var2 = findVariable(frame, "object2");
 				assertNotNull(var1);
 				assertNotNull(var2);
 				IJavaObject object1 = (IJavaObject)var1.getValue();

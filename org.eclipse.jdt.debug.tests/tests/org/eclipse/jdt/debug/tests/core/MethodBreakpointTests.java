@@ -185,7 +185,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			assertNotNull("Method entry breakpoint not hit within timeout period", thread);
 			
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable var = frame.findVariable("sum");
+			IVariable var = findVariable(frame, "sum");
 			assertNotNull("Could not find variable 'sum'", var);
 			
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
@@ -211,7 +211,7 @@ public class MethodBreakpointTests extends AbstractDebugTest {
 			assertNotNull("Method exit breakpoint not hit within timeout period", thread);
 			
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable var = frame.findVariable("sum");
+			IVariable var = findVariable(frame, "sum");
 			assertNotNull("Could not find variable 'sum'", var);
 			
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();

@@ -35,7 +35,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable var = frame.findVariable("i");
+			IVariable var = findVariable(frame, "i");
 			assertNotNull("Could not find variable 'i'", var);
 			
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
@@ -59,7 +59,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable var = frame.findVariable("i");
+			IVariable var = findVariable(frame, "i");
 			assertNotNull("Could not find variable 'i'", var);
 			
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
@@ -83,7 +83,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable var = frame.findVariable("i");
+			IVariable var = findVariable(frame, "i");
 			assertNotNull("Could not find variable 'i'", var);
 			
 			IJavaPrimitiveValue value = (IJavaPrimitiveValue)var.getValue();
@@ -94,7 +94,7 @@ public class ConditionalBreakpointsTests extends AbstractDebugTest {
 			resumeToLineBreakpoint(thread, bp);
 			
 			frame = (IJavaStackFrame)thread.getTopStackFrame();
-			var = frame.findVariable("i");
+			var = findVariable(frame, "i");
 			assertNotNull("Could not find variable 'i'", var);
 			
 			value = (IJavaPrimitiveValue)var.getValue();

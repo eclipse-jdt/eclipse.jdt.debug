@@ -39,7 +39,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable ivt = frame.findVariable("ivt");
+			IVariable ivt = findVariable(frame, "ivt");
 			assertNotNull("Could not find variable 'ivt'", ivt);
 			
 			// retrieve an instance var
@@ -107,7 +107,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable ivt = frame.findVariable("ivt");
+			IVariable ivt = findVariable(frame, "ivt");
 			assertNotNull("Could not find variable 'ivt'", ivt);
 			IJavaObject object = (IJavaObject)ivt.getValue();
 			
@@ -137,7 +137,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable ivt = frame.findVariable("ivt");
+			IVariable ivt = findVariable(frame, "ivt");
 			assertNotNull("Could not find variable 'ivt'", ivt);
 			IJavaObject object = (IJavaObject)ivt.getValue();
 			
@@ -160,7 +160,7 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable pubStr = frame.findVariable("pubStr");
+			IVariable pubStr = findVariable(frame, "pubStr");
 			assertNotNull("Could not find variable 'pubStr'", pubStr);
 			assertEquals("'pubStr' value should be 'public'", "public", pubStr.getValue().getValueString());
 			
@@ -187,8 +187,8 @@ public class InstanceVariableTests extends AbstractDebugTest {
 			thread= launchToLineBreakpoint(typeName, bp);
 
 			IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
-			IVariable count = frame.findVariable("count");
-			IVariable i = frame.findVariable("i");
+			IVariable count = findVariable(frame, "count");
+			IVariable i = findVariable(frame, "i");
 			
 			assertNotNull("could not find variable 'count'", count);
 			assertNotNull("could not find variable 'i'", i);

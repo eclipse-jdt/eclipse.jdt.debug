@@ -185,7 +185,7 @@ public class WatchpointTests extends AbstractDebugTest {
 			assertNotNull("No breakpoint", hit);
 			assertTrue("Should be an access", wp.isAccessSuspend(thread.getDebugTarget()));
 			assertEquals("Should be line 30", 30, frame.getLineNumber());			
-			IVariable var = frame.findVariable("value");
+			IVariable var = findVariable(frame, "value");
 			assertNotNull("Could not find variable 'value'", var);
 			
 			// retrieve an instance var
