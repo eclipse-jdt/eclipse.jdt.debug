@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -35,11 +34,11 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
@@ -1754,16 +1753,16 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	/**
 	 * Java debug targets do not support storage retrieval.
 	 * 
-	 * @see IStorageRetrieval#supportsStorageRetrieval()
+	 * @see IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
 	public boolean supportsStorageRetrieval() {
 		return false;
 	}
 
 	/**
-	 * @see IStorageRetrieval#getStorage(long, long)
+	 * @see IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
-	public IStorage getStorage(long startAddress, long length)
+	public IMemoryBlock getMemoryBlock(long startAddress, long length)
 		throws DebugException {
 			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_storage_retrieval")); //$NON-NLS-1$
 			// this line will not be excecuted as #notSupported(String)
