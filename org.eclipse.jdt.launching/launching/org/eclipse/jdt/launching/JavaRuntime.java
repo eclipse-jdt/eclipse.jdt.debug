@@ -61,8 +61,6 @@ import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntryResolver;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathProvider;
 import org.eclipse.jdt.internal.launching.SocketAttachConnector;
-import org.eclipse.jdt.internal.launching.StandardClasspathProvider;
-import org.eclipse.jdt.internal.launching.StandardSourcePathProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.launching;
+package org.eclipse.jdt.launching;
 
 /*******************************************************************************
  * Copyright (c) 2001, 2002 International Business Machines Corp. and others.
@@ -19,15 +19,13 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.IRuntimeClasspathProvider;
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jdt.launching.LibraryLocation;
 
 /**
  * Default implementation for classpath provider
+ * <p>
+ * This class may be subclassed.
+ * </p>
+ * @since 2.0
  */
 public class StandardClasspathProvider implements IRuntimeClasspathProvider {
 
