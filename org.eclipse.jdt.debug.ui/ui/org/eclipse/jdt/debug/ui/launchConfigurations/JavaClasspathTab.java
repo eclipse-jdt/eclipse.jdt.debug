@@ -14,6 +14,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.actions.AddAdvancedAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddFolderAction;
@@ -31,6 +32,7 @@ import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -131,6 +133,8 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		
 		createVerticalSpacer(pathButtonComp, 1);
 		
+		List advancedActions = new ArrayList(5);
+		
 		RuntimeClasspathAction action = new MoveUpAction(null);								
 		Button button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
@@ -162,24 +166,22 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		addAction(action);		
 
 		action = new AddFolderAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);
-		addAction(action);		
+		advancedActions.add(action);
 
 		action = new AddExternalFolderAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);
-		addAction(action);		
+		advancedActions.add(action);		
 
 		action = new AddVariableAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
-		action.setButton(button);
-		addAction(action);		
+		advancedActions.add(action);		
 		
 		action = new AttachSourceAction(null);								
-		button  = createPushButton(pathButtonComp, action.getText(), null);
+		advancedActions.add(action);
+		
+		IAction[] adv = (IAction[])advancedActions.toArray(new IAction[advancedActions.size()]);
+		action = new AddAdvancedAction(null, adv);
+		button = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
-		addAction(action);				
+		addAction(action);
 														
 		retargetActions(fClasspathViewer);		
 	}
