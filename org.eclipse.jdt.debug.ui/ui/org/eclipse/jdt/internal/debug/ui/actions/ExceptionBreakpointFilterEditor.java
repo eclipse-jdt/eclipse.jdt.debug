@@ -185,7 +185,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 	
 	public ExceptionBreakpointFilterEditor(Composite parent, IJavaExceptionBreakpoint breakpoint) {
 		fBreakpoint= breakpoint;
-		init(JavaBreakpointPreferenceStore.EXCEPTION_FILTER, "Re&strict to Selected Location(s):");
+		init(JavaBreakpointPreferenceStore.EXCEPTION_FILTER, ActionMessages.getString("ExceptionBreakpointFilterEditor.Re&strict_to_Selected_Location(s)__1")); //$NON-NLS-1$
 		createControl(parent);
 	}
 	
@@ -265,8 +265,8 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		
 		// Add filter button
 		fAddFilterButton = new Button(buttonContainer, SWT.PUSH);
-		fAddFilterButton.setText("&Add");
-		fAddFilterButton.setToolTipText("Key in the name of a new scope expression");
+		fAddFilterButton.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.&Add_2")); //$NON-NLS-1$
+		fAddFilterButton.setToolTipText(ActionMessages.getString("ExceptionBreakpointFilterEditor.Key_in_the_name_of_a_new_scope_expression_3")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		fAddFilterButton.setLayoutData(gd);
 		fAddFilterButton.addSelectionListener(new SelectionListener() {
@@ -279,8 +279,8 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		
 		// Add type button
 		fAddTypeButton = new Button(buttonContainer, SWT.PUSH);
-		fAddTypeButton.setText("Add &Class...");
-		fAddTypeButton.setToolTipText("Choose a Java Class to Add It to the Breakpoint Scope");
+		fAddTypeButton.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_&Class_4")); //$NON-NLS-1$
+		fAddTypeButton.setToolTipText(ActionMessages.getString("ExceptionBreakpointFilterEditor.Choose_a_Java_Class_to_Add_It_to_the_Breakpoint_Scope_5")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddTypeButton);
 		fAddTypeButton.setLayoutData(gd);
 		fAddTypeButton.addSelectionListener(new SelectionListener() {
@@ -293,8 +293,8 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		
 		// Add package button
 		fAddPackageButton = new Button(buttonContainer, SWT.PUSH);
-		fAddPackageButton.setText("Add &Package...");
-		fAddPackageButton.setToolTipText("Choose a Package to Add to the Breakpoint Scope");
+		fAddPackageButton.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_&Package_6")); //$NON-NLS-1$
+		fAddPackageButton.setToolTipText(ActionMessages.getString("ExceptionBreakpointFilterEditor.Choose_a_Package_to_Add_to_the_Breakpoint_Scope_7")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddPackageButton);
 		fAddPackageButton.setLayoutData(gd);
 		fAddPackageButton.addSelectionListener(new SelectionListener() {
@@ -307,8 +307,8 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		
 		// Remove button
 		fRemoveFilterButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveFilterButton.setText("&Remove");
-		fRemoveFilterButton.setToolTipText("Remove all selected scoping elements");
+		fRemoveFilterButton.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.&Remove_8")); //$NON-NLS-1$
+		fRemoveFilterButton.setToolTipText(ActionMessages.getString("ExceptionBreakpointFilterEditor.Remove_all_selected_scoping_elements_9")); //$NON-NLS-1$
 		gd = getButtonGridData(fRemoveFilterButton);
 		fRemoveFilterButton.setLayoutData(gd);
 		fRemoveFilterButton.addSelectionListener(new SelectionListener() {
@@ -345,7 +345,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 			validateChangeAndCleanup();
 		}
 		
-		fNewFilter = fFilterContentProvider.addFilter("");		
+		fNewFilter = fFilterContentProvider.addFilter("");		 //$NON-NLS-1$
 		fNewTableItem = fFilterTable.getItem(0);
 		
 		// create & configure Text widget for editor
@@ -421,7 +421,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		// if it's invalid, beep and leave sitting in the editor
 		else if (!validateEditorInput(trimmedValue)) {
 			fInvalidEditorText= trimmedValue;
-			fEditorText.setText("Invalid expression. Return to continue; escape to exit.");
+			fEditorText.setText(ActionMessages.getString("ExceptionBreakpointFilterEditor.Invalid_expression._Return_to_continue;_escape_to_exit_11")); //$NON-NLS-1$
 			fEditorText.getDisplay().beep();			
 			return;
 		// otherwise, commit the new value if not a duplicate
@@ -505,14 +505,14 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		try {
 			dialog = createAllPackagesDialog(shell);
 		} catch (JavaModelException jme) {
-			String title= "Add package to scope";
-			String message= "Could not open package selection dialog for scope definition"; 
+			String title= ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_package_to_scope_12"); //$NON-NLS-1$
+			String message= ActionMessages.getString("ExceptionBreakpointFilterEditor.Could_not_open_package_selection_dialog_for_scope_definition_13");  //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
 			return;			
 		}
 	
-		dialog.setTitle("Add Package to Scope"); 
-		dialog.setMessage("&Select a package to add to the scope of the breakpoint");
+		dialog.setTitle(ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_Package_to_Scope_14"));  //$NON-NLS-1$
+		dialog.setMessage(ActionMessages.getString("ExceptionBreakpointFilterEditor.&Select_a_package_to_add_to_the_scope_of_the_breakpoint_15")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}
@@ -521,7 +521,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 			IJavaElement pkg = (IJavaElement)packages[0];
 			String filter = pkg.getElementName();
 			if (filter.length() < 1) {
-				filter = "(default package)"; 
+				filter = ActionMessages.getString("ExceptionBreakpointFilterEditor.(default_package)_16");  //$NON-NLS-1$
 			} else {
 				filter += ".*"; //$NON-NLS-1$
 			}
@@ -536,14 +536,14 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 			dialog= JavaUI.createTypeDialog(shell, new ProgressMonitorDialog(shell),
 				SearchEngine.createWorkspaceScope(), IJavaElementSearchConstants.CONSIDER_CLASSES, false);
 		} catch (JavaModelException jme) {
-			String title= "Add Class to Scope";
-			String message= "Could not open class selection dialog for scope definition";
+			String title= ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_Class_to_Scope_17"); //$NON-NLS-1$
+			String message= ActionMessages.getString("ExceptionBreakpointFilterEditor.Could_not_open_class_selection_dialog_for_scope_definition_18"); //$NON-NLS-1$
 			ExceptionHandler.handle(jme, title, message);
 			return;
 		}
 	
-		dialog.setTitle("Add class to Scope");
-		dialog.setMessage("&Select a class to add to the scope of the breakpoint");
+		dialog.setTitle(ActionMessages.getString("ExceptionBreakpointFilterEditor.Add_class_to_Scope_19")); //$NON-NLS-1$
+		dialog.setMessage(ActionMessages.getString("ExceptionBreakpointFilterEditor.&Select_a_class_to_add_to_the_scope_of_the_breakpoint_20")); //$NON-NLS-1$
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			return;
 		}

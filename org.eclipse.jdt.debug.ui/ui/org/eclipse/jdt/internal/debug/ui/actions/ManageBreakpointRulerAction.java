@@ -129,17 +129,17 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 					if (!JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(), lineNumber)) {
 						Map attributes = new HashMap(10);
 						JavaCore.addJavaElementMarkerAttributes(attributes, type);
-						attributes.put("org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID", type.getHandleIdentifier());
+						attributes.put("org.eclipse.jdt.debug.ui.JAVA_ELEMENT_HANDLE_ID", type.getHandleIdentifier()); //$NON-NLS-1$
 						JDIDebugModel.createLineBreakpoint(getBreakpointResource(type), type.getFullyQualifiedName(), lineNumber, line.getOffset(), line.getOffset() + line.getLength(), 0, true, attributes);
 					}
 				}
 			}
 		} catch (DebugException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e);
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e); //$NON-NLS-1$
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e);
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e); //$NON-NLS-1$
 		} catch (BadLocationException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e);
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.adding.message1"), e); //$NON-NLS-1$
 		}
 	}
 	
@@ -155,7 +155,7 @@ public class ManageBreakpointRulerAction extends MarkerRulerInfoAction {
 				breakpointManager.removeBreakpoint(breakpoint, true);
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.removing.message1"), e);
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpoints.error.removing.message1"), e); //$NON-NLS-1$
 		}
 	}
 	

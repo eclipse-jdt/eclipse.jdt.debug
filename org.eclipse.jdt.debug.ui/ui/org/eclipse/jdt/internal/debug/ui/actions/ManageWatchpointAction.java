@@ -99,7 +99,7 @@ public class ManageWatchpointAction extends ManageBreakpointAction {
 				setBreakpoint(JDIDebugModel.createWatchpoint(BreakpointUtils.getBreakpointResource(type),type.getFullyQualifiedName(), element.getElementName(), -1, start, end, 0, true, attributes));
 			} catch (JavaModelException e) {
 				JDIDebugUIPlugin.log(e);
-				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), "The selected field is not visible in the currently selected debug context. A stack frame or suspended thread which contains the declaring type of this field must be selected."); //$NON-NLS-1$
+				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), ActionMessages.getString("ManageWatchpointAction.The_selected_field_is_not_visible_in_the_currently_selected_debug_context._A_stack_frame_or_suspended_thread_which_contains_the_declaring_type_of_this_field_must_be_selected_1")); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (CoreException x) {
 				JDIDebugUIPlugin.log(x);
 				MessageDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("ManageWatchpointAction.Problems_adding_watchpoint_7"), x.getMessage()); //$NON-NLS-1$

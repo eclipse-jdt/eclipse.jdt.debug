@@ -378,11 +378,11 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	}
 
 	protected void createConditionEditor(Composite parent) {
-		fConditionEnabler= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CONDITION_ENABLED, "Enable condition", parent);
+		fConditionEnabler= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CONDITION_ENABLED, ActionMessages.getString("JavaBreakpointPreferencePage.Enable_condition_1"), parent); //$NON-NLS-1$
 		addField(fConditionEnabler);
 
 		fCondition =
-			new BreakpointStringFieldEditor(JavaBreakpointPreferenceStore.CONDITION, "Condition", parent);
+			new BreakpointStringFieldEditor(JavaBreakpointPreferenceStore.CONDITION, ActionMessages.getString("JavaBreakpointPreferencePage.Condition_2"), parent); //$NON-NLS-1$
 		fConditionTextControl= fCondition.getTextControl(parent);
 		try {
 			fConditionTextControl.setEnabled(((IJavaLineBreakpoint)getBreakpoint()).isConditionEnabled());

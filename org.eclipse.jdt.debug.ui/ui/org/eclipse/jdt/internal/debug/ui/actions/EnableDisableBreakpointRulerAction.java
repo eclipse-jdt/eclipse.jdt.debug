@@ -25,7 +25,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 	public EnableDisableBreakpointRulerAction(ITextEditor editor, IVerticalRulerInfo info) {
 		setInfo(info);
 		setTextEditor(editor);
-		setText("&Enable Breakpoint");
+		setText(ActionMessages.getString("EnableDisableBreakpointRulerAction.&Enable_Breakpoint_1")); //$NON-NLS-1$
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 			try {
 				getBreakpoint().setEnabled(!getBreakpoint().isEnabled());
 			} catch (CoreException e) {
-				ErrorDialog.openError(getTextEditor().getEditorSite().getShell(), "Enabling/disabling breakpoints", "Exceptions occurred enabling disabling the breakpoint.", e.getStatus());
+				ErrorDialog.openError(getTextEditor().getEditorSite().getShell(), ActionMessages.getString("EnableDisableBreakpointRulerAction.Enabling/disabling_breakpoints_2"), ActionMessages.getString("EnableDisableBreakpointRulerAction.Exceptions_occurred_enabling_disabling_the_breakpoint_3"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -53,7 +53,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 		setEnabled(true);
 		try {
 			boolean enabled= getBreakpoint().isEnabled();
-			setText(enabled ? "&Disable Breakpoint" : "&Enable Breakpoint");
+			setText(enabled ? ActionMessages.getString("EnableDisableBreakpointRulerAction.&Disable_Breakpoint_4") : ActionMessages.getString("EnableDisableBreakpointRulerAction.&Enable_Breakpoint_5")); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}
