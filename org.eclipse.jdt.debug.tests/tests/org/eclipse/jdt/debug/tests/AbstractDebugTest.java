@@ -123,6 +123,32 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	}
 	
 	/**
+	 * Launches the given configuration and waits for an event. Returns the
+	 * source of the event. If the event is not received, the launch is
+	 * terminated and an exception is thrown.
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param waiter the event waiter to use
+	 * @return Object the source of the event
+	 * @exception Exception if the event is never received.
+	 */
+	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter) throws Exception {
+		ILaunch launch = configuration.launch(ILaunchManager.DEBUG_MODE, null);
+		Object suspendee= waiter.waitForEvent();
+		if (suspendee == null) {
+			try {
+				launch.terminate();
+			} catch (CoreException e) {
+				e.printStackTrace();
+				fail("Program did not susupend, and unable to terminate launch.");
+			}
+		}
+		setEventSet(waiter.getEventSet());
+		assertNotNull("Program did not suspend, launch terminated.", suspendee);
+		return suspendee;		
+	}
+	
+	/**
 	 * Launches the type with the given name, and waits for a
 	 * suspend event in that program. Returns the thread in which the suspend
 	 * event occurred.
@@ -147,12 +173,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread launchAndSuspend(ILaunchConfiguration config) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.SUSPEND, IJavaThread.class);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
-		config.launch(ILaunchManager.DEBUG_MODE, null);
-
-		Object suspendee= waiter.waitForEvent();
-		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
+		Object suspendee = launchAndWait(config, waiter);
 		return (IJavaThread)suspendee;		
 	}
 	
@@ -181,12 +202,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread launchToBreakpoint(ILaunchConfiguration config) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
-		config.launch(ILaunchManager.DEBUG_MODE, null);
 
-		Object suspendee= waiter.waitForEvent();
-		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
+		Object suspendee= launchAndWait(config, waiter);
 		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread);
 		return (IJavaThread)suspendee;		
 	}
@@ -218,18 +235,12 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaDebugTarget launchAndTerminate(ILaunchConfiguration config, int timeout) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.TERMINATE, IJavaDebugTarget.class);
 		waiter.setTimeout(timeout);
-		
-		ILaunch launch = config.launch(ILaunchManager.DEBUG_MODE, null);
 
-		IJavaDebugTarget debugTarget = (IJavaDebugTarget)launch.getDebugTarget();
-		if (debugTarget == null || !(debugTarget.isTerminated() || debugTarget.isDisconnected())) {
-			Object terminatee= waiter.waitForEvent();
-			setEventSet(waiter.getEventSet());
-			assertNotNull("Program did not terminate.", terminatee);
-			assertTrue("terminatee is not an IJavaDebugTarget", terminatee instanceof IJavaDebugTarget);
-			debugTarget = (IJavaDebugTarget) terminatee;
-			assertTrue("debug target is not terminated", debugTarget.isTerminated() || debugTarget.isDisconnected());
-		}
+		Object terminatee = launchAndWait(config, waiter);		
+		assertNotNull("Program did not terminate.", terminatee);
+		assertTrue("terminatee is not an IJavaDebugTarget", terminatee instanceof IJavaDebugTarget);
+		IJavaDebugTarget debugTarget = (IJavaDebugTarget) terminatee;
+		assertTrue("debug target is not terminated", debugTarget.isTerminated() || debugTarget.isDisconnected());
 		return debugTarget;		
 	}
 	
@@ -260,13 +271,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	protected IJavaThread launchToLineBreakpoint(ILaunchConfiguration config, ILineBreakpoint bp) throws Exception {
 		DebugEventWaiter waiter= new DebugElementKindEventDetailWaiter(DebugEvent.SUSPEND, IJavaThread.class, DebugEvent.BREAKPOINT);
 		waiter.setTimeout(DEFAULT_TIMEOUT);
-		
-		config.launch(ILaunchManager.DEBUG_MODE, null);
 
-		Object suspendee= waiter.waitForEvent();
-		setEventSet(waiter.getEventSet());
-		assertNotNull("Program did not suspend.", suspendee);
-		
+		Object suspendee= launchAndWait(config, waiter);
 		assertTrue("suspendee was not an IJavaThread", suspendee instanceof IJavaThread);
 		IJavaThread thread = (IJavaThread) suspendee;
 		IBreakpoint hit = getBreakpoint(thread);
