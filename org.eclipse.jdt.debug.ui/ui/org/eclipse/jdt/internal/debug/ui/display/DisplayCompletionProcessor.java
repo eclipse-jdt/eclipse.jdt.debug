@@ -6,7 +6,6 @@ package org.eclipse.jdt.internal.debug.ui.display;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -26,11 +25,14 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.internal.corext.template.ContextType;
+import org.eclipse.jdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.text.java.IJavaCompletionProposal;
 import org.eclipse.jdt.internal.ui.text.java.JavaCompletionProposalComparator;
 import org.eclipse.jdt.internal.ui.text.java.JavaParameterListValidator;
 import org.eclipse.jdt.internal.ui.text.java.ResultCollector;
+import org.eclipse.jdt.internal.ui.text.template.TemplateEngine;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -50,12 +52,17 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		
 	private ResultCollector fCollector;
 	private IContextInformationValidator fValidator;
+	private TemplateEngine fTemplateEngine;
 	
 	private char[] fProposalAutoActivationSet;
 	private JavaCompletionProposalComparator fComparator;
 		
 	public DisplayCompletionProcessor() {
 		fCollector= new ResultCollector();
+		ContextType contextType= ContextTypeRegistry.getInstance().getContextType("java"); //$NON-NLS-1$
+		if (contextType != null) {
+			fTemplateEngine= new TemplateEngine(contextType);
+		}
 		fComparator= new JavaCompletionProposalComparator();
 	}
 	
@@ -132,10 +139,27 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				receivingType.codeComplete(viewer.getDocument().get().toCharArray(), insertionPosition, documentOffset,
 					 localVariableTypeNames, localVariableNames,
 					 localModifiers, stackFrame.isStatic(), fCollector);
-					 
+				
+				IJavaCompletionProposal[] results= fCollector.getResults();
+				
+				if (fTemplateEngine != null) {
+					try {
+						fTemplateEngine.reset();
+						fTemplateEngine.complete(viewer, documentOffset, null);
+						IJavaCompletionProposal[] templateResults= fTemplateEngine.getResults();
+
+						// concatenate arrays
+						IJavaCompletionProposal[] total= new IJavaCompletionProposal[results.length + templateResults.length];
+						System.arraycopy(templateResults, 0, total, 0, templateResults.length);
+						System.arraycopy(results, 0, total, templateResults.length, results.length);
+						results= total;
+					} catch (JavaModelException x) {
+						JDIDebugUIPlugin.log(x);
+					}					
+				}	 
 				 //Order here and not in result collector to make sure that the order
 				 //applies to all proposals and not just those of the compilation unit. 
-				return order(getCollector().getResults());	
+				return order(results);	
 			}
 		} catch (JavaModelException x) {
 			handle(viewer, x);
