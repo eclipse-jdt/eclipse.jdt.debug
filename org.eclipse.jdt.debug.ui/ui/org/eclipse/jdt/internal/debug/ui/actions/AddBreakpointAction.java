@@ -124,8 +124,9 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 					return null;
 				}
 				IJavaElement e = unit.getElementAt(selection.getOffset());
-				if (e instanceof IType)
-						type = (IType)e;
+				if (e instanceof IType) {
+					type = (IType)e;
+				}
 				else if (e != null && e instanceof IMember) {
 					type = ((IMember) e).getDeclaringType();
 				}
@@ -154,7 +155,6 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		setPluginAction(action);
 		run();
 	}
 	/**
