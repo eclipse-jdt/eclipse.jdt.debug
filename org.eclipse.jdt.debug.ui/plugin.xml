@@ -177,7 +177,10 @@
 			enablesFor="+">
 			<enablement> 
              	<and>
-	             	<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<or>
+						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
+					</or>
 	             	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
 	             </and>
             </enablement>
@@ -194,7 +197,10 @@
 			enablesFor="+">
 			<enablement>
 				<and>
-	             	<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<or>
+						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
+					</or>
 					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
 	             </and>
             </enablement>
@@ -211,7 +217,10 @@
 			enablesFor="+">
 			<enablement> 
              	<and>
-	             	<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<or>
+						<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+						<systemProperty name="org.eclipse.jdt.debug.ui.scrapbookActive" value="true"/>
+					</or>
 					<or>
 						<objectClass name="org.eclipse.jface.text.ITextSelection"/>
 						<objectClass name="org.eclipse.jdt.debug.core.IJavaVariable"/>

@@ -32,7 +32,9 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 /**
  * Manages the current evaluation context (stack frame) for evaluation actions.
- * In each page, the selection is tracked in each debug view (if any). 
+ * In each page, the selection is tracked in each debug view (if any). When a stack
+ * frame selection exists, the "debuggerActive" System property is set to true. When
+ * a scrapbook becomes active, the "scrapbookActive" System property is set to true. 
  */
 public class EvaluationContextManager implements IWindowListener, IPageListener, ISelectionListener, IPartListener2 {
 
@@ -108,6 +110,10 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	public void pageOpened(IWorkbenchPage page) {
 		page.addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		page.addPartListener(this);
+		IWorkbenchPartReference ref = page.getActivePartReference();
+		if (ref != null) {
+			partActivated(ref);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -256,6 +262,11 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	 * @see IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partActivated(IWorkbenchPartReference ref) {
+		if ("org.eclipse.jdt.debug.ui.SnippetEditor".equals(ref.getId())) {
+			System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "true");
+		} else {
+			System.setProperty(JDIDebugUIPlugin.getUniqueIdentifier() + ".scrapbookActive", "false");
+		}
 	}
 
 	/**
