@@ -123,8 +123,8 @@ public class SocketListeningConnectorImpl extends ConnectorImpl implements Liste
 	 * Waits for a target VM to attach to this connector.
 	 * @return Returns a connected Virtual Machine.
 	 */
-	public VirtualMachine accept(Map connectionArgs) throws IOException {
-		// TODO handshake timeout???
+	public VirtualMachine accept(Map connectionArgs) throws IOException, IllegalConnectorArgumentsException {
+        getConnectionArguments(connectionArgs);
 		SocketConnection connection = (SocketConnection) ((SocketTransportImpl)fTransport).accept(fTimeout, 0);
 		return establishedConnection(connection);
 	}
