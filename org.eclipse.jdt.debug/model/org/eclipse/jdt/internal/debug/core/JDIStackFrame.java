@@ -760,7 +760,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * the declaring type loaded in the VM.
 	 */
 	public boolean isOutOfSynch() throws DebugException {
-		return fIsOutOfSynch || ((JDIDebugTarget)getDebugTarget()).isOutOfSynch(getUnderlyingMethod().declaringType());
+		if (fIsOutOfSynch) {
+			return true;
+		}
+		if (((JDIDebugTarget)getDebugTarget()).isOutOfSynch(getUnderlyingMethod().declaringType())) {
+			fIsOutOfSynch= true;
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -768,10 +775,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * the declaring type loaded in the VM.
 	 */
 	public boolean mayBeOutOfSynch() throws DebugException {
-		if (isOutOfSynch()) {
-			return true;
-		}
-		return ((JDIDebugTarget)getDebugTarget()).isOutOfSynch(getUnderlyingMethod().declaringType());
+		return false;
 	}
 	
 	protected boolean exists() throws DebugException {
