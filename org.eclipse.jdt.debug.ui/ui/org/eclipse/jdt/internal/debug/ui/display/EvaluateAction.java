@@ -17,9 +17,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -36,16 +38,11 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.IUpdate;
 
 import com.sun.jdi.InvocationException;
@@ -81,29 +78,16 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 * Finds the currently selected stack frame in the UI
 	 */
 	protected IStackFrame getContext() {
-		IWorkbenchPartSite site = fWorkbenchPart.getSite();
-		if (site == null) {
-			return null;
-		}
-		IWorkbenchWindow window = site.getWorkbenchWindow();
-		if (window == null) {
-			return null;
-		}
-		IWorkbenchPage page = window.getActivePage();
-		if (page == null) {
-			return null;
-		}
-		IViewPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (part != null) {
-			ISelectionProvider sp = part.getSite().getSelectionProvider();
-			if (sp != null) {
-				ISelection s = sp.getSelection();
-				if (s instanceof IStructuredSelection && !s.isEmpty()) {
-					IStructuredSelection ss = (IStructuredSelection)s;
-					Object item = ss.getFirstElement();
-					if (item instanceof IStackFrame) {
-						return (IStackFrame)item;
-					}
+		IDebugElement context = DebugUITools.getDebugContext();
+		if (context != null) {
+			if (context instanceof IStackFrame) {
+				return (IStackFrame)context;
+			}
+			if (context instanceof IThread) {
+				try {
+					return ((IThread)context).getTopStackFrame();
+				} catch (DebugException e) {
+					JDIDebugUIPlugin.log(e);
 				}
 			}
 		}
