@@ -73,7 +73,7 @@ public class JavaWatchpointFieldNameChange extends Change {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
+	public void initializeValidationData(IProgressMonitor pm) {
 	}
 	
 	/* (non-Javadoc)

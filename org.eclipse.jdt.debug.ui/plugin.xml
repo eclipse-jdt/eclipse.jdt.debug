@@ -32,6 +32,7 @@
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.jdt.ui"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
+	  <import plugin="org.eclipse.ltk.core.refactoring"/>      
    </requires>
 
 
@@ -2220,7 +2221,7 @@
    
 <!-- refactoring -->
    
-   <extension point="org.eclipse.jdt.ui.renameParticipants">
+   <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationITypeRenameParticipant"
             id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeRename">
@@ -2292,7 +2293,7 @@
          </enablement>
       </renameParticipant> -->
    </extension>
-<!--   <extension point="org.eclipse.jdt.ui.moveParticipants">
+<!--   <extension point="org.eclipse.ltk.core.refactoring.moveParticipants">
       <moveParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationITypeMoveParticipant"
             id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeMove">

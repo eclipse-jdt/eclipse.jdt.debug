@@ -98,7 +98,7 @@ public class LaunchConfigurationProjectNameChange extends Change {
 		return MessageFormat.format(RefactoringMessages.getString("LaunchConfigurationProjectNameChange.1"), new String[] {fLaunchConfiguration.getName()}); //$NON-NLS-1$
 	}
 
-	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
+	public void initializeValidationData(IProgressMonitor pm) {
 		// must be implemented to decide correct value of isValid
 	}
 

@@ -209,7 +209,7 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 		return new LaunchConfigurationMainTypeNameChange(fNewLaunchConfiguration, fOldTypeName);
 	}
 
-	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
+	public void initializeValidationData(IProgressMonitor pm) {
 	}
 
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
