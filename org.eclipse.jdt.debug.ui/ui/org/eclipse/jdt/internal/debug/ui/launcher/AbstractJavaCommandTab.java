@@ -120,6 +120,9 @@ public abstract class AbstractJavaCommandTab extends AbstractLaunchConfiguration
 			//using the default
 			fDefaultButton.setSelection(true);
 			handleDefaultButtonSelected(true);
+		} else {
+			fDefaultButton.setSelection(false);
+			handleDefaultButtonSelected(false);
 		}
 	}
 

@@ -278,6 +278,25 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 */
 	protected void handleJREComboBoxModified() {
 		loadDynamicJREArea();
+		
+		// always set the newly created area with defaults
+		ILaunchConfigurationWorkingCopy wc = getLaunchConfigurationWorkingCopy();
+		if (wc == null) {
+			try {
+				if (getLaunchConfiguration().isWorkingCopy()) {
+					// get a fresh copy to work on
+					wc = ((ILaunchConfigurationWorkingCopy)getLaunchConfiguration()).getOriginal().getWorkingCopy();
+				} else {
+						wc = getLaunchConfiguration().getWorkingCopy();
+				}
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.errorDialog("Unable to initialize defaults for selected JRE", e);
+				return;
+			}
+		}
+		getDynamicTab().setDefaults(wc);
+		getDynamicTab().initializeFrom(wc);
+				
 		updateLaunchConfigurationDialog();		
 	}
 	
@@ -387,12 +406,8 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		// Ask the dynamic UI to create its Control
 		getDynamicTab().setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 		getDynamicTab().createControl(getDynamicTabHolder());
-		if (getLaunchConfigurationWorkingCopy() != null) {
-			//creating a dynamic area that was not created initially
-			getDynamicTab().setDefaults(getLaunchConfigurationWorkingCopy());
-		}
-		getDynamicTab().initializeFrom(getLaunchConfiguration());
-		getDynamicTabHolder().layout();		
+		getDynamicTabHolder().layout();	
+			
 	}
 
 	protected ILaunchConfigurationWorkingCopy getLaunchConfigurationWorkingCopy() {
