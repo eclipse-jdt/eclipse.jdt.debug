@@ -211,6 +211,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		fClasspathViewer.setEnabled(!useDefault);
 		fBootpathViewer.setEnabled(!useDefault);
 		updateLaunchConfigurationDialog();
+		setDirty(true);
 	}
 
 	/**
@@ -234,6 +235,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			// no need to update if an explicit path is being used and this setting
 			// has not changed (and viewing the same config as last time)
 			if (!useDefault && !fClassPathDefaultButton.getSelection()) {
+				setDirty(false);
 				return;			
 			}
 		}
@@ -254,6 +256,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		fClasspathViewer.setLaunchConfiguration(configuration);
 		fBootpathViewer.setLaunchConfiguration(configuration);
 		getControl().setRedraw(true);
+		setDirty(false);
 	}
 
 	/**
@@ -300,28 +303,30 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		boolean def = fClassPathDefaultButton.getSelection();		
-		if (def) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, (String)null);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (String)null);
-		} else {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-			try {
-				IRuntimeClasspathEntry[] boot = fBootpathViewer.getEntries();
-				IRuntimeClasspathEntry[] user = fClasspathViewer.getEntries();
-				List mementos = new ArrayList(boot.length + user.length);
-				for (int i = 0; i < boot.length; i++) {
-					boot[i].setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
-					mementos.add(boot[i].getMemento());
-				}
-				for (int i = 0; i < user.length; i++) {
-					user[i].setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-					mementos.add(user[i].getMemento());
-				}
-				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaClasspathTab.Unable_to_save_classpath_1"), e); //$NON-NLS-1$
-			}	
+		if (isDirty()) {
+			boolean def = fClassPathDefaultButton.getSelection();		
+			if (def) {
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, (String)null);
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (String)null);
+			} else {
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
+				try {
+					IRuntimeClasspathEntry[] boot = fBootpathViewer.getEntries();
+					IRuntimeClasspathEntry[] user = fClasspathViewer.getEntries();
+					List mementos = new ArrayList(boot.length + user.length);
+					for (int i = 0; i < boot.length; i++) {
+						boot[i].setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+						mementos.add(boot[i].getMemento());
+					}
+					for (int i = 0; i < user.length; i++) {
+						user[i].setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+						mementos.add(user[i].getMemento());
+					}
+					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaClasspathTab.Unable_to_save_classpath_1"), e); //$NON-NLS-1$
+				}	
+			}
 		}
 	}
 

@@ -80,6 +80,7 @@ public abstract class JavaLaunchConfigurationTab extends AbstractLaunchConfigura
 	 */
 	public void entriesChanged(RuntimeClasspathViewer viewer) {
 		updateLaunchConfigurationDialog();
+		setDirty(true);
 	}
 
 }

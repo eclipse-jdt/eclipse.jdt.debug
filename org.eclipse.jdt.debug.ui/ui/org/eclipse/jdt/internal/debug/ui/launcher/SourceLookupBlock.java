@@ -205,6 +205,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		}
 		fPathViewer.setEnabled(!def);
 		updateLaunchConfigurationDialog();
+		setDirty(true);
 	}
 	
 	/**
@@ -277,6 +278,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 			if (!useDefault && !fDefaultButton.getSelection()) {
 				// If an explicit classpath is being used, it must be the same as before.
 				// No need to refresh
+				setDirty(false);
 				return;
 			}
 		}
@@ -298,34 +300,37 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
+		setDirty(false);
 	}
 	
 	/**
 	 * Saves settings in the given working copy
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		boolean def = fDefaultButton.getSelection();		
-		if (def) {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List)null);
-		} else {
-			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, def);
-			try {
-				IRuntimeClasspathEntry[] entries = fPathViewer.getEntries();
-				List mementos = new ArrayList(entries.length);
-				for (int i = 0; i < entries.length; i++) {
-					mementos.add(entries[i].getMemento());
-				}
-				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, mementos);
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("SourceLookupBlock.Unable_to_save_source_lookup_path_1"), e); //$NON-NLS-1$
-			}	
-		}
-		boolean dup = fDuplicatesButton.getSelection();
-		if (dup) {
-			configuration.setAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, true);		
-		} else {
-			configuration.setAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, (String)null);
+		if (isDirty()) {
+			boolean def = fDefaultButton.getSelection();		
+			if (def) {
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (List)null);
+			} else {
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, def);
+				try {
+					IRuntimeClasspathEntry[] entries = fPathViewer.getEntries();
+					List mementos = new ArrayList(entries.length);
+					for (int i = 0; i < entries.length; i++) {
+						mementos.add(entries[i].getMemento());
+					}
+					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, mementos);
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("SourceLookupBlock.Unable_to_save_source_lookup_path_1"), e); //$NON-NLS-1$
+				}	
+			}
+			boolean dup = fDuplicatesButton.getSelection();
+			if (dup) {
+				configuration.setAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, true);		
+			} else {
+				configuration.setAttribute(JavaUISourceLocator.ATTR_FIND_ALL_SOURCE_ELEMENTS, (String)null);
+			}
 		}
 	}	
 	
