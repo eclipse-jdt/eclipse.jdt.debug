@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -29,10 +30,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -62,7 +65,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	/**
 	 * A list of prequisite projects ordered by their build order.
 	 */
-	private IProject[] orderedProjects;
+	private IProject[] fOrderedProjects;
 	/**
 	 * Convenience method to get the launch manager.
 	 * 
@@ -842,7 +845,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	 */
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration,
 			String mode) throws CoreException {
-		return orderedProjects;
+		return fOrderedProjects;
 	}
 	/*
 	 * (non-Javadoc)
@@ -853,7 +856,7 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 	protected IProject[] getProjectsForProblemSearch(
 			ILaunchConfiguration configuration, String mode)
 			throws CoreException {
-		return orderedProjects;
+		return fOrderedProjects;
 	}
 	
 	/* (non-Javadoc)
@@ -875,13 +878,25 @@ public abstract class AbstractJavaLaunchConfigurationDelegate
 			monitor.subTask(LaunchingMessages
 					.getString("AbstractJavaLaunchConfigurationDelegate.20")); //$NON-NLS-1$
 		}
-		orderedProjects = null;
+		fOrderedProjects = null;
 		IJavaProject javaProject = JavaRuntime.getJavaProject(configuration);
 		if (javaProject != null) {
-			orderedProjects = computeReferencedBuildOrder(new IProject[]{javaProject
+			fOrderedProjects = computeReferencedBuildOrder(new IProject[]{javaProject
 					.getProject()});
 		}
 		// do generic launch checks
 		return super.preLaunchCheck(configuration, mode, monitor);
 	}
+    
+     /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBreakpoints(org.eclipse.debug.core.ILaunchConfiguration)
+     */
+    protected IBreakpoint[] getBreakpoints(ILaunchConfiguration configuration) {
+         IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
+         if (!breakpointManager.isEnabled()) {
+             // no need to check breakpoints individually.
+             return null;
+         }
+         return breakpointManager.getBreakpoints(JDIDebugModel.getPluginIdentifier());
+     }
 }
