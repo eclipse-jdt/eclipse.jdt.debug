@@ -112,7 +112,7 @@ public class JavaStepFilterPreferencePage extends PreferencePage implements IWor
 		composite.setFont(parent.getFont());
 		
 		createStepFilterPreferences(composite);
-		Dialog.applyDialogFont(composite);
+
 		return composite;	
 	}
 

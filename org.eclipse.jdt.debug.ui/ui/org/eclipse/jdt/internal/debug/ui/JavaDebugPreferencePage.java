@@ -11,7 +11,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -164,7 +163,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		// cannot set preference store, as it is a core preference
 				
 		setValues();
-		Dialog.applyDialogFont(composite);
 		return composite;		
 	}
 		

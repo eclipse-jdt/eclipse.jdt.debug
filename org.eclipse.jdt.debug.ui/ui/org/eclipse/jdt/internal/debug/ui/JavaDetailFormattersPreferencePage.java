@@ -145,7 +145,6 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		createSourceViewer(container);
 		
 		fFormatViewerContentProvider.refreshViewer();
-		Dialog.applyDialogFont(container);
 		return container;
 	}
 	
