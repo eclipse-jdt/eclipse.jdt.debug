@@ -350,7 +350,6 @@ public class ASTAPIVisitor extends ASTVisitor {
 		int ifTrueAddress= ifFalseAddress - ifFalse.getSize();
 		Instruction ifTrue= fInstructions.get(ifTrueAddress);
 		int conditionalAddress= ifTrueAddress - ifTrue.getSize();
-		Instruction condition= fInstructions.get(conditionalAddress);
 
 		// Insert the conditional jump
 		ConditionalJump conditionalJump= new ConditionalJump(false);
@@ -474,7 +473,6 @@ public class ASTAPIVisitor extends ASTVisitor {
 		}
 
 		int conditionalAddress= ifTrueAddress - ifTrue.getSize();
-		Instruction condition= fInstructions.get(conditionalAddress);
 
 		// Insert the conditional jump
 		ConditionalJump conditionalJump= new ConditionalJump(false);
@@ -1627,12 +1625,7 @@ public class ASTAPIVisitor extends ASTVisitor {
 		int expressionTypeId = getTypeId(node.getOperand());
 
 		String opToken = node.getOperator().toString();
-		int opTokenLength = opToken.length();
 		char char0 = opToken.charAt(0);
-		char char1 = '\0';
-		if (opTokenLength > 1) {
-			char1 = opToken.charAt(1);
-		}
 		
 		switch (char0) {
 			case '+': // plus plus or unary plus
