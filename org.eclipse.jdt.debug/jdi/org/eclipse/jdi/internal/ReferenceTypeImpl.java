@@ -1,9 +1,11 @@
 package org.eclipse.jdi.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -700,20 +702,16 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 */
 	public List locationsOfLine(int line) throws AbsentInformationException {
 		Iterator allMethods = methods().iterator();
-		List locations;
 		while (allMethods.hasNext()) {
 			MethodImpl method = (MethodImpl)allMethods.next();
 			try {
 				if (method.isNative()) {
 					continue;
 				}
-				locations = method.locationsOfLine(line);
-			} catch (AbsentInformationException e) {
-				continue;
+				return method.locationsOfLine(line);
 			} catch (InvalidLineNumberException e) {
 				continue;
 			}
-			return locations;
 		}
 		throw new InvalidLineNumberException(JDIMessages.getString("ReferenceTypeImpl.No_executable_code_at_line__5") + line  + JDIMessages.getString("ReferenceTypeImpl._6")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -1077,35 +1075,36 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 	 	getConstantMaps();
 	 	return fClassStatusVector;
 	 }
-	/*
+	 
+	/**
 	 * @see TypeImpl#createNullValue()
 	 */
 	public Value createNullValue() {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see ReferenceType#sourceNames(String)
 	 */
 	public List sourceNames(String arg0) throws AbsentInformationException {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see ReferenceType#sourcePaths(String)
 	 */
 	public List sourcePaths(String arg0) throws AbsentInformationException {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see ReferenceType#sourceDebugExtension()
 	 */
 	public String sourceDebugExtension() throws AbsentInformationException {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see ReferenceType#allLineLocations(String, String)
 	 */
 	public List allLineLocations(String arg0, String arg1)
@@ -1113,7 +1112,7 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		return null;
 	}
 
-	/*
+	/**
 	 * @see ReferenceType#locationsOfLine(String, String, int)
 	 */
 	public List locationsOfLine(String arg0, String arg1, int arg2)
@@ -1121,18 +1120,17 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 		return null;
 	}
 
-	/*
+	/**
 	 * @see ReferenceType#availableStrata()
 	 */
 	public List availableStrata() {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see ReferenceType#defaultStratum()
 	 */
 	public String defaultStratum() {
 		return null;
 	}
-
 }

@@ -1024,6 +1024,12 @@
 		plugin = "org.eclipse.jdt.debug"
 		code="161">
 	</statusHandler>
+	<statusHandler
+		id="org.eclipse.jdt.debug.ui.statusHandler.noLineNumberAttributes"
+		class="org.eclipse.jdt.internal.debug.ui.NoLineNumberAttributesStatusHandler"
+		plugin = "org.eclipse.jdt.debug"
+		code="162">
+	</statusHandler>
 </extension>
 
 <extension point = "org.eclipse.debug.core.sourceLocators">

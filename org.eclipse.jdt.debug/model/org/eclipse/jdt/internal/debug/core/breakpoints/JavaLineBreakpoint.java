@@ -21,8 +21,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
@@ -84,6 +88,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * This value must be cleared everytime the breakpoint is added to a target.
 	 */
 	private Map fCompiledExpressions= new HashMap();
+	
+	/**
+	 * Status code indicating that a request to create a breakpoint in a type
+	 * with no line number attributes has occurred.
+	 */
+	public static final int NO_LINE_NUMBERS= 162;
 		
 	public JavaLineBreakpoint() {
 	}
@@ -251,7 +261,15 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		List locations= null;
 		try {
 			locations= type.locationsOfLine(lineNumber);
-		} catch (AbsentInformationException e) {
+		} catch (AbsentInformationException aie) {
+			IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), NO_LINE_NUMBERS, MessageFormat.format("Absent Line Number information", new String[] {"Missing"}), null); 
+			IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
+			if (handler != null) {
+				try {
+					handler.handleStatus(status, type);
+				} catch (CoreException e) {
+				}
+			}
 			return null;
 		} catch (NativeMethodException e) {
 			return null;
