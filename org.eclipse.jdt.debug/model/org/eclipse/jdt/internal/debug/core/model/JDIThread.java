@@ -2197,5 +2197,50 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		return super.getAdapter(adapter);
 	}	
+	
+	/**
+	 * Returns true if all the user threads are suspended and
+	 * this owns at least one monitor.
+	 * @return boolean
+	 * @throws DebugException
+	 */
+	public boolean hasOwnedMonitors() throws DebugException {
+		return isSuspended() && getOwnedMonitors().size() > 0;
+	}
+	
+	/**
+	 * @see ThreadReference#ownedMonitors()
+	 * @return List
+	 * @throws DebugException
+	 */
+	public List getOwnedMonitors() throws DebugException {
+		try {
+			return getUnderlyingThread().ownedMonitors();
+		} catch (IncompatibleThreadStateException e) {
+		}
+		return Collections.EMPTY_LIST;
+	}
+	
+	/**
+	 * Returns true if all the user threads are suspended and
+	 * this thread owns at least one monitor.
+	 * @return boolean
+	 * @throws DebugException
+	 */
+	public boolean hasContendedMonitors() throws DebugException{
+		return isSuspended() && (getCurrentContendedMonitor()!=null);
+	}
 
+	/**
+	 * @see ThreadReference#currentContendedMonitor()
+	 * @return List
+	 * @throws DebugException
+	 */
+	public ObjectReference getCurrentContendedMonitor() throws DebugException {
+		try {
+			return getUnderlyingThread().currentContendedMonitor();
+		} catch (IncompatibleThreadStateException e) {
+		}
+		return null;
+	}
 }

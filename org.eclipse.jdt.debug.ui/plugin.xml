@@ -184,6 +184,13 @@
 	   	icon="icons/full/ctool16/disp_sbook.gif"
 	   	class="org.eclipse.jdt.internal.debug.ui.display.DisplayView">
 	</view>
+	<!-- <view
+      	name="Threads and Monitors"
+		icon="icons/full/monitor/thread_and_monitor_icon.gif"
+		category="org.eclipse.debug.ui"
+		class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorsView"
+		id="org.eclipse.jdt.debug.ui.MonitorsView">
+	</view> -->
 </extension>
 
 <extension point="org.eclipse.ui.perspectiveExtensions">
@@ -207,7 +214,10 @@
     	targetID="org.eclipse.debug.ui.DebugPerspective"> 
     	<view id="org.eclipse.jdt.debug.ui.DisplayView" 
         	relative="org.eclipse.debug.ui.ExpressionView" 
-    		relationship="stack"/>	
+    		relationship="stack"/>
+		<!-- <view id="org.eclipse.jdt.debug.ui.MonitorsView"
+			relative="org.eclipse.jdt.debug.ui.DisplayView"
+			relationship="stack"/> -->
         <view id="org.eclipse.jdt.ui.PackageExplorer" 
                 relative="org.eclipse.debug.ui.DebugView" 
                 relationship="stack"
@@ -221,6 +231,7 @@
                 relationship="stack"
                 visible="false"/> 
     	<viewShortcut id="org.eclipse.jdt.debug.ui.DisplayView"/>
+		<!-- <viewShortcut id="org.eclipse.jdt.debug.ui.MonitorsView"/> -->
      </perspectiveExtension> 
 </extension>
 
@@ -523,6 +534,43 @@
 			enablesFor="+">
 		</action> 
 	</viewerContribution>
+	<!-- <viewerContribution
+            targetID="org.eclipse.jdt.debug.ui.MonitorsView"
+            id="org.eclipse.jdt.debug.MonitorsViewPopupActions">
+         <action
+               id="org.eclipse.jdt.ui.actions.MonitorTrick"
+               hoverIcon="icons/full/monitor/trick_icon.gif"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTrick"
+               disabledIcon="icons/full/monitor/trick_icon.gif"
+               icon="icons/full/monitor/trick_icon.gif"
+               helpContextId="drop_to_frame_action_context"
+               label="Trick the VM"
+               menubarPath="vmGroup"
+               tooltip="Trick the VM">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.actions.MonitorTrace"
+               hoverIcon="icons/full/monitor/suspendall_icon.gif"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTrace"
+               disabledIcon="icons/full/monitor/suspendall_default_icon.gif"
+               icon="icons/full/monitor/suspendall_default_icon.gif"
+               helpContextId="drop_to_frame_action_context"
+               label="Suspend all non system threads"
+               menubarPath="vmGroup"
+               tooltip="Suspend all non system threads">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.actions.MonitorQuit"
+               hoverIcon="icons/full/monitor/resumeall_icon.gif"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuit"
+               disabledIcon="icons/full/monitor/resumeall_default_icon.gif"
+               icon="icons/full/monitor/resumeall_default_icon.gif"
+               helpContextId="drop_to_frame_action_context"
+               label="Resume all non system threads"
+               menubarPath="vmGroup"
+               tooltip="Resume all non system threads">
+         </action>
+      </viewerContribution> -->
 </extension>
 
 <extension point="org.eclipse.ui.viewActions">
@@ -648,6 +696,69 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
 	</viewContribution>
+<!--
+	   <viewContribution
+            targetID="org.eclipse.jdt.debug.ui.MonitorsView"
+            id="org.eclipse.jdt.debug.MonitorsActions">
+         <action
+               label="Trick the VM"
+               icon="icons/full/monitor/trick_icon.gif"
+               helpContextId="drop_to_frame_action_context"
+               tooltip="Trick the VM"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTrick"
+               toolbarPath="vmGroup"
+               id="org.eclipse.jdt.ui.actions.MonitorTrick">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.actions.MonitorTrace"
+               toolbarPath="vmGroup"
+               hoverIcon="icons/full/monitor/suspendall_icon.gif"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTrace"
+               disabledIcon="icons/full/monitor/suspendall_default_icon.gif"
+               icon="icons/full/monitor/suspendall_default_icon.gif"
+               helpContextId="drop_to_frame_action_context"
+               label="Suspend all non system threads"
+               tooltip="Suspend all non system threads">
+         </action>
+         <action
+               id="org.eclipse.jdt.ui.actions.MonitorQuit"
+               toolbarPath="vmGroup"
+               hoverIcon="icons/full/monitor/resumeall_icon.gif"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorQuit"
+               disabledIcon="icons/full/monitor/resumeall_default_icon.gif"
+               icon="icons/full/monitor/resumeall_default_icon.gif"
+               helpContextId="drop_to_frame_action_context"
+               label="Resume all non system threads"
+               tooltip="Resume all non system threads">
+         </action>
+         <action
+               label="Deadlock View"
+               icon="icons/full/monitor/deadlockview_icon.gif"
+               helpContextId="drop_to_frame_action_context"
+               tooltip="Switch to deadlock view"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleDeadLocksViewAction"
+               toolbarPath="vmGroup"
+               id="org.eclipse.jdt.ui.actions.MonitorQuit">
+         </action>
+         <action
+               label="Monitor View"
+               icon="icons/full/monitor/monitorview_icon.gif"
+               helpContextId="drop_to_frame_action_context"
+               tooltip="Switch to monitor view"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleMonitorsViewAction"
+               toolbarPath="vmGroup"
+               id="org.eclipse.jdt.ui.actions.MonitorQuit">
+         </action>
+         <action
+               label="Thread views"
+               icon="icons/full/monitor/threadview_icon.gif"
+               helpContextId="drop_to_frame_action_context"
+               tooltip="Switch to thread view"
+               class="org.eclipse.jdt.internal.debug.ui.monitors.ToggleThreadsViewAction"
+               toolbarPath="vmGroup"
+               id="org.eclipse.jdt.ui.actions.MonitorQuit">
+         </action>
+      </viewContribution> -->
 </extension>
 
 <!--Java debug model presentation -->

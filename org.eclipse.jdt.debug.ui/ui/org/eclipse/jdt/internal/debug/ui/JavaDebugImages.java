@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -72,7 +74,14 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
 	
 	public static final String IMG_VIEW_ARGUMENTS_TAB= NAME_PREFIX + "variable_tab.gif";  //$NON-NLS-1$
-
+	
+	public static final String IMG_OBJS_THREAD = NAME_PREFIX + "thread_icon.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_MONITOR = NAME_PREFIX + "monitor_icon.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_MONITOR_OWNED = NAME_PREFIX + "monitor_owned_icon.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_MONITOR_WAITED = NAME_PREFIX + "monitor_waited_icon.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_THREAD_OWNING = NAME_PREFIX + "thread_owning_icon.gif";  //$NON-NLS-1$
+	public static final String IMG_OBJS_THREAD_WAITING = NAME_PREFIX + "thread_waiting_icon.gif";  //$NON-NLS-1$
+	
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
@@ -119,6 +128,14 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OBJS_SNIPPET_EVALUATING= createManaged(T_OBJ, IMG_OBJS_SNIPPET_EVALUATING);
 	
 	public static final ImageDescriptor DESC_VIEW_ARGUMENTS_TAB = createManaged(T_CVIEW, IMG_VIEW_ARGUMENTS_TAB);
+
+	public static final ImageDescriptor DESC_OBJ_THREAD = createManaged(T_OBJ, IMG_OBJS_THREAD);
+	public static final ImageDescriptor DESC_OBJ_MONITOR = createManaged(T_OBJ, IMG_OBJS_MONITOR);
+	public static final ImageDescriptor DESC_OBJ_MONITOR_OWNED = createManaged(T_OBJ, IMG_OBJS_MONITOR_OWNED);
+	public static final ImageDescriptor DESC_OBJ_MONITOR_WAITED = createManaged(T_OBJ, IMG_OBJS_MONITOR_WAITED);
+	public static final ImageDescriptor DESC_OBJ_THREAD_OWNING = createManaged(T_OBJ, IMG_OBJS_THREAD_OWNING);
+	public static final ImageDescriptor DESC_OBJ_THREAD_WAITING = createManaged(T_OBJ, IMG_OBJS_THREAD_WAITING);
+
 		
 	public static final ImageDescriptor DESC_OVR_IS_OUT_OF_SYNCH= create(T_OVR, "error_co.gif");			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_MAY_BE_OUT_OF_SYNCH= create(T_OVR, "warning_co.gif");		//$NON-NLS-1$
