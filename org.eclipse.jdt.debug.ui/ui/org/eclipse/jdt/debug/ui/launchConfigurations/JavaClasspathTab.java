@@ -99,6 +99,8 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		
 		fPathTabFolder = new TabFolder(comp, SWT.NONE);
 		gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 200;
+		gd.widthHint = 250;	
 		fPathTabFolder.setLayoutData(gd);
 		fPathTabFolder.setFont(font);
 		fPathTabFolder.addSelectionListener(new SelectionAdapter() {
