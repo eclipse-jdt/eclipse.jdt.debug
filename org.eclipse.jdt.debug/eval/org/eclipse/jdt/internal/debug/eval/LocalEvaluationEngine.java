@@ -226,7 +226,7 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 									JDIDebugPlugin.logError(de);
 								}
 							} catch (RuntimeException re) {
-								re.printStackTrace();
+								JDIDebugPlugin.logError(re);
 							}
 						}
 					}
