@@ -293,6 +293,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 	
 	private double getJavaVersion() {
 		LibraryInfo libInfo = LaunchingPlugin.getLibraryInfo(fVMInstance.getInstallLocation().getAbsolutePath());
+		if (libInfo == null) {
+		    return 0D;
+		}
 		String version = libInfo.getVersion();
 		int index = version.indexOf("."); //$NON-NLS-1$
 		int nextIndex = version.indexOf(".", index+1); //$NON-NLS-1$
