@@ -159,7 +159,7 @@ public class AddVMDialog extends StatusDialog {
 		gd.horizontalSpan = 3;
 		l.setLayoutData(gd);		
 		
-		fLibraryBlock = new VMLibraryBlock();
+		fLibraryBlock = new VMLibraryBlock(this);
 		Control block = fLibraryBlock.createControl(parent);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
@@ -275,7 +275,7 @@ public class AddVMDialog extends StatusDialog {
 		return status;
 	}
 	
-	private void updateStatusLine() {
+	protected void updateStatusLine() {
 		IStatus max= null;
 		for (int i= 0; i < fStati.length; i++) {
 			IStatus curr= fStati[i];
@@ -428,11 +428,11 @@ public class AddVMDialog extends StatusDialog {
 		fStati[2]= status;
 	}
 	
-	private IStatus getSystemLibraryStatus() {
+	protected IStatus getSystemLibraryStatus() {
 		return fStati[3];
 	}
 	
-	private void setSystemLibraryStatus(IStatus status) {
+	protected void setSystemLibraryStatus(IStatus status) {
 		fStati[3]= status;
 	}
 	

@@ -10,27 +10,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
-import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
-import org.eclipse.jdt.internal.debug.ui.actions.AddFolderAction;
-import org.eclipse.jdt.internal.debug.ui.actions.AddJarAction;
-import org.eclipse.jdt.internal.debug.ui.actions.AddProjectAction;
-import org.eclipse.jdt.internal.debug.ui.actions.AddVariableAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AttachSourceAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
-import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -50,7 +43,7 @@ import org.eclipse.swt.widgets.Label;
 /**
  * Control used to edit the libraries associated with a VM install
  */
-public class VMLibraryBlock {
+public class VMLibraryBlock implements IEntriesChangedListener {
 	
 	protected IVMInstall fVmInstall;
 	protected IVMInstallType fVmInstallType;
@@ -62,6 +55,16 @@ public class VMLibraryBlock {
 	protected Button fDefaultButton;
 	protected List fActions = new ArrayList(10);
 	
+	protected AddVMDialog fDialog = null;
+	protected boolean fInCallback = false;
+	
+	/**
+	 * Constructor for VMLibraryBlock.
+	 */
+	public VMLibraryBlock(AddVMDialog dialog) {
+		fDialog = dialog;
+	}
+
 	/**
 	 * Creates and returns the source lookup control.
 	 * 
@@ -78,6 +81,7 @@ public class VMLibraryBlock {
 		fPathViewer = new RuntimeClasspathViewer(comp);
 		gd = new GridData(GridData.FILL_BOTH);
 		fPathViewer.getControl().setLayoutData(gd);
+		fPathViewer.addEntriesChangedListener(this);
 
 		Composite pathButtonComp = new Composite(comp, SWT.NONE);
 		GridLayout pathButtonLayout = new GridLayout();
@@ -245,7 +249,16 @@ public class VMLibraryBlock {
 			}
 			fPathViewer.setEntries(entries);
 		}
-		fPathViewer.setEnabled(!useDefault);					
+		fPathViewer.setEnabled(!useDefault);		
+		IStatus status = null;
+		if (getEntries().length == 0 && !isDefaultSystemLibrary()) {
+			status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
+				LauncherMessages.getString("VMLibraryBlock.Libraries_cannot_be_empty._1"), null); //$NON-NLS-1$
+		} else {
+			status = new StatusInfo();
+		}		
+		fDialog.setSystemLibraryStatus(status);
+		fDialog.updateStatusLine();
 	}
 	
 	/**
@@ -323,4 +336,15 @@ public class VMLibraryBlock {
 	protected IVMInstallType getVMInstallType() {
 		return fVmInstallType;
 	}	
+	/**
+	 * @see IEntriesChangedListener#entriesChanged(RuntimeClasspathViewer)
+	 */
+	public void entriesChanged(RuntimeClasspathViewer viewer) {
+		if (!fInCallback) {
+			fInCallback = true;
+			update();
+			fInCallback = false;
+		}
+	}
+
 }
