@@ -39,6 +39,7 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
+import com.sun.jdi.InvalidTypeException;
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
 
@@ -62,7 +63,13 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
                 }
             }
         } catch (DebugException e) {
-            DebugUIPlugin.errorDialog(shell, ActionMessages.getString("JavaObjectValueEditor.0"), ActionMessages.getString("JavaObjectValueEditor.1"), e); //$NON-NLS-1$ //$NON-NLS-2$
+            Throwable cause = e.getStatus().getException();
+            if (cause instanceof InvalidTypeException) {
+                IStatus status = DebugUIPlugin.newErrorStatus(cause.getMessage(), null);
+                reportProblem(shell, status);
+            } else {
+                DebugUIPlugin.errorDialog(shell, ActionMessages.getString("JavaObjectValueEditor.0"), ActionMessages.getString("JavaObjectValueEditor.1"), e); //$NON-NLS-1$ //$NON-NLS-2$
+            }
         }
         return true;
     }
@@ -105,8 +112,7 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
     			    if (exception != null) {
     			        String message = getExceptionMessage(exception);
     			        IStatus status= DebugUIPlugin.newErrorStatus(message, null);
-    			        DebugUIPlugin.errorDialog(shell, ActionMessages.getString("JavaObjectValueEditor.2"), //$NON-NLS-1$
-    			                MessageFormat.format(ActionMessages.getString("JavaObjectValueEditor.3"), new String[] { message }), status); //$NON-NLS-1$
+    			        reportProblem(shell, status);
     			        return null;
     			    }
     			    String[] messages = result.getErrorMessages();
@@ -122,6 +128,18 @@ public class JavaObjectValueEditor implements IVariableValueEditor {
             }
         }
         return null;
+    }
+    
+    /**
+     * Reports the given status to the user. This status should be for a problem
+     * that occurred due to an error in the user's code (not, for example, because of
+     * a timeout from the VM).
+     * @param shell a shell to use for opening a dialog
+     * @param status a status which has information about the problem
+     */
+    public void reportProblem(Shell shell, IStatus status) {
+        DebugUIPlugin.errorDialog(shell, ActionMessages.getString("JavaObjectValueEditor.2"), //$NON-NLS-1$
+                ActionMessages.getString("JavaObjectValueEditor.3"), status); //$NON-NLS-1$
     }
     
     /**
