@@ -608,6 +608,8 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 			switch (replyPacket.errorCode()) {
 				case JdwpReplyPacket.INVALID_THREAD:
 					throw new InvalidStackFrameException();
+				case JdwpReplyPacket.INVALID_FRAMEID:
+					throw new InvalidStackFrameException("Unable to pop the requested stack frame from the call stack (Reasons include: The frame id was invalid; The thread was resumed)");
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
 					throw new IncompatibleThreadStateException("Unable to pop the requested stack frame. The requested stack frame is not suspended.");
 				case JdwpReplyPacket.NO_MORE_FRAMES:

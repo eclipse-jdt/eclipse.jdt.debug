@@ -446,13 +446,18 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			j9Support= false;
 		}
 		try {
-			boolean supported = !thread.isTerminated()
-				&& thread.isSuspended()
-				&& (jdkSupport || j9Support);
-			if (supported) {
+			if (thread.isSuspended() && !thread.isTerminated()
+				&& (jdkSupport || j9Support)) {
 				// Also ensure that this frame and no frames above this
 				// frame are native. Unable to pop native stack frames.
 				List frames= thread.computeStackFrames();
+				if (jdkSupport) {
+					// JDK VMs are currently unable to pop the bottom
+					// stack frame.
+					if (frames.get(frames.size() - 1) == this) {
+						return false;
+					}
+				}
 				Iterator iter= frames.iterator();
 				JDIStackFrame frame= null;
 				while (iter.hasNext()) {
@@ -486,6 +491,14 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			((JDIThread) getThread()).dropToFrame(this);
 		} else {
 			notSupported(JDIDebugModelMessages.getString("JDIStackFrame.Drop_to_frame_not_supported")); //$NON-NLS-1$
+		}
+	}
+
+	public void popFrame() throws DebugException {
+		if (supportsDropToFrame()) {
+			((JDIThread) getThread()).popFrame(this);
+		} else {
+			notSupported(JDIDebugModelMessages.getString("JDIStackFrame.pop_frame_not_supported")); //$NON-NLS-1$
 		}
 	}
 

@@ -1243,19 +1243,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// JDK 1.4 support
 			try {
 				// Pop the drop frame and all frames above it
-				StackFrame jdiFrame = ((JDIStackFrame) frame).getUnderlyingStackFrame();
-				preserveStackFrames();
-				fThread.popFrames(jdiFrame);
+				popFrame(frame);
 				computeStackFrames();
 				stepInto();
-			} catch (IncompatibleThreadStateException exception) {
-				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
-			} catch (InvalidStackFrameException exception) {
-				// InvalidStackFrameException can be thrown when all but the
-				// deepest frame were popped. Fire a changed notification
-				// in case this has occured.
-				fireChangeEvent();
-				targetRequestFailed(exception.toString(),exception); //$NON-NLS-1$
 			} catch (RuntimeException exception) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_dropping_to_frame"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
 			}
@@ -1266,6 +1256,29 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			synchronized (this) {
 				StepHandler handler = new DropToFrameHandler(frame);
 				handler.step();
+			}
+		}
+	}
+	
+	protected void popFrame(IStackFrame frame) throws DebugException {
+		VirtualMachine vm= getVM();
+		if (vm.canPopFrames()) {
+			// JDK 1.4 support
+			try {
+				// Pop the frame and all frames above it
+				StackFrame jdiFrame = ((JDIStackFrame) frame).getUnderlyingStackFrame();
+				preserveStackFrames();
+				fThread.popFrames(jdiFrame);
+			} catch (IncompatibleThreadStateException exception) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_popping"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
+			} catch (InvalidStackFrameException exception) {
+				// InvalidStackFrameException can be thrown when all but the
+				// deepest frame were popped. Fire a changed notification
+				// in case this has occured.
+				fireChangeEvent();
+				targetRequestFailed(exception.toString(),exception); //$NON-NLS-1$
+			} catch (RuntimeException exception) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_popping"), new String[] {exception.toString()}),exception); //$NON-NLS-1$
 			}
 		}
 	}

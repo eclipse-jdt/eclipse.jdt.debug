@@ -103,4 +103,14 @@
    <attribute name="org.eclipse.jdt.debug.core.methodSignature"/>
 </extension>
 
+<extension 
+	point="org.eclipse.core.resources.builders" 
+	id="hcrbuilder"
+	name="%hcrBuilderName">
+	<builder>
+		<run class="org.eclipse.jdt.internal.debug.core.hcr.ProjectBuildWatcher">
+		</run>
+	</builder>
+</extension>
+
 </plugin>

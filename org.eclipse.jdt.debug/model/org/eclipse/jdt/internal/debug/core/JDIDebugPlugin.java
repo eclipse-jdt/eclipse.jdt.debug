@@ -81,8 +81,7 @@ public class JDIDebugPlugin extends Plugin {
 	 * manager.  Also initializes step filter information.
 	 */
 	public void startup() throws CoreException {
-		fJavaHCRMgr= new JavaHotCodeReplaceManager();
-		fJavaHCRMgr.startup();		
+		fJavaHCRMgr= JavaHotCodeReplaceManager.getDefault();
 
 		JDIDebugModel.setupState();
 	}
