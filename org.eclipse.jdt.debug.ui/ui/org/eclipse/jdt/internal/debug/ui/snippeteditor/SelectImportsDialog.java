@@ -39,6 +39,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
@@ -132,6 +133,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	}
 	
 	private void createImportButtons(Composite container) {
+		Font font = container.getFont();
+		
 		// button container
 		Composite buttonContainer = new Composite(container, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
@@ -148,6 +151,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		fAddTypeButton.setToolTipText(SnippetMessages.getString("SelectImportsDialog.Choose_a_Type_to_Add_as_an_Import_2")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddTypeButton);
 		fAddTypeButton.setLayoutData(gd);
+		fAddTypeButton.setFont(font);
 		fAddTypeButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
 				addType();
@@ -162,6 +166,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		fAddPackageButton.setToolTipText(SnippetMessages.getString("SelectImportsDialog.Choose_a_Package_to_Add_as_an_Import_4")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddPackageButton);
 		fAddPackageButton.setLayoutData(gd);
+		fAddPackageButton.setFont(font);
 		fAddPackageButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
 				addPackage();
@@ -176,6 +181,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		fRemoveImportsButton.setToolTipText(SnippetMessages.getString("SelectImportsDialog.Remove_All_Selected_Imports_6")); //$NON-NLS-1$
 		gd = getButtonGridData(fRemoveImportsButton);
 		fRemoveImportsButton.setLayoutData(gd);
+		fRemoveImportsButton.setFont(font);
 		fRemoveImportsButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent se) {
 				removeImports();
@@ -303,6 +309,8 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite dialogComp = (Composite)super.createDialogArea(parent);
 		// top level container
 		Composite outer = new Composite(dialogComp, SWT.NONE);
@@ -311,6 +319,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		topLayout.marginHeight = 5;
 		topLayout.marginWidth = 0;
 		outer.setLayout(topLayout);
+		outer.setFont(font);
 		
 		setTitle(MessageFormat.format(SnippetMessages.getString("SelectImportsDialog.Manage_the_Java_Snippet_Editor_Imports_for___{0}__1"), new String[]{fEditor.getPage().getName()})); //$NON-NLS-1$
 		
@@ -327,6 +336,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		columnLayoutData[0]= new ColumnWeightData(100);		
 		tableLayout.addColumnData(columnLayoutData[0]);
 		fImportsTable.setLayout(tableLayout);
+		fImportsTable.setFont(font);
 		new TableColumn(fImportsTable, SWT.NONE);
 
 		fImportsViewer = new TableViewer(fImportsTable);
@@ -352,6 +362,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 		});		
 		
 		createImportButtons(outer);
+		applyDialogFont(outer);
 		return outer;
 	}
 

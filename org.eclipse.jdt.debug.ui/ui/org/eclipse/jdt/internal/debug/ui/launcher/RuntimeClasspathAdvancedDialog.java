@@ -24,6 +24,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -63,6 +64,8 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		Font font = parent.getFont();
+		
 		initializeDialogUnits(parent);
 		
 		Composite composite= (Composite) super.createDialogArea(parent);
@@ -82,6 +85,7 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		l.setLayoutData(gd);
+		l.setFont(font);
 		
 		fButtons = new Button[fActions.length];
 		for (int i = 0; i < fActions.length; i++) {
@@ -93,14 +97,18 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			fButtons[i].setLayoutData(gd);
+			fButtons[i].setFont(font);
 		}
 		
 		fAddContainerButton = new Button(inner, SWT.RADIO);
 		fAddContainerButton.setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Add_&Container__1")); //$NON-NLS-1$
+		fAddContainerButton.setFont(font);
+		
 		fContainerCombo = new Combo(inner, SWT.READ_ONLY);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.grabExcessHorizontalSpace = true;
 		fContainerCombo.setLayoutData(gd);
+		fContainerCombo.setFont(font);
 		fDescriptors= ClasspathContainerDescriptor.getDescriptors();
 		String[] names= new String[fDescriptors.length];
 		for (int i = 0; i < names.length; i++) {
@@ -112,6 +120,8 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		new Label(inner, SWT.NONE);
 		
 		getShell().setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Advanced_Options_1")); //$NON-NLS-1$
+		
+		applyDialogFont(composite);
 		return composite;
 
 	}

@@ -35,6 +35,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -80,6 +81,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -100,10 +102,12 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		
 		fWidthLabel= new Label(widthHeightNameComp, SWT.NONE);
 		fWidthLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.widthlabel.text")); //$NON-NLS-1$
+		fWidthLabel.setFont(font);
 		
 		fWidthText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWidthText.setLayoutData(gd);
+		fWidthText.setFont(font);
 		fWidthText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -112,10 +116,12 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 
 		fNameLabel = new Label(widthHeightNameComp, SWT.NONE);
 		fNameLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.namelabel.text")); //$NON-NLS-1$
+		fNameLabel.setFont(font);
 		
 		fNameText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fNameText.setLayoutData(gd);
+		fNameText.setFont(font);
 		fNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -124,10 +130,12 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 
 		fHeightLabel= new Label(widthHeightNameComp, SWT.NONE);
 		fHeightLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.heightlabel.text")); //$NON-NLS-1$
+		fHeightLabel.setFont(font);
 		
 		fHeightText = new Text(widthHeightNameComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fHeightText.setLayoutData(gd);
+		fHeightText.setFont(font);
 		fHeightText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -140,6 +148,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		hint.setText(LauncherMessages.getString("AppletParametersTab.(optional_applet_instance_name)_1")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 		hint.setLayoutData(gd);
+		hint.setFont(font);
 				
 		createVerticalSpacer(comp);
 		
@@ -151,17 +160,20 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		parametersLayout.marginHeight = 0;
 		parametersLayout.marginWidth = 0;
 		parametersComp.setLayout(parametersLayout);
+		parametersComp.setFont(font);
 		
 		Label parameterLabel = new Label(parametersComp, SWT.NONE);
 		parameterLabel.setText(LauncherMessages.getString("appletlauncher.argumenttab.parameterslabel.text")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		parameterLabel.setLayoutData(gd);
+		parameterLabel.setFont(font);
 		
 		fParametersTable = new Table(parametersComp, SWT.BORDER | SWT.MULTI);
 		fParametersTable.setData(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS);
 		TableLayout tableLayout = new TableLayout();
 		fParametersTable.setLayout(tableLayout);
+		fParametersTable.setFont(font);
 		gd = new GridData(GridData.FILL_BOTH);
 		fParametersTable.setLayoutData(gd);
 		TableColumn column1 = new TableColumn(this.fParametersTable, SWT.NONE);
@@ -193,6 +205,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		envButtonComp.setLayout(envButtonLayout);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		envButtonComp.setLayoutData(gd);
+		envButtonComp.setFont(font);
 		
 		fParametersAddButton = createPushButton(envButtonComp ,LauncherMessages.getString("appletlauncher.argumenttab.parameters.button.add.text"), null); //$NON-NLS-1$
 		fParametersAddButton.addSelectionListener(new SelectionAdapter() {
@@ -423,6 +436,7 @@ public class AppletParametersTab extends JavaLaunchConfigurationTab {
 		final Table table = new Table(comp, style | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
+		table.setFont(comp.getFont());
 		TableColumn column1 = new TableColumn(table, SWT.NONE);
 		column1.setText(LauncherMessages.getString("appletlauncher.argumenttab.parameterscolumn.name.text")); //$NON-NLS-1$
 		column1.setWidth(150);

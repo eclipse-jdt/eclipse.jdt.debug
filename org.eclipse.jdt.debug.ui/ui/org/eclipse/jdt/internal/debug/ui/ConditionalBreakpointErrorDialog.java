@@ -17,6 +17,7 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -49,10 +50,13 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 		}
 		fTextArea= createEditArea(parent, condition, DebugUIMessages.getString("ConditionalBreakpointErrorDialog.Edit_the_condition_1")); //$NON-NLS-1$
 		
+		applyDialogFont(dialogArea);
 		return dialogArea;
 	}
 	
 	private Text createEditArea(Composite parent, String startingText, String labelText) {
+		Font font = parent.getFont();
+		
 		Composite editArea = new Composite(parent, SWT.NONE);
 		GridData data = new GridData(SWT.NONE);
 		data.horizontalSpan = GridData.FILL_HORIZONTAL;
@@ -69,7 +73,8 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 		labelData.horizontalAlignment= GridData.BEGINNING;
 		labelData.horizontalSpan= 1;
 		label.setLayoutData(labelData);
-		
+		label.setFont(font);
+				
 		Text text= new Text(editArea, SWT.SINGLE | SWT.BORDER);
 		text.setText(startingText);		
 		GridData textData= new GridData(SWT.NONE);
@@ -77,6 +82,7 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 		textData.horizontalSpan= 1;
 		textData.horizontalAlignment= GridData.BEGINNING;
 		text.setLayoutData(textData);
+		text.setFont(font);
 		
 		return text;
 	}

@@ -37,6 +37,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -78,6 +79,8 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_CLASSPATH_TAB);
@@ -91,6 +94,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		fPathTabFolder = new TabFolder(comp, SWT.NONE);
 		gd = new GridData(GridData.FILL_BOTH);
 		fPathTabFolder.setLayoutData(gd);
+		fPathTabFolder.setFont(font);
 		fPathTabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				TabItem[] tabs = fPathTabFolder.getSelection();
@@ -107,6 +111,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		
 		fClasspathViewer = new RuntimeClasspathViewer(fPathTabFolder);
 		fClasspathViewer.addEntriesChangedListener(this);
+		fClasspathViewer.getControl().setFont(font);
 		fClassPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 0);
 		fClassPathTabItem.setText(LauncherMessages.getString("JavaClasspathTab.Us&er_classes_1")); //$NON-NLS-1$
 		fClassPathTabItem.setControl(fClasspathViewer.getControl());
@@ -114,6 +119,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 
 		fBootpathViewer = new RuntimeClasspathViewer(fPathTabFolder);
 		fBootpathViewer.addEntriesChangedListener(this);
+		fBootpathViewer.getControl().setFont(font);
 		fBootPathTabItem = new TabItem(fPathTabFolder, SWT.NONE, 1);
 		fBootPathTabItem.setText(LauncherMessages.getString("JavaClasspathTab.&Bootstrap_classes_2")); //$NON-NLS-1$
 		fBootPathTabItem.setControl(fBootpathViewer.getControl());
@@ -126,6 +132,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		pathButtonComp.setLayout(pathButtonLayout);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		pathButtonComp.setLayoutData(gd);
+		pathButtonComp.setFont(font);
 
 		createVerticalSpacer(comp, 2);
 						
@@ -134,6 +141,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fClassPathDefaultButton.setLayoutData(gd);
+		fClassPathDefaultButton.setFont(font);
 		fClassPathDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleClasspathDefaultButtonSelected();

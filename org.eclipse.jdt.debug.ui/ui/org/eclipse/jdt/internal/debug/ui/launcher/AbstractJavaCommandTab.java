@@ -25,6 +25,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -43,6 +44,7 @@ public abstract class AbstractJavaCommandTab extends AbstractLaunchConfiguration
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -52,15 +54,18 @@ public abstract class AbstractJavaCommandTab extends AbstractLaunchConfiguration
 		topLayout.marginHeight= 0;
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		comp.setLayoutData(gd);
+		comp.setFont(font);
 		
 		createVerticalSpacer(comp, 2);
 		
 		Label javaCommandLabel= new Label(comp, SWT.NONE);
 		javaCommandLabel.setText(LauncherMessages.getString("AbstractJavaCommandTab.Name_of_Java_e&xecutable__1"));  //$NON-NLS-1$
+		javaCommandLabel.setFont(font);
 		
 		fJavaCommandText= new Text(comp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fJavaCommandText.setLayoutData(gd);
+		fJavaCommandText.setFont(font);
 		fJavaCommandText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -72,6 +77,7 @@ public abstract class AbstractJavaCommandTab extends AbstractLaunchConfiguration
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fDefaultButton.setLayoutData(gd);
+		fDefaultButton.setFont(font);
 		fDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleDefaultButtonSelected(fDefaultButton.getSelection());

@@ -38,6 +38,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -183,6 +184,8 @@ public class SourceAttachmentBlock {
 	 * Creates the control
 	 */
 	public Control createControl(Composite parent) {
+		Font font = parent.getFont();
+		
 		PixelConverter converter= new PixelConverter(parent);
 		
 		fSWTWidget= parent;
@@ -194,6 +197,7 @@ public class SourceAttachmentBlock {
 		layout.marginWidth= 0;
 		layout.numColumns= 4;		
 		composite.setLayout(layout);
+		composite.setFont(font);
 		
 		int widthHint= converter.convertWidthInCharsToPixels(fIsVariableEntry ? 50 : 60);
 		
@@ -202,6 +206,7 @@ public class SourceAttachmentBlock {
 		
 		Label message= new Label(composite, SWT.LEFT);
 		message.setLayoutData(gd);
+		message.setFont(font);
 		message.setText(MessageFormat.format(LauncherMessages.getString("SourceAttachmentBlock.Select_the_archive_file_(JAR_or_zip)_containing_the_source_for_____{0}______12"), new String[] {fJARPath.lastSegment()})); //$NON-NLS-1$
 				
 		if (fIsVariableEntry) {
@@ -212,6 +217,7 @@ public class SourceAttachmentBlock {
 			Label desc= new Label(composite, SWT.LEFT + SWT.WRAP);
 			desc.setText(LauncherMessages.getString("SourceAttachmentBlock.Source_attachments_for_variable_entries_are_defined_by_variable_paths._The_first_segment_of_such_a_path_describes_a_variable_name,_the_rest_is_an_optional_path_extension._13")); //$NON-NLS-1$
 			desc.setLayoutData(gd);
+			desc.setFont(font);
 			DialogField.createEmptySpace(composite, 1);
 		}
 		// archive name field
@@ -232,6 +238,7 @@ public class SourceAttachmentBlock {
 			fFullPathResolvedLabel= new CLabel(composite, SWT.LEFT);
 			fFullPathResolvedLabel.setText(getResolvedLabelString(fFileNameField.getText(), true));
 			fFullPathResolvedLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+			fFullPathResolvedLabel.setFont(font);
 			DialogField.createEmptySpace(composite, 2);			
 		}
 		
@@ -243,6 +250,7 @@ public class SourceAttachmentBlock {
 		Label desc= new Label(composite, SWT.LEFT + SWT.WRAP);
 		desc.setText(LauncherMessages.getString("SourceAttachmentBlock.Define_the_root_of_the_package_structure_in_the_archive._For_example,_when_the_archive_contains_src/java/lang/Object.java,_the_root_path_would_be___src__._14")); //$NON-NLS-1$
 		desc.setLayoutData(gd);
+		desc.setFont(font);
 		DialogField.createEmptySpace(composite, 1);		
 		
 		// root path field	
@@ -255,6 +263,7 @@ public class SourceAttachmentBlock {
 			fPrefixResolvedLabel= new CLabel(composite, SWT.LEFT);
 			fPrefixResolvedLabel.setText(getResolvedLabelString(fPrefixField.getText(), false));
 			fPrefixResolvedLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+			fPrefixResolvedLabel.setFont(font);
 			DialogField.createEmptySpace(composite, 2);
 		}
 		

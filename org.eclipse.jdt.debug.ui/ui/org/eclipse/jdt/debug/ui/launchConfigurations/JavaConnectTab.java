@@ -45,6 +45,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -96,6 +97,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -115,16 +117,19 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		projComp.setLayout(projLayout);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		projComp.setLayoutData(gd);
+		projComp.setFont(font);
 		
 		fProjLabel = new Label(projComp, SWT.NONE);
 		fProjLabel.setText(LauncherMessages.getString("JavaConnectTab.&Project__2")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
+		fProjLabel.setFont(font);
 		
 		fProjText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProjText.setLayoutData(gd);
+		fProjText.setFont(font);
 		fProjText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -152,11 +157,13 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
 		l.setLayoutData(gd);
+		l.setFont(font);
 		
 		fConnectorCombo = new Combo(connectorComp, SWT.READ_ONLY);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fConnectorCombo.setLayoutData(gd);
+		fConnectorCombo.setFont(font);
 		String[] names = new String[fConnectors.length];
 		for (int i = 0; i < fConnectors.length; i++) {
 			names[i] = fConnectors[i].getName();
@@ -173,6 +180,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		Group group = new Group(comp, SWT.NONE);
 		group.setText(LauncherMessages.getString("JavaConnectTab.Connection_Properties_1")); //$NON-NLS-1$
 		group.setLayout(new GridLayout());
+		group.setFont(font);
 		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		group.setLayoutData(gd);		
@@ -190,6 +198,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		
 		fAllowTerminateButton = new Button(comp, SWT.CHECK);
 		fAllowTerminateButton.setText(LauncherMessages.getString("JavaConnectTab.&Allow_termination_of_remote_VM_6")); //$NON-NLS-1$
+		fAllowTerminateButton.setFont(font);
 		fAllowTerminateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();

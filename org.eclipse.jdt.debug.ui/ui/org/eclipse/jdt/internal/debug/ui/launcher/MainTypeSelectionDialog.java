@@ -16,6 +16,8 @@ import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -84,4 +86,12 @@ public class MainTypeSelectionDialog extends TwoPaneElementSelector {
 		return super.open();
 	}
 	
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
+	public Control createDialogArea(Composite parent) {
+		Control control= super.createDialogArea(parent);
+		applyDialogFont(control);
+		return control;
+	}
 }

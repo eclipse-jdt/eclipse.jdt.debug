@@ -52,8 +52,10 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogArea= (Composite) super.createDialogArea(parent);
+		dialogArea.setFont(parent.getFont());
 		setToggleButton(createCheckButton(dialogArea, fToggleMessage));
 		getToggleButton().setSelection(fStore.getBoolean(fPreferenceKey));
+		applyDialogFont(dialogArea);
 		return dialogArea;
 	}
 	
@@ -69,6 +71,7 @@ public class ErrorDialogWithToggle extends ErrorDialog {
 		data.horizontalSpan= 2;
 		data.horizontalAlignment= GridData.CENTER;
 		button.setLayoutData(data);
+		button.setFont(parent.getFont());
 		
 		return button;
 	}

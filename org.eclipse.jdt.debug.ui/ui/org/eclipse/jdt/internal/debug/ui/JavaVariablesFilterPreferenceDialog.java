@@ -24,6 +24,7 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -131,7 +132,7 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		GridData gd;
+		Font font= parent.getFont();
 		Composite composite = (Composite)super.createDialogArea(parent);
 		((GridLayout) composite.getLayout()).numColumns = 1;
 
@@ -144,11 +145,11 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 		layout.horizontalSpacing = 0;
 		titleComposite.setLayout(layout);
 		titleComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
+		titleComposite.setFont(font);
 		createTitleArea(titleComposite);
 
 		Label titleBarSeparator = new Label(titleComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		titleBarSeparator.setLayoutData(gd);
 
 		// Build the Page container
@@ -169,7 +170,8 @@ public class JavaVariablesFilterPreferenceDialog extends Dialog
 		// For some reason, this seems to be necessary to set the initial title 
 		// area message
 		updateMessage();
-
+		
+		applyDialogFont(composite);
 		return composite;
 	}
 

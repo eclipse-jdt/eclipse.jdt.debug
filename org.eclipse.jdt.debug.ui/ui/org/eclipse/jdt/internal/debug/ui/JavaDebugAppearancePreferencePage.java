@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -88,7 +89,7 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);		
-		
+		composite.setFont(parent.getFont());	
 		
 		createPrimitiveDisplayPreferences(composite);
 		
@@ -195,6 +196,7 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 		// FieldEditor GridData
 		GridData data = new GridData();	
 		button.setLayoutData(data);
+		button.setFont(parent.getFont());
 		
 		return button;
 	}
@@ -219,6 +221,7 @@ public class JavaDebugAppearancePreferencePage extends PreferencePage implements
 		gd.horizontalAlignment = GridData.FILL;
 		comp.setLayoutData(gd);
 		comp.setText(labelText);
+		comp.setFont(parent.getFont());
 		return comp;
 	}
 		

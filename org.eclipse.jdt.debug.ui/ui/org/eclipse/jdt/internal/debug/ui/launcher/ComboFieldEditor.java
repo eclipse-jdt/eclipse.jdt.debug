@@ -100,6 +100,7 @@ public class ComboFieldEditor extends FieldEditor {
 		gd.horizontalSpan = comboC;
 		gd.horizontalAlignment = GridData.FILL;
 		control.setLayoutData(gd);
+		control.setFont(parent.getFont());
 	}
 
 	/**
@@ -141,6 +142,7 @@ public class ComboFieldEditor extends FieldEditor {
 	public Combo getComboBoxControl(Composite parent) {
 		if (fCombo == null) {
 			fCombo = new Combo(parent, SWT.READ_ONLY);
+			fCombo.setFont(parent.getFont());
 			for (int i = 0; i < fEntryNamesAndValues.length; i++) {
 				fCombo.add(fEntryNamesAndValues[i][0], i);
 			}

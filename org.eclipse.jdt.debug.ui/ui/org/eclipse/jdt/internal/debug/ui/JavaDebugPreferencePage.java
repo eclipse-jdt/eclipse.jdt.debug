@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -89,6 +90,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	protected Control createContents(Composite parent) {
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.JAVA_DEBUG_PREFERENCE_PAGE);
 		
+		Font font = parent.getFont();
+		
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -100,6 +103,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		data.verticalAlignment = GridData.FILL;
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);		
+		composite.setFont(font);
 		
 		Composite comp= createGroupComposite(composite, 1, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_Execution_1")); //$NON-NLS-1$
 		fSuspendButton= createCheckButton(comp, DebugUIMessages.getString("JavaDebugPreferencePage.Suspend_&execution_on_uncaught_exceptions_1")); //$NON-NLS-1$
@@ -123,6 +127,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		spacingComposite.setLayoutData(data);
+		spacingComposite.setFont(font);
 		
 		IPreferenceStore store= JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		int minValue;
@@ -251,6 +256,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		// FieldEditor GridData
 		GridData data = new GridData();	
 		button.setLayoutData(data);
+		button.setFont(parent.getFont());
 		
 		return button;
 	}
@@ -275,6 +281,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		gd.horizontalAlignment = GridData.FILL;
 		comp.setLayoutData(gd);
 		comp.setText(labelText);
+		comp.setFont(parent.getFont());
 		return comp;
 	}
 		

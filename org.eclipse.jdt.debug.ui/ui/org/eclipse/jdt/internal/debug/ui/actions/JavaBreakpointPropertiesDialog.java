@@ -35,6 +35,7 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -266,9 +267,11 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		GridData gd;
+		Font font = parent.getFont();
+		
 		Composite composite = (Composite)super.createDialogArea(parent);
 		((GridLayout) composite.getLayout()).numColumns = 1;
+		composite.setFont(font);
 		
 		// Build the title area and separator line
 		Composite titleComposite = new Composite(composite, SWT.NONE);
@@ -279,17 +282,17 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		layout.horizontalSpacing = 0;
 		titleComposite.setLayout(layout);
 		titleComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		titleComposite.setFont(font);
 		
 		createTitleArea(titleComposite);
 	
 		Label titleBarSeparator = new Label(titleComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		titleBarSeparator.setLayoutData(gd);
 	
 		// Build the Page container
 		fPageContainer = createPageContainer(composite, 2);
 		fPageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fPageContainer.setFont(parent.getFont());
 
 		fPage= new JavaBreakpointPreferencePage(getBreakpoint());
 		fPage.setContainer(this);
@@ -301,6 +304,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		gd.horizontalSpan = 2;
 		separator.setLayoutData(gd);
 	
+		applyDialogFont(composite);
 		return composite;
 	}
 	
@@ -311,6 +315,8 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	 * @return the created title area composite
 	 */
 	private Composite createTitleArea(Composite parent) {
+		Font font = parent.getFont();
+		
 		// Create the title area which will contain
 		// a title, message, and image.
 		fTitleArea = new Composite(parent, SWT.NONE);
@@ -329,6 +335,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
 		fTitleArea.setLayout(layout);
 		fTitleArea.setLayoutData(layoutData);
+		fTitleArea.setFont(font);
 		fTitleArea.setBackground(bg);
 	
 		// Message label
@@ -375,6 +382,7 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 	private Composite createPageContainer(Composite parent, int numColumns) {
 		Composite result = new Composite(parent, SWT.NULL);
 		result.setLayout(new PageLayout());
+		result.setFont(parent.getFont());
 		return result;
 	}
 

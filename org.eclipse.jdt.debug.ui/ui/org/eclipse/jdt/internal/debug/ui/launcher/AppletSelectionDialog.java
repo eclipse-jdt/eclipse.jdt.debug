@@ -16,6 +16,8 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
@@ -26,35 +28,33 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 
 	private IRunnableContext fRunnableContext;
 	private IJavaProject fProject;
-	
+
 	private static final String fgAppletClass = "java.applet.Applet"; //$NON-NLS-1$
-	
+
 	private static class PackageRenderer extends JavaElementLabelProvider {
 		public PackageRenderer() {
-			super(JavaElementLabelProvider.SHOW_PARAMETERS | JavaElementLabelProvider.SHOW_POST_QUALIFIED | JavaElementLabelProvider.SHOW_ROOT);	
+			super(JavaElementLabelProvider.SHOW_PARAMETERS | JavaElementLabelProvider.SHOW_POST_QUALIFIED | JavaElementLabelProvider.SHOW_ROOT);
 		}
 
 		public Image getImage(Object element) {
-			return super.getImage(((IType)element).getPackageFragment());
+			return super.getImage(((IType) element).getPackageFragment());
 		}
-		
+
 		public String getText(Object element) {
-			return super.getText(((IType)element).getPackageFragment());
+			return super.getText(((IType) element).getPackageFragment());
 		}
 	}
-	
+
 	public AppletSelectionDialog(Shell shell, IRunnableContext context, IJavaProject project) {
-		super(shell, 
-				new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_BASICS | JavaElementLabelProvider.SHOW_OVERLAY_ICONS), 
-				new PackageRenderer());
+		super(shell, new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_BASICS | JavaElementLabelProvider.SHOW_OVERLAY_ICONS), new PackageRenderer());
 
 		Assert.isNotNull(context);
 		Assert.isNotNull(project);
 
-		fRunnableContext= context;
-		fProject= project;
+		fRunnableContext = context;
+		fProject = project;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
@@ -74,5 +74,13 @@ public class AppletSelectionDialog extends TwoPaneElementSelector {
 		}
 		return super.open();
 	}
-	
+
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
+	public Control createDialogArea(Composite parent) {
+		Control control = super.createDialogArea(parent);
+		applyDialogFont(control);
+		return control;
+	}
 }

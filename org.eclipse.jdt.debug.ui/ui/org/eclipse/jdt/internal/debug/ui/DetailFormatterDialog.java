@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
+
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -90,8 +91,6 @@ public class DetailFormatterDialog extends StatusDialog {
 	 */
 	private IType fType;
 	
-	/**
-	 * 	 */
 	private List fDefinedTypes;
 	
 	/**
@@ -125,18 +124,20 @@ public class DetailFormatterDialog extends StatusDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
-		
 
 		// type name label
 		Label label= new Label(container, SWT.NONE);
 		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_&name__2")); //$NON-NLS-1$
 		gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
+		label.setFont(font);
 
 		Composite innerContainer = new Composite(container, SWT.NONE);
 		layout = new GridLayout();
@@ -152,6 +153,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		fTypeNameText.setText(fDetailFormatter.getTypeName());
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fTypeNameText.setLayoutData(gd);
+		fTypeNameText.setFont(font);		
 		fTypeNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				fTypeSearched= false;
@@ -164,6 +166,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		gd= (GridData)typeSearchButton.getLayoutData();
 		gd.horizontalAlignment = GridData.END;
 		typeSearchButton.setLayoutData(gd);
+		typeSearchButton.setFont(font);		
 		typeSearchButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				selectType();
@@ -175,6 +178,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Associated_&code__5")); //$NON-NLS-1$
 		gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
+		label.setFont(font);
 
 		// snippet viewer
 		fSnippetViewer= new JDISourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
@@ -193,8 +197,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		fSnippetViewer.setEditable(true);
 		fSnippetViewer.setDocument(document);
 	
-		Font font= JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT);
-		fSnippetViewer.getTextWidget().setFont(font);
+		fSnippetViewer.getTextWidget().setFont(JFaceResources.getTextFont());
 		
 		Control control= fSnippetViewer.getControl();
 		gd= new GridData(GridData.FILL_BOTH);
@@ -228,9 +231,10 @@ public class DetailFormatterDialog extends StatusDialog {
 		fCheckBox= new Button(container, SWT.CHECK | SWT.LEFT);
 		fCheckBox.setText(DebugUIMessages.getString("DetailFormatterDialog.&Enable_1")); //$NON-NLS-1$
 		fCheckBox.setSelection(fDetailFormatter.isEnabled());
+		fCheckBox.setFont(font);
 		
 		checkValues();
-
+		applyDialogFont(container);
 		return container;
 	}
 	

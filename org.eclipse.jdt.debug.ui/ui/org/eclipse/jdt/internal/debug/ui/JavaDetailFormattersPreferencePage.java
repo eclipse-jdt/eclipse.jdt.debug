@@ -90,6 +90,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	 * Create a group to contain the detail formatters related widgetry
 	 */
 	private Control createDetailFormatsPreferences(Composite parent) {
+		Font font = parent.getFont();
+		
 		// top level container
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -99,6 +101,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		container.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		container.setLayoutData(gd);
+		container.setFont(font);
 		
 		//table label
 		fTableLabel= new Label(container, SWT.NONE);
@@ -106,6 +109,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fTableLabel.setLayoutData(gd);
+		fTableLabel.setFont(font);
 
 		fFormatterListViewer= CheckboxTableViewer.newCheckList(container, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = (Table)fFormatterListViewer.getControl();
@@ -113,6 +117,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		gd.heightHint= convertHeightInCharsToPixels(10);
 		gd.widthHint= convertWidthInCharsToPixels(10);
 		table.setLayoutData(gd);
+		table.setFont(font);
 		fFormatViewerContentProvider= new FormatterListViewerContentProvider(fFormatterListViewer);
 		fFormatterListViewer.setContentProvider(fFormatViewerContentProvider);
 		fFormatterListViewer.setLabelProvider(new LabelProvider() {
@@ -146,6 +151,8 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	
 
 	private void createDetailFormatsButtons(Composite container) {
+		Font font = container.getFont();
+		
 		// button container
 		Composite buttonContainer = new Composite(container, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
@@ -162,6 +169,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fAddFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Allow_you_to_create_a_new_detail_formatter_6")); //$NON-NLS-1$
 		gd = getButtonGridData(fAddFormatterButton);
 		fAddFormatterButton.setLayoutData(gd);
+		fAddFormatterButton.setFont(font);
 		SWTUtil.setButtonDimensionHint(fAddFormatterButton);
 		fAddFormatterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -175,6 +183,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fRemoveFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Remove_all_selected_detail_formatters_8")); //$NON-NLS-1$
 		gd = getButtonGridData(fRemoveFormatterButton);
 		fRemoveFormatterButton.setLayoutData(gd);
+		fRemoveFormatterButton.setFont(font);
 		SWTUtil.setButtonDimensionHint(fRemoveFormatterButton);
 		fRemoveFormatterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -189,6 +198,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fEditFormatterButton.setToolTipText(DebugUIMessages.getString("JavaDetailFormattersPreferencePage.Edit_the_selected_detail_formatter_10")); //$NON-NLS-1$
 		gd = getButtonGridData(fEditFormatterButton);
 		fEditFormatterButton.setLayoutData(gd);
+		fEditFormatterButton.setFont(font);
 		SWTUtil.setButtonDimensionHint(fEditFormatterButton);
 		fEditFormatterButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -225,8 +235,7 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		fCodeViewer.setDocument(document);
 		fCodeViewer.getTextWidget().setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	
-		Font font= JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT);
-		fCodeViewer.getTextWidget().setFont(font);
+		fCodeViewer.getTextWidget().setFont(JFaceResources.getTextFont());
 		
 		Control control= fCodeViewer.getControl();
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);

@@ -26,6 +26,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -68,7 +69,8 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-						
+		Font font = parent.getFont();
+				
 		Composite workingDirComp = new Composite(parent, SWT.NONE);
 		WorkbenchHelp.setHelp(workingDirComp, IJavaDebugHelpContextIds.WORKING_DIRECTORY_BLOCK);;		
 		GridLayout workingDirLayout = new GridLayout();
@@ -78,6 +80,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		workingDirComp.setLayout(workingDirLayout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		workingDirComp.setLayoutData(gd);
+		workingDirComp.setFont(font);
 		setControl(workingDirComp);
 		
 		fWorkingDirLabel = new Label(workingDirComp, SWT.NONE);
@@ -85,6 +88,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fWorkingDirLabel.setLayoutData(gd);
+		fWorkingDirLabel.setFont(font);
 		
 		fLocalDirButton = createRadioButton(workingDirComp, LauncherMessages.getString("WorkingDirectoryBlock.&Local_directory__1")); //$NON-NLS-1$
 		fLocalDirButton.addSelectionListener(new SelectionAdapter() {
@@ -96,6 +100,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		fWorkingDirText = new Text(workingDirComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWorkingDirText.setLayoutData(gd);
+		fWorkingDirText.setFont(font);
 		fWorkingDirText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -119,6 +124,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		fWorkspaceDirText = new Text(workingDirComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fWorkspaceDirText.setLayoutData(gd);
+		fWorkspaceDirText.setFont(font);
 		fWorkspaceDirText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
@@ -137,6 +143,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fUseDefaultWorkingDirButton.setLayoutData(gd);
+		fUseDefaultWorkingDirButton.setFont(font);
 		fUseDefaultWorkingDirButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleUseDefaultWorkingDirButtonSelected();

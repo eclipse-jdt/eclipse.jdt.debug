@@ -259,8 +259,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			fViewer.setEditable(true);
 			fViewer.setDocument(document);
 		
-			Font font= JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT);
-			fViewer.getTextWidget().setFont(font);
+			fViewer.getTextWidget().setFont(JFaceResources.getTextFont());
 			
 			Control control= fViewer.getControl();
 			GridData gd = new GridData(GridData.FILL_BOTH);
@@ -422,6 +421,8 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		}
 
 		protected void doFillIntoGrid(Composite parent, int numColumns) {
+			Font font = parent.getFont();
+			
 			fBasicComposite = new Composite(parent, SWT.NULL);
 			GridLayout layout = new GridLayout();
 			layout.marginWidth = 0;
@@ -438,11 +439,13 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			GridData gd = new GridData();
 			gd.verticalAlignment = SWT.TOP;
 			fTitleLabel.setLayoutData(gd);
+			fTitleLabel.setFont(font);
 
 			fValueLabel = new Label(fBasicComposite, SWT.WRAP);
 			fValueLabel.setText(fValue);
 			gd = new GridData();
 			fValueLabel.setLayoutData(gd);
+			fValueLabel.setFont(font);
 		}
 
 		public int getNumberOfControls() {

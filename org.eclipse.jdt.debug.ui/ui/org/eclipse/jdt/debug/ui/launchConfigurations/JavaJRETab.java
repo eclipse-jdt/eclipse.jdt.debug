@@ -36,6 +36,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -91,6 +92,8 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite topComp = new Composite(parent, SWT.NONE);
 		setControl(topComp);
 		WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_JRE_TAB);
@@ -101,6 +104,7 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		topComp.setLayout(topLayout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		topComp.setLayoutData(gd);
+		topComp.setFont(font);
 		
 		createVerticalSpacer(topComp, 2);
 		
@@ -109,10 +113,12 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fJRELabel.setLayoutData(gd);
+		fJRELabel.setFont(font);
 		
 		fJRECombo = new Combo(topComp, SWT.READ_ONLY);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fJRECombo.setLayoutData(gd);
+		fJRECombo.setFont(font);
 		initializeJREComboBox();
 		fJRECombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
@@ -127,7 +133,10 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			}
 		});	
 		
-		setDynamicTabHolder(new Composite(topComp, SWT.NONE));
+		Composite dynTabComp = new Composite(topComp, SWT.NONE);
+		dynTabComp.setFont(font);
+		
+		setDynamicTabHolder(dynTabComp);
 		GridLayout tabHolderLayout = new GridLayout();
 		tabHolderLayout.marginHeight= 0;
 		tabHolderLayout.marginWidth= 0;

@@ -54,6 +54,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 			GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 			gd.horizontalSpan = numColumns;
 			checkBox.setLayoutData(gd);
+			checkBox.setFont(parent.getFont());
 			if (text != null) {
 				checkBox.setText(text);
 			}
@@ -173,6 +174,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 			label.setImage(fgAccessImages[i]);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 			label.setLayoutData(gd);
+			label.setFont(getFieldEditorParent().getFont());
 		}		
 				
 		// Create column headers for the checkbox table
@@ -182,6 +184,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 			label.setText(JDIDebugUIPlugin.fgAccessModifierNames[i]);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 			label.setLayoutData(gd);
+			label.setFont(getFieldEditorParent().getFont());
 		}
 
 		// Create one listener for all +/- buttons
@@ -207,10 +210,12 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 			rowComp.setLayout(rowLayout);
 			gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			rowComp.setLayoutData(gd);
+			rowComp.setFont(getFieldEditorParent().getFont());
 			
 			// Create the row label
 			label = new Label(rowComp, SWT.NONE);
 			label.setText(JDIDebugUIPlugin.fgModeModifierNames[i]);
+			label.setFont(rowComp.getFont());
 			
 			// Create the +/- buttons
 			Composite buttonComp = createPlusMinusButtons(rowComp, false, buttonListener, i);
@@ -235,6 +240,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = JDIDebugUIPlugin.fgAccessModifierNames.length + 1;
 		primitiveGroup.setLayoutData(gd);
+		primitiveGroup.setFont(getFieldEditorParent().getFont());
 		primitiveGroup.setText(DebugUIMessages.getString("JavaDebugPreferencePage.Primitive_type_display_options_2")); //$NON-NLS-1$
 
 		// Create the 3 primitive display checkboxes
@@ -269,6 +275,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		plusButton.setData(COLUMN_KEY, columnBoolean);
 		plusButton.setData(ROW_COL_KEY, rowColInteger);
 		plusButton.addSelectionListener(buttonListener);
+		plusButton.setFont(parent.getFont());
 		
 		Button minusButton = new Button(buttonComp, SWT.PUSH);
 		minusButton.setImage(fgMinusSignImage);
@@ -276,6 +283,7 @@ public class JavaVariablesFilterPreferencePage extends FieldEditorPreferencePage
 		minusButton.setData(COLUMN_KEY, columnBoolean);
 		minusButton.setData(ROW_COL_KEY, rowColInteger);
 		minusButton.addSelectionListener(buttonListener);		
+		minusButton.setFont(parent.getFont());
 	
 		return buttonComp;
 	}

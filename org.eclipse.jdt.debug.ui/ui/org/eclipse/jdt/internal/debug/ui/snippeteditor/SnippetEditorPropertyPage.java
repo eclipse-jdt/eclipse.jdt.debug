@@ -126,7 +126,8 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
-		comp.setLayout(topLayout);				
+		comp.setLayout(topLayout);
+		comp.setFont(parent.getFont());		
 		
 		// fake launch config dialog
 		fProxy = new Proxy();

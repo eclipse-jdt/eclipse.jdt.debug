@@ -12,6 +12,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -44,6 +45,8 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite composite = (Composite)super.createDialogArea(parent);
 		
 		final Button addExported = new Button(composite, SWT.CHECK);
@@ -54,6 +57,7 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 			}
 		});
 		addExported.setSelection(fAddExportedEntries);
+		addExported.setFont(font);
 		
 		final Button addRequired = new Button(composite, SWT.CHECK);
 		addRequired.setText(ActionMessages.getString("ProjectSelectionDialog.Add_required_projects_of_selected_projects._2")); //$NON-NLS-1$
@@ -62,8 +66,10 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 				fAddRequiredProjects = addRequired.getSelection();
 			}
 		});
-		addRequired.setSelection(fAddRequiredProjects);		
+		addRequired.setSelection(fAddRequiredProjects);
+		addRequired.setFont(font);		
 		
+		applyDialogFont(composite);
 		return composite;
 	}
 	
@@ -80,5 +86,4 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 	public boolean isAddRequiredProjects() {
 		return fAddRequiredProjects;
 	}
-
 }

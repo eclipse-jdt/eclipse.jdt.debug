@@ -10,6 +10,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -43,6 +44,8 @@ public class NameValuePairDialog extends Dialog {
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite comp = new Composite(parent, SWT.NULL);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
@@ -51,12 +54,14 @@ public class NameValuePairDialog extends Dialog {
 		
 		fNameLabel = new Label(comp, SWT.NONE);
 		fNameLabel.setText(fFieldLabels[0]);
+		fNameLabel.setFont(font);
 		
 		fNameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		fNameText.setText(fInitialValues[0]);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		fNameText.setLayoutData(gd);
+		fNameText.setFont(font);
 		fNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateButtons();
@@ -65,18 +70,21 @@ public class NameValuePairDialog extends Dialog {
 		
 		fValueLabel = new Label(comp, SWT.NONE);
 		fValueLabel.setText(fFieldLabels[1]);
+		fValueLabel.setFont(font);
 		
 		fValueText = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		fValueText.setText(fInitialValues[1]);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		fValueText.setLayoutData(gd);
+		fValueText.setFont(font);
 		fValueText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				updateButtons();
 			}
 		});		
 		
+		applyDialogFont(comp);
 		return comp;
 	}
 	

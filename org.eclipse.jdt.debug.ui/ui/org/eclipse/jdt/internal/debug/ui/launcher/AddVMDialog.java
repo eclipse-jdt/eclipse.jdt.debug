@@ -37,6 +37,7 @@ import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -144,11 +145,14 @@ public class AddVMDialog extends StatusDialog {
 	}
 		
 	protected Control createDialogArea(Composite ancestor) {
+		Font font = ancestor.getFont();
+		
 		createDialogFields();
 		Composite parent= new Composite(ancestor, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 3;
 		parent.setLayout(layout);
+		parent.setFont(font);
 		
 		fVMTypeCombo.doFillIntoGrid(parent, 3);
 		((GridData)fVMTypeCombo.getComboControl(null).getLayoutData()).widthHint= convertWidthInCharsToPixels(50);
@@ -163,7 +167,8 @@ public class AddVMDialog extends StatusDialog {
 		l.setText(LauncherMessages.getString("AddVMDialog.JRE_system_libraries__1")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
-		l.setLayoutData(gd);		
+		l.setLayoutData(gd);
+		l.setFont(font);		
 		
 		fLibraryBlock = new VMLibraryBlock(this);
 		Control block = fLibraryBlock.createControl(parent);
@@ -183,6 +188,7 @@ public class AddVMDialog extends StatusDialog {
 		
 		initializeFields();
 		
+		applyDialogFont(parent);
 		return parent;
 	}
 	

@@ -15,6 +15,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -34,6 +35,7 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -46,11 +48,13 @@ public class VMArgumentsBlock extends JavaLaunchConfigurationTab {
 				
 		fVMArgumentsLabel = new Label(comp, SWT.NONE);
 		fVMArgumentsLabel.setText(LauncherMessages.getString("JavaArgumentsTab.VM_ar&guments__6")); //$NON-NLS-1$
+		fVMArgumentsLabel.setFont(font);
 		
 		fVMArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP| SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 40;
-		fVMArgumentsText.setLayoutData(gd);	
+		fVMArgumentsText.setLayoutData(gd);
+		fVMArgumentsText.setFont(font);
 		fVMArgumentsText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();

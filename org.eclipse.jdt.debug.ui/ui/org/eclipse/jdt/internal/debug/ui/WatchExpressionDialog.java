@@ -63,6 +63,8 @@ public class WatchExpressionDialog extends StatusDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
@@ -74,6 +76,7 @@ public class WatchExpressionDialog extends StatusDialog {
 		label.setText(DebugUIMessages.getString("WatchExpressionDialog.E&xpression_3")); //$NON-NLS-1$
 		gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
+		label.setFont(font);
 
 		// snippet viewer
 		fSnippetViewer= new JDISourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
@@ -95,8 +98,7 @@ public class WatchExpressionDialog extends StatusDialog {
 			}
 		});
 
-		Font font= JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT);
-		fSnippetViewer.getTextWidget().setFont(font);
+		fSnippetViewer.getTextWidget().setFont(JFaceResources.getTextFont());
 
 		Control control= fSnippetViewer.getControl();
 		gd= new GridData(GridData.FILL_BOTH);
@@ -109,7 +111,9 @@ public class WatchExpressionDialog extends StatusDialog {
 		fCheckBox= new Button(container, SWT.CHECK | SWT.LEFT);
 		fCheckBox.setText(DebugUIMessages.getString("WatchExpressionDialog.&Enable_4")); //$NON-NLS-1$
 		fCheckBox.setSelection(fWatchExpression.isEnabled());
+		fCheckBox.setFont(font);
 
+		applyDialogFont(container);
 		return container;
 	}
 

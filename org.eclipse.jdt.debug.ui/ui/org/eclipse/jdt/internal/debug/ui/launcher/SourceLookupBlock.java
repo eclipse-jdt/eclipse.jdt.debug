@@ -34,6 +34,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -60,6 +61,8 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 	 * @param parent the parent widget of this control
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
+		
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
@@ -72,11 +75,13 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
 		viewerLabel.setLayoutData(gd);
+		viewerLabel.setFont(font);
 		
 		fPathViewer = new RuntimeClasspathViewer(comp);
 		fPathViewer.addEntriesChangedListener(this);
 		gd = new GridData(GridData.FILL_BOTH);
 		fPathViewer.getControl().setLayoutData(gd);
+		fPathViewer.getControl().setFont(font);
 
 		Composite pathButtonComp = new Composite(comp, SWT.NONE);
 		GridLayout pathButtonLayout = new GridLayout();
@@ -85,7 +90,8 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		pathButtonComp.setLayout(pathButtonLayout);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		pathButtonComp.setLayoutData(gd);
-
+		pathButtonComp.setFont(font);
+		
 		createVerticalSpacer(comp, 2);
 						
 		fDefaultButton = new Button(comp, SWT.CHECK);
@@ -93,6 +99,7 @@ public class SourceLookupBlock extends JavaLaunchConfigurationTab implements ILa
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
 		fDefaultButton.setLayoutData(gd);
+		fDefaultButton.setFont(font);
 		fDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleDefaultButtonSelected();
