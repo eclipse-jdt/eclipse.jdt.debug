@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.util.SWTUtil;
+import org.eclipse.jdt.internal.ui.util.PixelConverter;
 import org.eclipse.jdt.launching.ProjectSourceLocator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -36,7 +36,7 @@ public class JavaUISourceLocator implements ISourceLocator {
 		fAllowedToAsk= true;
 	}
 
-	/*
+	/**
 	 * @see ISourceLocator#getSourceElement(IStackFrame)
 	 */
 	public Object getSourceElement(IStackFrame stackFrame) {
@@ -90,7 +90,7 @@ public class JavaUISourceLocator implements ISourceLocator {
 			Label message= new Label(composite, SWT.LEFT + SWT.WRAP);
 			message.setText(LauncherMessages.getFormattedString("JavaUISourceLocator.selectprojects.message", fTypeName)); //$NON-NLS-1$
 			GridData data= new GridData();
-			data.widthHint= SWTUtil.convertWidthInCharsToPixels(70, message);
+			data.widthHint= new PixelConverter(message).convertWidthInCharsToPixels(70);
 			message.setLayoutData(data);
 
 			Control inner= fSourceLookupBlock.createControl(composite);
@@ -100,7 +100,7 @@ public class JavaUISourceLocator implements ISourceLocator {
 			Label askmessage= new Label(composite, SWT.LEFT + SWT.WRAP);
 			askmessage.setText(LauncherMessages.getString("JavaUISourceLocator.askagain.description")); //$NON-NLS-1$
 			data= new GridData();
-			data.widthHint= SWTUtil.convertWidthInCharsToPixels(70, message);
+			data.widthHint= new PixelConverter(message).convertWidthInCharsToPixels(70);
 			askmessage.setLayoutData(data);
 
 			return composite;
