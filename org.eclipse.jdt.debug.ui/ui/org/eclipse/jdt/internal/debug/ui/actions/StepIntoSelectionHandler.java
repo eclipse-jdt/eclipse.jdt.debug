@@ -35,6 +35,10 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	private IMethod fMethod;
 	
 	/**
+	 * Resolved signature of the method to step into	 */
+	private String fResolvedSignature;
+	
+	/**
 	 * The thread in which to step	 */
 	private IJavaThread fThread;
 
@@ -71,7 +75,12 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 			fOriginalName = frame.getName();
 			fOriginalSignature = frame.getSignature();
 			fOriginalTypeName = frame.getDeclaringTypeName();
-		} catch (DebugException e) {
+			if (method.isBinary()) {
+				fResolvedSignature = method.getSignature();
+			} else {
+				fResolvedSignature = ManageMethodBreakpointActionDelegate.resolveMethodSignature(method.getDeclaringType(), method.getSignature());
+			}
+		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
 	}
@@ -93,6 +102,15 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 	protected IMethod getMethod() {
 		return fMethod;
 	}
+	
+	/**
+	 * Returns the resolved signature of the method to step into
+	 * 
+	 * @return the resolved signature of the method to step into
+	 */
+	protected String getSignature() {
+		return fResolvedSignature;
+	}	
 	
 	/**
 	 * @see org.eclipse.debug.core.IDebugEventFilter#filterDebugEvents(org.eclipse.debug.core.DebugEvent)
@@ -126,7 +144,7 @@ public class StepIntoSelectionHandler implements IDebugEventFilter {
 						} else {
 							name = frame.getName();
 						}
-						if (name.equals(getMethod().getElementName()) && frame.getSignature().equals(getMethod().getSignature())) {
+						if (name.equals(getMethod().getElementName()) && frame.getSignature().equals(getSignature())) {
 							// hit
 							cleanup();
 							return events;

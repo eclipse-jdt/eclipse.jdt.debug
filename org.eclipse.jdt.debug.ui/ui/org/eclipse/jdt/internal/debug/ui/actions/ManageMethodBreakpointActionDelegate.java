@@ -137,7 +137,7 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 		}
 	}
 
-	protected String resolveMethodSignature(IType type, String methodSignature) throws JavaModelException {
+	public static String resolveMethodSignature(IType type, String methodSignature) throws JavaModelException {
 		String[] parameterTypes= Signature.getParameterTypes(methodSignature);
 		
 		StringBuffer resolvedSig= new StringBuffer("("); //$NON-NLS-1$
@@ -166,7 +166,7 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 		return methodSignature;
 	}
 
-	protected boolean generateQualifiedName(IType type, StringBuffer resolvedSig, String typeName) throws JavaModelException {
+	protected static boolean generateQualifiedName(IType type, StringBuffer resolvedSig, String typeName) throws JavaModelException {
 		int count= Signature.getArrayCount(typeName);
 		typeName= Signature.getElementType(typeName.substring(1 + count, typeName.length() - 1));
 		String[][] resolvedType= type.resolveType(typeName);
