@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.display;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -49,8 +50,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
@@ -58,13 +57,21 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
@@ -140,6 +147,7 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 	 * workbench shutdown.
 	 */
 	private static IMemento tempMemento;
+	private List submissions;
 	
 	/**
 	 * @see ViewPart#createChild(IWorkbenchPartContainer)
@@ -269,29 +277,22 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 		fContentAssistAction.setHoverImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		fContentAssistAction.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
 		actionBars.updateActionBars();
-		
-		// hook CRTL-Space, and use the retargetable content assist action for code assist.
-		// This ensures code assist works even if a java editor is not present
-		addVerifyKeyListener();
-		getSite().getKeyBindingService().registerAction(fContentAssistAction);
-	}
-	
-	protected void addVerifyKeyListener() {
-		fSourceViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
-			public void verifyKey(VerifyEvent event) {
-				//do code assist for CTRL-SPACE
-				if (event.stateMask == SWT.CTRL && event.keyCode == 0) {
-					if (event.character == 0x20) {
-						if(fContentAssistAction.isEnabled()) {
-							fContentAssistAction.run();
-							event.doit= false;
-						}
-					}
-				}
+
+		IHandler handler = new AbstractHandler() {
+			public Object execute(Map parameterValuesByName) throws ExecutionException {
+				fContentAssistAction.run();
+				return null;
 			}
-		});
-	}	
-	
+			
+		};
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();	
+		submissions = Collections.singletonList(new HandlerSubmission(null, null, null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, Priority.MEDIUM)); //$NON-NLS-1$
+		commandSupport.addHandlerSubmissions(submissions);	
+
+	}
+
 	protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {
 		fGlobalActions.put(actionID, action);
 		actionBars.setGlobalActionHandler(actionID, action);
@@ -449,6 +450,11 @@ public class DisplayView extends ViewPart implements ITextInputListener, IPartLi
 		if (fSourceViewer != null) {
 			fSourceViewer.dispose();
 		}
+		
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
+		commandSupport.removeHandlerSubmissions(submissions);
+		
 		super.dispose();
 	}
 
