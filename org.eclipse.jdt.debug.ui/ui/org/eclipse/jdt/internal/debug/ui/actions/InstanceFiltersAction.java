@@ -27,6 +27,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -53,7 +54,7 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 			try {
 				IValue value = var.getValue();
 				if (value instanceof IJavaObject) {
-					IJavaObject object = (IJavaObject)value;
+					final IJavaObject object = (IJavaObject)value;
 					final List breakpoints = getApplicableBreakpoints(var, object);
 					IStructuredContentProvider content = new IStructuredContentProvider() {
 						public void dispose() {};
@@ -73,12 +74,20 @@ public class InstanceFiltersAction extends ObjectActionDelegate {
 								IJavaBreakpoint breakpoint= (IJavaBreakpoint) checkBreakpoint[k];
 								try {
 									IJavaObject[] instanceFilters= breakpoint.getInstanceFilters();
-									if (instanceFilters.length > 0) {
+									boolean sameTarget = false;
+									for (int i = 0; i < instanceFilters.length; i++) {
+										IJavaObject instanceFilter = instanceFilters[i];
+										if (instanceFilter.getDebugTarget().equals(object.getDebugTarget())) {
+											sameTarget = true;
+											break;
+										}
+									}
+									if (sameTarget) {
 										MessageDialog dialog= new MessageDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), ActionMessages.getString("InstanceFiltersAction.Instance_Filter_Breakpoint_Selection_2"), //$NON-NLS-1$
 											null, MessageFormat.format(ActionMessages.getString("InstanceFiltersAction.breakpoint_{0}_already_restricted._Reset_the_restriction_to_object_{1}_"), new String[] { modelPresentation.getText(breakpoint), var.getName()}), //$NON-NLS-1$
 											MessageDialog.QUESTION, new String[] { ActionMessages.getString("InstanceFiltersAction.Yes_2"), ActionMessages.getString("InstanceFiltersAction.Cancel_3")}, //$NON-NLS-1$ //$NON-NLS-2$
 											0);
-										if (dialog.open() == 0) {
+										if (dialog.open() == Dialog.OK) {
 											for (int i= 0; i < instanceFilters.length; i++) {
 												breakpoint.removeInstanceFilter(instanceFilters[i]);
 											}

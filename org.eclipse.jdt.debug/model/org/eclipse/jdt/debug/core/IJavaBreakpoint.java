@@ -147,9 +147,10 @@ public interface IJavaBreakpoint extends IBreakpoint {
 	 * breakpoint is restricted to suspend execution. Has no effect
 	 * if the object has already been added.<br>
 	 * 
-	 * Note: the current implementation adds filters. If there is more than one
-	 * instance filter, the breakpoint will never be hit, as the current context
-	 * cannot be two different instances at the same time.
+	 * Note: This implementation will add more than one filter. However, if there is
+	 * more than one instance filter for a debug target, the breakpoint will never be hit
+	 * in that target, as the current context cannot be two different instances at the
+	 * same time.
 	 * 
 	 * @param object instance filter to add
 	 * @exception CoreException if unable to add the given instance filter

@@ -565,8 +565,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				if (object.getDebugTarget().equals(target)) {
 					fInstanceFilters.remove(i);
 					changed = true;
-				} else {
-					i++;
 				}
 			}
 		}
