@@ -2504,7 +2504,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 
 			monitor.beginTask(this.getName(), runnables.size()); //$NON-NLS-1$
 			for (Iterator iter= runnables.iterator(); iter.hasNext() && !fJDIThread.isTerminated() && !monitor.isCanceled();) {
-				((Runnable)iter.next()).run();
+				try {
+					((Runnable) iter.next()).run();
+				} catch (Exception e) {
+					JDIDebugPlugin.log(e);
+				}
 				monitor.worked(1);
 			}
 			fJDIThread.fRunningAsyncJob= null;
