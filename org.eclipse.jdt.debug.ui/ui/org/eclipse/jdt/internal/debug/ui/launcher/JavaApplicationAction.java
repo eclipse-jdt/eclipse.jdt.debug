@@ -81,12 +81,12 @@ public abstract class JavaApplicationAction implements IWorkbenchWindowActionDel
 				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1"), e); //$NON-NLS-1$
 				return;
 			} catch (InvocationTargetException e) {
-				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_2"), e); //$NON-NLS-1$
+				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1"), e); //$NON-NLS-1$
 				return;
 			}
 			IType type = null;
 			if (types.length == 0) {
-				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_3"), (Throwable)null); //$NON-NLS-1$
+				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaApplicationAction.Launch_failed__no_main_type_found_1"), (Throwable)null); //$NON-NLS-1$
 			} else if (types.length > 1) {
 				type = chooseType(types);
 			} else {

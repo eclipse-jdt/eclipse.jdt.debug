@@ -67,7 +67,7 @@ public class AddJarAction extends RuntimeClasspathAction {
 							return new Status(IStatus.OK, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.getString("AddJarAction.Selection_must_be_a_jar_or_zip_4"), null); //$NON-NLS-1$
 						}
 					} else {
-						return new Status(IStatus.OK, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.getString("AddJarAction.Selection_must_be_a_jar_or_zip_5"), null); //$NON-NLS-1$
+						return new Status(IStatus.OK, JDIDebugPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, ActionMessages.getString("AddJarAction.Selection_must_be_a_jar_or_zip_4"), null); //$NON-NLS-1$
 					}
 					
 				}
