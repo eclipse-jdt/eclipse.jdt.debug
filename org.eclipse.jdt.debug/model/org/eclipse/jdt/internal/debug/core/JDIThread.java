@@ -220,21 +220,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * @see IStep
 	 */
 	public boolean canStepInto() {
-		return isSuspended();
+		return isSuspended() && !isStepping();
 	}
 
 	/**
 	 * @see IStep
 	 */
 	public boolean canStepOver() {
-		return isSuspended();
+		return isSuspended() && !isStepping();
 	}
 
 	/**
 	 * @see IStep
 	 */
 	public boolean canStepReturn() {
-		return isSuspended();
+		return isSuspended() && !isStepping();
 	}
 
 	/**
@@ -569,14 +569,16 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			try {
 				if (getTopStackFrame().equals(fDestinationFrame)) {
 					fDestinationFrame = null;
+				} else if (getChildren0().indexOf(fDestinationFrame) == -1) {
+					fDestinationFrame = null;
 				} else {
-					stepReturn();
+					stepReturn0();
 					fRunning = true;
 					fStepCount--;
 					return;
 				}
 			} catch (DebugException e) {
-				fDestinationFrame = null;
+				abortDropAndStep();
 				internalError(e);
 			}
 		} else if (fDropping) {
@@ -586,12 +588,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 				try {
 					dropTopFrame();
 				} catch (DebugException e) {
+					abortDropAndStep();
 					internalError(e);
 				}
 			} else {
 				try {
 					reenterTopFrame();
 				} catch (DebugException e) {
+					abortDropAndStep();
 					internalError(e);
 				}
 			}
@@ -600,6 +604,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 			try {
 				stepInto();
 			} catch (DebugException e) {
+				abortDropAndStep();
 				internalError(e);
 			}
 		} 
@@ -771,6 +776,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		if (!canStepReturn()) {
 			return;
 		}
+		stepReturn0();
+	}
+	
+	private void stepReturn0() throws DebugException {
 		step(StepRequest.STEP_OUT);
 	}
 
@@ -869,6 +878,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	}
 	
 	protected void stepToFrame(IStackFrame frame) throws DebugException {
+		if (!canStepReturn()) {
+			return;
+		}
 		fDestinationFrame = frame;
 		stepReturn();
 	}

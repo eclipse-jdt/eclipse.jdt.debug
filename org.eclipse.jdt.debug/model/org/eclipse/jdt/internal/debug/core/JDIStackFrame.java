@@ -101,7 +101,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	public boolean canStepInto() {
 		try {
-			return isTopStackFrame() && getThread().canStepInto();
+			return exists() && isTopStackFrame() && getThread().canStepInto();
 		} catch (DebugException e) {
 			return false;
 		}
@@ -111,7 +111,11 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IStep.
 	 */
 	public boolean canStepOver() {
-		return getThread().canStepOver();
+		try {
+			return exists() && getThread().canStepOver();
+		} catch (DebugException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -122,7 +126,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			List frames = ((JDIThread)getThread()).getChildren0();
 			if (frames != null && !frames.isEmpty()) {
 				Object bottomFrame = frames.get(frames.size() - 1);
-				return !this.equals(bottomFrame) && getThread().canStepReturn();
+				return exists() && !this.equals(bottomFrame) && getThread().canStepReturn();
 			}
 		} catch (DebugException e) {
 		}
@@ -278,6 +282,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IStep.
 	 */
 	public void stepInto() throws DebugException {
+		if (!canStepInto()) {
+			return;
+		}
 		getThread().stepInto();
 	}
 
@@ -285,6 +292,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IStep
 	 */
 	public void stepOver() throws DebugException {
+		if (!canStepOver()) {
+			return;
+		}
 		if (isTopStackFrame()) {
 			getThread().stepOver();
 		} else {
@@ -296,6 +306,9 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IStep
 	 */
 	public void stepReturn() throws DebugException {
+		if (!canStepReturn()) {
+			return;
+		}
 		if (isTopStackFrame()) {
 			getThread().stepReturn();
 		} else {
@@ -699,6 +712,10 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	protected boolean isTopStackFrame() throws DebugException {
 		IStackFrame tos = getThread().getTopStackFrame();
 		return tos != null && tos.equals(this);
+	}
+	
+	protected boolean exists() throws DebugException {
+		return ((JDIThread)getThread()).getChildren0().indexOf(this) != -1;
 	}
 }
 
