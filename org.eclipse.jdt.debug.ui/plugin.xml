@@ -62,7 +62,9 @@
       </menu>
   	  <action
   		 label="%runToLineAction.label"
-  		 icon="icons/full/clcl16/runtoline_co.gif"
+  		 icon="icons/full/elcl16/runtoline_co.gif"
+  		 disabledIcon="icons/full/dlcl16/runtoline_co.gif"
+  		 hoverIcon="icons/full/clcl16/runtoline_co.gif"
   		 helpContextId="run_to_line_action_context"
   		 class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineAction"
   		 menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
@@ -71,7 +73,9 @@
   		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
-			icon="icons/full/etool16/disp_sbook.gif" 
+			icon="icons/full/etool16/disp_sbook.gif"
+			disabledIcon="icons/full/dtool16/disp_sbook.gif"
+  		 	hoverIcon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action>
@@ -79,6 +83,8 @@
 			label="%Inspect.label" 
 			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
 			icon="icons/full/etool16/insp_sbook.gif"
+			disabledIcon="icons/full/dtool16/insp_sbook.gif"
+  		 	hoverIcon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
@@ -262,13 +268,13 @@
 		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="variableGroup" 
-			icon="icons/full/etool16/disp_sbook.gif"
+			icon="icons/full/ctool16/disp_sbook.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="variableGroup" 
-			icon="icons/full/etool16/insp_sbook.gif" 
+			icon="icons/full/ctool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
 	</viewerContribution>
@@ -278,14 +284,14 @@
 		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="evaluationGroup"
-			icon="icons/full/etool16/disp_sbook.gif" 
+			icon="icons/full/ctool16/disp_sbook.gif" 
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="evaluationGroup"
-			icon="icons/full/etool16/insp_sbook.gif"
+			icon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
@@ -300,6 +306,8 @@
 			label="%showFinalAction.label"
 			toolbarPath="javaVariableFilters"
 			icon="icons/full/elcl16/final_co.gif"
+			disabledIcon="icons/full/dlcl16/final_co.gif"
+			hoverIcon="icons/full/clcl16/final_co.gif"
 			tooltip="%showFinalAction.tooltip"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
@@ -308,6 +316,8 @@
 			label="%showStaticAction.label"
 			toolbarPath="javaVariableFilters"
 			icon="icons/full/elcl16/static_co.gif"
+			disabledIcon="icons/full/dlcl16/static_co.gif"
+			hoverIcon="icons/full/clcl16/static_co.gif"
 			tooltip="%showStaticAction.tooltip"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
@@ -328,6 +338,8 @@
 			label="%showFinalAction.label"
 			toolbarPath="javaVariableFilters"
 			icon="icons/full/elcl16/final_co.gif"
+			disabledIcon="icons/full/dlcl16/final_co.gif"
+			hoverIcon="icons/full/clcl16/final_co.gif"
 			tooltip="%showFinalAction.tooltip"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowFinalFieldsAction">
@@ -336,6 +348,8 @@
 			label="%showStaticAction.label"
 			toolbarPath="javaVariableFilters"
 			icon="icons/full/elcl16/static_co.gif"
+			disabledIcon="icons/full/dlcl16/static_co.gif"
+			hoverIcon="icons/full/clcl16/static_co.gif"
 			tooltip="%showStaticAction.tooltip"
 			state="true"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticFieldsAction">
@@ -355,7 +369,9 @@
 		<action id="org.eclipse.jdt.debug.ui.actions.AddException"
 			label="%exceptionAction.label"
 			toolbarPath="javaExceptions"
-			icon="icons/full/clcl16/exc_catch.gif"
+			icon="icons/full/elcl16/exc_catch.gif"
+			disabledIcon="icons/full/dlcl16/exc_catch.gif"
+			hoverIcon="icons/full/clcl16/exc_catch.gif"
 			tooltip="%exceptionAction.tooltip"
 			class="org.eclipse.jdt.internal.debug.ui.actions.AddExceptionAction">
 		</action>
@@ -387,7 +403,9 @@
 			label="%Display.label" 
 			tooltip="%Display.tooltip"
 			toolbarPath="evaluationGroup"
-			icon="icons/full/etool16/disp_sbook.gif" 
+			icon="icons/full/etool16/disp_sbook.gif"
+			disabledIcon="icons/full/dtool16/disp_sbook.gif"
+			hoverIcon="icons/full/ctool16/disp_sbook.gif"
 			helpContextId="display_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action>
@@ -396,6 +414,8 @@
 			tooltip="%Inspect.tooltip"
 			toolbarPath="evaluationGroup"
 			icon="icons/full/etool16/insp_sbook.gif"
+			disabledIcon="icons/full/dtool16/insp_sbook.gif"
+			hoverIcon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
@@ -443,7 +463,7 @@
 			id="org.eclipse.jdt.debug.ui.actions.VariableInspectAction"
 			label="%Inspect.label"
 			menubarPath="openOnGroup"
-			icon="icons/full/etool16/insp_sbook.gif"
+			icon="icons/full/ctool16/insp_sbook.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
 			enablesFor="+">
 		</action>		
@@ -465,13 +485,13 @@
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
-			icon="icons/full/etool16/disp_sbook.gif" 
+			icon="icons/full/ctool16/disp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
-			icon="icons/full/etool16/insp_sbook.gif" 
+			icon="icons/full/ctool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
      </viewerContribution>
@@ -487,13 +507,13 @@
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions" 
-			icon="icons/full/etool16/disp_sbook.gif"
+			icon="icons/full/ctool16/disp_sbook.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
-			icon="icons/full/etool16/insp_sbook.gif" 
+			icon="icons/full/ctool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.AddBreakpoint" 
@@ -514,13 +534,13 @@
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions"
-			icon="icons/full/etool16/disp_sbook.gif" 
+			icon="icons/full/ctool16/disp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions"
-			icon="icons/full/etool16/insp_sbook.gif" 
+			icon="icons/full/ctool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
 		<action id="org.eclipse.jdt.debug.ui.AddBreakpoint" 
@@ -573,13 +593,17 @@
 			tooltip="%Display.tooltip"
 			toolbarPath="evaluationGroup" 
 			icon="icons/full/etool16/disp_sbook.gif"
+			disabledIcon="icons/full/dtool16/disp_sbook.gif"
+			hoverIcon="icons/full/ctool16/disp_sbook.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			tooltip="%Inspect.tooltip"
 			toolbarPath="evaluationGroup" 
-			icon="icons/full/etool16/insp_sbook.gif" 
+			icon="icons/full/etool16/insp_sbook.gif"
+			disabledIcon="icons/full/dtool16/insp_sbook.gif"
+			hoverIcon="icons/full/ctool16/insp_sbook.gif"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
       </editorContribution> 

@@ -18,6 +18,8 @@ public class RunAction extends SnippetAction {
 		setToolTipText(SnippetMessages.getString("RunAction.tooltip")); //$NON-NLS-1$
 		setDescription(SnippetMessages.getString("RunAction.description")); //$NON-NLS-1$
 		setImageDescriptor(JavaDebugImages.DESC_TOOL_RUNSNIPPET);
+		setDisabledImageDescriptor(JavaDebugImages.DESC_TOOL_RUNSNIPPET_DISABLED);
+		setHoverImageDescriptor(JavaDebugImages.DESC_TOOL_RUNSNIPPET_HOVER);
 	}
 	
 	/**

@@ -69,6 +69,8 @@ public class JavaDebugImages {
 	private static final String T_WIZBAN= "wizban"; 	//$NON-NLS-1$
 	private static final String T_LCL= "clcl16"; 		//$NON-NLS-1$
 	private static final String T_CTOOL= "ctool16"; 	//$NON-NLS-1$
+	private static final String T_DTOOL= "dtool16"; 	//$NON-NLS-1$
+	private static final String T_ETOOL= "etool16"; 	//$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION= createManaged(T_OBJ, IMG_OBJS_EXCEPTION);
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION_DISABLED= createManaged(T_OBJ, IMG_OBJS_EXCEPTION_DISABLED);
@@ -101,13 +103,14 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_WIZBAN_JAVA_LAUNCH= create(T_WIZBAN, "java_app_wiz.gif"); 		//$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_JAVA_ATTACH= create(T_WIZBAN, "java_attach_wiz.gif"); 	//$NON-NLS-1$
 	
-	public static final ImageDescriptor DESC_TOOL_DISPLAYSNIPPET= create(T_CTOOL, "disp_sbook.gif"); 		//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET= create(T_CTOOL, "run_sbook.gif"); 			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_INSPSNIPPET= create(T_CTOOL, "insp_sbook.gif"); 			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_PACKSNIPPET= create(T_CTOOL, "pack_sbook.gif"); 			//$NON-NLS-1$
-	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET= create(T_CTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET= create(T_ETOOL, "run_sbook.gif"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET_HOVER= create(T_CTOOL, "run_sbook.gif"); 	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOL_RUNSNIPPET_DISABLED= create(T_DTOOL, "run_sbook.gif"); //$NON-NLS-1$
+	
+	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET= create(T_ETOOL, "term_sbook.gif"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_HOVER= create(T_CTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
+	public static final ImageDescriptor DESC_TOOL_TERMSNIPPET_DISABLED= create(T_DTOOL, "term_sbook.gif"); 			//$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_TOOL_NEWSNIPPET= create(T_CTOOL, "newsbook_wiz.gif"); 			//$NON-NLS-1$
 
 	/**
 	 * Returns the image managed under the given key in this registry.
