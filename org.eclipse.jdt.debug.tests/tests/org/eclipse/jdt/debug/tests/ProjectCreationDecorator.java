@@ -13,6 +13,7 @@ package org.eclipse.jdt.debug.tests;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -37,6 +38,9 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Test to close the workbench, since debug tests do not run in the UI
@@ -200,5 +204,16 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		assertNotNull("No default JRE", vm);
 		JavaProjectHelper.addVariableEntry(project, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
 				
+	}
+	
+	public void testPerspectiveSwtich() {
+	    DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+            public void run() {
+                IWorkbench workbench = PlatformUI.getWorkbench();
+                IPerspectiveDescriptor descriptor = workbench.getPerspectiveRegistry().findPerspectiveWithId(IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
+                workbench.getActiveWorkbenchWindow().getActivePage().setPerspective(descriptor);
+            }
+        }
+	    );
 	}
 }
