@@ -29,12 +29,9 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -86,18 +83,17 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 	 */
 	public void run(IAction action) {
 		updateForRun();
+		report(null);
 		if (getBreakpoint() == null) {
 			// add breakpoint
 			try {
-				IMethod method = (IMethod)getMember();
-				if (method == null || !enableForMember(method)) {
-					IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), Status.ERROR, ActionMessages.getString("ManageMethodBreakpointActionDelegate.CantAdd"), null); //$NON-NLS-1$
-					Shell shell = JDIDebugUIPlugin.getActiveWorkbenchShell();
-					if (shell != null) {
-						ErrorDialog.openError(shell, ActionMessages.getString("ManageMethodBreakpointActionDelegate.Error_1"), ActionMessages.getString("ManageMethodBreakpointActionDelegate.Add_Method_Breakpoint_Failed_2"), status); //$NON-NLS-1$ //$NON-NLS-2$
-					}
+				IMember member = getMember();
+				if (member == null || !enableForMember(member)) {
+					report(ActionMessages.getString("ManageMethodBreakpointActionDelegate.CantAdd")); //$NON-NLS-1$
 					return;
-				} 
+				}
+				
+				IMethod method= (IMethod)member;
 				int start = -1;
 				int end = -1;
 				ISourceRange range = method.getNameRange();
@@ -202,15 +198,6 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 		return false;
 	}
 	
-	/**
-	 * Only enabled for concrete methods
-	 * @see IPartListener#partActivated(IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart part) {
-		super.partActivated(part);
-		setEnabledState(getTextEditor());
-	}
-	
 	protected void setEnabledState(ITextEditor editor) {
 		if (getAction() != null && getPage() != null) {
 			IWorkbenchPart part = getPage().getActivePart();
@@ -218,10 +205,11 @@ public class ManageMethodBreakpointActionDelegate extends AbstractManageBreakpoi
 				getAction().setEnabled(false);
 			} else {
 				if (part == getPage().getActiveEditor()) {
-					getAction().setEnabled(true);
-				} else {
-					ISelectionProvider sp= part.getSite().getSelectionProvider();
-					getAction().setEnabled(sp != null && enableForMember(getMember(sp.getSelection())));
+					if (getPage().getActiveEditor() instanceof ITextEditor) {
+						super.setEnabledState((ITextEditor)getPage().getActiveEditor());
+					} else {
+						getAction().setEnabled(false);
+					}
 				}
 			}
 		}	

@@ -18,8 +18,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -61,12 +59,12 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 	 */
 	public void run(IAction action) {
 		updateForRun();
+		report(null);
 		if (getBreakpoint() == null) {
 			try {
 				IMember element= getMember();
 				if (element == null || !enableForMember(element)) {
-					IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), Status.ERROR, ActionMessages.getString("ManageWatchpointActionDelegate.Watchpoints_can_only_be_added_for_field_members._1"), null); //$NON-NLS-1$
-					JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageWatchpointActionDelegate.Add_Watchpoint_Failed_2"), status); //$NON-NLS-1$
+					report(ActionMessages.getString("ManageWatchpointActionDelegate.CantAdd"));
 					return;
 				}
 				IType type = element.getDeclaringType();
@@ -295,8 +293,6 @@ public class ManageWatchpointActionDelegate extends AbstractManageBreakpointActi
 			} else { //dealing with active editor
 				if (getPage().getActiveEditor() instanceof ITextEditor) {
 					super.setEnabledState((ITextEditor)getPage().getActiveEditor());
-				} else {
-					getAction().setEnabled(false);
 				}
 			}
 		}	

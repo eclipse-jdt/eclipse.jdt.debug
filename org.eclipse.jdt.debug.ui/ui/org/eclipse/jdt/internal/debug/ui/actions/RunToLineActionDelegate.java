@@ -1,19 +1,19 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -28,8 +28,6 @@ import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncher;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -37,7 +35,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * Action to support run to line (i.e. where the cursor is in the active editor)
  */
-public class RunToLineActionDelegate extends ManageBreakpointActionDelegate implements IEditorActionDelegate, IActionDelegate2, IDebugEventSetListener {
+public class RunToLineActionDelegate extends ManageBreakpointActionDelegate implements IEditorActionDelegate {
 	
 	public RunToLineActionDelegate() {
 	}
@@ -163,27 +161,6 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 	}
 	
 	/**
-	 * @see ManageBreakpointActionDelegate#setEnabledState(ITextEditor)
-	 */
-	protected void setEnabledState(ITextEditor editor) {
-		IAction action= getAction();
-		if (action != null) {
-			try {
-				super.setEnabledState(editor);
-				if (action.isEnabled()) {
-					IDebugTarget target= getContext();
-					action.setEnabled(target != null 
-						&& !(target.isDisconnected() 
-						|| target.isTerminated()));
-				}
-			} catch (DebugException de) {
-				action.setEnabled(false);
-				JDIDebugUIPlugin.log(de);
-			}
-		}
-	}
-	
-	/**
 	 * Resolves a stack frame context from the model.
 	 */
 	protected IDebugTarget getContextFromDebugTarget(IDebugTarget dt) throws DebugException {
@@ -209,59 +186,5 @@ public class RunToLineActionDelegate extends ManageBreakpointActionDelegate impl
 			setTextEditor((ITextEditor)targetEditor);
 		}
 		setEnabledState(getTextEditor());
-	}
-	/**
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
-	 */
-	public void init(IAction action) {
-		DebugPlugin.getDefault().addDebugEventListener(this);
-	}
-	
-	/**
-	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
-	 */
-	public void handleDebugEvents(final DebugEvent[] events) {
-		if (getTextEditor() == null || getAction() == null) {
-			return;
-		}
-		final Shell shell= getTextEditor().getSite().getShell();
-		if (shell == null || shell.isDisposed()) {
-			return;
-		}
-		Runnable r= new Runnable() {
-			public void run() {
-				if (shell.isDisposed()) {
-					return;
-				}
-				for (int i = 0; i < events.length; i++) {
-					if (events[i].getSource() != null) {
-						doHandleDebugEvent(events[i]);
-					}
-				}
-			}
-		};
-	
-		shell.getDisplay().asyncExec(r);
-	}
-	
-	/**
-	 * Update on specific debug events.
-	 */
-	protected void doHandleDebugEvent(DebugEvent event) {
-		switch (event.getKind()) {
-			case DebugEvent.TERMINATE :
-				if (event.getSource() instanceof IDebugTarget) {
-					update();
-				}
-				break;
-		}
-	}		
-	
-	/**
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 }

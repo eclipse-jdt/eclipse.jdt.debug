@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -45,7 +46,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDelegate, IPartListener {
 	
-	private boolean fInitialized= false;
+	protected boolean fInitialized= false;
 	private IAction fAction= null;
 	private int fLineNumber;
 	private IType fType= null;
@@ -61,9 +62,10 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	protected void manageBreakpoint(IEditorInput editorInput) {
 		ISelectionProvider sp= getTextEditor().getSelectionProvider();
 		if (sp == null || getType() == null) {
-			beep();
+			report("Breakpoint can neither be added nor removed at current text selection");
 			return;
 		}
+		report(null);
 		ISelection selection= sp.getSelection();
 		if (selection instanceof ITextSelection) {
 			IDocument document= getTextEditor().getDocumentProvider().getDocument(editorInput);
@@ -162,22 +164,24 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (!fInitialized) {
-			setAction(action);
-			if (getWorkbenchWindow() != null) {
-				IWorkbenchPage page= getWorkbenchWindow().getActivePage();
-				if (page != null) {
-					IEditorPart part= page.getActiveEditor();
-					if (part instanceof ITextEditor) {
-						if (!(part instanceof JavaSnippetEditor)) {
-							setTextEditor((ITextEditor)part);
-						}
+			initialize(action);
+		} 
+	}
+
+	protected void initialize(IAction action) {
+		setAction(action);
+		if (getWorkbenchWindow() != null) {
+			IWorkbenchPage page= getWorkbenchWindow().getActivePage();
+			if (page != null) {
+				IEditorPart part= page.getActiveEditor();
+				if (part instanceof ITextEditor) {
+					if (!(part instanceof JavaSnippetEditor)) {
+						setTextEditor((ITextEditor)part);
 					}
 				}
 			}
-			fInitialized= true;
-		} 
-		
-		setEnabledState(getTextEditor());
+		}
+		fInitialized= true;
 	}
 	
 	protected void update() {
@@ -186,7 +190,6 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 			if (getTextEditor() != null) {
 				breakpointExists(getTextEditor().getEditorInput());
 			}
-			action.setEnabled(getTextEditor()!= null && getType() != null);
 		}
 	}
 	
@@ -305,8 +308,18 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 		fWorkbenchWindow = workbenchWindow;
 	}
 
-	protected void beep() {
-		if (JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
+	protected void report(String message) {
+		if (getTextEditor() != null) {
+			IEditorStatusLine statusLine= (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class);
+			if (statusLine != null) {
+				if (message != null) {
+					statusLine.setMessage(true, message, null);
+				} else {
+					statusLine.setMessage(true, null, null);
+				}
+			}
+		}		
+		if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
 			JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
 		}
 	}
