@@ -11,6 +11,7 @@ Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -23,10 +24,12 @@ import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.Message;
+import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
+import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.debug.eval.ICompiledExpression;
@@ -39,7 +42,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import com.sun.jdi.InvocationException;
 
 public class JavaDetailFormattersManager implements IPropertyChangeListener, IDebugEventSetListener, ILaunchesListener {
-	
 	/**
 	 * The default detail formatters manager.	 */
 	static private JavaDetailFormattersManager fgDefault;
@@ -88,9 +90,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 			String typeName= detailFormattersList[i++];
 			String snippet= detailFormattersList[i++].replace('\u0000', ',');
 			boolean enabled= ! JavaDetailFormattersPreferencePage.DETAIL_FORMATTER_IS_DISABLED.equals(detailFormattersList[i++]);
-			if (enabled) {
-				fDetailFormattersMap.put(typeName, snippet);
-			}
+			fDetailFormattersMap.put(typeName, new DetailFormatter(typeName, snippet, enabled));
 		}
 	}
 	
@@ -150,20 +150,63 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		}
 		return fToStringValue;
 	}
+	
+	public boolean hasAssociatedDetailFormatter(IJavaType type) {
+		return getAssociatedDetailFormatter(type) != null;
+	}
+	
+	public DetailFormatter getAssociatedDetailFormatter(IJavaType type) {
+		String typeName;
+		try {
+			while (type instanceof IJavaArrayType) {
+				type= ((IJavaArrayType)type).getComponentType();
+			}
+			if (type instanceof IJavaClassType) {
+				typeName= type.getName();
+			} else {
+				return null;
+			}
+		} catch (DebugException e) {
+			return null;
+		}
+		return (DetailFormatter)fDetailFormattersMap.get(typeName);
+	}
+	
+	public void setAssociatedDetailFormatter(DetailFormatter detailFormatter) {
+		fDetailFormattersMap.put(detailFormatter.getTypeName(), detailFormatter);
+		savePreference();
+	}
 
+
+	private void savePreference() {
+		Collection valuesList= fDetailFormattersMap.values();
+		String[] values= new String[valuesList.size() * 3];
+		int i= 0;
+		for (Iterator iter= valuesList.iterator(); iter.hasNext();) {
+			DetailFormatter detailFormatter= (DetailFormatter) iter.next();
+			values[i++]= detailFormatter.getTypeName();
+			values[i++]= detailFormatter.getSnippet().replace(',','\u0000');
+			values[i++]= detailFormatter.isEnabled() ? JavaDetailFormattersPreferencePage.DETAIL_FORMATTER_IS_ENABLED : JavaDetailFormattersPreferencePage.DETAIL_FORMATTER_IS_DISABLED;
+		}
+		String pref = JavaDebugOptionsManager.serializeList(values);
+		JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST, pref);
+	}
 	/**
 	 * Return the detail formatter (code snippet) associate with
-	 * the given type.
+	 * the given type or one of its super type.
 	 */
-	private String getDetailFormat(IJavaClassType type) throws DebugException {
+	private String getDetailFormatter(IJavaClassType type) throws DebugException {
 		if (type == null) {
 			return null;
 		}
 		String typeName= type.getName();
 		if (fDetailFormattersMap.containsKey(typeName)) {
-			return (String)fDetailFormattersMap.get(typeName);
+			DetailFormatter detailFormatter= (DetailFormatter)fDetailFormattersMap.get(typeName);
+			if (detailFormatter.isEnabled()) {
+				return detailFormatter.getSnippet();
+			}
 		}
-		return getDetailFormat(type.getSuperclass());
+		return getDetailFormatter(type.getSuperclass());
 	}
 
 	/**
@@ -178,7 +221,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		if (fCacheMap.containsKey(key)) {
 			return (ICompiledExpression) fCacheMap.get(key);
 		} else {
-			String snippet= getDetailFormat(type);
+			String snippet= getDetailFormatter(type);
 			if (snippet != null) {
 				ICompiledExpression res= evaluationEngine.getCompiledExpression(snippet, javaObject);
 				fCacheMap.put(key, res);

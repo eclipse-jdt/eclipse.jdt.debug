@@ -13,7 +13,7 @@ Contributors:
 
 /**
  * Information about a detail formatter. */
-class DetailFormatter {
+public class DetailFormatter implements Comparable {
 	
 	private boolean fEnabled;
 	
@@ -21,7 +21,7 @@ class DetailFormatter {
 	
 	private String fSnippet;
 	
-	DetailFormatter(String typeName, String snippet, boolean enabled) {
+	public DetailFormatter(String typeName, String snippet, boolean enabled) {
 		fTypeName= typeName;
 		fSnippet= snippet;
 		fEnabled= enabled;
@@ -73,6 +73,21 @@ class DetailFormatter {
 	 */
 	public void setTypeName(String typeName) {
 		fTypeName= typeName;
+	}
+
+	/**
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object another) {
+		DetailFormatter detailFormatter= (DetailFormatter)another;
+		if (fTypeName == null) {
+			if (detailFormatter.fTypeName == null) {
+				return 0;
+			} else {
+				return detailFormatter.fTypeName.compareTo(fTypeName);
+			}
+		}
+		return fTypeName.compareTo(detailFormatter.fTypeName);
 	}
 
 }

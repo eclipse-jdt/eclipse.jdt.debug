@@ -10,6 +10,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -58,7 +60,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 /**
  * Dialog for edit detail formatter.
  */
-class DetailFormatterDialog extends StatusDialog {
+public class DetailFormatterDialog extends StatusDialog {
 	
 	/**
 	 * The detail formatter to edit.
@@ -68,12 +70,17 @@ class DetailFormatterDialog extends StatusDialog {
 	// widgets
 	private Text fTypeNameText;
 	private JDISourceViewer fSnippetViewer;
+	private Button fCheckBox;
 
 	/**
 	 * Indicate if a search for a type with the given name 
 	 * have been already performed.
 	 */
 	private boolean fTypeSearched;
+	
+	/**
+	 * Indicate if the type can be modified.	 */
+	private boolean fEditTypeName;
 
 	/**
 	 * The type object which corresponds to the given name.
@@ -84,13 +91,21 @@ class DetailFormatterDialog extends StatusDialog {
 	private IType fType;
 	
 	/**
+	 * 	 */
+	private List fDefinedTypes;
+	
+	/**
 	 * DetailFormatterDialog constructor.
 	 * 
 	 * @param detailFormatter the detail formatter to edit/add.
 	 * @param editDialog flag which indicates if the dialog is used for
 	 * edit an existing formatter, or for enter the info of a new one.
 	 */
-	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, boolean editDialog) {
+	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, List definedTypes, boolean editDialog) {
+		this(parent, detailFormatter, definedTypes, true, editDialog);
+	}
+	
+	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, List definedTypes, boolean editTypeName, boolean editDialog) {
 		super(parent);
 		fDetailFormatter= detailFormatter;
 		fTypeSearched= false;
@@ -100,6 +115,8 @@ class DetailFormatterDialog extends StatusDialog {
 		} else {
 			setTitle(DebugUIMessages.getString("DetailFormatterDialog.Add_Detail_Formatter_2")); //$NON-NLS-1$
 		}
+		fEditTypeName= editTypeName;
+		fDefinedTypes= definedTypes;
 	}
 	
 	/**
@@ -131,6 +148,7 @@ class DetailFormatterDialog extends StatusDialog {
 		innerContainer.setLayoutData(gd);
 		// type name text
 		fTypeNameText= new Text(innerContainer, SWT.SINGLE | SWT.BORDER);
+		fTypeNameText.setEditable(fEditTypeName);
 		fTypeNameText.setText(fDetailFormatter.getTypeName());
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fTypeNameText.setLayoutData(gd);
@@ -206,6 +224,11 @@ class DetailFormatterDialog extends StatusDialog {
 			}
 		});
 		
+		// enable checkbox
+		fCheckBox= new Button(container, SWT.CHECK | SWT.LEFT);
+		fCheckBox.setText(DebugUIMessages.getString("DetailFormatterDialog.&Enable_1")); //$NON-NLS-1$
+		fCheckBox.setSelection(fDetailFormatter.isEnabled());
+		
 		checkValues();
 
 		return container;
@@ -216,8 +239,11 @@ class DetailFormatterDialog extends StatusDialog {
 	 */
 	private void checkValues() {
 		StatusInfo status= new StatusInfo();
-		if (fTypeNameText.getText().trim().length() == 0) {
+		String typeName= fTypeNameText.getText().trim();
+		if (typeName.length() == 0) {
 			status.setError(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_name_must_not_be_empty._3")); //$NON-NLS-1$
+		} else if (fDefinedTypes.contains(typeName)) {
+			status.setError(DebugUIMessages.getString("DetailFormatterDialog.A_detail_formatter_is_already_defined_for_this_type_2")); //$NON-NLS-1$
 		} else if (fSnippetViewer.getDocument().get().trim().length() == 0) {
 			status.setError(DebugUIMessages.getString("DetailFormatterDialog.Associated_code_must_not_be_empty_3")); //$NON-NLS-1$
 		} else if (fType == null && fTypeSearched) {
@@ -230,8 +256,8 @@ class DetailFormatterDialog extends StatusDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		fDetailFormatter.setEnabled(true);
-		fDetailFormatter.setTypeName(fTypeNameText.getText());
+		fDetailFormatter.setEnabled(fCheckBox.getSelection());
+		fDetailFormatter.setTypeName(fTypeNameText.getText().trim());
 		fDetailFormatter.setSnippet(fSnippetViewer.getDocument().get());
 		
 		super.okPressed();
@@ -276,7 +302,7 @@ class DetailFormatterDialog extends StatusDialog {
 		}
 		fType= null;
 		fTypeSearched= true;
-		final String pattern= fTypeNameText.getText();
+		final String pattern= fTypeNameText.getText().trim();
 		if (pattern == null || "".equals(pattern)) { //$NON-NLS-1$
 			return;
 		}

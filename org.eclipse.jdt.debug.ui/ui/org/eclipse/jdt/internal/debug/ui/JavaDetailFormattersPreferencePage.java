@@ -13,6 +13,8 @@ Contributors:
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
@@ -247,21 +249,19 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 
 	public void addType() {
 		DetailFormatter detailFormat= new DetailFormatter("", "", true); //$NON-NLS-1$ //$NON-NLS-2$
-		if (new DetailFormatterDialog(getShell(), detailFormat, false).open() == Window.OK) {
-			fFormatViewerContentProvider.addDetailFormat(detailFormat);
+		if (new DetailFormatterDialog(getShell(), detailFormat, fFormatViewerContentProvider.getDefinedTypes(), false).open() == Window.OK) {
+			fFormatViewerContentProvider.addDetailFormatter(detailFormat);
 		}
 	}
 	
 	public void removeTypes() {
 		IStructuredSelection selection= (IStructuredSelection)fFormatterListViewer.getSelection();
-		for (Iterator iter= selection.iterator(); iter.hasNext();) {
-			fFormatViewerContentProvider.removeDetailFormat((DetailFormatter) iter.next());
-		}
+		fFormatViewerContentProvider.removeDetailFormatters(selection.toArray());
 	}
 	
 	public void editType() {
 		IStructuredSelection selection= (IStructuredSelection)fFormatterListViewer.getSelection();
-		if (new DetailFormatterDialog(getShell(), (DetailFormatter)(selection).getFirstElement(), true).open() == Window.OK) {
+		if (new DetailFormatterDialog(getShell(), (DetailFormatter)(selection).getFirstElement(), null, false, true).open() == Window.OK) {
 			fFormatterListViewer.refresh();
 			fFormatViewerContentProvider.refreshViewer();
 			updatePage(selection);
@@ -276,7 +276,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 	
 	class FormatterListViewerContentProvider implements IStructuredContentProvider {
 		
-		private List fDetailFormattersList;
+		private Set fDetailFormattersSet;
+		
+		private List fDefinedTypes;
 		
 		private CheckboxTableViewer fViewer;
 		
@@ -287,22 +289,24 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 			fViewer= viewer;
 			// load the current formatters
 			String[] detailFormattersList= JavaDebugOptionsManager.parseList(JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_DETAIL_FORMATTERS_LIST));
-			fDetailFormattersList= new ArrayList(detailFormattersList.length / 3);
+			fDetailFormattersSet= new TreeSet();
+			fDefinedTypes= new ArrayList(detailFormattersList.length / 3);
 			for (int i= 0, length= detailFormattersList.length; i < length;) {
 				String typeName= detailFormattersList[i++];
 				String snippet= detailFormattersList[i++].replace('\u0000', ',');
 				boolean enabled= ! DETAIL_FORMATTER_IS_DISABLED.equals(detailFormattersList[i++]);
 				DetailFormatter detailFormatter= new DetailFormatter(typeName, snippet, enabled);
-				fDetailFormattersList.add(detailFormatter);
+				fDetailFormattersSet.add(detailFormatter);
+				fDefinedTypes.add(typeName);
 			}
 		}
 		
 		/**
 		 * Save the detail formatter list.		 */
 		public void saveDetailFormatters() {
-			String[] values= new String[fDetailFormattersList.size() * 3];
+			String[] values= new String[fDetailFormattersSet.size() * 3];
 			int i= 0;
-			for (Iterator iter= fDetailFormattersList.iterator(); iter.hasNext();) {
+			for (Iterator iter= fDetailFormattersSet.iterator(); iter.hasNext();) {
 				DetailFormatter detailFormatter= (DetailFormatter) iter.next();
 				values[i++]= detailFormatter.getTypeName();
 				values[i++]= detailFormatter.getSnippet().replace(',','\u0000');
@@ -315,8 +319,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		
 		/**
 		 * Add a detail formatter.		 */
-		public void addDetailFormat(DetailFormatter detailFormatter) {
-			fDetailFormattersList.add(detailFormatter);
+		public void addDetailFormatter(DetailFormatter detailFormatter) {
+			fDetailFormattersSet.add(detailFormatter);
+			fDefinedTypes.add(detailFormatter.getTypeName());
 			fViewer.refresh();
 			refreshViewer();
 			IStructuredSelection selection= new StructuredSelection(detailFormatter);
@@ -326,8 +331,23 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		
 		/**
 		 * Remove a detailFormatter		 */
-		public void removeDetailFormat(DetailFormatter detailFormatter) {
-			fDetailFormattersList.remove(detailFormatter);
+		public void removeDetailFormatter(DetailFormatter detailFormatter) {
+			fDetailFormattersSet.remove(detailFormatter);
+			fDefinedTypes.remove(detailFormatter.getTypeName());
+			fViewer.refresh();
+			IStructuredSelection selection= new StructuredSelection();
+			fViewer.setSelection(selection);
+			updatePage(selection);
+		}
+		
+		/**
+		 * Remove detailFormatters
+		 */
+		public void removeDetailFormatters(Object[] detailFormatters) {
+			for (int i= 0, length= detailFormatters.length; i < length; i++) {
+				fDetailFormattersSet.remove(detailFormatters[i]);
+				fDefinedTypes.remove(((DetailFormatter)detailFormatters[i]).getTypeName());
+			}
 			fViewer.refresh();
 			IStructuredSelection selection= new StructuredSelection();
 			fViewer.setSelection(selection);
@@ -337,9 +357,9 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		/**
 		 * Refresh the formatter list viewer. 		 */
 		private void refreshViewer() {
-			DetailFormatter[] checkedElementsTmp= new DetailFormatter[fDetailFormattersList.size()];
+			DetailFormatter[] checkedElementsTmp= new DetailFormatter[fDetailFormattersSet.size()];
 			int i= 0;
-			for (Iterator iter= fDetailFormattersList.iterator(); iter.hasNext();) {
+			for (Iterator iter= fDetailFormattersSet.iterator(); iter.hasNext();) {
 				DetailFormatter detailFormatter= (DetailFormatter) iter.next();
 				if (detailFormatter.isEnabled()) {
 					checkedElementsTmp[i++]= detailFormatter;
@@ -355,9 +375,13 @@ public class JavaDetailFormattersPreferencePage extends PreferencePage implement
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return fDetailFormattersList.toArray();
+			return fDetailFormattersSet.toArray();
 		}
-
+		
+		public List getDefinedTypes() {
+			return fDefinedTypes;
+		}
+		
 		/**
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
