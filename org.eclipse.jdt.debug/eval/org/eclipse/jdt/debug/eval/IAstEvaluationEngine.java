@@ -76,7 +76,7 @@ public interface IAstEvaluationEngine extends IEvaluationEngine {
 	 * Compilation and runtime errors are reported in the evaluation result.
 	 * 
 	 * @param expression the expression to evaluate
-	 * @param thisContext the 'this' context for the evaluation
+	 * @param object the 'this' context for the evaluation
 	 * @param thread the thread in which to run the evaluation,
 	 *   which must be suspended
 	 * @param listener the listener that will receive notification
