@@ -196,6 +196,24 @@ public interface IRuntimeClasspathEntry {
 	public int getClasspathProperty();
 	
 	/**
+	 * Sets whether this entry should appear on the bootstrap classpath,
+	 * the user classpath, or whether this entry is a standard bootstrap entry
+	 * that does not need to appear on the classpath.
+	 * The location is one of:
+	 * <ul>
+	 * <li><code>STANDARD_CLASSES</code> - a standard entry does not need to appear
+	 * 		on the runtime classpath</li>
+	 * <li><code>BOOTSTRAP_CLASSES</code> - a bootstrap entry should appear on the
+	 * 		boot path</li>
+	 * <li><code>USER_CLASSES</code> - a user entry should appear on the path
+	 * 		conatining user or application classes</li>
+	 * </ul>
+	 * 
+	 * @param location a location constant
+	 */
+	public void setClasspathProperty(int location);	
+	
+	/**
 	 * Retunrns absolute resolved entries for this entry, that should appear
 	 * on the runtime classpath.
 	 * 

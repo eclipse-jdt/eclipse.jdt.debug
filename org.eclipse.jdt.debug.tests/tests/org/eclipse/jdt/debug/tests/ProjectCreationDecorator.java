@@ -49,15 +49,14 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		// add rt.jar
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		assertNotNull("No default JRE", vm);
-		IPath path = vm.getVMInstallType().getDefaultLibraryLocation(vm.getInstallLocation()).getSystemLibraryPath();
-		JavaProjectHelper.addLibrary(project, path);
+		JavaProjectHelper.addVariableEntry(project, new Path(JavaRuntime.JRELIB_VARIABLE), new Path(JavaRuntime.JRESRC_VARIABLE), new Path(JavaRuntime.JRESRCROOT_VARIABLE));
 		
 		pro = project.getProject();
 		
 		//add A.jar
 		root = JavaTestPlugin.getDefault().getFileInPlugin(new Path("testjars"));
 		JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
-		path = src.getPath().append("A.jar");
+		IPath path = src.getPath().append("A.jar");
 		JavaProjectHelper.addLibrary(project, path);
 		
 		// create launch configuration folder

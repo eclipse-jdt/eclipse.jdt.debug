@@ -61,6 +61,7 @@ public class JavaSourceLookupTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		fSourceLookupBlock.performApply(configuration);
 	}
 
 	/**

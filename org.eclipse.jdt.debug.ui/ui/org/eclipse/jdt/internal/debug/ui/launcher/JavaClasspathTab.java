@@ -240,6 +240,29 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		boolean def = fClassPathDefaultButton.getSelection();		
+		if (def) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, (String)null);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (String)null);
+		} else {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
+			try {
+				IRuntimeClasspathEntry[] boot = fBootpathViewer.getEntries();
+				IRuntimeClasspathEntry[] user = fClasspathViewer.getEntries();
+				List mementos = new ArrayList(boot.length + user.length);
+				for (int i = 0; i < boot.length; i++) {
+					boot[i].setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+					mementos.add(boot[i].getMemento());
+				}
+				for (int i = 0; i < user.length; i++) {
+					user[i].setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+					mementos.add(user[i].getMemento());
+				}
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JavaClasspathTab.Unable_to_save_classpath_1"), e); //$NON-NLS-1$
+			}	
+		}
 	}
 
 	/**

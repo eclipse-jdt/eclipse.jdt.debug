@@ -198,9 +198,11 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	}
 		
 	/**
-	 * Returns the bootpath specified by the given launch
-	 * configuration, as an array of Strings. The returned array
-	 * is empty if no bootpath is specified.
+	 * Returns entries that should appear on the bootstrap portion
+	 * of the classpath as specified by the given launch
+	 * configuration, as an array of resolved strings. The returned array
+	 * is empty if no bootpath is specified, or if all entries are standard
+	 * (i.e. appear by default).
 	 * 
 	 * @param configuration launch configuration
 	 * @return the bootpath specified by the given 
@@ -208,20 +210,29 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
 	protected String[] getBootpath(ILaunchConfiguration configuration) throws CoreException {
-		List bootpathList = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH, (List)null);
-		String[] bootpath = null;
-		if (bootpathList != null) {
-			bootpath = new String[bootpathList.size()];
-			bootpathList.toArray(bootpath);
-		} else {
-			bootpath = new String[0];
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeRuntimeClasspath(configuration);
+		List bootEntries = new ArrayList(entries.length);
+		boolean allStandard = true;
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getClasspathProperty() != IRuntimeClasspathEntry.USER_CLASSES) {
+				allStandard = allStandard && entries[i].getClasspathProperty() == IRuntimeClasspathEntry.STANDARD_CLASSES;
+				String[] resolvedPaths = entries[i].getResolvedPaths();
+				for (int j = 0; j < resolvedPaths.length; j++) {
+					bootEntries.add(resolvedPaths[j]);
+				}
+			}
 		}
-		return bootpath;
+		if (allStandard) {
+			return new String[0];
+		} else {
+			return (String[])bootEntries.toArray(new String[bootEntries.size()]);		
+		}
 	}
 
 	/**
-	 * Returns the classpath specified by the given launch
-	 * configuration, as an array of Strings. The returned array
+	 * Returns the entries that should appear on the user portion of
+	 * the classpath as specified by the given launch
+	 * configuration, as an array of resolved strings. The returned array
 	 * is empty if no classpath is specified.
 	 * 
 	 * @param configuration launch configuration
@@ -230,19 +241,17 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */	
 	protected String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
-		if (configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false)) {
-			return getDefaultClasspath(configuration);
-		} else {
-			String[] classpath;
-			List classpathList = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (List)null);
-			if (classpathList == null) {
-				classpath = getDefaultClasspath(configuration);
-			} else {
-				classpath = new String[classpathList.size()];
-				classpathList.toArray(classpath);
+		IRuntimeClasspathEntry[] entries = JavaRuntime.computeRuntimeClasspath(configuration);
+		List userEntries = new ArrayList(entries.length);
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+				String[] resolvedPaths = entries[i].getResolvedPaths();
+				for (int j = 0; j < resolvedPaths.length; j++) {
+					userEntries.add(resolvedPaths[j]);
+				}
 			}
-			return classpath;
 		}
+		return (String[])userEntries.toArray(new String[userEntries.size()]);
 	}
 	
 	/**

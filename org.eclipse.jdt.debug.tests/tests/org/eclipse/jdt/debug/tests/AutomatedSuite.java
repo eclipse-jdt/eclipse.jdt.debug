@@ -18,6 +18,7 @@ import org.eclipse.jdt.debug.tests.core.LaunchConfigurationTests;
 import org.eclipse.jdt.debug.tests.core.LocalVariableTests;
 import org.eclipse.jdt.debug.tests.core.MethodBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.PatternBreakpointTests;
+import org.eclipse.jdt.debug.tests.core.RuntimeClasspathEntryTests;
 import org.eclipse.jdt.debug.tests.core.StaticVariableTests;
 import org.eclipse.jdt.debug.tests.core.TargetPatternBreakpointTests;
 import org.eclipse.jdt.debug.tests.core.WatchpointTests;
@@ -57,6 +58,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(PatternBreakpointTests.class));
 		addTest(new TestSuite(TargetPatternBreakpointTests.class));
 		addTest(new TestSuite(EventSetTests.class));
+		addTest(new TestSuite(RuntimeClasspathEntryTests.class));
 	}
 	
 	public static void main(String[] args) {

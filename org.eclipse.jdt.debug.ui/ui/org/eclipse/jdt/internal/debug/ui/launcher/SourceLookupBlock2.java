@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.SWTUtil;
@@ -146,19 +147,8 @@ public class SourceLookupBlock2 {
 		boolean def = fDefaultButton.getSelection();
 		if (def) {
 			try {
-				// the default source path is based on the classpath 
-				boolean defCP = getLaunchConfiguration().getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
-				if (defCP) {
-					IJavaProject proj = getProject();
-					if (proj == null) {
-						// XXX: handle no project - use default source of system libraries
-					} else {
-						IRuntimeClasspathEntry[] entries = JavaRuntime.computeRuntimeClasspath(proj);
-						fPathViewer.setEntries(entries);						
-					}
-				} else {
-					// XXX: handle persisted classpath
-				}
+				IRuntimeClasspathEntry[] defs = JavaRuntime.computeRuntimeClasspath(getLaunchConfiguration());
+				fPathViewer.setEntries(defs);
 			} catch (CoreException e) {
 				JDIDebugUIPlugin.log(e);
 			}
@@ -220,11 +210,35 @@ public class SourceLookupBlock2 {
 			setProject(project);
 			boolean useDefault = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
 			fDefaultButton.setSelection(useDefault);
-			handleDefaultButtonSelected();
+			IRuntimeClasspathEntry[] entries = JavaRuntime.computeSourceLookupPath(config);
+			fPathViewer.setEntries(entries);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
 		}
 	}
+	
+	/**
+	 * Saves settings in the given working copy
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		boolean def = fDefaultButton.getSelection();		
+		if (def) {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, (String)null);
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, (String)null);
+		} else {
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, def);
+			try {
+				IRuntimeClasspathEntry[] entries = fPathViewer.getEntries();
+				List mementos = new ArrayList(entries.length);
+				for (int i = 0; i < entries.length; i++) {
+					mementos.add(entries[i].getMemento());
+				}
+				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH, mementos);
+			} catch (CoreException e) {
+				JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("SourceLookupBlock.Unable_to_save_source_lookup_path_1"), e); //$NON-NLS-1$
+			}	
+		}		
+	}	
 	
 	/**
 	 * Returns the entries visible in the viewer

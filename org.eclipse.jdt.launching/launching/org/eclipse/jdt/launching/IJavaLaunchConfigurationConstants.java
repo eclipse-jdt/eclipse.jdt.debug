@@ -94,6 +94,8 @@ public interface IJavaLaunchConfigurationConstants {
 	 * The bootpath for a Java application is stored
 	 * in a launch configuration with this key. A bootpath
 	 * is stored as a raw string.
+	 * 
+	 * @deprecated use ATTR_CLASSPATH - contains both use classes and bootstrap classes
 	 */
 	public static final String ATTR_BOOTPATH = LaunchingPlugin.getUniqueIdentifier() + ".BOOTPATH";	 //$NON-NLS-1$
 	
@@ -101,7 +103,8 @@ public interface IJavaLaunchConfigurationConstants {
 	 * Classpath launch configuration attribute name.
 	 * If this attribute is present on a launch configuration, its value becomes
 	 * the sole classpath for the launch.  If not present, a default class runtime
-	 * classpath is used.
+	 * classpath is used. The attribute value is a list of strings which are mementos
+	 * for runtime class path entries.
 	 */
 	public static final String ATTR_CLASSPATH = LaunchingPlugin.getUniqueIdentifier() + ".CLASSPATH";	 //$NON-NLS-1$
 	
@@ -116,7 +119,8 @@ public interface IJavaLaunchConfigurationConstants {
 	/**
 	 * Classpath launch configuration attribute name.
 	 * If this attribute is present on a launch configuration, its value becomes
-	 * the sole source lookup path for the launch.
+	 * the sole source lookup path for the launch. Its value is a list of
+	 * strings which are mementos for associated runtime classpath entries.
 	 */
 	public static final String ATTR_SOURCE_PATH = LaunchingPlugin.getUniqueIdentifier() + ".SOURCE_PATH";	 //$NON-NLS-1$
 		

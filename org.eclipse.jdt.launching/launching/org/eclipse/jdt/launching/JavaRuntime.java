@@ -17,7 +17,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,11 +46,13 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.JavaClasspathVariablesInitializer;
+import org.eclipse.jdt.internal.launching.JavaLaunchConfigurationUtils;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 import org.eclipse.jdt.internal.launching.RuntimeClasspathEntry;
@@ -335,8 +339,8 @@ public final class JavaRuntime {
 	 * @return runtime classpath entry
 	 */
 	public static IRuntimeClasspathEntry newProjectRuntimeClasspathEntry(IJavaProject project) {
-		IClasspathEntry cpe = JavaCore.newProjectEntry(project.getPath());
-		return new RuntimeClasspathEntry(IRuntimeClasspathEntry.PROJECT, cpe);
+		IClasspathEntry cpe = JavaCore.newProjectEntry(project.getProject().getLocation());
+		return newRuntimeClasspathEntry(cpe);
 	}
 	
 	
@@ -349,8 +353,8 @@ public final class JavaRuntime {
 	 * @return runtime classpath entry
 	 */
 	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IResource resource) {
-		IClasspathEntry cpe = JavaCore.newLibraryEntry(resource.getFullPath(), null, null);
-		return new RuntimeClasspathEntry(IRuntimeClasspathEntry.ARCHIVE, cpe);
+		IClasspathEntry cpe = JavaCore.newLibraryEntry(resource.getLocation(), null, null);
+		return newRuntimeClasspathEntry(cpe);
 	}
 	
 	/**
@@ -364,7 +368,7 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IPath path) {
 		IClasspathEntry cpe = JavaCore.newLibraryEntry(path, null, null);
-		return new RuntimeClasspathEntry(IRuntimeClasspathEntry.ARCHIVE, cpe);
+		return newRuntimeClasspathEntry(cpe);
 	}
 
 	/**
@@ -378,11 +382,37 @@ public final class JavaRuntime {
 	 */
 	public static IRuntimeClasspathEntry newVariableRuntimeClasspathEntry(String name) {
 		IClasspathEntry cpe = JavaCore.newVariableEntry(new Path(name), null, null);
-		return new RuntimeClasspathEntry(IRuntimeClasspathEntry.VARIABLE, cpe);
+		return newRuntimeClasspathEntry(cpe);
 	}
-			
+	
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
+	 * 
+	 * Returns a runtime classpath entry constructed from the given memento.
+	 * 
+	 * @param memento a menento for a runtime classpath entry
+	 * @return runtime classpath entry
+	 * @exception CoreException if unable to construct a runtime classpath entry
+	 */
+	public static IRuntimeClasspathEntry newRuntimeClasspathEntry(String memento) throws CoreException {
+		return new RuntimeClasspathEntry(memento);
+	}
+	
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
+	 * 
+	 * Returns a runtime classpath entry that corresponds to the given
+	 * classpath entry. The classpath entry may not be of type <code>CPE_SOURCE</code>.
+	 * 
+	 * @param entry a classpath entry
+	 * @return runtime classpath entry
+	 */
+	public static IRuntimeClasspathEntry newRuntimeClasspathEntry(IClasspathEntry entry) {
+		return new RuntimeClasspathEntry(entry);
+	}	
+			
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
 	 * 
 	 * Computes the default runtime claspath for a given project.
 	 * 
@@ -392,30 +422,161 @@ public final class JavaRuntime {
 	 * [XXX: fix for libraries
 	 */
 	public static IRuntimeClasspathEntry[] computeRuntimeClasspath(IJavaProject project) throws CoreException {
-		IClasspathEntry entry = JavaCore.newProjectEntry(project.getPath());
+		IClasspathEntry entry = JavaCore.newProjectEntry(project.getProject().getLocation());
 		List classpathEntries = expandProject(entry);
 		IRuntimeClasspathEntry[] runtimeEntries = new IRuntimeClasspathEntry[classpathEntries == null ? 0 : classpathEntries.size()];
 		for (int i = 0; i < runtimeEntries.length; i++) {
 			IClasspathEntry e = (IClasspathEntry)classpathEntries.get(i);
-			IRuntimeClasspathEntry re = null;
-			switch (e.getEntryKind()) {
-				case IClasspathEntry.CPE_PROJECT:
-					re = new RuntimeClasspathEntry(IRuntimeClasspathEntry.PROJECT, e);
-					break;
-				case IClasspathEntry.CPE_LIBRARY:
-					re = new RuntimeClasspathEntry(IRuntimeClasspathEntry.ARCHIVE, e);
-					break;
-				case IClasspathEntry.CPE_VARIABLE:
-					re = new RuntimeClasspathEntry(IRuntimeClasspathEntry.VARIABLE, e);
-					break;
-				default:
-					break;
-			}
-			runtimeEntries[i] = re;
+			runtimeEntries[i] = newRuntimeClasspathEntry(e);
 		}
 		return runtimeEntries;
 	}
 	
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
+	 * 
+	 * Returns the source lookup path for the given (Java) launch configuration,
+	 * computing the path if required (i.e. is not explicitly set on the
+	 * launch configuration).
+	 * 
+	 * @param configuration launch configuration
+	 * @return runtime classpath entries that should be on the source lookup path
+	 * @exception CoreException if unable to compute the source lookup path
+	 */
+	public static IRuntimeClasspathEntry[] computeSourceLookupPath(ILaunchConfiguration configuration) throws CoreException {
+		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_SOURCE_PATH, true);
+		if (useDefault) {
+			// the default source lookup path is the same as the classpath
+			return computeRuntimeClasspath(configuration);
+		} else {
+			// recover persisted source path
+			return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH);
+		}
+	}
+	
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
+	 * 
+	 * Returns the class path for the given (Java) launch configuration,
+	 * computing the default path if required (i.e. is not explicitly set on the
+	 * launch configuration).
+	 * 
+	 * @param configuration launch configuration
+	 * @return runtime classpath entries that should be on the class path
+	 * @exception CoreException if unable to compute the class path
+	 */
+	public static IRuntimeClasspathEntry[] computeRuntimeClasspath(ILaunchConfiguration configuration) throws CoreException {
+		boolean useDefault = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
+		if (useDefault) {
+			IJavaProject proj = JavaLaunchConfigurationUtils.getJavaProject(configuration);
+			if (proj == null) {
+				// no project - use JRE's libraries by default
+				IVMInstall vm = computeVMInstall(configuration);
+				LibraryLocation[] libs = vm.getLibraryLocations();
+				if (libs == null) {
+					return new IRuntimeClasspathEntry[0];
+				} else {
+					IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[libs.length];
+					for (int i = 0; i < libs.length; i++) {
+						IRuntimeClasspathEntry r = newArchiveRuntimeClasspathEntry(libs[i].getSystemLibraryPath());
+						r.setSourceAttachmentPath(libs[i].getSystemLibrarySourcePath());
+						r.setSourceAttachmentRootPath(libs[i].getPackageRootPath());
+					}
+					return rtes;
+				}				
+			} else {
+				return JavaRuntime.computeRuntimeClasspath(proj);						
+			}
+		} else {
+			// recover persisted classpath
+			return recoverRuntimePath(configuration, IJavaLaunchConfigurationConstants.ATTR_CLASSPATH);
+		}
+	}
+	
+	/**
+	 * Returns a collection of runtime classpath entries that are defined in the
+	 * specified attribute of the given launch configuration.
+	 * 
+	 * @param configuration launch configuration
+	 * @param attribute attribute name containing the list of entries
+	 * @return collection of runtime classpath entries that are defined in the
+	 *  specified attribute of the given launch configuration
+	 * @exception CoreException if unable to retrieve the list
+	 */
+	private static IRuntimeClasspathEntry[] recoverRuntimePath(ILaunchConfiguration configuration, String attribute) throws CoreException {
+		List entries = (List)configuration.getAttribute(attribute, Collections.EMPTY_LIST);
+		IRuntimeClasspathEntry[] rtes = new IRuntimeClasspathEntry[entries.size()];
+		Iterator iter = entries.iterator();
+		int i = 0;
+		while (iter.hasNext()) {
+			rtes[i] = newRuntimeClasspathEntry((String)iter.next());
+			i++;
+		}
+		return rtes;		
+	}
+	
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE</b>
+	 * 
+	 * Returns the VMInstall for the given (Java) launch configuration.
+	 * The VM install is computed in the following way:
+	 * <ol>
+	 * <li>The VM install is explicitly specified on the launch configuration
+	 * 	via the <code>ATTR_VM_INSTALL_TYPE</code> and <code>ATTR_VM_INSTALL_ID</code>
+	 *  attributes.</li>
+	 * <li>If no explicit VM install is specified, the VM install associated with
+	 * 	the launch confiugration's project is used.<li>
+	 * <li>If no project is specified, or the project does not specify a custom
+	 * 	VM install, the workspace default VM install is used.</li>
+	 * </ol>
+	 * 
+	 * @param configuration launch configuration
+	 * @return vm install
+	 * @exception CoreException if unable to compute a vm install
+	 * 
+	 * [XXX: need to account for JRE per project when support exists]
+	 */
+	public static IVMInstall computeVMInstall(ILaunchConfiguration configuration) throws CoreException {
+		String type = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+		if (type != null) {
+			String id = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, (String)null);
+			if (id == null) {
+				// error - type specified without a specific install
+				abort(LaunchingMessages.getString("JavaRuntime.VM_install_ID_not_specified_1"), null); //$NON-NLS-1$
+			} else {
+				IVMInstallType vt = getVMInstallType(type);
+				if (vt == null) {
+					// error type does not exist
+					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_type_does_not_exist__{0}_2"), new String[] {type}), null); //$NON-NLS-1$
+				} else {
+					IVMInstall[] vms = vt.getVMInstalls();
+					for (int i = 0; i < vms.length; i++) {
+						if (id.equals(vms[i].getId())) {
+							return vms[i];
+						}
+					}
+					// error - install not found
+					abort(MessageFormat.format(LaunchingMessages.getString("JavaRuntime.Specified_VM_install_not_found__type_{0},_id_{1}_3"), new String[] {type, id}), null); //$NON-NLS-1$
+				}
+			}
+		}
+		
+		// XXX: check project's JRE
+		
+		return getDefaultVMInstall();
+	}
+
+	/**
+	 * Throws a core exception with an internal error status.
+	 * 
+	 * @param message the status message
+	 * @param exception lower level exception associated with the
+	 *  error, or <code>null</code> if none
+	 */
+	private static void abort(String message, Throwable exception) throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, message, exception));
+	}	
+				
 	/**
 	 * Returns the transitive closure of classpath entries for the
 	 * given project entry.
@@ -428,7 +589,7 @@ public final class JavaRuntime {
 		// 1. Get the raw classpath
 		// 2. Replace source folder entries with a project entry
 		IPath projectPath = projectEntry.getPath();
-		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(projectPath);
+		IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(projectPath.lastSegment());
 		if (res == null) {
 			return null;
 		}
