@@ -1,79 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <plugin
    id="org.eclipse.jdt.debug.tests"
    name="%pluginName"
    version="2.1.0"
    provider-name="%providerName"
    class="org.eclipse.jdt.debug.testplugin.JavaTestPlugin">
-   
+
+   <runtime>
+      <library name="javadebugtests.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
    <requires>
-	  <import plugin="org.junit"/>   
+      <import plugin="org.junit"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jdt.ui"/>
-	  <import plugin="org.eclipse.jdt.launching"/>
-	  <import plugin="org.eclipse.jdt.debug"/>
-	  <import plugin="org.eclipse.jdt.debug.ui"/>
-	  <import plugin="org.eclipse.debug.core"/>
-	  <import plugin="org.eclipse.debug.ui"/>
-	  <import plugin="org.eclipse.update.core"/>
+      <import plugin="org.eclipse.jdt.launching"/>
+      <import plugin="org.eclipse.jdt.debug"/>
+      <import plugin="org.eclipse.jdt.debug.ui"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.update.core"/>
    </requires>
 
-<runtime>
-  <library name="javadebugtests.jar" >
-     <export name = "*"/>
-  </library> 
-</runtime>
 
-<extension point="org.eclipse.jdt.launching.classpathProviders">
-  <classpathProvider
-    id = "org.eclipse.jdt.debug.tests.EmptyClasspathProvider"
-    class ="org.eclipse.jdt.debug.testplugin.EmptyClasspathProvider">
-  </classpathProvider>
-</extension>
-
-<extension point="org.eclipse.debug.ui.consoleLineTrackers">
-  <consoleLineTracker
-    id = "org.eclipse.jdt.debug.tests.ConsoleLineTracker"
-    class ="org.eclipse.jdt.debug.testplugin.ConsoleLineTracker"
-    processType = "java">
-  </consoleLineTracker>
-</extension>
-
-<extension point = "org.eclipse.jdt.core.classpathVariableInitializer">
-	<classpathVariableInitializer
-		variable="NULL_VARIALBE"
-		class="org.eclipse.jdt.debug.testplugin.NullVariableInitializer"/>
-</extension>
-
-<extension point = "org.eclipse.debug.core.launchModes">
-	<launchMode
-		mode="TEST_MODE"
-		label="TEST_MODE"/>
-</extension>	
-
-<extension point = "org.eclipse.debug.core.launchDelegates">
-	<launchDelegate
-		id="org.eclipse.jdt.debug.tests.testModeLaunchDelegate"
-		type="org.eclipse.jdt.launching.localJavaApplication"
-		modes="TEST_MODE"
-		delegate="org.eclipse.jdt.debug.testplugin.TestModeLaunchDelegate">
-	</launchDelegate>
-</extension>
-
-<extension point = "org.eclipse.debug.ui.launchConfigurationTabGroups">
-	<launchConfigurationTabGroup
-		id="org.eclipse.jdt.debug.tests.launchConfigurationTabGroup.testJavaApplication"
-		type ="org.eclipse.jdt.launching.localJavaApplication"
-		class="org.eclipse.jdt.debug.testplugin.TestJavaApplicationTabGroup">
-		<launchMode
-			mode="TEST_MODE"
-			perspective="org.eclipse.jdt.ui.JavaPerspective">
-		</launchMode>
-	</launchConfigurationTabGroup>
-</extension>
+   <extension
+         point="org.eclipse.jdt.launching.classpathProviders">
+      <classpathProvider
+            class="org.eclipse.jdt.debug.testplugin.EmptyClasspathProvider"
+            id="org.eclipse.jdt.debug.tests.EmptyClasspathProvider">
+      </classpathProvider>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.consoleLineTrackers">
+      <consoleLineTracker
+            class="org.eclipse.jdt.debug.testplugin.ConsoleLineTracker"
+            processType="java"
+            id="org.eclipse.jdt.debug.tests.ConsoleLineTracker">
+      </consoleLineTracker>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathVariableInitializer">
+      <classpathVariableInitializer
+            variable="NULL_VARIALBE"
+            class="org.eclipse.jdt.debug.testplugin.NullVariableInitializer">
+      </classpathVariableInitializer>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchModes">
+      <launchMode
+            label="TEST_MODE"
+            mode="TEST_MODE">
+      </launchMode>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            type="org.eclipse.jdt.launching.localJavaApplication"
+            delegate="org.eclipse.jdt.debug.testplugin.TestModeLaunchDelegate"
+            modes="TEST_MODE"
+            id="org.eclipse.jdt.debug.tests.testModeLaunchDelegate">
+      </launchDelegate>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.eclipse.jdt.launching.localJavaApplication"
+            class="org.eclipse.jdt.debug.testplugin.TestJavaApplicationTabGroup"
+            id="org.eclipse.jdt.debug.tests.launchConfigurationTabGroup.testJavaApplication">
+         <launchMode
+               perspective="org.eclipse.jdt.ui.JavaPerspective"
+               mode="TEST_MODE">
+         </launchMode>
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.simpleLaunchVariables">
+      <variable
+            initializerClass="org.eclipse.jdt.debug.testplugin.SimpleVariableInitializer"
+            name="TEST_VAR_WITH_INITIALIZER"
+            description="testing">
+      </variable>
+   </extension>
 
 </plugin>

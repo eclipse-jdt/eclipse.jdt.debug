@@ -232,4 +232,10 @@ public class LaunchVariableTests extends LaunchConfigurationTests {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 	
+	public void testInitializer() {
+		ILaunchVariableManager manager = DebugPlugin.getDefault().getLaunchVariableManager();
+		ISimpleLaunchVariable var = manager.getSimpleVariable("TEST_VAR_WITH_INITIALIZER");
+		assertNotNull("Variable not defined", var);
+		assertEquals("wrong value", "INITIAL_TEST_VALUE", var.getValue());
+	}
 }
