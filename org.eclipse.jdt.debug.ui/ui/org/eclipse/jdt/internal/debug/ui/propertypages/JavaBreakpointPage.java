@@ -281,7 +281,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	}
 	
 	/**
-	 * Allows subclasses to add type specific labels to the common java
+	 * Allows subclasses to add type specific labels to the common Java
 	 * breakpoint page.
 	 * @param parent
 	 */
@@ -289,7 +289,7 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 		// Do nothing
 	}
 	/**
-	* Allows subclasses to add type specific editors to the common java
+	* Allows subclasses to add type specific editors to the common Java
 	* breakpoint page.
 	* @param parent
 	*/
