@@ -522,33 +522,45 @@
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.ClassFileRulerPopupActions" 
     	targetID="#ClassFileRulerContext">
+    	<action
+			id="org.eclipse.jdt.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
+			label="%JavaBreakpointProperties.label"
+			menubarPath="debug"
+			class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
+		</action>
+    	<action
+			id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+			label="%EnableBreakpoint.label"
+			menubarPath="debug"
+			class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+		</action>
 		<action
 			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate"
 			label="%AddBreakpoint.label"
 			menubarPath="debug"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
-		</action>
-		<action
-			id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate"
-			label="%EnableBreakpoint.label"
-			menubarPath="debug"
-			class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
 		</action>
 	</viewerContribution>
 	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CompilationUnitRulerPopupActions" 
     	targetID="#CompilationUnitRulerContext">
-		<action
-			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate"
-			label="%AddBreakpoint.label"
+    	<action
+			id="org.eclipse.jdt.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
+			label="%JavaBreakpointProperties.label"
 			menubarPath="debug"
-			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
+			class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
 		</action>
 		<action
 			id="org.eclipse.jdt.ui.actions.EnableDisableBreakpointRulerActionDelegate"
 			label="%EnableBreakpoint.label"
 			menubarPath="debug"
 			class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+		</action>
+		<action
+			id="org.eclipse.jdt.ui.actions.ManageBreakpointRulerActionDelegate"
+			label="%AddBreakpoint.label"
+			menubarPath="debug"
+			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerActionDelegate">
 		</action>
 	</viewerContribution>	
 	<viewerContribution 

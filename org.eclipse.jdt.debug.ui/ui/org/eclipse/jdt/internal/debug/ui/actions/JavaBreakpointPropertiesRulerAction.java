@@ -11,33 +11,35 @@ Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerAction {
-	
+
+/**
+ * Presents a custom properties dialog to configure
+ * the attibutes of a Java Breakpoint from the ruler popup menu of a 
+ * text editor.
+ */
+public class JavaBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAction {
+
 	/**
 	 * Creates the action to enable/disable breakpoints
 	 */
-	public EnableDisableBreakpointRulerAction(ITextEditor editor, IVerticalRulerInfo info) {
+	public JavaBreakpointPropertiesRulerAction(ITextEditor editor, IVerticalRulerInfo info) {
 		setInfo(info);
 		setTextEditor(editor);
-		setText("&Enable Breakpoint");
+		setText("Breakpoint &Properties...");
 	}
-
 	/**
 	 * @see Action#run()
 	 */
 	public void run() {
 		if (getBreakpoint() != null) {
-			try {
-				getBreakpoint().setEnabled(!getBreakpoint().isEnabled());
-			} catch (CoreException e) {
-				ErrorDialog.openError(getTextEditor().getEditorSite().getShell(), "Enabling/disabling breakpoints", "Exceptions occurred enabling disabling the breakpoint.", e.getStatus());
-			}
+			Dialog d= 
+				new JavaBreakpointPropertiesDialog(getTextEditor().getEditorSite().getShell(), (IJavaBreakpoint)getBreakpoint());
+			d.open();	
 		}
 	}
 	
@@ -46,16 +48,11 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 	 */
 	public void update() {
 		setBreakpoint(determineBreakpoint());
-		if (getBreakpoint() == null) {
+		if (getBreakpoint() == null || !(getBreakpoint() instanceof IJavaBreakpoint)) {
+			setBreakpoint(null);
 			setEnabled(false);
 			return;
 		}
 		setEnabled(true);
-		try {
-			boolean enabled= getBreakpoint().isEnabled();
-			setText(enabled ? "&Disable Breakpoint" : "&Enable Breakpoint");
-		} catch (CoreException ce) {
-			JDIDebugUIPlugin.log(ce);
-		}
 	}
 }
