@@ -470,14 +470,12 @@
 			label="%Display.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/disp_sbook.gif" 
-			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/insp_sbook.gif" 
-			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
      </viewerContribution>
@@ -494,14 +492,12 @@
 			label="%Display.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/disp_sbook.gif"
-			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/insp_sbook.gif" 
-			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.AddBreakpoint" 
@@ -522,14 +518,12 @@
     	<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
 			menubarPath="additions"
-			enablesFor="+"
 			icon="icons/full/etool16/disp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions"
-			enablesFor="+"
 			icon="icons/full/etool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
@@ -570,14 +564,12 @@
 			tooltip="%Display.tooltip"
 			toolbarPath="evaluationGroup" 
 			icon="icons/full/etool16/disp_sbook.gif"
-			enablesFor="+"
 			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			tooltip="%Inspect.tooltip"
 			toolbarPath="evaluationGroup" 
-			enablesFor="+"
 			icon="icons/full/etool16/insp_sbook.gif" 
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
