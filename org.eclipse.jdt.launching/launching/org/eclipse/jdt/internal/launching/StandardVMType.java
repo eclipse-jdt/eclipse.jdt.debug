@@ -31,6 +31,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.AbstractVMInstallType;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.LibraryLocation;
+import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * A VM install type for VMs the conform to the standard
@@ -137,7 +138,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public File detectInstallLocation() {
 		// do not detect on the Mac OS
-		if (BootLoader.getOS().equals(BootLoader.OS_MACOSX)) {
+		if (BootLoader.getOS().equals(Constants.OS_MACOSX)) {
 			return null;
 		}		
 		
@@ -371,7 +372,7 @@ public class StandardVMType extends AbstractVMInstallType {
 	 */
 	public IStatus validateInstallLocation(File javaHome) {
 		IStatus status = null;
-		if (BootLoader.getOS().equals(BootLoader.OS_MACOSX)) {
+		if (BootLoader.getOS().equals(Constants.OS_MACOSX)) {
 			status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), 0, LaunchingMessages.getString("StandardVMType.Standard_VM_not_supported_on_MacOS._1"), null); //$NON-NLS-1$
 		} else {
 			File javaExecutable = findJavaExecutable(javaHome);
