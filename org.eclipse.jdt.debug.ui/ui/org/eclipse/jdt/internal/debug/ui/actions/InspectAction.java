@@ -90,8 +90,8 @@ public class InspectAction extends EvaluateAction {
 			return;
 		}
 		
-		ISelection selection= getSelection();
-		if (selection == null) {
+		Object selection= getSelectedObject();
+		if (!(selection instanceof IStructuredSelection)) {
 			super.run();
 			return;
 		}

@@ -24,6 +24,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -80,7 +81,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	private IWorkbenchPart fTargetPart;
 	private IEditorPart fTargetEditor;
 	private IWorkbenchWindow fWindow;
-	private ISelection fSelection;
+	private Object fSelection;
 	
 	/**
 	 * Used to resolve editor input for selected stack frame
@@ -155,10 +156,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 	
 	
-	protected void run() {
-			
-		String expression= null;
-		
+	protected void run() {		
 		// eval in context of object or stack frame
 		IJavaObject object = getObjectContext();		
 		IStackFrame stackFrame= getContext();
@@ -177,11 +175,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			if (javaElement != null) {
 				IJavaProject project = javaElement.getJavaProject();
 				try {
-					Object selection= getExpressionSelection();
+					Object selection= getSelectedObject();
 					if (!(selection instanceof String)) {
 						return;
 					}
-					expression= (String)selection;
+					String expression= (String)selection;
 					
 					IDataDisplay dataDisplay= getDataDisplay();
 					if (dataDisplay != null) {
@@ -256,7 +254,8 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		IAction action= getAction();
 		if (action != null) {
 			boolean enabled = false;
-			Object selection = getExpressionSelection();
+			resolveSelectedObject();
+			Object selection = getSelectedObject();
 			if (selection != null) {
 				if (selection instanceof IStructuredSelection) {
 					//valid selection from the tree viewer in the variables view
@@ -275,34 +274,43 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 	
 	/**
-	 * Returns the selected object in the target part, or <code>null</code>
+	 * Resolves the selected object in the target part, or <code>null</code>
 	 * if there is no selection.
-	 * 
-	 * @return the selected object in the active view, or <code>null</code>
-	 *  if there is no selection
 	 */
-	protected Object getExpressionSelection() {
-		setSelection(null);
+	protected void resolveSelectedObject() {
+		Object selectedObject= null;
 		ISelection selection= getTargetSelection();
 		if (selection instanceof ITextSelection) {
 			String text= ((ITextSelection)selection).getText();
 			if (textHasContent(text)) {
-				return text;
+				selectedObject= text;
 			}
 		} else if (selection instanceof IStructuredSelection) {
 			if (!selection.isEmpty()) {
-				IStructuredSelection ss= (IStructuredSelection)selection;
-				Iterator elements = ss.iterator();
-				while (elements.hasNext()) {
-					if (!(elements.next() instanceof IJavaVariable)) {
-						return null;
+				if (getTargetPart().getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW)) {
+					//work on the editor selection
+					setTargetPart(getTargetPart().getSite().getPage().getActiveEditor());
+					selection= getTargetSelection();
+					if (selection instanceof ITextSelection) {
+						String text= ((ITextSelection)selection).getText();
+						if (textHasContent(text)) {
+							selectedObject= text;
+						}
 					}
-				}
-				setSelection(ss);
-				return ss;
+				} else {
+					IStructuredSelection ss= (IStructuredSelection)selection;
+					Iterator elements = ss.iterator();
+					while (elements.hasNext()) {
+						if (!(elements.next() instanceof IJavaVariable)) {
+							setSelectedObject(null);
+							return;
+						}
+					}
+					selectedObject= ss;
+				}			
 			}
 		}
-		return null;
+		setSelectedObject(selectedObject);
 	}
 	
 	protected ISelection getTargetSelection() {
@@ -640,11 +648,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	public void pageOpened(IWorkbenchPage page) {
 	}	
 	
-	protected ISelection getSelection() {
+	protected Object getSelectedObject() {
 		return fSelection;
 	}
 	
-	protected void setSelection(ISelection selection) {
+	protected void setSelectedObject(Object selection) {
 		fSelection = selection;
 	}
 }
