@@ -73,14 +73,14 @@
 			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
 			icon="icons/full/etool16/disp_sbook.gif" 
 			helpContextId="display_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.display.DisplayAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
 			icon="icons/full/etool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
   </actionSet>
 </extension>
@@ -255,7 +255,41 @@
 			menubarPath="additions"
 			class="org.eclipse.debug.ui.actions.RunAction">
 		</action>		
-	</viewerContribution>	
+	</viewerContribution>
+	<viewerContribution
+		id="org.eclipse.jdt.debug.DetailsEvaluationActions"
+		targetID="org.eclipse.debug.ui.VariableView.detail">
+		<action id="org.eclipse.jdt.debug.ui.Display" 
+			label="%Display.label" 
+			menubarPath="additions" 
+			icon="icons/full/etool16/disp_sbook.gif" 
+			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
+		</action> 	
+        <action id="org.eclipse.jdt.debug.ui.Inspect" 
+			label="%Inspect.label" 
+			menubarPath="additions" 
+			icon="icons/full/etool16/insp_sbook.gif" 
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
+		</action>
+	</viewerContribution>
+	<viewerContribution
+		id="org.eclipse.jdt.debug.DisplayEvaluationActions"
+		targetID="org.eclipse.jdt.debug.ui.DisplayView">
+		<action id="org.eclipse.jdt.debug.ui.Display" 
+			label="%Display.label" 
+			menubarPath="evaluationGroup"
+			icon="icons/full/etool16/disp_sbook.gif" 
+			helpContextId="display_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
+		</action>
+		<action id="org.eclipse.jdt.debug.ui.Inspect" 
+			label="%Inspect.label" 
+			menubarPath="evaluationGroup"
+			icon="icons/full/etool16/insp_sbook.gif"
+			helpContextId="inspect_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
+		</action> 
+	</viewerContribution>
 </extension>
 
 <extension point="org.eclipse.ui.viewActions">
@@ -346,6 +380,26 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction">
 		</action>
 	</viewContribution>
+	<viewContribution
+		id="org.eclipse.jdt.debug.ui.DisplayViewActions"
+		targetID="org.eclipse.jdt.debug.ui.DisplayView">
+			<action id="org.eclipse.jdt.debug.ui.Display" 
+			label="%Display.label" 
+			tooltip="Display"
+			toolbarPath="evaluationGroup"
+			icon="icons/full/etool16/disp_sbook.gif" 
+			helpContextId="display_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
+		</action>
+		<action id="org.eclipse.jdt.debug.ui.Inspect" 
+			label="%Inspect.label" 
+			tooltip="Inspect"
+			toolbarPath="evaluationGroup"
+			icon="icons/full/etool16/insp_sbook.gif"
+			helpContextId="inspect_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
+		</action> 
+	</viewContribution>
 </extension>
 
 <!--Java debug model presentation -->
@@ -386,11 +440,11 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.OpenOnVariableAction">
 		</action>
 		<action
-			id="org.eclipse.jdt.debug.ui.actions.InspectVariableAction"
+			id="org.eclipse.jdt.debug.ui.actions.VariableInspectAction"
 			label="%Inspect.label"
 			menubarPath="openOnGroup"
 			icon="icons/full/etool16/insp_sbook.gif"
-			class="org.eclipse.jdt.internal.debug.ui.actions.InspectVariableAction"
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
 			enablesFor="+">
 		</action>		
 	</objectContribution>
@@ -406,6 +460,22 @@
 		</action>
 	</objectContribution>
 	<viewerContribution 
+    	id="org.eclipse.jdt.debug.ui.JavaSnippetPopupActions" 
+    	targetID="#JavaSnippetEditorContext">
+    	<action id="org.eclipse.jdt.debug.ui.Display" 
+			label="%Display.label" 
+			menubarPath="additions" 
+			icon="icons/full/etool16/disp_sbook.gif" 
+			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
+		</action> 	
+        <action id="org.eclipse.jdt.debug.ui.Inspect" 
+			label="%Inspect.label" 
+			menubarPath="additions" 
+			icon="icons/full/etool16/insp_sbook.gif" 
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
+		</action>
+     </viewerContribution>
+	<viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CUPopupActions" 
     	targetID="#CompilationUnitEditorContext">
     	<action id="org.eclipse.jdt.debug.ui.RunToLine"
@@ -418,13 +488,13 @@
 			label="%Display.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/disp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.DisplayAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/insp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.AddBreakpoint" 
 			label="%addBreakpointAction.label" 
@@ -445,13 +515,13 @@
 			label="%Display.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/disp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.DisplayAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
 		</action> 	
         <action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
 			menubarPath="additions" 
 			icon="icons/full/etool16/insp_sbook.gif" 
-			class="org.eclipse.jdt.internal.debug.ui.display.InspectAction"> 
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
 		</action> 
 		<action id="org.eclipse.jdt.debug.ui.AddBreakpoint" 
 			label="%addBreakpointAction.label" 
@@ -480,6 +550,28 @@
   		</action> 
   </objectContribution>
 </extension>
+
+<extension point="org.eclipse.ui.editorActions"> 
+      <editorContribution 
+         id="org.eclipse.jdt.debug.ui.JavaSnippetToolbarActions" 
+         targetID="org.eclipse.jdt.debug.ui.SnippetEditor"> 
+         <action id="org.eclipse.jdt.debug.ui.Display" 
+			label="%Display.label"
+			tooltip="%Display.tooltip"
+			toolbarPath="evaluationGroup" 
+			icon="icons/full/etool16/disp_sbook.gif" 
+			class="org.eclipse.jdt.internal.debug.ui.actions.DisplayAction"> 
+		</action> 	
+        <action id="org.eclipse.jdt.debug.ui.Inspect" 
+			label="%Inspect.label" 
+			tooltip="%Inspect.tooltip"
+			toolbarPath="evaluationGroup" 
+			icon="icons/full/etool16/insp_sbook.gif" 
+			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"> 
+		</action>
+      </editorContribution> 
+   </extension> 
+
 
 <extension
 	point="org.eclipse.ui.propertyPages">

@@ -5,14 +5,16 @@ package org.eclipse.jdt.internal.debug.ui.snippeteditor;
  * All Rights Reserved.
  */
  
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.ui.javaeditor.BasicEditorActionContributor;
 import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-
+import org.eclipse.ui.part.EditorActionBarContributor;
 
 /**
  * Contributions of the Java Snippet Editor to the Workbench's tool and menu bar.
@@ -23,9 +25,7 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 	
 	private RunAction fRunAction;
 	private StopAction fStopAction;
-	private DisplayAction fDisplayAction;
 	private RunInPackageAction fRunInAction;
-	private InspectAction fInspectAction;
 	private SnippetOpenOnSelectionAction fOpenOnSelectionAction;
 	private SnippetOpenHierarchyOnSelectionAction fOpenOnTypeSelectionAction;
 	
@@ -35,22 +35,20 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 	}
 	
 	/**
-	 * @see IActionBarContributor#contributeToToolBar
+	 * @see EditorActionBarContributor#contributeToToolBar(IToolBarManager)
 	 */
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
 		
 		super.contributeToToolBar(toolBarManager);
 		
-		toolBarManager.add(new Separator());
-		toolBarManager.add(fInspectAction);
-		toolBarManager.add(fDisplayAction);
-		toolBarManager.add(fRunAction);		
+		toolBarManager.add(new Separator(IJavaDebugUIConstants.EVALUATION_GROUP));
+		toolBarManager.add(fRunAction);
 		toolBarManager.add(fStopAction);
 		toolBarManager.add(fRunInAction);
 	}
 			
 	/**
-	 *	@see IActionBarContributor#contributeToMenu
+	 *	@see EditorActionBarContributor#contributeToMenu(IMenuManager)
 	 */
 	public void contributeToMenu(IMenuManager menu) {
 		
@@ -60,15 +58,11 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		if (editMenu != null) {	
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenOnSelectionAction);
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenOnTypeSelectionAction);
-			editMenu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));	
-			editMenu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fInspectAction);		
-			editMenu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fDisplayAction);
-			editMenu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fRunAction);
 		}
 	}
 	
 	/**
-	 *	EditorActionContributor@see setActiveEditor
+	 *	@see IEditorActionBarContributor#setActiveEditor(IEditorPart)
 	 */
 	public void setActiveEditor(IEditorPart part) {
 		
@@ -78,10 +72,8 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		if (part instanceof JavaSnippetEditor)
 			fSnippetEditor= (JavaSnippetEditor) part;
 			
-		fDisplayAction.setEditor(fSnippetEditor);		
 		fStopAction.setEditor(fSnippetEditor);		
 		fRunAction.setEditor(fSnippetEditor);
-		fInspectAction.setEditor(fSnippetEditor);			
 		fRunInAction.setEditor(fSnippetEditor);
 		fOpenOnSelectionAction.setContentEditor(fSnippetEditor);
 		fOpenOnTypeSelectionAction.setContentEditor(fSnippetEditor);
@@ -92,9 +84,7 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		 
 		fOpenOnSelectionAction= new SnippetOpenOnSelectionAction(fSnippetEditor);
 		fOpenOnTypeSelectionAction= new SnippetOpenHierarchyOnSelectionAction(fSnippetEditor);
-		fDisplayAction= new DisplayAction(fSnippetEditor);		
 		fRunAction= new RunAction(fSnippetEditor);
-		fInspectAction= new InspectAction(fSnippetEditor);
 		fStopAction= new StopAction(fSnippetEditor);
 		fRunInAction= new RunInPackageAction(null);
 	}	

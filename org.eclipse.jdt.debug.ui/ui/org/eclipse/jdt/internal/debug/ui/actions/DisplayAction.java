@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.debug.ui.display;
+package org.eclipse.jdt.internal.debug.ui.actions;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -12,26 +12,17 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
-import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
-import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Displays the result of an evaluation in the display view
  */
 public class DisplayAction extends EvaluateAction {
-	
-	public DisplayAction() {
-		setText(DisplayMessages.getString("Display.label")); //$NON-NLS-1$
-		setToolTipText(DisplayMessages.getString("Display.tooltip")); //$NON-NLS-1$
-		setDescription(DisplayMessages.getString("Display.description")); //$NON-NLS-1$
-		JavaDebugImages.setToolImageDescriptors(this, "disp_sbook.gif"); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, new Object[] { IHelpContextIds.DISPLAY_ACTION });	
-	}
-	
+		
 	/**
 	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
 	 */
@@ -51,7 +42,7 @@ public class DisplayAction extends EvaluateAction {
 						if (severeProblems) {
 							IDataDisplay dataDisplay= getDataDisplay();
 							if (dataDisplay != null) {
-								dataDisplay.displayExpressionValue(DisplayMessages.getString("DisplayAction.(evaluation_failed)_1")); //$NON-NLS-1$
+								dataDisplay.displayExpressionValue(ActionMessages.getString("DisplayAction.(evaluation_failed)_1")); //$NON-NLS-1$
 							}
 						}
 					}
@@ -73,12 +64,12 @@ public class DisplayAction extends EvaluateAction {
 				sig= type.getSignature();
 			}
 			if ("V".equals(sig)) { //$NON-NLS-1$
-				resultString= DisplayMessages.getString("Display.no_result_value"); //$NON-NLS-1$
+				resultString= ActionMessages.getString("DisplayAction.no_result_value"); //$NON-NLS-1$
 			} else {
 				if (sig != null) {
-					resultString= MessageFormat.format(DisplayMessages.getString("Display.type_name_pattern"), new Object[] { result.getReferenceTypeName() }); //$NON-NLS-1$
+					resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.type_name_pattern"), new Object[] { result.getReferenceTypeName() }); //$NON-NLS-1$
 				}
-				resultString= MessageFormat.format(DisplayMessages.getString("Display.result_pattern"), new Object[] { resultString, evaluateToString(result, thread) }); //$NON-NLS-1$
+				resultString= MessageFormat.format(ActionMessages.getString("DisplayAction.result_pattern"), new Object[] { resultString, evaluateToString(result, thread) }); //$NON-NLS-1$
 			}
 		} catch(DebugException x) {
 			reportError(x);
@@ -88,13 +79,6 @@ public class DisplayAction extends EvaluateAction {
 		if (dataDisplay != null) {
 			dataDisplay.displayExpressionValue(resultString);
 		}
-	}
-	
-	/**
-	 * Hook to let snippet editor use it's action
-	 */
-	protected Class getAdapterClass() {
-		return IDisplayAction.class;
 	}
 	
 	/**
@@ -115,5 +99,14 @@ public class DisplayAction extends EvaluateAction {
 		} else {
 			return value.getValueString();
 		}
+	}
+	
+	protected void run() {
+		IWorkbenchPart part= getTargetPart();
+		if (part instanceof JavaSnippetEditor) {
+			((JavaSnippetEditor)part).evalSelection(JavaSnippetEditor.RESULT_DISPLAY);
+			return;
+		}
+		super.run();	
 	}
 }

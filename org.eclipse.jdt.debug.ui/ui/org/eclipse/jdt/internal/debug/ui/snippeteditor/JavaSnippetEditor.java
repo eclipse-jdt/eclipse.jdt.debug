@@ -54,8 +54,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.JDISourceViewer;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.jdt.internal.debug.ui.display.IDisplayAction;
-import org.eclipse.jdt.internal.debug.ui.display.IInspectAction;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.JavaStatusConstants;
@@ -156,25 +154,13 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 */
 	protected void createActions() {
 		super.createActions();
-		setAction("Display", new DisplayAction(this));		 //$NON-NLS-1$
 		setAction("Run", new RunAction(this)); //$NON-NLS-1$
-		setAction("Inspect", new InspectAction(this)); //$NON-NLS-1$
 		setAction("ContentAssistProposal", new TextOperationAction(SnippetMessages.getBundle(), "SnippetEditor.ContentAssistProposal.", this, ISourceViewer.CONTENTASSIST_PROPOSALS));			 //$NON-NLS-2$ //$NON-NLS-1$
 		setAction("OpenOnSelection", new SnippetOpenOnSelectionAction(this));			 //$NON-NLS-1$
 		setAction("OpenHierarchyOnSelection", new SnippetOpenHierarchyOnSelectionAction(this));  //$NON-NLS-1$
 		setAction("Stop", new StopAction(this));  //$NON-NLS-1$
 		setAction("RunIn", new RunInPackageAction(this));  //$NON-NLS-1$
 	} 
-	
-	public Object getAdapter(Class adapter) {
-		if (adapter == IDisplayAction.class) {
-			return getAction("Display"); //$NON-NLS-1$
-		}
-		if (adapter == IInspectAction.class) {
-			return getAction("Inspect"); //$NON-NLS-1$
-		}		
-		return super.getAdapter(adapter);
-	}
 	
 	/**
 	 * @see AbstractTextEditor#editorContextMenuAboutToShow(MenuManager)
@@ -187,8 +173,6 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		addGroup(menu, IContextMenuConstants.GROUP_SEARCH,  IContextMenuConstants.GROUP_SHOW);
 		addAction(menu, IContextMenuConstants.GROUP_SHOW, "OpenOnSelection"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_SHOW, "OpenHierarchyOnSelection"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Inspect"); //$NON-NLS-1$
-		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Display"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Run"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "Stop"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_ADDITIONS, "RunIn"); //$NON-NLS-1$

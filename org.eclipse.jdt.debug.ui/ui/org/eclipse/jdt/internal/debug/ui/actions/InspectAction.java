@@ -1,36 +1,34 @@
-package org.eclipse.jdt.internal.debug.ui.display;
+package org.eclipse.jdt.internal.debug.ui.actions;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
  
+import java.util.Iterator;
+
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.debug.eval.IEvaluationListener;
+import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
-import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
+import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
+import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Places the result of an evaluation in the debug expression view.
  */
 public class InspectAction extends EvaluateAction {
-
-	public InspectAction() {
-		setText(DisplayMessages.getString("Inspect.label")); //$NON-NLS-1$
-		setToolTipText(DisplayMessages.getString("Inspect.tooltip")); //$NON-NLS-1$
-		setDescription(DisplayMessages.getString("Inspect.description")); //$NON-NLS-1$
-		JavaDebugImages.setToolImageDescriptors(this, "insp_sbook.gif"); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, new Object[] { IHelpContextIds.INSPECT_ACTION });	
-	}
 	
 	/**
 	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
@@ -57,13 +55,6 @@ public class InspectAction extends EvaluateAction {
 			});
 		}
 	}
-		
-	/**
-	 * Hook to let snippet editor use it's action
-	 */
-	protected Class getAdapterClass() {
-		return IInspectAction.class;
-	}	
 	
 	/**
 	 * Make the expression view visible or open one
@@ -90,5 +81,42 @@ public class InspectAction extends EvaluateAction {
 	 */
 	protected IDataDisplay getDataDisplay() {
 		return null;
+	}
+	
+	protected void run() {
+		IWorkbenchPart part= getTargetPart();
+		if (part instanceof JavaSnippetEditor) {
+			((JavaSnippetEditor)part).evalSelection(JavaSnippetEditor.RESULT_INSPECT);
+			return;
+		}
+		
+		ISelection selection= getSelection();
+		if (selection == null) {
+			super.run();
+			return;
+		}
+		
+		//inspecting from the context of the variables view
+		Iterator variables = ((IStructuredSelection)selection).iterator();
+		while (variables.hasNext()) {
+			IJavaVariable var = (IJavaVariable)variables.next();
+			try {
+				JavaInspectExpression expr = new JavaInspectExpression(var.getName(), (IJavaValue)var.getValue());
+				DebugPlugin.getDefault().getExpressionManager().addExpression(expr);
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.errorDialog(ActionMessages.getString("InspectAction.Exception_occurred_inspecting_variable"), e.getStatus());
+			}
+		}
+	
+		if (part.getSite().getId().equals("IDebugUIConstants.ID_EXPRESSION_VIEW")) {
+			return;
+		}
+		IWorkbenchPage page = part.getSite().getPage();
+		if (page != null) {
+			part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+			if (part != null) {
+				page.activate(part);
+			}
+		}
 	}
 }

@@ -1,4 +1,4 @@
-package org.eclipse.jdt.internal.debug.ui.display;
+package org.eclipse.jdt.internal.debug.ui.actions;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.ui.display;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -36,10 +37,11 @@ import org.eclipse.jdt.debug.eval.EvaluationManager;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.display.DataDisplay;
+import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
-import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetAction;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -54,14 +56,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.texteditor.IUpdate;
 
 import com.sun.jdi.InvocationException;
 import com.sun.jdi.ObjectReference;
@@ -77,10 +81,14 @@ import com.sun.jdi.ObjectReference;
  * the selection is a text selection. Thus we have to listen to parts
  * and do manual updating].
  */
-public abstract class EvaluateAction extends Action implements IUpdate, IEvaluationListener, IWorkbenchWindowActionDelegate, IEditorActionDelegate, IPartListener, ISelectionChangedListener {
-		
+public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchWindowActionDelegate, IObjectActionDelegate, IEditorActionDelegate, IPartListener, ISelectionChangedListener, IViewActionDelegate, IPageListener {
+
 	private String fExpression;
 	private IAction fAction;
+	private IWorkbenchPart fTargetPart;
+	private IEditorPart fTargetEditor;
+	private IWorkbenchWindow fWindow;
+	private ISelection fSelection;
 	
 	/**
 	 * Used to resolve editor input for selected stack frame
@@ -98,7 +106,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 * perform the evaluation in the context of the
 	 * selected value.
 	 * 
-	 * @return java object or <code>null</code>
+	 * @return Java object or <code>null</code>
 	 */
 	protected IJavaObject getObjectContext() {
 		IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
@@ -154,43 +162,16 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		return null;
 	}
 	
-	/**
-	 * Hook to allow snippet editor to use same global
-	 * actions
-	 */
-	protected Class getAdapterClass() {
-		return null;
-	}
 	
-	protected IAction getSnippetDelegate() {
-		Class delegate = getAdapterClass();
-		if (delegate != null) {
-			IWorkbenchPart part = getWorkbenchPart();
-			if (part != null) {
-				return (IAction)part.getAdapter(delegate);
-			}
-		}	
-		return null;	
-	}
-	
-	/**
-	 * @see Action#run()
-	 */
-	public void run() {
-		
-		IAction delegate = getSnippetDelegate();
-		if (delegate != null) {
-			delegate.run();
-			return;
-		}
-		
+	protected void run() {
+			
 		fExpression= null;
 		
 		// eval in context of object or stack frame
 		IJavaObject object = getObjectContext();		
 		IStackFrame stackFrame= getContext();
 		if (stackFrame == null) {
-			reportError(DisplayMessages.getString("Evaluate.error.message.stack_frame_context")); //$NON-NLS-1$
+			reportError(ActionMessages.getString("Evaluate.error.message.stack_frame_context")); //$NON-NLS-1$
 			return;
 		}
 		
@@ -204,7 +185,11 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 			if (javaElement != null) {
 				IJavaProject project = javaElement.getJavaProject();
 				try {
-					fExpression= getExpressionText();
+					Object selection= getExpressionSelection();
+					if (!(selection instanceof String)) {
+						return;
+					}
+					fExpression= (String)selection;
 					
 					IDataDisplay dataDisplay= getDataDisplay();
 					if (dataDisplay != null) {
@@ -222,10 +207,10 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 					reportError(e);
 				}
 			} else {
-				reportError(DisplayMessages.getString("Evaluate.error.message.src_context")); //$NON-NLS-1$
+				reportError(ActionMessages.getString("Evaluate.error.message.src_context")); //$NON-NLS-1$
 			}
 		} else {
-			reportError(DisplayMessages.getString("Evaluate.error.message.eval_adapter")); //$NON-NLS-1$
+			reportError(ActionMessages.getString("Evaluate.error.message.eval_adapter")); //$NON-NLS-1$
 		}
 	}
 	
@@ -272,59 +257,91 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	}
 	
 	/**
-	 * Updates the enabled state of this action and the action that this is a
+	 * Updates the enabled state of the action that this is a
 	 * delegate for.
 	 */
 	public void update() {
-		
-		IAction delegate = getSnippetDelegate();
-		boolean enabled = false;
-		if (delegate != null) {
-			((SnippetAction)delegate).update();
-			enabled = delegate.isEnabled();
-		} else {			
-			String expression = getExpressionText();
-			if (expression != null && textHasContent(expression)) {
-				enabled = getContext() != null;
+		IAction action= getAction();
+		if (action != null) {
+			boolean enabled = false;
+			Object selection = getExpressionSelection();
+			if (selection != null) {
+				if (selection instanceof IStructuredSelection) {
+					//valid selection from the tree viewer in the variables view
+					//for inspect
+					enabled= true;
+				} else {
+					if (getTargetPart() instanceof JavaSnippetEditor) {
+						enabled= true;
+					} else {
+						enabled = getContext() != null;
+					}
+				}
 			}
+			action.setEnabled(enabled);
 		}
-		setEnabled(enabled);
-		updateAction();
 	}
 	
 	/**
-	 * Returns the selected text in the active view, or <code>null</code>
+	 * Returns the selected object in the target part, or <code>null</code>
 	 * if there is no text selection.
 	 * 
 	 * @return the selected text in the active view, or <code>null</code>
 	 *  if there is no text selection
 	 */
-	protected String getExpressionText() {
-		IWorkbenchPart part = getWorkbenchPart();
-		if (part != null) {
-			ISelectionProvider provider = part.getSite().getSelectionProvider();
-			if (provider != null) {
-				ISelection sel = provider.getSelection();
-				if (sel instanceof ITextSelection) {
-					return ((ITextSelection)sel).getText();
+	protected Object getExpressionSelection() {
+		ISelection selection= getTargetSelection();
+		if (selection instanceof ITextSelection) {
+			String text= ((ITextSelection)selection).getText();
+			if (textHasContent(text)) {
+				return text;
+			}
+		} else if (selection instanceof IStructuredSelection) {
+			if (!selection.isEmpty()) {
+				IStructuredSelection ss= (IStructuredSelection)selection;
+				Iterator elements = ss.iterator();
+				while (elements.hasNext()) {
+					if (!(elements.next() instanceof IJavaVariable)) {
+						return null;
+					}
+				}
+				setSelection(ss);
+				return ss;
+			}
+		} else {
+			IWorkbenchPart part = getTargetPart();
+			if (part != null) {
+				//look for an editor
+				IEditorPart editorPart= part.getSite().getPage().getActiveEditor();
+				if (editorPart != null) {
+					setTargetPart(editorPart);
+					ITextSelection tSelection= (ITextSelection)getTargetSelection();
+					if (tSelection != null) {
+						return tSelection.getText();
+					}
 				}
 			}
 		}
 		return null;
 	}
 	
-	protected void updateAction() {
-		IAction action= getAction();
-		if (action != null) {
-			action.setEnabled(isEnabled());
+	protected ISelection getTargetSelection() {
+		IWorkbenchPart part = getTargetPart();
+		if (part != null) {
+			ISelectionProvider provider = part.getSite().getSelectionProvider();
+			if (provider != null) {
+				return provider.getSelection();
+			}
 		}
+		return null;
 	}
+	
 	/**
 	 * Returns true if the current stack frame context can be used for an
 	 * evaluation, false otherwise.  For a Snippet editor, always returns true.
 	 */
 	protected boolean isValidStackFrame() {
-		if (getWorkbenchPart() instanceof JavaSnippetEditor) {
+		if (getTargetPart() instanceof JavaSnippetEditor) {
 			return true;
 		}
 		IStackFrame stackFrame = getContext();
@@ -357,22 +374,38 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 			return false;
 		}
 		IEditorInput sfEditorInput= getDebugModelPresentation().getEditorInput(sourceElement);
-		if (getWorkbenchPart() instanceof IEditorPart) {
-			return ((IEditorPart)getWorkbenchPart()).getEditorInput().equals(sfEditorInput);
+		if (getTargetPart() instanceof IEditorPart) {
+			return ((IEditorPart)getTargetPart()).getEditorInput().equals(sfEditorInput);
 		}
 		return false;
 	}
 	
 	protected Shell getShell() {
-		return getWorkbenchPart().getSite().getShell();
+		if (getTargetPart() != null) {
+			return getTargetPart().getSite().getShell();
+		} else {
+			return getWorkbenchWindow().getShell();
+		}
+	}
+	
+	protected IWorkbenchWindow getWorkbenchWindow() {
+		return JDIDebugUIPlugin.getActiveWorkbenchWindow();
 	}
 	
 	protected IDataDisplay getDataDisplay() {
+		IDataDisplay display;
+		IWorkbenchPart part= getTargetPart();
+		if (part != null) {
+			display= (IDataDisplay)part.getAdapter(IDataDisplay.class);
+			if (display != null) {
+				return display;
+			}
+		}
 		IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
 		if (page != null) {
 			IWorkbenchPart activePart= page.getActivePart();
 			if (activePart != null) {
-				IDataDisplay display= (IDataDisplay)activePart.getAdapter(IDataDisplay.class);
+				display= (IDataDisplay)activePart.getAdapter(IDataDisplay.class);
 				if (display != null) {
 					return display;
 				}	
@@ -381,12 +414,12 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 					return new DataDisplay(viewer);
 				}
 			}
-			IViewPart view = page.findView(DisplayView.ID_DISPLAY_VIEW);;
+			IViewPart view = page.findView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);;
 			if (view == null) {
 				try {
-					view= page.showView(DisplayView.ID_DISPLAY_VIEW);
+					view= page.showView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);
 				} catch (PartInitException e) {
-					MessageDialog.openError(getShell(), DisplayMessages.getString("EditorDisplayAction.Cannot_open_Display_viewer_1"), e.getMessage()); //$NON-NLS-1$
+					MessageDialog.openError(getShell(), ActionMessages.getString("EvaluateAction.Cannot_open_Display_view"), e.getMessage()); //$NON-NLS-1$
 				} finally {
 					page.activate(activePart);
 				}
@@ -420,7 +453,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	}
 	
 	protected void reportError(IStatus status) {
-		ErrorDialog.openError(getShell(), DisplayMessages.getString("EvaluationAction.Error_evaluating_1"), null, status); //$NON-NLS-1$
+		ErrorDialog.openError(getShell(), ActionMessages.getString("Evaluate.error.title.eval_problems"), null, status); //$NON-NLS-1$
 	}
 	
 	protected void reportError(Throwable exception) {
@@ -439,9 +472,9 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 			return;
 		}
 		
-		String message= MessageFormat.format(DisplayMessages.getString("Evaluate.error.message.direct_exception"), new Object[] { exception.getClass() }); //$NON-NLS-1$
+		String message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.direct_exception"), new Object[] { exception.getClass() }); //$NON-NLS-1$
 		if (exception.getMessage() != null)
-			message= MessageFormat.format(DisplayMessages.getString("Evaluate.error.message.exception.pattern"), new Object[] { message, exception.getMessage() }); //$NON-NLS-1$
+			message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.exception.pattern"), new Object[] { message, exception.getMessage() }); //$NON-NLS-1$
 		reportError(message);
 	}
 	
@@ -458,7 +491,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	
 	protected boolean reportProblems(IMarker[] problems) {
 		
-		String defaultMsg= DisplayMessages.getString("Evaluate.error.message.unqualified_error"); //$NON-NLS-1$
+		String defaultMsg= ActionMessages.getString("Evaluate.error.message.unqualified_error"); //$NON-NLS-1$
 		
 		String message= ""; //$NON-NLS-1$
 		for (int i= 0; i < problems.length; i++) {
@@ -469,7 +502,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 				if (i == 0) {
 					message= msg;
 				} else {
-					message= MessageFormat.format(DisplayMessages.getString("Evaluate.error.problem_append_pattern"), new Object[] { message, msg }); //$NON-NLS-1$
+					message= MessageFormat.format(ActionMessages.getString("Evaluate.error.problem_append_pattern"), new Object[] { message, msg }); //$NON-NLS-1$
 				}
 			}
 		}
@@ -485,20 +518,19 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 		if (exception instanceof com.sun.jdi.InvocationException) {
 			InvocationException ie= (InvocationException) exception;
 			ObjectReference ref= ie.exception();
-			reportError(MessageFormat.format(DisplayMessages.getString("Evaluate.error.message.wrapped_exception"), new Object[] { ref.referenceType().name() })); //$NON-NLS-1$
+			reportError(MessageFormat.format(ActionMessages.getString("Evaluate.error.message.wrapped_exception"), new Object[] { ref.referenceType().name() })); //$NON-NLS-1$
 		} else
 			reportError(exception);
 	}
 	
 	protected boolean isUsedInEditor() {
-		return getWorkbenchPart() instanceof IEditorPart;
+		return getTargetPart() instanceof IEditorPart;
 	}
 		
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		setAction(action);
 		run();
 	}
 
@@ -515,9 +547,10 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 */
 	public void dispose() {
 		disposeDebugModelPresentation();
-		IWorkbenchWindow win = getWorkbenchWindow();
+		IWorkbenchWindow win = getWindow();
 		if (win != null) {
 			win.getPartService().removePartListener(this);
+			win.removePageListener(this);
 		}
 	}
 
@@ -525,40 +558,19 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
+		setWindow(window);
+		setTargetPart(window.getActivePage().getActivePart());
 		window.getPartService().addPartListener(this);
+		window.addPageListener(this);
 		update();
 	}
-	
-	protected IWorkbenchWindow getWorkbenchWindow() {
-		return JDIDebugUIPlugin.getActiveWorkbenchWindow();
-	}
-	
+
 	protected IAction getAction() {
 		return fAction;
 	}
 
 	protected void setAction(IAction action) {
 		fAction = action;
-	}
-	
-	/**
-	 * Returns the workbench part that the evaluation is
-	 * being performed from (i.e. the source of the expression),
-	 * or <code>null</code> if none.
-	 * 
-	 * @return the workbench part that the evaluation is
-	 * being performed from (i.e. the source of the expression),
-	 * or <code>null</code> if none
-	 */
-	protected IWorkbenchPart getWorkbenchPart() {
-		IWorkbenchWindow window = getWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				return page.getActivePart();
-			}
-		}
-		return null;
 	}
 	
 	/**
@@ -589,6 +601,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		setAction(action);
+		setTargetPart(targetEditor);
 		update();
 	}
 
@@ -596,10 +609,11 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
-		ISelectionProvider provider = part.getSite().getSelectionProvider();
+		setTargetPart(part);
+		/*ISelectionProvider provider = part.getSite().getSelectionProvider();
 		if (provider != null) {
 			provider.addSelectionChangedListener(this);
-		}
+		}*/
 	}
 
 	/**
@@ -612,16 +626,19 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
+		if (part == getTargetPart()) {
+			setTargetPart(null);
+		}
 	}
 
 	/**
 	 * @see IPartListener#partDeactivated(IWorkbenchPart)
 	 */
 	public void partDeactivated(IWorkbenchPart part) {
-		ISelectionProvider provider = part.getSite().getSelectionProvider();
+		/*ISelectionProvider provider = part.getSite().getSelectionProvider();
 		if (provider != null) {
 			provider.removeSelectionChangedListener(this);
-		}		
+		}*/
 	}
 
 	/**
@@ -635,5 +652,61 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		selectionChanged(getAction(), event.getSelection());
+	}
+	
+	/**
+	 * @see IViewActionDelegate#init(IViewPart)
+	 */
+	public void init(IViewPart view) {
+		setTargetPart(view);
+	}
+
+	protected IWorkbenchPart getTargetPart() {
+		return fTargetPart;
+	}
+
+	protected void setTargetPart(IWorkbenchPart part) {
+		fTargetPart = part;
+	}
+
+	protected IWorkbenchWindow getWindow() {
+		return fWindow;
+	}
+
+	protected void setWindow(IWorkbenchWindow window) {
+		fWindow = window;
+	}
+	/**
+	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
+	 */
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		setAction(action);
+		setTargetPart(targetPart);
+		update();
+	}
+	/**
+	 * @see IPageListener#pageActivated(IWorkbenchPage)
+	 */
+	public void pageActivated(IWorkbenchPage page) {
+	}
+
+	/**
+	 * @see IPageListener#pageClosed(IWorkbenchPage)
+	 */
+	public void pageClosed(IWorkbenchPage page) {
+	}
+
+	/**
+	 * @see IPageListener#pageOpened(IWorkbenchPage)
+	 */
+	public void pageOpened(IWorkbenchPage page) {
+	}	
+	
+	protected ISelection getSelection() {
+		return fSelection;
+	}
+	
+	protected void setSelection(ISelection selection) {
+		fSelection = selection;
 	}
 }
