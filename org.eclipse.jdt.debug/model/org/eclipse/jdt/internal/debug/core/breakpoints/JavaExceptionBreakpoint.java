@@ -381,6 +381,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	
 	/**
 	 * @see IJavaExceptionBreakpoint#getFilters()
+	 * @deprecated
 	 */
 	public String[] getFilters() throws CoreException {
 		String[] iFilters= getInclusionFilters();
@@ -393,6 +394,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	
 	/**
 	 * @see IJavaExceptionBreakpoint#setFilters(String[], boolean)
+	 * @deprecated
 	 */
 	public void setFilters(String[] filters, boolean inclusive) throws CoreException {
 		if (inclusive) {
@@ -472,6 +474,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 	
 	/**
 	 * @see IJavaExceptionBreakpoint#isInclusiveFiltered()
+	 * @deprecated
 	 */
 	public boolean isInclusiveFiltered() throws CoreException {
 		return ensureMarker().getAttribute(INCLUSION_FILTERS, "").length() > 0; //$NON-NLS-1$
