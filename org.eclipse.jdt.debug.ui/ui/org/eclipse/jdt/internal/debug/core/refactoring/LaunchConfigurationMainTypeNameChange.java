@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 International Business Machines Corp. and others.
+ * Copyright (c) 2003, 2004 International Business Machines Corp. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -17,7 +17,9 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.Signature;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -34,17 +36,21 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 public class LaunchConfigurationMainTypeNameChange extends Change {
 	
 	public static Change createChangesFor(IType type, String newName) throws CoreException {
-		List changes= new ArrayList();
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+		// generate the new type name
+		if (newName.endsWith(".java")) { //$NON-NLS-1$
+			newName= newName.substring(0, newName.length() - 5);
+		}
 		// Java application launch configurations
 		ILaunchConfigurationType configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		ILaunchConfiguration configs[]= manager.getLaunchConfigurations(configurationType);
 		String typeName= type.getFullyQualifiedName();
-		createNeededChanges(configs, newName, typeName, changes);
+		String projectName= type.getJavaProject().getElementName();
+		List changes= changesForITypeChange(configs, newName, typeName, projectName);
 		// Java applet launch configurations
 		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
 		configs= manager.getLaunchConfigurations(configurationType);
-		createNeededChanges(configs, newName, typeName, changes);
+		changes.addAll(changesForITypeChange(configs, newName, typeName, projectName));
 		int nbChanges= changes.size();
 		if (nbChanges == 0) {
 			return null;
@@ -55,19 +61,70 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 		}
 	}
 	
-	private static void createNeededChanges(ILaunchConfiguration[] configs, String newName, String typeName, List changes) throws CoreException {
+	private static List changesForITypeChange(ILaunchConfiguration[] configs, String newName, String typeName, String projectName) throws CoreException {
+		List changes= new ArrayList();
 		for (int i= 0; i < configs.length; i++) {
 			ILaunchConfiguration launchConfiguration = configs[i];
-			String mainType= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
-			if (typeName.equals(mainType)) {
-				changes.add(new LaunchConfigurationMainTypeNameChange(launchConfiguration, newName));
+			String mainTypeName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
+			if (typeName.equals(mainTypeName)) {
+				String lcProjectName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+				
+				if (projectName.equals(lcProjectName)) {
+					int index= mainTypeName.lastIndexOf('.');
+					String newTypeName;
+					if (index == -1) {
+						newTypeName= newName;
+					} else {
+						newTypeName= mainTypeName.substring(0, index + 1) + newName;
+					}
+					changes.add(new LaunchConfigurationMainTypeNameChange(launchConfiguration, newTypeName));
+				}
 			}
 		}
+		return changes;
 	}
 
+	public static Change createChangesFor(IPackageFragment packageFragment, String newName) throws CoreException {
+		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+		// Java application launch configurations
+		ILaunchConfigurationType configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
+		ILaunchConfiguration configs[]= manager.getLaunchConfigurations(configurationType);
+		String packageFragmentName= packageFragment.getElementName();
+		String projectName= packageFragment.getJavaProject().getElementName();
+		List changes= changesForIPackageFragmentChange(configs, newName, packageFragmentName, projectName);
+		// Java applet launch configurations
+		configurationType= manager.getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLET);
+		configs= manager.getLaunchConfigurations(configurationType);
+		changes.addAll(changesForIPackageFragmentChange(configs, newName, packageFragmentName, projectName));
+		int nbChanges= changes.size();
+		if (nbChanges == 0) {
+			return null;
+		} else if (nbChanges == 1) {
+			return (Change) changes.get(0);
+		} else {
+			return new CompositeChange(RefactoringMessages.getString("LaunchConfigurationMainTypeNameChange.1"), (Change[])changes.toArray(new Change[changes.size()])); //$NON-NLS-1$
+		}
+	}
+	
+	private static List changesForIPackageFragmentChange(ILaunchConfiguration[] configs, String newName, String packageFragmentName, String projectName) throws CoreException {
+		List changes= new ArrayList();
+		for (int i= 0; i < configs.length; i++) {
+			ILaunchConfiguration launchConfiguration = configs[i];
+			String mainTypeName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
+			if (mainTypeName != null && mainTypeName.startsWith(packageFragmentName)) {
+				String lcProjectName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+				if (projectName.equals(lcProjectName)) {
+					String newTypeName= newName + mainTypeName.substring(packageFragmentName.length());
+					changes.add(new LaunchConfigurationMainTypeNameChange(launchConfiguration, newTypeName));
+				}
+			}
+		}
+		return changes;
+	}
+	
 	private ILaunchConfiguration fLaunchConfiguration;
 	
-	private String fOldName;
+	private String fOldTypeName;
 	
 	private String fNewTypeName;
 	
@@ -103,25 +160,16 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 	/**
 	 * LaunchConfigurationMainTypeNameChange constructor.
 	 */
-	public LaunchConfigurationMainTypeNameChange(ILaunchConfiguration launchConfiguration, String newName) throws CoreException {
+	public LaunchConfigurationMainTypeNameChange(ILaunchConfiguration launchConfiguration, String newTypeName) throws CoreException {
 		fLaunchConfiguration= launchConfiguration;
 		fNewLaunchConfiguration= launchConfiguration;
-		// generate the new type name
-		if (newName.endsWith(".java")) { //$NON-NLS-1$
-			newName= newName.substring(0, newName.length() - 5);
-		}
-		String current = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
-		int index = current.lastIndexOf('.');
-		if (index == -1) {
-			fNewTypeName = newName;
-			fOldName= current;
-		} else {
-			fNewTypeName = current.substring(0, index + 1) + newName;
-			fOldName= current.substring(index + 1);
-		}
+		fOldTypeName = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
+		fNewTypeName= newTypeName;
 		// generate the new configuration name
+		String oldName= Signature.getSimpleName(fOldTypeName);
+		String newName= Signature.getSimpleName(fNewTypeName);
 		String launchConfigurationName= fLaunchConfiguration.getName();
-		fNewLaunchConfigurationName= launchConfigurationName.replaceAll(fOldName, newName);
+		fNewLaunchConfigurationName= launchConfigurationName.replaceAll(oldName, newName);
 		if (launchConfigurationName.equals(fNewLaunchConfigurationName) || DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(fNewLaunchConfigurationName)) {
 			fNewLaunchConfigurationName= null;
 		}
@@ -158,19 +206,22 @@ public class LaunchConfigurationMainTypeNameChange extends Change {
 		copy.doSave();
 		launchManager.removeLaunchConfigurationListener(configurationListener);
 		// create the undo change
-		return new LaunchConfigurationMainTypeNameChange(fNewLaunchConfiguration, fOldName);
+		return new LaunchConfigurationMainTypeNameChange(fNewLaunchConfiguration, fOldTypeName);
 	}
 
 	public void initializeValidationData(IProgressMonitor pm) throws CoreException {
-		// must be implemented to decide correct value of isValid
 	}
 
-	public RefactoringStatus isValid(IProgressMonitor pm) {
-		// TODO
-		// This method must ensure that the change object is still valid.
-		// This is in particular interesting when performing an undo change
-		// since the workspace could have changed since the undo change has
-		// been created.
-		return new RefactoringStatus();
+	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
+		if (fLaunchConfiguration.exists()) {
+			String typeName= fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
+			if (fOldTypeName.equals(typeName)) {
+				return new RefactoringStatus();
+			} else {
+				return RefactoringStatus.createWarningStatus(MessageFormat.format("The main type for the launch configuration \"{0}\" is no more \"{1}\".", new String[] {fLaunchConfiguration.getName(), fOldTypeName}));
+			}
+		} else {
+			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format("The launch configuration \"{0}\" no more exists", new String[] {fLaunchConfiguration.getName()}));
+		}
 	}
 }

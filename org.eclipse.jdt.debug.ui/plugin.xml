@@ -2190,6 +2190,23 @@
            </with>
          </enablement>
       </renameParticipant>
+      <renameParticipant
+      		class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationIPackageFragmentRenameParticipant"
+      		id="org.eclipse.jdt.debug.refractoring.launchConfigurationIPackageFragmentRename">
+         <enablement>
+           <with variable="affectedProjects">
+             <iterate>
+               <test property="org.eclipse.jdt.ui.projectNature" value="org.eclipse.jdt.core.javanature"/>
+             </iterate>
+           </with>
+           <with variable="selection">
+             <count value="1"/>
+             <iterate>
+   	           <instanceof value="org.eclipse.jdt.core.IPackageFragment"/>
+             </iterate>
+           </with>
+         </enablement>
+      </renameParticipant>
 <!--      <renameParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointITypeRenameParticipant"
             id="org.eclipse.jdt.debug.refactoring.javaBreakpointITypeRename">
@@ -2209,7 +2226,7 @@
       </renameParticipant> -->
    </extension>
 <!--   <extension point="org.eclipse.jdt.ui.moveParticipants">
-      <renameParticipant
+      <moveParticipant
             class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationITypeMoveParticipant"
             id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeMove">
          <enablement>
@@ -2225,8 +2242,8 @@
              </iterate>
            </with>
          </enablement>
-      </renameParticipant> 
-	</extension>  -->
+      </moveParticipant>
+   </extension>-->
 <!-- Context support -->
    <extension
          point="org.eclipse.ui.contexts">

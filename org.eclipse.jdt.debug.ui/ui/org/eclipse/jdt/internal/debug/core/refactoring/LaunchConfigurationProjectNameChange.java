@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 International Business Machines Corp. and others.
+ * Copyright (c) 2003, 2004 International Business Machines Corp. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
@@ -38,6 +38,8 @@ public class LaunchConfigurationProjectNameChange extends Change {
 	
 	private String fNewProjectName;
 	
+	private String fOldProjectName;
+	
 	/**
 	 * @param javaProject
 	 * @param string
@@ -66,8 +68,9 @@ public class LaunchConfigurationProjectNameChange extends Change {
 		}
 	}
 	
-	public LaunchConfigurationProjectNameChange(ILaunchConfiguration launchConfiguration, String newProjectName) {
+	public LaunchConfigurationProjectNameChange(ILaunchConfiguration launchConfiguration, String newProjectName) throws CoreException {
 		fLaunchConfiguration= launchConfiguration;
+		fOldProjectName= launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 		fNewProjectName= newProjectName;
 	}
 	
@@ -75,11 +78,10 @@ public class LaunchConfigurationProjectNameChange extends Change {
 	 * @see org.eclipse.jdt.internal.corext.refactoring.base.IChange#perform(org.eclipse.jdt.internal.corext.refactoring.base.ChangeContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		String currentProjectName= fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 		ILaunchConfigurationWorkingCopy copy = fLaunchConfiguration.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, fNewProjectName);
 		copy.doSave();
-		return new LaunchConfigurationProjectNameChange(fLaunchConfiguration, currentProjectName);
+		return new LaunchConfigurationProjectNameChange(fLaunchConfiguration, fOldProjectName);
 	}
 	
 	/* (non-Javadoc)
@@ -100,12 +102,16 @@ public class LaunchConfigurationProjectNameChange extends Change {
 		// must be implemented to decide correct value of isValid
 	}
 
-	public RefactoringStatus isValid(IProgressMonitor pm) {
-		// TODO
-		// This method must ensure that the change object is still valid.
-		// This is in particular interesting when performing an undo change
-		// since the workspace could have changed since the undo change has
-		// been created.
-		return new RefactoringStatus();
+	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
+		if (fLaunchConfiguration.exists()) {
+			String projectName= fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
+			if (fOldProjectName.equals(projectName)) {
+				return new RefactoringStatus();
+			} else {
+				return RefactoringStatus.createWarningStatus(MessageFormat.format("The project for the launch configuration \"{0}\" is no more \"{1}\".", new String[] {fLaunchConfiguration.getName(), fOldProjectName}));
+			}
+		} else {
+			return RefactoringStatus.createFatalErrorStatus(MessageFormat.format("The launch configuration \"{0}\" no more exists", new String[] {fLaunchConfiguration.getName()}));
+		}
 	}
 }
