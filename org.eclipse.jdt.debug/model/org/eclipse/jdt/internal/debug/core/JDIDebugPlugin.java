@@ -134,21 +134,36 @@ public class JDIDebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Convenience method to log internal errors
+	 * Logs the specified throwable with this plug-in's log.
+	 * 
+	 * @param t throwable to log 
 	 */
-	public static void logError(Exception e) {
-		if (getDefault().isDebugging()) {
-			Throwable t = e;
-			if (e instanceof DebugException) {
-				DebugException de = (DebugException)e;
-				IStatus status = de.getStatus();
-				if (status.getException() != null) {
-					t = status.getException();
-				}
+	public static void log(Throwable t) {
+		Throwable top= t;
+		if (t instanceof DebugException) {
+			DebugException de = (DebugException)t;
+			IStatus status = de.getStatus();
+			if (status.getException() != null) {
+				top = status.getException();
 			}
+		} else if (t instanceof CoreException) {
+			log(((CoreException)t).getStatus());
+		}
+		// this message is intentionally not internationalized, as an exception may
+		// be due to the resource bundle itself
+		log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from JDI Debug: ", top));  //$NON-NLS-1$		
+	}
+	
+	/**
+	 * Logs the given message if in debug mode.
+	 * 
+	 * @param String message to log
+	 */
+	public static void logDebugMessage(String message) {
+		if (getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from JDI Debug: ", t));  //$NON-NLS-1$		
+			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from JDI Debug: " + message, null));  //$NON-NLS-1$		
 		}
 	}
 	

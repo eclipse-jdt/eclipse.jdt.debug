@@ -267,7 +267,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 							try {
 								getSuspendOnCompilationErrorBreakpoint().setEnabled(isSuspendOnCompilationErrors());
 							} catch (CoreException e) {
-								JDIDebugPlugin.logError(e);
+								JDIDebugPlugin.log(e.getStatus());
 							}
 						}
 					};
@@ -293,7 +293,7 @@ public class JavaDebugOptionsManager implements ILaunchListener, IResourceChange
 					try {
 						getSuspendOnCompilationErrorBreakpoint().setEnabled(false);
 					} catch (CoreException e) {
-						JDIDebugPlugin.logError(e);
+						JDIDebugPlugin.log(e.getStatus());
 					}
 				}
 			};

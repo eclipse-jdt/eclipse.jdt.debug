@@ -79,7 +79,7 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 				}
 			}
 		} catch(DebugException de) {
-			JDIDebugUIPlugin.logError(de);
+			ExceptionHandler.handle(de, ActionMessages.getString("RunToLine.error.title1"), ActionMessages.getString("RunToLine.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	/**
@@ -157,7 +157,7 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 					&& getTextEditor() != null);
 			} catch (DebugException de) {
 				action.setEnabled(false);
-				JDIDebugUIPlugin.logError(de);
+				JDIDebugUIPlugin.log(de.getStatus());
 			}
 		}
 	}

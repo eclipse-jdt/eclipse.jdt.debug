@@ -187,9 +187,9 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			if (!target.isAvailable()) {			
 				return null;
 			} 
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 			return null;
 		}
 		return request;
@@ -224,7 +224,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			return null;
 		} catch (RuntimeException e) {
 			// not able to retrieve line info
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 			return null;
 		}
 		
@@ -260,9 +260,9 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			if (!target.isAvailable()) {
 				return request;
 			}
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		}
 		return request;
 	}
@@ -416,11 +416,11 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			if (result.hasErrors()) {
 				Throwable exception= result.getException();
 				if (exception instanceof VMDisconnectedException) {
-					JDIDebugPlugin.logError((VMDisconnectedException)exception);
+					JDIDebugPlugin.log((VMDisconnectedException)exception);
 					try {
 						thread.resumeForEvaluation();
 					} catch(DebugException e) {
-						JDIDebugPlugin.logError(e);
+						JDIDebugPlugin.log(e.getStatus());
 					}
 				} else {
 					fireConditionHasRuntimeErrors(exception);
@@ -441,7 +441,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 				thread.resumeForEvaluation();
 				return;
 			} catch (DebugException e) {
-				JDIDebugPlugin.logError(e);
+				JDIDebugPlugin.log(e.getStatus());
 			}
 			// Suspend when the an error occurs
 			suspendForEvent(event, thread);

@@ -156,7 +156,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 						}
 					}
 				} catch (DebugException e) {
-					JDIDebugUIPlugin.logError(e);
+					JDIDebugUIPlugin.log(e.getStatus());
 				}
 			}
 		}
@@ -172,7 +172,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			DefaultJavaValueDetailProvider detailProvider = new DefaultJavaValueDetailProvider();
 			detailProvider.computeDetail(value, thread, listener);
 		} catch (DebugException de) {
-			JDIDebugUIPlugin.logError(de);
+			JDIDebugUIPlugin.log(de.getStatus());
 		}
 	}
 	
@@ -829,8 +829,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					flags |= JDIImageDescriptor.EXIT;
 				}
 			}
-		} catch (CoreException exception) {
-			JDIDebugUIPlugin.logError(exception);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e.getStatus());
 		}
 		return flags;
 	}
@@ -846,7 +846,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				if (javaVariable.isPrivate())
 					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PRIVATE);
 			} catch (DebugException e) {
-				JDIDebugUIPlugin.logError(e);
+				JDIDebugUIPlugin.log(e.getStatus());
 			}
 		}
 		return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_DEFAULT);
@@ -865,8 +865,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				}
 			}
 		} catch(DebugException e) {
-			JDIDebugUIPlugin.logError(e);
-			// fall through
+			JDIDebugUIPlugin.log(e.getStatus());
 		}
 		return flags;
 	}
@@ -890,7 +889,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			return EditorUtility.getEditorInput(item);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.logError(e);
+			JDIDebugUIPlugin.log(e.getStatus());
 			return null;
 		}
 	}
@@ -1396,7 +1395,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				String result= value.getValueString();
 				fResultBuffer.append(result);
 			} catch (DebugException de) {
-				JDIDebugUIPlugin.logError(de);
+				JDIDebugUIPlugin.log(de.getStatus());
 				fResultBuffer.append(de.getStatus().getMessage());
 			}
 		}
@@ -1410,7 +1409,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 					appendJDIValueString(toStringValue);
 				}
 			} catch (DebugException de) {
-				JDIDebugUIPlugin.logError(de);
+				JDIDebugUIPlugin.log(de.getStatus());
 				fResultBuffer.append(de.getStatus().getMessage());
 			}
 		}
@@ -1421,7 +1420,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			try {
 				arrayValues = arrayValue.getValues();
 			} catch (DebugException de) {
-				JDIDebugUIPlugin.logError(de);
+				JDIDebugUIPlugin.log(de.getStatus());
 				fResultBuffer.append(de.getStatus().getMessage());
 				return;
 			}

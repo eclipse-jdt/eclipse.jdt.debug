@@ -245,7 +245,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			}			
 			createRequest(target, event.referenceType());
 		} catch (CoreException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e.getStatus());
 		}
 		return true;
 	}
@@ -313,7 +313,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				// make a note that we auto-disabled this breakpoint.
 				setExpired(true);
 			} catch (CoreException ce) {
-				JDIDebugPlugin.logError(ce);
+				JDIDebugPlugin.log(ce.getStatus());
 			}
 		}
 	}	
@@ -541,7 +541,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 					break;					
 			} 
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		}
 	}
 	
@@ -599,10 +599,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 						}
 					} catch (VMDisconnectedException e) {
 						if (target.isAvailable()) {
-							JDIDebugPlugin.logError(e);
+							JDIDebugPlugin.log(e);
 						}
 					} catch (RuntimeException e) {
-						JDIDebugPlugin.logError(e);
+						JDIDebugPlugin.log(e);
 					} finally {
 						deregisterRequest(req, target);
 					}
@@ -634,7 +634,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				}
 			} catch (VMDisconnectedException e) {
 			} catch (RuntimeException e) {
-				JDIDebugPlugin.logError(e);
+				JDIDebugPlugin.log(e);
 			}
 		}
 	}
@@ -887,7 +887,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				// update the breakpoint request is
 				// acceptable.
 			} catch (CoreException exception) {
-				JDIDebugPlugin.logError(exception);
+				JDIDebugPlugin.log(exception.getStatus());
 			}
 		}
 	}

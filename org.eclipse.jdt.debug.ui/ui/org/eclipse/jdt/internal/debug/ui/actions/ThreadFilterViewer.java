@@ -98,8 +98,8 @@ public class ThreadFilterViewer extends FieldEditor {
 					fCheckHandler.checkThread(filteredThread, true);
 				}
 			}
-		} catch (CoreException exception) {
-			JDIDebugUIPlugin.logError(exception);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e.getStatus());
 		}
 	}
 
@@ -184,8 +184,8 @@ public class ThreadFilterViewer extends FieldEditor {
 					} else {
 						fBreakpoint.removeThreadFilter(target);
 					}
-				} catch (CoreException exception) {
-					JDIDebugUIPlugin.logError(exception);
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.log(e.getStatus());
 				}
 			}
 		}
@@ -224,7 +224,7 @@ public class ThreadFilterViewer extends FieldEditor {
 				try {
 					threads= target.getThreads();
 				} catch (DebugException exception) {
-					JDIDebugUIPlugin.logError(exception);
+					JDIDebugUIPlugin.log(exception.getStatus());
 					return;
 				}
 				IThread thread;
@@ -236,7 +236,7 @@ public class ThreadFilterViewer extends FieldEditor {
 					try {
 						name= thread.getName();
 					} catch (DebugException exception) {
-						JDIDebugUIPlugin.logError(exception);
+						JDIDebugUIPlugin.log(exception.getStatus());
 					}
 					if (MAIN.equals(name)) {
 						checkedThread= fThreadViewer.setChecked(thread, true);
@@ -256,7 +256,7 @@ public class ThreadFilterViewer extends FieldEditor {
 				try {
 					threads= target.getThreads();
 				} catch (DebugException exception) {
-					JDIDebugUIPlugin.logError(exception);
+					JDIDebugUIPlugin.log(exception.getStatus());
 					return;
 				}
 				for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
@@ -286,7 +286,7 @@ public class ThreadFilterViewer extends FieldEditor {
 				try {
 					threads= target.getThreads();
 				} catch (DebugException exception) {
-					JDIDebugUIPlugin.logError(exception);
+					JDIDebugUIPlugin.log(exception.getStatus());
 					return;
 				}
 				for (int i= 0, numThreads= threads.length; i < numThreads; i++) {
@@ -319,7 +319,7 @@ public class ThreadFilterViewer extends FieldEditor {
 				try {
 					threads= target.getThreads();
 				} catch (DebugException exception) {
-					JDIDebugUIPlugin.logError(exception);
+					JDIDebugUIPlugin.log(exception.getStatus());
 					continue;
 				}
 				checkedThread= false;

@@ -85,10 +85,10 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 
 	/**
-	 * Convenience method to log internal errors
+	 * Convenience method to log errors
 	 */
 	protected static void logError(Exception e) {
-		JDIDebugPlugin.logError(e);
+		JDIDebugPlugin.log(e);
 	}
 	
 	/**

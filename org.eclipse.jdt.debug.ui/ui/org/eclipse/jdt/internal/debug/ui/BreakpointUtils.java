@@ -111,7 +111,7 @@ public class BreakpointUtils {
 			try {
 				member= binSearch(type, start, end);
 			} catch (CoreException ce) {
-				JDIDebugUIPlugin.logError(ce);
+				JDIDebugUIPlugin.log(ce.getStatus());
 			}
 		}
 		if (member == null) {

@@ -277,7 +277,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			createTypeSpecificFieldEditors();
 			addField(createThreadFilterViewer(getFieldEditorParent()));
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.logError(ce);
+			JDIDebugUIPlugin.log(ce.getStatus());
 		}
 	}
 	

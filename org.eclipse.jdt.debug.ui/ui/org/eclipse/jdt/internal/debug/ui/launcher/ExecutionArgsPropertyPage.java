@@ -129,7 +129,7 @@ public class ExecutionArgsPropertyPage extends PropertyPage {
 						}
 					} catch (JavaModelException e) {
 						// ignore, can't set args.
-						JDIDebugUIPlugin.logError(e);
+						JDIDebugUIPlugin.log(e.getStatus());
 					}
 				}
 			}
@@ -138,7 +138,7 @@ public class ExecutionArgsPropertyPage extends PropertyPage {
 			try {
 				element= ((IClassFile) element).getType();
 			} catch (JavaModelException e) {
-				JDIDebugUIPlugin.logError(e);
+				JDIDebugUIPlugin.log(e.getStatus());
 			}
 		}
 		if (element instanceof IType) {

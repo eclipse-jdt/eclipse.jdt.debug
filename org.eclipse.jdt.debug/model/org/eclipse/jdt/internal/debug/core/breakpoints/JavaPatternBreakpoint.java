@@ -129,7 +129,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 		try {
 			name= getPattern();
 		} catch (CoreException ce) {
-			JDIDebugPlugin.logError(ce);
+			JDIDebugPlugin.log(ce.getStatus());
 		}
 		return name;
 	}

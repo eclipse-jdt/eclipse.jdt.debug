@@ -79,8 +79,8 @@ public class ExceptionHandler {
 	//---- Hooks for subclasses to control exception handling ------------------------------------
 	
 	protected void perform(CoreException e, Shell shell, String title, String message) {
-		JDIDebugUIPlugin.log(e);
 		IStatus status= e.getStatus();
+		JDIDebugUIPlugin.log(status);
 		if (status != null) {
 			ErrorDialog.openError(shell, title, message, status);
 		} else {

@@ -175,9 +175,9 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			if (!target.isAvailable()) {
 				return request;
 			}
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		}
 		return newRequest;
 	}
@@ -233,9 +233,9 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			if (!target.isAvailable()) {
 				return null;
 			}
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		}			
 		return request;
 	}
@@ -290,10 +290,10 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 				if (!target.isAvailable()) {
 					return request;
 				}
-				JDIDebugPlugin.logError(e);
+				JDIDebugPlugin.log(e);
 				return request;
 			} catch (RuntimeException e) {
-				JDIDebugPlugin.logError(e);
+				JDIDebugPlugin.log(e);
 			}
 		}
 		return request;
@@ -329,7 +329,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			}
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		}
 	}
 		
@@ -414,7 +414,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 			}
 			
 		} catch (CoreException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e.getStatus());
 		}
 		return true;
 	}
@@ -453,7 +453,7 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 					setExpired(true);
 					setEnabled(false);
 				} catch (CoreException e) {
-					JDIDebugPlugin.logError(e);
+					JDIDebugPlugin.log(e.getStatus());
 				}
 				return resume;
 			}  else {

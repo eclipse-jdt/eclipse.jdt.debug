@@ -155,20 +155,33 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		return fSnippetDocumentProvider;
 	}	
 	
-	public static void logError(Exception e) {
+	/**
+	 * Logs the given message if in debug mode.
+	 * 
+	 * @param String message to log
+	 */
+	public static void logDebugMessage(String message) {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not internationalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal error logged from JDT Debug UI: ", e));  //$NON-NLS-1$		
+			log(new Status(IStatus.ERROR, getPluginId(), IJavaDebugUIConstants.INTERNAL_ERROR, "Internal message logged from JDT Debug UI: " + message, null));
 		}
 	}
 	
 	public static void errorDialog(String message, IStatus status) {
-		Shell shell = getActiveWorkbenchShell();
 		log(status);
+		Shell shell = getActiveWorkbenchShell();
 		if (shell != null) {
 			ErrorDialog.openError(shell, DebugUIMessages.getString("JDIDebugUIPlugin.Error_1"), message, status); //$NON-NLS-1$
 		}
+	}
+	
+	/**
+	 * Utility method with conventions
+	 */
+	public static void errorDialog(String message, Throwable t) {
+		IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, "Error logged from JDT Debug UI: ", t); //$NON-NLS-1$	
+		errorDialog(message, status);
 	}
 	
 	/**

@@ -549,7 +549,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		try {
 			getSourceViewer().getDocument().replace(fSnippetEnd, 0, resultString.toString());
 		} catch (BadLocationException e) {
-			JDIDebugUIPlugin.logError(e);
+			JDIDebugUIPlugin.log(e);
 		}
 		
 		selectAndReveal(fSnippetEnd, resultString.length());
@@ -591,7 +591,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		try {
 			insertionPoint = document.getLineOffset(document.getLineOfOffset(fSnippetStart));
 		} catch (BadLocationException ble) {
-			JDIDebugUIPlugin.logError(ble);
+			JDIDebugUIPlugin.log(ble);
 		}
 		int firstInsertionPoint = insertionPoint;
 		boolean severeError=false;
@@ -614,7 +614,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		try {
 			document.replace(insertionPoint, 0, message);
 		} catch (BadLocationException e) {
-			JDIDebugUIPlugin.logError(e);
+			JDIDebugUIPlugin.log(e);
 		}
 		return insertionPoint += message.length();
 	}	
@@ -635,7 +635,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		try {
 			getSourceViewer().getDocument().replace(fSnippetEnd, 0, bos.toString());
 		} catch (BadLocationException e) {
-			JDIDebugUIPlugin.logError(e);
+			JDIDebugUIPlugin.log(e);
 		}
 		selectAndReveal(fSnippetEnd, bos.size());
 	}
@@ -649,7 +649,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			try {
 				getSourceViewer().getDocument().replace(fSnippetEnd, 0, message);
 			} catch (BadLocationException e) {
-				JDIDebugUIPlugin.logError(e);
+				JDIDebugUIPlugin.log(e);
 			}
 			selectAndReveal(fSnippetEnd, message.length());
 		} else {
@@ -869,7 +869,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		try {
 			return findJavaProject() != null;
 		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.logError(jme);
+			JDIDebugUIPlugin.log(jme.getStatus());
 		}
 		return false;
 	}
@@ -927,7 +927,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			success= true;
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
-			JDIDebugUIPlugin.logError(x);
+			JDIDebugUIPlugin.log(x);
 			String title= SnippetMessages.getString("JavaSnippetEditor.Problems_During_Save_As..._3");  //$NON-NLS-1$
 			String msg= SnippetMessages.getString("JavaSnippetEditor.Save_could_not_be_completed.__4") +  x.getTargetException().getMessage(); //$NON-NLS-1$
 			MessageDialog.openError(shell, title, msg);

@@ -37,7 +37,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -609,7 +608,7 @@ public class ExceptionBreakpointFilterEditor extends FieldEditor {
 		try {
 			fBreakpoint.setFilters(stringFilters, true);
 		} catch (CoreException ce) {
-			JDIDebugUIPlugin.logError(ce);
+			JDIDebugUIPlugin.log(ce.getStatus());
 		}
 	}
 

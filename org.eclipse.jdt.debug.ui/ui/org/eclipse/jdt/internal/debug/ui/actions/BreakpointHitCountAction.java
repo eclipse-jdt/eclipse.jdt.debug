@@ -133,7 +133,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 					breakpoint.setHitCount(newHitCount);
 				}
 			} catch (CoreException ce) {
-				JDIDebugUIPlugin.logError(ce);
+				JDIDebugUIPlugin.errorDialog("Exception occurred attempting to set hit count", ce.getStatus());
 			}
 		}
 	}
@@ -161,7 +161,7 @@ public class BreakpointHitCountAction extends ObjectActionDelegate {
 		try {
 			currentHitCount = breakpoint.getHitCount();
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.logError(e);
+			JDIDebugUIPlugin.log(e.getStatus());
 		}
 		String initialValue;
 		if (currentHitCount > 0) {

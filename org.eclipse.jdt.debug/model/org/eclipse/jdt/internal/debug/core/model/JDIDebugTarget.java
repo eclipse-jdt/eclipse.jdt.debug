@@ -1343,7 +1343,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 				disconnect();
 			}
 		} catch (DebugException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e.getStatus());
 		}
 		cleanup();
 	}

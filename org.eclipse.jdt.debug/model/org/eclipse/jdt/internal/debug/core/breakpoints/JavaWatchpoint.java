@@ -246,7 +246,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			target.internalError(e);
 			return request;
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		}
 		return request;
 	}
@@ -417,7 +417,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 			}
 		} catch (VMDisconnectedException e) {
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		}
 	}
 	

@@ -51,7 +51,7 @@ public class DataDisplay implements IDataDisplay {
 			getTextViewer().setSelectedRange(offset + expression.length(), 0);	
 			getTextViewer().revealRange(offset, expression.length());
 		} catch (BadLocationException ble) {
-			JDIDebugUIPlugin.logError(ble);
+			JDIDebugUIPlugin.log(ble);
 		}
 	}		
 	
@@ -71,7 +71,7 @@ public class DataDisplay implements IDataDisplay {
 		try {
 			getTextViewer().getDocument().replace(offset, replace, value);	
 		} catch (BadLocationException ble) {
-			JDIDebugUIPlugin.logError(ble);
+			JDIDebugUIPlugin.log(ble);
 		}
 		getTextViewer().setSelectedRange(offset + length, 0);	
 		getTextViewer().revealRange(offset, length);

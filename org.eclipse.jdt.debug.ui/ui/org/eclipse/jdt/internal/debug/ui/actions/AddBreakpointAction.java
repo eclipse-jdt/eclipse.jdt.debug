@@ -85,7 +85,7 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 			try {
 				return !JDIDebugModel.lineBreakpointExists(type.getFullyQualifiedName(), getLineNumber());
 			} catch (CoreException ce) {
-				JDIDebugUIPlugin.logError(ce);
+				JDIDebugUIPlugin.log(ce.getStatus());
 			}
 		}
 		return false;
@@ -132,7 +132,7 @@ public class AddBreakpointAction implements IEditorActionDelegate, IBreakpointLi
 				}
 			}
 		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.logError(jme);
+			JDIDebugUIPlugin.log(jme.getStatus());
 		}
 		return type;
 	}

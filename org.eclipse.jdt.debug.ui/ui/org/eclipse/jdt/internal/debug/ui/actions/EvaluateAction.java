@@ -381,8 +381,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 				try {
 					view= page.showView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);
 				} catch (PartInitException e) {
-					MessageDialog.openError(getShell(), ActionMessages.getString("EvaluateAction.Cannot_open_Display_view"), e.getMessage()); //$NON-NLS-1$
-					JDIDebugUIPlugin.logError(e);
+					JDIDebugUIPlugin.errorDialog(ActionMessages.getString("EvaluateAction.Cannot_open_Display_view"), e);
 				} finally {
 					page.activate(activePart);
 				}
@@ -432,7 +431,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		
 		if (exception instanceof CoreException) {
 			CoreException ce= (CoreException) exception;
-			JDIDebugUIPlugin.logError(ce);
+			JDIDebugUIPlugin.log(ce);
 			reportError(ce.getStatus());
 			return;
 		}

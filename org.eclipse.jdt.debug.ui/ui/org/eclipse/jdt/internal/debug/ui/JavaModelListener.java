@@ -33,8 +33,8 @@ class JavaModelListener implements IElementChangedListener {
 					IJavaElement parent= type.getPackageFragment().getParent();
 					check(breakpoint, parent, e.getDelta());
 				}
-			} catch (CoreException exception) {
-				JDIDebugUIPlugin.getDefault().logError(exception);
+			} catch (CoreException x) {
+				JDIDebugUIPlugin.log(x.getStatus());
 			}
 		}
 	}

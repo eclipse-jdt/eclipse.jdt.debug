@@ -149,20 +149,9 @@ public class ManageMethodBreakpointAction extends ManageBreakpointAction {
 				resolvedTypes[i]= buf.toString();
 			}
 			
-			
-			/*String[][] resolvedTypeNames= type.resolveType(returnType);
-			if (resolvedTypeNames == null || resolvedTypeNames.length > 1) {
-					//cannot be uniquely resolved
-					return null;
-			}
-			StringBuffer buf= new StringBuffer();
-			for (int j= 0; j < resolvedTypeNames[0].length; j++) {
-				buf.append(resolvedTypeNames[0][j]);
-			}
-			returnType= buf.toString();*/
 			return Signature.createMethodSignature(resolvedTypes, returnType);	
 		} catch (JavaModelException jme) {
-			JDIDebugUIPlugin.logError(jme);
+			JDIDebugUIPlugin.log(jme.getStatus());
 			return null;
 		} 
 		

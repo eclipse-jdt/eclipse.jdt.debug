@@ -129,7 +129,7 @@ public class JDIDebugModel {
 		try {
 			ResourcesPlugin.getWorkspace().run(r, null);
 		} catch (CoreException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e.getStatus());
 		}
 		return target[0];
 	}

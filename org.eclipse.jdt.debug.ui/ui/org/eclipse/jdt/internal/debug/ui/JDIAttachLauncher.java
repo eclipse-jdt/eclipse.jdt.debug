@@ -99,11 +99,12 @@ public class JDIAttachLauncher implements ILauncherDelegate {
 			} catch (IOException e) {
 				errorDialog(DebugUIMessages.getString("JDIAttachLauncher.Unable_to_connect_to_specified_address_1"), //$NON-NLS-1$
 				 		IJDIStatusConstants.CODE_CONNECTION_FAILED, e);
-				JDIDebugUIPlugin.logError(e);
 			} catch (IllegalConnectorArgumentsException e) {
-				JDIDebugUIPlugin.logError(e);
+				errorDialog("Arguments incorrectly specified for the the remote connection",
+				 		IJDIStatusConstants.CODE_CONNECTION_FAILED, e);
 			} catch (CoreException e) {
-				JDIDebugUIPlugin.logError(e);
+				errorDialog("An exception occurred creating the remote connection",
+				 		IJDIStatusConstants.CODE_CONNECTION_FAILED, e);
 			}
 
 		} else {

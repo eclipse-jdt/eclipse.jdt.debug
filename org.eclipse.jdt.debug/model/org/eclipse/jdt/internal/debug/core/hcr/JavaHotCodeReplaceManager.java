@@ -226,7 +226,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		try {
 			delta.accept(fProjectVisitor);
 		} catch (CoreException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e.getStatus());
 			return Collections.EMPTY_LIST;
 		}
 		return fProjectVisitor.getBuiltProjects();
@@ -306,8 +306,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				// Remove the obsolete hcr builder from the build spec
 				removeCommand(project, buildWatcherCommand);
 			}
-		} catch (CoreException exception) {
-			JDIDebugPlugin.logError(exception);
+		} catch (CoreException e) {
+			JDIDebugPlugin.log(e.getStatus());
 		}
 	}
 	
@@ -460,7 +460,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			target.fireChangeEvent(DebugEvent.CONTENT);
 		}
 		if (!ms.isOK()) {
-			JDIDebugPlugin.logError(new DebugException(ms));
+			JDIDebugPlugin.log(ms);
 		}
 	}
 	
@@ -771,7 +771,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		try {
 			delta.accept(fClassfileVisitor);
 		} catch (CoreException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e.getStatus());
 			return Collections.EMPTY_LIST; // quiet failure
 		}
 		return fClassfileVisitor.getChangedClassFiles();
@@ -816,7 +816,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 									}
 								}
 							} catch (CoreException e) {
-								JDIDebugPlugin.logError(e);
+								JDIDebugPlugin.log(e.getStatus());
 							}
 							if (!hasCompileErrors) {
 								// Only return class files that have no compilation errors.
@@ -915,7 +915,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				try {
 					getWorkspace().run(wRunnable, null);
 				} catch (CoreException ce) {
-					JDIDebugPlugin.logError(ce);
+					JDIDebugPlugin.log(ce.getStatus());
 				}
 			}
 		};
@@ -1036,7 +1036,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				try {
 					outputPath= javaProject.getOutputLocation();
 				} catch (JavaModelException e) {
-					JDIDebugPlugin.logError(e);
+					JDIDebugPlugin.log(e.getStatus());
 					project = null;
 					continue;
 				}

@@ -65,7 +65,7 @@ public class BreakpointThreadToggleAction extends BreakpointToggleAction {
 				action.setText(ActionMessages.getString("BreakpointSuspendPolicy.Suspend_&Thread_2")); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
-			 JDIDebugUIPlugin.logError(e);
+			 JDIDebugUIPlugin.log(e.getStatus());
 		}
 	}	
 }

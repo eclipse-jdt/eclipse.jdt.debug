@@ -241,10 +241,10 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 							IJavaObject v = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), theException);
 							v.sendMessage("printStackTrace", "()V", null, getThread(), false); //$NON-NLS-2$ //$NON-NLS-1$
 						} catch (DebugException de) {
-							JDIDebugPlugin.logError(de);
+							JDIDebugPlugin.log(de.getStatus());
 						}
 					} catch (RuntimeException re) {
-						JDIDebugPlugin.logError(re);
+						JDIDebugPlugin.log(re);
 					}
 				}
 			}
@@ -632,10 +632,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		while (iter.hasNext()) {
 			File file = (File)iter.next();
 			if (file.exists() && !file.delete()) {
-				JDIDebugPlugin.logError(
-					new DebugException(
-						 new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-									MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.Unable_to_delete_temporary_evaluation_class_file_{0}_1"), new String[] {file.getAbsolutePath()}), null)) //$NON-NLS-1$
+				JDIDebugPlugin.log(
+					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
+						MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.Unable_to_delete_temporary_evaluation_class_file_{0}_1"), new String[] {file.getAbsolutePath()}), null) //$NON-NLS-1$
 				);				
 			}
 		}
@@ -645,10 +644,9 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 		while (i >= 0) {
 			File dir = (File)directories.get(i);
 			if (dir.exists() && !dir.delete()) {
-				JDIDebugPlugin.logError(
-					new DebugException(
-						 new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
-									MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.Unable_to_delete_temporary_evaluation_directory_{0}_2"), new String[] {dir.getAbsolutePath()}), null)) //$NON-NLS-1$
+				JDIDebugPlugin.log(
+					new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(), DebugException.REQUEST_FAILED, 
+						MessageFormat.format(EvaluationMessages.getString("LocalEvaluationEngine.Unable_to_delete_temporary_evaluation_directory_{0}_2"), new String[] {dir.getAbsolutePath()}), null) //$NON-NLS-1$
 				);
 			}
 			i--;

@@ -87,7 +87,7 @@ public class JavaDebugHover implements IJavaEditorTextHover {
 					return buffer.toString();
 			
 			} catch (BadLocationException x) {
-				JDIDebugUIPlugin.logError(x);
+				JDIDebugUIPlugin.log(x);
 			}
 		}
 

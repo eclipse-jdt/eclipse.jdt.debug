@@ -147,13 +147,12 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				request= target.getEventRequestManager().createExceptionRequest(type, isCaught(), isUncaught());
 				configureRequest(request, target);
 			} catch (VMDisconnectedException e) {
-				if (!target.isAvailable()) {
-					return null;
+				if (target.isAvailable()) {
+					JDIDebugPlugin.log(e);
 				}
-				JDIDebugPlugin.logError(e);
 				return null;
 			} catch (RuntimeException e) {
-				JDIDebugPlugin.logError(e);
+				JDIDebugPlugin.log(e);
 				return null;
 			}	
 			return request;
@@ -279,9 +278,9 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			if (!target.isAvailable()) {
 				return request;
 			}
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		} catch (RuntimeException e) {
-			JDIDebugPlugin.logError(e);
+			JDIDebugPlugin.log(e);
 		}
 		return request;
 	}
@@ -326,7 +325,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				}
 			} 
 		} catch (CoreException ce) {
-			JDIDebugPlugin.logError(ce);
+			JDIDebugPlugin.log(ce.getStatus());
 		}
 		return true;
 	}
