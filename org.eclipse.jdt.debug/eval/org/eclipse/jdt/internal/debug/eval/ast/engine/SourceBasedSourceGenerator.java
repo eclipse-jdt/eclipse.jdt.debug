@@ -94,9 +94,7 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		
 	private boolean fRightTypeFound;
 	
-	private boolean fIsInAStaticMethod;
-	
-	private boolean fCreateInAnInstanceMethod;
+	private boolean fCreateInAStaticMethod;
 	
 	private boolean fEvaluateNextEndTypeDeclaration;
 	
@@ -123,16 +121,15 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * which contains the code snippet is an no-static method, even if <code>position</code>
 	 * is in a static method.
 	 */
-	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, boolean createInAnInstanceMethod, String[] localTypesNames, String[] localVariables, String codeSnippet) {
+	public SourceBasedSourceGenerator(CompilationUnit unit, int position, boolean isLineNumber, boolean createInAStaticMethod, String[] localTypesNames, String[] localVariables, String codeSnippet) {
 		fRightTypeFound= false;
 		fUnit= unit;
 		fPosition= position;
 		fLocalVariableTypeNames= localTypesNames;
 		fLocalVariableNames= localVariables;
 		fCodeSnippet= codeSnippet;
-		fIsInAStaticMethod= false;
 		fIsLineNumber= isLineNumber;
-		fCreateInAnInstanceMethod= createInAnInstanceMethod;
+		fCreateInAStaticMethod= createInAStaticMethod;
 	}
 	
 	/**
@@ -191,18 +188,10 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 		return fError;
 	}
 	
-	private boolean isInAStaticMethod() {
-		return fIsInAStaticMethod && ! fCreateInAnInstanceMethod;
-	}
-	
-	private void setIsInAStaticMethod(boolean value) {
-		fIsInAStaticMethod= value;
-	}
-	
 	private StringBuffer buildRunMethod(List bodyDeclarations) {
 		StringBuffer buffer = new StringBuffer();
 
-		if (isInAStaticMethod()) {
+		if (fCreateInAStaticMethod) {
 			buffer.append("static "); //$NON-NLS-1$
 		}
 
@@ -641,30 +630,6 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 			return;
 		}
 		fSource = buildCompilationUnit(fSource, node);
-	}
-
-	/**
-	 * @see ASTVisitor#endVisit(Initializer)
-	 */
-	public void endVisit(Initializer node) {
-		if (hasError()) {
-			return;
-		}
-		if (!rightTypeFound() && containsLine(node)) {
-			setIsInAStaticMethod(Flags.isStatic(node.getModifiers()));
-		}
-	}
-
-	/**
-	 * @see ASTVisitor#endVisit(MethodDeclaration)
-	 */
-	public void endVisit(MethodDeclaration node) {
-		if (hasError()) {
-			return;
-		}
-		if (!rightTypeFound() && containsLine(node)) {
-			setIsInAStaticMethod(Flags.isStatic(node.getModifiers()));
-		}
 	}
 
 	/**

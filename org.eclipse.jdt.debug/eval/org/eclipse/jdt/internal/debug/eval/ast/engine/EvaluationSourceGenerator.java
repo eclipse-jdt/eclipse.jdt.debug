@@ -145,11 +145,11 @@ public class EvaluationSourceGenerator {
 		return fCodeSnippet;
 	}
 
-	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber, boolean createInAnInstanceMethod) throws DebugException {
+	private void createEvaluationSourceFromSource(String source, int position, boolean isLineNumber, boolean createInAStaticMethod) throws DebugException {
 		ASTParser parser = ASTParser.newParser(AST.JLS2);
 		parser.setSource(source.toCharArray());
 		CompilationUnit unit= (CompilationUnit)parser.createAST(null);
-		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, createInAnInstanceMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
+		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, createInAStaticMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
 		unit.accept(visitor);
 		
 		if (visitor.hasError()) {
@@ -194,7 +194,7 @@ public class EvaluationSourceGenerator {
 				String baseSource= getSourceFromFrame(frame);
 				int lineNumber= frame.getLineNumber();
 				if (baseSource != null && lineNumber != -1) {
-					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true, false);
+					createEvaluationSourceFromSource(baseSource,  frame.getLineNumber(), true, frame.isStatic());
 				} 
 				if (fSource == null) {
 					JDIObjectValue object= (JDIObjectValue)frame.getThis();
@@ -220,7 +220,7 @@ public class EvaluationSourceGenerator {
 				String baseSource= getTypeSourceFromProject(thisObject.getJavaType().getName(), javaProject);
 				int lineNumber= getLineNumber((JDIObjectValue) thisObject);
 				if (baseSource != null && lineNumber != -1) {
-					createEvaluationSourceFromSource(baseSource, lineNumber, true, true);
+					createEvaluationSourceFromSource(baseSource, lineNumber, true, false);
 				}
 				if (fSource == null) {
 					BinaryBasedSourceGenerator mapper= getInstanceSourceMapper((JDIObjectValue) thisObject, false);
