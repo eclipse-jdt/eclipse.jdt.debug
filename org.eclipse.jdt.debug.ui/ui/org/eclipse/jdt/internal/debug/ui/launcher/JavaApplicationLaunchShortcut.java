@@ -14,13 +14,10 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -62,7 +59,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut, IActionFi
 	/**
 	 * @param search the java elements to search for a main type
 	 * @param mode the mode to launch in
-	 * @param whether activated on an editor (or from a selection in a viewer)
+	 * @param editor activated on an editor (or from a selection in a viewer)
 	 */
 	public void searchAndLaunch(Object[] search, String mode, boolean editor) {
 		IType[] types = null;
@@ -275,7 +272,7 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut, IActionFi
 	 */
 	public boolean testAttribute(Object target, String name, String value) {
 		if ("ContextualLaunchActionFilter".equals(name)) { //$NON-NLS-1$
-			return hasMain2(target);
+			return hasMain(target);
 		} else if ("NameMatches".equals(name)) { //$NON-NLS-1$
 			return nameMatches(target, value);
 		}
@@ -293,26 +290,8 @@ public class JavaApplicationLaunchShortcut implements ILaunchShortcut, IActionFi
 			return false;
 		}
 	}
-
-	private boolean hasMain(Object target) {
-		if (target != null && target instanceof IStructuredSelection) {
-			Object[] selections = ((IStructuredSelection )target).toArray();
-			IResource resource = (IResource)selections[0];
-			IType[] types= null;
-				try {
-					final Set result= new HashSet();
-					MainMethodFinder.collectTypes(resource, new NullProgressMonitor(), result);
-					if (result.size() > 0) {
-						return true;
-					}
-				} catch (JavaModelException e) {
-					return false;
-				}
-			}
-		return false;
-		}
 	
-	private boolean hasMain2(Object target) {
+	private boolean hasMain(Object target) {
 		if (target != null && target instanceof IStructuredSelection) {
 			Object[] selections = ((IStructuredSelection )target).toArray();
 			IResource resource = (IResource)selections[0];
