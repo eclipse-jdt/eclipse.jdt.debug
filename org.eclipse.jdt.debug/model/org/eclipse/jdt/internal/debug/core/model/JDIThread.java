@@ -565,7 +565,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Unable_to_retrieve_stack_frame_-_thread_not_suspended._1"), e, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
 		} catch (IndexOutOfBoundsException e) {
 			try {
-				computeNewStackFrames();
+			computeNewStackFrames();
 			} catch (DebugException de) {
 			}
 			fireChangeEvent(DebugEvent.CONTENT);
@@ -697,20 +697,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see org.eclipse.jdt.debug.core.IJavaThread#queueRunnable(Runnable)
 	 */
 	public void queueRunnable(Runnable evaluation) {
-		String threadName;
-		try {
-			threadName= getName();
-		} catch (DebugException e) {
-			JDIDebugPlugin.log(e);
-			return;
-		}
 		if (fAsyncJob == null) {
-			fAsyncJob= new ThreadJob(this, threadName);
+			fAsyncJob= new ThreadJob(this);
 			fAsyncJob.addRunnable(evaluation);
 		} else {
 			synchronized (fAsyncJob) {
 				if (fAsyncJob == null) {
-					fAsyncJob= new ThreadJob(this, threadName);
+					fAsyncJob= new ThreadJob(this);
 				}
 				fAsyncJob.addRunnable(evaluation);
 			}
@@ -2473,8 +2466,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		
 		private JDIThread fJDIThread;
 		
-		public ThreadJob(JDIThread thread, String threadName) {
-			super(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.39"), new Object[] {threadName})); //$NON-NLS-1$
+		public ThreadJob(JDIThread thread) {
+			super(JDIDebugModelMessages.getString("JDIThread.39")); //$NON-NLS-1$
 			fJDIThread= thread;
 			fRunnables= new Vector(5);
 			setRule(this);
