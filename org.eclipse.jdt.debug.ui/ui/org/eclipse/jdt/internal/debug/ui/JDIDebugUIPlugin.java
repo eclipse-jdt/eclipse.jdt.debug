@@ -26,6 +26,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaModel;
@@ -78,6 +80,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	
 	private ActionFilterAdapterFactory fActionFilterAdapterFactory;
 	private JavaSourceLocationWorkbenchAdapterFactory fSourceLocationAdapterFactory;
+	
+	private IDebugModelPresentation fUtilPresentation;
 	
 	/**
 	 * Java Debug UI listeners
@@ -284,6 +288,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.unregisterAdapters(fActionFilterAdapterFactory);
 		manager.unregisterAdapters(fSourceLocationAdapterFactory);
+		if (fUtilPresentation != null) {
+			fUtilPresentation.dispose();
+		}
 		super.shutdown();
 	}
 	
@@ -415,6 +422,19 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 			String id = infos[i].getAttribute("vmInstallTypeID"); //$NON-NLS-1$
 			fVmInstallTypePageMap.put(id, infos[i]);
 		}		
+	}
+	
+	/**
+	 * Returns a shared utility Java debug model presentation. Clients should not
+	 * dispose the presentation.
+	 * 
+	 * @return a Java debug model presentation
+	 */
+	public IDebugModelPresentation getModelPresentation() {
+		if (fUtilPresentation == null) {
+			fUtilPresentation = DebugUITools.newDebugModelPresentation(JDIDebugModel.getPluginIdentifier());
+		}
+		return fUtilPresentation;
 	}
 }
 

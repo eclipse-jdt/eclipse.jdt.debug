@@ -1393,4 +1393,12 @@
   <fileTypes extension="jpage" type="text"/>
 </extension>
 
+<extension point="org.eclipse.debug.ui.consoleLineTrackers">
+  <consoleLineTracker
+    id = "org.eclipse.jdt.debug.ui.JavaConsoleTracker"
+    class ="org.eclipse.jdt.internal.debug.ui.console.JavaConsoleTracker"
+    processType = "java">
+  </consoleLineTracker>
+</extension>
+
 </plugin>
