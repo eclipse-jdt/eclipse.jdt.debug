@@ -56,7 +56,6 @@ import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.internal.debug.core.model.JDIPlaceholderVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.ui.display.JavaInspectExpression;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
@@ -893,9 +892,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		IJavaVariable javaVariable= (IJavaVariable) element.getAdapter(IJavaVariable.class);
 		if (javaVariable != null) {
 			try {
-				if (javaVariable instanceof JDIPlaceholderVariable) {
-					return JavaDebugImages.DESC_OBJS_PLACEHOLDER_VARIABLE;
-				} else if (javaVariable.isLocal())
+				if (javaVariable.isLocal())
 					return JavaDebugImages.DESC_OBJS_LOCAL_VARIABLE;
 				if (javaVariable.isPublic())
 					return JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PUBLIC);

@@ -62,7 +62,6 @@ public class JavaDebugImages {
 	public static final String IMG_OBJS_WATCHPOINT_DISABLED= NAME_PREFIX + "readwrite_obj_disabled.gif";	//$NON-NLS-1$
 	
 	public static final String IMG_OBJS_LOCAL_VARIABLE = NAME_PREFIX + "localvariable_obj.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_PLACEHOLDER_VARIABLE = NAME_PREFIX + "placeholdervariable_obj.gif";	//$NON-NLS-1$
 	
 	public static final String IMG_OBJS_METHOD_BREAKPOINT_ENTRY= NAME_PREFIX + "entry_ovr.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED= NAME_PREFIX + "entry_ovr_disabled.gif";	//$NON-NLS-1$
@@ -114,7 +113,6 @@ public class JavaDebugImages {
 	public static final ImageDescriptor DESC_OBJS_MODIFICATION_WATCHPOINT_DISABLED= createManaged(T_OBJ, IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED);
 	
 	public static final ImageDescriptor DESC_OBJS_LOCAL_VARIABLE = createManaged(T_OBJ, IMG_OBJS_LOCAL_VARIABLE);
-	public static final ImageDescriptor DESC_OBJS_PLACEHOLDER_VARIABLE = createManaged(T_OBJ, IMG_OBJS_PLACEHOLDER_VARIABLE);
 	
 	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_ENTRY= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_ENTRY);
 	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED);

@@ -250,4 +250,24 @@
       </attribute>
    </extension>
 
+   <extension point="org.eclipse.debug.core.logicalStructureTypes">
+      <logicalStructureType
+            modelIdentifier="org.eclipse.jdt.debug"
+            description="HashMap Entries"
+            class="org.eclipse.jdt.internal.debug.core.logicalstructures.MapStructureType"
+            id="java.util.Map">
+      </logicalStructureType>
+      <logicalStructureType
+            modelIdentifier="org.eclipse.jdt.debug"
+            description="Array"
+            class="org.eclipse.jdt.internal.debug.core.logicalstructures.CollectionStructureType"
+            id="java.util.Collection">
+      </logicalStructureType> 
+      <logicalStructureType
+            modelIdentifier="org.eclipse.jdt.debug"
+            description="Key and Value"
+            class="org.eclipse.jdt.internal.debug.core.logicalstructures.MapEntryStructureType"
+            id="java.util.MapEntry">
+      </logicalStructureType>      
+   </extension>
 </plugin>

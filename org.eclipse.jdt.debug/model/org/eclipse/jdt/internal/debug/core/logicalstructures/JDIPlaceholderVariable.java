@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.debug.core.model;
+package org.eclipse.jdt.internal.debug.core.logicalstructures;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
@@ -32,8 +32,8 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 	private IJavaValue fValue;
 
 	public JDIPlaceholderVariable(String name, IJavaValue value) {
-		setName(name);
-		setValue(value);
+		fName = name;
+		fValue = value;
 	}
 	
 	/* (non-Javadoc)
@@ -69,10 +69,6 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 	 */
 	public String getName() {
 		return fName;
-	}
-	
-	private void setName(String name) {
-		fName = name;
 	}
 
 	/* (non-Javadoc)
@@ -169,7 +165,6 @@ public class JDIPlaceholderVariable implements IJavaVariable {
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
 	public void setValue(IValue value) {
-		fValue = (IJavaValue) value;
 	}
 
 	/* (non-Javadoc)

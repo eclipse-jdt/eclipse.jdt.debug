@@ -29,7 +29,6 @@
 
 <!-- Extensions Points -->
    <extension-point id="vmInstallTypePage" name="%vmInstallTypePage" schema="schema/vmInstallTypePage.exsd"/>
-   <extension-point id="javaObjectBrowsers" name="%javaObjectBrowsers"/>
 
 <!-- Extensions -->
    <extension
@@ -2195,42 +2194,6 @@
                id="org.eclipse.jdt.ui.MembersView">
          </part>
       </actionSetPartAssociation>
-   </extension>
-   <extension
-         point="org.eclipse.debug.ui.objectBrowsers">
-      <objectBrowser
-            debugModelId="org.eclipse.jdt.debug"
-            class="org.eclipse.jdt.internal.debug.ui.JavaObjectBrowser"
-            id="org.eclipse.jdt.debug.ui.JavaObjectBrowser">
-      </objectBrowser>
-   </extension>
-   <extension
-         point="org.eclipse.jdt.debug.ui.javaObjectBrowsers">
-      <javaObjectBrowser
-            types="java.util.Collection"
-            class="org.eclipse.jdt.internal.debug.ui.JavaUtilCollectionObjectBrowser"
-            id="org.eclipse.jdt.debug.ui.CollectionObjectBrowser">
-      </javaObjectBrowser>
-      <javaObjectBrowser
-            types="java.util.Map"
-            class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapObjectBrowser"
-            id="org.eclipse.jdt.debug.ui.MapObjectBrowser">
-      </javaObjectBrowser>
-      <javaObjectBrowser
-            types="java.util.Map$Entry"
-            class="org.eclipse.jdt.internal.debug.ui.JavaUtilMapEntryObjectBrowser"
-            id="org.eclipse.jdt.debug.ui.MapEntryObjectBrowser">
-      </javaObjectBrowser>
-      <javaObjectBrowser
-            types="org.eclipse.swt.widgets.Composite"
-            class="org.eclipse.jdt.internal.debug.ui.SWTCompositeObjectBrowser"
-            id="org.eclipse.jdt.debug.ui.SWTCompositeObjectBrowser">
-      </javaObjectBrowser>
-      <javaObjectBrowser
-            types="org.eclipse.core.resources.IContainer"
-            class="org.eclipse.jdt.internal.debug.ui.CoreResourcesIContainerObjectBrowser"
-            id="org.eclipse.jdt.debug.ui.CoreResourcesIContainerObjectBrowser">
-      </javaObjectBrowser>
    </extension>
    
 <!-- Roles and Activities -->
