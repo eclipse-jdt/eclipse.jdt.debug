@@ -13,6 +13,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.JavaSnippetEditor;
 import org.eclipse.swt.widgets.Display;
@@ -31,12 +32,15 @@ public class DisplayAction extends EvaluateAction {
 		final IJavaValue value= result.getValue();
 		
 		if (result.hasProblems() || value != null) {
-			Display display= Display.getDefault();
+			final Display display= JDIDebugUIPlugin.getStandardDisplay();
 			if (display.isDisposed()) {
 				return;
 			}
 			display.asyncExec(new Runnable() {
 				public void run() {
+					if (display.isDisposed()) {
+						return;
+					}
 					if (result.hasProblems()) {
 						boolean severeProblems= reportProblems(result);
 						if (severeProblems) {
