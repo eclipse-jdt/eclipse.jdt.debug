@@ -134,16 +134,22 @@ public class JavaVariablesContentProvider extends DefaultVariablesContentProvide
 					// Make sure we don't consider this interface again
 					checkedInterfaces.add(interfaceName);
 					
-					// Now, add the directly extended super interfaces to the list to be checked
+					// Now, add the directly extended super interfaces to the list to be checked,
+					// assuming they haven't already been checked
 					IJavaInterfaceType[] superInterfaces = interfaceType.getSuperInterfaces();
 					for (int j = 0; j < superInterfaces.length; j++) {
-						nextInterfacesList.add(superInterfaces[j]);
+						String superInterfaceName = superInterfaces[j].getName();
+						if (!checkedInterfaces.contains(superInterfaceName) &&
+						    !nextInterfacesList.contains(superInterfaceName)) {
+							nextInterfacesList.add(superInterfaces[j]);
+						}
 					}					
 				}
 				
 				// Now get ready to check the immediate super interfaces of all the interfaces just checked
 				IJavaInterfaceType[] tempInterfaces = new IJavaInterfaceType[nextInterfacesList.size()];
 				interfaces = (IJavaInterfaceType[]) nextInterfacesList.toArray(tempInterfaces);
+				nextInterfacesList = new ArrayList();
 			}			
 			
 			// Move up 1 level in the class hierarchy and try again
