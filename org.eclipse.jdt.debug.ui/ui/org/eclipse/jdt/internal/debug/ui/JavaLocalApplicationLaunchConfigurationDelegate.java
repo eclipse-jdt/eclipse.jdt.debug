@@ -172,7 +172,7 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 			if ((types == null) || (types.length < 1)) {
 				return;
 			}
-			name = types[0].getElementName();
+			name = types[0].getFullyQualifiedName();
 			workingCopy.setAttribute(JavaDebugUI.MAIN_TYPE_ATTR, name);
 		} catch (InterruptedException ie) {
 		} catch (InvocationTargetException ite) {
@@ -219,13 +219,13 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 			if (installTypeId == null) {
 				return false;
 			}
-			workingCopy.setAttribute(JavaDebugUI.PLUGIN_ID, installTypeId);
+			workingCopy.setAttribute(JavaDebugUI.VM_INSTALL_TYPE_ATTR, installTypeId);
 			
 			String installId = resource.getPersistentProperty(fgQualNameVMId);
 			if (installId == null) {
 				return false;
 			}
-			workingCopy.setAttribute(JavaDebugUI.PLUGIN_ID, installId);
+			workingCopy.setAttribute(JavaDebugUI.VM_INSTALL_ATTR, installId);
 		} catch (CoreException ce) {
 			return false;
 		}	

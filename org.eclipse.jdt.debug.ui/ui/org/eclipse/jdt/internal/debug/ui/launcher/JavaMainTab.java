@@ -60,7 +60,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
  * This tab appears in the LaunchConfigurationDialog for launch configurations that
  * require Java-specific launching information such as a main type and JRE.
  */
-public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
+public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 
 	// The launch configuration dialog that owns this tab
 	private ILaunchConfigurationDialog fLaunchConfigurationDialog;

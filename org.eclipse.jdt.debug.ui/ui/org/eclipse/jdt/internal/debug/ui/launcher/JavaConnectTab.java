@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
-public class ConnectTab implements ILaunchConfigurationTab {
+public class JavaConnectTab implements ILaunchConfigurationTab {
 
 	// The launch configuration dialog that owns this tab
 	private ILaunchConfigurationDialog fLaunchConfigurationDialog;
