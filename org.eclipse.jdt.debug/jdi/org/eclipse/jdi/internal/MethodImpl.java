@@ -549,7 +549,7 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 			target.fVerboseWriter.println("method", ID.value());
 
 		ID.read(in);
-		if (ID.isNull())
+		if (ID.isNull() || ID.value() == 0)
 			return null;
 			
 		// The method must be part of a known reference type.
