@@ -52,10 +52,17 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
             String title= ActionMessages.getString("JavaPrimitiveValueEditor.0"); //$NON-NLS-1$
             String message= MessageFormat.format(ActionMessages.getString("JavaPrimitiveValueEditor.1"), new String[] {name}); //$NON-NLS-1$
             String initialValue= variable.getValue().getValueString();
-            IInputValidator validator= new PrimitiveValidator();
+            PrimitiveValidator validator= new PrimitiveValidator();
             InputDialog dialog= new InputDialog(shell, title, message, initialValue, validator);
             if (dialog.open() == Window.OK) {
                 String stringValue = dialog.getValue();
+                if (stringValue.length() > 1 && stringValue.charAt(0) == '\\') {
+                	// Compute value of octal of hexadecimal escape sequence
+                	int i= validator.getEscapeValue(stringValue);
+                	if (i != Integer.MAX_VALUE) {
+                		stringValue= new String(new char[] { (char) i });
+                	}
+                }
                 variable.setValue(stringValue);
             }
         } catch (DebugException e) {
@@ -89,7 +96,15 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
 	                }
 	                break;
 	        	case 'C':
-	        	    if (newText.length() != 1) {
+	        		if (newText.length() > 1 && newText.charAt(0) == '\\') {
+	        			// Possibly an escaped character
+	        			if (isSpecialCharacter(newText) ||
+	        					isOctalEscape(newText) ||
+	        					isUnicode(newText)) {
+	        				break;
+	        			}
+	        		} 
+	        		if (newText.length() != 1) {
 	        	        type="char"; //$NON-NLS-1$
 	        	    }
 	                break;
@@ -139,6 +154,82 @@ public class JavaPrimitiveValueEditor implements IVariableValueEditor {
             }
             return null;
         }
+
+		private boolean isUnicode(String newText) {
+			if (newText.length() == 6) {
+				if (newText.charAt(1) == 'u') {
+					char[] chars = newText.toCharArray();
+					for (int i = 2; i < chars.length; i++) {
+						if (!isHexDigit(chars[i])) {
+							return false;
+						}
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		private boolean isOctalEscape(String newText) {
+			char[] chars= newText.toCharArray();
+			if (chars.length < 4) {
+				for (int i = 1; i < chars.length; i++) {
+					if (!isOctalDigit(chars[i])) {
+						return false;
+					}
+				}
+				return true;
+			} else if (chars.length == 4) {
+				char ch= chars[1];
+				if (ch < '0' || ch > '3') {
+					return false;
+				}
+				for (int i = 2; i < chars.length; i++) {
+					if (!isOctalDigit(chars[i])) {
+						return false;
+					}
+				}
+                return true;
+			}
+			return false;
+		}
+
+		private boolean isSpecialCharacter(String newText) {
+			char ch= newText.charAt(1);
+			return newText.length() == 2 &&
+				(ch == 'b'  ||
+				ch == 't'  ||
+				ch == 'n'  ||
+				ch == 'f'  ||
+				ch == 'r'  ||
+				ch == '"'  ||
+				ch == '\'' ||
+				ch == '\\');
+		}
+		
+		private boolean isOctalDigit(char ch) {
+            return Character.digit(ch, 8) != -1;
+		}
+		
+		private boolean isHexDigit(char ch) {
+            return Character.digit(ch, 16) != -1;
+		}
+		
+		/**
+		 * Returns the integer value specified by the given string, which
+		 * represents an octal or hexadecimal escape sequence. Returns
+		 * Integer.MAX_VALUE if the given string is not a valid octal or
+		 * hexadecimal escape sequence.
+		 */
+		protected int getEscapeValue(String string) {
+			int i= Integer.MAX_VALUE;
+			if (isOctalEscape(string)) {
+				i= Integer.parseInt(string.substring(1), 8);
+			} else if (isUnicode(string)) {
+				i= Integer.parseInt(string.substring(2), 16);
+			}
+			return i;
+		}
     }
 
 }
