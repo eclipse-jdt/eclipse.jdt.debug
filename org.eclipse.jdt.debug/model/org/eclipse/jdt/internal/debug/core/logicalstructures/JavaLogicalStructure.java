@@ -246,12 +246,15 @@ public class JavaLogicalStructure implements ILogicalStructureType {
 						sourceElement= ((ISourceLookupDirector) locator).getSourceElement(sourcePaths[0]);
 					}
 				}
+				if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
+					sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
+				}
 			}
 			if (sourceElement == null) {
 				sourceElement = locator.getSourceElement(stackFrame);
-			}
-			if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
-				sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
+				if (!(sourceElement instanceof IJavaElement) && sourceElement instanceof IAdaptable) {
+					sourceElement = ((IAdaptable)sourceElement).getAdapter(IJavaElement.class);
+				}
 			}
 			IJavaProject project= null;
 			if (sourceElement instanceof IJavaElement) {
