@@ -856,7 +856,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint);
 				}
 				abortStep();
-				fireSuspendEvent(DebugEvent.BREAKPOINT);
+				queueSuspendEvent(DebugEvent.BREAKPOINT);
 			} else {
 				if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
 					((JDIDebugTarget)getDebugTarget()).cancelSuspendByBreakpoint(breakpoint);
@@ -1356,6 +1356,18 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		fEventSuspend = (detail != DebugEvent.CLIENT_REQUEST);
 		super.fireSuspendEvent(detail);
 	}
+		
+	/**
+	 * Queues a suspend event. If the suspend is due to a an event
+	 * request in the underlying VM, evaluations may be performed,
+	 * otherwise evaluations are disallowed.
+	 * 
+	 * @see JDIDebugElement#queueSuspendEvent(int)
+	 */
+	public void queueSuspendEvent(int detail) {
+		fEventSuspend = (detail != DebugEvent.CLIENT_REQUEST);
+		super.queueSuspendEvent(detail);
+	}
 	
 	/**
 	 * Notification this thread has terminated - update state
@@ -1760,7 +1772,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			setRunning(false);
 			deleteStepRequest();
 			setPendingStepHandler(null);
-			fireSuspendEvent(DebugEvent.STEP_END);
+			queueSuspendEvent(DebugEvent.STEP_END);
 		}
 		
 		/**

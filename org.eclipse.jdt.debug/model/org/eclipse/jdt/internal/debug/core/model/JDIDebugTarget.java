@@ -1157,7 +1157,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 *  suspension
 	 */
 	protected void suspendedByBreakpoint(JavaBreakpoint breakpoint) {
-		fireSuspendEvent(DebugEvent.BREAKPOINT);
+		queueSuspendEvent(DebugEvent.BREAKPOINT);
 	}	
 	
 	/**

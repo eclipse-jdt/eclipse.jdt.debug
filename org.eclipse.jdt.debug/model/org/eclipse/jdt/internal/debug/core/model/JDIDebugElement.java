@@ -126,6 +126,16 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 
 	/**
+	 * Queues a debug event with the event dispatcher to be fired
+	 * as an event set when all event processing is complete.
+	 * 
+	 * @param event the event to queue
+	 */
+	public void queueEvent(DebugEvent event) {
+		((JDIDebugTarget)getDebugTarget()).getEventDispatcher().queue(event);
+	}
+	
+	/**
 	 * Fires a debug event marking the RESUME of this element with
 	 * the associated detail.
 	 * 
@@ -147,6 +157,17 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 		fireEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
 	}
 	
+	/**
+	 * Queues a debug event marking the SUSPEND of this element with
+	 * the associated detail.
+	 * 
+	 * @param detail The int detail of the event
+	 * @see org.eclipse.debug.core.DebugEvent
+	 */
+	public void queueSuspendEvent(int detail) {
+		queueEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
+	}
+			
 	/**
 	 * Fires a debug event marking the termination of this element.
 	 */

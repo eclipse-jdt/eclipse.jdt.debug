@@ -5,8 +5,12 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.VMDisconnectedException;
@@ -55,6 +59,12 @@ public class EventDispatcher implements Runnable {
 	 * to <code>IJDIEventListener</code>.
 	 */
 	private HashMap fEventHandlers;
+	
+	/**
+	 * Queue of debug model events to fire, created
+	 * when processing events on the target VM
+	 */
+	private List fDebugEvents = new ArrayList(5);
 	
 	/**
 	 * Constructs a new event dispatcher listening for events
@@ -112,6 +122,9 @@ public class EventDispatcher implements Runnable {
 					// Unhandled Event
 				}
 		}
+		
+		fireEvents();
+		
 		if (vote && resume) {
 			eventSet.resume();
 		}
@@ -193,6 +206,25 @@ public class EventDispatcher implements Runnable {
 	 */	
 	public void removeJDIEventListener(IJDIEventListener listener, EventRequest request) {
 		fEventHandlers.remove(request);
+	}
+	
+	/** 
+	 * Adds the given event to the queue of debug events to fire when done
+	 * dispatching events from the current event set.
+	 * 
+	 * @param event the event to queue
+	 */
+	public void queue(DebugEvent event) {
+		fDebugEvents.add(event);
+	}
+	
+	/**
+	 * Fires debug events in the event queue, and clears the queue
+	 */
+	protected void fireEvents() {
+		DebugEvent[] events = (DebugEvent[])fDebugEvents.toArray(new DebugEvent[fDebugEvents.size()]);
+		fDebugEvents.clear();
+		DebugPlugin.getDefault().fireDebugEventSet(events);
 	}
 	
 }
