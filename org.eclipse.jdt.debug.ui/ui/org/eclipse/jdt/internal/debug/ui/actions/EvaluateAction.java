@@ -184,6 +184,11 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
 	 */
 	public void evaluationComplete(final IEvaluationResult result) {
+		// if plug-in has shutdown, ignore - see bug# 8693
+		if (JDIDebugUIPlugin.getDefault() == null) {
+			return;
+		}
+		
 		final IJavaValue value= result.getValue();
 		if (result.hasErrors() || value != null) {
 			final Display display= JDIDebugUIPlugin.getStandardDisplay();

@@ -56,7 +56,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
 import com.sun.jdi.InvocationException;
-import com.sun.jdi.ObjectReference; 
+import com.sun.jdi.ObjectReference;
 
 /**
  * An evaluation engine that deploys class files locally
@@ -916,7 +916,10 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 * and reset for the next evaluation.
 	 */
 	protected void evaluationComplete() {
-		getListener().evaluationComplete(getResult());
+		// only notify if plug-in not yet shutdown (bug# 8693)
+		if (JDIDebugPlugin.getDefault() != null)  {
+			getListener().evaluationComplete(getResult());
+		}
 		evaluationEnded();
 		reset();
 		if (isDisposed()) {

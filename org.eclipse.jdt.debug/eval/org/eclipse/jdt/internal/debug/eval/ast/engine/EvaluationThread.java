@@ -209,7 +209,10 @@ class EvaluationThread {
 	 */
 	private void evaluationFinished(IEvaluationResult result) {
 		fEngine.evaluationThreadFinished(this);
-		fListener.evaluationComplete(result);
+		// only notify if plugin not yet shutdown - bug# 8693
+		if(JDIDebugPlugin.getDefault() != null) {
+			fListener.evaluationComplete(result);
+		}
 		fExpression= null;
 		fContext= null;
 		fThread= null;
