@@ -677,7 +677,7 @@ public final class JavaRuntime {
 	/**
 	 * Returns resolved entries for the given entry in the context of the given
 	 * launch configuration. If the entry is of kind
-	 * <code>VARIABLE</code> or <code>CONTAINTER</code>, variable and contanier
+	 * <code>VARIABLE</code> or <code>CONTAINER</code>, variable and contanier
 	 * resolvers are consulted. If the entry is of kind <code>PROJECT</code>,
 	 * and the associated Java project specifies non-default output locations,
 	 * the corresponding output locations are returned. Otherwise, the given
@@ -850,7 +850,7 @@ public final class JavaRuntime {
 	/**
 	 * Returns resolved entries for the given entry in the context of the given
 	 * Java project. If the entry is of kind
-	 * <code>VARIABLE</code> or <code>CONTAINTER</code>, variable and contanier
+	 * <code>VARIABLE</code> or <code>CONTAINER</code>, variable and contanier
 	 * resolvers are consulted. If the entry is of kind <code>PROJECT</code>,
 	 * and the associated Java project specifies non-default output locations,
 	 * the corresponding output locations are returned. Otherwise, the given
@@ -1713,8 +1713,7 @@ public final class JavaRuntime {
 	/**
 	 * Notifies all VM install changed listeners of the given property change.
 	 * 
-	 * @param vm the VM that has changed
-	 * @param event event desribing the change.
+	 * @param event event describing the change.
 	 * @since 2.0
 	 */
 	public static void fireVMChanged(PropertyChangeEvent event) {
