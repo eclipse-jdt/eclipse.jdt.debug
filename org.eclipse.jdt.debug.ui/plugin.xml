@@ -2249,4 +2249,78 @@
       </activityPatternBinding>
    </extension>
 
+<!-- refactoring -->
+   
+   <extension point="org.eclipse.jdt.ui.renameParticipants">
+      <renameParticipant
+            class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationITypeRenameParticipant"
+            id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeRename">
+         <enablement>
+           <with variable="affectedProjects">
+             <iterate>
+               <test property="projectNature" value="org.eclipse.jdt.core.javanature"/>
+             </iterate>
+           </with>
+           <with variable="selection">
+             <count value="1"/>
+             <iterate>
+   	           <instanceof value="org.eclipse.jdt.core.IType"/>
+             </iterate>
+           </with>
+         </enablement>
+      </renameParticipant>
+      <renameParticipant
+            class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationIJavaProjectRenameParticipant"
+            id="org.eclipse.jdt.debug.refactoring.launchConfigurationIJavaProjectRename">
+         <enablement>
+           <with variable="affectedProjects">
+             <iterate>
+               <test property="projectNature" value="org.eclipse.jdt.core.javanature"/>
+             </iterate>
+           </with>
+           <with variable="selection">
+             <count value="1"/>
+             <iterate>
+   	           <instanceof value="org.eclipse.jdt.core.IJavaProject"/>
+             </iterate>
+           </with>
+         </enablement>
+      </renameParticipant>
+<!--      <renameParticipant
+            class="org.eclipse.jdt.internal.debug.core.refactoring.JavaBreakpointITypeRenameParticipant"
+            id="org.eclipse.jdt.debug.refactoring.javaBreakpointITypeRename">
+         <enablement>
+           <with variable="affectedProjects">
+             <iterate>
+               <test property="projectNature" value="org.eclipse.jdt.core.javanature"/>
+             </iterate>
+           </with>
+           <with variable="selection">
+             <count value="1"/>
+             <iterate>
+   	           <instanceof value="org.eclipse.jdt.core.IType"/>
+             </iterate>
+           </with>
+         </enablement>
+      </renameParticipant> -->
+   </extension>
+<!--   <extension point="org.eclipse.jdt.ui.moveParticipants">
+      <renameParticipant
+            class="org.eclipse.jdt.internal.debug.core.refactoring.LaunchConfigurationITypeMoveParticipant"
+            id="org.eclipse.jdt.debug.refactoring.launchConfigurationITypeMove">
+         <enablement>
+           <with variable="affectedProjects">
+             <iterate>
+               <test property="projectNature" value="org.eclipse.jdt.core.javanature"/>
+             </iterate>
+           </with>
+           <with variable="selection">
+             <count value="1"/>
+             <iterate>
+   	           <instanceof value="org.eclipse.jdt.core.IType"/>
+             </iterate>
+           </with>
+         </enablement>
+      </renameParticipant> 
+	</extension>  -->
 </plugin>
