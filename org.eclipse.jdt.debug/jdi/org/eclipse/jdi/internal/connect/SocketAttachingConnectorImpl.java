@@ -60,6 +60,7 @@ public class SocketAttachingConnectorImpl extends ConnectorImpl implements Attac
 		
         // Timeout
         IntegerArgumentImpl timeoutArg = new IntegerArgumentImpl("timeout", ConnectMessages.getString("SocketAttachingConnectorImpl.1"), ConnectMessages.getString("SocketAttachingConnectorImpl.2"), false, 0, Integer.MAX_VALUE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        timeoutArg.setValue(0); // by default wait forever
         arguments.put(timeoutArg.name(), timeoutArg);
         
 		return arguments;
