@@ -70,6 +70,14 @@ public class EventDispatcher implements Runnable {
 	private List fDebugEvents = new ArrayList(5);
 	
 	/**
+	 * Collection of deferred events for conditional breakpoints.
+	 * Conditional breakpoints are handled after all other events
+	 * in an event set, such that we only evaluate conditions
+	 * if required.
+	 */
+	private List fDeferredEvents = new ArrayList(5);
+	
+	/**
 	 * Constructs a new event dispatcher listening for events
 	 * originating from the specified debug target's underlying
 	 * VM.
@@ -92,7 +100,6 @@ public class EventDispatcher implements Runnable {
 			return;
 		}
 		EventIterator iter= eventSet.eventIterator();
-		List deferredEvents= new ArrayList();
 		boolean vote = false; 
 		boolean resume = true;
 		while (iter.hasNext()) {
@@ -111,7 +118,7 @@ public class EventDispatcher implements Runnable {
 					// other listeners vote.
 					try {
 						if (((IJavaLineBreakpoint)listener).isConditionEnabled()) {
-							deferredEvents.add(event);
+							defer(event);
 							continue;
 						}
 					} catch (CoreException exception) {
@@ -138,24 +145,30 @@ public class EventDispatcher implements Runnable {
 		}
 		
 		if (resume) {
-			Iterator deferredIter= deferredEvents.iterator();
-			while (deferredIter.hasNext()) {
-				if (isShutdown()) {
-					return;
-				}
-				Event event= (Event)deferredIter.next();
-				if (event == null) {
-					continue;
-				}
-				// Dispatch events to registered listeners, if any
-				IJDIEventListener listener = (IJDIEventListener)fEventHandlers.get(event.request());
-				if (listener != null) {
-					vote = true;
-					resume = listener.handleEvent(event, fTarget) && resume;
-					continue;
+			// process deferred events if event handlers have voted
+			// to resume the thread
+			if (!getDeferredEvents().isEmpty()) {
+				Iterator deferredIter= getDeferredEvents().iterator();
+				while (deferredIter.hasNext()) {
+					if (isShutdown()) {
+						return;
+					}
+					Event event= (Event)deferredIter.next();
+					if (event == null) {
+						continue;
+					}
+					// Dispatch events to registered listeners, if any
+					IJDIEventListener listener = (IJDIEventListener)fEventHandlers.get(event.request());
+					if (listener != null) {
+						vote = true;
+						resume = listener.handleEvent(event, fTarget) && resume;
+						continue;
+					}
 				}
 			}
 		}
+		// clear any deferred events (processed or not)
+		getDeferredEvents().clear();
 		
 		fireEvents();
 		
@@ -263,6 +276,25 @@ public class EventDispatcher implements Runnable {
 		fDebugEvents.clear();
 		DebugPlugin.getDefault().fireDebugEventSet(events);
 	}
-	
+
+	/**
+	 * Defer the given event, to be handled after all other events in
+	 * an event set.
+	 * 
+	 * @param event event to defer
+	 */
+	protected void defer(Event event) {
+		fDeferredEvents.add(event);
+	}
+
+	/**
+	 * Returns the events currently deferred.
+	 * 
+	 * @return deferred events
+	 */
+	protected List getDeferredEvents() {
+		return fDeferredEvents;
+	}
+		
 }
 
