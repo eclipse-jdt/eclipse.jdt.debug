@@ -82,7 +82,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	protected ILaunchConfiguration fLaunchConfiguration;
 	
 	/**
-	 * @see ILaunchConfigurationTab#createControl(Composite)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -221,13 +221,13 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		boolean useDefault = true;
@@ -304,7 +304,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (isDirty()) {
@@ -335,14 +335,14 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#getName()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return LauncherMessages.getString("JavaClasspathTab.Cla&ss_path_3"); //$NON-NLS-1$
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#getImage()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
 		if (fImage == null) {
@@ -384,7 +384,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		}
 	}
 	/**
-	 * @see ILaunchConfigurationTab#dispose()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
 		if (fClasspathViewer != null) {

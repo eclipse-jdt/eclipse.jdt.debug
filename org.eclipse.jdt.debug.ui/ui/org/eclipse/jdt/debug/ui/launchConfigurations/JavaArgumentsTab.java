@@ -71,7 +71,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#createControl(Composite)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -118,13 +118,13 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	}
 			
 	/**
-	 * @see ILaunchConfigurationTab#dispose()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
 	}
 		
 	/**
-	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
 		return fWorkingDirectoryBlock.isValid(config);
@@ -133,7 +133,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	/**
 	 * Defaults are empty.
 	 * 
-	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
@@ -142,7 +142,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
@@ -156,7 +156,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getAttributeValueFrom(fPrgmArgumentsText));
@@ -178,14 +178,14 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#getName()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return LauncherMessages.getString("JavaArgumentsTab.&Arguments_16"); //$NON-NLS-1$
 	}	
 	
 	/**
-	 * @see ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
 	 */
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		super.setLaunchConfigurationDialog(dialog);
@@ -193,7 +193,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		fVMArgumentsBlock.setLaunchConfigurationDialog(dialog);
 	}	
 	/**
-	 * @see ILaunchConfigurationTab#getErrorMessage()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
 	 */
 	public String getErrorMessage() {
 		String m = super.getErrorMessage();
@@ -204,7 +204,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#getMessage()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
 	 */
 	public String getMessage() {
 		String m = super.getMessage();
@@ -215,7 +215,7 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#getImage()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
 		return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);

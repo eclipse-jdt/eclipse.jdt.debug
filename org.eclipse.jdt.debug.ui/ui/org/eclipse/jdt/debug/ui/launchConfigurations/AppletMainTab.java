@@ -84,7 +84,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
 	/**
-	 * @see ILaunchConfigurationTab#createControl(Composite)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -213,7 +213,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
@@ -259,7 +259,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	}
 		
 	/**
-	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)fProjText.getText());
@@ -282,7 +282,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	}
 			
 	/**
-	 * @see ILaunchConfigurationTab#dispose()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
 	}
@@ -396,7 +396,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 
 
 	/**
-	 * @see ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		
@@ -451,7 +451,7 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		IJavaElement je = getContext();
@@ -532,14 +532,14 @@ public class AppletMainTab extends JavaLaunchConfigurationTab {
 	}
 
 	/**
-	 * @see ILaunchConfigurationTab#getName()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return LauncherMessages.getString("appletlauncher.maintab.name"); //$NON-NLS-1$
 	}
 			
 	/**
-	 * @see ILaunchConfigurationTab#getImage()
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
