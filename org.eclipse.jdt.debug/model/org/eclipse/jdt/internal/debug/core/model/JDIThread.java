@@ -2485,7 +2485,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		
 		public void addRunnable(Runnable runnable) {
-			fRunnables.add(runnable);
+		    synchronized (fRunnables) {
+		        fRunnables.add(runnable);
+		    }
 			schedule();
 		}
 		
