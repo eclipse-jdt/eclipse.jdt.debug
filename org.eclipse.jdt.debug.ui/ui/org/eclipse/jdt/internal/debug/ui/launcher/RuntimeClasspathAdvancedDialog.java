@@ -23,6 +23,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -117,6 +119,14 @@ public class RuntimeClasspathAdvancedDialog extends Dialog {
 		}	
 		fContainerCombo.setItems(names);
 		fContainerCombo.select(0);
+		fContainerCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent arg0) {
+				for (int i = 0; i < fButtons.length; i++) {
+					fButtons[i].setSelection(false);
+				}
+				fAddContainerButton.setSelection(true);
+			}
+		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.grabExcessHorizontalSpace = true;
 		gd.widthHint = convertWidthInCharsToPixels(maxLength + 5);
