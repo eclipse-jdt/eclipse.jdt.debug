@@ -250,6 +250,24 @@ public interface IJavaLaunchConfigurationConstants {
 	 * </p>
 	 */
 	public static final int ERR_VM_CONNECT_TIMEOUT = 117;	
+	
+	/**
+	 * Status code indicating that a free socket was not available to
+	 * communicate with the VM.
+	 */
+	public static final int ERR_NO_SOCKET_AVAILABLE = 118;		
+	
+	/**
+	 * Status code indicating that the JDI connector required for a
+	 * debug launch was not available.
+	 */
+	public static final int ERR_CONNECTOR_NOT_AVAILABLE = 119;	
+	
+	/**
+	 * Status code indicating that the debugger failed to connect
+	 * to the VM.
+	 */
+	public static final int ERR_CONNECTION_FAILED = 120;		
 
 	/**
 	 * Status code indicating an unexpected internal error.

@@ -19,6 +19,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.AbstractVMRunner;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
@@ -67,10 +68,6 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return location.getAbsolutePath();
 	}
 	
-	protected static IStatus createStatus(String message, Throwable th) {
-		return new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IStatus.ERROR, message, th);
-	}
-	
 	/**
 	 * Returns the working directory to use for the launched VM,
 	 * or <code>null</code> if the working directory is to be inherited
@@ -86,12 +83,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 			return null;
 		}
 		File dir = new File(path);
-		if (dir.isDirectory()) {
-			return dir;
-		} else {
-			throw new CoreException(createStatus(
-				MessageFormat.format("Specified working directory does not exist or is not a directory: {0}", new String[] {path}), null)); //$NON-NLS-1$			
+		if (!dir.isDirectory()) {
+			abort(MessageFormat.format("Specified working directory does not exist or is not a directory: {0}", new String[] {path}), null, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 		}
+		return dir;
 	}
 	
 	/**

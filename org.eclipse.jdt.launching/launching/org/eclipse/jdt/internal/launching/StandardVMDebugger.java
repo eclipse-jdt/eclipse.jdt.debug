@@ -25,6 +25,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jdt.launching.VMRunnerResult;
 
@@ -53,7 +54,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
 		if (port == -1) {
-			throw new CoreException(createStatus("Could not find a free port for the debugger", null));
+			abort("Could not find a free socket for the debugger.", null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE);
 		}
 		
 		String program= constructProgramString();
@@ -94,7 +95,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		ListeningConnector connector= getConnector();
 		if (connector == null) {
-			throw new CoreException(createStatus("Couldn't find an appropriate debug connector", null));
+			abort("Couldn't find an appropriate debug connector", null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE);
 		}
 		Map map= connector.defaultArguments();
 		int timeout= fVMInstance.getDebuggerTimeout();
@@ -150,9 +151,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 				connector.stopListening(map);
 			}
 		} catch (IOException e) {
-			throw new CoreException(createStatus("Couldn't connect to VM", e)); 
+			abort("Couldn't connect to VM", e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED); 
 		} catch (IllegalConnectorArgumentsException e) {
-			throw new CoreException(createStatus("Couldn't connect to VM", e));
+			abort("Couldn't connect to VM", e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED); 
 		}
 		if (p != null) {
 			p.destroy();
@@ -166,7 +167,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 	public VMRunnerResult run(ILaunchConfiguration config) throws CoreException {
 		int port= SocketUtil.findUnusedLocalPort("", 5000, 15000); //$NON-NLS-1$
 		if (port == -1) {
-			throw new CoreException(createStatus("Could not find a free port for the debugger", null));
+			abort("Could not find a free socket for the debugger.", null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE);
 		}
 		
 		String program= constructProgramString();
@@ -207,7 +208,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 
 		ListeningConnector connector= getConnector();
 		if (connector == null) {
-			throw new CoreException(createStatus("Couldn't find an appropriate debug connector", null));
+			abort("Couldn't find an appropriate debug connector", null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE);
 		}
 		Map map= connector.defaultArguments();
 		int timeout= fVMInstance.getDebuggerTimeout();
@@ -264,9 +265,9 @@ public class StandardVMDebugger extends StandardVMRunner {
 				connector.stopListening(map);
 			}
 		} catch (IOException e) {
-			throw new CoreException(createStatus("Couldn't connect to VM", e));
+			abort("Couldn't connect to VM", e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED); 
 		} catch (IllegalConnectorArgumentsException e) {
-			throw new CoreException(createStatus("Couldn't connect to VM", e));
+			abort("Couldn't connect to VM", e, IJavaLaunchConfigurationConstants.ERR_CONNECTION_FAILED); 
 		}
 		if (p != null) {
 			p.destroy();
