@@ -20,6 +20,7 @@
       <import plugin="org.eclipse.ui.workbench.texteditor" optional="true"/>
       <import plugin="org.eclipse.ui.editors" optional="true"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.filebuffers"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.variables"/>
       <import plugin="org.eclipse.core.expressions"/>
@@ -2465,5 +2466,25 @@
             %NewJavaScrapbookPage.description
          </description>
       </wizard>
+   </extension>
+   
+    <extension
+         id="org.eclipse.jdt.debug.ui.SnippetDocumentFactory"
+         name="%snippetDocumentFactory.name"
+         point="org.eclipse.core.filebuffers.documentCreation">
+      <factory
+            extensions="jpage"
+            class="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetDocumentFactory">
+      </factory>
+   </extension>
+   
+   <extension
+         id="org.eclipse.jdt.debug.ui.SnippetDocumentSetupParticipant"
+         name="%snippetDocumentSetupParticipant.name"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            extensions="jpage"
+            class="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetDocumentSetupParticipant">
+      </participant>
    </extension>
 </plugin>

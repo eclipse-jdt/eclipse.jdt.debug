@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -65,7 +64,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -79,7 +77,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	 */
 	private static JDIDebugUIPlugin fgPlugin;
 	
-	private FileDocumentProvider fSnippetDocumentProvider;
+	private IDocumentProvider fSnippetDocumentProvider;
 	
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
 	
@@ -211,8 +209,9 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	}	
 	
 	public IDocumentProvider getSnippetDocumentProvider() {
-		if (fSnippetDocumentProvider == null)
+		if (fSnippetDocumentProvider == null) {
 			fSnippetDocumentProvider= new SnippetFileDocumentProvider();
+		}
 		return fSnippetDocumentProvider;
 	}	
 	
