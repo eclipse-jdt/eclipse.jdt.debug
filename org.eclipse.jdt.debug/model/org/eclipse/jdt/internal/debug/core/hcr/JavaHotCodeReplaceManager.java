@@ -811,7 +811,27 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			// create the method
 			return null;
 		}
-		IType type= unit.getType(getUnqualifiedName(declaringTypeName));;
+		String typeName = getUnqualifiedName(declaringTypeName);
+		int index = typeName.indexOf('$');
+		IType type = null;
+		if (index > 0) {
+			String remaining = typeName.substring(index + 1);
+			typeName = typeName.substring(0, index);
+			type = unit.getType(typeName);
+			while (remaining != null) {
+				index = remaining.indexOf('$');
+				if (index > 0) {
+					typeName = remaining.substring(0, index);
+					remaining = remaining.substring(index + 1);
+				} else {
+					typeName = remaining;
+					remaining = null;
+				}
+				type = type.getType(typeName);
+			}
+		} else {
+			type = unit.getType(typeName);
+		}
 		if (type != null) {
 			return type.getMethod(methodName, arguments);
 		}
