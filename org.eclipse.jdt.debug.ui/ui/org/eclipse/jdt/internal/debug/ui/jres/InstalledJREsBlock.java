@@ -53,6 +53,8 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -100,6 +102,9 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	private float fWeight1 = 1/3F;
 	private float fWeight2 = 1/3F;
 	private float fWeight3 = 1/3F;
+	
+	// index of column used for sorting
+	private int fSortColumn = 0;
 	
 	// Make sure that VMStandin ids are unique if multiple calls to System.currentTimeMillis()
 	// happen very quickly
@@ -189,38 +194,33 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 
 		TableColumn column1= new TableColumn(table, SWT.NULL);
 		column1.setText(JREMessages.getString("InstalledJREsBlock.0")); //$NON-NLS-1$
+		column1.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				sortByName();
+			}
+		});
 	
 		TableColumn column2= new TableColumn(table, SWT.NULL);
 		column2.setText(JREMessages.getString("InstalledJREsBlock.1")); //$NON-NLS-1$
+		column2.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				sortByLocation();
+			}
+		});
 		
 		TableColumn column3= new TableColumn(table, SWT.NULL);
 		column3.setText(JREMessages.getString("InstalledJREsBlock.2")); //$NON-NLS-1$
-
-		fVMList= new CheckboxTableViewer(table);
+		column3.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				sortByType();
+			}
+		});
 		
-		fVMList.setSorter(new ViewerSorter() {
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
-					IVMInstall left= (IVMInstall)e1;
-					IVMInstall right= (IVMInstall)e2;
-					String leftType= left.getVMInstallType().getName();
-					String rightType= right.getVMInstallType().getName();
-					int res= leftType.compareToIgnoreCase(rightType);
-					if (res != 0) {
-						return res;
-					}
-					return left.getName().compareToIgnoreCase(right.getName());
-				}
-				return super.compare(viewer, e1, e2);
-			}
-			
-			public boolean isSorterProperty(Object element, String property) {
-				return true;
-			}
-		});		
-			
+		fVMList= new CheckboxTableViewer(table);			
 		fVMList.setLabelProvider(new VMLabelProvider());
 		fVMList.setContentProvider(new JREsContentProvider());
+		// by default, sort by name
+		sortByName();
 		
 		fVMList.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent evt) {
@@ -290,6 +290,75 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 
 	}
 	
+	/**
+	 * Sorts by VM type, and name within type.
+	 */
+	private void sortByType() {
+		fVMList.setSorter(new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
+					IVMInstall left= (IVMInstall)e1;
+					IVMInstall right= (IVMInstall)e2;
+					String leftType= left.getVMInstallType().getName();
+					String rightType= right.getVMInstallType().getName();
+					int res= leftType.compareToIgnoreCase(rightType);
+					if (res != 0) {
+						return res;
+					}
+					return left.getName().compareToIgnoreCase(right.getName());
+				}
+				return super.compare(viewer, e1, e2);
+			}
+			
+			public boolean isSorterProperty(Object element, String property) {
+				return true;
+			}
+		});	
+		fSortColumn = 3;			
+	}
+	
+	/**
+	 * Sorts by VM name.
+	 */
+	private void sortByName() {
+		fVMList.setSorter(new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
+					IVMInstall left= (IVMInstall)e1;
+					IVMInstall right= (IVMInstall)e2;
+					return left.getName().compareToIgnoreCase(right.getName());
+				}
+				return super.compare(viewer, e1, e2);
+			}
+			
+			public boolean isSorterProperty(Object element, String property) {
+				return true;
+			}
+		});		
+		fSortColumn = 1;		
+	}
+	
+	/**
+	 * Sorts by VM location.
+	 */
+	private void sortByLocation() {
+		fVMList.setSorter(new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				if ((e1 instanceof IVMInstall) && (e2 instanceof IVMInstall)) {
+					IVMInstall left= (IVMInstall)e1;
+					IVMInstall right= (IVMInstall)e2;
+					return left.getInstallLocation().getAbsolutePath().compareToIgnoreCase(right.getInstallLocation().getAbsolutePath());
+				}
+				return super.compare(viewer, e1, e2);
+			}
+			
+			public boolean isSorterProperty(Object element, String property) {
+				return true;
+			}
+		});		
+		fSortColumn = 2;		
+	}
+		
 	private void enableButtons() {
 		int selectionCount= ((IStructuredSelection)fVMList.getSelection()).size();
 		fEditButton.setEnabled(selectionCount == 1);
@@ -639,7 +708,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	}
 	
 	/**
-	 * Persist column width settings into the give dialog store, prefixed
+	 * Persist table settings into the give dialog store, prefixed
 	 * with the given key.
 	 * 
 	 * @param settings dialog store
@@ -649,6 +718,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		for (int i = 0; i < 3; i++) {
 			saveColumn(settings, qualifier, i);
 		}
+		settings.put(qualifier + ".sortColumn", fSortColumn);
 	}
 	
 	private void saveColumn(IDialogSettings settings, String qualifier, int col) {
@@ -663,7 +733,7 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	}
 	
 	/**
-	 * Retsore column width settings from the given dialog store using the
+	 * Retsore table settings from the given dialog store using the
 	 * given key.
 	 * 
 	 * @param settings dialog settings store
@@ -674,6 +744,22 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 		fWeight2 = restoreColumnWeight(settings, qualifier, 1);
 		fWeight3 = restoreColumnWeight(settings, qualifier, 2);
 		fVMList.getTable().layout(true);
+		try {
+			fSortColumn = settings.getInt(qualifier + ".sortColumn");
+		} catch (NumberFormatException e) {
+			fSortColumn = 1;
+		}
+		switch (fSortColumn) {
+			case 1:
+				sortByName();
+				break;
+			case 2:
+				sortByLocation();
+				break;
+			case 3:
+				sortByType();
+				break;
+		}
 	}
 	
 	private float restoreColumnWeight(IDialogSettings settings, String qualifier, int col) {
