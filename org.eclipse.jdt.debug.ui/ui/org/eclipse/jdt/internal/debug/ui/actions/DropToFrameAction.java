@@ -9,9 +9,8 @@ import java.util.Iterator;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 
 public class DropToFrameAction extends ObjectActionDelegate {
 
@@ -35,7 +34,7 @@ public class DropToFrameAction extends ObjectActionDelegate {
 			} catch (DebugException de) {
 				String title= ActionMessages.getString("DropToFrameAction.Drop_to_Frame_1"); //$NON-NLS-1$
 				String message= ActionMessages.getString("DropToFrameAction.Exceptions_occurred_attempting_to_drop_to_frame._2"); //$NON-NLS-1$
-				ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell(), title, message, de.getStatus());
+				ExceptionHandler.handle(de, title, message);
 			}
 		}
 		update(action);

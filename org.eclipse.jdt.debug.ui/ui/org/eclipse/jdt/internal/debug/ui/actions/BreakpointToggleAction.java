@@ -15,15 +15,13 @@ import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 public abstract class BreakpointToggleAction implements IObjectActionDelegate, IBreakpointListener, IPartListener {
@@ -45,7 +43,7 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 			} catch (CoreException e) {
 				String title= ActionMessages.getString("BreakpointAction.Breakpoint_configuration_1"); //$NON-NLS-1$
 				String message= ActionMessages.getString("BreakpointAction.Exceptions_occurred_attempting_to_modify_breakpoint._2"); //$NON-NLS-1$
-				ErrorDialog.openError(JDIDebugUIPlugin.getActiveWorkbenchWindow().getShell(), title, message, e.getStatus());
+				ExceptionHandler.handle(e, title, message);
 			}			
 		}
 	}

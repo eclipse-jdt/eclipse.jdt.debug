@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -21,11 +20,10 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
+import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -62,8 +60,7 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 				BreakpointUtils.addRunToLineAttributes(attributes);
 				breakpoint= JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), getLineNumber(), -1, -1, 1, false, attributes);
 			} catch (CoreException ce) {
-				errorDialog(ce.getStatus());
-				JDIDebugUIPlugin.logError(ce);
+				ExceptionHandler.handle(ce, ActionMessages.getString("RunToLine.error.title1"), ActionMessages.getString("RunToLine.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			} 
 			target.breakpointAdded(breakpoint);
@@ -141,10 +138,6 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 		}
 		
 		return null;
-	}
-	protected void errorDialog(IStatus status) {
-		Shell shell= getTextEditor().getSite().getShell();
-		ErrorDialog.openError(shell, ActionMessages.getString("RunToLine.error.title1"), ActionMessages.getString("RunToLine.error.message1"), status); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
