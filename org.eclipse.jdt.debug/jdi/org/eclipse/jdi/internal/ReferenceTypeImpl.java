@@ -997,7 +997,6 @@ public abstract class ReferenceTypeImpl extends TypeImpl implements ReferenceTyp
 			return refTypeBootstrap;
 		}
 		
-		ClassLoaderReferenceImpl loaderImpl= (ClassLoaderReferenceImpl)classLoader;
 		List visibleTypes;
 		iter= classes.iterator();
 		while (iter.hasNext()) {
