@@ -262,52 +262,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		// Important: only enable a request after it has been configured
 		updateEnabledState(request);
 	}	
-	
-	/**
-	 * Called when a breakpoint event is encountered
-	 */
-	public void expireHitCount(Event event) {
-		EventRequest request= event.request();
-		Integer requestCount= (Integer) request.getProperty(IJavaDebugConstants.HIT_COUNT);
-		if (requestCount != null) {
-			try {
-				request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.TRUE);
-				setEnabled(false);
-				// make a note that we auto-disabled this breakpoint.
-				setExpired(true);
-			} catch (CoreException ce) {
-				logError(ce);
-			}
-		}
-	}	
 		
-	/**
-	 * @see IJavaBreakpoint#handleEvent(Event)
-	 */
-	public boolean handleEvent(Event event, JDIDebugTarget target) {
-		if (event instanceof ClassPrepareEvent) {
-			// create a new request
-			ClassPrepareEvent cpe = (ClassPrepareEvent)event;
-			try {
-				createRequest(target, cpe.referenceType());
-			} catch (CoreException e) {
-				logError(e);
-			}
-			return true;
-		} else {
-			ThreadReference threadRef= ((LocatableEvent)event).thread();
-			JDIThread thread= target.findThread(threadRef);		
-			if (thread == null) {
-				return true;
-			} else {
-				thread.handleSuspendForBreakpoint(this);
-				expireHitCount(event);	
-				return false;
-			}						
-		}
-
-	}		
-
 	/**
 	 * @see JavaBreakpoint#isSupportedBy(VirtualMachine)
 	 */

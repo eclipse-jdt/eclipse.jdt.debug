@@ -155,29 +155,11 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 			return request;
 	}
 	
-	protected EventRequest createRequest(JDIDebugTarget target, ReferenceType type)  throws CoreException {
+	protected void createRequest(JDIDebugTarget target, ReferenceType type)  throws CoreException {
 			ExceptionRequest request= newRequest(target, type);
 			registerRequest(target, request);
-			return request;
 	}
-		
-	/**
-	 * @see JavaBreakpoint#handleEvent(Event)
-	 */
-	public boolean handleEvent(Event event, JDIDebugTarget target){
-		if (!(event instanceof ExceptionEvent)) {
-			return true;
-		}
-		ThreadReference threadRef= ((ExceptionEvent)event).thread();
-		JDIThread thread= target.findThread(threadRef);
-		if (thread == null) {
-			return true;
-		} else {
-			thread.handleSuspendForBreakpoint(this);
-			return false;
-		}
-	}
-	
+			
 	/**
 	 * @see JavaBreakpoint#isSupportedBy(VirtualMachine)
 	 */

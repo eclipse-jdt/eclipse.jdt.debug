@@ -10,7 +10,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.*;
 
-import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.*;
+import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
 
 public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener {
@@ -91,6 +92,52 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		target.removeJDIEventListener(this, oldRequest);
 		target.addJDIEventListener(this, newRequest);
 	}
+
+	/**
+	 * @see IJavaBreakpoint#handleEvent(Event)
+	 */
+	public boolean handleEvent(Event event, JDIDebugTarget target) {
+		if (event instanceof ClassPrepareEvent) {
+			// create a new request
+			ClassPrepareEvent cpe = (ClassPrepareEvent)event;
+			try {
+				createRequest(target, cpe.referenceType());
+			} catch (CoreException e) {
+				logError(e);
+			}
+			return true;
+		} else {
+			ThreadReference threadRef= ((LocatableEvent)event).thread();
+			JDIThread thread= target.findThread(threadRef);		
+			if (thread == null) {
+				return true;
+			} else {
+				thread.handleSuspendForBreakpoint(this);
+				expireHitCount(event);	
+				return false;
+			}						
+		}		
+	}	
+	
+	/**
+	 * Called when a breakpoint event is encountered
+	 */
+	public void expireHitCount(Event event) {
+		EventRequest request= event.request();
+		Integer requestCount= (Integer) request.getProperty(IJavaDebugConstants.HIT_COUNT);
+		if (requestCount != null) {
+			try {
+				request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.TRUE);
+				setEnabled(false);
+				// make a note that we auto-disabled this breakpoint.
+				setExpired(true);
+			} catch (CoreException ce) {
+				logError(ce);
+			}
+		}
+	}	
+
+	protected abstract void createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException;
 	
 	protected abstract void addToTarget(JDIDebugTarget target) throws CoreException;
 	
