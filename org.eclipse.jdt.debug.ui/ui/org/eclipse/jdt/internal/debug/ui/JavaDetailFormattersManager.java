@@ -14,14 +14,12 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.sun.jdi.InvocationException;
-
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.Message;
@@ -38,7 +36,9 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-public class JavaDetailFormattersManager implements IPropertyChangeListener, IDebugEventSetListener, ILaunchListener {
+import com.sun.jdi.InvocationException;
+
+public class JavaDetailFormattersManager implements IPropertyChangeListener, IDebugEventSetListener, ILaunchesListener {
 	
 	/**
 	 * The default detail formatters manager.	 */
@@ -209,25 +209,28 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(ILaunch)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(ILaunch[])
 	 */
-	public void launchAdded(ILaunch launch) {
+	public void launchesAdded(ILaunch[] launches) {
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(ILaunch)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(ILaunch[])
 	 */
-	public void launchChanged(ILaunch launch) {
+	public void launchesChanged(ILaunch[] launches) {
 	}
 
 	/**
-	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(ILaunch)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(ILaunch[])
 	 */
-	public void launchRemoved(ILaunch launch) {
-		IDebugTarget[] debugTargets= launch.getDebugTargets();
-		for (int i = 0; i < debugTargets.length; i++) {
-			if (debugTargets[i] instanceof JDIDebugTarget) {
-				deleteCacheForTarget((JDIDebugTarget)debugTargets[i]);		
+	public void launchesRemoved(ILaunch[] launches) {
+		for (int i = 0; i < launches.length; i++) {
+			ILaunch launch = launches[i];
+			IDebugTarget[] debugTargets= launch.getDebugTargets();
+			for (int j = 0; j < debugTargets.length; j++) {
+				if (debugTargets[j] instanceof JDIDebugTarget) {
+					deleteCacheForTarget((JDIDebugTarget)debugTargets[j]);		
+				}
 			}
 		}
 	}

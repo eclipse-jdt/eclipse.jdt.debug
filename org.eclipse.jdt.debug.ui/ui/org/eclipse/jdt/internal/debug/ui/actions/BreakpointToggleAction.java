@@ -13,8 +13,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
@@ -26,7 +26,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 
-public abstract class BreakpointToggleAction implements IObjectActionDelegate, IBreakpointListener, IPartListener {
+public abstract class BreakpointToggleAction implements IObjectActionDelegate, IBreakpointsListener, IPartListener {
 	
 	private IStructuredSelection fSelection;
 	private IAction fAction;
@@ -122,30 +122,34 @@ public abstract class BreakpointToggleAction implements IObjectActionDelegate, I
 	}
 	
 	/**
-	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
+	 * @see IBreakpointsListener#breakpointsAdded(IBreakpoint[])
 	 */
-	public void breakpointAdded(IBreakpoint breakpoint) {
+	public void breakpointsAdded(IBreakpoint[] breakpoints) {
 	}
 
 	/**
-	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
+	 * @see IBreakpointsListener#breakpointsChanged(IBreakpoint[], IMarkerDelta[])
 	 */
-	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 		if (getAction() != null) {
 			IStructuredSelection selection= getStructuredSelection();
 			if (selection != null) {
 				IBreakpoint selectedBreakpoint= (IBreakpoint)selection.getFirstElement();
-				if (selectedBreakpoint.equals(breakpoint)) {
-					selectionChanged(getAction(), selection);
+				for (int i = 0; i < breakpoints.length; i++) {
+					IBreakpoint breakpoint = breakpoints[i];
+					if (selectedBreakpoint.equals(breakpoint)) {
+						selectionChanged(getAction(), selection);
+						return;
+					}
 				}
 			}			
 		}
 	}
 
 	/**
-	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
+	 * @see IBreakpointsListener#breakpointsRemoved(IBreakpoint[], IMarkerDelta[])
 	 */
-	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
 	}
 	
 	protected IWorkbenchPart getPart() {
