@@ -1155,15 +1155,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected String getExceptionBreakpointText(IJavaExceptionBreakpoint breakpoint) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
-		IType type = BreakpointUtils.getType(breakpoint);
-		if (type != null) {
-			boolean showQualified= isShowQualifiedNames();
-			if (showQualified) {
-				buffer.append(type.getFullyQualifiedName());
-			} else {
-				buffer.append(type.getElementName());
-			}
-		}
+		String typeName = breakpoint.getTypeName();
+		buffer.append(getQualifiedName(typeName));
 		int hitCount= breakpoint.getHitCount();
 		if (hitCount > 0) {
 			buffer.append(" ["); //$NON-NLS-1$
@@ -1199,58 +1192,50 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 
 	protected String getLineBreakpointText(IJavaLineBreakpoint breakpoint) throws CoreException {
 
-		boolean showQualified= isShowQualifiedNames();
-		IType type= BreakpointUtils.getType(breakpoint);
+		String typeName= breakpoint.getTypeName();
 		IMember member= BreakpointUtils.getMember(breakpoint);
-		if (type != null) {
-			StringBuffer label= new StringBuffer();
-			if (showQualified) {
-				label.append(type.getFullyQualifiedName());
-			} else {
-				label.append(type.getElementName());
-			}
-			int lineNumber= breakpoint.getLineNumber();
-			if (lineNumber > 0) {
-				label.append(" ["); //$NON-NLS-1$
-				label.append(DebugUIMessages.getString("JDIModelPresentation.line__65")); //$NON-NLS-1$
-				label.append(' ');
-				label.append(lineNumber);
-				label.append(']');
+		StringBuffer label= new StringBuffer();
+		label.append(getQualifiedName(typeName));
+		int lineNumber= breakpoint.getLineNumber();
+		if (lineNumber > 0) {
+			label.append(" ["); //$NON-NLS-1$
+			label.append(DebugUIMessages.getString("JDIModelPresentation.line__65")); //$NON-NLS-1$
+			label.append(' ');
+			label.append(lineNumber);
+			label.append(']');
 
-			}
-			int hitCount= breakpoint.getHitCount();
-			if (hitCount > 0) {
-				label.append(" ["); //$NON-NLS-1$
-				label.append(DebugUIMessages.getString("JDIModelPresentation.hit_count__67")); //$NON-NLS-1$
-				label.append(' ');
-				label.append(hitCount);
-				label.append(']');
-			}
-			
-			appendSuspendPolicy(breakpoint,label);
-			appendThreadFilter(breakpoint, label);
-			
-			if (breakpoint instanceof IJavaMethodBreakpoint) {
-				IJavaMethodBreakpoint mbp = (IJavaMethodBreakpoint)breakpoint;
-				boolean entry = mbp.isEntry();
-				boolean exit = mbp.isExit();
-				if (entry && exit) {
-					label.append(DebugUIMessages.getString("JDIModelPresentation.entry_and_exit")); //$NON-NLS-1$
-				} else if (entry) {
-					label.append(DebugUIMessages.getString("JDIModelPresentation.entry")); //$NON-NLS-1$
-				} else if (exit) {
-					label.append(DebugUIMessages.getString("JDIModelPresentation.exit")); //$NON-NLS-1$
-				}
-			}
-						
-			if (member != null) {
-				label.append(" - "); //$NON-NLS-1$
-				label.append(fJavaLabelProvider.getText(member));
-			}
-			
-			return label.toString();
 		}
-		return ""; //$NON-NLS-1$
+		int hitCount= breakpoint.getHitCount();
+		if (hitCount > 0) {
+			label.append(" ["); //$NON-NLS-1$
+			label.append(DebugUIMessages.getString("JDIModelPresentation.hit_count__67")); //$NON-NLS-1$
+			label.append(' ');
+			label.append(hitCount);
+			label.append(']');
+		}
+		
+		appendSuspendPolicy(breakpoint,label);
+		appendThreadFilter(breakpoint, label);
+		
+		if (breakpoint instanceof IJavaMethodBreakpoint) {
+			IJavaMethodBreakpoint mbp = (IJavaMethodBreakpoint)breakpoint;
+			boolean entry = mbp.isEntry();
+			boolean exit = mbp.isExit();
+			if (entry && exit) {
+				label.append(DebugUIMessages.getString("JDIModelPresentation.entry_and_exit")); //$NON-NLS-1$
+			} else if (entry) {
+				label.append(DebugUIMessages.getString("JDIModelPresentation.entry")); //$NON-NLS-1$
+			} else if (exit) {
+				label.append(DebugUIMessages.getString("JDIModelPresentation.exit")); //$NON-NLS-1$
+			}
+		}
+					
+		if (member != null) {
+			label.append(" - "); //$NON-NLS-1$
+			label.append(fJavaLabelProvider.getText(member));
+		}
+		
+		return label.toString();
 
 	}
 	

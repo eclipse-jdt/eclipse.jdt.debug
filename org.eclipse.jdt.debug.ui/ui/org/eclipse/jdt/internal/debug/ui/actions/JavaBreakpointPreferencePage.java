@@ -7,14 +7,12 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILineBreakpoint;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
-import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
@@ -169,11 +167,8 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	protected void createFieldEditors() {
 		IJavaBreakpoint breakpoint = getBreakpoint();
 		try {
-			IType iType= BreakpointUtils.getType(breakpoint);
-			if (iType != null) {
-				String type = iType.getFullyQualifiedName();
-				addField(createLabelEditor(getFieldEditorParent(), ActionMessages.getString("JavaBreakpointPreferencePage.Type___4"), type)); //$NON-NLS-1$
-			}
+			String type = breakpoint.getTypeName();
+			addField(createLabelEditor(getFieldEditorParent(), ActionMessages.getString("JavaBreakpointPreferencePage.Type___4"), type)); //$NON-NLS-1$
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.logError(ce);
 		}
