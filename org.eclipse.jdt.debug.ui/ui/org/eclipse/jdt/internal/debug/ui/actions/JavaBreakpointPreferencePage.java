@@ -7,7 +7,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILineBreakpoint;
-import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -16,6 +16,7 @@ import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -37,7 +38,7 @@ import org.eclipse.swt.widgets.Text;
  * preferences.  A JavaBreakpointPreferenceStore is used to interface between this
  * page and the breakpoint.
  * @see JavaBreakpointPropertiesDialog
- * @see JavaBrekapointPropertyStore
+ * @see JavaBreakpointPreferenceStore
  */
 public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 
@@ -180,6 +181,8 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	protected static final String VM_SUSPEND_POLICY = "VM"; //$NON-NLS-1$
 	protected static final String THREAD_SUSPEND_POLICY = "THREAD"; //$NON-NLS-1$
 
+	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
+	
 	protected JavaBreakpointPreferencePage(IJavaBreakpoint breakpoint) {
 		super(GRID);
 		setBreakpoint(breakpoint);
@@ -227,6 +230,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			if (typeName != null) {
 				addField(createLabelEditor(getFieldEditorParent(), ActionMessages.getString("JavaBreakpointPreferencePage.Type___4"), typeName)); //$NON-NLS-1$
 			}
+			createTypeSpecificLabelFieldEditors(breakpoint);
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}
@@ -276,6 +280,23 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			addField(createThreadFilterViewer(getFieldEditorParent()));
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
+		}
+	}
+
+	protected void createTypeSpecificLabelFieldEditors(IJavaBreakpoint breakpoint) throws CoreException {
+		if (breakpoint instanceof IJavaLineBreakpoint) {
+			IMember member= BreakpointUtils.getMember((IJavaLineBreakpoint)breakpoint);
+			if (member == null) {
+				return;
+			}
+			String label= ActionMessages.getString("JavaBreakpointPreferencePage.Member");//$NON-NLS-1$
+			String memberName= fJavaLabelProvider.getText(member);
+			if (breakpoint instanceof IJavaMethodBreakpoint) {
+				label= ActionMessages.getString("JavaBreakpointPreferencePage.Method");//$NON-NLS-1$
+			} else if (breakpoint instanceof IJavaWatchpoint) {
+				label= ActionMessages.getString("JavaBreakpointPreferencePage.Field");//$NON-NLS-1$
+			}
+			addField(createLabelEditor(getFieldEditorParent(), label, memberName)); 
 		}
 	}
 	
@@ -413,12 +434,6 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	protected FieldEditor createEnabledEditor(Composite parent) {	
 		BooleanFieldEditor bfe= new BooleanFieldEditor(JavaBreakpointPreferenceStore.ENABLED, ActionMessages.getString("JavaBreakpointPreferencePage.&Enabled_22"),parent); //$NON-NLS-1$
 		return bfe;
-	}
-
-	protected FieldEditor createLineNumberEditor(Composite parent) {	
-		IntegerFieldEditor ife= new IntegerFieldEditor(ActionMessages.getString("JavaBreakpointPreferencePage.LineNumber_23"), ActionMessages.getString("JavaBreakpointPreferencePage.Line_Number__24"),parent); //$NON-NLS-1$ //$NON-NLS-2$
-		ife.setValidRange(0, Integer.MAX_VALUE);
-		return ife;
 	}
 
 	protected FieldEditor createMethodEntryEditor(Composite parent) {	
