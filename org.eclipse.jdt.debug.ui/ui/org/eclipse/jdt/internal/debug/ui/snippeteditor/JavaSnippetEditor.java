@@ -45,7 +45,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
-import org.eclipse.jdt.core.ICompletionRequestor;
+import org.eclipse.jdt.core.CompletionRequestor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -660,7 +660,7 @@ public class JavaSnippetEditor extends AbstractDecoratedTextEditor implements ID
 		async(r);
 	}
 		
-	protected void codeComplete(ICompletionRequestor requestor) throws JavaModelException {
+	protected void codeComplete(CompletionRequestor requestor) throws JavaModelException {
 		ITextSelection selection= (ITextSelection)getSelectionProvider().getSelection();
 		int start= selection.getOffset();
 		String snippet= getSourceViewer().getDocument().get();	
