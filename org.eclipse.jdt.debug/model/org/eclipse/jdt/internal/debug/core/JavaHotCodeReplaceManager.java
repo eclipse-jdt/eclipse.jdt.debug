@@ -155,12 +155,15 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	protected void notifyFailedHCR(List targets, List resources, List qualifiedNames) {
 		Iterator iter= targets.iterator();
 		while (iter.hasNext()) {
-			JDIDebugTarget target= (JDIDebugTarget) iter.next();
-			if (!target.isTerminated() && !target.isDisconnected()) {
-				target.typesFailedReload(resources, qualifiedNames);
-			}
+			notifyFailedHCR((JDIDebugTarget) iter.next(), resources, qualifiedNames);
 		}
 	}
+	
+	protected void notifyFailedHCR(JDIDebugTarget target, List resources, List qualifiedNames) {
+		if (!target.isTerminated() && !target.isDisconnected()) {
+				target.typesFailedReload(resources, qualifiedNames);
+		}
+	}	
 	
 	/**
 	 * Returns the currently registered debug targets that support
@@ -208,6 +211,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			} catch (DebugException de) {
 				// target update failed
 				JDIDebugPlugin.logError(de);
+				notifyFailedHCR(target, resources, qualifiedNames);
 				fireHCRFailed(de);
 			}
 		}
@@ -244,7 +248,8 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	protected void attemptDropToFrame(IDebugTarget target, List replacedClassNames) throws DebugException {
 		IThread[] threads= target.getThreads();
 		List dropFrames= new ArrayList(1);
-		for (int i = 0; i < threads.length; i++) {
+		int numThreads= threads.length;
+		for (int i = 0; i < numThreads; i++) {
 			IThread thread= (IThread) threads[i];
 			if (thread.isSuspended()) {
 				IStackFrame[] frames= thread.getStackFrames();
@@ -265,7 +270,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				} else {
 					// if any thread that should drop does not support the drop,
 					// do not drop in any threads.
-					notifyFailedDrop(frames, replacedClassNames);
+					for (int j= 0; j < numThreads; j++) {
+						notifyFailedDrop(threads[i].getStackFrames(), replacedClassNames);
+					}
 					throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
 						DebugException.NOT_SUPPORTED, JDIDebugModelMessages.getString("JDIStackFrame.Drop_to_frame_not_supported"), null)); //$NON-NLS-1$
 				}
@@ -274,11 +281,13 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		
 		// All threads that want to drop to frame are able. Proceed with the drop
 		Iterator iter= dropFrames.iterator();
+		IJavaStackFrame dropFrame= null;
 		while (iter.hasNext()) {
 			try {
-				((IJavaStackFrame)iter.next()).dropToFrame();
+				dropFrame= ((IJavaStackFrame)iter.next());
+				dropFrame.dropToFrame();
 			} catch (DebugException de) {
-				continue;
+				notifyFailedDrop(dropFrame.getThread().getStackFrames(), replacedClassNames);
 			}
 		}
 	}

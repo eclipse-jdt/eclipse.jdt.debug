@@ -773,6 +773,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	
 	public void setOutOfSynch(boolean outOfSynch) {
 		fIsOutOfSynch= outOfSynch;
+		fireChangeEvent();
 	}
 	
 	/**
