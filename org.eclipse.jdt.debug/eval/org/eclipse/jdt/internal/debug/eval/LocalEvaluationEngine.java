@@ -36,7 +36,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.core.eval.ICodeSnippetRequestor;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
-import org.eclipse.jdt.debug.eval.ast.model.ICompiledExpression;
+import org.eclipse.jdt.debug.eval.model.ICompiledExpression;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaClassObject;
 import org.eclipse.jdt.debug.core.IJavaClassType;

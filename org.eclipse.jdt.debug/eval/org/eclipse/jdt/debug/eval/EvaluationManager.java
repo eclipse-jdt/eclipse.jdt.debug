@@ -19,7 +19,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.internal.debug.eval.LocalEvaluationEngine;
-import org.eclipse.jdt.internal.debug.eval.ast.ASTEvaluationEngine;
+import org.eclipse.jdt.internal.debug.eval.ast.engine.ASTEvaluationEngine;
 
 /**
  * The evaluation manager provides factory methods for

@@ -7,10 +7,11 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.ast.model.IRuntimeContext;
-import org.eclipse.jdt.debug.eval.ast.model.IValue;
-import org.eclipse.jdt.debug.eval.ast.model.IVariable;
-import org.eclipse.jdt.debug.eval.ast.model.IVirtualMachine;
+import org.eclipse.jdt.debug.eval.model.IRuntimeContext;
+import org.eclipse.jdt.debug.eval.model.IValue;
+import org.eclipse.jdt.debug.eval.model.IVariable;
+import org.eclipse.jdt.debug.eval.model.IVirtualMachine;
+import org.eclipse.jdt.internal.debug.eval.ast.instructions.Instruction;
 
 /**
  * @version 	1.0
