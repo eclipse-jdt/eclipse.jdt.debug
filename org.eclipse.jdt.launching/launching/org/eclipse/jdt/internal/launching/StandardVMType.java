@@ -145,7 +145,13 @@ public class StandardVMType extends AbstractVMInstallType {
 		
 		// Retrieve the 'java.home' system property.  If that directory doesn't exist, 
 		// return null.
-		File javaHome = new File (System.getProperty("java.home")); //$NON-NLS-1$
+		File javaHome; //$NON-NLS-1$
+		try {
+			javaHome= new File (System.getProperty("java.home")).getCanonicalFile();
+		} catch (IOException e) {
+			LaunchingPlugin.log(e);
+			return null;
+		}
 		if (!javaHome.exists()) {
 			return null;
 		}
