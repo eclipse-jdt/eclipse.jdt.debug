@@ -28,7 +28,8 @@ import org.eclipse.ui.console.IConsoleHyperlink;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
-import org.eclipse.ui.console.IPatternMatchHandler;
+import org.eclipse.ui.console.IPatternMatchListener;
+import org.eclipse.ui.console.PatternMatchEvent;
 
 public class IOConsoleHyperlinkTest implements IActionDelegate2, IWorkbenchWindowActionDelegate {
  
@@ -38,14 +39,14 @@ public class IOConsoleHyperlinkTest implements IActionDelegate2, IWorkbenchWindo
         IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
         manager.addConsoles(new IConsole[] { console });
 
-        IPatternMatchHandler listener = new IPatternMatchHandler() {
+        IPatternMatchListener listener = new IPatternMatchListener() {
             public String getPattern() {
                 return "1234567890"; //$NON-NLS-1$
             }
 
-            public void matchFound(String text, int offset) {
+            public void matchFound(PatternMatchEvent event) {
                 try {
-                    console.addHyperlink(new MyHyperlink(), offset, text.length());
+                    console.addHyperlink(new MyHyperlink(), event.getOffset(), event.getLength());
                 } catch (BadLocationException e) {
                     e.printStackTrace();
                 }
