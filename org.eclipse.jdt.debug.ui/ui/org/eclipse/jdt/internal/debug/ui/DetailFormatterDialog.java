@@ -361,7 +361,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		};
 		
 		SearchEngine engine= new SearchEngine(JavaCore.getWorkingCopies(null));
-		SearchPattern searchPattern = SearchPattern.createPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.ALL_OCCURRENCES, SearchPattern.R_PATTERN_MATCH, false);
+		SearchPattern searchPattern = SearchPattern.createPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.ALL_OCCURRENCES, SearchPattern.R_PATTERN_MATCH);
 		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
 		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
 		try {

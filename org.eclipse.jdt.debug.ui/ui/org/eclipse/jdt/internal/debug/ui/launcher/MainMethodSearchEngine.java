@@ -106,7 +106,7 @@ public class MainMethodSearchEngine{
 			searchTicks = 25;
 		}
 		
-		SearchPattern pattern = SearchPattern.createPattern("main(String[]) void", IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH, true); //$NON-NLS-1$
+		SearchPattern pattern = SearchPattern.createPattern("main(String[]) void", IJavaSearchConstants.METHOD, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE); //$NON-NLS-1$
 		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
 		MethodCollector collector = new MethodCollector(style);
 		IProgressMonitor searchMonitor = new SubProgressMonitor(pm, searchTicks);
