@@ -468,7 +468,6 @@ public class JavaJRETab extends JavaLaunchConfigurationTab {
 							name = vm.getName();
 						}
 					} catch (CoreException e) {
-						JDIDebugUIPlugin.log(e);
 					}
 					return MessageFormat.format(LauncherMessages.getString("JavaJRETab.9"), new String[]{name}); //$NON-NLS-1$
 				}
