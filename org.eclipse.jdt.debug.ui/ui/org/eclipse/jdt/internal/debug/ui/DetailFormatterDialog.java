@@ -132,21 +132,17 @@ public class DetailFormatterDialog extends StatusDialog {
 		
 		Font font = parent.getFont();
 		
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		container.setLayout(layout);
-		GridData gd= new GridData(GridData.FILL_BOTH);
-		container.setLayoutData(gd);
+		Composite container = (Composite)super.createDialogArea(parent);
 
 		// type name label
 		Label label= new Label(container, SWT.NONE);
 		label.setText(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_&name__2")); //$NON-NLS-1$
-		gd= new GridData(GridData.BEGINNING);
+		GridData gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
 		label.setFont(font);
 
 		Composite innerContainer = new Composite(container, SWT.NONE);
-		layout = new GridLayout();
+		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.numColumns = 2;
