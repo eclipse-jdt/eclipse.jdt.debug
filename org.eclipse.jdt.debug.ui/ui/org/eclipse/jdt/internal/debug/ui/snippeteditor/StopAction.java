@@ -11,7 +11,9 @@
 package org.eclipse.jdt.internal.debug.ui.snippeteditor;
 
 
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Stops the VM used to run a snippet.
@@ -29,6 +31,7 @@ public class StopAction extends SnippetAction {
 		setImageDescriptor(JavaDebugImages.DESC_TOOL_TERMSNIPPET);
 		setDisabledImageDescriptor(JavaDebugImages.DESC_TOOL_TERMSNIPPET_DISABLED);
 		setHoverImageDescriptor(JavaDebugImages.DESC_TOOL_TERMSNIPPET_HOVER);
+		WorkbenchHelp.setHelp(this, IJavaDebugHelpContextIds.TERMINATE_SCRAPBOOK_VM_ACTION);
 	}
 	
 	/**

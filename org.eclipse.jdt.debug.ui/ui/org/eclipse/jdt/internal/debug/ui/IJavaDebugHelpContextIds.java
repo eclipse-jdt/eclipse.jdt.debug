@@ -37,6 +37,7 @@ public interface IJavaDebugHelpContextIds {
 	public static final String INSTANCE_BREAKPOINT_SELECTION_DIALOG= PREFIX + "instance_breakpoint_selection_dialog_context"; //$NON-NLS-1$
 	public static final String ADD_WATCH_EXPRESSION_DIALOG= PREFIX + "add_watch_expression_dialog_context"; //$NON-NLS-1$
 	public static final String EDIT_WATCH_EXPRESSION_DIALOG= PREFIX + "edit_watch_expression_dialog_context"; //$NON-NLS-1$
+	public static final String SNIPPET_IMPORTS_DIALOG= PREFIX + "snippet_imports_dialog_context"; //$NON-NLS-1$
 
 	// Preference/Property pages
 	public static final String JRE_PREFERENCE_PAGE= PREFIX + "jre_preference_page_context"; //$NON-NLS-1$
@@ -68,6 +69,8 @@ public interface IJavaDebugHelpContextIds {
 	public static final String SHOW_STATICS_ACTION = PREFIX + "show_static_action_context"; //$NON-NLS-1$
 	public static final String SHOW_CONSTANTS_ACTION = PREFIX + "show_constants_action_context"; //$NON-NLS-1$
 	public static final String CLEAR_DISPLAY_VIEW_ACTION = PREFIX + "clear_display_view_action_context"; //$NON-NLS-1$
+	public static final String TERMINATE_SCRAPBOOK_VM_ACTION = PREFIX + "terminate_scrapbook_vm_action_context"; //$NON-NLS-1$
+	public static final String SCRAPBOOK_IMPORTS_ACTION = PREFIX + "scrapbook_imports_action_context"; //$NON-NLS-1$
 	
 	
 }

@@ -25,6 +25,7 @@ import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.Filter;
 import org.eclipse.jdt.internal.debug.ui.FilterLabelProvider;
 import org.eclipse.jdt.internal.debug.ui.FilterViewerSorter;
+import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -58,6 +59,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SelectImportsDialog extends TitleAreaDialog {
 
@@ -138,6 +140,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 	}
 	
 	private void createImportButtons(Composite container) {
+		WorkbenchHelp.setHelp(container, IJavaDebugHelpContextIds.SNIPPET_IMPORTS_DIALOG);
 		Font font = container.getFont();
 		
 		// button container
