@@ -1040,7 +1040,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
 		for (int i = 0; i < targets.length; i++) {
 			IDebugTarget target = targets[i];
-			MultiStatus multiStatus = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, "Exception occurred while updating breakpoint.", null);
+			MultiStatus multiStatus = new MultiStatus(JDIDebugPlugin.getUniqueIdentifier(), JDIDebugPlugin.INTERNAL_ERROR, JDIDebugBreakpointMessages.getString("JavaBreakpoint.Exception"), null); //$NON-NLS-1$
 			if (!target.isTerminated() && target instanceof JDIDebugTarget) {
 				try {
 					recreate((JDIDebugTarget)target);
