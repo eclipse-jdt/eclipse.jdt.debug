@@ -153,18 +153,9 @@ public class AddVMDialog extends StatusDialog {
 		
 	protected Control createDialogArea(Composite ancestor) {
 		Font font = ancestor.getFont();
-		initializeDialogUnits(ancestor);
 		createDialogFields();
-		Composite parent= new Composite(ancestor, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 3;
-		layout.marginWidth =
-			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.marginHeight =
-			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);		
-			
-		parent.setLayout(layout);
-		parent.setFont(font);
+		Composite parent = (Composite)super.createDialogArea(ancestor);
+		((GridLayout)parent.getLayout()).numColumns= 3;
 		
 		fVMTypeCombo.doFillIntoGrid(parent, 3);
 		((GridData)fVMTypeCombo.getComboControl(null).getLayoutData()).widthHint= convertWidthInCharsToPixels(50);
