@@ -62,6 +62,11 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 	// Listener for modify events in all text-based widgets
 	private ModifyListener fModifyListener;
 
+	// Project UI widgets
+	private Label fProjLabel;
+	private Text fProjText;
+	private Button fProjButton;
+
 	// Main class UI widgets
 	private Label fMainLabel;
 	private Text fMainText;
@@ -123,6 +128,35 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		GridData gd;
 		
 		createVerticalSpacer(comp);
+		
+		/*
+		Composite projComp = new Composite(comp, SWT.NONE);
+		GridLayout projLayout = new GridLayout();
+		projLayout.numColumns = 2;
+		projLayout.marginHeight = 0;
+		projLayout.marginWidth = 0;
+		projComp.setLayout(projLayout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		projComp.setLayoutData(gd);
+		
+		fProjLabel = new Label(projComp, SWT.NONE);
+		fProjLabel.setText("Project");
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fProjLabel.setLayoutData(gd);
+		
+		fProjText = new Text(projComp, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fProjText.setLayoutData(gd);
+		
+		fProjButton = new Button(projComp, SWT.PUSH);
+		fProjButton.setText("Browse");
+		fProjButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleProjectButtonSelected();
+			}
+		});
+		*/
 		
 		Composite mainComp = new Composite(comp, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
@@ -204,8 +238,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 				handleWorkingDirBrowseButtonSelected();
 			}
 		});
-				
-		
+						
 		createVerticalSpacer(comp);
 				
 		Composite jreComp = new Composite(comp, SWT.NONE);
@@ -543,6 +576,10 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 		if (selectedDirectory != null) {
 			fWorkingDirText.setText(selectedDirectory);
 		}		
+	}
+	
+	protected void handleProjectButtonSelected() {
+		
 	}
 	
 	/**
