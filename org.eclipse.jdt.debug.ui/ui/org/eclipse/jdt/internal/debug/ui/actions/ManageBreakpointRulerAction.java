@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
@@ -247,6 +248,15 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 						type= (IType)e;
 					} else if (e instanceof IMember) {
 						type= ((IMember)e).getDeclaringType();
+					}
+					// bug 52385: we don't want local and anonymous types from compilation unit,
+					// we are getting 'not-always-correct' names for them.
+					try {
+						while (type != null && type.isLocal()) {
+							type= type.getDeclaringType();
+						}
+					} catch (JavaModelException ex) {
+						JDIDebugUIPlugin.log(ex);
 					}
 				}
 				if (type != null) {

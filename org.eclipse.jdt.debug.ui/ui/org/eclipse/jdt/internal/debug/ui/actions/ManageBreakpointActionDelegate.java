@@ -193,7 +193,16 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 		} else if (member != null) {
 			type= member.getDeclaringType();
 		}
-	
+		// bug 52385: we don't want local and anonymous types from compilation unit,
+		// we are getting 'not-always-correct' names for them.
+		try {
+			while (type != null && !type.isBinary() && type.isLocal()) {
+				type= type.getDeclaringType();
+			}
+		} catch (JavaModelException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+
 		setType(type);
 		return type;
 	}
