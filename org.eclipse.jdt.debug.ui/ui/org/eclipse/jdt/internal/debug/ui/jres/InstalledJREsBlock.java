@@ -32,6 +32,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -96,6 +97,11 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 	private Button fRemoveButton;
 	private Button fEditButton;
 	private Button fSearchButton;	
+	
+	// column weights
+	private float fWeight1 = 1/3F;
+	private float fWeight2 = 1/3F;
+	private float fWeight3 = 1/3F;
 	
 	// Make sure that VMStandin ids are unique if multiple calls to System.currentTimeMillis()
 	// happen very quickly
@@ -317,8 +323,8 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 					// table is getting smaller so make the columns
 					// smaller first and then resize the table to
 					// match the client area width
-					column1.setWidth(width/4);
-					column2.setWidth(width/4);
+					column1.setWidth(Math.round(width * fWeight1));
+					column2.setWidth(Math.round(width * fWeight2));
 					column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
 					table.setSize(width, area.height);
 				} else {
@@ -326,12 +332,33 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 					// bigger first and then make the columns wider
 					// to match the client area width
 					table.setSize(width, area.height);
-					column1.setWidth(width/4);
-					column2.setWidth(width/4);
+					column1.setWidth(Math.round(width * fWeight1));
+					column2.setWidth(Math.round(width * fWeight2));
 					column3.setWidth(width - (column1.getWidth() + column2.getWidth()));
 				 }
 			}
+		}); 
+		column1.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				if (column1.getWidth() > 0) {
+					fWeight1 = getColumnWeight(0);
+				}
+			}
 		});
+		column2.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				if (column2.getWidth() > 0) {
+					fWeight2 = getColumnWeight(1);
+				}
+			}
+		});
+		column3.addControlListener(new ControlAdapter() {
+		public void controlResized(ControlEvent e) {
+			if (column3.getWidth() > 0) {
+				fWeight3 = getColumnWeight(2);
+			}
+		}
+	});
 	}	
 
 	/**
@@ -611,5 +638,54 @@ public class InstalledJREsBlock implements IAddVMDialogRequestor {
 			return null;
 		}
 		return (IVMInstall)objects[0];
+	}
+	
+	/**
+	 * Persist column width settings into the give dialog store, prefixed
+	 * with the given key.
+	 * 
+	 * @param settings dialog store
+	 * @param qualifier key qualifier
+	 */
+	public void saveColumnSettings(IDialogSettings settings, String qualifier) {
+		for (int i = 0; i < 3; i++) {
+			saveColumn(settings, qualifier, i);
+		}
+	}
+	
+	private void saveColumn(IDialogSettings settings, String qualifier, int col) {
+		settings.put(qualifier + ".column" + col, getColumnWeight(col));	
+	}
+	
+	private float getColumnWeight(int col) {
+		Table table = fVMList.getTable();
+		Point size = table.getSize();
+		TableColumn column = table.getColumn(col);
+		return ((float)column.getWidth()) / size.x;
+	}
+	
+	/**
+	 * Retsore column width settings from the given dialog store using the
+	 * given key.
+	 * 
+	 * @param settings dialog settings store
+	 * @param qualifier key to restore settings from
+	 */
+	public void restoreColumnSettings(IDialogSettings settings, String qualifier) {
+		fWeight1 = restoreColumnWeight(settings, qualifier, 0);
+		fWeight2 = restoreColumnWeight(settings, qualifier, 1);
+		fWeight3 = restoreColumnWeight(settings, qualifier, 2);
+		fVMList.getTable().layout(true);
+	}
+	
+	private float restoreColumnWeight(IDialogSettings settings, String qualifier, int col) {
+		Table table = fVMList.getTable();
+		
+		try {
+			return settings.getFloat(qualifier + ".column" + col);
+		} catch (NumberFormatException e) {
+			return 1/3F;
+		}
+
 	}
 }

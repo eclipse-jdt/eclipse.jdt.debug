@@ -39,6 +39,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -171,6 +172,8 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		data.horizontalSpan = 1;
 		control.setLayoutData(data);
 		control.setFont(font);
+		
+		fJREBlock.restoreColumnSettings(JDIDebugUIPlugin.getDefault().getDialogSettings(), IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
 						
 		WorkbenchHelp.setHelp(parent, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);		
 		populateVMList();
@@ -223,6 +226,10 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		if (build) {
 			buildWorkspace();
 		}
+		
+		// save column widths
+		IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
+		fJREBlock.saveColumnSettings(settings, IJavaDebugHelpContextIds.JRE_PREFERENCE_PAGE);
 		
 		return super.performOk();
 	}	
