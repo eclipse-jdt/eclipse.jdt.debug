@@ -13,7 +13,6 @@ package org.eclipse.jdt.debug.tests;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
-import org.eclipse.test.performance.PerformanceTestCase;
 
 public class AbstractDebugPerformanceTest extends AbstractDebugTest {
 
