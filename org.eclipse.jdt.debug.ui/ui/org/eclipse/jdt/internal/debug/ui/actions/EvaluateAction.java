@@ -432,17 +432,14 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			DebugException de = (DebugException)exception;
 			Throwable t= de.getStatus().getException();
 			if (t != null) {
-				JDIDebugUIPlugin.log(t);
 				return getWrappedExceptionMessage(t);
 			}
 		}
 		
 		if (exception instanceof CoreException) {
 			CoreException ce= (CoreException) exception;
-			JDIDebugUIPlugin.log(ce);
 			return ce.getStatus().getMessage();
 		}
-		JDIDebugUIPlugin.log(exception);
 		String message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.direct_exception"), new Object[] { exception.getClass() }); //$NON-NLS-1$
 		if (exception.getMessage() != null) {
 			message= MessageFormat.format(ActionMessages.getString("Evaluate.error.message.exception.pattern"), new Object[] { message, exception.getMessage() }); //$NON-NLS-1$
