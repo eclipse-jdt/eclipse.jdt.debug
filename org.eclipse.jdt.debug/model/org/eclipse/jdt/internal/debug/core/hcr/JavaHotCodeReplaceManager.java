@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -1081,8 +1082,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	public void launchRemoved(ILaunch launch) {
 		IDebugTarget[] debugTargets= launch.getDebugTargets();
 		for (int i = 0; i < debugTargets.length; i++) {
-			if (debugTargets[i] instanceof JDIDebugTarget) {
-				deregisterTarget((JDIDebugTarget)debugTargets[i]);		
+			IJavaDebugTarget jt = (IJavaDebugTarget)debugTargets[i].getAdapter(IJavaDebugTarget.class);
+			if (jt != null) {
+				deregisterTarget((JDIDebugTarget)jt);		
 			}
 		}
 	}
@@ -1095,8 +1097,9 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	public void launchAdded(ILaunch launch) {
 		IDebugTarget[] debugTargets= launch.getDebugTargets();
 		for (int i = 0; i < debugTargets.length; i++) {
-			if (debugTargets[i] instanceof JDIDebugTarget) {
-				JDIDebugTarget target = (JDIDebugTarget)debugTargets[i];
+			IJavaDebugTarget jt = (IJavaDebugTarget)debugTargets[i].getAdapter(IJavaDebugTarget.class);
+			if (jt != null) {
+				JDIDebugTarget target = (JDIDebugTarget)jt;
 				if (target.supportsHotCodeReplace()) {
 					addHotSwapTarget(target);
 				} else {
@@ -1125,9 +1128,15 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
-			if (event.getSource() instanceof JDIDebugTarget && event.getKind() == DebugEvent.TERMINATE) {
-				deregisterTarget((JDIDebugTarget) event.getSource());
-			}	
+			if (event.getKind() == DebugEvent.TERMINATE) {
+				Object source = event.getSource();
+				if (source instanceof IAdaptable) {
+					IJavaDebugTarget jt = (IJavaDebugTarget)((IAdaptable)source).getAdapter(IJavaDebugTarget.class);
+					if (jt != null) {
+						deregisterTarget((JDIDebugTarget)jt);
+					}	
+				}
+			}
 		}
 	}
 	
@@ -1140,9 +1149,14 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		// If there are no more active JDIDebugTargets, stop
 		// listening to resource changes.
 		for (int i= 0; i < launches.length; i++) {
-			if (launches[i].getDebugTarget() instanceof JDIDebugTarget) {
-				if (((JDIDebugTarget) launches[i].getDebugTarget()).isAvailable()) {
-					return;
+			IDebugTarget[] targets = launches[i].getDebugTargets();
+			for (int j = 0; j < targets.length; j++) {
+				IDebugTarget debugTarget = targets[j];
+				IJavaDebugTarget jt = (IJavaDebugTarget)debugTarget.getAdapter(IJavaDebugTarget.class);
+				if (jt != null) {
+					if (((JDIDebugTarget)jt).isAvailable()) {
+						return;
+					}
 				}
 			}
 		}
