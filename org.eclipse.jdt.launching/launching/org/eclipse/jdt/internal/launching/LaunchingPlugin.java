@@ -471,7 +471,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 			
 			// Determine the deteled VMs
 			List deleted = oldResults.getVMList();
-			List current = newResults.getVMList();
+			List current = newResults.getValidVMList();
 			deleted.removeAll(current);
 			
 			// Dispose deleted VMs.  The 'disposeVMInstall' method fires notification of the 
