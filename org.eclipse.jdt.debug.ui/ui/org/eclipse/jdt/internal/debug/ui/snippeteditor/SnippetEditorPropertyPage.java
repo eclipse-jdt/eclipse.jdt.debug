@@ -105,6 +105,18 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 			throws InvocationTargetException, InterruptedException {
 		}
 
+		/**
+		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(org.eclipse.debug.ui.ILaunchConfigurationTab)
+		 */
+		public void setActiveTab(ILaunchConfigurationTab tab) {
+		}
+
+		/**
+		 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(int)
+		 */
+		public void setActiveTab(int index) {
+		}
+
 	}
 		
 	/**
