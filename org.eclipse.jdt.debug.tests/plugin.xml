@@ -134,6 +134,12 @@
                menubarPath="org.eclipse.ui.run/TestGroup"
                id="org.eclipse.jdt.debug.tests.testMessageConsoleAction">
          </action>
+         <action
+               label="Test Show Console"
+               class="org.eclipse.jdt.debug.tests.console.TestShowConsoleActionDelegate"
+               menubarPath="org.eclipse.ui.run/TestGroup"
+               id="org.eclipse.jdt.debug.tests.testShowConsoleAction">
+         </action>         
       </actionSet>
    </extension>
    <extension
