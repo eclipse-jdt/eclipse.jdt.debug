@@ -20,25 +20,17 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
-public abstract class BreakpointToggleAction implements IViewActionDelegate, IBreakpointListener, IPartListener {
+public abstract class BreakpointToggleAction implements IObjectActionDelegate, IBreakpointListener, IPartListener {
 	
 	private IStructuredSelection fSelection;
 	private IAction fAction;
-	private IViewPart fView;
-
-	/**
-	 * @see IViewActionDelegate#init(IViewPart)
-	 */
-	public void init(IViewPart viewPart) {
-		setView(viewPart);
-		viewPart.getSite().getPage().addPartListener(this);
-		getBreakpointManager().addBreakpointListener(this);
-	}
+	private IWorkbenchPart fPart;
 
 	/**
 	 * @see IActionDelegate#run(IAction)
@@ -151,12 +143,12 @@ public abstract class BreakpointToggleAction implements IViewActionDelegate, IBr
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 	
-	protected IViewPart getView() {
-		return fView;
+	protected IWorkbenchPart getPart() {
+		return fPart;
 	}
 
-	protected void setView(IViewPart view) {
-		fView = view;
+	protected void setPart(IWorkbenchPart part) {
+		fPart = part;
 	}
 	
 	/**
@@ -175,7 +167,7 @@ public abstract class BreakpointToggleAction implements IViewActionDelegate, IBr
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
-		if (part == getView()) {
+		if (part == getPart()) {
 			getBreakpointManager().removeBreakpointListener(this);
 			part.getSite().getPage().removePartListener(this);
 		}
@@ -191,6 +183,20 @@ public abstract class BreakpointToggleAction implements IViewActionDelegate, IBr
 	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
 	public void partOpened(IWorkbenchPart part) {
+	}
+	
+	/**
+	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
+	 */
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		IWorkbenchPart oldPart= getPart();
+		if (oldPart != null) {
+			getPart().getSite().getPage().removePartListener(this);			
+		}	
+		
+		getBreakpointManager().addBreakpointListener(this);
+		setPart(targetPart);
+		targetPart.getSite().getPage().addPartListener(this);	
 	}
 }
 
