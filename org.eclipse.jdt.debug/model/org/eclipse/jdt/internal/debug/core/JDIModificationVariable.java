@@ -9,8 +9,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugTarget;
 
-import com.sun.jdi.*;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.Value;
+import com.sun.jdi.VirtualMachine;
  
 /**
  * Common functionality for variables that support value modification
@@ -45,6 +48,12 @@ public abstract class JDIModificationVariable extends JDIVariable {
 				return fgValidSignatures.contains(signature);
 			}
 		} catch (DebugException e) {
+			logError(e);
+		} catch (VMDisconnectedException e) {
+			IDebugTarget target = getDebugTarget();
+			if (target.isTerminated() || target.isDisconnected()) {
+				return false;
+			}
 			logError(e);
 		} catch (RuntimeException e) {
 			logError(e);
