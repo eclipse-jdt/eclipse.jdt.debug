@@ -23,7 +23,7 @@ import com.sun.jdi.VirtualMachine;
 public abstract class JDIModificationVariable extends JDIVariable {
 	
 	private final static ArrayList fgValidSignatures = new ArrayList (9);
-	{
+	static {
 		fgValidSignatures.add("B");  // byte //$NON-NLS-1$
  		fgValidSignatures.add("C");  // char //$NON-NLS-1$
 		fgValidSignatures.add("D");  // double //$NON-NLS-1$
