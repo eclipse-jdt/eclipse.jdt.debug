@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.JavaModelException;
  * </p>
  * @see DirectorySourceLocation
  * @see IStorage
+ * @since 2.0
  */
 public class LocalFileStorage extends PlatformObject implements IStorage {
 	

@@ -27,6 +27,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
  * </p>
  * @see IEvaluationResult
  * @see IEvaluationListener
+ * @since 2.0
  */
 
 public interface IEvaluationEngine {

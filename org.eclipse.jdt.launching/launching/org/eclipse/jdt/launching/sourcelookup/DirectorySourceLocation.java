@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.JavaModelException;
  * (repeatedly) as the API evolves.
  * </p>
  * @see IJavaSourceLocation
+ * @since 2.0
  */
 public class DirectorySourceLocation extends PlatformObject implements IJavaSourceLocation {
 

@@ -21,6 +21,7 @@ import org.eclipse.jdt.debug.core.IJavaValue;
  * (repeatedly) as the API evolves.
  * </p>
  * @see IJavaValue
+ * @since 2.0
  */
 
 public interface IEvaluationResult {

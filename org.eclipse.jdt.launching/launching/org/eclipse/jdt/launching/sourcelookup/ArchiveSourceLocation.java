@@ -30,6 +30,7 @@ import org.eclipse.jdt.internal.launching.LaunchingPlugin;
  * (repeatedly) as the API evolves.
  * </p>
  * @see IJavaSourceLocation
+ * @since 2.0
  */
 public class ArchiveSourceLocation extends PlatformObject implements IJavaSourceLocation {
 	

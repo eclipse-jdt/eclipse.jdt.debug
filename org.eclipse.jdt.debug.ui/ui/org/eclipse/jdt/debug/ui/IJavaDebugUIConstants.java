@@ -12,6 +12,8 @@ package org.eclipse.jdt.debug.ui;
  * contributed to any group on the menu. To facilitate insertion of actions
  * in between existing groups, empty groups have been defined
  * in the menu. Each group prefixed by "empty" indicates an empty group.
+ * </p>
+ * @since 2.0
  */
 public interface IJavaDebugUIConstants {
 
@@ -27,4 +29,14 @@ public interface IJavaDebugUIConstants {
 	public static final String JAVA_SNIPPET_EDITOR_CONTEXT_MENU= "#JavaSnippetEditorContext"; //$NON-NLS-1$
 	
 	public static final String JAVA_SNIPPET_EDITOR_RULER_MENU= "#JavaSnippetRulerContext"; //$NON-NLS-1$
+	
+	/**
+	 * Plug-in identifier for the Java Debug UI
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.jdt.debug.ui"; //$NON-NLS-1$
+
+	/**
+	 * Status code indicating an unexpected internal error.
+	 */
+	public static final int INTERNAL_ERROR = 150;
 }

@@ -31,6 +31,7 @@ import org.eclipse.jdt.core.JavaModelException;
  * </p>
  * @see ArchiveSourceLocation
  * @see IStorage
+ * @since 2.0
  */
 public class ZipEntryStorage extends PlatformObject implements IStorage {
 	

@@ -45,6 +45,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
  * </p>
  *
  * @see org.eclipse.debug.core.model.ISourceLocator
+ * @since 2.0
  */
 public class JavaSourceLocator implements IPersistableSourceLocator {
 	

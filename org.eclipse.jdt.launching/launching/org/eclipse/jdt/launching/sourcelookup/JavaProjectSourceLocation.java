@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.IJavaProject;
  * (repeatedly) as the API evolves.
  * </p>
  * @see IJavaSourceLocation
+ * @since 2.0
  */
 public class JavaProjectSourceLocation extends PlatformObject implements IJavaSourceLocation {
 

@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Shell;
  * This class is intended to be instantiated. This class is not
  * intended to be subclassed.
  * </p>
+ * @since 2.0
  */
 
 public class JavaUISourceLocator implements IPersistableSourceLocator {

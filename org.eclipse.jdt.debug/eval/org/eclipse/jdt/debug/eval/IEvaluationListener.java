@@ -19,6 +19,7 @@ package org.eclipse.jdt.debug.eval;
  * (repeatedly) as the API evolves.
  * </p>
  * @see IEvaluationResult
+ * @since 2.0
  */
 
 public interface IEvaluationListener {

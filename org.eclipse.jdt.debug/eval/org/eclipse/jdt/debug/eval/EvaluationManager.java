@@ -30,6 +30,7 @@ import org.eclipse.jdt.internal.debug.eval.LocalEvaluationEngine;
  * </p>
  * @see IEvaluationResult
  * @see IEvaluationListener
+ * @since 2.0
  */
 public class EvaluationManager {
 		
