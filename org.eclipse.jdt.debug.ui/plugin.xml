@@ -223,9 +223,9 @@
 			definitionId="org.eclipse.jdt.debug.ui.Watch"
 			label="%Watch.label" 
 			menubarPath="org.eclipse.ui.run/jdtGroup"
-			icon="icons/full/ctool16/expression_obj.gif"
-			disabledIcon="icons/full/ctool16/expression_obj.gif"
-  		 	hoverIcon="icons/full/ctool16/expression_obj.gif"
+			icon="icons/full/ctool16/watch_exp.gif"
+			disabledIcon="icons/full/ctool16/watch_exp.gif"
+  		 	hoverIcon="icons/full/ctool16/watch_exp.gif"
 			helpContextId="watch_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
 			enablesFor="+">
@@ -511,7 +511,7 @@
 		targetID="org.eclipse.debug.ui.ExpressionView">
          <action
                label="%addWatchExpressionAction.label"
-               icon="icons/full/ctool16/expression_obj.gif"
+               icon="icons/full/ctool16/watch_exp.gif"
                helpContextId="add_watch_expression_context"
                tooltip="%addWatchExpressionAction.tooltip"
                menubarPath="additions"
@@ -987,7 +987,7 @@
 			id="org.eclipse.jdt.debug.ui.actions.WatchAction"
 			label="%Watch.label"
 			menubarPath="openOnGroup"
-			icon="icons/full/ctool16/expression_obj.gif"
+			icon="icons/full/ctool16/watch_exp.gif"
 			helpContextId="variable_watch_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
 			enablesFor="+">
@@ -1154,7 +1154,7 @@
         <action id="org.eclipse.jdt.debug.ui.cuPopup.Watch" 
 			label="%Watch.label" 
 			menubarPath="additions" 
-			icon="icons/full/ctool16/expression_obj.gif"
+			icon="icons/full/ctool16/watch_exp.gif"
 			helpContextId="watch_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
 			enablesFor="+">
@@ -1246,7 +1246,7 @@
         <action id="org.eclipse.jdt.debug.ui.cfPopup.Watch" 
 			label="%Watch.label" 
 			menubarPath="additions" 
-			icon="icons/full/ctool16/expression_obj.gif"
+			icon="icons/full/ctool16/watch_exp.gif"
 			helpContextId="watch_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
 			enablesFor="+">
