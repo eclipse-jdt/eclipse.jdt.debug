@@ -200,9 +200,9 @@
 			enablesFor="+">
 		</action>
 	</objectContribution>
-	<viewerContribution
+	<objectContribution
 		id="org.eclipse.jdt.debug.DropToFrameActions"
-		targetID="org.eclipse.debug.ui.DebugView">
+		objectClass="org.eclipse.jdt.debug.core.IJavaStackFrame">
 		<action
 			id="org.eclipse.jdt.ui.actions.DropToFrame"
 			label="%dropFrameAction.label"
@@ -211,7 +211,7 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.DropToFrameAction"
 			enablesFor="1">
 		</action>
-	</viewerContribution>
+	</objectContribution>
 	<viewerContribution
 		id="org.eclipse.jdt.debug.ToggleStepFilterActions"
 		targetID="org.eclipse.debug.ui.DebugView">
@@ -534,6 +534,7 @@
      	objectClass="org.eclipse.jdt.core.IMethod">
 		<action id="org.eclipse.jdt.debug.ui.MethodBreakpoint"
 		 	label="%manageMethodBreakpointAction.label"
+		 	helpContextId="manage_methodbreakpoint_action_context"
 		 	menubarPath="additions" 
 		 	class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointAction"
 		 	enablesFor="1">
@@ -544,6 +545,7 @@
 		objectClass="org.eclipse.jdt.core.IField">
   		<action id="org.eclipse.jdt.debug.ui.Watchpoint"
   			label="%manageWatchpointAction.label"
+  			helpContextId="manage_watchpoint_action_context"
   			menubarPath="additions"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointAction"
   			enablesFor="1">
