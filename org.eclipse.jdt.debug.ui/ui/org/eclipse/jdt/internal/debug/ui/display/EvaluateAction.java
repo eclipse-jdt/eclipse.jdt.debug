@@ -153,7 +153,7 @@ public abstract class EvaluateAction extends Action implements IUpdate, IEvaluat
 			IWorkspace workspace = project.getProject().getWorkspace();
 			IResource res = workspace.getRoot().findMember(outputLocation);
 			File dir = new File(res.getLocation().toOSString());
-			engine= EvaluationManager.newLocalEvaluationEngine(project, vm, dir);
+			engine= EvaluationManager.newClassFileEvaluationEngine(project, vm, dir);
 		}	
 		return engine;
 			

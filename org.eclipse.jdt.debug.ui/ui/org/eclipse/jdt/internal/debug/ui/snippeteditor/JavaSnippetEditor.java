@@ -45,7 +45,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
-import org.eclipse.jdt.debug.eval.IEvaluationEngine;
+import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIContentAssistPreference;
@@ -120,7 +120,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	private String fPackageName= null;
 	
 	private Image fOldTitleImage= null;
-	private IEvaluationEngine fEngine= null;
+	private IClassFileEvaluationEngine fEngine= null;
 	
 	private IPropertyChangeListener fJavaPluginPreferenceStoreListener= new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
@@ -390,6 +390,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			return;
 		}
 		try {
+			if (fPackageName != null) {
+				getEvaluationEngine().setPackageName(fPackageName);
+			}
 			getEvaluationEngine().evaluate(snippet,getThread(), this);
 		} catch (DebugException e) {
 			ErrorDialog.openError(getShell(), SnippetMessages.getString("SnippetEditor.error.evaluating"), null, e.getStatus()); //$NON-NLS-1$
@@ -830,11 +833,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return true;
 	}
 	
-	protected IEvaluationEngine getEvaluationEngine() {
+	protected IClassFileEvaluationEngine getEvaluationEngine() {
 		if (fEngine == null) {
 			IPath outputLocation =	getJavaProject().getProject().getPluginWorkingLocation(JDIDebugUIPlugin.getDefault().getDescriptor());
 			java.io.File f = new java.io.File(outputLocation.toOSString());
-			fEngine = EvaluationManager.newLocalEvaluationEngine(getJavaProject(), (IJavaDebugTarget)getThread().getDebugTarget(), f);
+			fEngine = EvaluationManager.newClassFileEvaluationEngine(getJavaProject(), (IJavaDebugTarget)getThread().getDebugTarget(), f);
 		}
 		return fEngine;
 	}

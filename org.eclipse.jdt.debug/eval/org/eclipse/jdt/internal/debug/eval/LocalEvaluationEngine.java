@@ -43,7 +43,7 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.debug.eval.IEvaluationEngine;
+import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration;
 import org.eclipse.jdt.internal.compiler.lookup.CompilationUnitScope;
@@ -58,7 +58,7 @@ import com.sun.jdi.ObjectReference;
  * An evaluation engine that deploys class files locally
  */
 
-public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetRequestor {	 
+public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeSnippetRequestor {	 
 	
 	/**
 	 * The Java project context in which to compile snippets.
@@ -1168,6 +1168,21 @@ public class LocalEvaluationEngine implements IEvaluationEngine, ICodeSnippetReq
 			index = typeName.indexOf('$');
 		}
 		list.add(typeName);
-		return (String[])list.toArray(new String[list.size()]);
+		return (String[])list.toArray(new String[list.size()]);	
 	}
+	
+	/*
+	 * @see IClassFileEvaluationEngine#getPackageName()
+	 */
+	public String getPackageName() {
+		return getEvaluationContext().getPackageName();
+	}
+
+	/*
+	 * @see IClassFileEvaluationEngine#setPackageName(String)
+	 */
+	public void setPackageName(String packageName) {
+		getEvaluationContext().setPackageName(packageName);
+	}
+
 }

@@ -131,7 +131,7 @@ public interface IEvaluationEngine {
 	IJavaProject getJavaProject();
 	
 	/**
-	 * Retursn the debug target for which evaluations
+	 * Returns the debug target for which evaluations
 	 * are executed.
 	 * 
 	 * @return Java debug target

@@ -161,6 +161,7 @@ public class EvaluationManager {
 	/**
 	 * Creates and retuns a new evaluation engine that
 	 * performs evaluations for local Java applications
+	 * by deploying class files.
 	 * 
 	 * @param project the java project in which snippets
 	 *  are to be compiled
@@ -170,8 +171,8 @@ public class EvaluationManager {
 	 *  are deployed to assist in the evaluation. The directory
 	 *  must exist.
 	 */
-	public static IEvaluationEngine newLocalEvaluationEngine(IJavaProject project, IJavaDebugTarget vm, File directory) {
-		IEvaluationEngine engine = new LocalEvaluationEngine(project, vm, directory);
+	public static IClassFileEvaluationEngine newClassFileEvaluationEngine(IJavaProject project, IJavaDebugTarget vm, File directory) {
+		IClassFileEvaluationEngine engine = new LocalEvaluationEngine(project, vm, directory);
 		getDefault().addEvaluationEngine(engine);
 		return engine;
 	}
