@@ -206,8 +206,8 @@ public class MethodImpl extends TypeComponentImpl implements Method, Locatable {
 		Iterator locations = codeIndexToLine().keySet().iterator();
 		Vector result = new Vector();
 		while (locations.hasNext()) {
-			Long lindeCodeIndex = (Long)locations.next();
-			result.add(new LocationImpl(virtualMachineImpl(), this, lindeCodeIndex.longValue()));
+			Long lineCodeIndex = (Long)locations.next();
+			result.add(new LocationImpl(virtualMachineImpl(), this, lineCodeIndex.longValue()));
 		}
 		fAllLineLocations = result;
 		return fAllLineLocations;
