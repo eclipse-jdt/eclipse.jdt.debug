@@ -17,15 +17,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -45,38 +46,17 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 			IBreakpoint breakpoint= breakpoints[i];
 			if (breakpoint instanceof IJavaLineBreakpoint) {
 				IJavaLineBreakpoint jBreakpoint= (IJavaLineBreakpoint)breakpoint;
-				boolean match= false;
 				try {
-					match= breakpointAtRulerLine(jBreakpoint);
+					if (breakpointAtRulerLine(jBreakpoint)) {
+						return jBreakpoint;
+					}
 				} catch (CoreException ce) {
 					JDIDebugUIPlugin.log(ce);
 					continue;
 				}
-				if (match) {
-					IResource breakpointResource= jBreakpoint.getMarker().getResource();
-					IResource editorResource= getResource();
-					if (breakpointResource.equals(editorResource)) {
-						return breakpoint;
-					} else if (editorResource == null) {
-						IClassFile classFile= (IClassFile)getTextEditor().getEditorInput().getAdapter(IClassFile.class);
-						if (classFile != null) {
-							try {
-								IType type = classFile.getType();
-								if (type.getFullyQualifiedName().equals(jBreakpoint.getTypeName())) {
-									return breakpoint;
-								}
-							} catch (CoreException ce) {
-								JDIDebugUIPlugin.log(ce);
-								continue;
-							}
-			
-						} 
-					}
-				}
 			}
 		}
 		return null;
-	
 	}
 
 	protected IVerticalRulerInfo getInfo() {
@@ -111,23 +91,25 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 	}
 
 	protected boolean breakpointAtRulerLine(IJavaLineBreakpoint jBreakpoint) throws CoreException {
-		int lineNumber= jBreakpoint.getLineNumber();
-		if (lineNumber == -1) {
-			int charStart= jBreakpoint.getCharStart();
-			if (charStart != -1) {
-				IDocumentProvider provider= fTextEditor.getDocumentProvider();
-				IDocument doc=  provider.getDocument(fTextEditor.getEditorInput());
-				try {
-					//must add one
-					lineNumber= doc.getLineOfOffset(jBreakpoint.getCharStart()) + 1;
-				} catch(BadLocationException e) {
-					return false;
+		Position position= getAnnotationModel().getMarkerPosition(jBreakpoint.getMarker());
+		if (position != null) {
+			IDocumentProvider provider= getTextEditor().getDocumentProvider();
+			IDocument doc=  provider.getDocument(getTextEditor().getEditorInput());
+			try {
+				int markerLineNumber= doc.getLineOfOffset(position.getOffset());
+				int rulerLine= getInfo().getLineOfLastMouseButtonActivity();
+				if (rulerLine == markerLineNumber) {
+					if (getTextEditor().isDirty()) {
+						return jBreakpoint.getLineNumber() == markerLineNumber + 1;
+					}
+					return true;
 				}
+			} catch (BadLocationException x) {
+				JDIDebugUIPlugin.log(x);
 			}
 		}
-		//document line numbers 0 based; breakpoints 1 based
-		int line= getInfo().getLineOfLastMouseButtonActivity();
-		return (line + 1) == lineNumber;
+		
+		return false;
 	}
 		
 	protected IBreakpoint getBreakpoint() {
@@ -136,5 +118,19 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 
 	protected void setBreakpoint(IBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
+	}
+	
+	/**
+	 * Returns the <code>AbstractMarkerAnnotationModel</code> of the editor's input.
+	 *
+	 * @return the marker annotation model
+	 */
+	protected AbstractMarkerAnnotationModel getAnnotationModel() {
+		IDocumentProvider provider= fTextEditor.getDocumentProvider();
+		IAnnotationModel model= provider.getAnnotationModel(getTextEditor().getEditorInput());
+		if (model instanceof AbstractMarkerAnnotationModel) {
+			return (AbstractMarkerAnnotationModel) model;
+		}
+		return null;
 	}
 }
