@@ -13,16 +13,12 @@ package org.eclipse.jdt.internal.debug.ui;
  
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -43,9 +39,7 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
@@ -86,24 +80,12 @@ import com.sun.jdi.ObjectReference;
  * debug action visibility.
  * </ul>
  */
-public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventSetListener, IPropertyChangeListener, IJavaBreakpointListener, ILaunchListener, IBreakpointsListener, IJavaStructuresListener {
+public class JavaDebugOptionsManager implements IDebugEventSetListener, IPropertyChangeListener, IJavaBreakpointListener, ILaunchListener, IBreakpointsListener, IJavaStructuresListener {
 	
 	/**
 	 * Singleton options manager
 	 */
 	private static JavaDebugOptionsManager fgOptionsManager = null;
-	
-	/**
-	 * Map of problems to locations
-	 * (<code>IMarker</code> -> <code>Location</code>)
-	 */
-	private HashMap fProblemMap = new HashMap(10);
-	
-	/**
-	 * Map of locations to problems.
-	 * (<code>Location</code> -> <code>IMarker</code>)
-	 */
-	private HashMap fLocationMap = new HashMap(10);
 	
 	/**
 	 * Breakpoint used to suspend on uncaught exceptions
@@ -164,74 +146,10 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 				status.add(e.getStatus());
 			}
 			
-			// note existing compilation errors
-			try {
-				IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
-				if (problems != null) {
-					for (int i = 0; i < problems.length; i++) {
-						problemAdded(problems[i]);
-					}
-				}
-			} catch (CoreException e) {
-				status.add(e.getStatus());
-			}
-			
 			if (status.getChildren().length == 0) {
 				return Status.OK_STATUS;
 			}
 			return status;
-		}
-}
-	
-	/**
-	 * Helper class that describes a location in a stack
-	 * frame. A location consists of a package name, source
-	 * file name, and a line number.
-	 */
-	class Location {
-		private String fPackageName;
-		private String fSourceName;
-		private int fLineNumber;
-		
-		public Location(String packageName, String sourceName, int lineNumber) {
-			fPackageName = packageName;
-			fSourceName = sourceName;
-			fLineNumber = lineNumber;
-		}
-		
-		public boolean equals(Object o) {
-			if (o instanceof Location) {
-				Location l = (Location)o;
-				return l.fPackageName.equals(fPackageName) && l.fSourceName.equals(fSourceName) && l.fLineNumber == fLineNumber;
-				
-			}
-			return false;
-		}
-		
-		public int hashCode() {
-			return fPackageName.hashCode() + fSourceName.hashCode() + fLineNumber;
-		}
-	}
-
-	/**
-	 * Update cache of problems as they are added/removed.
-	 * 
-	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		IMarkerDelta[] deltas = event.findMarkerDeltas("org.eclipse.jdt.core.problem", true); //$NON-NLS-1$
-		if (deltas != null) {
-			for (int i = 0; i < deltas.length; i++) {
-				IMarkerDelta delta = deltas[i];
-				switch (delta.getKind()) {
-					case IResourceDelta.ADDED:
-						problemAdded(delta.getMarker());
-						break;
-					case IResourceDelta.REMOVED:
-						problemRemoved(delta.getMarker());
-						break;
-				}
-			}
 		}
 	}
 	
@@ -268,7 +186,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * Called at shutdown by the Java debug ui plug-in
 	 */
 	public void shutdown() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		DebugPlugin debugPlugin = DebugPlugin.getDefault();
 		debugPlugin.removeDebugEventListener(this);
 		debugPlugin.getLaunchManager().removeLaunchListener(this);
@@ -279,8 +196,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		}
 		JDIDebugModel.removeJavaBreakpointListener(this);
         JavaLogicalStructures.removeStructuresListener(this);
-		fProblemMap.clear();
-		fLocationMap.clear();
 		System.getProperties().remove(JDIDebugUIPlugin.getUniqueIdentifier() + ".debuggerActive"); //$NON-NLS-1$
 	}	
 
@@ -293,57 +208,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		job.setSystem(true);
 		job.schedule();
 	}
-		
-	/**
-	 * The given problem has been added. Cross
-	 * reference the problem with its location.
-	 * Enable the error breakpoint if the suspend
-	 * option is on, and this is the first problem
-	 * being added.
-	 */
-	protected void problemAdded(IMarker problem) {
-		if (problem.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) == IMarker.SEVERITY_ERROR) {
-			IResource res = problem.getResource();
-			IJavaElement cu = JavaCore.create(res);
-			if (cu != null && cu instanceof ICompilationUnit) {
-				// auto-enable the exception breakpoint if this is the first problem added
-				// and the preference is turned on.
-				boolean autoEnable = fProblemMap.isEmpty();
-				int line = problem.getAttribute(IMarker.LINE_NUMBER, -1);
-				String name = cu.getElementName();
-				Location l = new Location(cu.getParent().getElementName(), name, line);
-				fLocationMap.put(l, problem);
-				fProblemMap.put(problem, l);
-				if (autoEnable) {
-					try {
-						getSuspendOnCompilationErrorBreakpoint().setEnabled(isSuspendOnCompilationErrors());
-					} catch (CoreException e) {
-						JDIDebugUIPlugin.log(e);
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * The given problem has been removed. Remove
-	 * cross reference of problem and location.
-	 * Disable the breakpoint if there are no errors.
-	 */
-	protected void problemRemoved(IMarker problem) {
-		Object location = fProblemMap.remove(problem);
-		if (location != null) {
-			fLocationMap.remove(location);
-		}
-		if (fProblemMap.isEmpty()) {
-			try {
-				getSuspendOnCompilationErrorBreakpoint().setEnabled(false);
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e);
-			}
-		}
-	}
-				
+						
 	/**
 	 * Notifies java debug targets of the given breakpoint
 	 * addition or removal.
@@ -422,12 +287,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 				int kind = REMOVED;
 				if (isSuspendOnCompilationErrors()) {
 					kind = ADDED;
-                    if (!fProblemMap.isEmpty()) {
-                        try {
-                            breakpoint.setEnabled(true);
-                        } catch (CoreException e) {
-                        }
-                    }
 				}
 				notifyTargets(breakpoint, kind);
 			}
@@ -727,35 +586,27 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * @return marker representing compilation problem, or <code>null</code>
 	 * @throws DebugException if an exception occurrs retrieveing the problem
 	 */
-	protected IMarker getProblem(IJavaStackFrame frame) throws DebugException {
-		String name = frame.getSourceName();
-		String packageName = frame.getDeclaringTypeName();
-		int index = packageName.lastIndexOf('.');
-		if (index == -1) {
-			if (name == null) {
-				// guess at source name if no debug attribute
-				name = packageName;
-				int dollar = name.indexOf('$');
-				if (dollar >= 0) {
-					name = name.substring(0, dollar);
+	protected IMarker getProblem(IJavaStackFrame frame) {
+		ILaunch launch = frame.getLaunch();
+		if (launch != null) {
+			ISourceLookupResult result = DebugUITools.lookupSource(frame, null);
+			Object sourceElement = result.getSourceElement();
+			if (sourceElement instanceof IResource) {
+				try {
+					IResource resource = (IResource) sourceElement;
+					IMarker[] markers = resource.findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
+					int line = frame.getLineNumber();
+					for (int i = 0; i < markers.length; i++) {
+						IMarker marker = markers[i];
+						if (marker.getAttribute(IMarker.LINE_NUMBER, -1) == line) {
+							return marker;
+						}
+					}
+				} catch (CoreException e) {
 				}
-				name+= ".java"; //$NON-NLS-1$
 			}
-			packageName = ""; //$NON-NLS-1$
-		} else {
-			if (name == null) {
-				name = packageName.substring(index + 1);
-				int dollar = name.indexOf('$');
-				if (dollar >= 0) {
-					name = name.substring(0, dollar);
-				}
-				name += ".java"; //$NON-NLS-1$
-			}
-			packageName = packageName.substring(0,index);
 		}
-		int line = frame.getLineNumber();
-		Location l = new Location(packageName, name, line);
-		return  (IMarker)fLocationMap.get(l);		
+		return null;
 	}	
 	
 	/* (non-Javadoc)
@@ -828,7 +679,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		initializeProblemHandling();
 		notifyTargetsOfFilters();
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 		JDIDebugModel.addJavaBreakpointListener(this);
         JavaLogicalStructures.addStructuresListener(this);
 	}	
