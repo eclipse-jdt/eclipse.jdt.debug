@@ -234,7 +234,7 @@ public class SelectImportsDialog extends TitleAreaDialog {
 			IJavaElement pkg = (IJavaElement)packages[0];
 			String filter = pkg.getElementName();
 			if (filter.length() < 1) {
-				filter = SnippetMessages.getString("SelectImportsDialog.(default_package)_11");  //$NON-NLS-1$
+				return;
 			} else {
 				filter += ".*"; //$NON-NLS-1$
 			}
