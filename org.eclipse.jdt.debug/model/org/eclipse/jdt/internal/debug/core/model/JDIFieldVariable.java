@@ -199,6 +199,24 @@ public class JDIFieldVariable extends JDIModificationVariable implements IJavaFi
 		} 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
+	 */
+	public String getGenericSignature() throws DebugException {
+		try {
+			String genericSignature= fField.genericSignature();
+			if (genericSignature != null) {
+				return genericSignature;
+			}
+			return fField.signature();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIFieldVariable.exception_retrieving_field_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;
+		} 
+	}
+	
 	public Field getField() {
 		return fField;
 	}

@@ -67,6 +67,13 @@ public class JDIThisVariable extends JDIVariable {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
+	 */
+	public String getGenericSignature() throws DebugException {
+		return getSignature();
+	}
+
 	/**
 	 * @see IVariable#getReferenceTypeName()
 	 */

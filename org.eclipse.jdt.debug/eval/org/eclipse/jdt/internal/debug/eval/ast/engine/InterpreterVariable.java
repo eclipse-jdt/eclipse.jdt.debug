@@ -206,4 +206,11 @@ public class InterpreterVariable implements IJavaVariable {
 	public boolean isLocal() {
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
+	 */
+	public String getGenericSignature() throws DebugException {
+		return getSignature();
+	}
 }

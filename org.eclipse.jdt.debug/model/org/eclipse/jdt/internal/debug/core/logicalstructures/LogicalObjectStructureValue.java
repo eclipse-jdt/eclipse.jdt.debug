@@ -76,6 +76,13 @@ public class LogicalObjectStructureValue implements IJavaObject {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaValue#getGenericSignature()
+	 */
+	public String getGenericSignature() throws DebugException {
+		return fObject.getGenericSignature();
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaValue#getJavaType()
 	 */
 	public IJavaType getJavaType() throws DebugException {

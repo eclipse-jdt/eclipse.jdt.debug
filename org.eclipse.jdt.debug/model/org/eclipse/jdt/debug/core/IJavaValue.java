@@ -36,6 +36,21 @@ public interface IJavaValue extends IValue {
 	public String getSignature() throws DebugException;
 		
 	/**
+	 * Returns the generic signature as defined in the JVM
+	 * specification for the type of this value.
+	 * Returns <code>null</code> if the value is <code>null</code>,
+	 * or if the type of this value is not a generic type.
+	 *
+	 * @return signature, or <code>null</code> if generic signature not available
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>The type associated with the signature is not yet loaded</li></ul>
+	 */
+	public String getGenericSignature() throws DebugException;
+		
+	/**
 	 * Returns the type of this value, or <code>null</code>
 	 * if this value represents the <code>null</code> value
 	 * 

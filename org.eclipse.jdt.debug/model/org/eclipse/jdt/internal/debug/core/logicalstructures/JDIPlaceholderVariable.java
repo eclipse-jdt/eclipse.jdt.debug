@@ -45,6 +45,13 @@ public class JDIPlaceholderVariable extends PlatformObject implements IJavaVaria
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
+	 */
+	public String getGenericSignature() throws DebugException {
+		return ((IJavaValue)getValue()).getGenericSignature();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getJavaType()
 	 */
 	public IJavaType getJavaType() throws DebugException {

@@ -313,6 +313,27 @@ public class JDIValue extends JDIDebugElement implements IValue, IJavaValue {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaValue#getGenericSignature()
+	 */
+	public String getGenericSignature() throws DebugException {
+		try {
+			if (fValue != null) {
+				Type type= fValue.type();
+				if (type instanceof ReferenceType) {
+					return ((ReferenceType)type).genericSignature();
+				}
+				return null;
+			}
+			return null;
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIValue.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;			
+		}
+	}
+	
 	/**
 	 * @see IJavaValue#getArrayLength()
 	 */

@@ -116,6 +116,24 @@ public class JDILocalVariable extends JDIModificationVariable {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
+	 */
+	public String getGenericSignature() throws DebugException {
+		try {
+			String genericSignature= fLocal.genericSignature();
+			if (genericSignature != null) {
+				return genericSignature;
+			}
+			return fLocal.signature();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDILocalVariable.exception_retrieving_local_variable_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception
+			return null;			
+		}
+	}
+	
 	/** 
 	 * Updates this local's underlying variable. Called by enclosing stack 
 	 * frame when doing an incremental update.

@@ -38,6 +38,23 @@ public interface IJavaVariable extends IVariable, IJavaModifiers {
 	public String getSignature() throws DebugException;
 	
 	/**
+	 * Returns the generic signature as defined in the JVM
+	 * specification for the declared type of this variable,
+	 * or <code>null</code> if the type associated with the
+	 * signature is not yet loaded in the target VM.
+	 * Returns the same value as #getSignature() if the declared type
+	 * of this variable is not a generic type.
+	 *
+	 * @return generic signature, or <code>null</code> if not accessible
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>The type associated with the signature is not yet loaded</li></ul>
+	 */
+	public String getGenericSignature() throws DebugException;
+	
+	/**
 	 * Returns the declared type of this variable.
 	 * 
 	 * @return the declared type of this variable

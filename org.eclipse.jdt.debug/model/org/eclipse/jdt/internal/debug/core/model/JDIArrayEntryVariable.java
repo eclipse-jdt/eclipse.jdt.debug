@@ -20,6 +20,7 @@ import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ArrayType;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
@@ -133,6 +134,25 @@ public class JDIArrayEntryVariable extends JDIModificationVariable {
 	public String getSignature() throws DebugException {
 		try {
 			return getArrayReference().type().signature();
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
+			// execution will not reach this line, as
+			// #targetRequestFailed will thrown an exception			
+			return null;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.core.IJavaVariable#getGenericSignature()
+	 */
+	public String getGenericSignature() throws DebugException {
+		try {
+			ReferenceType referenceType= getArrayReference().referenceType();
+			String genericSignature= referenceType.genericSignature();
+			if (genericSignature != null) {
+				return genericSignature;
+			}
+			return referenceType.signature();
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIArrayEntryVariable.exception_retrieving_type_signature"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
