@@ -38,6 +38,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathContentProvider;
+import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathLabelProvider;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathModel;
 import org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry;
@@ -256,34 +257,18 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (isDirty()) {
-			boolean def = !hasClasspathChanged(configuration.getOriginal());
+			IRuntimeClasspathEntry[] classpath = getCurrentClasspath();
+			boolean def = isDefaultClasspath(classpath, configuration.getOriginal());
 			if (def) {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, (String)null);
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, (String)null);
 			} else {
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
 				try {
-					IClasspathEntry[] boot = model.getEntries(ClasspathModel.BOOTSTRAP);
-					IClasspathEntry[] user = model.getEntries(ClasspathModel.USER);
-					List mementos = new ArrayList(boot.length + user.length);
-					IClasspathEntry bootEntry;
-					IRuntimeClasspathEntry entry;
-					for (int i = 0; i < boot.length; i++) {
-						bootEntry= boot[i];
-						if (bootEntry instanceof IRuntimeClasspathEntry) {
-							entry= (IRuntimeClasspathEntry) boot[i];
-							entry.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
-							mementos.add(entry.getMemento());
-						}
-					}
-					IClasspathEntry userEntry;
-					for (int i = 0; i < user.length; i++) {
-						userEntry= user[i];
-						if (userEntry instanceof IRuntimeClasspathEntry) {
-							entry= (IRuntimeClasspathEntry) user[i];
-							entry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
-							mementos.add(entry.getMemento());
-						}
+					List mementos = new ArrayList(classpath.length);
+					for (int i = 0; i < classpath.length; i++) {
+						IRuntimeClasspathEntry entry = classpath[i];
+						mementos.add(entry.getMemento());
 					}
 					configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
 				} catch (CoreException e) {
@@ -292,44 +277,77 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			}
 		}
 	}
+	
+	/**
+	 * Returns the classpath entries currently specified by this tab.
+	 * 
+	 * @return the classpath entries currently specified by this tab
+	 */
+	private IRuntimeClasspathEntry[] getCurrentClasspath() {
+		IClasspathEntry[] boot = model.getEntries(ClasspathModel.BOOTSTRAP);
+		IClasspathEntry[] user = model.getEntries(ClasspathModel.USER);
+		List entries = new ArrayList(boot.length + user.length);
+		IClasspathEntry bootEntry;
+		IRuntimeClasspathEntry entry;
+		for (int i = 0; i < boot.length; i++) {
+			bootEntry= boot[i];
+			entry = null;
+			if (bootEntry instanceof ClasspathEntry) {
+				entry = ((ClasspathEntry)bootEntry).getDelegate(); 
+			} else if (bootEntry instanceof IRuntimeClasspathEntry) {
+				entry= (IRuntimeClasspathEntry) boot[i];
+			}
+			if (entry != null) {
+				if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
+					entry.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+				}
+				entries.add(entry);
+			}
+		}
+		IClasspathEntry userEntry;
+		for (int i = 0; i < user.length; i++) {
+			userEntry= user[i];
+			entry = null;
+			if (userEntry instanceof ClasspathEntry) {
+				entry = ((ClasspathEntry)userEntry).getDelegate();
+			} else if (userEntry instanceof IRuntimeClasspathEntry) {
+				entry= (IRuntimeClasspathEntry) user[i];
+			}
+			if (entry != null) {
+				entry.setClasspathProperty(IRuntimeClasspathEntry.USER_CLASSES);
+				entries.add(entry);
+			}
+		}			
+		return (IRuntimeClasspathEntry[]) entries.toArray(new IRuntimeClasspathEntry[entries.size()]);
+	}
 
 	/**
-	 * @param configuration
-	 * @return
+	 * Returns whether the specified classpath is equivalent to the
+	 * default classpath for this configuration.
+	 * 
+	 * @param classpath classpath to compare to default
+	 * @param configuration original configuration
+	 * @return whether the specified classpath is equivalent to the
+	 * default classpath for this configuration
 	 */
-	private boolean hasClasspathChanged(ILaunchConfiguration configuration) {
+	private boolean isDefaultClasspath(IRuntimeClasspathEntry[] classpath, ILaunchConfiguration configuration) {
 		try {
-			IRuntimeClasspathEntry[] entries= JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
-			IClasspathEntry[] bootEntries= model.getEntries(ClasspathModel.BOOTSTRAP);
-			IClasspathEntry entry;
-			int i;
-			for (i = 0; i < bootEntries.length; i++) {
-				if (i == entries.length) {
-					return true;
+			ILaunchConfigurationWorkingCopy wc = configuration.getWorkingCopy();
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
+			IRuntimeClasspathEntry[] entries= JavaRuntime.computeUnresolvedRuntimeClasspath(wc);
+			if (classpath.length == entries.length) {
+				for (int i = 0; i < entries.length; i++) {
+					IRuntimeClasspathEntry entry = entries[i];
+					if (!entry.equals(classpath[i])) {
+						return false;
+					}
 				}
-				entry = bootEntries[i];
-				if (i > entries.length || !entry.equals(entries[i])) {
-					return true;
-				}
-				
+				return true;
 			}
-			
-			IClasspathEntry[] userEntries= model.getEntries(ClasspathModel.USER);
-			for (;i < entries.length; i++) {
-				if (i >= userEntries.length) {
-					return true;
-				}
-				entry = userEntries[i];
-				if (i > entries.length || !entry.equals(entries[i])) {
-					return true;
-				}
-				
-			}
+			return false;
 		} catch (CoreException e) {
-			return true;
+			return false;
 		}
-		
-		return false;
 	}
 
 	/* (non-Javadoc)

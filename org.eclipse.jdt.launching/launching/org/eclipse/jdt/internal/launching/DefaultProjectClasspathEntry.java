@@ -317,4 +317,17 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 	public String getName() {
 		return MessageFormat.format(LaunchingMessages.getString("DefaultProjectClasspathEntry.4"), new String[] {getJavaProject().getElementName()}); //$NON-NLS-1$
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		return obj instanceof DefaultProjectClasspathEntry &&
+		 ((DefaultProjectClasspathEntry)obj).getJavaProject().equals(getJavaProject());
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getJavaProject().hashCode();
+	}
 }
