@@ -8,6 +8,7 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
@@ -281,21 +282,33 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 		
 		// always set the newly created area with defaults
 		ILaunchConfigurationWorkingCopy wc = getLaunchConfigurationWorkingCopy();
-		if (wc == null) {
-			try {
+		if (getDynamicTab() == null) {
+			// remove any VM specfic args from the config
+			if (wc == null) {
 				if (getLaunchConfiguration().isWorkingCopy()) {
-					// get a fresh copy to work on
-					wc = ((ILaunchConfigurationWorkingCopy)getLaunchConfiguration()).getOriginal().getWorkingCopy();
-				} else {
-						wc = getLaunchConfiguration().getWorkingCopy();
+					wc = (ILaunchConfigurationWorkingCopy)getLaunchConfiguration();
 				}
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.errorDialog("Unable to initialize defaults for selected JRE", e);
-				return;
 			}
+			if (wc != null) {
+				wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+			}
+		} else {
+			if (wc == null) {
+				try {
+					if (getLaunchConfiguration().isWorkingCopy()) {
+						// get a fresh copy to work on
+						wc = ((ILaunchConfigurationWorkingCopy)getLaunchConfiguration()).getOriginal().getWorkingCopy();
+					} else {
+							wc = getLaunchConfiguration().getWorkingCopy();
+					}
+				} catch (CoreException e) {
+					JDIDebugUIPlugin.errorDialog("Unable to initialize defaults for selected JRE", e);
+					return;
+				}
+			}
+			getDynamicTab().setDefaults(wc);
+			getDynamicTab().initializeFrom(wc);
 		}
-		getDynamicTab().setDefaults(wc);
-		getDynamicTab().initializeFrom(wc);
 				
 		updateLaunchConfigurationDialog();		
 	}
