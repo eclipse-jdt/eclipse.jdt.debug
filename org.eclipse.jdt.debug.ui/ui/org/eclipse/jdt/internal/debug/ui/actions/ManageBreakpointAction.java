@@ -36,7 +36,6 @@ public abstract class ManageBreakpointAction implements IObjectActionDelegate {
 			return;
 		}
 		update(selection);
-		update();
 	}
 
 	protected IAction getAction() {
