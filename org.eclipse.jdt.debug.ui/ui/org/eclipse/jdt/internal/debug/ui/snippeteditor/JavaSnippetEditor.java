@@ -583,7 +583,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 		 
 	public IJavaElement[] codeResolve() throws JavaModelException {
-		IDocument d= getSourceViewer().getDocument();
+		ISourceViewer viewer= getSourceViewer();
+		if (viewer == null) {
+			return null;
+		}
+		IDocument d= viewer.getDocument();
 		ITextSelection selection= (ITextSelection) getSelectionProvider().getSelection();
 		int start= selection.getOffset();
 		int len= selection.getLength();
