@@ -12,6 +12,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
  
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -36,7 +37,7 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 	 */
 	public void run(IAction action) {
 		PropertyDialogAction propertyAction= 
-			new PropertyDialogAction(getActivePart().getSite().getShell(), new ISelectionProvider() {
+			new PropertyDialogAction(JDIDebugUIPlugin.getActiveWorkbenchShell(), new ISelectionProvider() {
 				public void addSelectionChangedListener(ISelectionChangedListener listener) {
 				}
 				public ISelection getSelection() {
@@ -78,7 +79,7 @@ public class JavaBreakpointPropertiesAction implements IObjectActionDelegate {
 		return fBreakpoint;
 	}
 
-	protected void setBreakpoint(IJavaBreakpoint breakpoint) {
+	public void setBreakpoint(IJavaBreakpoint breakpoint) {
 		fBreakpoint = breakpoint;
 	}
 	/**

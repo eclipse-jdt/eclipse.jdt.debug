@@ -55,11 +55,12 @@ import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesDialog;
+import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -732,8 +733,9 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 				ConditionalBreakpointErrorDialog dialog= new ConditionalBreakpointErrorDialog(shell, message, status);
 				int result = dialog.open();
 				if (result == Window.OK) {
-					JavaBreakpointPropertiesDialog breakpointPropertiesDialog = new JavaBreakpointPropertiesDialog(shell, breakpoint);
-					breakpointPropertiesDialog.open();
+					JavaBreakpointPropertiesAction action= new JavaBreakpointPropertiesAction();
+					action.selectionChanged(null, new StructuredSelection(breakpoint));
+					action.run(null);
 				}
 			}
 		});
