@@ -84,7 +84,7 @@ public class JavaExceptionBreakpoint extends JavaBreakpoint implements IJavaExce
 				}
 				
 				// create the marker
-				fMarker= resource.createMarker(JAVA_EXCEPTION_BREAKPOINT);
+				setMarker(resource.createMarker(JAVA_EXCEPTION_BREAKPOINT));
 				// configure the standard attributes
 				setEnabled(true);
 				// configure caught, uncaught, checked, and the type attributes
