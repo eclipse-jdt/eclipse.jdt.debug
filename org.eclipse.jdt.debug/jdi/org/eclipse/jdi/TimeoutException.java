@@ -13,5 +13,4 @@ package org.eclipse.jdi;
 
 public class TimeoutException extends RuntimeException {
 	public TimeoutException() {	}
-	public TimeoutException(String s) {	}
 }
