@@ -2105,7 +2105,7 @@
             id="org.eclipse.jdt.debug.ui.Display">
       </command>
       <keyBinding
-            string="Ctrl+D"
+            string="Ctrl+Alt+D"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.jdt.debug.ui.Display"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
