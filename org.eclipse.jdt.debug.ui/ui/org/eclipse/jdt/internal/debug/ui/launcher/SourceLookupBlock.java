@@ -50,9 +50,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class SourceLookupBlock {
 	
-	// works on one of a project or launch configuration
 	private IJavaProject fJavaProject;
-	private ILaunchConfiguration fLaunchConfiguration;
+	private IJavaSourceLocation[] fLocations;
 	
 	
 	private SelectionButtonDialogField fUseDefaultRadioButton;
@@ -124,14 +123,6 @@ public class SourceLookupBlock {
 		setJavaProject(project);
 		createFields();
 	}
-	
-	/**
-	 * Creates a source lookup block for a launch configuration.
-	 */
-	public SourceLookupBlock(ILaunchConfiguration config) {
-		setLaunchConfiguration(config);
-		createFields();
-	}	
 	
 	/**
 	 * Create fields
@@ -324,7 +315,8 @@ public class SourceLookupBlock {
 					}
 				}
 			}
-			ProjectSourceLocator.setPersistedSourceLocations(getJavaProject(), (IJavaSourceLocation[]) orderedLocations.toArray(new IJavaSourceLocation[orderedLocations.size()]));
+			setSourceLocations((IJavaSourceLocation[]) orderedLocations.toArray(new IJavaSourceLocation[orderedLocations.size()]));
+			ProjectSourceLocator.setPersistedSourceLocations(getJavaProject(), getSourceLocations());
 		}	
 	}
 	
@@ -386,28 +378,25 @@ public class SourceLookupBlock {
 	private void setJavaProject(IJavaProject javaProject) {
 		fJavaProject = javaProject;
 	}
-
+	
 	/**
-	 * Returns the launch configuration this control
-	 * is operating on, or <code>null</code> if operating
-	 * on a Java project.
+	 * Sets the selected locations.
 	 * 
-	 * @return launch configuration or <code>null</code>
+	 * @param array of source locations specified by this control
 	 */
-	protected ILaunchConfiguration getLaunchConfiguration() {
-		return fLaunchConfiguration;
+	private void setSourceLocations(IJavaSourceLocation[] locations) {
+		fLocations = locations;
 	}
 
 	/**
-	 * Sets the launch configuration this control
-	 * is operating on, or <code>null</code> if operating
-	 * on a Java project.
+	 * Returns the locations specified by this control,
+	 * or <code>null</code> changes were not applied.
 	 * 
-	 * @param launchConfiguration launch configuration or <code>null</code>
+	 * @return the locations specified by this control,
+	 * or <code>null</code> changes were not applied
 	 */
-	public void setLaunchConfiguration(ILaunchConfiguration launchConfiguration) {
-		fLaunchConfiguration = launchConfiguration;
+	public IJavaSourceLocation[] getSourceLocations() {
+		return fLocations;
 	}
-
 }
 

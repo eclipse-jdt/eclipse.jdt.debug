@@ -138,7 +138,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	 */
 	private void showDebugSourcePage(String typeName) {
 		if (fJavaProject != null) {
-			SourceLookupDialog dialog= new SourceLookupDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), fJavaProject, typeName);
+			SourceLookupDialog dialog= new SourceLookupDialog(JDIDebugUIPlugin.getActiveWorkbenchShell(), fJavaProject, typeName, this);
 			dialog.open();
 			fAllowedToAsk= !dialog.isNotAskAgain();
 		}
@@ -150,16 +150,18 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	private static class SourceLookupDialog extends Dialog {
 		
 		private SourceLookupBlock fSourceLookupBlock;
+		private JavaUISourceLocator fLocator;
 		private String fTypeName;
 		private boolean fNotAskAgain;
 		private Button fAskAgainCheckBox;
 		
-		public SourceLookupDialog(Shell shell, IJavaProject project, String typeName) {
+		public SourceLookupDialog(Shell shell, IJavaProject project, String typeName, JavaUISourceLocator locator) {
 			super(shell);
 			fSourceLookupBlock= new SourceLookupBlock(project);
 			fTypeName= typeName;
 			fNotAskAgain= false;
 			fAskAgainCheckBox= null;
+			fLocator = locator;
 		}
 		
 		public boolean isNotAskAgain() {
@@ -207,6 +209,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 					fNotAskAgain= fAskAgainCheckBox.getSelection();
 				}
 				fSourceLookupBlock.applyChanges();
+				fLocator.setSourceLocations(fSourceLookupBlock.getSourceLocations());
 			} catch (JavaModelException e) {
 				JDIDebugUIPlugin.log(e);
 			}
