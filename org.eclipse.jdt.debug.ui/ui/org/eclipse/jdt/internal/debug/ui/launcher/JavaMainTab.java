@@ -5,11 +5,7 @@ package org.eclipse.jdt.internal.debug.ui.launcher;
  * All Rights Reserved.
  */
  
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,7 +29,6 @@ import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.internal.ui.util.BusyIndicatorRunnableContext;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -47,7 +42,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -58,7 +52,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
  * This tab appears in the LaunchConfigurationDialog for launch configurations that
  * require Java-specific launching information such as a main type and JRE.
  */
-public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDialogRequestor {
+public class JavaMainTab extends JavaLaunchConfigurationTab {
 		
 	// Project UI widgets
 	private Label fProjLabel;
@@ -70,16 +64,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 	private Text fMainText;
 	private Button fSearchButton;
 	private Button fSearchExternalJarsCheckButton;
-	
-	// JRE UI widgets
-	private Label fJRELabel;
-	private Combo fJRECombo;
-	private Button fJREAddButton;
-	
-	// Collections used to populating the JRE Combo box
-	private IVMInstallType[] fVMTypes;
-	private List fVMStandins;
-	
+			
 	private static final String EMPTY_STRING = "";
 	
 	/**
@@ -162,41 +147,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		fSearchExternalJarsCheckButton = new Button(mainComp, SWT.CHECK);
 		fSearchExternalJarsCheckButton.setText("E&xt. jars");
 		fSearchExternalJarsCheckButton.setToolTipText("Include external jars when searching for a main class");
-				
-		createVerticalSpacer(comp);
 		
-		Composite jreComp = new Composite(comp, SWT.NONE);
-		GridLayout jreLayout = new GridLayout();
-		jreLayout.numColumns = 2;
-		jreLayout.marginHeight = 0;
-		jreLayout.marginWidth = 0;
-		jreComp.setLayout(jreLayout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		jreComp.setLayoutData(gd);
-		
-		fJRELabel = new Label(jreComp, SWT.NONE);
-		fJRELabel.setText("&JRE:");
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		fJRELabel.setLayoutData(gd);
-		
-		fJRECombo = new Combo(jreComp, SWT.READ_ONLY);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fJRECombo.setLayoutData(gd);
-		initializeJREComboBox();
-		fJRECombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent evt) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-		
-		fJREAddButton = new Button(jreComp, SWT.PUSH);
-		fJREAddButton.setText("A&dd...");
-		fJREAddButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleJREAddButtonSelected();
-			}
-		});
 				
 	}
 		
@@ -206,7 +157,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 	public void initializeFrom(ILaunchConfiguration config) {
 		updateProjectFromConfig(config);
 		updateMainTypeFromConfig(config);
-		updateJREFromConfig(config);
 	}
 	
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
@@ -226,19 +176,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		}	
 		fMainText.setText(mainTypeName);	
 	}
-
-	protected void updateJREFromConfig(ILaunchConfiguration config) {
-		String vmID = null;
-		try {
-			vmID = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, EMPTY_STRING);
-		} catch (CoreException ce) {			
-		}
-		if (vmID == null) {
-			clearJREComboBoxEntry();
-		} else {
-			selectJREComboBoxEntry(vmID);
-		}
-	}
 		
 	/**
 	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
@@ -246,14 +183,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)fProjText.getText());
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)fMainText.getText());
-		int vmIndex = fJRECombo.getSelectionIndex();
-		if (vmIndex > -1) {
-			VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
-			String vmID = vmStandin.getId();
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vmID);
-			String vmTypeID = vmStandin.getVMInstallType().getId();
-			config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
-		}		
 	}
 			
 	/**
@@ -268,74 +197,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 	protected void createVerticalSpacer(Composite comp) {
 		new Label(comp, SWT.NONE);
 	}
-	
-	/**
-	 * Load the JRE related collections, and use these to set the values on the combo box
-	 */
-	protected void initializeJREComboBox() {
-		fVMTypes= JavaRuntime.getVMInstallTypes();
-		fVMStandins= createFakeVMInstalls(fVMTypes);
-		populateJREComboBox();		
-	}
-	
-	private List createFakeVMInstalls(IVMInstallType[] vmTypes) {
-		ArrayList vms= new ArrayList();
-		for (int i= 0; i < vmTypes.length; i++) {
-			IVMInstall[] vmInstalls= vmTypes[i].getVMInstalls();
-			for (int j= 0; j < vmInstalls.length; j++) 
-				vms.add(new VMStandin(vmInstalls[j]));
-		}
-		return vms;
-	}
-	
-	/**
-	 * Set the available items on the JRE combo box
-	 */
-	protected void populateJREComboBox() {
-		String[] vmNames = new String[fVMStandins.size()];
-		Iterator iterator = fVMStandins.iterator();
-		int index = 0;
-		while (iterator.hasNext()) {
-			VMStandin standin = (VMStandin)iterator.next();
-			String vmName = standin.getName();
-			vmNames[index] = vmName;
-			index++;
-		}
-		fJRECombo.setItems(vmNames);
-	}
-	
-	/**
-	 * Cause the VM with the specified ID to be selected in the JRE combo box.
-	 * This relies on the fact that the items set on the combo box are done so in 
-	 * the same order as they in the <code>fVMStandins</code> list.
-	 */
-	protected void selectJREComboBoxEntry(String vmID) {
-		//VMStandin selectedVMStandin = null;
-		int index = -1;
-		for (int i = 0; i < fVMStandins.size(); i++) {
-			VMStandin vmStandin = (VMStandin)fVMStandins.get(i);
-			if (vmStandin.getId().equals(vmID)) {
-				index = i;
-				//selectedVMStandin = vmStandin;
-				break;
-			}
-		}
-		if (index > -1) {
-			fJRECombo.select(index);
-			//fJRECombo.setData(JavaDebugUI.VM_INSTALL_TYPE_ATTR, selectedVMStandin.getVMInstallType().getId());
-		} else {
-			clearJREComboBoxEntry();
-		}
-	}
-	
-	/**
-	 * Convenience method to remove any selection in the JRE combo box
-	 */
-	protected void clearJREComboBoxEntry() {
-		//fJRECombo.clearSelection();
-		fJRECombo.deselectAll();
-	}
-	
+		
 	/**
 	 * Show a dialog that lists all main types
 	 */
@@ -378,18 +240,7 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 			fProjText.setText(javaProject.getElementName());
 		}
 	}
-	
-	/**
-	 * Show a dialog that lets the user add a new JRE definition
-	 */
-	protected void handleJREAddButtonSelected() {
-		AddVMDialog dialog= new AddVMDialog(this, getShell(), fVMTypes, null);
-		dialog.setTitle(LauncherMessages.getString("vmPreferencePage.editJRE.title")); //$NON-NLS-1$
-		if (dialog.open() != dialog.OK) {
-			return;
-		}
-	}
-	
+		
 	/**
 	 * Show a dialog that lets the user select a project.  This in turn provides
 	 * context for the main type, allowing the user to key a main type name, or
@@ -460,33 +311,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 		return JavaCore.create(getWorkspaceRoot());
 	}
 
-	/**
-	 * @see IAddVMDialogRequestor#isDuplicateName(IVMInstallType, String)
-	 */
-	public boolean isDuplicateName(IVMInstallType type, String name) {
-		for (int i= 0; i < fVMStandins.size(); i++) {
-			IVMInstall vm= (IVMInstall)fVMStandins.get(i);
-			if (vm.getVMInstallType() == type) {
-				if (vm.getName().equals(name))
-					return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * @see IAddVMDialogRequestor#vmAdded(IVMInstall)
-	 */
-	public void vmAdded(IVMInstall vm) {
-		((VMStandin)vm).convertToRealVM();		
-		try {
-			JavaRuntime.saveVMConfiguration();
-		} catch(CoreException e) {
-		}
-		fVMStandins.add(vm);
-		populateJREComboBox();
-		selectJREComboBoxEntry(vm.getId());
-	}
 
 	/**
 	 * @see ILaunchConfigurationTab#isPageComplete()
@@ -518,24 +342,6 @@ public class JavaMainTab extends JavaLaunchConfigurationTab implements IAddVMDia
 				setErrorMessage(e.getMessage());
 				return false;
 			}
-		}
-		
-		int vmIndex = fJRECombo.getSelectionIndex();
-		if (vmIndex > -1) {
-			VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
-			IVMInstall vm = vmStandin.convertToRealVM();
-			File location = vm.getInstallLocation();
-			if (location == null) {
-				setErrorMessage("JRE home directory not specified.");
-				return false;
-			}
-			if (!location.exists()) {
-				setErrorMessage("JRE home directory does not exist.");
-				return false;
-			}			
-		} else {
-			setErrorMessage("JRE not specified.");
-			return false;
 		}	
 		
 		return true;

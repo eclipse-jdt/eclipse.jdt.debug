@@ -20,11 +20,15 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -33,6 +37,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
@@ -48,13 +53,14 @@ import org.eclipse.swt.widgets.TableItem;
  * Launch configuration tab for local java launches that presents the various paths (bootpath,
  * classpath and extension dirs path) and the environment variables to the user.
  */
-public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
+public class JavaEnvironmentTab extends JavaLaunchConfigurationTab implements IAddVMDialogRequestor {
 	
 	// Paths UI widgets
 	private TabFolder fPathTabFolder;
 	private TabItem fBootPathTabItem;
 	private TabItem fClassPathTabItem;
 	private TabItem fExtensionPathTabItem;
+	private TabItem fJRETabItem;
 	private List fBootPathList;
 	private List fClassPathList;
 	private List fExtensionPathList;
@@ -64,6 +70,12 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 	private Button fPathRemoveButton;
 	private Button fPathMoveUpButton;
 	private Button fPathMoveDownButton;
+	private Combo fJRECombo;
+	private Button fJREAddButton;
+	
+	// Collections used to populating the JRE Combo box
+	private IVMInstallType[] fVMTypes;
+	private java.util.List fVMStandins;	
 	
 	// Environment variables UI widgets
 	private Label fEnvLabel;
@@ -152,6 +164,40 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		fExtensionPathTabItem.setText("E&xtension path");
 		fExtensionPathTabItem.setControl(fExtensionPathList);
 		fExtensionPathTabItem.setData(fExtensionPathList);
+		
+		// JRE
+		Composite jreComp = new Composite(fPathTabFolder, SWT.NONE);
+		GridLayout jreLayout = new GridLayout();
+		jreLayout.numColumns = 2;
+		jreLayout.marginHeight = 0;
+		jreLayout.marginWidth = 0;
+		jreComp.setLayout(jreLayout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		jreComp.setLayoutData(gd);
+		
+		createVerticalSpacer(jreComp, 2);
+		
+		fJRECombo = new Combo(jreComp, SWT.READ_ONLY);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fJRECombo.setLayoutData(gd);
+		initializeJREComboBox();
+		fJRECombo.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent evt) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		
+		fJREAddButton = new Button(jreComp, SWT.PUSH);
+		fJREAddButton.setText("N&ew...");
+		fJREAddButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleJREAddButtonSelected();
+			}
+		});
+				
+		fJRETabItem = new TabItem(fPathTabFolder, SWT.NONE);
+		fJRETabItem.setText("&JRE");
+		fJRETabItem.setControl(jreComp);
 		
 		Composite pathButtonComp = new Composite(comp, SWT.NONE);
 		GridLayout pathButtonLayout = new GridLayout();
@@ -623,19 +669,28 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		TabItem[] tabSelection = fPathTabFolder.getSelection();
 		boolean isClasspathTab = tabSelection != null && tabSelection.length == 1 && tabSelection[0].equals(fClassPathTabItem);
 		
-		int selectCount = listWidget.getSelectionIndices().length;
+		int selectCount = 0;
+		if (listWidget != null) {
+			selectCount = listWidget.getSelectionIndices().length;
+		}
 		boolean selection = selectCount > 0;
 		boolean singleSelection = selectCount == 1;
 		
-		int selectedIndex = listWidget.getSelectionIndex();
-		boolean firstSelected = selectedIndex == 0;
-		boolean lastSelcted = selectedIndex == (listWidget.getItemCount() - 1);
+		boolean firstSelected = false;
+		boolean lastSelcted = false;
+		if (listWidget != null) {
+			int selectedIndex = listWidget.getSelectionIndex();
+			firstSelected = selectedIndex == 0;
+			lastSelcted = selectedIndex == (listWidget.getItemCount() - 1);
+		}
 		
-		fPathRemoveButton.setEnabled((!useDefault || !isClasspathTab) && selection);
-		fPathMoveUpButton.setEnabled((!useDefault || !isClasspathTab) && singleSelection && !firstSelected);
-		fPathMoveDownButton.setEnabled((!useDefault || !isClasspathTab) && singleSelection && !lastSelcted);
-		fPathAddArchiveButton.setEnabled((!useDefault || !isClasspathTab));
-		fPathAddDirectoryButton.setEnabled((!useDefault || !isClasspathTab));
+		boolean enabledList = (!useDefault || !isClasspathTab) && listWidget != null;
+		
+		fPathRemoveButton.setEnabled(enabledList && selection);
+		fPathMoveUpButton.setEnabled(enabledList && singleSelection && !firstSelected);
+		fPathMoveDownButton.setEnabled(enabledList && singleSelection && !lastSelcted);
+		fPathAddArchiveButton.setEnabled(enabledList);
+		fPathAddDirectoryButton.setEnabled(enabledList);
 	
 	}
 	
@@ -779,6 +834,24 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		
+		int vmIndex = fJRECombo.getSelectionIndex();
+		if (vmIndex > -1) {
+			VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
+			IVMInstall vm = vmStandin.convertToRealVM();
+			File location = vm.getInstallLocation();
+			if (location == null) {
+				setErrorMessage("JRE home directory not specified.");
+				return false;
+			}
+			if (!location.exists()) {
+				setErrorMessage("JRE home directory does not exist.");
+				return false;
+			}			
+		} else {
+			setErrorMessage("JRE not specified.");
+			return false;
+		}		
+		
 		return true;
 	}
 	
@@ -790,6 +863,7 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		updateClassPathFromConfig(configuration);
 		updateEnvVarsFromConfig(configuration);
 		updateExtensionPathFromConfig(configuration);
+		updateJREFromConfig(configuration);
 	}
 
 	/**
@@ -804,6 +878,15 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		}
 		updateConfigFromPathList(fBootPathList, configuration);
 		updateConfigFromPathList(fExtensionPathList, configuration);
+		
+		int vmIndex = fJRECombo.getSelectionIndex();
+		if (vmIndex > -1) {
+			VMStandin vmStandin = (VMStandin)fVMStandins.get(vmIndex);
+			String vmID = vmStandin.getId();
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, vmID);
+			String vmTypeID = vmStandin.getVMInstallType().getId();
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
+		}		
 	}
 	
 	/**
@@ -813,4 +896,122 @@ public class JavaEnvironmentTab extends JavaLaunchConfigurationTab {
 		return fClassPathDefaultButton.getSelection();
 	}
 
+
+	/**
+	 * Load the JRE related collections, and use these to set the values on the combo box
+	 */
+	protected void initializeJREComboBox() {
+		fVMTypes= JavaRuntime.getVMInstallTypes();
+		fVMStandins= createFakeVMInstalls(fVMTypes);
+		populateJREComboBox();		
+	}
+	
+	/**
+	 * Show a dialog that lets the user add a new JRE definition
+	 */
+	protected void handleJREAddButtonSelected() {
+		AddVMDialog dialog= new AddVMDialog(this, getShell(), fVMTypes, null);
+		dialog.setTitle(LauncherMessages.getString("vmPreferencePage.editJRE.title")); //$NON-NLS-1$
+		if (dialog.open() != dialog.OK) {
+			return;
+		}
+	}	
+	
+	/**
+	 * @see IAddVMDialogRequestor#isDuplicateName(IVMInstallType, String)
+	 */
+	public boolean isDuplicateName(IVMInstallType type, String name) {
+		for (int i= 0; i < fVMStandins.size(); i++) {
+			IVMInstall vm= (IVMInstall)fVMStandins.get(i);
+			if (vm.getVMInstallType() == type) {
+				if (vm.getName().equals(name))
+					return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @see IAddVMDialogRequestor#vmAdded(IVMInstall)
+	 */
+	public void vmAdded(IVMInstall vm) {
+		((VMStandin)vm).convertToRealVM();		
+		try {
+			JavaRuntime.saveVMConfiguration();
+		} catch(CoreException e) {
+		}
+		fVMStandins.add(vm);
+		populateJREComboBox();
+		selectJREComboBoxEntry(vm.getId());
+	}	
+	
+	/**
+	 * Set the available items on the JRE combo box
+	 */
+	protected void populateJREComboBox() {
+		String[] vmNames = new String[fVMStandins.size()];
+		Iterator iterator = fVMStandins.iterator();
+		int index = 0;
+		while (iterator.hasNext()) {
+			VMStandin standin = (VMStandin)iterator.next();
+			String vmName = standin.getName();
+			vmNames[index] = vmName;
+			index++;
+		}
+		fJRECombo.setItems(vmNames);
+	}	
+	
+	/**
+	 * Cause the VM with the specified ID to be selected in the JRE combo box.
+	 * This relies on the fact that the items set on the combo box are done so in 
+	 * the same order as they in the <code>fVMStandins</code> list.
+	 */
+	protected void selectJREComboBoxEntry(String vmID) {
+		//VMStandin selectedVMStandin = null;
+		int index = -1;
+		for (int i = 0; i < fVMStandins.size(); i++) {
+			VMStandin vmStandin = (VMStandin)fVMStandins.get(i);
+			if (vmStandin.getId().equals(vmID)) {
+				index = i;
+				//selectedVMStandin = vmStandin;
+				break;
+			}
+		}
+		if (index > -1) {
+			fJRECombo.select(index);
+			//fJRECombo.setData(JavaDebugUI.VM_INSTALL_TYPE_ATTR, selectedVMStandin.getVMInstallType().getId());
+		} else {
+			clearJREComboBoxEntry();
+		}
+	}	
+	
+	/**
+	 * Convenience method to remove any selection in the JRE combo box
+	 */
+	protected void clearJREComboBoxEntry() {
+		fJRECombo.deselectAll();
+	}	
+	
+	private java.util.List createFakeVMInstalls(IVMInstallType[] vmTypes) {
+		ArrayList vms= new ArrayList();
+		for (int i= 0; i < vmTypes.length; i++) {
+			IVMInstall[] vmInstalls= vmTypes[i].getVMInstalls();
+			for (int j= 0; j < vmInstalls.length; j++) 
+				vms.add(new VMStandin(vmInstalls[j]));
+		}
+		return vms;
+	}	
+	
+	protected void updateJREFromConfig(ILaunchConfiguration config) {
+		String vmID = null;
+		try {
+			vmID = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL, EMPTY_STRING);
+		} catch (CoreException ce) {			
+		}
+		if (vmID == null) {
+			clearJREComboBoxEntry();
+		} else {
+			selectJREComboBoxEntry(vmID);
+		}
+	}	
 }
