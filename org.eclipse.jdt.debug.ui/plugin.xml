@@ -211,7 +211,10 @@
 			<enablement> 
              	<and>
 	             	<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
-					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+					<or>
+						<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+						<objectClass name="org.eclipse.jdt.debug.core.IJavaVariable"/>
+					</or>
 	             </and>
             </enablement>
 		</action> 
@@ -1109,7 +1112,6 @@
     	<action id="org.eclipse.jdt.debug.ui.cuPopup.StepIntoSelection"
     		label="%stepIntoSelectionAction.label"
     		menubarPath="additions"
-    		icon="icons/full/ctool16/run_sbook.gif"
     		helpContextId="step_into_selection_action_context"
     		class="org.eclipse.jdt.internal.debug.ui.actions.StepIntoSelectionActionDelegate"
     		enablesFor="+">

@@ -214,7 +214,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		setEvaluating(false);
 		setTargetPart(fNewTargetPart);
 		setNewTargetPart(null);
-		update();
 	}
 	/**
 	 * Display the given evaluation result.
@@ -296,23 +295,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	protected void update() {
 		IAction action= getAction();
 		if (action != null) {
-			boolean enabled = false;
 			resolveSelectedObject();
-			Object selection = getSelectedObject();
-			if (selection != null) {
-				if (selection instanceof IStructuredSelection) {
-					//valid selection from the tree viewer in the variables view
-					//for inspect
-					enabled= true;
-				} else {
-					if (getTargetPart() instanceof JavaSnippetEditor) {
-						enabled= true;
-					} else {
-						enabled = getStackFrameContext() != null;
-					}
-				}
-			}
-			action.setEnabled(enabled);
 		}
 	}
 	
@@ -572,15 +555,15 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
+		update();
 		run();
 	}
 
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
+	public void selectionChanged(IAction action, ISelection selection) { 
 		setAction(action);
-		update();
 	}	
 
 	/**
@@ -644,7 +627,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		setAction(action);
 		setTargetPart(targetEditor);
-		update();
 	}
 
 	/**
