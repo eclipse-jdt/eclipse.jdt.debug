@@ -80,7 +80,13 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					}
 				case IRuntimeClasspathEntry.VARIABLE:
 					IPath path = entry.getPath();
-					return path.segment(0);
+					String name = entry.getVariableName();
+					IPath value = JavaCore.getClasspathVariable(name);
+					if (value == null) {
+						return name;
+					} else {
+						return name + " - " + value.toString(); //$NON-NLS-1$
+					}
 				case IRuntimeClasspathEntry.LIBRARY:
 					break;
 			}	

@@ -171,4 +171,13 @@ public interface IRuntimeClasspathEntry {
 	 *  on the runtime classpath
 	 */
 	public String[] getResolvedPaths();
+	
+	/**
+	 * Returns the name of the variable associated with this entry, or <code>null</code>
+	 * if this entry is not of type <code>VARIABLE</code>.
+	 * 
+	 * @return the name of the variable associated with this entry, or <code>null</code>
+	 *  if this entry is not of type <code>VARIABLE</code>
+	 */
+	public String getVariableName();
 }

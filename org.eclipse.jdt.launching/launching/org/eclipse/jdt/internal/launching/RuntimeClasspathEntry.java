@@ -165,8 +165,7 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 	public int getClasspathProperty() {
 		switch (getType()) {
 			case VARIABLE:
-				String name = getPath().segment(0);
-				if (name.equals(JavaRuntime.JRELIB_VARIABLE)) {
+				if (getVariableName().equals(JavaRuntime.JRELIB_VARIABLE)) {
 					return STANDARD_CLASSES;
 				} else {
 					return USER_CLASSES;
@@ -213,6 +212,17 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @see IRuntimeClasspathEntry#getVariableName()
+	 */
+	public String getVariableName() {
+		if (getType() == IRuntimeClasspathEntry.VARIABLE) {
+			return getPath().segment(0);
+		} else {
+			return null;
+		}
 	}
 
 }

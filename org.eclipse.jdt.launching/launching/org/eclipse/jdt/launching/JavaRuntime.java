@@ -366,7 +366,21 @@ public final class JavaRuntime {
 		IClasspathEntry cpe = JavaCore.newLibraryEntry(path, null, null);
 		return new RuntimeClasspathEntry(IRuntimeClasspathEntry.ARCHIVE, cpe);
 	}
-		
+
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
+	 * 
+	 * Returns a new runtime classpath entry for the classpath
+	 * variable with the given name.
+	 * 
+	 * @param name class path variable name
+	 * @return runtime classpath entry
+	 */
+	public static IRuntimeClasspathEntry newVariableRuntimeClasspathEntry(String name) {
+		IClasspathEntry cpe = JavaCore.newVariableEntry(new Path(name), null, null);
+		return new RuntimeClasspathEntry(IRuntimeClasspathEntry.VARIABLE, cpe);
+	}
+			
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
 	 * 

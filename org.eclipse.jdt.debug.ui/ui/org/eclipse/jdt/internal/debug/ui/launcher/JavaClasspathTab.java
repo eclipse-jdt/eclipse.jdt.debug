@@ -19,6 +19,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.AddExternalJarAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddFolderAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddJarAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddProjectAction;
+import org.eclipse.jdt.internal.debug.ui.actions.AddVariableAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveDownAction;
 import org.eclipse.jdt.internal.debug.ui.actions.MoveUpAction;
 import org.eclipse.jdt.internal.debug.ui.actions.RemoveAction;
@@ -159,7 +160,12 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		button  = createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
 		addAction(action);		
-												
+
+		action = new AddVariableAction(null);								
+		button  = createPushButton(pathButtonComp, action.getText(), null);
+		action.setButton(button);
+		addAction(action);		
+														
 		retargetActions(fClasspathViewer);
 //		
 //		fPathAddDirectoryButton = createPushButton(pathButtonComp, LauncherMessages.getString("JavaEnvironmentTab.Add_&Folder_16"), null); //$NON-NLS-1$
