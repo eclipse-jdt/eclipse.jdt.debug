@@ -13,7 +13,7 @@ import org.eclipse.debug.core.model.IVariable;
  * A Java debug target is an extension of a regular debug
  * target, providing support specific to the JDI debug model.
  * A Java debug target is also available as an adapter from
- * debug targets originating for the JDI debug model.
+ * debug targets originating from the JDI debug model.
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
@@ -33,13 +33,18 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * <p>
 	 * Variable lookup works only when a debug target has one or more
 	 * threads suspended. Lookup is performed in each suspended thread,
-	 * returning the first successful match. If this debug target has no
-	 * suspended threads, <code>null</code> is returned.
+	 * returning the first successful match, or <code>null</code> if no
+	 * match if found. If this debug target has no suspended threads,
+	 * <code>null</code> is returned.
 	 * </p>
 	 * @param variableName name of the variable
 	 * @return a variable with the given name, or <code>null</code> if none
-	 * @exception DebugException if an exception occurrs while searching
-	 *   for the varialble on the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	IVariable findVariable(String variableName) throws DebugException;
 

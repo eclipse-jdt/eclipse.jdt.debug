@@ -15,7 +15,7 @@ import org.eclipse.jdt.core.IJavaProject;
  * A Java thread is an extension of a regular thread,
  * providing support specific to the JDI debug model.
  * A Java thread is also available as an adapter from
- * threads originating for the JDI debug model.
+ * threads originating from the JDI debug model.
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
@@ -33,8 +33,12 @@ public interface IJavaThread extends IThread, IJavaEvaluate {
 	 * Returns whether this thread is a system thread.
 	 *
 	 * @return whether this thread is a system thread
-	 * @exception DebugException if unable to determine if this
-	 *   thread is a system thread
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	boolean isSystemThread() throws DebugException;
 	
@@ -42,8 +46,12 @@ public interface IJavaThread extends IThread, IJavaEvaluate {
 	 * Returns the name of the thread group this thread belongs to.
 	 *
 	 * @return thread group name
-	 * @exception DebugException if unable retrieve this thread's
-	 *	group name from the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * </ul>
 	 */
 	String getThreadGroupName() throws DebugException;
 	
@@ -66,8 +74,13 @@ public interface IJavaThread extends IThread, IJavaEvaluate {
 	 * </p>
 	 * @param variableName the name of the variable to search for
 	 * @return a variable, or <code>null</code> if none
-	 * @exception DebugException if an exception occurrs while searching
-	 *    for the variable 
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>This thread is not currently suspended.</li>
+	 * </ul>
 	 */
 	IVariable findVariable(String variableName) throws DebugException;
 
