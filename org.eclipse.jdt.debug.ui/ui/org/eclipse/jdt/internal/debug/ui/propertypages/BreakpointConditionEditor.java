@@ -29,14 +29,14 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultUndoManager;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -106,11 +106,14 @@ public class BreakpointConditionEditor {
 		control.setLayoutData(gd);
 		
 		// listener for check the value
-		fViewer.getTextWidget().addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				valueChanged();
-			}
-		});
+		fViewer.getDocument().addDocumentListener(new IDocumentListener() {
+            public void documentAboutToBeChanged(DocumentEvent event) {
+            }
+            public void documentChanged(DocumentEvent event) {
+                valueChanged();
+            }
+        });
+		
 		// we can only do code assist if there is an associated type
 		IType type= BreakpointUtils.getType(fBreakpoint);
 		if (type != null) {
@@ -144,7 +147,6 @@ public class BreakpointConditionEditor {
 		gd.widthHint= fPage.convertWidthInCharsToPixels(40);	
 		document.set(condition);
 		valueChanged();
-		
 		
 		IHandler handler = new AbstractHandler() {
 		    public Object execute(Map parameter) throws ExecutionException {
@@ -181,24 +183,12 @@ public class BreakpointConditionEditor {
 			}
 		}
 	}
-
-	/**
-	 * @see org.eclipse.jface.preference.FieldEditor#adjustForNumColumns(int)
-	 */
-	protected void adjustForNumColumns(int numColumns) {
-		GridData gd = (GridData)fViewer.getControl().getLayoutData();
-		gd.horizontalSpan = numColumns - 1;
-		// We only grab excess space if we have to
-		// If another field editor has more columns then
-		// we assume it is setting the width.
-		gd.grabExcessHorizontalSpace = gd.horizontalSpan == 1;
-	}
 		
 	/**
 	 * Return the completion processor associated with this viewer.
 	 * @return BreakPointConditionCompletionProcessor
 	 */
-	private BreakpointConditionCompletionProcessor getCompletionProcessor() {
+	protected BreakpointConditionCompletionProcessor getCompletionProcessor() {
 		if (fCompletionProcessor == null) {
 			fCompletionProcessor= new BreakpointConditionCompletionProcessor(null);
 		}
@@ -227,15 +217,8 @@ public class BreakpointConditionEditor {
 		}
 		valueChanged();
 	}
-
-	/**
-	 * @see org.eclipse.jface.preference.FieldEditor#isValid()
-	 */
-	public boolean isValid() {
-		return fIsValid;
-	}
 	
-	public void valueChanged() {
+	protected void valueChanged() {
 		refreshValidState();
 				
 		String newValue = fViewer.getDocument().get();
