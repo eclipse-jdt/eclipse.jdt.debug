@@ -47,11 +47,23 @@ public class JavaDebugImages {
 	/*
 	 * Available cached Images in the Java debug plug-in image registry.
 	 */	
-	
-
 	public static final String IMG_OBJS_EXCEPTION= NAME_PREFIX + "jexception_obj.gif";			//$NON-NLS-1$
 	public static final String IMG_OBJS_ERROR= NAME_PREFIX + "jrtexception_obj.gif";			//$NON-NLS-1$	
-	public static final String IMG_OBJS_BREAKPOINT_INSTALLED= NAME_PREFIX + "brkpi_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_BREAKPOINT_INSTALLED= NAME_PREFIX + "installed_ovr.gif";	//$NON-NLS-1$
+	
+	public static final String IMG_OBJS_ACCESS_WATCHPOINT_ENABLED= NAME_PREFIX + "read_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_ACCESS_WATCHPOINT_DISABLED= NAME_PREFIX + "read_obj_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_MODIFICATION_WATCHPOINT_ENABLED= NAME_PREFIX + "write_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED= NAME_PREFIX + "write_obj_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_WATCHPOINT_ENABLED= NAME_PREFIX + "readwrite_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_WATCHPOINT_DISABLED= NAME_PREFIX + "readwrite_obj_disabled.gif";	//$NON-NLS-1$
+	
+	public static final String IMG_OBJS_METHOD_BREAKPOINT_ENTRY= NAME_PREFIX + "entry_ovr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED= NAME_PREFIX + "entry_ovr_disabled.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_METHOD_BREAKPOINT_EXIT= NAME_PREFIX + "exit_ovr.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED= NAME_PREFIX + "exit_ovr_disabled.gif";	//$NON-NLS-1$
+	
+	
 	public static final String IMG_OBJS_SNIPPET_EVALUATING= NAME_PREFIX + "jsbook_run_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_UP_NAV= NAME_PREFIX + "up_nav.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_DOWN_NAV= NAME_PREFIX + "down_nav.gif";	//$NON-NLS-1$
@@ -66,7 +78,20 @@ public class JavaDebugImages {
 	private static final String T_CTOOL= "ctool16"; 	//$NON-NLS-1$
 	
 	public static final ImageDescriptor DESC_OBJS_EXCEPTION= createManaged(T_OBJ, IMG_OBJS_EXCEPTION);
-	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED= createManaged(T_OBJ, IMG_OBJS_BREAKPOINT_INSTALLED);
+	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_INSTALLED= createManaged(T_OVR, IMG_OBJS_BREAKPOINT_INSTALLED);
+	
+	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED= createManaged(T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED);
+	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED= createManaged(T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_ACCESS_WATCHPOINT_ENABLED= createManaged(T_OBJ, IMG_OBJS_ACCESS_WATCHPOINT_ENABLED);
+	public static final ImageDescriptor DESC_OBJS_ACCESS_WATCHPOINT_DISABLED= createManaged(T_OBJ, IMG_OBJS_ACCESS_WATCHPOINT_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_MODIFICATION_WATCHPOINT_ENABLED= createManaged(T_OBJ, IMG_OBJS_MODIFICATION_WATCHPOINT_ENABLED);
+	public static final ImageDescriptor DESC_OBJS_MODIFICATION_WATCHPOINT_DISABLED= createManaged(T_OBJ, IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED);
+	
+	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_ENTRY= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_ENTRY);
+	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_ENTRY_DISABLED);
+	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_EXIT= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_EXIT);
+	public static final ImageDescriptor DESC_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED= createManaged(T_OVR, IMG_OBJS_METHOD_BREAKPOINT_EXIT_DISABLED);
+	
 	public static final ImageDescriptor DESC_OBJS_ERROR= createManaged(T_OBJ, IMG_OBJS_ERROR);
 	
 	public static final ImageDescriptor DESC_OBJS_SNIPPET_EVALUATING= createManaged(T_OBJ, IMG_OBJS_SNIPPET_EVALUATING);

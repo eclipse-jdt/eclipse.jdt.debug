@@ -24,6 +24,7 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncherDelegate;
 import org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetFileDocumentProvider;
+import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -51,12 +52,15 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	
 	private FileDocumentProvider fSnippetDocumentProvider;
 	
+	private ImageDescriptorRegistry fImageDescriptorRegistry;
+	
 	/**
 	 * @see Plugin(IPluginDescriptor)
 	 */
 	public JDIDebugUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		setDefault(this);
+		fImageDescriptorRegistry= new ImageDescriptorRegistry();
 	}
 	
 	/**
@@ -193,6 +197,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 	public void shutdown() throws CoreException {
 		JDIDebugModel.removeHotCodeReplaceListener(this);
 		JavaDebugOptionsManager.getDefault().shutdown();
+		getImageDescriptorRegistry().dispose();
 		super.shutdown();
 	}
 	/**
@@ -270,6 +275,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin implements IJavaHotCodeRe
 		//we can rely on not creating a display as we 
 		//prereq the base eclipse ui plugin.
 		return Display.getDefault();
+	}
+	
+	/**
+	 * Returns the image descriptor registry used for this plugin.
+	 */
+	public static ImageDescriptorRegistry getImageDescriptorRegistry() {
+		return getDefault().fImageDescriptorRegistry;
 	}
 }
 

@@ -85,7 +85,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	protected HashMap fAttributes= new HashMap(3);
 
 	static final Point BIG_SIZE= new Point(22, 16);
-	protected ImageDescriptorRegistry fRegistry= JavaPlugin.getImageDescriptorRegistry();
+	protected ImageDescriptorRegistry fJavaElementImageRegistry= JavaPlugin.getImageDescriptorRegistry();
+	protected ImageDescriptorRegistry fDebugImageRegistry= JDIDebugUIPlugin.getImageDescriptorRegistry();
 
 	protected static final String fgStringName= "java.lang.String"; //$NON-NLS-1$
 	
@@ -99,17 +100,6 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * used to evaluate 'toString()' for displaying details of values.
 	 */
 	private static final String fgToString = "toString"; //$NON-NLS-1$
-	
-	/**
-	 * Map used for retrieving cached composite image descriptors.
-	 * key: the base image
-	 * value: a "flag map" such that:
-	 * 		key: a set of adornment (overlay) flags
-	 * 		value: the image descriptor which contains the base image with the
-	 * 				overlays appropriate for the flags.
-	 * 				
-	 */
-	private HashMap fImageMap= new HashMap(5);
 
 	protected JavaElementLabelProvider fJavaLabelProvider= new JavaElementLabelProvider(JavaElementLabelProvider.SHOW_DEFAULT);
 	
@@ -767,20 +757,70 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 
 	protected Image getJavaBreakpointImage(IJavaBreakpoint breakpoint) throws CoreException {
-		if (!breakpoint.isEnabled()) {
-			return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED);
+		if (breakpoint instanceof IJavaMethodBreakpoint) {
+			IJavaMethodBreakpoint mBreakpoint= (IJavaMethodBreakpoint)breakpoint;
+			return getJavaMethodBreakpointImage(mBreakpoint);
+		} else if (breakpoint instanceof IJavaWatchpoint) {
+			IJavaWatchpoint watchpoint= (IJavaWatchpoint)breakpoint;
+			return getJavaWatchpointImage(watchpoint);
+		} else {
+			int flags= computeBreakpointAdornmentFlags(breakpoint);
+			JDIImageDescriptor descriptor= null;
+			if (breakpoint.isEnabled()) {
+				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT), flags);
+			} else {
+				descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
+			}
+			return fDebugImageRegistry.get(descriptor);
 		}
-		if (breakpoint.isInstalled()) {
-			return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_BREAKPOINT_INSTALLED);
-		}
-		return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT);
 	}
 
+	protected Image getJavaMethodBreakpointImage(IJavaMethodBreakpoint mBreakpoint) throws CoreException {
+		int flags= computeBreakpointAdornmentFlags(mBreakpoint);
+		JDIImageDescriptor descriptor= null;
+		if (mBreakpoint.isEnabled()) {
+			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT), flags);
+		} else {
+			descriptor= new JDIImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED), flags);
+		}
+			
+		return fDebugImageRegistry.get(descriptor);
+	}
+	
+	protected Image getJavaWatchpointImage(IJavaWatchpoint watchpoint) throws CoreException {
+		boolean enabled= watchpoint.isEnabled();
+		if (watchpoint.isAccess()) {
+			if (watchpoint.isModification()) {
+				//access and modification
+				if (enabled) {
+					return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_WATCHPOINT_ENABLED);
+				} else {
+					return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_WATCHPOINT_DISABLED);
+				}
+			} else {
+				if (enabled) {
+					return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_ACCESS_WATCHPOINT_ENABLED);
+				} else {
+					return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_ACCESS_WATCHPOINT_DISABLED);
+				}
+			}
+		} else if (watchpoint.isModification()) {
+			if (enabled) {
+				return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_MODIFICATION_WATCHPOINT_ENABLED);
+			} else {
+				return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED);
+			}
+		} else {
+			//neither access nor modification
+			return JavaDebugImages.get(JavaDebugImages.IMG_OBJS_WATCHPOINT_DISABLED);
+		}
+	}
+	
 	protected Image getVariableImage(IAdaptable element) {
 		JavaElementImageDescriptor descriptor= new JavaElementImageDescriptor(
 			computeBaseImageDescriptor(element), computeAdornmentFlags(element), BIG_SIZE);
 
-		return fRegistry.get(descriptor);			
+		return fJavaElementImageRegistry.get(descriptor);			
 	}
 	
 	/**
@@ -793,19 +833,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			return null;
 		}
 		int flags= computeJDIAdornmentFlags(element);
-		JDIDebugElementImageDescriptor descriptor= null;
-		HashMap flagMap= (HashMap) fImageMap.get(image); // Get flags mapped to image
-		if (flagMap != null) {
-			descriptor= (JDIDebugElementImageDescriptor) flagMap.get(new Integer(flags)); // Get descriptor mapped to flags (and image)
-		} else {
-			flagMap= new HashMap(3);
-			fImageMap.put(image, flagMap); // Store mapping of image to flags
-		}
-		if (descriptor == null) {
-			descriptor= new JDIDebugElementImageDescriptor(image, flags);
-			flagMap.put(new Integer(flags), descriptor); // Store mapping of flags (and image) to descriptor
-		}
-		return fRegistry.get(descriptor);
+		JDIImageDescriptor descriptor= new JDIImageDescriptor(image, flags);
+		return fDebugImageRegistry.get(descriptor);
 	}
 	
 	/**
@@ -817,28 +846,57 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		try {
 			if (element instanceof IJavaStackFrame) {
 				if (((IJavaStackFrame)element).isOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.IS_OUT_OF_SYNCH;
+					return JDIImageDescriptor.IS_OUT_OF_SYNCH;
 				}
 			}
 			if (element instanceof IJavaThread) {
 				if (((IJavaThread)element).isOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.IS_OUT_OF_SYNCH;
+					return JDIImageDescriptor.IS_OUT_OF_SYNCH;
 				}
 				if (((IJavaThread)element).mayBeOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.MAY_BE_OUT_OF_SYNCH;
+					return JDIImageDescriptor.MAY_BE_OUT_OF_SYNCH;
 				}
 			}
 			if (element instanceof IJavaDebugTarget) {
 				if (((IJavaDebugTarget)element).isOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.IS_OUT_OF_SYNCH;
+					return JDIImageDescriptor.IS_OUT_OF_SYNCH;
 				}
 				if (((IJavaDebugTarget)element).mayBeOutOfSynch()) {
-					return JDIDebugElementImageDescriptor.MAY_BE_OUT_OF_SYNCH;
+					return JDIImageDescriptor.MAY_BE_OUT_OF_SYNCH;
 				}
 			}
 		} catch (DebugException exception) {
 		}
 		return 0;
+	}
+	
+	/**
+	 * Returns the adornment flags for the given breakpoint.
+	 * These flags are used to render appropriate overlay
+	 * icons for the breakpoint.
+	 */
+	private int computeBreakpointAdornmentFlags(IJavaBreakpoint breakpoint)  {
+		int flags= 0;
+		try {
+			if (breakpoint.isEnabled()) {
+				flags |= JDIImageDescriptor.ENABLED;
+			}
+			if (breakpoint.isInstalled()) {
+				flags |= JDIImageDescriptor.INSTALLED;
+			}
+			if (breakpoint instanceof IJavaMethodBreakpoint) {
+				IJavaMethodBreakpoint mBreakpoint= (IJavaMethodBreakpoint)breakpoint;
+				if (mBreakpoint.isEntry()) {
+					flags |= JDIImageDescriptor.ENTRY;
+				}
+				if (mBreakpoint.isExit()) {
+					flags |= JDIImageDescriptor.EXIT;
+				}
+			}
+		} catch (CoreException exception) {
+			JDIDebugUIPlugin.logError(exception);
+		}
+		return flags;
 	}
 	
 	private ImageDescriptor computeBaseImageDescriptor(IAdaptable element) {
