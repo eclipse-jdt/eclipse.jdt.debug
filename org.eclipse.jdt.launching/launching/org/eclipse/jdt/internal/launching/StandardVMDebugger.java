@@ -57,11 +57,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 			abort(LaunchingMessages.getString("StandardVMDebugger.Could_not_find_a_free_socket_for_the_debugger_1"), null, IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE); //$NON-NLS-1$
 		}
 		
-		Map attributeMap= config.getVMSpecificAttributesMap();
-		String command= (String)attributeMap.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
-		
-		String program= constructProgramString(command);
-		program= adjustProgramString(command, program);
+		String program= constructProgramString(config);
 
 		List arguments= new ArrayList(12);
 

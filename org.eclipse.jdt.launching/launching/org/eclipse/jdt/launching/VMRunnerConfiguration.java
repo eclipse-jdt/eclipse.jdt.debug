@@ -107,7 +107,7 @@ public class VMRunnerConfiguration {
 	 * Returns the <code>Map</code> that contains String name/value pairs that represent
 	 * VM-specific attributes.
 	 * 
-	 * @return The <code>Map</code> of VM-specific attributes.
+	 * @return The <code>Map</code> of VM-specific attributes or <code>null</code>.
 	 * @since 2.0
 	 */
 	public Map getVMSpecificAttributesMap() {

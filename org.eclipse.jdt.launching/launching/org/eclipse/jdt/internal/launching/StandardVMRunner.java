@@ -95,7 +95,12 @@ public class StandardVMRunner extends AbstractVMRunner {
 		return LaunchingPlugin.getUniqueIdentifier();
 	}
 	
-	protected String constructProgramString(String command) {
+	protected String constructProgramString(VMRunnerConfiguration config) {
+		String command= null;
+		Map map= config.getVMSpecificAttributesMap();
+		if (map != null) {
+			command = (String)map.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
+		}
 		StringBuffer buff= new StringBuffer(getJDKLocation());
 		buff.append(File.separator);
 		buff.append("bin"); //$NON-NLS-1$
@@ -103,6 +108,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		
 		if (command == null) {
 			buff.append("java"); //$NON-NLS-1$
+			return adjustProgramString(buff.toString());
 		} else {
 			buff.append(command);
 			
@@ -131,13 +137,10 @@ public class StandardVMRunner extends AbstractVMRunner {
 	 * @see IVMRunner#run(VMRunnerConfiguration, ILaunch, IProgressMonitor)
 	 */
 	public void run(VMRunnerConfiguration config, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-		Map map= config.getVMSpecificAttributesMap();
-		String command= (String)map.get(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND);
-		String program= constructProgramString(command);
-		program = adjustProgramString(command, program);
+		
+		String program= constructProgramString(config);
 		
 		List arguments= new ArrayList();
-
 		arguments.add(program);
 				
 		// VM args are the first thing after the java program so that users can specify
@@ -174,16 +177,16 @@ public class StandardVMRunner extends AbstractVMRunner {
 		process.setAttribute(JavaRuntime.ATTR_CMDLINE, renderCommandLine(cmdLine));
 	}
 
-	protected String adjustProgramString(String command, String program) {
-		if (command == null) {
-			File javawexe= new File(program + "w.exe"); //$NON-NLS-1$
-			File javaw= new File(program + "w"); //$NON-NLS-1$
-			if (javawexe.isFile()) {
-				program= javawexe.getAbsolutePath();
-			} else if (javaw.isFile()) {
-				program= javaw.getAbsolutePath();
-			}
+	protected String adjustProgramString(String program) {
+		
+		File javawexe= new File(program + "w.exe"); //$NON-NLS-1$
+		File javaw= new File(program + "w"); //$NON-NLS-1$
+		if (javawexe.isFile()) {
+			program= javawexe.getAbsolutePath();
+		} else if (javaw.isFile()) {
+			program= javaw.getAbsolutePath();
 		}
+		
 		return program;
 	}	
 }
