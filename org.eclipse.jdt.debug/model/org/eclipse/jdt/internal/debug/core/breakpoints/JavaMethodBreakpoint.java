@@ -632,12 +632,17 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#createRequest(JDIDebugTarget, ReferenceType)
 	 */
 	protected boolean createRequest(JDIDebugTarget target, ReferenceType type) throws CoreException {
-		EventRequest entryRequest= createMethodEntryRequest(target, type);
-		EventRequest exitRequest= createMethodExitRequest(target, type);
-		
-		registerRequest(entryRequest, target);
-		registerRequest(exitRequest, target);
-		return true;
+		if (type.name().equals(getTypeName())) {
+			EventRequest entryRequest= createMethodEntryRequest(target, type);
+			EventRequest exitRequest= createMethodExitRequest(target, type);
+			
+			registerRequest(entryRequest, target);
+			registerRequest(exitRequest, target);
+			return true;
+		} else {
+			// do not create requests for inner/outer types if since this is for a specific type
+			return false;
+		}
 	}
 	/**
 	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#setTypeName(String)
