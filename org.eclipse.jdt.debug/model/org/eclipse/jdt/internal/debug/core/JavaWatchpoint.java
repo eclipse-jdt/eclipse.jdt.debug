@@ -1,28 +1,42 @@
 package org.eclipse.jdt.internal.debug.core;
 
-import java.text.MessageFormat;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.internal.debug.core.IJavaDebugConstants;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IField;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.IWorkingCopy;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.Field;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.VirtualMachine;
+import com.sun.jdi.event.AccessWatchpointEvent;
+import com.sun.jdi.event.Event;
+import com.sun.jdi.event.ModificationWatchpointEvent;
+import com.sun.jdi.request.AccessWatchpointRequest;
+import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.ModificationWatchpointRequest;
+import com.sun.jdi.request.WatchpointRequest;
 
 public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoint {
 	
 	static String fMarkerType= IJavaDebugConstants.JAVA_WATCHPOINT;
 	
-	private final static int ACCESS_EVENT= 0;
-	private final static int MODIFICATION_EVENT= 1;
-	private int fLastEventType= -1;
+	private final static Integer ACCESS_EVENT= new Integer(0);
+	private final static Integer MODIFICATION_EVENT= new Integer(1);
+	private HashMap fLastEventTypes= new HashMap(10); // maps targets to reason for suspension
 	
 	public JavaWatchpoint() {
 	}
@@ -422,9 +436,9 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 	 */
 	public boolean handleEvent(Event event, JDIDebugTarget target)  {
 		if (event instanceof AccessWatchpointEvent) {
-			fLastEventType= ACCESS_EVENT;
+			fLastEventTypes.put(target, ACCESS_EVENT);
 		} else if (event instanceof ModificationWatchpointEvent) {
-			fLastEventType= MODIFICATION_EVENT;
+			fLastEventTypes.put(target, MODIFICATION_EVENT);
 		}
 		return super.handleEvent(event, target);
 	}	
@@ -475,8 +489,12 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 		}
 	}
 		
-	public boolean isAccessSuspend() {
-		return fLastEventType == ACCESS_EVENT;
+	public boolean isAccessSuspend(IJavaDebugTarget target) {
+		Integer lastEventType= (Integer) fLastEventTypes.get(target);
+		if (lastEventType == null) {
+			return false;
+		}
+		return lastEventType.equals(ACCESS_EVENT);
 	}
 }
 
