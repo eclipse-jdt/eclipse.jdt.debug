@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -627,6 +629,9 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 			}
 			if (item instanceof IJavaStackFrame || item instanceof IJavaThread || item instanceof IJavaDebugTarget) {
 				return getDebugElementImage(item);
+			}
+			if (item instanceof IJavaValue) {
+				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PUBLIC);
 			}
 		} catch (CoreException e) {
 			if (!(e.getStatus().getException() instanceof VMDisconnectedException)) {

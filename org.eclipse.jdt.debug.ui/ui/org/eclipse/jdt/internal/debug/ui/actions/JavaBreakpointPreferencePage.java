@@ -14,6 +14,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
@@ -326,6 +327,15 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		} catch (CoreException ce) {
 			JDIDebugUIPlugin.log(ce);
 		}
+		
+		try {
+			IJavaObject[] instances = breakpoint.getInstanceFilters();
+			if (instances.length > 0) {
+				addField(createInstanceFilterViewer(getFieldEditorParent()));
+			}
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
 	}
 
 	protected void createTypeSpecificLabelFieldEditors(IJavaBreakpoint breakpoint) throws CoreException {
@@ -348,6 +358,10 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	protected FieldEditor createThreadFilterViewer(Composite parent) {
 		return new ThreadFilterViewer(parent, getBreakpoint());
 	}
+	
+	protected FieldEditor createInstanceFilterViewer(Composite parent) {
+		return new InstanceFilterViewer(parent, getBreakpoint());
+	}	
 	
 	protected FieldEditor createFilterEditor(Composite parent) {
 		return new ExceptionBreakpointFilterEditor(parent, (IJavaExceptionBreakpoint)getBreakpoint());
