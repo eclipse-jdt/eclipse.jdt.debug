@@ -21,7 +21,7 @@ import org.eclipse.jdt.internal.ui.wizards.buildpaths.ClasspathContainerWizard;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Dialog of radio buttons/actions for advanced classpath options.
  */
-public class RuntimeClasspathAdvancedDialog extends TitleAreaDialog {
+public class RuntimeClasspathAdvancedDialog extends Dialog {
 	
 	private IAction[] fActions;
 	private Button[] fButtons;	
@@ -77,7 +77,11 @@ public class RuntimeClasspathAdvancedDialog extends TitleAreaDialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		inner.setLayoutData(gd);
 		
-		new Label(inner, SWT.NONE);
+		Label l = new Label(inner, SWT.NONE);
+		l.setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Select_an_advanced_option__1")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		l.setLayoutData(gd);
 		
 		fButtons = new Button[fActions.length];
 		for (int i = 0; i < fActions.length; i++) {
@@ -107,8 +111,6 @@ public class RuntimeClasspathAdvancedDialog extends TitleAreaDialog {
 		
 		new Label(inner, SWT.NONE);
 		
-		setTitle(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Add_Classpath_Entry_1")); //$NON-NLS-1$
-		setMessage(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Select_the_type_of_entry_to_add_2")); //$NON-NLS-1$
 		getShell().setText(LauncherMessages.getString("RuntimeClasspathAdvancedDialog.Advanced_Options_1")); //$NON-NLS-1$
 		return composite;
 
