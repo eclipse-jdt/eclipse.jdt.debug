@@ -5,10 +5,6 @@ package org.eclipse.jdt.internal.launching;
  * All Rights Reserved.
  */
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -16,17 +12,15 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.jdi.Bootstrap;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMConnector;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
 import com.sun.jdi.VirtualMachine;
-import com.sun.jdi.connect.AttachingConnector;
-import com.sun.jdi.connect.Connector;
-import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 
 /**
  * Launch configuration delegate for a remote Java application.
@@ -53,26 +47,20 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		String portNumberString = Integer.toString(portNumber);
 		
 		IDebugTarget debugTarget = null;
-		AttachingConnector connector= getAttachingConnector();
-		if (connector != null) {
-			Map map= connector.defaultArguments();
-			Connector.Argument param= (Connector.Argument) map.get("hostname"); //$NON-NLS-1$
-			param.setValue(hostName);
-			param= (Connector.Argument) map.get("port"); //$NON-NLS-1$
-			param.setValue(portNumberString);
-			try {
-				VirtualMachine vm= connector.attach(map);
-				String vmLabel = constructVMLabel(vm, hostName, portNumber);
-				debugTarget= JDIDebugModel.newDebugTarget(vm, vmLabel, null, allowTerminate, true);
-			} catch (IOException ioe) {
-				abort("Failed to connect to remote VM", ioe, IJavaLaunchConfigurationConstants.ERR_REMOTE_VM_CONNECTION_FAILED);
-			} catch (IllegalConnectorArgumentsException icae) {
-				LaunchingPlugin.log(icae);
-				return null;
-			}
+		String connectorId = getVMConnectorId(configuration);
+		IVMConnector connector = null;
+		if (connectorId == null) {
+			connector = JavaRuntime.getDefaultVMConnector();
 		} else {
-			abort("Socket attaching connector not available", null, IJavaLaunchConfigurationConstants.ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE);
+			connector = JavaRuntime.getVMConnector(connectorId);
 		}
+		if (connector == null) {
+			abort("Connector not specified.", null, IJavaLaunchConfigurationConstants.ERR_CONNECTOR_NOT_AVAILABLE);
+		}
+
+		VirtualMachine vm= connector.connect(hostName, portNumber, monitor);
+		String vmLabel = constructVMLabel(vm, hostName, portNumber);
+		debugTarget= JDIDebugModel.newDebugTarget(vm, vmLabel, null, allowTerminate, true);
 		
 		// Create & return Launch:
 		//  - set default source locator if none specified
@@ -99,20 +87,4 @@ public class JavaRemoteApplicationLaunchConfigurationDelegate extends AbstractJa
 		return buffer.toString();
 	}
 	
-	/**
-	 * Return the socket transport attaching connector
-	 */
-	protected static AttachingConnector getAttachingConnector() {
-		AttachingConnector connector= null;
-		Iterator iter= Bootstrap.virtualMachineManager().attachingConnectors().iterator();
-		while (iter.hasNext()) {
-			AttachingConnector lc= (AttachingConnector) iter.next();
-			if (lc.name().equals("com.sun.jdi.SocketAttach")) { //$NON-NLS-1$
-				connector= lc;
-				break;
-			}
-		}
-		return connector;
-	}
-
 }

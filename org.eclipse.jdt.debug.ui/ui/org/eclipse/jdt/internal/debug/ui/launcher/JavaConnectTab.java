@@ -19,6 +19,8 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMConnector;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
@@ -29,6 +31,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -50,6 +53,10 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 
 	// Allow terminate UI widgets
 	private Button fAllowTerminateButton;
+	
+	// Connector combo
+	private Combo fConnectorCombo;
+	private IVMConnector[] fConnectors = JavaRuntime.getVMConnectors();
 	
 	private static final String EMPTY_STRING = "";
 	
@@ -132,6 +139,33 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+		
+		createVerticalSpacer(comp);
+		
+		Composite connectorComp = new Composite(comp,SWT.NONE);
+		GridLayout y = new GridLayout();
+		y.numColumns = 2;
+		y.marginHeight = 0;
+		y.marginWidth = 0;
+		connectorComp.setLayout(y);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		connectorComp.setLayoutData(gd);
+		
+		Label l = new Label(connectorComp, SWT.NONE);
+		l.setText("Connect&ion Type:");
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		l.setLayoutData(gd);
+		
+		fConnectorCombo = new Combo(connectorComp, SWT.READ_ONLY);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fConnectorCombo.setLayoutData(gd);
+		String[] names = new String[fConnectors.length];
+		for (int i = 0; i < fConnectors.length; i++) {
+			names[i] = fConnectors[i].getName();
+		}
+		fConnectorCombo.setItems(names);
 	}
 
 	/**
@@ -149,6 +183,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		updateHostNameFromConfig(config);
 		updatePortNumberFromConfig(config);
 		updateAllowTerminateFromConfig(config);
+		updateConnectionFromConfig(config);
 	}
 	
 	protected void updateProjectFromConfig(ILaunchConfiguration config) {
@@ -191,6 +226,16 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		fAllowTerminateButton.setSelection(allowTerminate);	
 	}
 
+	protected void updateConnectionFromConfig(ILaunchConfiguration config) {
+		String id = null;
+		try {
+			id = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, JavaRuntime.getDefaultVMConnector().getIdentifier());
+		} catch (CoreException ce) {
+			JDIDebugUIPlugin.log(ce);
+		}	
+		fConnectorCombo.setText(JavaRuntime.getVMConnector(id).getName());	
+	}
+	
 	/**
 	 * @see ILaunchConfigurationTab#dispose()
 	 */
@@ -211,6 +256,9 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab {
 		}
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PORT_NUMBER, port);		
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_ALLOW_TERMINATE, fAllowTerminateButton.getSelection());
+		
+		int index = fConnectorCombo.getSelectionIndex();
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, fConnectors[index].getIdentifier());
 	}
 		
 	/**

@@ -180,7 +180,20 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 				
 		return vm;
 	}	
-	
+
+	/**
+	 * Returns the VM connector identifier specified by
+	 * the given launch configuration, or <code>null</code> if none.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the VM connector identifier specified by the given 
+	 *  launch configuration, or <code>null</code> if none
+	 * @exception CoreException if unable to retrieve the attribute
+	 */
+	protected String getVMConnectorId(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_CONNECTOR, (String)null);
+	}
+		
 	/**
 	 * Returns the bootpath specified by the given launch
 	 * configuration, as an array of Strings. The returned array

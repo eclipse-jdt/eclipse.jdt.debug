@@ -25,7 +25,13 @@ public interface IJavaLaunchConfigurationConstants {
 	 * (value <code>org.eclipse.jdt.launching.remoteJavaApplication"</code>).
 	 */
 	public static final String ID_REMOTE_JAVA_APPLICATION = LaunchingPlugin.PLUGIN_ID + ".remoteJavaApplication"; //$NON-NLS-1$	
-		
+
+	/**
+	 * Identifier for the standard socket attaching VM connector
+	 * (value <code>org.eclipse.jdt.launching.socketAttachConnector"</code>).
+	 */
+	public static final String ID_SOCKET_ATTACH_VM_CONNECTOR = LaunchingPlugin.PLUGIN_ID + ".socketAttachConnector"; //$NON-NLS-1$	
+			
 	/**
 	 * Name of project containing the main type.
 	 */
@@ -75,6 +81,13 @@ public interface IJavaLaunchConfigurationConstants {
 	 * identifying a type of VM to use for a launch.
 	 */
 	public static final String ATTR_VM_INSTALL_TYPE = LaunchingPlugin.PLUGIN_ID + ".VM_INSTALL_TYPE_ID"; //$NON-NLS-1$
+	
+	/**
+	 * VM connector launch configuration attribute name.
+	 * The <code>id</code> of an <code>IVMConnector</code>
+	 * identifying a connector to use for a remote attach.
+	 */
+	public static final String ATTR_VM_CONNECTOR= LaunchingPlugin.PLUGIN_ID + ".VM_CONNECTOR_ID"; //$NON-NLS-1$
 	
 	/**
 	 * Bootpath launch configuration attribute name.

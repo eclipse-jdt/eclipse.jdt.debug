@@ -5,6 +5,8 @@ package org.eclipse.jdt.launching;
  * All Rights Reserved.
  */
  
+import com.sun.jdi.VirtualMachine;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -44,34 +46,16 @@ public interface IVMConnector {
 	
 	/**
 	 * Establishes a JDI connection with a debuggable VM at the specified
-	 * address. The resulting port and host address that the debugger should
-	 * connect to are returned via <code>getHost()</code> and <code>getPort()</code>.
+	 * address, and returns the resulting virtual machine. 
 	 * 
 	 * @param host the name of the host on which the target VM is running
 	 * @param port the port number at which to connect to the target VM
 	 * @param monitor progress monitor
+	 * @return virtual machine
 	 * @exception CoreException if unable to establish a connection with the target VM
 	 */
-	public void connect(String host, int port, IProgressMonitor monitor) throws CoreException;
-	
-	/**
-	 * Returns the port that the debugger should connect to, or 
-	 * <code>-1</code> if a has not been established.
-	 * 
-	 * @return the port that the debugger should connect to, or 
-	 *  <code>-1</code> if a has not been established
-	 */
-	public int getPort();
-	
-	/**
-	 * Returns the name of the host the debugger should connect to, or
-	 * <code>null</code> if a connection has not been established.
-	 * 
-	 * @return the name of the host the debugger should connect to, or
-	 *  <code>null</code> if a connection has not been established
-	 */
-	public String getHost();
-	
+	public VirtualMachine connect(String host, int port, IProgressMonitor monitor) throws CoreException;
+		
 	/**
 	 * Returns the name of this connector.
 	 * 

@@ -53,6 +53,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.CompositeId;
 import org.eclipse.jdt.internal.launching.LaunchingMessages;
 import org.eclipse.jdt.internal.launching.LaunchingPlugin;
+import org.eclipse.jdt.internal.launching.SocketAttachConnector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -102,6 +103,7 @@ public final class JavaRuntime {
 
 	private static IVMInstallType[] fgVMTypes= null;
 	private static String fgDefaultVMId= null;
+	private static String fgDefaultVMConnectorId = null;
 	
 	/**
 	 * Not intended to be instantiated.
@@ -245,6 +247,17 @@ public final class JavaRuntime {
 	}	
 	
 	/**
+	 * Sets a VM connector as the system-wide default VM. This setting is persisted when
+	 * saveVMConfiguration is called. 
+	 * @param	connector The connector to make the default. May be null to clear 
+	 * 				the default.
+	 */
+	public static void setDefaultVMConnector(IVMConnector connector, IProgressMonitor monitor) throws CoreException {
+		fgDefaultVMConnectorId= connector.getIdentifier();
+		saveVMConfiguration();
+	}		
+	
+	/**
 	 * Return the default VM set with <code>setDefaultVM()</code>.
 	 * @return	Returns the default VM. May return null when no default
 	 * 			VM was set or when the default VM has been disposed.
@@ -270,12 +283,35 @@ public final class JavaRuntime {
 		}
 	}
 	
+	/**
+	 * Return the default VM connector.
+	 * @return	Returns the default VM connector.
+	 */
+	public static IVMConnector getDefaultVMConnector() {
+		String id = getDefaultVMConnectorId();
+		IVMConnector connector = null;
+		if (id != null) {
+			connector = getVMConnector(id);
+		}
+		if (connector == null) {
+			connector = new SocketAttachConnector();
+		}
+		return connector;
+	}	
+	
 	private static String getDefaultVMId() {
 		if (fgVMTypes == null) {
 			initializeVMTypes();
 		}
 		return fgDefaultVMId;
 	}
+	
+	private static String getDefaultVMConnectorId() {
+		if (fgVMTypes == null) {
+			initializeVMTypes();
+		}
+		return fgDefaultVMConnectorId;
+	}	
 	
 	private static String getIdFromVM(IVMInstall vm) {
 		if (vm == null) {
@@ -380,6 +416,9 @@ public final class JavaRuntime {
 		Element config = doc.createElement("vmSettings"); //$NON-NLS-1$
 		if (fgDefaultVMId != null) {
 			config.setAttribute("defaultVM", fgDefaultVMId); //$NON-NLS-1$
+		}
+		if (fgDefaultVMConnectorId != null) {
+			config.setAttribute("defaultVMConnector", fgDefaultVMConnectorId); //$NON-NLS-1$
 		}
 		doc.appendChild(config);
 		
@@ -490,6 +529,7 @@ public final class JavaRuntime {
 			throw new IOException(LaunchingMessages.getString("JavaRuntime.badFormat")); //$NON-NLS-1$
 		}
 		fgDefaultVMId= config.getAttribute("defaultVM"); //$NON-NLS-1$
+		fgDefaultVMConnectorId = config.getAttribute("defaultVMConnector"); //$NON-NLS-1$
 		NodeList list = config.getChildNodes();
 		int length = list.getLength();
 		for (int i = 0; i < length; ++i) {
@@ -669,4 +709,24 @@ public final class JavaRuntime {
 			new Path(JRESRCROOT_VARIABLE)
 		);
 	}
+	
+	/**
+	 * Returns the VM connetor defined with the specified identifier,
+	 * or <code>null</code> if none.
+	 * 
+	 * @param id VM connector identifier
+	 * @return VM connector or <code>null</code> if none
+	 */
+	public static IVMConnector getVMConnector(String id) {
+		return LaunchingPlugin.getPlugin().getVMConnector(id);
+	}
+	
+	/**
+	 * Returns all VM connector extensions.
+	 *
+	 * @return VM connectors
+	 */
+	public static IVMConnector[] getVMConnectors() {
+		return LaunchingPlugin.getPlugin().getVMConnectors();
+	}	
 }

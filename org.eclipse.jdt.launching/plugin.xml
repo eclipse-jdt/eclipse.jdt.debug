@@ -27,6 +27,7 @@
 <!-- Search extension point definitions -->
 
 <extension-point name="%vmInstallTypes" id="vmInstallTypes"/>
+<extension-point name="%vmConnectors" id="vmConnectors"/>
 
 <!-- Extensions -->
 
@@ -68,6 +69,12 @@
 		id = "org.eclipse.jdt.launching.javaSourceLocator"
 	   	class="org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator"
 	   	name="Basic Java Source Locator"/>
+</extension>
+
+<extension point = "org.eclipse.jdt.launching.vmConnectors">
+	<vmConnector
+		id="org.eclipse.jdt.launching.socketAttachConnector"
+		class="org.eclipse.jdt.internal.launching.SocketAttachConnector"/>
 </extension>
 
 </plugin>
