@@ -157,7 +157,7 @@ public class JavaUISourceLocator implements IPersistableSourceLocator {
 	private Object findSourceElement(IStackFrame stackFrame) {
 		if (isFindAllSourceElements()) {
 			Object[] sourceElements = fSourceLocator.getSourceElements(stackFrame);
-			if (sourceElements == null) {
+			if (sourceElements == null || sourceElements.length == 0) {
 				return null;
 			} 
 			if (sourceElements.length == 1) {
