@@ -112,7 +112,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (command == null) {
 			File exe = StandardVMType.findJavaExecutable(fVMInstance.getInstallLocation());
 			if (exe == null) {
-				abort(MessageFormat.format("Unable to locate executable for {0}", new String[]{fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+				abort(MessageFormat.format(LaunchingMessages.getString("StandardVMRunner.Unable_to_locate_executable_for_{0}_1"), new String[]{fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 			}
 			return exe.getAbsolutePath();
 		}
@@ -124,7 +124,7 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (fileExists(exe)) {
 			return exe.getAbsolutePath(); 
 		}
-		exe = new File(exe.getAbsolutePath() + ".exe");
+		exe = new File(exe.getAbsolutePath() + ".exe"); //$NON-NLS-1$
 		if (fileExists(exe)) {
 			return exe.getAbsolutePath(); 
 		}		
@@ -132,13 +132,13 @@ public class StandardVMRunner extends AbstractVMRunner {
 		if (fileExists(exe)){
 			return exe.getAbsolutePath();
 		}
-		exe = new File(exe.getAbsolutePath() + ".exe");
+		exe = new File(exe.getAbsolutePath() + ".exe"); //$NON-NLS-1$
 		if (fileExists(exe)){
 			return exe.getAbsolutePath();
 		}		 
 		
 		// not found
-		abort(MessageFormat.format("Specified executable {0} does not exist for {1}", new String[]{command, fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+		abort(MessageFormat.format(LaunchingMessages.getString("StandardVMRunner.Specified_executable_{0}_does_not_exist_for_{1}_4"), new String[]{command, fVMInstance.getName()}), null, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		// NOTE: an exception will be thrown - null cannot be returned
 		return null;		
 	}	

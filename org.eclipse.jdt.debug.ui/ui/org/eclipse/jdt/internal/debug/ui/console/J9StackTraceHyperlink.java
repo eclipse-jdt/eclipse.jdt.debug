@@ -41,7 +41,7 @@ public class J9StackTraceHyperlink extends JavaStackTraceHyperlink {
 			// replace slashes with dots
 			return typeName.replace('/', '.');
 		} else {
-			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, "Unable to parse type name from hyperlink.", null);
+			IStatus status = new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), 0, ConsoleMessages.getString("J9StackTraceHyperlink.Unable_to_parse_type_name_from_hyperlink._1"), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 	}

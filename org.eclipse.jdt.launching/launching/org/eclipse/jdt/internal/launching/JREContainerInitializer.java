@@ -173,7 +173,7 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 	public void requestClasspathContainerUpdate(IPath containerPath, IJavaProject project, IClasspathContainer containerSuggestion) throws CoreException {
 		IVMInstall vm = resolveVM(containerPath);
 		if (vm == null) { 
-			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST, MessageFormat.format("JRE referenced by classpath container {0} does not exist.", new String[]{containerPath.toString()}), null);
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST, MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.JRE_referenced_by_classpath_container_{0}_does_not_exist._1"), new String[]{containerPath.toString()}), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		} else {
 			// update of the vm with new library locations
@@ -196,11 +196,11 @@ public class JREContainerInitializer extends ClasspathContainerInitializer {
 						}
 						libs[i] = new LibraryLocation(path, srcPath, rootPath);
 					} else {
-						IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, MessageFormat.format("Classpath entry {0} does not refer to an existing library.", new String[]{entry.getPath().toString()}), null);
+						IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.Classpath_entry_{0}_does_not_refer_to_an_existing_library._2"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
 						throw new CoreException(status);
 					}
 				} else {
-					IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, MessageFormat.format("Classpath entry {0} does not refer to a library.", new String[]{entry.getPath().toString()}), null);
+					IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.getUniqueIdentifier(), IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR, MessageFormat.format(LaunchingMessages.getString("JREContainerInitializer.Classpath_entry_{0}_does_not_refer_to_a_library._3"), new String[]{entry.getPath().toString()}), null); //$NON-NLS-1$
 					throw new CoreException(status);
 				}
 			}

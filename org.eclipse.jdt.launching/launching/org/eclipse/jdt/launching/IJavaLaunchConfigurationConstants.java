@@ -415,6 +415,8 @@ public interface IJavaLaunchConfigurationConstants {
 
 	/**
 	 * Default value for the 'ATTR_APPLET_APPLETVIEWER' attribute.
+	 * 
+	 * @since 2.1
 	 */	
-	public static final String DEFAULT_APPLETVIEWER_CLASS = "sun.applet.AppletViewer";	
+	public static final String DEFAULT_APPLETVIEWER_CLASS = "sun.applet.AppletViewer";	 //$NON-NLS-1$
 }

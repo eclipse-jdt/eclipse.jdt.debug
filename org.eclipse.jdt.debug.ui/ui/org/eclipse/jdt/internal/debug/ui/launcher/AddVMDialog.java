@@ -299,7 +299,7 @@ public class AddVMDialog extends StatusDialog {
 				AbstractVMInstallType type = (AbstractVMInstallType)getVMType();
 				URL url = type.getDefaultJavadocLocation(getInstallLocation());
 				if (url == null) { 
-					fJavadocURL.setText("");
+					fJavadocURL.setText(""); //$NON-NLS-1$
 				} else {
 					fJavadocURL.setText(url.toExternalForm());
 				}
