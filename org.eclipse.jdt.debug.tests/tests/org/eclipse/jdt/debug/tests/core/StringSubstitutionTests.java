@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +23,12 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.IValueVariableListener;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
+import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -547,7 +552,30 @@ public class StringSubstitutionTests extends AbstractDebugTest implements IValue
 		setSelection(resource);
 		String result = doSubs(expression);
 		assertEquals(resource.getName(), result);
-	}	
+	}
+
+	/**
+	 * Tests that variables work as parameters to various fields in local Java
+	 * application configurations.
+	 */
+	public void testLocalJavaApplicationParameters() throws CoreException {
+		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		setSelection(resource);
+		
+		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
+		ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "${project_name}");
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "${resource_name}");
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, "${project_loc}");
+		
+		JavaLocalApplicationLaunchConfigurationDelegate delegate = new JavaLocalApplicationLaunchConfigurationDelegate();
+		
+		assertEquals(resource.getProject().getName(), delegate.getProgramArguments(wc));
+		assertEquals(resource.getName(), delegate.getVMArguments(wc));
+		File workingDir = delegate.getWorkingDirectory(wc);
+		assertNotNull(workingDir);
+		assertEquals(resource.getProject().getLocation().toString(), workingDir.toString());
+	}
 	
 	/**
 	 * Sets the selected resource in the navigator view.
