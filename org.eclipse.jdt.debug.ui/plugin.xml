@@ -1460,6 +1460,7 @@
 		<action id="org.eclipse.jdt.ui.debugViewPopupActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowQualified"/>
 		<action id="org.eclipse.jdt.ui.variableViewPopupActions.ShowQualified"/>
+		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Execute"/>
 		<action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Display"/>
         <action id="org.eclipse.jdt.debug.ui.variablesViewDetail.Inspect"/>
 	</debugActionGroup>
