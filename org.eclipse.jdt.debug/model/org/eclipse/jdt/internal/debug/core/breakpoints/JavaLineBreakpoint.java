@@ -130,15 +130,20 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
 		clearCachedExpressionFor(target);
+		clearCachedSuspendEvents(target);
 		super.removeFromTarget(target);
 	}
 	
 	/**
-	 * Removes all compiled expressions which are currently
+	 * Removes all suspend events which are currently
 	 * being cached for threads in the given target.
 	 */
-	public void clearCachedExpressionFor(JDIDebugTarget target) {
-		Set threads= fCompiledExpressions.keySet();
+	protected void clearCachedSuspendEvents(JDIDebugTarget target) {
+		removeCachedThreads(fSuspendEvents, target);
+	}
+	
+	private void removeCachedThreads(Map map, JDIDebugTarget target) {
+		Set threads= map.keySet();
 		List threadsToRemove= new ArrayList();
 		Iterator iter= threads.iterator();
 		JDIThread thread;
@@ -150,8 +155,16 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		}
 		iter= threadsToRemove.iterator();
 		while (iter.hasNext()) {
-			fCompiledExpressions.remove((JDIThread)iter.next());
+			map.remove((JDIThread)iter.next());
 		}
+	}
+	
+	/**
+	 * Removes all compiled expressions which are currently
+	 * being cached for threads in the given target.
+	 */
+	protected void clearCachedExpressionFor(JDIDebugTarget target) {
+		removeCachedThreads(fCompiledExpressions, target);
 	}
 	
 	/**
@@ -433,9 +446,9 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	
 	/**
 	 * Listens for evaluation completion for condition evaluation.
-	 * If an evaluation evaluates true or has an error, this breakpoint
+	 * If an evaluation evaluates <code>true</code> or has an error, this breakpoint
 	 * will suspend the thread in which the breakpoint was hit.
-	 * If the evaluation returns false, the thread is resumed.
+	 * If the evaluation returns <code>false</code>, the thread is resumed.
 	 */
 	class EvaluationListener implements IEvaluationListener {
 		IEvaluationResult fResult;
@@ -475,7 +488,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			} catch (DebugException e) {
 				JDIDebugPlugin.log(e);
 			}
-			// Suspend when the an error occurs
+			// Suspend when an error occurs
 			suspendForEvent(event, thread);
 		}
 		
@@ -542,6 +555,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	public void setCondition(String condition) throws CoreException {
 		// Clear the cached compiled expressions
 		fCompiledExpressions.clear();	
+		fSuspendEvents.clear();
 		if (condition != null && condition.trim().length() == 0) {
 			condition = null;
 		}
@@ -578,5 +592,13 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	public void setConditionEnabled(boolean conditionEnabled) throws CoreException {	
 		setAttributes(new String[]{CONDITION_ENABLED, IMarker.MESSAGE}, new Object[]{new Boolean(conditionEnabled), getMarkerMessage(conditionEnabled, getCondition(), getHitCount())});
+	}
+	/**
+	 * @see org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint#cleanupForThreadTermination(JDIThread)
+	 */
+	protected void cleanupForThreadTermination(JDIThread thread) {
+		fSuspendEvents.remove(thread);
+		fCompiledExpressions.remove(thread);
+		super.cleanupForThreadTermination(thread);
 	}
 }
