@@ -243,7 +243,7 @@ public final class JavaRuntime {
 	 */
 	public static IVMInstall getDefaultVMInstall() {
 		IVMInstall install= getVMFromId(getDefaultVMId());
-		if (install != null || install.getInstallLocation().exists()) {
+		if (install != null && install.getInstallLocation().exists()) {
 			return install;
 		} else {
 			// if the default JRE goes missing, re-detect
