@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -388,7 +389,7 @@ public class CompilationUnitDelta {
 			StringBuffer buffer= new StringBuffer();
 			char[] part= new char[2048];
 			int read= 0;
-			reader= new BufferedReader(new InputStreamReader(is));
+			reader= new BufferedReader(new InputStreamReader(is, ResourcesPlugin.getEncoding()));
 
 			while ((read= reader.read(part)) != -1)
 				buffer.append(part, 0, read);
