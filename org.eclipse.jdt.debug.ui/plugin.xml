@@ -1838,7 +1838,8 @@
             type="org.eclipse.jdt.launching.localJavaApplication"
             helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.local_java_application"
             class="org.eclipse.jdt.internal.debug.ui.launcher.LocalJavaApplicationTabGroup"
-            id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication">
+            id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.localJavaApplication"
+            bannerImage="icons/full/wizban/java_app_wiz.gif">
             <launchMode 
                   mode="debug"
                   perspective="org.eclipse.debug.ui.DebugPerspective"
@@ -1854,7 +1855,8 @@
             description="%remoteJavaApplicationTabGroupDescription"
             helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.remote_java_application"
             class="org.eclipse.jdt.internal.debug.ui.launcher.RemoteJavaApplicationTabGroup"
-            id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.remoteJavaApplication">
+            id="org.eclipse.jdt.debug.ui.launchConfigurationTabGroup.remoteJavaApplication"
+            bannerImage="icons/full/wizban/java_attach_wiz.gif">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.jdt.launching.javaApplet"
