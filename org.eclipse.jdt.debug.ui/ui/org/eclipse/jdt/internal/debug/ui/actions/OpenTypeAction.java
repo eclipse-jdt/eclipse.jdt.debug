@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
+import java.io.File;
 import java.util.Iterator;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,7 +21,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISourceLocator;
-import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -29,7 +30,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.ui.JavaUISourceLocator;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
@@ -141,29 +141,42 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 	}
 	
 	/**
-	 * Use the source locators to determine the correct source element
+	 * Use the source locator to determine the correct source element
 	 */
 	protected Object getSourceElement(Object e) {
 		if (e instanceof IDebugElement) {
 			IDebugElement de= (IDebugElement)e;
 			ISourceLocator sourceLocator= de.getLaunch().getSourceLocator();
-			IAdaptable element= de;
 		
-			IStackFrame stackFrame= (IStackFrame)element.getAdapter(IJavaStackFrame.class);
-			if (stackFrame != null) {
-				return sourceLocator.getSourceElement(stackFrame);
-			} 
-			IJavaSourceLocation[] locations= null;
-			if (sourceLocator instanceof JavaUISourceLocator) {
-				JavaUISourceLocator javaSourceLocator= (JavaUISourceLocator)sourceLocator;
-				locations= javaSourceLocator.getSourceLocations();
-			} else if (sourceLocator instanceof JavaSourceLocator) {
-				JavaSourceLocator javaSourceLocator= (JavaSourceLocator)sourceLocator;
-				locations= javaSourceLocator.getSourceLocations();
-			}
-			if (locations != null) {
-				try {
-					String typeName= getTypeNameToOpen(de);
+			String typeName = null;
+			try {
+				typeName = getTypeNameToOpen(de);
+				if (sourceLocator instanceof ISourceLookupDirector) {
+					ISourceLookupDirector director = (ISourceLookupDirector)sourceLocator;
+					String fileName = typeName.replace('.', File.separatorChar);
+					fileName = fileName + ".java"; //$NON-NLS-1$
+					Object object = director.getSourceElement(fileName);
+					if (object != null) {
+						// return the java element adapter if it exists
+						if (object instanceof IAdaptable) {
+							IJavaElement element = (IJavaElement) ((IAdaptable)object).getAdapter(IJavaElement.class);
+							if (element != null) {
+								return element;
+							}
+						}
+						return object;
+					}
+				}
+				// still support deprecated source locators for 'open type'
+				IJavaSourceLocation[] locations= null;
+				if (sourceLocator instanceof JavaUISourceLocator) {
+					JavaUISourceLocator javaSourceLocator= (JavaUISourceLocator)sourceLocator;
+					locations= javaSourceLocator.getSourceLocations();
+				} else if (sourceLocator instanceof JavaSourceLocator) {
+					JavaSourceLocator javaSourceLocator= (JavaSourceLocator)sourceLocator;
+					locations= javaSourceLocator.getSourceLocations();
+				}
+				if (locations != null) {
 					for (int i = 0; i < locations.length; i++) {
 						IJavaSourceLocation location = locations[i];
 						Object sourceElement= location.findSourceElement(typeName);
@@ -171,10 +184,11 @@ public abstract class OpenTypeAction extends ObjectActionDelegate {
 							return sourceElement;
 						}
 					}
-				} catch (CoreException ex) {
-					JDIDebugUIPlugin.log(ex);
 				}
+			} catch (CoreException ex) {
+				JDIDebugUIPlugin.errorDialog("Unable to open type", ex.getStatus());
 			}
+					
 		}
 		return null;
 	}
