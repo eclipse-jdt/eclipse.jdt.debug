@@ -1,12 +1,13 @@
 package org.eclipse.jdt.internal.debug.ui.launcher;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */ 
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others. All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/ 
 
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstallType;
 
 /**
  * This interface is implemented by clients of the <code>AddVMDialog</code>.
