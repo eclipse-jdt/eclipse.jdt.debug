@@ -90,7 +90,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 		setControl(workingDirComp);
 		
 		fWorkingDirLabel = new Label(workingDirComp, SWT.NONE);
-		fWorkingDirLabel.setText(LauncherMessages.getString("JavaArgumentsTab.Wor&king_directory__2")); //$NON-NLS-1$
+		fWorkingDirLabel.setText(LauncherMessages.getString("WorkingDirectoryBlock.12")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fWorkingDirLabel.setLayoutData(gd);
@@ -169,7 +169,7 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	 */
 	protected void handleWorkingDirBrowseButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
-		dialog.setMessage(LauncherMessages.getString("JavaArgumentsTab.Select_a_&working_directory_for_the_launch_configuration__7")); //$NON-NLS-1$
+		dialog.setMessage(LauncherMessages.getString("WorkingDirectoryBlock.7")); //$NON-NLS-1$
 		String currentWorkingDir = fWorkingDirText.getText();
 		if (!currentWorkingDir.trim().equals("")) { //$NON-NLS-1$
 			File path = new File(currentWorkingDir);
@@ -189,10 +189,10 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 	 * the workspace
 	 */
 	protected void handleWorkspaceDirBrowseButtonSelected() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
-																	   ResourcesPlugin.getWorkspace().getRoot(),
-																	   false,
-																	   LauncherMessages.getString("WorkingDirectoryBlock.Select_a_&workspace_relative_working_directory__4")); //$NON-NLS-1$
+		ContainerSelectionDialog dialog = 
+			new ContainerSelectionDialog(getShell(),
+					ResourcesPlugin.getWorkspace().getRoot(), false,
+					LauncherMessages.getString("WorkingDirectoryBlock.4")); //$NON-NLS-1$
 		
 		IContainer currentContainer = getContainer();
 		if (currentContainer != null) {
@@ -299,17 +299,17 @@ public class WorkingDirectoryBlock extends JavaLaunchConfigurationTab {
 			if (workingDirPath.length() > 0) {
 				File dir = new File(workingDirPath);
 				if (!dir.exists()) {
-					setErrorMessage(LauncherMessages.getString("JavaArgumentsTab.Working_directory_does_not_exist_10")); //$NON-NLS-1$
+					setErrorMessage(LauncherMessages.getString("WorkingDirectoryBlock.10")); //$NON-NLS-1$
 					return false;
 				}
 				if (!dir.isDirectory()) {
-					setErrorMessage(LauncherMessages.getString("JavaArgumentsTab.Working_directory_is_not_a_directory_11")); //$NON-NLS-1$
+					setErrorMessage(LauncherMessages.getString("WorkingDirectoryBlock.11")); //$NON-NLS-1$
 					return false;
 				}
 			}
 		} else {
 			if (getContainer() == null) {
-				setErrorMessage(LauncherMessages.getString("WorkingDirectoryBlock.Specified_project_or_folder_does_not_exist._5")); //$NON-NLS-1$
+				setErrorMessage(LauncherMessages.getString("WorkingDirectoryBlock.5")); //$NON-NLS-1$
 				return false;
 			}
 		}
