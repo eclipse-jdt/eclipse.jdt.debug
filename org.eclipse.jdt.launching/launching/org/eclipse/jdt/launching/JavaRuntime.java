@@ -1007,10 +1007,16 @@ public final class JavaRuntime {
 						IRuntimeClasspathEntry classpath = new DefaultProjectClasspathEntry(jp);
 						IRuntimeClasspathEntry[] entries = resolveRuntimeClasspathEntry(classpath, jp);
 						for (int j = 0; j < entries.length; j++) {
-							resolved.add(entries[j]);
+							IRuntimeClasspathEntry e = entries[j];
+							if (!resolved.contains(e)) {
+								resolved.add(entries[j]);
+							}
 						}
 					} else {
-						resolved.add(newRuntimeClasspathEntry(cpe));
+						IRuntimeClasspathEntry e = newRuntimeClasspathEntry(cpe);
+						if (!resolved.contains(e)) {
+							resolved.add(e);
+						}
 					}
 				}
 				// set classpath property
