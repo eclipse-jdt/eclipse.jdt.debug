@@ -31,6 +31,5 @@ public class ExitToggleAction extends BreakpointToggleAction {
 	public boolean isEnabledFor(Object element) {
 		return element instanceof IJavaMethodBreakpoint;
 	}
-
 }
 

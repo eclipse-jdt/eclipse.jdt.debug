@@ -12,12 +12,10 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,14 +25,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
 
-public class BreakpointHitCountAction extends Action implements IViewActionDelegate {
+public class BreakpointHitCountAction extends ObjectActionDelegate {
 
 	private static final String INITIAL_VALUE= "1"; //$NON-NLS-1$
-
-	protected IStructuredSelection fCurrentSelection;
 
 	/**
 	 * A dialog that sets the focus to the text area.
@@ -109,10 +103,6 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 		}
 
 }
-	
-	public BreakpointHitCountAction() {
-		setEnabled(false);
-	}
 
 	/**
 	 * Returns the plugin's breakpoint manager
@@ -147,14 +137,7 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 			}
 		}
 	}
-
-	/**
-	 * @see IAction#run()
-	 */
-	public void run() {
-		run(null);
-	}
-
+	
 	protected int hitCountDialog(IJavaBreakpoint breakpoint) {
 		String title= ActionMessages.getString("BreakpointHitCountAction.Set_Breakpoint_Hit_Count_2"); //$NON-NLS-1$
 		String message= ActionMessages.getString("BreakpointHitCountAction.&Enter_the_new_hit_count_for_the_breakpoint__3"); //$NON-NLS-1$
@@ -197,29 +180,7 @@ public class BreakpointHitCountAction extends Action implements IViewActionDeleg
 		}
 	}
 
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection sel) {
-		if (sel instanceof IStructuredSelection) {
-			fCurrentSelection= (IStructuredSelection)sel;
-			Object[] elements= fCurrentSelection.toArray();
-			action.setEnabled(elements.length == 1 && isEnabledFor(elements[0]));
-		}
-	}
-
-	/**
-	 * @see IViewActionDelegate#init(IViewPart)
-	 */
-	public void init(IViewPart view) {
-	}
-
-	protected IStructuredSelection getStructuredSelection() {
-		return fCurrentSelection;
-	}
-
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		return element instanceof IJavaBreakpoint;
 	}
-
 }

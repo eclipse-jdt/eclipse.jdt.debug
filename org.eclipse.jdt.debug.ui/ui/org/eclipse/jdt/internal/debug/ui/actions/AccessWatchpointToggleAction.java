@@ -31,6 +31,5 @@ public class AccessWatchpointToggleAction extends BreakpointToggleAction {
 	public boolean isEnabledFor(Object element) {
 		return element instanceof IJavaWatchpoint;
 	}
-
 }
 

@@ -6,24 +6,33 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 
 /**
  * Toggles the caught state of an exception breakpoint
  */
-public class ExceptionCaughtToggleAction extends ExceptionAction {
+public class ExceptionCaughtToggleAction extends BreakpointToggleAction {
 
 	/**
-	 * @see ExceptionAction#getToggleState(IJavaExceptionBreakpoint)
+	 * @see BreakpointToggleAction#getToggleState(IJavaBreakpoint)
 	 */
-	protected boolean getToggleState(IJavaExceptionBreakpoint exception) throws CoreException {
+	protected boolean getToggleState(IJavaBreakpoint breakpoint) throws CoreException {
+		//will only be called after isEnabledFor so cast is safe
+		IJavaExceptionBreakpoint exception= (IJavaExceptionBreakpoint)breakpoint;
 		return exception.isCaught();
 	}
 
 	/**
-	 * @see ExceptionAction#doAction(IJavaExceptionBreakpoint)
+	 * @see BreakpointToggleAction#doAction(IJavaBreakpoint)
 	 */
-	public void doAction(IJavaExceptionBreakpoint exception) throws CoreException {
+	public void doAction(IJavaBreakpoint breakpoint) throws CoreException {
+		//will only be called after isEnabledFor so cast is safe
+		IJavaExceptionBreakpoint exception= (IJavaExceptionBreakpoint)breakpoint;
 		exception.setCaught(!exception.isCaught());
+	}
+	
+	public boolean isEnabledFor(Object element) {
+		return element instanceof IJavaExceptionBreakpoint;
 	}
 }

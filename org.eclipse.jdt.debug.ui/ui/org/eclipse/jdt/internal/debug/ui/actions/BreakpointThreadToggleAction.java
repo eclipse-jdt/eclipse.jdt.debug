@@ -7,6 +7,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,8 +32,7 @@ public class BreakpointThreadToggleAction extends BreakpointToggleAction {
 	/**
 	 * @see BreakpointToggleAction#getToggleState(IJavaBreakpoint)
 	 */
-	protected boolean getToggleState(IJavaBreakpoint breakpoint)
-		throws CoreException {
+	protected boolean getToggleState(IJavaBreakpoint breakpoint) throws CoreException {
 		return false;
 	}
 
@@ -65,8 +65,7 @@ public class BreakpointThreadToggleAction extends BreakpointToggleAction {
 				action.setText(ActionMessages.getString("BreakpointSuspendPolicy.Suspend_&Thread_2")); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
-			 
+			 JDIDebugUIPlugin.logError(e);
 		}
 	}	
-
 }

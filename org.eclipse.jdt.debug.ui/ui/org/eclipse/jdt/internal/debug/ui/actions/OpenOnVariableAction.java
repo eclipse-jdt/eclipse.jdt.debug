@@ -16,7 +16,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 
 public class OpenOnVariableAction extends OpenTypeAction {
 	
-	private static final Set fPrimitiveTypes= initPrimitiveTypes();
+	private static final Set fgPrimitiveTypes= initPrimitiveTypes();
 
 	protected IDebugElement getDebugElement(IAdaptable element) {
 		return (IDebugElement)element.getAdapter(IJavaVariable.class);
@@ -25,23 +25,27 @@ public class OpenOnVariableAction extends OpenTypeAction {
 	protected String getTypeNameToOpen(IDebugElement element) throws DebugException {
 		String refType= ((IJavaVariable)element).getReferenceTypeName();
 		refType= removeArray(refType);
-		if (fPrimitiveTypes.contains(refType))
+		if (fgPrimitiveTypes.contains(refType)){
 			return null;
+		}
 		return refType;
 	}
 	
 	protected String removeArray(String typeName) {
-		if (typeName == null)
+		if (typeName == null) {
 			return null;
+		}
 		int index= typeName.indexOf('[');
-		if (index > 0)
+		if (index > 0) {
 			return typeName.substring(0, index);
+		}
 		return typeName;
 	}
 	
 	public boolean isEnabledFor(Object o){
-		if (!(o instanceof IAdaptable))
+		if (!(o instanceof IAdaptable)) {
 			return false;
+		}
 		IJavaVariable element= (IJavaVariable)getDebugElement((IAdaptable)o);
 		try {
 			if (element != null) {
@@ -54,7 +58,7 @@ public class OpenOnVariableAction extends OpenTypeAction {
 	}
 
 	private static Set initPrimitiveTypes() {
-		HashSet set= new HashSet();
+		HashSet set= new HashSet(8);
 		set.add("short"); //$NON-NLS-1$
 		set.add("int"); //$NON-NLS-1$
 		set.add("long"); //$NON-NLS-1$

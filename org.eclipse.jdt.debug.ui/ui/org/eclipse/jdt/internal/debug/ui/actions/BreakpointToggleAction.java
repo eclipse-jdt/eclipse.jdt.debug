@@ -8,55 +8,42 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.IWorkbenchPart;
 
-public abstract class BreakpointToggleAction extends Action implements IViewActionDelegate, IUpdate {
+public abstract class BreakpointToggleAction implements IViewActionDelegate, IBreakpointListener, IPartListener {
 	
-	private IStructuredSelection fCurrentSelection;
+	private IStructuredSelection fSelection;
 	private IAction fAction;
-	
-	public BreakpointToggleAction() {
-		setEnabled(false);
-	}
-
-	/**
-	 * @see Action#run()
-	 */
-	public void run() {
-		run(null);
-	}
+	private IViewPart fView;
 
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart viewPart) {
-		IDebugViewAdapter debugView = (IDebugViewAdapter)viewPart.getAdapter(IDebugViewAdapter.class);
-		if (debugView != null) {
-			// add myself to the debug view, such that my update method
-			// will be called when a breakpoint changes
-			debugView.setAction(getClass().getName(), this);
-		}		
+		setView(viewPart);
+		viewPart.getSite().getPage().addPartListener(this);
+		getBreakpointManager().addBreakpointListener(this);
 	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		fAction= action;
 		IStructuredSelection selection= getStructuredSelection();
 		Iterator enum= selection.iterator();
 		while (enum.hasNext()) {
@@ -75,19 +62,23 @@ public abstract class BreakpointToggleAction extends Action implements IViewActi
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		setAction(action);
 		if (selection.isEmpty()) {
-			fCurrentSelection= null;
+			setStructuredSelection(null);
+			return;
 		}
-		else if (selection instanceof IStructuredSelection) {
-			fCurrentSelection= (IStructuredSelection)selection;
-			boolean enabled= fCurrentSelection.size() == 1 && isEnabledFor(fCurrentSelection.getFirstElement());
+		if (selection instanceof IStructuredSelection) {
+			setStructuredSelection((IStructuredSelection)selection);
+			boolean enabled= getStructuredSelection().size() == 1 
+				&& isEnabledFor(getStructuredSelection().getFirstElement());
 			action.setEnabled(enabled);
 			if (enabled) {
-				IBreakpoint breakpoint= (IBreakpoint)fCurrentSelection.getFirstElement();
+				IBreakpoint breakpoint= (IBreakpoint)getStructuredSelection().getFirstElement();
 				if (breakpoint instanceof IJavaBreakpoint) {
 					try {
 						action.setChecked(getToggleState((IJavaBreakpoint) breakpoint));
 					} catch (CoreException e) {
+						JDIDebugUIPlugin.logError(e);
 					}
 				}
 			}
@@ -108,19 +99,14 @@ public abstract class BreakpointToggleAction extends Action implements IViewActi
 	 * Get the current selection
 	 */
 	protected IStructuredSelection getStructuredSelection() {
-		return fCurrentSelection;
+		return fSelection;
+	}
+	
+	protected void setStructuredSelection(IStructuredSelection selection) {
+		fSelection= selection;
 	}
 	
 	public abstract boolean isEnabledFor(Object element);
-	
-	/** 
-	 * @see IUpdate#update()
-	 */
-	public void update() {
-		if (fAction != null && fCurrentSelection != null) {
-			selectionChanged(fAction, fCurrentSelection);
-		}
-	}	
 
 	/**
 	 * Get the breakpoint manager for the debug plugin
@@ -134,6 +120,77 @@ public abstract class BreakpointToggleAction extends Action implements IViewActi
 	 */
 	protected IBreakpoint getBreakpoint(IMarker marker) {
 		return getBreakpointManager().getBreakpoint(marker);
+	}
+
+	protected IAction getAction() {
+		return fAction;
+	}
+
+	protected void setAction(IAction action) {
+		fAction = action;
+	}
+	
+	/**
+	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
+	 */
+	public void breakpointAdded(IBreakpoint breakpoint) {
+	}
+
+	/**
+	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
+	 */
+	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+		if (getAction() != null) {
+			selectionChanged(getAction(), getStructuredSelection());
+		}
+	}
+
+	/**
+	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
+	 */
+	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+	}
+	
+	protected IViewPart getView() {
+		return fView;
+	}
+
+	protected void setView(IViewPart view) {
+		fView = view;
+	}
+	
+	/**
+	 * @see IPartListener#partActivated(IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partClosed(IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+		if (part == getView()) {
+			getBreakpointManager().removeBreakpointListener(this);
+			part.getSite().getPage().removePartListener(this);
+		}
+	}
+
+	/**
+	 * @see IPartListener#partDeactivated(IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+	}
+
+	/**
+	 * @see IPartListener#partOpened(IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart part) {
 	}
 }
 

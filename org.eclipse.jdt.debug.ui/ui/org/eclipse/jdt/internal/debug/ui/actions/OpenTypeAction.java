@@ -25,22 +25,11 @@ import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
 
-public abstract class OpenTypeAction implements IViewActionDelegate {
-	private IStructuredSelection fCurrentSelection= null;
+public abstract class OpenTypeAction extends ObjectActionDelegate {
 	private StructuredViewer fViewer;
-
-	/**
-	 * @see IViewActionDelegate#init(IViewPart)
-	 */
-	public void init(IViewPart view) {
-	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
@@ -58,27 +47,9 @@ public abstract class OpenTypeAction implements IViewActionDelegate {
 		}
 	}
 	
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection sel) {
-		if (sel instanceof IStructuredSelection) {
-			fCurrentSelection= (IStructuredSelection)sel;
-			Object[] elements= fCurrentSelection.toArray();
-			action.setEnabled(elements.length == 1 && isEnabledFor(elements[0]));
-		}
-	}
-	
-	
-	protected IStructuredSelection getStructuredSelection() {
-		return fCurrentSelection;
-	}
-	
 	protected abstract IDebugElement getDebugElement(IAdaptable element);
 	
 	protected abstract String getTypeNameToOpen(IDebugElement element) throws DebugException;
-	
-	public abstract boolean isEnabledFor(Object element);
 	
 	protected void doAction(Object e) throws DebugException {
 		IAdaptable element= (IAdaptable) e;
