@@ -324,7 +324,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 					}
 					break;
 				case IRuntimeClasspathEntry.CONTAINER:
-					throw new IllegalArgumentException("Illegal to have a container resolved to a container");
+					throw new IllegalArgumentException(LaunchingMessages.getString("JavaSourceLocator.Illegal_to_have_a_container_resolved_to_a_container_1")); //$NON-NLS-1$
 			}
 			if (location != null) {
 				locations.add(location);

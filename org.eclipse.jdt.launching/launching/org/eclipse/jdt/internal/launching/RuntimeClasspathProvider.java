@@ -32,13 +32,13 @@ public class RuntimeClasspathProvider implements IRuntimeClasspathProvider {
 	 */
 	protected IRuntimeClasspathProvider getProvider() throws CoreException {
 		if (fDelegate == null) {
-			fDelegate = (IRuntimeClasspathProvider)fConfigurationElement.createExecutableExtension("class");
+			fDelegate = (IRuntimeClasspathProvider)fConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
 		}
 		return fDelegate;
 	}
 	
 	public String getIdentifier() {
-		return fConfigurationElement.getAttribute("id");
+		return fConfigurationElement.getAttribute("id"); //$NON-NLS-1$
 	}
 	/**
 	 * @see IRuntimeClasspathProvider#computeUnresolvedClasspath(ILaunchConfiguration)

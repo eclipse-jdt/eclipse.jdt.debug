@@ -53,7 +53,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 	 * Constructs a new page.
 	 */
 	public JREContainerWizardPage() {
-		super("JRE System Library");
+		super(LauncherMessages.getString("JREContainerWizardPage.JRE_System_Library_1")); //$NON-NLS-1$
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 			typeId = fConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
 			name = fConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String)null);
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog("Unable to set JRE for project.", e);
+			JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JREContainerWizardPage.Unable_to_set_JRE_for_project._2"), e); //$NON-NLS-1$
 			return false;
 		}
 		
@@ -126,14 +126,14 @@ public class JREContainerWizardPage extends WizardPage implements IClasspathCont
 		fJRETab = new JavaJRETab();
 		fJRETab.createControl(parent);
 		setControl(fJRETab.getControl());
-		setTitle("JRE System Library");
-		setMessage("Select the JRE used to build this project.");
+		setTitle(LauncherMessages.getString("JREContainerWizardPage.JRE_System_Library_3")); //$NON-NLS-1$
+		setMessage(LauncherMessages.getString("JREContainerWizardPage.Select_the_JRE_used_to_build_this_project._4")); //$NON-NLS-1$
 		
 		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(IJavaLaunchConfigurationConstants.ID_JAVA_APPLICATION);
 		try {
-			fConfig = type.newInstance(null, "TEMP_CONFIG");
+			fConfig = type.newInstance(null, "TEMP_CONFIG"); //$NON-NLS-1$
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog("Unable to retrieve existing JREs", e);
+			JDIDebugUIPlugin.errorDialog(LauncherMessages.getString("JREContainerWizardPage.Unable_to_retrieve_existing_JREs_6"), e); //$NON-NLS-1$
 			return;
 		}
 		

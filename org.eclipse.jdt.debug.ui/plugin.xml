@@ -947,6 +947,12 @@
 		plugin ="org.eclipse.jdt.launching"
 		code="117">
 	</statusHandler>	
+	<statusHandler
+		id="org.eclipse.jdt.debug.ui.statusHandler.unresolvedJRE"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.UnresolvedJREStatusHandler"
+		plugin ="org.eclipse.jdt.launching"
+		code="160">
+	</statusHandler>		
 </extension>
 
 <extension point = "org.eclipse.debug.core.sourceLocators">

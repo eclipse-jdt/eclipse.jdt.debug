@@ -45,7 +45,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -136,6 +135,17 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static final String JRE_CONTAINER = LaunchingPlugin.getUniqueIdentifier() + ".JRE_CONTAINER"; //$NON-NLS-1$
+	
+	/**
+	 * A status code indicating that a JRE could not be resolved for a project.
+	 * When a JRE cannot be resolved for a project by this plug-in's container
+	 * initializer, an exception is thrown with this status code. A status handler
+	 * may be registered for this status code. The <code>source</code> object provided
+	 * to the status handler is the Java project for which the path could not be
+	 * resolved. The status handler must return an <code>IVMInstall</code> or <code>null</code>.
+	 * The container resolver will re-set the project's classpath if required.
+	 */
+	public static final int ERR_UNABLE_TO_RESOLVE_JRE = 160;
 	
 	/**
 	 * Preference key for launch/connect timeout. VM Runners should honor this timeout
@@ -249,9 +259,9 @@ public final class JavaRuntime {
 	 * 
 	 * @return the VM instance that is selected for the given Java project
 	 * 		   Returns null if no VM was previously set.
-	 * @throws CoreException	If reading the property from the underlying
-	 * 							property failed or if the property value was
-	 * 							corrupt.
+	 * @throws CoreException if unable to determine the project's VM install
+	 * 
+	 * XXX: does not work for non-standard variables or containers
 	 */
 	public static IVMInstall getVMInstall(IJavaProject project) throws CoreException {
 		// check the classpath

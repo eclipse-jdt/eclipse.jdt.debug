@@ -39,7 +39,7 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	 */
 	protected IRuntimeClasspathEntryResolver getResolver() throws CoreException {
 		if (fDelegate == null) {
-			fDelegate = (IRuntimeClasspathEntryResolver)fConfigurationElement.createExecutableExtension("class");
+			fDelegate = (IRuntimeClasspathEntryResolver)fConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
 		}
 		return fDelegate;
 	}
@@ -48,14 +48,14 @@ public class RuntimeClasspathEntryResolver implements IRuntimeClasspathEntryReso
 	 * Returns the variable name this resolver is registered for, or <code>null</code>
 	 */
 	public String getVariableName() {
-		return fConfigurationElement.getAttribute("variable");
+		return fConfigurationElement.getAttribute("variable"); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Returns the container id this resolver is registered for, or <code>null</code>
 	 */
 	public String getContainerId() {
-		return fConfigurationElement.getAttribute("container");
+		return fConfigurationElement.getAttribute("container"); //$NON-NLS-1$
 	}	
 
 }
