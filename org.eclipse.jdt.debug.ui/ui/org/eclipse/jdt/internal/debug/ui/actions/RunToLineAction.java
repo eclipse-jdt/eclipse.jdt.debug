@@ -61,8 +61,9 @@ public class RunToLineAction extends AddBreakpointAction implements IWorkbenchWi
 				BreakpointUtils.addJavaBreakpointAttributes(attributes, type);
 				BreakpointUtils.addRunToLineAttributes(attributes);
 				breakpoint= JDIDebugModel.createLineBreakpoint(BreakpointUtils.getBreakpointResource(type), type.getFullyQualifiedName(), getLineNumber(), -1, -1, 1, false, attributes);
-			} catch (CoreException de) {
-				errorDialog(de.getStatus());
+			} catch (CoreException ce) {
+				errorDialog(ce.getStatus());
+				JDIDebugUIPlugin.logError(ce);
 				return;
 			} 
 			target.breakpointAdded(breakpoint);
