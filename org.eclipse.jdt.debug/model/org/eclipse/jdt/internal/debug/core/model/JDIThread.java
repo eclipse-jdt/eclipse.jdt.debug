@@ -131,6 +131,13 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private boolean fIsPerformingEvaluation= false;
 	private IEvaluationRunnable fEvaluationRunnable;
+	
+	/**
+	 * Whether this thread was manually suspended during an
+	 * evaluation.
+	 */
+	private boolean fEvaluationInterrupted = false;
+	
 	/**
 	 * Whether this thread is currently invoking a method.
 	 * Nested method invocations cannot be performed.
@@ -627,6 +634,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				} 
 			}
 			fireSuspendEvent(evaluationDetail);
+			if (fEvaluationInterrupted && (fAsyncThread == null || fAsyncThread.isEmpty())) {
+				// @see bug 31585:
+				// When an evaluation was interrupted & resumed, the launch view does
+				// not update properly. It cannot know when it is safe to display frames
+				// since it does not know about queued evaluations. Thus, when the queue 
+				// is empty, we fire a change event to force the view to update.
+				fireChangeEvent(DebugEvent.CONTENT);
+			}			
 		}
 	}
 	
@@ -1331,6 +1346,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// Abort any pending step request
 			abortStep();
 			setSuspendedQuiet(false);
+			fEvaluationInterrupted = isPerformingEvaluation();
 			suspendUnderlyingThread();
 		} catch (RuntimeException e) {
 			setRunning(true);
@@ -2437,6 +2453,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					fThread.start();
 				} 
 			}
+		}
+		
+		/**
+		 * Returns whether the queue is empty
+		 * 
+		 * @return boolean
+		 */
+		public boolean isEmpty() {
+			return fRunnables.isEmpty();
 		}
 		
 		public void clearQueue() {
