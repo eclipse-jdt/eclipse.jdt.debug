@@ -49,6 +49,8 @@ public class MonitorManager {
 	
 	private static MonitorManager fgDefault= null;
 	
+	private DeadLocksViewContentProvider fDeadlockUpdateListener;
+	
 	/**
 	 * List containing the lists of the different deadlocks
 	 */
@@ -214,6 +216,9 @@ public class MonitorManager {
 		if (!target.supportsMonitorInformation()) {
 			return;
 		}
+		if (fDeadlockUpdateListener != null) {
+			fDeadlockUpdateListener.clearDeadlockInformation();
+		}
 		update(target, true);
 	}
 		
@@ -232,6 +237,11 @@ public class MonitorManager {
 		if (!target.supportsMonitorInformation()) {
 			return;
 		}
+		
+		if (fDeadlockUpdateListener != null) {
+			fDeadlockUpdateListener.clearDeadlockInformation();
+		}
+		
 		update(target, false);
 	}
 	
@@ -349,6 +359,9 @@ public class MonitorManager {
 		fMonitorToOwningThread.clear();
 		fMonitorToContendingThreads.clear();
 		fDeadLockLists.clear();
+		if (fDeadlockUpdateListener != null) {
+			fDeadlockUpdateListener.clearDeadlockInformation();
+		}
 	}
 	
 	/**
@@ -462,5 +475,13 @@ public class MonitorManager {
 			}	
 		}
 		return false;
+	}
+	
+	protected void addDeadlockUpdateListener(DeadLocksViewContentProvider provider) {
+		fDeadlockUpdateListener= provider;		
+	}
+	
+	protected void removeDeadlockUpdateListener() {
+		fDeadlockUpdateListener= null;
 	}
 }

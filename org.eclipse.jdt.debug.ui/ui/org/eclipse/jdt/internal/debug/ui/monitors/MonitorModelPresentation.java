@@ -45,7 +45,10 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 		if (item instanceof DeadLocksViewContentProvider.ContentThreadWrapper) {
 			return getThreadDeadLockText((DeadLocksViewContentProvider.ContentThreadWrapper)item);
 		} else if (item instanceof DeadLocksViewContentProvider.ContentMonitorWrapper) {
-			return getMonitorText((IJavaObject)((DeadLocksViewContentProvider.ContentMonitorWrapper)item).fMonitor);
+			StringBuffer res= new StringBuffer();
+			res.append(((DeadLocksViewContentProvider.ContentMonitorWrapper)item).fMonitor.toString());
+			res.append(" owned by...");
+			return res.toString();
 		} else if (item instanceof IJavaObject) {
 			return getMonitorText((IJavaObject)item);
 		} else if (item instanceof IJavaThread) {
@@ -73,24 +76,10 @@ public class MonitorModelPresentation extends LabelProvider implements IDebugMod
 		
 		if(thread.caughtInADeadLock){
 			res.append(MonitorMessages.getString("MonitorModelPresentation._(caught_in_the_deadlock)_2")); //$NON-NLS-1$
+		} else {
+			res.append(" waiting for...");
 		}
 		return res.toString();
-	}
-
-	/**
-	 * Text for ThreadWrapper in DeadLocksViewContentProvider
-	 */
-	protected String getContentThreadWrapperText(DeadLocksViewContentProvider.ContentThreadWrapper ctw){
-		StringBuffer res= new StringBuffer();
-		try{
-			res.append(ctw.fThread.getName());
-		}
-		catch (DebugException e) {
-		}
-		if(ctw.caughtInADeadLock){
-			res.append(MonitorMessages.getString("MonitorModelPresentation._(caught_in_a_deadlock)_3")); //$NON-NLS-1$
-		}
-		return res.toString();	
 	}
 
 	/**

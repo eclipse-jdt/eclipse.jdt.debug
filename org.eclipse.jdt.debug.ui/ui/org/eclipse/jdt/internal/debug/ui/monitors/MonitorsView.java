@@ -114,7 +114,6 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 	}
 	
 	public MonitorsView(){		
-		fViewId = VIEW_ID_MONITOR;
 		setEventHandler(new MonitorsDebugEventHandler(this));
 	}
 
@@ -171,17 +170,20 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 				getControl().setRedraw(true);
 			}
 			
-			//goes down the tree, but only changes the color of the first and last element
+			//goes down the tree, but only changes the color of the items caught in a deadlock
 			public void updateColor(TreeItem item, Color c, int count) {
-				if((count ==0)||(item.getItems().length==0))
-					item.setForeground(c);
+				Object data= item.getData();
+				if (data instanceof DeadLocksViewContentProvider.ContentThreadWrapper) {
+					if(((DeadLocksViewContentProvider.ContentThreadWrapper)data).caughtInADeadLock) {
+						item.setForeground(c);
+					}
+				}
 				
 				TreeItem[] children = item.getItems();
 				for (int i = 0; i < children.length; i++) {
 					updateColor(children[i], c, (count+1));
 				}
 			}
-
 		};
 		deadLocksViewer.setContentProvider(new DeadLocksViewContentProvider());
 		deadLocksViewer.setLabelProvider(new MonitorModelPresentation());
@@ -206,6 +208,8 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 
 		createContextMenu(getDeadLocksViewer().getControl());
 		createContextMenu(getMonitorsViewer().getControl());
+		
+		setViewId(VIEW_ID_MONITOR);
 	}
 
 	/**
