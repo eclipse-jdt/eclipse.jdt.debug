@@ -1205,7 +1205,7 @@ public final class JavaRuntime {
 	}
 
 	private static String getVMsAsXML() throws IOException {
-		VMDefinitionsContainer container = new VMDefinitionsContainer(true);	
+		VMDefinitionsContainer container = new VMDefinitionsContainer();	
 		container.setDefaultVMInstallCompositeID(getDefaultVMId());
 		container.setDefaultVMInstallConnectorTypeID(getDefaultVMConnectorId());	
 		IVMInstallType[] vmTypes= getVMInstallTypes();
@@ -1278,8 +1278,6 @@ public final class JavaRuntime {
 			vmStandin.convertToRealVM();
 		}
 		
-		// Cache the Java version information for each VM
-		LaunchingPlugin.setJavaVersionInfoMap(vmContainer.getJavaVersionInfoMap());
 	}
 	
 	/**

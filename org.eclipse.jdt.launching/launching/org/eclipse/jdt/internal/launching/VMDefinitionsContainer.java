@@ -66,12 +66,7 @@ public class VMDefinitionsContainer {
 	/**
 	 * VMs managed by this container whose install locations don't actually exist.	 */
 	private List fInvalidVMList;
-	
-	/**
-	 * Mapping of install paths for VM installations to Java version objects
-	 */
-	private Map fJavaVersionInfoMap;
-	
+		
 	/**
 	 * The number of VMs managed by this container.	 */
 	private int fVMCount = 0;
@@ -86,33 +81,13 @@ public class VMDefinitionsContainer {
 	private String fDefaultVMInstallConnectorTypeID;
 	
 	/**
-	 * Constructor 
-	 * 
-	 * @param initializeVersionInfoMap indicates whether the new object should
-	 * be filled in with the current mapping of known JRE install paths to
-	 * version information.
-	 * 
-	 * @see org.eclipse.jdt.internal.launching.JavaVersionInfo
+	 * Constructs an empty VM container 
 	 */
-	public VMDefinitionsContainer(boolean initializeVersionInfoMap) {
+	public VMDefinitionsContainer() {
 		fVMTypeToVMMap = new HashMap(10);
-		fInvalidVMList = new ArrayList(5);
-		if (initializeVersionInfoMap) {
-			fJavaVersionInfoMap = LaunchingPlugin.getJavaVersionInfoMap();
-		} else {
-			fJavaVersionInfoMap = new HashMap(10);
-		}
-			
+		fInvalidVMList = new ArrayList(5);			
 	}
-	
-	public void setJavaVersionInfoMap(Map versionInfoMap) {
-		fJavaVersionInfoMap = versionInfoMap;
-	}
-	
-	public Map getJavaVersionInfoMap() {
-		return fJavaVersionInfoMap;
-	}
-	
+		
 	/**
 	 * Add the specified VM to the VM definitions managed by this container.
 	 * <p>
@@ -151,10 +126,6 @@ public class VMDefinitionsContainer {
 			IVMInstall vm = (IVMInstall) iterator.next();
 			addVM(vm);
 		}
-	}
-	
-	public void addJavaVersionInfo(String installPath, JavaVersionInfo versionInfo) {
-		fJavaVersionInfoMap.put(installPath, versionInfo);
 	}
 	
 	/**
@@ -337,13 +308,6 @@ public class VMDefinitionsContainer {
 			element.appendChild(libLocationElement);
 		}
 		
-		// If 'java -version' info is present for this VM, create a node for it
-		JavaVersionInfo versionInfo = (JavaVersionInfo) fJavaVersionInfoMap.get(installPath);
-		if (versionInfo != null) {
-			Element versionInfoElement = versionInfoAsElement(doc, versionInfo);
-			element.appendChild(versionInfoElement);
-		}
-		
 		// Java doc location
 		URL url = vm.getJavadocLocation();
 		if (url != null) {
@@ -366,13 +330,6 @@ public class VMDefinitionsContainer {
 			root.appendChild(element);
 		}
 		return root;
-	}
-	
-	private static Element versionInfoAsElement(Document doc, JavaVersionInfo versionInfo) {
-		Element versionInfoElement = doc.createElement("versionInfo"); //$NON-NLS-1$
-		versionInfoElement.setAttribute("version", versionInfo.getVersionString()); //$NON-NLS-1$
-		versionInfoElement.setAttribute("ibm", new Boolean(versionInfo.ibmFound()).toString()); //$NON-NLS-1$
-		return versionInfoElement;
 	}
 			
 	/**
@@ -399,7 +356,7 @@ public class VMDefinitionsContainer {
 	 */	public static VMDefinitionsContainer parseXMLIntoContainer(InputStream inputStream) throws IOException {
 		
 		// Create the container to populate
-		VMDefinitionsContainer container = new VMDefinitionsContainer(false);
+		VMDefinitionsContainer container = new VMDefinitionsContainer();
 
 		// Wrapper the stream for efficient parsing
 		InputStream stream= new BufferedInputStream(inputStream);
@@ -511,10 +468,6 @@ public class VMDefinitionsContainer {
 					} else if (subElementName.equals("libraryLocations")) { //$NON-NLS-1$
 						setLibraryLocations(vmStandin, subElement);
 						break;
-					} else if (subElementName.equals("versionInfo")) { //$NON-NLS-1$
-						JavaVersionInfo versionInfo = parseJavaVersionInfo(subElement);
-						container.addJavaVersionInfo(installPath, versionInfo);
-						break;
 					}
 				}
 			}
@@ -532,14 +485,6 @@ public class VMDefinitionsContainer {
 			LaunchingPlugin.log(LaunchingMessages.getString("JavaRuntime.VM_element_specified_with_no_id_attribute_2")); //$NON-NLS-1$
 		}
 	}	
-	
-	private static JavaVersionInfo parseJavaVersionInfo(Element versionInfoElement) {
-		String versionString = versionInfoElement.getAttribute("version"); //$NON-NLS-1$
-		String ibmString = versionInfoElement.getAttribute("ibm"); //$NON-NLS-1$
-		boolean ibmFlag = Boolean.valueOf(ibmString).booleanValue();
-		JavaVersionInfo versionInfo = new JavaVersionInfo(versionString, ibmFlag);
-		return versionInfo;		
-	}
 	
 	/**
 	 * Create & return a LibraryLocation object populated from the attribute values

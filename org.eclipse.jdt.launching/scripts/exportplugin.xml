@@ -15,10 +15,17 @@
 		<mkdir dir="${destdir}" />
 		<delete dir="${dest}" />
 		<mkdir dir="${dest}" />
+		
+		<!-- Create the launching jar -->
 		<jar 
 			jarfile="${dest}/launching.jar"
 			basedir="bin"
+			excludes="org/eclipse/jdt/internal/launching/support/**"
 		/>
+		
+		<!-- Copy the launching support jar -->
+		<copy file="lib/launchingsupport.jar" todir="${dest}/lib"/> 
+				
 		<copy file="plugin.xml" todir="${dest}"/>
 		<copy file="plugin.properties" todir="${dest}"/>
 		<zip zipfile="${dest}/launchingsrc.zip">

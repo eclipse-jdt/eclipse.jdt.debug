@@ -9,7 +9,10 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.internal.events.ResourceChangeEvent;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -55,6 +63,12 @@ import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChangeListener, IVMInstallChangedListener, IResourceChangeListener {
 	
@@ -82,12 +96,12 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	 * Marker used to indicate a default JRE could not be found/detected
 	 */
 	public static final String NO_DEFAULT_JRE_MARKER_TYPE = getUniqueIdentifier() + ".noDefaultJRE"; //$NON-NLS-1$
-	
+		
 	/**
-	 * Mapping of top-level VM installation directories to results from 'java -
-	 * version' for that VM.
+	 * Mapping of top-level VM installation directories to library info for that
+	 * VM.
 	 */
-	private static Map fgJavaVersionInfoMap = new HashMap(10);
+	private static Map fgLibraryInfoMap = null;	
 	
 	public LaunchingPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -95,34 +109,37 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	}
 	
 	/**
-	 * Get the JavaVersionInfo object that corresponds to the specified
-	 * JRE install path.
+	 * Returns the library info that corresponds to the specified JRE install
+	 * path, or <code>null</code> if none.
+	 * 
+	 * @return the library info that corresponds to the specified JRE install
+	 * path, or <code>null</code> if none
 	 */
-	public static JavaVersionInfo getJavaVersionInfo(String javaInstallPath) {
-		return (JavaVersionInfo) fgJavaVersionInfoMap.get(javaInstallPath);
+	public static LibraryInfo getLibraryInfo(String javaInstallPath) {
+		if (fgLibraryInfoMap == null) {
+			restoreLibraryInfo(); 
+		}
+		return (LibraryInfo) fgLibraryInfoMap.get(javaInstallPath);
 	}
 	
 	/**
-	 * Add the specified JRE install path -- java version info pair to the
-	 * mapping.
+	 * Sets the library info that corresponds to the specified JRE install
+	 * path.
+	 * 
+	 * @param javaInstallPath home location for a JRE
+	 * @param info the libary information, or <code>null</code> to remove
 	 */
-	public static void setJavaVersionInfo(String javaInstallPath, JavaVersionInfo versionInfo) {
-		fgJavaVersionInfoMap.put(javaInstallPath, versionInfo);
-	}
-	
-	/**
-	 * Set the mapping of JRE install paths to JavaVersionInfo objects.
-	 */		
-	public static void setJavaVersionInfoMap(Map javaVersionInfoMap) {
-		fgJavaVersionInfoMap = javaVersionInfoMap;
-	}
-	
-	/**
-	 * Return the mapping of JRE install paths to JavaVersionInfo objects.
-	 */
-	public static Map getJavaVersionInfoMap() {
-		return fgJavaVersionInfoMap;
-	}
+	public static void setLibraryInfo(String javaInstallPath, LibraryInfo info) {
+		if (fgLibraryInfoMap == null) {
+			restoreLibraryInfo(); 
+		}		
+		if (info == null) {
+			fgLibraryInfoMap.remove(javaInstallPath);
+		} else {
+			fgLibraryInfoMap.put(javaInstallPath, info);
+		}
+		saveLibraryInfo();
+	}	
 		
 	/**
 	 * Return a <code>java.io.File</code> object that corresponds to the specified
@@ -652,6 +669,174 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	private static IJavaModel getJavaModel() {
 		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 	}
+
+	/**
+	 * Return the VM definitions contained in this object as a String of XML.  The String
+	 * is suitable for storing in the workbench preferences.
+	 * <p>
+	 * The resulting XML is compatible with the static method <code>parseXMLIntoContainer</code>.
+	 * </p>
+	 * @return String the results of flattening this object into XML
+	 * @throws IOException if this method fails. Reasons include:<ul>
+	 * <li>serialization of the XML document failed</li>
+	 * </ul>
+	 */
+	private static String getLibraryInfoAsXML() throws IOException{
+		
+		// Create the Document and the top-level node
+		Document doc = new DocumentImpl();
+		Element config = doc.createElement("libraryInfos");    //$NON-NLS-1$
+		doc.appendChild(config);
+						
+		// Create a node for each info in the table
+		Iterator locations = fgLibraryInfoMap.keySet().iterator();
+		while (locations.hasNext()) {
+			String home = (String)locations.next();
+			LibraryInfo info = (LibraryInfo) fgLibraryInfoMap.get(home);
+			Element locationElemnet = infoAsElement(doc, info);
+			locationElemnet.setAttribute("home", home); //$NON-NLS-1$
+			config.appendChild(locationElemnet);
+		}
+		
+		// Serialize the Document and return the resulting String
+		return JavaLaunchConfigurationUtils.serializeDocument(doc);
+	}	
+	
+	/**
+	 * Creates an XML element for the given info.
+	 * 
+	 * @param doc
+	 * @param info
+	 * @return Element
+	 */
+	private static Element infoAsElement(Document doc, LibraryInfo info) {
+		Element libraryElement = doc.createElement("libraryInfo"); //$NON-NLS-1$
+		appendPathElements(doc, "bootpath", libraryElement, info.getBootpath()); //$NON-NLS-1$
+		appendPathElements(doc, "extensionDirs", libraryElement, info.getExtensionDirs()); //$NON-NLS-1$
+		return libraryElement;
+	}
+	
+	/**
+	 * Appends path elements to the given library element, rooted by an
+	 * element of the given type.
+	 * 
+	 * @param doc
+	 * @param elementType
+	 * @param libraryElement
+	 * @param paths
+	 */
+	private static void appendPathElements(Document doc, String elementType, Element libraryElement, String[] paths) {
+		if (paths.length > 0) {
+			Element child = doc.createElement(elementType);
+			libraryElement.appendChild(child);
+			for (int i = 0; i < paths.length; i++) {
+				String path = paths[i];
+				Element entry = doc.createElement("entry"); //$NON-NLS-1$
+				child.appendChild(entry);
+				entry.setAttribute("path", path); //$NON-NLS-1$
+			}
+		}
+	}
+	
+	/**
+	 * Saves the library info in a local workspace state location 
+	 */
+	private static void saveLibraryInfo() {
+		try {
+			String xml = getLibraryInfoAsXML();
+			IPath libPath = getDefault().getStateLocation();
+			libPath = libPath.append("libraryInfos.xml"); //$NON-NLS-1$
+			File file = libPath.toFile();
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileOutputStream stream = new FileOutputStream(file);
+			stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+			stream.close();
+		} catch (IOException e) {
+			log(e);
+		}	
+	}
+	
+	/**
+	 * Restores library information for VMs
+	 */
+	private static void restoreLibraryInfo() {
+		fgLibraryInfoMap = new HashMap(10);
+		IPath libPath = getDefault().getStateLocation();
+		libPath = libPath.append("libraryInfos.xml"); //$NON-NLS-1$
+		File file = libPath.toFile();
+		if (file.exists()) {
+			try {
+				InputStream stream = new FileInputStream(file);
+				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				Element root = parser.parse(new InputSource(stream)).getDocumentElement();
+				if(!root.getNodeName().equals("libraryInfos")) { //$NON-NLS-1$
+					return;
+				}
+				
+				NodeList list = root.getChildNodes();
+				int length = list.getLength();
+				for (int i = 0; i < length; ++i) {
+					Node node = list.item(i);
+					short type = node.getNodeType();
+					if (type == Node.ELEMENT_NODE) {
+						Element element = (Element) node;
+						String nodeName = element.getNodeName();
+						if (nodeName.equalsIgnoreCase("libraryInfo")) { //$NON-NLS-1$
+							String location = element.getAttribute("home"); //$NON-NLS-1$
+							String[] bootpath = getPathsFromXML(element, "bootpath"); //$NON-NLS-1$
+							String[] extDirs = getPathsFromXML(element, "extensionDirs"); //$NON-NLS-1$
+							if (location != null) {
+								LibraryInfo info = new LibraryInfo(bootpath, extDirs);
+								fgLibraryInfoMap.put(location, info);										
+							}
+						}
+					}
+				}				
+			} catch (IOException e) {
+				log(e);
+			} catch (ParserConfigurationException e) {
+				log(e);
+			} catch (SAXException e) {
+				log(e);
+			}
+		}
+	}
+	
+	private static String[] getPathsFromXML(Element lib, String pathType) {
+		List paths = new ArrayList();
+		NodeList list = lib.getChildNodes();
+		int length = list.getLength();
+		for (int i = 0; i < length; ++i) {
+			Node node = list.item(i);
+			short type = node.getNodeType();
+			if (type == Node.ELEMENT_NODE) {
+				Element element = (Element) node;
+				String nodeName = element.getNodeName();
+				if (nodeName.equalsIgnoreCase(pathType)) {
+					NodeList entries = element.getChildNodes();
+					int numEntries = entries.getLength();
+					for (int j = 0; j < numEntries; j++) {
+						Node n = entries.item(j);
+						short t = n.getNodeType();
+						if (t == Node.ELEMENT_NODE) {
+							Element entryElement = (Element)n;
+							String name = entryElement.getNodeName();
+							if (name.equals("entry")) { //$NON-NLS-1$
+								String path = entryElement.getAttribute("path"); //$NON-NLS-1$
+								if (path != null && path.length() > 0) {
+									paths.add(path);
+								}
+							}
+						}
+					}
+				}
+			}
+		}			
+		return (String[])paths.toArray(new String[paths.size()]);		
+	}
 	
 }
 
+ 

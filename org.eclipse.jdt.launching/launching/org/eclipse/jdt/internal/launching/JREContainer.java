@@ -11,6 +11,9 @@ package org.eclipse.jdt.internal.launching;
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -52,11 +55,13 @@ public class JREContainer implements IClasspathContainer {
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
 		LibraryLocation[] libs = JavaRuntime.getLibraryLocations(fVMInstall);
-		IClasspathEntry[] entries = new IClasspathEntry[libs.length];
+		List entries = new ArrayList(libs.length);
 		for (int i = 0; i < libs.length; i++) {
-			entries[i] = JavaCore.newLibraryEntry(libs[i].getSystemLibraryPath(), libs[i].getSystemLibrarySourcePath(), libs[i].getPackageRootPath());
+			if (!libs[i].getSystemLibraryPath().isEmpty()) {
+				entries.add(JavaCore.newLibraryEntry(libs[i].getSystemLibraryPath(), libs[i].getSystemLibrarySourcePath(), libs[i].getPackageRootPath()));
+			}
 		}
-		return entries;
+		return (IClasspathEntry[])entries.toArray(new IClasspathEntry[entries.size()]);
 	}
 
 	/**
