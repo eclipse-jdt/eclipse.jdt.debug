@@ -315,7 +315,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 		if (getPageBook().isDisposed()) {
 			return;
 		}
-		boolean changeToHavingMonitorInformation= monitorInformationAvailable && !fMonitorInformationAvailable;
+		boolean changeFromShowMessagePage= monitorInformationAvailable && !fMonitorInformationAvailable;
 		fMonitorInformationAvailable= monitorInformationAvailable;
 		if (!monitorInformationAvailable) {
 			showMessage(MonitorMessages.getString("MonitorsView.The_current_VM_does_not_support_the_retrieval_of_monitor_information_1")); //$NON-NLS-1$
@@ -329,6 +329,12 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 				page= getViewer().getControl();
 				break;
 			case VIEW_ID_DEADLOCK:
+				if(MonitorManager.getDefault().getNumberOfDeadlocks() == 0 && MonitorManager.getDefault().getThreads().length > 0) {
+					showMessage(MonitorMessages.getString("MonitorsView.No_deadlock_detected_3")); //$NON-NLS-1$
+					return;
+				} else {
+					changeFromShowMessagePage= true;
+				}
 				getDeadLocksViewer().refresh();
 				((TreeViewer)getDeadLocksViewer()).expandAll();
 				page= getDeadLocksViewer().getControl();
@@ -339,7 +345,7 @@ public class MonitorsView extends AbstractDebugEventHandlerView {
 				page= getMonitorsViewer().getControl();
 				break;
 		}
-		if (changeToHavingMonitorInformation) {
+		if (changeFromShowMessagePage) {
 			getPageBook().showPage(page);
 		}
 		updateObjects();
