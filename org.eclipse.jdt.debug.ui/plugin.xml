@@ -863,6 +863,40 @@
 		</action>
 	</objectContribution>
 	<objectContribution
+		id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
+		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
+		<filter name="PrimitiveVariableActionFilter" value="isPrimitive"/>
+		<visibility>
+			<not>
+				<objectState name="DetailFormatterFilter" value="isDefined"/>
+			</not>
+		</visibility>
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.NewDetailFormatter"
+			label="new detail formatter"
+			tooltip="associate a detail formatter with this type"
+			menubarPath="emptyNavigationGroup"
+			helpContextId="open_variable_concrete_type_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.NewDetailFormatterAction"
+			enablesFor="1">
+		</action>
+	</objectContribution>
+	<objectContribution
+		id="org.eclipse.jdt.debug.ui.FilteredJavaVariableActions"
+		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
+		<filter name="PrimitiveVariableActionFilter" value="isPrimitive"/>
+		<filter name="DetailFormatterFilter" value="isDefined"/>
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.EditDetailFormatter"
+			label="edit detail formatter"
+			tooltip="Edit the detail formatter associated with this type"
+			menubarPath="emptyNavigationGroup"
+			helpContextId="open_variable_concrete_type_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.EditDetailFormatterAction"
+			enablesFor="1">
+		</action>
+	</objectContribution>
+	<objectContribution
 		id="org.eclipse.jdt.debug.ui.JavaVariableActions"
 		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
 		<action

@@ -55,6 +55,14 @@ public class JavaVariableActionFilter implements IActionFilter {
 				} catch (DebugException exception) {
 					JDIDebugUIPlugin.log(exception);
 				}
+			} else if (name.equals("DetailFormatterFilter") && value.equals("isDefined")) { //$NON-NLS-1$ //$NON-NLS-2$
+				IValue varValue;
+				try {
+					varValue= var.getValue();
+					return (varValue instanceof IJavaObject) && (JavaDetailFormattersManager.getDefault().hasAssociatedDetailFormatter(((IJavaObject)varValue).getJavaType()));
+				} catch (DebugException exception) {
+					JDIDebugUIPlugin.log(exception);
+				}
 			}
 		}
 
