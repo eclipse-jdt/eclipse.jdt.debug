@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IWorkingCopy;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.internal.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.IProblemFactory;
@@ -265,7 +266,7 @@ public class CompilationUnitDelta {
 		if (buffer != null) {									
 			JavaNode root= new JavaNode(buffer);
 			JavaParseTreeBuilder builder= new JavaParseTreeBuilder(root, buffer);
-			SourceElementParser parser= new SourceElementParser(builder, new ProblemFactory(), new CompilerOptions());
+			SourceElementParser parser= new SourceElementParser(builder, new ProblemFactory(), new CompilerOptions(JavaCore.getOptions()));
 			try {
 				parser.parseCompilationUnit(builder, false);
 			} catch (ParseError ex) {
