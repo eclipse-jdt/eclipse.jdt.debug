@@ -61,6 +61,11 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	private boolean fTrace = false;
 	
 	/**
+	 * Detected (speculated) JDI interface version
+	 */
+	private static float fJDIVersion;
+	
+	/**
 	 * Returns whether the debug UI plug-in is in trace
 	 * mode.
 	 * 
@@ -103,9 +108,18 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 		}
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
+	
+	/**
+	 * Returns the detected version of JDI support. This
+	 * is intended to distinguish between clients that support
+	 * JDI 1.4 methods like hot code replace.
+	 */
+	public static float getJDIVersion() {
+		return fJDIVersion;
+	}
 		
 	public JDIDebugPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+		super(descriptor);	
 		fgPlugin = this;
 	}
 	
@@ -113,6 +127,16 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
+		fJDIVersion= (float)1.4;
+		try {
+			// JDI clients before version 1.4 do not support
+			// hot code replace.
+			Class clazz = Class.forName("com.sun.jdi.VirtualMachine");
+			clazz.getMethod("canRedefineClasses", new Class[0]);
+		} catch (NoSuchMethodException e) {
+			fJDIVersion= (float)1.3;
+		} catch (ClassNotFoundException e) {
+		}	
 		JavaHotCodeReplaceManager.getDefault().startup();
 		fBreakpointListeners = new ListenerList(5);
 		getPluginPreferences().setDefault(JDIDebugModel.PREF_REQUEST_TIMEOUT, JDIDebugModel.DEF_REQUEST_TIMEOUT);

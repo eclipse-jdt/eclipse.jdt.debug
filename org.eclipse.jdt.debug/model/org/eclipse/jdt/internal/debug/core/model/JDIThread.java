@@ -1323,8 +1323,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * </ul>
 	 */
 	protected void dropToFrame(IStackFrame frame) throws DebugException {
-		VirtualMachine vm= getVM();
-		if (vm.canPopFrames()) {
+		JDIDebugTarget target= (JDIDebugTarget) getDebugTarget();
+		if (target.canPopFrames()) {
 			// JDK 1.4 support
 			try {
 				// Pop the drop frame and all frames above it
@@ -1345,8 +1345,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	protected void popFrame(IStackFrame frame) throws DebugException {
-		VirtualMachine vm= getVM();
-		if (vm.canPopFrames()) {
+		JDIDebugTarget target= (JDIDebugTarget)getDebugTarget();
+		if (target.canPopFrames()) {
 			// JDK 1.4 support
 			try {
 				// Pop the frame and all frames above it

@@ -356,7 +356,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 					continue;
 				}
 				boolean framesPopped= false;
-				if (target.getVM().canPopFrames()) {
+				if (target.canPopFrames()) {
 					// JDK 1.4 drop to frame support:
 					// JDK 1.4 spec is faulty around methods that have
 					// been rendered obsolete after class redefinition.
@@ -378,7 +378,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 				if (containsObsoleteMethods(target)) {
 					fireObsoleteMethods(target);
 				}
-				if (target.getVM().canPopFrames() && framesPopped) {
+				if (target.canPopFrames() && framesPopped) {
 					// Second half of JDK 1.4 drop to frame support:
 					// All affected frames have been popped and the classes
 					// have been reloaded. Step into the first changed

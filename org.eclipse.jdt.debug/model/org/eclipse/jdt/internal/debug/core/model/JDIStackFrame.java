@@ -24,6 +24,7 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;
@@ -479,7 +480,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 				return false;
 			} 
 			boolean j9Support= false;
-			boolean jdkSupport= getVM().canPopFrames();
+			boolean jdkSupport= target.canPopFrames();
 			try {
 				j9Support= (thread.getUnderlyingThread() instanceof org.eclipse.jdi.hcr.ThreadReference) &&
 						((org.eclipse.jdi.hcr.VirtualMachine) ((JDIDebugTarget) getDebugTarget()).getVM()).canDoReturn();
@@ -657,7 +658,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		if (fStackFrame == null || fDeclaringTypeName == null) {
 			try {
 				Method underlyingMethod= getUnderlyingMethod();
-				if (underlyingMethod.isObsolete()) {
+				if (isObsolete()) {
 					fDeclaringTypeName=  JDIDebugModelMessages.getString("JDIStackFrame.<unknown_declaring_type>_1"); //$NON-NLS-1$
 				} else {
 					fDeclaringTypeName= getUnderlyingMethod().declaringType().name();
@@ -678,7 +679,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	public String getReceivingTypeName() throws DebugException {
 		if (fStackFrame == null || fReceivingTypeName == null) {
 			try {
-				if (getUnderlyingMethod().isObsolete()) {
+				if (isObsolete()) {
 					fReceivingTypeName=JDIDebugModelMessages.getString("JDIStackFrame.<unknown_receiving_type>_2"); //$NON-NLS-1$
 				} else {
 					ObjectReference thisObject = getUnderlyingThisObject();
@@ -850,7 +851,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 * @see IJavaStackFrame#isObsolete()
 	 */
 	public boolean isObsolete() throws DebugException {
-		if (!((JDIDebugTarget)getDebugTarget()).hasHCROccurred()) {
+		if (JDIDebugPlugin.getJDIVersion() < 1.4 || !((JDIDebugTarget)getDebugTarget()).hasHCROccurred()) {
 			// If no hot code replace has occurred, this frame
 			// cannot be obsolete.
 			return false;

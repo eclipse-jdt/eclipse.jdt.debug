@@ -553,8 +553,20 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @return whether this debug target supports JDK hot code replace
 	 */
 	public boolean supportsJDKHotCodeReplace() {
-		if (isAvailable()) {
+		if (isAvailable() && JDIDebugPlugin.getJDIVersion() >= 1.4) {
 			return getVM().canRedefineClasses();
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns whether this debug target supports popping stack frames.
+	 * 
+	 * @return whether this debug target supports popping stack frames.
+	 */
+	public boolean canPopFrames() {
+		if (isAvailable() && JDIDebugPlugin.getJDIVersion() >= 1.4) {
+			return getVM().canPopFrames();
 		}
 		return false;
 	}
