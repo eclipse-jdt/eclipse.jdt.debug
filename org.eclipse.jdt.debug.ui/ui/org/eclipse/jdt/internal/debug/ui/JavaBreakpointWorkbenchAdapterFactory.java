@@ -16,6 +16,8 @@ import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaStratumLineBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaTargetPatternBreakpoint;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -61,7 +63,19 @@ public class JavaBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 				}
 				if (breakpoint instanceof IJavaPatternBreakpoint) {
 					try {
-						label.append(((IJavaPatternBreakpoint) breakpoint).getPattern());
+						label.append(((IJavaPatternBreakpoint) breakpoint).getSourceName());
+					} catch (CoreException e) {
+						JDIDebugUIPlugin.log(e);
+					}
+				} else if (breakpoint instanceof IJavaTargetPatternBreakpoint) {
+					try {
+						label.append(((IJavaTargetPatternBreakpoint) breakpoint).getSourceName());
+					} catch (CoreException e) {
+						JDIDebugUIPlugin.log(e);
+					}
+				} else if (breakpoint instanceof IJavaStratumLineBreakpoint) {
+					try {
+						label.append(((IJavaStratumLineBreakpoint) breakpoint).getSourceName());
 					} catch (CoreException e) {
 						JDIDebugUIPlugin.log(e);
 					}
