@@ -129,6 +129,8 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	protected void setDepth(int depth) {
 		fDepth = depth;
+		clearCachedData();
+		fRefreshVariables = true;
 	}
 	
 	/**
@@ -965,10 +967,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	 */
 	protected void setUnderlyingStackFrame(StackFrame frame) {
 		if (frame != null) {
-			fMethod= frame.location().method();
-			if (fLastMethod != null && !fLastMethod.equals(fMethod)) {
-				clearCachedData();
-			}
 			fLastMethod= fMethod;
 		} else {
 			if (fMethod != null) {
@@ -978,11 +976,6 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			}
 		}
 		fStackFrame = frame;
-		fRefreshVariables = true;
-		// always clear 'this' and receiver type name, as we could be in a
-		// different receiver next time, but still in the same location (method)
-		fThisObject = null;		
-		fReceivingTypeName = null;
 	}
 	
 	/**
