@@ -46,7 +46,7 @@ public class AddExternalFolderAction extends OpenDialogAction {
 			
 		IPath filterPath= new Path(dialog.getFilterPath());
 		IRuntimeClasspathEntry[] elems= new IRuntimeClasspathEntry[1];
-		IPath path= filterPath.append(res).makeAbsolute();	
+		IPath path= new Path(res).makeAbsolute();	
 		elems[0]= JavaRuntime.newArchiveRuntimeClasspathEntry(path);
 
 		setDialogSetting(LAST_PATH_SETTING, filterPath.toOSString());
