@@ -189,7 +189,11 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 */
 	protected void deregisterRequest(EventRequest request, JDIDebugTarget target) throws CoreException {
 		target.removeJDIEventListener(this, request);
-		if (!(request instanceof ClassPrepareRequest)) {
+		// A request may be getting deregistered because the breakpoint has
+		// been deleted. It may be that this occurred because of a marker deletion.
+		// Don't try updating the marker (decrementing the install count) if
+		// it no longer exists.
+		if (!(request instanceof ClassPrepareRequest) && getMarker().exists()) {
 			decrementInstallCount();
 		}
 	}
