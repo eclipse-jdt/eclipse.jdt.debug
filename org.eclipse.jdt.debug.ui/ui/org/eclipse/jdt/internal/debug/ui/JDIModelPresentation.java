@@ -74,6 +74,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import com.sun.jdi.ObjectCollectedException;
@@ -164,18 +165,14 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	 * @return thread or <code>null</code>
 	 */
 	public static IJavaThread getEvaluationThread(IJavaDebugTarget target) {
-		IAdaptable context = DebugUITools.getDebugContext();
+		IJavaStackFrame frame = EvaluationContextManager.getEvaluationContext((IWorkbenchWindow)null);
 		IJavaThread thread = null;
-		if (context != null) {
-			if (context instanceof IJavaStackFrame) {
-				thread = (IJavaThread)((IJavaStackFrame)context).getThread();		
-			} else if (context instanceof IJavaThread) {
-				thread = (IJavaThread)context;
-			}
-			if (thread != null && (!thread.getDebugTarget().equals(target) || !thread.isSuspended())) {
-				// can only use suspended threads in the same target
-				thread = null;
-			}
+		if (frame != null) {
+			thread = (IJavaThread) frame.getThread();
+		}
+		if (thread != null && (!thread.getDebugTarget().equals(target) || !thread.isSuspended())) {
+			// can only use suspended threads in the same target
+			thread = null;
 		}
 		if (thread == null) {
 			try {
