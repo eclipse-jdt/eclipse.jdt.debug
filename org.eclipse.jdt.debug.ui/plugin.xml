@@ -1843,6 +1843,11 @@
 		types="org.eclipse.swt.widgets.Composite"
 		class="org.eclipse.jdt.internal.debug.ui.SWTCompositeVariablesContentProvider">
 	</javaVariablesContentProvider>
+	<javaVariablesContentProvider
+		id="org.eclipse.jdt.debug.ui.CoreResourcesIContainerContentProvider"
+		types="org.eclipse.core.resources.IContainer"
+		class="org.eclipse.jdt.internal.debug.ui.CoreResourcesIContainerVariablesContentProvider">
+	</javaVariablesContentProvider>
 </extension>
 
 </plugin>
