@@ -121,7 +121,7 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 					//must add one
 					lineNumber= doc.getLineOfOffset(jBreakpoint.getCharStart()) + 1;
 				} catch(BadLocationException e) {
-					JDIDebugUIPlugin.log(e);
+					return false;
 				}
 			}
 		}
