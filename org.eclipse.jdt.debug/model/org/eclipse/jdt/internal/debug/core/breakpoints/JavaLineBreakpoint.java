@@ -5,9 +5,12 @@ package org.eclipse.jdt.internal.debug.core.breakpoints;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -76,10 +79,10 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	private Map fSuspendEvents= new HashMap();
 	/**
-	 * The cached compiled expression for this breakpoint. This value must be cleared
-	 * everytime the breakpoint is added to a target.
+	 * The map of cached compiled expressions (ICompiledExpression) for this breakpoint, keyed by thread.
+	 * This value must be cleared everytime the breakpoint is added to a target.
 	 */
-	private ICompiledExpression fCompiledExpression;
+	private Map fCompiledExpressions= new HashMap();
 		
 	public JavaLineBreakpoint() {
 	}
@@ -116,12 +119,37 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * @see JavaBreakpoint#addToTarget(JDIDebugTarget)
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
-		fCompiledExpression= null;
+		clearCachedExpressionFor(target);
 		super.addToTarget(target);
 	}
 	
+	/**
+	 * @see JavaBreakpoint#removeFromTarget(JDIDebugTarget)
+	 */
 	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
+		clearCachedExpressionFor(target);
 		super.removeFromTarget(target);
+	}
+	
+	/**
+	 * Removes all compiled expressions which are currently
+	 * being cached for threads in the given target.
+	 */
+	public void clearCachedExpressionFor(JDIDebugTarget target) {
+		Set threads= fCompiledExpressions.keySet();
+		List threadsToRemove= new ArrayList();
+		Iterator iter= threads.iterator();
+		JDIThread thread;
+		while (iter.hasNext()) {
+			thread= (JDIThread)iter.next();
+			if (thread.getDebugTarget() == target) {
+				threadsToRemove.add(thread);
+			}
+		}
+		iter= threadsToRemove.iterator();
+		while (iter.hasNext()) {
+			fCompiledExpressions.remove((JDIThread)iter.next());
+		}
 	}
 	
 	/**
@@ -384,15 +412,17 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 
 		thread.handleSuspendForBreakpointQuiet(this);
 		JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
-		if (fCompiledExpression == null) {
-			fCompiledExpression= engine.getCompiledExpression(condition, frame);
+		ICompiledExpression expression= (ICompiledExpression)fCompiledExpressions.get(thread);
+		if (expression == null) {
+			expression= engine.getCompiledExpression(condition, frame);
+			fCompiledExpressions.put(thread, expression);
 		}
-		if (conditionHasErrors()) {
-			fireConditionHasErrors();
+		if (conditionHasErrors(expression)) {
+			fireConditionHasErrors(expression);
 			return !suspendForEvent(event, thread);
 		}
 		fSuspendEvents.put(thread, event);
-		engine.evaluateExpression(fCompiledExpression, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
+		engine.evaluateExpression(expression, frame, listener, DebugEvent.EVALUATION_IMPLICIT, false);
 
 		// Do not resume. When the evaluation returns, the evaluation listener
 		// will resume the thread if necessary or update for suspension.
@@ -460,19 +490,16 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * Notifies listeners that a conditional breakpoint expression has been
 	 * compiled that contains errors
 	 */
-	private void fireConditionHasErrors() {
-		JDIDebugPlugin.getDefault().fireBreakpointHasCompilationErrors(this, fCompiledExpression.getErrors());
+	private void fireConditionHasErrors(ICompiledExpression expression) {
+		JDIDebugPlugin.getDefault().fireBreakpointHasCompilationErrors(this, expression.getErrors());
 	}
 	
 	/**
 	 * Returns whether the cached conditional expression has errors or
 	 * <code>false</code> if there is no cached expression
 	 */
-	public boolean conditionHasErrors() {
-		if (fCompiledExpression == null) {
-			return false;
-		}
-		return fCompiledExpression.hasErrors();
+	public boolean conditionHasErrors(ICompiledExpression expression) {
+		return expression.hasErrors();
 	}
 	
 	private IJavaProject getJavaProject(IProject project) {
@@ -511,8 +538,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * @see IJavaLineBreakpoint#setCondition(String)
 	 */
 	public void setCondition(String condition) throws CoreException {
-		// Clear the cached compiled expression
-		fCompiledExpression= null;	
+		// Clear the cached compiled expressions
+		fCompiledExpressions.clear();	
 		if (condition != null && condition.trim().length() == 0) {
 			condition = null;
 		}
