@@ -77,9 +77,9 @@ public class RunToLineAdapter implements IRunToLineTarget {
 						ASTParser parser = ASTParser.newParser(AST.JLS2);
 						parser.setSource(document.get().toCharArray());
 						CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
-						ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineNumber[0]);
+						ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineNumber[0], false);
 						compilationUnit.accept(locator);
-						validLine[0]= locator.getValidLocation();		
+						validLine[0]= locator.getLineLocation();		
 						typeName[0]= locator.getFullyQualifiedTypeName();
 					}
 				};

@@ -89,18 +89,22 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		
-	protected void report(String message, IWorkbenchPart part) {
-		IEditorStatusLine statusLine= (IEditorStatusLine) part.getAdapter(IEditorStatusLine.class);
-		if (statusLine != null) {
-			if (message != null) {
-				statusLine.setMessage(true, message, null);
-			} else {
-				statusLine.setMessage(true, null, null);
+	protected void report(final String message, final IWorkbenchPart part) {
+		JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IEditorStatusLine statusLine= (IEditorStatusLine) part.getAdapter(IEditorStatusLine.class);
+				if (statusLine != null) {
+					if (message != null) {
+						statusLine.setMessage(true, message, null);
+					} else {
+						statusLine.setMessage(true, null, null);
+					}
+				}		
+				if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
+					JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
+				}
 			}
-		}		
-		if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
-			JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
-		}
+		});
 	}
 	
 	protected IType getType(ITextSelection selection) {
@@ -127,6 +131,11 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(IWorkbenchPart, ISelection)
 	 */
 	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
+		toggleLineBreakpoints(part, selection, false);
+	}
+	
+	
+	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection, boolean bestMatch) {
 		if (selection instanceof ITextSelection) {
 			report(null, part);
 			IEditorPart editorPart = (IEditorPart)part;
@@ -186,7 +195,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					}
 					breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, -1, -1, 0, true, attributes);
 				}
-				new BreakpointLocationVerifierJob(document, breakpoint, lineNumber, typeName, type, resource, (IEditorStatusLine) editorPart.getAdapter(IEditorStatusLine.class)).schedule();
+				new BreakpointLocationVerifierJob(document, breakpoint, lineNumber, bestMatch, typeName, type, resource, editorPart).schedule();
 			} catch (CoreException ce) {
 				ExceptionHandler.handle(ce, ActionMessages.getString("ManageBreakpointActionDelegate.error.title1"), ActionMessages.getString("ManageBreakpointActionDelegate.error.message1")); //$NON-NLS-1$ //$NON-NLS-2$
 				return;

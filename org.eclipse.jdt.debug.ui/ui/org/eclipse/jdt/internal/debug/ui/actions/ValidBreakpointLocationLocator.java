@@ -90,38 +90,64 @@ import org.eclipse.jdt.core.dom.PrefixExpression.Operator;
  */
 public class ValidBreakpointLocationLocator extends ASTVisitor {
 	
+	public static final int LOCATION_NOT_FOUND= 0;
+	public static final int LOCATION_LINE= 1;
+	public static final int LOCATION_METHOD= 2;
+	public static final int LOCATION_FIELD= 3;
+	
 	private CompilationUnit fCompilationUnit;
 	private int fLineNumber;
+	private boolean fBestMatch;
 
-	private int fLocation;
+	private int fLocationType;
 	private boolean fLocationFound;
 	private String fTypeName;
+	private int fLineLocation;
+	private int fMemberOffset;
 
 	/**
 	 * @param compilationUnit the JDOM CompilationUnit of the source code.
 	 * @param lineNumber the line number in the source code where to put the breakpoint.
+	 * @param bestMatch if <code>true</code> look for the best match, otherwise look only for a valid line
 	 */
-	public ValidBreakpointLocationLocator(CompilationUnit compilationUnit, int lineNumber) {
+	public ValidBreakpointLocationLocator(CompilationUnit compilationUnit, int lineNumber, boolean bestMatch) {
 		fCompilationUnit= compilationUnit;
 		fLineNumber= lineNumber;
+		fBestMatch= bestMatch;
 		fLocationFound= false;
 	}
 	
 	/**
-	 * Return the line number of the computed valid location, or -1 if no valid location has been found.
+	 * Return the type of the valid location found
+	 * @return one of LOCATION_NOT_FOUND, LOCATION_LINE, LOCATION_METHOD or LOCATION_FIELD
 	 */
-	public int getValidLocation() {
-		if (fLocationFound) {
-			return fLocation;
+	public int getLocationType() {
+		return fLocationType;
+	}
+	
+	/**
+	 * Return of the type where the valid location is.
+	 */
+	public String getFullyQualifiedTypeName() {
+		return fTypeName;
+	}
+	
+	/**
+	 * Return the line number of the computed valid location, if the location type is LOCATION_LINE.
+	 */
+	public int getLineLocation() {
+		if (fLocationType == LOCATION_LINE) {
+			return fLineLocation;
 		}
 		return -1;
 	}
 	
 	/**
-	 * Return of the type where the valid location is, or null if no valid location has been found.
+	 * Return the offset of the member which is the valid location,
+	 * if the location type is LOCATION_METHOD or LOCATION_FIELD.
 	 */
-	public String getFullyQualifiedTypeName() {
-		return fTypeName;
+	public int getMemberOffset() {
+		return fMemberOffset;
 	}
 	
 	/**
@@ -177,8 +203,9 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		// breakpoint is requested on this line or on a previous line, this is a valid 
 		// location
 		if (isCode && (fLineNumber <= startLine)) {
-			fLocation= startLine;
+			fLineLocation= startLine;
 			fLocationFound= true;
+			fLocationType= LOCATION_LINE;
 			fTypeName= computeTypeName(node);
 			return false;
 		}
@@ -313,8 +340,9 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 		if (visit(node, false)) {
 			if (node.statements().isEmpty() && node.getParent().getNodeType() == ASTNode.METHOD_DECLARATION) {
 				// in case of an empty method, set the breakpoint on the last line of the empty block.
-				fLocation= fCompilationUnit.lineNumber(node.getStartPosition() + node.getLength() - 1);
+				fLineLocation= fCompilationUnit.lineNumber(node.getStartPosition() + node.getLength() - 1);
 				fLocationFound= true;
+				fLocationType= LOCATION_LINE;
 				fTypeName= computeTypeName(node);
 				return false;
 			}
@@ -426,6 +454,16 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 */
 	public boolean visit(FieldDeclaration node) {
 		if (visit(node, false)) {
+			if (fBestMatch) {
+				// check if the line contains a single field declaration.
+				List fragments = node.fragments();
+				if (fragments.size() == 1) {
+					fMemberOffset= ((VariableDeclarationFragment)fragments.get(0)).getName().getStartPosition();
+					fLocationType= LOCATION_FIELD;
+					fLocationFound= true;
+					return false;
+				}
+			}
 			// visit only the variable declaration fragments, no the variable names.
 			List fragments= node.fragments();
 			for (Iterator iter= fragments.iterator(); iter.hasNext();) {
@@ -511,8 +549,9 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 					
 				}
 			}
-			fLocation= fCompilationUnit.lineNumber(firstConstant.getStartPosition());
+			fLineLocation= fCompilationUnit.lineNumber(firstConstant.getStartPosition());
 			fLocationFound= true;
+			fLocationType= LOCATION_LINE;
 			fTypeName= computeTypeName(firstConstant);
 		}
 		return false;
@@ -551,6 +590,16 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	 */
 	public boolean visit(MethodDeclaration node) {
 		if (visit(node, false)) {
+			if (fBestMatch) {
+				// check if we are on the line which contains the method name
+				int nameOffset= node.getName().getStartPosition();
+				if (fCompilationUnit.lineNumber(nameOffset) == fLineNumber) {
+					fMemberOffset= nameOffset;
+					fLocationType= LOCATION_METHOD;
+					fLocationFound= true;
+					return false;
+				}
+			}
 			// visit only the body
 			Block body = node.getBody();
 			if (body != null) { // body is null for abstract methods
@@ -608,8 +657,9 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	public boolean visit(PrefixExpression node) {
 		if (visit(node, false)) {
 			if (isReplacedByConstantValue(node)) {
-				fLocation= fCompilationUnit.lineNumber(node.getStartPosition());
+				fLineLocation= fCompilationUnit.lineNumber(node.getStartPosition());
 				fLocationFound= true;
+				fLocationType= LOCATION_LINE;
 				fTypeName= computeTypeName(node);
 				return false;
 			}
