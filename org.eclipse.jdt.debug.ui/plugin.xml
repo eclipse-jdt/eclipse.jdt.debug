@@ -1905,55 +1905,24 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.commands.StepIntoSelection">
       </command>
-      <keyBinding
-            keySequence="M1+F5"
-            contextId="org.eclipse.debug.ui.debugging"
-            commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.execute.name"
             description="%ActionDefinition.execute.description"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.commands.Execute">
       </command>
-      <keyBinding
-            keySequence="M1+U"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.jdt.debug.ui.commands.Execute"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.display.name"
             description="%ActionDefinition.display.description"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.commands.Display">
       </command>
-      <keyBinding
-            keySequence="M1+M2+D"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            commandId="org.eclipse.jdt.debug.ui.commands.Display"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-      		platform="gtk"
-            keySequence="M1+M2+V"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            commandId="org.eclipse.jdt.debug.ui.commands.Display"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.inspect.name"
             description="%ActionDefinition.inspect.description"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.commands.Inspect">
       </command>
-      <keyBinding
-            keySequence="M1+M2+I"
-            contextId="org.eclipse.ui.contexts.dialogAndWindow"
-            commandId="org.eclipse.jdt.debug.ui.commands.Inspect"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
  <!-- views -->
       <command
             name="%ViewCommand.displayView.name"
@@ -1968,48 +1937,72 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.localJavaShortcut.debug">
       </command>
-      <keyBinding
-            keySequence="M3+M2+D J"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.debug"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
       <command
             name="%JavaApplicationShortcut.description.run"
             description="%JavaApplicationShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.localJavaShortcut.run">
       </command>
-      <keyBinding
-            keySequence="M3+M2+X J"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.run"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%AppletShortcut.description.debug"
             description="%AppletShortcut.description.debug"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.javaAppletShortcut.debug">
       </command>
-      <keyBinding
-            keySequence="M3+M2+D A"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.debug"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
       <command
             name="%AppletShortcut.description.run"
             description="%AppletShortcut.description.run"
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.jdt.debug.ui.javaAppletShortcut.run">
-      </command>
-      <keyBinding
-            keySequence="M3+M2+X A"
+      </command> 
+   </extension>
+   <extension point="org.eclipse.ui.bindings">
+      <key
+            sequence="M1+F5"
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            sequence="M1+U"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.jdt.debug.ui.commands.Execute"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M1+M2+D"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            commandId="org.eclipse.jdt.debug.ui.commands.Display"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+      		platform="gtk"
+            sequence="M1+M2+V"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            commandId="org.eclipse.jdt.debug.ui.commands.Display"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            sequence="M1+M2+I"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            commandId="org.eclipse.jdt.debug.ui.commands.Inspect"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            sequence="M3+M2+D J"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            sequence="M3+M2+X J"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.jdt.debug.ui.localJavaShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M3+M2+D A"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+            sequence="M3+M2+X A"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.jdt.debug.ui.javaAppletShortcut.run"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>      
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.jdt.ui.classpathContainerPage">
