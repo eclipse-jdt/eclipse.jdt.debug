@@ -470,6 +470,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	
 	private BooleanFieldEditor fConditionEnabler;
 	private BreakpointConditionFieldEditor fCondition;
+	private RadioGroupFieldEditor fConditionSuspendRadio;
 
 	private IJavaBreakpoint fBreakpoint;
 	protected static final String VM_SUSPEND_POLICY = "VM"; //$NON-NLS-1$
@@ -511,6 +512,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			public void propertyChange(PropertyChangeEvent event) {
 				boolean enabled = fConditionEnabler.getBooleanValue();
 				fCondition.setEnabled(enabled);
+				fConditionSuspendRadio.setEnabled(enabled, getFieldEditorParent());
 				fCondition.refreshValidState();
 				if (fCondition.isValid() && fHitCount != null) {
 					fHitCount.refreshValidState();
@@ -647,6 +649,11 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 				} else {
 					store.setValue(JavaBreakpointPreferenceStore.CONDITION_ENABLED, false);				
 				}
+				if (lineBreakpoint.isConditionSuspendOnTrue()) {
+					store.setValue(JavaBreakpointPreferenceStore.CONDITION_SUSPEND_ON_TRUE, JavaBreakpointPreferenceStore.CONDITION_SUSPEND_ON_TRUE);
+				} else {
+					store.setValue(JavaBreakpointPreferenceStore.CONDITION_SUSPEND_ON_TRUE, JavaBreakpointPreferenceStore.CONDITION_SUSPEND_ON_CHANGES);
+				}
 			}
 			if (breakpoint instanceof IJavaMethodBreakpoint) {
 				IJavaMethodBreakpoint jmBreakpoint = (IJavaMethodBreakpoint) breakpoint;
@@ -727,13 +734,18 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		fConditionEnabler= new BooleanFieldEditor(JavaBreakpointPreferenceStore.CONDITION_ENABLED, label, parent);
 		addField(fConditionEnabler);
 
-		fCondition =
-			new BreakpointConditionFieldEditor(JavaBreakpointPreferenceStore.CONDITION, ActionMessages.getString("JavaBreakpointPreferencePage.Condition_2"), parent); //$NON-NLS-1$
+		fCondition = new BreakpointConditionFieldEditor(JavaBreakpointPreferenceStore.CONDITION, ActionMessages.getString("JavaBreakpointPreferencePage.Condition_2"), parent); //$NON-NLS-1$
+		fConditionSuspendRadio= new RadioGroupFieldEditor(JavaBreakpointPreferenceStore.CONDITION_SUSPEND_ON_TRUE, ActionMessages.getString("JavaBreakpointPreferencePage.Suspend_when_1"), 1, //$NON-NLS-1$
+			new String[][] {{ActionMessages.getString("JavaBreakpointPreferencePage.condition_is___true__._2"), JavaBreakpointPreferenceStore.CONDITION_SUSPEND_ON_TRUE}, //$NON-NLS-1$
+				{ActionMessages.getString("JavaBreakpointPreferencePage.value_of_condition_change._3"), JavaBreakpointPreferenceStore.CONDITION_SUSPEND_ON_CHANGES}}, parent);  //$NON-NLS-1$
 		try {
-			fCondition.setEnabled(((IJavaLineBreakpoint)getBreakpoint()).isConditionEnabled());
+			boolean enabled= ((IJavaLineBreakpoint)getBreakpoint()).isConditionEnabled();
+			fCondition.setEnabled(enabled);
+			fConditionSuspendRadio.setEnabled(enabled, getFieldEditorParent());
 		} catch (CoreException ce) {
 		}
 		addField(fCondition);
+		addField(fConditionSuspendRadio);
 		
 	}
 	

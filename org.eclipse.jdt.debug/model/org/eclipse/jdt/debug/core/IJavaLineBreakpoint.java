@@ -69,6 +69,27 @@ public interface IJavaLineBreakpoint extends IJavaBreakpoint, ILineBreakpoint {
 	 * 	this breakpoint's underlying marker
 	 */
 	public void setConditionEnabled(boolean enabled) throws CoreException;
+	/**
+	 * Returns whether the breakpoint suspends when the value of the condition
+	 * is <code>true</code> or when the value of the condition changes.
+	 * 
+	 * @return <code>true</code> if this breakpoint suspends when the value of
+	 * the condition is <code>true</code>, <code>false</code> if this breakpoint
+	 * suspends when the value of the condition changes.
+	 * @exception CoreException if unable to access the property on
+	 * 	this breakpoint's underlying marker
+	 */
+	public boolean isConditionSuspendOnTrue() throws CoreException;
+	/**
+	 * Set the suspend state of this breakpoint's condition. If the value is
+	 * <code>true</code>, the breakpoint will stop when the value of the
+	 * condition is <code>true</code>. If the value is <code>false</code>, the
+	 * breakpoint will stop when the value of the condition changes.
+	 * 
+	 * @exception CoreException if unable to access the property on 	this
+	 * breakpoint's underlying marker
+	 */
+	public void setConditionSuspendOnTrue(boolean suspendOnTrue) throws CoreException;
 
 }
 

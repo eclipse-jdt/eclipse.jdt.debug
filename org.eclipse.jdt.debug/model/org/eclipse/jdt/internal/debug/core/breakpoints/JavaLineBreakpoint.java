@@ -28,6 +28,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -72,6 +73,13 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	protected static final String CONDITION_ENABLED= "org.eclipse.jdt.debug.core.conditionEnabled"; //$NON-NLS-1$
 	
 	/**
+	 * Breakpoint attribute storing a breakpoint's condition suspend policy
+	 * (value <code>" org.eclipse.jdt.debug.core.conditionSuspendOnTrue"
+	 * </code>). This attribute is stored as an <code>boolean</code>.
+	 */
+	protected static final String CONDITION_SUSPEND_ON_TRUE= "org.eclipse.jdt.debug.core.conditionSuspendOnTrue"; //$NON-NLS-1$
+	
+	/**
 	 * Breakpoint attribute storing a breakpoint's source file name (debug attribute)
 	 * (value <code>"org.eclipse.jdt.debug.core.sourceName"</code>). This attribute is stored as
 	 * a <code>String</code>.
@@ -89,6 +97,12 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 * This value must be cleared everytime the breakpoint is added to a target.
 	 */
 	private Map fCompiledExpressions= new HashMap();
+	
+	/**
+	 * The map of the result value of the condition (IValue) for this
+	 * breakpoint, keyed by debug target.
+	 */
+	private Map fConditionValues= new HashMap();
 	
 	/**
 	 * Status code indicating that a request to create a breakpoint in a type
@@ -147,6 +161,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
 		clearCachedExpressionFor(target);
 		clearCachedSuspendEvents(target);
+		fConditionValues.remove(target);
 		super.removeFromTarget(target);
 	}
 	
@@ -476,10 +491,22 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			}
 			try {
 				IValue value= result.getValue();
-				if (value instanceof IJavaPrimitiveValue) {
-					// Suspend when the condition evaluates true
-					IJavaPrimitiveValue javaValue= (IJavaPrimitiveValue)value;
-					if (javaValue.getJavaType().getName().equals("boolean") && javaValue.getBooleanValue()) { //$NON-NLS-1$
+				if (isConditionSuspendOnTrue()) {
+					if (value instanceof IJavaPrimitiveValue) {
+						// Suspend when the condition evaluates true
+						IJavaPrimitiveValue javaValue= (IJavaPrimitiveValue)value;
+						if (isConditionSuspendOnTrue()) {
+							if (javaValue.getJavaType().getName().equals("boolean") && javaValue.getBooleanValue()) { //$NON-NLS-1$
+								suspendForCondition(event, thread);
+								return;
+							}
+						}
+					}
+				} else {
+					IDebugTarget debugTarget= thread.getDebugTarget();
+					IValue lastValue= (IValue)fConditionValues.get(debugTarget);
+					fConditionValues.put(debugTarget, value);
+					if (!value.equals(lastValue)) {
 						suspendForCondition(event, thread);
 						return;
 					}
@@ -564,7 +591,8 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	 */
 	public void setCondition(String condition) throws CoreException {
 		// Clear the cached compiled expressions
-		fCompiledExpressions.clear();	
+		fCompiledExpressions.clear();
+		fConditionValues.clear();
 		fSuspendEvents.clear();
 		if (condition != null && condition.trim().length() == 0) {
 			condition = null;
@@ -624,6 +652,22 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 		if (request instanceof BreakpointRequest) {
 			((BreakpointRequest)request).addInstanceFilter(object);
 		}
+	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#isConditionSuspendOnTrue()
+	 */
+	public boolean isConditionSuspendOnTrue() throws DebugException {
+		return ensureMarker().getAttribute(CONDITION_SUSPEND_ON_TRUE, false);
+	}
+
+	/**
+	 * @see org.eclipse.jdt.debug.core.IJavaLineBreakpoint#setConditionSuspendOnTrue(boolean)
+	 */
+	public void setConditionSuspendOnTrue(boolean suspendOnTrue) throws CoreException {
+		setAttributes(new String[]{CONDITION_SUSPEND_ON_TRUE}, new Object[]{new Boolean(suspendOnTrue)});
+		fConditionValues.clear();
+		recreate();
 	}
 
 }
