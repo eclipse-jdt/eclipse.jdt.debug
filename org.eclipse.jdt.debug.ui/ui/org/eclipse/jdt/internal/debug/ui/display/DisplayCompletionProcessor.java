@@ -179,7 +179,7 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 				if (stackCU != null) {
 					IDocument doc = new Document(stackCU.getSource());
 					try {
-						insertion = doc.getLineOffset(stackFrame.getLineNumber());
+						insertion = doc.getLineOffset(stackFrame.getLineNumber() - 1);
 					} catch(BadLocationException e) {
 						JDIDebugUIPlugin.log(e);
 					}	
