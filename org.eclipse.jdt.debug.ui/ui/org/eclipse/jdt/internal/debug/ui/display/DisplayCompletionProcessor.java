@@ -431,4 +431,12 @@ public class DisplayCompletionProcessor implements IContentAssistProcessor {
 		
 		return type;	
 	}
+	/**
+	 * Returns the templateEngine.
+	 * @return TemplateEngine
+	 */
+	public TemplateEngine getTemplateEngine() {
+		return fTemplateEngine;
+	}
+
 }

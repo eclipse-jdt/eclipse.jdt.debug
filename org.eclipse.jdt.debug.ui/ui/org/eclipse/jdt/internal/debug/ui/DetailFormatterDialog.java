@@ -10,15 +10,22 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchResultCollector;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -28,6 +35,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -47,17 +55,45 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
+/**
+ * Dialog for edit detail formatter.
+ */
 class DetailFormatterDialog extends StatusDialog {
 	
-	private DetailFormatter fDetailFormat;
-	
-	private Text fTypeNameText;
+	/**
+	 * The detail formatter to edit.
+	 */
+	private DetailFormatter fDetailFormatter;
 
+	// widgets
+	private Text fTypeNameText;
 	private JDISourceViewer fSnippetViewer;
+
+	/**
+	 * Indicate if a search for a type with the given name 
+	 * have been already performed.
+	 */
+	private boolean fTypeSearched;
+
+	/**
+	 * The type object which corresponds to the given name.
+	 * If this field is <code>null</code> and <code>fTypeSearched</code> is
+	 * <code>true</code>, that means there is no type with the given name in 
+	 * the workspace.
+	 */
+	private IType fType;
 	
-	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormat, boolean editDialog) {
+	/**
+	 * DetailFormatterDialog constructor.
+	 * 
+	 * @param detailFormatter the detail formatter to edit/add.
+	 * @param editDialog flag which indicates if the dialog is used for
+	 * edit an existing formatter, or for enter the info of a new one.
+	 */
+	public DetailFormatterDialog(Shell parent, DetailFormatter detailFormatter, boolean editDialog) {
 		super(parent);
-		fDetailFormat= detailFormat;
+		fDetailFormatter= detailFormatter;
+		fTypeSearched= false;
 		setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
 		if (editDialog) {
 			setTitle(DebugUIMessages.getString("DetailFormatterDialog.Edit_Detail_Formatter_1")); //$NON-NLS-1$
@@ -67,6 +103,8 @@ class DetailFormatterDialog extends StatusDialog {
 	}
 	
 	/**
+	 * Create the dialog area.
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
@@ -93,11 +131,12 @@ class DetailFormatterDialog extends StatusDialog {
 		innerContainer.setLayoutData(gd);
 		// type name text
 		fTypeNameText= new Text(innerContainer, SWT.SINGLE | SWT.BORDER);
-		fTypeNameText.setText(fDetailFormat.getTypeName());
+		fTypeNameText.setText(fDetailFormatter.getTypeName());
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		fTypeNameText.setLayoutData(gd);
 		fTypeNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				fTypeSearched= false;
 				checkValues();
 			}
 		});
@@ -121,13 +160,18 @@ class DetailFormatterDialog extends StatusDialog {
 
 		// snippet viewer
 		fSnippetViewer= new JDISourceViewer(container,  null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL );
+		fSnippetViewer.setInput(this);
 	
 		JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
 		IDocument document= new Document();
 		IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
 		document.setDocumentPartitioner(partitioner);
 		partitioner.connect(document);		
-		fSnippetViewer.configure(new JavaSourceViewerConfiguration(tools, null));
+		fSnippetViewer.configure(new DisplayViewerConfiguration() {
+			public IContentAssistProcessor getContentAssistantProcessor() {
+				return new DetailFormatterCompletionProcessor(DetailFormatterDialog.this);
+			}
+		});
 		fSnippetViewer.setEditable(true);
 		fSnippetViewer.setDocument(document);
 	
@@ -139,7 +183,20 @@ class DetailFormatterDialog extends StatusDialog {
 		gd.heightHint= convertHeightInCharsToPixels(10);
 		gd.widthHint= convertWidthInCharsToPixels(80);
 		control.setLayoutData(gd);
-		document.set(fDetailFormat.getSnippet());
+		document.set(fDetailFormatter.getSnippet());
+		
+		fSnippetViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+			public void verifyKey(VerifyEvent event) {
+				//do code assist for CTRL-SPACE
+				if (event.stateMask == SWT.CTRL && event.keyCode == 0) {
+					if (event.character == 0x20) {
+						findCorrespondingType();
+						fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+						event.doit= false;
+					}
+				}
+			}
+		});
 		
 		fSnippetViewer.getDocument().addDocumentListener(new IDocumentListener() {
 			public void documentAboutToBeChanged(DocumentEvent event) {
@@ -154,13 +211,17 @@ class DetailFormatterDialog extends StatusDialog {
 		return container;
 	}
 	
-	
+	/**
+	 * Check the field values and display a message in the status if needed.
+	 */
 	private void checkValues() {
 		StatusInfo status= new StatusInfo();
 		if (fTypeNameText.getText().trim().length() == 0) {
 			status.setError(DebugUIMessages.getString("DetailFormatterDialog.Qualified_type_name_must_not_be_empty._3")); //$NON-NLS-1$
 		} else if (fSnippetViewer.getDocument().get().trim().length() == 0) {
 			status.setError(DebugUIMessages.getString("DetailFormatterDialog.Associated_code_must_not_be_empty_3")); //$NON-NLS-1$
+		} else if (fType == null && fTypeSearched) {
+			status.setWarning(DebugUIMessages.getString("No_type_with_the_given_name_found_in_the_workspace._1")); //$NON-NLS-1$
 		}
 		updateStatus(status);
 	}
@@ -169,13 +230,16 @@ class DetailFormatterDialog extends StatusDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		fDetailFormat.setEnabled(true);
-		fDetailFormat.setTypeName(fTypeNameText.getText());
-		fDetailFormat.setSnippet(fSnippetViewer.getDocument().get());
+		fDetailFormatter.setEnabled(true);
+		fDetailFormatter.setTypeName(fTypeNameText.getText());
+		fDetailFormatter.setSnippet(fSnippetViewer.getDocument().get());
 		
 		super.okPressed();
 	}
 	
+	/**
+	 * Open the 'select type' dialog, and set the user choice into the formatter.
+	 */
 	private void selectType() {
 		Shell shell= getShell();
 		SelectionDialog dialog= null;
@@ -197,9 +261,66 @@ class DetailFormatterDialog extends StatusDialog {
 		
 		Object[] types= dialog.getResult();
 		if (types != null && types.length > 0) {
-			IType type = (IType)types[0];
-			fTypeNameText.setText(type.getFullyQualifiedName());
+			fType = (IType)types[0];
+			fTypeNameText.setText(fType.getFullyQualifiedName());
 		}		
 	}
 	
+	/**
+	 * Use the java search engine for find the (a) type which corresponds
+	 * to the given name.
+	 */
+	private void findCorrespondingType() {
+		if (fTypeSearched) {
+			return;
+		}
+		fType= null;
+		fTypeSearched= true;
+		final String pattern= fTypeNameText.getText();
+		if (pattern == null || "".equals(pattern)) { //$NON-NLS-1$
+			return;
+		}
+		final IJavaSearchResultCollector collector= new IJavaSearchResultCollector() {
+			private boolean fFirst= true;
+			
+			public void aboutToStart() {
+			}
+
+			public void accept(IResource resource, int start, int end, IJavaElement enclosingElement, int accuracy) throws CoreException {
+				if (!fFirst) {
+					return;
+				}
+				fFirst= false;
+				if (enclosingElement instanceof IType) {
+					fType= (IType) enclosingElement;
+				}
+			}
+
+			public void done() {
+				checkValues();
+			}
+
+			public IProgressMonitor getProgressMonitor() {
+				return null;
+			}
+		};
+	
+		SearchEngine engine= new SearchEngine(JavaUI.getSharedWorkingCopies());
+		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
+		try {
+			engine.search(JavaPlugin.getWorkspace(), SearchEngine.createSearchPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, true), scope, collector);
+		} catch (JavaModelException e) {
+		}
+	}
+	
+	/**
+	 * Return the type object which corresponds to the given name.
+	 */
+	public IType getType() {
+		if (!fTypeSearched) {
+			findCorrespondingType();
+		}
+		return fType;
+	}
+
 }
