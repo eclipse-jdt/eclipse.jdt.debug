@@ -25,10 +25,11 @@ import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.eval.EvaluationManager;
+import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
+import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
-import org.eclipse.jdt.debug.eval.model.ICompiledExpression;
 import org.eclipse.jdt.internal.core.JavaModel;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -383,15 +384,15 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 			return true;
 		}
 		IJavaProject project= getJavaProject(marker.getResource().getProject());
-		final IEvaluationEngine engine = getEvaluationEngine(target, project);
+		IAstEvaluationEngine engine = getEvaluationEngine(target, project);
 		if (engine == null) {
 			// If no engine is available, suspend
 			return !suspendForEvent(event, thread);
 		}
 		thread.handleSuspendForBreakpointQuiet(this);
-		final JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
+		JDIStackFrame frame= (JDIStackFrame)thread.computeNewStackFrames().get(0);
 		
-		final EvaluationListener listener= new EvaluationListener();
+		EvaluationListener listener= new EvaluationListener();
 
 		if (fCompiledExpression == null) {
 			fCompiledExpression= engine.getCompiledExpression(condition, frame);
@@ -503,20 +504,17 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	
 	/**
 	 * Returns an evaluation engine for evaluating this breakpoint's condition
+	 * in the given target and project context.
 	 */
-	public IEvaluationEngine getEvaluationEngine(IJavaDebugTarget vm, IJavaProject project)   {
-		IEvaluationEngine engine = EvaluationManager.getEvaluationEngine(vm);
-		if (engine == null) {
-			engine= EvaluationManager.newASTAPIEvaluationEngine(project, vm);
-		}
-		return engine;
+	public IAstEvaluationEngine getEvaluationEngine(IJavaDebugTarget vm, IJavaProject project)   {
+		return ((JDIDebugTarget)vm).getEvaluationEngine(project);
 	}
 	
 	/**
 	 * @see IJavaLineBreakpoint#supportsCondition
 	 */
 	public boolean supportsCondition() {
-		return EvaluationManager.isUsingASTEvaluationEngine();
+		return true;
 	}
 	
 	/**

@@ -207,6 +207,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			IJavaElement javaElement= getJavaElement(stackFrame);
 			if (javaElement != null) {
 				IJavaProject project = javaElement.getJavaProject();
+				IEvaluationEngine engine = null;
 				try {
 					Object selection= getSelectedObject();
 					if (!(selection instanceof String)) {
@@ -219,7 +220,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 						dataDisplay.displayExpression(expression);
 					}
 					
-					IEvaluationEngine engine = getEvaluationEngine((IJavaDebugTarget)jFrame.getDebugTarget(), project);
+					engine = EvaluationManager.newAstEvaluationEngine(project, (IJavaDebugTarget)jFrame.getDebugTarget());
 					if (object == null) {
 						engine.evaluate(expression, jFrame, this);
 					} else {
@@ -228,6 +229,10 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					
 				} catch (CoreException e) {
 					reportError(e);
+				} finally {
+					if (engine != null) {
+						engine.dispose();
+					}
 				}
 			} else {
 				reportError(ActionMessages.getString("Evaluate.error.message.src_context")); //$NON-NLS-1$
@@ -236,27 +241,7 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			reportError(ActionMessages.getString("Evaluate.error.message.eval_adapter")); //$NON-NLS-1$
 		}
 	}
-	
-	/**
-	 * Returns an evaluation engine for the given debug target
-	 * and Java project.
-	 * 
-	 * @param vm debug target on which the evaluation will be
-	 *  performed
-	 * @param project the context in which the evaluation will be
-	 *  compiled
-	 * @exception CoreException if creation of a new evaluation
-	 *  engine is required and fails 
-	 */
-	protected IEvaluationEngine getEvaluationEngine(IJavaDebugTarget vm, IJavaProject project) throws CoreException {
-		IEvaluationEngine engine = EvaluationManager.getEvaluationEngine(vm);
-		if (engine == null) {
-			engine= EvaluationManager.newEvaluationEngine(project, vm);
-		}	
-		return engine;
-			
-	}
-	
+		
 	protected IJavaElement getJavaElement(IStackFrame stackFrame) {
 		
 		// Get the corresponding element.

@@ -5,7 +5,6 @@ package org.eclipse.jdt.internal.debug.eval.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
 

@@ -5,8 +5,8 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IObject;
-import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
+import org.eclipse.jdt.internal.debug.eval.model.IObject;
+import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
 
 public class UnaryPlusOperator extends UnaryOperator {
 

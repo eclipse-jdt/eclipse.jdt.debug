@@ -5,9 +5,6 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IObject;
-import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.debug.eval.model.IValue;
 import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.eval.model.*;

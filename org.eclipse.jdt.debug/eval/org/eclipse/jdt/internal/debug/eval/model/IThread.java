@@ -1,15 +1,12 @@
-package org.eclipse.jdt.debug.eval.model;
+package org.eclipse.jdt.internal.debug.eval.model;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-import org.eclipse.core.runtime.CoreException;
-
+ 
 /**
- * A value assigned to a field or variable on a virtual
- * machine.
+ * A thread in which a message send may be performed.
  * <p>
  * Clients are intended to implement this interface.
  * </p>
@@ -19,16 +16,7 @@ import org.eclipse.core.runtime.CoreException;
  * (repeatedly) as the API evolves.
  * </p>
  */
-public interface IValue {
-	
-	/**
-	 * Returns the type of this vlaue.
-	 * 
-	 * @return the type of this value
-	 * @exception CoreException if unable to retrieve this value's type
-	 */
-	IType getType() throws CoreException;
-	
-}
+public interface IThread {
 
+}
 

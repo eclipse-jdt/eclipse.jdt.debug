@@ -6,11 +6,11 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IArray;
-import org.eclipse.jdt.debug.eval.model.IClassType;
-import org.eclipse.jdt.debug.eval.model.IInterfaceType;
-import org.eclipse.jdt.debug.eval.model.IObject;
-import org.eclipse.jdt.debug.eval.model.IVariable;
+import org.eclipse.jdt.internal.debug.eval.model.IArray;
+import org.eclipse.jdt.internal.debug.eval.model.IClassType;
+import org.eclipse.jdt.internal.debug.eval.model.IInterfaceType;
+import org.eclipse.jdt.internal.debug.eval.model.IObject;
+import org.eclipse.jdt.internal.debug.eval.model.IVariable;
  
 /**
  * Pops an object off the stack, and pushes the value

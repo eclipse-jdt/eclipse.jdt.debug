@@ -9,10 +9,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.dom.Message;
-import org.eclipse.jdt.debug.eval.model.ICompiledExpression;
-import org.eclipse.jdt.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.debug.eval.model.IValue;
+import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.*;
+import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
+import org.eclipse.jdt.internal.debug.eval.model.IValue;
 
 public class InstructionSequence implements ICompiledExpression {
 
@@ -31,8 +31,11 @@ public class InstructionSequence implements ICompiledExpression {
 		fSnippet= snippet;
 	}
 	
-	/*
-	 * @see ICompiledExpression#evaluate(IRuntimeContext)
+	/**
+	 * Runs this compiled expression in the given context, and retuns
+	 * the result.
+	 * 
+	 * @param context evaluation context
 	 */
 	public IValue evaluate(IRuntimeContext context) {
 		Interpreter interpreter= new Interpreter(getInstructions(), context);
@@ -45,7 +48,8 @@ public class InstructionSequence implements ICompiledExpression {
 	}
 	
 	/**
-	 * @see ICompiledExpression#getException()
+	 * Returns the runtime exception that occurred while evaluating this expression
+	 * or <code>null</code> if no exception occurred.
 	 */
 	public CoreException getException() {
 		return fException;

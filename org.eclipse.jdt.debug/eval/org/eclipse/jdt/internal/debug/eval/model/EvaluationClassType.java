@@ -6,11 +6,6 @@ package org.eclipse.jdt.internal.debug.eval.model;
  */
  
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IClassType;
-import org.eclipse.jdt.debug.eval.model.IObject;
-import org.eclipse.jdt.debug.eval.model.IThread;
-import org.eclipse.jdt.debug.eval.model.IValue;
-import org.eclipse.jdt.debug.eval.model.IVariable;
 import org.eclipse.jdt.debug.core.IJavaClassType;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;

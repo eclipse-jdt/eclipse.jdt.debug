@@ -6,9 +6,9 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.debug.eval.model.IArrayType;
-import org.eclipse.jdt.debug.eval.model.IObject;
-import org.eclipse.jdt.debug.eval.model.IType;
+import org.eclipse.jdt.internal.debug.eval.model.IArrayType;
+import org.eclipse.jdt.internal.debug.eval.model.IObject;
+import org.eclipse.jdt.internal.debug.eval.model.IType;
 
 public abstract class ArrayInstruction extends CompoundInstruction {
 

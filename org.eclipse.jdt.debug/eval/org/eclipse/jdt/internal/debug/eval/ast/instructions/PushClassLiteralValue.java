@@ -5,7 +5,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IType;
+import org.eclipse.jdt.internal.debug.eval.model.IType;
 
 /**
  * Handles code like "new Object().class"

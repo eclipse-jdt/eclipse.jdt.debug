@@ -47,8 +47,8 @@ import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IClassFileEvaluationEngine;
+import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
-import org.eclipse.jdt.debug.eval.model.ICompiledExpression;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
@@ -373,12 +373,11 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	}
 
 	/**
-	 * Returns the directory in which snippet class files are
-	 * deployed.
+	 * Returns the directory in which snippet class files are deployed.
 	 * 
-	 * @return class file deployment directory
+	 * @return the directory in which snippet class files are deployed.
 	 */
-	protected File getOutputDirectory() {
+	public File getOutputDirectory() {
 		return fOutputDirectory;
 	}
 
@@ -1361,44 +1360,6 @@ public class LocalEvaluationEngine implements IClassFileEvaluationEngine, ICodeS
 	 */
 	public boolean isRequestingClassFiles() {
 		return true;
-	}
-	/*
-	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaStackFrame, IEvaluationListener)
-	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaStackFrame frame,	IEvaluationListener listener) throws DebugException {
-	}
-
-	/*
-	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaStackFrame)
-	 */
-	public ICompiledExpression getCompiledExpression(String snippet, IJavaStackFrame frame)	throws DebugException {
-		return null;
-	}
-
-	/**
-	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaObject, IJavaThread, IEvaluationListener)
-	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaObject object, IJavaThread thread, IEvaluationListener listener) throws DebugException {
-	}
-
-	/**
-	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaThread, IEvaluationListener)
-	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener) throws DebugException {
-	}
-
-	/**
-	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaObject, IJavaThread)
-	 */
-	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject object, IJavaThread thread) throws DebugException {
-		return null;
-	}
-
-	/**
-	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaThread)
-	 */
-	public ICompiledExpression getCompiledExpression(String snippet, IJavaThread thread) throws DebugException {
-		return null;
 	}
 
 }

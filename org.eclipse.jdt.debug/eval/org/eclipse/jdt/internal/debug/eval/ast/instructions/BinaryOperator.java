@@ -5,9 +5,9 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.debug.eval.model.IValue;
-import org.eclipse.jdt.debug.eval.model.IVariable;
+import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
+import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.internal.debug.eval.model.IVariable;
 
 public abstract class BinaryOperator extends CompoundInstruction {
 	protected int fResultTypeId;

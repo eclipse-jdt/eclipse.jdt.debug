@@ -6,9 +6,6 @@ package org.eclipse.jdt.internal.debug.eval.model;
  */
  
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IArray;
-import org.eclipse.jdt.debug.eval.model.IArrayType;
-import org.eclipse.jdt.debug.eval.model.IType;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaType;

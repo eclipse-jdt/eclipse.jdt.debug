@@ -17,20 +17,21 @@ import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
+import org.eclipse.jdt.debug.eval.ICompiledExpression;
 import org.eclipse.jdt.debug.eval.IEvaluationEngine;
 import org.eclipse.jdt.debug.eval.IEvaluationListener;
-import org.eclipse.jdt.debug.eval.model.ICompiledExpression;
-import org.eclipse.jdt.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.debug.eval.model.IValue;
-import org.eclipse.jdt.debug.eval.model.IVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.jdt.internal.debug.eval.EvaluationResult;
 import org.eclipse.jdt.internal.debug.eval.ast.instructions.InstructionSequence;
 import org.eclipse.jdt.internal.debug.eval.model.EvaluationValue;
+import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
+import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.internal.debug.eval.model.IVariable;
 import org.eclipse.jdt.internal.debug.eval.model.JavaObjectRuntimeContext;
 import org.eclipse.jdt.internal.debug.eval.model.RuntimeContext;
 
-public class ASTEvaluationEngine implements IEvaluationEngine {
+public class ASTEvaluationEngine implements IAstEvaluationEngine {
 
 	private IJavaProject fProject;
 	
@@ -47,14 +48,6 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 
 	public void setDebugTarget(IJavaDebugTarget debugTarget) {
 		fDebugTarget = debugTarget;
-	}
-
-	/**
-	 * @see IEvaluationEngine#evaluate(String, IJavaThread, IEvaluationListener)
-	 * 
-	 * Not yet implemented
-	 */
-	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener) {
 	}
 
 	/**
@@ -92,7 +85,7 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 	/**
 	 * Evaluates the given expression in the given thread and the given runtime context.
 	 */
-	private void doEvaluation(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener) {
+	private void doEvaluation(final ICompiledExpression expression, final IRuntimeContext context, final IJavaThread thread, final IEvaluationListener listener) {		
 		Thread evaluationThread= new Thread(new Runnable() {
 			public void run() {
 
@@ -107,10 +100,11 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 				}
 		
 				IValue value = null;
+				InstructionSequence instructionSet = (InstructionSequence)expression;
 				((JDIThread)thread).setPerformingEvaluation(true);
-				value= expression.evaluate(context);
+				value= instructionSet.evaluate(context);
 				((JDIThread)thread).setPerformingEvaluation(false);
-				CoreException exception= expression.getException();
+				CoreException exception= instructionSet.getException();
 				
 				if (value != null) {
 					IJavaValue jv = ((EvaluationValue)value).getJavaValue();
@@ -240,19 +234,6 @@ public class ASTEvaluationEngine implements IEvaluationEngine {
 	 * @see IEvaluationEngine#dispose()
 	 */
 	public void dispose() {
-	}
-
-	/**
-	 * @see IEvaluationEngine#evaluate(ICompiledExpression, IJavaThread, IEvaluationListener)
-	 */
-	public void evaluateExpression(ICompiledExpression expression, IJavaThread thread, IEvaluationListener listener) throws DebugException {
-	}
-
-	/**
-	 * @see IEvaluationEngine#getCompiledExpression(String, IJavaThread)
-	 */
-	public ICompiledExpression getCompiledExpression(String snippet, IJavaThread thread) throws DebugException {
-		return null;
 	}
 
 }

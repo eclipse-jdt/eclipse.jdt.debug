@@ -5,11 +5,11 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IObject;
-import org.eclipse.jdt.debug.eval.model.IPrimitiveType;
-import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.debug.eval.model.IType;
-import org.eclipse.jdt.debug.eval.model.IValue;
+import org.eclipse.jdt.internal.debug.eval.model.IObject;
+import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveType;
+import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
+import org.eclipse.jdt.internal.debug.eval.model.IType;
+import org.eclipse.jdt.internal.debug.eval.model.IValue;
 
 public class Cast extends CompoundInstruction {
 

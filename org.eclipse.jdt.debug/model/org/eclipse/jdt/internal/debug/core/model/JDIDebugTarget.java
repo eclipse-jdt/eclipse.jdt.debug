@@ -32,12 +32,15 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jdi.TimeoutException;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.eval.EvaluationManager;
+import org.eclipse.jdt.debug.eval.IAstEvaluationEngine;
 import org.eclipse.jdt.internal.core.Util;
 import org.eclipse.jdt.internal.debug.core.EventDispatcher;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
@@ -169,6 +172,12 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * Count of the number of suspend events in this target
 	 */
 	private int fSuspendCount = 0;
+	
+	/**
+	 * Evaluation engine cache by java project. Engines
+	 * are disposed when this target terminates.
+	 */
+	private HashMap fEngines;
 	
 	/**
 	 * List of step filters - each string is a patter/fully qualified
@@ -1270,6 +1279,14 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		plugin.getLaunchManager().removeLaunchListener(this);
 		removeAllBreakpoints();
 		fOutOfSynchTypes.clear();
+		if (fEngines != null) {
+			Iterator engines = fEngines.values().iterator();
+			while (engines.hasNext()) {
+				IAstEvaluationEngine engine = (IAstEvaluationEngine)engines.next();
+				engine.dispose();
+			}
+			fEngines.clear();
+		}
 	}
 
 	/**
@@ -2039,6 +2056,25 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	protected void incrementSuspendCount() {
 		fSuspendCount++;
+	}
+	
+	/**
+	 * Returns an evaluation engine for the given project, creating
+	 * one if neccessary.
+	 * 
+	 * @param project java project
+	 * @return evalaution engine
+	 */
+	public IAstEvaluationEngine getEvaluationEngine(IJavaProject project) {
+		if (fEngines == null) {
+			fEngines = new HashMap(2);
+		}
+		IAstEvaluationEngine engine = (IAstEvaluationEngine)fEngines.get(project);
+		if (engine == null) {
+			engine = EvaluationManager.newAstEvaluationEngine(project, this);
+			fEngines.put(project, engine);
+		}
+		return engine;
 	}
 }
 

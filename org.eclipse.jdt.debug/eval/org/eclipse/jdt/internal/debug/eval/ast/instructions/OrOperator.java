@@ -4,8 +4,8 @@
  */
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
-import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.debug.eval.model.IValue;
+import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
+import org.eclipse.jdt.internal.debug.eval.model.IValue;
 
 public class OrOperator extends BinaryOperator {
 	public OrOperator(int resultId, int leftTypeId, int rightTypeId, int start) {

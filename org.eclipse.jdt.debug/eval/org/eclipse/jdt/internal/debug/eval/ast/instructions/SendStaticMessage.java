@@ -7,10 +7,10 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.debug.eval.model.IClassType;
-import org.eclipse.jdt.debug.eval.model.IObject;
-import org.eclipse.jdt.debug.eval.model.IValue;
-import org.eclipse.jdt.debug.eval.model.IVariable;
+import org.eclipse.jdt.internal.debug.eval.model.IClassType;
+import org.eclipse.jdt.internal.debug.eval.model.IObject;
+import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.internal.debug.eval.model.IVariable;
  
 /**
  * Sends a message. The arguments are on the

@@ -6,8 +6,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.debug.eval.model.IPrimitiveValue;
-import org.eclipse.jdt.debug.eval.model.IValue;
+import org.eclipse.jdt.internal.debug.eval.model.IPrimitiveValue;
+import org.eclipse.jdt.internal.debug.eval.model.IValue;
 
 public class RemainderOperator extends BinaryOperator {
 	public RemainderOperator(int resultId, int leftTypeId, int rightTypeId, int start) {

@@ -5,8 +5,8 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IArray;
-import org.eclipse.jdt.debug.eval.model.IArrayType;
+import org.eclipse.jdt.internal.debug.eval.model.IArray;
+import org.eclipse.jdt.internal.debug.eval.model.IArrayType;
 
 public class ArrayInitializerInstruction extends ArrayInstruction {
 

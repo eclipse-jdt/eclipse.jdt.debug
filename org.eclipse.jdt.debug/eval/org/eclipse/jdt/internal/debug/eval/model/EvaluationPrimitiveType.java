@@ -5,7 +5,6 @@
 package org.eclipse.jdt.internal.debug.eval.model;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IPrimitiveType;
 
 public class EvaluationPrimitiveType implements IPrimitiveType {
 		

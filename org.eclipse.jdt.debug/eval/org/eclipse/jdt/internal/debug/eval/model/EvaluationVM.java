@@ -6,10 +6,6 @@ package org.eclipse.jdt.internal.debug.eval.model;
  */
  
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IObject;
-import org.eclipse.jdt.debug.eval.model.IType;
-import org.eclipse.jdt.debug.eval.model.IValue;
-import org.eclipse.jdt.debug.eval.model.IVirtualMachine;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;

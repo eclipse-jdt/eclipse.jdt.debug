@@ -10,13 +10,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.eval.model.IClassType;
-import org.eclipse.jdt.debug.eval.model.IObject;
-import org.eclipse.jdt.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.debug.eval.model.IThread;
-import org.eclipse.jdt.debug.eval.model.IVariable;
-import org.eclipse.jdt.debug.eval.model.IVirtualMachine;
-import org.eclipse.jdt.internal.debug.eval.model.*;
 
 public class JavaObjectRuntimeContext implements IRuntimeContext {
 	

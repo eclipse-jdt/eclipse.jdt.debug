@@ -238,8 +238,6 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	
 	private void initializeOptionsManager() throws CoreException {
 		JavaDebugOptionsManager.getDefault().startup();
-		boolean useAST= getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_USE_AST_EVALUATION);
-		EvaluationManager.useASTEvaluationEngine(useAST);
 	}
 	
 	private void initializeAdapterManager() {

@@ -17,6 +17,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+/**
+ * [Issue: to be deleted]
+ */
+
 public class JavaDebugWorkInProgressPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	private Button fUseASTSupport;
@@ -57,7 +61,7 @@ public class JavaDebugWorkInProgressPreferencePage extends PreferencePage implem
 	
 	public boolean performOk() {
 		boolean checked= fUseASTSupport.getSelection();
-		EvaluationManager.useASTEvaluationEngine(checked);
+		//EvaluationManager.useASTEvaluationEngine(checked);
 		getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_USE_AST_EVALUATION, checked);
 		return true;
 	}

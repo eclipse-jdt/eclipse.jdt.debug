@@ -1,5 +1,10 @@
 package org.eclipse.jdt.debug.eval;
 
+import java.io.File;
+
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.jdt.debug.core.IJavaThread;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -7,13 +12,8 @@ package org.eclipse.jdt.debug.eval;
 
 /**
  * An evaluation engine that performs evaluations by
- * deploying class files locally.
- * <p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
- * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
- * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
- * (repeatedly) as the API evolves.
- * </p>
+ * deploying and executing class files locally.
+ * 
  * @since 2.0
  */ 
 public interface IClassFileEvaluationEngine extends IEvaluationEngine {
@@ -38,6 +38,37 @@ public interface IClassFileEvaluationEngine extends IEvaluationEngine {
 	 * @param imports the list of import names
 	 */
 	public void setImports(String[] imports);
+		
+	/**
+	 * Asynchronously evaluates the given snippet in the specified
+	 * target thread, reporting the result back to the given listener.
+	 * The snippet is evaluated in the context of the Java
+	 * project this evaluation engine was created on. If the
+	 * snippet is determined to be a valid expression, the expression
+	 * is evaluated in the specified thread, which resumes its
+	 * execution from the location at which it is currently suspended.
+	 * When the evaluation completes, the thread will be suspened
+	 * at this original location.
+	 * 
+	 * @param snippet code snippet to evaluate
+	 * @param thread the thread in which to run the evaluation,
+	 *   which must be suspended
+	 * @param listener the listener that will receive notification
+	 *   when/if the evalaution completes
+	 * @exception DebugException if this method fails.  Reasons include:<ul>
+	 * <li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * <li>The specified thread is not currently suspended</li>
+	 * <li>The specified thread is not contained in the debug target
+	 *   associated with this evaluation engine</li>
+	 * <li>The specified thread is suspended in the middle of
+	 *  an evaluation that has not completed. It is not possible
+	 *  to perform nested evaluations</li>
+	 * </ul>
+	 */
+	public void evaluate(String snippet, IJavaThread thread, IEvaluationListener listener) throws DebugException;
+	
 	
 }
 

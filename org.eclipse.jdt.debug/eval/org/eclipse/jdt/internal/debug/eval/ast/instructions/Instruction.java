@@ -6,16 +6,15 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IVariable;
-import org.eclipse.jdt.debug.eval.model.IClassType;
-import org.eclipse.jdt.debug.eval.model.IInterfaceType;
-import org.eclipse.jdt.debug.eval.model.IObject;
-import org.eclipse.jdt.debug.eval.model.IRuntimeContext;
-import org.eclipse.jdt.debug.eval.model.IType;
-import org.eclipse.jdt.debug.eval.model.IValue;
-import org.eclipse.jdt.debug.eval.model.IVariable;
-import org.eclipse.jdt.debug.eval.model.IVirtualMachine;
 import org.eclipse.jdt.internal.debug.eval.ast.engine.*;
+import org.eclipse.jdt.internal.debug.eval.model.IClassType;
+import org.eclipse.jdt.internal.debug.eval.model.IInterfaceType;
+import org.eclipse.jdt.internal.debug.eval.model.IObject;
+import org.eclipse.jdt.internal.debug.eval.model.IRuntimeContext;
+import org.eclipse.jdt.internal.debug.eval.model.IType;
+import org.eclipse.jdt.internal.debug.eval.model.IValue;
+import org.eclipse.jdt.internal.debug.eval.model.IVariable;
+import org.eclipse.jdt.internal.debug.eval.model.IVirtualMachine;
  
 /**
  * Common behavoir for instructions.

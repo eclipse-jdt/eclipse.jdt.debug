@@ -6,8 +6,8 @@ package org.eclipse.jdt.internal.debug.eval.ast.instructions;
  */
  
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.debug.eval.model.IClassType;
-import org.eclipse.jdt.debug.eval.model.IValue;
+import org.eclipse.jdt.internal.debug.eval.model.IClassType;
+import org.eclipse.jdt.internal.debug.eval.model.IValue;
 
 /**
  * Invokes a constructor. The arguments are on the
