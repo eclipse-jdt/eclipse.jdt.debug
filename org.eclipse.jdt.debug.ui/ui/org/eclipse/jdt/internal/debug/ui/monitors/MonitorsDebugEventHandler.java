@@ -34,7 +34,7 @@ public class MonitorsDebugEventHandler extends AbstractDebugEventHandler {
 	/**
 	 * @see org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler#doHandleDebugEvents(DebugEvent[])
 	 */
-	protected void doHandleDebugEvents(DebugEvent[] events) {
+	protected void doHandleDebugEvents(DebugEvent[] events, Object data) {
 		DebugEvent event;
 		Object source;
 		boolean monitorInformationAvailable= true;
