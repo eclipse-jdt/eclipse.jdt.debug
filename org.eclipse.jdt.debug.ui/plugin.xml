@@ -78,8 +78,8 @@
 		visible="false" 
 		id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
 	<menu
-        label="%DebugMenu.label"
-          id="org.eclipse.debug.ui.DebugMenu">
+        label="%RunMenu.label"
+          id="org.eclipse.ui.run">
         <separator
            name="debugGroup">
          </separator>         
@@ -98,21 +98,21 @@
   			icon="icons/full/obj16/brkpi_obj.gif"
   			helpContextId="manage_watchpoint_breakpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageWatchpointActionDelegate"
-  			menubarPath="org.eclipse.debug.ui.DebugMenu/breakpointGroup">
+  			menubarPath="org.eclipse.ui.run/breakpointGroup">
   	    </action>
       	<action id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
   			label="%manageMethodBreakpointAction.label"
   			icon="icons/full/obj16/brkpi_obj.gif"
   			helpContextId="manage_method_breakpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageMethodBreakpointActionDelegate"
-  			menubarPath="org.eclipse.debug.ui.DebugMenu/breakpointGroup">
+  			menubarPath="org.eclipse.ui.run/breakpointGroup">
   	    </action>
       	<action id="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
   			label="%ManageBreakpointAction.label"
   			icon="icons/full/obj16/brkpi_obj.gif"
   			helpContextId="manage_breakpoint_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate"
-  			menubarPath="org.eclipse.debug.ui.DebugMenu/breakpointGroup">
+  			menubarPath="org.eclipse.ui.run/breakpointGroup">
   	    </action>
   	  	<action id="org.eclipse.jdt.debug.ui.RunToLineAction"
   			label="%runToLineAction.label"
@@ -121,14 +121,14 @@
   			hoverIcon="icons/full/clcl16/runtoline_co.gif"
   			helpContextId="run_to_line_action_context"
   			class="org.eclipse.jdt.internal.debug.ui.actions.RunToLineActionDelegate"
-  			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup">
+  			menubarPath="org.eclipse.ui.run/jdtGroup">
   			<enablement> 
              	<pluginState id="org.eclipse.jdt.debug.ui" value="activated"/> 
             </enablement> 
   	    </action>
   	    <action id="org.eclipse.jdt.debug.ui.RunSnippet" 
 			label="%RunSnippet.label" 
-			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
+			menubarPath="org.eclipse.ui.run/jdtGroup"
 			icon="icons/full/etool16/run_sbook.gif"
 			disabledIcon="icons/full/dtool16/run_sbook.gif"
   		 	hoverIcon="icons/full/ctool16/run_sbook.gif"
@@ -140,7 +140,7 @@
 		</action>
   		<action id="org.eclipse.jdt.debug.ui.Display" 
 			label="%Display.label" 
-			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
+			menubarPath="org.eclipse.ui.run/jdtGroup"
 			icon="icons/full/etool16/disp_sbook.gif"
 			disabledIcon="icons/full/dtool16/disp_sbook.gif"
   		 	hoverIcon="icons/full/ctool16/disp_sbook.gif"
@@ -152,7 +152,7 @@
 		</action>
 		<action id="org.eclipse.jdt.debug.ui.Inspect" 
 			label="%Inspect.label" 
-			menubarPath="org.eclipse.debug.ui.DebugMenu/jdtGroup"
+			menubarPath="org.eclipse.ui.run/jdtGroup"
 			icon="icons/full/etool16/insp_sbook.gif"
 			disabledIcon="icons/full/dtool16/insp_sbook.gif"
   		 	hoverIcon="icons/full/ctool16/insp_sbook.gif"
@@ -170,7 +170,7 @@
             helpContextId="debug_java_app"
             tooltip="%DebugJavaApplicationAction.tooltip"
             class="org.eclipse.jdt.internal.debug.ui.launcher.DebugJavaApplicationAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/debugGroup"
+            menubarPath="org.eclipse.ui.run/debugGroup"
             id="org.eclipse.jdt.debug.ui.actions.debugJavaApp">
         </action>
         <action
@@ -181,7 +181,7 @@
             helpContextId="debug_java_app"
             tooltip="%RunJavaApplicationAction.tooltip"
             class="org.eclipse.jdt.internal.debug.ui.launcher.RunJavaApplicationAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/runGroup"
+            menubarPath="org.eclipse.ui.run/runGroup"
             id="org.eclipse.jdt.debug.ui.actions.runJavaApp">
         </action>      
    </actionSet>  
