@@ -7,6 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.io.IOException;
+
 import org.eclipse.jdi.internal.VirtualMachineImpl;
 
 /**
@@ -18,6 +20,7 @@ public abstract class PacketManager implements Runnable {
 	private ConnectorImpl fConnector;
 	/** Thread that handles the communication the other way (e.g. if we are sending, the receiving thread). */
 	private Thread fPartnerThread;
+	private IOException fDisconnectException;
 	
 	/**
 	 * Creates new PacketManager.
@@ -25,9 +28,19 @@ public abstract class PacketManager implements Runnable {
 	protected PacketManager(ConnectorImpl connector) {
 		fConnector = connector;
 	}
-
+	
 	/**
 	 * Used to indicate that an IO exception occurred, closes connection to Virtual Machine.
+	 * 
+	 * @param disconnectException the IOException that occurred
+	 */
+	public synchronized void disconnectVM(IOException disconnectException) {
+		fDisconnectException= disconnectException;
+		disconnectVM();
+	}
+
+	/**
+	 * Closes connection to Virtual Machine.
 	 */
 	public synchronized void disconnectVM() {
 		VirtualMachineImpl vm = fConnector.virtualMachine();
@@ -45,6 +58,14 @@ public abstract class PacketManager implements Runnable {
 	 */
 	public boolean VMIsDisconnected() {
 		return fConnector.virtualMachine().isDisconnected();
+	}
+	
+	/**
+	 * Returns the IOException that caused this packet manager to disconnect or
+	 * <code>null</code> if none.
+	 */
+	public IOException getDisconnectException() {
+		return fDisconnectException;
 	}
 	
 	/**

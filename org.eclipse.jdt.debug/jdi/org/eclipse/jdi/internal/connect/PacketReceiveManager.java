@@ -8,6 +8,7 @@ package org.eclipse.jdi.internal.connect;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -49,7 +50,7 @@ public class PacketReceiveManager extends PacketManager {
 			fCommandPackets = new LinkedList();
 			fReplyPackets = new LinkedList();
 		} catch (IOException e) {
-			disconnectVM();
+			disconnectVM(e);
 		}
 	}
 
@@ -65,7 +66,7 @@ public class PacketReceiveManager extends PacketManager {
 		} catch (InterruptedIOException e) {
 			// Stop running.
 		} catch (IOException e) {
-			disconnectVM();
+			disconnectVM(e);
 		}
 	}
 	
@@ -89,8 +90,15 @@ public class PacketReceiveManager extends PacketManager {
 		}
 		
 		// Check for an IO Exception.
-		if (VMIsDisconnected())
-			throw new VMDisconnectedException(ConnectMessages.getString("PacketReceiveManager.Got_IOException_from_Virtual_Machine_1")); //$NON-NLS-1$
+		if (VMIsDisconnected()) {
+			String message;
+			if (getDisconnectException() == null) {
+				message= ConnectMessages.getString("PacketReceiveManager.Got_IOException_from_Virtual_Machine_1"); //$NON-NLS-1$
+			} else {
+				message= MessageFormat.format(ConnectMessages.getString("PacketReceiveManager.Got_{0}_from_Virtual_Machine_1"), new String[] {getDisconnectException().getClass().getName()}); //$NON-NLS-1$
+			}
+			throw new VMDisconnectedException(message);
+		}
 			
 		// Check for a timeout.
 		if (packet == null)

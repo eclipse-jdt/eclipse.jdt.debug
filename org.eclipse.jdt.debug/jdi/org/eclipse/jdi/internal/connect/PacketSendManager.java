@@ -11,6 +11,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 
 import org.eclipse.jdi.internal.jdwp.JdwpPacket;
@@ -36,7 +37,7 @@ public class PacketSendManager extends PacketManager {
 			fOutStream = connector.getOutputStream();
 			fOutgoingPackets = new LinkedList();
 		} catch (IOException e) {
-			disconnectVM();
+			disconnectVM(e);
 		}
 	}
 
@@ -50,7 +51,7 @@ public class PacketSendManager extends PacketManager {
 			} catch (InterruptedException e) {
 			} catch (InterruptedIOException e) {
 			} catch (IOException e) {
-				disconnectVM();
+				disconnectVM(e);
 			}
 		}
 	}
@@ -59,8 +60,15 @@ public class PacketSendManager extends PacketManager {
 	 * Add a packet to be sent to the Virtual Machine.
 	 */
 	public synchronized void sendPacket(JdwpPacket packet) {
-		if (VMIsDisconnected())
-			throw (new VMDisconnectedException(ConnectMessages.getString("PacketSendManager.Got_IOException_from_Virtual_Machine_1"))); //$NON-NLS-1$
+		if (VMIsDisconnected()) {
+			String message;
+			if (getDisconnectException() == null) {
+				message= ConnectMessages.getString("PacketSendManager.Got_IOException_from_Virtual_Machine_1"); //$NON-NLS-1$
+			} else {
+				message= MessageFormat.format(ConnectMessages.getString("PacketSendManager.Got_{0}_from_Virtual_Machine_1"), new String[] {getDisconnectException().getClass().getName()}); //$NON-NLS-1$
+			}
+			throw new VMDisconnectedException(message);
+		}
 
 		// Add packet to list of packets to send.
 		fOutgoingPackets.add(packet);
