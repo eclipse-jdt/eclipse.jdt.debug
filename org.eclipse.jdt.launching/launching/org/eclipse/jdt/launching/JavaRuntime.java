@@ -1496,11 +1496,7 @@ public final class JavaRuntime {
 	 */	private static String generateDetectedVMName(IVMInstall vm) {
 		StringBuffer nameBuffer = new StringBuffer(LaunchingMessages.getString("JavaRuntime.detectedSuffix")); //$NON-NLS-1$
 		nameBuffer.append(" ("); //$NON-NLS-1$
-		try {
-			nameBuffer.append(vm.getInstallLocation().getCanonicalPath());
-		} catch (IOException ioe) {
-			nameBuffer.append(LaunchingMessages.getString("JavaRuntime.Unknown_location_1")); //$NON-NLS-1$
-		}
+		nameBuffer.append(vm.getInstallLocation().getName());
 		nameBuffer.append(')');
 		return nameBuffer.toString();
 	}

@@ -9,10 +9,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -271,6 +274,11 @@ public class AddVMDialog extends StatusDialog {
 			IVMInstallType type= getVMType();
 			if (fRequestor.isDuplicateName(type, name) && (fEditedVM == null || !name.equals(fEditedVM.getName()))) {
 				status.setError(LauncherMessages.getString("addVMDialog.duplicateName")); //$NON-NLS-1$
+			} else {
+				IStatus s = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
+				if (!s.isOK()) {
+					status.setError(MessageFormat.format(LauncherMessages.getString("AddVMDialog.JRE_name_must_be_a_valid_file_name__{0}_1"), new String[]{s.getMessage()})); //$NON-NLS-1$
+				}
 			}
 		}
 		return status;
