@@ -407,7 +407,8 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			fConditionTextControl.setEnabled(((IJavaLineBreakpoint)getBreakpoint()).isConditionEnabled());
 		} catch (CoreException ce) {
 		}
-		fCondition.setEmptyStringAllowed(true);
+		fCondition.setEmptyStringAllowed(false);
+		fCondition.setErrorMessage(ActionMessages.getString("JavaBreakpointPreferencePage.Invalid_condition")); //$NON-NLS-1$
 		addField(fCondition);
 		
 	}
