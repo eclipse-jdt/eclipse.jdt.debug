@@ -97,9 +97,11 @@ public class Timer {
 	 * notification.
 	 */
 	public void stop() {
-		setStarted(false);
-		setTimeout(Integer.MAX_VALUE);
-		getThread().interrupt();
+		if (isAlive()) {
+			setStarted(false);
+			setTimeout(Integer.MAX_VALUE);
+			getThread().interrupt();
+		}
 	}
 	
 	/**
