@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.ClasspathContainerInitializer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -485,8 +486,17 @@ public class RuntimeClasspathEntry implements IRuntimeClasspathEntry {
 			IRuntimeClasspathEntry r = (IRuntimeClasspathEntry)obj;
 			if (getType() == r.getType() && getClasspathProperty() == r.getClasspathProperty()) {
 				if (getType() == IRuntimeClasspathEntry.CONTAINER) {
-					// containers are equal if their ID is equal
-					return getPath().equals(r.getPath());
+					String id = getPath().segment(0);
+					ClasspathContainerInitializer initializer = JavaCore.getClasspathContainerInitializer(id);
+					IJavaProject javaProject1 = getJavaProject();
+					IJavaProject javaProject2 = r.getJavaProject();
+					if (initializer == null || javaProject1 == null || javaProject2 == null) {
+						// containers are equal if their ID is equal by default
+						return getPath().equals(r.getPath());
+					}
+					Object comparisonID1 = initializer.getComparisonID(getPath(), javaProject1);
+					Object comparisonID2 = initializer.getComparisonID(r.getPath(), javaProject2);
+					return comparisonID1.equals(comparisonID2);
 				} else if (getPath().equals(r.getPath())) {
 					IPath sa1 = getSourceAttachmentPath();
 					IPath root1 = getSourceAttachmentRootPath();

@@ -113,4 +113,21 @@ public class RuntimeClasspathEntryTests extends AbstractDebugTest {
 //		}
 //	}	
 	
+	public void testJREContainerEquality() throws Exception {
+		IRuntimeClasspathEntry entry1 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.STANDARD_CLASSES, getJavaProject());
+		IRuntimeClasspathEntry entry2 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path(JavaRuntime.JRE_CONTAINER), IRuntimeClasspathEntry.STANDARD_CLASSES, getJavaProject("MultiOutput"));
+		assertEquals("JRE containers should be equal no matter which project", entry1, entry2);
+	}
+	
+	public void testExampleContainerEqualityNegative() throws Exception {
+		IRuntimeClasspathEntry entry1 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, getJavaProject());
+		IRuntimeClasspathEntry entry2 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, getJavaProject("MultiOutput"));
+		assertFalse("Example containers should *not* be equal for different projects", entry1.equals(entry2));
+	}
+	
+	public void testExampleContainerEqualityPositive() throws Exception {
+		IRuntimeClasspathEntry entry1 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, getJavaProject());
+		IRuntimeClasspathEntry entry2 = JavaRuntime.newRuntimeContainerClasspathEntry(new Path("org.eclipse.jdt.debug.tests.TestClasspathContainer"), IRuntimeClasspathEntry.USER_CLASSES, getJavaProject());
+		assertEquals("Example containers should be equal for same project", entry1, entry2);
+	}	
 }

@@ -253,5 +253,11 @@
             class="org.eclipse.jdt.debug.tests.SourcePathComputerDelegate1"
             id="org.eclipse.jdt.debug.tests.testSourcePathComputer"/>
    </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathContainerInitializer">
+      <classpathContainerInitializer
+            class="org.eclipse.jdt.debug.testplugin.TestClasspathContainerInitializer"
+            id="org.eclipse.jdt.debug.tests.TestClasspathContainer"/>
+   </extension>
 
 </plugin>
