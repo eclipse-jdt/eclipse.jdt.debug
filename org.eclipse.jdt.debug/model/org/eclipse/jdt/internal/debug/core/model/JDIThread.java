@@ -619,7 +619,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * 	(status code <code>IJavaThread.ERR_INCOMPATIBLE_THREAD_STATE</code>)</li>
 	 * </ul>
 	 */
-	protected Value invokeMethod(ClassType receiverClass, ObjectReference receiverObject, Method method, List args) throws DebugException {
+	protected Value invokeMethod(ClassType receiverClass, ObjectReference receiverObject, Method method, List args, boolean superSend) throws DebugException {
 		if (receiverClass != null && receiverObject != null) {
 			throw new IllegalArgumentException(JDIDebugModelMessages.getString("JDIThread.can_only_specify_one_receiver_for_a_method_invocation")); //$NON-NLS-1$
 		}
@@ -643,10 +643,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 				setInvokingMethod(true);				
 			}
 			preserveStackFrames();
+			int flags= ClassType.INVOKE_SINGLE_THREADED;
+			if (superSend) {
+				// Superclass method invocation must be performed nonvirtual.
+				flags |= ObjectReference.INVOKE_NONVIRTUAL;
+			}
 			if (receiverClass == null) {
-				result= receiverObject.invokeMethod(getUnderlyingThread(), method, args, ClassType.INVOKE_SINGLE_THREADED);
+				result= receiverObject.invokeMethod(getUnderlyingThread(), method, args, flags);
 			} else {
-				result= receiverClass.invokeMethod(getUnderlyingThread(), method, args, ClassType.INVOKE_SINGLE_THREADED);
+				result= receiverClass.invokeMethod(getUnderlyingThread(), method, args, flags);
 			}
 		} catch (InvalidTypeException e) {
 			invokeFailed(e, timeout);

@@ -86,7 +86,7 @@ public class JDIClassType extends JDIType implements IJavaClassType {
 			} catch (RuntimeException e) {
 				getDebugTarget().targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIClassType.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 			}
-			Value result = javaThread.invokeMethod(clazz, null, method, arguments);
+			Value result = javaThread.invokeMethod(clazz, null, method, arguments, false);
 			return JDIValue.createValue(getDebugTarget(), result);
 		} else {
 			getDebugTarget().requestFailed(JDIDebugModelMessages.getString("JDIClassType.Type_is_not_a_class_type"), null); //$NON-NLS-1$

@@ -64,7 +64,7 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_while_performing_method_lookup_for_selector"), new String[] {e.toString(), selector, signature}), e); //$NON-NLS-1$
 		}
-		Value result = javaThread.invokeMethod(null, object, method, arguments);
+		Value result = javaThread.invokeMethod(null, object, method, arguments, superSend);
 		return JDIValue.createValue((JDIDebugTarget)getDebugTarget(), result);
 	}
 	

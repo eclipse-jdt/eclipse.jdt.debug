@@ -261,8 +261,12 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 	 */
 	private int optionsToJdwpOptions(int options) {
 		int jdwpOptions = 0;
-   		if ((options & INVOKE_SINGLE_THREADED) != 0)
+   		if ((options & INVOKE_SINGLE_THREADED) != 0) {
    			jdwpOptions |= MethodImpl.INVOKE_SINGLE_THREADED_JDWP;
+   		}
+   		if ((options & INVOKE_NONVIRTUAL) != 0) {
+   			jdwpOptions |= MethodImpl.INVOKE_NONVIRTUAL_JDWP;
+   		}
    		return jdwpOptions;
 	}
 	
@@ -277,7 +281,7 @@ public class ObjectReferenceImpl extends ValueImpl implements ObjectReference {
 		MethodImpl methodImpl = (MethodImpl)method;
 		
 		// Perform some checks for IllegalArgumentException.
-		if (!referenceType().visibleMethods().contains(method))
+		if (!referenceType().allMethods().contains(method))
 			throw new IllegalArgumentException(JDIMessages.getString("ObjectReferenceImpl.Class_does_not_contain_given_method_2")); //$NON-NLS-1$
 		if (method.argumentTypeNames().size() != arguments.size())
 			throw new IllegalArgumentException(JDIMessages.getString("ObjectReferenceImpl.Number_of_arguments_doesn__t_match_3")); //$NON-NLS-1$
