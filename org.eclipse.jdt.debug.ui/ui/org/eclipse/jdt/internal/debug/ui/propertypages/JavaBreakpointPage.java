@@ -171,11 +171,11 @@ public abstract class JavaBreakpointPage extends PropertyPage {
 	 */
 	private void createSuspendPolicyEditor(Composite parent) throws CoreException {
 		IJavaBreakpoint breakpoint= getBreakpoint();
-		createLabel(parent, "Suspend Policy");
+		createLabel(parent, PropertyPageMessages.getString("JavaBreakpointPage.8")); //$NON-NLS-1$
 		boolean suspendThread= breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_THREAD;
-		fSuspendThreadButton= createRadioButton(parent, "Suspend &Thread");
+		fSuspendThreadButton= createRadioButton(parent, PropertyPageMessages.getString("JavaBreakpointPage.9")); //$NON-NLS-1$
 		fSuspendThreadButton.setSelection(suspendThread);
-		fSuspendVMButton= createRadioButton(parent, "Suspend &VM");
+		fSuspendVMButton= createRadioButton(parent, PropertyPageMessages.getString("JavaBreakpointPage.10")); //$NON-NLS-1$
 		fSuspendVMButton.setSelection(!suspendThread);
 	}
 
