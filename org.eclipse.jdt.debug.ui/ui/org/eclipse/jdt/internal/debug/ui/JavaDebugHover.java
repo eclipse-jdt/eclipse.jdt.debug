@@ -87,6 +87,25 @@ public class JavaDebugHover implements IJavaEditorTextHover, ITextHoverExtension
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 	    IJavaStackFrame frame = getFrame();
 	    if (frame != null) {
+	        // first check for 'this' - code resolve does not resolve java elements for 'this'
+	        IDocument document= textViewer.getDocument();
+			if (document != null) {
+			    try {
+                    String variableName= document.get(hoverRegion.getOffset(), hoverRegion.getLength());
+                    if (variableName.equals("this")) { //$NON-NLS-1$
+                        try {
+                            IJavaVariable variable = frame.findVariable(variableName);
+                            if (variable != null) {
+                                return getVariableText(variable);
+                            }
+                        } catch (DebugException e) {
+                            return null;
+                        }
+                    }
+                } catch (BadLocationException e) {
+                    return null;
+                }
+			}
 		    ICodeAssist codeAssist = null;
 		    if (fEditor != null) {
 				IEditorInput input = fEditor.getEditorInput();
