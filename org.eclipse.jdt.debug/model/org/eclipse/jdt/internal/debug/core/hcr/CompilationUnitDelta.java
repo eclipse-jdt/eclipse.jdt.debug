@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.internal.compiler.IProblemFactory;
 import org.eclipse.jdt.internal.compiler.SourceElementParser;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.internal.compiler.problem.ProblemSeverities;
 import org.eclipse.jdt.internal.core.JavaElement;
 
 /**
@@ -114,7 +115,10 @@ public class CompilationUnitDelta {
 	private static class ProblemFactory implements IProblemFactory {
 		
 		public IProblem createProblem(char[] originatingFileName, int problemId, String[] problemArguments, String[] messageArguments, int severity, int startPosition, int endPosition, int lineNumber) {
-			throw new ParseError();
+			if ((severity & ProblemSeverities.Error) > 0) {
+				throw new ParseError();
+			}
+			return null;
 		}
 		
 		public Locale getLocale() {
