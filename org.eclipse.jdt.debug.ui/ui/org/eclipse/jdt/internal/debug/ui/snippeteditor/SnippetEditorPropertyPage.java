@@ -127,23 +127,7 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		fConfig.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
 		fWorkingDirBlock.initializeFrom(fConfig);
 	}
-
-	/**
-	 * @see PreferencePage#performApply()
-	 */
-	protected void performApply() {
-		fWorkingDirBlock.performApply(fConfig);
-		String attr = null;
-		try {
-			attr = fConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("SnippetEditorPropertyPage.Unable_to_save_working_directory._2"), e); //$NON-NLS-1$
-		}
-		ScrapbookLauncher.setWorkingDirectoryAttribute(getFile(), attr);
-		super.performApply();
-	}
 	
-
 	/**
 	 * @see IPreferencePage#isValid()
 	 */
@@ -165,4 +149,18 @@ public class SnippetEditorPropertyPage extends PropertyPage {
 		return fWorkingDirBlock.getMessage();
 	}
 
+	/**
+	 * @see IPreferencePage#performOk()
+	 */
+	public boolean performOk() {
+		fWorkingDirBlock.performApply(fConfig);
+		String attr = null;
+		try {
+			attr = fConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.errorDialog(SnippetMessages.getString("SnippetEditorPropertyPage.Unable_to_save_working_directory._2"), e); //$NON-NLS-1$
+		}
+		ScrapbookLauncher.setWorkingDirectoryAttribute(getFile(), attr);
+		return super.performOk();
+	}
 }
