@@ -102,18 +102,24 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	public void startup() throws CoreException {
 		super.startup();
 		
-		//exclude launch configurations from being copied to the output directory
+		// Exclude launch configurations from being copied to the output directory
+		String launchFilter = "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$
 		Hashtable optionsMap = JavaCore.getOptions();
 		String filters= (String)optionsMap.get("org.eclipse.jdt.core.builder.resourceCopyExclusionFilter"); //$NON-NLS-1$
-		if (filters == null || filters.length() ==0) {
-			filters= "*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$;;
-		} else {
-			filters= filters + ",*." + ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION; //$NON-NLS-1$;
+		boolean modified = false;
+		if (filters == null || filters.length() == 0) {
+			filters= launchFilter;
+			modified = true;
+		} else if (filters.indexOf(launchFilter) == -1) {
+			filters= filters + ',' + launchFilter; //$NON-NLS-1$
+			modified = true;
 		}
 
-		optionsMap.put("org.eclipse.jdt.core.builder.resourceCopyExclusionFilter", filters);  //$NON-NLS-1$
-		JavaCore.setOptions(optionsMap);
-		
+		if (modified) {
+			optionsMap.put("org.eclipse.jdt.core.builder.resourceCopyExclusionFilter", filters);  //$NON-NLS-1$
+			JavaCore.setOptions(optionsMap);
+		}		
+
 		// set default preference values
 		getPluginPreferences().setDefault(JavaRuntime.PREF_CONNECT_TIMEOUT, JavaRuntime.DEF_CONNECT_TIMEOUT);
 		getPluginPreferences().addPropertyChangeListener(this);
@@ -121,7 +127,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 	}
 	
 	/**
-	 * Returns the VM connetor with the specified id, or <code>null</code>
+	 * Returns the VM connector with the specified id, or <code>null</code>
 	 * if none. 
 	 * 
 	 * @param id connector identifier
