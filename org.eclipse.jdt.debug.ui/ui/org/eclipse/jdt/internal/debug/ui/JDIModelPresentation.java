@@ -1575,14 +1575,10 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				case '>':
 					enclosingLevel--;
 					break;
-				default:
-					if (!tokenizer.hasMoreTokens()) {
-						names.add(listName.substring(startPos));
-					}
-					break;
 			}
 			currentPos += token.length();
 		}
+		names.add(listName.substring(startPos));
 		return names;
 	}
 
