@@ -104,7 +104,6 @@ public class RefreshTabTests extends AbstractDebugTest {
 	
 	/**
 	 * Tests a refresh scope for a specific resource (old format)
-	 *
 	 */
 	public void testSpecificResource() throws CoreException {
 		String scope = "${resource:/DebugTests/.classpath}";
@@ -113,5 +112,17 @@ public class RefreshTabTests extends AbstractDebugTest {
 		assertNotNull(result);
 		assertEquals(1, result.length);
 		assertEquals(resource, result[0]);				
+	}
+	
+	/**
+	 * Tests a refresh scope for a working set
+	 */
+	public void testWorkingSet() throws CoreException {
+		String scope= "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/DebugTests/.classpath\" type=\"1\"/>\n</launchConfigurationWorkingSet>}";
+		IResource resource = getJavaProject().getProject().getFile(".classpath");
+		IResource[] result = RefreshTab.getRefreshResources(scope);
+		assertNotNull(result);
+		assertEquals(1, result.length);
+		assertEquals(resource, result[0]);			
 	}
 }
