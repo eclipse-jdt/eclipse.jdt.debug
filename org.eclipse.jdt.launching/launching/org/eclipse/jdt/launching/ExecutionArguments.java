@@ -138,6 +138,11 @@ public class ExecutionArguments {
 			while (ch > 0 && !Character.isWhitespace((char)ch)) {
 				if (ch == '\\') {
 					ch= getNext();
+					if (Character.isWhitespace((char)ch)) {
+						// end of token, don't lose trailing backslash
+						buf.append('\\');
+						return buf.toString();
+					}
 					if (ch > 0) {
 						if (ch != '"') {        // Only escape double quotes
 							buf.append('\\'); 
