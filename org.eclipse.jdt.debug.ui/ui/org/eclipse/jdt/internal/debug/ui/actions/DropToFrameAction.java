@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jface.action.IAction;
@@ -32,13 +33,16 @@ public class DropToFrameAction extends ObjectActionDelegate {
 		Iterator itr= selection.iterator();
 		
 		while (itr.hasNext()) {
-			IJavaStackFrame frame= (IJavaStackFrame)itr.next();
-			try {
-				frame.dropToFrame();
-			} catch (DebugException de) {
-				String title= ActionMessages.getString("DropToFrameAction.Drop_to_Frame_1"); //$NON-NLS-1$
-				String message= ActionMessages.getString("DropToFrameAction.Exceptions_occurred_attempting_to_drop_to_frame._2"); //$NON-NLS-1$
-				ExceptionHandler.handle(de, title, message);
+			IStackFrame frame= (IStackFrame)itr.next();
+			IJavaStackFrame stackFrame = (IJavaStackFrame)frame.getAdapter(IJavaStackFrame.class);
+			if (stackFrame != null) {
+				try {
+					stackFrame.dropToFrame();
+				} catch (DebugException de) {
+					String title= ActionMessages.getString("DropToFrameAction.Drop_to_Frame_1"); //$NON-NLS-1$
+					String message= ActionMessages.getString("DropToFrameAction.Exceptions_occurred_attempting_to_drop_to_frame._2"); //$NON-NLS-1$
+					ExceptionHandler.handle(de, title, message);
+				}
 			}
 		}
 	}
