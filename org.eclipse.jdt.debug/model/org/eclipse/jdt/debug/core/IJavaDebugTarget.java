@@ -358,7 +358,18 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	
 	/**
 	 * Set the default stratum used in this debug target.
+	 * 
+	 * @param the new default stratum.
 	 * @since 3.0
 	 */
 	public void setDefaultStratum(String stratum);
+	
+	/**
+	 * Return the default stratum used in this the target.
+	 * 
+	 * @return the default stratum.
+	 * @see #setDefaultStratum(String)
+	 * @since 3.0
+	 */
+	public String getDefaultStratum();
 }

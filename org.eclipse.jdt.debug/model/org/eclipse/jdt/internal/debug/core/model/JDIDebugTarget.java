@@ -2023,6 +2023,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	public void setDefaultStratum(String stratum) {
 		getVM().setDefaultStratum(stratum);
 	}
+	
+	public String getDefaultStratum() {
+		return getVM().getDefaultStratum();
+	}
 
 }
 
