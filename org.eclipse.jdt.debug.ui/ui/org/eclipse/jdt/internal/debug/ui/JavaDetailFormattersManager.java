@@ -122,7 +122,7 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				Runnable postEventProcess = new Runnable() {
 					public void run() {
 						if (thread.isPerformingEvaluation() && thread.isSuspended()) {
-							listener.detailComputed(objectValue, "Cannot perform nested evaluations.");
+							listener.detailComputed(objectValue, DebugUIMessages.getString("JavaDetailFormattersManager.9")); //$NON-NLS-1$
 						} else {
 							thread.queueRunnable(new Runnable() {
 								public void run() {
