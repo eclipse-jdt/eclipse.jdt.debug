@@ -650,15 +650,17 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 *  evaluation.
 	 */
 	protected synchronized String evaluateToString(IJavaValue value, IJavaThread thread) throws DebugException {
+		fResult= null;
 		fPresentation.computeDetail(value, this);
-		if (fResult == null) {
-			try {
-				wait(10000);
-			} catch (InterruptedException e) {
-				return SnippetMessages.getString("SnippetEditor.error.interrupted"); //$NON-NLS-1$
+		synchronized (this) {
+			if (fResult == null) {
+				try {
+					wait(10000);
+				} catch (InterruptedException e) {
+					return SnippetMessages.getString("SnippetEditor.error.interrupted"); //$NON-NLS-1$
+				}
 			}
 		}
-	
 		return fResult;
 	}
 	
@@ -667,7 +669,9 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	 */
 	public synchronized void detailComputed(IValue value, final String result) {
 		fResult= result;
-		this.notifyAll();	
+		synchronized (this) {
+			this.notifyAll();	
+		}
 	}
 	
 	protected boolean showAllErrors(Message[] errors) {
