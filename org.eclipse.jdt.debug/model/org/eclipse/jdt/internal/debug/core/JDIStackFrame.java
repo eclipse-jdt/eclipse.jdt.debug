@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
@@ -29,6 +30,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 
 import org.eclipse.jdt.debug.core.IJavaVariable;
+
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;
 import com.sun.jdi.LocalVariable;
@@ -822,6 +824,15 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 			receiver = (IJavaObject)JDIValue.createValue((JDIDebugTarget)getDebugTarget(), thisObject);
 		}
 		return receiver;
+	}
+
+	/**
+	 * Java stack frames do not support registers
+	 * 
+	 * @see IStackFrame#getRegisterGroups()
+	 */
+	public IRegisterGroup[] getRegisterGroups() throws DebugException {
+		return new IRegisterGroup[0];
 	}
 
 }

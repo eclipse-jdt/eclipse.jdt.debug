@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -578,7 +579,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			} catch (ClassCircularityError exception) {
 				jdiRequestFailed(getString("JDIDebugTarget.hcr_class_circularity_error"), exception); //$NON-NLS-1$
 			} catch (RuntimeException exception) {
-				targetRequestFailed(getString("JDIDebugTarget.hcr_failed"), exception);
+				targetRequestFailed(getString("JDIDebugTarget.hcr_failed"), exception); //$NON-NLS-1$
 			}
 			reinstallBreakpointsIn(resources);
 		} else {
@@ -1660,5 +1661,26 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	protected void setThreadStartHandler(ThreadStartHandler threadStartHandler) {
 		fThreadStartHandler = threadStartHandler;
 	}
+	
+	/**
+	 * Java debug targets do not support storage retrieval.
+	 * 
+	 * @see IStorageRetrieval#supportsStorageRetrieval()
+	 */
+	public boolean supportsStorageRetrieval() {
+		return false;
+	}
+
+	/**
+	 * @see IStorageRetrieval#getStorage(long, long)
+	 */
+	public IStorage getStorage(long startAddress, long length)
+		throws DebugException {
+			notSupported(JDIDebugModelMessages.getString("JDIDebugTarget.does_not_support_storage_retrieval")); //$NON-NLS-1$
+			// this line will not be excecuted as #notSupported(String)
+			// will throw an exception
+			return null;
+	}
+
 }
 
