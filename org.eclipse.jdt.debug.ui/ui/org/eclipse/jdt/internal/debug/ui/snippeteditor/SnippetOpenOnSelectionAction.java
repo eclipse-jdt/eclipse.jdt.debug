@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jdt.ui.actions.OpenAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -33,6 +34,8 @@ public class SnippetOpenOnSelectionAction extends OpenAction {
 		super(editor.getSite());
 		fEditor= editor;
 		setResources();
+		setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_EDITOR);
+		editor.getSite().getKeyBindingService().registerAction(this);
 	}
 	
 	protected void setResources() {

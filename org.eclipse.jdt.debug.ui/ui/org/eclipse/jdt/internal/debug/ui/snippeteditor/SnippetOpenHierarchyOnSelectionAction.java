@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jdt.ui.actions.OpenTypeHierarchyAction;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -33,6 +34,8 @@ public class SnippetOpenHierarchyOnSelectionAction extends OpenTypeHierarchyActi
 		super(editor.getSite());
 		fEditor= editor;
 		setResources();
+		setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_TYPE_HIERARCHY);
+		editor.getSite().getKeyBindingService().registerAction(this);
 	}
 	
 	protected void setResources() {
