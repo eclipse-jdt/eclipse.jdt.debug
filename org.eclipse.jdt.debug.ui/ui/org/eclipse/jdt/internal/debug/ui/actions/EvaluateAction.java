@@ -401,6 +401,35 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 	}
 	
 	protected IDataDisplay getDataDisplay() {
+		IDataDisplay display= getDirectDataDisplay();
+		if (display != null) {
+			return display;
+		}
+		IWorkbenchPage page= JDIDebugUIPlugin.getDefault().getActivePage();
+		if (page != null) {
+			IWorkbenchPart activePart= page.getActivePart();
+			if (activePart != null) {
+				IViewPart view = page.findView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);;
+				if (view == null) {
+					try {
+						view= page.showView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);
+					} catch (PartInitException e) {
+						JDIDebugUIPlugin.errorDialog(ActionMessages.getString("EvaluateAction.Cannot_open_Display_view"), e); //$NON-NLS-1$
+					} finally {
+						page.activate(activePart);
+					}
+				}
+				if (view != null) {
+					page.bringToTop(view);
+					return (IDataDisplay)view.getAdapter(IDataDisplay.class);
+				}			
+			}
+		}
+		
+		return null;		
+	}	
+	
+	protected IDataDisplay getDirectDataDisplay() {
 		IWorkbenchPart part= getTargetPart();
 		if (part != null) {
 			IDataDisplay display= (IDataDisplay)part.getAdapter(IDataDisplay.class);
@@ -436,25 +465,9 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 					return new DataDisplay(viewer);
 				}
 			}
-			IViewPart view = page.findView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);;
-			if (view == null) {
-				try {
-					view= page.showView(IJavaDebugUIConstants.ID_DISPLAY_VIEW);
-				} catch (PartInitException e) {
-					JDIDebugUIPlugin.errorDialog(ActionMessages.getString("EvaluateAction.Cannot_open_Display_view"), e); //$NON-NLS-1$
-				} finally {
-					page.activate(activePart);
-				}
-			}
-			if (view != null) {
-				page.bringToTop(view);
-				return (IDataDisplay)view.getAdapter(IDataDisplay.class);
-			}			
 		}
-		
-		return null;		
-	}	
-	
+		return null;
+	}
 	protected boolean textHasContent(String text) {
 		if (text != null) {
 			int length= text.length();
@@ -469,9 +482,26 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 		return false;
 	}
 	
+	/**
+	 * Displays a failed evaluation message in the data display.
+	 */
+	protected void reportErrors(IEvaluationResult result) {
+		String message= getErrorMessage(result);
+		reportError(message);
+	}
+	
 	protected void reportError(String message) {
-		Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
-		ErrorDialog.openError(getShell(), ActionMessages.getString("Evaluate.error.title.eval_problems"), null, status); //$NON-NLS-1$
+		IDataDisplay dataDisplay= getDataDisplay();
+		if (dataDisplay != null) {
+			if (message.length() != 0) {
+				dataDisplay.displayExpressionValue(MessageFormat.format(ActionMessages.getString("EvaluateAction.(evaluation_failed)_Reason"), new String[] {message})); //$NON-NLS-1$
+			} else {
+				dataDisplay.displayExpressionValue(ActionMessages.getString("EvaluateAction.(evaluation_failed)_1")); //$NON-NLS-1$
+			}
+		} else {
+			Status status= new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, message, null);
+			ErrorDialog.openError(getShell(), ActionMessages.getString("Evaluate.error.title.eval_problems"), null, status); //$NON-NLS-1$
+		}
 	}
 	
 	protected String getExceptionMessage(Throwable exception) {
@@ -500,13 +530,6 @@ public abstract class EvaluateAction implements IEvaluationListener, IWorkbenchW
 			InvocationException ie= (InvocationException) exception;
 			ObjectReference ref= ie.exception();
 			return MessageFormat.format(ActionMessages.getString("Evaluate.error.message.wrapped_exception"), new Object[] { ref.referenceType().name() }); //$NON-NLS-1$
-	}
-	
-	protected void reportErrors(IEvaluationResult result) {
-		String message= getErrorMessage(result);
-		if (message.length() != 0) {
-			reportError(message);
-		}
 	}
 	
 	protected String getErrorMessage(IEvaluationResult result) {

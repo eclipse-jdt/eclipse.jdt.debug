@@ -68,14 +68,6 @@ public class InspectAction extends EvaluateAction {
 			}
 		}
 	}
-
-	/**
-	 * @see EvaluateAction#getDataDisplay()
-	 */
-	protected IDataDisplay getDataDisplay() {
-		//always uses the ExpressionsView
-		return null;
-	}
 	
 	protected void run() {
 		IWorkbenchPart part= getTargetPart();
@@ -112,5 +104,9 @@ public class InspectAction extends EvaluateAction {
 				page.bringToTop(part);
 			}
 		}
+	}
+	
+	protected IDataDisplay getDataDisplay() {
+		return getDirectDataDisplay();
 	}
 }
