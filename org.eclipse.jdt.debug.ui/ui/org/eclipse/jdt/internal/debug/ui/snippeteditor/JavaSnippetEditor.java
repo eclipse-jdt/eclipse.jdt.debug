@@ -205,7 +205,7 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 		return fEvaluating;
 	}
 	
-	public void evalSelection(final int resultMode) {
+	public void evalSelection(int resultMode) {
 		if (!isInJavaProject()) {
 			reportNotInJavaProjectError();
 			return;
@@ -253,9 +253,11 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 			try {
 				new ProgressMonitorDialog(getShell()).run(true, false, r);		
 			} catch (InterruptedException e) {
+				JDIDebugUIPlugin.log(e);
 				evaluationEnds();
 				return;
 			} catch (InvocationTargetException e) {
+				JDIDebugUIPlugin.log(e);
 				evaluationEnds();
 				return;
 			}
@@ -693,11 +695,13 @@ public class JavaSnippetEditor extends AbstractTextEditor implements IDebugEvent
 	}
 	
 	protected boolean classPathsEqual(String[] path1, String[] path2) {
-		if (path1.length != path2.length)
+		if (path1.length != path2.length) {
 			return false;
+		}
 		for (int i= 0; i < path1.length; i++) {
-			if (!path1[i].equals(path2[i]))
+			if (!path1[i].equals(path2[i])) {
 				return false;
+			}
 		}
 		return true;
 	}
