@@ -53,9 +53,8 @@ public class SnippetEditorActionContributor extends BasicEditorActionContributor
 		
 		IMenuManager navigateMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_NAVIGATE);
 		if (navigateMenu != null) {
-			navigateMenu.appendToGroup(IWorkbenchActionConstants.NAV_START, new Separator());
-			navigateMenu.appendToGroup(IWorkbenchActionConstants.NAV_START, fOpenOnSelectionAction);
-			navigateMenu.appendToGroup(IWorkbenchActionConstants.NAV_START, fOpenOnTypeSelectionAction);
+			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenOnSelectionAction);
+			navigateMenu.appendToGroup(IWorkbenchActionConstants.OPEN_EXT, fOpenOnTypeSelectionAction);
 		}
 	}
 	
