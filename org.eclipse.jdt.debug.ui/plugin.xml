@@ -102,9 +102,6 @@
             <separator
                   name="jdtGroup">
             </separator>
-            <separator
-                  name="breakpointGroup">
-            </separator>
          </menu>
          <action
                definitionId="org.eclipse.jdt.debug.ui.commands.ToggleWatchpoint"
@@ -155,15 +152,6 @@
                class="org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionAction"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
                id="org.eclipse.jdt.debug.ui.actions.AddExceptionBreakpoint">
-         </action>
-         <action
-               definitionId="org.eclipse.jdt.debug.ui.commands.ToggleBreakpoint"
-               label="%ManageBreakpointAction.label"
-               icon="icons/full/obj16/brkpi_obj.gif"
-               helpContextId="manage_breakpoint_action_context"
-               class="org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointActionDelegate"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.jdt.debug.ui.actions.ToggleBreakpoint">
          </action>
          <action
                definitionId="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
@@ -334,6 +322,9 @@
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
+		 <actionSet
+               id="org.eclipse.debug.ui.breakpointActionSet">
+         </actionSet>                     
          <actionSet
                id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
          </actionSet>
@@ -341,11 +332,17 @@
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaHierarchyPerspective">
          <actionSet
+               id="org.eclipse.debug.ui.breakpointActionSet">
+         </actionSet>         
+         <actionSet
                id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
          </actionSet>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
+         <actionSet
+               id="org.eclipse.debug.ui.breakpointActionSet">
+         </actionSet>         
          <actionSet
                id="org.eclipse.jdt.debug.ui.JDTDebugActionSet">
          </actionSet>
@@ -1400,6 +1397,13 @@
             </enablement>
          </action>
          <action
+               label="%runToLineAction.label"
+               helpContextId="run_to_line_action_context"
+               class="org.eclipse.debug.internal.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine">
+         </action>
+         <action
                label="%Execute.label"
                icon="icons/full/ctool16/run_sbook.gif"
                helpContextId="execute_action_context"
@@ -1513,6 +1517,13 @@
                </and>
             </enablement>
          </action>
+         <action
+               label="%runToLineAction.label"
+               helpContextId="run_to_line_action_context"
+               class="org.eclipse.debug.internal.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.jdt.debug.ui.cuPopup.RunToLine">
+         </action>         
          <action
                label="%Execute.label"
                icon="icons/full/ctool16/run_sbook.gif"
@@ -2032,18 +2043,6 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
-            name="%ActionDefinition.manageBreakpoint.name"
-            description="%ActionDefinition.manageBreakpoint.description"
-            category="org.eclipse.debug.ui.category.run"
-            id="org.eclipse.jdt.debug.ui.commands.ToggleBreakpoint">
-      </command>
-      <keyBinding
-            string="Ctrl+Shift+B"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.commands.ToggleBreakpoint"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <command
             name="%ActionDefinition.stepIntoSelection.name"
             description="%ActionDefinition.stepIntoSelection.description"
             category="org.eclipse.debug.ui.category.run"
@@ -2355,11 +2354,13 @@
             class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
             adaptableType="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor">
             <adapter type="org.eclipse.debug.internal.ui.actions.IRunToLineTarget"/>
+            <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
          </factory>
          <factory 
             class="org.eclipse.jdt.internal.debug.ui.actions.RetargettableActionAdapterFactory" 
             adaptableType="org.eclipse.jdt.internal.ui.javaeditor.ClassFileEditor">
             <adapter type="org.eclipse.debug.internal.ui.actions.IRunToLineTarget"/>
+            <adapter type="org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget"/>
          </factory>         
       </extension>     	
       

@@ -31,9 +31,11 @@ import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -41,21 +43,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class RunToLineAdapter implements IRunToLineTarget {
 	
-	private IEditorPart editorPart;
-	
-	/**
-	 * Constructs a new run to line adapter for the given editor
-	 * 
-	 * @param editor
-	 */
-	public RunToLineAdapter(IEditorPart editor) {
-		editorPart = editor;
-	}
-	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.IRunToLineTarget#runToLine()
+	 * @see org.eclipse.debug.internal.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
-	public void runToLine(ISuspendResume target) throws CoreException {
+	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
+		IEditorPart editorPart = (IEditorPart)part;
 		IEditorInput input = editorPart.getEditorInput();
 		String errorMessage = null;
 		if (input == null) {
@@ -69,10 +61,10 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				final int[] validLine = new int[1];
 				final String[] typeName = new String[1];
 				final int[] lineNumber = new int[1];
-				final ITextSelection selection = (ITextSelection) textEditor.getSelectionProvider().getSelection();
+				final ITextSelection textSelection = (ITextSelection) selection;
 				Runnable r = new Runnable() {
 					public void run() {
-						lineNumber[0] = selection.getStartLine() + 1;
+						lineNumber[0] = textSelection.getStartLine() + 1;
 						ASTParser parser = ASTParser.newParser(AST.LEVEL_2_0);
 						parser.setSource(document.get().toCharArray());
 						CompilationUnit compilationUnit= (CompilationUnit)parser.createAST(null);
@@ -99,7 +91,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					}
 				} else {
 					// invalid line
-					if (selection.getLength() > 0) {
+					if (textSelection.getLength() > 0) {
 						errorMessage = ActionMessages.getString("RunToLineAdapter.3"); //$NON-NLS-1$
 					} else {
 						errorMessage = ActionMessages.getString("RunToLineAdapter.4"); //$NON-NLS-1$
@@ -111,10 +103,5 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		throw new CoreException(new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR,
 				errorMessage, null));
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.IRunToLineTarget#dispose()
-	 */
-	public void dispose() {
-		editorPart = null;
-	}
+
 }

@@ -16,11 +16,11 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.internal.ui.actions.IRunToLineTarget;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICodeAssist;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -113,11 +113,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * the desired location, then perform a "step into selection."
 	 */
 	private void runToLineBeforeStepIn(ITextSelection textSelection, final IJavaStackFrame startFrame, final IMethod method) throws DebugException {
-		RunToLineActionDelegate runToLineAction= new RunToLineActionDelegate();
-		IType type= runToLineAction.getType0(textSelection);
-		if (type == null) {
-			return;
-		}
+		IRunToLineTarget runToLineAction = new RunToLineAdapter();
 		runToLineType= startFrame.getReceivingTypeName();
 		runToLineLine= textSelection.getStartLine() + 1;
 		if (runToLineType == null || runToLineLine == -1) {
@@ -192,7 +188,7 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 		};
 		DebugPlugin.getDefault().addDebugEventListener(listener);
 		try {
-			runToLineAction.runToLine(type, runToLineLine);
+			runToLineAction.runToLine(fEditorPart, textSelection, startFrame);
 		} catch (CoreException e) {
 			DebugPlugin.getDefault().removeDebugEventListener(listener);
 			showErrorMessage(ActionMessages.getString("StepIntoSelectionActionDelegate.4")); //$NON-NLS-1$

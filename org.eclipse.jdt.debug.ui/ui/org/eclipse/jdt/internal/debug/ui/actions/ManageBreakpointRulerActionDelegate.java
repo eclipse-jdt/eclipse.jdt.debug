@@ -13,15 +13,34 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class ManageBreakpointRulerActionDelegate extends AbstractRulerActionDelegate {
 
+	private ManageBreakpointRulerAction targetAction;
+	private IEditorPart activeEditor;
+	
 	/**
 	 * @see AbstractRulerActionDelegate#createAction()
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
-		return new ManageBreakpointRulerAction(rulerInfo, editor);
+		targetAction = new ManageBreakpointRulerAction(rulerInfo, editor);
+		return targetAction;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
+	 */
+	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
+		if (activeEditor != null) {
+			if (targetAction != null) {
+				targetAction.dispose();
+				targetAction = null;
+			}
+		}
+		activeEditor = targetEditor;
+		super.setActiveEditor(callerAction, targetEditor);
 	}
 }

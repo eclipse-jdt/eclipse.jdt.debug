@@ -12,14 +12,15 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.internal.ui.actions.IRunToLineTarget;
-import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
+import org.eclipse.debug.internal.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.ui.IEditorPart;
 
 /**
- * @author DWright
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * Creates adapters for retargettable actions in debug platform.
+ * Contributed via <code>org.eclipse.core.runtime.adapters</code> 
+ * extension point. 
+ * 
+ * @since 3.0
  */
 public class RetargettableActionAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
@@ -27,16 +28,21 @@ public class RetargettableActionAdapterFactory implements IAdapterFactory {
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adapterType == IRunToLineTarget.class) {
-			if (adaptableObject instanceof JavaEditor) {
-				return new RunToLineAdapter((IEditorPart)adaptableObject);
+			if (adaptableObject instanceof IEditorPart) {
+				return new RunToLineAdapter();
 			}
 		}
+		if (adapterType == IToggleBreakpointsTarget.class) {
+			if (adaptableObject instanceof IEditorPart) {
+				return new ToggleBreakpointAdapter();
+			}
+		} 
 		return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[]{IRunToLineTarget.class};
+		return new Class[]{IRunToLineTarget.class, IToggleBreakpointsTarget.class};
 	}
 }

@@ -11,106 +11,39 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.ISourceRange;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
-import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.ui.IWorkingCopyManager;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.IUpdate;
 
-public class ManageBreakpointRulerAction extends Action implements IUpdate {	
+public class ManageBreakpointRulerAction extends Action {	
 	
 	private IVerticalRulerInfo fRuler;
 	private ITextEditor fTextEditor;
-	private List fMarkers;
+	private ToggleBreakpointAdapter fBreakpointAdapter;
 
 	public ManageBreakpointRulerAction(IVerticalRulerInfo ruler, ITextEditor editor) {
 		super(ActionMessages.getString("ManageBreakpointRulerAction.label")); //$NON-NLS-1$
 		fRuler= ruler;
 		fTextEditor= editor;
-	}
-	
-	/** 
-	 * Returns the resource for which to create the marker, 
-	 * or <code>null</code> if there is no applicable resource.
-	 *
-	 * @return the resource for which to create the marker or <code>null</code>
-	 */
-	protected IResource getResource() {
-		IEditorInput input= fTextEditor.getEditorInput();
-		
-		IResource resource= (IResource) input.getAdapter(IFile.class);
-		
-		if (resource == null) {
-			resource= (IResource) input.getAdapter(IResource.class);
-		}
-			
-		return resource;
+		fBreakpointAdapter = new ToggleBreakpointAdapter();
 	}
 	
 	/**
-	 * Checks whether a position includes the ruler's line of activity.
-	 *
-	 * @param position the position to be checked
-	 * @param document the document the position refers to
-	 * @return <code>true</code> if the line is included by the given position
+	 * Disposes this action
 	 */
-	protected boolean includesRulerLine(Position position, IDocument document) {
-
-		if (position != null) {
-			try {
-				int markerLine= document.getLineOfOffset(position.getOffset());
-				int line= fRuler.getLineOfLastMouseButtonActivity();
-				if (line == markerLine) {
-					return true;
-				}
-			} catch (BadLocationException x) {
-			}
-		}
-		
-		return false;
+	public void dispose() {
+		fTextEditor = null;
+		fRuler = null;
 	}
-	
+		
 	/**
 	 * Returns this action's vertical ruler info.
 	 *
@@ -130,20 +63,6 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 	}
 	
 	/**
-	 * Returns the <code>AbstractMarkerAnnotationModel</code> of the editor's input.
-	 *
-	 * @return the marker annotation model
-	 */
-	protected AbstractMarkerAnnotationModel getAnnotationModel() {
-		IDocumentProvider provider= fTextEditor.getDocumentProvider();
-		IAnnotationModel model= provider.getAnnotationModel(fTextEditor.getEditorInput());
-		if (model instanceof AbstractMarkerAnnotationModel) {
-			return (AbstractMarkerAnnotationModel) model;
-		}
-		return null;
-	}
-
-	/**
 	 * Returns the <code>IDocument</code> of the editor's input.
 	 *
 	 * @return the document of the editor's input
@@ -154,165 +73,19 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate {
 	}
 	
 	/**
-	 * @see IUpdate#update()
-	 */
-	public void update() {
-		fMarkers= getMarkers();
-	}
-
-	/**
 	 * @see Action#run()
 	 */
 	public void run() {
-		report(null);
-		if (fMarkers.isEmpty()) {
-			addMarker();
-		} else {
-			removeMarkers(fMarkers);
-		}
-	}
-	
-	protected List getMarkers() {
-		
-		List breakpoints= new ArrayList();
-		
-		IResource resource= getResource();
-		IDocument document= getDocument();
-		AbstractMarkerAnnotationModel model= getAnnotationModel();
-		
-		if (model != null) {
-			try {
-				
-				IMarker[] markers= null;
-				if (resource instanceof IFile)
-					markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
-				else {
-					IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-					markers= root.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
-				}
-				
-				if (markers != null) {
-					IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-					for (int i= 0; i < markers.length; i++) {
-						IBreakpoint breakpoint= breakpointManager.getBreakpoint(markers[i]);
-						if (breakpoint != null && breakpointManager.isRegistered(breakpoint) && 
-								includesRulerLine(model.getMarkerPosition(markers[i]), document))
-							breakpoints.add(markers[i]);
-					}
-				}
-			} catch (CoreException x) {
-				JDIDebugUIPlugin.log(x.getStatus());
-			}
-		}
-		return breakpoints;
-	}
-	
-	protected void addMarker() {
-		
-		IEditorInput editorInput= getTextEditor().getEditorInput();
-		
 		try {
 			IDocument document= getDocument();
 			int lineNumber= getVerticalRulerInfo().getLineOfLastMouseButtonActivity();
 			IRegion line= document.getLineInformation(lineNumber);
-			// Ruler and Document are 0-based, editor is 1-based. We need the editor line number after this point
-			lineNumber++;
-
-			IType type= null;
-			IResource resource;
-			IClassFile classFile= (IClassFile)editorInput.getAdapter(IClassFile.class);
-			if (classFile != null) {
-				type= classFile.getType();
-				// bug 34856 - if this is an inner type, ensure the breakpoint is not
-				// being added to the outer type
-				if (type.getDeclaringType() != null) {
-					ISourceRange sourceRange = type.getSourceRange();
-					int offset = line.getOffset();
-					int start = sourceRange.getOffset();
-					int end = start + sourceRange.getLength();
-					if (offset < start || offset > end) {
-						report(MessageFormat.format(ActionMessages.getString("ManageBreakpointRulerAction.Breakpoints_can_only_be_created_within_the_type_associated_with_the_editor__{0}._1"), new String[]{type.getTypeQualifiedName()})); //$NON-NLS-1$
-						return;
-					}
-				}
-				resource= BreakpointUtils.getBreakpointResource(type);
-			} else if (editorInput instanceof IFileEditorInput) {
-				IWorkingCopyManager manager= JavaUI.getWorkingCopyManager();
-				ICompilationUnit unit= manager.getWorkingCopy(editorInput);
-				if (unit != null) {
-					synchronized (unit) {
-						unit.reconcile(false/*don't create ast*/, false/*don't force problem detection*/, null/*use primary owner*/, null/*no progress monitor*/);
-					}
-					IJavaElement e= unit.getElementAt(line.getOffset());
-					if (e instanceof IType) {
-						type= (IType)e;
-					} else if (e instanceof IMember) {
-						type= ((IMember)e).getDeclaringType();
-					}
-					// bug 52385: we don't want local and anonymous types from compilation unit,
-					// we are getting 'not-always-correct' names for them.
-					try {
-						while (type != null && type.isLocal()) {
-							type= type.getDeclaringType();
-						}
-					} catch (JavaModelException ex) {
-						JDIDebugUIPlugin.log(ex);
-					}
-				}
-				if (type != null) {
-					resource= BreakpointUtils.getBreakpointResource(type);
-				} else {
-					resource= ((IFileEditorInput)editorInput).getFile();
-				}
-			} else {
-				resource= ResourcesPlugin.getWorkspace().getRoot();
-			}
-
-			Map attributes= new HashMap(10);
-			String typeName= null;
-			IJavaLineBreakpoint breakpoint= null;
-			if (type != null) {
-				IJavaProject project= type.getJavaProject();
-				typeName= type.getFullyQualifiedName();
-				if (type.exists() && project != null && project.isOnClasspath(type)) {
-					if (JDIDebugModel.lineBreakpointExists(typeName, lineNumber) == null) {
-						int start= line.getOffset();
-						int end= start + line.getLength() - 1;
-						BreakpointUtils.addJavaBreakpointAttributesWithMemberDetails(attributes, type, start, end);
-					}
-				}
-				breakpoint= JDIDebugModel.createLineBreakpoint(resource, typeName, lineNumber, -1, -1, 0, true, attributes);
-			}
-			new BreakpointLocationVerifierJob(document, breakpoint, lineNumber, typeName, type, resource, (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class)).schedule();
-		} catch (DebugException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
+			ITextSelection selection = new TextSelection(document, line.getOffset(), line.getLength());
+			fBreakpointAdapter.toggleLineBreakpoints(fTextEditor, selection);
 		} catch (BadLocationException e) {
 			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
-		}
-	}
-	
-	protected void removeMarkers(List markers) {
-		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-		try {
-			Iterator e= markers.iterator();
-			while (e.hasNext()) {
-				IBreakpoint breakpoint= breakpointManager.getBreakpoint((IMarker) e.next());
-				breakpointManager.removeBreakpoint(breakpoint, true);
-			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.removing.message1"), e); //$NON-NLS-1$
+			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
 		}
-	}
-	
-	protected void report(final String message) {
-		IEditorStatusLine statusLine= (IEditorStatusLine) getTextEditor().getAdapter(IEditorStatusLine.class);
-		if (statusLine != null) {
-			statusLine.setMessage(true, message, null);
-		}
-		if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
-			Display.getCurrent().beep();
-		}
-	}
+	}		
 }
