@@ -76,6 +76,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	private ThreadReference fThread;
 	/**
+	 * Cache of previous name, used in case thread is garbage collected.
+	 */
+	private String fPreviousName;
+	/**
 	 * Collection of stack frames
 	 */
 	private List fStackFrames;
@@ -906,8 +910,15 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	public String getName() throws DebugException {
 		try {
-			return getUnderlyingThread().name();
+			fPreviousName = getUnderlyingThread().name(); 
+			return fPreviousName;
 		} catch (RuntimeException e) {
+			// Don't bother reporting the exception if we have the old name (bug 30785)
+			if (e instanceof ObjectCollectedException) {
+				if (fPreviousName != null) {
+					return fPreviousName;
+				}
+			}
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_thread_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not fall through, as
 			// #targetRequestFailed will thrown an exception
