@@ -15,12 +15,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.testplugin.DebugElementEventWaiter;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.widgets.Display;
@@ -41,10 +42,7 @@ public class RunToLineTests extends AbstractDebugTest {
 	public RunToLineTests(String name) {
 		super(name);
 	}
-	
-	class DummyAction extends Action {
-	}
-	
+
 	private Object fLock = new Object();
 	private IEditorPart fEditor = null;
 	
@@ -95,10 +93,51 @@ public class RunToLineTests extends AbstractDebugTest {
 	    
 	}
 
+	/**
+	 * Test a run to line, with no extra breakpoints.
+	 * 
+	 * @throws Exception
+	 */
 	public void testRunToLine() throws Exception {
+	    runToLine(55, 55, true);
+	}
+	
+	/**
+	 * Test a run to line, with an extra breakpoint, and preference to skip
+	 * 
+	 * @throws Exception
+	 */
+	public void testRunToLineSkipBreakpoint() throws Exception {
+	    createLineBreakpoint(53, "Breakpoints");
+	    runToLine(55, 55, true);
+	}	
+	
+	/**
+	 * Test a run to line, with an extra breakpoint, and preference to *not* skip
+	 * 
+	 * @throws Exception
+	 */
+	public void testRunToLineHitBreakpoint() throws Exception {
+	    createLineBreakpoint(53, "Breakpoints");
+	    runToLine(55, 53, false);
+	}	
+
+	/**
+	 * Runs to the given line number in the 'Breakpoints' source file, after stopping at the
+	 * first line in the main method.
+	 * 
+	 * @param lineNumber line number to run to, ONE BASED
+	 * @param expectedLineNumber the line number to be on after run-to-line (may differ from
+	 *  the target line number if the option to skip breakpoints is off).
+	 * @param skipBreakpoints preference value for "skip breakpoints during run to line"
+	 * @throws Exception
+	 */
+	public void runToLine(final int lineNumber, int expectedLineNumber, boolean skipBreakpoints) throws Exception {
 		String typeName = "Breakpoints";
 		IJavaLineBreakpoint breakpoint = createLineBreakpoint(52, typeName);
 		
+		boolean restore = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
+		DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, skipBreakpoints);
 		IJavaThread thread= null;
 		final IPartListener listener = new MyPartListener();
 		try {
@@ -131,10 +170,10 @@ public class RunToLineTests extends AbstractDebugTest {
                     assertNotNull("no run to line adapter", adapter);
                     IDocumentProvider documentProvider = editor.getDocumentProvider();
                     try {
-                        // position cursor to line 55
+                        // position cursor to line
                         documentProvider.connect(this);
                         IDocument document = documentProvider.getDocument(editor.getEditorInput());
-                        int lineOffset = document.getLineOffset(54); // document is 0 based!
+                        int lineOffset = document.getLineOffset(lineNumber - 1); // document is 0 based!
                         documentProvider.disconnect(this);
                         editor.selectAndReveal(lineOffset, 0);
                         // run to line
@@ -150,11 +189,11 @@ public class RunToLineTests extends AbstractDebugTest {
             DebugUIPlugin.getStandardDisplay().syncExec(r);
             waiter.waitForEvent();
             IStackFrame topStackFrame = thread.getTopStackFrame();
-            assertEquals("wrong line", 55, topStackFrame.getLineNumber());
+            assertEquals("wrong line", expectedLineNumber, topStackFrame.getLineNumber());
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-			
+			DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, restore);
 		    Runnable cleanup = new Runnable() {
                 public void run() {
                     IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -165,5 +204,4 @@ public class RunToLineTests extends AbstractDebugTest {
             display.asyncExec(cleanup);			
 		}		
 	}
-
 }
