@@ -167,7 +167,7 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 	}
 			
 	/**
-	 *@see ISourceLocator#getSourceElement
+	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(IStackFrame)
 	 */
 	public Object getSourceElement(IStackFrame stackFrame) {
 		if (stackFrame instanceof IJavaStackFrame) {

@@ -14,9 +14,6 @@ import java.util.EventObject;
  * <p>
  * Clients may instantiate this class.
  * </p>
- *
- * @see #addPropertyChangeListener
- * @see #IPropertyChangeListener
  * @since 2.0
  */
 public class PropertyChangeEvent extends EventObject {
