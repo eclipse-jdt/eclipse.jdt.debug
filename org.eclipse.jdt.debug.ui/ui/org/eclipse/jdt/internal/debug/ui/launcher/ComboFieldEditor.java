@@ -66,24 +66,39 @@ public class ComboFieldEditor extends FieldEditor {
 	 * @see FieldEditor#adjustForNumColumns(int)
 	 */
 	protected void adjustForNumColumns(int numColumns) {
-		Control control = getLabelControl();
-		if (control != null) {
-			((GridData)control.getLayoutData()).horizontalSpan = numColumns;
+		if (numColumns > 1) {
+			Control control = getLabelControl();
+			int left = numColumns;
+			if (control != null) {
+				((GridData)control.getLayoutData()).horizontalSpan = 1;
+				left = left - 1;
+			}
+			((GridData)fCombo.getLayoutData()).horizontalSpan = left;
+		} else {
+			Control control = getLabelControl();
+			if (control != null) {
+				((GridData)control.getLayoutData()).horizontalSpan = 1;
+			}
+			((GridData)fCombo.getLayoutData()).horizontalSpan = 1;			
 		}
-		((GridData)fCombo.getLayoutData()).horizontalSpan = numColumns;
 	}
 
 	/**
 	 * @see FieldEditor#doFillIntoGrid(Composite, int)
 	 */
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
+		int comboC = 1;
+		if (numColumns > 1) {
+			comboC = numColumns - 1;
+		}
 		Control control = getLabelControl(parent);
 		GridData gd = new GridData();
-		gd.horizontalSpan = numColumns;
+		gd.horizontalSpan = 1;
 		control.setLayoutData(gd);
 		control = getComboBoxControl(parent);
 		gd = new GridData();
-		gd.horizontalSpan = numColumns;
+		gd.horizontalSpan = comboC;
+		gd.horizontalAlignment = GridData.FILL;
 		control.setLayoutData(gd);
 	}
 

@@ -155,6 +155,7 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		Group group = new Group(comp, SWT.NONE);
 		group.setText(LauncherMessages.getString("JavaConnectTab.Connection_Properties_1")); //$NON-NLS-1$
 		y = new GridLayout();
+		y.numColumns = 2;
 		group.setLayout(y);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(gd);		
@@ -205,12 +206,6 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 			if (arg instanceof Connector.IntegerArgument) {
 				store.setDefault(arg.name(), ((Connector.IntegerArgument)arg).intValue());
 				field = new IntegerFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);
-			} else if (arg instanceof Connector.StringArgument) {
-				store.setDefault(arg.name(), arg.value());
-				field = new StringFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);
-			} else if (arg instanceof Connector.BooleanArgument) {
-				store.setDefault(arg.name(), ((Connector.BooleanArgument)arg).booleanValue());
-				field = new BooleanFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);					
 			} else if (arg instanceof Connector.SelectedArgument) {
 				List choices = ((Connector.SelectedArgument)arg).choices();
 				String[][] namesAndValues = new String[choices.size()][2];
@@ -224,6 +219,12 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 				}
 				store.setDefault(arg.name(), arg.value());
 				field = new ComboFieldEditor(arg.name(), getLabel(arg.label()), namesAndValues, fArgumentComposite);
+			} else if (arg instanceof Connector.StringArgument) {
+				store.setDefault(arg.name(), arg.value());
+				field = new StringFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);
+			} else if (arg instanceof Connector.BooleanArgument) {
+				store.setDefault(arg.name(), ((Connector.BooleanArgument)arg).booleanValue());
+				field = new BooleanFieldEditor(arg.name(), getLabel(arg.label()), fArgumentComposite);					
 			}
 			field.fillIntoGrid(fArgumentComposite, 2);
 			field.setPreferenceStore(store);
