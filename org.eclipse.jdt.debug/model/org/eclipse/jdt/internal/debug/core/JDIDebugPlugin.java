@@ -93,8 +93,7 @@ public class JDIDebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Instantiates and starts up the hot code replace
-	 * manager.
+	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
 		fJavaHCRMgr= JavaHotCodeReplaceManager.getDefault();
@@ -111,6 +110,8 @@ public class JDIDebugPlugin extends Plugin {
 
 	/**
 	 * Shutdown the HCR mgr and the Java debug targets.
+	 * 
+	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
 		fJavaHCRMgr.shutdown();
