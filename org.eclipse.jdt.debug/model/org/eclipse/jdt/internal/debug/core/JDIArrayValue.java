@@ -6,6 +6,7 @@ package org.eclipse.jdt.internal.debug.core;
  */
  
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaArray;
@@ -129,7 +130,7 @@ public class JDIArrayValue extends JDIValue implements IJavaArray {
 		try {
 			return getArrayReference().getValues();
 		} catch (IndexOutOfBoundsException e) {
-			throw e;
+			return Collections.EMPTY_LIST;
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format("{0} occurred while retrieving values from array.", new String[] {e.toString()}), e);
 		}
