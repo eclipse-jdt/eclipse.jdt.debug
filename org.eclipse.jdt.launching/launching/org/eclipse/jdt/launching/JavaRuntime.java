@@ -444,7 +444,7 @@ public final class JavaRuntime {
 	 * @since 2.0
 	 */
 	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IResource resource) {
-		IClasspathEntry cpe = JavaCore.newLibraryEntry(resource.getLocation(), null, null);
+		IClasspathEntry cpe = JavaCore.newLibraryEntry(resource.getFullPath(), null, null);
 		return newRuntimeClasspathEntry(cpe);
 	}
 	
