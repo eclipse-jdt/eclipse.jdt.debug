@@ -59,14 +59,6 @@
 	</view>
 </extension>
 
-<extension point = "org.eclipse.debug.core.launchConfigurationTypes">
-   <launchConfigurationType id="org.eclipse.jdt.debug.ui.localJavaApplication"
-	   name="%javaApplication"
-	   delegate="org.eclipse.jdt.internal.debug.ui.JavaApplicationLaunchConfigurationDelegate"
-	   modes= "run, debug">
-   </launchConfigurationType>
-</extension>
-
 <extension point="org.eclipse.ui.popupMenus">
 	<viewerContribution
 		id="org.eclipse.jdt.debug.AccessWatchpointToggleActions"
@@ -495,5 +487,23 @@
 		public="false"
    		modes="debug" />
 </extension>	
+
+<extension point = "org.eclipse.debug.core.launchConfigurationTypes">
+   <launchConfigurationType
+   	   id="org.eclipse.jdt.debug.ui.localJavaApplication"
+	   name="%javaApplication"
+	   delegate="org.eclipse.jdt.internal.debug.ui.JavaApplicationLaunchConfigurationDelegate"
+	   modes= "run, debug">
+   </launchConfigurationType>
+</extension>
+
+<extension point = "org.eclipse.debug.ui.launchConfigurationTabs">
+	<launchConfigurationTab
+		id="org.eclipse.jdt.debug.ui.launchConfigurationTab.Main"
+		type ="org.eclipse.jdt.debug.ui.localJavaApplication"
+		class="org.eclipse.debug.internal.ui.launcher.MainTab"
+		name="Main">
+	</launchConfigurationTab>
+</extension>
 
 </plugin>
