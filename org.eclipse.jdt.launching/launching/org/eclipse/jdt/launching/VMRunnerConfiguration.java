@@ -32,6 +32,7 @@ public class VMRunnerConfiguration {
 	private String[] fBootClassPath;
 	private String fWorkingDirectory;
 	private Map fVMSpecificAttributesMap;
+	private boolean fResume = true;
 	
 	private static final String[] fgEmpty= new String[0];
 	
@@ -239,4 +240,27 @@ public class VMRunnerConfiguration {
 	public String getWorkingDirectory() {
 		return fWorkingDirectory;
 	}	
+	
+	/**
+	 * Sets whether the VM is resumed on startup when launched in
+	 * debug mode. Has no effect when not in debug mode.
+	 *  
+	 * @param resume whehter to resume the VM on startup
+	 * @since 3.0
+	 */
+	public void setResumeOnStartup(boolean resume) {
+		fResume = resume;
+	}
+	
+	/**
+	 * Returns whether the VM is resumed on startup when lanched
+	 * in debug mode. Has no effect when no in debug mode. Default
+	 * value is <code>true</code> for backwards compatibility.
+	 * 
+	 * @return whether to resume the VM on startup
+	 * @since 3.0
+	 */
+	public boolean isResumeOnStartup() {
+		return fResume;
+	}
 }

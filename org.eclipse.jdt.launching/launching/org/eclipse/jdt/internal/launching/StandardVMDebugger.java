@@ -250,7 +250,7 @@ public class StandardVMDebugger extends StandardVMRunner {
 						
 						VirtualMachine vm= runnable.getVirtualMachine();
 						if (vm != null) {
-							JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false);
+							JDIDebugModel.newDebugTarget(launch, vm, renderDebugTarget(config.getClassToLaunch(), port), process, true, false, config.isResumeOnStartup());
 							subMonitor.worked(1);
 							subMonitor.done();
 						}
