@@ -231,6 +231,9 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 */
 	protected void displayDefaultClasspath() {
 		ILaunchConfiguration config = getLaunchConfiguration();
+		if (config.isWorkingCopy()) {
+			config= ((ILaunchConfigurationWorkingCopy)config).getOriginal();
+		}
 		if (config == null) {
 			setClasspathEntries(new IRuntimeClasspathEntry[0]);
 		} else {
