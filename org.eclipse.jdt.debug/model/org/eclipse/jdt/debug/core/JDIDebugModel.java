@@ -127,7 +127,7 @@ public class JDIDebugModel {
 	 * @exception DebugException if unable to create the breakpoint marker due
 	 *  to a lower level exception.
 	 */
-	public static IJavaBreakpoint createLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd, int hitCount) throws DebugException {
+	public static IJavaLineBreakpoint createLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd, int hitCount) throws DebugException {
 		return new JavaLineBreakpoint(type, lineNumber, charStart, charEnd, hitCount);
 	}
 	
@@ -155,7 +155,7 @@ public class JDIDebugModel {
 	 * @exception DebugException if unable to create the breakpoint marker due
 	 *  to a lower level exception.
 	 */
-	public static IJavaBreakpoint createRunToLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd) throws DebugException {
+	public static IJavaRunToLineBreakpoint createRunToLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd) throws DebugException {
 		return new JavaRunToLineBreakpoint(type, lineNumber, charStart, charEnd);
 	}
 	
@@ -175,7 +175,7 @@ public class JDIDebugModel {
 	 * @exception DebugException if unable to create the breakpoint marker due
 	 *  to a lower level exception.
 	 */
-	public static IJavaBreakpoint createExceptionBreakpoint(final IType exception, final boolean caught, final boolean uncaught, final boolean checked) throws DebugException {
+	public static IJavaExceptionBreakpoint createExceptionBreakpoint(final IType exception, final boolean caught, final boolean uncaught, final boolean checked) throws DebugException {
 		return new JavaExceptionBreakpoint(exception, caught, uncaught, checked);
 	}
 
@@ -193,7 +193,7 @@ public class JDIDebugModel {
 	 * @exception DebugException if unable to create the breakpoint marker due
 	 * 	to a lower level exception
 	 */
-	public static IJavaBreakpoint createWatchpoint(final IField field, final int hitCount) throws DebugException {
+	public static IJavaWatchpoint createWatchpoint(final IField field, final int hitCount) throws DebugException {
 		return new JavaWatchpoint(field, hitCount);
 	}
 
@@ -211,7 +211,7 @@ public class JDIDebugModel {
 	 * @exception DebugException if unable to create the breakpoint marker due
 	 *  to a lower level exception.
 	 */
-	public static IJavaBreakpoint createMethodEntryBreakpoint(final IMethod method, final int hitCount) throws DebugException {
+	public static IJavaMethodEntryBreakpoint createMethodEntryBreakpoint(final IMethod method, final int hitCount) throws DebugException {
 		return new JavaMethodEntryBreakpoint(method, hitCount);
 	}
 	
