@@ -30,7 +30,6 @@ public abstract class ToggleFilterAction extends ToggleDelegateAction {
 						ViewerFilter addedFilter = filters[i];
 						if (addedFilter.equals(filter)) {
 							alreadyAdded = true;
-							System.out.println("Already added");
 							break;
 						}
 					}
