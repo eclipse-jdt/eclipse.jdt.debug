@@ -538,17 +538,6 @@
             targetID="org.eclipse.jdt.debug.ui.MonitorsView"
             id="org.eclipse.jdt.debug.MonitorsViewPopupActions">
          <action
-               id="org.eclipse.jdt.ui.actions.MonitorTrick"
-               hoverIcon="icons/full/monitor/trick_icon.gif"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTrick"
-               disabledIcon="icons/full/monitor/trick_icon.gif"
-               icon="icons/full/monitor/trick_icon.gif"
-               helpContextId="drop_to_frame_action_context"
-               label="Trick the VM"
-               menubarPath="vmGroup"
-               tooltip="Trick the VM">
-         </action>
-         <action
                id="org.eclipse.jdt.ui.actions.MonitorTrace"
                hoverIcon="icons/full/monitor/suspendall_icon.gif"
                class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTrace"
@@ -700,15 +689,6 @@
 	   <viewContribution
             targetID="org.eclipse.jdt.debug.ui.MonitorsView"
             id="org.eclipse.jdt.debug.MonitorsActions">
-         <action
-               label="Trick the VM"
-               icon="icons/full/monitor/trick_icon.gif"
-               helpContextId="drop_to_frame_action_context"
-               tooltip="Trick the VM"
-               class="org.eclipse.jdt.internal.debug.ui.monitors.MonitorTrick"
-               toolbarPath="vmGroup"
-               id="org.eclipse.jdt.ui.actions.MonitorTrick">
-         </action>
          <action
                id="org.eclipse.jdt.ui.actions.MonitorTrace"
                toolbarPath="vmGroup"
