@@ -81,6 +81,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 			try {
 				currentJDK= currentJDK.getCanonicalFile();
 			} catch (IOException ex) {
+				// NeedWork
 			}
 			File[] versions= versionDir.listFiles();
 			for (int i= 0; i < versions.length; i++) {
@@ -108,7 +109,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 						try {
 							JavaRuntime.setDefaultVMInstall(rvm, null);
 						} catch (CoreException e) {
-							// exception intentionally ignored
+							// NeedWork
 						}
 					}
 				}
@@ -187,6 +188,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 			if (path.startsWith(JVM_VERSION_LOC) && path.endsWith(post))
 				id= path.substring(JVM_VERSION_LOC.length(), path.length()-post.length());
 		} catch (IOException ex) {
+			// NeedWork
 		}
 		if (id != null) {
 			File docLocation= new File(JAVADOC_LOC + id);
@@ -194,6 +196,7 @@ public class MacOSXVMInstallType extends StandardVMType {
 				try {
 					return new URL("file", "", JAVADOC_LOC + id);	//$NON-NLS-1$ //$NON-NLS-2$
 				} catch (MalformedURLException ex) {
+					// NeedWork
 				}
 			}
 		}
