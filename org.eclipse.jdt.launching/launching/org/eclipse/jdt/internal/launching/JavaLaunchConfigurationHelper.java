@@ -58,6 +58,8 @@ import org.eclipse.jdt.launching.sourcelookup.JavaProjectSourceLocation;
  */
 public class JavaLaunchConfigurationHelper implements IResourceChangeListener,
 																		 ILaunchConfigurationListener {
+																		 	
+	private static JavaLaunchConfigurationHelper fgDefault = null;
 
 	private class LocalJavaConfigurationVisitor implements IResourceDeltaVisitor {
 		
@@ -129,16 +131,28 @@ public class JavaLaunchConfigurationHelper implements IResourceChangeListener,
 	private LocalJavaConfigurationVisitor fResourceVisitor ;
 
 	/**
+	 * Creates a new helper
+	 */
+	private JavaLaunchConfigurationHelper() {
+		fgDefault = this;
+	}
+	
+	/**
 	 * Fill the internal type-to-config map with all currently known local java configs, then
 	 * register for resource change & launch configuration events.  Launch configuration events
 	 * allow this class to keep its internal map up to date as far as what configurations of 
 	 * type 'local java' exist, and resource change events are when this class deletes all
 	 * 'local java' type configs that specified the deleted type as their main type.
 	 */
-	public JavaLaunchConfigurationHelper() {
+	void startup() {
 		initializeConfigMap();
-		ResourcesPlugin.getPlugin().getWorkspace().addResourceChangeListener(this);
-		getLaunchManager().addLaunchConfigurationListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		getLaunchManager().addLaunchConfigurationListener(this);		
+	}
+	
+	void shutdown() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		getLaunchManager().removeLaunchConfigurationListener(this);
 	}
 	
 	/**
@@ -370,6 +384,16 @@ public class JavaLaunchConfigurationHelper implements IResourceChangeListener,
 	protected static void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID,
 		  code, message, exception));
+	}
+	
+	/**
+	 * Returns the default helper
+	 */
+	public static JavaLaunchConfigurationHelper getDefault() {
+		if (fgDefault == null) {
+			fgDefault = new JavaLaunchConfigurationHelper();
+		}
+		return fgDefault;
 	}
 	
 	/**

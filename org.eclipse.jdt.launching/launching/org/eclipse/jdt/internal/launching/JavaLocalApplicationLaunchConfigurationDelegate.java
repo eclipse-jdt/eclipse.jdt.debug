@@ -38,14 +38,6 @@ import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
  */
 public class JavaLocalApplicationLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
-
-	/**
-	 * Create the helper class that handles deleting configs whose underlying main type gets deleted
-	 */
-	static {
-		new JavaLaunchConfigurationHelper();
-	}
-
 	/**
 	 * @see ILaunchConfigurationDelegate#launch(ILaunchConfiguration, String, IProgressMonitor)
 	 */

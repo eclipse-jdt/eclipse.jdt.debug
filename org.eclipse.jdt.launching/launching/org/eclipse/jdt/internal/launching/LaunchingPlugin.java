@@ -4,6 +4,7 @@
  */
 package org.eclipse.jdt.internal.launching;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -11,6 +12,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 
 public class LaunchingPlugin extends Plugin {
+	
+	/**
+	 * Monitors resource deltas related to launch configs
+	 */
+	private JavaLaunchConfigurationHelper fHelper;
 	
 	public static final String PLUGIN_ID= "org.eclipse.jdt.launching"; //$NON-NLS-1$
 	
@@ -38,12 +44,22 @@ public class LaunchingPlugin extends Plugin {
 	}	
 	
 	/**
-	 * Clears zip file cache
+	 * Clears zip file cache.
+	 * Shutdown the launch config helper.
 	 * 
 	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() {
 		ArchiveSourceLocation.shutdown();
+		JavaLaunchConfigurationHelper.getDefault().shutdown();
 	}
 		
+	/**
+	 * @see Plugin#startup()
+	 */
+	public void startup() throws CoreException {
+		super.startup();
+		JavaLaunchConfigurationHelper.getDefault().startup();
+	}
+
 }
