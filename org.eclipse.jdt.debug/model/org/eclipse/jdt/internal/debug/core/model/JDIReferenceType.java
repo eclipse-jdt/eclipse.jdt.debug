@@ -192,7 +192,7 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 			}
 		}
 		String signature= type.signature();
-		StringBuffer res= new StringBuffer(signature.substring(1, signature.length() - 1).replace('/','.'));
+		StringBuffer res= new StringBuffer(getTypeName(signature));
 		String genericSignature= type.genericSignature();
 		if (genericSignature != null) {
 			String[] typeParameters= Signature.getTypeParameters(genericSignature);
@@ -205,6 +205,29 @@ public abstract class JDIReferenceType extends JDIType implements IJavaReference
 			}
 		}
 		return res.toString();
+	}
+	
+	/**
+	 * Return the name from the given signature.
+	 * Keep the '$' characters.
+	 */
+	static public String getTypeName(String genericTypeSignature) {
+		int arrayDimension= 0;
+		while (genericTypeSignature.charAt(arrayDimension) == '[') {
+			arrayDimension++;
+		}
+		int parameterStart= genericTypeSignature.indexOf('<');
+		StringBuffer name= new StringBuffer();
+		if (parameterStart < 0) {
+			name.append(genericTypeSignature.substring(arrayDimension + 1, genericTypeSignature.length() - 1).replace('/', '.'));
+		} else {
+			name.append(genericTypeSignature.substring(arrayDimension + 1, parameterStart).replace('/', '.'));
+			name.append(Signature.toString(genericTypeSignature).substring(parameterStart - 1 - arrayDimension).replace('/', '.'));
+		}
+		for (int i= 0; i < arrayDimension; i++) {
+			name.append("[]"); //$NON-NLS-1$
+		}
+		return name.toString();
 	}
 
 	/* (non-Javadoc)
