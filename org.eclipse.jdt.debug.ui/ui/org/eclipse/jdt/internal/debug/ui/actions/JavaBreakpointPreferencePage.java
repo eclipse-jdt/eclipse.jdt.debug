@@ -79,10 +79,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	}
 
 	class BreakpointStringFieldEditor extends StringFieldEditor {
-		public BreakpointStringFieldEditor(
-			String name,
-			String labelText,
-			Composite parent) {
+		public BreakpointStringFieldEditor(String name,	String labelText, Composite parent) {
 			super(name, labelText, parent);
 		}
 
@@ -389,6 +386,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			fConditionTextControl.setEnabled(((IJavaLineBreakpoint)getBreakpoint()).isConditionEnabled());
 		} catch (CoreException ce) {
 		}
+		fCondition.setEmptyStringAllowed(false);
 		addField(fCondition);
 	}
 	
