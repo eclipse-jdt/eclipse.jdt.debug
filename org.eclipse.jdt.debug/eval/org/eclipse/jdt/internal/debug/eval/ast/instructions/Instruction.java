@@ -224,7 +224,7 @@ public abstract class Instruction {
 
 
 	protected IJavaArrayType getArrayType(String typeSignature, int dimension) throws CoreException {
-		String qualifiedName = Signature.toString(typeSignature);
+		String qualifiedName = RuntimeSignature.toString(typeSignature);
 		String braces = ""; //$NON-NLS-1$
 		for (int i = 0; i < dimension; i++) {
 			qualifiedName += "[]"; //$NON-NLS-1$
