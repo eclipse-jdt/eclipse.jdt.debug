@@ -1,17 +1,14 @@
 package org.eclipse.jdt.launching;
 
-import org.eclipse.core.runtime.Preferences;
-
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.internal.launching.LaunchingPlugin;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+ 
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
- * A VM install changed listener is notified 
+ * A VM install changed listener is notified when
  * the workspace default VM install changes, or when an attribute of
  * a specific VM install changes.
  * Listeners register with <code>JavaRuntime</code>.
