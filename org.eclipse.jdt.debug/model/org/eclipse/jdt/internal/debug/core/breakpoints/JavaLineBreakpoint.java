@@ -550,7 +550,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 	}
 
 	protected String getMarkerMessage(boolean conditionEnabled, String condition, int hitCount) throws CoreException {
-		if (conditionEnabled) {
+		if (conditionEnabled && condition != null) {
 			String message= super.getMarkerMessage(hitCount);
 			if (message == null) {
 				message= ""; //$NON-NLS-1$

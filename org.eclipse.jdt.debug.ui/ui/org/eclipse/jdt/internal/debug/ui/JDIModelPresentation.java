@@ -1487,7 +1487,7 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 	}
 	
 	protected void appendConditional(IJavaLineBreakpoint breakpoint, StringBuffer buffer) throws CoreException {
-		if (breakpoint.isConditionEnabled()) {
+		if (breakpoint.isConditionEnabled() && breakpoint.getCondition() != null) {
 			buffer.append(' ');
 			buffer.append(DebugUIMessages.getString("JDIModelPresentation.[conditional]_2")); //$NON-NLS-1$
 		}

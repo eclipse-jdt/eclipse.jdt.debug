@@ -180,16 +180,11 @@ public class JavaBreakpointPropertiesDialog extends Dialog implements IPreferenc
 							break;
 						case 'N': // condition
 							IJavaLineBreakpoint lineBreakpoint= (IJavaLineBreakpoint)breakpoint;
-							String condition= getPreferenceStore().getString(JavaBreakpointPreferenceStore.CONDITION);
-							lineBreakpoint.setCondition(condition);
-							if (condition.length() == 0) {
-								lineBreakpoint.setConditionEnabled(false);
-							}
+							lineBreakpoint.setCondition(getPreferenceStore().getString(JavaBreakpointPreferenceStore.CONDITION));
 							break;
 						case 'D': // condition_enabled
 							lineBreakpoint= (IJavaLineBreakpoint)breakpoint;
-							boolean enabled= getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.CONDITION_ENABLED) && (getPreferenceStore().getString(JavaBreakpointPreferenceStore.CONDITION).length() != 0);
-							lineBreakpoint.setConditionEnabled(enabled);
+							lineBreakpoint.setConditionEnabled(getPreferenceStore().getBoolean(JavaBreakpointPreferenceStore.CONDITION_ENABLED));
 							break;
 					}
 					break;

@@ -78,7 +78,11 @@ public class ConditionalBreakpointErrorDialog extends ErrorDialog {
 	protected void buttonPressed(int id) {
 		if (id == IDialogConstants.OK_ID) {  // was the Ok button pressed?
 			try {
-				fBreakpoint.setCondition(fTextArea.getText());
+				String text= fTextArea.getText();
+				fBreakpoint.setCondition(text);
+				if (text == null || text.trim().length() == 0) {
+					fBreakpoint.setConditionEnabled(false);
+				}
 			} catch (CoreException exception) {
 			}
 		}
