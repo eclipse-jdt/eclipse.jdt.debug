@@ -2047,6 +2047,13 @@
             command="org.eclipse.jdt.debug.ui.commands.Display"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <keyBinding
+      		platform="gtk"
+            string="Ctrl+Shift+V"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.jdt.debug.ui.commands.Display"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <command
             name="%ActionDefinition.inspect.name"
             description="%ActionDefinition.inspect.description"
