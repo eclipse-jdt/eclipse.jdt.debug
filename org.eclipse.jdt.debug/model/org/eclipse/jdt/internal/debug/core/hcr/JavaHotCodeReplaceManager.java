@@ -588,7 +588,7 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 		IProject project= null;
 		for (int j= frames.size() - 1; j >= 0; j--) {
 			frame= (JDIStackFrame) frames.get(j);
-			if (replacedClassNames.contains(frame.getDeclaringTypeName())) {
+			if (containsChangedType(frame, replacedClassNames)) {
 				// smart drop to frame support
 				compilationUnit= getCompilationUnit(frame);
 				try {
@@ -624,6 +624,30 @@ public class JavaHotCodeReplaceManager implements IResourceChangeListener, ILaun
 			}
 		}
 		return affectedFrame;
+	}
+	
+	/**
+	 * Returns whether the given frame's declaring type was changed
+	 * based on the given list of changed class names.
+	 */
+	protected boolean containsChangedType(JDIStackFrame frame, List replacedClassNames) throws DebugException {
+		String declaringTypeName= frame.getDeclaringTypeName();
+		// Check if the frame's declaring type was changed
+		if (replacedClassNames.contains(declaringTypeName)) {
+			return true;
+		}
+		// Check if one of the frame's declaring type's inner classes have changed
+		Iterator iter= replacedClassNames.iterator();
+		int index;
+		String className= null;
+		while (iter.hasNext()) {
+			className= (String) iter.next();
+			index= className.indexOf('$');
+			if (index > -1 && declaringTypeName.equals(className.substring(0, index))) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
