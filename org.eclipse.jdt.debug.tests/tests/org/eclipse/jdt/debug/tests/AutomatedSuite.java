@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
-import org.eclipse.jdt.debug.testplugin.TestPluginLauncher;
 import org.eclipse.jdt.debug.tests.core.BootpathTests;
 import org.eclipse.jdt.debug.tests.core.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathContainerTests;
@@ -125,10 +124,6 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(RemoteAttachTests.class));
 	}
 	
-	public static void main(String[] args) {
-		TestPluginLauncher.run(TestPluginLauncher.getLocationFromProperties(), AutomatedSuite.class, args);
-	}		
-
 	/**
 	 * Runs the tests and collects their result in a TestResult.
 	 * The debug tests cannot be run in the UI thread or the event
