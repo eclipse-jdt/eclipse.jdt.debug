@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -590,26 +591,35 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * Remove all requests that this breakpoint has installed in the given
 	 * debug target.
 	 */
-	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
-		List requests = getRequests(target);
-		Iterator iter = requests.listIterator();
-		EventRequest req;
-		while (iter.hasNext()) {
-			req = (EventRequest)iter.next();
-			try {				
-				if (target.isAvailable() && !isExpired(req)) { // cannot delete an expired request
-					target.getEventRequestManager().deleteEventRequest(req); // disable & remove
+	public void removeFromTarget(final JDIDebugTarget target) throws CoreException {
+		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+			// This operation is wrapped in a workspace runnable so that the
+			// marker changes which result from deregistering a request are
+			// fired after we're done iterating over the requests.
+			// Failing to do so can result in a ConcurrentModificationException
+			public void run(IProgressMonitor monitor) throws CoreException {
+				List requests = getRequests(target);
+				Iterator iter = requests.iterator();
+				EventRequest req;
+				while (iter.hasNext()) {
+					req = (EventRequest)iter.next();
+					try {				
+						if (target.isAvailable() && !isExpired(req)) { // cannot delete an expired request
+							target.getEventRequestManager().deleteEventRequest(req); // disable & remove
+						}
+					} catch (VMDisconnectedException e) {
+						if (target.isAvailable()) {
+							JDIDebugPlugin.logError(e);
+						}
+					} catch (RuntimeException e) {
+						JDIDebugPlugin.logError(e);
+					} finally {
+						deregisterRequest(req, target);
+					}
 				}
-			} catch (VMDisconnectedException e) {
-				if (target.isAvailable()) {
-					JDIDebugPlugin.logError(e);
-				}
-			} catch (RuntimeException e) {
-				JDIDebugPlugin.logError(e);
-			} finally {
-				deregisterRequest(req, target);
 			}
-		}
+		};
+		runnable.run(null);
 		fRequestsByTarget.remove(target);
 		fFilteredThreadsByTarget.remove(target);
 		
