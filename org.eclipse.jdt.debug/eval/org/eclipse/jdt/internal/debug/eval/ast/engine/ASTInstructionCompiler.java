@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
+import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
@@ -226,6 +227,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	private Stack fStack;
 
 	private int fCounter;
+	
+	// internal index used to create unique variable name
+	private int fUniqueIdIndex= 0;
 
 
 	/**
@@ -700,6 +704,92 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	public void endVisit(EmptyStatement node) {
 		if (!isActive() || hasErrors())
 			return;
+		storeInstruction();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.EnhancedForStatement)
+	 */
+	public void endVisit(EnhancedForStatement node) {
+		if (!isActive() || hasErrors())
+			return;
+
+		/* The structure of generated instructions is :
+		 *
+		 * For an array:
+		 * --
+		 * | <ParameterType>[] a= Expression
+		 * | int i= 0
+		 * | <ParameterType> <ParameterName>
+		 * --
+		 * --
+		 * | i < a.length
+		 * - jump to the instruction after the last jump if the condition is false.
+		 * --
+		 * --
+		 * | s= a[i]
+		 * | Body
+		 * --
+		 * --
+		 * - jump to the first instruction of the condition.
+		 *
+		 * For an Iterable:
+		 * --
+		 * | Iterator i= Expression.iterator()
+		 * | <ParameterType> <ParameterName>
+		 * --
+		 * --
+		 * | i.hasNext()
+		 * - jump to the instruction after the last jump if the condition is false.
+		 * --
+		 * --
+		 * | s= i.next()
+		 * | Body
+		 * --
+		 * --
+		 * - jump to the first instruction of the condition.
+		 *
+		 */
+
+		int bodyAddress= fInstructions.getEnd();
+		Instruction body= fInstructions.getInstruction(bodyAddress);
+		int conditionAddress= bodyAddress - body.getSize();
+		Instruction condition= fInstructions.getInstruction(conditionAddress);
+		int initAddress= conditionAddress - condition.getSize();
+		
+		// add conditional jump
+		ConditionalJump condJump= new ConditionalJump(false);
+		fInstructions.insert(condJump, conditionAddress + 1);
+		bodyAddress++;
+		fCounter++;
+		condJump.setOffset(body.getSize() + 1);
+		
+		// add jump
+		Jump jump= new Jump();
+		fInstructions.add(jump);
+		fCounter++;
+		jump.setOffset(initAddress - (bodyAddress + 1));
+		
+
+		// for each pending break or continue instruction which are related to
+		// this loop, set the offset of the corresponding jump.
+		String label= getLabel(node);
+		for (Iterator iter= fCompleteInstructions.iterator(); iter.hasNext();) {
+			CompleteInstruction instruction= (CompleteInstruction) iter.next();
+			if (instruction.fLabel == null || instruction.fLabel.equals(label)) {
+				iter.remove();
+				Jump jumpInstruction= instruction.fInstruction;
+				int instructionAddress= fInstructions.indexOf(jumpInstruction);
+				if (instruction.fIsBreak) {
+					// jump to the instruction after the last jump
+					jumpInstruction.setOffset((bodyAddress - instructionAddress) + 1);
+				} else {
+					// jump to the first instruction of the condition
+					jumpInstruction.setOffset(initAddress - instructionAddress);
+				}
+			}
+		}
+		
 		storeInstruction();
 	}
 
@@ -1711,6 +1801,109 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnhancedForStatement)
+	 */
+	public boolean visit(EnhancedForStatement node) {
+		if (!isActive()) {
+			return false;
+		}
+		
+		push(new NoOp(fCounter));
+		
+		
+		ITypeBinding typeBinding= node.getExpression().resolveTypeBinding();
+		Type paramType= node.getParameter().getType();
+		String typeSignature= getTypeSignature(paramType.resolveBinding());
+		int paramTypeId= getTypeId(paramType);
+		boolean isParamPrimitiveType= paramTypeId != Instruction.T_Object && paramTypeId != Instruction.T_String;
+		String paramIdentifier= node.getParameter().getName().getIdentifier();
+		
+		if (typeBinding.isArray()) {
+			// the expression returns an array
+			int idIndex= fUniqueIdIndex++;
+			String arrayIdentifier= "#a" + idIndex; //$NON-NLS-1$
+			String varIdentifier= "#i" + idIndex; //$NON-NLS-1$
+			push(new LocalVariableCreation(arrayIdentifier, typeSignature, 1, isParamPrimitiveType, true, fCounter));
+				node.getExpression().accept(this);
+			storeInstruction();
+			push(new LocalVariableCreation(varIdentifier, "I", 0, true, true, fCounter)); //$NON-NLS-1$
+				push(new PushInt(0));
+				storeInstruction();
+			storeInstruction();
+			push(new LocalVariableCreation(paramIdentifier, typeSignature, 0, isParamPrimitiveType, false, fCounter));
+			storeInstruction();
+			
+			push(new LessOperator(Instruction.T_int, Instruction.T_int, fCounter));
+				push(new PushLocalVariable(varIdentifier));
+				storeInstruction();
+				push(new PushArrayLength(fCounter));
+					push(new PushLocalVariable(arrayIdentifier));
+					storeInstruction();
+				storeInstruction();
+			storeInstruction();
+			
+			// conditionnal jump will be added here
+			
+			push(new NoOp(fCounter));
+				push(new AssignmentOperator(paramTypeId, paramTypeId, fCounter));
+					push(new PushLocalVariable(paramIdentifier));
+					storeInstruction();
+					push(new org.eclipse.jdt.internal.debug.eval.ast.instructions.ArrayAccess(fCounter));
+						push(new PushLocalVariable(arrayIdentifier));
+						storeInstruction();
+						push(new PostfixPlusPlusOperator(Instruction.T_int, fCounter));
+							push(new PushLocalVariable(varIdentifier));
+							storeInstruction();
+						storeInstruction();
+					storeInstruction();
+				storeInstruction();
+				push(new Pop());
+				storeInstruction();
+				node.getBody().accept(this);
+			storeInstruction();
+			
+			// jump will be added here
+			
+		} else {
+			// the expression returns a collection
+			String iteratorIdentifier= "#i" + fUniqueIdIndex++; //$NON-NLS-1$
+			push(new LocalVariableCreation(iteratorIdentifier, "Ljava/util/Iterator;", 0, false, true, fCounter)); //$NON-NLS-1$
+				push(new SendMessage("iterator", "()Ljava/util/Iterator;", 0, null, fCounter));  //$NON-NLS-1$//$NON-NLS-2$
+					node.getExpression().accept(this);
+				storeInstruction();
+			storeInstruction();
+			push(new LocalVariableCreation(paramIdentifier, typeSignature, 0, isParamPrimitiveType, false, fCounter));
+			storeInstruction();
+			
+			push(new SendMessage("hasNext", "()Z", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+				push(new PushLocalVariable(iteratorIdentifier));
+				storeInstruction();
+			storeInstruction();
+			
+			// conditional jump will be added here
+			
+			push(new NoOp(fCounter));
+				push(new AssignmentOperator(paramTypeId, paramTypeId, fCounter));
+					push(new PushLocalVariable(paramIdentifier));
+					storeInstruction();
+					push(new SendMessage("next", "()Ljava/lang/Object;", 0, null, fCounter)); //$NON-NLS-1$ //$NON-NLS-2$
+						push(new PushLocalVariable(iteratorIdentifier));
+						storeInstruction();
+					storeInstruction();
+				storeInstruction();
+				push(new Pop());
+				storeInstruction();
+				node.getBody().accept(this);
+			storeInstruction();
+			
+			// jump will be added here
+			
+		}
+
+		return false;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumConstantDeclaration)
 	 */
 	public boolean visit(EnumConstantDeclaration node) {
@@ -2410,10 +2603,10 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		char char0 = opToken.charAt(0);
 
 		switch (char0) {
-			case '+': // plus plus or unary plus
+			case '+': // plus plus
 				push(new PostfixPlusPlusOperator(expressionTypeId, fCounter));
 				break;
-			case '-': // minus minus or unary minus
+			case '-': // minus minus
 				push(new PostfixMinusMinusOperator(expressionTypeId, fCounter));
 				break;
 			default:

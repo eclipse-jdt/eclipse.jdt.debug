@@ -23,6 +23,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -145,7 +146,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			String[] localVariables= new String[numLocals];
 			for (int i = 0; i < numLocals; i++) {
 				localVariables[i] = locals[i].getName();
-				localTypesNames[i] = locals[i].getReferenceTypeName();
+				localTypesNames[i] = Signature.toString(locals[i].getGenericSignature()).replace('/', '.');
 			}
 			mapper = new EvaluationSourceGenerator(localTypesNames, localVariables, snippet);
 			unit = parseCompilationUnit(mapper.getSource(frame, javaProject).toCharArray(), mapper.getCompilationUnitName(), javaProject);
