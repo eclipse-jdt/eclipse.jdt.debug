@@ -53,7 +53,7 @@
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">
       <classpathVariableInitializer
-            variable="NULL_VARIALBE"
+            variable="NULL_VARIABLE"
             class="org.eclipse.jdt.debug.testplugin.NullVariableInitializer">
       </classpathVariableInitializer>
    </extension>
@@ -114,10 +114,18 @@
             label="Message Console Test"
             description="Tests the message (generic) console"
             id="org.eclipse.jdt.debug.tests.messageConsoleActionSet">
+            <menu
+               label="Run"
+               path="additions"
+               id="org.eclipse.ui.run">
+            <separator
+                  name="TestGroup">
+            </separator>
+         </menu>
          <action
                label="Test Message Console"
                class="org.eclipse.jdt.debug.tests.console.TestMessageConsoleActionDelegate"
-               menubarPath="org.eclipse.ui.run/additions"
+               menubarPath="org.eclipse.ui.run/TestGroup"
                id="org.eclipse.jdt.debug.tests.testMessageConsoleAction">
          </action>
       </actionSet>
