@@ -60,12 +60,12 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			}
 			List methods = refType.methodsByName(selector, signature);
 			if (methods.isEmpty()) {
-				requestFailed("Receiver does not implement selector {0} and signature {1}", null);
+				requestFailed(MessageFormat.format("Receiver does not implement selector \"{0}\" with signature \"{1}\"", new String[] {selector, signature}), null);
 			} else {
 				method = (Method)methods.get(0);
 			}
 		} catch (RuntimeException e) {
-			targetRequestFailed(MessageFormat.format("{0} occurred while performing method lookup for selector {1} and signature {2}", new String[] {e.toString(), selector, signature}), e);
+			targetRequestFailed(MessageFormat.format("{0} occurred while performing method lookup for selector \"{1}\" with signature \"{2}\"", new String[] {e.toString(), selector, signature}), e);
 		}
 		Value result = javaThread.invokeMethod(null, object, method, arguments);
 		return JDIValue.createValue((JDIDebugTarget)getDebugTarget(), result);
