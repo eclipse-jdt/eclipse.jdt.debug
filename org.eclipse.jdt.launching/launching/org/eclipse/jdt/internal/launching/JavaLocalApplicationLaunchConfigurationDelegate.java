@@ -5,8 +5,11 @@ package org.eclipse.jdt.internal.launching;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.text.MessageFormat;
+import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -16,11 +19,14 @@ import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jdt.launching.VMRunnerResult;
 import org.eclipse.jdt.launching.sourcelookup.JavaSourceLocator;
 
@@ -169,16 +175,18 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 
 	/**
 	 * Verifies a VM install is specified by the given 
-	 * launch configuration, and returns the VM install.
+	 * launch configuration, that its home location
+	 * is specified and exists, and returns the VM install.
 	 * 
 	 * @param configuration launch configuration
 	 * @return the VM install specified by the given 
 	 *  launch configuration
-	 * @exception CoreException if unable to retrieve the attribute
-	 * 	or the attribute is unspecified
+	 * @exception CoreException if unable to retrieve the attribute,
+	 * 	the attribute is unspecified, or if the home location is
+	 *  unspecified or does not exist
 	 */	
 	protected IVMInstall verifyVMInstall(ILaunchConfiguration configuration) throws CoreException {
-		verifyVMInstallType(configuration);
+		IVMInstallType type = verifyVMInstallType(configuration);
 		String id = getVMInstallId(configuration);
 		if (id == null) {
 			abort("JRE not specified.", null, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_VM_INSTALL); 
@@ -187,7 +195,16 @@ public class JavaLocalApplicationLaunchConfigurationDelegate implements ILaunchC
 		if (vm == null) {
 			abort(MessageFormat.format("JRE {0} does not exist.", new String[]{id}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
 		}
+		File location = vm.getInstallLocation();
+		if (location == null) {
+			abort(MessageFormat.format("JRE home directory not specified for {0}.", new String[]{vm.getName()}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
+		}
+		if (!location.exists()) {
+			abort(MessageFormat.format("JRE home directory for {0} does not exist: {1}", new String[]{vm.getName(), location.getAbsolutePath()}), null, IJavaLaunchConfigurationConstants.ERR_VM_INSTALL_DOES_NOT_EXIST);
+		}
+				
 		return vm;
 	}	
+	
 }
 

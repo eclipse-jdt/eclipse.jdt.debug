@@ -30,6 +30,12 @@
 
 <!-- Extensions -->
 
+<extension point = "org.eclipse.jdt.launching.vmInstallTypes">
+	<vmInstallType
+	   	class="org.eclipse.jdt.internal.launching.StandardVMType"
+	    id="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"/>
+</extension>
+
 <extension point = "org.eclipse.debug.core.launchConfigurationTypes">
    <launchConfigurationType
    	   id="org.eclipse.jdt.launching.localJavaApplication"

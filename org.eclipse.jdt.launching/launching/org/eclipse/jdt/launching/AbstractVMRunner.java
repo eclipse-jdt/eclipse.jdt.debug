@@ -6,6 +6,7 @@ package org.eclipse.jdt.launching;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +16,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.launching.LaunchingPlugin;
 
 /**
  * Common function for VM runners.
@@ -34,7 +38,7 @@ import org.eclipse.jdt.core.JavaCore;
  * @see IJavaLaunchConfigurationConstants
  * @since 2.0
  */
-public abstract class VMRunner implements IVMRunner {
+public abstract class AbstractVMRunner implements IVMRunner {
 
 	/**
 	 * Throws a core exception with an error status object built from
@@ -311,6 +315,49 @@ public abstract class VMRunner implements IVMRunner {
 			bootpath = new String[0];
 		}
 		return bootpath;
+	}
+	
+	/**
+	 * Performs a runtime exec on the given command line in the context
+	 * of the specified working directory and returns the resulting process.
+	 * If the current runtime does not support the specification of a working
+	 * directory, the status handler for error code
+	 * <code>ERR_WORKING_DIRECTORY_NOT_SUPPORTED</code> is queried to see if the
+	 * exec should be re-executed without specifying a working directory.
+	 * 
+	 * @param cmdLine the command line
+	 * @param workingDirectory the working directory, or <code>null</code>
+	 * @return the resulting process or <code>null</code> if the exec is
+	 *  cancelled
+	 * @see Runtime
+	 */
+	protected Process exec(String[] cmdLine, File workingDirectory) throws CoreException {
+		Process p= null;
+		try {
+			if (workingDirectory == null) {
+				p= Runtime.getRuntime().exec(cmdLine, null);
+			} else {
+				p= Runtime.getRuntime().exec(cmdLine, null, workingDirectory);
+			}
+		} catch (IOException e) {
+				if (p != null) {
+					p.destroy();
+				}
+				abort("Exception starting process.", e, IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+		} catch (NoSuchMethodError e) {
+			//attempting launches on 1.2.* - no ability to set working directory
+			
+			IStatus status = new Status(IStatus.ERROR, LaunchingPlugin.PLUGIN_ID, IJavaLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED, "Eclipse runtime does not support working directory.", e);
+			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+			
+			if (handler != null) {
+				Object result = handler.handleStatus(status, this);
+				if (result instanceof Boolean && ((Boolean)result).booleanValue()) {
+					p= exec(cmdLine, null);
+				}
+			}
+		}
+		return p;
 	}	
 			
 	private static class ArgumentParser {
@@ -378,7 +425,7 @@ public abstract class VMRunner implements IVMRunner {
 		}
 	}
 	
-	private static String[] parseArguments(String args) {
+	protected static String[] parseArguments(String args) {
 		if (args == null)
 			return new String[0];
 		ArgumentParser parser= new ArgumentParser(args);

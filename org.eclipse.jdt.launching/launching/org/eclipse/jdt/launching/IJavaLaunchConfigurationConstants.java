@@ -219,6 +219,37 @@ public interface IJavaLaunchConfigurationConstants {
 	 * could not be found.
 	 */
 	public static final int ERR_SHARED_MEMORY_CONNECTOR_UNAVAILABLE = 114;
+	
+	/**
+	 * Status code indicating that the Eclipse runtime does not support
+	 * launching a program with a working directory. This feature is only
+	 * available if Eclipse is run on a 1.3 runtime or higher.
+	 * <p>
+	 * A status handler may be registered for this error condition,
+	 * and should return a Boolean indicating whether the program
+	 * should be relaunched with the default working directory.
+	 * </p>
+	 */
+	public static final int ERR_WORKING_DIRECTORY_NOT_SUPPORTED = 115;	
+	
+	/**
+	 * Status code indicating that an error occurred launching the VM
+	 * in debug mode. The status error message is the text that
+	 * the VM wrote to standard error before exiting.
+	 */
+	public static final int ERR_VM_LAUNCH_ERROR = 116;	
+	
+	/**
+	 * Status code indicating that a timeout has occurred waiting for
+	 * the VM to connect with the debugger.
+	 * <p>
+	 * A status handler may be registered for this error condition,
+	 * and should return a Boolean indicating whether the program
+	 * should continue waiting for a connection for the associated
+	 * timeout period.
+	 * </p>
+	 */
+	public static final int ERR_VM_CONNECT_TIMEOUT = 117;	
 
 	/**
 	 * Status code indicating an unexpected internal error.

@@ -677,12 +677,6 @@
 	</page>	
 </extension>
 
-<extension point = "org.eclipse.jdt.launching.vmInstallTypes">
-	<vmInstallType
-	   	class="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"
-	    id="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType"/>
-</extension>
-
 <extension point = "org.eclipse.debug.core.launchers">
 	<launcher
 	    id="org.eclipse.jdt.debug.ui.launcher.JavaApplicationLauncherDelegate"
@@ -700,12 +694,6 @@
 		description="%remoteLauncher.description"
 		wizard="org.eclipse.jdt.internal.debug.ui.JDIAttachLauncherWizard"
 		icon = "icons/full/ctool16/java_attach.gif"
-   		modes="debug" />
-   	<launcher
-		id="org.eclipse.jdt.debug.ui.launcher.ScrapbookLauncherDelegate"
-		class="org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookLauncherDelegate"
-		label="%scrapbookLauncher.label"
-		public="false"
    		modes="debug" />
 </extension>	
 
@@ -748,5 +736,21 @@
 		name="%javaConnectTabName">
 	</launchConfigurationTab>
 </extension>
+
+<extension point = "org.eclipse.debug.core.statusHandlers">
+	<statusHandler
+		id="org.eclipse.jdt.debug.ui.statusHandler.workingDirectory"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryStatusHandler"
+		plugin ="org.eclipse.jdt.launching"
+		code="115">
+	</statusHandler>
+	<statusHandler
+		id="org.eclipse.jdt.debug.ui.statusHandler.workingDirectory"
+		class="org.eclipse.jdt.internal.debug.ui.launcher.VMConnectTimeoutStatusHandler"
+		plugin ="org.eclipse.jdt.launching"
+		code="117">
+	</statusHandler>	
+</extension>
+
 
 </plugin>
