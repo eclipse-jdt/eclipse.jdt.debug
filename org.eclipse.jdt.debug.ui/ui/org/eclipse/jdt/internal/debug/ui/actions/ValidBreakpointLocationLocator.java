@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -180,8 +181,8 @@ public class ValidBreakpointLocationLocator extends ASTVisitor {
 	static protected String computeTypeName(ASTNode node) {
 		String typeName = null;
 		while (!(node instanceof CompilationUnit)) {
-			if (node instanceof TypeDeclaration) {
-				String identifier= ((TypeDeclaration)node).getName().getIdentifier();
+			if (node instanceof AbstractTypeDeclaration) {
+				String identifier= ((AbstractTypeDeclaration)node).getName().getIdentifier();
 				if (typeName == null) {
 					typeName= identifier;
 				} else {
