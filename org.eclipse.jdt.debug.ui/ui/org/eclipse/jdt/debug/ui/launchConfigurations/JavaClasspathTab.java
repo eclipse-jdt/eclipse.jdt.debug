@@ -105,10 +105,6 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			}
 		});
 		
-		Composite classPathComp = new Composite(fPathTabFolder, SWT.NONE);
-		GridLayout classPathLayout = new GridLayout();
-		classPathComp.setLayout(classPathLayout);
-		
 		fClasspathViewer = new RuntimeClasspathViewer(fPathTabFolder);
 		fClasspathViewer.addEntriesChangedListener(this);
 		fClasspathViewer.getControl().setFont(font);
@@ -239,7 +235,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 			setClasspathEntries(JavaRuntime.computeUnresolvedRuntimeClasspath(configuration));
 		} catch (CoreException e) {
 			if (e.getStatus().getCode() != IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT) {
-				// do not log error if this is a reference to a non-existant project
+				// do not log error if this is a reference to a non-existent project
 				JDIDebugUIPlugin.log(e);
 			}
 		}
