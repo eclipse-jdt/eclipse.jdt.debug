@@ -443,12 +443,6 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			numVMs++;
 		}
 		List vmNames = new ArrayList(numVMs);
-		
-		// Set up the default VM name
-		if (defaultVM != null) {
-			fDefaultVMName = constructDefaultJREName(defaultVM);
-			vmNames.add(fDefaultVMName);
-		}
 
 		// Add all installed VMs
 		Iterator iterator = fVMStandins.iterator();
@@ -458,6 +452,13 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 			vmNames.add(vmName);
 		}
 		Collections.sort(vmNames);
+		
+		// Add the default VM name first - @see bug 38551
+		if (defaultVM != null) {
+			fDefaultVMName = constructDefaultJREName(defaultVM);
+			vmNames.add(0, fDefaultVMName);
+		}
+		
 		fJRECombo.setItems((String[])vmNames.toArray(new String[vmNames.size()]));
 	}	
 	
