@@ -5,7 +5,6 @@ package org.eclipse.jdt.internal.debug.eval.ast.engine;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -84,12 +83,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
-import org.eclipse.jdt.internal.compiler.ast.MessageSend;
 
-/**
- * @version 	1.0
- * @author
- */
 public class ASTAPIVisitor extends ASTVisitor {
 
 	/**
