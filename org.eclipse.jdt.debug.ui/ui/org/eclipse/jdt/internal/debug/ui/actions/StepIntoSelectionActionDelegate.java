@@ -12,6 +12,8 @@ package org.eclipse.jdt.internal.debug.ui.actions;
 
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -117,11 +119,26 @@ public class StepIntoSelectionActionDelegate implements IEditorActionDelegate, I
 	 * the desired location, then perform a "step into selection."
 	 */
 	private void runToLineBeforeStepIn(ITextSelection textSelection, final IThread thread, final IMethod method) {
-		IRunToLineTarget runToLineAction = new RunToLineAdapter();
 		runToLineType= getType().getFullyQualifiedName();
 		runToLineLine= textSelection.getStartLine() + 1;
 		if (runToLineType == null || runToLineLine == -1) {
 			return;
+		}
+		// see bug 65489 - get the run-to-line adapater from the editor
+		IRunToLineTarget runToLineAction = null;
+		IEditorPart ed = getActiveEditor();
+		if (ed != null) {
+			runToLineAction  = (IRunToLineTarget) ed.getAdapter(IRunToLineTarget.class);
+			if (runToLineAction == null) {
+				IAdapterManager adapterManager = Platform.getAdapterManager();
+				if (adapterManager.hasAdapter(ed,   IRunToLineTarget.class.getName())) { 
+					runToLineAction = (IRunToLineTarget) adapterManager.loadAdapter(ed,IRunToLineTarget.class.getName()); 
+				}
+			}
+		}	
+		// if no adapter exists, use the Java adapter
+		if (runToLineAction == null) {
+		  runToLineAction = new RunToLineAdapter();
 		}
 		listener= new IDebugEventSetListener() {
 			/**
