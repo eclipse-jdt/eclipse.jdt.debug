@@ -1,18 +1,41 @@
 package org.eclipse.jdt.internal.debug.core;
 
-import java.util.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IDebugConstants;
+import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.debug.core.*;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.ReferenceType;
+import com.sun.jdi.ThreadReference;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.event.ClassPrepareEvent;
+import com.sun.jdi.event.Event;
+import com.sun.jdi.event.LocatableEvent;
+import com.sun.jdi.request.ClassPrepareRequest;
+import com.sun.jdi.request.EventRequest;
+import com.sun.jdi.request.MethodEntryRequest;
 
 public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoint, IJDIEventListener {
 	
@@ -138,7 +161,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	
 	protected abstract void addToTarget(JDIDebugTarget target) throws CoreException;
 	
-	protected void changeForTarget(final JDIDebugTarget target) throws CoreException {
+	protected void changeForTarget(JDIDebugTarget target) throws CoreException {
 		List requests = getRequests(target);
 		if (requests != null) {
 			Iterator iter = requests.iterator();
