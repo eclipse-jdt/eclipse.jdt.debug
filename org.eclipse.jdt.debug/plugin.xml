@@ -30,32 +30,32 @@
 	<breakpoint
 		id="javaLineBreakpoint"
 		markerType="org.eclipse.jdt.debug.javaLineBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.JavaLineBreakpoint">
+		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint">
 	</breakpoint>
 	<breakpoint
 		id="javaPatternBreakpoint"
 		markerType="org.eclipse.jdt.debug.javaPatternBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.JavaPatternBreakpoint">
+		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaPatternBreakpoint">
 	</breakpoint>
 	<breakpoint
 		id="javaRunToLineBreakpoint"
 		markerType="org.eclipse.jdt.debug.javaRunToLineBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.JavaRunToLineBreakpoint">
+		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaRunToLineBreakpoint">
 	</breakpoint>
 	<breakpoint
 		id="javaExceptionBreakpoint"
 		markerType="org.eclipse.jdt.debug.javaExceptionBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.JavaExceptionBreakpoint">
+		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaExceptionBreakpoint">
 	</breakpoint>
 	<breakpoint
 		id="javaWatchpoint"
 		markerType="org.eclipse.jdt.debug.javaWatchpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.JavaWatchpoint">
+		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaWatchpoint">
 	</breakpoint>
 	<breakpoint
 		id="javaMethodEntryBreakpoint"
 		markerType="org.eclipse.jdt.debug.javaMethodEntryBreakpointMarker"
-		class="org.eclipse.jdt.internal.debug.core.JavaMethodEntryBreakpoint">
+		class="org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodEntryBreakpoint">
 	</breakpoint>
 </extension>
 
