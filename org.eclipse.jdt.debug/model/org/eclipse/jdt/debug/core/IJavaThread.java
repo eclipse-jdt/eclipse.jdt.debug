@@ -8,8 +8,7 @@ package org.eclipse.jdt.debug.core;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.internal.debug.core.JavaBreakpoint;
 
 /**
  * A Java thread is an extension of a regular thread,
@@ -54,7 +53,7 @@ public interface IJavaThread extends IThread, IJavaEvaluate {
 	 *
 	 * @return breakpoint that caused suspend, or <code>null</code> if none
 	 */
-	IMarker getBreakpoint();
+	JavaBreakpoint getBreakpoint();
 	
 	/**
 	 * Returns a variable with the given name, or <code>null</code> if

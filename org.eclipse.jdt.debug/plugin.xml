@@ -27,17 +27,30 @@
 <!-- Extensions -->
 <!-- Extension points -->
 <extension
-      id="javaLineBreakpoint"
-      point="org.eclipse.core.resources.markers">
-   <super
-         type="org.eclipse.debug.core.lineBreakpoint">
-   </super>
+	id="javaBreakpoint"
+	point="org.eclipse.core.resources.markers">
+	<super
+		type="org.eclipse.debug.core.breakpoint">	
+	</super>
    <persistent
          value="true">
    </persistent>
    <attribute
          name="typeHandle">
-   </attribute>
+	</attribute>         
+</extension>     	
+<extension
+      id="javaLineBreakpoint"
+      point="org.eclipse.core.resources.markers">
+   <super
+         type="org.eclipse.jdt.debug.javaBreakpoint">      
+   </super>         
+   <super
+         type="org.eclipse.debug.core.lineBreakpoint">
+   </super>
+   <persistent
+         value="true">
+   </persistent>   
    <attribute
          name="installCount">
    </attribute>
@@ -62,14 +75,11 @@
       id="javaExceptionBreakpoint"
       point="org.eclipse.core.resources.markers">
    <super
-         type="org.eclipse.debug.core.breakpoint">
+         type="org.eclipse.jdt.debug.javaBreakpoint">
    </super>
    <persistent
          value="true">
-   </persistent>
-   <attribute
-         name="typeHandle">
-   </attribute>
+   </persistent>   
    <attribute
          name="caught">
    </attribute>
@@ -86,9 +96,9 @@
 	<super
 		type="org.eclipse.jdt.debug.javaLineBreakpoint">
 	</super>
-	<persistent
-		value="true">
-	</persistent>
+   <persistent
+         value="true">
+   </persistent>	
 	<attribute
 		name="fieldHandle">
 	</attribute>
@@ -115,4 +125,10 @@
          name="methodHandle">
    </attribute>
 </extension>
+<extension point = "org.eclipse.debug.core.breakpoint_factories">
+<breakpoint_factory
+	    id="org.eclipse.jdt.core.JavaBreakpointFactory"
+	   	class="org.eclipse.jdt.internal.debug.core.JavaBreakpointFactory"
+   		type="org.eclipse.jdt.debug.javaBreakpoint"/>
+</extension>	   	
 </plugin>

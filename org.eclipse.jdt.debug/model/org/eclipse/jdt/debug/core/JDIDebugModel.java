@@ -134,303 +134,25 @@ public class JDIDebugModel {
 	 *  to a lower level exception.
 	 */
 	public static IMarker createLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd, int hitCount) throws DebugException {
-		return createLineBreakpointCommon(type, lineNumber, charStart, charEnd, hitCount, IJavaDebugConstants.JAVA_LINE_BREAKPOINT);
-	}
-	
-	/**
-	 * Creates and returns a run-to-line breakpoint in the
-	 * given type, at the given line number. If a character range within the
-	 * line is known, it may be specified by charStart/charEnd. Run-to-line
-	 * breakpoints have a hit count of 1.
-	 * Note: the breakpoint is not added to the breakpoint manager
-	 * - it is merely created.
-	 *
-	 * @param type the type in which to create the breakpoint
-	 * @param lineNumber the lineNumber on which the breakpoint is created - line
-	 *   numbers are 1 based, associated with the compilation unit in which
-	 *   the type is defined
-	 * @param charStart the first character index associated with the breakpoint,
-	 *   or -1 if unspecified
- 	 * @param charEnd the last character index associated with the breakpoint,
-	 *   or -1 if unspecified
-	 * @return a run-to-line breakpoint
-	 * @exception DebugException if unable to create the breakpoint marker due
-	 *  to a lower level exception.
-	 */
-	public static IMarker createRunToLineBreakpoint(IType type, int lineNumber, int charStart, int charEnd) throws DebugException {
-		return createLineBreakpointCommon(type, lineNumber, charStart, charEnd, 1, IJavaDebugConstants.JAVA_RUN_TO_LINE_BREAKPOINT);
-	}
-	
-	/**
-	 * Common method for creating line breakpoints, either 'regular' or 'run to line'
-	 */
-	private static IMarker createLineBreakpointCommon(final IType type, final int lineNumber, final int charStart, final int charEnd, final int hitCount, final String exceptionType) throws DebugException {
-
-		fgBreakpoint= null;
-
-		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
-
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IResource resource= null;
-				resource= type.getUnderlyingResource();
-				if (resource == null) {
-					resource= type.getJavaProject().getProject();
-				}
-
-				// create the marker
-				fgBreakpoint= resource.createMarker(exceptionType);
-				DebugPlugin.getDefault().getBreakpointManager().configureLineBreakpoint(fgBreakpoint, getPluginIdentifier(), true, lineNumber, charStart, charEnd);
-
-				// configure the hit count and type handle
-				DebugJavaUtils.setTypeAndHitCount(fgBreakpoint, type, hitCount);
-
-				// configure the marker as a Java marker
-				Map attributes= fgBreakpoint.getAttributes();
-				JavaCore.addJavaElementMarkerAttributes(attributes, type);
-				fgBreakpoint.setAttributes(attributes);
-			}
-		};
-		
-		try {
-			ResourcesPlugin.getWorkspace().run(wr, null);
-		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
-		}
-
-		return fgBreakpoint;
-	}
-	
-	/**
-	 * Creates and returns an exception breakpoint for the
-	 * given (throwable) type. Caught and uncaught specify where the exception
-	 * should cause thread suspensions - that is, in caught and/or uncaught locations.
-	 * Checked indicates if the given exception is a checked exception.
-	 * Note: the breakpoint is not added to the breakpoint manager
-	 * - it is merely created.
-	 *
-	 * @param type the exception for which to create the breakpoint
-	 * @param caught whether to suspend in caught locations
-	 * @param uncaught whether to suspend in uncaught locations
- 	 * @param checked whether the exception is a checked exception
-	 * @return an exception breakpoint
-	 * @exception DebugException if unable to create the breakpoint marker due
-	 *  to a lower level exception.
-	 */
-	public static IMarker createExceptionBreakpoint(final IType exception, final boolean caught, final boolean uncaught, final boolean checked) throws DebugException {
-		// determine the resource to associate the marker with
-
-		fgBreakpoint= null;
-
-		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
-
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IResource resource= null;
-				resource= exception.getUnderlyingResource();
-
-				if (resource == null) {
-					resource= exception.getJavaProject().getProject();
-				}
-				
-				// if the exception breakpoint already exists in the breakpoint mgr.,
-				// just use it
-				IMarker existing= findExistingExceptionBreakpoint(exception);
-				if (existing != null) {
-					fgBreakpoint= existing;
-					return;
-				}
-				
-				// create the marker
-				fgBreakpoint= resource.createMarker(IJavaDebugConstants.JAVA_EXCEPTION_BREAKPOINT);
-				// configure the standard attributes
-				DebugPlugin.getDefault().getBreakpointManager().configureBreakpoint(fgBreakpoint, getPluginIdentifier(), true);
-				// configure caught, uncaught, checked, and the type attributes
-				DebugJavaUtils.configureExceptionBreakpoint(fgBreakpoint, caught, uncaught, checked, exception);
-
-				// configure the marker as a Java marker
-				Map attributes= fgBreakpoint.getAttributes();
-				JavaCore.addJavaElementMarkerAttributes(attributes, exception);
-				fgBreakpoint.setAttributes(attributes);
-			}
-
-		};
-		
-		try {
-			ResourcesPlugin.getWorkspace().run(wr, null);
-		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
-		}
-
-		return fgBreakpoint;
+		return (new LineBreakpoint(type, lineNumber, charStart, charEnd, hitCount, IJavaDebugConstants.JAVA_LINE_BREAKPOINT)).getMarker();
 	}
 
-	private static IMarker findExistingExceptionBreakpoint(IType type) {
-		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
-		IMarker[] allBreakpoints= manager.getBreakpoints(IJavaDebugConstants.JAVA_EXCEPTION_BREAKPOINT);
-		for (int i = 0; i < allBreakpoints.length; i++) {
-			IMarker bp= allBreakpoints[i];
-			if (DebugJavaUtils.getType(bp).equals(type)) {
-				return bp;
-			}
-		}
-		return null;
+	public static IBreakpointManager getBreakpointManager() {
+		return DebugPlugin.getDefault().getBreakpointManager();
 	}
 
-	/**
-	 * Creates and returns a watchpoint on the
-	 * given field.
-	 * If hitCount > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times. Note: the breakpoint is not
-	 * added to the breakpoint manager - it is merely created.
-	 * 
-	 * @param field the field on which to suspend (on access or modification)
-	 * @param hitCount the number of times the breakpoint will be hit before
-	 * 	suspending execution - 0 if it should always suspend
-	 * @return a watchpoint
-	 * @exception DebugException if unable to create the breakpoint marker due
-	 * 	to a lower level exception
-	 */
-	public static IMarker createWatchpoint(final IField field, final int hitCount) throws DebugException {
-		
-		fgBreakpoint= null;
-		
-		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
-			
-			public void run(IProgressMonitor monitor) throws CoreException {
-
-				IResource resource = null;
-				ICompilationUnit compilationUnit = getCompilationUnit(field);
-				if (compilationUnit != null) {
-					resource = compilationUnit.getUnderlyingResource();
-				}
-				if (resource == null) {
-					resource = field.getJavaProject().getProject();
-				}
-				
-				fgBreakpoint= resource.createMarker(IJavaDebugConstants.JAVA_WATCHPOINT);
-				
-				// find the source range if available
-				int start = -1;
-				int stop = -1;
-				ISourceRange range = field.getSourceRange();
-				if (range != null) {
-					start = range.getOffset();
-					stop = start + range.getLength() - 1;
-				}
-				// configure the standard attributes
-				DebugPlugin.getDefault().getBreakpointManager().configureLineBreakpoint(fgBreakpoint, getPluginIdentifier(), true, -1, start, stop);
-				// configure the type handle and hit count
-				DebugJavaUtils.setTypeAndHitCount(fgBreakpoint, field.getDeclaringType(), hitCount);
-				// configure the field handle
-				DebugJavaUtils.setField(fgBreakpoint, field);
-				// configure the access and modification flags to defaults
-				DebugJavaUtils.setDefaultAccessAndModification(fgBreakpoint);
-				DebugJavaUtils.setAutoDisabled(fgBreakpoint, false);				
-				
-				
-				// configure the marker as a Java marker
-				Map attributes= fgBreakpoint.getAttributes();
-				JavaCore.addJavaElementMarkerAttributes(attributes, field);
-				fgBreakpoint.setAttributes(attributes);			
-			}
-		};
-		
-		try {
-			ResourcesPlugin.getWorkspace().run(wr, null);
-		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
-		}
-		
-		return fgBreakpoint;
-	}
-
-	/**
-	 * Returns the underlying compilation unit of an element.
-	 */
-	public static ICompilationUnit getCompilationUnit(IJavaElement element) {
-		if (element instanceof IWorkingCopy) {
-			return (ICompilationUnit) ((IWorkingCopy) element).getOriginalElement();
-		}
-		if (element instanceof ICompilationUnit) {
-			return (ICompilationUnit) element;
-		}		
-		IJavaElement parent = element.getParent();
-		if (parent != null) {
-			return getCompilationUnit(parent);
-		}
-		return null;
-	}
-
-	/**
-	 * Creates and returns a method entry breakpoint in the
-	 * given method.
-	 * If hitCount is > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times. Note: the breakpoint is not
-	 * added to the breakpoint manager - it is merely created.
-	 *
-	 * @param method the method in which to suspend on entry
-	 * @param hitCount the number of times the breakpoint will be hit before
-	 *   suspending execution - 0 if it should always suspend
-	 * @return a method entry breakpoint
-	 * @exception DebugException if unable to create the breakpoint marker due
-	 *  to a lower level exception.
-	 */
-	public static IMarker createMethodEntryBreakpoint(final IMethod method, final int hitCount) throws DebugException {
-		// determine the resource to associate the marker with
-
-		fgBreakpoint= null;
-
-		IWorkspaceRunnable wr= new IWorkspaceRunnable() {
-
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IResource resource= null;
-				resource= method.getUnderlyingResource();
-				if (resource == null) {
-					resource= method.getJavaProject().getProject();
-				}
-
-				// create the marker
-				fgBreakpoint= resource.createMarker(IJavaDebugConstants.JAVA_METHOD_ENTRY_BREAKPOINT);
-				
-				// find the source range if available
-				int start = -1;
-				int end = -1;
-				ISourceRange range = method.getSourceRange();
-				if (range != null) {
-					start = range.getOffset();
-					end = start + range.getLength() - 1;
-				}
-				// configure the standard attributes
-				DebugPlugin.getDefault().getBreakpointManager().configureLineBreakpoint(fgBreakpoint, getPluginIdentifier(), true, -1, start, end);
-				// configure the type handle and hit count
-				DebugJavaUtils.setTypeAndHitCount(fgBreakpoint, method.getDeclaringType(), hitCount);
-
-				// configure the method handle
-				DebugJavaUtils.setMethod(fgBreakpoint, method);
-				
-				// configure the marker as a Java marker
-				Map attributes= fgBreakpoint.getAttributes();
-				JavaCore.addJavaElementMarkerAttributes(attributes, method);
-				fgBreakpoint.setAttributes(attributes);
-			}
-
-		};
-		
-		try {
-			ResourcesPlugin.getWorkspace().run(wr, null);
-		} catch (CoreException e) {
-			throw new DebugException(e.getStatus());
-		}
-		
-		return fgBreakpoint;
-	}
 	/**
 	 * Returns the hit count of the given breakpoint or -1 if the attribute is not set.
 	 * 
 	 * @param breakpoint the breakpoint
 	 * @return hit count, or -1
 	 */
-	public static int getHitCount(IMarker breakpoint) {
-		return DebugJavaUtils.getHitCount(breakpoint);
+	public static int getHitCount(IMarker marker) {
+		JavaBreakpoint breakpoint= getBreakpoint(marker);
+		if (breakpoint instanceof LineBreakpoint) {
+			return ((LineBreakpoint)breakpoint).getHitCount();
+		}
+		return -1;
 	}
 	
 	/**
@@ -440,53 +162,13 @@ public class JDIDebugModel {
 	 * @param hitCount the number of times the breakpoint is hit before suspending execution
 	 * @exception CoreException if an exception occurrs updating the marker
 	 */
-	public static void setHitCount(IMarker breakpoint, int hitCount) throws CoreException {
-		DebugJavaUtils.setHitCount(breakpoint, hitCount);
-	}
-
-	/**
-	 * Returns the member the given breakpoint is installed in,
-	 * or <code>null</code> if a member is not determinable.
-	 *
-	 * @param breakpoint the breakpoint
-	 * @return a member, or <code>null</code>
-	 */
-	public static IMember getMember(IMarker breakpoint) {
-		try {
-			return DebugJavaUtils.getMember(breakpoint);
-		} catch (CoreException e) {
-			return null;
+	public static void setHitCount(IMarker marker, int hitCount) throws CoreException {
+		JavaBreakpoint breakpoint= getBreakpoint(marker);
+		if (breakpoint instanceof LineBreakpoint) {
+			((LineBreakpoint) breakpoint).setHitCount(hitCount);
 		}
 	}
-	/**
-	 * Returns the method the given breakpoint is installed in
-	 * or <code>null</code> if breakpoint is not installed in a method.
-	 *
-	 * @param breakpoint the breakpoint
-	 * @return a method, or <code>null</code>
-	 */
-	public static IMethod getMethod(IMarker breakpoint) {
-		return DebugJavaUtils.getMethod(breakpoint);
-	}
 
-	/**
-	 * Returns the field handle identifier of the given breakpoint
-	 */
-	public static String getFieldHandleIdentifier(IMarker breakpoint) {
-		return DebugJavaUtils.getFieldHandleIdentifier(breakpoint);
-	}
-	
-	/**
-	 * Returns the field the given breakpoint is installed on
-	 * or <code>null</code> if breakpoint is not installed in a method.
-	 * 
-	 * @param breakpoint the breakpoint
-	 * @return a field or <code>null</code>
-	 */
-	public static IField getField(IMarker breakpoint) {
-		return DebugJavaUtils.getField(breakpoint);
-	}
-	
 	/**
 	 * Returns the type the given breakpoint is installed in
 	 * or <code>null</code> if breakpoint is not installed in a type. If
@@ -497,118 +179,27 @@ public class JDIDebugModel {
 	 * @param breakpoint the breakpoint
 	 * @return a type, or <code>nulll</code>
 	 */
-	public static IType getType(IMarker breakpoint) {
-		return DebugJavaUtils.getType(breakpoint);
+	public static IType getType(IMarker marker) {
+		JavaBreakpoint breakpoint= getBreakpoint(marker);
+		if (breakpoint != null) {
+			return breakpoint.getBreakpointType();
+		}
+		return null;
 	}
+
 	/**
-	 * Returns whether the given breakpoint is an exception
-	 * breakpoint that will suspend in caught locations.
-	 *
-	 * @param breakpoint the breakpoint
-	 * @return whether the given breakpoint is an exception
-	 * breakpoint that will suspend in caught locations
+	 * Returns the JavaBreakpoint in the breakpoint manager associated
+	 * with the given marker. If no such breakpoint exists, returns 
+	 * <code>null</code>.
 	 */
-	public static boolean isCaught(IMarker breakpoint) {
-		return DebugJavaUtils.isCaught(breakpoint);
+	private static JavaBreakpoint getBreakpoint(IMarker marker) {
+		IBreakpoint breakpoint= getBreakpointManager().getBreakpoint(marker);
+		if (breakpoint instanceof JavaBreakpoint) {
+			return (JavaBreakpoint) breakpoint;
+		}
+		return null;
 	}
-	/**
-	 * Returns whether the given breakpoint is an exception
-	 * breakpoint for a checked exception.
-	 *
-	 * @param breakpoint the breakpoint
-	 * @return whether the given breakpoint is an exception
-	 * breakpoint for a checked exception
-	 */
-	public static boolean isChecked(IMarker breakpoint) {
-		return DebugJavaUtils.isChecked(breakpoint);
-	}
-	/**
-	 * Returns whether the given breakpoint
-	 * is an exception breakpoint.
-	 *
-	 * @param breakpoint the breakpoint
-	 * @return whether the given breakpoint
-	 * is an exception breakpoint
-	 */
-	public static boolean isExceptionBreakpoint(IMarker breakpoint) {
-		return DebugJavaUtils.isExceptionBreakpoint(breakpoint);
-	}
-	/**
-	 * Returns whether the given breakpoint is installed in at least one debug target.
-	 *
-	 * @param breakpoint the breakpoint
-	 * @return whether the given breakpoint is installed in at least one debug target
-	 */
-	public static boolean isInstalled(IMarker breakpoint) {
-		return DebugJavaUtils.isInstalled(breakpoint);
-	}
-	
-	/**
-	 * Returns whether the given breakpoint is a watchpoint.
-	 *
-	 * @param breakpoint the breakpoint
-	 * @return whether the given breakpoint is a watchpoint
-	 */
-	public static boolean isWatchpoint(IMarker breakpoint) {
-		return DebugJavaUtils.isWatchpoint(breakpoint);
-	}
-	
-	/**
-	 * Returns whether the given breakpoint
-	 * is an access watchpoint.
-	 * 
-	 * @param breakpoint the breakpoint
-	 * @return whether the given breakpoint 
-	 * is an access watchpoint
-	 */
-	public static boolean isAccess(IMarker breakpoint) {
-		return DebugJavaUtils.isAccess(breakpoint);
-	}
-	
-	/**
-	 * Returns whether the given breakpoint
-	 * is an modificaion watchpoint.
-	 * 
-	 * @param breakpoint the breakpoint
-	 * @return whether the given breakpoint 
-	 * is an modification watchpoint
-	 */
-	public static boolean isModification(IMarker breakpoint) {
-		return DebugJavaUtils.isModification(breakpoint);
-	}	
-	
-	public static boolean isAutoDisabled(IMarker breakpoint) {
-		return DebugJavaUtils.isAutoDisabled(breakpoint);
-	}
-	/**
-	 * Returns whether the given breakpoint is a method entry breakpoint.
-	 *
-	 * @param breakpoint the breakpoint
-	 * @return whether the given breakpoint is a method entry breakpoint
-	 */
-	public static boolean isMethodEntryBreakpoint(IMarker breakpoint) {
-		return DebugJavaUtils.isMethodEntryBreakpoint(breakpoint);
-	}
-	/**
-	 * Returns whether the given breakpoint is a run to line breakpoint.
-	 *
-	 * @param breakpoint the breakpoint
-	 * @retrun whether the given breakpoint is a run to line breakpoint
-	 */
-	public static boolean isRunToLineBreakpoint(IMarker breakpoint) {
-		return DebugJavaUtils.isRunToLineBreakpoint(breakpoint);
-	}
-	/**
-	 * Returns whether the given breakpoint is an exception
-	 * breakpoint that will suspend in uncaught locations.
-	 *
-	 * @param breakpoint the breakpoint
-	 * @return whether the given breakpoint is an exception
-	 * breakpoint that will suspend in uncaught locations
-	 */
-	public static boolean isUncaught(IMarker breakpoint) {
-		return DebugJavaUtils.isUncaught(breakpoint);
-	}
+
 }
 
 

@@ -5,14 +5,10 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugConstants;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaDebugConstants;
 
 /**
@@ -44,24 +40,26 @@ public class JDIDebugPlugin extends Plugin {
 	public void startup() throws CoreException {
 		
 		fJavaHCRMgr= new JavaHotCodeReplaceManager();
-		fJavaHCRMgr.startup();		
+		fJavaHCRMgr.startup();	
 
-		IMarker[] breakpoints= null;
+		IMarker[] markers= null;
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		try {
-			breakpoints= root.findMarkers(IJavaDebugConstants.JAVA_LINE_BREAKPOINT, true, IResource.DEPTH_INFINITE);
+			markers= root.findMarkers(IJavaDebugConstants.JAVA_LINE_BREAKPOINT, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			DebugJavaUtils.logError(e);
 			return;
 		}
-		
-		if (breakpoints == null) {
+		if (markers == null) {
 			return;
 		}
-		
-		for (int i = 0; i < breakpoints.length; i++) {
-			IMarker breakpoint = breakpoints[i];
-			DebugJavaUtils.configureBreakpointAtStartup(breakpoint);
+
+		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
+		for (int i= 0; i < markers.length; i++) {
+			JavaBreakpoint breakpoint= (JavaBreakpoint)manager.loadMarker(markers[i]);
+			if (breakpoint != null) {
+				breakpoint.configureBreakpointAtStartup();
+			}
 		}
 	}
 

@@ -21,6 +21,12 @@ package org.eclipse.jdt.debug.core;
 public interface IJavaDebugConstants {
 	
 	/**
+	 * Java breakpoint marker type
+	 * (value <code>"org.eclipse.jdt.debug.javaBreakpoint"</code>).
+	 */
+	public static final String JAVA_BREAKPOINT= "org.eclipse.jdt.debug.javaBreakpoint";
+	
+	/**
 	 * Java line breakpoint marker type
 	 * (value <code>"org.eclipse.jdt.debug.javaLineBreakpoint"</code>).
 	 */

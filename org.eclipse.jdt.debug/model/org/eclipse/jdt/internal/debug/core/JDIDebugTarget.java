@@ -5,21 +5,20 @@ package org.eclipse.jdt.internal.debug.core;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
+import java.io.ByteArrayInputStream;
+import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.eval.IEvaluationContext;
-import org.eclipse.jdt.debug.core.IJavaDebugConstants;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.core.*;
+
+import com.sun.jdi.*;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
-import java.io.ByteArrayInputStream;
-import java.text.MessageFormat;
-import java.util.*;
 
 /**
  * Debug target for JDI debug model.
@@ -41,24 +40,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	private final static String ERROR_RESUME_NOT_SUPPORTED = ERROR + "resume.not_supported";
 	private final static String ERROR_SUSPEND_NOT_SUPPORTED = ERROR + "suspend.not_supported";
 	private final static String ERROR_TERMINATE_NOT_SUPPORTED = ERROR + "terminate.not_supported";
-	private final static String ERROR_ACCESS_WATCHPOINT_NOT_SUPPORTED = ERROR + "access.not_supported";
-	private final static String ERROR_MODIFICATION_WATCHPOINT_NOT_SUPPORTED = ERROR + "modification.net_supported";
 	private final static String ERROR_TERMINATE = ERROR + "terminate.exception";
 	private static final String ERROR_GET_CRC= ERROR + "get_crc";
 	
 	private static final int MAX_THREAD_DEATH_ATTEMPTS = 1;
 	
-	/**
-	 * Key used to store the class name attribute pertinent to a
-	 * specific method entry request. Used for method entry breakpoints.
-	 */
-	protected final static String CLASS_NAME= "className";
-	/**
-	 * Key used to store the name and signature
-	 * attribute pertinent to a specific method 
-	 * entry request breakpoint. Used for method entry breakpoints.
-	 */
-	protected final static String BREAKPOINT_INFO= "breakpointInfo";
 	/**
 	 * Associated system process, or <code>null</code> if not available.
 	 */
@@ -84,8 +70,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * corresponding class is not yet loaded). 
 	 * <p>
 	 * Key: the fully qualified name of the class
-	 * Value: a <code>List</code> of <code>IMarker</code>s representing the
-	 * deferred breakpointsin that class.
+	 * Value: a <code>List</code> of <code>JavaBreakpoint</code>s representing the
+	 * deferred breakpoints in that class.
 	 */
 	protected Map fDeferredBreakpointsByClass;
 	/**
@@ -98,9 +84,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	/**
 	 * Table of installed breakpoints
 	 * <p>
-	 * Key: breakpoint (<code>IMarker</code>)
-	 * Value: the event request associated with the breakpoint (one
-	 * of <code>BreakpointRequest</code> or <code>MethodEntryRequest</code>).
+	 * Key: breakpoint (<code>JavaBreakpoint</code>)
+	 * Value: the event request associated with the breakpoint (<code>Object</code>).
 	 */
 	protected HashMap fInstalledBreakpoints;
 		
@@ -263,9 +248,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Installs all breakpoints that currently exist in the breakpoint manager
 	 */
 	protected void initializeBreakpoints() {
-		IMarker[] bps = getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
+		IBreakpoint[] bps = (IBreakpoint[]) getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
 		for (int i = 0; i < bps.length; i++) {
-			breakpointAdded(bps[i]);
+			if (bps[i] instanceof JavaBreakpoint) {
+				breakpointAdded((JavaBreakpoint)bps[i]);
+			}
 		}
 	}
 	
@@ -403,7 +390,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * @param breakpoint the breakpoint to defer
 	 * @param typeName name of the type the given breakpoint is associated with
 	 */
-	protected void defer(IMarker breakpoint, String typeName) {
+	protected void defer(JavaBreakpoint breakpoint, String typeName) {
 		List bps= (List) fDeferredBreakpointsByClass.get(typeName);
 		if (bps == null) {
 			// listen for the load of the type
@@ -595,99 +582,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		createThreadDeathInstance(threadRef);
 		resume(threadRef);
 	}
-
-	/**
-	 * Handles a method entry event. If this method entry event is
-	 * in a method that a method entry breakpoint has been set for,
-	 * handle the event as a breakpoint.
-	 */
-	protected void handleMethodEntry(MethodEntryEvent event) {
-		Method enteredMethod = event.method();
-		MethodEntryRequest request = (MethodEntryRequest)event.request();
-		List breakpoints = (List)request.getProperty(IDebugConstants.BREAKPOINT_MARKER);
-		Iterator requestBreakpoints= breakpoints.iterator();
-		IMarker breakpoint= null;
-		int index= 0;
-		while (requestBreakpoints.hasNext()) {
-			IMarker aBreakpoint= (IMarker)requestBreakpoints.next();
-			Object[] nameSignature= getMethodEntryBreakpointInfo(request, aBreakpoint, index);
-			String enteredMethodName= enteredMethod.name();
-			if (nameSignature != null && nameSignature[0].equals(enteredMethodName) &&
-				nameSignature[1].equals(enteredMethod.signature())) {
-				breakpoint= aBreakpoint;
-				break;
-			}
-			index++;	
-		}
-		if (breakpoint == null) {
-			handleMethodEntryResume(event.thread());
-			return;
-		}	
-		
-		List counts = (List)request.getProperty(IJavaDebugConstants.HIT_COUNT);
-		Integer count= (Integer)counts.get(index);
-		if (count != null) {
-			handleHitCountMethodEntryBreakpoint(event, breakpoint, counts, count, index);
-		} else {
-			// no hit count - suspend
-			handleMethodEntryBreakpoint(event.thread(), breakpoint);
-		}
-	}
-	
-	protected void handleMethodEntryResume(ThreadReference thread) {
-		if (!hasPendingEvents()) {
-			resume(thread);
-		}
-	}
-	
-	protected void handleHitCountMethodEntryBreakpoint(MethodEntryEvent event, IMarker breakpoint, List counts, Integer count, int index) {
-	// decrement count and suspend if 0
-		int hitCount = count.intValue();
-		if (hitCount > 0) {
-			hitCount--;
-			count = new Integer(hitCount);
-			counts.set(index, count);
-			if (hitCount == 0) {
-				// the count has reached 0, breakpoint hit
-				handleMethodEntryBreakpoint(event.thread(), breakpoint);
-				try {
-					// make a note that we auto-disabled the breakpoint
-					// order is important here...see methodEntryChanged
-					DebugJavaUtils.setExpired(breakpoint, true);
-					getBreakpointManager().setEnabled(breakpoint, false);
-				} catch (CoreException e) {
-					internalError(e);
-				}
-			}  else {
-				// count still > 0, keep running
-				handleMethodEntryResume(event.thread());		
-			}
-		} else {
-			// hit count expired, keep running
-			handleMethodEntryResume(event.thread());
-		}
-	}
-	protected String[] getMethodEntryBreakpointInfo(MethodEntryRequest request, IMarker breakpoint, int index) {
-		List nameSignatures = (List)request.getProperty(BREAKPOINT_INFO);
-		if (nameSignatures.get(index) != null) {
-			return (String[])nameSignatures.get(index);
-		}
-		String[] nameSignature= new String[2];
-		IMethod aMethod= DebugJavaUtils.getMethod(breakpoint); 
-			try {
-				if (aMethod.isConstructor()) {
-					nameSignature[0]= "<init>";
-				} else {
-					 nameSignature[0]= aMethod.getElementName();
-				}
-				nameSignature[1]= aMethod.getSignature();
-				nameSignatures.add(index, nameSignature);
-				return nameSignature;
-			} catch (JavaModelException e) {
-				logError(e);
-				return null;
-			}
-	}
 	
 	/**
 	 * Resumes the given thread
@@ -701,9 +595,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 	}
 	 
-	protected void handleMethodEntryBreakpoint(ThreadReference thread, IMarker breakpoint) {
+	protected void handleMethodEntryBreakpoint(ThreadReference thread, JavaBreakpoint breakpoint) {
 		JDIThread jdiThread = findThread(thread);
-		jdiThread.handleSuspendMethodEntry(breakpoint);
+		jdiThread.handleSuspendForBreakpoint(breakpoint);
 	}
 	/**
 	 * Handles a thread death event.
@@ -742,107 +636,51 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		terminate0();
 	}	
 	
-	/**
-	 * Returns the top-level type name associated with the type 
-	 * the given breakpoint is associated with, or <code>null</code>.
-	 */
-	protected String getTopLevelTypeName(IMarker breakpoint) {
-		IType type = DebugJavaUtils.getType(breakpoint);
-		if (type != null) {
-			while (type.getDeclaringType() != null) {
-				type = type.getDeclaringType();
-			}
-			return type.getFullyQualifiedName();
-		}
-		return null;
-	}
-	
+
 	/**
 	 * Installs or defers the given breakpoint
 	 */
-	public void breakpointAdded(IMarker breakpoint) {
-		if (DebugJavaUtils.isExceptionBreakpoint(breakpoint)) {
-			exceptionBreakpointAdded(breakpoint);
-		} else if (DebugJavaUtils.isMethodEntryBreakpoint(breakpoint)) {
-			methodEntryBreakpointAdded(breakpoint);
-		} else if (DebugJavaUtils.isWatchpoint(breakpoint)) {
-			watchpointAdded(breakpoint);
-		} else {
-			lineBreakpointAdded(breakpoint);
-		}
+	public void breakpointAdded(IBreakpoint breakpoint) {
+		breakpoint.addToTarget(this);
 	}
 	
-	protected void lineBreakpointAdded(IMarker breakpoint) {
-		String topLevelName= getTopLevelTypeName(breakpoint);
-		if (topLevelName == null) {
-			internalError(ERROR_BREAKPOINT_NO_TYPE);
-			return;
-		}
-		
-		// look for the top-level class - if it is loaded, inner classes may also be loaded
-		List classes= jdiClassesByName(topLevelName);
-		if (classes == null || classes.isEmpty()) {
-			// defer
-			defer(breakpoint, topLevelName);
-		} else {
-			// try to install
-			ReferenceType type= (ReferenceType) classes.get(0);
-			if (!installLineBreakpoint(breakpoint, type)) {
-				// install did not succeed - could be an inner type not yet loaded
-				defer(breakpoint, topLevelName);
-			}
-		}
+	/**
+	 * Add a breakpoint to the installed breakpoints collection
+	 */
+	public void installBreakpoint(JavaBreakpoint breakpoint, Object request) {
+		fInstalledBreakpoints.put(breakpoint, request);
 	}
 
 	/**
-	 * Installs a line breakpoint in the given type, returning whether successful.
+	 * Remove a breakpoint from the installed breakpoints collection
 	 */
-	protected boolean installLineBreakpoint(IMarker marker, ReferenceType type) {
-		Location location= null;
-		IBreakpointManager manager= getBreakpointManager();
-		int lineNumber= manager.getLineNumber(marker);			
-		location= determineLocation(lineNumber, type);
-		if (location == null) {
-			// could be an inner type not yet loaded, or line information not available
-			return false;
-		}
-		
-		if (createLineBreakpointRequest(location, marker) != null) {
-			// update the install attibute on the breakpoint
-			if (!fInHCR) {
-				try {
-					DebugJavaUtils.incrementInstallCount(marker);
-				} catch (CoreException e) {
-					internalError(e);
-				}
-			}
-			return true;
-		} else {
-			return false;
-		}
-		
+	public Object uninstallBreakpoint(JavaBreakpoint breakpoint) {
+		return fInstalledBreakpoints.remove(breakpoint);		
 	}
 	
 	/**
-	 * Creates, installs, and returns a line breakpoint request at
-	 * the given location for the given breakpoint.
+	 * Return the request object associated with the given breakpoint
 	 */
-	protected BreakpointRequest createLineBreakpointRequest(Location location, IMarker breakpoint) {
-		BreakpointRequest request = null;
-		try {
-			request= getEventRequestManager().createBreakpointRequest(location);
-			configureRequest(request, breakpoint);
-		} catch (VMDisconnectedException e) {
-			fInstalledBreakpoints.remove(breakpoint);
-			return null;
-		} catch (RuntimeException e) {
-			fInstalledBreakpoints.remove(breakpoint);
-			internalError(e);
-			return null;
-		}
-		request.setEnabled(getBreakpointManager().isEnabled(breakpoint));
-		fInstalledBreakpoints.put(breakpoint, request);		
-		return request;
+	public Object getRequest(JavaBreakpoint breakpoint) {
+		return fInstalledBreakpoints.get(breakpoint);
+	}
+	
+	/**
+	 * Return the deferred breakpoints
+	 */
+	public List getDeferredBreakpointsByClass(String name) {
+		return (List)fDeferredBreakpointsByClass.get(name);
+	}
+	
+	/**
+	 * Remove a deferred breakpoint
+	 */
+	public void removeDeferredBreakpointByClass(String name) {
+		fDeferredBreakpointsByClass.remove(name);
+	}
+	
+	public boolean inHCR() {
+		return fInHCR;
 	}
 
 	/**
@@ -900,424 +738,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	/**
 	 * @see IBreakpointSupport
 	 */
-	public void breakpointChanged(IMarker breakpoint, IMarkerDelta delta) {
-		if (DebugJavaUtils.isExceptionBreakpoint(breakpoint)) {
-			exceptionBreakpointChanged(breakpoint);
-		} else if (DebugJavaUtils.isMethodEntryBreakpoint(breakpoint)) {
-			methodEntryBreakpointChanged(breakpoint, delta);
-		} else if (DebugJavaUtils.isWatchpoint(breakpoint)) {
-			watchpointChanged(breakpoint);
-		} else {
-			lineBreakpointChanged(breakpoint);
-		}
-	}
-	
-	protected void lineBreakpointChanged(IMarker breakpoint) {
-		EventRequest request= (BreakpointRequest) fInstalledBreakpoints.get(breakpoint);
-		if (request != null) {
-			// already installed - could be a change in the enabled state or hit count
-			//may result in a new request being generated
-			request= updateHitCount(request, breakpoint);
-			if (request != null) {
-				updateEnabledState(request, breakpoint);
-				fInstalledBreakpoints.put(breakpoint, request);				
-			}
-		}
-	}
-
-	protected void updateMethodEntryEnabledState(MethodEntryRequest request)  {
-		IBreakpointManager manager= getBreakpointManager();
-		Iterator breakpoints= ((List)request.getProperty(IDebugConstants.BREAKPOINT_MARKER)).iterator();
-		boolean requestEnabled= false;
-		while (breakpoints.hasNext()) {
-			IMarker breakpoint= (IMarker)breakpoints.next();
-			if (manager.isEnabled(breakpoint)) {
-				requestEnabled = true;
-				break;
-			}
-		}
-		updateEnabledState0(request, requestEnabled);
-	}
-	
-	protected void updateEnabledState(EventRequest request, IMarker breakpoint)  {
-		updateEnabledState0(request, getBreakpointManager().isEnabled(breakpoint));
-		
-	}
-	
-	private void updateEnabledState0(EventRequest request, boolean enabled) {
-		if (request.isEnabled() != enabled) {
-			// change the enabled state
-			try {
-				// if the request has expired, and is not a method entry request, do not disable.
-				// BreakpointRequests that have expired cannot be deleted. However method entry 
-				// requests that are expired can be deleted (since we simulate the hit count)
-				if (request instanceof MethodEntryRequest || !isExpired(request)) {
-					request.setEnabled(enabled);
-				}
-			} catch (VMDisconnectedException e) {
-			} catch (RuntimeException e) {
-				internalError(e);
-			}
-		}
-	}
-	
-	/**
-	 * Update the hit count of an <code>EventRequest</code>. Return a new request with
-	 * the appropriate settings.
-	 */
-	protected EventRequest updateHitCount(EventRequest request, IMarker marker) {		
-		
-		// if the hit count has changed, or the request has expired and is being re-enabled,
-		// create a new request
-		if (hasHitCountChanged(marker, request) || (isExpired(request) && getBreakpointManager().isEnabled(marker))) {
-			try {
-				// delete old request
-				//on JDK you cannot delete (disable) an event request that has hit its count filter
-				if (!isExpired(request)) {
-					getEventRequestManager().deleteEventRequest(request); // disable & remove
-				}				
-				if (request instanceof BreakpointRequest) {
-					Location location = ((BreakpointRequest) request).location();
-					request = createLineBreakpointRequest(location, marker);					
-				} else { 
-					Field field= ((WatchpointRequest) request).field();
-					if (request instanceof AccessWatchpointRequest) {
-						request= createAccessWatchpoint(marker, field);
-					} else if (request instanceof ModificationWatchpointRequest) {
-						request= createModificationWatchpoint(marker, field);
-					}
-				}
-			} catch (VMDisconnectedException e) {
-			} catch (RuntimeException e) {
-				internalError(e);
-			}
-		}
-		return request;
-	}
-	
-	/**
-	 * Returns whether the hitCount of a marker is equal to the hitCount of
-	 * the associated request.
-	 */
-	protected boolean hasHitCountChanged(IMarker marker, EventRequest request) {
-		int hitCount= DebugJavaUtils.getHitCount(marker);
-		Integer requestCount= (Integer) request.getProperty(IJavaDebugConstants.HIT_COUNT);
-		int oldCount = -1;
-		if (requestCount != null)  {
-			oldCount = requestCount.intValue();
-		} 
-		return hitCount != oldCount;
-	}
-		
-	/**
-	 * An exception breakpoint has been added.
-	 */
-	protected void exceptionBreakpointAdded(IMarker exceptionBreakpoint) {
-		exceptionBreakpointChanged(exceptionBreakpoint);
-	}
-
-	/**
-	 * An exception breakpoint has changed
-	 */
-	protected void exceptionBreakpointChanged(IMarker exceptionBreakpoint) {
-
-		boolean caught= DebugJavaUtils.isCaught(exceptionBreakpoint);
-		boolean uncaught= DebugJavaUtils.isUncaught(exceptionBreakpoint);
-
-		if (caught || uncaught) {
-			IType exceptionType = DebugJavaUtils.getType(exceptionBreakpoint);
-			if (exceptionType == null) {
-				internalError(ERROR_BREAKPOINT_NO_TYPE);
-				return;
-			}
-			String exceptionName = exceptionType.getFullyQualifiedName();
-			String topLevelName = getTopLevelTypeName(exceptionBreakpoint);
-			if (topLevelName == null) {
-				internalError(ERROR_BREAKPOINT_NO_TYPE);
-				return;
-			}
-			List classes= jdiClassesByName(exceptionName);
-			ReferenceType exClass= null;
-			if (classes != null && !classes.isEmpty()) {
-				exClass= (ReferenceType) classes.get(0);
-			}
-			if (exClass == null) {
-				// defer the exception
-				defer(exceptionBreakpoint, topLevelName);
-			} else {
-				// new or changed - first delete the old request
-				if (null != fInstalledBreakpoints.get(exceptionBreakpoint))
-					exceptionBreakpointRemoved(exceptionBreakpoint);
-				ExceptionRequest request= null;
-				try {
-					request= getEventRequestManager().createExceptionRequest(exClass, caught, uncaught);
-					configureRequest(request, exceptionBreakpoint);
-				} catch (VMDisconnectedException e) {
-					return;
-				} catch (RuntimeException e) {
-					internalError(e);
-					return;
-				}
-				request.setEnabled(getBreakpointManager().isEnabled(exceptionBreakpoint));
-				fInstalledBreakpoints.put(exceptionBreakpoint, request);
-			}
-		} else {
-			exceptionBreakpointRemoved(exceptionBreakpoint);
-		}
-	}
-
-	/**
-	 * An exception breakpoint has been removed
-	 */
-	protected void exceptionBreakpointRemoved(IMarker exceptionBreakpoint) {
-		IType type = DebugJavaUtils.getType(exceptionBreakpoint);
-		if (type == null) {
-			internalError(ERROR_BREAKPOINT_NO_TYPE);
-			return;
-		}
-		String name = type.getFullyQualifiedName();
-		ExceptionRequest request= (ExceptionRequest) fInstalledBreakpoints.remove(exceptionBreakpoint);
-		if (request != null) {
-			try {
-				getEventRequestManager().deleteEventRequest(request);
-			} catch (VMDisconnectedException e) {
-				return;
-			} catch (RuntimeException e) {
-				internalError(e);
-				return;
-			}
-		}
-		List deferred = (List)fDeferredBreakpointsByClass.get(name);
-		if (deferred != null)  {
-			deferred.remove(exceptionBreakpoint);
-			if (deferred.isEmpty()) {
-				fDeferredBreakpointsByClass.remove(name);
-			}
-		}
-	}
-
-	/**
-	 * A watchpoint has been added.
-	 * Create or update the request.
-	 */
-	protected void watchpointAdded(IMarker breakpoint) {
-		selectiveWatchpointAdded(breakpoint, true, true);
-
-	}
-
-	/**
-	 * A single watchpoint can create multiple requests. This method provides control over this
-	 * property for explicitly choosing which requests (access, modification, or both) to 
-	 * potentially add.
-	 */	
-	protected void selectiveWatchpointAdded(IMarker breakpoint, boolean accessCheck, boolean modificationCheck) {
-		String topLevelName= getTopLevelTypeName(breakpoint);
-		if (topLevelName == null) {
-			internalError(ERROR_BREAKPOINT_NO_TYPE);
-			return;
-		}
-		
-		List classes= jdiClassesByName(topLevelName);
-		if (classes == null || classes.isEmpty()) {
-			// defer
-			defer(breakpoint, topLevelName);
-			return;
-		}
-				
-		IField javaField= DebugJavaUtils.getField(breakpoint);
-		Field field= null;
-		ReferenceType reference= null;
-		for (int i=0; i<classes.size(); i++) {
-			reference= (ReferenceType) classes.get(i);
-			field= reference.fieldByName(javaField.getElementName());
-			if (field == null) {
-				return;
-			}
-			AccessWatchpointRequest accessRequest= null;
-			ModificationWatchpointRequest modificationRequest= null;			
-			// If we're not supposed to check access or modification, just retrieve the
-			// existing request
-			if (!accessCheck) {
-				accessRequest= getAccessWatchpointRequest(field);
-			}
-			if (!modificationCheck) {
-				modificationRequest= getModificationWatchpointRequest(field);
-			}
-			if (DebugJavaUtils.isAccess(breakpoint) && accessCheck) {
-				if (getVM().canWatchFieldAccess()) {
-					accessRequest= accessWatchpointAdded(breakpoint, field);
-				} else {
-					try {
-						notSupported(ERROR_ACCESS_WATCHPOINT_NOT_SUPPORTED);
-					} catch (DebugException e) {
-						internalError(e);
-					}
-				}
-			}
-			if (DebugJavaUtils.isModification(breakpoint) && modificationCheck) {
-				if (getVM().canWatchFieldModification()) {
-					modificationRequest= modificationWatchpointAdded(breakpoint, field);
-				} else {
-					try {
-						notSupported(ERROR_MODIFICATION_WATCHPOINT_NOT_SUPPORTED);
-					} catch (DebugException e) {
-						internalError(e);
-					}
-				}
-			}
-			if (!(accessRequest == null && modificationRequest == null)) {
-				Object[] requests= {accessRequest, modificationRequest};
-				fInstalledBreakpoints.put(breakpoint, requests);
-				try {		
-					DebugJavaUtils.incrementInstallCount(breakpoint);
-				} catch (CoreException e) {
-					internalError(e);
-				}				
-			}
-		}
-	}
-	
-	/**
-	 * An access watchpoint has been added.
-	 * Create or update the request.
-	 */
-	protected AccessWatchpointRequest accessWatchpointAdded(IMarker breakpoint, Field field) {
-		AccessWatchpointRequest request= getAccessWatchpointRequest(field);
-		if (request == null) {
-			request= createAccessWatchpoint(breakpoint, field);
-		}
-		// Important: Enable only after request has been configured
-		request.setEnabled(getBreakpointManager().isEnabled(breakpoint));
-		return request;
-	}
-	
-	/**
-	 * Create an access watchpoint for the given breakpoint and associated field
-	 */
-	protected AccessWatchpointRequest createAccessWatchpoint(IMarker breakpoint, Field field) {
-		AccessWatchpointRequest request= null;
-			try {
-				request= getEventRequestManager().createAccessWatchpointRequest(field);
-				configureRequest(request, breakpoint);
-			} catch (VMDisconnectedException e) {
-				return null;
-			} catch (RuntimeException e) {
-				internalError(e);
-				return null;
-			}
-		return request;
-	}	
-	
-	/**
-	 * A modification watchpoint has been added.
-	 * Create or update the request.
-	 */
-	protected ModificationWatchpointRequest modificationWatchpointAdded(IMarker breakpoint, Field field) {
-		ModificationWatchpointRequest request= getModificationWatchpointRequest(field);
-		if (request == null) {
-			request= createModificationWatchpoint(breakpoint, field);
-		}
-		// Important: only enable a request after it has been configured
-		request.setEnabled(getBreakpointManager().isEnabled(breakpoint));
-		return request;
-	}
-	
-	/**
-	 * Create a modification watchpoint for the given breakpoint and associated field
-	 */
-	protected ModificationWatchpointRequest createModificationWatchpoint(IMarker breakpoint, Field field) {
-		ModificationWatchpointRequest request= null;
-		try {
-			request= getEventRequestManager().createModificationWatchpointRequest(field);
-			configureRequest(request, breakpoint);
-		} catch (VMDisconnectedException e) {
-			return null;
-		} catch (RuntimeException e) {
-			internalError(e);
-			return null;
-		}
-		return request;			
-	}
-	
-	/**
-	 * Configure a request with common properties:
-	 * <ul>
-	 * <li><code>IDebugConstants.BREAKPOINT_MARKER</code></li>
-	 * <li><code>IJavaDebugConstants.HIT_COUNT</code></li>
-	 * <li><code>IJavaDebugConstants.EXPIRED</code></li>
-	 * </ul>
-	 * and sets the suspend policy of the request to suspend the event thread.
-	 */
-	protected void configureRequest(EventRequest request, IMarker breakpoint) {
-		request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-		request.putProperty(IDebugConstants.BREAKPOINT_MARKER, breakpoint);								
-		int hitCount= DebugJavaUtils.getHitCount(breakpoint);
-		if (hitCount > 0) {
-			request.addCountFilter(hitCount);
-			request.putProperty(IJavaDebugConstants.HIT_COUNT, new Integer(hitCount));
-			request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.FALSE);
-		}
-	}
-	
-	/**
-	 * Enable a request and increment the install count of the associated breakpoint.
-	 */
-	protected void completeConfiguration(EventRequest request, IMarker breakpoint) {
-		// Important: Enable only after request has been configured
-		request.setEnabled(getBreakpointManager().isEnabled(breakpoint));		
-		try {		
-			DebugJavaUtils.incrementInstallCount(breakpoint);
-		} catch (CoreException e) {
-			internalError(e);
-		}
-	}		
-	
-	/**
-	 * A method entry breakpoint has been added.
-     * Create or update the request.
-	 */
-	protected void methodEntryBreakpointAdded(IMarker breakpoint) {
-		IType type = DebugJavaUtils.getType(breakpoint);
-		if (type == null) {
-			internalError(ERROR_BREAKPOINT_NO_TYPE);
-			return;
-		}
-		String className = type.getFullyQualifiedName();
-		
-		MethodEntryRequest request = getMethodEntryRequest(className);
-		
-		if (request == null) {
-			try {
-				request= getEventRequestManager().createMethodEntryRequest();
-				request.addClassFilter(className);
-				request.putProperty(CLASS_NAME, className);
-				request.putProperty(BREAKPOINT_INFO, new ArrayList(1));
-				request.setSuspendPolicy(EventRequest.SUSPEND_EVENT_THREAD);
-				request.putProperty(IDebugConstants.BREAKPOINT_MARKER, new ArrayList(3));
-				request.putProperty(IJavaDebugConstants.HIT_COUNT, new ArrayList(3));
-			} catch (VMDisconnectedException e) {
-				return;
-			} catch (RuntimeException e) {
-				internalError(e);
-				return;
-			}
-		}
-		List breakpointInfo= (List)request.getProperty(BREAKPOINT_INFO);
-		breakpointInfo.add(null);
-		
-		List breakpoints= (List)request.getProperty(IDebugConstants.BREAKPOINT_MARKER);
-		breakpoints.add(breakpoint);
-		
-		
-		List hitCounts = (List)request.getProperty(IJavaDebugConstants.HIT_COUNT);
-		int hitCount = DebugJavaUtils.getHitCount(breakpoint);
-		if (hitCount > 0) {
-			hitCounts.add(new Integer(hitCount));
-		} else {
-			hitCounts.add(null);
-		}
-		completeConfiguration(request, breakpoint);
-		fInstalledBreakpoints.put(breakpoint, request);
+	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+		breakpoint.changeForTarget(this);
 	}
 	
 	/**
@@ -1356,152 +778,18 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		Iterator requests= getEventRequestManager().methodEntryRequests().iterator();
 		while (requests.hasNext()) {
 			MethodEntryRequest existingRequest= (MethodEntryRequest)requests.next();
-			if (className.equals(existingRequest.getProperty(CLASS_NAME))) {
+			if (className.equals(existingRequest.getProperty(MethodEntryBreakpoint.CLASS_NAME))) {
 				return existingRequest;
 			}
 		}
 		return null;
 	}
-	
-	/**
-	 * A watchpoint has been changed.
-	 * Update the request.
-	 */
-	protected void watchpointChanged(IMarker breakpoint) {
-		Object[] requests= (Object[])fInstalledBreakpoints.get(breakpoint);		
-		for (int i=0; i < requests.length; i++) {
-			WatchpointRequest request= (WatchpointRequest)requests[i];
-			if (request == null) {
-				if ((i == 0) && DebugJavaUtils.isAccess(breakpoint)) {
-					selectiveWatchpointAdded(breakpoint, true, false);
-				}
-				if ((i == 1) && DebugJavaUtils.isModification(breakpoint)) {
-					selectiveWatchpointAdded(breakpoint, false, true);
-				}
-				continue;
-			}
-			if ((!DebugJavaUtils.isAccess(breakpoint) && (request instanceof AccessWatchpointRequest)) ||
-			(!DebugJavaUtils.isModification(breakpoint) && (request instanceof ModificationWatchpointRequest))) {
-				getEventRequestManager().deleteEventRequest(request); // disable & remove
-				continue;
-			}
-			request= (WatchpointRequest)updateHitCount(request, breakpoint);
-
-			if (request != null) {
-				updateEnabledState(request, breakpoint);					
-				requests[i]= request;
-			}				
-		}
-	}
-
-	/**
-	 * A method entry breakpoint has been changed.
-	 * Update the request.
-	 */
-	protected void methodEntryBreakpointChanged(IMarker breakpoint, IMarkerDelta delta) {
-		MethodEntryRequest request = (MethodEntryRequest)fInstalledBreakpoints.get(breakpoint);
-		if (request == null) {
-			return;
-		}
-		// check the enabled state
-		updateMethodEntryEnabledState(request);
-		
-		List breakpoints= (List)request.getProperty(IDebugConstants.BREAKPOINT_MARKER);
-		int index= breakpoints.indexOf(breakpoint);
-		// update the breakpoints hit count
-		int newCount = DebugJavaUtils.getHitCount(breakpoint);
-		List hitCounts= (List)request.getProperty(IJavaDebugConstants.HIT_COUNT);
-		if (newCount > 0) {
-			hitCounts.set(index, new Integer(newCount));
-		} else {
-			//back to a regular breakpoint
-			hitCounts.set(index, null);			
-		}
-	}
-	
-	/**
-	 * A watchpoint has been removed.
-	 * Remove the request.
-	 */
-	protected void watchpointRemoved(IMarker breakpoint) {
-		Object[] requests= (Object[]) fInstalledBreakpoints.remove(breakpoint);
-		if (requests == null) {
-			//deferred breakpoint
-			if (!breakpoint.exists()) {
-				//resource no longer exists
-				return;
-			}
-			String name= getTopLevelTypeName(breakpoint);
-			if (name == null) {
-				internalError(ERROR_BREAKPOINT_NO_TYPE);
-				return;
-			}
-			List markers= (List) fDeferredBreakpointsByClass.get(name);
-			if (markers == null) {
-				return;
-			}
-
-			markers.remove(breakpoint);
-			if (markers.isEmpty()) {
-				fDeferredBreakpointsByClass.remove(name);
-			}
-		} else {
-			//installed breakpoint
-			try {
-				for (int i=0; i<requests.length; i++) {
-					WatchpointRequest request= (WatchpointRequest)requests[i];
-					if (request == null) {
-						continue;
-					}
-					getEventRequestManager().deleteEventRequest(request); // disable & remove					
-				}
-				try {
-					DebugJavaUtils.decrementInstallCount(breakpoint);
-				} catch (CoreException e) {
-					internalError(e);
-				}			
-			} catch (VMDisconnectedException e) {
-				return;
-			} catch (RuntimeException e) {
-				internalError(e);
-			}
-		}
-	}
-
-	/**
-	 * A method entry breakpoint has been removed.
-	 * Update the request.
-	 */
-	protected void methodEntryBreakpointRemoved(IMarker breakpoint) {
-		MethodEntryRequest request = (MethodEntryRequest)fInstalledBreakpoints.remove(breakpoint);
-		if (request != null) {
-			try {
-				DebugJavaUtils.decrementInstallCount(breakpoint);
-			} catch (CoreException e) {
-				internalError(e);
-			}
-			List breakpoints= (List)request.getProperty(IDebugConstants.BREAKPOINT_MARKER);
-			int index = breakpoints.indexOf(breakpoint);
-			breakpoints.remove(index);
-			if (breakpoints.isEmpty()) {
-				try {
-					getEventRequestManager().deleteEventRequest(request); // disable & remove
-				} catch (VMDisconnectedException e) {
-				} catch (RuntimeException e) {
-					internalError(e);
-				}
-			} else {
-				List hitCounts= (List)request.getProperty(IJavaDebugConstants.HIT_COUNT);
-				hitCounts.remove(index);
-			}
-		}
-	}
 
 	/**
 	 * @see IBreakpointSupport
 	 */
-	public boolean supportsBreakpoint(IMarker breakpoint) {
-		return !isTerminated() && !isDisconnected() && JDIDebugModel.getPluginIdentifier().equals(getBreakpointManager().getModelIdentifier(breakpoint));
+	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
+		return !isTerminated() && !isDisconnected() && JDIDebugModel.getPluginIdentifier().equals(breakpoint.getModelIdentifier());
 	}
 
 	/**
@@ -1575,15 +863,15 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			//inner class load...resolve the top level type name
 			topLevelName= className.substring(0, index);
 		}
-		ArrayList markers= (ArrayList) fDeferredBreakpointsByClass.remove(topLevelName);
-		if (markers != null) {
+		ArrayList breakpoints= (ArrayList) fDeferredBreakpointsByClass.remove(topLevelName);
+		if (breakpoints != null) {
 			//no longer need to listen for this class load
 			ClassPrepareRequest request= (ClassPrepareRequest) fClassPrepareRequestsByClass.remove(topLevelName);
 			getEventRequestManager().deleteEventRequest(request);
-			Iterator itr= ((ArrayList) markers.clone()).iterator();
+			Iterator itr= ((ArrayList) breakpoints.clone()).iterator();
 			while (itr.hasNext()) {
-				IMarker marker= (IMarker) itr.next();
-				breakpointAdded(marker);
+				JavaBreakpoint breakpoint= (JavaBreakpoint) itr.next();
+				breakpoint.addToTarget(this);
 			}			
 		}
 	}
@@ -1592,11 +880,11 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * Sets all the breakpoints to be uninstalled.
 	 */
 	protected void uninstallAllBreakpoints() {
-		Iterator markers= ((Map)((HashMap)fInstalledBreakpoints).clone()).keySet().iterator();
-		while (markers.hasNext()) {
-			IMarker marker= (IMarker) markers.next();
+		Iterator breakpoints= ((Map)((HashMap)fInstalledBreakpoints).clone()).keySet().iterator();
+		while (breakpoints.hasNext()) {
+			JavaBreakpoint breakpoint= (JavaBreakpoint) breakpoints.next();
 			try {
-				DebugJavaUtils.decrementInstallCount(marker);				
+				breakpoint.decrementInstallCount();				
 			} catch (CoreException e) {
 				internalError(e);
 			}
@@ -1607,53 +895,8 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	/**
 	 * @see IBreakpointSupport
 	 */
-	public void breakpointRemoved(IMarker breakpoint, IMarkerDelta delta) {
-		if (DebugJavaUtils.isExceptionBreakpoint(breakpoint)) {
-			exceptionBreakpointRemoved(breakpoint);
-		} else if (DebugJavaUtils.isMethodEntryBreakpoint(breakpoint)) {
-			methodEntryBreakpointRemoved(breakpoint);
-		} else if (DebugJavaUtils.isWatchpoint(breakpoint)) {
-			watchpointRemoved(breakpoint);
-		} else {
-			lineBreakpointRemoved(breakpoint);
-		}
-	}
-	
-	protected void lineBreakpointRemoved(IMarker breakpoint) {		
-		BreakpointRequest request= (BreakpointRequest) fInstalledBreakpoints.remove(breakpoint);
-		if (request == null) {
-			//deferred breakpoint
-			if (!breakpoint.exists()) {
-				//resource no longer exists
-				return;
-			}
-			String name= getTopLevelTypeName(breakpoint);
-			if (name == null) {
-				internalError(ERROR_BREAKPOINT_NO_TYPE);
-				return;
-			}
-			List markers= (List) fDeferredBreakpointsByClass.get(name);
-			if (markers == null) {
-				return;
-			}
-
-			markers.remove(breakpoint);
-			if (markers.isEmpty()) {
-				fDeferredBreakpointsByClass.remove(name);
-			}
-		} else {
-			//installed breakpoint
-			try {
-				// cannot delete an expired request
-				if (!isExpired(request)) {
-					getEventRequestManager().deleteEventRequest(request); // disable & remove
-				}
-			} catch (VMDisconnectedException e) {
-				return;
-			} catch (RuntimeException e) {
-				internalError(e);
-			}
-		}
+	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+		breakpoint.removeFromTarget(this);
 	}
 
 	/**
@@ -1666,16 +909,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			while (itr.hasNext()) {
 				// do not notify the breakpoint manager of uninstall, as we
 				// are in a resource change callback and cannot modify the resource tree
-				IMarker marker= (IMarker) itr.next();
-				boolean watchpointMarker= false;
-				try {
-					watchpointMarker= marker.isSubtypeOf(IJavaDebugConstants.JAVA_WATCHPOINT);
-				} catch (CoreException ce) {
-					logError(ce);
-					continue;
-				}
-				if (watchpointMarker) {
-					Object[] requests= (Object[])fInstalledBreakpoints.remove(marker);
+				JavaBreakpoint breakpoint= (JavaBreakpoint) itr.next();
+				if (breakpoint instanceof Watchpoint) {
+					Object[] requests= (Object[])fInstalledBreakpoints.remove(breakpoint);
 					for (int i=0; i<requests.length; i++) {
 						EventRequest req = (EventRequest)requests[i];
 						if (req != null) {
@@ -1683,10 +919,10 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 						}
 					}
 				} else {
-					EventRequest req = (EventRequest)fInstalledBreakpoints.remove(marker);
+					EventRequest req = (EventRequest)fInstalledBreakpoints.remove(breakpoint);
 					getEventRequestManager().deleteEventRequest(req);
 				}
-				breakpointAdded(marker);
+				breakpoint.addToTarget(this);
 			}
 		}
 	}
@@ -1755,29 +991,6 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 		return null;
 	}
-		
-	/**
-	 * Called by a JDI thread when a breakpoint or 
-	 * watchpoint is encountered.
-	 */
-	public void expireHitCount(LocatableEvent event) {
-		EventRequest request= (EventRequest)event.request();
-		Integer requestCount= (Integer) request.getProperty(IJavaDebugConstants.HIT_COUNT);
-		if (requestCount != null) {
-			IMarker breakpoint= (IMarker)request.getProperty(IDebugConstants.BREAKPOINT_MARKER);
-			if (breakpoint == null) {
-				return;
-			}
-			try {
-				request.putProperty(IJavaDebugConstants.EXPIRED, Boolean.TRUE);
-				getBreakpointManager().setEnabled(breakpoint, false);
-				// make a note that we auto-disabled this breakpoint.
-				DebugJavaUtils.setExpired(breakpoint, true);
-			} catch (CoreException ce) {
-				internalError(ce);
-			}
-		}
-	}
 	
 	/**
 	 * @see IDebugElement
@@ -1792,7 +1005,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 	 * 
 	 * @see IAdaptable
 	 */
-	protected Object getAdpater(Class adapter) {
+	public Object getAdapter(Class adapter) {
 		if (adapter == IJavaDebugTarget.class) {
 			return this;
 		}
@@ -1903,18 +1116,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 		}
 		return context;
 	}
-	
-	/**
-	 * Returns whether the given request is expired
-	 */
-	protected boolean isExpired(EventRequest request) {
-		Boolean requestExpired= (Boolean) request.getProperty(IJavaDebugConstants.EXPIRED);
-		if (requestExpired == null) {
-				return false;
-		}
-		return requestExpired.booleanValue();
-	}
-	
+
 	/**
 	 * The JDIDebugPlugin is shutting down.
 	 * Shutdown the event dispatcher.

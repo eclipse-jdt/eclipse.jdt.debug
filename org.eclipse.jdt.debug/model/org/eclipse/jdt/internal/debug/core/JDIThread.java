@@ -109,7 +109,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * The breakpoint that caused the last suspend, or
 	 * <code>null</code> if none.
 	 */
-	protected IMarker fCurrentBreakpoint;
+	protected JavaBreakpoint fCurrentBreakpoint;
 
 	/**
 	 * The cached named of the underlying thread.
@@ -137,7 +137,6 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 * invocations cannot be performed.
 	 */
 	protected boolean fInEvaluation = false;
-	protected boolean fEvaluationAborted = false;
 
 	/**
 	 * Creates a new thread on the underlying thread reference.
@@ -191,7 +190,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	/**
 	 * @see IJavaThread
 	 */
-	public IMarker getBreakpoint() {
+	public JavaBreakpoint getBreakpoint() {
 		if (fCurrentBreakpoint != null && !fCurrentBreakpoint.exists()) {
 			fCurrentBreakpoint= null;
 		}
@@ -444,21 +443,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 		}
 
 		invokeComplete(timeout);
-		if (fEvaluationAborted) {
-			fEvaluationAborted = false;
-			resume();
-		}
 		return result;
-	}
-	
-	/**
-	 * Called by JDIValue when an evaluation of
-	 * #toString times out. Causes this thread to
-	 * be automatically resumed when it returns from
-	 * its evaluation - see <code>invokeMethod</code>.
-	 */
-	protected void abortEvaluation() {
-		fEvaluationAborted = true;
 	}
 	
 	/**
@@ -595,24 +580,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutL
 	 */
 	protected void handleLocatableEvent(LocatableEvent event) {
 		abortDropAndStep();
-		fCurrentBreakpoint= (IMarker) event.request().getProperty(IDebugConstants.BREAKPOINT_MARKER);
+		fCurrentBreakpoint= (JavaBreakpoint) event.request().getProperty(IDebugConstants.BREAKPOINT);
 		setRunning(false, DebugEvent.BREAKPOINT);
-		((JDIDebugTarget) getDebugTarget()).expireHitCount(event);
 	}
 	
-	/**
-	 * Suspend the thread based on an exception event
-	 */
-	protected void handleException(ExceptionEvent event) {
-		abortDropAndStep();
-		fCurrentBreakpoint= (IMarker) event.request().getProperty(IDebugConstants.BREAKPOINT_MARKER);
-		setRunning(false, DebugEvent.BREAKPOINT);
-	}
-
-	/**
-	 * Suspend the thread based on the method entry event
-	 */
-	protected void handleSuspendMethodEntry(IMarker breakpoint) {
+	protected void handleSuspendForBreakpoint(JavaBreakpoint breakpoint) {
 		abortDropAndStep();
 		fCurrentBreakpoint= breakpoint;
 		setRunning(false, DebugEvent.BREAKPOINT);
