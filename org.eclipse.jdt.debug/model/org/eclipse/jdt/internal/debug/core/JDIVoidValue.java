@@ -8,6 +8,8 @@ package org.eclipse.jdt.internal.debug.core;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jdt.debug.core.IJavaThread;
+
 /**
  * Represents a value of "void"
  */
@@ -23,35 +25,35 @@ public class JDIVoidValue extends JDIValue {
 	}
 	
 	/**
-	 * @see IValue
+	 * @see IValue#getReferenceTypeName()
 	 */
 	public String getReferenceTypeName() {
 		return "void"; //$NON-NLS-1$
 	}
 	
 	/**
-	 * @see IValue
+	 * @see IValue#getValueString()
 	 */
 	public String getValueString() {
 		return "null"; //$NON-NLS-1$
 	}
 
 	/**
-	 * @see IJavaValue
+	 * @see IJavaValue#evaluateToString(IJavaThread)
 	 */
-	public String evaluateToString() {
+	public String evaluateToString(IJavaThread thread) {
 		return getValueString();
 	}
 
 	/**
-	 * @see IJavaValue
+	 * @see IJavaValue#getSignature()
 	 */
 	public String getSignature() {
 		return "V"; //$NON-NLS-1$
 	}
 
 	/**
-	 * @see IJavaValue
+	 * @see IJavaValue#getArrayLength()
 	 */
 	public int getArrayLength() {
 		return -1;
