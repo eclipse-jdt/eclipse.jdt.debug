@@ -64,7 +64,7 @@ public class JavaLineBreakpoint extends JavaBreakpoint implements IJavaLineBreak
 
 	
 				// create the marker
-				fMarker= resource.createMarker(markerType);
+				setMarker(resource.createMarker(markerType));
 				setLineBreakpointAttributes(getPluginIdentifier(), true, lineNumber, charStart, charEnd);
 	
 				// configure the hit count and type handle

@@ -114,7 +114,7 @@ public class JavaWatchpoint extends JavaLineBreakpoint implements IJavaWatchpoin
 					resource = field.getJavaProject().getProject();
 				}
 				
-				fMarker= resource.createMarker(JAVA_WATCHPOINT);
+				setMarker(resource.createMarker(JAVA_WATCHPOINT));
 				
 				// configure the standard attributes
 				setStandardAttributes(field);

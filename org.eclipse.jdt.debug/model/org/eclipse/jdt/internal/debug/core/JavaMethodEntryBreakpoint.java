@@ -62,7 +62,7 @@ public class JavaMethodEntryBreakpoint extends JavaLineBreakpoint implements IJa
 				}
 
 				// create the marker
-				fMarker= resource.createMarker(JAVA_METHOD_ENTRY_BREAKPOINT);
+				setMarker(resource.createMarker(JAVA_METHOD_ENTRY_BREAKPOINT));
 				
 				// find the source range if available
 				int start = -1;

@@ -43,7 +43,7 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 			public void run(IProgressMonitor monitor) throws CoreException {
 	
 				// create the marker
-				fMarker= resource.createMarker(markerType);
+				setMarker(resource.createMarker(markerType));
 				setLineBreakpointAttributes(getPluginIdentifier(), true, lineNumber, -1, -1);
 	
 				// configure the hit count and pattern handle
