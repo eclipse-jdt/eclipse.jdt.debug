@@ -24,7 +24,6 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
-import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -305,7 +304,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected boolean canStep() {
 		try {
-			return isSuspended() && (!isSuspendedQuiet())  && (!isPerformingEvaluation() || isInvokingMethod()) && !isStepping() && getTopStackFrame() != null && !((IJavaDebugTarget)getDebugTarget()).isPerformingHotCodeReplace();
+			return isSuspended()
+				&& (!isSuspendedQuiet())  && (!isPerformingEvaluation() || isInvokingMethod())
+				&& !isStepping()
+				&& getTopStackFrame() != null
+				&& !getJavaDebugTarget().isPerformingHotCodeReplace();
 		} catch (DebugException e) {
 			return false;
 		}
@@ -590,6 +593,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * @see IJavaThread#runEvaluation(IEvaluationRunnable, IProgressMonitor, int)
 	 */ 
 	public void runEvaluation(IEvaluationRunnable evaluation, IProgressMonitor monitor, int evaluationDetail, boolean hitBreakpoints) throws DebugException {
+		if (!canStep()) {
+			requestFailed(JDIDebugModelMessages.getString("JDIThread.Evaluation_failed_-_thread_not_suspended"), null, IJavaThread.ERR_THREAD_NOT_SUSPENDED); //$NON-NLS-1$
+		}
+		
 		if (isPerformingEvaluation()) {
 			requestFailed(JDIDebugModelMessages.getString("JDIThread.Cannot_perform_nested_evaluations"), null, IJavaThread.ERR_NESTED_METHOD_INVOCATION); //$NON-NLS-1$			
 		}
@@ -2401,4 +2408,5 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		}
 		
 	}
+	
 }

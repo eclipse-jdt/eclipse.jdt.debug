@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -28,6 +29,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaArray;
 import org.eclipse.jdt.debug.core.IJavaArrayType;
 import org.eclipse.jdt.debug.core.IJavaClassType;
@@ -108,11 +110,21 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 	 * @param listener the listener
 	 */	
 	public void computeValueDetail(final IJavaValue objectValue, final IJavaThread thread, final IValueDetailListener listener) {
-		thread.queueRunnable(new Runnable() {
+		Runnable postEventDispatch = new Runnable() {
 			public void run() {
-				resolveFormatter(objectValue, thread, listener);
+				Runnable postEventProcess = new Runnable() {
+					public void run() {
+						thread.queueRunnable(new Runnable() {
+							public void run() {
+								resolveFormatter(objectValue, thread, listener);
+							}
+						});
+					}
+				};
+				JDIDebugUIPlugin.getStandardDisplay().asyncExec(postEventProcess);
 			}
-		});
+		};
+		DebugPlugin.getDefault().asyncExec(postEventDispatch);
 	}
 	
 	private void resolveFormatter(final IJavaValue value, final IJavaThread thread, final IValueDetailListener listener) {
@@ -141,7 +153,10 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 		try {
 			evaluationListener.valueToString(value);
 		} catch (DebugException e) {
-			JDIDebugUIPlugin.log(e);
+			if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+				// don't log 'thread not suspended' errors
+				JDIDebugUIPlugin.log(e);
+			}
 			listener.detailComputed(value, e.getStatus().getMessage());
 		}
 	}
@@ -397,32 +412,40 @@ public class JavaDetailFormattersManager implements IPropertyChangeListener, IDe
 				try {
 					valueToString(result.getValue());
 				} catch (DebugException e) {
-					JDIDebugUIPlugin.log(e);
+					if (e.getStatus().getCode() != IJavaThread.ERR_THREAD_NOT_SUSPENDED) {
+						// don't log 'thread not suspended' errors
+						JDIDebugUIPlugin.log(e);
+					}
 					fListener.detailComputed(fValue, e.getStatus().getMessage());
 				}
 			}
 		}
 		
-		public void valueToString(IJavaValue objectValue) throws DebugException {
-			StringBuffer result= new StringBuffer();
-			if (objectValue.getSignature() == null) {
-				// no need to spawn a thread for a null fValue
-				result.append(DebugUIMessages.getString("JavaDetailFormattersManager.null")); //$NON-NLS-1$
-			} else if (objectValue instanceof IJavaPrimitiveValue) {
-				// no need to spawn a thread for a primitive value
-				appendJDIPrimitiveValueString(result, objectValue);
-			} else if (fThread == null || !fThread.isSuspended()) {
-				// no thread available
-				result.append(DebugUIMessages.getString("JavaDetailFormattersManager.no_suspended_threads")); //$NON-NLS-1$
-				appendJDIValueString(result, objectValue);
-			} else if (objectValue instanceof IJavaArray) {
-				appendArrayDetail(result, (IJavaArray) objectValue);
-			} else if (objectValue instanceof IJavaObject) {
-				appendObjectDetail(result, (IJavaObject) objectValue);
-			} else {
-				appendJDIValueString(result, objectValue);
-			}
-			fListener.detailComputed(fValue, result.toString());
+		public void valueToString(final IJavaValue objectValue) throws DebugException {
+			IEvaluationRunnable eval = new IEvaluationRunnable() {
+				public void run(IJavaThread thread, IProgressMonitor monitor) throws DebugException {
+					StringBuffer result= new StringBuffer();
+					if (objectValue.getSignature() == null) {
+						// no need to spawn a thread for a null fValue
+						result.append(DebugUIMessages.getString("JavaDetailFormattersManager.null")); //$NON-NLS-1$
+					} else if (objectValue instanceof IJavaPrimitiveValue) {
+						// no need to spawn a thread for a primitive value
+						appendJDIPrimitiveValueString(result, objectValue);
+					} else if (fThread == null || !fThread.isSuspended()) {
+						// no thread available
+						result.append(DebugUIMessages.getString("JavaDetailFormattersManager.no_suspended_threads")); //$NON-NLS-1$
+						appendJDIValueString(result, objectValue);
+					} else if (objectValue instanceof IJavaArray) {
+						appendArrayDetail(result, (IJavaArray) objectValue);
+					} else if (objectValue instanceof IJavaObject) {
+						appendObjectDetail(result, (IJavaObject) objectValue);
+					} else {
+						appendJDIValueString(result, objectValue);
+					}
+					fListener.detailComputed(fValue, result.toString());
+				}
+			};
+			fThread.runEvaluation(eval, null, DebugEvent.EVALUATION_IMPLICIT, false);
 		}
 		
 		protected void appendArrayDetail(StringBuffer result, IJavaArray arrayValue) throws DebugException {
