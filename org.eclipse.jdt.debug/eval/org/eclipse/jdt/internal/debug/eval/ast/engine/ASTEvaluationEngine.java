@@ -1,8 +1,11 @@
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
 package org.eclipse.jdt.internal.debug.eval.ast.engine;
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -209,7 +212,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 	public ICompiledExpression getCompiledExpression(String snippet, IJavaObject thisContext) {
 		if (thisContext instanceof IJavaArray) {
 			InstructionSequence errorExpression= new InstructionSequence(snippet);
-			errorExpression.addError(new Message(EvaluationEngineMessages.getString("Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1"), 0)); //$NON-NLS-1$
+			errorExpression.addError(new Message(EvaluationEngineMessages.getString("ASTEvaluationEngine.Cannot_perform_an_evaluation_in_the_context_of_an_array_instance_1"), 0)); //$NON-NLS-1$
 		}
 		IJavaProject javaProject = getJavaProject();
 
@@ -258,7 +261,7 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 			}
 			if (snippetError || runMethodError) {
 				if (runMethodError) {
-					errorSequence.addError(new Message(EvaluationEngineMessages.getString("ASTEvaluationEngineEvaluations_must_contain_either_an_expression_or_a_block_of_well-formed_statements_1"), 0)); //$NON-NLS-1$
+					errorSequence.addError(new Message(EvaluationEngineMessages.getString("ASTEvaluationEngine.Evaluations_must_contain_either_an_expression_or_a_block_of_well-formed_statements_1"), 0)); //$NON-NLS-1$
 				}
 				return errorSequence;
 			}
@@ -270,21 +273,21 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		return visitor.getInstructions();
 	}
 
-	/*
+	/**
 	 * @see IEvaluationEngine#getJavaProject()
 	 */
 	public IJavaProject getJavaProject() {
 		return fProject;
 	}
 
-	/*
+	/**
 	 * @see IEvaluationEngine#getDebugTarget()
 	 */
 	public IJavaDebugTarget getDebugTarget() {
 		return fDebugTarget;
 	}
 
-	/*
+	/**
 	 * @see IEvaluationEngine#dispose()
 	 */
 	public void dispose() {
@@ -299,5 +302,4 @@ public class ASTEvaluationEngine implements IAstEvaluationEngine {
 		dispose();
 		super.finalize();
 	}
-
 }

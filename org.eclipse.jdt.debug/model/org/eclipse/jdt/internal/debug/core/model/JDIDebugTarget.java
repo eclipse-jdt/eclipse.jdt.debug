@@ -1,9 +1,11 @@
 package org.eclipse.jdt.internal.debug.core.model;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -1446,39 +1448,39 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			if (classes.size() == 0) {
 				switch (name.charAt(0)) {
 					case 'b':
-						if (name.equals("boolean")) {
+						if (name.equals("boolean")) { //$NON-NLS-1$
 							return new IJavaType[] {newValue(true).getJavaType()};
-						} else if (name.equals("byte")) {
+						} else if (name.equals("byte")) { //$NON-NLS-1$
 							return new IJavaType[] {newValue((byte)1).getJavaType()};
 						}
 						break;
 					case 'i':
-						if (name.equals("int")) {
+						if (name.equals("int")) { //$NON-NLS-1$
 							return new IJavaType[] {newValue(1).getJavaType()};
 						}
 						break;
 					case 'l':
-						if (name.equals("long")) {
+						if (name.equals("long")) { //$NON-NLS-1$
 							return new IJavaType[] {newValue(1l).getJavaType()};
 						}
 						break;
 					case 'c':
-						if (name.equals("char")) {
+						if (name.equals("char")) { //$NON-NLS-1$
 							return new IJavaType[] {newValue(' ').getJavaType()};
 						}
 						break;
 					case 's':
-						if (name.equals("short")) {
+						if (name.equals("short")) { //$NON-NLS-1$
 							return new IJavaType[] {newValue((short)1).getJavaType()};
 						}
 						break;
 					case 'f':
-						if (name.equals("float")) {
+						if (name.equals("float")) { //$NON-NLS-1$
 							return new IJavaType[] {newValue(1f).getJavaType()};
 						}
 						break;
 					case 'd':
-						if (name.equals("double")) {
+						if (name.equals("double")) { //$NON-NLS-1$
 							return new IJavaType[] {newValue(1d).getJavaType()};
 						}
 						break;
