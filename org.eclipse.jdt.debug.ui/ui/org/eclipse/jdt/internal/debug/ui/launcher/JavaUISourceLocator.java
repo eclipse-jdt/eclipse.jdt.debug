@@ -96,14 +96,12 @@ public class JavaUISourceLocator implements ISourceLocator {
 
 			Control inner= fSourceLookupBlock.createControl(composite);
 			inner.setLayoutData(new GridData(GridData.FILL_BOTH));
-			fAskAgainCheckBox= new Button(composite, SWT.CHECK);
-			fAskAgainCheckBox.setText(LauncherMessages.getString("JavaUISourceLocator.askagain.message")); //$NON-NLS-1$
-			Label askmessage= new Label(composite, SWT.LEFT + SWT.WRAP);
-			askmessage.setText(LauncherMessages.getString("JavaUISourceLocator.askagain.description")); //$NON-NLS-1$
+			fAskAgainCheckBox= new Button(composite, SWT.CHECK + SWT.WRAP);
 			data= new GridData();
-			data.widthHint= convertWidthInCharsToPixels(askmessage, 70);
-			askmessage.setLayoutData(data);
-
+			data.widthHint= convertWidthInCharsToPixels(fAskAgainCheckBox, 70);
+			fAskAgainCheckBox.setLayoutData(data);
+			fAskAgainCheckBox.setText(LauncherMessages.getString("JavaUISourceLocator.askagain.message")); //$NON-NLS-1$
+			
 			return composite;
 		}
 		
