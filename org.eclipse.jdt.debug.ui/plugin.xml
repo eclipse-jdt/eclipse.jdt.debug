@@ -633,6 +633,7 @@
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			style="toggle"
 			state="false">
 		</action>
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowStatic"
@@ -642,6 +643,7 @@
 			tooltip="%showStaticAction.tooltip"
 			helpContextId="show_static_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
+			style="toggle"
 			state="false">
 		</action>		
 		<action id="org.eclipse.jdt.ui.variableViewActions.ShowConstants"
@@ -651,6 +653,7 @@
 			tooltip="%showConstantsAction.tooltip"
 			helpContextId="show_constants_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
+			style="toggle"
 			state="false">
 		</action>		
 	</viewContribution>
@@ -671,6 +674,7 @@
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			style="toggle"
 			state="false">
 		</action>
 		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowStatic"
@@ -680,6 +684,7 @@
 			tooltip="%showStaticAction.tooltip"
 			helpContextId="show_static_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowStaticVariablesAction"
+			style="toggle"
 			state="false">
 		</action>		
 		<action id="org.eclipse.jdt.ui.expressionViewActions.ShowConstants"
@@ -689,6 +694,7 @@
 			tooltip="%showConstantsAction.tooltip"
 			helpContextId="show_constants_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowConstantsAction"
+			style="toggle"
 			state="false">
 		</action>		
 	</viewContribution>	
@@ -712,6 +718,7 @@
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			style="toggle"
 			state="false">
 		</action>
 	</viewContribution>
@@ -725,6 +732,7 @@
 			tooltip="%showQualifiedAction.tooltip"
 			helpContextId="show_qualified_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.ShowQualifiedAction"
+			style="toggle"
 			state="false">
 		</action>
 	</viewContribution>
