@@ -94,7 +94,7 @@ public class TargetPatternBreakpointTests extends AbstractDebugTest implements I
 				ILineBreakpoint breakpoint= (ILineBreakpoint) hit;
 				int lineNumber = breakpoint.getLineNumber();
 				int stackLine = thread.getTopStackFrame().getLineNumber();
-				assertTrue("line numbers of breakpoint and stack frame do not match", lineNumber == stackLine);
+				assertEquals("line numbers of breakpoint and stack frame do not match", lineNumber, stackLine);
 				bps.remove(breakpoint);
 				breakpoint.delete();
 				if (!bps.isEmpty()) {
