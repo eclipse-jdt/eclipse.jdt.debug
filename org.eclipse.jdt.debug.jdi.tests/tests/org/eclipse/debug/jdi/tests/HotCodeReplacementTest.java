@@ -75,12 +75,7 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		}
 		assertEquals("dropTopFrame.6", stackSize - 1, newStackSize);
 	}
-	private void getClassFileVersion() {
-		org.eclipse.jdi.hcr.ReferenceType type =
-			(org.eclipse.jdi.hcr.ReferenceType) getMainClass();
-		int version = type.getClassFileVersion();
-		assertEquals("getClassFileVersion.1", -211226504, version);
-	}
+	
 	/**
 	 * Init the fields that are used by this test only.
 	 */
@@ -238,13 +233,6 @@ public class HotCodeReplacementTest extends AbstractJDITest {
 		// Reenter on exit
 		if (vm.canReenterOnExit())
 			reenterOnExit(thread);
-
-		// Get class file version
-		// MML: commented out, otherwise this test fails after a change to
-		// the main class.
-		//	if (vm.canGetClassFileVersion()) {
-		//		getClassFileVersion();
-		//	}
 	}
 	/**
 	 * Make sure the test leaves the VM in the same state it found it.
