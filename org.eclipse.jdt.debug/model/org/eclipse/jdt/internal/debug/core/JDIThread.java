@@ -46,7 +46,7 @@ import com.sun.jdi.request.StepRequest;
 /** 
  * Proxy to a thread reference on the target.
  */
-public class JDIThread extends JDIDebugElement implements IJavaThread {
+public class JDIThread extends JDIDebugElement implements IJavaThread, ITimeoutListener {
 	
 	protected static final String MAIN_THREAD_GROUP = "main"; //$NON-NLS-1$
 
@@ -90,7 +90,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	protected boolean fEventSuspend = false;
 
 	/**
-	 * Step timer. During a long running step, children are disposed.
+	 * Action timer. During a long running action,
+	 * stack frames are collapsed.
 	 */
 	private Timer fTimer;
 
@@ -121,6 +122,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 */
 	protected boolean fInEvaluation = false;
 	protected boolean fEvaluationAborted = false;
+	
+	/**
+	 * Whether this thread has been interrupted during
+	 * the last evaluation. That is, was a breakpoint
+	 * hit, did the user suspend the thread, or did
+	 * the evaluation timeout.
+	 */
+	private boolean fInterrupted = false;
 
 	/**
 	 * Creates a new thread on the underlying thread reference.
@@ -421,7 +430,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			setRequestTimeout(Integer.MAX_VALUE);
 			setRunning(true);
 			fInEvaluation = true;
-			disposeStackFrames();
+			preserveStackFrames();
+			resetInterrupted();
+			startCollapseTimer();
 			if (receiverClass == null) {
 				result= receiverObject.invokeMethod(fThread, method, args, ClassType.INVOKE_SINGLE_THREADED);
 			} else {
@@ -445,6 +456,34 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			resume();
 		}
 		return result;
+	}
+	
+	/**
+	 * Called when an evaluation may have been interrupted.
+	 * If an evaluation gets suspended, or times out, we need
+	 * to fire a suspend event when the evaluation compeletes,
+	 * to update the UI.
+	 */
+	protected void interrupted() {
+		if (isPerformingEvaluation()) {
+			fInterrupted = true;
+			stopCollapseTimer();
+		}
+	}
+	
+	/**
+	 * Resets the interrupted state to <code>false</code>. 
+	 */
+	protected void resetInterrupted() {
+		fInterrupted = false;
+	}
+	
+	/**
+	 * Returns whether this thread was interrupted during the
+	 * last evaluation.
+	 */
+	protected boolean wasInterrupted() {
+		return fInterrupted;
 	}
 	
 	/**
@@ -472,6 +511,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			setRequestTimeout(Integer.MAX_VALUE);
 			setRunning(true);
 			fInEvaluation = true;
+			preserveStackFrames();
+			resetInterrupted();
+			startCollapseTimer();
 			result= receiverClass.newInstance(fThread, constructor, args, ClassType.INVOKE_SINGLE_THREADED);
 		} catch (InvalidTypeException e) {
 			invokeFailed(e, timeout);
@@ -503,9 +545,14 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * the orginal timeout value for JDI requests.
 	 */
 	protected void invokeComplete(int restoreTimeout) {
+		stopCollapseTimer();
+		boolean interrupted= wasInterrupted();
 		setRunning(false);
 		fInEvaluation = false;
 		setRequestTimeout(restoreTimeout);
+		if (interrupted) {
+			fireSuspendEvent(-1);
+		}
 	}
 	
 	/**
@@ -662,7 +709,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Sets whether this thread is currently executing.
 	 * When set to <code>true</code>, this thread's current
-	 * breakpoint is cleared.
+	 * breakpoint is cleared. When set to <code>false</code>
+	 * a note is made that this thread has been interrupted.
 	 * 
 	 * @param running whether this thread is executing
 	 */
@@ -670,6 +718,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		fRunning = running;
 		if (running) {
 			fCurrentBreakpoint = null;
+		} else {
+			interrupted();
 		}
 	}
 
@@ -920,13 +970,35 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	}
 	
 	/**
-	 * Returns this thread's step timer.
+	 * Returns this thread's timer.
 	 */
-	protected Timer getStepTimer() {
+	private Timer getTimer() {
 		if (fTimer == null) {
 			fTimer = new Timer();
 		}
 		return fTimer;
+	}
+	
+	/**
+	 * An action has timed out. Dispose stack frames.
+	 */
+	public void timeout() {
+		System.out.println("timeout");
+		disposeStackFrames();
+		interrupted();
+		fireChangeEvent();
+	}
+	
+	/**
+	 * Starts a timer. In the event of a timeout,
+	 * stack frames are collapsed.
+	 */
+	protected void startCollapseTimer() {
+		getTimer().start(this, 3000);
+	}
+	
+	protected void stopCollapseTimer() {
+		getTimer().stop();
 	}
 		 	
 	/**
@@ -965,7 +1037,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	/**
 	 * Helper class to perform stepping an a thread.
 	 */
-	abstract class StepHandler implements IJDIEventListener, ITimeoutListener {
+	abstract class StepHandler implements IJDIEventListener {
 		/**
 		 * Request for stepping in the underlying VM
 		 */
@@ -1001,7 +1073,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			setRunning(true);
 			preserveStackFrames();
 			fireResumeEvent(DebugEvent.STEP_START);
-			getStepTimer().start(this, 3000);
+			startCollapseTimer();
 			invokeThread();
 		}
 		
@@ -1148,19 +1220,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * </ul>
 		 */
 		protected void stepEnd() {
-			getStepTimer().stop();
+			stopCollapseTimer();
 			setRunning(false);
 			deleteStepRequest();
 			setPendingStepHandler(null);
 			fireSuspendEvent(DebugEvent.STEP_END);
-		}
-
-		/**
-		 * A step has timed out. Dispose stack frames.
-		 */
-		public void timeout() {
-			disposeStackFrames();
-			fireChangeEvent();
 		}
 		
 		/**
@@ -1170,7 +1234,7 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 */
 		protected void abort() {
 			if (getStepRequest() != null) {
-				getStepTimer().stop();
+				stopCollapseTimer();
 				deleteStepRequest();
 				setPendingStepHandler(null);
 			}
