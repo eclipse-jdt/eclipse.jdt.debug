@@ -97,11 +97,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	protected Map fFilteredThreadsByTarget;
 	
 	/**
-	 * Whether to ignore change callbacks - used when updating intall counts
-	 */
-	private boolean fIgnoreChange = false;
-	
-	/**
 	 * Propery identifier for a breakpoint object on an event request
 	 */
 	public static final String JAVA_BREAKPOINT_PROPERTY = "org.eclipse.jdt.debug.breakpoint"; //$NON-NLS-1$
@@ -473,14 +468,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Update all requests that this breakpoint has installed in the
 	 * given target to reflect the current state of this breakpoint.
-	 * Ignore the change if the 'ignore change' flag has been set
-	 * (used when updating install counts).
 	 */
-	public void changeForTarget(JDIDebugTarget target) throws CoreException {
-		if (isIgnoreChange()) {
-			return;
-		}
-		
+	public void changeForTarget(JDIDebugTarget target) throws CoreException {		
 		List requests = getRequests(target);
 		if (!requests.isEmpty()) {
 			ListIterator iter = requests.listIterator();
@@ -677,14 +666,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	/**
 	 * Increments the install count of this breakpoint
 	 */
-	protected void incrementInstallCount() throws CoreException {
-		try {
-			setIgnoreChange(true);		
-			int count = getInstallCount();
-			setAttribute(INSTALL_COUNT, count + 1);
-		} finally {
-			setIgnoreChange(false);
-		}
+	protected void incrementInstallCount() throws CoreException {	
+		int count = getInstallCount();
+		setAttribute(INSTALL_COUNT, count + 1);
 	}	
 	
 	/**
@@ -696,25 +680,19 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	}	
 
 	/**
-	 * Decrements the install count of this breakpoint, and disregards
-	 * change callback for install count change.
+	 * Decrements the install count of this breakpoint.
 	 */
 	protected void decrementInstallCount() throws CoreException {
-		try {
-			setIgnoreChange(true);
-			int count= getInstallCount();
-			if (count > 0) {
-				setAttribute(INSTALL_COUNT, count - 1);	
+		int count= getInstallCount();
+		if (count > 0) {
+			setAttribute(INSTALL_COUNT, count - 1);	
+		}
+		if (count == 1) {
+			if (isExpired()) {
+				// if breakpoint was auto-disabled, re-enable it
+				setAttributes(fgExpiredEnabledAttributes,
+						new Object[]{Boolean.FALSE, Boolean.TRUE});
 			}
-			if (count == 1) {
-				if (isExpired()) {
-					// if breakpoint was auto-disabled, re-enable it
-					setAttributes(fgExpiredEnabledAttributes,
-							new Object[]{Boolean.FALSE, Boolean.TRUE});
-				}
-			}
-		} finally {
-			setIgnoreChange(false);
 		}
 	}
 	
@@ -990,20 +968,6 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			jt = JDIType.createType(target, type);
 		}
 		return JDIDebugPlugin.getDefault().fireInstalling(target, this, jt);
-	}
-	
-	/**
-	 * Sets whether change callbacks should be ignored
-	 */
-	protected void setIgnoreChange(boolean ignore) {
-		fIgnoreChange = ignore;
-	}
-	
-	/**
-	 * Returns whether change callbacks should be ignored
-	 */
-	protected boolean isIgnoreChange() {
-		return fIgnoreChange;
 	}
 }
 
