@@ -20,6 +20,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 
 import com.sun.jdi.ClassType;
 import com.sun.jdi.Field;
+import com.sun.jdi.InterfaceType;
 import com.sun.jdi.Method;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
@@ -118,25 +119,52 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 	/**
 	 * @see IJavaObject#getField(String, String)
 	 */
-	public IJavaFieldVariable getField(String name, String typeSignature) throws DebugException {
+	public IJavaFieldVariable getField(String name, String declaringTypeSignature) throws DebugException {
 		ReferenceType ref= getUnderlyingReferenceType();
 		try {
 			Field field= null, enclosingThis= null, fieldTmp= null;
-			Iterator fields= ref.fields().iterator();
+			Iterator fields= ref.allFields().iterator();
 			while (fields.hasNext()) {
 				fieldTmp = (Field)fields.next();
-				if (name.equals(fieldTmp.name()) && typeSignature.equals(fieldTmp.declaringType().signature())) {
+				if (name.equals(fieldTmp.name()) && declaringTypeSignature.equals(fieldTmp.declaringType().signature())) {
 					field= fieldTmp;
 					break;
-				}
-				if (fieldTmp.name().startsWith("this$")) {
-					enclosingThis= fieldTmp;
 				}
 			}
 			if (field != null) {
 				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
-			} else {
-				return ((JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, getUnderlyingObject())).getValue()).getField(name, typeSignature);
+			}
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
+		}
+		// it is possible to return null
+		return null;
+	}
+	
+	/**
+	 * Returns a variable representing the field in this object
+	 * with the given name, or <code>null</code> if there is no
+	 * field with the given name, or the name is ambiguous.
+	 * 
+	 * @param name field name
+	 * @param superClassLevel the level of the desired field in the
+	 *  hierarchy. Level 0 returns the field from the current type, level 1 from the 
+	 *  super type, etc.
+	 * @return the variable representing the field, or <code>null</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	public IJavaFieldVariable getField(String name, int superClassLevel) throws DebugException {
+		ReferenceType ref= getUnderlyingReferenceType();
+		try {
+			for (int i= 0 ; i < superClassLevel; i++) {
+				ref= ((ClassType)ref).superclass();
+			}
+			Field field = ref.fieldByName(name);
+			if (field != null) {
+				return new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), field, getUnderlyingObject());
 			}
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
@@ -165,5 +193,34 @@ public class JDIObjectValue extends JDIValue implements IJavaObject {
 			
 	}
 
+	/**
+	 * Return the enclosing object of this object at the specified level.
+	 * Level 0 returns the object, level 1 returns the enclosing object, etc.
+	 */
+	public IJavaObject getEnclosingObject(int enclosingLevel) throws DebugException {
+		JDIObjectValue res= this;
+		for (int i= 0; i < enclosingLevel; i ++) {
+			ReferenceType ref= res.getUnderlyingReferenceType();
+			try {
+				Field enclosingThis= null, fieldTmp= null;
+				Iterator fields= ref.fields().iterator();
+				while (fields.hasNext()) {
+					fieldTmp = (Field)fields.next();
+					if (fieldTmp.name().startsWith("this$")) {
+						enclosingThis= fieldTmp;
+					}
+				}
+				if (enclosingThis != null) {
+					res= (JDIObjectValue)(new JDIFieldVariable((JDIDebugTarget)getDebugTarget(), enclosingThis, res.getUnderlyingObject())).getValue();
+				} else {
+					// it is possible to return null
+					return null;
+				}
+			} catch (RuntimeException e) {
+				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIObjectValue.exception_retrieving_field"), new String[]{e.toString()}), e); //$NON-NLS-1$
+			}
+		}
+		return res;
+	}
 }
 
