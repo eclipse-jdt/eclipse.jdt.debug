@@ -241,7 +241,6 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 			write(this, outData);
 			writeInt(index, "index", outData); //$NON-NLS-1$
 			writeInt(length, "length", outData); //$NON-NLS-1$
-			String componentSignature= ((ArrayTypeImpl) referenceType()).componentSignature();
 			Iterator iterValues= checkedValues.iterator();
 			while (iterValues.hasNext()) {
 				ValueImpl value= (ValueImpl)iterValues.next();
