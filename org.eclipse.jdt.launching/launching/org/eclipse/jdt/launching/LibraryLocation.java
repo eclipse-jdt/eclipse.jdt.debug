@@ -60,6 +60,7 @@ public final class LibraryLocation {
 	 * 					  Must not be <code>null</code>. (Use Path.EMPTY or IPath.ROOT)
 	 * @param javadocLocation The location of the javadoc for <code>library</code>
 	 * @throws	IllegalArgumentException	If the library path is <code>null</code>.
+	 * @since 3.1
 	 */	
 	public LibraryLocation(IPath libraryPath, IPath sourcePath, IPath packageRoot, URL javadocLocation) {
 		if (libraryPath == null)
