@@ -218,6 +218,26 @@
 	             </and>
             </enablement>
 		</action> 
+		<action id="org.eclipse.jdt.debug.ui.Watch"
+			definitionId="org.eclipse.jdt.debug.ui.Watch"
+			label="%Watch.label" 
+			menubarPath="org.eclipse.ui.run/jdtGroup"
+			icon="icons/full/etool16/expression_obj.gif"
+			disabledIcon="icons/full/dtool16/expression_obj.gif"
+  		 	hoverIcon="icons/full/ctool16/expression_obj.gif"
+			helpContextId="watch_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
+			enablesFor="+">
+			<enablement> 
+             	<and>
+	             	<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<or>
+						<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+						<objectClass name="org.eclipse.jdt.debug.core.IJavaVariable"/>
+					</or>
+	             </and>
+            </enablement>
+		</action> 
    </actionSet>
 </extension>
 
@@ -962,17 +982,13 @@
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
 			enablesFor="+">
 		</action>		
-	</objectContribution>
-	<objectContribution
-		id="org.eclipse.jdt.debug.ui.JavaVariableActions"
-		objectClass="org.eclipse.jdt.debug.core.IJavaVariable">
 		<action
-			id="org.eclipse.jdt.debug.ui.actions.WatchVariableAction"
-			label="%WatchVariable.label"
+			id="org.eclipse.jdt.debug.ui.actions.WatchAction"
+			label="%Watch.label"
 			menubarPath="openOnGroup"
 			icon="icons/full/ctool16/expression_obj.gif"
 			helpContextId="variable_watch_action_context"
-			class="org.eclipse.jdt.internal.debug.ui.actions.WatchVariableAction"
+			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
 			enablesFor="+">
 		</action>		
 	</objectContribution>	
@@ -1134,6 +1150,20 @@
 				</and>
 			</enablement>
 		</action>
+        <action id="org.eclipse.jdt.debug.ui.cuPopup.Watch" 
+			label="%Watch.label" 
+			menubarPath="additions" 
+			icon="icons/full/ctool16/expression_obj.gif"
+			helpContextId="watch_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
+			enablesFor="+">
+			<enablement>
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
+		</action>
      </viewerContribution>
      <viewerContribution 
     	id="org.eclipse.jdt.debug.ui.CFPopupActions" 
@@ -1204,6 +1234,20 @@
 			icon="icons/full/ctool16/insp_sbook.gif"
 			helpContextId="inspect_action_context"
 			class="org.eclipse.jdt.internal.debug.ui.actions.InspectAction"
+			enablesFor="+">
+			<enablement>
+	  			<and>
+					<systemProperty name="org.eclipse.jdt.debug.ui.debuggerActive" value="true"/> 
+					<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+				</and>
+			</enablement>
+		</action>
+        <action id="org.eclipse.jdt.debug.ui.cfPopup.Watch" 
+			label="%Watch.label" 
+			menubarPath="additions" 
+			icon="icons/full/ctool16/expression_obj.gif"
+			helpContextId="watch_action_context"
+			class="org.eclipse.jdt.internal.debug.ui.actions.WatchAction"
 			enablesFor="+">
 			<enablement>
 	  			<and>
