@@ -5,12 +5,7 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
-public class NativeMethodException extends RuntimeException 
-{
+public class NativeMethodException extends RuntimeException {
 	public NativeMethodException() { }
 	public NativeMethodException(String arg1) {
 	   	super(arg1);

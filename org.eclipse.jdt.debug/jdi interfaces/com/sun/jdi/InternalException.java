@@ -5,12 +5,7 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
-public class InternalException extends RuntimeException 
-{
+public class InternalException extends RuntimeException {
 	public InternalException() { }
 	
 	public InternalException(int errorCode) {
@@ -26,7 +21,9 @@ public class InternalException extends RuntimeException
 		error = errorCode;
 	}
 	
-	public int errorCode() { return error; }
+	public int errorCode() { 
+		return error; 
+	}
 	
 	private int error;
 }

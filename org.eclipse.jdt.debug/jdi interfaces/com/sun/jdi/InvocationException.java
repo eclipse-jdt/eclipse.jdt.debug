@@ -5,15 +5,12 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
-public class InvocationException extends Exception 
-{
-	private com.sun.jdi.ObjectReference exception;
-	public InvocationException(com.sun.jdi.ObjectReference arg1) {
+public class InvocationException extends Exception {
+	private ObjectReference exception;
+	public InvocationException(ObjectReference arg1) {
 		exception = arg1;
 	}
-	public ObjectReference exception() { return exception; }
+	public ObjectReference exception() {
+		return exception; 
+	}
 }

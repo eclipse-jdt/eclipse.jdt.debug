@@ -5,13 +5,14 @@ package com.sun.jdi.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.io.IOException;
+import java.util.Map;
 
-public interface ListeningConnector extends com.sun.jdi.connect.Connector {
-	public com.sun.jdi.VirtualMachine accept(java.util.Map arg1) throws java.io.IOException, IllegalConnectorArgumentsException;
-	public String startListening(java.util.Map arg1) throws java.io.IOException, IllegalConnectorArgumentsException;
-	public void stopListening(java.util.Map arg1) throws java.io.IOException, IllegalConnectorArgumentsException;
-	public boolean supportsMultipleConnections() throws java.io.IOException, IllegalConnectorArgumentsException;
+import com.sun.jdi.VirtualMachine;
+
+public interface ListeningConnector extends Connector {
+	public VirtualMachine accept(Map arg1) throws IOException, IllegalConnectorArgumentsException;
+	public String startListening(Map arg1) throws IOException, IllegalConnectorArgumentsException;
+	public void stopListening(Map arg1) throws IOException, IllegalConnectorArgumentsException;
+	public boolean supportsMultipleConnections() throws IOException, IllegalConnectorArgumentsException;
 }

@@ -5,12 +5,7 @@ package com.sun.jdi.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
-public class VMStartException extends Exception 
-{
+public class VMStartException extends Exception {
 	Process fProcess;
 	
 	public VMStartException(Process proc) {

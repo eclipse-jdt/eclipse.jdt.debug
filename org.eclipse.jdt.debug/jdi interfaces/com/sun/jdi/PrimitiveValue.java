@@ -5,11 +5,7 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
-public interface PrimitiveValue extends com.sun.jdi.Value {
+public interface PrimitiveValue extends Value {
 	public boolean booleanValue();
 	public byte byteValue();
 	public char charValue();

@@ -5,11 +5,7 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
-public interface ByteValue extends com.sun.jdi.PrimitiveValue , java.lang.Comparable {
+public interface ByteValue extends PrimitiveValue, Comparable {
 	public boolean equals(Object arg1);
 	public int hashCode();
 	public byte value();

@@ -5,47 +5,47 @@ package com.sun.jdi.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 public interface Connector {
-	public java.util.Map defaultArguments();
-	public com.sun.jdi.connect.Transport transport();
-	public java.lang.String name();
-	public java.lang.String description();
+	public Map defaultArguments();
+	public Transport transport();
+	public String name();
+	public String description();
 
-	public interface Argument extends java.io.Serializable {
-		public java.lang.String name();
-		public java.lang.String label();
-		public java.lang.String description();
-		public boolean isValid(java.lang.String arg1);
-		public java.lang.String value();
+	public interface Argument extends Serializable {
+		public String name();
+		public String label();
+		public String description();
+		public boolean isValid(String arg1);
+		public String value();
 		public void setValue(String arg1);
 		public boolean mustSpecify();
 	}
 	
-	public interface StringArgument extends com.sun.jdi.connect.Connector.Argument {
+	public interface StringArgument extends Connector.Argument {
 	}
 
-	public interface IntegerArgument extends com.sun.jdi.connect.Connector.Argument {
+	public interface IntegerArgument extends Connector.Argument {
 		public void setValue(int arg1);
 		public boolean isValid(int arg1);
-		public java.lang.String stringValueOf(int arg1);
+		public String stringValueOf(int arg1);
 		public int intValue();
 		public int max();
 		public int min();
 	}
 
-	public interface BooleanArgument extends com.sun.jdi.connect.Connector.Argument {
+	public interface BooleanArgument extends Connector.Argument {
 		public void setValue(boolean arg1);
 		public boolean isValid(String arg1);
-		public java.lang.String stringValueOf(boolean arg1);
+		public String stringValueOf(boolean arg1);
 		public boolean booleanValue();
 	}
 	
-	public interface SelectedArgument extends com.sun.jdi.connect.Connector.Argument {
-		public java.util.List choices();
-		public boolean isValid(java.lang.String arg1);
+	public interface SelectedArgument extends Connector.Argument {
+		public List choices();
+		public boolean isValid(String arg1);
 	}
 }

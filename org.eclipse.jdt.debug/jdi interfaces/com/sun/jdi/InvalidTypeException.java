@@ -5,12 +5,7 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
-public class InvalidTypeException extends Exception 
-{
+public class InvalidTypeException extends Exception {
 	public InvalidTypeException() { }
 	public InvalidTypeException(String arg1) {
 	   	super(arg1);

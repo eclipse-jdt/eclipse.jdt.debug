@@ -5,10 +5,6 @@ package com.sun.jdi.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
 public interface Transport {
 	public String name();
 }

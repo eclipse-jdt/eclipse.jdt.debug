@@ -5,13 +5,9 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
-public interface ArrayType extends com.sun.jdi.ReferenceType {
+public interface ArrayType extends ReferenceType {
 	public String componentSignature();
-	public com.sun.jdi.Type componentType() throws ClassNotLoadedException;
+	public Type componentType() throws ClassNotLoadedException;
 	public String componentTypeName();
-	public com.sun.jdi.ArrayReference newInstance(int arg1);
+	public ArrayReference newInstance(int arg1);
 }

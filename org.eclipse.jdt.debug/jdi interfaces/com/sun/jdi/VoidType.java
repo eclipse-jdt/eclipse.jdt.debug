@@ -5,9 +5,5 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
-public interface VoidType extends com.sun.jdi.Type {
+public interface VoidType extends Type {
 }

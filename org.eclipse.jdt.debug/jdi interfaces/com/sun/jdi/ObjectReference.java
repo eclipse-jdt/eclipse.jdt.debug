@@ -5,9 +5,8 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.util.List;
+import java.util.Map;
 
 public interface ObjectReference extends com.sun.jdi.Value {
 	public static final int INVOKE_SINGLE_THREADED = 1;
@@ -16,13 +15,13 @@ public interface ObjectReference extends com.sun.jdi.Value {
 	public void enableCollection();
 	public int entryCount() throws IncompatibleThreadStateException;
 	public boolean equals(Object arg1);
-	public com.sun.jdi.Value getValue(com.sun.jdi.Field arg1);
-	public java.util.Map getValues(java.util.List arg1);
+	public Value getValue(Field arg1);
+	public Map getValues(java.util.List arg1);
 	public int hashCode();
-	public com.sun.jdi.Value invokeMethod(com.sun.jdi.ThreadReference arg1, com.sun.jdi.Method arg2, java.util.List arg3, int arg4) throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException, InvocationException;
+	public Value invokeMethod(ThreadReference arg1, Method arg2, List arg3, int arg4) throws InvalidTypeException, ClassNotLoadedException, IncompatibleThreadStateException, InvocationException;
 	public boolean isCollected();
-	public com.sun.jdi.ThreadReference owningThread() throws IncompatibleThreadStateException;	public com.sun.jdi.ReferenceType referenceType();
-	public void setValue(com.sun.jdi.Field arg1, com.sun.jdi.Value arg2) throws InvalidTypeException, ClassNotLoadedException;
+	public ThreadReference owningThread() throws IncompatibleThreadStateException;	public com.sun.jdi.ReferenceType referenceType();
+	public void setValue(Field arg1, Value arg2) throws InvalidTypeException, ClassNotLoadedException;
 	public long uniqueID();
-	public java.util.List waitingThreads() throws IncompatibleThreadStateException;
+	public List waitingThreads() throws IncompatibleThreadStateException;
 }

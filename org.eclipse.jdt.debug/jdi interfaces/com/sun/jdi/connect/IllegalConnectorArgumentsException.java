@@ -5,26 +5,24 @@ package com.sun.jdi.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class IllegalConnectorArgumentsException extends Exception 
-{
-	java.util.List fNames;
+public class IllegalConnectorArgumentsException extends Exception {
+	List fNames;
 	
-	public IllegalConnectorArgumentsException(String arg1, java.util.List arg2) {
+	public IllegalConnectorArgumentsException(String arg1, List arg2) {
 		super(arg1);
 		fNames = arg2;
 	}
 	
 	public IllegalConnectorArgumentsException(String arg1, String arg2) {
 		super(arg1);
-		fNames = new java.util.Vector();
+		fNames = new ArrayList(1);
 		fNames.add(arg1);
 	}
 	
-	public java.util.List argumentNames() { 
+	public List argumentNames() { 
 		return fNames;
 	}
 }

@@ -5,17 +5,17 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.util.List;
+
+import com.sun.jdi.connect.LaunchingConnector;
 
 public interface VirtualMachineManager {
-	public java.util.List allConnectors();
-	public java.util.List attachingConnectors();
-	public java.util.List connectedVirtualMachines();
-	public com.sun.jdi.connect.LaunchingConnector defaultConnector();
-	public java.util.List launchingConnectors();
-	public java.util.List listeningConnectors();
+	public List allConnectors();
+	public List attachingConnectors();
+	public List connectedVirtualMachines();
+	public LaunchingConnector defaultConnector();
+	public List launchingConnectors();
+	public List listeningConnectors();
 	public int majorInterfaceVersion();
 	public int minorInterfaceVersion();
 }

@@ -5,22 +5,21 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.util.List;
+import java.util.Map;
 
-public interface ReferenceType extends com.sun.jdi.Type , java.lang.Comparable , com.sun.jdi.Accessible {
-	public java.util.List allFields();
-	public java.util.List allMethods();
-	public java.util.List allLineLocations() throws AbsentInformationException;
-	public com.sun.jdi.ClassLoaderReference classLoader();
-	public com.sun.jdi.ClassObjectReference classObject();
+public interface ReferenceType extends Type , Comparable , Accessible {
+	public List allFields();
+	public List allMethods();
+	public List allLineLocations() throws AbsentInformationException;
+	public ClassLoaderReference classLoader();
+	public ClassObjectReference classObject();
 	public boolean equals(Object arg1);
 	public boolean failedToInitialize();
-	public com.sun.jdi.Field fieldByName(String arg1);
-	public java.util.List fields();
-	public com.sun.jdi.Value getValue(com.sun.jdi.Field arg1);
-	public java.util.Map getValues(java.util.List arg1);
+	public Field fieldByName(String arg1);
+	public List fields();
+	public Value getValue(Field arg1);
+	public Map getValues(List arg1);
 	public int hashCode();
 	public boolean isAbstract();
 	public boolean isFinal();
@@ -28,20 +27,20 @@ public interface ReferenceType extends com.sun.jdi.Type , java.lang.Comparable ,
 	public boolean isPrepared();
 	public boolean isStatic();
 	public boolean isVerified();
-	public java.util.List locationsOfLine(int arg1) throws AbsentInformationException;
-	public java.util.List methods();
-	public java.util.List methodsByName(String arg1);
-	public java.util.List methodsByName(String arg1, String arg2);
+	public List locationsOfLine(int arg1) throws AbsentInformationException;
+	public List methods();
+	public List methodsByName(String arg1);
+	public List methodsByName(String arg1, String arg2);
 	public String name();
-	public java.util.List nestedTypes();
+	public List nestedTypes();
 	public String sourceName() throws AbsentInformationException;
-	public java.util.List visibleFields();
-	public java.util.List visibleMethods();
-	public java.util.List sourceNames(String arg1) throws AbsentInformationException;
-	public java.util.List sourcePaths(String arg1) throws AbsentInformationException;
+	public List visibleFields();
+	public List visibleMethods();
+	public List sourceNames(String arg1) throws AbsentInformationException;
+	public List sourcePaths(String arg1) throws AbsentInformationException;
 	public String sourceDebugExtension() throws AbsentInformationException;
-	public java.util.List allLineLocations(String arg1, String arg2) throws AbsentInformationException;
-	public java.util.List locationsOfLine(String arg1, String arg2, int arg3) throws AbsentInformationException;
-	public java.util.List availableStrata();
+	public List allLineLocations(String arg1, String arg2) throws AbsentInformationException;
+	public List locationsOfLine(String arg1, String arg2, int arg3) throws AbsentInformationException;
+	public List availableStrata();
 	public String defaultStratum();
 }

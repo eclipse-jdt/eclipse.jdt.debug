@@ -5,15 +5,13 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.util.List;
 
-public interface ThreadGroupReference extends com.sun.jdi.ObjectReference {
+public interface ThreadGroupReference extends ObjectReference {
 	public String name();
-	public com.sun.jdi.ThreadGroupReference parent();
+	public ThreadGroupReference parent();
 	public void resume();
 	public void suspend();
-	public java.util.List threadGroups();
-	public java.util.List threads();
+	public List threadGroups();
+	public List threads();
 }

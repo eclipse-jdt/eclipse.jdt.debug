@@ -5,12 +5,10 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.util.List;
 
-public interface InterfaceType extends com.sun.jdi.ReferenceType {
-	public java.util.List implementors();
-	public java.util.List subinterfaces();
-	public java.util.List superinterfaces();
+public interface InterfaceType extends ReferenceType {
+	public List implementors();
+	public List subinterfaces();
+	public List superinterfaces();
 }

@@ -5,10 +5,6 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
 public class AbsentInformationException extends Exception 
 {
 	public AbsentInformationException() { }

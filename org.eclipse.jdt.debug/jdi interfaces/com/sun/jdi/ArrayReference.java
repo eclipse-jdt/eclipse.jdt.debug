@@ -5,16 +5,14 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.util.List;
 
-public interface ArrayReference extends com.sun.jdi.ObjectReference {
-	public com.sun.jdi.Value getValue(int arg1);
-	public java.util.List getValues();
-	public java.util.List getValues(int arg1, int arg2);
+public interface ArrayReference extends ObjectReference {
+	public Value getValue(int arg1);
+	public List getValues();
+	public List getValues(int arg1, int arg2);
 	public int length();
-	public void setValue(int arg1, com.sun.jdi.Value arg2) throws InvalidTypeException, ClassNotLoadedException;
-	public void setValues(int arg1, java.util.List arg2, int arg3, int arg4) throws InvalidTypeException, ClassNotLoadedException;
-	public void setValues(java.util.List arg1) throws InvalidTypeException, ClassNotLoadedException;
+	public void setValue(int arg1, Value arg2) throws InvalidTypeException, ClassNotLoadedException;
+	public void setValues(int arg1, List arg2, int arg3, int arg4) throws InvalidTypeException, ClassNotLoadedException;
+	public void setValues(List arg1) throws InvalidTypeException, ClassNotLoadedException;
 }

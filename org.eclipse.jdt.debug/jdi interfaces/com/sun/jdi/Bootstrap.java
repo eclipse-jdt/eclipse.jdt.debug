@@ -5,12 +5,7 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
-
-public class Bootstrap
-{
+public class Bootstrap {
 	public VirtualMachineManager virtualMachineManager() {
 		return null;
 	}

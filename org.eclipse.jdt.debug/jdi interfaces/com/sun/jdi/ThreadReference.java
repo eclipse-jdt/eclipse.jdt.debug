@@ -5,11 +5,9 @@ package com.sun.jdi;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.connect.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.util.List;
 
-public interface ThreadReference extends com.sun.jdi.ObjectReference {
+public interface ThreadReference extends ObjectReference {
 	public static final int THREAD_STATUS_UNKNOWN = -1;
 	public static final int THREAD_STATUS_ZOMBIE = 0;
 	public static final int THREAD_STATUS_RUNNING = 1;
@@ -17,21 +15,21 @@ public interface ThreadReference extends com.sun.jdi.ObjectReference {
 	public static final int THREAD_STATUS_MONITOR = 3;
 	public static final int THREAD_STATUS_WAIT = 4;
 	public static final int THREAD_STATUS_NOT_STARTED = 5;
-	public com.sun.jdi.ObjectReference currentContendedMonitor() throws IncompatibleThreadStateException;
-	public com.sun.jdi.StackFrame frame(int arg1) throws IncompatibleThreadStateException;
+	public ObjectReference currentContendedMonitor() throws IncompatibleThreadStateException;
+	public StackFrame frame(int arg1) throws IncompatibleThreadStateException;
 	public int frameCount() throws IncompatibleThreadStateException;
-	public java.util.List frames() throws IncompatibleThreadStateException;
-	public java.util.List frames(int arg1, int arg2) throws IncompatibleThreadStateException;
+	public List frames() throws IncompatibleThreadStateException;
+	public List frames(int arg1, int arg2) throws IncompatibleThreadStateException;
 	public void interrupt();
 	public boolean isAtBreakpoint();
 	public boolean isSuspended();
 	public String name();
-	public java.util.List ownedMonitors() throws IncompatibleThreadStateException;
+	public List ownedMonitors() throws IncompatibleThreadStateException;
 	public void resume();
 	public int status();
-	public void stop(com.sun.jdi.ObjectReference arg1) throws InvalidTypeException;
+	public void stop(ObjectReference arg1) throws InvalidTypeException;
 	public void suspend();
 	public int suspendCount();
-	public com.sun.jdi.ThreadGroupReference threadGroup();
+	public ThreadGroupReference threadGroup();
 	public void popFrames(StackFrame frame) throws IncompatibleThreadStateException;
 }

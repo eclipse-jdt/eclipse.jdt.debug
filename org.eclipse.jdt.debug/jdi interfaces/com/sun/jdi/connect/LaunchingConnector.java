@@ -5,10 +5,10 @@ package com.sun.jdi.connect;
  * All Rights Reserved.
  */
 
-import com.sun.jdi.*;
-import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import java.io.IOException;
 
-public interface LaunchingConnector extends com.sun.jdi.connect.Connector {
-	public com.sun.jdi.VirtualMachine launch(java.util.Map arg1) throws java.io.IOException, IllegalConnectorArgumentsException, VMStartException;
+import com.sun.jdi.VirtualMachine;
+
+public interface LaunchingConnector extends Connector {
+	public VirtualMachine launch(java.util.Map arg1) throws IOException, IllegalConnectorArgumentsException, VMStartException;
 }
