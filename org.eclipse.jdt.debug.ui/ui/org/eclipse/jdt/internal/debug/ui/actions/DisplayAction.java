@@ -1,21 +1,20 @@
 package org.eclipse.jdt.internal.debug.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jdt.core.dom.Message;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.display.IDataDisplay;
@@ -28,12 +27,6 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class DisplayAction extends EvaluateAction implements IValueDetailListener {
 	
-	private Object fLock= new Object();
-	
-	/**
-	 * The debug model presentation used for computing toString
-	 */
-	private IDebugModelPresentation fPresentation= DebugUITools.newDebugModelPresentation(JDIDebugModel.getPluginIdentifier());
 	/**
 	 * The result of a toString evaluation returned asynchronously by the
 	 * debug model.
@@ -42,7 +35,7 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	
 	/**
 	 * Reports errors to the user via the normal means (@see EvaluateAction#reportErrors(IEvaluationResult))
-	 * and displays a failed evaluation message in the display view.
+	 * and displays a failed evaluation message in the data display.
 	 */
 	protected void reportErrors(IEvaluationResult result) {
 		String message= getErrorMessage(result);
@@ -99,13 +92,13 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 		final Display display= JDIDebugUIPlugin.getStandardDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				if (display.isDisposed()) {
-					return;
+				if (!display.isDisposed()) {
+					IDataDisplay dataDisplay= getDataDisplay();
+					if (dataDisplay != null) {
+						dataDisplay.displayExpressionValue(finalString);
+					}
 				}
-				final IDataDisplay dataDisplay= getDataDisplay();
-				if (dataDisplay != null) {
-					dataDisplay.displayExpressionValue(finalString);
-				}
+				evaluationCleanup();
 			}
 		});
 	}
@@ -116,33 +109,32 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 	 * 
 	 * @param value object or primitive data type the 'toString'
 	 *  is required for
-	 * @param thread the thread in which to evaluate 'toString'
 	 * @return the result of evaluating toString
 	 * @exception DebugException if an exception occurs during the
 	 *  evaluation.
 	 */
 	protected String evaluateToString(IJavaValue value) throws DebugException {
-		fResult= null;
-		fPresentation.computeDetail(value, this);
-		synchronized (fLock) {
-			if (fResult == null) {
+		setResult(null);
+		getDebugModelPresentation().computeDetail(value, this);
+		synchronized (this) {
+			if (getResult() == null) {
 				try {
-					fLock.wait(20000);
+					wait(20000);
 				} catch (InterruptedException e) {
 					return ActionMessages.getString("DisplayAction.toString_interrupted"); //$NON-NLS-1$
 				}
 			}
 		}
-		return fResult;
+		return getResult();
 	}
 	
 	/**
 	 * @see IValueDetailListener#detailComputed(IValue, String)
 	 */
-	public void detailComputed(IValue value, final String result) {
-		fResult= result;
-		synchronized (fLock) {
-			fLock.notifyAll();
+	public void detailComputed(IValue value, String result) {
+		setResult(result);
+		synchronized (this) {
+			notifyAll();
 		}
 	}
 	
@@ -153,5 +145,13 @@ public class DisplayAction extends EvaluateAction implements IValueDetailListene
 			return;
 		}
 		super.run();	
+	}
+	
+	protected String getResult() {
+		return fResult;
+	}
+
+	protected void setResult(String result) {
+		fResult = result;
 	}
 }
