@@ -940,7 +940,13 @@
 		class="org.eclipse.jdt.internal.debug.ui.launcher.UnresolvedJREStatusHandler"
 		plugin ="org.eclipse.jdt.launching"
 		code="160">
-	</statusHandler>		
+	</statusHandler>
+	<statusHandler
+		id="org.eclipse.jdt.debug.ui.statusHandler.suspendTimeout"
+		class="org.eclipse.jdt.internal.debug.ui.SuspendTimeoutStatusHandler"
+		plugin = "org.eclipse.jdt.debug"
+		code="161">
+	</statusHandler>
 </extension>
 
 <extension point = "org.eclipse.debug.core.sourceLocators">

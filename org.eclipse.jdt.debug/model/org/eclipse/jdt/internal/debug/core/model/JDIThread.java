@@ -13,9 +13,12 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
@@ -23,6 +26,7 @@ import org.eclipse.jdt.debug.core.IEvaluationRunnable;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaVariable;
+import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.StringMatcher;
@@ -61,6 +65,10 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * Constant for the name of the main thread group.
 	 */
 	private static final String MAIN_THREAD_GROUP = "main"; //$NON-NLS-1$
+	/**
+	 * Status code indicating that a request to suspend this thread has timed out
+	 */
+	public static final int SUSPEND_TIMEOUT= 161;
 	/**
 	 * Underlying thread.
 	 */
@@ -146,6 +154,11 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * undesired 'nudging' in recursive methods.
 	 */
 	private int fOriginalStepStackDepth;
+
+	/**
+	 * Whether or not this thread is currently suspending (user-requested).
+	 */
+	private boolean fIsSuspending= false;
 		
 	/**
 	 * Creates a new thread on the underlying thread reference
@@ -1163,13 +1176,62 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			// Abort any pending step request
 			abortStep();
-			getUnderlyingThread().suspend();
-			setRunning(false);
-			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+			suspendUnderlyingThread();
 		} catch (RuntimeException e) {
 			setRunning(true);
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_suspending"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
+	}
+	
+	/**
+	 * Suspends the underlying thread asynchronously and fires notification when
+	 * the underlying thread is suspended.
+	 */
+	protected void suspendUnderlyingThread() {
+		if (fIsSuspending) {
+			return;
+		}		
+		fIsSuspending= true;
+		Thread thread= new Thread(new Runnable() {
+			public void run() {
+				try {
+					getUnderlyingThread().suspend();
+					int timeout= JDIDebugModel.getPreferences().getInt(JDIDebugModel.PREF_REQUEST_TIMEOUT);
+					long stop= System.currentTimeMillis() + timeout;
+					boolean suspended= isUnderlyingThreadSuspended();
+					while (System.currentTimeMillis() < stop && !suspended) {
+						try {
+							Thread.sleep(50);
+						} catch (InterruptedException e) {
+						}
+						suspended= isUnderlyingThreadSuspended();
+						if (suspended) {
+							break;
+						}
+					}
+					if (!suspended) {
+						IStatus status= new Status(IStatus.ERROR, JDIDebugPlugin.getUniqueIdentifier(), SUSPEND_TIMEOUT, MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.suspend_timeout"), new String[] {new Integer(timeout).toString()}), null); //$NON-NLS-1$
+						IStatusHandler handler= DebugPlugin.getDefault().getStatusHandler(status);
+						if (handler != null) {
+							try {
+								handler.handleStatus(status, JDIThread.this);
+							} catch (CoreException e) {
+							}
+						}
+					}
+					setRunning(false);
+					fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+				} catch (RuntimeException exception) {
+				} finally {
+					fIsSuspending= false;
+				}
+			}
+		});
+		thread.start();
+	}
+	
+	public boolean isUnderlyingThreadSuspended() {
+		return getUnderlyingThread().isSuspended();
 	}
 
 	/**
