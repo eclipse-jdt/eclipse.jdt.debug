@@ -1772,8 +1772,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 				if (jdiThread == null) {
 					return false;
 				}
-			}	
-			jdiThread.setRunning(true);
+			}
 			return true;
 		}
 		

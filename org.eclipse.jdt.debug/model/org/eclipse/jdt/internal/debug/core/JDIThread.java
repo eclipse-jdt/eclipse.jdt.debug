@@ -475,10 +475,20 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		try {
 			return getUnderlyingThread().frames();
 		} catch (IncompatibleThreadStateException e) {
-			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames"), new String[] {e.toString()}), e); //$NON-NLS-1$
-			// execution will not reach this line, as
-			// #targetRequestFailed will thrown an exception			
-			return null;
+			// The debug model is not in synch with the underlying
+			// thread - update the model to reflect the underlying
+			// thread. This can happen when a thread is first created and
+			// its running state is initialized to "suspended". The VM can
+			// resume the thread without notifying the model. 
+			// (1) set this thread to "running"
+			// (2) fire a resume event
+			// This will not corrupt the 'refresh children' flag, as when
+			// a thread starts it has no stack frames, and the flag
+			// will remain as 'true' until stack frames are retrieved
+			// (bug 6518)
+			setRunning(true);
+			fireResumeEvent(DebugEvent.UNSPECIFIED);
+			return Collections.EMPTY_LIST;
 		} catch (RuntimeException e) {
 			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIThread.exception_retrieving_stack_frames_2"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			// execution will not reach this line, as
