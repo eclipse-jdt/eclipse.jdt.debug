@@ -30,7 +30,7 @@ public class J9ConsoleTracker implements IConsoleLineTracker {
 	 */
 	public void init(IConsole console) {
 		fConsole = console;
-		fJ9Matcher = new StringMatcher("*.*(*)*", false, false);
+		fJ9Matcher = new StringMatcher("*.*(*)*", false, false); //$NON-NLS-1$
 	}
 
 	/**

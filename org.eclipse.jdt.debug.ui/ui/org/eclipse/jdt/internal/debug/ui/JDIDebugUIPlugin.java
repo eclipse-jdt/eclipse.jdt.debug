@@ -116,7 +116,7 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 															"normal", //$NON-NLS-1$
 															"synthetic"}; //$NON-NLS-1$
 
-	public static final String VARIABLES_FILTER_PREFIX = getUniqueIdentifier() + "variables_filter";
+	public static final String VARIABLES_FILTER_PREFIX = getUniqueIdentifier() + "variables_filter"; //$NON-NLS-1$
 
 	/**
 	 * @see Plugin(IPluginDescriptor)

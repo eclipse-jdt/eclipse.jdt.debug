@@ -31,8 +31,8 @@ public class JavaConsoleTracker implements IConsoleLineTracker {
 	 */
 	public void init(IConsole console) {
 		fConsole = console;
-		fJavaMatcher = new StringMatcher("*(*.java:*)", false, false);
-		fNativeMatcher = new StringMatcher("*(Native Method)", false, false);
+		fJavaMatcher = new StringMatcher("*(*.java:*)", false, false); //$NON-NLS-1$
+		fNativeMatcher = new StringMatcher("*(Native Method)", false, false); //$NON-NLS-1$
 	}
 
 	/**
