@@ -11,6 +11,7 @@
 package org.eclipse.jdt.debug.tests.core;
 
 import org.eclipse.jdt.debug.core.IJavaClassType;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
@@ -69,4 +70,62 @@ public class StratumTests extends AbstractDebugTest {
 		}		
 	}	
 
+	/**
+	 * Test set / get default stratum on a java debug target.
+	 * 
+	 * @throws Exception
+	 */
+	public void testSetGetDefaultStratum() throws Exception {
+		String typeName = "Breakpoints";
+		createLineBreakpoint(81, typeName);		
+		
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaDebugTarget debugTarget= (IJavaDebugTarget)thread.getDebugTarget();
+			String stratum= debugTarget.getDefaultStratum();
+			assertNull("Default strata should be 'null'", stratum);
+			debugTarget.setDefaultStratum("strataTest");
+			stratum= debugTarget.getDefaultStratum();
+			assertEquals("Wrong strata", "strataTest", stratum);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}		
+	}
+
+	public void testGetLineInStratum() throws Exception {
+		String typeName= "Breakpoints";
+		createLineBreakpoint(81, typeName);
+
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaStackFrame stackFrame= (IJavaStackFrame)thread.getTopStackFrame();
+			int lineNumber= stackFrame.getLineNumber("Java");
+			assertEquals("Wrong line number", 81, lineNumber);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
+
+	public void testGetSourceNameInStratum() throws Exception {
+		String typeName= "Breakpoints";
+		createLineBreakpoint(81, typeName);
+
+		IJavaThread thread= null;
+		try {
+			thread= launchToBreakpoint(typeName);
+			assertNotNull("Breakpoint not hit within timeout period", thread);
+			IJavaStackFrame stackFrame= (IJavaStackFrame)thread.getTopStackFrame();
+			String sourceName= stackFrame.getSourceName("Java");
+			assertEquals("Wrong source name", "Breakpoints.java", sourceName);
+		} finally {
+			terminateAndRemove(thread);
+			removeAllBreakpoints();
+		}
+	}
 }

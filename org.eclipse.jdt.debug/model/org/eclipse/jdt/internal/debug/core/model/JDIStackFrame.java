@@ -35,7 +35,6 @@ import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;
 import com.sun.jdi.LocalVariable;
-import com.sun.jdi.Location;
 import com.sun.jdi.Method;
 import com.sun.jdi.NativeMethodException;
 import com.sun.jdi.ObjectReference;
@@ -328,10 +327,7 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	public int getLineNumber() throws DebugException {
 		if (isSuspended()) {
 			try {
-				Location location= getUnderlyingStackFrame().location();
-				if (location != null) {
-					return location.lineNumber();
-				}
+				return getUnderlyingStackFrame().location().lineNumber();
 			} catch (RuntimeException e) {
 				if (getThread().isSuspended()) {
 					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_line_number"), new String[] {e.toString()}), e); //$NON-NLS-1$
@@ -836,23 +832,16 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 	public String getSourceName() throws DebugException {
 		if (fStackFrame == null || fSourceName == null) {
 			try {
-				Location l = getUnderlyingMethod().location();
-				if (l != null) {
-					fSourceName = l.sourceName();
-				}
+				fSourceName = getUnderlyingMethod().location().sourceName();
 			} catch (AbsentInformationException e) {
-				fSourceName = ""; //$NON-NLS-1$
+				fSourceName = null;
 			} catch (NativeMethodException e) {
-				fSourceName = ""; //$NON-NLS-1$
+				fSourceName = null;
 			} catch (RuntimeException e) {
 				targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
 			}
 		}
-		if (fSourceName == null || fSourceName.length() == 0) {
-			return null;
-		} else {
-			return fSourceName;
-		}
+		return fSourceName;
 	}
 	
 	protected boolean isTopStackFrame() throws DebugException {
@@ -1128,8 +1117,40 @@ public class JDIStackFrame extends JDIDebugElement implements IJavaStackFrame {
 		try {
 			return getUnderlyingStackFrame().location().sourcePath(stratum);
 		} catch (AbsentInformationException e) {
-			return null;
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_path"), new String[] {e.toString()}), e); //$NON-NLS-1$
 		}
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getLineNumber(java.lang.String)
+	 */
+	public int getLineNumber(String stratum) throws DebugException {
+		if (isSuspended()) {
+			try {
+				return getUnderlyingStackFrame().location().lineNumber(stratum);
+			} catch (RuntimeException e) {
+				if (getThread().isSuspended()) {
+					targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_line_number"), new String[] {e.toString()}), e); //$NON-NLS-1$
+				}
+			}
+		}
+		return -1;
+	}
+
+	/*
+	 * @see org.eclipse.jdt.debug.core.IJavaStackFrame#getSourceName(java.lang.String)
+	 */
+	public String getSourceName(String stratum) throws DebugException {
+		try {
+			return getUnderlyingMethod().location().sourceName(stratum);
+		} catch (AbsentInformationException e) {
+		} catch (NativeMethodException e) {
+		} catch (RuntimeException e) {
+			targetRequestFailed(MessageFormat.format(JDIDebugModelMessages.getString("JDIStackFrame.exception_retrieving_source_name"), new String[] {e.toString()}), e); //$NON-NLS-1$
+		}
+		return null;
 	}
 
 }
