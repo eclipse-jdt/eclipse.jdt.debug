@@ -43,6 +43,10 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
             public String getPattern() {
                 return "1234567890"; //$NON-NLS-1$
             }
+            
+            public String getLineQualifier() {
+            	return "1234567890"; //$NON-NLS-1$
+            }
 
             public void matchFound(PatternMatchEvent event) {
                 try {
@@ -54,10 +58,6 @@ public class IOConsoleHyperlinkActionDelegate implements IActionDelegate2, IWork
 
             public int getCompilerFlags() {
                 return 0;
-            }
-            
-            public int getMatchContext() {
-                return IPatternMatchListener.LINE_MATCH;
             }
 
             public void connect(IConsole console) {

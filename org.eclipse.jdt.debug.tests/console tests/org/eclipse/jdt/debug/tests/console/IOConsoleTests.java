@@ -54,6 +54,14 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
     public String getPattern() {
         return "foo";
     }
+    
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.ui.console.IPatternMatchListener#getQuickPattern()
+     */
+    public String getLineQualifier() {
+    	return "foo";
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
@@ -69,13 +77,6 @@ public class IOConsoleTests extends AbstractDebugTest implements IPatternMatchLi
 		return 0;
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getMatchContext()
-     */
-    public int getMatchContext() {
-        return IPatternMatchListener.LINE_MATCH;
-    }
-    
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#connect(org.eclipse.ui.console.IConsole)
      */
