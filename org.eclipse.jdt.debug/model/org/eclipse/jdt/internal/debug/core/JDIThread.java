@@ -821,7 +821,12 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 			// to update any variables that may have changed
 			// value
 			try {
-				((JDIStackFrame)getTopStackFrame()).fireChangeEvent();
+				JDIStackFrame sf = (JDIStackFrame)getTopStackFrame();
+				// if the invoke failed, we may not have a top
+				// stack frame
+				if (sf != null) {
+					sf.fireChangeEvent();
+				}
 			} catch (DebugException e) {
 				logError(e);
 			}
