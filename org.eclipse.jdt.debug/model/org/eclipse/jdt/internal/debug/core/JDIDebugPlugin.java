@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
@@ -21,6 +22,11 @@ import org.eclipse.jdt.debug.core.JDIDebugModel;
  */
 
 public class JDIDebugPlugin extends Plugin {
+	
+	/**
+	 * Status code indicating an unexpected internal error.
+	 */
+	public static final int INTERNAL_ERROR = 120;
 	
 	private static JDIDebugPlugin fgPlugin;
 	
@@ -82,11 +88,8 @@ public class JDIDebugPlugin extends Plugin {
 	 * Convenience method to log internal errors
 	 */
 	public static void logError(Exception e) {
-		Throwable t = e;
 		if (getDefault().isDebugging()) {
-			// this message is intentionally not internationalized, as an exception may
-			// be due to the resource bundle itself
-			System.out.println("Internal error logged from JDI debug model: "); //$NON-NLS-1$
+			Throwable t = e;
 			if (e instanceof DebugException) {
 				DebugException de = (DebugException)e;
 				IStatus status = de.getStatus();
@@ -94,9 +97,18 @@ public class JDIDebugPlugin extends Plugin {
 					t = status.getException();
 				}
 			}
-			t.printStackTrace();
-			System.out.println();
+			// this message is intentionally not internationalized, as an exception may
+			// be due to the resource bundle itself
+			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal error logged from JDI Debug: ", t));  //$NON-NLS-1$		
 		}
 	}
-
+	
+	/**
+	 * Logs the specified status with this plug-in's log.
+	 * 
+	 * @param status status to log
+	 */
+	public static void log(IStatus status) {
+		getDefault().getLog().log(status);
+	}
 }
