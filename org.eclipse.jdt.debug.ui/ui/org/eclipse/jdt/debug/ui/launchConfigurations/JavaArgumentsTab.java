@@ -8,6 +8,8 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
@@ -17,6 +19,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -186,6 +189,13 @@ public class JavaArgumentsTab extends JavaLaunchConfigurationTab {
 		}
 		return m;
 	}
+	
+	/**
+	 * @see ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return DebugUITools.getImage(IDebugUIConstants.IMG_VIEW_VARIABLES);
+	}	
 
 }
 

@@ -16,6 +16,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -42,6 +44,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -530,6 +533,13 @@ public class JavaConnectTab extends JavaLaunchConfigurationTab implements IPrope
 		return LauncherMessages.getString("JavaConnectTab.Conn&ect_20"); //$NON-NLS-1$
 	}			
 	
+	/**
+	 * @see ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return DebugUITools.getImage(IDebugUIConstants.IMG_LCL_DISCONNECT);
+	}
+		
 	/**
 	 * Returns the selected connector
 	 */

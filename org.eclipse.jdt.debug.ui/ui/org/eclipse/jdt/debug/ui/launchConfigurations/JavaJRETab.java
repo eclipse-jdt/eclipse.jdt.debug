@@ -5,23 +5,23 @@ package org.eclipse.jdt.debug.ui.launchConfigurations;
  * All Rights Reserved.
  */
  
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.launcher.AddVMDialog;
 import org.eclipse.jdt.internal.debug.ui.launcher.IAddVMDialogRequestor;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMStandin;
+import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
@@ -31,6 +31,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -223,6 +224,13 @@ public class JavaJRETab extends JavaLaunchConfigurationTab implements IAddVMDial
 	public String getName() {
 		return LauncherMessages.getString("JavaJRETab.&JRE_1"); //$NON-NLS-1$
 	}
+	
+	/**
+	 * @see ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return JavaPluginImages.get(JavaPluginImages.IMG_OBJS_LIBRARY);
+	}	
 
 	/**
 	 * @see IAddVMDialogRequestor#isDuplicateName(IVMInstallType, String)

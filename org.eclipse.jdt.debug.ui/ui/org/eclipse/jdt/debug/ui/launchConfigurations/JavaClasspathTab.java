@@ -12,7 +12,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.actions.AddAdvancedAction;
 import org.eclipse.jdt.internal.debug.ui.actions.AddExternalFolderAction;
@@ -29,6 +28,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.RuntimeClasspathAction;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaLaunchConfigurationTab;
 import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathViewer;
+import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -36,6 +36,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -62,6 +63,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	protected RuntimeClasspathViewer fBootpathViewer;
 	protected Button fClassPathDefaultButton;
 	protected List fActions = new ArrayList(10);
+	protected Image fImage = null;
 
 	/**
 	 * The last launch config this tab was initialized from
@@ -302,6 +304,16 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	}
 	
 	/**
+	 * @see ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		if (fImage == null) {
+			fImage = JavaPluginImages.DESC_TOOL_CLASSPATH_ORDER.createImage();
+		}
+		return fImage;
+	}		
+	
+	/**
 	 * Sets the java project currently specified by the
 	 * given launch config, if any.
 	 */
@@ -340,6 +352,9 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		if (fClasspathViewer != null) {
 			fClasspathViewer.removeEntriesChangedListener(this);
 			fBootpathViewer.removeEntriesChangedListener(this);
+		}
+		if (fImage != null) {
+			fImage.dispose();
 		}
 		super.dispose();
 	}
