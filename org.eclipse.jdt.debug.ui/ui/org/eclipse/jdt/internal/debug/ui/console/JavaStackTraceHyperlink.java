@@ -31,7 +31,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.console.IHyperlink;
-import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -40,12 +40,12 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class JavaStackTraceHyperlink implements IHyperlink {
 	
-	private IOConsole fConsole;
+	private TextConsole fConsole;
 
 	/**
 	 * Constructor for JavaStackTraceHyperlink.
 	 */
-	public JavaStackTraceHyperlink(IOConsole console) {
+	public JavaStackTraceHyperlink(TextConsole console) {
 		fConsole = console;
 	}
 
@@ -195,7 +195,7 @@ public class JavaStackTraceHyperlink implements IHyperlink {
 	 *  
 	 * @return console
 	 */
-	protected IOConsole getConsole() {
+	protected TextConsole getConsole() {
 		return fConsole;
 	}
 	

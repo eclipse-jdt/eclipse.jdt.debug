@@ -12,8 +12,8 @@ package org.eclipse.jdt.internal.debug.ui.console;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.console.IHyperlink;
-import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.console.TextConsole;
 
 
 /**
@@ -25,7 +25,7 @@ public class JavaNativeConsoleTracker extends JavaConsoleTracker {
         try {
             int offset = event.getOffset();
             int length = event.getLength();
-            IOConsole console = getConsole();
+            TextConsole console = getConsole();
             IHyperlink link = new JavaNativeStackTraceHyperlink(console);
             console.addHyperlink(link, offset, length);   
         } catch (BadLocationException e) {

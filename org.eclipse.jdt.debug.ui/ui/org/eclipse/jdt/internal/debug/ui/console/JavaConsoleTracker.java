@@ -14,9 +14,9 @@ package org.eclipse.jdt.internal.debug.ui.console;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IHyperlink;
-import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IPatternMatchListenerDelegate;
 import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * Provides links for stack traces
@@ -26,13 +26,13 @@ public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
 	/**
 	 * The console associated with this line tracker 
 	 */
-	private IOConsole fConsole;
+	private TextConsole fConsole;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.IConsole)
      */
     public void connect(IConsole console) {
-	    fConsole = (IOConsole) console;
+	    fConsole = (TextConsole) console;
     }
 
     /* (non-Javadoc)
@@ -42,7 +42,7 @@ public class JavaConsoleTracker implements IPatternMatchListenerDelegate {
         fConsole = null;
     }
     
-    protected IOConsole getConsole() {
+    protected TextConsole getConsole() {
         return fConsole;
     }
 

@@ -12,8 +12,8 @@ package org.eclipse.jdt.internal.debug.ui.console;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ui.console.IHyperlink;
-import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * creates JavaExceptionHyperLinks
@@ -29,7 +29,7 @@ public class JavaExceptionConsoleTracker extends JavaConsoleTracker {
         try {
             int offset = event.getOffset();
             int length = event.getLength();
-            IOConsole console = getConsole();
+            TextConsole console = getConsole();
             String exceptionName;
             exceptionName = console.getDocument().get(offset, length - 1);
             IHyperlink link = new JavaExceptionHyperLink(console, exceptionName);

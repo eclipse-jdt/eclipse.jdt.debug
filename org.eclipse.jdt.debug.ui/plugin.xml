@@ -2587,7 +2587,7 @@ M4 = Platform-specific fourth key
        </classpathProvider>
    </extension>
    
-   <!--Java Stack Trace Console
+   <!--Java Stack Trace Console-->
    <extension
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
@@ -2595,10 +2595,9 @@ M4 = Platform-specific fourth key
             class="org.eclipse.jdt.internal.debug.ui.console.JavaStackTraceConsoleFactory">
       </consoleFactory>
    </extension>
-   -->
+   
    
    <!--Java Stack Trace Pattern Matchers-->
-   <!--""-->
    <extension
          point="org.eclipse.ui.console.consolePatternMatchListeners">
       <consolePatternMatchListener
@@ -2608,9 +2607,9 @@ M4 = Platform-specific fourth key
             id="org.eclipse.jdt.debug.ui.JavaConsoleTracker">
          <enablement>
             <or>
+			  <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
                <test property="org.eclipse.debug.ui.processTypeTest" value="java"/>
                <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
-               <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
             </or>
          </enablement>
       </consolePatternMatchListener>
@@ -2621,9 +2620,9 @@ M4 = Platform-specific fourth key
             id="org.eclipse.jdt.debug.ui.JavaNativeConsoleTracker">
          <enablement>
             <or>
+               <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
                <test property="org.eclipse.debug.ui.processTypeTest" value="java"/>
                <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
-               <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
             </or>
          </enablement>
       </consolePatternMatchListener>
@@ -2634,9 +2633,9 @@ M4 = Platform-specific fourth key
             id="org.eclipse.jdt.debug.ui.JavaExceptionConsoleTracker">
          <enablement>
             <or>
+               <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
                <test property="org.eclipse.debug.ui.processTypeTest" value="java"/>
                <test property="org.eclipse.debug.ui.processTypeTest" value="org.eclipse.ant.ui.antProcess"/>
-               <test property="org.eclipse.ui.console.consoleTypeTest" value="javaStackTraceConsole"/>
             </or>
          </enablement>
       </consolePatternMatchListener>

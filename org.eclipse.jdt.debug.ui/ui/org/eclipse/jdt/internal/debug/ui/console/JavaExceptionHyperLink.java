@@ -29,7 +29,7 @@ import org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesAction;
 import org.eclipse.jdt.internal.debug.ui.breakpoints.AddExceptionDialog;
 import org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * A hyperlink that creates an exception breakpoint.
@@ -44,7 +44,7 @@ public class JavaExceptionHyperLink extends JavaStackTraceHyperlink {
 	 * @param console the console the link is contained in
 	 * @param exceptionName fully qualified name of the exception
 	 */
-	public JavaExceptionHyperLink(IOConsole console, String exceptionName) {
+	public JavaExceptionHyperLink(TextConsole console, String exceptionName) {
 		super(console);
 		fExceptionName = exceptionName;
 	}

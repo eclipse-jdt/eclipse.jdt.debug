@@ -11,17 +11,14 @@
 package org.eclipse.jdt.internal.debug.ui.console;
 
 
-import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * A hyperlink from a stack trace line of the form "*(Native Method)"
  */
 public class JavaNativeStackTraceHyperlink extends JavaStackTraceHyperlink {
 
-	/**
-     * @see JavaStackTraceHyperlink#JavaStackTraceHyperlink(IConsole, int, int)
-	 */
-	public JavaNativeStackTraceHyperlink(IOConsole console) {
+	public JavaNativeStackTraceHyperlink(TextConsole console) {
 		super(console);
 	}
 
