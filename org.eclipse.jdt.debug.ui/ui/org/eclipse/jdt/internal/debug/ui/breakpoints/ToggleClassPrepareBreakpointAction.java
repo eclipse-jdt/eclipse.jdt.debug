@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate,	IActionDelegate2 {
 	
-	private ISelection selection;
+	private ISelection fSelection;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
@@ -64,7 +64,7 @@ public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IStructuredSelection ss = (IStructuredSelection)selection;
+		IStructuredSelection ss = (IStructuredSelection)fSelection;
 		Iterator iterator = ss.iterator();
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(JDIDebugModel.getPluginIdentifier());
 		while (iterator.hasNext()) {
@@ -107,6 +107,6 @@ public class ToggleClassPrepareBreakpointAction implements IObjectActionDelegate
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		this.selection = selection;
+	    fSelection = selection;
 	}
 }
