@@ -66,7 +66,6 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -107,8 +106,6 @@ public class DetailFormatterDialog extends StatusDialog {
 	private List fDefinedTypes;
 
 	private List submissions;
-
-	private Shell fShell;
 	
 	/**
 	 * DetailFormatterDialog constructor.
@@ -155,11 +152,7 @@ public class DetailFormatterDialog extends StatusDialog {
 			}
 		};
 		
-		fShell = parent.getShell();
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		
-		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		contextSupport.registerShell(fShell, IWorkbenchContextSupport.TYPE_WINDOW);		
 		
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();		
 		submissions = Collections.singletonList(new HandlerSubmission(null, null, null, "org.eclipse.ui.edit.text.contentAssist.proposals", handler, Priority.MEDIUM)); //$NON-NLS-1$
@@ -394,8 +387,7 @@ public class DetailFormatterDialog extends StatusDialog {
 	 */
 	public boolean close() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		contextSupport.unregisterShell(fShell);
+
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 		commandSupport.removeHandlerSubmissions(submissions);
 		

@@ -29,13 +29,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 
 /**
  * Property page for editing breakpoints of type
@@ -57,7 +54,6 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	
 	private static final String fgWatchpointError= PropertyPageMessages.getString("JavaLineBreakpointPage.0"); //$NON-NLS-1$
 	private static final String fgMethodBreakpointError= PropertyPageMessages.getString("JavaLineBreakpointPage.1");//$NON-NLS-1$
-	private Shell shell; 
 
 	/**
 	 * @see org.eclipse.jdt.internal.debug.ui.propertypages.JavaBreakpointPage#doStore()
@@ -211,12 +207,6 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 		IJavaLineBreakpoint breakpoint = (IJavaLineBreakpoint) getBreakpoint();
 		IType type = BreakpointUtils.getType(breakpoint);
 		
-		shell = parent.getShell();
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		
-		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-		contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);
-		
 		String label = null;
 		if (type != null) {
 			ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
@@ -288,9 +278,6 @@ public class JavaLineBreakpointPage extends JavaBreakpointPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
-		IWorkbenchContextSupport contextSupport = PlatformUI.getWorkbench().getContextSupport();
-		contextSupport.unregisterShell(shell);
-		
 		if (fConditionEditor != null) {
 			fConditionEditor.dispose();
 		}
