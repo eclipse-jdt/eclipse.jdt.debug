@@ -198,7 +198,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
-				boolean enabled = ((Boolean) event.getNewValue()).booleanValue();
+				boolean enabled = fHitCountEnabler.getBooleanValue();
 				fHitCountTextControl.setEnabled(enabled);
 				fHitCount.refreshValidState();
 				checkState();
@@ -212,7 +212,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
-				boolean enabled = ((Boolean) event.getNewValue()).booleanValue();
+				boolean enabled = fConditionEnabler.getBooleanValue();
 				fConditionTextControl.setEnabled(enabled);
 				fCondition.refreshValidState();
 				checkState();

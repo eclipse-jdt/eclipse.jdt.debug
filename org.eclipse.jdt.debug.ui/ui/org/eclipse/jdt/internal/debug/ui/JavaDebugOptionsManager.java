@@ -45,6 +45,7 @@ import org.eclipse.jdt.debug.core.IJavaStackFrame;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -380,12 +381,12 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS)) {
 			IBreakpoint breakpoint = getSuspendOnCompilationErrorBreakpoint();
 			if (breakpoint != null) {
-				setEnabled(breakpoint, ((Boolean)event.getNewValue()).booleanValue());
+				setEnabled(breakpoint, JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
 			}
 		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS)) {
 			IBreakpoint breakpoint = getSuspendOnUncaughtExceptionBreakpoint();
 			if (breakpoint != null) {
-				setEnabled(breakpoint, ((Boolean)event.getNewValue()).booleanValue());
+				setEnabled(breakpoint, JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_UNCAUGHT_EXCEPTIONS));
 			}
 		} else if (isUseFilterProperty(event.getProperty())) {
 			notifyTargetsOfFilters();

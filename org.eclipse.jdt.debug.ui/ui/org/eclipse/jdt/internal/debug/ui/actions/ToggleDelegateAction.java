@@ -106,8 +106,7 @@ public abstract class ToggleDelegateAction implements IViewActionDelegate, IProp
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(getActionId())) {
-			boolean checked= ((Boolean)event.getNewValue()).booleanValue();
-			getAction().setChecked(checked);
+			getAction().setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(getActionId()));
 		} else if (event.getProperty().equals(IAction.CHECKED)) {
 			JDIDebugUIPlugin.getDefault().getPreferenceStore().setValue(getActionId(), getAction().isChecked());
 			valueChanged(getAction().isChecked());

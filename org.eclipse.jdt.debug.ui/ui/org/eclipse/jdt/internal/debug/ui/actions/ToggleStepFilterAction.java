@@ -82,8 +82,7 @@ public class ToggleStepFilterAction implements IViewActionDelegate, IPartListene
 			return;
 		}
 		if (event.getProperty().equals(IJDIPreferencesConstants.PREF_USE_FILTERS)) {
-			Boolean checked= (Boolean)event.getNewValue();
-			action.setChecked(checked.booleanValue());
+			action.setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS));
 		}
 		
 	}
