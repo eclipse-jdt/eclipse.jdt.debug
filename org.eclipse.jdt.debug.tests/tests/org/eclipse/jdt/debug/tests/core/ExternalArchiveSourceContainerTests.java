@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
+import org.eclipse.jdt.debug.testplugin.JavaTestPlugin;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.JavaSourceLookupDirector;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -52,6 +56,21 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 		assertTrue("Did not find JRE source archive", false);
 		return null;
 	}
+	
+	/**
+	 * Returns the source archive at the specified path within this plug-in.
+	 */
+	protected ExternalArchiveSourceContainer getContainer(String path, boolean detect, boolean duplicates) throws Exception {
+		ISourceLookupDirector director = new JavaSourceLookupDirector();
+		director.initializeParticipants();
+		director.setFindDuplicates(duplicates);
+		IPath p = new Path(path);
+		File file = JavaTestPlugin.getDefault().getFileInPlugin(p);
+		assertTrue("file " + path +  " does not exist", file != null && file.exists());
+		ExternalArchiveSourceContainer container = new ExternalArchiveSourceContainer(file.getAbsolutePath(), detect);
+		director.setSourceContainers(new ISourceContainer[]{container});
+		return container;
+	}	
 	
 	/**
 	 * Tests creation and restoring from a memento.
@@ -104,4 +123,32 @@ public class ExternalArchiveSourceContainerTests extends AbstractDebugTest {
 		ZipEntryStorage storage = (ZipEntryStorage) objects[0];
 		assertEquals("Wrong file", "Object.java", storage.getName());
 	}	
+	
+	public void testAutoDetectUnqualifiedSourceLookupPositive() throws Exception {
+		ExternalArchiveSourceContainer container = getContainer(true, false);
+		// force detection
+		Object[] objects = container.findSourceElements("java/lang/Object.java");
+		// then search for unqualified file
+		objects = container.findSourceElements("Object.java");
+		assertEquals("Expected 1 result", 1, objects.length);
+		ZipEntryStorage storage = (ZipEntryStorage) objects[0];
+		assertEquals("Wrong file", "Object.java", storage.getName());
+	}
+	
+	public void testAutoDetectMultipleRoots() throws Exception {
+		ExternalArchiveSourceContainer container = getContainer("testresources/source-test.zip", true, false);
+		// find .java file
+		Object[] objects = container.findSourceElements("one/two/Three.java");
+		assertEquals("Expected 1 result", 1, objects.length);
+		ZipEntryStorage storage = (ZipEntryStorage) objects[0];
+		assertEquals("Wrong file", "Three.java", storage.getName());
+		// find .txt file
+		objects = container.findSourceElements("another/file-b.txt");
+		storage = (ZipEntryStorage) objects[0];
+		assertEquals("Wrong file", "file-b.txt", storage.getName());
+		// find another .txt file
+		objects = container.findSourceElements("folder/file-c.txt");
+		storage = (ZipEntryStorage) objects[0];
+		assertEquals("Wrong file", "file-c.txt", storage.getName());		
+	}		
 }
