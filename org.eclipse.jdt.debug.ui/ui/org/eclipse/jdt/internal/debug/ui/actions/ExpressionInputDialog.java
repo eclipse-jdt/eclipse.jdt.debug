@@ -32,6 +32,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -104,6 +105,7 @@ public class ExpressionInputDialog extends Dialog {
         // Configure the source viewer after creating the error text so that any
         // necessary error messages can be set.
         configureSourceViewer();
+        fViewer.doOperation(ITextOperationTarget.SELECT_ALL);
         return composite;
     }
     
