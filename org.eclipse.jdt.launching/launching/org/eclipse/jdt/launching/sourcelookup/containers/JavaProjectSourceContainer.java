@@ -112,4 +112,29 @@ public class JavaProjectSourceContainer extends CompositeSourceContainer {
 	public int hashCode() {
 		return getJavaProject().hashCode();
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
+	 */
+	public Object[] findSourceElements(String name) throws CoreException {
+		Object[] objects = super.findSourceElements(name);
+		List filtered = null;
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			if (object instanceof IResource) {
+				if (!getJavaProject().isOnClasspath((IResource)object)) {
+					if (filtered == null) {
+						filtered = new ArrayList(objects.length);
+						for (int j = 0; j < objects.length; j++) {
+							filtered.add(objects[j]);
+						}
+					}
+					filtered.remove(object);
+				}
+			}
+		}
+		if (filtered == null) {
+			return objects;
+		}
+		return filtered.toArray();
+	}
 }
