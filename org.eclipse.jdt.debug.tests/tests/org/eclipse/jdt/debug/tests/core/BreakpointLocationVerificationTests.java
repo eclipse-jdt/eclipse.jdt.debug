@@ -43,7 +43,7 @@ public class BreakpointLocationVerificationTests extends AbstractDebugTest {
 		IType type= getJavaProject().findType("BreakpointsLocation");
 		assertNotNull("Cannot find type", type);
 		CompilationUnit compilationUnit= parseCompilationUnit(type.getCompilationUnit());
-		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineToTry, false);
+		ValidBreakpointLocationLocator locator= new ValidBreakpointLocationLocator(compilationUnit, lineToTry, true, false);
 		compilationUnit.accept(locator);
 		int lineNumber= locator.getLineLocation();		
 		assertEquals("Wrong line number", expectedLineNumber, lineNumber);
