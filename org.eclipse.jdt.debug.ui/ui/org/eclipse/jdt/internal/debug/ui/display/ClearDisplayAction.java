@@ -23,11 +23,6 @@ public class ClearDisplayAction extends Action {
 		setToolTipText(DisplayMessages.getString("ClearDisplay.tooltip")); //$NON-NLS-1$
 		setDescription(DisplayMessages.getString("ClearDisplay.description")); //$NON-NLS-1$
 		
-		/*
-		 * 1GEULHD: ITPJUI:ALL - Display 'clear' action should use the same icon as Console
-		 * Subsituted "clear_co.gif" for "removea_exc.gif".
-		 * Copied icons to /icons.
-		 */
 		JavaDebugImages.setLocalImageDescriptors(this, "clear_co.gif"); //$NON-NLS-1$
 	}
 
