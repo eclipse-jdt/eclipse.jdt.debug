@@ -96,6 +96,8 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private boolean fEvaluateNextEndTypeDeclaration;
 	
+	private String fError;
+	
 	private CompilationUnit fUnit;
 	
 	private int fPosition;
@@ -171,6 +173,18 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	
 	private void setRightTypeFound(boolean value) {
 		fRightTypeFound= value;
+	}
+	
+	public boolean hasError() {
+		return fError != null;
+	}
+	
+	public void setError(String errorDesc) {
+		fError= errorDesc;
+	}
+	
+	public String getError() {
+		return fError;
 	}
 	
 	private boolean isInAStaticMethod() {
@@ -534,71 +548,80 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * @see ASTVisitor#endVisit(ClassInstanceCreation)
 	 */
 	public void endVisit(ClassInstanceCreation node) {
-		AnonymousClassDeclaration anonymousClassDeclaration = node.getAnonymousClassDeclaration();
-		if (anonymousClassDeclaration != null && !rightTypeFound() && containsLine(node)) {
-			setRightTypeFound(true);
-			
-			fSource= buildRunMethod(anonymousClassDeclaration.bodyDeclarations());
-			fEvaluateNextEndTypeDeclaration = true;
+		if (hasError()) {
+			return;
 		}
+		AnonymousClassDeclaration anonymousClassDeclaration = node.getAnonymousClassDeclaration();
+		if (anonymousClassDeclaration != null) {
+			if (!rightTypeFound() && containsLine(node)) {
+				setRightTypeFound(true);
+				
+				fSource= buildRunMethod(anonymousClassDeclaration.bodyDeclarations());
+				fEvaluateNextEndTypeDeclaration = true;
+			}
 		
-		if (anonymousClassDeclaration != null && rightTypeFound()) {
-			
-			List bodyDeclarations= anonymousClassDeclaration.bodyDeclarations();
-			
-			StringBuffer source = buildTypeBody(fSource, bodyDeclarations);
-			
-			ASTNode parent = node.getParent();
-			while (!(parent instanceof MethodDeclaration || parent instanceof FieldDeclaration)) {
-				parent= parent.getParent();
-			}
-			
-			fSource= new StringBuffer();
+			if (rightTypeFound()) {
 				
-			if (parent instanceof MethodDeclaration) {
-				MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
-				
-				if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
-					fSource.append("static "); //$NON-NLS-1$
+				if (!node.arguments().isEmpty()) {
+					setError(EvaluationEngineMessages.getString("SourceBasedSourceGenerator.Cannot_evaluate_an_expression_in_the_context_of_anonymous_type_with_no_default_constructor._1")); //$NON-NLS-1$
+					return;
 				}
+				
+				List bodyDeclarations= anonymousClassDeclaration.bodyDeclarations();
+				
+				StringBuffer source = buildTypeBody(fSource, bodyDeclarations);
+				
+				ASTNode parent = node.getParent();
+				while (!(parent instanceof MethodDeclaration || parent instanceof FieldDeclaration)) {
+					parent= parent.getParent();
+				}
+				
+				fSource= new StringBuffer();
 					
-				fSource.append("void "); //$NON-NLS-1$
-				fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
-				fSource.append("() {\n"); //$NON-NLS-1$
-				fSource.append("new "); //$NON-NLS-1$
-				fSource.append(getQualifiedIdentifier(node.getName()));
-				fSource.append("()"); //$NON-NLS-1$
-				
-				fSnippetStartPosition+= fSource.length();
-				fSource.append(source);
-				fSource.append(";}\n"); //$NON-NLS-1$
-				
-			} else if (parent instanceof FieldDeclaration) {
-				FieldDeclaration enclosingFieldDeclaration = (FieldDeclaration) parent;
-				
-				if (Flags.isStatic(enclosingFieldDeclaration.getModifiers())) {
-					fSource.append("static "); //$NON-NLS-1$
+				if (parent instanceof MethodDeclaration) {
+					MethodDeclaration enclosingMethodDeclaration = (MethodDeclaration) parent;
+					
+					if (Flags.isStatic(enclosingMethodDeclaration.getModifiers())) {
+						fSource.append("static "); //$NON-NLS-1$
+					}
+						
+					fSource.append("void "); //$NON-NLS-1$
+					fSource.append(getUniqueMethodName(EVAL_METHOD_NAME, bodyDeclarations));
+					fSource.append("() {\n"); //$NON-NLS-1$
+					fSource.append("new "); //$NON-NLS-1$
+					fSource.append(getQualifiedIdentifier(node.getName()));
+					fSource.append("()"); //$NON-NLS-1$
+					
+					fSnippetStartPosition+= fSource.length();
+					fSource.append(source);
+					fSource.append(";}\n"); //$NON-NLS-1$
+					
+				} else if (parent instanceof FieldDeclaration) {
+					FieldDeclaration enclosingFieldDeclaration = (FieldDeclaration) parent;
+					
+					if (Flags.isStatic(enclosingFieldDeclaration.getModifiers())) {
+						fSource.append("static "); //$NON-NLS-1$
+					}
+					
+					Type type= enclosingFieldDeclaration.getType();
+					while (type instanceof ArrayType) {
+						type= ((ArrayType)type).getComponentType();
+					}
+					
+					fSource.append(getQualifiedIdentifier(((SimpleType)type).getName()));
+					fSource.append(' ');
+					fSource.append(getUniqueFieldName(EVAL_FIELD_NAME, bodyDeclarations));
+					fSource.append(" = new "); //$NON-NLS-1$
+					fSource.append(getQualifiedIdentifier(node.getName()));
+					fSource.append("()"); //$NON-NLS-1$
+					
+					fSnippetStartPosition+= fSource.length();
+					fSource.append(source);
+					fSource.append(";\n"); //$NON-NLS-1$
+					
 				}
-				
-				Type type= enclosingFieldDeclaration.getType();
-				while (type instanceof ArrayType) {
-					type= ((ArrayType)type).getComponentType();
-				}
-				
-				fSource.append(getQualifiedIdentifier(((SimpleType)type).getName()));
-				fSource.append(' ');
-				fSource.append(getUniqueFieldName(EVAL_FIELD_NAME, bodyDeclarations));
-				fSource.append(" = new "); //$NON-NLS-1$
-				fSource.append(getQualifiedIdentifier(node.getName()));
-				fSource.append("()"); //$NON-NLS-1$
-				
-				fSnippetStartPosition+= fSource.length();
-				fSource.append(source);
-				fSource.append(";\n"); //$NON-NLS-1$
-				
+				fLastTypeName= ""; //$NON-NLS-1$
 			}
-			fLastTypeName= ""; //$NON-NLS-1$
-			
 		}		
 	}
 
@@ -606,6 +629,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * @see ASTVisitor#endVisit(CompilationUnit)
 	 */
 	public void endVisit(CompilationUnit node) {
+		if (hasError()) {
+			return;
+		}
 		if (!rightTypeFound()) { // if the right type hasn't been found
 			fSource= null;
 			return;
@@ -617,6 +643,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * @see ASTVisitor#endVisit(Initializer)
 	 */
 	public void endVisit(Initializer node) {
+		if (hasError()) {
+			return;
+		}
 		if (!rightTypeFound() && containsLine(node)) {
 			setIsInAStaticMethod(Flags.isStatic(node.getModifiers()));
 		}
@@ -626,6 +655,9 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * @see ASTVisitor#endVisit(MethodDeclaration)
 	 */
 	public void endVisit(MethodDeclaration node) {
+		if (hasError()) {
+			return;
+		}
 		if (!rightTypeFound() && containsLine(node)) {
 			setIsInAStaticMethod(Flags.isStatic(node.getModifiers()));
 		}
@@ -635,6 +667,10 @@ public class SourceBasedSourceGenerator extends ASTVisitor  {
 	 * @see ASTVisitor#endVisit(TypeDeclaration)
 	 */
 	public void endVisit(TypeDeclaration node) {
+		
+		if (hasError()) {
+			return;
+		}
 		
 		if (!rightTypeFound() && containsLine(node)) {
 			setRightTypeFound(true);

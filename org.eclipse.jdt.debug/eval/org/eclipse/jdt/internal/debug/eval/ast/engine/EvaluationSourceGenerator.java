@@ -8,7 +8,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -22,6 +24,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.model.JDIClassType;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
@@ -138,6 +141,10 @@ public class EvaluationSourceGenerator {
 		CompilationUnit unit= AST.parseCompilationUnit(source.toCharArray());
 		SourceBasedSourceGenerator visitor= new SourceBasedSourceGenerator(unit, position, isLineNumber, createInAnInstanceMethod, fLocalVariableTypeNames, fLocalVariableNames, fCodeSnippet);
 		unit.accept(visitor);
+		
+		if (visitor.hasError()) {
+			throw new DebugException(new Status(Status.ERROR, JDIDebugPlugin.getUniqueIdentifier(), Status.OK, visitor.getError(), null));
+		}
 		
 		String sourceRes= visitor.getSource();
 		if (sourceRes == null) {
