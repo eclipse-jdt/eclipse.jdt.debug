@@ -23,7 +23,6 @@ import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.jdt.internal.ui.util.TypeInfoLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -63,7 +62,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 		there were more than one in the workspace), and an editor opened revealing 
  * 		the beginning of the type.
  */
-public class OpenOnConsoleTypeAction extends Action implements IViewActionDelegate, Listener {
+public class OpenOnConsoleTypeAction implements IViewActionDelegate, Listener {
 																	
 	private IViewPart fViewPart;
 	
@@ -71,6 +70,8 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 	private String fTypeName;
 	private int fLineNumber;
 	private boolean fInitiatedFromDoubleClick= false;
+	private IAction fAction;
+	private ITextSelection fSelection;
 	
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
@@ -101,6 +102,8 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		setAction(action);
+		update();
 	}
 
 	protected void doOpenType() {		
@@ -110,6 +113,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 		setLineNumber(-1);
 		determineSearchParameters();
 		if (getTypeName() == null) {
+			beep();
 			return;
 		}
 		
@@ -150,6 +154,7 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 		// choose the appropriate result             
 		TypeInfo typeInfo = selectTypeInfo(typeRefsFound);			                          		
 		if (typeInfo == null) {
+			beep();
 			return;
 		}
 		
@@ -225,32 +230,21 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 	 * the entire line where the cursor is currently located.
 	 */
 	protected void determineSearchParameters() {
-		ISelectionProvider selectionProvider = fViewPart.getViewSite().getSelectionProvider();
-		if (selectionProvider == null) {
+		ITextSelection textSelection= getTextSelection();
+		IDocument consoleDocument = getConsoleDocument();
+		if (consoleDocument == null) {
 			return;
-		}		
-		ISelection selection = selectionProvider.getSelection();
-		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection = (ITextSelection)selection;
-			if (textSelection.getLength() > 0 && !initiatedFromDoubleClick()) {
-				parseSelection(textSelection.getText());
-			} else {
-				IDocument consoleDocument = getConsoleDocument();
-				if (consoleDocument == null) {
-					return;
-				}
-				try {
-					int offset = textSelection.getOffset();
-					int lineNumber = consoleDocument.getLineOfOffset(offset);
-					int lineOffset = consoleDocument.getLineOffset(lineNumber);
-					int lineLength = consoleDocument.getLineLength(lineNumber);		
-					String lineText = consoleDocument.get(lineOffset, lineLength);				
-					parseSelection(lineText);
-				} catch (BadLocationException ble) {
-					JDIDebugUIPlugin.log(ble);
-					MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Open_Type_3"), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_console_document_7")); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			}
+		}
+		try {
+			int offset = textSelection.getOffset();
+			int lineNumber = consoleDocument.getLineOfOffset(offset);
+			int lineOffset = consoleDocument.getLineOffset(lineNumber);
+			int lineLength = consoleDocument.getLineLength(lineNumber);		
+			String lineText = consoleDocument.get(lineOffset, lineLength);				
+			parseSelection(lineText);
+		} catch (BadLocationException ble) {
+			JDIDebugUIPlugin.log(ble);
+			MessageDialog.openError(getShell(), ActionMessages.getString("OpenOnConsoleTypeAction.Open_Type_3"), ActionMessages.getString("OpenOnConsoleTypeAction.Error_parsing_console_document_7")); //$NON-NLS-1$ //$NON-NLS-2$
 		}		
 	}
 	
@@ -397,6 +391,63 @@ public class OpenOnConsoleTypeAction extends Action implements IViewActionDelega
 
 	protected void setViewPart(IViewPart viewPart) {
 		fViewPart = viewPart;
+	}
+	
+	protected IAction getAction() {
+		return fAction;
+	}
+
+	protected void setAction(IAction action) {
+		fAction = action;
+	}
+	
+	protected void update() {
+		IAction action= getAction();
+		if (action == null) {
+			return;
+		}
+		boolean enabled= false;
+		ISelectionProvider selectionProvider = getViewPart().getViewSite().getSelectionProvider();
+		if (selectionProvider == null) {
+			return;
+		}		
+		ISelection selection = selectionProvider.getSelection();
+		if (selection instanceof ITextSelection) {
+			ITextSelection textSelection = (ITextSelection)selection;
+			if (initiatedFromDoubleClick()) {
+				enabled= true;
+			} else {
+				enabled= textHasContent(textSelection.getText());
+			}
+			setTextSelection(textSelection);
+		}
+		action.setEnabled(enabled);
+	}
+	
+	protected boolean textHasContent(String text) {
+		if (text != null) {
+			int length= text.length();
+			if (length > 0) {
+				for (int i= 0; i < length; i++) {
+					if (Character.isLetterOrDigit(text.charAt(i))) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	protected ITextSelection getTextSelection() {
+		return fSelection;
+	}
+
+	protected void setTextSelection(ITextSelection textSelection) {
+		fSelection = textSelection;
+	}
+	
+	protected void beep() {
+		getViewPart().getViewSite().getPage().getWorkbenchWindow().getShell().getDisplay().beep();
 	}
 }
 
