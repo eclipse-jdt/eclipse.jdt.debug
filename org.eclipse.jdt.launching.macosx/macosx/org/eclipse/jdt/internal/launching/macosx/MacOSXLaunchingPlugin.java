@@ -86,8 +86,10 @@ public class MacOSXLaunchingPlugin extends Plugin {
 		 * the stub either from the running Eclipse or from the JavaVM
 		 * framework. Here we create the appropriate pathname.
 		 */
+		int pos= 0;
 		String javaApplStub= System.getProperty("sun.boot.library.path");	//$NON-NLS-1$
-		int pos= javaApplStub.indexOf(':');
+		if (javaApplStub != null)
+			pos= javaApplStub.indexOf(':');
 		if (pos > 0)
 			javaApplStub= javaApplStub.substring(0, pos);	
 		String expected= "/Contents/Resources/Java";	//$NON-NLS-1$
@@ -95,7 +97,18 @@ public class MacOSXLaunchingPlugin extends Plugin {
 			javaApplStub= javaApplStub.substring(0, javaApplStub.length()-expected.length());
 			javaApplStub+= "/Contents/MacOS/";	//$NON-NLS-1$
 		} else {
-			javaApplStub= "/System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/MacOS/"; //$NON-NLS-1$
+			javaApplStub= System.getProperty("java.class.path");	//$NON-NLS-1$
+			if (javaApplStub != null)
+				pos= javaApplStub.indexOf(expected);
+			else
+				pos= 0;
+			if (pos > 0) {
+				javaApplStub= javaApplStub.substring(0, pos);
+				javaApplStub+= "/Contents/MacOS/";	//$NON-NLS-1$				
+			} else {
+				// fall back
+				javaApplStub= "/System/Library/Frameworks/JavaVM.framework/Versions/A/Resources/MacOS/"; //$NON-NLS-1$
+			}
 		}
 		javaApplStub= "JAVASTUB=\""+ javaApplStub + "\"\n";	//$NON-NLS-1$ //$NON-NLS-2$
 		
