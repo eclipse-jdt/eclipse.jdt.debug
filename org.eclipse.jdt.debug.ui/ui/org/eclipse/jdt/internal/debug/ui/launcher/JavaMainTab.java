@@ -433,8 +433,6 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 	 * Show a dialog that lists all main types
 	 */
 	protected void handleSearchButtonSelected() {
-		Shell shell = getShell();
-		IWorkbenchWindow workbenchWindow = JDIDebugUIPlugin.getActiveWorkbenchWindow();
 		
 		IJavaProject javaProject = getJavaProject();
 		IJavaSearchScope searchScope = null;
@@ -449,8 +447,9 @@ public class JavaMainTab implements ILaunchConfigurationTab, IAddVMDialogRequest
 			constraints |= IJavaElementSearchConstants.CONSIDER_EXTERNAL_JARS;
 		}
 		
+		Shell shell = getShell();
 		SelectionDialog dialog = JavaUI.createMainTypeDialog(shell, 
-															 workbenchWindow, 
+															 getLaunchDialog(), 
 															 searchScope, 
 															 constraints, 
 															 false, 
