@@ -12,27 +12,17 @@ package org.eclipse.jdt.internal.debug.ui.jres;
 
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModel;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
-import org.eclipse.jdt.internal.debug.ui.ExceptionHandler;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.launching.VMDefinitionsContainer;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallType;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -40,11 +30,8 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.VMStandin;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -53,7 +40,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * An experimental replacement for the Installed JREs preference page.
@@ -64,34 +50,14 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 							
 	// JRE Block
 	private InstalledJREsBlock fJREBlock;									
-	
-	// the VMs defined when this page was opened
-	private VMDefinitionsContainer fOriginalVMs;
-	
-	// cache of VM install types
-	private IVMInstallType[] fVMTypes;
-
+		
 	public JREsPreferencePage() {
 		super();
 		
 		// only used when page is shown programatically
 		setTitle(JREMessages.getString("JREsPreferencePage.1"));	 //$NON-NLS-1$
-				
 		
 		setDescription(JREMessages.getString("JREsPreferencePage.2")); //$NON-NLS-1$
-		fVMTypes = JavaRuntime.getVMInstallTypes();
-		fOriginalVMs = new VMDefinitionsContainer();
-		IVMInstall def = JavaRuntime.getDefaultVMInstall();
-		if (def != null) {
-			fOriginalVMs.setDefaultVMInstallCompositeID(JavaRuntime.getCompositeIdFromVM(def));
-		}
-	
-		for (int i = 0; i < fVMTypes.length; i++) {
-			IVMInstall[] vms = fVMTypes[i].getVMInstalls();
-			for (int j = 0; j < vms.length; j++) {
-				fOriginalVMs.addVM(vms[j]);
-			}
-		}
 	}
 
 	/**
@@ -110,8 +76,9 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		
 		// Retrieve all known VM installs from each vm install type
 		List vms = new ArrayList();
-		for (int i= 0; i < fVMTypes.length; i++) {
-			IVMInstall[] vmInstalls= fVMTypes[i].getVMInstalls();
+		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
+		for (int i= 0; i < types.length; i++) {
+			IVMInstall[] vmInstalls= types[i].getVMInstalls();
 			for (int j = 0; j < vmInstalls.length; j++) {
 				vms.add(new VMStandin(vmInstalls[j]));
 			}
@@ -185,47 +152,10 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	public boolean performOk() {
 		
-		// Create a VM definition container
-		VMDefinitionsContainer vmContainer = new VMDefinitionsContainer();
-		
-		// Set the default VM Id on the container
 		IVMInstall defaultVM = getCurrentDefaultVM();
-		String defaultVMId = JavaRuntime.getCompositeIdFromVM(defaultVM);
-		vmContainer.setDefaultVMInstallCompositeID(defaultVMId);
-		
-		// Set the VMs on the container
 		IVMInstall[] vms = fJREBlock.getJREs();
-		for (int i = 0; i < vms.length; i++) {
-			vmContainer.addVM(vms[i]);
-		}
-		
-		// determine if a build is required
-		boolean buildRequired = false;
-		try {
-			buildRequired = isBuildRequired(fOriginalVMs, vmContainer);
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.log(e);
-		} 
-		boolean build = false;
-		if (buildRequired) {
-			// prompt the user to do a full build
-			MessageDialog messageDialog = new MessageDialog(getShell(), JREMessages.getString("JREsPreferencePage.4"), null,  //$NON-NLS-1$
-			JREMessages.getString("JREsPreferencePage.5"), //$NON-NLS-1$
-			MessageDialog.QUESTION, new String[] {JREMessages.getString("JREsPreferencePage.6"), JREMessages.getString("JREsPreferencePage.7"), JREMessages.getString("JREsPreferencePage.8")}, 0); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			int button = messageDialog.open();
-			if (button == 2) {
-				return false;
-			}
-			build = button == 0;			
-		}
-		
-		// Generate XML for the VM defs and save it as the new value of the VM preference
-		saveVMDefinitions(vmContainer);
-		
-		// do a build if required
-		if (build) {
-			buildWorkspace();
-		}
+		JREsUpdater updater = new JREsUpdater(getShell());
+		updater.updateJRESettings(vms, defaultVM);
 		
 		// save column widths
 		IDialogSettings settings = JDIDebugUIPlugin.getDefault().getDialogSettings();
@@ -234,46 +164,8 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		return super.performOk();
 	}	
 	
-	private void saveVMDefinitions(final VMDefinitionsContainer container) {
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				// Generate XML for the VM defs and save it as the new value of the VM preference
-				try {
-					String vmDefXML = container.getAsXML();
-					JavaRuntime.getPreferences().setValue(JavaRuntime.PREF_VM_XML, vmDefXML);
-					JavaRuntime.savePreferences();
-				} catch (IOException ioe) {
-					JDIDebugUIPlugin.log(ioe);
-				}
-			}
-		});
-	}
-	
 	protected IJavaModel getJavaModel() {
 		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-	}
-	
-	private void buildWorkspace() {
-		ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
-		try {
-			dialog.run(true, true, new WorkspaceModifyOperation() {
-				public void execute(IProgressMonitor monitor) throws InvocationTargetException{
-					try {
-						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			});
-		} catch (InterruptedException e) {
-			// opearation canceled by user
-		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), JREMessages.getString("JREsPreferencePage.1"), JREMessages.getString("JREsPreferencePage.9")); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}			
-	
-	private IVMInstall getCurrentDefaultVM() {
-		return fJREBlock.getCheckedJRE();
 	}
 
 	/**
@@ -311,6 +203,10 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 	}
 	
+	private IVMInstall getCurrentDefaultVM() {
+		return fJREBlock.getCheckedJRE();
+	}	
+	
 	/**
 	 * @see IDialogPage#setVisible(boolean)
 	 */
@@ -319,99 +215,6 @@ public class JREsPreferencePage extends PreferencePage implements IWorkbenchPref
 		if (visible) {
 			setTitle(JREMessages.getString("JREsPreferencePage.12")); //$NON-NLS-1$
 		}
-	}
-
-	/**
-	 * Returns whether a re-build is required based on the previous and current
-	 * VM definitions.
-	 * 
-	 * @param prev VMs defined in the workspace
-	 * @param curr VMs that will be defined in the workspace
-	 * @return whether the new JRE definitions required the workspace to be
-	 * built
-	 */
-	private boolean isBuildRequired(VMDefinitionsContainer prev, VMDefinitionsContainer curr) throws CoreException {
-		String prevDef = prev.getDefaultVMInstallCompositeID();
-		String currDef = curr.getDefaultVMInstallCompositeID();
-		
-		boolean defaultChanged = !isEqual(prevDef, currDef);
-		
-		IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
-		
-		//if the default VM changed, see if any projects reference it
-		if (defaultChanged) {
-			for (int i = 0; i < projects.length; i++) {
-				IJavaProject project = projects[i];
-				IClasspathEntry[] entries = project.getRawClasspath();
-				for (int j = 0; j < entries.length; j++) {
-					IClasspathEntry entry = entries[j];
-					switch (entry.getEntryKind()) {
-						case IClasspathEntry.CPE_VARIABLE:
-							IPath path = entry.getPath();
-							if (path.segmentCount() == 1 && path.segment(0).equals(JavaRuntime.JRELIB_VARIABLE)) {
-								// a project references the default JRE via JRE_LIB
-								return true;
-							}
-							break;
-						case IClasspathEntry.CPE_CONTAINER:
-							path = entry.getPath();
-							if (path.segmentCount() == 1 && path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
-								// a project references the default JRE via JRE_CONTAIER
-								return true;
-							}
-							break;
-					};
-				}
-			}
-		}
-		
-		// otherwise, if a referenced VM is removed or there is a library
-		// change in a referenced VM, a build is required 
-		List futureVMs = curr.getVMList();
-		for (int i = 0; i < projects.length; i++) {
-			IJavaProject project = projects[i];
-			IVMInstall prevVM = JavaRuntime.getVMInstall(project);
-			if (prevVM != null) {
-				int index  = futureVMs.indexOf(prevVM);
-				if (index >= 0) {
-					IVMInstall futureVM = (IVMInstall)futureVMs.get(index);
-					// the VM still exists, see if the libraries changed
-					LibraryLocation[] prevLibs = JavaRuntime.getLibraryLocations(prevVM);
-					LibraryLocation[] newLibs = JavaRuntime.getLibraryLocations(futureVM);
-					if (prevLibs.length == newLibs.length) {
-						for (int j = 0; j < newLibs.length; j++) {
-							LibraryLocation newLib = newLibs[j];
-							LibraryLocation prevLib = prevLibs[j];
-							String newPath = newLib.getSystemLibraryPath().toOSString();
-							String prevPath = prevLib.getSystemLibraryPath().toOSString();
-							if (!newPath.equalsIgnoreCase(prevPath)) {
-								// different libs or ordering, a re-build is required
-								return true;
-							}
-						} 
-					} else {
-						// different number of libraries, a re-build is required
-						return true;
-					}
-				} else {
-					// the VM no longer exists, a re-build will be required
-					return true;
-				}
-			}
-		}
-		
-		
-		return false;
-	}
-	
-	private boolean isEqual(Object a, Object b) {
-		if (a == null) {
-			return b == null;
-		}
-		if (b == null) {
-			return false;
-		}
-		return (a.equals(b));
 	}
 	
 }
