@@ -21,15 +21,19 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-public class DetailFormatterCompletionProcessor extends DisplayCompletionProcessor {
+public class CodeSnippetCompletionProcessor extends DisplayCompletionProcessor {
+	
+	public interface ITypeProvider {
+		IType getType();
+	}
 
 	/**
 	 * The dialog with which this processor is associated.
 	 */
-	private DetailFormatterDialog fDetailFormatDialog;
+	private ITypeProvider fTypeProvider;
 		
-	public DetailFormatterCompletionProcessor(DetailFormatterDialog detailFormatDialog) {
-		fDetailFormatDialog= detailFormatDialog;
+	public CodeSnippetCompletionProcessor(ITypeProvider detailFormatDialog) {
+		fTypeProvider= detailFormatDialog;
 	}
 
 	/**
@@ -37,7 +41,7 @@ public class DetailFormatterCompletionProcessor extends DisplayCompletionProcess
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
 
-		IType receivingType= fDetailFormatDialog.getType();
+		IType receivingType= fTypeProvider.getType();
 		if (receivingType == null) {
 			return new ICompletionProposal[0];
 		}

@@ -14,11 +14,21 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.core.search.SearchMatch;
+import org.eclipse.jdt.core.search.SearchParticipant;
+import org.eclipse.jdt.core.search.SearchPattern;
+import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.internal.debug.core.logicalstructures.JavaLogicalStructure;
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
@@ -30,6 +40,8 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -52,12 +64,20 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  */
-public class EditLogicalStructureDialog extends StatusDialog implements Listener, ISelectionChangedListener, IDocumentListener {
+public class EditLogicalStructureDialog extends StatusDialog implements Listener, ISelectionChangedListener, IDocumentListener, CodeSnippetCompletionProcessor.ITypeProvider {
 
 	public class AttributesContentProvider implements IStructuredContentProvider {
 		
@@ -169,6 +189,8 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	private IStructuredSelection fCurrentAttributeSelection;
 	private IType fType;
 	private boolean fTypeSearched= false;
+	private DisplayViewerConfiguration fViewerConfiguration;
+	private HandlerSubmission fSubmission;
 
 	protected EditLogicalStructureDialog(Shell parentShell, JavaLogicalStructure logicalStructure) {
 		super(parentShell);
@@ -182,6 +204,20 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 	 */
 	protected Control createDialogArea(Composite parent) {
 		fParentComposite= parent;
+		
+		IHandler handler = new AbstractHandler() {
+			public Object execute(Map parameterValuesByName) throws ExecutionException {
+				findCorrespondingType();
+				fSnippetViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);				
+				return null;
+			}
+		};
+		
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		
+		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();		
+		fSubmission = new HandlerSubmission(null, parent.getShell(), null, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, handler, Priority.MEDIUM); //$NON-NLS-1$
+		commandSupport.addHandlerSubmission(fSubmission);	
 		
 		// big container
 		Composite container= new Composite(parent, SWT.NONE);
@@ -318,11 +354,14 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		fSnippetDocument.setDocumentPartitioner(partitioner);
 		partitioner.connect(fSnippetDocument);
 		fSnippetViewer.configure(new JavaSourceViewerConfiguration(JavaPlugin.getDefault().getJavaTextTools().getColorManager(), JavaPlugin.getDefault().getPreferenceStore(), null, null));
-//		fSnippetViewer.configure(new DisplayViewerConfiguration() {
-//			public IContentAssistProcessor getContentAssistantProcessor() {
-//				return new DetailFormatterCompletionProcessor(DetailFormatterDialog.this);
-//			}
-//		});
+		if (fViewerConfiguration == null) {
+			fViewerConfiguration= new DisplayViewerConfiguration() {
+				public IContentAssistProcessor getContentAssistantProcessor() {
+					return new CodeSnippetCompletionProcessor(EditLogicalStructureDialog.this);
+				}
+			};
+		}
+		fSnippetViewer.configure(fViewerConfiguration);
 		fSnippetViewer.setEditable(true);
 		fSnippetViewer.setDocument(fSnippetDocument);
 		
@@ -529,6 +568,7 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		for (int i = 0; i < children.length; i++) {
 			children[i].dispose();
 		}
+		fSnippetViewer.dispose();
 		createCodeGroupWidgets(isValue);
 		setAttributesData(isValue);
 		fParentComposite.layout(true, true);
@@ -713,4 +753,70 @@ public class EditLogicalStructureDialog extends StatusDialog implements Listener
 		}
 		super.okPressed();
 	}
+
+	/**
+	 * Use the Java search engine to find the type which corresponds
+	 * to the given name.
+	 */
+	private void findCorrespondingType() {
+		if (fTypeSearched) {
+			return;
+		}
+		fType= null;
+		fTypeSearched= true;
+		final String pattern= fQualifiedTypeNameText.getText().trim().replace('$', '.');
+		if (pattern == null || "".equals(pattern)) { //$NON-NLS-1$
+			return;
+		}
+		
+		final SearchRequestor collector = new SearchRequestor() {
+			private boolean fFirst= true;
+			
+			public void endReporting() {
+				checkValues();
+			}
+
+			public void acceptSearchMatch(SearchMatch match) throws CoreException {
+				Object enclosingElement = match.getElement();
+				if (!fFirst) {
+					return;
+				}
+				fFirst= false;
+				if (enclosingElement instanceof IType) {
+					fType= (IType) enclosingElement;
+				}
+			}
+		};
+		
+		SearchEngine engine= new SearchEngine(JavaCore.getWorkingCopies(null));
+		SearchPattern searchPattern = SearchPattern.createPattern(pattern, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE);
+		IJavaSearchScope scope= SearchEngine.createWorkspaceScope();
+		SearchParticipant[] participants = new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()};
+		try {
+			engine.search(searchPattern, participants, scope, collector, null);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+	}
+	
+	/**
+	 * Return the type object which corresponds to the given name.
+	 */
+	public IType getType() {
+		if (!fTypeSearched) {
+			findCorrespondingType();
+		}
+		return fType;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#close()
+	 */
+	public boolean close() {
+		PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(fSubmission);
+		
+		fSnippetViewer.dispose();
+		return super.close();
+	}
+
 }

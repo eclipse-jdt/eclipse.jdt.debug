@@ -73,7 +73,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 /**
  * Dialog for edit detail formatter.
  */
-public class DetailFormatterDialog extends StatusDialog {
+public class DetailFormatterDialog extends StatusDialog implements CodeSnippetCompletionProcessor.ITypeProvider {
 	
 	/**
 	 * The detail formatter to edit.
@@ -238,7 +238,7 @@ public class DetailFormatterDialog extends StatusDialog {
 		partitioner.connect(document);		
 		fSnippetViewer.configure(new DisplayViewerConfiguration() {
 			public IContentAssistProcessor getContentAssistantProcessor() {
-				return new DetailFormatterCompletionProcessor(DetailFormatterDialog.this);
+				return new CodeSnippetCompletionProcessor(DetailFormatterDialog.this);
 			}
 		});
 		fSnippetViewer.setEditable(true);
