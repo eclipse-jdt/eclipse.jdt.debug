@@ -1302,6 +1302,10 @@ public class VirtualMachineImpl extends MirrorImpl implements VirtualMachine, or
 		return fShortType;
 	}
 	
+	/*
+	 *  (non-Javadoc)
+	 * @see com.sun.jdi.VirtualMachine#canBeModified()
+	 */
 	public boolean canBeModified() {
 		return true;
 	}
