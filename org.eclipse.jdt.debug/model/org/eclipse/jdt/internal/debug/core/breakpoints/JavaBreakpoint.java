@@ -488,7 +488,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	public void changeForTarget(JDIDebugTarget target) throws CoreException {
 		// Must iterate over a copy of the requests because updating a
 		// request will modify the underlying list.
-		ArrayList requests = (ArrayList) getRequests(target).clone();
+		List requests = (List) getRequests(target).clone();
 		if (!requests.isEmpty()) {
 			Iterator iter = requests.iterator();
 			EventRequest req;
@@ -853,7 +853,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		// are transient properties, they are not set on
 		// the marker. Thus we must update the request
 		// here.
-		ArrayList requests = (ArrayList) getRequests(target).clone();
+		List requests = (List) getRequests(target).clone();
 		Iterator iter= requests.iterator();
 		EventRequest request= null;
 		while (iter.hasNext()) {
@@ -936,7 +936,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 		JDIDebugTarget target= (JDIDebugTarget)javaTarget;
 		fFilteredThreadsByTarget.remove(target);
-		ArrayList requests = (ArrayList) getRequests(target).clone();
+		List requests = (List) getRequests(target).clone();
 		Iterator iter= requests.iterator();
 		EventRequest request= null;
 		while (iter.hasNext()) {
@@ -957,6 +957,5 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			}
 		}
 	}
-
 }
 
