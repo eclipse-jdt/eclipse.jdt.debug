@@ -97,7 +97,8 @@ cd "$APP_NAME.app/Contents"
 #
 # Copy the JavaAppLauncher into the bundle 
 #
-cp "$JAVASTUB"/Eclipse MacOS/JavaApplicationStub
+cp "$JAVASTUB"/JavaApplicationStub MacOS
+chmod +x MacOS/JavaApplicationStub
 
 #
 # Create the Info.plist file.
