@@ -21,6 +21,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.dialogs.StatusDialog;
@@ -140,6 +142,12 @@ public class AddVMDialog extends StatusDialog {
 		});
 		fJavadocURL.setLabelText(LauncherMessages.getString("AddVMDialog.Java&doc_URL__1")); //$NON-NLS-1$
 		fJavadocURL.setButtonLabel(LauncherMessages.getString("AddVMDialog.Bro&wse..._2")); //$NON-NLS-1$
+		fJavadocURL.setDialogFieldListener(new IDialogFieldListener() {
+			public void dialogFieldChanged(DialogField field) {
+				setJavadocURLStatus(validateJavadocURL());
+				updateStatusLine();
+			}
+		});
 	}
 	
 	protected String getVMName() {
@@ -288,6 +296,18 @@ public class AddVMDialog extends StatusDialog {
 		fLibraryBlock.update();
 		detectJavadocLocation();
 		return s;
+	}
+	
+	private IStatus validateJavadocURL() {
+		String text = fJavadocURL.getText();
+		if (text != null && text.length() > 0) {
+			try {
+				new URL(text);
+			} catch (MalformedURLException e) {
+				return new Status(IStatus.ERROR, JDIDebugUIPlugin.getUniqueIdentifier(), IJavaDebugUIConstants.INTERNAL_ERROR, LauncherMessages.getString("AddVMDialog.Invalid_URL_syntax_specified_for_Javadoc_location._1"), e); //$NON-NLS-1$
+			}
+		}
+		return new StatusInfo();
 	}
 	
 	/**
@@ -468,6 +488,14 @@ public class AddVMDialog extends StatusDialog {
 	
 	private void setJRELocationStatus(IStatus status) {
 		fStati[1]= status;
+	}
+	
+	private void setJavadocURLStatus(IStatus status) {
+		fStati[2] = status;
+	}
+	
+	private IStatus getJavaURLStatus() {
+		return fStati[2];
 	}
 	
 	protected IStatus getSystemLibraryStatus() {
