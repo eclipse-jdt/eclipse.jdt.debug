@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
@@ -27,7 +28,13 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 /**
  * Tests for launch configurations
  */
-public class LaunchConfigurationTests extends AbstractDebugTest {
+public class LaunchConfigurationTests extends AbstractDebugTest implements ILaunchConfigurationListener {
+	
+	/**
+	 * The from/to handles during rename operations
+	 */
+	protected ILaunchConfiguration fFrom;
+	protected ILaunchConfiguration fTo;
 	
 	public LaunchConfigurationTests(String name) {
 		super(name);
@@ -219,8 +226,12 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 		 // rename
 		 wc = handle.getWorkingCopy();
 		 wc.rename("config-2-rename");
+		 addConfigListener();
 		 ILaunchConfiguration newHandle = wc.doSave();
+		 removeConfigListener();
 		 assertTrue("Config should no longer exist", !handle.exists());
+		 assertEquals("From should be original", handle, fFrom);
+		 assertEquals("To should be new handle", newHandle, fTo);
 		 
 		 // retrieve new attributes
 		 assertTrue("String1 should be String1", newHandle.getAttribute("String1", "Missing").equals("String1"));
@@ -236,6 +247,90 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 		 // cleanup
 		 newHandle.delete();
 		 assertTrue("Config should not exist after deletion", !newHandle.exists());		 	 
+	}	
+	
+	/**
+	 * Moves a local configuration to a shared location
+	 */
+	public void testMoveLocalToSharedConfiguration() throws CoreException {
+		 ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "config2share");
+		 IPath location = wc.getLocation();
+		 ILaunchConfiguration handle = wc.doSave();
+		 File file = location.toFile();
+		 assertTrue("Configuration file should exist", file.exists());
+
+		 // retrieve attributes
+		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1"));
+		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1);
+		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false));
+		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true));
+
+		 // move
+		 wc = handle.getWorkingCopy();
+		 wc.setContainer(getJavaProject().getProject());
+		 addConfigListener();
+		 ILaunchConfiguration newHandle = wc.doSave();
+		 removeConfigListener();
+		 assertTrue("Config should no longer exist", !handle.exists());
+		 assertEquals("From should be original", handle, fFrom);
+		 assertEquals("To should be new handle", newHandle, fTo);
+
+		 // retrieve new attributes
+		 assertTrue("String1 should be String1", newHandle.getAttribute("String1", "Missing").equals("String1"));
+		 assertTrue("Int1 should be 1", newHandle.getAttribute("Int1", 0) == 1);
+		 assertTrue("Boolean1 should be true", newHandle.getAttribute("Boolean1", false));
+		 assertTrue("Boolean2 should be false", !newHandle.getAttribute("Boolean2", true));
+
+		 // ensure new handle is in the index
+		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
+		 assertTrue("Renamed configuration should exist in project index", existsIn(configs, newHandle));
+		 assertTrue("Original configuration should NOT exist in project index", !existsIn(configs, handle));
+
+		 // cleanup
+		 newHandle.delete();
+		 assertTrue("Config should not exist after deletion", !newHandle.exists());
+	}	
+	
+	/**
+	 * Moves a local configuration to a shared location
+	 */
+	public void testMoveSharedToLocalConfiguration() throws CoreException {
+		 ILaunchConfigurationWorkingCopy wc = newConfiguration(getJavaProject().getProject(), "config2local");
+		 IPath location = wc.getLocation();
+		 ILaunchConfiguration handle = wc.doSave();
+		 File file = location.toFile();
+		 assertTrue("Configuration file should exist", file.exists());
+
+		 // retrieve attributes
+		 assertTrue("String1 should be String1", handle.getAttribute("String1", "Missing").equals("String1"));
+		 assertTrue("Int1 should be 1", handle.getAttribute("Int1", 0) == 1);
+		 assertTrue("Boolean1 should be true", handle.getAttribute("Boolean1", false));
+		 assertTrue("Boolean2 should be false", !handle.getAttribute("Boolean2", true));
+
+		 // move
+		 wc = handle.getWorkingCopy();
+		 wc.setContainer(null);
+		 addConfigListener();
+		 ILaunchConfiguration newHandle = wc.doSave();
+		 removeConfigListener();
+		 assertTrue("Config should no longer exist", !handle.exists());
+		 assertEquals("From should be original", handle, fFrom);
+		 assertEquals("To should be new handle", newHandle, fTo);
+
+		 // retrieve new attributes
+		 assertTrue("String1 should be String1", newHandle.getAttribute("String1", "Missing").equals("String1"));
+		 assertTrue("Int1 should be 1", newHandle.getAttribute("Int1", 0) == 1);
+		 assertTrue("Boolean1 should be true", newHandle.getAttribute("Boolean1", false));
+		 assertTrue("Boolean2 should be false", !newHandle.getAttribute("Boolean2", true));
+
+		 // ensure new handle is in the index
+		 ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
+		 assertTrue("Renamed configuration should exist in project index", existsIn(configs, newHandle));
+		 assertTrue("Original configuration should NOT exist in project index", !existsIn(configs, handle));
+
+		 // cleanup
+		 newHandle.delete();
+		 assertTrue("Config should not exist after deletion", !newHandle.exists());
 	}		
 	
 	/**
@@ -347,8 +442,12 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 		 // rename
 		 wc = handle.getWorkingCopy();
 		 wc.rename("shared-2-rename");
+		 addConfigListener();
 		 ILaunchConfiguration newHandle = wc.doSave();
+		 removeConfigListener();
 		 assertTrue("Config should no longer exist", !handle.exists());
+		 assertEquals("From should be original", handle, fFrom);
+		 assertEquals("To should be new handle", newHandle, fTo);		 
 		 
 		 // retrieve new attributes
 		 assertTrue("String1 should be String1", newHandle.getAttribute("String1", "Missing").equals("String1"));
@@ -406,5 +505,32 @@ public class LaunchConfigurationTests extends AbstractDebugTest {
 	}	
 		
 		
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+		fFrom = getLaunchManager().getMovedFrom(configuration);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		fTo = getLaunchManager().getMovedTo(configuration);
+	}
+
+	protected void addConfigListener() {
+		getLaunchManager().addLaunchConfigurationListener(this);
+	}
+	
+	protected void removeConfigListener() {
+		getLaunchManager().removeLaunchConfigurationListener(this);
+	}
 }
 
