@@ -11,9 +11,13 @@
 <h1>
 Eclipse Platform Build Notes&nbsp;<br>
 Java Debug</h1>
-January ??, 2002
+January 22, 2002
 <h3>
 What's new in this drop</h3>
+Java breakpoint creation has changed to not require the use of Java elements.
+Unfortunately, the resulting changes invalidates breakpoints created previous to this build.
+The out of date breakpoints will be deleted at startup.
+See <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=7807">7807</a>: Breakpoint creation API should not use java elements<br>.
 	
 <h3>
 Problem Reports Fixed</h3>
@@ -27,6 +31,11 @@ Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=7809">7809</a>: AddExceptionDialog makes illegal access to internal class<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=1699">1699</a>: Display window enhancement<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=1713">1713</a>: Icon for "Show type/qualified names" could be clearer (1GJY72V)<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=5653">5653</a>: DCR: Debugger should catch uncaught exception by default<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=7002">7002</a>: Suspend on uncaught exception does not expose the type of the exception<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=7862">7862</a>: Feature:hidden breakpoints<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=7807">7807</a>: Breakpoint creation API should not use java elements<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=7915">7915</a>: breakpoint marker attributes need qualified names<br>
 
 <h3>
 Problem Reports Closed</h3>
