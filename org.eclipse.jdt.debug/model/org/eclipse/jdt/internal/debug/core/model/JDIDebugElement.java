@@ -8,6 +8,7 @@ package org.eclipse.jdt.internal.debug.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -87,7 +88,15 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	/**
 	 * Convenience method to log errors
 	 */
-	protected static void logError(Exception e) {
+	protected void logError(Exception e) {
+		if (!((JDIDebugTarget)getDebugTarget()).isAvailable()) {
+			// Don't log VMDisconnectedExceptions that occur
+			// when the VM is unavailable.
+			if (e instanceof VMDisconnectedException || 
+				(e instanceof CoreException && ((CoreException)e).getStatus().getException() instanceof VMDisconnectedException)) {
+				return;
+			}
+		}
 		JDIDebugPlugin.log(e);
 	}
 	
@@ -224,8 +233,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @throws DebugException a new exception with given status code
 	 */
 	public void requestFailed(String message,  Throwable e, int code) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			code, message, e));	
+		throwDebugException(message, code, e);
 	}
 		
 	/**
@@ -236,22 +244,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @throws DebugException The exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	public void targetRequestFailed(String message, Throwable e) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			DebugException.TARGET_REQUEST_FAILED, message, e));
-	}
-	
-	/**
-	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>
-	 * with the given underlying exception. The underlying exception is an exception thrown
-	 * by a JDI request.
-	 * 
-	 * @param message Failure message
-	 * @param e runtime exception that has occurred
-	 * @throws DebugException the exception with a status code of <code>TARGET_REQUEST_FAILED</code>
-	 */
-	public void jdiRequestFailed(String message, RuntimeException e) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			DebugException.TARGET_REQUEST_FAILED, message, e));
+		throwDebugException(message, DebugException.TARGET_REQUEST_FAILED, e);
 	}
 	
 	/**
@@ -264,8 +257,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @throws DebugException the exception with a status code of <code>TARGET_REQUEST_FAILED</code>
 	 */
 	public void jdiRequestFailed(String message, Throwable e) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			DebugException.TARGET_REQUEST_FAILED, message, e));
+		throwDebugException(message,	DebugException.TARGET_REQUEST_FAILED, e);
 	}	
 	
 	/**
@@ -275,8 +267,16 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 * @throws DebugException The exception with a status code of <code>NOT_SUPPORTED</code>.
 	 */
 	public void notSupported(String message) throws DebugException {
+		throwDebugException(message,	DebugException.NOT_SUPPORTED, null);
+	}
+	
+	/**
+	 * Throws a debug exception with the given message, error code, and underlying
+	 * exception.
+	 */
+	protected void throwDebugException(String message, int code, Throwable exception) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			DebugException.NOT_SUPPORTED, message, null));
+			DebugException.NOT_SUPPORTED, message, exception));
 	}
 	
 	/**
