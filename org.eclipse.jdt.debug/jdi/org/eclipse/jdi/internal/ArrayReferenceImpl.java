@@ -74,9 +74,21 @@ public class ArrayReferenceImpl extends ObjectReferenceImpl implements ArrayRefe
 	 * @returns Returns a range of array components.
 	 */
 	public List getValues(int firstIndex, int length) throws IndexOutOfBoundsException {
-		// Negative length indicates all elements.
-		if (length < 0)
-			length = length();
+
+		int arrayLength= length();
+
+		if (firstIndex < 0 || firstIndex >= arrayLength) {
+			throw new IndexOutOfBoundsException(JDIMessages.getString("ArrayReferenceImpl.Invalid_index_1")); //$NON-NLS-1$
+		}
+		
+		if (length == -1) {
+			// length == -1 means all elements to the end.
+			length = arrayLength - firstIndex;
+		} else if (length < -1) {
+			throw new IndexOutOfBoundsException("Invalid number of value to get from array");
+		} else if (firstIndex + length > arrayLength) {
+			throw new IndexOutOfBoundsException("Attempted to get more values from array than length of array");
+		}
 			
 		// Note that this information should not be cached.
 		initJdwpRequest();
