@@ -46,7 +46,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * the failure.</li>
 	 * </ul>
 	 */
-	IVariable findVariable(String variableName) throws DebugException;
+	public abstract IVariable findVariable(String variableName) throws DebugException;
 	
 	/**
 	 * Returns the type from this debug target with the given fully
@@ -63,7 +63,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * the failure.</li>
 	 * </ul>
 	 */
-	IJavaType getJavaType(String name) throws DebugException;
+	public abstract IJavaType getJavaType(String name) throws DebugException;
 
 	/**
 	 * Returns an <code>IJavaValue</code> for the given boolean. This
@@ -73,7 +73,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @param value a boolean from which to create a value
 	 * @return the equivalent <code>IJavaValue</code>
 	 */	
-	IJavaValue newValue(boolean value);	
+	public abstract IJavaValue newValue(boolean value);	
 
 	/**
 	 * Returns an <code>IJavaValue</code> for the given byte. This
@@ -83,7 +83,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @param value a byte from which to create a value
 	 * @return the equivalent <code>IJavaValue</code>
 	 */	
-	IJavaValue newValue(byte value);	
+	public abstract IJavaValue newValue(byte value);	
 
 	/**
 	 * Returns an <code>IJavaValue</code> for the given char. This
@@ -93,7 +93,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @param value a char from which to create a value
 	 * @return the equivalent <code>IJavaValue</code>
 	 */	
-	IJavaValue newValue(char value);
+	public abstract IJavaValue newValue(char value);
 	
 	/**
 	 * Returns an <code>IJavaValue</code> for the given double. This
@@ -103,7 +103,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @param value a double from which to create a value
 	 * @return the equivalent <code>IJavaValue</code>
 	 */	
-	IJavaValue newValue(double value);	
+	public abstract IJavaValue newValue(double value);	
 	
 	/**
 	 * Returns an <code>IJavaValue</code> for the given float. This
@@ -113,7 +113,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @param value a float from which to create a value
 	 * @return the equivalent <code>IJavaValue</code>
 	 */	
-	IJavaValue newValue(float value);		
+	public abstract IJavaValue newValue(float value);		
 				
 	/**
 	 * Returns an <code>IJavaValue</code> for the given int. This
@@ -123,7 +123,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @param value an int from which to create a value
 	 * @return the equivalent <code>IJavaValue</code>
 	 */	
-	IJavaValue newValue(int value);
+	public abstract IJavaValue newValue(int value);
 	
 	/**
 	 * Returns an <code>IJavaValue</code> for the given long. This
@@ -133,7 +133,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @param value a long from which to create a value
 	 * @return the equivalent <code>IJavaValue</code>
 	 */	
-	IJavaValue newValue(long value);	
+	public abstract IJavaValue newValue(long value);	
 	
 	/**
 	 * Returns an <code>IJavaValue</code> for the given short. This
@@ -143,7 +143,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @param value a short from which to create a value
 	 * @return the equivalent <code>IJavaValue</code>
 	 */	
-	IJavaValue newValue(short value);
+	public abstract IJavaValue newValue(short value);
 	
 	/**
 	 * Returns an <code>IJavaValue</code> for the given string. This
@@ -153,7 +153,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @param value a string from which to create a value
 	 * @return the equivalent <code>IJavaValue</code>
 	 */	
-	IJavaValue newValue(String value);		
+	public abstract IJavaValue newValue(String value);		
 	
 	/**
 	 * Returns an <code>IJavaValue</code> that represents
@@ -162,7 +162,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * 
 	 * @return the null <code>IJavaValue</code>
 	 */	
-	IJavaValue nullValue();
+	public abstract IJavaValue nullValue();
 	
 	/**
 	 * Returns an <code>IJavaValue</code> that represents
@@ -171,7 +171,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * 
 	 * @return the void <code>IJavaValue</code>
 	 */	
-	IJavaValue voidValue();
+	public abstract IJavaValue voidValue();
 	/**
 	 * Returns whether any of the threads associated with this debug target
 	 * are running code in the VM that is out of synch with the code
@@ -184,7 +184,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	boolean isOutOfSynch() throws DebugException;
+	public abstract boolean isOutOfSynch() throws DebugException;
 	/**
 	 * Returns whether any of the threads associated with this debug target
 	 * may be running code in the VM that is out of synch with the code
@@ -197,7 +197,7 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 */
-	boolean mayBeOutOfSynch() throws DebugException;
+	public abstract boolean mayBeOutOfSynch() throws DebugException;
 	
 	/**
 	 * Returns whether this target supports hot code replace.
@@ -205,4 +205,95 @@ public interface IJavaDebugTarget extends IDebugTarget {
 	 * @return whether this target supports hot code replace
 	 */
 	public boolean supportsHotCodeReplace();
+	
+	/**
+	 * Returns whether step filters are enabled
+	 * in this target.
+	 * 
+	 * @return whether step filters are enabled
+	 * in this target
+	 */
+	public abstract boolean isStepFiltersEnabled();
+	
+	/**
+	 * Sets whether step filters are enabled in this
+	 * target.
+	 * 
+	 * @param enabled whether step filters are enabled in this
+	 * target
+	 */
+	public abstract void setStepFiltersEnabled(boolean enabled);
+	
+	/**
+	 * Returns whether synthetic methods are filtered
+	 * when stepping.
+	 * 
+	 * @return whether synthetic methods are filtered
+	 * when stepping
+	 */
+	public abstract boolean isFilterSynthetics();
+	
+	/**
+	 * Sets whether synthetic methods are filtered
+	 * when stepping.
+	 * 
+	 * @param filter whether to synthetic methods are filtered
+	 * when stepping
+	 */
+	public abstract void setFilterSynthetics(boolean filter);
+	
+	/**
+	 * Returns whether static initializers are filtered
+	 * when stepping.
+	 * 
+	 * @return whether static initializers are filtered
+	 * when stepping
+	 */
+	public abstract boolean isFilterStaticInitializers();
+	
+	/**
+	 * Sets whether to filter static initializers when
+	 * stepping.
+	 * 
+	 * @param filter whether to filter static initializers when
+	 * stepping
+	 */
+	public abstract void setFilterStaticInitializers(boolean filter);
+	
+	/**
+	 * Returns whether constructors are filtered when stepping.
+	 * 
+	 * @return whether constructors are filtered when stepping
+	 */
+	public abstract boolean isFilterConstructors();
+	
+	/**
+	 * Sets whether to filter constructors when stepping.
+	 * 
+	 * @param filter whether to filter constructors when stepping
+	 */
+	public abstract void setFilterConstructors(boolean filter);
+	
+	/**
+	 * Returns the list of active step filters in this target.
+	 * The list is a collection of Strings. Each filter is the 
+	 * fully qualified name/pattern of a type/package to filter
+	 * when stepping. For example <code>java.lang.*</code> or
+	 * <code>java.lang.String</code>.
+	 * 
+	 * @return the list of active step filters, or <code>null</code>
+	 */
+	public abstract String[] getStepFilters();
+	
+	/**
+	 * Sets the list of active step filters in this target.
+	 * The list is a collection of Strings. Each filter is the 
+	 * fully qualified name/pattern of a type/package to filter
+	 * when stepping. For example <code>java.lang.*</code> or
+	 * <code>java.lang.String</code>.
+	 * 
+	 * @param list active step filters, or <code>null</code>
+	 */
+	public abstract void setStepFilters(String[] list);
+	
 }

@@ -6,8 +6,11 @@ package org.eclipse.jdt.internal.debug.ui.actions;
  */
  
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -31,9 +34,10 @@ public class ToggleStepFilterAction extends Action implements IViewActionDelegat
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		boolean newStepFilterState = !JDIDebugModel.useStepFilters();		
+		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		boolean newStepFilterState = !store.getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS);		
 		action.setChecked(newStepFilterState);
-		JDIDebugModel.setUseStepFilters(newStepFilterState);
+		store.setValue(IJDIPreferencesConstants.PREF_USE_FILTERS, newStepFilterState);
 	}
 
 	/**
@@ -49,7 +53,7 @@ public class ToggleStepFilterAction extends Action implements IViewActionDelegat
 		// This is the only way to set the initial checked state of the action
 		// See [1GJUUTP: ITPDUI:ALL - Cheesy code in ToggleStepFilterAction]
 		if (!fSetInitialState) {
-			action.setChecked(JDIDebugModel.useStepFilters());
+			action.setChecked(JDIDebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS));
 			fSetInitialState = true;
 		}
 	}

@@ -5,9 +5,12 @@ package org.eclipse.jdt.internal.debug.ui;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -33,6 +36,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -60,8 +64,8 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 	private IJavaExceptionBreakpoint fSuspendOnExceptionBreakpoint = null;
 	
 	/**
-	 * Constants indicating whether a notification
-	 * is added or removed.
+	 * Constants indicating whether a problem
+	 * is added, removed, or changed.
 	 */
 	private static final int ADDED = 0;
 	private static final int REMOVED = 1;
@@ -76,6 +80,11 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 	 * Marker attribute problem message
 	 */
 	public static final String ATTR_PROBLEM_MESSAGE = "org.eclipse.jdt.debug.ui.problemBreakpoint.message";
+	
+	/**
+	 * Local cache of active step filters.
+	 */
+	private String[] fActiveStepFilters = new String[0];
 
 	/*
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
@@ -162,6 +171,9 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 		bp.setRegistered(false);
 		bp.setEnabled(isSuspendOnUncaughtExceptions());
 		setSuspendOnUncaughtExceptionBreakpoint(bp);
+		
+		// step filters
+		updateActiveFilters();
 	}
 
 	/**
@@ -300,6 +312,36 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 			}
 		}	
 	}
+	
+	/**
+	 * Notifies the give debug target of filter specifications
+	 * 
+	 * @param target Java debug target
+	 */
+	protected void notifyTargetOfFilters(IJavaDebugTarget target) {
+
+		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		
+		target.setFilterConstructors(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
+		target.setFilterStaticInitializers(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
+		target.setFilterSynthetics(store.getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
+		target.setStepFiltersEnabled(store.getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS));
+		target.setStepFilters(getActiveStepFilters());
+
+	}	
+	
+	/**
+	 * Notifies all targets of current filter specifications.
+	 */
+	protected void notifyTargetsOfFilters() {
+		IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
+		for (int i = 0; i < targets.length; i++) {
+			if (targets[i] instanceof IJavaDebugTarget) {
+				IJavaDebugTarget target = (IJavaDebugTarget)targets[i];
+				notifyTargetOfFilters(target);
+			}
+		}	
+	}		
 
 	/**
 	 * Notifies the given target of the given breakpoint
@@ -337,6 +379,9 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 			}
 			// uncaught exception breakpoint
 			notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
+			
+			// step filters
+			notifyTargetOfFilters(javaTarget);
 		}
 		
 		
@@ -378,6 +423,18 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 			setSuspendOnCompilationErrors(((Boolean)event.getNewValue()).booleanValue());
 		} else if (event.getProperty().equals(IJDIPreferencesConstants.SUSPEND_ON_UNCAUGHT_EXCEPTIONS)) {
 			setSuspendOnUncaughtExceptions(((Boolean)event.getNewValue()).booleanValue());
+		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS)) {
+			notifyTargetsOfFilters();
+		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS)) {
+			notifyTargetsOfFilters();
+		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS)) {
+			notifyTargetsOfFilters();
+		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_USE_FILTERS)) {
+			notifyTargetsOfFilters();
+		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST)) {
+			updateActiveFilters();
+		} else if (event.getProperty().equals(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST)) {
+			updateActiveFilters();
 		}
 	}
 	
@@ -453,4 +510,68 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, ILaunch
 	protected IJavaExceptionBreakpoint getSuspendOnUncaughtExceptionBreakpoint() {
 		return fSuspendOnExceptionBreakpoint;
 	}	
+	
+	/**
+	 * Parses the comma separated string into an array of strings
+	 * 
+	 * @return list
+	 */
+	protected static String[] parseList(String listString) {
+		List list = new ArrayList(10);
+		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			list.add(token);
+		}
+		return (String[])list.toArray(new String[list.size()]);
+	}
+	
+	/**
+	 * Serializes the array of strings into one comma
+	 * separated string.
+	 * 
+	 * @param list array of strings
+	 * @return a single string composed of the given list
+	 */
+	protected static String serializeList(String[] list) {
+		if (list == null) {
+			return ""; //$NON-NLS-1$
+		}
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < list.length; i++) {
+			if (i > 0) {
+				buffer.append(',');
+			}
+			buffer.append(list[i]);
+		}
+		return buffer.toString();
+	}	
+	
+	/**
+	 * Sets the current list of active step filters
+	 * 
+	 * @param filters the current list of active step filters
+	 */
+	private void setActiveStepFilters(String[] filters) {
+		fActiveStepFilters = filters;
+	}
+	
+	/**
+	 * Returns the current list of active step filters
+	 * 
+	 * @return current list of active step filters
+	 */
+	protected String[] getActiveStepFilters() {
+		return fActiveStepFilters;
+	}
+	
+	/**
+	 * Updates local copy of active step filters and
+	 * notifies targets.
+	 */
+	protected void updateActiveFilters() {
+		String[] filters = parseList(JDIDebugUIPlugin.getDefault().getPreferenceStore().getString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST));
+		setActiveStepFilters(filters);
+		notifyTargetsOfFilters();
+	}
 }

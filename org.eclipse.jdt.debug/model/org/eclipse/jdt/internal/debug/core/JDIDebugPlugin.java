@@ -78,12 +78,10 @@ public class JDIDebugPlugin extends Plugin {
 	
 	/**
 	 * Instantiates and starts up the hot code replace
-	 * manager.  Also initializes step filter information.
+	 * manager.
 	 */
 	public void startup() throws CoreException {
 		fJavaHCRMgr= JavaHotCodeReplaceManager.getDefault();
-
-		JDIDebugModel.setupState();
 	}
 	
 	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
@@ -96,7 +94,6 @@ public class JDIDebugPlugin extends Plugin {
 
 	/**
 	 * Shutdown the HCR mgr and the Java debug targets.
-	 * Save the current in-memory step filter state.
 	 */
 	public void shutdown() throws CoreException {
 		fJavaHCRMgr.shutdown();
@@ -108,7 +105,6 @@ public class JDIDebugPlugin extends Plugin {
 				((JDIDebugTarget)target).shutdown();
 			}
 		}
-		JDIDebugModel.saveStepFilterState();
 
 		fgPlugin = null;
 		super.shutdown();

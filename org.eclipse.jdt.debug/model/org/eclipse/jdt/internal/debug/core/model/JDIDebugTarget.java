@@ -157,6 +157,43 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * Whether the VM should be resumed on startup
 	 */
 	private boolean fResumeOnStartup = false; 
+	
+	/**
+	 * List of step filters - each string is a patter/fully qualified
+	 * name of a type to filter.
+	 */
+	private String[] fStepFilters = null;
+	
+	/**
+	 * Step filter state mask.
+	 */
+	private int fStepFilterMask = 0;
+	
+	/**
+	 * Step filter bit mask - indicates if step filters are enabled.
+	 */
+	private static final int STEP_FILTERS_ENABLED = 0x001;
+	
+	/**
+	 * Step filter bit mask - indicates if sythetic methods are filtered.
+	 */	
+	private static final int FILTER_SYNTHETICS = 0x002;
+	
+	/**
+	 * Step filter bit mask - indicates if static initializers are filtered.
+	 */		
+	private static final int FILTER_STATIC_INITIALIZERS = 0x004;
+	
+	/**
+	 * Step filter bit mask - indicates if constructors are filtered.
+	 */		
+	private static final int FILTER_CONSTRUCTORS = 0x008;
+	
+	/**
+	 * Mask used to flip individual bit masks via XOR
+	 */
+	private static final int XOR_MASK = 0xFFF;
+	
 	 
 	/**
 	 * Creates a new JDI debug target for the given virtual machine.
@@ -1813,5 +1850,92 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	protected boolean isResumeOnStartup() {
 		return fResumeOnStartup;
 	}
+	
+	/**
+	 * @see IJavaDebugTarget#getStepFilters()
+	 */
+	public String[] getStepFilters() {
+		return fStepFilters;
+	}
+
+	/**
+	 * @see IJavaDebugTarget#isFilterConstructors()
+	 */
+	public boolean isFilterConstructors() {
+		return (fStepFilterMask & FILTER_CONSTRUCTORS) > 0;
+	}
+
+	/**
+	 * @see IJavaDebugTarget#isFilterStaticInitializers()
+	 */
+	public boolean isFilterStaticInitializers() {
+		return (fStepFilterMask & FILTER_STATIC_INITIALIZERS) > 0;
+	}
+
+	/**
+	 * @see IJavaDebugTarget#isFilterSynthetics()
+	 */
+	public boolean isFilterSynthetics() {
+		return (fStepFilterMask & FILTER_SYNTHETICS) > 0;
+	}
+
+	/**
+	 * @see IJavaDebugTarget#isStepFiltersEnabled()
+	 */
+	public boolean isStepFiltersEnabled() {
+		return (fStepFilterMask & STEP_FILTERS_ENABLED) > 0;
+	}
+
+	/**
+	 * @see IJavaDebugTarget#setFilterConstructors(boolean)
+	 */
+	public void setFilterConstructors(boolean filter) {
+		if (filter) {
+			fStepFilterMask = fStepFilterMask | FILTER_CONSTRUCTORS;
+		} else {
+			fStepFilterMask = fStepFilterMask & (FILTER_CONSTRUCTORS ^ XOR_MASK);
+		}
+	}
+
+	/**
+	 * @see IJavaDebugTarget#setFilterStaticInitializers(boolean)
+	 */
+	public void setFilterStaticInitializers(boolean filter) {
+		if (filter) {
+			fStepFilterMask = fStepFilterMask | FILTER_STATIC_INITIALIZERS;
+		} else {
+			fStepFilterMask = fStepFilterMask & (FILTER_STATIC_INITIALIZERS ^ XOR_MASK);
+		}		
+	}
+
+	/**
+	 * @see IJavaDebugTarget#setFilterSynthetics(boolean)
+	 */
+	public void setFilterSynthetics(boolean filter) {
+		if (filter) {
+			fStepFilterMask = fStepFilterMask | FILTER_SYNTHETICS;
+		} else {
+			fStepFilterMask = fStepFilterMask & (FILTER_SYNTHETICS ^ XOR_MASK);
+		}				
+	}
+
+	/**
+	 * @see IJavaDebugTarget#setStepFilters(String[])
+	 */
+	public void setStepFilters(String[] list) {
+		fStepFilters = list;
+	}
+
+	/**
+	 * @see IJavaDebugTarget#setStepFiltersEnabled(boolean)
+	 */
+	public void setStepFiltersEnabled(boolean enabled) {
+		if (enabled) {
+			fStepFilterMask = fStepFilterMask | STEP_FILTERS_ENABLED;
+		} else {
+			fStepFilterMask = fStepFilterMask & (STEP_FILTERS_ENABLED ^ XOR_MASK);
+		}				
+	}
+
 }
 

@@ -1714,24 +1714,21 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 */
 		protected void attachFiltersToStepRequest(StepRequest request) {
 			
-			if (applyStepFilters() && JDIDebugModel.useStepFilters()) {
+			if (applyStepFilters() && getJavaDebugTarget().isStepFiltersEnabled()) {
 				Location currentLocation= getOriginalStepLocation();
 				//check if the user has already stopped in a filtered location
 				//is so do not filter @see bug 5587
 				ReferenceType type= currentLocation.declaringType();
 				String typeName= type.name();
-				List activeFilters = JDIDebugModel.getActiveStepFilters();
-				Iterator iterator = activeFilters.iterator();
-				while (iterator.hasNext()) {
-					StringMatcher matcher = new StringMatcher((String)iterator.next(), false, false);
+				String[] activeFilters = getJavaDebugTarget().getStepFilters();
+				for (int i = 0; i < activeFilters.length; i++) {
+					StringMatcher matcher = new StringMatcher(activeFilters[i], false, false);
 					if (matcher.match(typeName)) {
 						return;
 					}
 				}
-				iterator = activeFilters.iterator();
-				while (iterator.hasNext()) {
-					String filter = (String)iterator.next();
-					request.addClassExclusionFilter(filter);
+				for (int i = 0; i < activeFilters.length; i++) {
+					request.addClassExclusionFilter(activeFilters[i]);
 				}
 			}
 		}
@@ -1801,9 +1798,9 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 		 * filtered.  Returns <code>false</code> otherwise.
 		 */
 		protected boolean locationIsFiltered(Method method) {
-			boolean filterStatics = JDIDebugModel.filterStatics();
-			boolean filterSynthetics = JDIDebugModel.filterSynthetics();
-			boolean filterConstructors = JDIDebugModel.filterConstructors();
+			boolean filterStatics = getJavaDebugTarget().isFilterStaticInitializers();
+			boolean filterSynthetics = getJavaDebugTarget().isFilterSynthetics();
+			boolean filterConstructors = getJavaDebugTarget().isFilterConstructors();
 			if (!(filterStatics || filterSynthetics || filterConstructors)) {
 				return false;
 			}			

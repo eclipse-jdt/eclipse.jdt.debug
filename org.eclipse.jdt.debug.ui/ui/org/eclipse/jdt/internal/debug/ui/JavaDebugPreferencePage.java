@@ -97,7 +97,6 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	
 	private static final Image IMG_CUNIT = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CUNIT);
 	private static final Image IMG_PKG = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
-
 	
 	// Preference widgets
 	private Button fSuspendButton;
@@ -251,21 +250,21 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		
 		public StepFilterContentProvider(CheckboxTableViewer viewer) {
 			fViewer = viewer;
-			List active = JDIDebugModel.getActiveStepFilters();
-			List inactive = JDIDebugModel.getInactiveStepFilters();
+			List active = createActiveStepFiltersList();
+			List inactive = createInactiveStepFiltersList();
 			populateFilters(active, inactive);
 		}
 		
 		public void setDefaults() {
 			fViewer.remove(fFilters.toArray());			
-			List active = JDIDebugModel.getDefaultActiveStepFilters();
-			List inactive = JDIDebugModel.getDefaultInactiveStepFilters();
+			List active = createActiveStepFiltersList();
+			List inactive = createInactiveStepFiltersList();
 			populateFilters(active, inactive);		
 							
-			fFilterSyntheticButton.setSelection(JDIDebugModel.getDefaultFilterSynthetic());
-			fFilterStaticButton.setSelection(JDIDebugModel.getDefaultFilterStatic());
-			fFilterConstructorButton.setSelection(JDIDebugModel.getDefaultFilterConstructor());
-			boolean useStepFilters = JDIDebugModel.getDefaultUseStepFilters();
+			fFilterSyntheticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
+			fFilterStaticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
+			fFilterConstructorButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
+			boolean useStepFilters = getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS);
 			fUseFiltersCheckbox.setSelection(useStepFilters);
 			toggleStepFilterWidgetsEnabled(useStepFilters);
 		}
@@ -295,11 +294,12 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		}
 		
 		public void saveFilters() {
-			JDIDebugModel.setUseStepFilters(fUseFiltersCheckbox.getSelection());
-			JDIDebugModel.setFilterSynthetics(fFilterSyntheticButton.getSelection());
-			JDIDebugModel.setFilterStatics(fFilterStaticButton.getSelection());
-			JDIDebugModel.setFilterConstructors(fFilterConstructorButton.getSelection());
 			
+			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_USE_FILTERS, fUseFiltersCheckbox.getSelection());
+			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS, fFilterConstructorButton.getSelection());
+			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS, fFilterStaticButton.getSelection());
+			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS, fFilterSyntheticButton.getSelection());
+							
 			List active = new ArrayList(fFilters.size());
 			List inactive = new ArrayList(fFilters.size());
 			Iterator iterator = fFilters.iterator();
@@ -312,8 +312,10 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 					inactive.add(name);
 				}
 			}
-			JDIDebugModel.setActiveStepFilters(active);
-			JDIDebugModel.setInactiveStepFilters(inactive);
+			String pref = JavaDebugOptionsManager.serializeList((String[])active.toArray(new String[active.size()]));
+			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, pref);
+			pref = JavaDebugOptionsManager.serializeList((String[])inactive.toArray(new String[inactive.size()]));
+			getPreferenceStore().setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, pref);
 		}
 		
 		public void removeFilters(Object[] filters) {
@@ -444,6 +446,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		store.setDefault(IJDIPreferencesConstants.SHOW_CHAR_VALUES, false);
 		store.setDefault(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES, false);		
 		store.setDefault(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS, true);		
+		store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, "com.ibm.*,com.sun.*,java.*,javax.*,org.omg.*,sun.*,sunw.*");
+		store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, "");
 	}
 
 	/**
@@ -542,7 +546,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fFilterViewer.setSorter(new WorkbenchViewerSorter());
 		fStepFilterContentProvider = new StepFilterContentProvider(fFilterViewer);
 		fFilterViewer.setContentProvider(fStepFilterContentProvider);
-		fFilterViewer.setInput(JDIDebugModel.getAllStepFilters());
+		// input just needs to be non-null
+		fFilterViewer.setInput(this);
 		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 		gd.heightHint = 150;
 		gd.widthHint = 300;
@@ -652,10 +657,10 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		gd.horizontalSpan = 2;
 		fFilterConstructorButton.setLayoutData(gd);
 		
-		fFilterSyntheticButton.setSelection(JDIDebugModel.filterSynthetics());
-		fFilterStaticButton.setSelection(JDIDebugModel.filterStatics());
-		fFilterConstructorButton.setSelection(JDIDebugModel.filterConstructors());
-		boolean enabled = JDIDebugModel.useStepFilters();
+		fFilterSyntheticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_SYNTHETICS));
+		fFilterStaticButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_STATIC_INITIALIZERS));
+		fFilterConstructorButton.setSelection(getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_FILTER_CONSTRUCTORS));
+		boolean enabled = getPreferenceStore().getBoolean(IJDIPreferencesConstants.PREF_USE_FILTERS);
 		fUseFiltersCheckbox.setSelection(enabled);
 		toggleStepFilterWidgetsEnabled(enabled);
 	}
@@ -961,7 +966,7 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 		fUnsignedButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.SHOW_UNSIGNED_VALUES));
 		
 		fStepFilterContentProvider.setDefaults();
-		fSuspendButton.setSelection(JDIDebugModel.getDefaultSuspendOnUncaughtExceptions());
+		fSuspendButton.setSelection(false);
 		fSuspendOnCompilationErrors.setSelection(store.getBoolean(IJDIPreferencesConstants.PREF_SUSPEND_ON_COMPILATION_ERRORS));
 		fAlertHCRButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_HCR_FAILED));
 		fAlertObsoleteButton.setSelection(store.getDefaultBoolean(IJDIPreferencesConstants.ALERT_OBSOLETE_METHODS));
@@ -1069,6 +1074,37 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 	public void dispose() {
 		super.dispose();
 		getPreferenceStore().removePropertyChangeListener(getPropertyChangeListener());
+	}
+	
+	/**
+	 * Returns a list of active step filters.
+	 * 
+	 * @return list
+	 */
+	protected List createActiveStepFiltersList() {
+		String[] strings = JavaDebugOptionsManager.parseList(getPreferenceStore().getString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST));
+		return toList(strings);
+	}
+	
+	/**
+	 * Returns a list of active step filters.
+	 * 
+	 * @return list
+	 */
+	protected List createInactiveStepFiltersList() {
+		String[] strings = JavaDebugOptionsManager.parseList(getPreferenceStore().getString(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST));
+		return toList(strings);
+	}	
+	
+	/**
+	 * Returns the array as a list
+	 */
+	protected List toList(Object[] array) {
+		List list = new ArrayList(array.length);
+		for (int i = 0; i < array.length; i++) {
+			list.add(array[i]);
+		}
+		return list;		
 	}
 }
 

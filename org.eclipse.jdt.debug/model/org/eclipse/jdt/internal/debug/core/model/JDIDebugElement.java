@@ -282,6 +282,16 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	public IDebugTarget getDebugTarget() {
 		return fDebugTarget;
 	}
+	
+	/**
+	 * Returns this elements debug target as its implementation
+	 * class.
+	 * 
+	 * @return Java debug target
+	 */
+	protected JDIDebugTarget getJavaDebugTarget() {
+		return (JDIDebugTarget)fDebugTarget;
+	}
 
 	protected VirtualMachine getVM() {
 		return ((JDIDebugTarget)getDebugTarget()).getVM();

@@ -26,7 +26,47 @@ public interface IJDIPreferencesConstants {
 	 * execution when a compilation error is encountered
 	 * (while debugging).
 	 */
+	
 	public static final String PREF_SUSPEND_ON_COMPILATION_ERRORS= JavaDebugUI.PLUGIN_ID + ".suspend_on_compilation_errors"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference controlling whether step filters
+	 * are currently used in Java debug sessions.
+	 */
+	public static final String PREF_USE_FILTERS = JavaDebugUI.PLUGIN_ID + ".use_filters"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference controlling whether sythetic
+	 * methods are to be filtered when stepping (and step
+	 * filters are enabled).
+	 */	
+	public static final String PREF_FILTER_SYNTHETICS = JavaDebugUI.PLUGIN_ID + ".filter_synthetics"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference controlling whether static
+	 * initializers are to be filtered when stepping (and step
+	 * filters are enabled).
+	 */		
+	public static final String PREF_FILTER_STATIC_INITIALIZERS = JavaDebugUI.PLUGIN_ID + ".filter_statics"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference controlling whether constructors
+	 * are to be filtered when stepping (and step
+	 * filters are enabled).
+	 */			
+	public static final String PREF_FILTER_CONSTRUCTORS = JavaDebugUI.PLUGIN_ID + ".filter_constructors"; //$NON-NLS-1$
+	
+	/**
+	 * List of active step filters. A String containing a comma
+	 * separated list of fully qualified type names/patterns.
+	 */			
+	public static final String PREF_ACTIVE_FILTERS_LIST = JavaDebugUI.PLUGIN_ID + ".active_filters"; //$NON-NLS-1$
+	
+	/**
+	 * List of inactive step filters. A String containing a comma
+	 * separated list of fully qualified type names/patterns.
+	 */				
+	public static final String PREF_INACTIVE_FILTERS_LIST = JavaDebugUI.PLUGIN_ID + ".inactive_filters"; //$NON-NLS-1$	
 	
 	// Preference update flag useful for IPropertyChangeListeners to
 	// by notified of variable rendering preference changes
