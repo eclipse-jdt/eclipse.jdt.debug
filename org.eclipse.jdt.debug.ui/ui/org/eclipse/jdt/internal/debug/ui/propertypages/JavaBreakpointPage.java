@@ -242,9 +242,8 @@ public class JavaBreakpointPage extends PropertyPage {
                 .getAdapter(IWorkbenchAdapter.class);
         if (adapter != null) {
             return adapter.getLabel(element);
-        } else {
-            return "";//$NON-NLS-1$
-        }
+        } 
+        return "";//$NON-NLS-1$
     }	
 	
 	/**
