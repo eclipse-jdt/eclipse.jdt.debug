@@ -1617,69 +1617,216 @@
     </shortcut>
 </extension>
 
-<extension point="org.eclipse.ui.actionDefinitions">
-	<actionDefinition
+<!-- commands and their bindings -->   
+<extension point="org.eclipse.ui.commands">
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		id="org.eclipse.jdt.debug.ui.localJavaShortcut"
 		name= "%ActionDefinition.localJavaShortcut.name"
-		description="%ActionDefinition.localJavaShortcut.description"/>
-	<actionDefinition
+		description="%ActionDefinition.localJavaShortcut.description"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.localJavaShortcut"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.localJavaShortcut"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>
+	
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		id="org.eclipse.jdt.debug.ui.javaAppletShortcut"
 		name= "%ActionDefinition.javaAppletShortcut.name"
-		description="%ActionDefinition.javaAppletShortcut.description"/>		
-	<actionDefinition
+		description="%ActionDefinition.javaAppletShortcut.description"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.javaAppletShortcut"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.javaAppletShortcut"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>	
+	
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		 id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
   		 name="%ActionDefinition.manageWatchpoint.name"
-  		 description= "%ActionDefinition.manageWatchpoint.description"/>
-	<actionDefinition
+  		 description= "%ActionDefinition.manageWatchpoint.description"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>	
+	
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
 		name="%ActionDefinition.manageMethodBreakpoint.name"
-  		description="%ActionDefinition.manageMethodBreakpoint.description"/>
-	<actionDefinition
+  		description="%ActionDefinition.manageMethodBreakpoint.description"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>	
+	
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		id="org.eclipse.jdt.debug.ui.actionSet.AddException"
 		name="%ActionDefinition.addException.name"
-		description= "%ActionDefinition.addException.description"/>
-	<actionDefinition
+		description= "%ActionDefinition.addException.description"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.actionSet.AddException"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.actionSet.AddException"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>	
+	
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		id="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
 		name="%ActionDefinition.manageBreakpoint.name"
-		description= "%ActionDefinition.manageBreakpoint.description"/>
-	<actionDefinition
+		description= "%ActionDefinition.manageBreakpoint.description"
+	/>
+	<keyBinding
+		string="Ctrl+Shift+B"
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string="Ctrl+Shift+B"
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>	
+	
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		id="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
 		name="%ActionDefinition.stepIntoSelection.name"
-  		description= "%ActionDefinition.stepIntoSelection.description"/>
-	<actionDefinition
+  		description= "%ActionDefinition.stepIntoSelection.description"
+	/>
+	<keyBinding
+		string="Ctrl+F5"
+		scope="org.eclipse.jdt.ui.javaEditorScope"
+		command="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string="Ctrl+F5"
+		scope="org.eclipse.jdt.ui.javaEditorScope"
+		command="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>	
+	
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		id="org.eclipse.jdt.debug.ui.RunToLineAction"
 		name="%ActionDefinition.runToLine.name"
-		description= "%ActionDefinition.runToLine.description"/>
-  	<actionDefinition
+		description= "%ActionDefinition.runToLine.description"
+	/>
+	<keyBinding
+		string="Ctrl+R"
+		scope="org.eclipse.jdt.ui.javaEditorScope"
+		command="org.eclipse.jdt.debug.ui.RunToLineAction"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string="Ctrl+R"
+		scope="org.eclipse.jdt.ui.javaEditorScope"
+		command="org.eclipse.jdt.debug.ui.RunToLineAction"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>	
+	
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		id="org.eclipse.jdt.debug.ui.Execute" 
 		name="%ActionDefinition.execute.name" 
-		description= "%ActionDefinition.execute.description"/>
-	<actionDefinition
+		description= "%ActionDefinition.execute.description"
+	/>
+	<keyBinding
+		string="Ctrl+U"
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.Execute"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string="Ctrl+U"
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.Execute"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>		
+	
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		id="org.eclipse.jdt.debug.ui.Display" 
 		name="%ActionDefinition.display.name" 
-		description= "%ActionDefinition.display.description"/>
-	<actionDefinition
+		description= "%ActionDefinition.display.description"
+	/>
+	<keyBinding
+		string="Ctrl+D"
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.Display"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string="Ctrl+D"
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.Display"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>		
+	
+	<command
+		category="org.eclipse.debug.ui.category.run"
 		id="org.eclipse.jdt.debug.ui.Inspect" 
 		name="%ActionDefinition.inspect.name" 
-		description= "%ActionDefinition.inspect.description"/>
-</extension>
-
-<extension point="org.eclipse.ui.acceleratorSets">	
-	<acceleratorSet
-		scopeId="org.eclipse.ui.globalScope"
-		configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-		<accelerator key="" id="org.eclipse.jdt.debug.ui.localJavaShortcut"/>
-		<accelerator key="" id="org.eclipse.jdt.debug.ui.javaAppletShortcut"/>
-		<accelerator key="" id="org.eclipse.jdt.debug.ui.ManageWatchpointAction"/>
-		<accelerator key="" id="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"/>
-		<accelerator key="" id="org.eclipse.jdt.debug.ui.actionSet.AddException"/>
-		<accelerator key="Ctrl+Shift+B" id="org.eclipse.jdt.debug.ui.ManageBreakpointAction"/>
-		<accelerator key="Ctrl+F5" id="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"/>
-		<accelerator key="Ctrl+R" id="org.eclipse.jdt.debug.ui.RunToLineAction"/>
-		<accelerator key="Ctrl+U" id="org.eclipse.jdt.debug.ui.Execute"/>
-		<accelerator key="Ctrl+D" id="org.eclipse.jdt.debug.ui.Display"/>
-		<accelerator key="" id="org.eclipse.jdt.debug.ui.Inspect"/>
-	</acceleratorSet>
+		description= "%ActionDefinition.inspect.description"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.Inspect"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.globalScope"
+		command="org.eclipse.jdt.debug.ui.Inspect"
+		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
+	/>	
 </extension>
 
 <extension point = "org.eclipse.jdt.ui.classpathContainerPage">
