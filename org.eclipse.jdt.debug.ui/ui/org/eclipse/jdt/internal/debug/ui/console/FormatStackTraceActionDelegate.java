@@ -12,42 +12,45 @@ package org.eclipse.jdt.internal.debug.ui.console;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IViewActionDelegate;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.console.IConsoleView;
 
-public class FormatJavaStackTraceAction extends Action {
-
+public class FormatStackTraceActionDelegate implements IViewActionDelegate {
+    
+    private IConsoleView fConsoleView;
     private JavaStackTraceConsole fConsole;
 
-    FormatJavaStackTraceAction(JavaStackTraceConsole console) {
-        super(ConsoleMessages.getString("FormatJavaStackTraceAction.0"), JavaDebugImages.DESC_ELCL_FORMAT_STACKTRACE); //$NON-NLS-1$
-        setToolTipText(ConsoleMessages.getString("FormatJavaStackTraceAction.1")); //$NON-NLS-1$
+    public FormatStackTraceActionDelegate() {
+    }
+    
+    public FormatStackTraceActionDelegate(JavaStackTraceConsole console) {
         fConsole = console;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IAction#run()
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
      */
-    public void run() {
+    public void init(IViewPart view) {
+        fConsoleView = (IConsoleView) view;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+     */
+    public void run(IAction action) {
+        if (fConsoleView != null) { 
+            fConsole = (JavaStackTraceConsole) fConsoleView.getConsole();
+        }
         IDocument document = fConsole.getDocument();
         String orig = document.get();
         if (orig != null && orig.length() > 0) {
             document.set(""); //$NON-NLS-1$ hack avoids bug in the default position updater
             document.set(format(orig));
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
-     */
-    public void runWithEvent(Event event) {
-        run();
     }
 
     private String format(String trace) {
@@ -123,5 +126,9 @@ public class FormatJavaStackTraceAction extends Action {
         
         return formattedTrace.toString();
     }
-
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+     */
+    public void selectionChanged(IAction action, ISelection selection) {
+    }      
 }

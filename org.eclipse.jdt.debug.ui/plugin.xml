@@ -697,6 +697,17 @@
                id="org.eclipse.jdt.debug.ui.actions.MonitorQuitAction">
          </action>
       </viewerContribution>
+       <viewerContribution
+             targetID="javaStackTraceConsole.#TextConsole"
+             id="org.eclipse.jdt.debug.ui.javaStackTraceConsoleContextMenu">
+          <action
+                label="%FormatStackTraceActionDelegate.name"
+                tooltip="%FormatStackTraceActionDelegate.tooltip"
+                definitionId="org.eclipse.jdt.ui.edit.text.java.format"
+                class="org.eclipse.jdt.internal.debug.ui.console.FormatStackTraceActionDelegate"
+                menubarPath="additions"
+                id="org.eclipse.jdt.debug.ui.formatJavaStackTraceAction"/>
+       </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

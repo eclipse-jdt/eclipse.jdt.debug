@@ -150,8 +150,6 @@ public class JavaDebugImages {
 
 	public static final ImageDescriptor DESC_OBJ_JAVA_INSPECT_EXPRESSION= create(T_OBJ, "insp_sbook.gif"); 			//$NON-NLS-1$
 	public static final ImageDescriptor DESC_CLASSPATH= createManaged(T_OBJ, IMG_OBJS_CLASSPATH);
-	
-	public static final ImageDescriptor DESC_ELCL_FORMAT_STACKTRACE= create(T_ELCL, "format_trace.gif"); //$NON-NLS-1$
 	/**
 	 * Returns the image managed under the given key in this registry.
 	 * 
