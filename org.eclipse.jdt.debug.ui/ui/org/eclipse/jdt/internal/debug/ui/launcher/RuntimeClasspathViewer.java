@@ -116,13 +116,17 @@ public class RuntimeClasspathViewer extends TableViewer {
 		IStructuredSelection sel = (IStructuredSelection)getSelection();
 		if (sel.isEmpty()) {
 			for (int i = 0; i < entries.length; i++) {
-				fEntries.add(entries[i]);
+				if (!fEntries.contains(entries[i])) {
+					fEntries.add(entries[i]);
+				}
 			}
 		} else {
 			int index = fEntries.indexOf(sel.getFirstElement());
 			for (int i = 0; i < entries.length; i++) {
-				fEntries.add(index, entries[i]);
-				index++;
+				if (!fEntries.contains(entries[i])) {
+					fEntries.add(index, entries[i]);
+					index++;
+				}
 			}
 		}
 		setSelection(new StructuredSelection(entries));
