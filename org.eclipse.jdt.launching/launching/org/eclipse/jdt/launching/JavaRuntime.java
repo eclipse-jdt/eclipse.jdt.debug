@@ -108,7 +108,7 @@ public final class JavaRuntime {
 	/**
 	 * Classpath container used for a project's JRE
 	 * (value <code>"org.eclipse.jdt.launching.JRE_CONTAINER"</code>). A
-	 * container  is resolved in the context of a specific Java project, to one
+	 * container is resolved in the context of a specific Java project, to one
 	 * or more system libraries contained in a JRE. The container can have zero
 	 * or two path segments following the container name. When no segments
 	 * follow the container name, the workspace default JRE is used to build a
@@ -1524,7 +1524,7 @@ public final class JavaRuntime {
 	}	
 	
 	/**
-	 * Returns the VM connetor defined with the specified identifier,
+	 * Returns the VM connector defined with the specified identifier,
 	 * or <code>null</code> if none.
 	 * 
 	 * @param id VM connector identifier
