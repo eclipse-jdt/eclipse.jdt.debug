@@ -251,6 +251,42 @@ public interface IJavaLaunchConfigurationConstants {
 	 * @since 2.1
 	 */
 	public static final String ATTR_APPLET_APPLETVIEWER_CLASS = LaunchingPlugin.getUniqueIdentifier() + ".APPLET_APPLETVIEWER_CLASS";	 //$NON-NLS-1$
+	
+	/**
+	 * Attribute key for a VM specific argument. Value is an array
+	 * of strings desribing paths in the local file system that
+	 * should be prepended to the bootpath, or <code>null</code>
+	 * if none. The value is computed dynamically at launch time
+	 * and placed in the VM specific arguments map by the Java 
+	 * application launch delegate.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String ATTR_BOOTPATH_PREPEND = LaunchingPlugin.getUniqueIdentifier() + ".-Xbootclasspath/p:";	 //$NON-NLS-1$
+
+	/**
+	 * Attribute key for a VM specific argument. Value is an array
+	 * of strings desribing paths in the local file system that
+	 * should be placed on the bootpath explicitly, or <code>null</code>
+	 * if none. The value is computed dynamically at launch time
+	 * and placed in the VM specific arguments map by the Java 
+	 * application launch delegate.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String ATTR_BOOTPATH = LaunchingPlugin.getUniqueIdentifier() + ".-Xbootclasspath:";	 //$NON-NLS-1$
+	
+	/**
+	 * Attribute key for a VM specific argument. Value is an array
+	 * of strings desribing paths in the local file system that
+	 * should be appended to the bootpath, or <code>null</code>
+	 * if none. The value is computed dynamically at launch time
+	 * and placed in the VM specific arguments map by the Java 
+	 * application launch delegate.
+	 * 
+	 * @since 3.0
+	 */	
+	public static final String ATTR_BOOTPATH_APPEND = LaunchingPlugin.getUniqueIdentifier() + ".-Xbootclasspath/a:";	 //$NON-NLS-1$
 
 	/**
 	 * Status code indicating a launch configuration does not

@@ -415,7 +415,26 @@ public abstract class AbstractJavaLaunchConfigurationDelegate implements ILaunch
 	 * @exception CoreException if unable to retrieve the attribute
 	 */
 	public Map getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+		Map map = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP, (Map)null);
+		String[][] paths = getBootpathExt(configuration);
+		String[] pre = paths[0];
+		String[] boot = paths[1];
+		String[] app = paths[2];
+		if (pre != null || app != null) {
+			if (map == null) {
+				map = new HashMap(3);
+			}
+			if (pre != null) {
+				map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, pre);
+			}
+			if (app != null) {
+				map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_APPEND, app);
+			}
+			if (boot != null) {
+				map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH, boot);
+			}
+		}
+		return map;
 	}
 	
 	/**

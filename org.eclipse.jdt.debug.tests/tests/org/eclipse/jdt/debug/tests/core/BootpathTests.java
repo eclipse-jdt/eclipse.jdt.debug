@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.eclipse.jdt.debug.tests.core;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.debug.tests.AbstractDebugTest;
 import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 /**
  * Tests bootpath settings
@@ -56,5 +64,33 @@ public class BootpathTests extends AbstractDebugTest {
 		assertNull("Main bootpath should be empty array", pathInfo[1]);
 		assertNull("Append bootpath should be null", pathInfo[2]);
 	}
+	
+	public void testPrependBootpath() throws Exception {
+		ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
+		ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+		IRuntimeClasspathEntry[] classpath = JavaRuntime.computeUnresolvedRuntimeClasspath(wc);
+		IRuntimeClasspathEntry[] newpath = new IRuntimeClasspathEntry[classpath.length + 1];
+		IResource jar = getJavaProject().getProject().getFile(new Path("src/A.jar"));
+		IRuntimeClasspathEntry pre = JavaRuntime.newArchiveRuntimeClasspathEntry(jar);
+		pre.setClasspathProperty(IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+		newpath[0] = pre;
+		System.arraycopy(classpath, 0, newpath, 1, classpath.length);
+		List mementos = new ArrayList(newpath.length);
+		for (int i = 0; i < newpath.length; i++) {
+			IRuntimeClasspathEntry entry = newpath[i];
+			mementos.add(entry.getMemento());
+		}
+		
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
+		
+		JavaLocalApplicationLaunchConfigurationDelegate delegate = new JavaLocalApplicationLaunchConfigurationDelegate();
+		Map map = delegate.getVMSpecificAttributesMap(wc);
+		assertNotNull("Missing VM specific attributes map", map);
+		String[] prepath = (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND);
+		assertNotNull("Missing bootpath prepend", pre);
+		assertEquals("Incorrect number of prepends", 1, prepath.length);
+		assertEquals("wrong prepended path", jar.getLocation().toOSString(), prepath[0]);
+	}	
 		
 }

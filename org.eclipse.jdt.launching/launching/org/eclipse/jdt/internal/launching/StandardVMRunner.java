@@ -256,10 +256,13 @@ public class StandardVMRunner extends AbstractVMRunner {
 	}
 
 	protected void addBootClassPathArguments(List arguments, VMRunnerConfiguration config) {
-		// bootpath
-		String[] prependBootCP= config.getPrependBootClassPath();
-		String[] bootCP= config.getMainBootClassPath();
-		String[] appendBootCP= config.getAppendBootClassPath();
+		Map map = config.getVMSpecificAttributesMap();
+		if (map == null) {
+			return;
+		}
+		String[] prependBootCP= (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND);
+		String[] bootCP= (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH);
+		String[] appendBootCP= (String[]) map.get(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_APPEND);
 		if (prependBootCP == null && bootCP == null && appendBootCP == null) {
 			// use old single attribute instead of new attributes if not specified
 			bootCP = config.getBootClassPath();

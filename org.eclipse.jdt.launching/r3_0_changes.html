@@ -21,18 +21,26 @@
 <p>In prior releases, the <code>VMRunnerConfiguration</code> had one attribute 
   to describe a boot path. The attribute is a collection of <code>Strings</code> 
   to be specified in the -<code>Xbootclasspath</code> argument. Three new attributes 
-  have been added to the VMRunnerConfiguration to support VMs that allow for prepending 
-  and appending to the boot path. The new methods/attributes added are:</p>
+  have been added to the VM specific attributes map to support VMs that allow 
+  for prepending and appending to the boot path. The newly added attributes are 
+  defined in <code>IJavaLanuchConfigurationConstants</code>:</p>
 <ul>
-  <li><code>getPrependBootClassPath()</code> - returns a collection of entries 
-    to be prepended to the boot path (the <code>-Xbootclasspath/p</code> argument)</li>
-  <li><code>getMainBootClassPath()</code> - returns a collection of entries to 
-    be placed on the boot path (the <code>-Xbootclasspath</code> argument)</li>
-  <li><code>getAppendBootClassPath()</code> - returns a collection of entries 
-    to be appended to the boot path (the <code>-Xbootclasspath/a</code> argument)</li>
+  <li><code>ATTR_BOOTPAH_PREPEND</code> - an array of strings describing paths 
+    in the local file system to be prepended to the boot path (the <code>-Xbootclasspath/p</code> 
+    argument)</li>
+  <li><code>ATTR_BOOTPATH</code> - an array of strings describing paths in the 
+    local file system to be placed on the boot path (the <code>-Xbootclasspath</code> 
+    argument)</li>
+  <li><code>ATTR_BOOTPATH_APPEND</code> - an array of strings describing paths 
+    in the local file system to be appended to the boot path (the <code>-Xbootclasspath/a</code> 
+    argument)</li>
 </ul>
 <p>The old attribute,<code> getBootClassPath()</code> still exists, and contains 
   a complete path equivalent to that of the three new attributes. However, <code>VMRunners</code> 
-  that support the new boot path options should take advantage of the new attributes.</p>
+  that support the new boot path options should take advantage of the new attributes, 
+  found in the VM specific attributes map (i.e. <code>VMRunnerConfiguration.getVMSpecificAttributesMap()</code>). 
+  The attributes are computed dynamically at launch time based on the classpath 
+  attribute associated with a launch configiuration. The boothpath attributes 
+  themselves are not stored in launch configurations.</p>
 </body>
 </html>

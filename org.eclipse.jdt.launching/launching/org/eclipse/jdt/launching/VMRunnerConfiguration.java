@@ -119,6 +119,7 @@ public class VMRunnerConfiguration {
 	 * @param prependBootClassPath the classpath entries to prepend to the boot classpath - <code>null</code>
 	 * or empty if none
 	 * @since 3.0
+	 * @deprecated - to be removed
 	 */
 	public void setPrependBootClassPath(String[] prependBootClassPath) {
 		fPrependBootClassPath= prependBootClassPath;
@@ -135,6 +136,7 @@ public class VMRunnerConfiguration {
 	 * 
 	 * @param bootClassPath the main boot classpath entries, possibly <code>null</code>
 	 * @since 3.0
+	 * @deprecated - to be removed
 	 */
 	public void setMainBootClassPath(String[] bootClassPath) {
 		fMainBootClassPath= bootClassPath;
@@ -147,6 +149,7 @@ public class VMRunnerConfiguration {
 	 * @param appendBootClassPath the entries to append to the boot classpath - 
 	 *  <code>null</code> or empty indicates none.
 	 * @since 3.0
+	 * @deprecated - to be removed
 	 */
 	public void setAppendBootClassPath(String[] appendBootClassPath) {
 		fAppendBootClassPath= appendBootClassPath;
@@ -209,6 +212,7 @@ public class VMRunnerConfiguration {
 	 * @return the classpath entries to prepend to the boot classpath, or
 	 *  <code>null</code> if none
 	 * @since 3.0
+	 * @deprecated - to be removed
 	 */
 	public String[] getPrependBootClassPath() {
 		return fPrependBootClassPath;
@@ -220,6 +224,7 @@ public class VMRunnerConfiguration {
 	 * 
 	 * @return the main part of the boot classpath
 	 * @since 3.0
+	 * @deprecated - to be removed
 	 */
 	public String[] getMainBootClassPath() {
 		return fMainBootClassPath;
@@ -232,6 +237,7 @@ public class VMRunnerConfiguration {
 	 * @return the classpath entries to append to the boot classpath,
 	 *  or <code>null</code> if none
 	 * @since 3.0
+	 * @deprecated - to be removed
 	 */
 	public String[] getAppendBootClassPath() {
 		return fAppendBootClassPath;
