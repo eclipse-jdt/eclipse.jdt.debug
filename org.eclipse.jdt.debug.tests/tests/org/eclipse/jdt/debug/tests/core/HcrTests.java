@@ -79,6 +79,8 @@ public class HcrTests extends AbstractDebugTest {
 				variable = frame.findVariable("x");
 				assertNotNull("Could not find 'x'", variable);
 				assertEquals("value of 'x' should be 'Two'", "Two", variable.getValue().getValueString());
+			} else {
+				System.err.println("Warning: HCR test skipped since target VM does not support HCR.");
 			}
 						
 		} finally {
