@@ -590,7 +590,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 */
 	public void disconnect() throws DebugException {
 
-		if (isDisconnected()) {
+		if (!isAvailable()) {
 			// already done
 			return;
 		}
