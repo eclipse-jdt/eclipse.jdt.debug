@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.debug.eval.ast.instructions;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPrimitiveValue;
 import org.eclipse.jdt.debug.core.IJavaValue;
@@ -19,6 +20,8 @@ import org.eclipse.jdt.internal.debug.core.model.JDINullValue;
 public class PlusOperator extends BinaryOperator {
 
 	public static final String NULL= "null"; //$NON-NLS-1$
+	public static final String TOSTRING_SELECTOR= "toString"; //$NON-NLS-1$
+	public static final String TOSTRING_SIGNATURE= "()Ljava/lang/String;"; //$NON-NLS-1$
 
 	public PlusOperator(int resultId, int leftTypeId, int rightTypeId, int start) {
 		this(resultId, leftTypeId, rightTypeId, false, start);
@@ -28,7 +31,7 @@ public class PlusOperator extends BinaryOperator {
 		super(resultId, leftTypeId, rightTypeId, isAssignmentOperator, start);
 	}
 	
-	private String getString(IJavaValue value, int typeId) {
+	private String getString(IJavaValue value, int typeId) throws DebugException {
 		
 		// test if value == null
 		if (value instanceof JDINullValue) {
@@ -36,13 +39,12 @@ public class PlusOperator extends BinaryOperator {
 		}
 		
 		if (value instanceof IJavaObject) {
-			try {
+			if (typeId == T_String) {
 				return value.getValueString();
-			} catch (CoreException e) {
-				e.printStackTrace();
-				return null;
-			}		
-		} 
+			}
+			return ((IJavaObject) value).sendMessage(TOSTRING_SELECTOR, TOSTRING_SIGNATURE, null, getContext().getThread(), null).getValueString();
+		}
+		
 		IJavaPrimitiveValue primitiveValue= (IJavaPrimitiveValue)value;
 		switch (typeId) {
 			case T_boolean:
@@ -103,7 +105,7 @@ public class PlusOperator extends BinaryOperator {
 	/*
 	 * @see BinaryOperator#getStringResult(IJavaValue, IJavaValue)
 	 */
-	protected String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+	protected String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		return getString(leftOperand, fLeftTypeId) + getString(rightOperand, fRightTypeId);
 	}
 

@@ -212,7 +212,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 		return newValue(getBooleanResult(leftOperand, rightOperand));
 	}
 	
-	private IJavaValue getStringValueResult(IJavaValue leftOperand, IJavaValue rightOperand) {
+	private IJavaValue getStringValueResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException {
 		return newValue(getStringResult(leftOperand, rightOperand));
 	}
 	
@@ -226,7 +226,7 @@ public abstract class BinaryOperator extends CompoundInstruction {
 
 	protected abstract boolean getBooleanResult(IJavaValue leftOperand, IJavaValue rightOperand);
 
-	protected abstract String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand);
+	protected abstract String getStringResult(IJavaValue leftOperand, IJavaValue rightOperand) throws CoreException;
 
 	protected int getInternResultType() {
 		return getBinaryPromotionType(fLeftTypeId, fRightTypeId);
