@@ -7,9 +7,11 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
  
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
@@ -17,10 +19,14 @@ import org.eclipse.jdt.debug.core.IJavaMethodBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaObject;
 import org.eclipse.jdt.debug.core.IJavaPatternBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaWatchpoint;
+import org.eclipse.jdt.internal.debug.ui.BreakPointConditionCompletionProcessor;
 import org.eclipse.jdt.internal.debug.ui.BreakpointUtils;
 import org.eclipse.jdt.internal.debug.ui.IJavaDebugHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.display.DisplayViewerConfiguration;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -28,12 +34,26 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -151,6 +171,228 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		}
 	}
 	
+	class BreakpointConditionFieldEditor extends FieldEditor {
+		
+		private SourceViewer fViewer;
+		
+		private BreakPointConditionCompletionProcessor fCompletionProcessor;
+		
+		private boolean fIsValid;
+		
+		private String fOldValue;
+		
+		private String fErrorMessage;
+		
+		private Composite fParent;
+		
+		public BreakpointConditionFieldEditor(String name,	String labelText, Composite parent) {
+			super(name, labelText, parent);
+			setDefaults();
+			
+			fErrorMessage= ActionMessages.getString("JavaBreakpointPreferencePage.Invalid_condition");
+			fOldValue= "";
+		}
+
+		protected void doStore() {
+			getPreferenceStore().setValue(getPreferenceName(), fViewer.getDocument().get());
+		}
+
+		/**
+		 * @see FieldEditor#refreshValidState()
+		 */
+		protected void refreshValidState() {
+			// the value is valid if the field is not editable, or if the value is not empty
+			if (!fViewer.isEditable()) {
+				clearErrorMessage();
+				fIsValid= true;
+			} else {
+				String text= fViewer.getDocument().get();
+				fIsValid= text != null && text.trim().length() > 0;
+				if (!fIsValid) {
+					showErrorMessage(fErrorMessage);
+				} else {
+					clearErrorMessage();
+				}
+			}
+			super.refreshValidState();
+		}
+		
+		/**
+ 		 * Clears the error message from the message line if the error
+ 		 * message is the error message from this field editor.
+		 */
+		protected void clearErrorMessage() {
+			if (getPreferencePage() != null) {
+				String message= getPreferencePage().getErrorMessage();
+				if (message != null) {
+					if(fErrorMessage.equals(message)) {
+						super.clearErrorMessage();
+					}
+					
+				} else {
+					super.clearErrorMessage();
+				}
+			}
+		}
+		/**
+		 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite, int)
+		 */
+		protected void doFillIntoGrid(Composite parent, int numColumns) {
+			fParent= parent;
+			getLabelControl(parent).setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			
+			// the source viewer
+			fViewer= new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+			fViewer.setInput(parent);
+		
+			JavaTextTools tools= JavaPlugin.getDefault().getJavaTextTools();
+			IDocument document= new Document();
+			IDocumentPartitioner partitioner= tools.createDocumentPartitioner();
+			document.setDocumentPartitioner(partitioner);
+			partitioner.connect(document);		
+			fViewer.configure(new DisplayViewerConfiguration() {
+				public IContentAssistProcessor getContentAssistantProcessor() {
+						return getCompletionProcessor();
+				}
+			});
+			fViewer.setEditable(true);
+			fViewer.setDocument(document);
+		
+			Font font= JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT);
+			fViewer.getTextWidget().setFont(font);
+			
+			Control control= fViewer.getControl();
+			GridData gd = new GridData();
+			gd.horizontalSpan = numColumns - 1;
+			gd.horizontalAlignment = gd.FILL;
+			gd.grabExcessHorizontalSpace = true;
+			gd.heightHint= convertHeightInCharsToPixels(10);
+			gd.widthHint= convertWidthInCharsToPixels(40);
+			control.setLayoutData(gd);
+		
+			// listener for activate the code assist
+			fViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+				public void verifyKey(VerifyEvent event) {
+					//do code assist for CTRL-SPACE
+					if (event.stateMask == SWT.CTRL && event.keyCode == 0) {
+						if (event.character == 0x20) {
+							fViewer.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+							event.doit= false;
+						}
+					}
+				}
+			});
+
+			// listener for check the value
+			fViewer.getTextWidget().addKeyListener(new KeyAdapter() {
+				public void keyReleased(KeyEvent e) {
+					valueChanged();
+				}
+			});
+			
+		}
+
+		/**
+		 * @see org.eclipse.jface.preference.FieldEditor#adjustForNumColumns(int)
+		 */
+		protected void adjustForNumColumns(int numColumns) {
+			GridData gd = (GridData)fViewer.getControl().getLayoutData();
+			gd.horizontalSpan = numColumns - 1;
+			// We only grab excess space if we have to
+			// If another field editor has more columns then
+			// we assume it is setting the width.
+			gd.grabExcessHorizontalSpace = gd.horizontalSpan == 1;
+		}
+
+		/**
+		 * @see org.eclipse.jface.preference.FieldEditor#doLoad()
+		 */
+		protected void doLoad() {
+			fViewer.getDocument().set(getPreferenceStore().getString(getPreferenceName()));
+			valueChanged();
+		}
+
+		/**
+		 * @see org.eclipse.jface.preference.FieldEditor#doLoadDefault()
+		 */
+		protected void doLoadDefault() {
+			fViewer.getDocument().set(getPreferenceStore().getDefaultString(getPreferenceName()));
+			valueChanged();
+		}
+
+		/**
+		 * @see org.eclipse.jface.preference.FieldEditor#getNumberOfControls()
+		 */
+		public int getNumberOfControls() {
+			return 0;
+		}
+		
+		/**
+		 * Return the completion processor associated with this viewer.		 * @return BreakPointConditionCompletionProcessor		 */
+		private BreakPointConditionCompletionProcessor getCompletionProcessor() {
+			if (fCompletionProcessor == null) {
+				fCompletionProcessor= new BreakPointConditionCompletionProcessor(null);
+			}
+			return fCompletionProcessor;
+		}
+		
+		/**
+		 * Set the defaults value of this fields which can't be set in doFillIntoGrid().		 */
+		public void setDefaults() {
+			try {
+				getCompletionProcessor().setType(BreakpointUtils.getType(fBreakpoint));
+			} catch (CoreException e) {
+			}
+			
+			String source= null;
+			try {
+				source= BreakpointUtils.getType(fBreakpoint).getSource();
+			} catch (JavaModelException e) {
+			} catch (CoreException e) {
+			}
+			int lineNumber= fBreakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, -1);
+			int position= -1;
+			if (source != null && lineNumber != -1) {
+				try {
+					position= new Document(source).getLineOffset(lineNumber);
+				} catch (BadLocationException e) {
+				}
+			}
+			getCompletionProcessor().setPosition(position);
+			
+		}
+
+		/**
+		 * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean, org.eclipse.swt.widgets.Composite)
+		 */
+		public void setEnabled(boolean enabled) {
+			super.setEnabled(enabled, fParent);
+			fViewer.setEditable(enabled);
+			valueChanged();
+		}
+
+		/**
+		 * @see org.eclipse.jface.preference.FieldEditor#isValid()
+		 */
+		public boolean isValid() {
+			return fIsValid;
+		}
+		
+		public void valueChanged() {
+			boolean oldState= fIsValid;
+			refreshValidState();
+			if (fIsValid != oldState)
+				fireStateChanged(IS_VALID, oldState, fIsValid);
+				
+			String newValue = fViewer.getDocument().get();
+			if (!newValue.equals(fOldValue)) {
+				fireValueChanged(VALUE, fOldValue, newValue);
+				fOldValue = newValue;
+			}
+		}
+
+	}
+	
 	class LabelFieldEditor extends FieldEditor {
 
 		private Label fTitleLabel;
@@ -213,9 +455,8 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 	private BooleanFieldEditor fHitCountEnabler;
 	private BreakpointIntegerFieldEditor fHitCount;
 	
-	private Text fConditionTextControl;
 	private BooleanFieldEditor fConditionEnabler;
-	private BreakpointStringFieldEditor fCondition;
+	private BreakpointConditionFieldEditor fCondition;
 
 	private IJavaBreakpoint fBreakpoint;
 	protected static final String VM_SUSPEND_POLICY = "VM"; //$NON-NLS-1$
@@ -256,7 +497,7 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
 				boolean enabled = fConditionEnabler.getBooleanValue();
-				fConditionTextControl.setEnabled(enabled);
+				fCondition.setEnabled(enabled);
 				fCondition.refreshValidState();
 				if (fCondition.isValid() && fHitCount != null) {
 					fHitCount.refreshValidState();
@@ -463,14 +704,11 @@ public class JavaBreakpointPreferencePage extends FieldEditorPreferencePage {
 		addField(fConditionEnabler);
 
 		fCondition =
-			new BreakpointStringFieldEditor(JavaBreakpointPreferenceStore.CONDITION, ActionMessages.getString("JavaBreakpointPreferencePage.Condition_2"), parent); //$NON-NLS-1$
-		fConditionTextControl= fCondition.getTextControl(parent);
+			new BreakpointConditionFieldEditor(JavaBreakpointPreferenceStore.CONDITION, ActionMessages.getString("JavaBreakpointPreferencePage.Condition_2"), parent); //$NON-NLS-1$
 		try {
-			fConditionTextControl.setEnabled(((IJavaLineBreakpoint)getBreakpoint()).isConditionEnabled());
+			fCondition.setEnabled(((IJavaLineBreakpoint)getBreakpoint()).isConditionEnabled());
 		} catch (CoreException ce) {
 		}
-		fCondition.setEmptyStringAllowed(false);
-		fCondition.setErrorMessage(ActionMessages.getString("JavaBreakpointPreferencePage.Invalid_condition")); //$NON-NLS-1$
 		addField(fCondition);
 		
 	}

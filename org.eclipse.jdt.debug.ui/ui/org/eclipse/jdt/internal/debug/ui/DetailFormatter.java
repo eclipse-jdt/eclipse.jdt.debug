@@ -10,6 +10,9 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
+
+/**
+ * Information about a detail formatter. */
 class DetailFormatter {
 	
 	private boolean fEnabled;
