@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -29,6 +30,11 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 	private ClasspathModel model= null;
 	private boolean refreshEnabled= false;
 	private boolean refreshRequested= false;
+	private JavaClasspathTab fTab;
+	
+	public ClasspathContentProvider(JavaClasspathTab tab) {
+		fTab = tab;
+	}
 		
 	public void add(IClasspathEntry parent, IRuntimeClasspathEntry child) {
 		Object newEntry= null;
@@ -150,7 +156,7 @@ public class ClasspathContentProvider implements ITreeContentProvider {
 			return ((ClasspathModel)parentElement).getEntries();
 		}
 		if (parentElement instanceof ClasspathEntry) {
-			return ((ClasspathEntry)parentElement).getChildren();
+			return ((ClasspathEntry)parentElement).getChildren(fTab.getLaunchConfiguration());
 		}
 		if (parentElement == null) {
 			List all= new ArrayList();

@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -119,9 +120,9 @@ public class DefaultProjectClasspathEntry extends AbstractRuntimeClasspathEntry 
 		return getProject();
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries()
+	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries() throws CoreException {
+	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		IClasspathEntry entry = JavaCore.newProjectEntry(getJavaProject().getProject().getFullPath());
 		List classpathEntries = new ArrayList(5);
 		List expanding = new ArrayList(5);

@@ -11,6 +11,7 @@
 package org.eclipse.jdt.internal.launching;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.w3c.dom.Element;
 
@@ -64,11 +65,14 @@ public interface IRuntimeClasspathEntry2 extends IRuntimeClasspathEntry {
 	 * Returns the classpath entries this entry is composed of, or an
 	 * empty collection if this entry is not a composite entry.
 	 * 
+	 * @param configuration the context (launch configuration) in which
+	 *  this runtime classpath entry is being queried for contained
+	 * 	entries, possibly <code>null</code> 
 	 * @return the classpath entries this entry is composed of, or an
 	 * empty collection if this entry is not a composite entry
-	 * @throws CoreException if unable to retrieve composed entries
+	 * @throws CoreException if unable to retrieve contained entries
 	 */
-	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries() throws CoreException;
+	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException;
 	
 	/**
 	 * Returns a human readable name for this classpath entry.

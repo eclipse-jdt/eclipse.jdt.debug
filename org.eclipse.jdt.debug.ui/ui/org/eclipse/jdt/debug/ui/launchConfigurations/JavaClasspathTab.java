@@ -100,7 +100,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		fClasspathViewer.addEntriesChangedListener(this);
 		fClasspathViewer.getControl().setFont(font);
 		fClasspathViewer.setLabelProvider(new ClasspathLabelProvider());
-		fClasspathViewer.setContentProvider(new ClasspathContentProvider());
+		fClasspathViewer.setContentProvider(new ClasspathContentProvider(this));
 	
 		Composite pathButtonComp = new Composite(comp, SWT.NONE);
 		GridLayout pathButtonLayout = new GridLayout();
@@ -401,7 +401,7 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	/**
 	 * Returns the current launch configuration
 	 */
-	private ILaunchConfiguration getLaunchConfiguration() {
+	public ILaunchConfiguration getLaunchConfiguration() {
 		return fLaunchConfiguration;
 	}
 	

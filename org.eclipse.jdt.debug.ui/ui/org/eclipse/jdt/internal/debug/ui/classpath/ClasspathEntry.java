@@ -14,6 +14,7 @@ package org.eclipse.jdt.internal.debug.ui.classpath;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 
@@ -173,12 +174,12 @@ public class ClasspathEntry extends AbstractClasspathEntry implements IRuntimeCl
 		 ((IRuntimeClasspathEntry2)rpe).isComposite();
 	}
 	
-	public IClasspathEntry[] getChildren() {
+	public IClasspathEntry[] getChildren(ILaunchConfiguration configuration) {
 		IRuntimeClasspathEntry rpe = getDelegate();
 		if (rpe instanceof IRuntimeClasspathEntry2) {
 			IRuntimeClasspathEntry2 r2 = (IRuntimeClasspathEntry2) rpe;
 			try {
-				IRuntimeClasspathEntry[] entries = r2.getRuntimeClasspathEntries();
+				IRuntimeClasspathEntry[] entries = r2.getRuntimeClasspathEntries(configuration);
 				IClasspathEntry[] cps = new IClasspathEntry[entries.length];
 				for (int i = 0; i < entries.length; i++) {
 					IRuntimeClasspathEntry childEntry = entries[i];

@@ -60,7 +60,7 @@ public class StandardSourcePathProvider extends StandardClasspathProvider {
 					IRuntimeClasspathEntry2 entry = (IRuntimeClasspathEntry2)entries[i];
 					if (entry.getTypeId().equals(DefaultProjectClasspathEntry.TYPE_ID)) {
 						// add the resolved children of the project
-						IRuntimeClasspathEntry[] children = entry.getRuntimeClasspathEntries();
+						IRuntimeClasspathEntry[] children = entry.getRuntimeClasspathEntries(configuration);
 						IRuntimeClasspathEntry[] res = JavaRuntime.resolveSourceLookupPath(children, configuration);
 						for (int j = 0; j < res.length; j++) {
 							all.add(res[j]);
