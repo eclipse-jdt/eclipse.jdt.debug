@@ -25,14 +25,14 @@ public class SendStaticMessage extends CompoundInstruction {
 	private int fArgCount;
 	private String fSelector;
 	private String fSignature;
-	private String fTypeSignature;
+	private String fTypeName;
 	
-	public SendStaticMessage(String typeSignature, String selector, String signature, int argCount, int start) {
+	public SendStaticMessage(String typeName, String selector, String signature, int argCount, int start) {
 		super(start);
 		fArgCount= argCount;
 		fSelector= selector;
 		fSignature= signature;
-		fTypeSignature= typeSignature;
+		fTypeName= typeName;
 	}
 	
 	public void execute() throws CoreException {
@@ -42,7 +42,7 @@ public class SendStaticMessage extends CompoundInstruction {
 			args[i] = (IJavaValue)popValue();
 		}
 		
-		IJavaType receiver= getType(Signature.toString(fTypeSignature).replace('/', '.'));
+		IJavaType receiver= getType(fTypeName);
 		IJavaValue result;
 		if (receiver instanceof IJavaClassType) {
 			result= ((IJavaClassType)receiver).sendMessage(fSelector, fSignature, args, getContext().getThread());

@@ -1762,10 +1762,9 @@ public class ASTInstructionCompiler extends ASTVisitor {
 		boolean isStatic= Flags.isStatic(methodBinding.getModifiers());
 		Expression expression= node.getExpression();
 		
-		String typeSignature= getTypeSignature(methodBinding.getDeclaringClass());
-		
 		if (isStatic) {
-			push(new SendStaticMessage(typeSignature, selector, signature, argCount, fCounter));
+			String typeName= getTypeName(methodBinding.getDeclaringClass());
+			push(new SendStaticMessage(typeName, selector, signature, argCount, fCounter));
 			if (expression != null) {
 				node.getExpression().accept(this);
 				push(new Pop());
@@ -2168,8 +2167,8 @@ public class ASTInstructionCompiler extends ASTVisitor {
 
 		Name qualifier= node.getQualifier();
 		if (Modifier.isStatic(methodBinding.getModifiers())) {
-			String typeSignature= getTypeSignature(methodBinding.getDeclaringClass());
-			push(new SendStaticMessage(typeSignature, selector, signature, argCount, fCounter));
+			String typeName= getTypeName(methodBinding.getDeclaringClass());
+			push(new SendStaticMessage(typeName, selector, signature, argCount, fCounter));
 		} else {
 			push(new SendMessage(selector, signature, argCount, true, fCounter));
 			int enclosingLevel= 0;
