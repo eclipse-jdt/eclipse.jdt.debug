@@ -331,13 +331,42 @@ public final class JavaRuntime {
 	 * 
 	 * Returns a new runtime classpath entry for the given project.
 	 * 
-	 * @return runtime classpath entrie
+	 * @param project Java project
+	 * @return runtime classpath entry
 	 */
-	public static IRuntimeClasspathEntry newRuntimeClasspathEntry(IJavaProject project) {
+	public static IRuntimeClasspathEntry newProjectRuntimeClasspathEntry(IJavaProject project) {
 		IClasspathEntry cpe = JavaCore.newProjectEntry(project.getPath());
 		return new RuntimeClasspathEntry(IRuntimeClasspathEntry.PROJECT, cpe);
 	}
 	
+	
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
+	 * 
+	 * Returns a new runtime classpath entry for the given archive.
+	 * 
+	 * @param resource archive resource
+	 * @return runtime classpath entry
+	 */
+	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IResource resource) {
+		IClasspathEntry cpe = JavaCore.newLibraryEntry(resource.getFullPath(), null, null);
+		return new RuntimeClasspathEntry(IRuntimeClasspathEntry.ARCHIVE, cpe);
+	}
+	
+	/**
+	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
+	 * 
+	 * Returns a new runtime classpath entry for the given archive (possibly
+	 * external).
+	 * 
+	 * @param path absolute path to an archive
+	 * @return runtime classpath entry
+	 */
+	public static IRuntimeClasspathEntry newArchiveRuntimeClasspathEntry(IPath path) {
+		IClasspathEntry cpe = JavaCore.newLibraryEntry(path, null, null);
+		return new RuntimeClasspathEntry(IRuntimeClasspathEntry.ARCHIVE, cpe);
+	}
+		
 	/**
 	 * <b>THIS METHOD IS YET EXPERIMENTAL AND SUBJECT TO CHANGE<b>
 	 * 
