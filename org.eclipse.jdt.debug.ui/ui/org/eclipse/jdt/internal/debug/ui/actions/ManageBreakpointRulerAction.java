@@ -97,6 +97,9 @@ public class ManageBreakpointRulerAction extends Action {
 				// create new markers
 				IDocument document= getDocument();
 				int lineNumber= getVerticalRulerInfo().getLineOfLastMouseButtonActivity();
+				if (lineNumber >= document.getNumberOfLines()) {
+					return;
+				}
 				IRegion line= document.getLineInformation(lineNumber);
 				ITextSelection selection = new TextSelection(document, line.getOffset(), line.getLength());
 				fBreakpointAdapter.toggleLineBreakpoints(fTextEditor, selection);
