@@ -1981,7 +1981,13 @@
          </perspective>
       </shortcut>
    </extension>
-<!-- commands and their bindings -->
+<!-- commands and their bindings
+NOTE:
+M1 = CTRL/COMMAND 
+M2 = SHIFT 
+M3 = ALT 
+M4 = Platform-specific fourth key
+-->
    <extension point="org.eclipse.ui.commands">
       <command
             name="%ActionDefinition.addException.name"
@@ -1990,7 +1996,7 @@
             id="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.jdt.debug.ui.commands.AddExceptionBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -2002,7 +2008,7 @@
             id="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.jdt.debug.ui.commands.AddClassPrepareBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -2014,14 +2020,7 @@
             id="org.eclipse.jdt.debug.ui.commands.StepIntoSelection">
       </command>
       <keyBinding
-            string="Ctrl+F5"
-            scope="org.eclipse.debug.ui.debugging"
-            command="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-      		platform="carbon"
-            string="Command+F5"
+            keySequence="M1+F5"
             scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.jdt.debug.ui.commands.StepIntoSelection"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -2033,14 +2032,7 @@
             id="org.eclipse.jdt.debug.ui.commands.Execute">
       </command>
       <keyBinding
-            string="Ctrl+U"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.commands.Execute"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-      		platform="carbon"
-            string="Command+U"
+            keySequence="M1+U"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.jdt.debug.ui.commands.Execute"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -2052,21 +2044,14 @@
             id="org.eclipse.jdt.debug.ui.commands.Display">
       </command>
       <keyBinding
-            string="Ctrl+Shift+D"
+            keySequence="M1+M2+D"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.jdt.debug.ui.commands.Display"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
       		platform="gtk"
-            string="Ctrl+Shift+V"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.commands.Display"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-      		platform="carbon"
-            string="Command+Shift+D"
+            keySequence="M1+M2+V"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.jdt.debug.ui.commands.Display"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -2078,14 +2063,7 @@
             id="org.eclipse.jdt.debug.ui.commands.Inspect">
       </command>
       <keyBinding
-            string="Ctrl+Shift+I"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.jdt.debug.ui.commands.Inspect"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-      		platform="carbon"
-            string="Command+Shift+I"
+            keySequence="M1+M2+I"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.jdt.debug.ui.commands.Inspect"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
