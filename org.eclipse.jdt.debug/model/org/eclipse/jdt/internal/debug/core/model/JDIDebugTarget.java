@@ -1106,13 +1106,13 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 			return;
 		}
 		try {
-			setSuspended(true);
-			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
 			VirtualMachine vm = getVM();
 			if (vm != null) {
 				vm.suspend();
 			}
 			suspendThreads();
+			setSuspended(true);
+			fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
 		} catch (RuntimeException e) {
 			setSuspended(false);
 			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
