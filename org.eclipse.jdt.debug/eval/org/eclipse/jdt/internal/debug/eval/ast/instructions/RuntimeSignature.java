@@ -49,7 +49,6 @@ public class RuntimeSignature {
 	public static final String SIG_SHORT = "S"; //$NON-NLS-1$
 	public static final String SIG_VOID = "V"; //$NON-NLS-1$
 	private static final char[] NO_CHAR = new char[0];
-	private static final char[][] NO_CHAR_CHAR = new char[0][];
 	private static final char[] BOOLEAN = { 'b', 'o', 'o', 'l', 'e', 'a', 'n' };
 	private static final char[] BYTE = { 'b', 'y', 't', 'e' };
 	private static final char[] CHAR = { 'c', 'h', 'a', 'r' };
