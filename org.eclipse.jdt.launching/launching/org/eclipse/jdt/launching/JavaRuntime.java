@@ -823,7 +823,23 @@ public final class JavaRuntime {
 			case IRuntimeClasspathEntry.VARIABLE:
 				IRuntimeClasspathEntryResolver resolver = getVariableResolver(entry.getVariableName());
 				if (resolver == null) {
-					// no resolution by default
+					// default resolution - an archive
+					IPath archPath = JavaCore.getClasspathVariable(entry.getVariableName());
+					IPath srcPath = null;
+					IPath srcVar = entry.getSourceAttachmentPath();
+					IPath srcRootPath = null;
+					IPath srcRootVar = entry.getSourceAttachmentRootPath();
+					if (archPath != null) {
+						if (srcVar != null && !srcVar.isEmpty()) {
+							srcPath = JavaCore.getClasspathVariable(srcVar.segment(0));
+							if (srcRootVar != null && !srcRootVar.isEmpty()) {
+								srcRootPath = JavaCore.getClasspathVariable(srcRootVar.segment(0));						
+							}
+						}
+						// now resolve the archive (recursively)
+						IClasspathEntry archEntry = JavaCore.newLibraryEntry(archPath, srcPath, srcRootPath, entry.getClasspathEntry().isExported());
+						return resolveRuntimeClasspathEntry(newRuntimeClasspathEntry(archEntry), project);
+					}
 					break;
 				} else {
 					return resolver.resolveRuntimeClasspathEntry(entry, project);
