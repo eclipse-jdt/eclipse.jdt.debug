@@ -1136,20 +1136,21 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 
 		StringBuffer buff= new StringBuffer();
+		int intValue= Integer.parseInt(value.getValueString());
 		switch (sig.charAt(0)) {
 			case 'B' :
 				buff.append("0x"); //$NON-NLS-1$
-				int byteVal = Integer.parseInt(value.getValueString());
+				int byteVal = intValue;
 				byteVal = byteVal & 0xFF;
 				buff.append(Integer.toHexString(byteVal));
 				break;
 			case 'I' :
 				buff.append("0x"); //$NON-NLS-1$
-				buff.append(Integer.toHexString(Integer.parseInt(value.getValueString())));
+				buff.append(Integer.toHexString(intValue));
 				break;			
 			case 'S' :
 				buff.append("0x"); //$NON-NLS-1$
-				int shortVal = Integer.parseInt(value.getValueString());
+				int shortVal = intValue;
 				shortVal = shortVal & 0xFFFF;
 				buff.append(Integer.toHexString(shortVal));
 				break;

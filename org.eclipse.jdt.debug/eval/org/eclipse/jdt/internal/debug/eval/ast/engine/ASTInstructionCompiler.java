@@ -2169,7 +2169,7 @@ public class ASTInstructionCompiler extends ASTVisitor {
 	private int parseIntValue(String token) {
 		int tokenLength= token.length();
 		if (tokenLength < 10) {
-			// Integer.decode can handle tokens with less than 10 digits
+			// Integer.decode can handle tokens with less than 18 digits
 			return Integer.decode(token).intValue();
 		} else {
 			switch (getBase(token)) {
