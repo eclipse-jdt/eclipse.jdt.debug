@@ -544,18 +544,20 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget 
 			Map typesToBytes= getTypesToBytes(resources);
 			try {
 				getVM().redefineClasses(typesToBytes);
-			} catch (UnsupportedOperationException uoe) {
-				targetRequestFailed(getString("JDIDebugTarget.hcr_unsupported_redefinition"), uoe); //$NON-NLS-1$
-			} catch (NoClassDefFoundError ncdfe) {
-				targetRequestFailed(getString("JDIDebugTarget.hcr_bad_bytes"), ncdfe); //$NON-NLS-1$
-			} catch (VerifyError ve) {
-				targetRequestFailed(getString("JDIDebugTarget.hcr_verify_error"), ve); //$NON-NLS-1$
-			} catch (UnsupportedClassVersionError ucve) {
-				targetRequestFailed(getString("JDIDebugTarget.hcr_unsupported_class_version"), ucve); //$NON-NLS-1$
-			} catch (ClassFormatError cfe) {
-				targetRequestFailed(getString("JDIDebugTarget.hcr_class_format_error"), cfe); //$NON-NLS-1$
-			} catch (ClassCircularityError cce) {
-				targetRequestFailed(getString("JDIDebugTarget.hcr_class_circularity_error"),cce); //$NON-NLS-1$
+			} catch (UnsupportedOperationException exception) {
+				jdiRequestFailed(getString("JDIDebugTarget.hcr_unsupported_redefinition"), exception); //$NON-NLS-1$
+			} catch (NoClassDefFoundError exception) {
+				jdiRequestFailed(getString("JDIDebugTarget.hcr_bad_bytes"), exception); //$NON-NLS-1$
+			} catch (VerifyError exception) {
+				jdiRequestFailed(getString("JDIDebugTarget.hcr_verify_error"), exception); //$NON-NLS-1$
+			} catch (UnsupportedClassVersionError exception) {
+				jdiRequestFailed(getString("JDIDebugTarget.hcr_unsupported_class_version"), exception); //$NON-NLS-1$
+			} catch (ClassFormatError exception) {
+				jdiRequestFailed(getString("JDIDebugTarget.hcr_class_format_error"), exception); //$NON-NLS-1$
+			} catch (ClassCircularityError exception) {
+				jdiRequestFailed(getString("JDIDebugTarget.hcr_class_circularity_error"), exception); //$NON-NLS-1$
+			} catch (RuntimeException exception) {
+				targetRequestFailed(getString("JDIDebugTarget.hcr_failed"), exception);
 			}
 			reinstallBreakpointsIn(resources);
 		} else {

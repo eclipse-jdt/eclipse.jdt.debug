@@ -202,6 +202,34 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	}
 	
 	/**
+	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>
+	 * with the given underlying exception. The underlying exception is an exception thrown
+	 * by a JDI request.
+	 * 
+	 * @param message Failure message
+	 * @param e runtime exception that has occurred
+	 * @throws DebugException the exception with a status code of <code>TARGET_REQUEST_FAILED</code>
+	 */
+	protected void jdiRequestFailed(String message, RuntimeException e) throws DebugException {
+		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
+			DebugException.TARGET_REQUEST_FAILED, message, e));
+	}
+	
+	/**
+	 * Throws a new debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>
+	 * with the given underlying exception. The underlying exception is an exception thrown
+	 * by a JDI request.
+	 * 
+	 * @param message Failure message
+	 * @param e throwable exception that has occurred
+	 * @throws DebugException the exception with a status code of <code>TARGET_REQUEST_FAILED</code>
+	 */
+	protected void jdiRequestFailed(String message, Throwable e) throws DebugException {
+		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
+			DebugException.TARGET_REQUEST_FAILED, message, e));
+	}	
+	
+	/**
 	 * Throws a new debug exception with a status code of <code>NOT_SUPPORTED</code>.
 	 * 
 	 * @param message Failure message
