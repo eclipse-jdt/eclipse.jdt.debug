@@ -19,6 +19,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.jdt.debug.testplugin.TestPluginLauncher;
 import org.eclipse.jdt.debug.tests.core.BootpathTests;
+import org.eclipse.jdt.debug.tests.core.BreakpointListenerTests;
 import org.eclipse.jdt.debug.tests.core.ClasspathProviderTests;
 import org.eclipse.jdt.debug.tests.core.ConditionalBreakpointsTests;
 import org.eclipse.jdt.debug.tests.core.DeferredBreakpointTests;
@@ -101,6 +102,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(BootpathTests.class));
 		addTest(new TestSuite(TypeTests.class));
 		addTest(new TestSuite(InstanceFilterTests.class));
+		addTest(new TestSuite(BreakpointListenerTests.class));
 		
 		// Evaluation tests
 		addTest(new TestSuite(TestsOperators1.class));

@@ -14,8 +14,10 @@ Contributors:
 import junit.framework.TestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -26,6 +28,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
@@ -372,6 +375,15 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 		return config;
 	}
 	
+	protected IResource getBreakpointResource(String typeName) throws Exception {
+		IJavaElement element = getJavaProject().findElement(new Path(typeName + ".java"));
+		IResource resource = element.getCorrespondingResource();
+		if (resource == null) {
+			resource = getJavaProject().getProject();
+		}		
+		return resource;
+	}
+	
 	/**
 	 * Creates and returns a line breakpoint at the given line number in the type with the
 	 * given name.
@@ -380,7 +392,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param typeName type name
 	 */
 	protected IJavaLineBreakpoint createLineBreakpoint(int lineNumber, String typeName) throws Exception {
-		return JDIDebugModel.createLineBreakpoint(getJavaProject().getProject(), typeName, lineNumber, -1, -1, 0, true, null);
+		return JDIDebugModel.createLineBreakpoint(getBreakpointResource(typeName), typeName, lineNumber, -1, -1, 0, true, null);
 	}
 	
 	/**
@@ -392,7 +404,7 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param condition condition
 	 */
 	protected IJavaLineBreakpoint createConditionalLineBreakpoint(int lineNumber, String typeName, String condition) throws Exception {
-		IJavaLineBreakpoint bp = JDIDebugModel.createLineBreakpoint(getJavaProject().getProject(), typeName, lineNumber, -1, -1, 0, true, null);
+		IJavaLineBreakpoint bp = JDIDebugModel.createLineBreakpoint(getBreakpointResource(typeName), typeName, lineNumber, -1, -1, 0, true, null);
 		bp.setCondition(condition);
 		bp.setConditionEnabled(true);
 		return bp;
@@ -441,8 +453,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param caught whether to suspend in caught locations
 	 * @param uncaught whether to suspend in uncaught locations
 	 */	
-	protected IJavaExceptionBreakpoint createExceptionBreakpoint(String exName, boolean caught, boolean uncaught) throws CoreException {
-		return JDIDebugModel.createExceptionBreakpoint(getJavaProject().getProject(),exName, caught, uncaught, false, true, null);
+	protected IJavaExceptionBreakpoint createExceptionBreakpoint(String exName, boolean caught, boolean uncaught) throws Exception {
+		return JDIDebugModel.createExceptionBreakpoint(getBreakpointResource(exName),exName, caught, uncaught, false, true, null);
 	}
 	
 	/**
@@ -453,8 +465,8 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 * @param access whether to suspend on field access
 	 * @param modification whether to suspend on field modification
 	 */	
-	protected IJavaWatchpoint createWatchpoint(String typeName, String fieldName, boolean access, boolean modification) throws CoreException {
-		IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(getJavaProject().getProject(), typeName, fieldName, -1, -1, -1, 0, true, null);
+	protected IJavaWatchpoint createWatchpoint(String typeName, String fieldName, boolean access, boolean modification) throws Exception {
+		IJavaWatchpoint wp = JDIDebugModel.createWatchpoint(getBreakpointResource(typeName), typeName, fieldName, -1, -1, -1, 0, true, null);
 		wp.setAccess(access);
 		wp.setModification(modification);
 		return wp;
@@ -495,11 +507,9 @@ public abstract class AbstractDebugTest extends TestCase implements  IEvaluation
 	 */
 	protected void removeAllBreakpoints() {
 		IBreakpoint[] bps = getBreakpointManager().getBreakpoints();
-		for (int i = 0; i < bps.length; i++) {
-			try {
-				bps[i].delete();
-			} catch (CoreException e) {
-			}
+		try {
+			getBreakpointManager().removeBreakpoints(bps, true);
+		} catch (CoreException e) {
 		}
 	}
 	
