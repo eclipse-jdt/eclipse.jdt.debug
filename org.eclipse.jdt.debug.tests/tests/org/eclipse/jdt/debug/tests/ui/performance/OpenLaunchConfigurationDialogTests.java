@@ -33,8 +33,12 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
         // cold run
         ILaunchConfiguration config = getLaunchConfiguration("Breakpoints");
 		IStructuredSelection selection= new StructuredSelection(config);
+		for (int i = 0; i < 100; i++) {
+		    openLCD(selection, fgIdentifier); 
+        }
 		
-		openLCD(selection, fgIdentifier);
+		commitMeasurements();
+		assertPerformance();
     }
     
     public void testOpenJavaProgramLaunchConfigurationDialog2() {
@@ -55,11 +59,7 @@ public class OpenLaunchConfigurationDialogTests extends AbstractDebugPerformance
 		dialog.setInitialStatus(status);
 		startMeasuring();
 		dialog.open();
-		stopMeasuring();
 		dialog.close();
-		
-		commitMeasurements();
-		assertPerformance();
-		
+		stopMeasuring();
     }
 }
