@@ -1,11 +1,12 @@
+package org.eclipse.jdt.debug.ui;
+
 /*
  * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
  */
-package org.eclipse.jdt.debug.ui;
 
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-
+ 
 /**
  * Constant definitions for Java debug UI plug-in.
  * <p>
@@ -17,7 +18,7 @@ public interface IJavaDebugUIConstants {
 	/**
 	 * Plug-in identifier for the Java Debug UI
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.jdt.debug.ui"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = JDIDebugUIPlugin.getUniqueIdentifier();
 
 	/**
 	 * Extension point identifier for contributions of a UI page that corresponds to a VMInstallType.
