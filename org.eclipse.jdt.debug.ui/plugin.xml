@@ -1633,12 +1633,6 @@
 		command="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
 		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.ManageWatchpointAction"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>	
 	
 	<command
 		category="org.eclipse.debug.ui.category.run"
@@ -1652,12 +1646,6 @@
 		command="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
 		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.ManageMethodBreakpointAction"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>	
 	
 	<command
 		category="org.eclipse.debug.ui.category.run"
@@ -1671,12 +1659,6 @@
 		command="org.eclipse.jdt.debug.ui.actionSet.AddException"
 		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.actionSet.AddException"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>	
 	
 	<command
 		category="org.eclipse.debug.ui.category.run"
@@ -1690,12 +1672,6 @@
 		command="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
 		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 	/>
-	<keyBinding
-		string="Ctrl+Shift+B"
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.ManageBreakpointAction"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>	
 	
 	<command
 		category="org.eclipse.debug.ui.category.run"
@@ -1709,12 +1685,6 @@
 		command="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
 		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 	/>
-	<keyBinding
-		string="Ctrl+F5"
-		scope="org.eclipse.jdt.ui.javaEditorScope"
-		command="org.eclipse.jdt.debug.ui.StepIntoSelectionAction"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>	
 	
 	<command
 		category="org.eclipse.debug.ui.category.run"
@@ -1728,12 +1698,6 @@
 		command="org.eclipse.jdt.debug.ui.RunToLineAction"
 		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 	/>
-	<keyBinding
-		string="Ctrl+R"
-		scope="org.eclipse.jdt.ui.javaEditorScope"
-		command="org.eclipse.jdt.debug.ui.RunToLineAction"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>	
 	
 	<command
 		category="org.eclipse.debug.ui.category.run"
@@ -1747,12 +1711,6 @@
 		command="org.eclipse.jdt.debug.ui.Execute"
 		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 	/>
-	<keyBinding
-		string="Ctrl+U"
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.Execute"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>		
 	
 	<command
 		category="org.eclipse.debug.ui.category.run"
@@ -1766,12 +1724,6 @@
 		command="org.eclipse.jdt.debug.ui.Display"
 		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 	/>
-	<keyBinding
-		string="Ctrl+D"
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.Display"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>		
 	
 	<command
 		category="org.eclipse.debug.ui.category.run"
@@ -1785,12 +1737,7 @@
 		command="org.eclipse.jdt.debug.ui.Inspect"
 		configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 	/>
-	<keyBinding
-		string=""
-		scope="org.eclipse.ui.globalScope"
-		command="org.eclipse.jdt.debug.ui.Inspect"
-		configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-	/>	
+
 </extension>
 
 <extension point = "org.eclipse.jdt.ui.classpathContainerPage">
