@@ -566,8 +566,8 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 			// check if the archive is a package fragment root
 			IProject project = resource.getProject();
 			IJavaProject jp = JavaCore.create(project);
-			if (jp.exists()) {
-				try {
+			try {
+				if (jp.exists()) {
 					IPackageFragmentRoot root = jp.getPackageFragmentRoot(resource);
 					IPackageFragmentRoot[] allRoots = jp.getPackageFragmentRoots();
 					for (int j = 0; j < allRoots.length; j++) {
@@ -579,26 +579,27 @@ public class JavaSourceLocator implements IPersistableSourceLocator {
 							}
 						}
 					}
-					// check all other java projects to see if another project references
-					// the archive
-					IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
-					IJavaProject[] jps = model.getJavaProjects();
-					for (int i = 0; i < jps.length; i++) {
-						allRoots = jps[i].getPackageFragmentRoots();
-						for (int j = 0; j < allRoots.length; j++) {
-							root = allRoots[j];
-							if (!root.isExternal() && root.getPath().equals(entry.getPath())) {
-								if (isSourceAttachmentEqual(root, entry)) {
-									// use package fragment root
-									return new PackageFragmentRootSourceLocation(root);
-								}							
-							}
+
+				}
+				// check all other java projects to see if another project references
+				// the archive
+				IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+				IJavaProject[] jps = model.getJavaProjects();
+				for (int i = 0; i < jps.length; i++) {
+					IPackageFragmentRoot[] allRoots = jps[i].getPackageFragmentRoots();
+					for (int j = 0; j < allRoots.length; j++) {
+						IPackageFragmentRoot root = allRoots[j];
+						if (!root.isExternal() && root.getPath().equals(entry.getPath())) {
+							if (isSourceAttachmentEqual(root, entry)) {
+								// use package fragment root
+								return new PackageFragmentRootSourceLocation(root);
+							}							
 						}
 					}
-				} catch (JavaModelException e) {
-					LaunchingPlugin.log(e);
-				}		
-			}
+				}
+			} catch (JavaModelException e) {
+				LaunchingPlugin.log(e);
+			}		
 		}		
 		return null;
 	}
