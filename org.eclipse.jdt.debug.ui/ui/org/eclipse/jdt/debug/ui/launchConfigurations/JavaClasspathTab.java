@@ -73,7 +73,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 
 	protected RuntimeClasspathViewer fClasspathViewer;
-	private ClasspathModel model;
+	private ClasspathModel fModel;
 
 	protected static final String DIALOG_SETTINGS_PREFIX = "JavaClasspathTab"; //$NON-NLS-1$
 	
@@ -229,22 +229,22 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		}
 		
 		fClasspathViewer.setLaunchConfiguration(configuration);
-		fClasspathViewer.setInput(model);
+		fClasspathViewer.setInput(fModel);
 		setDirty(false);
 	}
 	
 	private void createClasspathModel(ILaunchConfiguration configuration) throws CoreException {
-		model= new ClasspathModel();
+		fModel= new ClasspathModel();
 		IRuntimeClasspathEntry[] entries= JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
 		IRuntimeClasspathEntry entry;
 		for (int i = 0; i < entries.length; i++) {
 			entry= entries[i];
 			switch (entry.getClasspathProperty()) {
 				case IRuntimeClasspathEntry.USER_CLASSES:				
-					model.addEntry(ClasspathModel.USER, entry);
+					fModel.addEntry(ClasspathModel.USER, entry);
 					break;
 				default:
-					model.addEntry(ClasspathModel.BOOTSTRAP, entry);
+					fModel.addEntry(ClasspathModel.BOOTSTRAP, entry);
 					break;
 			}
 		}	
@@ -282,8 +282,8 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 	 * @return the classpath entries currently specified by this tab
 	 */
 	private IRuntimeClasspathEntry[] getCurrentClasspath() {
-		IClasspathEntry[] boot = model.getEntries(ClasspathModel.BOOTSTRAP);
-		IClasspathEntry[] user = model.getEntries(ClasspathModel.USER);
+		IClasspathEntry[] boot = fModel.getEntries(ClasspathModel.BOOTSTRAP);
+		IClasspathEntry[] user = fModel.getEntries(ClasspathModel.USER);
 		List entries = new ArrayList(boot.length + user.length);
 		IClasspathEntry bootEntry;
 		IRuntimeClasspathEntry entry;
@@ -436,4 +436,10 @@ public class JavaClasspathTab extends JavaLaunchConfigurationTab {
 		return true;
 	}
 	
+	/**
+	 * @return Returns the classpath model.
+	 */
+	protected ClasspathModel getModel() {
+		return fModel;
+	}
 }
