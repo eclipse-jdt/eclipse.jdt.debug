@@ -28,7 +28,7 @@ public class JDIType implements IJavaType {
 	private Type fType;
 	
 	/**
-	 * The debug target this type orginiated from
+	 * The debug target this type originated from
 	 */
 	private JDIDebugTarget fDebugTarget;
 	
