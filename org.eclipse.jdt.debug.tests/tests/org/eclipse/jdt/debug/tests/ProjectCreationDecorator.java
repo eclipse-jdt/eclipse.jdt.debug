@@ -15,7 +15,6 @@ import java.io.File;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -40,9 +39,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 	}
 	
 	public void testProjectCreation() throws Exception {
-		// turn off auto-build
-		ResourcesPlugin.getWorkspace().getDescription().setAutoBuilding(false);
-		
 		// delete any pre-existing project
 		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject("DebugTests");
 		if (pro.exists()) {
@@ -53,10 +49,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		IPackageFragmentRoot src = JavaProjectHelper.addSourceContainer(fJavaProject, "src");
 		File root = JavaTestPlugin.getDefault().getFileInPlugin(JavaProjectHelper.TEST_SRC_DIR);
 		JavaProjectHelper.importFilesFromDirectory(root, src.getPath(), null);
-		
-		// import the compilation error file
-		File file = JavaTestPlugin.getDefault().getFileInPlugin(JavaProjectHelper.TEST_COMPILE_ERROR);
-		JavaProjectHelper.importFile(file, src.getPath(), null);
 		
 		// add rt.jar
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
@@ -88,9 +80,6 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		// turn of suspend on  uncaught exceptions
 		setSuspendOnUncaughtExceptionsPreference(false);
 		
-		// build the workspace
-		ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, null);
-		
 		// create launch configurations
 		createLaunchConfiguration("Breakpoints");
 		createLaunchConfiguration("InstanceVariablesTests");
@@ -115,8 +104,7 @@ public class ProjectCreationDecorator extends AbstractDebugTest {
 		createLaunchConfiguration("EvalNestedTypeTests");
 		createLaunchConfiguration("EvalTypeHierarchyTests");
 		createLaunchConfiguration("WorkingDirectoryTest");
-		createLaunchConfiguration("OneToTen");
-		createLaunchConfiguration("CompilationError");			
+		createLaunchConfiguration("OneToTen");		
 	}
 	
 	/**
