@@ -22,6 +22,7 @@ import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
@@ -315,6 +316,8 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 				return null;
 			} else if (item instanceof IBreakpoint) {
 				return getBreakpointText((IBreakpoint)item);
+			} else if (item instanceof IExpression) {
+				return getExpressionText((IExpression)item);
 			} else {
 				StringBuffer label= new StringBuffer();
 				if (item instanceof IJavaThread) {
@@ -949,6 +952,36 @@ public class JDIModelPresentation extends LabelProvider implements IDebugModelPr
 		}
 		return ""; //$NON-NLS-1$
 	}
+	
+	protected String getExpressionText(IExpression expression) throws DebugException {
+		String label= expression.getExpressionText();
+		if (label != null) {
+			boolean showTypes= isShowVariableTypeNames();
+			int spaceIndex= label.lastIndexOf(' ');
+			StringBuffer buff= new StringBuffer();
+			IJavaValue javaValue= (IJavaValue) expression.getValue();
+			String typeName= javaValue.getReferenceTypeName();
+			if (showTypes && spaceIndex == -1) {
+				typeName= getQualifiedName(typeName);
+				if (typeName.length() > 0) {
+					buff.append(typeName);
+					buff.append(' ');
+				}
+			}
+			if (spaceIndex != -1 && !showTypes) {
+				label= label.substring(spaceIndex + 1);
+			}
+			buff.append(label);
+
+			String valueString= getValueText(javaValue);
+			if (valueString.length() > 0) {
+				buff.append("= "); //$NON-NLS-1$
+				buff.append(valueString);
+			}
+			return buff.toString();
+		}
+		return ""; //$NON-NLS-1$
+	}	
 
 	/**
 	 * Given the reference type name of an array type, insert the array length
