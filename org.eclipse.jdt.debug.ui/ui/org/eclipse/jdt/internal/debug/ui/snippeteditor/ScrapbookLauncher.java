@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -55,6 +56,13 @@ import org.eclipse.jface.dialogs.MessageDialog;
 public class ScrapbookLauncher implements IDebugEventSetListener {
 	
 	public static final String SCRAPBOOK_LAUNCH = IJavaDebugUIConstants.PLUGIN_ID + ".scrapbook_launch"; //$NON-NLS-1$
+	
+	/**
+	 * Persistent property associated with snippet files specifying working directory.
+	 * Same format as the associated launch configuration attribute
+	 * <code>ATTR_WORKING_DIR</code>.
+	 */
+	public static final QualifiedName SNIPPET_EDITOR_WORKING_DIR = new QualifiedName(IJavaDebugUIConstants.PLUGIN_ID, "snippet_editor_working_dir"); //$NON-NLS-1$
 	
 	private IJavaLineBreakpoint fMagicBreakpoint;
 	
@@ -157,6 +165,7 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, classpathList);
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.jdt.internal.debug.ui.snippeteditor.ScrapbookMain"); //$NON-NLS-1$
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, p.getElementName());
+			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, getWorkingDirectoryAttribute(page));
 			
 			StringBuffer urlsString = new StringBuffer();
 			for (int i = 0; i < urls.length; i++) {
@@ -280,4 +289,29 @@ public class ScrapbookLauncher implements IDebugEventSetListener {
 		}
 		return new URL(encoded.toString());
 	}
+	
+	/**
+	 * Returns the working directory attribute for the given snippet file,
+	 * possibly <code>null</code>.
+	 */
+	public static String getWorkingDirectoryAttribute(IFile file) {
+		try {
+			return file.getPersistentProperty(SNIPPET_EDITOR_WORKING_DIR);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		return null;
+	}
+	
+	/**
+	 * Sets the working directory attribute for the given snippet file,
+	 * possibly <code>null</code> (default)
+	 */
+	public static void setWorkingDirectoryAttribute(IFile file, String value) {
+		try {
+			file.setPersistentProperty(SNIPPET_EDITOR_WORKING_DIR, value);
+		} catch (CoreException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+	}	
 }

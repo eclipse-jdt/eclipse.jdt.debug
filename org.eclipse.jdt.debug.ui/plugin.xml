@@ -785,6 +785,13 @@
 		objectClass="org.eclipse.debug.core.model.IDebugTarget"
 		class="org.eclipse.jdt.internal.debug.ui.launcher.ProcessPropertyPage"> 
     </page>
+	<page
+		id="org.eclipse.jdt.debug.ui.snippeteditor.SnippetEditorPage" 
+		name="%snippetEditorPageName"
+		objectClass="org.eclipse.core.resources.IFile"
+		class="org.eclipse.jdt.internal.debug.ui.snippeteditor.SnippetEditorPropertyPage"
+		nameFilter="*.jpage"> 
+    </page>    
 </extension>
 
 <extension point = "org.eclipse.ui.preferencePages">
