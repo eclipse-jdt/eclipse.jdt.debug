@@ -1869,6 +1869,9 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 * @see org.eclipse.jdt.debug.core.IJavaDebugTarget#supportsMonitorInformation()
 	 */
 	public boolean supportsMonitorInformation() {
+		if (!isAvailable()) {
+			return false;
+		}
 		return getVM().canGetCurrentContendedMonitor() && getVM().canGetMonitorInfo() && getVM().canGetOwnedMonitorInfo();
 	}
 	
