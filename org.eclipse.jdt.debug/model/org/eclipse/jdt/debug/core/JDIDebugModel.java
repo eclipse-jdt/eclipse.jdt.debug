@@ -150,7 +150,7 @@ public class JDIDebugModel {
 	public static void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
 		JDIDebugPlugin.getDefault().addHotCodeReplaceListener(listener);
 	}
-	
+		
 	/**
 	 * Removes the given hot code replace listener to the JDI debug model.
 	 * Removed listeners will not receive hot code replace notifications.
@@ -158,6 +158,25 @@ public class JDIDebugModel {
 	public static void removeHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
 		JDIDebugPlugin.getDefault().removeHotCodeReplaceListener(listener);
 	}
+	
+	/**
+	 * Adds the given breakpoint listener to the JDI debug model.
+	 * 
+	 * @param listener breakpoint listener
+	 */
+	public static void addJavaBreakpointListener(IJavaBreakpointListener listener) {
+		JDIDebugPlugin.getDefault().addJavaBreakpointListener(listener);
+	}	
+
+	/**
+	 * Removes the given breakpoint listener from the JDI debug model.
+	 * 
+	 * @param listener breakpoint listener
+	 */
+	public static void removeJavaBreakpointListener(IJavaBreakpointListener listener) {
+		JDIDebugPlugin.getDefault().removeJavaBreakpointListener(listener);
+	}	
+	
 	
 	/**
 	 * Creates and returns a line breakpoint in the type with the

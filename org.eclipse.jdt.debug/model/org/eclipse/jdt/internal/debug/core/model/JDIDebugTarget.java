@@ -1013,10 +1013,7 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 		try {
 			setSuspended(false);
 			getVM().resume();
-			Iterator threads = getThreadList().iterator();
-			while (threads.hasNext()) {
-				((JDIThread)threads.next()).resumedByVM();
-			}
+			resumeThreads();
 			fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 		} catch (VMDisconnectedException e) {
 			disconnected();
@@ -1128,6 +1125,28 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	}
 	
 	/**
+	 * Notifies threads that they have been resumed
+	 */
+	protected void resumeThreads() {
+		Iterator threads = getThreadList().iterator();
+		while (threads.hasNext()) {
+			((JDIThread)threads.next()).resumedByVM();
+		}
+	}	
+	
+	/**
+	 * Notifies this VM to update its state in preparation
+	 * for a suspend.
+	 * 
+	 * @param breakpoint the breakpoint that caused the
+	 *  suspension
+	 */
+	protected void prepareToSuspendByBreakpoint(JavaBreakpoint breakpoint) {
+		setSuspended(true);
+		suspendThreads();
+	}
+	
+	/**
 	 * Notifies this VM it has been suspended by the
 	 * given breakpoint
 	 * 
@@ -1135,10 +1154,19 @@ public class JDIDebugTarget extends JDIDebugElement implements IJavaDebugTarget,
 	 *  suspension
 	 */
 	protected void suspendedByBreakpoint(JavaBreakpoint breakpoint) {
-		setSuspended(true);
-		suspendThreads();
 		fireSuspendEvent(DebugEvent.BREAKPOINT);
-	}
+	}	
+	
+	/**
+	 * Notifies this VM suspension has been cancelled
+	 * 
+	 * @param breakpoint the breakpoint that caused the
+	 *  suspension
+	 */
+	protected void cancelSuspendByBreakpoint(JavaBreakpoint breakpoint) {
+		setSuspended(false);
+		resumeThreads();
+	}	
 
 	/**
 	 * @see ITerminate#terminate()

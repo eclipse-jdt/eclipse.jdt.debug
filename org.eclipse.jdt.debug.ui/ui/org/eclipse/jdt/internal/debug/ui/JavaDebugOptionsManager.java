@@ -6,10 +6,8 @@ package org.eclipse.jdt.internal.debug.ui;
  */
  
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IMarker;
@@ -18,35 +16,37 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
 import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaExceptionBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaStackFrame;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * Manages options for the Java Debugger:<ul>
- * <li>Creates breakpoints corresponding to compilation errors</li>
- * <li>Creates breakpoint for the 'suspend on uncaught' exceptions option</li>
+ * <li>Suspend on compilation errors</li>
+ * <li>Ssuspend on uncaught exceptions</li>
+ * <li>Step filters</li>
  * </ul>
  */
-public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventListener, IPropertyChangeListener {
+public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugEventListener, IPropertyChangeListener, IJavaBreakpointListener {
 	
 	/**
 	 * Singleton options manager
@@ -54,9 +54,16 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	private static JavaDebugOptionsManager fgOptionsManager = null;
 	
 	/**
-	 * Map of problems to associated breakpoints
+	 * Map of problems to locations
+	 * (<code>IMarker</code> -> <code>Location</code>)
 	 */
 	private HashMap fProblemMap = new HashMap(10);
+	
+	/**
+	 * Map of locations to problems.
+	 * (<code>Location</code> -> <code>IMarker</code>)
+	 */
+	private HashMap fLocationMap = new HashMap(10);
 	
 	/**
 	 * Breakpoint used to suspend on uncaught exceptions
@@ -64,51 +71,73 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	private IJavaExceptionBreakpoint fSuspendOnExceptionBreakpoint = null;
 	
 	/**
-	 * Constants indicating whether a problem
+	 * Breakpoint used to suspend on compilation errors
+	 */
+	private IJavaExceptionBreakpoint fSuspendOnErrorBreakpoint = null;	
+	
+	/**
+	 * Constants indicating whether a breakpoint
 	 * is added, removed, or changed.
 	 */
 	private static final int ADDED = 0;
 	private static final int REMOVED = 1;
 	private static final int CHANGED = 2;
-	
-	/**
-	 * Marker attribute denoting a problem breakpoint
-	 */
-	public static final String ATTR_PROBLEM_BREAKPOINT = "org.eclipse.jdt.debug.ui.problemBreakpoint"; //$NON-NLS-1$
-	
-	/**
-	 * Marker attribute problem message
-	 */
-	public static final String ATTR_PROBLEM_MESSAGE = "org.eclipse.jdt.debug.ui.problemBreakpoint.message"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Local cache of active step filters.
 	 */
 	private String[] fActiveStepFilters = new String[0];
+	
+	/**
+	 * Helper class that describes a location in a stack
+	 * frame. A location consists of a package name, source
+	 * file name, and a line number.
+	 */
+	class Location {
+		private String fPackageName;
+		private String fSourceName;
+		private int fLineNumber;
+		
+		public Location(String packageName, String sourceName, int lineNumber) {
+			fPackageName = packageName;
+			fSourceName = sourceName;
+			fLineNumber = lineNumber;
+		}
+		
+		public boolean equals(Object o) {
+			if (o instanceof Location) {
+				Location l = (Location)o;
+				return l.fPackageName.equals(fPackageName) && l.fSourceName.equals(fSourceName) && l.fLineNumber == fLineNumber;
+				
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return fPackageName.hashCode() + fSourceName.hashCode() + fLineNumber;
+		}
+	}
 
-	/*
+	/**
+	 * Update cache of problems as they are added/removed.
+	 * 
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		
-		final IMarkerDelta[] deltas = event.findMarkerDeltas("org.eclipse.jdt.core.problem", true); //$NON-NLS-1$
+		IMarkerDelta[] deltas = event.findMarkerDeltas("org.eclipse.jdt.core.problem", true); //$NON-NLS-1$
 		if (deltas != null) {
-			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor m) throws CoreException {
-					for (int i = 0; i < deltas.length; i++) {
-						IMarkerDelta delta = deltas[i];
-						switch (delta.getKind()) {
-							case IResourceDelta.ADDED:
-								problemAdded(delta.getMarker());
-								break;
-							case IResourceDelta.REMOVED:
-								problemRemoved(delta.getMarker());
-								break;
-						}
-					}
+			for (int i = 0; i < deltas.length; i++) {
+				IMarkerDelta delta = deltas[i];
+				switch (delta.getKind()) {
+					case IResourceDelta.ADDED:
+						problemAdded(delta.getMarker());
+						break;
+					case IResourceDelta.REMOVED:
+						problemRemoved(delta.getMarker());
+						break;
 				}
-			};
-			fork(wr);
+			}
 		}
 	}
 	
@@ -137,6 +166,7 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		JDIDebugModel.addJavaBreakpointListener(this);
 		initialize();
 	}
 	
@@ -147,26 +177,36 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		JDIDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		JDIDebugModel.removeJavaBreakpointListener(this);
 		fProblemMap.clear();
+		fLocationMap.clear();
 	}	
 	
 	/**
-	 * Creates breakpoints for existing problems, and
-	 * the global exception breakpoint.
+	 * Notes existing compilation problems, creates exception
+	 * breakpoints for copmilation problems and uncaught exceptions.
 	 * 
 	 * @exception CoreException if unable to initialize
 	 */
 	protected void initialize() throws CoreException {
-		// compilation errors
+		// compilation error breakpoint
+		IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Error", true, true, false, false, null); //$NON-NLS-1$
+		bp.setPersisted(false);
+		bp.setRegistered(false);
+		// disabled until there are errors
+		bp.setEnabled(false);
+		setSuspendOnCompilationErrorsBreakpoint(bp);
+		
+		// note compilation errors
 		IMarker[] problems = ResourcesPlugin.getWorkspace().getRoot().findMarkers("org.eclipse.jdt.core.problem", true, IResource.DEPTH_INFINITE); //$NON-NLS-1$
 		if (problems != null) {
 			for (int i = 0; i < problems.length; i++) {
 				problemAdded(problems[i]);
 			}
 		}
-
+		
 		// uncaught exception breakpoint
-		IJavaExceptionBreakpoint bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
+		bp = JDIDebugModel.createExceptionBreakpoint(ResourcesPlugin.getWorkspace().getRoot(),"java.lang.Throwable", false, true, false, false, null); //$NON-NLS-1$
 		bp.setPersisted(false);
 		bp.setRegistered(false);
 		bp.setEnabled(isSuspendOnUncaughtExceptions());
@@ -175,127 +215,51 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 		// step filters
 		updateActiveFilters();
 	}
-
+	
 	/**
-	 * Creates and returns a breakpoint for the given
-	 * compilation problem, or <code>null</code> if the
-	 * given problem does not require a breakpoint.
-	 * 
-	 * @param problem marker of type 'org.eclipse.jdt.core.problem'
-	 * @return breakpoint for the given compilation problem,
-	 *  or <code>null</code>
-	 * @exception CoreException if an exception occurrs accessing
-	 *  marker properties
+	 * The given problem has been added. Cross
+	 * reference the problem with its location.
+	 * Enable the error breakpoint if the suspend
+	 * option is on.
 	 */
-	protected IBreakpoint createCompilationBreakpoint(IMarker problem) throws CoreException {
-		IBreakpoint breakpoint = null;
+	protected void problemAdded(IMarker problem) {
 		if (problem.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO) == IMarker.SEVERITY_ERROR) {
 			IResource res = problem.getResource();
 			IJavaElement cu = JavaCore.create(res);
 			if (cu != null && cu instanceof ICompilationUnit) {
-				int start = problem.getAttribute(IMarker.CHAR_START, -1);
-				int end = problem.getAttribute(IMarker.CHAR_END, -1);
 				int line = problem.getAttribute(IMarker.LINE_NUMBER, -1);
-				int pos = start;
-				if (pos == -1) {
-					pos = line;
-				}
-				IJavaElement je = ((ICompilationUnit)cu).getElementAt(pos);
-				if (je != null) {
-					Map map = new HashMap(10);
-					map.put(ATTR_PROBLEM_BREAKPOINT, Boolean.TRUE);
-					String message = problem.getAttribute(IMarker.MESSAGE, null);
-					if (message != null) {
-						map.put(ATTR_PROBLEM_MESSAGE, message);
-					}					
-					if (je instanceof IMethod) {
-						IMethod method = (IMethod)je;
-						breakpoint = JDIDebugModel.createMethodBreakpoint(res, method.getDeclaringType().getFullyQualifiedName(), method.getElementName(), null, true, false, false, line, start, end, 0, false, map);
-					} else if (je instanceof IMember) {
-						IMember member = (IMember)je;
-						String name = null;
-						if (member instanceof IType) {
-							name = ((IType)member).getFullyQualifiedName();
-						} else {
-							name = member.getDeclaringType().getFullyQualifiedName();
-						}
-						breakpoint = JDIDebugModel.createMethodBreakpoint(res, name, null, null, true, false, false, line, start, end, 0, false, map);	
-					}	
-					if (breakpoint != null) {
-						breakpoint.setPersisted(false);
-						breakpoint.setEnabled(isSuspendOnCompilationErrors());
-					}				
+				String name = cu.getElementName();
+				Location l = new Location(cu.getParent().getElementName(), name, line);
+				fLocationMap.put(l, problem);
+				fProblemMap.put(problem, l);
+				try {
+					getSuspendOnCompilationErrorBreakpoint().setEnabled(isSuspendOnCompilationErrors());
+				} catch (CoreException e) {
+					JDIDebugPlugin.logError(e);
 				}
 			}
 		}
-		return breakpoint;
 	}
 	
 	/**
-	 * The given problem has been added. Create a breakpoint
-	 * for the problem.
+	 * The given problem has been removed. Remove
+	 * cross reference of problem and location.
+	 * Disable the breakpoint if there are no errors.
 	 */
-	protected void problemAdded(IMarker problem) {
-		try {
-			IBreakpoint breakpoint = createCompilationBreakpoint(problem);
-			if (breakpoint != null) {
-				setBreakpoint(problem, breakpoint);
-				notifyTargets(breakpoint, ADDED);
-			}
-		} catch (CoreException e) {
-			JDIDebugUIPlugin.logError(e);
-		}
-	}
-	
-	/**
-	 * The given problem has been removed. Remove any breakpoint
-	 * associated with the problem.
-	 */
-	protected void problemRemoved(IMarker problem){
-		IBreakpoint breakpoint = getBreakpoint(problem);
-		if (breakpoint != null) {
-			setBreakpoint(problem, null);
-			notifyTargets(breakpoint, REMOVED);
-			try {
-				breakpoint.delete();
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.logError(e);
-			}
-		}		
-	}
-	
-	/**
-	 * Sets the breakpoint associated with the given problem.
-	 * 
-	 * @param problem problem marker
-	 * @param breakpoint, or <code>null</code>
-	 */
-	protected void setBreakpoint(IMarker problem, IBreakpoint breakpoint) {
-		if (breakpoint == null) {
+	protected void problemRemoved(IMarker problem) {
+		Object location = fLocationMap.remove(problem);
+		if (location != null) {
 			fProblemMap.remove(problem);
-		} else {
-			fProblemMap.put(problem, breakpoint);
+		}
+		if (fProblemMap.isEmpty()) {
+			try {
+				getSuspendOnCompilationErrorBreakpoint().setEnabled(false);
+			} catch (CoreException e) {
+				JDIDebugPlugin.logError(e);
+			}
 		}
 	}
-	
-	/**
-	 * Returns the breakpoint associated with the given problem.
-	 * 
-	 * @param problem problem marker
-	 * @return breakpoint, or <code>null</code>
-	 */
-	protected IBreakpoint getBreakpoint(IMarker problem) {
-		return (IBreakpoint)fProblemMap.get(problem);
-	}	
-	
-	/**
-	 * Returns the current set of problem breakpoints
-	 */
-	protected IBreakpoint[] getCompilationBreakpoints() {
-		Collection collection = fProblemMap.values();
-		return (IBreakpoint[])collection.toArray(new IBreakpoint[collection.size()]);
-	}
-	
+				
 	/**
 	 * Notifies java debug targets of the given breakpoint
 	 * addition or removal.
@@ -366,22 +330,6 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	}
 	
 	/**
-	 * Forks the runnable in a new thread
-	 */
-	protected void fork(final IWorkspaceRunnable wRunnable) {
-		Runnable runnable= new Runnable() {
-			public void run() {
-				try {
-					ResourcesPlugin.getWorkspace().run(wRunnable, null);
-				} catch (CoreException ce) {
-					JDIDebugUIPlugin.log(ce);
-				}
-			}
-		};
-		new Thread(runnable).start();
-	}
-	
-	/**
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
@@ -410,15 +358,8 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 * @param enabled whether to suspend on compilation errors
 	 */
 	protected void setSuspendOnCompilationErrors(boolean enabled) {
-		IBreakpoint[] breakpoints = getCompilationBreakpoints();
-		for (int i = 0; i < breakpoints.length; i++) {
-			try {
-				breakpoints[i].setEnabled(enabled);
-				notifyTargets(breakpoints[i], CHANGED);
-			} catch (CoreException e) {
-				JDIDebugUIPlugin.log(e);
-			}
-		}
+		IBreakpoint breakpoint = getSuspendOnCompilationErrorBreakpoint();
+		setEnabled(breakpoint, enabled);
 	}
 	
 	/**
@@ -428,13 +369,24 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 */
 	protected void setSuspendOnUncaughtExceptions(boolean enabled) {
 		IBreakpoint breakpoint = getSuspendOnUncaughtExceptionBreakpoint();
+		setEnabled(breakpoint, enabled);
+	}	
+	
+	/**
+	 * Enable/Disable the given breakpoint and notify
+	 * targets of the change.
+	 * 
+	 * @param breakpoint a breakpoint
+	 * @param enabled whether enabeld
+	 */ 
+	protected void setEnabled(IBreakpoint breakpoint, boolean enabled) {
 		try {
 			breakpoint.setEnabled(enabled);
 			notifyTargets(breakpoint, CHANGED);
 		} catch (CoreException e) {
 			JDIDebugUIPlugin.log(e);
-		}
-	}	
+		}		
+	}
 	
 	/**
 	 * Returns whether suspend on comiplation errors is
@@ -475,6 +427,26 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 	 */
 	protected IJavaExceptionBreakpoint getSuspendOnUncaughtExceptionBreakpoint() {
 		return fSuspendOnExceptionBreakpoint;
+	}	
+	
+	/**
+	 * Sets the breakpoint used to suspend on compilation 
+	 * errors.
+	 * 
+	 * @param breakpoint exception breakpoint
+	 */
+	private void setSuspendOnCompilationErrorsBreakpoint(IJavaExceptionBreakpoint breakpoint) {
+		fSuspendOnErrorBreakpoint = breakpoint;
+	}
+	
+	/**
+	 * Returns the breakpoint used to suspend on compilation
+	 * errors
+	 * 
+	 * @return exception breakpoint
+	 */
+	protected IJavaExceptionBreakpoint getSuspendOnCompilationErrorBreakpoint() {
+		return fSuspendOnErrorBreakpoint;
 	}	
 	
 	/**
@@ -552,11 +524,10 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 			Object source = event.getSource();
 			if (source instanceof IJavaDebugTarget) {
 				IJavaDebugTarget javaTarget = (IJavaDebugTarget)source;
-				// compilation breakpoints
-				IBreakpoint[] breakpoints = getCompilationBreakpoints();
-				for (int i = 0; i < breakpoints.length; i++) {
-					notifyTarget(javaTarget, breakpoints[i], ADDED);
-				}
+				
+				// compilation breakpoints				
+				notifyTarget(javaTarget, getSuspendOnCompilationErrorBreakpoint(), ADDED);
+				
 				// uncaught exception breakpoint
 				notifyTarget(javaTarget, getSuspendOnUncaughtExceptionBreakpoint(), ADDED);
 				
@@ -564,6 +535,74 @@ public class JavaDebugOptionsManager implements IResourceChangeListener, IDebugE
 				notifyTargetOfFilters(javaTarget);
 			}
 		}
+	}
+
+	/*
+	 * @see IJavaBreakpointListener#breakpointAdded(IJavaDebugTarget, IJavaBreakpoint)
+	 */
+	public void breakpointAdded(
+		IJavaDebugTarget target,
+		IJavaBreakpoint breakpoint) {
+	}
+
+	/*
+	 * @see IJavaBreakpointListener#breakpointHit(IJavaThread, IJavaBreakpoint)
+	 */
+	public boolean breakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
+		if (breakpoint == getSuspendOnCompilationErrorBreakpoint()) {
+			try {
+				IJavaStackFrame frame = (IJavaStackFrame)thread.getTopStackFrame();
+				if (frame != null) {
+					return  getProblem(frame) != null;
+				}
+			} catch (DebugException e) {
+				JDIDebugUIPlugin.log(e);
+			}
+			
+		}
+		return true;
+	}
+
+	/*
+	 * @see IJavaBreakpointListener#breakpointInstalled(IJavaDebugTarget, IJavaBreakpoint)
+	 */
+	public void breakpointInstalled(
+		IJavaDebugTarget target,
+		IJavaBreakpoint breakpoint) {
+	}
+
+	/*
+	 * @see IJavaBreakpointListener#breakpointRemoved(IJavaDebugTarget, IJavaBreakpoint)
+	 */
+	public void breakpointRemoved(
+		IJavaDebugTarget target,
+		IJavaBreakpoint breakpoint) {
+	}
+	
+	/**
+	 * Returns any problem marker associated with the current location
+	 * of the given stack frame, or <code>null</code> if none.
+	 * 
+	 * @param frame stack frame
+	 * @return marker representing compilation problem, or <code>null</code>
+	 */
+	protected IMarker getProblem(IJavaStackFrame frame) {
+		try {
+			String packageName = frame.getDeclaringType().getName();
+			int index = packageName.lastIndexOf('.');
+			if (index == -1) {
+				packageName = "";
+			} else {
+				packageName = packageName.substring(0,index);
+			}
+			String name = frame.getSourceName();
+			int line = frame.getLineNumber();
+			Location l = new Location(packageName, name, line);
+			return  (IMarker)fLocationMap.get(l);		
+		} catch (DebugException e) {
+			JDIDebugUIPlugin.log(e);
+		}
+		return null;
 	}
 
 }

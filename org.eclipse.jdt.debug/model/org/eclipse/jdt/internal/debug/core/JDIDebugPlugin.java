@@ -14,8 +14,12 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.internal.core.ListenerList;
+import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.IJavaHotCodeReplaceListener;
-import org.eclipse.jdt.debug.core.JDIDebugModel;
+import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.internal.debug.core.hcr.JavaHotCodeReplaceManager;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
@@ -33,6 +37,18 @@ public class JDIDebugPlugin extends Plugin {
 	private static JDIDebugPlugin fgPlugin;
 	
 	private JavaHotCodeReplaceManager fJavaHCRMgr;
+	
+	/**
+	 * Breakpoint listener list.
+	 */
+	private ListenerList fBreakpointListeners = null;
+	
+	/**
+	 * Breakpoint notification types
+	 */
+	private static final int ADDED = 1;
+	private static final int INSTALLED = 2;
+	private static final int REMOVED = 3;
 	
 	/**
 	 * Whether this plug-in is in trace mode.
@@ -82,6 +98,7 @@ public class JDIDebugPlugin extends Plugin {
 	 */
 	public void startup() throws CoreException {
 		fJavaHCRMgr= JavaHotCodeReplaceManager.getDefault();
+		fBreakpointListeners = new ListenerList(5);
 	}
 	
 	public void addHotCodeReplaceListener(IJavaHotCodeReplaceListener listener) {
@@ -105,6 +122,7 @@ public class JDIDebugPlugin extends Plugin {
 				((JDIDebugTarget)target).shutdown();
 			}
 		}
+		fBreakpointListeners = null;
 
 		fgPlugin = null;
 		super.shutdown();
@@ -137,4 +155,96 @@ public class JDIDebugPlugin extends Plugin {
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
+	
+	/**
+	 * Adds the given breakpoint listener to the JDI debug model.
+	 * 
+	 * @param listener breakpoint listener
+	 */
+	public void addJavaBreakpointListener(IJavaBreakpointListener listener) {
+		fBreakpointListeners.add(listener);
+	}	
+
+	/**
+	 * Removes the given breakpoint listener from the JDI debug model.
+	 * 
+	 * @param listener breakpoint listener
+	 */
+	public void removeJavaBreakpointListener(IJavaBreakpointListener listener) {
+		fBreakpointListeners.remove(listener);
+	}		
+	
+	/**
+	 * Notifies listeners that the given breakpoint has been added.
+	 * 
+	 * @param target Java debug target
+	 * @param breakpoint Java breakpoint
+	 */
+	public void fireBreakpointAdded(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+		notify(target, breakpoint, ADDED);
+	}
+	
+	/**
+	 * Notifies listeners that the given breakpoint has been installed.
+	 * 
+	 * @param target Java debug target
+	 * @param breakpoint Java breakpoint
+	 */
+	public void fireBreakpointInstalled(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+		notify(target, breakpoint, INSTALLED);
+	}	
+	
+	/**
+	 * Notifies listeners that the given breakpoint has been removed.
+	 * 
+	 * @param target Java debug target
+	 * @param breakpoint Java breakpoint
+	 */
+	public void fireBreakpointRemoved(IJavaDebugTarget target, IJavaBreakpoint breakpoint) {
+		notify(target, breakpoint, REMOVED);
+	}
+		
+	/**
+	 * Notifies listeners of the given addition, install, or
+	 * remove.
+	 * 
+	 * @param target debug target
+	 * @param breakpoint the associated breakpoint
+	 * @param kind one of ADDED, REMOVED, INSTALLED
+	 */
+	protected void notify(IJavaDebugTarget target, IJavaBreakpoint breakpoint, int kind) {
+		Object[] listeners = fBreakpointListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IJavaBreakpointListener jbpl = (IJavaBreakpointListener)listeners[i];
+			switch (kind) {
+				case ADDED:
+					jbpl.breakpointAdded(target, breakpoint);
+					break;
+				case INSTALLED:
+					jbpl.breakpointInstalled(target, breakpoint);
+					break;
+				case REMOVED:
+					jbpl.breakpointRemoved(target, breakpoint);
+					break;					
+			}
+		}
+	}
+	
+	/**
+	 * Notifies listeners that the given breakpoint has been hit.
+	 * Returns whether the thread should suspend.
+	 * 
+	 * @param target Java debug target
+	 * @param breakpoint Java breakpoint
+	 */
+	public boolean fireBreakpointHit(IJavaThread thread, IJavaBreakpoint breakpoint) {
+		Object[] listeners = fBreakpointListeners.getListeners();
+		boolean suspend = listeners.length == 0;
+		for (int i = 0; i < listeners.length; i++) {
+			IJavaBreakpointListener jbpl = (IJavaBreakpointListener)listeners[i];
+			suspend = suspend | jbpl.breakpointHit(thread, breakpoint);
+		}	
+		return suspend;
+	}
+	
 }

@@ -270,7 +270,7 @@ public class BreakpointUtils {
 	 * @return whether the given breakpoint is a run to line
 	 *  breakpoint
 	 */
-	public static boolean isProblemBreakpoint(IBreakpoint breakpoint) throws CoreException {
-		return breakpoint.getMarker().getAttribute(JavaDebugOptionsManager.ATTR_PROBLEM_BREAKPOINT, false);
+	public static boolean isProblemBreakpoint(IBreakpoint breakpoint) {
+		return breakpoint == JavaDebugOptionsManager.getDefault().getSuspendOnCompilationErrorBreakpoint();
 	}	
 }

@@ -20,6 +20,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
+import org.eclipse.jdt.debug.core.IJavaBreakpointListener;
+import org.eclipse.jdt.debug.core.IJavaDebugTarget;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
 import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
@@ -151,6 +153,8 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		// update the install attibute on the breakpoint
 		if (!(request instanceof ClassPrepareRequest)) {
 			incrementInstallCount();
+			// notification 
+			fireInstalled(target);
 		}
 	}
 	
@@ -257,10 +261,23 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		if (thread == null) {
 			return true;
 		} else {
-			thread.handleSuspendForBreakpoint(this);
-			expireHitCount(event);	
-			return false;
+			expireHitCount(event);
+			return suspend(thread);
 		}	
+	}
+	
+	/**
+	 * Deletegates to the given thread to suspend, and
+	 * returns whether the thread should be resumed.
+	 * It is possible that the thread will not suspend
+	 * as directed by a Java breakpoint listener.
+	 * 
+	 * @see IJavaBreakpointListener#breakpointHit(IJavaThread, IJavaBreakpoint)
+	 */
+	protected boolean suspend(JDIThread thread) {
+		// check if suspend occurred
+		boolean suspended = thread.handleSuspendForBreakpoint(this);
+		return !suspended;
 	}
 	
 	/**
@@ -363,6 +380,10 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * execution of that target as appropriate.
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
+		
+		// pre-notification
+		fireAdded(target);
+		
 		String referenceTypeName= getTypeName();
 		String enclosingTypeName= getEnclosingReferenceTypeName();
 		if (referenceTypeName == null || enclosingTypeName == null) {
@@ -531,6 +552,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 	 * debug target.
 	 */
 	public void removeFromTarget(JDIDebugTarget target) throws CoreException {
+		
 		List requests = getRequests(target);
 		Iterator iter = requests.iterator();
 		while (iter.hasNext()) {
@@ -550,6 +572,9 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 			}
 		}
 		fRequestsByTarget.remove(target);
+		
+		// notification
+		fireRemoved(target);
 	}		
 	
 	/**
@@ -728,5 +753,34 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 		}
 	}
 	
+	/**
+	 * Notifies listeners this breakpoint is to be added to the
+	 * given target.
+	 * 
+	 * @param target debug target
+	 */
+	protected void fireAdded(IJavaDebugTarget target) {
+		JDIDebugPlugin.getDefault().fireBreakpointAdded(target, this);
+	}
+	
+	/**
+	 * Notifies listeners this breakpoint has been remvoed from the
+	 * given target.
+	 * 
+	 * @param target debug target
+	 */
+	protected void fireRemoved(IJavaDebugTarget target) {
+		JDIDebugPlugin.getDefault().fireBreakpointRemoved(target, this);
+	}	
+	
+	/**
+	 * Notifies listeners this breakpoint has been installed in the
+	 * given target.
+	 * 
+	 * @param target debug target
+	 */
+	protected void fireInstalled(IJavaDebugTarget target) {
+		JDIDebugPlugin.getDefault().fireBreakpointInstalled(target, this);
+	}	
 }
 

@@ -72,6 +72,9 @@ public class JavaPatternBreakpoint extends JavaLineBreakpoint implements IJavaPa
 	 */
 	public void addToTarget(JDIDebugTarget target) throws CoreException {
 		
+		// pre-notification
+		fireAdded(target);
+				
 		String referenceTypeName= getReferenceTypeName();
 		if (referenceTypeName == null) {
 			return;

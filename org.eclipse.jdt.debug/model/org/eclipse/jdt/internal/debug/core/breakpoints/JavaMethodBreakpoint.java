@@ -387,9 +387,8 @@ public class JavaMethodBreakpoint extends JavaLineBreakpoint implements IJavaMet
 		JDIThread thread= target.findThread(threadRef);	
 		if (thread == null) {
 			return true;
-		} else {						
-			thread.handleSuspendForBreakpoint(this);
-			return false;
+		} else {
+			return suspend(thread);				
 		}		
 	}
 	

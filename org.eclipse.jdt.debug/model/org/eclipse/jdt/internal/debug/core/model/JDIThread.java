@@ -23,6 +23,7 @@ import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.core.IJDIEventListener;
+import org.eclipse.jdt.internal.debug.core.JDIDebugPlugin;
 import org.eclipse.jdt.internal.debug.core.StringMatcher;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaBreakpoint;
 
@@ -981,19 +982,41 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 	 * suspend event.
 	 * 
 	 * @param breakpoint the breakpoint that caused the suspend
+	 * @return whether this thread suspended
 	 */
-	public void handleSuspendForBreakpoint(JavaBreakpoint breakpoint) {
-		abortStep();
+	public boolean handleSuspendForBreakpoint(JavaBreakpoint breakpoint) {
 		fCurrentBreakpoint= breakpoint;
 		try {
+			// update state to suspended but don't actually
+			// suspend unless a registered listener agrees
 			if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
-				((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint);
+				((JDIDebugTarget)getDebugTarget()).prepareToSuspendByBreakpoint(breakpoint);
 			} else {
 				setRunning(false);
 			}
-			fireSuspendEvent(DebugEvent.BREAKPOINT);
+			
+			// poll listeners
+			boolean suspend = JDIDebugPlugin.getDefault().fireBreakpointHit(this, breakpoint);
+			
+			// suspend or resume
+			if (suspend) {
+				if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
+					((JDIDebugTarget)getDebugTarget()).suspendedByBreakpoint(breakpoint);
+				} else {
+					abortStep();
+					fireSuspendEvent(DebugEvent.BREAKPOINT);
+				}				
+			} else {
+				if (breakpoint.getSuspendPolicy() == IJavaBreakpoint.SUSPEND_VM) {
+					((JDIDebugTarget)getDebugTarget()).cancelSuspendByBreakpoint(breakpoint);
+				} else {
+					setRunning(true);
+				}				
+			}
+			return suspend;
 		} catch (CoreException e) {
 			logError(e);
+			return true;
 		}
 	}
 
