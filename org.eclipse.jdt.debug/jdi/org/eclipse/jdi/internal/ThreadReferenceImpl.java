@@ -600,7 +600,6 @@ public class ThreadReferenceImpl extends ObjectReferenceImpl implements ThreadRe
 				case JdwpReplyPacket.THREAD_NOT_SUSPENDED:
 					throw new IncompatibleThreadStateException();
 				case JdwpReplyPacket.NO_MORE_FRAMES:
-				// XXX: FIXME - JDWP spec does not yet explain what this means
 					break;
 				default:
 					defaultReplyErrorHandler(replyPacket.errorCode());
