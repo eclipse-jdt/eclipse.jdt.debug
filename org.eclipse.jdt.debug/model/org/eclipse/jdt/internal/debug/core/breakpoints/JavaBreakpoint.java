@@ -609,7 +609,7 @@ public abstract class JavaBreakpoint extends Breakpoint implements IJavaBreakpoi
 				}
 			}
 		};
-		runnable.run(null);
+		run(runnable);
 		fRequestsByTarget.remove(target);
 		fFilteredThreadsByTarget.remove(target);
 		
