@@ -10,10 +10,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.debug.core.IJavaStackFrame;
-import org.eclipse.jdt.debug.core.IJavaThread;
-import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.launching.sourcelookup.ArchiveSourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.DirectorySourceLocation;
 import org.eclipse.jdt.launching.sourcelookup.IJavaSourceLocation;
@@ -21,7 +17,6 @@ import org.eclipse.jdt.launching.sourcelookup.JavaProjectSourceLocation;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -29,7 +24,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * UI adapter factory for JDI Debug
  */
-/*package*/ class JDIDebugUIAdapterFactory implements IAdapterFactory {
+/*package*/ class JavaSourceLocationWorkbenchAdapterFactory implements IAdapterFactory {
 
 	class SourceLocationPropertiesAdapter implements IWorkbenchAdapter {
 		
@@ -95,17 +90,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 				return new SourceLocationPropertiesAdapter();
 			}
 		}
-		if (adapterType == IActionFilter.class) {
-			if (obj instanceof IJavaThread) {
-				return new JavaThreadActionFilter();
-			} else if (obj instanceof IJavaStackFrame) {
-				return new JavaStackFrameActionFilter();
-			} else if (obj instanceof IJavaVariable) {
-				return new JavaVariableActionFilter();
-			} else if (obj instanceof IMethod) {
-				return new MethodActionFilter();
-			}
-		}
 		return null;
 	}
 
@@ -115,7 +99,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	public Class[] getAdapterList() {
 		return new Class[] {
 			IWorkbenchAdapter.class,
-			IActionFilter.class 
 		};
 	}
 }

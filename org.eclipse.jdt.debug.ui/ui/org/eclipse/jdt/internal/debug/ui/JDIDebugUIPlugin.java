@@ -75,7 +75,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 	
 	private JavaEvaluationEngineManager fEvaluationEngineManager;
 	
-	private JDIDebugUIAdapterFactory fAdapterFactory;
+	private ActionFilterAdapterFactory fActionFilterAdapterFactory;
+	private JavaSourceLocationWorkbenchAdapterFactory fSourceLocationAdapterFactory;
 	
 	/**
 	 * Java Debug UI listeners
@@ -246,12 +247,13 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		JavaDebugOptionsManager.getDefault().startup();
 		
 		IAdapterManager manager= Platform.getAdapterManager();
-		fAdapterFactory= new JDIDebugUIAdapterFactory();
-		manager.registerAdapters(fAdapterFactory, IJavaSourceLocation.class);
-		manager.registerAdapters(fAdapterFactory, IMethod.class);
-		manager.registerAdapters(fAdapterFactory, IJavaVariable.class);
-		manager.registerAdapters(fAdapterFactory, IJavaStackFrame.class);
-		manager.registerAdapters(fAdapterFactory, IJavaThread.class);
+		fActionFilterAdapterFactory= new ActionFilterAdapterFactory();
+		manager.registerAdapters(fActionFilterAdapterFactory, IMethod.class);
+		manager.registerAdapters(fActionFilterAdapterFactory, IJavaVariable.class);
+		manager.registerAdapters(fActionFilterAdapterFactory, IJavaStackFrame.class);
+		manager.registerAdapters(fActionFilterAdapterFactory, IJavaThread.class);
+		fSourceLocationAdapterFactory = new JavaSourceLocationWorkbenchAdapterFactory();
+		manager.registerAdapters(fSourceLocationAdapterFactory, IJavaSourceLocation.class);
 		
 		fEvaluationEngineManager= new JavaEvaluationEngineManager();
 		fJavaModelListener= new JavaModelListener();
@@ -278,7 +280,8 @@ public class JDIDebugUIPlugin extends AbstractUIPlugin {
 		}
 		fEvaluationEngineManager.dispose();
 		IAdapterManager manager= Platform.getAdapterManager();
-		manager.unregisterAdapters(fAdapterFactory);
+		manager.unregisterAdapters(fActionFilterAdapterFactory);
+		manager.unregisterAdapters(fSourceLocationAdapterFactory);
 		super.shutdown();
 	}
 	
