@@ -136,7 +136,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 * 	 * @param version	 * @return boolean	 */
 	public static boolean isJdiVersionGreaterThanOrEqual(int[] version) {
 		int[] runningVersion = getJDIVersion();
-		return runningVersion[0] >= version[0] && runningVersion[1] >= version[1];
+		return runningVersion[0] > version[0] || (runningVersion[0] == version[0] && runningVersion[1] >= version[1]);
 	}
 		
 	public JDIDebugPlugin(IPluginDescriptor descriptor) {
