@@ -11,6 +11,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaThread;
 import org.eclipse.jdt.debug.core.IJavaType;
 import org.eclipse.jdt.debug.core.IJavaValue;
+import org.eclipse.jdt.debug.eval.IEvaluationListener;
 import org.eclipse.jdt.debug.eval.IEvaluationResult;
 import org.eclipse.jdt.internal.debug.ui.IHelpContextIds;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
@@ -30,6 +31,9 @@ public class DisplayAction extends EvaluateAction {
 		WorkbenchHelp.setHelp(this, new Object[] { IHelpContextIds.DISPLAY_ACTION });	
 	}
 	
+	/**
+	 * @see IEvaluationListener#evaluationComplete(IEvaluationResult)
+	 */
 	public void evaluationComplete(final IEvaluationResult result) {
 		
 		final IJavaValue value= result.getValue();
