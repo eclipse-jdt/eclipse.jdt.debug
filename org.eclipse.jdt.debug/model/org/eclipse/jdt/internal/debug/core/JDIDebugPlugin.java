@@ -142,6 +142,7 @@ public class JDIDebugPlugin extends Plugin implements Preferences.IPropertyChang
 	 */
 	public void shutdown() throws CoreException {
 		getPluginPreferences().removePropertyChangeListener(this);
+		savePluginPreferences();
 		JavaHotCodeReplaceManager.getDefault().shutdown();
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		IDebugTarget[] targets= launchManager.getDebugTargets();

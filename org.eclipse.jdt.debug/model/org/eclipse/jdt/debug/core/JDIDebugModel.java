@@ -473,8 +473,19 @@ public class JDIDebugModel {
 	 * Returns the preference store for this plug-in.
 	 * 
 	 * @return the preference store for this plug-in
+	 * @since 2.0
 	 */
 	public static Preferences getPreferences() {
 		return JDIDebugPlugin.getDefault().getPluginPreferences();
+	}
+	
+	/**
+	 * Saves the preference store for this plug-in.
+	 * 
+	 * @return the preference store for this plug-in
+	 * @since 2.0
+	 */
+	public static void savePreferences() {
+		JDIDebugPlugin.getDefault().savePluginPreferences();
 	}
 }

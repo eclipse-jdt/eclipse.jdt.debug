@@ -87,6 +87,7 @@ public class LaunchingPlugin extends Plugin implements Preferences.IPropertyChan
 		ArchiveSourceLocation.closeArchives();
 		getPluginPreferences().removePropertyChangeListener(this);
 		JavaRuntime.removeVMInstallChangedListener(this);
+		savePluginPreferences();
 		super.shutdown();
 	}
 		

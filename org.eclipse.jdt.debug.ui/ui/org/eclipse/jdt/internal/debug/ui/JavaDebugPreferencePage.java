@@ -184,6 +184,8 @@ public class JavaDebugPreferencePage extends PreferencePage implements IWorkbenc
 			refreshViews();
 		}
 		JDIDebugUIPlugin.getDefault().savePluginPreferences();
+		JDIDebugModel.savePreferences();
+		JavaRuntime.savePreferences();
 		return true;
 	}
 	

@@ -1383,6 +1383,15 @@ public final class JavaRuntime {
 	}
 	
 	/**
+	 * Saves the preferences for the launching plug-in.
+	 * 
+	 * @since 2.0
+	 */
+	public static void savePreferences() {
+		LaunchingPlugin.getDefault().savePluginPreferences();
+	}
+	
+	/**
 	 * Registers the given resolver for the specified variable.
 	 * 
 	 * @param resolver runtime classpathe entry resolver
