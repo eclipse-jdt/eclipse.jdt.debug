@@ -17,6 +17,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.debug.ui.JavaDebugUI;
@@ -45,6 +46,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
+/**
+ * This tab appears in the LaunchConfigurationDialog for launch configurations that
+ * require Java-specific launching information such as a main type and JRE.
+ */
 public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 
 	// The launch configuration dialog that owns this tab
@@ -280,8 +285,15 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 	
 	protected void updateMainTypeFromConfig(ILaunchConfiguration config) {
 		try {
-			String mainType = config.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, EMPTY_STRING);
-			fMainText.setText(mainType);
+			String mainTypeID = config.getAttribute(JavaDebugUI.MAIN_TYPE_ATTR, EMPTY_STRING);
+			if ((mainTypeID != null) && (mainTypeID.trim().length() > 0)) {
+				IType type = (IType) JavaCore.create(mainTypeID);
+				if (type != null) {
+					String mainTypeName = type.getFullyQualifiedName();
+					fMainText.setText(mainTypeName);
+					fMainText.setData(JavaDebugUI.MAIN_TYPE_ATTR, mainTypeID);
+				}
+			}
 		} catch (CoreException ce) {			
 		}		
 	}
@@ -391,7 +403,7 @@ public class MainTab implements ILaunchConfigurationTab, IAddVMDialogRequestor {
 	 * Create some empty space 
 	 */
 	protected void createVerticalSpacer(Composite comp) {
-		Label spacer = new Label(comp, SWT.NONE);
+		new Label(comp, SWT.NONE);
 	}
 	
 	/**
