@@ -871,6 +871,8 @@ public class JDIThread extends JDIDebugElement implements IJavaThread {
 					((JDIDebugTarget)getDebugTarget()).cancelSuspendByBreakpoint(breakpoint);
 				} else {
 					setRunning(true);
+					// dispose cached stack frames so we re-retrieve on the next breakpoint
+					disposeStackFrames();
 				}				
 			}
 			return suspend;

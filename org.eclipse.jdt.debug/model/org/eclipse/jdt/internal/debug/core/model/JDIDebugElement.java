@@ -276,7 +276,7 @@ public abstract class JDIDebugElement extends PlatformObject implements IDebugEl
 	 */
 	protected void throwDebugException(String message, int code, Throwable exception) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, JDIDebugModel.getPluginIdentifier(),
-			DebugException.NOT_SUPPORTED, message, exception));
+			code, message, exception));
 	}
 	
 	/**
