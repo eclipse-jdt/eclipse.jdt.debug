@@ -117,10 +117,10 @@ public class RuntimeClasspathEntryLabelProvider extends LabelProvider {
 					String device = path.getDevice();
 					if (device != null) {
 						displayPath.append(device);
-						displayPath.append(File.separator);
 					}
+					displayPath.append(File.separator);
 					for (int i = 0; i < segments.length - 1; i++) { 
-						displayPath.append(segments[i] + File.separator);
+						displayPath.append(segments[i]).append(File.separator);
 					}
 				}
 				return displayPath.toString();
