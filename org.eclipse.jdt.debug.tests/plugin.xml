@@ -51,7 +51,8 @@
 
 <extension point = "org.eclipse.debug.core.launchModes">
 	<launchMode
-		mode="TEST_MODE"/>
+		mode="TEST_MODE"
+		label="TEST_MODE"/>
 </extension>	
 
 <extension point = "org.eclipse.debug.core.launchDelegates">
@@ -69,7 +70,8 @@
 		type ="org.eclipse.jdt.launching.localJavaApplication"
 		class="org.eclipse.jdt.debug.testplugin.TestJavaApplicationTabGroup">
 		<launchMode
-			mode="TEST_MODE">
+			mode="TEST_MODE"
+			perspective="org.eclipse.jdt.ui.JavaPerspective">
 		</launchMode>
 	</launchConfigurationTabGroup>
 </extension>
